@@ -107,7 +107,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case ColumnStatus:
 			if(ls.isIncompatible()) {
 				return tr("Incompatible version");
-			} else if (ls.webLoginBlocked) {
+			} else if(ls.webLoginBlocked) {
 #ifdef __EMSCRIPTEN__
 				return tr("Closed (not allowed to join from the web browser)");
 #else
@@ -123,7 +123,8 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 				return QVariant{};
 			}
 		case ColumnTitle:
-			return isNsfm(ls) ? tr("Not suitable for minors (NSFM)") : QVariant{};
+			return isNsfm(ls) ? tr("Not suitable for minors (NSFM)")
+							  : QVariant{};
 		case ColumnActive: {
 			int n = ls.activeDrawingUserCount;
 			if(role == Qt::ToolTipRole) {
@@ -149,56 +150,81 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 
 	} else {
 		switch(role) {
-		case IdRole: return ls.id;
-		case IdAliasRole: return ls.alias;
-		case AliasOrIdRole: return ls.idOrAlias();
-		case UserCountRole: return ls.userCount;
-		case TitleRole: return ls.title;
-		case FounderRole: return ls.founder;
-		case NeedPasswordRole: return ls.needPassword;
-		case PersistentRole: return ls.persistent;
-		case ClosedRole: return ls.isClosed();
-		case IncompatibleRole: return !ls.incompatibleSeries.isEmpty();
-		case JoinableRole: return (!ls.isClosed() || m_moderatorMode) && ls.incompatibleSeries.isEmpty();
-		case NsfmRole: return isNsfm(ls);
-		case CompatibilityModeRole: return ls.isCompatibilityMode();
-		case InactiveRole: return ls.activeDrawingUserCount == 0;
-		default: return QVariant{};
+		case IdRole:
+			return ls.id;
+		case IdAliasRole:
+			return ls.alias;
+		case AliasOrIdRole:
+			return ls.idOrAlias();
+		case UserCountRole:
+			return ls.userCount;
+		case TitleRole:
+			return ls.title;
+		case FounderRole:
+			return ls.founder;
+		case NeedPasswordRole:
+			return ls.needPassword;
+		case PersistentRole:
+			return ls.persistent;
+		case ClosedRole:
+			return ls.isClosed();
+		case IncompatibleRole:
+			return !ls.incompatibleSeries.isEmpty();
+		case JoinableRole:
+			return (!ls.isClosed() || m_moderatorMode) &&
+				   ls.incompatibleSeries.isEmpty();
+		case NsfmRole:
+			return isNsfm(ls);
+		case CompatibilityModeRole:
+			return ls.isCompatibilityMode();
+		case InactiveRole:
+			return ls.activeDrawingUserCount == 0;
+		default:
+			return QVariant{};
 		}
 	}
 }
 
 Qt::ItemFlags LoginSessionModel::flags(const QModelIndex &index) const
 {
-	if(index.row()<0 || index.row() >= m_sessions.size())
+	if(index.row() < 0 || index.row() >= m_sessions.size()) {
 		return Qt::NoItemFlags;
+	}
 
 	const LoginSession &ls = m_sessions.at(index.row());
-	if(!ls.incompatibleSeries.isEmpty() || (ls.isClosed() && !m_moderatorMode))
+	if(!ls.incompatibleSeries.isEmpty() ||
+	   (ls.isClosed() && !m_moderatorMode)) {
 		return Qt::NoItemFlags;
-	else
+	} else {
 		return QAbstractTableModel::flags(index);
+	}
 }
 
-QVariant LoginSessionModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant LoginSessionModel::headerData(
+	int section, Qt::Orientation orientation, int role) const
 {
 	if(role != Qt::DisplayRole || orientation != Qt::Horizontal) {
 		return QVariant{};
 	}
 
 	switch(section) {
-	case ColumnTitle: return tr("Title");
-	case ColumnFounder: return tr("Started by");
-	case ColumnUsers: return tr("Users");
-	case ColumnActive: return tr("Active");
-	default: return QVariant{};
+	case ColumnTitle:
+		return tr("Title");
+	case ColumnFounder:
+		return tr("Started by");
+	case ColumnUsers:
+		return tr("Users");
+	case ColumnActive:
+		return tr("Active");
+	default:
+		return QVariant{};
 	}
 }
 
 void LoginSessionModel::updateSession(const LoginSession &session)
 {
 	// If the session is already listed, update it in place
-	for(int i=0;i<m_sessions.size();++i) {
+	for(int i = 0; i < m_sessions.size(); ++i) {
 		if(m_sessions.at(i).isIdOrAlias(session.idOrAlias())) {
 			m_sessions[i] = session;
 			emit dataChanged(index(i, 0), index(i, columnCount()));
@@ -214,7 +240,7 @@ void LoginSessionModel::updateSession(const LoginSession &session)
 
 void LoginSessionModel::removeSession(const QString &id)
 {
-	for(int i=0;i<m_sessions.size();++i) {
+	for(int i = 0; i < m_sessions.size(); ++i) {
 		if(m_sessions.at(i).isIdOrAlias(id)) {
 			beginRemoveRows(QModelIndex(), i, i);
 			m_sessions.removeAt(i);
@@ -229,4 +255,4 @@ bool LoginSessionModel::isNsfm(const LoginSession &session) const
 	return session.nsfm || parentalcontrols::isNsfmTitle(session.title);
 }
 
-} // namespace net
+}
