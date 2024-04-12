@@ -1608,7 +1608,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>&amp;Save</source>
-        <translation>&amp;บันทึก</translation>
+        <translation>บันทึก</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1635,13 +1635,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+45"/>
         <location filename="../widgets/macmenu.cpp" line="-12"/>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>ไฟล์</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Open &amp;Recent</source>
-        <translation type="unfinished"></translation>
+        <translation>เปิดล่าสุด</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1651,7 +1651,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>&amp;Export</source>
-        <translation type="unfinished"></translation>
+        <translation>ส่งออก</translation>
     </message>
     <message>
         <location line="+14"/>
