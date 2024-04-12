@@ -249,16 +249,12 @@ padding: 16px;</string>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="showNsfw">
+          <widget class="QCheckBox" name="showNsfw">
            <property name="toolTip">
             <string>Show sessions not suitable for minors (NSFM)</string>
            </property>
-           <property name="icon">
-            <iconset>
-             <normaloff>:/icons/censored.svg</normaloff>:/icons/censored.svg</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
+           <property name="text">
+            <string>NSFM</string>
            </property>
           </widget>
          </item>
