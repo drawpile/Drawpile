@@ -6,12 +6,12 @@
     <message>
         <location filename="../utils/avatarlistmodel.cpp" line="+113"/>
         <source>No avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>ไม่มีรูปแทนตัวผู้ใช้</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Add avatar…</source>
-        <translation type="unfinished"></translation>
+        <translation>เพิ่มรูปแทนตัวผู้ใช้</translation>
     </message>
 </context>
 <context>
@@ -24,7 +24,7 @@
     <message>
         <location line="+2"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation>ฟอร์แมตไม่รับรอง</translation>
     </message>
     <message>
         <location line="+2"/>
