@@ -833,7 +833,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/invitedialog.ui" line="+14"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>เชิญชวน</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -843,7 +843,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+35"/>
         <source>Web link</source>
-        <translation type="unfinished"></translation>
+        <translation>เว็บลิงค์</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -896,7 +896,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+1"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>รีเซ็ต</translation>
     </message>
 </context>
 <context>
@@ -911,7 +911,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+175"/>
         <source>&amp;Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>เลือกทั้งหมด</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -929,7 +929,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/lasersettings.ui" line="+17"/>
         <source>Color:</source>
-        <translation type="unfinished"></translation>
+        <translation>สี:</translation>
     </message>
     <message>
         <location line="+87"/>
@@ -957,17 +957,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>ชื่อ:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Opacity:</source>
-        <translation type="unfinished"></translation>
+        <translation>ความทึบแสง:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -977,7 +977,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+10"/>
         <source>Visibility:</source>
-        <translation type="unfinished"></translation>
+        <translation>การมองเห็น</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1002,7 +1002,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Created by:</source>
-        <translation type="unfinished"></translation>
+        <translation>สร้างโดย</translation>
     </message>
 </context>
 <context>
@@ -1015,17 +1015,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+16"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>บันทึก</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>เปลี่ยนชื่อใหม่</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>ลบ</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -1039,12 +1039,12 @@ Subrange: [%3, %4]</source>
         <location filename="../ui/logindialog.ui" line="+103"/>
         <location line="+234"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished"></translation>
+        <translation>รหัสผ่านไม่ถูกต้อง</translation>
     </message>
     <message>
         <location line="-191"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>รหัสผ่าน</translation>
     </message>
     <message>
         <location line="-36"/>
@@ -1054,12 +1054,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-24"/>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation>ชื่อผู้ใช้</translation>
     </message>
     <message>
         <location line="+158"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>ตัวกรอง</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -1069,7 +1069,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+22"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>รหัสผ่าน:</translation>
     </message>
     <message>
         <location line="+183"/>
@@ -1172,7 +1172,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../widgets/macmenu.cpp" line="+66"/>
         <source>Minimize</source>
-        <translation type="unfinished"></translation>
+        <translation>ย่อ</translation>
     </message>
     <message numerus="yes">
         <location line="+129"/>
@@ -1194,7 +1194,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <source>Discard changes</source>
-        <translation type="unfinished"></translation>
+        <translation>ยกเลิกการแก้ไข</translation>
     </message>
 </context>
 <context>
@@ -1219,7 +1219,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+92"/>
         <location line="+1466"/>
         <source>Untitled</source>
-        <translation type="unfinished"></translation>
+        <translation>ไม่มีชื่อ</translation>
     </message>
     <message>
         <location line="-1088"/>
@@ -1234,7 +1234,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>แก้ไข</translation>
     </message>
     <message>
         <location line="+156"/>
@@ -1257,7 +1257,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+27"/>
         <location line="+573"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>ยกเลิก</translation>
     </message>
     <message>
         <location line="-580"/>
@@ -1267,12 +1267,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>บันทึก</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discard</source>
-        <translation type="unfinished"></translation>
+        <translation>ละทิ้ง</translation>
     </message>
     <message>
         <location line="+271"/>
@@ -1282,7 +1282,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+135"/>
         <source>Saving...</source>
-        <translation type="unfinished"></translation>
+        <translation>กำลังบันทึก...</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1322,12 +1322,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+54"/>
         <source>Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>หยุดชั่วคราว</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>เล่น</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1403,7 +1403,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Stay</source>
-        <translation type="unfinished"></translation>
+        <translation>อยู่ต่อ</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -1444,7 +1444,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Join</source>
-        <translation type="unfinished"></translation>
+        <translation>เข้าร่วม</translation>
     </message>
     <message>
         <location line="+117"/>
@@ -1603,22 +1603,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>ปิด</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;บันทึก</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save &amp;As...</source>
-        <translation type="unfinished"></translation>
+        <translation>บันทึกเป็น…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Autosave</source>
-        <translation type="unfinished"></translation>
+        <translation>บันทึกอัตโนมัติ</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -1629,7 +1629,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>ออก</translation>
     </message>
     <message>
         <location line="+45"/>
