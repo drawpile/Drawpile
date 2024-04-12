@@ -2496,7 +2496,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+8"/>
         <source>Moderation</source>
-        <translation type="unfinished"></translation>
+        <translation>การควบคุมและคัดกรอง</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2521,7 +2521,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Line</source>
-        <translation type="unfinished"></translation>
+        <translation>เส้น</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2621,7 +2621,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>ซูม</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2631,7 +2631,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Inspector</source>
-        <translation type="unfinished"></translation>
+        <translation>ตรวจสอบ</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2641,7 +2641,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>&amp;Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>เครื่องมือ</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4056,7 +4056,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+57"/>
         <location line="+68"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>อินพุต</translation>
     </message>
     <message>
         <location line="-152"/>
