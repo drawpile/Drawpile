@@ -812,7 +812,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+29"/>
         <source>Export</source>
-        <translation>นำออก</translation>
+        <translation>ส่งออก</translation>
     </message>
 </context>
 <context>
@@ -939,7 +939,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>s</source>
-        <translation type="unfinished"></translation>
+        <translation>วินาที</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -952,7 +952,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/layerproperties.ui" line="+17"/>
         <source>Layer Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>คุณสมบัติเลเยอร์</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1343,7 +1343,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-1548"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation>ฟอร์แมตไม่รับรอง</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1353,7 +1353,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>ข้อผิดพลาดที่ไม่ทราบสาเหตุ</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1398,7 +1398,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+6"/>
         <source>Leave</source>
-        <translation type="unfinished"></translation>
+        <translation>ออก</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1598,7 +1598,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>เปิด...</translation>
     </message>
     <message>
         <location line="+2"/>
