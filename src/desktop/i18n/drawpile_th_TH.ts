@@ -29,7 +29,7 @@
     <message>
         <location filename="../ui/abusereport.ui" line="+14"/>
         <source>Report Abuse</source>
-        <translation type="unfinished"></translation>
+        <translation>รายงานการละเมิด</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -156,7 +156,7 @@
     <message>
         <location line="+16"/>
         <source>Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>ความหนัก </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -366,17 +366,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="+40"/>
         <source>Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>ความอิ่มตัวของสี</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>สี</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Hex</source>
-        <translation type="unfinished"></translation>
+        <translation>รหัสสี</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -386,12 +386,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+37"/>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>ค่าความสว่าง</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Green</source>
-        <translation type="unfinished"></translation>
+        <translation>เขียว</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -429,7 +429,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Jump</source>
-        <translation type="unfinished"></translation>
+        <translation>ข้ามไปหา</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -551,7 +551,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+6"/>
         <source>Paste Image</source>
-        <translation type="unfinished"></translation>
+        <translation>วางภาพ</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -622,7 +622,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>ไฟล์ข้อมูลการใช้งาน</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -712,7 +712,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished"></translation>
+        <translation>ข้างหลัง</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -749,7 +749,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+16"/>
         <source>Source:</source>
-        <translation type="unfinished"></translation>
+        <translation>แหล่ง</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -759,7 +759,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Tolerance: </source>
-        <translation type="unfinished"></translation>
+        <translation>ค่าความดึงดูดของเส้น </translation>
     </message>
     <message>
         <location line="+13"/>
