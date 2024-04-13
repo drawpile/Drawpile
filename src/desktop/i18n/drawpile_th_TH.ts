@@ -4256,7 +4256,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>Gross speed</source>
         <comment>mypaintinput</comment>
         <extracomment>changes more smoothly but is less accurate than &quot;Fine speed&quot;</extracomment>
-        <translation>ความเร็วขั้นต้น</translation>
+        <translation>ความเร็วรวม</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4554,49 +4554,49 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Fine speed gamma</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>แกมม่าความเร็วละเอียด</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Gross speed gamma</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>แกมม่าความเร็วรวม</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Jitter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>การสุ่มเปลี่ยนแปลง</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset by speed</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>การชดเชยตามความเร็ว</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset by speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>การชดเชยด้วยการกรองความเร็ว</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slow position tracking</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>การติดตามตำแหน่งแบบช้า</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slow tracking per dab</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>การติดตามแบบช้าต่อจุดแตะ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tracking noise</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>การติดตาม noise</translation>
     </message>
     <message>
         <location line="+2"/>
