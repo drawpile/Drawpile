@@ -212,7 +212,7 @@
     <message>
         <location line="+10"/>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>คำอธิบาย:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -233,7 +233,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+75"/>
         <source>Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>ป้ายชื่อ:</translation>
     </message>
 </context>
 <context>
@@ -246,12 +246,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+9"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>ชนิด</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>ทางลัด</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -4616,13 +4616,13 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="-135"/>
         <source>Color value</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ค่าสี</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save color</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>บันทึกสี</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4646,7 +4646,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Change color value (HSV)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>เปลี่ยนค่าสี (HSV)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4724,7 +4724,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Direction filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ตัวกรองทิศทาง</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4790,13 +4790,13 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Offset Y</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ออฟเซ็ต Y</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset X</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ออฟเซ็ต X</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5031,7 +5031,7 @@ For very slow speed the opposite happens.</source>
         <location line="+6"/>
         <source>Color value (brightness, intensity)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ค่าสี (ความสว่าง,ความเข้ม)</translation>
     </message>
     <message>
         <location line="+2"/>
