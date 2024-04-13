@@ -4548,7 +4548,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Gross speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ตัวกรองความเร็วรวม</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4603,14 +4603,14 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+137"/>
         <source>Color hue</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ค่าสี</translation>
     </message>
     <message>
         <location line="-135"/>
         <location line="+137"/>
         <source>Color saturation</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ความอิ่มตัวของสี</translation>
     </message>
     <message>
         <location line="-135"/>
