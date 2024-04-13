@@ -106,7 +106,7 @@
     <message>
         <location line="+20"/>
         <source>Brush</source>
-        <translation>พู่กัน</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+20"/>
@@ -184,7 +184,7 @@
     <message>
         <location line="+19"/>
         <source>Gain: </source>
-        <translation type="unfinished"></translation>
+        <translation>ปริมาณของสี </translation>
     </message>
     <message>
         <location line="+22"/>
@@ -207,7 +207,7 @@
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>ชื่อ:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -257,7 +257,7 @@ to 64x64 pixels.</source>
         <location line="+16"/>
         <location line="+50"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>การดำเนินการ</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -267,7 +267,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+3"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>แบบสลับ</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -371,7 +371,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Hue</source>
-        <translation>สี</translation>
+        <translation>แม่สี</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -4572,13 +4572,13 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Offset by speed</source>
         <comment>mypaintsetting</comment>
-        <translation>การชดเชยตามความเร็ว</translation>
+        <translation>ออฟเซ็ตตามความเร็ว</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset by speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation>การชดเชยด้วยการกรองความเร็ว</translation>
+        <translation>ออฟเซ็ตตามการกรองความเร็ว</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4603,7 +4603,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+137"/>
         <source>Color hue</source>
         <comment>mypaintsetting</comment>
-        <translation>ค่าสี</translation>
+        <translation>ค่าแม่สี</translation>
     </message>
     <message>
         <location line="-135"/>
@@ -4628,19 +4628,19 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Change color hue</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>เปลี่ยนค่าแม่สี</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change color lightness (HSL)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>เปลี่ยนความสว่างของสี (HSL)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change color satur. (HSL)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>เปลี่ยนความอิ่มตัวของสี (HSL)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4652,7 +4652,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Change color satur. (HSV)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>เปลี่ยนความอิ่มตัวของสี</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4664,7 +4664,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Smudge length</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ความยาว Smudge</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4676,49 +4676,49 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Eraser</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ยางลบ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke threshold</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>เกณฑ์ความหนาของเส้น</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke duration</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ระยะเวลาของเส้น</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke hold time</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ระยะเวลาการกด</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Custom input</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>อินพุตแบบกำหนดเอง</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Custom input filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ตัวกรอกอินพุตแบบกำหนดเอง</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Elliptical dab: ratio</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>จุดแตะรูปไข่: สัดส่วน</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Elliptical dab: angle</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>จุดแตะรูปไข่: มุม</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4850,7 +4850,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Posterize</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>โปสเตอร์ไรซ์</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4891,7 +4891,10 @@ This setting is responsible to stop painting when there is zero pressure. This i
 0.0 the opaque value above is for the individual dabs
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>แก้ไขความไม่เป็นเส้นตรงของการแตะสีทับซ้อนกัน ระบบจะทำการแก้ไขความไม่เป็นเส้นตรงนี้ เพื่อให้แรงกดที่ใช้แปรงสัมพันธ์กับความทึบแสงของสี (opaque) ได้อย่างเป็นเส้นตรง (หรือตามธรรมชาติ) โดยปกติแล้วค่าที่ 0.9 นั้นพอเหมาะกับการลากเส้นตามมาตรฐาน หากเส้นยังกระจายตัวอยู่มากให้ลดค่าลง หรือเพิ่มขึ้นหากคุณใช้ค่าการแตะสีต่อวินาทีด้วย
+
+ที่ 0.0 ค่าความทึบแสงของสีที่มากกว่านั้นมีสำหรับการแตะสีแต่ละครั้ง
+ที่ 1.0 ค่าความทึบแสงของสีที่มากกว่านั้นมีสำหรับจุดลากเส้นสุดท้าย โดยอนุมาณว่า โดยทั่วไป พิกเซลแต่ละตัวนั้นมีค่า &quot;แตะสี_ต่อ_รัศมี*2 (dabs_per_radius*2)&quot; สำหรับรอยแปรงระหว่างลากเส้น</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4899,7 +4902,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
  0.7 means 2 pixels
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>รัศมีของบรัชแบบเบสิก (แบบ logarithmic)
+ที่ 0.7 คือ 2 พิกเซล
+ที่ 3.0 คือ 20 พิกเซล</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4920,7 +4925,7 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <location line="+2"/>
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ใช้กดแปรง (dabs) กี่ครั้ง ในขณะที่เคอร์เซอร์เคลื่อนที่เป็นระยะทางเท่ากับรัศมีแปรง 1 เท่า (โดยเฉพาะค่าพื้นฐานของรัศมี)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4947,13 +4952,14 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <source>How slow the input fine speed is following the real speed
 0.0 change immediately as your speed changes (not recommended, but try it)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ความช้าของความเร็วละเอียดเมื่อตามความเร็วในความเป็นจริง
+ที่ 0.0 จะเปลี่ยนแปลงทันทีที่ความเร็วของคุณเปลี่ยนแปลง (ไม่แนะนำ แต่ลองทดสอบดูได้)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as &apos;fine speed filter&apos;, but note that the range is different</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>เหมือนกับ &quot;ตัวกรองความเร็วละเอียด&quot; แต่อย่าลืมว่า ระยะ นั้นแตกต่างไป</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4962,13 +4968,16 @@ This setting is responsible to stop painting when there is zero pressure. This i
 +8.0 very fast speed increases &apos;fine speed&apos; a lot
 For very slow speed the opposite happens.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ค่านี้จะเปลี่ยนแปลงการตอบสนองของอินพุต &quot;ความเร็วละเอียด&quot; เป็นความเร็วทางกายภาพระดับมาก จะเห็นชัดเจนที่สุดถ้า &quot;ความเร็วละเอียด&quot; ถูกจัดค่ากับรัศมี
+ที่ค่า -8.0 ความเร็วอย่างมากจะไม่เพิ่ม &quot;ความเร็วละเอียด&quot; มากไปกว่านี้
+ที่ค่า +8.0 ความเร็วอย่างมากจะเพิ่ม &quot;ความเร็วละเอียด&quot; เป็นอย่างมาก
+สำหรับความเร็วอย่างช้า จะเกิดการตอบสนองตรงกันข้าม</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as &apos;fine speed gamma&apos; for gross speed</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>เหมือนกันกับ &quot;แกมม่าความเร็วละเอียด&quot; สำหรับความเร็วรวม</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4977,7 +4986,10 @@ For very slow speed the opposite happens.</source>
  1.0 standard deviation is one basic radius away
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>เพิ่มการสุ่มออฟเซ็ตที่ตำแหน่งที่มีการแตะสี
+ที่ 0.0 จะถือว่าปิดการทำงาน
+ที่ 1.0 การเบี่ยงเบนตามมาตรฐานจะเป็นหนึ่งวงรัศมีห่างไป
+ที่น้อยกว่า (&lt;) 0.0 หรือ ค่าติดลบ จะไม่เกิดการสุ่มเปลี่ยนแปลง (jitter)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4986,19 +4998,22 @@ For very slow speed the opposite happens.</source>
 &gt; 0 draw where the pointer moves to
 &lt; 0 draw where the pointer comes from</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>เปลี่ยนแปลงตำแหน่งตามความเร็วของเคอร์เซอร์
+ค่าเท่ากับ 0 จะถือว่าปิดการทำงาน
+ค่ามากกว่า 0 จะวาดเส้น ณ จุดที่เคอร์เซอร์เคลื่อนไปหา
+ค่าน้อยกว่า 0 จะวาดเส้น ณ จุดที่เคอร์เซอร์เคลื่อนจากมา</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How slow the offset goes back to zero when the cursor stops moving</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ความล่าช้าของออฟเซ็ตในการกลับไปที่ค่าเป็นศูนย์เมื่อเคอร์เซอร์หยุดเคลื่อนที่</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ลดความเร็วของการติดตามเคอร์เซอร์ ค่าที่ 0 จะถือว่าปิดการทำงาน ค่าที่มากกว่าจะลดการสุ่มการเปลี่ยนแปลง เหมาะสำหรับการวาดเส้นคงที่ ลายเส้นคล้ายการ์ตูนคอมิก</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5010,7 +5025,7 @@ For very slow speed the opposite happens.</source>
         <location line="+2"/>
         <source>Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>เพิ่มการสุ่มให้กับเคอร์เซอร์ ซึ่งจะช่วงสร้างเส้นเล็ก ๆ ในทิศทางแบบสุ่ม ลองทดสอบการตั้งค่านี้กับ &quot;ติดตามแบบช้า&quot;</translation>
     </message>
     <message>
         <location line="+6"/>
