@@ -52,7 +52,7 @@ public:
 
 	void showPage(Entry entry);
 
-	void autoJoin(const QUrl &url);
+	void autoJoin(const QUrl &url, const QString &autoRecordPath);
 
 public slots:
 	void checkForUpdates();

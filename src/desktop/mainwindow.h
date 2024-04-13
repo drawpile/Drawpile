@@ -94,7 +94,7 @@ public:
 	~MainWindow() override;
 
 	void openPath(const QString &path, QTemporaryFile *tempFile = nullptr);
-	void autoJoin(const QUrl &url);
+	void autoJoin(const QUrl &url, const QString &autoRecordPath);
 
 	void hostSession(
 		const QString &title, const QString &password, const QString &alias,
@@ -285,7 +285,7 @@ private:
 	static constexpr int DESKTOP_MODE_MIN_WIDTH = 1000;
 	static constexpr int DESKTOP_MODE_MIN_HEIGHT = 600;
 
-	MainWindow *replaceableWindow();
+	void prepareWindowReplacement();
 
 	void connectStartDialog(dialogs::StartDialog *dlg);
 	void setStartDialogActions(dialogs::StartDialog *dlg);

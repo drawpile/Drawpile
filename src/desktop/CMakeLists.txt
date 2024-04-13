@@ -504,19 +504,20 @@ elseif(EMSCRIPTEN)
 		scene/cursoritem.h
 	)
 else()
+	target_compile_definitions(drawpile PRIVATE HAVE_VIDEO_EXPORT=1)
 	target_sources(drawpile PRIVATE
 		chat/chatlineedit.cpp
 		chat/chatlineedit.h
+		dialogs/videoexportdialog.cpp
+		dialogs/videoexportdialog.h
+		ui/videoexport.ui
 	)
-	# You're not gonna do any video exporting in the browser. We can't spawn an
-	# ffmpeg process and we can't download an image series without major effort.
-	if(NOT EMSCRIPTEN)
-		target_compile_definitions(drawpile PRIVATE HAVE_VIDEO_EXPORT=1)
-		target_sources(drawpile PRIVATE
-			dialogs/videoexportdialog.cpp
-			dialogs/videoexportdialog.h
-			ui/videoexport.ui
-		)
+	# On Windows and Linux, we want to start a new process when opening a new
+	# window, since that's more resilient against crashes. Pretty sure this
+	# would be unexpected on macOS, where multiple windows in a single process
+	# share a common menu, so we don't do it there.
+	if(NOT APPLE)
+		target_compile_definitions(drawpile PRIVATE HAVE_RUN_IN_NEW_PROCESS=1)
 	endif()
 endif()
 

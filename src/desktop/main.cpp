@@ -14,7 +14,6 @@
 #include "libclient/utils/logging.h"
 #include "libclient/utils/statedatabase.h"
 #include "libshared/util/paths.h"
-#include "libshared/util/qtcompat.h"
 #include <QCommandLineParser>
 #include <QDateTime>
 #include <QDebug>
@@ -22,6 +21,7 @@
 #include <QIcon>
 #include <QLibraryInfo>
 #include <QMetaEnum>
+#include <QRegularExpression>
 #include <QScreen>
 #include <QStyle>
 #include <QStyleFactory>
@@ -31,8 +31,7 @@
 #include <QUrl>
 #include <QWidget>
 #include <memory>
-#include <tuple>
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS)
 #	include "desktop/utils/macui.h"
 #	include "desktop/widgets/macmenu.h"
 #	include <QTimer>
@@ -43,6 +42,9 @@
 #	include "libshared/util/androidutils.h"
 #elif defined(__EMSCRIPTEN__)
 #	include "libclient/wasmsupport.h"
+#endif
+#ifdef HAVE_RUN_IN_NEW_PROCESS
+#	include <QProcess>
 #endif
 
 DrawpileApp::DrawpileApp(int &argc, char **argv)
@@ -129,7 +131,7 @@ bool DrawpileApp::event(QEvent *e)
 
 	case QEvent::FileOpen: {
 		QFileOpenEvent *fe = static_cast<QFileOpenEvent *>(e);
-		openPath(fe->file());
+		openPath(fe->file(), false);
 		return true;
 	}
 
@@ -145,7 +147,7 @@ bool DrawpileApp::event(QEvent *e)
 		   topLevelWindows().isEmpty()) {
 			// Open a new window when application is activated and there are no
 			// windows.
-			openStart();
+			openStart(QString(), false);
 		}
 	}
 #endif
@@ -393,10 +395,102 @@ QPair<QSize, QSizeF> DrawpileApp::screenResolution()
 	}
 }
 
-MainWindow *DrawpileApp::acquireWindow(bool singleSession)
+void DrawpileApp::setNewProcessArgs(
+	const QCommandLineParser &parser,
+	const QVector<const QCommandLineOption *> &options)
+{
+#ifdef HAVE_RUN_IN_NEW_PROCESS
+	m_newProcessArgs.clear();
+	for(const QCommandLineOption *option : options) {
+		if(parser.isSet(*option)) {
+			m_newProcessArgs.append(
+				QStringLiteral("--") + option->names().first());
+			m_newProcessArgs.append(parser.value(*option));
+		}
+	}
+#else
+	Q_UNUSED(parser);
+	Q_UNUSED(options);
+#endif
+}
+
+bool DrawpileApp::runInNewProcess(const QStringList &args)
+{
+#ifdef HAVE_RUN_IN_NEW_PROCESS
+	// Escape hatch for testing and unexpected environments.
+	QByteArray singleProcess = qgetenv("DRAWPILE_SINGLE_PROCESS").trimmed();
+	if(!singleProcess.isEmpty()) {
+		bool ok;
+		int i = singleProcess.toInt(&ok);
+		if(!ok || i != 0) {
+			qDebug("runInNewProcess: DRAWPILE_SINGLE_PROCESS is set");
+			return false;
+		}
+	}
+
+	QString path = QCoreApplication::applicationFilePath();
+	if(path.isEmpty()) {
+		qWarning("runInNewProcess: no application path");
+		return false;
+	}
+
+	// These checks are technically superfluous, but they give better logs.
+	QFileInfo pathInfo(path);
+	if(!pathInfo.isFile()) {
+		qWarning(
+			"runInNewProcess: application path '%s' doesn't refer to a file",
+			qUtf8Printable(path));
+		return false;
+	}
+
+#	ifdef Q_OS_WIN
+	// On Windows, file extensions determine executableness. Qt considers exe,
+	// com and bat executables, but we know that Drawpile is only ever supposed
+	// to be an exe, so we can narrow down our check to only that extension.
+	if(!path.endsWith(".exe", Qt::CaseInsensitive)) {
+		qWarning(
+			"runInNewProcess: application path '%s' is not an exe file",
+			qUtf8Printable(path));
+		return false;
+	}
+#	else
+	if(!pathInfo.isExecutable()) {
+		qWarning(
+			"runInNewProcess: application path '%s' is not executable",
+			qUtf8Printable(path));
+		return false;
+	}
+#	endif
+
+	QStringList combinedArgs;
+	combinedArgs.reserve(m_newProcessArgs.size() + args.size());
+	combinedArgs.append(m_newProcessArgs);
+	combinedArgs.append(args);
+	qDebug() << "runInNewProcess:" << path << combinedArgs;
+	setOverrideCursor(Qt::WaitCursor);
+	bool started = QProcess::startDetached(path, combinedArgs);
+	if(started) {
+		// Give the user some kind of indication that there's another instance
+		// of Drawpile booting up. 3 seconds should be long enough to cover it
+		// hopefully. Also just kinda hoping that the application will start up
+		// okay, rather than concocting some kind of cross-process notification.
+		QTimer::singleShot(3000, &DrawpileApp::restoreOverrideCursor);
+		return true;
+	} else {
+		restoreOverrideCursor();
+		return false;
+	}
+#else
+	Q_UNUSED(args);
+	return false;
+#endif
+}
+
+MainWindow *
+DrawpileApp::acquireWindow(bool restoreWindowPosition, bool singleSession)
 {
 	if(singleSession) {
-		return new MainWindow(true, singleSession);
+		return new MainWindow(restoreWindowPosition, singleSession);
 	} else {
 		for(QWidget *widget : topLevelWidgets()) {
 			MainWindow *mw = qobject_cast<MainWindow *>(widget);
@@ -408,14 +502,33 @@ MainWindow *DrawpileApp::acquireWindow(bool singleSession)
 	}
 }
 
-void DrawpileApp::openPath(const QString &path)
+void DrawpileApp::openPath(const QString &path, bool restoreWindowPosition)
 {
-	acquireWindow(false)->openPath(path);
+	acquireWindow(restoreWindowPosition, false)->openPath(path);
 }
 
-void DrawpileApp::joinUrl(const QUrl &url, bool singleSession)
+void DrawpileApp::joinUrl(
+	const QUrl &url, const QString &autoRecordPath, bool restoreWindowPosition,
+	bool singleSession)
 {
-	acquireWindow(singleSession)->autoJoin(url);
+	acquireWindow(restoreWindowPosition, singleSession)
+		->autoJoin(url, autoRecordPath);
+}
+
+void DrawpileApp::openBlank(
+	int width, int height, QColor backgroundColor, bool restoreWindowPosition)
+{
+	if(width <= 0) {
+		width = m_settings.newCanvasSize().width();
+	}
+	if(height <= 0) {
+		height = m_settings.newCanvasSize().height();
+	}
+	if(!backgroundColor.isValid()) {
+		backgroundColor = m_settings.newCanvasBackColor();
+	}
+	acquireWindow(restoreWindowPosition, false)
+		->newDocument(QSize(width, height), backgroundColor);
 }
 
 dialogs::StartDialog::Entry getStartDialogEntry(const QString &page)
@@ -437,12 +550,18 @@ dialogs::StartDialog::Entry getStartDialogEntry(const QString &page)
 	return dialogs::StartDialog::Entry::Guess;
 }
 
-void DrawpileApp::openStart(const QString &page)
+void DrawpileApp::openStart(const QString &page, bool restoreWindowPosition)
 {
-	MainWindow *win = new MainWindow;
+	MainWindow *win = new MainWindow(restoreWindowPosition);
 	win->newDocument(
 		m_settings.newCanvasSize(), m_settings.newCanvasBackColor());
-	if(page.compare("none", Qt::CaseInsensitive) != 0) {
+	// Importing an old animation is not actually a start dialog page, it's just
+	// here as an internal option to let us start a new process if the user
+	// requests an animation import on a dirty canvas.
+	if(page.compare(
+		   QStringLiteral("import-old-animation"), Qt::CaseInsensitive) == 0) {
+		win->importOldAnimation();
+	} else if(page.compare(QStringLiteral("none"), Qt::CaseInsensitive) != 0) {
 		dialogs::StartDialog *dlg = win->showStartDialog();
 		dlg->showPage(getStartDialogEntry(page));
 	}
@@ -511,8 +630,22 @@ static QStringList getStartPages()
 	return pages;
 }
 
+struct StartupOptions {
+	QStringList files;
+	QString startPage;
+	bool singleSession = false;
+	bool restoreWindowPosition = false;
+	QString autoRecordPath;
+	QString joinUrl;
+	QString openPath;
+	bool blank = false;
+	int blankWidth = 0;
+	int blankHeight = 0;
+	QColor blankColor;
+};
+
 // Initialize the application and return a list of files to be opened (if any)
-static std::tuple<QStringList, QString, bool> initApp(DrawpileApp &app)
+static StartupOptions initApp(DrawpileApp &app)
 {
 	// Parse command line arguments
 	QCommandLineParser parser;
@@ -555,6 +688,31 @@ static std::tuple<QStringList, QString, bool> initApp(DrawpileApp &app)
 	parser.addOption(copyLegacySettings);
 #endif
 
+	QCommandLineOption join(
+		QStringLiteral("join"),
+		QStringLiteral(
+			"Open the given session. Analogous to passing it as a positional "
+			"argument, but without guessing if it's a file or session URL."),
+		QStringLiteral("url"));
+	parser.addOption(join);
+
+	QCommandLineOption open(
+		QStringLiteral("open"),
+		QStringLiteral(
+			"Open the given file. Analogous to passing it as a positional "
+			"argument, but without guessing if it's a file or a session URL."),
+		QStringLiteral("path"));
+	parser.addOption(open);
+
+	QCommandLineOption blank(
+		QStringLiteral("blank"),
+		QStringLiteral("Start Drawpile with a blank canvas of the given width, "
+					   "height and background color in (a)rgb format without "
+					   "'#', separated by 'x'. Each element is may be left "
+					   "blank to use the default instead."),
+		QStringLiteral("widthxheightxcolor"));
+	parser.addOption(blank);
+
 	QString startPageDescription =
 		QStringLiteral("Which page to show on the start dialog: guess (the "
 					   "default), %1 or none.")
@@ -570,6 +728,18 @@ static std::tuple<QStringList, QString, bool> initApp(DrawpileApp &app)
 					   "of Drawpile."));
 	parser.addOption(singleSession);
 
+	QCommandLineOption noRestoreWindowPosition(
+		QStringLiteral("no-restore-window-position"),
+		QStringLiteral("Don't restore main window to its previous position."));
+	parser.addOption(noRestoreWindowPosition);
+
+	QCommandLineOption autoRecord(
+		QStringLiteral("auto-record"),
+		QStringLiteral("Automatically record to the given file. Only used if a "
+					   "session URL to join is also given."),
+		QStringLiteral("path"));
+	parser.addOption(autoRecord);
+
 	QCommandLineOption renderer(
 		"renderer",
 		"Override canvas renderer, one of: none (don't override, the default), "
@@ -581,6 +751,12 @@ static std::tuple<QStringList, QString, bool> initApp(DrawpileApp &app)
 	parser.addPositionalArgument("url", "Filename or URL.");
 
 	parser.process(app);
+	app.setNewProcessArgs(
+		parser, {&dataDir, &portableDataDir, &opengl, &buffer, &renderer,
+#ifdef Q_OS_WIN
+				 &copyLegacySettings
+#endif
+				});
 
 	// Override data directories
 	if(parser.isSet(dataDir))
@@ -654,21 +830,42 @@ static std::tuple<QStringList, QString, bool> initApp(DrawpileApp &app)
 	tabletinput::init(app);
 	parentalcontrols::init(settings);
 
-	// Set override locale from settings, or use system locale if no override is
-	// set
+	// Set override locale from settings, use system locale if no override set.
 	QLocale locale = QLocale::c();
 	QString overrideLang = settings.language();
-	if(!overrideLang.isEmpty())
+	if(!overrideLang.isEmpty()) {
 		locale = QLocale(overrideLang);
-
-	if(locale == QLocale::c())
+	}
+	if(locale == QLocale::c()) {
 		locale = QLocale::system();
+	}
 
 	initTranslations(app, locale);
 
-	return {
-		parser.positionalArguments(), parser.value(startPage),
-		parser.isSet(singleSession)};
+	StartupOptions startupOptions;
+	startupOptions.files = parser.positionalArguments();
+	startupOptions.startPage = parser.value(startPage);
+	startupOptions.singleSession = parser.isSet(singleSession);
+	startupOptions.restoreWindowPosition =
+		!parser.isSet(noRestoreWindowPosition);
+	startupOptions.autoRecordPath = parser.value(autoRecord);
+	startupOptions.openPath = parser.value(open);
+	startupOptions.joinUrl = parser.value(join);
+	startupOptions.blank = parser.isSet(blank);
+	if(startupOptions.blank) {
+		QRegularExpression blankRe(
+			QStringLiteral("\\A\\s*([0-9]*)(?:\\s*x\\s*([0-9]*)\\s*"
+						   "(?:x\\s*#?([0-9a-f]*))?)?\\s*\\z"),
+			QRegularExpression::CaseInsensitiveOption);
+		QRegularExpressionMatch match = blankRe.match(parser.value(blank));
+		if(match.hasMatch()) {
+			startupOptions.blankWidth = match.captured(1).toInt();
+			startupOptions.blankHeight = match.captured(2).toInt();
+			startupOptions.blankColor =
+				QColor(QStringLiteral("#") + match.captured(3));
+		}
+	}
+	return startupOptions;
 }
 
 #ifdef __EMSCRIPTEN__
@@ -772,6 +969,40 @@ static void applyRenderSettings(
 	}
 }
 
+static void startApplication(DrawpileApp *app)
+{
+	StartupOptions startupOptions = initApp(*app);
+	if(!startupOptions.joinUrl.isEmpty()) {
+		app->joinUrl(
+			QUrl(startupOptions.joinUrl), startupOptions.autoRecordPath,
+			startupOptions.restoreWindowPosition, startupOptions.singleSession);
+	} else if(!startupOptions.openPath.isEmpty()) {
+		app->openPath(
+			startupOptions.openPath, startupOptions.restoreWindowPosition);
+	} else if(startupOptions.blank) {
+		app->openBlank(
+			startupOptions.blankWidth, startupOptions.blankHeight,
+			startupOptions.blankColor, startupOptions.restoreWindowPosition);
+	} else if(!startupOptions.files.isEmpty()) {
+		const QString &arg = startupOptions.files.at(0);
+		bool looksLikeSessionUrl =
+			arg.startsWith("drawpile://", Qt::CaseInsensitive) ||
+			arg.startsWith("ws://", Qt::CaseInsensitive) ||
+			arg.startsWith("wss://", Qt::CaseInsensitive);
+		if(looksLikeSessionUrl) {
+			app->joinUrl(
+				QUrl(arg), startupOptions.autoRecordPath,
+				startupOptions.singleSession,
+				startupOptions.restoreWindowPosition);
+		} else {
+			app->openPath(arg, startupOptions.restoreWindowPosition);
+		}
+	} else {
+		app->openStart(
+			startupOptions.startPage, startupOptions.restoreWindowPosition);
+	}
+}
+
 int main(int argc, char *argv[])
 {
 #ifndef HAVE_QT_COMPAT_DEFAULT_HIGHDPI_PIXMAPS
@@ -838,23 +1069,7 @@ int main(int argc, char *argv[])
 	DrawpileApp *app = &appInstance;
 #endif
 
-	{
-		const auto [files, page, singleSession] = initApp(*app);
-		if(files.isEmpty()) {
-			app->openStart(page);
-		} else {
-			const QString &arg = files.at(0);
-			bool looksLikeSessionUrl =
-				arg.startsWith("drawpile://", Qt::CaseInsensitive) ||
-				arg.startsWith("ws://", Qt::CaseInsensitive) ||
-				arg.startsWith("wss://", Qt::CaseInsensitive);
-			if(looksLikeSessionUrl) {
-				app->joinUrl(QUrl(arg), singleSession);
-			} else {
-				app->openPath(arg);
-			}
-		}
-	}
+	startApplication(app);
 
 #ifdef __EMSCRIPTEN__
 	return 0;

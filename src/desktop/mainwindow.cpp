@@ -507,14 +507,14 @@ MainWindow::~MainWindow()
 	dpApp().settings().trySubmit();
 }
 
-void MainWindow::autoJoin(const QUrl &url)
+void MainWindow::autoJoin(const QUrl &url, const QString &autoRecordPath)
 {
 	if(m_singleSession) {
 		m_doc->client()->setSessionUrl(url);
-		joinSession(url);
+		joinSession(url, autoRecordPath);
 	} else {
 		dialogs::StartDialog *dlg = showStartDialog();
-		dlg->autoJoin(url);
+		dlg->autoJoin(url, autoRecordPath);
 	}
 }
 
@@ -613,23 +613,14 @@ void MainWindow::handleMouseLeave()
 }
 #endif
 
-/**
- * Get either a new MainWindow or this one if replacable
- */
-MainWindow *MainWindow::replaceableWindow()
+void MainWindow::prepareWindowReplacement()
 {
-	if(!canReplace()) {
-		if(windowState().testFlag(Qt::WindowFullScreen))
-			toggleFullscreen();
-		saveWindowState();
-		MainWindow *win = new MainWindow(false);
-		emit windowReplacementFailed(win);
-		Q_ASSERT(win->canReplace());
-		return win;
-
-	} else {
-		return this;
+	if(windowState().testFlag(Qt::WindowFullScreen)) {
+		toggleFullscreen();
 	}
+	saveWindowState();
+	saveSplitterState();
+	dpApp().settings().trySubmit();
 }
 
 /**
@@ -1397,9 +1388,13 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 	connections->add(connect(m_doc, &Document::serverLoggedIn, dlg, std::bind(&MainWindow::closeStartDialog, this, dlg)));
 	connections->add(connect(this, &MainWindow::hostSessionEnabled, dlg, &dialogs::StartDialog::hostPageEnabled));
 	connections->add(connect(this, &MainWindow::windowReplacementFailed, dlg, [dlg](MainWindow *win){
-		dlg->setParent(win, dlg->windowFlags());
-		win->connectStartDialog(dlg);
-		utils::showWindow(dlg);
+		if(win) {
+			dlg->setParent(win, dlg->windowFlags());
+			win->connectStartDialog(dlg);
+			utils::showWindow(dlg);
+		} else {
+			dlg->deleteLater();
+		}
 	}));
 	setStartDialogActions(dlg);
 }
@@ -1459,15 +1454,45 @@ void MainWindow::showNew()
 
 void MainWindow::newDocument(const QSize &size, const QColor &background)
 {
-	MainWindow *w = replaceableWindow();
-	w->m_doc->loadBlank(size, background);
+	if(canReplace()) {
+		m_doc->loadBlank(size, background);
+	} else {
+		prepareWindowReplacement();
+		bool newProcessStarted = dpApp().runInNewProcess(
+			{QStringLiteral("--no-restore-window-position"),
+			 QStringLiteral("--blank"),
+			 QStringLiteral("%1x%2x%3")
+				 .arg(size.width())
+				 .arg(size.height())
+				 .arg(background.name(QColor::HexArgb).remove('#'))});
+		if(newProcessStarted) {
+			emit windowReplacementFailed(nullptr);
+		} else {
+			MainWindow *win = new MainWindow(false);
+			emit windowReplacementFailed(win);
+			win->m_doc->loadBlank(size, background);
+		}
+	}
 }
 
-void MainWindow::openPath(const QString& path, QTemporaryFile *tempFile)
+void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 {
-	MainWindow *w = replaceableWindow();
-	if(w != this) {
-		w->openPath(path, tempFile);
+	if(!canReplace()) {
+		prepareWindowReplacement();
+		bool newProcessStarted = dpApp().runInNewProcess(
+			{QStringLiteral("--no-restore-window-position"),
+			 QStringLiteral("--open"), path});
+		if(newProcessStarted) {
+			emit windowReplacementFailed(nullptr);
+			// The temporary file is only used in the browser, which will never
+			// start new processes, so it really should always be null here.
+			Q_ASSERT(!tempFile);
+			delete tempFile;
+		} else {
+			MainWindow *win = new MainWindow(false);
+			emit windowReplacementFailed(win);
+			win->openPath(path, tempFile);
+		}
 		return;
 	}
 
@@ -1619,19 +1644,49 @@ void MainWindow::exportImage()
 
 void MainWindow::importOldAnimation()
 {
-	dialogs::AnimationImportDialog *dlg =
-		new dialogs::AnimationImportDialog(this);
-	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	connect(
-		dlg, &dialogs::AnimationImportDialog::canvasStateImported, this,
-		[this, dlg](const drawdance::CanvasState &canvasState) {
-			// Don't use the path of the imported animation to avoid clobbering
-			// of the old file by mashing Ctrl+S instinctually.
-			replaceableWindow()->m_doc->loadState(
-				canvasState, QString(), DP_SAVE_IMAGE_UNKNOWN, true);
-			dlg->deleteLater();
-		});
-	utils::showWindow(dlg);
+	// If we're on a single-window system, don't clobber that window just to
+	// show the dialog. Otherwise a single mis-click could obliterate work.
+#ifdef SINGLE_MAIN_WINDOW
+	bool showDialogNow = true;
+#else
+	bool showDialogNow = canReplace();
+#endif
+	if(showDialogNow) {
+		dialogs::AnimationImportDialog *dlg =
+			new dialogs::AnimationImportDialog(this);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		connect(
+			dlg, &dialogs::AnimationImportDialog::canvasStateImported, this,
+			[this, dlg](const drawdance::CanvasState &canvasState) {
+				MainWindow *win;
+				if(canReplace()) {
+					win = this;
+				} else {
+					prepareWindowReplacement();
+					win = new MainWindow;
+					emit windowReplacementFailed(win);
+				}
+				// Don't use the path of the imported animation to avoid
+				// clobbering of the old file by mashing Ctrl+S instinctually.
+				win->m_doc->loadState(
+					canvasState, QString(), DP_SAVE_IMAGE_UNKNOWN, true);
+				dlg->deleteLater();
+			});
+		utils::showWindow(dlg);
+	} else {
+		prepareWindowReplacement();
+		bool newProcessStarted = dpApp().runInNewProcess(
+			{QStringLiteral("--no-restore-window-position"),
+			 QStringLiteral("--start-page"),
+			 QStringLiteral("import-old-animation")});
+		if(newProcessStarted) {
+			emit windowReplacementFailed(nullptr);
+		} else {
+			MainWindow *win = new MainWindow(false);
+			emit windowReplacementFailed(win);
+			win->importOldAnimation();
+		}
+	}
 }
 
 void MainWindow::onCanvasSaveStarted()
@@ -2363,13 +2418,32 @@ void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 {
 	m_canvasView->hideDisconnectedWarning();
 	if(!canReplace()) {
-		MainWindow *win = new MainWindow(false, m_singleSession);
-		emit windowReplacementFailed(win);
-		Q_ASSERT(win->canReplace());
+		prepareWindowReplacement();
+
+		QStringList args;
+		args.reserve(6);
+		args.append(QStringLiteral("--no-restore-window-position"));
 		if(m_singleSession) {
-			win->m_doc->client()->setSessionUrl(url);
+			args.append(QStringLiteral("--single-session"));
 		}
-		win->joinSession(url, autoRecordFile);
+		args.append(QStringLiteral("--join"));
+		args.append(url.toString(QUrl::FullyEncoded));
+		if(!autoRecordFile.isEmpty()) {
+			args.append(QStringLiteral("--auto-record"));
+			args.append(autoRecordFile);
+		}
+
+		bool newProcessStarted = dpApp().runInNewProcess(args);
+		if(newProcessStarted) {
+			emit windowReplacementFailed(nullptr);
+		} else {
+			MainWindow *win = new MainWindow(false);
+			emit windowReplacementFailed(win);
+			if(m_singleSession) {
+				win->m_doc->client()->setSessionUrl(url);
+			}
+			win->joinSession(url, autoRecordFile);
+		}
 		return;
 	}
 

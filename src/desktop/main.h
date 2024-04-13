@@ -11,6 +11,8 @@
 
 class MainWindow;
 class QSoundEffect;
+class QCommandLineOption;
+class QCommandLineParser;
 
 namespace utils {
 class Recents;
@@ -31,10 +33,14 @@ public:
 	void initCanvasImplementation(const QString &arg);
 	void initInterface();
 
-	void openPath(const QString &path);
-	void joinUrl(const QUrl &url, bool singleSession);
-
-	void openStart(const QString &page = QString{});
+	void openPath(const QString &path, bool restoreWindowPosition);
+	void joinUrl(
+		const QUrl &url, const QString &autoRecordPath,
+		bool restoreWindowPosition, bool singleSession);
+	void openBlank(
+		int width, int height, QColor backgroundColor,
+		bool restoreWindowPosition);
+	void openStart(const QString &page, bool restoreWindowPosition);
 
 	void deleteAllMainWindowsExcept(MainWindow *win);
 
@@ -54,6 +60,15 @@ public:
 
 	// Returns a pair of (pixel size, physical size) of the primary screen.
 	static QPair<QSize, QSizeF> screenResolution();
+
+	void setNewProcessArgs(
+		const QCommandLineParser &parser,
+		const QVector<const QCommandLineOption *> &options);
+
+	// Runs a new Drawpile process with the given arguments. Returns if that
+	// succeeded. Depending on the platform, this may always fail, e.g. Android
+	// or the browser can't run stuff in new processes.
+	bool runInNewProcess(const QStringList &args);
 
 signals:
 #ifndef __EMSCRIPTEN__
@@ -78,12 +93,15 @@ private:
 	WinEventFilter winEventFilter;
 #endif
 	bool m_wasEraserNear = false;
+#ifdef HAVE_RUN_IN_NEW_PROCESS
+	QStringList m_newProcessArgs;
+#endif
 
 	void updateThemeIcons();
 
 	QPalette loadPalette(const QString &file);
 
-	MainWindow *acquireWindow(bool singleSession);
+	MainWindow *acquireWindow(bool restoreWindowPosition, bool singleSession);
 
 #ifndef __EMSCRIPTEN__
 	void updateEraserNear(bool near);

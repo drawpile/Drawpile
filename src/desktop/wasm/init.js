@@ -423,7 +423,7 @@ import { UAParser } from "ua-parser-js";
         entryFunction: window.createQtAppInstance,
         containerElements: [screen],
       },
-      arguments: ["--single-session", getUrlArgument(params)],
+      arguments: ["--single-session", "--join", getUrlArgument(params)],
     };
 
     config.qt.onLoaded = () => {

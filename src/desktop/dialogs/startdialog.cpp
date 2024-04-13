@@ -385,8 +385,13 @@ void StartDialog::showPage(Entry entry)
 	}
 }
 
-void StartDialog::autoJoin(const QUrl &url)
+void StartDialog::autoJoin(const QUrl &url, const QString &autoRecordPath)
 {
+	{
+		QSignalBlocker blocker(m_recordButton);
+		m_recordButton->setChecked(!autoRecordPath.isEmpty());
+		m_recordingFilename = autoRecordPath;
+	}
 	emit joinAddressSet(url.toString());
 	showPage(Entry::Join);
 	emit joinRequested(url);
