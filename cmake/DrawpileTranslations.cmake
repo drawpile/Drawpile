@@ -1,6 +1,37 @@
 #[[ This module contains data and functions for internationalisation. #]]
 
-set(SUPPORTED_LANGS ar_EG cs_CZ de_DE en_US es_CO fi_FI fr_FR id_ID it_IT ja_JP ko_KR nb_NO pt_BR pt_PT ru_RU th_TH tr_TR uk_UA vi_VN zh_CN)
+# Commented-out languages exist, but have no or only a negligible amount of
+# translated strings so that we shouldn't ship them yet.
+set(SUPPORTED_LANGS
+    ar_EG # Standard Arabic (Egypt used as a stand-in)
+    cs_CZ # Czech
+    de_DE # German
+    # el_GR # Greek
+    en_US # English
+    es_CO # American Spanish (Colombia used as a stand-in)
+    # fa_IR # Farsi (Iran)
+    fi_FI # Finnish
+    # fil_PH # Filipono
+    fr_FR # French
+    # hi_IN # Hindi (India)
+    id_ID # Indonesian
+    it_IT # Italian
+    ja_JP # Japanese
+    ko_KR # Korean
+    # mn_MN # Mongolian
+    # ms_MY # Malay
+    # nb_NO # Norwegian Bokmal
+    # pl_PL # Polish
+    pt_BR # Brazilian Portuguese
+    pt_PT # Portuguese Portuguese
+    ru_RU # Russian
+    th_TH # Thai
+    tr_TR # Turkish
+    uk_UA # Ukrainian
+    vi_VN # Vietnamese
+    zh_CN # Simplified Chinese
+)
+
 # Qt doesn't have some translations, but Drawpile does.
 set(LANGS_UNSUPPORTED_IN_QT id nb vi)
 

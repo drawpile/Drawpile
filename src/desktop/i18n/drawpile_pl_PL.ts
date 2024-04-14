@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="fil">
+<TS version="2.1" language="pl_PL">
 <context>
     <name>AbstractWidgetList</name>
     <message>
@@ -1178,6 +1178,7 @@ Subrange: [%3, %4]</source>
         <location line="+129"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -3832,6 +3833,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -3889,6 +3891,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -3900,6 +3903,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+7"/>
         <source>%n error(s) encountered.</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -6048,6 +6052,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -6055,6 +6060,7 @@ Values above 0.5 may not be noticeable.</source>
         <source>%1 %n was/were not imported because it was/they were invalid or duplicates.</source>
         <extracomment>%1 is the &quot;Imported %n session ban(s).&quot; message.</extracomment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -6154,6 +6160,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -6163,6 +6170,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -6170,6 +6178,7 @@ Values above 0.5 may not be noticeable.</source>
         <source>%n second(s)</source>
         <extracomment>Idle timeout seconds. May be joined with hours and minutes.</extracomment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -6263,6 +6272,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+9"/>
         <source>%n role(s) imported.</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -6482,6 +6492,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -6671,6 +6682,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -7115,6 +7127,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
@@ -7403,6 +7416,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -7435,6 +7449,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Really remove %n list server(s)?</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -8282,12 +8297,14 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+14"/>
         <source>%n tag(s) imported: %1</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -8301,6 +8318,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>%n error(s) encountered.</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>

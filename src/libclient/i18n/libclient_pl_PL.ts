@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="mn">
+<TS version="2.1" language="pl_PL">
 <context>
     <name>AvatarListModel</name>
     <message>
@@ -508,12 +508,14 @@
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="-2"/>
         <source>%1/%n users</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -527,6 +529,7 @@
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -1473,6 +1476,7 @@
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
