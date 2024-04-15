@@ -41,6 +41,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Make autosave interval actually be in minutes, not in seconds because that's ridiculous. Thanks D'mitri for reporting.
  * Feature: Add -U/--uncensor parameter to drawpile-timelapse to allow revealing censored layers.
  * Fix: Reduce contrast on censor tile stripes to make them less annoying to look at.
+ * Server Feature: When you pass an option that's not compiled in, the error message will not inform you of that fact, rather than just saying you passed an unknown option with no further information.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

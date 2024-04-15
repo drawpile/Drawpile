@@ -104,6 +104,30 @@ bool validateExtAuthUrl(const QString &param, const QUrl &url)
 	return true;
 }
 #endif
+
+bool isUncompiledOptionGiven(
+	const QCommandLineParser &parser,
+	const QVector<QPair<QString, QVector<const QCommandLineOption *>>> &options)
+{
+	bool error = false;
+	for(const QPair<QString, QVector<const QCommandLineOption *>> &pair :
+		options) {
+		QStringList unavailableOptions;
+		for(const QCommandLineOption *option : pair.second) {
+			if(parser.isSet(*option)) {
+				error = true;
+				unavailableOptions.append(option->names().join('/'));
+			}
+		}
+		if(!unavailableOptions.isEmpty()) {
+			qCritical(
+				"%s not compiled in, the following options are unavailable: %s",
+				qUtf8Printable(pair.first),
+				qUtf8Printable(unavailableOptions.join(QStringLiteral(", "))));
+		}
+	}
+	return error;
+}
 }
 
 bool start() {
@@ -132,14 +156,18 @@ bool start() {
 	parser.addOption(listenOption);
 
 #ifdef HAVE_WEBSOCKETS
+	QString websocketOptionSuffix;
+#else
+	QString websocketOptionSuffix = QStringLiteral(
+		" [QtWebSockets not compiled in, this option is unavailable]");
+#endif
 	// --websocket-port <port>
-	QCommandLineOption webSocketPortOption(QStringList() << "websocket-port", "WebSocket listening port (0 to disable)", "port", "0");
+	QCommandLineOption webSocketPortOption(QStringList() << "websocket-port", "WebSocket listening port (0 to disable)" + websocketOptionSuffix, "port", "0");
 	parser.addOption(webSocketPortOption);
 
 	// --websocket-listen <address>
-	QCommandLineOption webSocketListenOption(QStringList() << "websocket-listen", "WebSocket listening address", "address");
+	QCommandLineOption webSocketListenOption(QStringList() << "websocket-listen", "WebSocket listening address" + websocketOptionSuffix, "address");
 	parser.addOption(webSocketListenOption);
-#endif
 
 	// --local-host
 	QCommandLineOption localAddr("local-host", "This server's hostname for session announcement", "hostname");
@@ -166,25 +194,30 @@ bool start() {
 	parser.addOption(recordOption);
 
 #ifdef HAVE_WEBADMIN
+	QString webadminOptionSuffix;
+#else
+	QString webadminOptionSuffix = QStringLiteral(
+		" [Libmicrohttpd not compiled in, this option is unavailable]");
+#endif
 	// --web-admin-port <port>
-	QCommandLineOption webadminPortOption("web-admin-port", "Web admin interface port", "port", "0");
+	QCommandLineOption webadminPortOption("web-admin-port", "Web admin interface port" + webadminOptionSuffix, "port", "0");
 	parser.addOption(webadminPortOption);
 
 	// --web-admin-auth <user:password>
-	QCommandLineOption webadminAuthOption("web-admin-auth", "Web admin username & password (you can also use the DRAWPILESRV_WEB_ADMIN_AUTH environment variable for this)", "user:password");
+	QCommandLineOption webadminAuthOption("web-admin-auth", "Web admin username & password (you can also use the DRAWPILESRV_WEB_ADMIN_AUTH environment variable for this)" + webadminOptionSuffix, "user:password");
 	parser.addOption(webadminAuthOption);
 
 	// --web-admin-access <address/subnet>
-	QCommandLineOption webadminAccessOption("web-admin-access", "Set web admin access mask", "address/subnet|all");
+	QCommandLineOption webadminAccessOption("web-admin-access", "Set web admin access mask" + webadminOptionSuffix, "address/subnet|all");
 	parser.addOption(webadminAccessOption);
 
 	// --web-admin-allow-origin <origin>
 	QCommandLineOption webadminAllowedOriginOption(
 		"web-admin-allowed-origin",
-		"Allowed origin for Access-Control-Allow-Origin headers in responses",
+		"Allowed origin for Access-Control-Allow-Origin headers in responses" +
+			webadminOptionSuffix,
 		"origin");
 	parser.addOption(webadminAllowedOriginOption);
-#endif
 
 	// --database, -d <filename>
 	QCommandLineOption dbFileOption(QStringList() << "database" << "d", "Use configuration database", "filename");
@@ -203,18 +236,22 @@ bool start() {
 	parser.addOption(templatesOption);
 
 #ifdef HAVE_LIBSODIUM
+	QString sodiumOptionSuffix;
+#else
+	QString sodiumOptionSuffix = QStringLiteral(
+		" [Libsodium not compiled in, this option is unavailable]");
+#endif
 	// --extauth <url>
-	QCommandLineOption extAuthOption(QStringList() << "extauth", "Extauth server URL", "url");
+	QCommandLineOption extAuthOption(QStringList() << "extauth", "Extauth server URL" + sodiumOptionSuffix, "url");
 	parser.addOption(extAuthOption);
 
 	// --crypt-key
-	QCommandLineOption cryptKeyOption(QStringList() << "crypt-key", "Encryption key for session ban exports", "key");
+	QCommandLineOption cryptKeyOption(QStringList() << "crypt-key", "Encryption key for session ban exports" + sodiumOptionSuffix, "key");
 	parser.addOption(cryptKeyOption);
 
 	// --generate-crypt-key
-	QCommandLineOption generateCryptKeyOption(QStringList() << "generate-crypt-key", "Generate a key to pass to --crypt-key and exit");
+	QCommandLineOption generateCryptKeyOption(QStringList() << "generate-crypt-key", "Generate a key to pass to --crypt-key and exit" + sodiumOptionSuffix);
 	parser.addOption(generateCryptKeyOption);
-#endif
 
 	// --report-url <url>
 	QCommandLineOption reportUrlOption(QStringList() << "report-url", "Abuse report handler URL", "url");
@@ -226,6 +263,27 @@ bool start() {
 	if(parser.isSet(versionOption)) {
 		printVersion();
 		::exit(0);
+	}
+
+	// Give nice error messages about parameters for stuff not compiled in.
+	if(isUncompiledOptionGiven(
+		   parser,
+		   {
+#ifndef HAVE_WEBADMIN
+			   {QStringLiteral("Libmicrohttpd"),
+				{&webadminPortOption, &webadminAuthOption,
+				 &webadminAccessOption, &webadminAllowedOriginOption}},
+#endif
+#ifndef HAVE_LIBSODIUM
+			   {QStringLiteral("Libsodium"),
+				{&extAuthOption, &cryptKeyOption, &generateCryptKeyOption}},
+#endif
+#ifndef HAVE_WEBSOCKETS
+			   {QStringLiteral("QtWebSockets"),
+				{&webSocketPortOption, &webSocketListenOption}},
+#endif
+		   })) {
+		return false;
 	}
 
 #ifdef HAVE_LIBSODIUM
