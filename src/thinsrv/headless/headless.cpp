@@ -40,7 +40,17 @@ void printVersion()
 #ifdef HAVE_WEBADMIN
 	printf("Libmicrohttpd version: %s\n", qPrintable(Webadmin::version()));
 #else
-	printf("Libmicrohttpd version: N/A\n");
+	printf("Libmicrohttpd version: N/A (not compiled in)\n");
+#endif
+#ifdef HAVE_LIBSODIUM
+	printf("Libsodium version: %s\n", sodium_version_string());
+#else
+	printf("Libsodium version: N/A (not compiled in)\n");
+#endif
+#ifdef HAVE_WEBSOCKETS
+	printf("QtWebSockets: yes\n");
+#else
+	printf("QtWebSockets: N/A (not compiled in)\n");
 #endif
 }
 
