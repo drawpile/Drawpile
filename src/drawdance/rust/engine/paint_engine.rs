@@ -5,9 +5,9 @@ use crate::{
     DP_Timeline, DP_canvas_state_decref, DP_paint_engine_free_join, DP_paint_engine_handle_inc,
     DP_paint_engine_new_inc, DP_paint_engine_playback_begin, DP_paint_engine_playback_play,
     DP_paint_engine_playback_skip_by, DP_paint_engine_playback_step,
-    DP_paint_engine_render_everything, DP_paint_engine_tick, DP_paint_engine_view_canvas_state_inc,
-    DP_save, DP_PLAYER_RECORDING_END, DP_PLAYER_SUCCESS, DP_SAVE_IMAGE_ORA, DP_SAVE_RESULT_SUCCESS,
-    DP_TILE_SIZE,
+    DP_paint_engine_render_everything, DP_paint_engine_reveal_censored_set, DP_paint_engine_tick,
+    DP_paint_engine_view_canvas_state_inc, DP_save, DP_PLAYER_RECORDING_END, DP_PLAYER_SUCCESS,
+    DP_SAVE_IMAGE_ORA, DP_SAVE_RESULT_SUCCESS, DP_TILE_SIZE,
 };
 use anyhow::Result;
 use std::{
@@ -90,6 +90,10 @@ impl PaintEngine {
 
     pub fn render_height(&self) -> usize {
         self.render_height
+    }
+
+    pub fn set_reveal_censored(&self, reveal_censored: bool) {
+        unsafe { DP_paint_engine_reveal_censored_set(self.paint_engine, reveal_censored) }
     }
 
     extern "C" fn on_renderer_tile(

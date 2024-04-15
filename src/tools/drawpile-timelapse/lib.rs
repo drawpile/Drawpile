@@ -214,6 +214,8 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
         /// that they didn't have permission to draw on. The Drawpile client
         /// would also filter these out when playing back a recording.
         optional -A,--acl
+        /// Show censored layers instead of rendering them as censor squares.
+        optional -U,--uncensor
         /// Input recording file(s).
         repeated input: String
     };
@@ -339,6 +341,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
     }
 
     let acl_override = !flags.acl;
+    let reveal_censored = flags.uncensor;
 
     if flags.print_only {
         eprintln!();
@@ -358,6 +361,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
         }
         eprintln!("linger time:\n    {} sec", linger_time);
         eprintln!("filter acls:\n    {}", !acl_override);
+        eprintln!("reveal censored layers:\n    {}", reveal_censored);
         if let Some(command) = opt_command {
             eprintln!(
                 "ffmpeg command line:\n    {} {}",
@@ -387,6 +391,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
             &input_paths,
             framerate,
             acl_override,
+            reveal_censored,
             interval,
             dimensions.width,
             dimensions.height,
@@ -399,6 +404,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
             &input_paths,
             framerate,
             acl_override,
+            reveal_censored,
             interval,
             dimensions.width,
             dimensions.height,
@@ -411,6 +417,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
             &input_paths,
             framerate,
             acl_override,
+            reveal_censored,
             interval,
             dimensions.width,
             dimensions.height,
@@ -433,6 +440,7 @@ fn make_timelapse_command(
     input_paths: &Vec<String>,
     framerate: i32,
     acl_override: bool,
+    reveal_censored: bool,
     interval: i64,
     width: usize,
     height: usize,
@@ -458,6 +466,7 @@ fn make_timelapse_command(
         input_paths,
         framerate,
         acl_override,
+        reveal_censored,
         interval,
         width,
         height,
@@ -478,6 +487,7 @@ fn make_timelapse_raw(
     input_paths: &Vec<String>,
     framerate: i32,
     acl_override: bool,
+    reveal_censored: bool,
     interval: i64,
     width: usize,
     height: usize,
@@ -490,6 +500,7 @@ fn make_timelapse_raw(
         input_paths,
         framerate,
         acl_override,
+        reveal_censored,
         interval,
         width,
         height,
@@ -523,6 +534,7 @@ fn timelapse(
     input_paths: &Vec<String>,
     framerate: i32,
     acl_override: bool,
+    reveal_censored: bool,
     interval: i64,
     width: usize,
     height: usize,
@@ -535,7 +547,15 @@ fn timelapse(
     };
 
     for input_path in input_paths {
-        timelapse_recording(&mut ctx, input_path, acl_override, interval, width, height)?;
+        timelapse_recording(
+            &mut ctx,
+            input_path,
+            acl_override,
+            reveal_censored,
+            interval,
+            width,
+            height,
+        )?;
     }
 
     if !ctx.images.is_empty() {
@@ -559,6 +579,7 @@ fn timelapse_recording(
     ctx: &mut TimelapseContext,
     input_path: &String,
     acl_override: bool,
+    reveal_censored: bool,
     interval: i64,
     width: usize,
     height: usize,
@@ -567,6 +588,7 @@ fn timelapse_recording(
     player.set_acl_override(acl_override);
 
     let mut pe = PaintEngine::new(Some(player));
+    pe.set_reveal_censored(reveal_censored);
     pe.begin_playback()?;
 
     let mut initial = true;

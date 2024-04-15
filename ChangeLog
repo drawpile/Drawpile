@@ -39,6 +39,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Don't move view position when pressing side buttons in small screen mode.
  * Feature: Show a proper explanation when you can't join a session.
  * Fix: Make autosave interval actually be in minutes, not in seconds because that's ridiculous. Thanks D'mitri for reporting.
+ * Feature: Add -U/--uncensor parameter to drawpile-timelapse to allow revealing censored layers.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.
