@@ -233,7 +233,7 @@ DP_Tile *DP_tile_censored_noinc(void)
         if (!censor_tile) {
             censor_tile =
                 DP_tile_new_zebra(0, (DP_Pixel15){4497, 4883, 5268, DP_BIT15},
-                                  (DP_Pixel15){30711, 30840, 30968, DP_BIT15});
+                                  (DP_Pixel15){10151, 10280, 10408, DP_BIT15});
         }
         DP_atomic_unlock(&censor_tile_lock);
     }
