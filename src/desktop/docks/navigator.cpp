@@ -95,6 +95,7 @@ void NavigatorView::setCanvasModel(canvas::CanvasModel *model)
 
 	pe->setRenderOutsideView(isVisible());
 	m_tileCacheDirtyCheckNeeded = m_useTileCache;
+	m_canvasSize = QSize();
 	m_refreshAll = true;
 	refreshCache();
 
