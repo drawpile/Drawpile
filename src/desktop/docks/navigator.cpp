@@ -260,7 +260,6 @@ void NavigatorView::refreshCache()
 		} else {
 			refreshFromPixmap(pe);
 		}
-		update();
 	}
 }
 
@@ -283,19 +282,26 @@ void NavigatorView::refreshFromPixmap(canvas::PaintEngine *pe)
 			}
 		}
 	});
+	update();
 }
 
 void NavigatorView::refreshFromTileCache(canvas::PaintEngine *pe)
 {
-	pe->withTileCache([this](canvas::TileCache &tileCache) {
+	bool changed = false;
+	pe->withTileCache([this, &changed](canvas::TileCache &tileCache) {
 		m_tileCacheDirtyCheckNeeded = false;
 		QSize canvasSize = tileCache.size();
 		if(!canvasSize.isEmpty()) {
-			refreshCacheSize(canvasSize);
-			tileCache.paintDirtyNavigatorTilesReset(m_refreshAll, m_cache);
+			bool sizeChanged = refreshCacheSize(canvasSize);
+			bool tilesChanged =
+				tileCache.paintDirtyNavigatorTilesReset(m_refreshAll, m_cache);
+			changed = sizeChanged || tilesChanged;
 			m_refreshAll = false;
 		}
 	});
+	if(changed) {
+		update();
+	}
 }
 
 bool NavigatorView::refreshCacheSize(const QSize &canvasSize)

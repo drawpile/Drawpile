@@ -78,19 +78,21 @@ public:
 
 	bool needsDirtyCheck() const { return m_needsDirtyCheck; }
 
-	void paintDirtyNavigatorTilesReset(bool all, QPixmap &cache)
+	bool paintDirtyNavigatorTilesReset(bool all, QPixmap &cache)
 	{
 		QSize targetSize = cache.size();
 		qreal ratioX = qreal(targetSize.width()) / qreal(m_width);
 		qreal ratioY = qreal(targetSize.height()) / qreal(m_height);
 		QPainter painter(&cache);
 		painter.setCompositionMode(QPainter::CompositionMode_Source);
+		bool changed = false;
 		for(int tileY = 0; tileY < m_ytiles; ++tileY) {
 			for(int tileX = 0; tileX < m_xtiles; ++tileX) {
 				int i = tileIndex(tileX, tileY);
 				bool &dirtyNavigatorTile = m_dirtyNavigatorTiles[i];
 				if(all || dirtyNavigatorTile) {
 					dirtyNavigatorTile = false;
+					changed = true;
 					QRect sourceRect = rectAt(tileX, tileY);
 					QRect targetRect(
 						qFloor(sourceRect.x() * ratioX),
@@ -102,6 +104,7 @@ public:
 			}
 		}
 		m_needsNavigatorDirtyCheck = false;
+		return changed;
 	}
 
 	virtual const QPixmap *pixmap() { return nullptr; }
@@ -461,9 +464,9 @@ void TileCache::eachDirtyTileReset(const QRect &tileArea, const OnTileFn &fn)
 	d->eachDirtyTileReset(tileArea, fn);
 }
 
-void TileCache::paintDirtyNavigatorTilesReset(bool all, QPixmap &cache)
+bool TileCache::paintDirtyNavigatorTilesReset(bool all, QPixmap &cache)
 {
-	d->paintDirtyNavigatorTilesReset(all, cache);
+	return d->paintDirtyNavigatorTilesReset(all, cache);
 }
 
 TileCache::BaseImpl *TileCache::instantiateImpl(int canvasImplementation)

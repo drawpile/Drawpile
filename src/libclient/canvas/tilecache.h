@@ -66,7 +66,7 @@ public:
 	bool getResizeReset(Resize &outResize);
 	bool needsDirtyCheck() const;
 	void eachDirtyTileReset(const QRect &tileArea, const OnTileFn &fn);
-	void paintDirtyNavigatorTilesReset(bool all, QPixmap &cache);
+	bool paintDirtyNavigatorTilesReset(bool all, QPixmap &cache);
 
 private:
 	class BaseImpl;
