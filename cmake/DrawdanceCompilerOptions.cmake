@@ -2,6 +2,10 @@
 
 if(MSVC)
     add_compile_options(
+        # Source code is in UTF-8, obviously.
+        /utf-8
+        # Highest warning level.
+        /W4
         # C4100: unreferenced formal parameter
         #  - MSVC has no `__attribute__((unused))` and omitting parameter names
         #    wouldn't be standard C

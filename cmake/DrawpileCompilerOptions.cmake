@@ -32,7 +32,12 @@ endif()
 add_feature_info("Interprocedural optimization (CMAKE_INTERPROCEDURAL_OPTIMIZATION)" CMAKE_INTERPROCEDURAL_OPTIMIZATION "")
 
 if(MSVC)
-	add_compile_options(/utf-8 /W4)
+	add_compile_options(
+		# Source code is in UTF-8, obviously.
+		/utf-8
+		# Highest warning level.
+		/W4
+	)
 	add_compile_definitions(
 		# The _s family of functions don't exist on all platforms.
 		_CRT_SECURE_NO_WARNINGS
