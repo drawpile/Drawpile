@@ -1,24 +1,9 @@
-/**
- * \file
+/*
+ * SPDX-FileCopyrightText: 2013-2023 Mattia Basaglia <dev@dragon.best>
  *
- * \author Mattia Basaglia
- *
- * \copyright Copyright (C) 2013-2020 Mattia Basaglia
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
+
 #include "QtColorWidgets/swatch.hpp"
 #include "QtColorWidgets/qt_compatibility.hpp"
 
@@ -34,8 +19,8 @@
 #include <QDragEnterEvent>
 #include <QStyleOption>
 #include <QToolTip>
-namespace color_widgets {
 
+namespace color_widgets {
 
 class Swatch::Private
 {
@@ -96,13 +81,37 @@ public:
             return QSize(std::ceil( float(count) / forced_rows ), forced_rows);
 
         int columns = palette.columns();
+        bool flexible_columns = false;
 
         if ( forced_columns )
+        {
             columns = forced_columns;
+        }
         else if ( columns == 0 )
+        {
             columns = qMin(count, (owner->width() - border.width()) / color_size.width());
+            flexible_columns = true;
+        }
 
         int rows = std::ceil( float(count) / columns );
+
+        // Make nicer looking tables when we don't have many colors
+        if ( flexible_columns && rows < 4 )
+        {
+            int best_fit_rows = std::ceil(float(owner->height() - border.width()) / qMax(1, max_color_size.height()));
+            if ( rows < best_fit_rows )
+                rows = best_fit_rows;
+
+            columns = std::ceil( float(count) / rows );
+
+            // Avoid empty columns
+            int avail_width = owner->width() - border.width();
+            if ( columns * max_color_size.width() < avail_width )
+            {
+                columns = std::ceil(float(avail_width) / qMax(1, max_color_size.width()));
+                rows = std::ceil( float(count) / columns );
+            }
+        }
 
         return QSize(columns, rows);
     }
@@ -578,7 +587,7 @@ void Swatch::mousePressEvent(QMouseEvent *event)
         p->drag_index = index;
         if ( index == -2 )
             Q_EMIT clicked(-1, event->modifiers());
-		else if ( index != -1 )
+        else if ( index != -1 )
             Q_EMIT clicked(index, event->modifiers());
     }
     else if ( event->button() == Qt::RightButton )
@@ -586,8 +595,8 @@ void Swatch::mousePressEvent(QMouseEvent *event)
         int index = p->indexAt(event->pos(), true);
 
         if ( index == -2 )
-			Q_EMIT rightClicked(-1, event->modifiers());
-		else
+            Q_EMIT rightClicked(-1, event->modifiers());
+        else if ( index != -1 )
             Q_EMIT rightClicked(index, event->modifiers());
     }
 }
@@ -632,7 +641,7 @@ void Swatch::mouseDoubleClickEvent(QMouseEvent *event)
 
         if ( index == -2 )
             Q_EMIT doubleClicked(-1, event->modifiers());
-		else
+        else if ( index != -1 )
             Q_EMIT doubleClicked(index, event->modifiers());
     }
 }
@@ -853,7 +862,10 @@ bool Swatch::event(QEvent* event)
             QString message = color.name();
             if ( !name.isEmpty() )
                 message = tr("%1 (%2)").arg(name).arg(message);
-            message = "<tt style='background-color:"+color.name()+";color:"+color.name()+";'>MM</tt> "+message.toHtmlEscaped();
+            message = QStringLiteral("<tt style='background-color:%1;color:%2;'>MM</tt> %3")
+                          .arg(color.name())
+                          .arg(color.name())
+                          .arg(message.toHtmlEscaped());
             QToolTip::showText(help_ev->globalPos(), message, this,
                                p->indexRect(index).toRect());
             event->accept();

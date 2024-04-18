@@ -1,26 +1,11 @@
-/**
- * \file gradient_slider.hpp
+/*
+ * SPDX-FileCopyrightText: 2013-2020 Mattia Basaglia
+ * SPDX-FileCopyrightText: 2014 Calle Laakkonen
+ * SPDX-FileCopyrightText: 2017 caryoscelus
  *
- * \author Mattia Basaglia
- *
- * \copyright Copyright (C) 2013-2020 Mattia Basaglia
- * \copyright Copyright (C) 2014 Calle Laakkonen
- * \copyright Copyright (C) 2017 caryoscelus
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
+
 #ifndef GRADIENT_SLIDER_HPP
 #define GRADIENT_SLIDER_HPP
 
@@ -44,8 +29,8 @@ class QCP_EXPORT GradientSlider : public QSlider
     Q_PROPERTY(QLinearGradient gradient READ gradient WRITE setGradient)
 
 public:
-    explicit GradientSlider(QWidget *parent = 0);
-    explicit GradientSlider(Qt::Orientation orientation, QWidget *parent = 0);
+    explicit GradientSlider(QWidget *parent = nullptr);
+    explicit GradientSlider(Qt::Orientation orientation, QWidget *parent = nullptr);
     ~GradientSlider();
 
     /// Get the background, it's visible for transparent gradient stops

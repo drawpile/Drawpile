@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: 2013-2023 Mattia Basaglia <dev@dragon.best>
+
+SPDX-License-Identifier: LGPL-3.0-or-later
+-->
 <ui version="4.0">
  <class>color_widgets::ColorPaletteWidget</class>
  <widget class="QWidget" name="color_widgets::ColorPaletteWidget">
@@ -60,8 +65,7 @@
           </property>
           <property name="icon">
            <iconset theme="document-open">
-            <normaloff/>
-           </iconset>
+            <normaloff>.</normaloff>.</iconset>
           </property>
          </widget>
         </item>
@@ -72,8 +76,7 @@
           </property>
           <property name="icon">
            <iconset theme="document-new">
-            <normaloff/>
-           </iconset>
+            <normaloff>.</normaloff>.</iconset>
           </property>
          </widget>
         </item>
@@ -84,8 +87,7 @@
           </property>
           <property name="icon">
            <iconset theme="edit-copy">
-            <normaloff/>
-           </iconset>
+            <normaloff>.</normaloff>.</iconset>
           </property>
          </widget>
         </item>
@@ -95,7 +97,54 @@
     </layout>
    </item>
    <item>
-    <widget class="color_widgets::Swatch" name="swatch"/>
+    <widget class="QScrollArea" name="scroll_area">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+     </property>
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>227</width>
+        <height>108</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="color_widgets::Swatch" name="swatch">
+         <property name="colorSizePolicy">
+          <enum>color_widgets::Swatch::Minimum</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
    <item>
     <widget class="QWidget" name="group_edit_palette" native="true">
@@ -122,8 +171,7 @@
         </property>
         <property name="icon">
          <iconset theme="document-close">
-          <normaloff/>
-         </iconset>
+          <normaloff>.</normaloff>.</iconset>
         </property>
        </widget>
       </item>
@@ -134,8 +182,7 @@
         </property>
         <property name="icon">
          <iconset theme="document-revert">
-          <normaloff/>
-         </iconset>
+          <normaloff>.</normaloff>.</iconset>
         </property>
        </widget>
       </item>
@@ -146,8 +193,7 @@
         </property>
         <property name="icon">
          <iconset theme="document-save">
-          <normaloff/>
-         </iconset>
+          <normaloff>.</normaloff>.</iconset>
         </property>
        </widget>
       </item>
@@ -171,8 +217,7 @@
         </property>
         <property name="icon">
          <iconset theme="list-add">
-          <normaloff/>
-         </iconset>
+          <normaloff>.</normaloff>.</iconset>
         </property>
        </widget>
       </item>
@@ -183,8 +228,7 @@
         </property>
         <property name="icon">
          <iconset theme="list-remove">
-          <normaloff/>
-         </iconset>
+          <normaloff>.</normaloff>.</iconset>
         </property>
        </widget>
       </item>

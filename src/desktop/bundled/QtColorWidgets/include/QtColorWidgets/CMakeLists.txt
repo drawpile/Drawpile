@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2013-2023 Mattia Basaglia <dev@dragon.best>
+# SPDX-License-Identifier: BSD-2-Clause
+
 set (HEADERS
 abstract_widget_list.hpp
 bound_color_selector.hpp

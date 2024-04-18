@@ -1,24 +1,9 @@
-/**
- * \file
+/*
+ * SPDX-FileCopyrightText: 2013-2020 Mattia Basaglia
  *
- * \author Mattia Basaglia
- *
- * \copyright Copyright (C) 2013-2020 Mattia Basaglia
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
+
 #include "QtColorWidgets/color_wheel.hpp"
 #include "QtColorWidgets/color_wheel_private.hpp"
 
@@ -317,13 +302,12 @@ void ColorWheel::setColorSpace(color_widgets::ColorWheel::ColorSpaceEnum space)
                 p->color_from = &utils::color_from_hsl;
                 p->rainbow_from_hue = &utils::rainbow_hsv;
                 break;
-            case ColorHSV: {
+            case ColorHSV:
                 p->sat = old_col.hsvSaturationF();
                 p->val = old_col.valueF();
                 p->color_from = &QColor::fromHsvF;
                 p->rainbow_from_hue = &utils::rainbow_hsv;
                 break;
-            }
             case ColorLCH:
                 p->sat = utils::color_chromaF(old_col);
                 p->val = utils::color_lumaF(old_col);

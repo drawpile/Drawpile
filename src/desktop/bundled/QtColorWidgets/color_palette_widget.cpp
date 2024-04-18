@@ -1,24 +1,9 @@
-/**
- * \file
+/*
+ * SPDX-FileCopyrightText: 2013-2020 Mattia Basaglia
  *
- * \author Mattia Basaglia
- *
- * \copyright Copyright (C) 2013-2020 Mattia Basaglia
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
+
 #include "QtColorWidgets/color_palette_widget.hpp"
 #include "ui_color_palette_widget.h"
 #include "QtColorWidgets/color_dialog.hpp"
@@ -26,8 +11,9 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QImageReader>
+#include <QScrollBar>
 
-namespace color_widgets {
+using namespace color_widgets;
 
 class ColorPaletteWidget::Private : public Ui::ColorPaletteWidget
 {
@@ -73,7 +59,7 @@ public:
             ColorPalette palette;
             palette.loadImage(image);
             palette.setName(QFileInfo(file).baseName());
-            palette.setFileName(file+".gpl");
+            palette.setFileName(QStringLiteral("%1.gpl").arg(file));
             addPalette(palette);
             return true;
         }
@@ -104,6 +90,15 @@ public:
         if ( type == 1 )
             return openImage(file);
         return openGpl(file);
+    }
+
+    void resize_swatch()
+    {
+        int margin = 0;
+        auto sb = scroll_area->verticalScrollBar();
+        if ( sb->isVisible() )
+            margin = sb->width();
+        swatch->setFixedWidth(scroll_area->width() - margin);
     }
 };
 
@@ -210,8 +205,8 @@ ColorPaletteWidget::ColorPaletteWidget(QWidget* parent)
     });
 
     QString image_formats;
-    Q_FOREACH(QByteArray ba, QImageReader::supportedImageFormats())
-        image_formats += " *."+QString(ba);
+    for(auto ba: QImageReader::supportedImageFormats())
+        image_formats += QStringLiteral(" *.%1").arg(QString::fromUtf8(ba));
 
     connect(p->button_palette_open, &QAbstractButton::clicked, [this, image_formats](){
         if ( p->model )
@@ -312,7 +307,10 @@ void ColorPaletteWidget::setModel(ColorPaletteModel* model)
     {
         connect(model, &QAbstractItemModel::dataChanged, this, [this](const QModelIndex &index){
             if ( index.row() == p->palette_list->currentIndex() )
+            {
                 p->swatch->setPalette(p->model->palette(index.row()));
+                p->resize_swatch();
+            }
         });
     }
 }
@@ -407,6 +405,7 @@ void ColorPaletteWidget::on_palette_list_currentIndexChanged(int index)
     else
         p->swatch->setPalette(p->model->palette(index));
 
+    p->resize_swatch();
     p->swatch->palette().setDirty(false);
 }
 
@@ -448,4 +447,8 @@ void ColorPaletteWidget::setDefaultColor(const QColor& color)
     Q_EMIT(p->default_color = color);
 }
 
-} // namespace color_widgets
+void ColorPaletteWidget::resizeEvent(QResizeEvent * event)
+{
+    QWidget::resizeEvent(event);
+    p->resize_swatch();
+}

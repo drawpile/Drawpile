@@ -1,24 +1,9 @@
-/**
- * \file
+/*
+ * SPDX-FileCopyrightText: 2013-2020 Mattia Basaglia
  *
- * \author Mattia Basaglia
- *
- * \copyright Copyright (C) 2013-2020 Mattia Basaglia
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
+
 #include "QtColorWidgets/color_utils.hpp"
 
 #include <QScreen>
@@ -88,13 +73,14 @@ QColor color_widgets::utils::get_screen_color(const QPoint &global_pos)
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     QScreen *screen = QApplication::screenAt(global_pos);
+    // Drawpile patch: make sure we don't have a null screen.
+    if ( !screen )
+        return QColor();
 #else
     int screenNum = QApplication::desktop()->screenNumber(global_pos);
     QScreen *screen = QApplication::screens().at(screenNum);
 #endif
-    if(!screen) {
-        return QColor();
-    }
+
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     WId wid = QApplication::desktop()->winId();

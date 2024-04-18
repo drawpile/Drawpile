@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: 2013-2023 Mattia Basaglia <dev@dragon.best>
+
+SPDX-License-Identifier: LGPL-3.0-or-later
+-->
 <ui version="4.0">
  <class>ColorDialog</class>
  <widget class="QDialog" name="ColorDialog">
@@ -14,7 +19,8 @@
    <string>Select Color</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="format-fill-color"/>
+   <iconset theme="format-fill-color">
+    <normaloff>.</normaloff>.</iconset>
   </property>
   <layout class="QVBoxLayout" name="layout">
    <item>
@@ -239,6 +245,11 @@
        </item>
        <item row="10" column="1" colspan="2">
         <widget class="color_widgets::ColorLineEdit" name="edit_hex">
+         <property name="font">
+          <font>
+           <family>Monospace</family>
+          </font>
+         </property>
          <property name="showAlpha" stdset="0">
           <bool>true</bool>
          </property>

@@ -1,24 +1,9 @@
-/**
- * \file
+/*
+ * SPDX-FileCopyrightText: 2013-2020 Mattia Basaglia
  *
- * \author Mattia Basaglia
- *
- * \copyright Copyright (C) 2013-2020 Mattia Basaglia
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
+
 #include "QtColorWidgets/color_delegate.hpp"
 #include "QtColorWidgets/color_selector.hpp"
 #include "QtColorWidgets/color_dialog.hpp"
@@ -39,21 +24,24 @@ void color_widgets::ReadOnlyColorDelegate::paintItem(
         opt.showDecorationSelected = true;
         QStyle *style = widget ? widget->style() : QApplication::style();
         QRect geom = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, widget);
-        opt.text = "";
+        opt.text = QString();
 
         QStyleOptionFrame panel;
-        panel.initFrom(widget);
-        if (widget && widget->isEnabled())
+        panel.initFrom(option.widget);
+        if (option.widget->isEnabled())
             panel.state = QStyle::State_Enabled;
         panel.rect = geom;
         panel.lineWidth = 2;
         panel.midLineWidth = 0;
         panel.state |= QStyle::State_Sunken;
+        panel.frameShape = QFrame::StyledPanel;
 
-        style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, widget);
+//         style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, widget);
+
+        panel.palette.setBrush(QPalette::Base, brush);
         style->drawPrimitive(QStyle::PE_Frame, &panel, painter, nullptr);
-        QRect r = style->subElementRect(QStyle::SE_FrameContents, &panel, nullptr);
-        painter->fillRect(r, brush);
+//         QRect r = style->subElementRect(QStyle::SE_FrameContents, &panel, nullptr);
+//         painter->fillRect(r, brush);
 }
 
 
@@ -113,13 +101,13 @@ QWidget *color_widgets::ColorDelegate::createEditor(
 void color_widgets::ColorDelegate::color_changed()
 {
     ColorDialog *editor = qobject_cast<ColorDialog*>(sender());
-    emit commitData(editor);
+    Q_EMIT commitData(editor);
 }
 
 void color_widgets::ColorDelegate::close_editor()
 {
     ColorDialog *editor = qobject_cast<ColorDialog*>(sender());
-    emit closeEditor(editor);
+    Q_EMIT closeEditor(editor);
 }
 
 void color_widgets::ColorDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
@@ -169,7 +157,7 @@ bool color_widgets::ColorDelegate::eventFilter(QObject * watched, QEvent * event
     {
         if ( auto editor = qobject_cast<ColorDialog*>(watched) )
         {
-            emit closeEditor(editor, QAbstractItemDelegate::NoHint);
+            Q_EMIT closeEditor(editor, QAbstractItemDelegate::NoHint);
             return false;
         }
     }

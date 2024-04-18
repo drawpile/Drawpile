@@ -266,8 +266,8 @@ QString SystemInfoDialog::getCompileFeatures()
 #ifdef SINGLE_MAIN_WINDOW
 	features.append(QStringLiteral("SINGLE_MAIN_WINDOW"));
 #endif
-#ifdef QTCOLORPICKER_STATICALLY_LINKED
-	features.append(QStringLiteral("QTCOLORPICKER_STATICALLY_LINKED"));
+#ifdef QTCOLORWIDGETS_STATICALLY_LINKED
+	features.append(QStringLiteral("QTCOLORWIDGETS_STATICALLY_LINKED"));
 #endif
 #ifdef DP_QT_IO
 	features.append(QStringLiteral("DP_QT_IO"));

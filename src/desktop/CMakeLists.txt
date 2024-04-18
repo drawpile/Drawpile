@@ -605,7 +605,9 @@ else()
 	target_include_directories(drawpile-QtColorWidgets SYSTEM PUBLIC
 		"${CMAKE_CURRENT_SOURCE_DIR}/bundled/QtColorWidgets/include"
 	)
-	target_compile_definitions(drawpile-QtColorWidgets INTERFACE QTCOLORPICKER_STATICALLY_LINKED)
+	target_compile_definitions(drawpile-QtColorWidgets PUBLIC
+		QTCOLORWIDGETS_STATICALLY_LINKED
+	)
 	target_link_libraries(drawpile-QtColorWidgets PUBLIC
 		${QT_PACKAGE_NAME}::Core
 		${QT_PACKAGE_NAME}::Gui

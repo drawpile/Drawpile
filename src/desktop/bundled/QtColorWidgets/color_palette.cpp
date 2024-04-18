@@ -1,24 +1,9 @@
-/**
- * \file
+/*
+ * SPDX-FileCopyrightText: 2013-2020 Mattia Basaglia
  *
- * \author Mattia Basaglia
- *
- * \copyright Copyright (C) 2013-2020 Mattia Basaglia
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
+
 #include "QtColorWidgets/color_palette.hpp"
 #include <cmath>
 #include <QFile>
@@ -27,7 +12,7 @@
 #include <QPainter>
 #include <QFileInfo>
 
-namespace color_widgets {
+using namespace color_widgets;
 
 class ColorPalette::Private
 {
@@ -214,14 +199,18 @@ bool ColorPalette::load(const QString& name)
     QHash<QString,QString> properties;
     while( !stream.atEnd() )
     {
+        auto pos = stream.pos();
         line = stream.readLine();
         if ( line.isEmpty() )
             continue;
-        if ( line[0] == '#' )
+        if ( line[0] == QLatin1Char('#') )
             break;
-        int colon = line.indexOf(':');
+        int colon = line.indexOf(QLatin1Char(':'));
         if ( colon == -1 )
+        {
+            stream.seek(pos);
             break;
+        }
         properties[line.left(colon).toLower()] =
             line.right(line.size() - colon - 1).trimmed();
     }
@@ -229,25 +218,23 @@ bool ColorPalette::load(const QString& name)
     setName(properties[QStringLiteral("name")]);
     setColumns(properties[QStringLiteral("columns")].toInt());
 
-    // Skip comments
-    if ( !stream.atEnd() && line[0] == '#' )
-        while( !stream.atEnd() )
-        {
-            qint64 pos = stream.pos();
-            line = stream.readLine();
-            if ( !line.isEmpty() && line[0] != '#' )
-            {
-                stream.seek(pos);
-                break;
-            }
-        }
-
+    QString peeked;
     while( !stream.atEnd() )
     {
-        int r = 0, g = 0, b = 0;
-        stream >> r >> g >> b;
-        line = stream.readLine().trimmed();
-        p->colors.push_back(qMakePair(QColor(r, g, b), line));
+        // Can't figure out how to peek with text stream so we do this convoluted thing
+        peeked = stream.read(1);
+        if ( !peeked.isEmpty() && peeked[0] == QLatin1Char('#') )
+        {
+            stream.readLine();
+        }
+        else
+        {
+            stream.seek(stream.pos() - 1);
+            int r = 0, g = 0, b = 0;
+            stream >> r >> g >> b;
+            line = stream.readLine().trimmed();
+            p->colors.push_back(qMakePair(QColor(r, g, b), line));
+        }
     }
 
     Q_EMIT colorsChanged(p->colors);
@@ -274,7 +261,8 @@ bool ColorPalette::save()
     QString filename = p->fileName;
     if ( filename.isEmpty() )
     {
-        filename = unnamed(p->name)+".gpl";
+        filename = unnamed(p->name);
+        filename.append(QStringLiteral(".gpl"));
     }
 
     QFile file(filename);
@@ -329,7 +317,8 @@ void ColorPalette::setColumns(int columns)
 void ColorPalette::setColors(const QVector<QColor>& colors)
 {
     p->colors.clear();
-    Q_FOREACH(const QColor& col, colors)
+    // Drawpile patch: replace qAsConst with std::as_const.
+    for(auto &col: std::as_const(colors))
         p->colors.push_back(qMakePair(col,QString()));
     setDirty(true);
     Q_EMIT colorsChanged(p->colors);
@@ -495,5 +484,3 @@ ColorPalette ColorPalette::fromColorTable(const QVector<QRgb>& table)
     palette.loadColorTable(table);
     return palette;
 }
-
-} // namespace color_widgets

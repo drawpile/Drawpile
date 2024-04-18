@@ -1,25 +1,10 @@
-/**
- * \file
+/*
+ * SPDX-FileCopyrightText: 2013-2020 Mattia Basaglia
+ * SPDX-FileCopyrightText: 2017 caryoscelus
  *
- * \author Mattia Basaglia
- *
- * \copyright Copyright (C) 2013-2020 Mattia Basaglia
- * \copyright Copyright (C) 2017 caryoscelus
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
+
 #include "QtColorWidgets/color_line_edit.hpp"
 
 #include <QDropEvent>
@@ -55,7 +40,7 @@ public:
             QColor bg = customAlpha() ? Qt::transparent : color;
             QColor text = utils::color_lumaF(color) > 0.5 || color.alphaF() < 0.2 ? Qt::black : Qt::white;
             parent->setStyleSheet(
-                QString("background-color: %1; color: %2;")
+                QStringLiteral("background-color: %1; color: %2;")
                 .arg(bg.name()).arg(text.name())
             );
         }

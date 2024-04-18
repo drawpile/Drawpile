@@ -1,24 +1,9 @@
-/**
- * \file
+/*
+ * SPDX-FileCopyrightText: 2013-2020 Mattia Basaglia
  *
- * \author Mattia Basaglia
- *
- * \copyright Copyright (C) 2013-2020 Mattia Basaglia
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
+
 #include "QtColorWidgets/color_palette_model.hpp"
 #include <QDir>
 #include <QList>
@@ -84,7 +69,8 @@ public:
             return false;
 
         // Attempt to save as (Name).gpl
-        QString filename = palette.name()+".gpl";
+        QString filename = palette.name();
+        filename.append(QStringLiteral(".gpl"));
         if ( !save_dir.exists(filename) &&
                 attemptSave(palette, save_dir.absoluteFilePath(filename)) )
             return true;
@@ -95,7 +81,7 @@ public:
         QStringList existing_files = save_dir.entryList();
 
         // For all the files that match (Name)(Number).gpl, find the maximum (Number)
-        QRegularExpression name_regex(QRegularExpression::escape(palette.name())+"([0-9]+)\\.gpl");
+        QRegularExpression name_regex(QRegularExpression::escape(palette.name())+QStringLiteral("([0-9]+)\\.gpl"));
         int max = 0;
         for ( const auto& existing_file : existing_files )
         {
