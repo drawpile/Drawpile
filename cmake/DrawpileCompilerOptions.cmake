@@ -37,12 +37,16 @@ if(MSVC)
 		/utf-8
 		# Highest warning level.
 		/W4
+		# Disable C++ exceptions.
+		$<$<COMPILE_LANGUAGE:CXX,OBJCXX>:/EHs-c->
 	)
 	add_compile_definitions(
 		# The _s family of functions don't exist on all platforms.
 		_CRT_SECURE_NO_WARNINGS
 		# Qt uses some kind of deprecated extensions in their headers.
 		_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING
+		# Disable exceptions in MSVC STL. Probably. It's undocumented.
+		_HAS_EXCEPTIONS=0
 	)
 
 	if($ENV{CI})

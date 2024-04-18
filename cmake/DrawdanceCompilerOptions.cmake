@@ -6,6 +6,8 @@ if(MSVC)
         /utf-8
         # Highest warning level.
         /W4
+        # Disable C++ exceptions.
+        $<$<COMPILE_LANGUAGE:CXX,OBJCXX>:/EHs-c->
         # C4100: unreferenced formal parameter
         #  - MSVC has no `__attribute__((unused))` and omitting parameter names
         #    wouldn't be standard C
@@ -34,6 +36,8 @@ if(MSVC)
         #  - macros from uthash causing problems again
         /wd4702
     )
+    # Disable exceptions in MSVC STL. Probably. It's undocumented.
+    add_compile_definitions(_HAS_EXCEPTIONS=0)
 else()
     add_compile_options(
         -Wmissing-include-dirs -Wconversion
