@@ -30,13 +30,9 @@ net::Message ServerCommand::makeMute(int target, bool mute)
 	return make("mute", QJsonArray() << target << mute);
 }
 
-net::Message ServerCommand::makeAnnounce(const QString &url, bool privateMode)
+net::Message ServerCommand::makeAnnounce(const QString &url)
 {
-	QJsonObject kwargs;
-	if(privateMode)
-		kwargs["private"] = true;
-
-	return make("announce-session", QJsonArray() << url, kwargs);
+	return make("announce-session", QJsonArray() << url);
 }
 
 net::Message ServerCommand::makeUnannounce(const QString &url)

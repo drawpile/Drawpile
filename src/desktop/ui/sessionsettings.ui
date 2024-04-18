@@ -594,20 +594,9 @@
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="addPrivateAnnouncement">
-           <property name="text">
-            <string>Private listing</string>
-           </property>
-           <property name="icon">
-            <iconset theme="list-add">
-             <normaloff>theme:list-add.svg</normaloff>theme:list-add.svg</iconset>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="addAnnouncement">
            <property name="text">
-            <string>Public listing</string>
+            <string>List session</string>
            </property>
            <property name="icon">
             <iconset theme="list-add">
@@ -676,7 +665,6 @@
   <tabstop>banlistView</tabstop>
   <tabstop>removeBan</tabstop>
   <tabstop>announcementTableView</tabstop>
-  <tabstop>addPrivateAnnouncement</tabstop>
   <tabstop>addAnnouncement</tabstop>
   <tabstop>removeAnnouncement</tabstop>
  </tabstops>

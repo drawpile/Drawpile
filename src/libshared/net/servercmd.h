@@ -35,7 +35,7 @@ struct ServerCommand {
 	static net::Message makeMute(int target, bool mute);
 
 	//! Request the server to announce this session at a listing server
-	static net::Message makeAnnounce(const QString &url, bool privateMode);
+	static net::Message makeAnnounce(const QString &url);
 
 	//! Request the server to remove an announcement at the listing server
 	static net::Message makeUnannounce(const QString &url);

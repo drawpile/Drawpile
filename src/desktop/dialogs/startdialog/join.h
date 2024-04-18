@@ -42,12 +42,7 @@ private:
 	void resetAddressPlaceholderText();
 	void updateJoinButton();
 
-	static bool looksLikeRoomcode(const QString &address);
 	static QString fixUpInviteAddress(const QString &address);
-
-	QStringList getRoomcodeServerUrls() const;
-	void resolveRoomcode(const QString &roomcode, const QStringList &servers);
-	void finishResolvingRoomcode(const QString &address);
 
 	QUrl getUrl() const;
 

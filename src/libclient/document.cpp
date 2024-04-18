@@ -882,9 +882,9 @@ void Document::sendUnban(int entryId)
 	m_client->sendMessage(net::ServerCommand::makeUnban(entryId));
 }
 
-void Document::sendAnnounce(const QString &url, bool privateMode)
+void Document::sendAnnounce(const QString &url)
 {
-	m_client->sendMessage(net::ServerCommand::makeAnnounce(url, privateMode));
+	m_client->sendMessage(net::ServerCommand::makeAnnounce(url));
 }
 
 void Document::sendUnannounce(const QString &url)

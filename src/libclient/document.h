@@ -254,7 +254,7 @@ public slots:
 	void sendResetSession(const net::MessageList &resetImage = {});
 	void sendResizeCanvas(int top, int right, int bottom, int left);
 	void sendUnban(int entryId);
-	void sendAnnounce(const QString &url, bool privateMode);
+	void sendAnnounce(const QString &url);
 	void sendUnannounce(const QString &url);
 	void sendTerminateSession(const QString &reason);
 	void sendCanvasBackground(const QColor &color);
