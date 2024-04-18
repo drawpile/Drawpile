@@ -72,6 +72,7 @@ else()
 		$<$<COMPILE_LANGUAGE:CXX,OBJCXX>:-Wold-style-cast>
 		$<$<COMPILE_LANGUAGE:CXX,OBJCXX>:-Woverloaded-virtual>
 		$<$<COMPILE_LANGUAGE:CXX,OBJCXX>:-Wzero-as-null-pointer-constant>
+		$<$<COMPILE_LANGUAGE:CXX,OBJCXX>:-fno-exceptions>
 	)
 
 	# Some third-party libraries use comments to mark fallthrough cases, sccache
