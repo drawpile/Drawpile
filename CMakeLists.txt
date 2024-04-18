@@ -41,6 +41,23 @@ if(APPLE)
 	enable_language(OBJCXX)
 endif()
 
+# CMake includes warning and exception handling flags into the MSVC command line
+# by default, which in turn causes MSVC to whinge about us overriding them with
+# every file that's compiled. We just delete those garbage flags out of the
+# default command line, that's apparently the "normal" solution.
+if(MSVC)
+	message(STATUS "CMAKE_C_FLAGS before cleanup: ${CMAKE_C_FLAGS}")
+	message(STATUS "CMAKE_CXX_FLAGS before cleanup: ${CMAKE_CXX_FLAGS}")
+	message(STATUS "CMAKE_OBJCXX_FLAGS before cleanup: ${CMAKE_OBJCXX_FLAGS}")
+	string(REGEX REPLACE "/EH[cs-]+" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+	string(REGEX REPLACE "/EH[cs-]+" "" CMAKE_OBJCXX_FLAGS "${CMAKE_OBJCXX_FLAGS}")
+	string(REGEX REPLACE "/W[0-4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+	string(REGEX REPLACE "/W[0-4]" "" CMAKE_OBJCXX_FLAGS "${CMAKE_OBJCXX_FLAGS}")
+	message(STATUS "CMAKE_C_FLAGS before cleanup: ${CMAKE_C_FLAGS}")
+	message(STATUS "CMAKE_CXX_FLAGS after cleanup: ${CMAKE_CXX_FLAGS}")
+	message(STATUS "CMAKE_OBJCXX_FLAGS after cleanup: ${CMAKE_OBJCXX_FLAGS}")
+endif()
+
 # DrawpileOptions uses these so it must be included before then
 include(Cargo)
 include(FeatureSummary)
