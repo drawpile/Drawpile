@@ -262,7 +262,7 @@ const char *DP_protocol_version_name(const DP_ProtocolVersion *protover)
         if (protover->major == 24) {
             return "2.2.x";
         }
-        else if (protover->major == 21 || protover->major == 22) {
+        else if (protover->major == 22 || protover->major == 23) {
             return "2.2.0 beta";
         }
         else if (protover->major == 21 && protover->minor == 2) {
