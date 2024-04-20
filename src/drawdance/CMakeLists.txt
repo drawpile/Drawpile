@@ -17,6 +17,7 @@ endif()
 add_subdirectory(bundled)
 add_subdirectory(generators)
 add_subdirectory(libcommon)
+add_subdirectory(libdb)
 add_subdirectory(libmsg)
 add_subdirectory(libengine)
 

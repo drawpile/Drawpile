@@ -106,6 +106,19 @@ QSqlDatabase getConnection(
 
 }
 
+bool open(
+	drawdance::Database &db, const QString &humaneName, const QString &fileName,
+	const QString &sourceFileName)
+{
+	QString databasePath = utils::paths::writablePath(fileName);
+	QFileInfo fileInfo(databasePath);
+	if(!sourceFileName.isEmpty()) {
+		copyFrom(databasePath, sourceFileName, fileInfo);
+	}
+	fixFilePermissions(databasePath, fileInfo);
+	return db.open(databasePath, humaneName);
+}
+
 QSqlDatabase sqlite(
 	const QString &connectionName, const QString &humaneName,
 	const QString &fileName, const QString &sourceFileName)

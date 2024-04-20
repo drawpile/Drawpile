@@ -186,6 +186,11 @@ static int command_run(int argc, char **argv, int offset, DP_TestRegistry *R,
 {
     struct DP_TestRunParams params;
     if (parse_run_params(&params, argc, argv, offset)) {
+        if (R->skip_all_reason) {
+            fprintf(stdout, "1..0 # Skipped: %s\n", R->skip_all_reason);
+            return 0;
+        }
+
         DP_TestContext context = {NULL, "«", "»", stdout, stderr, 0, 0, user};
         unsigned int seed = (unsigned int)time(NULL);
         DP_test_note(&context, "srand seed is %u", seed);
@@ -216,8 +221,10 @@ static int command_list(int argc, DP_UNUSED char **argv, int offset,
                         DP_TestRegistry *R, DP_UNUSED void *user)
 {
     if (argc <= offset) {
-        for (int i = 0; i < R->used; ++i) {
-            puts(R->tests[i].name);
+        if (!R->skip_all_reason) {
+            for (int i = 0; i < R->used; ++i) {
+                puts(R->tests[i].name);
+            }
         }
         return 0;
     }
@@ -270,7 +277,7 @@ int DP_test_main(int argc, char **argv, DP_TestRegisterFn register_fn,
 {
     DP_cpu_support_init();
 
-    DP_TestRegistry registry = {0, 0, NULL, user};
+    DP_TestRegistry registry = {0, 0, NULL, user, NULL};
     register_fn(&registry);
 
     int (*command)(int, char **, int, DP_TestRegistry *, void *) = NULL;

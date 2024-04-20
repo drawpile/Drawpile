@@ -121,10 +121,6 @@ using PresetShortcutMap = QHash<QKeySequence, PresetShortcut>;
 class BrushPresetTagModel::Private {
 public:
 	Private()
-		: m_db{utils::db::sqlite(
-			  QStringLiteral("drawpile_brush_preset_connection"),
-			  QStringLiteral("brush presets"), QStringLiteral("brushes.db"),
-			  QStringLiteral("initialbrushpresets.db"))}
 	{
 		initDb();
 		cleanupDb();
@@ -150,70 +146,58 @@ public:
 	int createTag(const QString &name)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-		QMutexLocker locker{&m_mutex};
-		QSqlQuery query(m_db);
-		if(exec(query, "insert into tag (name) values (?)", {name})) {
-			return query.lastInsertId().toInt();
+		drawdance::Query query = db.query();
+		if(query.exec("insert into tag (name) values (?)", {name})) {
+			return query.lastInsertId();
 		} else {
 			return 0;
 		}
 	}
 
-	int readTagCount()
-	{
-		QMutexLocker locker{&m_mutex};
-		return readInt("select count(*) from tag");
-	}
+	int readTagCount() { return db.readInt("select count(*) from tag"); }
 
 	int readTagCountByName(const QString &name)
 	{
-		QMutexLocker locker{&m_mutex};
-		return readInt("select count(*) from tag where name = ?", {name});
+		return db.readInt("select count(*) from tag where name = ?", 0, {name});
 	}
 
 	int readTagIdAtIndex(int index)
 	{
-		QMutexLocker locker{&m_mutex};
-		return readInt(
-			"select id from tag order by LOWER(name) limit 1 offset ?",
+		return db.readInt(
+			"select id from tag order by LOWER(name) limit 1 offset ?", 0,
 			{index});
 	}
 
 	Tag readTagAtIndex(int index)
 	{
-		QMutexLocker locker{&m_mutex};
-		QSqlQuery query(m_db);
-		QString sql = QStringLiteral(
-			"select id, name from tag order by LOWER(name) limit 1 offset ?");
-		if(exec(query, sql, {index}) && query.next()) {
-			return Tag{query.value(0).toInt(), query.value(1).toString()};
+		drawdance::Query query = db.query();
+		const char *sql =
+			"select id, name from tag order by LOWER(name) limit 1 offset ?";
+		if(query.exec(sql, {index}) && query.next()) {
+			return Tag{query.columnInt(0), query.columnText16(1)};
 		} else {
-			return Tag{0, ""};
+			return Tag{0, QString()};
 		}
 	}
 
 	QString readTagNameById(int id)
 	{
-		QMutexLocker locker{&m_mutex};
-		return readString("select name from tag where id = ?", {id});
+		return db.readText16("select name from tag where id = ?", {id});
 	}
 
 	int readTagIndexById(int id)
 	{
-		QMutexLocker locker{&m_mutex};
-		QString sql = QStringLiteral("select n - 1 from (\n"
-									 "	select row_number() over(order by "
-									 "LOWER(name)) as n, id from tag)\n"
-									 "where id = ?");
-		return readInt(sql, {id}, -1);
+		const char *sql =
+			"select n - 1 from (select row_number() over("
+			"order by LOWER(name)) as n, id from tag) where id = ?";
+		return db.readInt(sql, -1, {id});
 	}
 
 	bool updateTagName(int id, const QString &name)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-		QMutexLocker locker{&m_mutex};
-		QSqlQuery query(m_db);
-		if(exec(query, "update tag set name = ? where id = ?", {name, id})) {
+		drawdance::Query query = db.query();
+		if(query.exec("update tag set name = ? where id = ?", {name, id})) {
 			return query.numRowsAffected() == 1;
 		} else {
 			return false;
@@ -223,9 +207,8 @@ public:
 	bool deleteTagById(int id)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-		QMutexLocker locker{&m_mutex};
-		QSqlQuery query(m_db);
-		if(exec(query, "delete from tag where id = ?", {id})) {
+		drawdance::Query query = db.query();
+		if(query.exec("delete from tag where id = ?", {id})) {
 			return query.numRowsAffected() == 1;
 		} else {
 			return false;
@@ -238,16 +221,12 @@ public:
 		const QByteArray &data)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-		QMutexLocker locker{&m_mutex};
-		QSqlQuery query(m_db);
-		QString sql = QStringLiteral(
+		drawdance::Query query = db.query();
+		const char *sql =
 			"insert into preset (name, description, thumbnail, type, data) "
-			"values (?, ?, ?, ?, ?)");
-		if(exec(
-			   query, sql,
-			   {nonNullString(name), nonNullString(description), thumbnail,
-				type, data})) {
-			return query.lastInsertId().toInt();
+			"values (?, ?, ?, ?, ?)";
+		if(query.exec(sql, {name, description, thumbnail, type, data})) {
+			return query.lastInsertId();
 		} else {
 			return 0;
 		}
@@ -255,120 +234,101 @@ public:
 
 	int readPresetCountAll()
 	{
-		QMutexLocker locker{&m_mutex};
-		return readInt("select count(*) from preset");
+		return db.readInt("select count(*) from preset");
 	}
 
 	int readPresetCountByUntagged()
 	{
-		QMutexLocker locker{&m_mutex};
-		QString sql = QStringLiteral(
-			"select count(*) from preset p where not exists(\n"
-			"	select 1 from preset_tag pt where pt.preset_id = p.id)");
-		return readInt(sql);
+		return db.readInt(
+			"select count(*) from preset p where not exists("
+			"select 1 from preset_tag pt where pt.preset_id = p.id)");
 	}
 
 	int readPresetCountByTagId(int tagId)
 	{
-		QMutexLocker locker{&m_mutex};
-		QString sql =
-			QStringLiteral("select count(*) from preset p\n"
-						   "	join preset_tag pt on pt.preset_id = p.id\n"
-						   "	where pt.tag_id = ?");
-		return readInt(sql, {tagId});
+		return db.readInt(
+			"select count(*) from preset p "
+			"join preset_tag pt on pt.preset_id = p.id "
+			"where pt.tag_id = ?",
+			0, {tagId});
 	}
 
 	int readPresetCountByName(const QString &name)
 	{
-		QMutexLocker locker(&m_mutex);
-		QString sql =
-			QStringLiteral("select count(*) from preset where name = ?");
-		return readInt(sql, {name});
+		return db.readInt(
+			"select count(*) from preset where name = ?", 0, {name});
 	}
 
 	int readPresetIdAtIndexAll(int index)
 	{
-		QMutexLocker locker{&m_mutex};
-		return readInt(
-			"select id from preset order by LOWER(name) limit 1 offset ?",
+		return db.readInt(
+			"select id from preset order by LOWER(name) limit 1 offset ?", 0,
 			{index});
 	}
 
 	int readPresetIdAtIndexByUntagged(int index)
 	{
-		QMutexLocker locker{&m_mutex};
-		QString sql =
-			QStringLiteral("select p.id from preset p\n"
-						   "	where not exists(select 1 from preset_tag pt "
-						   "where pt.preset_id = p.id)\n"
-						   "	order by LOWER(p.name) limit 1 offset ?");
-		return readInt(sql, {index});
+		return db.readInt(
+			"select p.id from preset p where not exists("
+			"select 1 from preset_tag pt where pt.preset_id = p.id) "
+			"order by LOWER(p.name) limit 1 offset ?",
+			0, {index});
 	}
 
 	int readPresetIdAtIndexByTagId(int index, int tagId)
 	{
-		QMutexLocker locker{&m_mutex};
-		QString sql =
-			QStringLiteral("select p.id from preset p\n"
-						   "	join preset_tag pt on pt.preset_id = p.id\n"
-						   "	where pt.tag_id = ?"
-						   "	order by LOWER(p.name) limit 1 offset ?");
-		return readInt(sql, {tagId, index});
+		return db.readInt(
+			"select p.id from preset p "
+			"join preset_tag pt on pt.preset_id = p.id "
+			"where pt.tag_id = ? order by LOWER(p.name) limit 1 offset ?",
+			0, {tagId, index});
 	}
 
 	QString readPresetEffectiveNameById(int id)
 	{
-		QMutexLocker locker(&m_mutex);
-		return readString(
-			QStringLiteral(
-				"select coalesce(changed_name, name) from preset where id = ?"),
+		return db.readText16(
+			"select coalesce(changed_name, name) from preset where id = ?",
 			{id});
 	}
 
 	QString readPresetEffectiveDescriptionById(int id)
 	{
-		QMutexLocker locker(&m_mutex);
-		return readString(
-			QStringLiteral("select coalesce(changed_description, description) "
-						   "from preset where id = ?"),
+		return db.readText16(
+			"select coalesce(changed_description, description) "
+			"from preset where id = ?",
 			{id});
 	}
 
 	QByteArray readPresetEffectiveThumbnailById(int id)
 	{
-		QMutexLocker locker(&m_mutex);
-		return readByteArray(
-			QStringLiteral("select coalesce(changed_thumbnail, thumbnail) from "
-						   "preset where id = ?"),
+		return db.readBlob(
+			"select coalesce(changed_thumbnail, thumbnail) from "
+			"preset where id = ?",
 			{id});
 	}
 
 	QByteArray readPresetDataById(int id)
 	{
-		QMutexLocker locker{&m_mutex};
-		return readByteArray("select data from preset where id = ?", {id});
+		return db.readBlob("select data from preset where id = ?", {id});
 	}
 
 	bool readPresetHasChangesById(int id)
 	{
-		QMutexLocker locker(&m_mutex);
-		return readInt(
-			QStringLiteral(
-				"select changed_name is not null or changed_description is not "
-				"null or changed_thumbnail is not null or changed_data is not "
-				"null as has_changes from preset where id = ?"),
-			{id});
+		return db.readInt(
+			"select changed_name is not null or changed_description is not "
+			"null or changed_thumbnail is not null or changed_data is not "
+			"null as has_changes from preset where id = ?",
+			0, {id});
 	}
 
 	std::optional<Preset> readPresetById(int id)
 	{
-		QMutexLocker locker(&m_mutex);
-		QSqlQuery query(m_db);
-		QString sql = QStringLiteral(
+		drawdance::Query query = db.query();
+		const char *sql =
 			"select id, name, description, thumbnail, data, changed_name, "
 			"changed_description, changed_thumbnail, changed_data from preset "
-			"where id = ?");
-		if(exec(query, sql, {id}) && query.next()) {
+			"where id = ?";
+		if(query.exec(sql, {id}) && query.next()) {
 			Preset preset;
 			readPreset(preset, query);
 			return preset;
@@ -380,14 +340,13 @@ public:
 	bool readPresetBrushDataById(
 		int id, QString &outName, QPixmap &outThumbnail, ActiveBrush &outBrush)
 	{
-		QMutexLocker locker(&m_mutex);
-		QSqlQuery query(m_db);
-		QString sql = QStringLiteral(
-			"select name, thumbnail, data from preset where id = ?");
-		if(exec(query, sql, {id}) && query.next()) {
-			outName = query.value(0).toString();
-			outThumbnail.loadFromData(query.value(1).toByteArray());
-			outBrush = loadBrush(id, query.value(2).toByteArray());
+		drawdance::Query query = db.query();
+		const char *sql =
+			"select name, thumbnail, data from preset where id = ?";
+		if(query.exec(sql, {id}) && query.next()) {
+			outName = query.columnText16(0);
+			outThumbnail.loadFromData(query.columnBlob(1));
+			outBrush = loadBrush(id, query.columnBlob(2));
 			return true;
 		} else {
 			return false;
@@ -400,17 +359,13 @@ public:
 		const QByteArray &data)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-		QMutexLocker locker(&m_mutex);
-		QSqlQuery query(m_db);
-		if(exec(
-			   query,
-			   QStringLiteral(
-				   "update preset set name = ?, description = ?, thumbnail = "
-				   "?, type = ?, data = ?, changed_name = null, "
-				   "changed_description = null, changed_thumbnail = null, "
-				   "changed_type = null, changed_data = null where id = ?"),
-			   {nonNullString(name), nonNullString(description), thumbnail,
-				type, data, id})) {
+		drawdance::Query query = db.query();
+		if(query.exec(
+			   "update preset set name = ?, description = ?, thumbnail = ?, "
+			   "type = ?, data = ?, changed_name = null, "
+			   "changed_description = null, changed_thumbnail = null, "
+			   "changed_type = null, changed_data = null where id = ?",
+			   {name, description, thumbnail, type, data, id})) {
 			return query.numRowsAffected() == 1;
 		} else {
 			return false;
@@ -420,13 +375,10 @@ public:
 	bool updatePresetBrush(int id, const QString &type, const QByteArray &data)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-		QMutexLocker locker(&m_mutex);
-		QSqlQuery query(m_db);
-		if(exec(
-			   query,
-			   QStringLiteral(
-				   "update preset set type = ?, data = ?, changed_type = null, "
-				   "changed_data = null where id = ?"),
+		drawdance::Query query = db.query();
+		if(query.exec(
+			   "update preset set type = ?, data = ?, changed_type = null, "
+			   "changed_data = null where id = ?",
 			   {type, data, id})) {
 			return query.numRowsAffected() == 1;
 		} else {
@@ -437,12 +389,9 @@ public:
 	bool updatePresetShortcut(int id, const QString &shortcut)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-		QMutexLocker locker(&m_mutex);
-		QSqlQuery query(m_db);
-		if(exec(
-			   query,
-			   QStringLiteral("update preset set shortcut = ? where id = ?"),
-			   {nonNullString(shortcut), id})) {
+		drawdance::Query query = db.query();
+		if(query.exec(
+			   "update preset set shortcut = ? where id = ?", {shortcut, id})) {
 			return query.numRowsAffected() == 1;
 		} else {
 			return false;
@@ -452,20 +401,16 @@ public:
 	bool resetAllPresetChanges()
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-		QMutexLocker locker(&m_mutex);
-		QSqlQuery query(m_db);
-		return exec(
-			query,
-			QStringLiteral("update preset set changed_description = null, "
-						   "changed_thumbnail = null, changed_type = null, "
-						   "changed_data = null"));
+		drawdance::Query query = db.query();
+		return query.exec("update preset set changed_description = null, "
+						  "changed_thumbnail = null, changed_type = null, "
+						  "changed_data = null");
 	}
 
 	bool deletePresetById(int id)
 	{
-		QMutexLocker locker{&m_mutex};
-		QSqlQuery query(m_db);
-		if(exec(query, "delete from preset where id = ?", {id})) {
+		drawdance::Query query = db.query();
+		if(query.exec("delete from preset where id = ?", {id})) {
 			return query.numRowsAffected() == 1;
 		} else {
 			return false;
@@ -474,19 +419,17 @@ public:
 
 	QList<TagAssignment> readTagAssignmentsByPresetId(int presetId)
 	{
-		QMutexLocker locker{&m_mutex};
 		QList<TagAssignment> tagAssignments;
-		QSqlQuery query(m_db);
-		QString sql = QStringLiteral(
-			"select t.id, t.name, pt.preset_id is not null from tag t\n"
-			"	left outer join preset_tag pt\n"
-			"		on pt.tag_id = t.id and pt.preset_id = ?\n"
-			"	order by t.id");
-		if(exec(query, sql, {presetId})) {
+		drawdance::Query query = db.query();
+		const char *sql =
+			"select t.id, t.name, pt.preset_id is not null "
+			"from tag t left outer join preset_tag pt "
+			"on pt.tag_id = t.id and pt.preset_id = ? order by t.id";
+		if(query.exec(sql, {presetId})) {
 			while(query.next()) {
 				tagAssignments.append(TagAssignment{
-					query.value(0).toInt(), query.value(1).toString(),
-					query.value(2).toBool()});
+					query.columnInt(0), query.columnText16(1),
+					query.columnBool(2)});
 			}
 		}
 		return tagAssignments;
@@ -495,21 +438,19 @@ public:
 	bool createPresetTag(int presetId, int tagId)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-		QMutexLocker locker{&m_mutex};
-		QSqlQuery query(m_db);
-		QString sql = QStringLiteral(
-			"insert into preset_tag (preset_id, tag_id) values (?, ?)");
-		return exec(query, sql, {presetId, tagId});
+		drawdance::Query query = db.query();
+		const char *sql =
+			"insert into preset_tag (preset_id, tag_id) values (?, ?)";
+		return query.exec(sql, {presetId, tagId});
 	}
 
 	bool deletePresetTag(int presetId, int tagId)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-		QMutexLocker locker{&m_mutex};
-		QSqlQuery query(m_db);
-		QString sql = QStringLiteral(
-			"delete from preset_tag where preset_id = ? and tag_id = ?");
-		if(exec(query, sql, {presetId, tagId})) {
+		drawdance::Query query = db.query();
+		const char *sql =
+			"delete from preset_tag where preset_id = ? and tag_id = ?";
+		if(query.exec(sql, {presetId, tagId})) {
 			return query.numRowsAffected() == 1;
 		} else {
 			return false;
@@ -519,22 +460,19 @@ public:
 	bool createOrUpdateState(const QString &key, const QVariant &value)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-		QMutexLocker locker{&m_mutex};
-		QSqlQuery query(m_db);
+		drawdance::Query query = db.query();
 		return createOrUpdateStateInternal(query, key, value);
 	}
 
 	QVariant readState(const QString &key)
 	{
-		QMutexLocker locker(&m_mutex);
-		QSqlQuery query(m_db);
+		drawdance::Query query = db.query();
 		return readStateInternal(query, key, QVariant());
 	}
 
 
 	void refreshTagCache()
 	{
-		QMutexLocker locker(&m_mutex);
 		bool tagIdToFilterFound = refreshTagCacheInternal();
 		if(!tagIdToFilterFound) {
 			m_tagIdToFilter = ALL_ID;
@@ -766,11 +704,6 @@ public:
 	}
 
 private:
-	static QString nonNullString(const QString &s)
-	{
-		return s.isNull() ? QStringLiteral("") : s;
-	}
-
 	static void parseGroupedTagIds(const QString &input, QSet<int> &tagIds)
 	{
 		QStringList tagIdStrings =
@@ -808,17 +741,16 @@ private:
 		}
 	}
 
-	bool refreshTagCacheInternal()
+	bool refreshTagCacheInternal(drawdance::Query &query)
 	{
 		m_tagCache.clear();
 		QString sql =
 			QStringLiteral("select id, name from tag order by lower(name)");
-		QSqlQuery query(m_db);
 		bool tagIdToFilterFound = m_tagIdToFilter < 0;
-		if(exec(query, sql)) {
+		if(query.exec(sql)) {
 			while(query.next()) {
-				int id = query.value(0).toInt();
-				m_tagCache.append({id, query.value(1).toString()});
+				int id = query.columnInt(0);
+				m_tagCache.append({id, query.columnText16(1)});
 				if(id == m_tagIdToFilter) {
 					tagIdToFilterFound = true;
 				}
@@ -867,7 +799,7 @@ private:
 		}
 	}
 
-	void readPreset(Preset &preset, QSqlQuery &query)
+	void readPreset(Preset &preset, drawdance::Query &query)
 	{
 		preset.id = query.value(0).toInt();
 		preset.originalName = query.value(1).toString();
@@ -966,39 +898,6 @@ private:
 		m_presetShortcuts.swap(newPresetShortcuts);
 	}
 
-	int readInt(
-		const QString &sql, const QList<QVariant> &params = {},
-		int defaultValue = 0)
-	{
-		QSqlQuery query(m_db);
-		if(exec(query, sql, params) && query.next()) {
-			return query.value(0).toInt();
-		} else {
-			return defaultValue;
-		}
-	}
-
-	QString readString(const QString &sql, const QList<QVariant> &params = {})
-	{
-		QSqlQuery query(m_db);
-		if(exec(query, sql, params) && query.next()) {
-			return query.value(0).toString();
-		} else {
-			return QString();
-		}
-	}
-
-	QByteArray
-	readByteArray(const QString &sql, const QList<QVariant> &params = {})
-	{
-		QSqlQuery query(m_db);
-		if(exec(query, sql, params) && query.next()) {
-			return query.value(0).toByteArray();
-		} else {
-			return QByteArray();
-		}
-	}
-
 	static bool exec(
 		QSqlQuery &query, const QString &sql,
 		const QList<QVariant> &params = {})
@@ -1019,10 +918,15 @@ private:
 
 	void initDb()
 	{
-		bool ok = utils::db::tx(m_db, [this]() {
-			QSqlQuery query(m_db);
-			return createStateTable(query) && executeMigrations(query);
-		});
+		bool ok =
+			(db.isOpen() || utils::db::open(
+								db, QStringLiteral("prush presets"),
+								QStringLiteral("brushes.db"),
+								QStringLiteral("initialbrushpresets.db"))) &&
+			utils::db::tx(m_db, [this]() {
+				QSqlQuery query(m_db);
+				return createStateTable(query) && executeMigrations(query);
+			});
 		if(!ok) {
 			qWarning("Error initializing brush database");
 		}
@@ -1140,8 +1044,7 @@ private:
 								  "shortcut text not null default ''"));
 	}
 
-	QRecursiveMutex m_mutex;
-	QSqlDatabase m_db;
+	static drawdance::Database db;
 	QTimer m_presetChangeTimer;
 	QHash<int, PresetChange> m_presetChanges;
 	QVector<CachedTag> m_tagCache;
