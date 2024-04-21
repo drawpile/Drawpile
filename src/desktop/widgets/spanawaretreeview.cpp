@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QList>
 #include <QModelIndex>
+#include <QScrollBar>
 
 namespace widgets {
 
@@ -26,6 +27,17 @@ void SpanAwareTreeView::rowsInserted(
 		for(int row = start; row <= end; ++row) {
 			setAllSpans(m->index(row, 0, parent));
 		}
+	}
+}
+
+void SpanAwareTreeView::updateGeometries()
+{
+	QTreeView::updateGeometries();
+	QScrollBar *vbar = verticalScrollBar();
+	bool verticalScrollBarVisible = vbar ? vbar->isVisible() : false;
+	if(m_verticalScrollBarVisible != verticalScrollBarVisible) {
+		m_verticalScrollBarVisible = verticalScrollBarVisible;
+		emit verticalScrollBarVisibilityChanged();
 	}
 }
 

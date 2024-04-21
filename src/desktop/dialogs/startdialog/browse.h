@@ -61,6 +61,7 @@ private:
 	void refreshServer(const sessionlisting::ListServer &ls, const QUrl &url);
 
 	void updateJoinButton();
+	void updateColumnSizes();
 
 	QAction *makeCopySessionDataAction(const QString &text, int role);
 

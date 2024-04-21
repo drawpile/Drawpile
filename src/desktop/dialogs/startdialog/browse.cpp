@@ -17,6 +17,7 @@
 #include <QLineEdit>
 #include <QMenu>
 #include <QScopedValueRollback>
+#include <QScrollBar>
 #include <QTimer>
 #include <QVBoxLayout>
 
@@ -169,6 +170,10 @@ Browse::Browse(QWidget *parent)
 	connect(
 		m_listing->selectionModel(), &QItemSelectionModel::selectionChanged,
 		this, &Browse::updateJoinButton);
+	connect(
+		m_listing,
+		&widgets::SpanAwareTreeView::verticalScrollBarVisibilityChanged, this,
+		&Browse::updateColumnSizes);
 
 	connect(m_listing, &QTreeView::doubleClicked, this, &Browse::joinIndex);
 
@@ -254,9 +259,7 @@ void Browse::accept()
 void Browse::resizeEvent(QResizeEvent *event)
 {
 	Page::resizeEvent(event);
-	m_listing->header()->setSectionResizeMode(
-		SessionListingModel::Title, QHeaderView::Interactive);
-	cascadeSectionResize(SessionListingModel::ColumnCount, 0, 0);
+	updateColumnSizes();
 }
 
 void Browse::updateListServers(const QVector<QVariantMap> &settingsListServers)
@@ -411,6 +414,13 @@ void Browse::updateJoinButton()
 {
 	QModelIndex index = m_listing->selectionModel()->currentIndex();
 	emit enableJoin(canJoinIndex(index));
+}
+
+void Browse::updateColumnSizes()
+{
+	m_listing->header()->setSectionResizeMode(
+		SessionListingModel::Title, QHeaderView::Interactive);
+	cascadeSectionResize(SessionListingModel::ColumnCount, 0, 0);
 }
 
 void Browse::refreshServer(
