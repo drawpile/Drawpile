@@ -8,9 +8,9 @@
 #include <QVector>
 
 #ifdef DESIGNER_PLUGIN
-#include <QtUiPlugin/QDesignerExportWidget>
+#	include <QtUiPlugin/QDesignerExportWidget>
 #else
-#define QDESIGNER_WIDGET_EXPORT
+#	define QDESIGNER_WIDGET_EXPORT
 #endif
 
 class QModelIndex;
@@ -23,7 +23,9 @@ public:
 	void reset() override;
 
 protected:
-	void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles = QVector<int>()) override;
+	void dataChanged(
+		const QModelIndex &topLeft, const QModelIndex &bottomRight,
+		const QVector<int> &roles = QVector<int>()) override;
 	void rowsInserted(const QModelIndex &parent, int start, int end) override;
 
 private:
