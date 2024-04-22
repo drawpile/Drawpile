@@ -32,9 +32,11 @@ protected:
 		const QVector<int> &roles = QVector<int>()) override;
 	void rowsInserted(const QModelIndex &parent, int start, int end) override;
 	void updateGeometries() override;
+    void verticalScrollbarValueChanged(int value) override;
 
 private:
 	void setAllSpans(const QModelIndex &index);
+	void checkVerticalScrollBarVisibility();
 
 	bool m_verticalScrollBarVisible = false;
 };

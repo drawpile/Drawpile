@@ -30,6 +30,7 @@ namespace startdialog {
 
 Browse::Browse(QWidget *parent)
 	: Page{parent}
+	, m_updateColumnsDebounce(20, this)
 {
 	QVBoxLayout *layout = new QVBoxLayout;
 	layout->setContentsMargins(0, 0, 0, 0);
@@ -172,7 +173,10 @@ Browse::Browse(QWidget *parent)
 		this, &Browse::updateJoinButton);
 	connect(
 		m_listing,
-		&widgets::SpanAwareTreeView::verticalScrollBarVisibilityChanged, this,
+		&widgets::SpanAwareTreeView::verticalScrollBarVisibilityChanged,
+		&m_updateColumnsDebounce, &DebounceTimer::setNone);
+	connect(
+		&m_updateColumnsDebounce, &DebounceTimer::noneChanged, this,
 		&Browse::updateColumnSizes);
 
 	connect(m_listing, &QTreeView::doubleClicked, this, &Browse::joinIndex);
@@ -259,7 +263,7 @@ void Browse::accept()
 void Browse::resizeEvent(QResizeEvent *event)
 {
 	Page::resizeEvent(event);
-	updateColumnSizes();
+	m_updateColumnsDebounce.setNone();
 }
 
 void Browse::updateListServers(const QVector<QVariantMap> &settingsListServers)

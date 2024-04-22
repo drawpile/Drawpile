@@ -4,6 +4,7 @@
 #define DESKTOP_DIALOGS_STARTDIALOG_BROWSE_H
 
 #include "desktop/dialogs/startdialog/page.h"
+#include "libclient/utils/debouncetimer.h"
 #include <QHash>
 #include <QWidget>
 
@@ -81,6 +82,7 @@ private:
 	QMenu *m_listingContextMenu;
 	QAction *m_joinAction;
 	QTimer *m_refreshTimer;
+	DebounceTimer m_updateColumnsDebounce;
 	qint64 m_lastRefresh = 0;
 	QHash<QString, sessionlisting::AnnouncementApiResponse *>
 		m_refreshesInProgress;

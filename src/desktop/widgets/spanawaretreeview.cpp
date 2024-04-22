@@ -17,6 +17,7 @@ void SpanAwareTreeView::dataChanged(
 			setAllSpans(m->index(row, 0, topLeft.parent()));
 		}
 	}
+	checkVerticalScrollBarVisibility();
 }
 
 void SpanAwareTreeView::rowsInserted(
@@ -28,17 +29,19 @@ void SpanAwareTreeView::rowsInserted(
 			setAllSpans(m->index(row, 0, parent));
 		}
 	}
+	checkVerticalScrollBarVisibility();
 }
 
 void SpanAwareTreeView::updateGeometries()
 {
 	QTreeView::updateGeometries();
-	QScrollBar *vbar = verticalScrollBar();
-	bool verticalScrollBarVisible = vbar ? vbar->isVisible() : false;
-	if(m_verticalScrollBarVisible != verticalScrollBarVisible) {
-		m_verticalScrollBarVisible = verticalScrollBarVisible;
-		emit verticalScrollBarVisibilityChanged();
-	}
+	checkVerticalScrollBarVisibility();
+}
+
+void SpanAwareTreeView::verticalScrollbarValueChanged(int value)
+{
+	QTreeView::verticalScrollbarValueChanged(value);
+	checkVerticalScrollBarVisibility();
 }
 
 void SpanAwareTreeView::setAllSpans(const QModelIndex &index)
@@ -59,6 +62,17 @@ void SpanAwareTreeView::reset()
 		for(int row = 0; row < rowCount; ++row) {
 			setAllSpans(m->index(row, 0));
 		}
+	}
+	checkVerticalScrollBarVisibility();
+}
+
+void SpanAwareTreeView::checkVerticalScrollBarVisibility()
+{
+	QScrollBar *vbar = verticalScrollBar();
+	bool verticalScrollBarVisible = vbar ? vbar->isVisible() : false;
+	if(m_verticalScrollBarVisible != verticalScrollBarVisible) {
+		m_verticalScrollBarVisible = verticalScrollBarVisible;
+		emit verticalScrollBarVisibilityChanged();
 	}
 }
 
