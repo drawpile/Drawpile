@@ -43,6 +43,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Reduce contrast on censor tile stripes to make them less annoying to look at.
  * Server Feature: When you pass an option that's not compiled in, the error message will not inform you of that fact, rather than just saying you passed an unknown option with no further information.
  * Feature: On Windows and Linux, new windows now open in a separate process, since that's more efficient and resilient. Can be disabled by setting the DRAWPILE_SINGLE_PROCESS environment variable. Thanks Bluestrings for suggesting.
+ * Fix: The main window should now properly restore to its previous position even when that's on a secondary screen. Thanks Moe for reporting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

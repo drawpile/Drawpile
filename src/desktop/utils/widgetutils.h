@@ -133,6 +133,7 @@ void showWindow(
 
 void setWidgetRetainSizeWhenHidden(QWidget *widget, bool retainSize);
 
+bool moveIfOnScreen(QWidget *widget, const QPoint &pos);
 bool setGeometryIfOnScreen(QWidget *widget, const QRect &geometry);
 
 // Sets header to sort by no column (as opposed to the first one) and enables

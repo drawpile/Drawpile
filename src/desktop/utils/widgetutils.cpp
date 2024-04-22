@@ -535,6 +535,17 @@ void setWidgetRetainSizeWhenHidden(QWidget *widget, bool retainSize)
 	widget->setSizePolicy(sp);
 }
 
+bool moveIfOnScreen(QWidget *widget, const QPoint &pos)
+{
+	for(QScreen *screen : dpApp().screens()) {
+		if(screen->availableGeometry().contains(pos)) {
+			widget->move(pos);
+			return true;
+		}
+	}
+	return false;
+}
+
 bool setGeometryIfOnScreen(QWidget *widget, const QRect &geometry)
 {
 	if(!geometry.isEmpty()) {

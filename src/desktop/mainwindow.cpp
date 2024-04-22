@@ -833,11 +833,8 @@ void MainWindow::readSettings(bool windowpos)
 
 	// Restore previously used window size and position
 	resize(settings.lastWindowSize());
-
 	if(windowpos) {
-		const auto pos = settings.lastWindowPosition();
-		if (dpApp().primaryScreen()->availableGeometry().contains(pos))
-			move(pos);
+		utils::moveIfOnScreen(this, settings.lastWindowPosition());
 	}
 
 	// Show self
