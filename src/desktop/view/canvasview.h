@@ -9,6 +9,7 @@ class QUrl;
 
 namespace widgets {
 class NotificationBar;
+class RulerWidget;
 }
 
 namespace view {
@@ -32,6 +33,7 @@ public:
 	void hideDisconnectedWarning();
 	void showResetNotice(bool compatibilityMode, bool saveInProgress);
 	void hideResetNotice();
+	void showRulers(bool enabled);
 
 signals:
 	void colorDropped(const QColor &color);
@@ -70,6 +72,7 @@ private:
 	void onControllerScrollAreaChanged(
 		int minH, int maxH, int valueH, int pageStepH, int singleStepH,
 		int minV, int maxV, int valueV, int pageStepV, int singleStepV);
+	void onViewChanged(const QPolygonF &view);
 
 	void activateNotificationBarAction();
 	void dismissNotificationBar();
@@ -79,6 +82,9 @@ private:
 	CanvasController *m_controller;
 	CanvasInterface *m_canvasWidget;
 	widgets::NotificationBar *m_notificationBar;
+	widgets::RulerWidget *m_hRuler;
+	widgets::RulerWidget *m_vRuler;
+	QWidget *m_corner;
 	NotificationBarState m_notificationBarState = NotificationBarState::None;
 	bool m_blockScrolling = false;
 	bool m_touchUseGestureEvents = false;

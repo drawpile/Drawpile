@@ -4058,6 +4058,7 @@ void MainWindow::setupActions()
 	QAction *evadeusercursors = makeAction("evadeusercursors", tr("Hide From Cursor")).noDefaultShortcut().checked().remembered();
 	QAction *showlasers = makeAction("showlasers", tr("Show La&ser Trails")).noDefaultShortcut().checked().remembered();
 	QAction *showgrid = makeAction("showgrid", tr("Show Pixel &Grid")).noDefaultShortcut().checked().remembered();
+	QAction *showrulers = makeAction("showrulers", tr("Show &Rulers")).noDefaultShortcut().checkable().remembered();
 
 #ifndef SINGLE_MAIN_WINDOW
 	QAction *fullscreen = makeAction("fullscreen", tr("&Full Screen")).shortcut(QKeySequence::FullScreen).checkable();
@@ -4111,7 +4112,7 @@ void MainWindow::setupActions()
 	m_canvasView->connectActions(
 		{moveleft, moveright, moveup, movedown, zoomin, zoomout, zoomorig,
 		 zoomfit, zoomfitwidth, zoomfitheight, rotateorig, rotatecw, rotateccw,
-		 viewflip, viewmirror, showgrid, showusermarkers, showusernames,
+		 viewflip, viewmirror, showgrid, showrulers, showusermarkers, showusernames,
 		 showuserlayers, showuseravatars, evadeusercursors});
 
 #ifndef SINGLE_MAIN_WINDOW
@@ -4211,6 +4212,7 @@ void MainWindow::setupActions()
 	viewmenu->addAction(showannotations);
 
 	viewmenu->addAction(showgrid);
+	viewmenu->addAction(showrulers);
 
 #ifndef SINGLE_MAIN_WINDOW
 	viewmenu->addSeparator();
