@@ -45,6 +45,7 @@ Unreleased Version 2.2.2-pre
  * Feature: On Windows and Linux, new windows now open in a separate process, since that's more efficient and resilient. Can be disabled by setting the DRAWPILE_SINGLE_PROCESS environment variable. Thanks Bluestrings for suggesting.
  * Fix: The main window should now properly restore to its previous position even when that's on a secondary screen. Thanks Moe for reporting.
  * Removed Feature: Roomcodes. They are a vestige from a time where Drawpile only had a single, central listing server. Nowadays nobody uses these anymore, invite links are the replacement.
+ * Feature: Disable global smoothing and jagged curve compensation for mouse and touch drawing by default, since those don't really only make sense for pen tablets. Can be toggled in the input preferences. Thanks nililfin for suggesting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

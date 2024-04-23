@@ -137,7 +137,7 @@ public slots:
 	void startDrawing(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 		qreal ytilt, qreal rotation, bool right, float zoom,
-		const QPointF &viewPos, bool eraserOverride);
+		const QPointF &viewPos, bool applyGlobalSmoothing, bool eraserOverride);
 
 	//! Continue a stroke
 	void continueDrawing(
@@ -209,6 +209,7 @@ private:
 	uint16_t m_activeLayer;
 	uint16_t m_activeAnnotation;
 	bool m_drawing;
+	bool m_applyGlobalSmoothing;
 
 	int m_globalSmoothing;
 	bool m_interpolateInputs;

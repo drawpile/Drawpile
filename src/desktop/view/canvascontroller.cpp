@@ -54,6 +54,7 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 		this, &CanvasController::setClearColor);
 	settings.bindRenderSmooth(this, &CanvasController::setRenderSmooth);
 	settings.bindTabletEvents(this, &CanvasController::setTabletEnabled);
+	settings.bindMouseSmoothing(this, &CanvasController::setMouseSmoothing);
 	settings.bindOneFingerScroll(this, &CanvasController::setEnableTouchScroll);
 	settings.bindOneFingerDraw(this, &CanvasController::setEnableTouchDraw);
 	settings.bindTwoFingerZoom(this, &CanvasController::setEnableTouchPinch);
@@ -1192,6 +1193,11 @@ void CanvasController::setTabletEnabled(bool tabletEnabled)
 	m_tabletEnabled = tabletEnabled;
 }
 
+void CanvasController::setMouseSmoothing(bool mouseSmoothing)
+{
+	m_mouseSmoothing = mouseSmoothing;
+}
+
 void CanvasController::setEnableTouchScroll(bool enableTouchScroll)
 {
 	m_enableTouchScroll = enableTouchScroll;
@@ -1531,7 +1537,7 @@ void CanvasController::penPressEvent(
 							point.timeMsec(), point, point.pressure(),
 							point.xtilt(), point.ytilt(), point.rotation(),
 							button == Qt::RightButton, m_zoom, posf,
-							eraserOverride);
+							isStylus || m_mouseSmoothing, eraserOverride);
 					break;
 				case PenMode::Colorpick:
 					m_canvasModel->pickColor(point.x(), point.y(), 0, 0);

@@ -169,6 +169,8 @@ QString SystemInfoDialog::getSystemInfo() const
 				settings.tabletEraserAction()));
 	info += QStringLiteral("Compensate jagged curves: %1\n")
 				.arg(boolToString(settings.interpolateInputs()));
+	info += QStringLiteral("Smoothe mouse and touch drawing: %1\n")
+				.arg(boolToString(settings.mouseSmoothing()));
 	info += QStringLiteral("Global smoothing: %1\n").arg(settings.smoothing());
 	info += QStringLiteral("Global pressure curve: \"%1\"\n")
 				.arg(settings.globalPressureCurve());

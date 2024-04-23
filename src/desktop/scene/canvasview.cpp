@@ -57,6 +57,7 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_scene(nullptr)
 	, m_zoomWheelDelta(0)
 	, m_enableTablet(true)
+	, m_mouseSmoothing(false)
 	, m_locked(false)
 	, m_busy(false)
 	, m_saveInProgress(false)
@@ -126,6 +127,7 @@ CanvasView::CanvasView(QWidget *parent)
 	}
 
 	settings.bindTabletEvents(this, &widgets::CanvasView::setTabletEnabled);
+	settings.bindMouseSmoothing(this, &widgets::CanvasView::setMouseSmoothing);
 	settings.bindOneFingerDraw(this, &widgets::CanvasView::setTouchDraw);
 	settings.bindOneFingerScroll(this, &widgets::CanvasView::setTouchScroll);
 	settings.bindTwoFingerZoom(this, &widgets::CanvasView::setTouchPinch);
@@ -924,7 +926,7 @@ void CanvasView::setPointerTracking(bool tracking)
 }
 
 void CanvasView::onPenDown(
-	const canvas::Point &p, bool right, const QPointF &viewPos,
+	const canvas::Point &p, bool right, const QPointF &viewPos, bool isStylus,
 	bool eraserOverride)
 {
 	if(m_scene->hasImage()) {
@@ -933,7 +935,8 @@ void CanvasView::onPenDown(
 			if(!m_locked)
 				emit penDown(
 					p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(),
-					p.rotation(), right, m_zoom, viewPos, eraserOverride);
+					p.rotation(), right, m_zoom, viewPos,
+					isStylus || m_mouseSmoothing, eraserOverride);
 			break;
 		case PenMode::Colorpick:
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
@@ -1078,7 +1081,7 @@ void CanvasView::penPressEvent(
 		}
 		onPenDown(
 			mapToCanvas(timeMsec, pos, pressure, xtilt, ytilt, rotation),
-			button == Qt::RightButton, pos, eraserOverride);
+			button == Qt::RightButton, pos, isStylus, eraserOverride);
 	}
 }
 

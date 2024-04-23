@@ -26,6 +26,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_model(nullptr)
 	, m_activeTool(nullptr)
 	, m_drawing(false)
+	, m_applyGlobalSmoothing(true)
 	, m_globalSmoothing(0)
 	, m_interpolateInputs(false)
 	, m_stabilizationMode(brushes::Stabilizer)
@@ -315,7 +316,7 @@ void ToolController::setSelectInterpolation(int selectInterpolation)
 void ToolController::startDrawing(
 	long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 	qreal ytilt, qreal rotation, bool right, float zoom, const QPointF &viewPos,
-	bool eraserOverride)
+	bool applyGlobalSmoothing, bool eraserOverride)
 {
 	Q_ASSERT(m_activeTool);
 
@@ -325,6 +326,7 @@ void ToolController::startDrawing(
 	}
 
 	m_drawing = true;
+	m_applyGlobalSmoothing = applyGlobalSmoothing;
 	m_activebrush.setEraserOverride(eraserOverride);
 	m_activeTool->begin(
 		canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation), right,
@@ -453,8 +455,9 @@ void ToolController::setBrushEngineBrush(
 		m_finishStrokes,
 	};
 	if(freehand) {
-		stroke.interpolate = m_interpolateInputs;
-		stroke.smoothing = m_effectiveSmoothing;
+		stroke.interpolate = m_applyGlobalSmoothing && m_interpolateInputs;
+		stroke.smoothing =
+			m_applyGlobalSmoothing ? m_effectiveSmoothing : m_smoothing;
 		if(m_stabilizerUseBrushSampleCount) {
 			if(brush.stabilizationMode() == brushes::Stabilizer) {
 				stroke.stabilizer_sample_count = brush.stabilizerSampleCount();
