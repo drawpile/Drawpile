@@ -54,8 +54,6 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 		this, &CanvasController::setClearColor);
 	settings.bindRenderSmooth(this, &CanvasController::setRenderSmooth);
 	settings.bindTabletEvents(this, &CanvasController::setTabletEnabled);
-	settings.bindIgnoreZeroPressureInputs(
-		this, &CanvasController::setIgnoreZeroPressureInputs);
 	settings.bindOneFingerScroll(this, &CanvasController::setEnableTouchScroll);
 	settings.bindOneFingerDraw(this, &CanvasController::setEnableTouchDraw);
 	settings.bindTwoFingerZoom(this, &CanvasController::setEnableTouchPinch);
@@ -497,8 +495,7 @@ void CanvasController::handleTabletMove(QTabletEvent *event)
 		// Under Windows Ink, some tablets report bogus zero-pressure inputs.
 		// We accept them so that they don't result in synthesized mouse events,
 		// but don't actually act on them.
-		if(!m_ignoreZeroPressureInputs || m_penState == PenState::Up ||
-		   pressure != 0.0) {
+		if(m_penState == PenState::Up || pressure != 0.0) {
 			penMoveEvent(
 				QDateTime::currentMSecsSinceEpoch(), posf,
 				qBound(0.0, pressure, 1.0), xTilt, yTilt, rotation, modifiers);
@@ -1193,12 +1190,6 @@ void CanvasController::setRenderSmooth(bool renderSmooth)
 void CanvasController::setTabletEnabled(bool tabletEnabled)
 {
 	m_tabletEnabled = tabletEnabled;
-}
-
-void CanvasController::setIgnoreZeroPressureInputs(
-	bool ignoreZeroPressureInputs)
-{
-	m_ignoreZeroPressureInputs = ignoreZeroPressureInputs;
 }
 
 void CanvasController::setEnableTouchScroll(bool enableTouchScroll)

@@ -197,7 +197,6 @@ private:
 	void setClearColor(const QColor clearColor);
 	void setRenderSmooth(bool renderSmooth);
 	void setTabletEnabled(bool tabletEnabled);
-	void setIgnoreZeroPressureInputs(bool setIgnoreZeroPressureInputs);
 	void setEnableTouchScroll(bool enableTouchScroll);
 	void setEnableTouchDraw(bool enableTouchDraw);
 	void setEnableTouchPinch(bool enableTouchPinch);
@@ -320,7 +319,6 @@ private:
 	QColor m_clearColor;
 	bool m_renderSmooth = false;
 	bool m_tabletEnabled = true;
-	bool m_ignoreZeroPressureInputs = true;
 	KisCubicCurve m_pressureCurve;
 	bool m_pixelGrid = true;
 	bool m_pointerTracking = false;

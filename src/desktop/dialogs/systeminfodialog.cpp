@@ -167,8 +167,6 @@ QString SystemInfoDialog::getSystemInfo() const
 		QStringLiteral("Eraser action: %1\n")
 			.arg(QMetaEnum::fromType<tabletinput::EraserAction>().valueToKey(
 				settings.tabletEraserAction()));
-	info += QStringLiteral("Ignore zero-pressure inputs: %1\n")
-				.arg(boolToString(settings.ignoreZeroPressureInputs()));
 	info += QStringLiteral("Compensate jagged curves: %1\n")
 				.arg(boolToString(settings.interpolateInputs()));
 	info += QStringLiteral("Global smoothing: %1\n").arg(settings.smoothing());

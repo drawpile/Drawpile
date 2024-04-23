@@ -72,11 +72,6 @@ void Input::initTablet(
 	settings.bindTabletEvents(pressure);
 	form->addRow(tr("Tablet:"), pressure);
 
-	auto *ignoreZeroPressureInputs =
-		new QCheckBox(tr("Ignore inputs with invalid pressure"));
-	settings.bindIgnoreZeroPressureInputs(ignoreZeroPressureInputs);
-	form->addRow(nullptr, ignoreZeroPressureInputs);
-
 	auto *interpolate = new QCheckBox(tr("Compensate jagged curves"));
 	settings.bindInterpolateInputs(interpolate);
 	form->addRow(nullptr, interpolate);

@@ -88,10 +88,6 @@ public:
 
 	//! Enable/disable tablet event handling
 	void setTabletEnabled(bool enable) { m_enableTablet = enable; }
-	void setIgnoreZeroPressureInputs(bool ignore)
-	{
-		m_ignoreZeroPressureInputs = ignore;
-	}
 
 	//! Enable/disable touch gestures
 	void setTouchScroll(bool scroll) { m_enableTouchScroll = scroll; }
@@ -414,7 +410,6 @@ private:
 	int m_zoomWheelDelta;
 
 	bool m_enableTablet;
-	bool m_ignoreZeroPressureInputs;
 	bool m_locked;
 	QString m_lockDescription;
 	bool m_busy;

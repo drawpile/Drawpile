@@ -97,7 +97,6 @@ SETTING(fontSize                  , FontSize                  , "settings/fontSi
 SETTING(globalPressureCurve       , GlobalPressureCurve       , "settings/input/globalcurve"            , GLOBAL_PRESSURE_CURVE_DEFAULT)
 SETTING(hostEnableAdvanced        , HostEnableAdvanced        , "history/hostenableadvanced"            , false)
 SETTING(ignoreCarrierGradeNat     , IgnoreCarrierGradeNat     , "history/cgnalert"                      , false)
-SETTING(ignoreZeroPressureInputs  , IgnoreZeroPressureInputs  , "settings/ignorezeropressureinputs"     , true)
 SETTING(inputPresets              , InputPresets              , "inputpresets"                          , QVector<QVariantMap>())
 SETTING(insecurePasswordStorage   , InsecurePasswordStorage   , "settings/insecurepasswordstorage"      , false)
 SETTING_GETSET_V(

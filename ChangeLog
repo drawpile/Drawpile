@@ -2,7 +2,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Allow choosing a different cursor for erase and alpha locked brushes. Thanks Hipofiz and Rylan for suggesting.
  * Server Fix: Properly sever connections on read, write and timeout errors.
  * Fix: Load annotations from ORA files saved by Drawpile 2.1 properly. Thanks RyanMolyneux for reporting.
- * Feature: Ignore inputs with invalid pressure during strokes, toggleable in the preferences in case there's tablets that behave this way in a valid case somehow. Thanks Lunalatte for reporting.
+ * Feature: Ignore inputs with invalid pressure during strokes. Thanks Lunalatte for reporting.
  * Server Fix: Handle sessions running out of space better, they should no longer end up in an unrecoverable state. The messages in chat are also now translatable, more informative and don't get spammed for every command. Thanks Bluestrings and Charmandrigo for reporting.
  * Feature: Lock canvas when the session is out of space, showing an appropriate message in the corner, rather than letting you continue drawing. The server needs to be updated for this to be available.
  * Server Fix: Make catchup not take pointlessly long when the session is out of space.
