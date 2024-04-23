@@ -21,13 +21,6 @@ struct ListServerInfo {
 	QString faviconUrl;   // URL of the server's favicon
 	bool readOnly;        // If true, listings cannot be submitted
 	bool publicListings;  // Does this server supports public listings
-	bool privateListings; // Does this server supports private (room code only) listings
-};
-
-enum class PrivacyMode {
-	Undefined, // not specified, defaults to public
-	Public,
-	Private
 };
 
 struct Session {
@@ -40,7 +33,6 @@ struct Session {
 	QStringList usernames;
 	bool password;
 	bool nsfm;
-	PrivacyMode isPrivate;
 	QString owner;
 	QDateTime started;
 	int maxUsers;
@@ -53,10 +45,8 @@ struct Announcement {
 	QUrl apiUrl;
 	QString id;
 	QString updateKey;
-	QString roomcode;
 	int listingId;
 	int refreshInterval;
-	bool isPrivate;
 };
 
 }
@@ -149,13 +139,6 @@ AnnouncementApiResponse *refreshSessions(const QVector<QPair<Announcement, Sessi
  * Returns the session ID
  */
 AnnouncementApiResponse *unlistSession(const Announcement &a);
-
-/**
- * @brief Query this server for a room code
- *
- * Returns a Session
- */
-AnnouncementApiResponse *queryRoomcode(const QUrl &apiUrl, const QString &roomcode);
 
 }
 

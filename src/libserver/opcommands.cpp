@@ -305,7 +305,13 @@ CmdResult announceSession(
 	if(!apiUrl.isValid())
 		return CmdResult::err("Invalid API URL");
 
-	client->session()->makeAnnouncement(apiUrl, kwargs["private"].toBool());
+	if(kwargs["private"].toBool()) {
+		// Private listings/roomcodes were removed in Drawpile 2.2.2.
+		return CmdResult::err(
+			"Private listings are not available on this server");
+	}
+
+	client->session()->makeAnnouncement(apiUrl);
 	return CmdResult::ok();
 }
 

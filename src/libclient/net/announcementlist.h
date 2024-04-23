@@ -8,21 +8,6 @@
 namespace net {
 
 /**
- * @brief Info about a session announcement
- */
-struct Announcement {
-	//! The URL of the announcement server
-	QString url;
-
-	//! Session room code (URL shortener type code, if provided by the server)
-	QString roomcode;
-
-	//! In private mode, the session is not visible in the public list, but a
-	//! room code is still generated
-	bool isPrivate;
-};
-
-/**
  * A list model to represent active session announcements.
  */
 class AnnouncementListModel final : public QAbstractTableModel {
@@ -33,9 +18,6 @@ public:
 
 	QVariant
 	data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-	QVariant headerData(
-		int section, Qt::Orientation orientation,
-		int role = Qt::DisplayRole) const override;
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
@@ -45,7 +27,7 @@ public:
 	 * If an announcement with the same URL already exists in the list, it is
 	 * updated in place.
 	 */
-	void addAnnouncement(const Announcement &a);
+	void addAnnouncement(const QString &url);
 
 	/**
 	 * @brief Remove an announcement from the list
@@ -59,12 +41,10 @@ public:
 	void clear();
 
 private:
-	QVector<Announcement> m_announcements;
+	QVector<QString> m_announcements;
 	QHash<QString, QPair<QIcon, QString>> m_knownServers;
 };
 
 }
-
-Q_DECLARE_METATYPE(net::Announcement)
 
 #endif

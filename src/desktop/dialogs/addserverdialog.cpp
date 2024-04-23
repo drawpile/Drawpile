@@ -315,8 +315,7 @@ void AddServerDialog::addServer()
 	QString urlString = d->url.toString();
 	listServerModel->addServer(
 		d->serverInfo.name, urlString, d->serverInfo.description,
-		d->serverInfo.readOnly, d->serverInfo.publicListings,
-		d->serverInfo.privateListings);
+		d->serverInfo.readOnly, d->serverInfo.publicListings);
 	QIcon icon = listServerModel->setFavicon(urlString, d->favicon);
 
 	listServerModel->submit();

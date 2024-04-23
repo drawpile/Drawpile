@@ -32,7 +32,7 @@ public:
 	 * @param listServer
 	 * @param mode
 	 */
-	void announceSession(Announcable *session, const QUrl &listServer, PrivacyMode mode);
+	void announceSession(Announcable *session, const QUrl &listServer);
 
 	/**
 	 * @brief Unlist the session
@@ -68,7 +68,7 @@ private:
 		Announcement announcement;
 
 		QElapsedTimer refreshTimer;
-		PrivacyMode mode; // undefined means the announcement hasn't finishe yet
+		bool finishedListing;
 		sessionlisting::Session description;
 	};
 

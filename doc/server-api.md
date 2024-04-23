@@ -122,8 +122,6 @@ Get detailed information about a session: `GET /api/sessions/:id/`
             {
                 "id": integer           (listing entry ID number)
                 "url": "url"            (list server address)
-                "roomcode": "room code" (the room code, if provided)
-                "private": boolean      (is this a private listing)
             }, ...
         ]
     }

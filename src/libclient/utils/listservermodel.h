@@ -18,7 +18,6 @@ struct ListServer {
 	QString description;
 	bool readonly;
 	bool publicListings;
-	bool privateListings;
 };
 
 class ListServerModel final : public QAbstractListModel
@@ -29,7 +28,6 @@ public:
 		UrlRole = Qt::UserRole,
 		DescriptionRole,
 		PublicListRole,
-		PrivateListRole
 	};
 
 	explicit ListServerModel(libclient::settings::Settings &settings, bool includeReadOnly, QObject *parent=nullptr);
@@ -47,7 +45,7 @@ public:
 	 * @brief Add a new server to the list
 	 * @return false if an existing item was updated instead of added
 	 */
-	bool addServer(const QString &name, const QString &url, const QString &description, bool readonly, bool pub, bool priv);
+	bool addServer(const QString &name, const QString &url, const QString &description, bool readonly, bool pub);
 
 	/**
 	 * @brief Remove the server with the given URL

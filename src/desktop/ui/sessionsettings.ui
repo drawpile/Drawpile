@@ -566,16 +566,13 @@
       </attribute>
       <layout class="QVBoxLayout">
        <item>
-        <widget class="QTableView" name="announcementTableView">
+        <widget class="QListView" name="announcementListView">
          <property name="selectionMode">
           <enum>QAbstractItemView::SingleSelection</enum>
          </property>
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectRows</enum>
          </property>
-         <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
         </widget>
        </item>
        <item>
@@ -596,7 +593,7 @@
          <item>
           <widget class="QPushButton" name="addAnnouncement">
            <property name="text">
-            <string>List session</string>
+            <string>Add listing</string>
            </property>
            <property name="icon">
             <iconset theme="list-add">
@@ -607,7 +604,7 @@
          <item>
           <widget class="QPushButton" name="removeAnnouncement">
            <property name="text">
-            <string>Remove selected</string>
+            <string>Remove selected listing</string>
            </property>
            <property name="icon">
             <iconset theme="list-remove">
@@ -664,7 +661,7 @@
   <tabstop>permMetadata</tabstop>
   <tabstop>banlistView</tabstop>
   <tabstop>removeBan</tabstop>
-  <tabstop>announcementTableView</tabstop>
+  <tabstop>announcementListView</tabstop>
   <tabstop>addAnnouncement</tabstop>
   <tabstop>removeAnnouncement</tabstop>
  </tabstops>

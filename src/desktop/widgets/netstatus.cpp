@@ -175,12 +175,6 @@ void NetStatus::loggedIn(const QUrl &sessionUrl, const QString &joinPassword)
 	}
 }
 
-void NetStatus::setRoomcode(const QString &roomcode)
-{
-	m_roomcode = roomcode;
-	updateLabel();
-}
-
 void NetStatus::setSecurityLevel(
 	net::Server::Security level, const QSslCertificate &certificate,
 	bool isSelfSigned)
@@ -249,7 +243,6 @@ void NetStatus::hostDisconnecting()
 void NetStatus::hostDisconnected()
 {
 	m_address = QString();
-	m_roomcode = QString();
 	m_isLocalHost = false;
 	m_haveRemoteAddress = false;
 	m_joinPassword = QString();
@@ -399,10 +392,8 @@ void NetStatus::updateLabel()
 	case LoggedIn:
 		if(m_hideServer)
 			txt = tr("Connected");
-		else if(m_roomcode.isEmpty())
-			txt = tr("Host: %1").arg(fullAddress());
 		else
-			txt = tr("Room: %1").arg(m_roomcode);
+			txt = tr("Host: %1").arg(fullAddress());
 		break;
 	case Disconnecting:
 		txt = tr("Logging out...");

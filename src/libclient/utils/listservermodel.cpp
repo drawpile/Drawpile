@@ -40,18 +40,16 @@ QVariant ListServerModel::data(const QModelIndex &index, int role) const
 		switch(role) {
 		case Qt::DisplayRole: return srv.name;
 		case Qt::DecorationRole: return srv.icon;
-		case Qt::ToolTipRole: return QString("%1\n\n%2\n\nURL: %3\nRead-only: %4, public: %5, private: %6").arg(
+		case Qt::ToolTipRole: return QString("%1\n\n%2\n\nURL: %3\nRead-only: %4, public: %5").arg(
 			srv.name,
 			srv.description,
 			srv.url,
 			srv.readonly ? QStringLiteral("yes") : QStringLiteral("no"),
-			srv.publicListings ? QStringLiteral("yes") : QStringLiteral("no"),
-			srv.privateListings ? QStringLiteral("yes") : QStringLiteral("no")
+			srv.publicListings ? QStringLiteral("yes") : QStringLiteral("no")
 			);
 		case UrlRole: return srv.url;
 		case DescriptionRole: return srv.description;
 		case PublicListRole: return srv.publicListings;
-		case PrivateListRole: return srv.privateListings;
 		}
 	}
 	return QVariant();
@@ -90,7 +88,7 @@ bool ListServerModel::removeRows(int row, int count, const QModelIndex &parent)
 	return true;
 }
 
-bool ListServerModel::addServer(const QString &name, const QString &url, const QString &description, bool readonly, bool pub, bool priv)
+bool ListServerModel::addServer(const QString &name, const QString &url, const QString &description, bool readonly, bool pub)
 {
 	const ListServer lstSrv {
 			QIcon(),
@@ -100,7 +98,6 @@ bool ListServerModel::addServer(const QString &name, const QString &url, const Q
 			description,
 			readonly,
 			pub,
-			priv
 		};
 
 	// First check if a server with this URL already exists
@@ -205,7 +202,6 @@ QVector<ListServer> ListServerModel::listServers(const QVector<QVariantMap> &cfg
 			item.value("description").toString(),
 			item.value("readonly").toBool(),
 			item.value("public", true).toBool(),
-			item.value("private", true).toBool()
 		};
 
 		if(ls.readonly && !includeReadOnly)
@@ -240,7 +236,6 @@ QVector<QVariantMap> ListServerModel::saveServers() const
 			{ "icon", s.iconName },
 			{ "readonly", s.readonly },
 			{ "public", s.publicListings },
-			{ "private", s.privateListings }
 		});
 	}
 	return cfg;

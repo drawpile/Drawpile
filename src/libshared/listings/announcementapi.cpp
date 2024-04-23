@@ -142,9 +142,6 @@ static void readApiInfoReply(QNetworkReply *reply, AnnouncementApiResponse *res)
 		obj.value("favicon").toString(),
 		obj.value("read_only").toBool(),
 		obj.value("public").toBool(true),
-		// backward compatibility: private defaults to true only
-		// if the server is not a read only server.
-		obj.value("private").toBool(!obj.value("read_only").toBool())
 	};
 
 	if(info.version.isEmpty()) {
@@ -268,7 +265,6 @@ AnnouncementApiResponse *getSessionList(const QUrl &apiUrl)
 				obj["usernames"].toVariant().toStringList(),
 				obj["password"].toBool(),
 				obj["nsfm"].toBool(),
-				PrivacyMode::Public, // a listed session cannot be private by definition
 				obj["owner"].toString(),
 				started,
 				obj["maxusers"].toInt(),
@@ -304,9 +300,6 @@ AnnouncementApiResponse *announceSession(const QUrl &apiUrl, const Session &sess
 	o["password"] = session.password;
 	o["owner"] = session.owner;
 	o["nsfm"] = session.nsfm;
-	if(session.isPrivate == PrivacyMode::Private) {
-		o["private"] = true;
-	}
 	if(session.maxUsers > 0) {
 		o["maxusers"] = session.maxUsers;
 	}
@@ -342,10 +335,8 @@ AnnouncementApiResponse *announceSession(const QUrl &apiUrl, const Session &sess
 			apiUrl,
 			sessionId,
 			obj["key"].toString(),
-			obj["roomcode"].toString(),
 			obj["id"].toInt(),
 			qMax(2, obj["expires"].toInt(6)) - 1,
-			obj["private"].toBool()
 		};
 
 		res->setResult(QVariant::fromValue(a), doc.object()["message"].toString());
@@ -367,9 +358,6 @@ AnnouncementApiResponse *refreshSession(const Announcement &a, const Session &se
 	o["password"] = session.password;
 	o["owner"] = session.owner;
 	o["nsfm"] = session.nsfm;
-	if(session.isPrivate != PrivacyMode::Undefined) {
-		o["private"] = session.isPrivate == PrivacyMode::Private;
-	}
 	o["maxusers"] = session.maxUsers;
 	o["closed"] = session.closed;
 	o["allowweb"] = session.allowWeb;
@@ -423,9 +411,6 @@ AnnouncementApiResponse *refreshSessions(const QVector<QPair<Announcement, Sessi
 		o["password"] = listing.second.password;
 		o["owner"] = listing.second.owner;
 		o["nsfm"] = listing.second.nsfm;
-		if(listing.second.isPrivate != PrivacyMode::Undefined) {
-			o["private"] = listing.second.isPrivate == PrivacyMode::Private;
-		}
 		o["maxusers"] = listing.second.maxUsers;
 		o["closed"] = listing.second.closed;
 		o["allowweb"] = listing.second.allowWeb;
@@ -484,52 +469,6 @@ AnnouncementApiResponse *unlistSession(const Announcement &a)
 	reply->connect(reply, &QNetworkReply::finished, res, [a, res]() {
 		res->setResult(a.id);
 	});
-	reply->connect(reply, &QNetworkReply::finished, reply, &QObject::deleteLater);
-
-	return res;
-}
-
-AnnouncementApiResponse *queryRoomcode(const QUrl &apiUrl, const QString &roomcode)
-{
-	QUrl url = apiUrl;
-	url.setPath(slashcat(url.path(), QStringLiteral("join/") + roomcode));
-
-	QNetworkRequest req(url);
-	req.setHeader(QNetworkRequest::UserAgentHeader, user_agent());
-
-	AnnouncementApiResponse *res = new AnnouncementApiResponse(apiUrl);
-
-	QNetworkReply *reply = networkaccess::getInstance()->get(req);
-
-	reply->connect(reply, &QNetworkReply::finished, res, [reply, res]() {
-		auto r = readReply(reply, res->isCancelled());
-		if(IsApiError(r)) {
-			res->setError(ApiError(r), reply->error());
-			return;
-		}
-		const auto doc = ApiSuccess(r);
-		const QJsonObject obj = doc.object();
-		const Session session {
-			obj["host"].toString(),
-			obj["port"].toInt(),
-			obj["id"].toString(),
-			protocol::ProtocolVersion::current(),
-			QString(),
-			0,
-			QStringList(),
-			false,
-			false,
-			PrivacyMode::Undefined,
-			QString(),
-			QDateTime(),
-			0,
-			false,
-			-1,
-			false,
-		};
-		res->setResult(QVariant::fromValue(session));
-	});
-
 	reply->connect(reply, &QNetworkReply::finished, reply, &QObject::deleteLater);
 
 	return res;

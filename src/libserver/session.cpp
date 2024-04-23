@@ -75,7 +75,7 @@ Session::Session(
 		m_announcements, &sessionlisting::Announcements::announcementError,
 		this, &Session::onAnnouncementError);
 	for(const QString &announcement : m_history->announcements())
-		makeAnnouncement(QUrl(announcement), false);
+		makeAnnouncement(QUrl(announcement));
 }
 
 Session::~Session()
@@ -839,8 +839,6 @@ void Session::sendUpdatedAnnouncementList()
 		m_announcements->getAnnouncements(this)) {
 		announcements.append(QJsonObject{
 			{QStringLiteral("url"), a.apiUrl.toString()},
-			{QStringLiteral("roomcode"), a.roomcode},
-			{QStringLiteral("private"), a.isPrivate},
 		});
 	}
 	directToAll(net::ServerReply::makeSessionConf(
@@ -1330,13 +1328,10 @@ QStringList Session::userNames() const
 	return lst;
 }
 
-void Session::makeAnnouncement(const QUrl &url, bool privateListing)
+void Session::makeAnnouncement(const QUrl &url)
 {
 	Q_ASSERT(m_announcements);
-	m_announcements->announceSession(
-		this, url,
-		privateListing ? sessionlisting::PrivacyMode::Private
-					   : sessionlisting::PrivacyMode::Public);
+	m_announcements->announceSession(this, url);
 }
 
 void Session::unlistAnnouncement(const QUrl &url, bool terminate)
@@ -1365,7 +1360,6 @@ sessionlisting::Session Session::getSessionAnnouncement() const
 			: userNames(),
 		!m_history->passwordHash().isEmpty(),
 		m_history->hasFlag(SessionHistory::Nsfm),
-		sessionlisting::PrivacyMode::Undefined,
 		m_history->founderName(),
 		m_history->startTime(),
 		m_history->maxUsers(),
@@ -1560,8 +1554,7 @@ QJsonObject Session::getDescription(bool full) const
 			listings << QJsonObject{
 				{"id", a.listingId},
 				{"url", a.apiUrl.toString()},
-				{"roomcode", a.roomcode},
-				{"private", a.isPrivate}};
+			};
 		}
 		o["listings"] = listings;
 	}

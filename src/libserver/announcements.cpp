@@ -18,10 +18,9 @@ Announcements::Announcements(server::ServerConfig *config, QObject *parent)
 	m_timerId = startTimer(30 * 1000, Qt::VeryCoarseTimer);
 }
 
-void Announcements::announceSession(Announcable *session, const QUrl &listServer, PrivacyMode mode)
+void Announcements::announceSession(Announcable *session, const QUrl &listServer)
 {
 	Q_ASSERT(session);
-	Q_ASSERT(mode != PrivacyMode::Undefined);
 
 	if(!listServer.isValid() || !m_config->isAllowedAnnouncementUrl(listServer)) {
 		server::Log()
@@ -35,7 +34,6 @@ void Announcements::announceSession(Announcable *session, const QUrl &listServer
 	}
 
 	auto description = session->getSessionAnnouncement();
-	description.isPrivate = mode;
 
 	// Don't announce twice at the same server
 	if(findListing(listServer, session))
@@ -47,7 +45,7 @@ void Announcements::announceSession(Announcable *session, const QUrl &listServer
 		session,
 		Announcement {},
 		QElapsedTimer(),
-		PrivacyMode::Undefined,
+		false,
 		{},
 	};
 
@@ -100,7 +98,7 @@ void Announcements::announceSession(Announcable *session, const QUrl &listServer
 
 		listing->announcement = result.value<sessionlisting::Announcement>();
 		Q_ASSERT(listing->announcement.apiUrl == listing->listServer);
-		listing->mode = listing->announcement.isPrivate ? PrivacyMode::Private : PrivacyMode::Public;
+		listing->finishedListing = true;
 		listing->description = description;
 		listing->refreshTimer.start();
 
@@ -133,7 +131,7 @@ void Announcements::unlistSession(Announcable *session, const QUrl &listServer, 
 				.message("Unlisting from " + listing.listServer.toString())
 				.to(m_config->logger());
 
-			if(listing.mode != PrivacyMode::Undefined && delist) {
+			if(listing.finishedListing && delist) {
 				auto *response = sessionlisting::unlistSession(listing.announcement);
 				connect(response, &AnnouncementApiResponse::finished, response, &AnnouncementApiResponse::deleteLater);
 			}
@@ -179,7 +177,7 @@ void Announcements::refreshListings()
 
 	// Gather a list of announcements that need refreshing
 	for(Listing &listing : m_announcements) {
-		bool shouldRefresh = listing.mode != PrivacyMode::Undefined && (
+		bool shouldRefresh = listing.finishedListing && (
 			listing.refreshTimer.hasExpired(listing.announcement.refreshInterval * 60 * 1000) ||
 			listing.session->hasUrgentAnnouncementChange(listing.description) ||
 			refreshServer == listing.listServer);
@@ -202,7 +200,6 @@ void Announcements::refreshListings()
 			}
 
 			Session description = listing.session->getSessionAnnouncement();
-			description.isPrivate = listing.mode;
 
 			updates << QPair<Announcement, Session> {
 				listing.announcement,
@@ -294,7 +291,7 @@ QVector<Announcement> Announcements::getAnnouncements(const Announcable *session
 {
 	QVector<Announcement> list;
 	for(const auto &listing : m_announcements) {
-		if(listing.mode != PrivacyMode::Undefined && listing.session == session)
+		if(listing.finishedListing && listing.session == session)
 			list << listing.announcement;
 	}
 	return list;

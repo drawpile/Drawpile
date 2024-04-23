@@ -53,8 +53,6 @@ public slots:
 	void hostDisconnecting();
 	void hostDisconnected();
 
-	void setRoomcode(const QString &roomcode);
-
 	void bytesReceived(int count);
 	void bytesSent(int count);
 
@@ -95,7 +93,6 @@ private:
 	QLabel *m_label, *m_security;
 	PopupMessage *m_popup;
 	QString m_address;
-	QString m_roomcode;
 	int m_port;
 	QUrl m_sessionUrl;
 	QString m_joinPassword;

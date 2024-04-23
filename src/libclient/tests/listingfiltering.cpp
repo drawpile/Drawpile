@@ -89,7 +89,6 @@ private:
 			QStringList(),
 			password,
 			nsfm,
-			sessionlisting::PrivacyMode::Public,
 			QString(),
 			QDateTime(),
 			254,

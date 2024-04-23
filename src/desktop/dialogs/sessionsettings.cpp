@@ -213,31 +213,21 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		m_ui->authTrusted, &QCheckBox::clicked, this,
 		&SessionSettingsDialog::authListChangeTrusted);
 
-	// Set up announcements tab
-	m_ui->announcementTableView->setModel(doc->announcementList());
-	QHeaderView *announcementHeader =
-		m_ui->announcementTableView->horizontalHeader();
-	announcementHeader->setSectionResizeMode(0, QHeaderView::Stretch);
+	m_ui->announcementListView->setModel(doc->announcementList());
 
 	QMenu *addAnnouncementMenu = new QMenu(this);
-	QMenu *addPrivateAnnouncementMenu = new QMenu(this);
 
 	m_ui->addAnnouncement->setMenu(addAnnouncementMenu);
-	m_ui->addPrivateAnnouncement->setMenu(addPrivateAnnouncementMenu);
 
 	connect(addAnnouncementMenu, &QMenu::triggered, [this](QAction *a) {
 		const QString apiUrl = a->property("API_URL").toString();
 		qDebug() << "Requesting public announcement:" << apiUrl;
-		m_doc->sendAnnounce(apiUrl, false);
-	});
-	connect(addPrivateAnnouncementMenu, &QMenu::triggered, [this](QAction *a) {
-		const QString apiUrl = a->property("API_URL").toString();
-		qDebug() << "Requesting private announcement:" << apiUrl;
-		m_doc->sendAnnounce(apiUrl, true);
+		m_doc->sendAnnounce(apiUrl);
 	});
 
 	connect(m_ui->removeAnnouncement, &QPushButton::clicked, [this]() {
-		auto sel = m_ui->announcementTableView->selectionModel()->selection();
+		QItemSelection sel =
+			m_ui->announcementListView->selectionModel()->selection();
 		QString apiUrl;
 		if(!sel.isEmpty())
 			apiUrl =
@@ -276,10 +266,8 @@ void SessionSettingsDialog::reloadSettings()
 	const auto listservers = sessionlisting::ListServerModel::listServers(
 		dpApp().settings().listServers(), false);
 	auto *addAnnouncementMenu = m_ui->addAnnouncement->menu();
-	auto *addPrivateAnnouncementMenu = m_ui->addPrivateAnnouncement->menu();
 
 	addAnnouncementMenu->clear();
-	addPrivateAnnouncementMenu->clear();
 
 	for(const auto &listserver : listservers) {
 		if(listserver.publicListings) {
@@ -287,17 +275,9 @@ void SessionSettingsDialog::reloadSettings()
 				listserver.icon, listserver.name);
 			a->setProperty("API_URL", listserver.url);
 		}
-
-		if(listserver.privateListings) {
-			QAction *a2 = addPrivateAnnouncementMenu->addAction(
-				listserver.icon, listserver.name);
-			a2->setProperty("API_URL", listserver.url);
-		}
 	}
 
 	m_ui->addAnnouncement->setEnabled(!addAnnouncementMenu->isEmpty());
-	m_ui->addPrivateAnnouncement->setEnabled(
-		!addPrivateAnnouncementMenu->isEmpty());
 }
 
 void SessionSettingsDialog::setPersistenceEnabled(bool enable)

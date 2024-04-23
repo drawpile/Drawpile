@@ -105,8 +105,6 @@ SessionPage::SessionPage(Server *server, const QString &id, QWidget *parent)
 	d->announcementlist = new JsonListModel({
 			{"id", tr("ID")},
 			{"url", tr("URL")},
-			{"roomcode", tr("Room code")},
-			{"private", tr("Private")},
 		}, this
 	);
 

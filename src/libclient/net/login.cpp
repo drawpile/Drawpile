@@ -887,7 +887,7 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 
 			if(!m_announceUrl.isEmpty())
 				m_server->sendMessage(
-					ServerCommand::makeAnnounce(m_announceUrl, false));
+					ServerCommand::makeAnnounce(m_announceUrl));
 
 			// Upload initial session content
 			if(m_mode == Mode::HostRemote) {
