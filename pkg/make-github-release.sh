@@ -83,9 +83,11 @@ if [[ $error -ne 0 ]]; then
 fi
 
 if [[ $CLOBBER_EXISTING == 'true' ]]; then
+    set -x
     gh release delete \
         --repo "$GIT_REPO_SLUG" --cleanup-tag --yes "$RELEASE_NAME" \
         || true
+    set +x
 fi
 
 if [[ $PRERELEASE == 'true' ]]; then
@@ -94,6 +96,7 @@ else
     prerelease_arg=
 fi
 
+set -x
 gh release create \
     --repo "$GIT_REPO_SLUG" \
     --target "$TARGET_COMMIT" \
@@ -101,3 +104,4 @@ gh release create \
     --notes "$release_description" \
     $prerelease_arg \
     "$RELEASE_NAME" "${assets[@]}"
+set +x
