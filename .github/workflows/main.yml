@@ -25,7 +25,7 @@ jobs:
       # - Android arm32 APK
       # - Android arm64 APK
       # - Linux x64 AppImage
-      # - macOS x64 Disk Image
+      # - macOS x64 Disk Image (broken currently, see #1300)
       # - Windows x64 Installer and ZIP including only the client
       # - Windows x64 ZIP including server and command-line tools
       # - Windows x86 Installer and ZIP including only the client
@@ -41,7 +41,6 @@ jobs:
       matrix:
         os:
           - ubuntu-20.04
-          - macos-13
           - windows-latest
         qt:
           - 5.15.8
@@ -58,12 +57,6 @@ jobs:
         exclude:
           - os: windows-latest
             cross_os: Android
-          - os: macos-13
-            cross_os: Android
-          - os: macos-13
-            bits: 32
-          - os: macos-13
-            component: 'Tools'
           - os: ubuntu-20.04
             cross_os: ''
             bits: 32
