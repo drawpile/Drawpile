@@ -20,8 +20,8 @@ set(KARCHIVE "v5.105.0" CACHE STRING
 option(KEEP_ARCHIVES "Keep downloaded archives instead of deleting them" OFF)
 option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
 option(KEEP_BINARY_DIRS "Keep build directories instead of deleting them" OFF)
-set(TARGET_BITS "64" CACHE STRING
-	"Platform bits (32 or 64, only relevant on Windows)")
+set(TARGET_ARCH "x86_64" CACHE STRING
+	"Target architecture (x86, x86_64, arm32, arm64)")
 
 # Hack to get Qt version, since its `find_package` code does not support script
 # mode and this information is needed to set up QtKeychain and the macOS version
@@ -68,7 +68,7 @@ endif()
 if(WIN32 AND ZLIB)
 	build_dependency(zlib ${ZLIB} ${BUILD_TYPE}
 		URL https://github.com/madler/zlib/releases/download/v@version@/zlib-@version@.tar.xz
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		VERSIONS
 			1.2.13
 			SHA384=57f9fd368500c413cf5fafd5ffddf150651a43de580051d659fab0fcacbf1fb63f4954851895148e530afa3b75d48433
@@ -85,7 +85,7 @@ if(LIBMICROHTTPD)
 
 	build_dependency(libmicrohttpd ${LIBMICROHTTPD} ${BUILD_TYPE}
 		URL https://ftpmirror.gnu.org/libmicrohttpd/libmicrohttpd-@version@.tar.gz
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		VERSIONS
 			0.9.75
 			SHA384=5a853f06d5f82c1e708c4d19758ffb77f5d1efd8431133cc956118aa49ce9b1d5b57ca468d9098127a81ed42582a97ec
@@ -109,7 +109,7 @@ endif()
 if(LIBSODIUM)
 	build_dependency(libsodium ${LIBSODIUM} ${BUILD_TYPE}
 		URL https://download.libsodium.org/libsodium/releases/libsodium-@version@.tar.gz
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		VERSIONS
 			1.0.18
 			SHA384=1dd0171eb6aa3444f4c7aeb35dc57871f151a2e66da13a487a5cd97f2d9d5e280b995b90de53b12b174f7f649d9acd0d
@@ -120,7 +120,7 @@ if(LIBSODIUM)
 				STATIC StaticRelease
 				DEBUG_SHARED DynDebug
 				DEBUG_STATIC StaticDebug
-				TARGET_BITS "${TARGET_BITS}"
+				TARGET_ARCH "${TARGET_ARCH}"
 				INCLUDES src/libsodium/include/sodium.h src/libsodium/include/sodium
 		UNIX AUTOMAKE
 	)
@@ -129,7 +129,7 @@ endif()
 if(QTKEYCHAIN)
 	build_dependency(qtkeychain ${QTKEYCHAIN} ${BUILD_TYPE}
 		URL https://github.com/frankosterfeld/qtkeychain/archive/@version@.tar.gz
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		VERSIONS
 			c6f0b66318f8da6917fb4681103f7303b1836194
 			SHA384=4dd6c985f0b8e2ad0a4e01cade0c230d8924ea564965098e5fa5a246ac5166ae0d9524516e2f19981af9f975955c563a
@@ -144,7 +144,7 @@ endif()
 if(LIBZIP AND BUILD_WITH_QT6)
 	build_dependency(libzip ${LIBZIP} ${BUILD_TYPE}
 		URL https://libzip.org/download/libzip-@version@.tar.xz
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		VERSIONS
 			1.9.2
 			SHA384=3fae34c63ac4e40d696bf5b95ff25d38c572c9e01f71350f065902f371c93db14fdee727d0179421f03b67c129d0f567
@@ -174,7 +174,7 @@ if(KARCHIVE AND NOT BUILD_WITH_QT6)
 	# so we don't need to provide separate arguments for these.
 	build_dependency(extra-cmake-modules ${KARCHIVE} ${BUILD_TYPE}
 		URL https://invent.kde.org/frameworks/extra-cmake-modules/-/archive/@version@/extra-cmake-modules-@version@.tar.gz
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		VERSIONS
 			v5.105.0
 			SHA384=e7f6cdee1f388d44024fc20ef663562a0ab2e0851745003c83b437aa620d0f808dea7ddb60fbf1e33161a83f08815a9c
@@ -186,7 +186,7 @@ if(KARCHIVE AND NOT BUILD_WITH_QT6)
 	)
 	build_dependency(karchive ${KARCHIVE} ${BUILD_TYPE}
 		URL https://invent.kde.org/frameworks/karchive/-/archive/@version@/karchive-@version@.tar.gz
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		VERSIONS
 			v5.105.0
 			SHA384=51b17b9f8d75927c6a9708c705eaef1611c3b76f157bf04f550af8ff82bf02d55e46f03b4add369751d7ef0b51086eb7

@@ -38,8 +38,8 @@ option(WEBSOCKETS "Build qtwebsockets" "${WEBSOCKETS_DEFAULT}")
 option(KEEP_ARCHIVES "Keep downloaded archives instead of deleting them" OFF)
 option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
 option(KEEP_BINARY_DIRS "Keep build directories instead of deleting them" OFF)
-set(TARGET_BITS "64" CACHE STRING
-	"Platform bits (32 or 64, only relevant on Windows)")
+set(TARGET_ARCH "x86_64" CACHE STRING
+	"Target architecture (x86, x86_64, arm32, arm64)")
 
 if(NOT QT_VERSION)
 	message(FATAL_ERROR "-DQT_VERSION is required")
@@ -211,7 +211,7 @@ set(URL https://download.qt.io/archive/qt/@version_major@/@version@/submodules/@
 if(OPENSSL)
 	build_dependency(openssl ${OPENSSL} ${BUILD_TYPE}
 		URL "https://www.openssl.org/source/openssl-@version@.tar.gz"
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "openssl-@version@"
 		VERSIONS
 			1.1.1t
@@ -230,7 +230,7 @@ endif()
 if(BASE)
 	build_dependency(qtbase ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
 			5.15.8
@@ -288,7 +288,7 @@ endif()
 if(SVG)
 	build_dependency(qtsvg ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
 			5.15.8
@@ -307,7 +307,7 @@ endif()
 if(IMAGEFORMATS)
 	build_dependency(qtimageformats ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
 			5.15.8
@@ -332,7 +332,7 @@ endif()
 if(SHADERTOOLS OR (QT_VERSION VERSION_GREATER_EQUAL 6 AND MULTIMEDIA))
 	build_dependency(qtshadertools ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
 			6.3.2
@@ -349,7 +349,7 @@ endif()
 if(MULTIMEDIA)
 	build_dependency(qtmultimedia ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
 			5.15.8
@@ -370,7 +370,7 @@ if(TOOLS)
 	# Required translations dependency
 	build_dependency(qttools ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
 			5.15.8
@@ -402,7 +402,7 @@ endif()
 if(ANDROID_EXTRAS)
 	build_dependency(qtandroidextras ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
 			5.15.8
@@ -415,7 +415,7 @@ endif()
 if(TRANSLATIONS)
 	build_dependency(qttranslations ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
 			5.15.8
@@ -434,7 +434,7 @@ endif()
 if(WEBSOCKETS)
 	build_dependency(qtwebsockets ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
-		TARGET_BITS "${TARGET_BITS}"
+		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
 			5.15.8

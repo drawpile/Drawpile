@@ -16,9 +16,9 @@ inputs:
       sub-tree within this path.
     default: .github/deps
     type: string
-  target_bits:
+  target_arch:
     description: >
-      Bits of the target platform, 32 or 64.
+      Architecture of the target platform, one of x86, x86_64, arm32 or arm64.
     type: string
 
   qt_pre_build:
@@ -85,7 +85,7 @@ runs:
           -DBUILD_TYPE=Release
           "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/${{ inputs.path }}/qt"
           "-DQT_VERSION=${{ inputs.qt }}"
-          "-DTARGET_BITS=${{ inputs.target_bits }}"
+          "-DTARGET_ARCH=${{ inputs.target_arch }}"
           ${{ inputs.qt_args }}
           -P .github/scripts/build-qt.cmake
 
@@ -105,6 +105,6 @@ runs:
           "-DLIBZIP=${{ inputs.libzip }}"
           "-DCMAKE_PREFIX_PATH=${{ github.workspace }}/${{ inputs.path }}/qt"
           "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/${{ inputs.path }}/other"
-          "-DTARGET_BITS=${{ inputs.target_bits }}"
+          "-DTARGET_ARCH=${{ inputs.target_arch }}"
           ${{ inputs.other_args }}
           -P .github/scripts/build-other.cmake

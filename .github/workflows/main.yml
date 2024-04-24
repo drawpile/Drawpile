@@ -17,17 +17,18 @@ env:
 
 jobs:
   test:
-    name: ${{ matrix.cross_os || matrix.os }} ${{ matrix.bits }}bit${{ matrix.component && format(' {0}', matrix.component) }} Qt ${{ matrix.qt }}${{ matrix.cross_os && format(' on {0}', matrix.os) }}
+    name: ${{ matrix.cross_os || matrix.os }} ${{ matrix.arch }}${{ matrix.component && format(' {0}', matrix.component) }} Qt ${{ matrix.qt }}${{ matrix.cross_os && format(' on {0}', matrix.os) }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       # We want to build the following:
       # - Android arm32 APK
       # - Android arm64 APK
-      # - Linux x64 AppImage
-      # - macOS x64 Disk Image (broken currently, see #1300)
-      # - Windows x64 Installer and ZIP including only the client
-      # - Windows x64 ZIP including server and command-line tools
+      # - Linux x86_64 AppImage
+      # - macOS x86_64 Disk Image
+      # - macOS arm64 Disk Image
+      # - Windows x86_64 Installer and ZIP including only the client
+      # - Windows x86_64 ZIP including server and command-line tools
       # - Windows x86 Installer and ZIP including only the client
       # Android targets are cross-compiled from Linux. We use the oldest Ubuntu
       # version available for compatibility reasons, since glibc is not included
@@ -39,42 +40,16 @@ jobs:
       # client releases dependent on them getting around to that when it's only
       # a secondary executable that's causing it.
       matrix:
-        os:
-          - ubuntu-20.04
-          - windows-latest
-        qt:
-          - 5.15.8
-        bits:
-          - 64
-          - 32
-        component:
-          - ''
-          - 'Tools'
-        cross_os:
-          - ''
-          - Android
-
-        exclude:
-          - os: windows-latest
-            cross_os: Android
-          - os: ubuntu-20.04
-            cross_os: ''
-            bits: 32
-          - os: ubuntu-20.04
-            component: 'Tools'
-          - os: windows-latest
-            bits: 32
-            component: 'Tools'
-
         # There's ways to deduplicate these includes, but any mistake causes
         # utterly confounding errors, so just explicitly specify each target.
         include:
           - os: ubuntu-20.04
             cross_os: ''
+            component: ''
             qt: 5.15.8
-            bits: 64
+            arch: x86_64
             sccache_triplet: x86_64-unknown-linux-musl
-            build_flags: -DINITSYS=systemd
+            build_flags: -DINITSYS=systemd -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
             # This causes the AppImage to be generated, instead of just creating
             # the portable tree, because there seems to be no way to separate
             # these steps with linuxdeploy
@@ -113,8 +88,9 @@ jobs:
 
           - os: ubuntu-20.04
             cross_os: Android
+            component: ''
             qt: 5.15.8
-            bits: 64
+            arch: arm64
             sccache_triplet: x86_64-unknown-linux-musl
             packager: cmake --install build --config Release --prefix .
             cross_qt_args: >-
@@ -161,8 +137,9 @@ jobs:
 
           - os: ubuntu-20.04
             cross_os: Android
+            component: ''
             qt: 5.15.8
-            bits: 32
+            arch: arm32
             sccache_triplet: x86_64-unknown-linux-musl
             packager: cmake --install build --config Release --prefix .
             cross_qt_args: >-
@@ -207,11 +184,51 @@ jobs:
               sudo apt-get install --no-install-recommends
               libsecret-1-dev
 
+          - os: macos-13
+            cross_os: ''
+            component: ''
+            qt: 6.6.3
+            arch: x86_64
+            build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
+            sccache_triplet: x86_64-apple-darwin
+            packager: cpack --verbose --config build/CPackConfig.cmake -C Release
+
+          - os: macos-14
+            cross_os: ''
+            component: ''
+            qt: 6.6.3
+            arch: arm64
+            build_flags: -DBUILD_PACKAGE_SUFFIX=arm64 -G Ninja
+            sccache_triplet: aarch64-apple-darwin
+            packager: cpack --verbose --config build/CPackConfig.cmake -C Release
+
           - os: windows-latest
+            cross_os: ''
+            component: ''
             qt: 5.15.8
-            bits: 64
+            arch: x86_64
             sccache_triplet: x86_64-pc-windows-msvc
-            build_flags: -DBUILD_PACKAGE_SUFFIX=64bit -G Ninja
+            build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
+            qt_pre_build: >
+              choco install gperf jom winflexbison3 &&
+              New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
+              New-Item -Path C:\ProgramData\Chocolatey\bin\bison.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_bison.exe
+            # Copying files is a disgusting hack because windeployqt does not
+            # search PATH to find DLLs and it gets confused by QtKeychain having
+            # a Qt prefix and thinks it is part of Qt and tries to process it
+            # and fails if it is not in the Qt bin directory with the rest of
+            # them
+            packager: >
+              cp .github/deps/other/bin/qt*.dll .github/deps/qt/bin &&
+              cpack --verbose --config build/CPackConfig.cmake -C Release
+
+          - os: windows-latest
+            cross_os: ''
+            component: 'Tools'
+            qt: 5.15.8
+            arch: x86_64
+            sccache_triplet: x86_64-pc-windows-msvc
+            build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
             qt_pre_build: >
               choco install gperf jom winflexbison3 &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
@@ -227,9 +244,9 @@ jobs:
 
           - os: windows-latest
             qt: 5.15.8
-            bits: 32
+            arch: x86
             sccache_triplet: x86_64-pc-windows-msvc
-            build_flags: -DCARGO_TRIPLE=i686-pc-windows-msvc -DBUILD_PACKAGE_SUFFIX=32bit -G Ninja
+            build_flags: -DCARGO_TRIPLE=i686-pc-windows-msvc -DBUILD_PACKAGE_SUFFIX=x86 -G Ninja
             qt_pre_build: >
               choco install gperf jom winflexbison3 &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
@@ -242,6 +259,7 @@ jobs:
             packager: >
               cp .github/deps/other/bin/qt*.dll .github/deps/qt/bin &&
               cpack --verbose --config build/CPackConfig.cmake -C Release
+
 
     steps:
       - name: Check out code
@@ -250,22 +268,27 @@ jobs:
           fetch-depth: 0 # for git-describe
           submodules: true
 
+      - name: Install Ninja on macOS
+        run: |
+          brew install ninja
+        if: runner.os == 'macOS'
+
       - name: Activate MSVC
         uses: ilammy/msvc-dev-cmd@v1
         with:
-          arch: win${{ matrix.bits }}
+          arch: win${{ matrix.arch == 'x86_64' && '64' || '32' }}
         if: runner.os == 'Windows'
 
       - name: Install NASM for building OpenSSL in Windows
         uses: ilammy/setup-nasm@v1
         with:
-          platform: win${{ matrix.bits }}
+          platform: win${{ matrix.arch == 'x86_64' && '64' || '32' }}
         if: runner.os == 'Windows'
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
         with:
-          msbuild-architecture: x${{ matrix.bits }}
+          msbuild-architecture: x${{ matrix.arch == 'x86_64' && '64' || '32' }}
         if: runner.os == 'Windows'
 
       - name: Work around QTBUG-112465
@@ -284,9 +307,9 @@ jobs:
         uses: ./.github/actions/build-deps
         id: deps
         with:
-          cache_key: ${{ runner.os }}${{ matrix.bits == 32 && '32' || '' }}
+          cache_key: ${{ runner.os }}-${{ matrix.arch }}
           path: .github/deps
-          target_bits: "${{ matrix.bits }}"
+          target_arch: "${{ matrix.arch }}"
           qt: ${{ matrix.qt }}
           qt_pre_build: ${{ matrix.qt_pre_build }}
           qt_args: ${{ matrix.qt_args }}
@@ -298,9 +321,9 @@ jobs:
         uses: ./.github/actions/build-deps
         id: cross-deps
         with:
-          cache_key: ${{ runner.os }}+${{ matrix.cross_os }}${{ matrix.bits == 32 && '32' || '' }}
+          cache_key: ${{ runner.os }}+${{ matrix.cross_os }}-${{ matrix.arch }}
           path: .github/cross-deps
-          target_bits: "${{ matrix.bits }}"
+          target_arch: "${{ matrix.arch }}"
           qt: ${{ matrix.qt }}
           qt_pre_build: ${{ matrix.cross_qt_pre_build }}
           qt_args: ${{ matrix.cross_qt_args }}
@@ -313,7 +336,7 @@ jobs:
         id: sccache
         with:
           triplet: ${{ matrix.sccache_triplet }}
-          cache_key: ${{ runner.os }}${{ matrix.component }}${{ matrix.bits == 32 && '32' || '' }}${{ matrix.cross_os && format('+{0}', matrix.cross_os) }}-${{ matrix.qt }}
+          cache_key: ${{ runner.os }}${{ matrix.component }}-${{ matrix.arch }}${{ matrix.cross_os && format('+{0}', matrix.cross_os) }}-${{ matrix.qt }}
 
       - name: Cache gradle
         uses: actions/cache@v4
@@ -323,18 +346,18 @@ jobs:
           path: |-
             ~/.gradle/wrapper/dists/gradle-*/*/gradle-*
             !~/.gradle/wrapper/dists/gradle-*/*/gradle-*.zip
-          key: gradle-${{ runner.os }}${{ matrix.bits == 32 && '32' || '' }}+${{ matrix.cross_os }}-${{ matrix.qt }}
+          key: gradle-${{ runner.os }}-${{ matrix.arch }}+${{ matrix.cross_os }}-${{ matrix.qt }}
         if: matrix.cross_os == 'Android'
 
       - name: Install Android 64 bit Rust target
         run: >
           rustup target add aarch64-linux-android
-        if: matrix.cross_os == 'Android' && matrix.bits == 64
+        if: matrix.cross_os == 'Android' && matrix.arch == 'arm64'
 
       - name: Install Android 32 bit Rust target
         run: >
           rustup target add armv7-linux-androideabi
-        if: matrix.cross_os == 'Android' && matrix.bits == 32
+        if: matrix.cross_os == 'Android' && matrix.arch == 'arm32'
 
       - name: Prepare Windows signing
         run: |
@@ -420,7 +443,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: matrix.packager
         with:
-          name: Drawpile${{ matrix.component && format('-{0}', matrix.component) }}-${{ matrix.cross_os || runner.os }}-${{ matrix.bits }}bit-Qt${{ matrix.qt }}
+          name: Drawpile${{ matrix.component && format('-{0}', matrix.component) }}-${{ matrix.cross_os || runner.os }}-${{ matrix.arch }}-Qt${{ matrix.qt }}
           path: |
             Drawpile-*.AppImage
             Drawpile-*.apk
@@ -432,7 +455,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: Logs${{ matrix.component && format('-{0}', matrix.component) }}-${{ matrix.cross_os || runner.os }}-${{ matrix.bits }}bit-Qt${{ matrix.qt }}
+          name: Logs${{ matrix.component && format('-{0}', matrix.component) }}-${{ matrix.cross_os || runner.os }}-${{ matrix.arch }}-Qt${{ matrix.qt }}
           path: |
             **/*.log
             **/*.wxs
@@ -500,11 +523,13 @@ jobs:
           PRERELEASE: ${{ !startsWith(github.ref, 'refs/tags/') || contains(github.ref, '-') }}
         run: |
           checkout/pkg/make-github-release.sh \
-            'Drawpile-Android-64bit-Qt5.15.8;Drawpile-*.apk;Android APK 64bit' \
-            'Drawpile-Linux-64bit-Qt5.15.8;Drawpile-*.AppImage;Linux AppImage 64bit' \
-            'Drawpile-Windows-64bit-Qt5.15.8;Drawpile-*.msi;Windows Installer 64bit' \
-            'Drawpile-Windows-64bit-Qt5.15.8;Drawpile-*.zip;Windows Portable ZIP 64bit' \
-            'Drawpile-Tools-Windows-64bit-Qt5.15.8;Drawpile-*.zip;Windows Server and Tools Portable ZIP 64bit - does not include Drawpile' \
-            'Drawpile-Android-32bit-Qt5.15.8;Drawpile-*.apk;Android APK 32bit - do not use, you want 64bit' \
-            'Drawpile-Windows-32bit-Qt5.15.8;Drawpile-*.msi;Windows Installer 32bit - do not use, you want 64bit' \
-            'Drawpile-Windows-32bit-Qt5.15.8;Drawpile-*.zip;Windows Portable ZIP 32bit - do not use, you want 64bit'
+            'Drawpile-Android-arm64-Qt5.15.8;Drawpile-*.apk;Android APK 64bit' \
+            'Drawpile-Linux-x86_64-Qt5.15.8;Drawpile-*.AppImage;Linux AppImage 64bit' \
+            'Drawpile-macOS-x86_64-Qt6.6.3;Drawpile-*.dmg;macOS Disk Image for Intel' \
+            'Drawpile-macOS-arm64-Qt6.6.3;Drawpile-*.dmg;macOS Disk Image for Apple Silicon' \
+            'Drawpile-Windows-x86_64-Qt5.15.8;Drawpile-*.msi;Windows Installer 64bit' \
+            'Drawpile-Windows-x86_64-Qt5.15.8;Drawpile-*.zip;Windows Portable ZIP 64bit' \
+            'Drawpile-Tools-Windows-x86_64-Qt5.15.8;Drawpile-*.zip;Windows Server and Tools Portable ZIP 64bit - does not include Drawpile' \
+            'Drawpile-Android-arm32-Qt5.15.8;Drawpile-*.apk;Android APK 32bit - do not use, you want 64bit' \
+            'Drawpile-Windows-x86-Qt5.15.8;Drawpile-*.msi;Windows Installer 32bit - do not use, you want 64bit' \
+            'Drawpile-Windows-x86-Qt5.15.8;Drawpile-*.zip;Windows Portable ZIP 32bit - do not use, you want 64bit'

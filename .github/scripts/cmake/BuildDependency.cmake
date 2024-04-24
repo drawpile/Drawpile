@@ -41,16 +41,16 @@ endif()
 
 # ExternalProject, except useful!
 function(build_dependency name version build_type)
-	set(oneValueArgs URL SOURCE_DIR TARGET_BITS)
+	set(oneValueArgs URL SOURCE_DIR TARGET_ARCH)
 	set(multiValueArgs VERSIONS PATCHES ALL_PLATFORMS UNIX WIN32)
 	cmake_parse_arguments(PARSE_ARGV 3 ARG "" "${oneValueArgs}" "${multiValueArgs}")
 
-	if(ARG_TARGET_BITS STREQUAL "32")
+	if(ARG_TARGET_ARCH STREQUAL "x86" OR ARG_TARGET_ARCH STREQUAL "arm32")
 		set(BUILD_TARGET_BITS 32)
-	elseif(ARG_TARGET_BITS STREQUAL "64")
+	elseif(ARG_TARGET_ARCH STREQUAL "x86_64" OR ARG_TARGET_ARCH STREQUAL "arm64")
 		set(BUILD_TARGET_BITS 64)
 	else()
-		message(FATAL_ERROR "Invalid TARGET_BITS '${ARG_TARGET_BITS}'")
+		message(FATAL_ERROR "Invalid TARGET_ARCH '${ARG_TARGET_ARCH}'")
 	endif()
 
 	if(ARG_ALL_PLATFORMS)
