@@ -29,9 +29,31 @@ Welcome::Welcome(QWidget *parent)
 
 void Welcome::activate()
 {
+#ifndef __EMSCRIPTEN__
 	dpApp().settings().setWelcomePageShown(true);
+#endif
 	emit showButtons();
 }
+
+#ifdef __EMSCRIPTEN__
+
+void Welcome::showStandaloneWarningText()
+{
+	m_browser->setText(
+		QStringLiteral("<h1>%1</h1>"
+					   "<p style=\"font-size:large;\">%2</p>"
+					   "<p style=\"font-size:large;\">%3</p>")
+			.arg(
+				tr("Standalone Mode"),
+				tr("You are running the web browser version of Drawpile in "
+				   "standalone mode. It will <strong>not</strong> "
+				   "automatically save what you draw. If it crashes, you close "
+				   "the tab or your browser decides to unload the page, "
+				   "<strong>you will lose your work</strong>."),
+				tr("Use at your own peril. Save often.")));
+}
+
+#else
 
 void Welcome::showFirstStartText()
 {
@@ -67,6 +89,8 @@ void Welcome::setNews(const QString &content)
 			"<table><tr><td style=\"padding:4px;\">%1</td></tr></table>")
 			.arg(content));
 }
+
+#endif
 
 void Welcome::linkClicked(const QUrl &url)
 {

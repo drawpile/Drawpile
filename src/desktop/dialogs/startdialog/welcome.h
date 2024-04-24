@@ -17,10 +17,16 @@ public:
 	Welcome(QWidget *parent = nullptr);
 	void activate() override;
 
+#ifdef __EMSCRIPTEN__
+	void showStandaloneWarningText();
+#else
 	void showFirstStartText();
+#endif
 
 public slots:
+#ifndef __EMSCRIPTEN__
 	void setNews(const QString &content);
+#endif
 
 signals:
 	void showButtons();

@@ -61,6 +61,10 @@ import { UAParser } from "ua-parser-js";
     return false;
   }
 
+  function isStandalone(params) {
+    return isTrueParam(params.get("standalone"));
+  }
+
   function looksLikeLocalhost(host) {
     return /^(localhost|127\.0\.0\.1|::1)(:|$)/i.test(host);
   }
@@ -423,8 +427,11 @@ import { UAParser } from "ua-parser-js";
         entryFunction: window.createQtAppInstance,
         containerElements: [screen],
       },
-      arguments: ["--single-session", "--join", getUrlArgument(params)],
     };
+
+    if(!isStandalone(params)) {
+      config.arguments = ["--single-session", "--join", getUrlArgument(params)];
+    }
 
     config.qt.onLoaded = () => {
       showScreen();
@@ -619,7 +626,12 @@ import { UAParser } from "ua-parser-js";
   }
 
   function checkHost() {
-    const host = getUrlHost(getQueryParams()).toLowerCase();
+    const params = getQueryParams();
+    if(isStandalone(params)) {
+      return true;
+    }
+
+    const host = getUrlHost(params).toLowerCase();
     const invalid =
       host === "" ||
       host === "drawpile.net" ||

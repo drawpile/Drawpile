@@ -158,7 +158,9 @@ public slots:
 	void reconnect();
 	void browse();
 	void leave();
+#ifndef __EMSCRIPTEN__
 	void checkForUpdates();
+#endif
 
 	void toggleFullscreen();
 	void setShowAnnotations(bool show);

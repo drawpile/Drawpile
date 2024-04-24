@@ -180,8 +180,6 @@ target_sources(dpclient PRIVATE
 	utils/listservermodel.h
 	utils/logging.cpp
 	utils/logging.h
-	utils/news.cpp
-	utils/news.h
 	utils/sessionfilterproxymodel.cpp
 	utils/sessionfilterproxymodel.h
 	utils/sessionidvalidator.cpp
@@ -211,6 +209,8 @@ endif()
 
 if(EMSCRIPTEN)
 	target_sources(dpclient PRIVATE wasmsupport.cpp wasmsupport.h)
+else()
+	target_sources(dpclient PRIVATE utils/news.cpp utils/news.h)
 endif()
 
 if(HAVE_TCPSOCKETS)

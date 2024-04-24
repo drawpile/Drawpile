@@ -2308,12 +2308,14 @@ void MainWindow::leave()
 	leavebox->show();
 }
 
+#ifndef __EMSCRIPTEN__
 void MainWindow::checkForUpdates()
 {
 	dialogs::StartDialog *dlg = showStartDialog();
 	dlg->showPage(dialogs::StartDialog::Entry::Welcome);
 	dlg->checkForUpdates();
 }
+#endif
 
 void MainWindow::reportAbuse()
 {
@@ -4568,14 +4570,18 @@ void MainWindow::setupActions()
 	QAction *showlogfile = makeAction("showlogfile", tr("Log File")).noDefaultShortcut();
 	QAction *about = makeAction("dpabout", tr("&About Drawpile")).menuRole(QAction::AboutRole).noDefaultShortcut();
 	QAction *aboutqt = makeAction("aboutqt", tr("About &Qt")).menuRole(QAction::AboutQtRole).noDefaultShortcut();
+#ifndef __EMSCRIPTEN__
 	QAction *versioncheck = makeAction("versioncheck", tr("Check For Updates")).noDefaultShortcut();
+#endif
 
 	connect(homepage, &QAction::triggered, &MainWindow::homepage);
 	connect(about, &QAction::triggered, &MainWindow::about);
 	connect(aboutqt, &QAction::triggered, &QApplication::aboutQt);
 
+#ifndef __EMSCRIPTEN__
 	connect(
 		versioncheck, &QAction::triggered, this, &MainWindow::checkForUpdates);
+#endif
 
 	connect(tablettester, &QAction::triggered, []() {
 		dialogs::TabletTestDialog *ttd=nullptr;
@@ -4655,7 +4661,9 @@ void MainWindow::setupActions()
 	helpmenu->addAction(about);
 	helpmenu->addAction(aboutqt);
 	helpmenu->addSeparator();
+#ifndef __EMSCRIPTEN__
 	helpmenu->addAction(versioncheck);
+#endif
 
 	// Brush slot shortcuts
 
@@ -4742,7 +4750,6 @@ void MainWindow::setupActions()
 		singleGroup->addAction(importOldAnimation);
 		singleGroup->addAction(host);
 		singleGroup->addAction(browse);
-		singleGroup->addAction(versioncheck);
 	}
 
 	updateInterfaceModeActions();
