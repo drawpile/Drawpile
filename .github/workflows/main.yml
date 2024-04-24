@@ -41,7 +41,7 @@ jobs:
       matrix:
         os:
           - ubuntu-20.04
-          - macos-latest
+          - macos-13
           - windows-latest
         qt:
           - 5.15.8
@@ -58,11 +58,11 @@ jobs:
         exclude:
           - os: windows-latest
             cross_os: Android
-          - os: macos-latest
+          - os: macos-13
             cross_os: Android
-          - os: macos-latest
+          - os: macos-13
             bits: 32
-          - os: macos-latest
+          - os: macos-13
             component: 'Tools'
           - os: ubuntu-20.04
             cross_os: ''
@@ -214,7 +214,7 @@ jobs:
               sudo apt-get install --no-install-recommends
               libsecret-1-dev
 
-          - os: macos-latest
+          - os: macos-13
             qt: 5.15.8
             bits: 64
             sccache_triplet: x86_64-apple-darwin
