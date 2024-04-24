@@ -51,7 +51,7 @@ QString Server::addSchemeToUserSuppliedAddress(const QString &remoteAddress)
 		return remoteAddress;
 	} else {
 #if defined(HAVE_TCPSOCKETS)
-		QString scheme = QStringLiteral("drawpile");
+		return QStringLiteral("drawpile://") + remoteAddress;
 #elif defined(HAVE_WEBSOCKETS)
 		bool looksLikeLocalhost =
 			remoteAddress.startsWith(
@@ -60,8 +60,12 @@ QString Server::addSchemeToUserSuppliedAddress(const QString &remoteAddress)
 			remoteAddress.startsWith("::1");
 		QString scheme =
 			looksLikeLocalhost ? QStringLiteral("ws") : QStringLiteral("wss");
+		QUrl url(scheme + QStringLiteral("://") + remoteAddress);
+		if(url.path().isEmpty() || url.path() == QStringLiteral("/")) {
+			url.setPath(QStringLiteral("/drawpile-web/ws"));
+		}
+		return url.toString();
 #endif
-		return scheme + QStringLiteral("://") + remoteAddress;
 	}
 }
 
