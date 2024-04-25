@@ -51,7 +51,7 @@ check_args() {
 
 run_gh() (
     set -x
-    gh "$@"
+    gh --repo "$GIT_REPO_SLUG" "$@"
 )
 
 check_args "$@"
@@ -88,8 +88,7 @@ if [[ $error -ne 0 ]]; then
 fi
 
 if [[ $CLOBBER_EXISTING == 'true' ]]; then
-    run_gh release delete \
-        --repo "$GIT_REPO_SLUG" --cleanup-tag --yes "$RELEASE_NAME" \
+    run_gh release delete --cleanup-tag --yes "$RELEASE_NAME" \
         || true
 fi
 
@@ -100,7 +99,6 @@ else
 fi
 
 run_gh release create \
-    --repo "$GIT_REPO_SLUG" \
     --target "$TARGET_COMMIT" \
     --title "$RELEASE_NAME" \
     --notes "$release_description" \
