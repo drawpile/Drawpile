@@ -99,13 +99,13 @@ void RulerWidget::paintEvent(QPaintEvent *)
 
 			if(lineHeight * digits >= pixelsPerRulerDivision - 2) {
 				QFont smallerFont = painter.font();
-				int newPointSize = smallerFont.pointSize() - 1;
-				if(newPointSize == 0)
+				qreal newPointSize = smallerFont.pointSizeF() - 1;
+				if(newPointSize <= 0)
 					// The font doesn't seem to be responding to point size or
 					// something else is wrong. Bail out here and continue with
 					// the current font.
 					break;
-				smallerFont.setPointSize(newPointSize);
+				smallerFont.setPointSizeF(newPointSize);
 				painter.setFont(smallerFont);
 			} else
 				break;
@@ -147,16 +147,22 @@ void RulerWidget::onViewChanged(const QPolygonF &view)
 		m_lMin = view.boundingRect().top();
 		m_lMax = view.boundingRect().bottom();
 	}
+	update();
 }
 
 void RulerWidget::setCanvasToRulerTransform(qreal scale, int offset)
 {
 	m_canvasToRulerScale = scale;
 	m_canvasToRulerOffset = offset;
+	update();
 }
 
 void RulerWidget::onTransformChanged(qreal zoom [[maybe_unused]], qreal angle)
 {
-	m_isRotated = std::abs(angle) > 0.001;
+	bool isRotated = std::abs(angle) > 0.001;
+	if(isRotated != m_isRotated) {
+		m_isRotated = isRotated;
+		update();
+	}
 }
 } // namespace widgets
