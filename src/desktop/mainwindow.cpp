@@ -931,7 +931,7 @@ void MainWindow::initSmallScreenState()
 	}
 	m_splitter->setHandleWidth(0);
 	m_chatbox->hide();
-	m_toolBarDraw->hide();
+	m_toolBarDraw->show();
 }
 
 void MainWindow::initDefaultDocks()
@@ -2879,7 +2879,6 @@ void MainWindow::handleToggleAction(int action)
 		QPair<QWidget *, int> dockActions[] = {
 			{m_dockToolSettings, int(Action::Left)},
 			{m_dockBrushPalette, int(Action::Left)},
-			{m_toolBarDraw, int(Action::Left)},
 			{m_dockTimeline, int(Action::Top)},
 			{m_dockOnionSkins, int(Action::Top)},
 			{m_dockNavigator, int(Action::None)},
@@ -5004,11 +5003,10 @@ void MainWindow::switchInterfaceMode(bool smallScreenMode)
 		}
 		removeToolBar(m_toolBarFile);
 		removeToolBar(m_toolBarEdit);
-		removeToolBar(m_toolBarDraw);
 		m_splitter->setHandleWidth(0);
 		m_chatbox->setSmallScreenMode(true);
 		m_chatbox->hide();
-		m_toolBarDraw->hide();
+		m_toolBarDraw->show();
 		m_viewStatusBar->show();
 		m_viewstatus->setHidden(true);
 		setFreezeDocks(true);
