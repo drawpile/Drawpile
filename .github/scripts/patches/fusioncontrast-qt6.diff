@@ -1,0 +1,56 @@
+Description: Fix dreadful contrast of the Qt Fusion style in various places.
+We can't use a proxy style for this stuff because for some reason that destroys
+the layout for everything in Windows set to Chinese. I guess it has some special
+hacks that only work if the style is set directly.
+
+Tool bar extension arrows are black by default, which means they're virtually
+invisible in dark styles. We load bespoke theme icons if we can find them.
+
+Checkbox outlines have completely garbage contrast in dark styles. We detect
+that and increase the lightness on them in that case.
+
+Contrast on sunken buttons is really bad in dark themes and worse in darker
+ones. We adjust those pretty hard to be actually visible.
+
+--- a/src/widgets/styles/qcommonstyle.cpp
++++ b/src/widgets/styles/qcommonstyle.cpp
+@@ -6138,6 +6138,12 @@
+                 }
+         }
+         break;
++        case SP_ToolBarHorizontalExtensionButton:
++            icon = QIcon::fromTheme(rtl ? "toolbar-ext-h-rtl-drawpile"_L1 : "toolbar-ext-h-drawpile"_L1);
++            break;
++        case SP_ToolBarVerticalExtensionButton:
++            icon = QIcon::fromTheme("toolbar-ext-v-drawpile"_L1);
++            break;
+         default:
+             break;
+         }
+
+--- a/src/widgets/styles/qfusionstyle.cpp
++++ b/src/widgets/styles/qfusionstyle.cpp
+@@ -724,7 +724,8 @@
+             gradient.setColorAt(1, (state & State_Sunken) ? pressedColor : option->palette.base().color());
+
+             painter->setBrush((state & State_Sunken) ? QBrush(pressedColor) : gradient);
+-            painter->setPen(QPen(outline.lighter(110)));
++            bool dark = option->palette.color(QPalette::Window).lightness() < 128;
++            painter->setPen(QPen(outline.lighter(dark ? 170 : 110)));
+
+             if (option->state & State_HasFocus && option->state & State_KeyboardFocusChange)
+                 painter->setPen(QPen(highlightedOutline));
+@@ -898,7 +899,12 @@
+
+         QLinearGradient gradient = qt_fusion_gradient(rect, (isEnabled && option->state & State_MouseOver ) ? buttonColor : buttonColor.darker(104));
+         p->setPen(Qt::transparent);
+-        p->setBrush(isDown ? QBrush(buttonColor.darker(110)) : gradient);
++        if(isDown) {
++            int lightness = option->palette.color(QPalette::Window).lightness();
++            p->setBrush(QBrush(buttonColor.darker(lightness > 127 ? 110 : lightness > 63 ? 140 : 180)));
++        } else {
++            p->setBrush(QBrush(gradient));
++        }
+         p->drawRoundedRect(r, 2.0, 2.0);
+         p->setBrush(Qt::NoBrush);
+

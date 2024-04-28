@@ -267,7 +267,7 @@ if(BASE)
 				patches/qandroidassetsfileenginehandler_dot_slash.diff
 				patches/qtbug-92199.diff
 				patches/qtbug-98369.diff
-				patches/checkboxoutline.diff
+				patches/fusioncontrast-qt5.diff
 				patches/windows_clipboard_sadness.diff
 			6.4.2
 				patches/qtbug-111538.diff
@@ -282,6 +282,7 @@ if(BASE)
 				patches/qtbug-116754.diff
 				patches/touchstart_prevent_default.diff
 				patches/webgl_is_hard.diff
+				patches/fusioncontrast-qt6.diff
 	)
 endif()
 
