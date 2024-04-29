@@ -1380,8 +1380,8 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 	connections->add(connect(dlg, &dialogs::StartDialog::join, this, &MainWindow::joinSession));
 	connections->add(connect(dlg, &dialogs::StartDialog::host, this, &MainWindow::hostSession));
 	connections->add(connect(dlg, &dialogs::StartDialog::create, this, &MainWindow::newDocument));
-	connections->add(connect(m_doc, &Document::canvasChanged, dlg, std::bind(&MainWindow::closeStartDialog, this, dlg)));
-	connections->add(connect(m_doc, &Document::serverLoggedIn, dlg, std::bind(&MainWindow::closeStartDialog, this, dlg)));
+	connections->add(connect(m_doc, &Document::canvasChanged, dlg, std::bind(&MainWindow::closeStartDialog, this, dlg, true)));
+	connections->add(connect(m_doc, &Document::serverLoggedIn, dlg, std::bind(&MainWindow::closeStartDialog, this, dlg, _1)));
 	connections->add(connect(this, &MainWindow::hostSessionEnabled, dlg, &dialogs::StartDialog::hostPageEnabled));
 	connections->add(connect(this, &MainWindow::windowReplacementFailed, dlg, [dlg](MainWindow *win){
 		if(win) {
@@ -1413,11 +1413,15 @@ void MainWindow::setStartDialogActions(dialogs::StartDialog *dlg)
 	dlg->setActions(actions);
 }
 
-void MainWindow::closeStartDialog(dialogs::StartDialog *dlg)
+void MainWindow::closeStartDialog(dialogs::StartDialog *dlg, bool reparent)
 {
-	for(QDialog *child : dlg->findChildren<QDialog *>(QString(), Qt::FindDirectChildrenOnly)) {
-		child->setParent(this, child->windowFlags());
-		child->show();
+	if(reparent) {
+		for(QDialog *child : dlg->findChildren<QDialog *>(
+				QString(), Qt::FindDirectChildrenOnly)) {
+			child->setParent(this, child->windowFlags());
+			child->show();
+		}
+	} else {
 	}
 	dlg->close();
 }

@@ -50,6 +50,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Increase contrast on depressed buttons in dark themes. This is a patch to Qt. Thanks MorrowShore for reporting.
  * Fix: Switch out the icon for the extension buttons on squashed menus and toolbars so that they're actually visible in dark themes. This is a patch to Qt.
  * Feature: Make canvas zoom slider use the same increments as the mouse wheel and zoom in/out actions, since stepping by 1% is not useful. Thanks zheida for suggesting.
+ * Fix: Work around a crash on Linux that happens when hosting with busted versions of Qt 6.6+. Thanks Vanska for reporting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

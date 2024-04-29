@@ -291,7 +291,7 @@ private:
 
 	void connectStartDialog(dialogs::StartDialog *dlg);
 	void setStartDialogActions(dialogs::StartDialog *dlg);
-	void closeStartDialog(dialogs::StartDialog *dlg);
+	void closeStartDialog(dialogs::StartDialog *dlg, bool join);
 	QWidget *getStartDialogOrThis();
 
 	void exportAnimation(
