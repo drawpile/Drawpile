@@ -398,6 +398,9 @@ void ViewWrapper::connectViewStatus(widgets::ViewStatus *viewStatus)
 		m_controller, &CanvasController::transformChanged, viewStatus,
 		&widgets::ViewStatus::setTransformation);
 	connect(
+		viewStatus, &widgets::ViewStatus::zoomStepped, m_controller,
+		&CanvasController::zoomSteps);
+	connect(
 		viewStatus, &widgets::ViewStatus::zoomChanged, m_controller,
 		&CanvasController::setZoom);
 	connect(

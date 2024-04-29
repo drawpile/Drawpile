@@ -399,6 +399,9 @@ void SceneWrapper::connectViewStatus(widgets::ViewStatus *viewStatus)
 		m_view, &CanvasView::viewTransformed, viewStatus,
 		&widgets::ViewStatus::setTransformation);
 	connect(
+		viewStatus, &widgets::ViewStatus::zoomStepped, m_view,
+		&CanvasView::zoomSteps);
+	connect(
 		viewStatus, &widgets::ViewStatus::zoomChanged, m_view,
 		&CanvasView::setZoom);
 	connect(

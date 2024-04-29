@@ -49,6 +49,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Always show drawing tools toolbar in small screen mode. Thanks Blozzom for suggesting.
  * Fix: Increase contrast on depressed buttons in dark themes. This is a patch to Qt. Thanks MorrowShore for reporting.
  * Fix: Switch out the icon for the extension buttons on squashed menus and toolbars so that they're actually visible in dark themes. This is a patch to Qt.
+ * Feature: Make canvas zoom slider use the same increments as the mouse wheel and zoom in/out actions, since stepping by 1% is not useful. Thanks zheida for suggesting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

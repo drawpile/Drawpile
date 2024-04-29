@@ -3,7 +3,7 @@
 #include "desktop/docks/navigator.h"
 #include "desktop/main.h"
 #include "desktop/widgets/groupedtoolbutton.h"
-#include "desktop/widgets/kis_slider_spin_box.h"
+#include "desktop/widgets/zoomslider.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/userlist.h"
@@ -486,7 +486,7 @@ Navigator::Navigator(QWidget *parent)
 	m_resetZoomButton->setIcon(QIcon::fromTheme("zoom-original"));
 	titlebar->addCustomWidget(m_resetZoomButton);
 
-	m_zoomSlider = new KisDoubleSliderSpinBox{this};
+	m_zoomSlider = new widgets::ZoomSlider(this);
 	m_zoomSlider->setMinimumWidth(0);
 	m_zoomSlider->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
 	m_zoomSlider->setMinimum(zoomMin * 100.0);
@@ -501,6 +501,9 @@ Navigator::Navigator(QWidget *parent)
 	connect(m_view, &NavigatorView::wheelZoom, this, &Navigator::wheelZoom);
 	connect(m_resetZoomButton, &widgets::GroupedToolButton::clicked, this, [this] { emit zoomChanged(1.0); });
 	connect(m_zoomSlider, QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this, &Navigator::updateZoom);
+	connect(
+		m_zoomSlider, &widgets::ZoomSlider::zoomStepped, this,
+		&Navigator::wheelZoom, Qt::QueuedConnection);
 
 	QAction *showCursorsAction = new QAction(tr("Show Cursors"), m_view);
 	showCursorsAction->setCheckable(true);

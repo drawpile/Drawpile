@@ -5,7 +5,6 @@
 
 #include <QWidget>
 
-class KisDoubleSliderSpinBox;
 class QComboBox;
 class QMenu;
 
@@ -13,6 +12,7 @@ namespace widgets {
 
 class GroupedToolButton;
 class KisAngleGauge;
+class ZoomSlider;
 
 class ViewStatus final : public QWidget
 {
@@ -28,6 +28,7 @@ public slots:
 	void setTransformation(qreal zoom, qreal angle);
 
 signals:
+	void zoomStepped(int steps);
 	void zoomChanged(qreal newZoom);
 	void angleChanged(qreal newAngle);
 
@@ -41,7 +42,7 @@ private slots:
 private:
 	void updatePalette();
 
-	KisDoubleSliderSpinBox *m_zoomSlider;
+	ZoomSlider *m_zoomSlider;
 	KisAngleGauge *m_compass;
 	QComboBox *m_angleBox;
 	bool m_updating;

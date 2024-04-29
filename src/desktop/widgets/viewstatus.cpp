@@ -4,6 +4,7 @@
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/KisAngleGauge.h"
+#include "desktop/widgets/zoomslider.h"
 #include "libclient/settings.h"
 #include "libshared/util/qtcompat.h"
 
@@ -95,7 +96,7 @@ ViewStatus::ViewStatus(QWidget *parent)
 	layout->addWidget(m_angleBox);
 
 	// Zoom slider
-	m_zoomSlider = new KisDoubleSliderSpinBox{this};
+	m_zoomSlider = new ZoomSlider(this);
 	m_zoomSlider->setMinimumWidth(24);
 	m_zoomSlider->setMaximumWidth(200);
 	m_zoomSlider->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
@@ -105,6 +106,9 @@ ViewStatus::ViewStatus(QWidget *parent)
 	m_zoomSlider->setValue(100.0);
 	m_zoomSlider->setSuffix("%");
 	connect(m_zoomSlider, QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this, &ViewStatus::zoomSliderChanged);
+	connect(
+		m_zoomSlider, &ZoomSlider::zoomStepped, this, &ViewStatus::zoomStepped,
+		Qt::QueuedConnection);
 
 	// Zoom preset button
 	m_zoomPreset = new widgets::GroupedToolButton(this);

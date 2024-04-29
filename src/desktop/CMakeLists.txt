@@ -384,6 +384,8 @@ target_sources(drawpile PRIVATE
 	widgets/viewstatus.h
 	widgets/viewstatusbar.cpp
 	widgets/viewstatusbar.h
+	widgets/zoomslider.cpp
+	widgets/zoomslider.h
 )
 
 target_link_libraries(drawpile PRIVATE

@@ -5,7 +5,6 @@
 
 #include "desktop/docks/dockbase.h"
 
-class KisDoubleSliderSpinBox;
 class QMenu;
 
 namespace canvas {
@@ -15,6 +14,7 @@ class PaintEngine;
 
 namespace widgets{
 class GroupedToolButton;
+class ZoomSlider;
 }
 
 namespace docks {
@@ -114,7 +114,7 @@ signals:
 	void zoomChanged(qreal newZoom);
 
 private:
-	KisDoubleSliderSpinBox *m_zoomSlider;
+	widgets::ZoomSlider *m_zoomSlider;
 	widgets::GroupedToolButton *m_resetZoomButton;
 	NavigatorView *m_view;
 	bool m_updating;
