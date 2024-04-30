@@ -49,6 +49,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "libclient/canvas/canvasmodel.h"
 #include "desktop/view/canvaswrapper.h"
 #include "desktop/view/lock.h"
+#include "desktop/widgets/canvasframe.h"
 #include "desktop/scene/selectionitem.h"
 #include "desktop/scene/toggleitem.h"
 #include "libclient/canvas/userlist.h"
@@ -256,7 +257,9 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	m_canvasView =
 		view::CanvasWrapper::instantiate(dpApp().canvasImplementation(), this);
 	m_canvasView->setShowToggleItems(m_smallScreenMode);
-	m_splitter->addWidget(m_canvasView->viewWidget());
+
+	m_canvasFrame = new widgets::CanvasFrame(m_canvasView->viewWidget());
+	m_splitter->addWidget(m_canvasFrame);
 	m_splitter->setCollapsible(SPLITTER_WIDGET_IDX++, false);
 
 	// Create the chatbox
@@ -316,6 +319,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	// Tool dock connections
 	m_tempToolSwitchShortcut = new ShortcutDetector(this);
 
+	m_canvasView->connectCanvasFrame(m_canvasFrame);
 	m_canvasView->connectDocument(m_doc);
 	m_canvasView->connectMainWindow(this);
 	m_canvasView->connectNavigator(m_dockNavigator);
@@ -4112,10 +4116,14 @@ void MainWindow::setupActions()
 	});
 	connect(m_chatbox, &widgets::ChatBox::muteChanged, this, &MainWindow::setNotificationsMuted);
 
+	connect(
+		showrulers, &QAction::toggled, m_canvasFrame,
+		&widgets::CanvasFrame::setShowRulers);
+
 	m_canvasView->connectActions(
 		{moveleft, moveright, moveup, movedown, zoomin, zoomout, zoomorig,
 		 zoomfit, zoomfitwidth, zoomfitheight, rotateorig, rotatecw, rotateccw,
-		 viewflip, viewmirror, showgrid, showrulers, showusermarkers, showusernames,
+		 viewflip, viewmirror, showgrid, showusermarkers, showusernames,
 		 showuserlayers, showuseravatars, evadeusercursors});
 
 #ifndef SINGLE_MAIN_WINDOW

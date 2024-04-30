@@ -36,6 +36,7 @@ class MainActions;
 class ActionBuilder;
 
 namespace widgets {
+	class CanvasFrame;
 	class DualColorButton;
 	class NetStatus;
 	class ChatBox;
@@ -375,6 +376,7 @@ private:
 	widgets::DualColorButton *m_dualColorButton;
 
 	view::Lock *m_viewLock;
+	widgets::CanvasFrame *m_canvasFrame;
 	view::CanvasWrapper *m_canvasView;
 
 	widgets::ViewStatusBar *m_viewStatusBar;

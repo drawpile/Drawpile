@@ -139,31 +139,31 @@ void RulerWidget::paintEvent(QPaintEvent *)
 	}
 }
 
-void RulerWidget::onViewChanged(const QPolygonF &view)
+void RulerWidget::setIsRotated(bool isRotated)
 {
-	if(isHorizontal()) {
-		m_lMin = view.boundingRect().left();
-		m_lMax = view.boundingRect().right();
-	} else {
-		m_lMin = view.boundingRect().top();
-		m_lMax = view.boundingRect().bottom();
-	}
-	update();
-}
-
-void RulerWidget::setCanvasToRulerTransform(qreal scale, int offset)
-{
-	m_canvasToRulerScale = scale;
-	m_canvasToRulerOffset = offset;
-	update();
-}
-
-void RulerWidget::onTransformChanged(qreal zoom [[maybe_unused]], qreal angle)
-{
-	bool isRotated = std::abs(angle) > 0.001;
 	if(isRotated != m_isRotated) {
 		m_isRotated = isRotated;
 		update();
 	}
 }
+
+void RulerWidget::setViewBounds(const QRectF &viewBounds)
+{
+	if(isHorizontal()) {
+		m_lMin = viewBounds.left();
+		m_lMax = viewBounds.right();
+	} else {
+		m_lMin = viewBounds.top();
+		m_lMax = viewBounds.bottom();
+	}
+	update();
+}
+
+void RulerWidget::setCanvasToRulerTransform(
+	qreal scale, const QRectF &viewBounds)
+{
+	m_canvasToRulerScale = scale;
+	setViewBounds(viewBounds);
+}
+
 } // namespace widgets

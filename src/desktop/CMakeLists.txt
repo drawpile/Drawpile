@@ -320,6 +320,8 @@ target_sources(drawpile PRIVATE
 	view/viewwrapper.h
 	widgets/brushpreview.cpp
 	widgets/brushpreview.h
+	widgets/canvasframe.cpp
+	widgets/canvasframe.h
 	widgets/canvasshortcutedit.cpp
 	widgets/canvasshortcutedit.h
 	widgets/colorbutton.cpp

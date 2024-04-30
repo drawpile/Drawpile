@@ -19,7 +19,7 @@ class SceneWrapper final : public QObject, public view::CanvasWrapper {
 public:
 	SceneWrapper(QWidget *parent = nullptr);
 
-	QWidget *viewWidget() const override;
+	QAbstractScrollArea *viewWidget() const override;
 
 	bool isTabletEnabled() const override;
 	bool isTouchScrollEnabled() const override;
@@ -60,6 +60,8 @@ public:
 	void disposeScene() override;
 
 	void connectActions(const Actions &actions) override;
+
+	void connectCanvasFrame(widgets::CanvasFrame *canvasFrame) override;
 
 	void connectDocument(Document *doc) override;
 

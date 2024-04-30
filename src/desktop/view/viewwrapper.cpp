@@ -16,6 +16,7 @@
 #include "desktop/view/canvasview.h"
 #include "desktop/view/glcanvas.h"
 #include "desktop/view/softwarecanvas.h"
+#include "desktop/widgets/canvasframe.h"
 #include "desktop/widgets/viewstatus.h"
 #include "desktop/widgets/viewstatusbar.h"
 #include "libclient/document.h"
@@ -34,7 +35,7 @@ ViewWrapper::ViewWrapper(bool useOpenGl, QWidget *parent)
 		m_scene, &CanvasScene::setUserMarkerPersistence);
 }
 
-QWidget *ViewWrapper::viewWidget() const
+QAbstractScrollArea *ViewWrapper::viewWidget() const
 {
 	return m_view;
 }
@@ -220,8 +221,6 @@ void ViewWrapper::connectActions(const Actions &actions)
 		actions.showgrid, &QAction::toggled, m_controller,
 		&CanvasController::setPixelGrid);
 	connect(
-		actions.showruler, &QAction::toggled, m_view, &CanvasView::showRulers);
-	connect(
 		actions.showusermarkers, &QAction::toggled, m_scene,
 		&CanvasScene::setShowUserMarkers);
 	connect(
@@ -236,6 +235,16 @@ void ViewWrapper::connectActions(const Actions &actions)
 	connect(
 		actions.evadeusercursors, &QAction::toggled, m_scene,
 		&CanvasScene::setEvadeUserCursors);
+}
+
+void ViewWrapper::connectCanvasFrame(widgets::CanvasFrame *canvasFrame)
+{
+	connect(
+		m_controller, &CanvasController::transformChanged, canvasFrame,
+		&widgets::CanvasFrame::setTransform);
+	connect(
+		m_controller, &CanvasController::viewChanged, canvasFrame,
+		&widgets::CanvasFrame::setView);
 }
 
 void ViewWrapper::connectDocument(Document *doc)

@@ -12,6 +12,7 @@
 #include "desktop/toolwidgets/lasersettings.h"
 #include "desktop/toolwidgets/selectionsettings.h"
 #include "desktop/toolwidgets/zoomsettings.h"
+#include "desktop/widgets/canvasframe.h"
 #include "desktop/widgets/viewstatus.h"
 #include "desktop/widgets/viewstatusbar.h"
 #include "libclient/document.h"
@@ -31,7 +32,7 @@ SceneWrapper::SceneWrapper(QWidget *parent)
 		m_scene, &CanvasScene::setUserMarkerPersistence);
 }
 
-QWidget *SceneWrapper::viewWidget() const
+QAbstractScrollArea *SceneWrapper::viewWidget() const
 {
 	return m_view;
 }
@@ -237,6 +238,16 @@ void SceneWrapper::connectActions(const Actions &actions)
 	connect(
 		actions.evadeusercursors, &QAction::toggled, m_scene,
 		&drawingboard::CanvasScene::setEvadeUserCursors);
+}
+
+void SceneWrapper::connectCanvasFrame(widgets::CanvasFrame *canvasFrame)
+{
+	connect(
+		m_view, &CanvasView::viewTransformed, canvasFrame,
+		&widgets::CanvasFrame::setTransform);
+	connect(
+		m_view, &CanvasView::viewRectChange, canvasFrame,
+		&widgets::CanvasFrame::setView);
 }
 
 void SceneWrapper::connectDocument(Document *doc)
