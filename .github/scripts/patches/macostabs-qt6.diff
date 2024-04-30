@@ -1,0 +1,15 @@
+Description: Qt turned off the OS tabbing for some reason? We'd like that to
+continue working like the user expects, thanks.
+
+Change that disabled it: https://codereview.qt-project.org/c/qt/qtbase/+/292619
+
+--- a/src/plugins/platforms/cocoa/qcocoawindow.mm
++++ b/src/plugins/platforms/cocoa/qcocoawindow.mm
+@@ -1795,7 +1795,6 @@
+
+     nsWindow.restorable = NO;
+     nsWindow.level = windowLevel(flags);
+-    nsWindow.tabbingMode = NSWindowTabbingModeDisallowed;
+
+     if (shouldBePanel) {
+         // Qt::Tool windows hide on app deactivation, unless Qt::WA_MacAlwaysShowToolWindow is set

@@ -268,6 +268,7 @@ if(BASE)
 				patches/qtbug-92199.diff
 				patches/qtbug-98369.diff
 				patches/fusioncontrast-qt5.diff
+				patches/macostabs-qt5.diff
 				patches/windows_clipboard_sadness.diff
 			6.4.2
 				patches/qtbug-111538.diff
@@ -283,6 +284,7 @@ if(BASE)
 				patches/touchstart_prevent_default.diff
 				patches/webgl_is_hard.diff
 				patches/fusioncontrast-qt6.diff
+				patches/macostabs-qt6.diff
 	)
 endif()
 
