@@ -6,11 +6,13 @@
 #include "desktop/view/canvasscene.h"
 #include "desktop/view/glcanvas.h"
 #include "desktop/widgets/notifbar.h"
+#include "desktop/widgets/rulerwidget.h"
 #include "libclient/drawdance/eventlog.h"
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
 #include <QDropEvent>
 #include <QGestureEvent>
+#include <QGridLayout>
 #include <QMimeData>
 #include <QScopedValueRollback>
 #include <QScrollBar>
@@ -18,6 +20,8 @@
 #include <QTouchEvent>
 
 namespace view {
+
+constexpr int rulerWidth = 18;
 
 CanvasView::CanvasView(
 	CanvasController *controller, CanvasInterface *canvasWidget,
@@ -50,6 +54,38 @@ CanvasView::CanvasView(
 	connect(
 		m_notificationBar, &widgets::NotificationBar::heightChanged,
 		controller->scene(), &CanvasScene::setNotificationBarHeight);
+
+	m_hRuler = new widgets::RulerWidget(this);
+	m_hRuler->setFixedHeight(rulerWidth);
+	m_vRuler = new widgets::RulerWidget(this);
+	m_vRuler->setFixedWidth(rulerWidth);
+	m_corner = new QWidget(this);
+	m_corner->setFixedSize(rulerWidth, rulerWidth);
+	m_corner->setAutoFillBackground(true);
+	m_corner->setAttribute(Qt::WA_TransparentForMouseEvents);
+
+	auto layout = new QGridLayout(this);
+	layout->setSpacing(0);
+	layout->setContentsMargins(0, 0, 0, 0);
+	layout->addWidget(m_corner, 0, 0);
+	layout->addWidget(m_hRuler, 0, 1);
+	layout->addWidget(m_vRuler, 1, 0);
+	layout->addWidget(vp, 1, 1);
+	setLayout(layout);
+
+	m_hRuler->hide();
+	m_vRuler->hide();
+	m_corner->hide();
+
+	connect(
+		m_controller, &CanvasController::viewChanged, this,
+		&CanvasView::onViewChanged);
+	connect(
+		m_controller, &CanvasController::transformChanged, m_hRuler,
+		&widgets::RulerWidget::onTransformChanged);
+	connect(
+		m_controller, &CanvasController::transformChanged, m_vRuler,
+		&widgets::RulerWidget::onTransformChanged);
 
 	desktop::settings::Settings &settings = dpApp().settings();
 	settings.bindCanvasScrollBars(this, &CanvasView::setEnableScrollBars);
@@ -142,6 +178,19 @@ void CanvasView::hideResetNotice()
 	if(m_notificationBarState == NotificationBarState::Reset) {
 		m_notificationBarState = NotificationBarState::None;
 		m_notificationBar->hide();
+	}
+}
+
+void CanvasView::showRulers(bool enabled)
+{
+	if(enabled) {
+		m_hRuler->show();
+		m_vRuler->show();
+		m_corner->show();
+	} else {
+		m_hRuler->hide();
+		m_vRuler->hide();
+		m_corner->hide();
 	}
 }
 
@@ -358,6 +407,23 @@ void CanvasView::onControllerScrollAreaChanged(
 	vbar->setPageStep(pageStepV);
 	hbar->setSingleStep(singleStepH);
 	vbar->setSingleStep(singleStepV);
+}
+
+void CanvasView::onViewChanged(const QPolygonF &view)
+{
+	auto transformScale = [](qreal min, qreal max, int viewWidth) {
+		qreal dist = std::abs(max - min);
+		return viewWidth / dist;
+	};
+	QRectF bound = view.boundingRect();
+	m_hRuler->setCanvasToRulerTransform(
+		transformScale(bound.left(), bound.right(), viewport()->width()),
+		-rulerWidth);
+	m_hRuler->onViewChanged(view);
+	m_vRuler->setCanvasToRulerTransform(
+		transformScale(bound.top(), bound.bottom(), viewport()->height()),
+		-rulerWidth);
+	m_vRuler->onViewChanged(view);
 }
 
 void CanvasView::activateNotificationBarAction()

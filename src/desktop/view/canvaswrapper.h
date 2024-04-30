@@ -62,6 +62,7 @@ public:
 		QAction *viewflip;
 		QAction *viewmirror;
 		QAction *showgrid;
+		QAction *showruler;
 		QAction *showusermarkers;
 		QAction *showusernames;
 		QAction *showuserlayers;

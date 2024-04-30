@@ -220,6 +220,8 @@ void ViewWrapper::connectActions(const Actions &actions)
 		actions.showgrid, &QAction::toggled, m_controller,
 		&CanvasController::setPixelGrid);
 	connect(
+		actions.showruler, &QAction::toggled, m_view, &CanvasView::showRulers);
+	connect(
 		actions.showusermarkers, &QAction::toggled, m_scene,
 		&CanvasScene::setShowUserMarkers);
 	connect(
