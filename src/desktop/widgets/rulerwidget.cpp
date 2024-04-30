@@ -22,7 +22,7 @@ RulerWidget::RulerWidget(QWidget *parent)
 void RulerWidget::paintEvent(QPaintEvent *)
 {
 	QPainter painter(this);
-	painter.fillRect(0, 0, width(), height(), palette().color(QPalette::Light));
+	painter.fillRect(0, 0, width(), height(), palette().color(QPalette::Base));
 
 	// The ruler doesn't make any sense right now for a rotated canvas, so
 	// disable it if the canvas is rotated.
@@ -56,8 +56,9 @@ void RulerWidget::paintEvent(QPaintEvent *)
 		std::lround((adjustedPPD * m_canvasToRulerScale));
 	divisions = longSize() / pixelsPerRulerDivision;
 
-	QColor dark = palette().color(QPalette::Dark);
 	QColor text = palette().color(QPalette::Text);
+	QColor dark =
+		QColor(text.red(), text.green(), text.blue(), text.alpha() / 2);
 
 	painter.setPen(dark);
 	painter.setRenderHint(QPainter::Antialiasing, true);
