@@ -52,6 +52,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Make canvas zoom slider use the same increments as the mouse wheel and zoom in/out actions, since stepping by 1% is not useful. Thanks zheida for suggesting.
  * Fix: Work around a crash on Linux that happens when hosting with busted versions of Qt 6.6+. Thanks Vanska for reporting.
  * Fix: Allow tabbing the main window on macOS again, for some reason Qt disabled it. This is a patch to Qt. Thanks mira for reporting.
+ * Feature: Pixel ruler, available under View > Show Rulers. Thanks fluttershydev for contributing.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.
