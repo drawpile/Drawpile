@@ -385,9 +385,6 @@ private:
 	bool m_touching = false;
 	bool m_touchRotating = false;
 	TouchMode m_touchMode = TouchMode::Unknown;
-	bool m_touchHackBegun = false;
-	bool m_touchHackEnded = false;
-	QPoint m_touchHackPos;
 	QVector<QPair<long long, QPointF>> m_touchDrawBuffer;
 	QPointF m_touchStartPos;
 	qreal m_touchStartZoom = 0.0;
