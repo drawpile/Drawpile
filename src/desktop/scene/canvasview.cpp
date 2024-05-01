@@ -1098,7 +1098,7 @@ static bool isSyntheticTouch(QMouseEvent *event)
 {
 #ifdef Q_OS_WIN
 	// Windows may generate bogus mouse events from touches, we never want this.
-	return event->source() & Qt::MouseEventSynthesizedByQt;
+	return event->source() & Qt::MouseEventSynthesizedBySystem;
 #else
 	Q_UNUSED(event);
 	return false;
