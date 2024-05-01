@@ -1099,11 +1099,11 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 {
 	const auto mousePos = compat::mousePos(*event);
 	DP_EVENT_LOG(
-		"mouse_press x=%d y=%d buttons=0x%x modifiers=0x%x synthetic=%d "
-		"pendown=%d touching=%d",
+		"mouse_press x=%d y=%d buttons=0x%x modifiers=0x%x source=0x%x "
+		"pendown=%d touching=%d timestamp=%llu",
 		mousePos.x(), mousePos.y(), unsigned(event->buttons()),
-		unsigned(event->modifiers()), isSynthetic(event), m_pendown,
-		m_touching);
+		unsigned(event->modifiers()), unsigned(event->source()), m_pendown,
+		m_touching, qulonglong(event->timestamp()));
 
 	updateCursorPos(mousePos);
 
@@ -1166,11 +1166,11 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 {
 	const auto mousePos = compat::mousePos(*event);
 	DP_EVENT_LOG(
-		"mouse_move x=%d y=%d buttons=0x%x modifiers=0x%x synthetic=%d "
-		"pendown=%d touching=%d",
+		"mouse_move x=%d y=%d buttons=0x%x modifiers=0x%x source=0x%x "
+		"pendown=%d touching=%d timestamp=%llu",
 		mousePos.x(), mousePos.y(), unsigned(event->buttons()),
-		unsigned(event->modifiers()), isSynthetic(event), m_pendown,
-		m_touching);
+		unsigned(event->modifiers()), unsigned(event->source()), m_pendown,
+		m_touching, qulonglong(event->timestamp()));
 
 	updateCursorPos(mousePos);
 
@@ -1378,11 +1378,11 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
 	const auto mousePos = compat::mousePos(*event);
 	DP_EVENT_LOG(
-		"mouse_release x=%d y=%d buttons=0x%x modifiers=0x%x synthetic=%d "
-		"pendown=%d touching=%d",
+		"mouse_release x=%d y=%d buttons=0x%x modifiers=0x%x source=0x%x "
+		"pendown=%d touching=%d timestamp=%llu",
 		mousePos.x(), mousePos.y(), unsigned(event->buttons()),
-		unsigned(event->modifiers()), isSynthetic(event), m_pendown,
-		m_touching);
+		unsigned(event->modifiers()), unsigned(event->source()), m_pendown,
+		m_touching, qulonglong(event->timestamp()));
 
 	updateCursorPos(mousePos);
 
@@ -1716,11 +1716,12 @@ void CanvasView::touchEvent(QTouchEvent *event)
 		   !compat::isTouchPad(event)) {
 			DP_EVENT_LOG(
 				"touch_draw_begin x=%f y=%f pendown=%d touching=%d type=%d "
-				"device=%s points=%s",
+				"device=%s points=%s timestamp=%llu",
 				pos.x(), pos.y(), m_pendown, m_touching,
 				compat::touchDeviceType(event),
 				qUtf8Printable(compat::touchDeviceName(event)),
-				qUtf8Printable(compat::debug(points)));
+				qUtf8Printable(compat::debug(points)),
+				qulonglong(event->timestamp()));
 			if(m_enableTouchScroll || m_enableTouchPinch ||
 			   m_enableTouchTwist) {
 				// Buffer the touch first, since it might end up being the
@@ -1738,10 +1739,11 @@ void CanvasView::touchEvent(QTouchEvent *event)
 		} else {
 			DP_EVENT_LOG(
 				"touch_begin pendown=%d touching=%d type=%d device=%s "
-				"points=%s",
+				"points=%s timestamp=%llu",
 				m_pendown, m_touching, compat::touchDeviceType(event),
 				qUtf8Printable(compat::touchDeviceName(event)),
-				qUtf8Printable(compat::debug(points)));
+				qUtf8Printable(compat::debug(points)),
+				qulonglong(event->timestamp()));
 			m_touchMode = TouchMode::Moving;
 		}
 		break;
@@ -1755,11 +1757,12 @@ void CanvasView::touchEvent(QTouchEvent *event)
 			QPointF pos = compat::touchPos(compat::touchPoints(*event).first());
 			DP_EVENT_LOG(
 				"touch_draw_update x=%f y=%f pendown=%d touching=%d type=%d "
-				"device=%s points=%s",
+				"device=%s points=%s timestamp=%llu",
 				pos.x(), pos.y(), m_pendown, m_touching,
 				compat::touchDeviceType(event),
 				qUtf8Printable(compat::touchDeviceName(event)),
-				qUtf8Printable(compat::debug(points)));
+				qUtf8Printable(compat::debug(points)),
+				qulonglong(event->timestamp()));
 			int bufferCount = m_touchDrawBuffer.size();
 			if(bufferCount == 0) {
 				if(m_touchMode == TouchMode::Drawing) {
@@ -1802,11 +1805,12 @@ void CanvasView::touchEvent(QTouchEvent *event)
 
 			DP_EVENT_LOG(
 				"touch_update x=%f y=%f pendown=%d touching=%d type=%d "
-				"device=%s points=%s",
+				"device=%s points=%s timestamp=%llu",
 				center.x(), center.y(), m_pendown, m_touching,
 				compat::touchDeviceType(event),
 				qUtf8Printable(compat::touchDeviceName(event)),
-				qUtf8Printable(compat::debug(points)));
+				qUtf8Printable(compat::debug(points)),
+				qulonglong(event->timestamp()));
 
 			if(!m_touching) {
 				m_touchStartZoom = zoom();
@@ -1896,22 +1900,25 @@ void CanvasView::touchEvent(QTouchEvent *event)
 								 m_touchMode == TouchMode::Drawing)) {
 			DP_EVENT_LOG(
 				"touch_draw_%s pendown=%d touching=%d type=%d device=%s "
-				"points=%s",
+				"points=%s timestamp=%llu",
 				event->type() == QEvent::TouchEnd ? "end" : "cancel", m_pendown,
 				m_touching, compat::touchDeviceType(event),
 				qUtf8Printable(compat::touchDeviceName(event)),
-				qUtf8Printable(compat::debug(points)));
+				qUtf8Printable(compat::debug(points)),
+				qulonglong(event->timestamp()));
 			flushTouchDrawBuffer();
 			touchReleaseEvent(
 				QDateTime::currentMSecsSinceEpoch(),
 				compat::touchPos(compat::touchPoints(*event).first()));
 		} else {
 			DP_EVENT_LOG(
-				"touch_%s pendown=%d touching=%d type=%d device=%s points=%s",
+				"touch_%s pendown=%d touching=%d type=%d device=%s points=%s "
+				"timestamp=%llu",
 				event->type() == QEvent::TouchEnd ? "end" : "cancel", m_pendown,
 				m_touching, compat::touchDeviceType(event),
 				qUtf8Printable(compat::touchDeviceName(event)),
-				qUtf8Printable(compat::debug(points)));
+				qUtf8Printable(compat::debug(points)),
+				qulonglong(event->timestamp()));
 		}
 		m_touching = false;
 		break;
