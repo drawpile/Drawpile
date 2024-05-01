@@ -441,12 +441,20 @@ void CanvasController::handleMousePress(QMouseEvent *event)
 	bool synthetic = isSynthetic(event);
 	DP_EVENT_LOG(
 		"mouse_press x=%f y=%f buttons=0x%x modifiers=0x%x synthetic=%d "
-		"penstate=%d touching=%d",
+		"penstate=%d touching=%d touchhackbegun=%d touchhackended=%d "
+		"touchhackx=%d touchhacky=%d",
 		posf.x(), posf.y(), unsigned(event->buttons()),
 		unsigned(event->modifiers()), int(synthetic), int(m_penState),
-		int(m_touching));
+		int(m_touching), int(m_touchHackBegun), int(m_touchHackEnded),
+		m_touchHackPos.x(), m_touchHackPos.y());
 
-	if(((!m_tabletEnabled || !synthetic)) && !m_touching) {
+	bool touchHackHit = m_touchHackBegun && m_touchHackEnded &&
+						posf.toPoint() == m_touchHackPos;
+	m_touchHackBegun = false;
+	if(touchHackHit) {
+		DP_EVENT_LOG("Ignoring garbage mouse press immediately after touch");
+		m_touchHackBegun = false;
+	} else if(((!m_tabletEnabled || !synthetic)) && !m_touching) {
 		event->accept();
 		penPressEvent(
 			QDateTime::currentMSecsSinceEpoch(), posf, 1.0, 0.0, 0.0, 0.0,
@@ -573,8 +581,14 @@ void CanvasController::handleTouchBegin(QTouchEvent *event)
 	event->accept();
 	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
 	int pointsCount = points.size();
-
 	QPointF posf = compat::touchPos(points.first());
+
+	m_touchHackBegun = pointsCount == 1;
+	m_touchHackEnded = false;
+	if(m_touchHackBegun) {
+		m_touchHackPos = posf.toPoint();
+	}
+
 	int action = m_scene->checkHover(posf.toPoint());
 	if(action != int(drawingboard::ToggleItem::Action::None)) {
 		emit toggleActionActivated(action);
@@ -622,6 +636,7 @@ void CanvasController::handleTouchUpdate(QTouchEvent *event)
 	event->accept();
 	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
 	int pointsCount = points.size();
+	m_touchHackBegun = false;
 
 	if(m_enableTouchDraw &&
 	   ((pointsCount == 1 && m_touchMode == TouchMode::Unknown) ||
@@ -762,6 +777,7 @@ void CanvasController::handleTouchEnd(QTouchEvent *event, bool cancel)
 {
 	event->accept();
 	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
+	m_touchHackEnded = true;
 	if(m_enableTouchDraw &&
 	   ((m_touchMode == TouchMode::Unknown && !m_touchDrawBuffer.isEmpty()) ||
 		m_touchMode == TouchMode::Drawing)) {

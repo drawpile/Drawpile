@@ -429,6 +429,9 @@ private:
 	TouchMode m_touchMode;
 	QVector<QPair<long long, QPointF>> m_touchDrawBuffer;
 	qreal m_touchStartZoom, m_touchStartRotate;
+	bool m_touchHackBegun = false;
+	bool m_touchHackEnded = false;
+	QPoint m_touchHackPos;
 
 	KisCubicCurve m_pressureCurve;
 

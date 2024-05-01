@@ -1100,10 +1100,20 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 	const auto mousePos = compat::mousePos(*event);
 	DP_EVENT_LOG(
 		"mouse_press x=%d y=%d buttons=0x%x modifiers=0x%x synthetic=%d "
-		"pendown=%d touching=%d",
+		"pendown=%d touching=%d touchhackbegun=%d touchhackended=%d "
+		"touchhackx=%d touchhacky=%d",
 		mousePos.x(), mousePos.y(), unsigned(event->buttons()),
-		unsigned(event->modifiers()), isSynthetic(event), m_pendown,
-		m_touching);
+		unsigned(event->modifiers()), isSynthetic(event), m_pendown, m_touching,
+		int(m_touchHackBegun), int(m_touchHackEnded), m_touchHackPos.x(),
+		m_touchHackPos.y());
+
+	bool touchHackHit =
+		m_touchHackBegun && m_touchHackEnded && mousePos == m_touchHackPos;
+	m_touchHackBegun = false;
+	if(touchHackHit) {
+		DP_EVENT_LOG("Ignoring garbage mouse press immediately after touch");
+		return;
+	}
 
 	updateCursorPos(mousePos);
 
@@ -1700,6 +1710,12 @@ void CanvasView::touchEvent(QTouchEvent *event)
 	switch(event->type()) {
 	case QEvent::TouchBegin: {
 		QPointF pos = compat::touchPos(points.first());
+		m_touchHackBegun = pointsCount == 1;
+		m_touchHackEnded = false;
+		if(m_touchHackBegun) {
+			m_touchHackPos = pos.toPoint();
+		}
+
 		drawingboard::ToggleItem::Action action =
 			m_scene->checkHover(mapToScene(pos.toPoint()));
 		if(action != drawingboard::ToggleItem::Action::None) {
@@ -1748,6 +1764,7 @@ void CanvasView::touchEvent(QTouchEvent *event)
 	}
 
 	case QEvent::TouchUpdate:
+		m_touchHackBegun = false;
 		if(m_enableTouchDraw &&
 		   ((pointsCount == 1 && m_touchMode == TouchMode::Unknown) ||
 			m_touchMode == TouchMode::Drawing) &&
@@ -1891,6 +1908,7 @@ void CanvasView::touchEvent(QTouchEvent *event)
 
 	case QEvent::TouchEnd:
 	case QEvent::TouchCancel:
+		m_touchHackEnded = true;
 		if(m_enableTouchDraw && ((m_touchMode == TouchMode::Unknown &&
 								  !m_touchDrawBuffer.isEmpty()) ||
 								 m_touchMode == TouchMode::Drawing)) {
