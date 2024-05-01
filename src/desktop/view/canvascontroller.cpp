@@ -415,7 +415,6 @@ void CanvasController::handleMouseMove(QMouseEvent *event)
 {
 	QPointF posf = mousePosF(event);
 	Qt::MouseButtons buttons = event->buttons();
-	bool synthetic = isSynthetic(event);
 	DP_EVENT_LOG(
 		"mouse_move x=%f y=%f buttons=0x%x modifiers=0x%x source=0x%x "
 		"penstate=%d touching=%d timestamp=%llu",
@@ -423,8 +422,8 @@ void CanvasController::handleMouseMove(QMouseEvent *event)
 		unsigned(event->source()), int(m_penState), int(m_touching),
 		qulonglong(event->timestamp()));
 
-	if((!m_tabletEnabled || !synthetic) && m_penState != PenState::TabletDown &&
-	   !m_touching) {
+	if((!m_tabletEnabled || !isSynthetic(event)) && !isSyntheticTouch(event) &&
+	   m_penState != PenState::TabletDown && !m_touching) {
 		if(m_penState != PenState::Up && buttons == Qt::NoButton) {
 			handleMouseRelease(event);
 		} else {
@@ -439,7 +438,6 @@ void CanvasController::handleMouseMove(QMouseEvent *event)
 void CanvasController::handleMousePress(QMouseEvent *event)
 {
 	QPointF posf = mousePosF(event);
-	bool synthetic = isSynthetic(event);
 	DP_EVENT_LOG(
 		"mouse_press x=%f y=%f buttons=0x%x modifiers=0x%x source=0x%x "
 		"penstate=%d touching=%d timestamp=%llu",
@@ -447,7 +445,8 @@ void CanvasController::handleMousePress(QMouseEvent *event)
 		unsigned(event->modifiers()), unsigned(event->source()),
 		int(m_penState), int(m_touching), qulonglong(event->timestamp()));
 
-	if(((!m_tabletEnabled || !synthetic)) && !m_touching) {
+	if(((!m_tabletEnabled || !isSynthetic(event))) &&
+	   !isSyntheticTouch(event) && !m_touching) {
 		event->accept();
 		penPressEvent(
 			QDateTime::currentMSecsSinceEpoch(), posf, 1.0, 0.0, 0.0, 0.0,
@@ -458,7 +457,6 @@ void CanvasController::handleMousePress(QMouseEvent *event)
 void CanvasController::handleMouseRelease(QMouseEvent *event)
 {
 	QPointF posf = mousePosF(event);
-	bool synthetic = isSynthetic(event);
 	DP_EVENT_LOG(
 		"mouse_release x=%f y=%f buttons=0x%x modifiers=0x%x source=0x%x "
 		"penstate=%d touching=%d timestamp=%llu",
@@ -466,7 +464,8 @@ void CanvasController::handleMouseRelease(QMouseEvent *event)
 		unsigned(event->modifiers()), unsigned(event->source()),
 		int(m_penState), int(m_touching), qulonglong(event->timestamp()));
 
-	if((!m_tabletEnabled || !synthetic) && !m_touching) {
+	if((!m_tabletEnabled || !isSynthetic(event)) && !isSyntheticTouch(event) &&
+	   !m_touching) {
 		event->accept();
 		penReleaseEvent(
 			QDateTime::currentMSecsSinceEpoch(), posf, event->button(),
@@ -1949,6 +1948,17 @@ QPointF CanvasController::wheelPosF(QWheelEvent *event) const
 bool CanvasController::isSynthetic(QMouseEvent *event)
 {
 	return event->source() & Qt::MouseEventSynthesizedByQt;
+}
+
+bool CanvasController::isSyntheticTouch(QMouseEvent *event)
+{
+#ifdef Q_OS_WIN
+	// Windows may generate bogus mouse events from touches, we never want this.
+	return event->source() & Qt::MouseEventSynthesizedBySystem;
+#else
+	Q_UNUSED(event);
+	return false;
+#endif
 }
 
 Qt::KeyboardModifiers

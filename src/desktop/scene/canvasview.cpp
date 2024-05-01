@@ -1094,6 +1094,17 @@ static bool isSynthetic(QMouseEvent *event)
 	}
 }
 
+static bool isSyntheticTouch(QMouseEvent *event)
+{
+#ifdef Q_OS_WIN
+	// Windows may generate bogus mouse events from touches, we never want this.
+	return event->source() & Qt::MouseEventSynthesizedByQt;
+#else
+	Q_UNUSED(event);
+	return false;
+#endif
+}
+
 //! Handle mouse press events
 void CanvasView::mousePressEvent(QMouseEvent *event)
 {
@@ -1107,7 +1118,8 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 
 	updateCursorPos(mousePos);
 
-	if((m_enableTablet && isSynthetic(event)) || m_touching) {
+	if((m_enableTablet && isSynthetic(event)) || isSyntheticTouch(event) ||
+	   m_touching) {
 		return;
 	}
 
@@ -1174,8 +1186,8 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 
 	updateCursorPos(mousePos);
 
-	if((m_enableTablet && isSynthetic(event)) || m_pendown == TABLETDOWN ||
-	   m_touching) {
+	if((m_enableTablet && isSynthetic(event)) || isSyntheticTouch(event) ||
+	   m_pendown == TABLETDOWN || m_touching) {
 		return;
 	}
 
@@ -1386,7 +1398,8 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 
 	updateCursorPos(mousePos);
 
-	if((m_enableTablet && isSynthetic(event)) || m_touching) {
+	if((m_enableTablet && isSynthetic(event)) || isSyntheticTouch(event) ||
+	   m_touching) {
 		return;
 	}
 

@@ -246,6 +246,7 @@ private:
 	QPointF tabletPosF(QTabletEvent *event) const;
 	QPointF wheelPosF(QWheelEvent *event) const;
 	static bool isSynthetic(QMouseEvent *event);
+	static bool isSyntheticTouch(QMouseEvent *event);
 
 	Qt::KeyboardModifiers getKeyboardModifiers(const QKeyEvent *event) const;
 	Qt::KeyboardModifiers getMouseModifiers(const QMouseEvent *event) const;
