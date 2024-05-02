@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef SESSIONLISTINGMODEL_H
-#define SESSIONLISTINGMODEL_H
-
+#ifndef LIBCLIENT_NET_SESSIONLISTINGMODEL_H
+#define LIBCLIENT_NET_SESSIONLISTINGMODEL_H
 #include "libshared/listings/announcementapi.h"
-
 #include <QAbstractItemModel>
 #include <QHash>
 #include <QImage>
@@ -13,8 +10,7 @@
 /**
  * @brief List of sessions received from a listing server
  */
-class SessionListingModel final : public QAbstractItemModel
-{
+class SessionListingModel final : public QAbstractItemModel {
 	Q_OBJECT
 public:
 	enum Column {
@@ -43,14 +39,23 @@ public:
 		IsInactiveRole,
 	};
 
-	SessionListingModel(QObject *parent=nullptr);
+	SessionListingModel(QObject *parent = nullptr);
 
-	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
+	QModelIndex index(
+		int row, int column,
+		const QModelIndex &parent = QModelIndex()) const override;
+
 	QModelIndex parent(const QModelIndex &child) const override;
-	int rowCount(const QModelIndex &parent=QModelIndex()) const override;
-	int columnCount(const QModelIndex &parent=QModelIndex()) const override;
-	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
-	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const override;
+	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+
+	QVariant
+	data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+	QVariant headerData(
+		int section, Qt::Orientation orientation,
+		int role = Qt::DisplayRole) const override;
+
 	Qt::ItemFlags flags(const QModelIndex &index) const override;
 	QSize span(const QModelIndex &index) const override;
 
@@ -60,8 +65,14 @@ public:
 
 public slots:
 	void setIcon(const QString &name, const QIcon &icon);
-	void setMessage(const QString &name, const QString &host, const QString &message);
-	void setList(const QString &name, const QString &host, const QVector<sessionlisting::Session> sessions);
+
+	void setMessage(
+		const QString &name, const QString &host, const QString &message);
+
+	void setList(
+		const QString &name, const QString &host,
+		const QVector<sessionlisting::Session> sessions);
+
 	void clear();
 
 private:
@@ -73,8 +84,13 @@ private:
 	bool isNsfm(const sessionlisting::Session &session) const;
 	bool isClosed(const sessionlisting::Session &session) const;
 
-	inline bool isRootItem(const QModelIndex &index) const { return index.internalId() == 0; }
-	inline int listingIndex(const QModelIndex &index) const {
+	bool isRootItem(const QModelIndex &index) const
+	{
+		return index.internalId() == 0;
+	}
+
+	int listingIndex(const QModelIndex &index) const
+	{
 		return isRootItem(index) ? index.row() : int(index.internalId() - 1);
 	}
 
@@ -86,7 +102,7 @@ private:
 		QString message;
 		QVector<sessionlisting::Session> sessions;
 
-		inline bool offline() const { return !message.isEmpty(); }
+		bool offline() const { return !message.isEmpty(); }
 	};
 
 	QVector<Listing> m_listings;
