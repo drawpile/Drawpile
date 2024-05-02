@@ -9454,7 +9454,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>ลบออก</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9508,7 +9508,7 @@ Hex: %4</source>
     <message>
         <location line="+59"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>ลบออก</translation>
     </message>
 </context>
 <context>
