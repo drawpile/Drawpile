@@ -1302,7 +1302,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+5"/>
         <source>Compatibility Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>โหมดเข้ากันได้:</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -2727,7 +2727,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>ล็อกไฟล์</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2744,7 +2744,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Check For Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>ตรวจสอบสำหรับการอัพเดต</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -2776,7 +2776,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+11"/>
         <location filename="../widgets/macmenu.cpp" line="-5"/>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>ช่วยเหลือ(&amp;H)</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -2811,7 +2811,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+51"/>
         <source>Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>จานสี</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -2821,7 +2821,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-13"/>
         <source>Window</source>
-        <translation type="unfinished"></translation>
+        <translation>หน้าต่าง</translation>
     </message>
 </context>
 <context>
@@ -2829,12 +2829,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/netstats.ui" line="+14"/>
         <source>Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>สถิติ</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Latency:</source>
-        <translation type="unfinished"></translation>
+        <translation>แฝง</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2859,12 +2859,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-86"/>
         <source>Sent:</source>
-        <translation type="unfinished"></translation>
+        <translation>ส่งแล้ว!</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Received:</source>
-        <translation type="unfinished"></translation>
+        <translation>ได้รับ</translation>
     </message>
 </context>
 <context>
@@ -2872,7 +2872,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/playback.ui" line="+14"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>การเล่น</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -2882,12 +2882,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Skip Backward</source>
-        <translation type="unfinished"></translation>
+        <translation>ย้อนหลัง</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>เล่น</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -2897,17 +2897,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Skip Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>ข้ามไป</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Playback Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>ความเร็วในการเล่น </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+79"/>
@@ -2932,7 +2932,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Autosave</source>
-        <translation type="unfinished"></translation>
+        <translation>บันทึกอัตโนมัติ</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -2942,7 +2942,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>หยุด</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -2956,7 +2956,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
         <location filename="../filewrangler.cpp" line="-450"/>
         <source>All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>ทุกไฟล์ (*)</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+77"/>
@@ -2966,27 +2966,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>ยางลบ</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Line</source>
-        <translation type="unfinished"></translation>
+        <translation>เส้นตรง</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Rectangle</source>
-        <translation type="unfinished"></translation>
+        <translation>สี่เหลี่ยม</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Ellipse</source>
-        <translation type="unfinished"></translation>
+        <translation>วงรี</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Bezier Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>เส้นโค้งเบซิเย่ร์</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2996,12 +2996,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Annotation</source>
-        <translation type="unfinished"></translation>
+        <translation>หมายเหตุ</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Picker</source>
-        <translation type="unfinished"></translation>
+        <translation>ตัวเลือกสี</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3021,12 +3021,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>ขยาย</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Inspector</source>
-        <translation type="unfinished"></translation>
+        <translation>คุณสมบัติ</translation>
     </message>
 </context>
 <context>
@@ -3042,7 +3042,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/resizedialog.ui" line="+14"/>
         <source>Resize Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>ปรับขนาดพื้นภาพ</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -3060,19 +3060,19 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>การแปลง</translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+3"/>
         <source>Flip Horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>พลิกแนวนอน</translation>
     </message>
     <message>
         <location line="+27"/>
         <location line="+3"/>
         <source>Flip Vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>พลิกแนวตั้ง</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -3089,7 +3089,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+26"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>อัตรา</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3114,37 +3114,37 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+6"/>
         <location line="+26"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>ตัวกรอง</translation>
     </message>
     <message>
         <location line="-8"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation>ผู้ใช้</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Inspect</source>
-        <translation type="unfinished"></translation>
+        <translation>ตรวจสอบ(&amp;I)</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Kick</source>
-        <translation type="unfinished"></translation>
+        <translation>เตะ</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Ban</source>
-        <translation type="unfinished"></translation>
+        <translation>แบน</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>เลิกทำ</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>ทำอีกครั้ง</translation>
     </message>
 </context>
 <context>
@@ -3157,12 +3157,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>การตั้งค่า</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session</source>
-        <translation type="unfinished"></translation>
+        <translation>เซสชั่น</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3192,7 +3192,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+25"/>
         <source>Options:</source>
-        <translation type="unfinished"></translation>
+        <translation>ตัวเลือก:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3242,17 +3242,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+13"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>ไตเติ้ล:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Login</source>
-        <translation type="unfinished"></translation>
+        <translation>ลงชื่อเข้าใช้</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>รหัสผ่าน:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -3282,7 +3282,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+11"/>
         <source>Permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>การอนุญาต</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3297,7 +3297,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>การอนุญาต</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3337,23 +3337,23 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+8"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>ตัวดำเนินการ</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+188"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>เชื่อถือได้</translation>
     </message>
     <message>
         <location line="-180"/>
         <source>Timeline:</source>
-        <translation type="unfinished"></translation>
+        <translation>ไทม์ไลน์</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Metadata:</source>
-        <translation type="unfinished"></translation>
+        <translation>ข้อมูลเมตา</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3374,13 +3374,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+18"/>
         <location line="+82"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>นำเข้า</translation>
     </message>
     <message>
         <location line="-71"/>
         <location line="+82"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>ส่งออก</translation>
     </message>
     <message>
         <location line="-58"/>
@@ -3391,17 +3391,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-145"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>บทบาท</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>ผู้ควบคุม</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>ประกาศ</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -3437,32 +3437,32 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+32"/>
         <source>Background color</source>
-        <translation type="unfinished"></translation>
+        <translation>ภาพพื้นหลัง</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Text color</source>
-        <translation type="unfinished"></translation>
+        <translation>สีข้อความ</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Bold</source>
-        <translation type="unfinished"></translation>
+        <translation>หนา</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Italic</source>
-        <translation type="unfinished"></translation>
+        <translation>ตัวเอียง</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Underline</source>
-        <translation type="unfinished"></translation>
+        <translation>ขีดเส้นใต้</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Strikethrough</source>
-        <translation type="unfinished"></translation>
+        <translation>ขีดฆ่า</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -3475,7 +3475,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/userinfodialog.ui" line="+14"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>ไดอะล็อก</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -3520,17 +3520,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+20"/>
         <source>Operating System:</source>
-        <translation type="unfinished"></translation>
+        <translation>ระบบปฏิบัติการ</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>ชื่อ:</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Protocol Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>เวอร์ชันของโพรโทคอล:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3543,7 +3543,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/videoexport.ui" line="+14"/>
         <source>Export video</source>
-        <translation type="unfinished"></translation>
+        <translation>ส่งวีดีโอออก</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3558,17 +3558,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+28"/>
         <source>Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>ขนาด:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Framerate:</source>
-        <translation type="unfinished"></translation>
+        <translation>อัตราเฟรม:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Format:</source>
-        <translation type="unfinished"></translation>
+        <translation>รูปแบบ:</translation>
     </message>
     <message>
         <location line="+72"/>
@@ -3578,7 +3578,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+31"/>
         <source>Image format:</source>
-        <translation type="unfinished"></translation>
+        <translation>นามสกุลภาพ:</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -3598,7 +3598,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+16"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation>เลือก</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -3611,7 +3611,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.cpp" line="+79"/>
         <source>Pick</source>
-        <translation type="unfinished"></translation>
+        <translation>เลือก</translation>
     </message>
 </context>
 <context>
@@ -3619,7 +3619,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette.cpp" line="+429"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>ไม่มีชื่อ</translation>
     </message>
 </context>
 <context>
@@ -3627,7 +3627,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_model.cpp" line="+70"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>ไม่มีชื่อ</translation>
     </message>
     <message>
         <location line="+74"/>
@@ -3687,7 +3687,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="-14"/>
         <location line="+15"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>ชื่อ</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -3702,7 +3702,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>ทุกไฟล์ (*)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3722,12 +3722,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/gradient_editor.cpp" line="+336"/>
         <source>Add Color</source>
-        <translation type="unfinished"></translation>
+        <translation>เพิ่มสี</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Remove Color</source>
-        <translation type="unfinished"></translation>
+        <translation>ลบสี</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -3748,7 +3748,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/swatch.cpp" line="+846"/>
         <source>Clear Color</source>
-        <translation type="unfinished"></translation>
+        <translation>ล้างสี</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -3761,7 +3761,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/abusereport.cpp" line="+17"/>
         <source>Report</source>
-        <translation type="unfinished"></translation>
+        <translation>รายงาน</translation>
     </message>
 </context>
 <context>
@@ -3779,12 +3779,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+74"/>
         <source>Check</source>
-        <translation type="unfinished"></translation>
+        <translation>ตรวจสอบ</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>เพิ่ม</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -3802,12 +3802,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>File to Import:</source>
-        <translation type="unfinished"></translation>
+        <translation>ไฟล์สำหรับนำเข้า</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation>เลือก</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3818,12 +3818,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+9"/>
         <source>Framerate:</source>
-        <translation type="unfinished"></translation>
+        <translation>อัตราเฟรม:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>นำเข้า</translation>
     </message>
     <message numerus="yes">
         <location line="+28"/>
@@ -3874,7 +3874,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+17"/>
         <source>Export</source>
         <extracomment>This text on a button, so it&apos;s a verb, not a noun.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>นำออก</translation>
     </message>
     <message>
         <location line="+162"/>
@@ -3919,7 +3919,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+48"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>ทั่วไป</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3990,7 +3990,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+12"/>
         <source>Spacing: </source>
-        <translation type="unfinished"></translation>
+        <translation>ระยะห่าง: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4001,7 +4001,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+40"/>
         <location line="+28"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="-260"/>
@@ -4031,13 +4031,13 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+31"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>ขนาด: </translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+17"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>พิกเซล</translation>
     </message>
     <message>
         <location line="-1"/>
@@ -4048,7 +4048,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+10"/>
         <location line="+405"/>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>ขนาด</translation>
     </message>
     <message>
         <location line="-405"/>
@@ -4385,13 +4385,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+2"/>
         <source>This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the &apos;stroke duration&apos; and &apos;stroke hold time&apos; settings.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>การป้อนข้อมูลนี้ช้าไปจากศูนย์ถึงหนึ่งในขณะที่คุณวาดจังหวะ. นอกจากนี้ยังสามารถกำหนดค่าให้กระโดดกลับไปที่ศูนย์เป็นระยะในขณะที่คุณย้าย. มองไปที่ &apos;ระยะเวลาของจังหวะ&apos; และ &apos; การตั้งค่าการจับจังหวะเวลา &apos;</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>มุมของจังหวะในองศาที่ มูลค่าจะอยู่ระหว่าง 0.0 และ 180.0 ได้อย่างมีประสิทธิภาพโดยไม่สนใจรอบ 180 องศา.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4409,7 +4409,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+2"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>นี้คือการป้อนข้อมูลที่ผู้ใช้กำหนด  &apos;การป้อนข้อมูลที่กำหนดเอง&apos; การตั้งค่าสำหรับรายละเอียด</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4482,7 +4482,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+10"/>
         <source>Opacity</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ความทึบ</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4500,13 +4500,13 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>รัศมี</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hardness</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ความยาก</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4518,31 +4518,31 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Dabs per basic radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ป้ายในรัศมีพื้นฐาน</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per actual radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ป้ายต่อขอบเขตที่แท้จริง</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per second</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>การป้าย ต่อวินาที</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Radius by random</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>สุ่มรัศมี</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fine speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ตัวกรองความเร็วที่ดี</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4931,13 +4931,13 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <location line="+2"/>
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>เช่นเดียวกับข้างต้น แต่รัศมีวาดจริงถูกนำมาใช้ซึ่งสามารถที่จะเปลี่ยนแบบไดนามิก</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs to draw each second, no matter how far the pointer moves</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ป้ายการวาดในแต่ละวินาทีไม่ว่าเท่าที่ผ่านมาการเคลื่อนไหวของตัวชี้</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5067,7 +5067,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>เปลี่ยนความอิ่มตัวของสีโดยใช้สีรูปแบบ HSL. 
+-1.0 สีเทามากขึ้น 
+0.0 ปิดการใช้ 
+1.0 อิ่มตัวมากขึ้น</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5076,7 +5079,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 brigher</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>เปลี่ยนค่าสี (ความสว่างเข้ม) ใช้รูปแบบสี HSV การเปลี่ยนแปลง HSV ถูกนำมาใช้ก่อนที่จะHSL. 
+-1.0 ดำกว่า 
+0.0 ปิดการใช้ 
+1.0 สว่างกว่า</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5085,7 +5091,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>เปลี่ยนความอิ่มตัวของสีโดยใช้รูปแบบสี HSV การเปลี่ยนแปลง HSV ถูกนำมาใช้ก่อนที่จะHSL. 
+-1.0 สีเทามากขึ้น 
+0.0 ปิดการใช้ 
+1.0 อิ่มตัวมากขึ้น</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5094,7 +5103,10 @@ For very slow speed the opposite happens.</source>
  0.5 mix the smudge color with the brush color
  1.0 use only the smudge color</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>สีที่มีรอยเปื้อนสีแทนสีแปรง รอยเปื้อนสีที่มีการเปลี่ยนแปลงอย่างช้าๆเพื่อสีที่คุณวาดภาพลงไป 
+0.0 ไม่ใช้รอยเปื้อนสี 
+0.5 ผสมสีรอยเปื้อนด้วยแปรงสี 
+1.0 การใช้สีเพียงรอยเปื้อน</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5122,7 +5134,10 @@ For very slow speed the opposite happens.</source>
  1.0 standard eraser
  0.5 pixels go towards 50% transparency</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ว่าเครื่องมือนี้จะทำงานเหมือนยางลบ 
+0.0 ระบายสีปกติ 
+1.0 ลบมาตรฐาน 
+0.5 พิกเซลไปสู่ความโปร่งใส 50%</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5149,7 +5164,8 @@ For very slow speed the opposite happens.</source>
         <source>Set the custom input to this value. If it is slowed down, move it towards this value (see below). The idea is that you make this input depend on a mixture of pressure/speed/whatever, and then make other settings depend on this &apos;custom input&apos; instead of repeating this combination everywhere you need it.
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ตั้งค่าสัญญาณเข้าที่กำหนดเองค่านี้ หากมีการชะลอตัวลงย้ายไปยังค่านี้ (ดูด้านล่าง) ความคิดคือการที่คุณให้การป้อนข้อมูลนี้ขึ้นอยู่กับส่วนผสมของความดัน / ความเร็ว / สิ่งและจากนั้นให้ตั้งค่าอื่น ๆ ขึ้นอยู่กับนี้การป้อนข้อมูลที่กำหนดเอง &apos;แทนการทำซ้ำชุดนี้ทุกที่ที่คุณต้องการ
+ถ้าคุณทำให้มันเปลี่ยนโดยการสุ่ม &apos;คุณสามารถสร้างช้า (เรียบ) การป้อนข้อมูลแบบสุ่ม</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5162,7 +5178,7 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
         <location line="+2"/>
         <source>Aspect ratio of the dabs; must be &gt;= 1.0, where 1.0 means a perfectly round dab.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>อัตราส่วนของ Dabs; จะต้องเป็น &gt;= 1.0 ที่ 1.0 หมายถึงการDAB รอบอย่างสมบูรณ์แบบ</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5177,7 +5193,7 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
         <location line="+2"/>
         <source>A low value will make the direction input adapt more quickly, a high value will make it smoother</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ค่าต่ำจะทำให้การป้อนข้อมูลทิศทางที่ปรับตัวได้รวดเร็วมากขึ้นที่มีมูลค่าสูงจะทำให้มันเรียบ</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5386,7 +5402,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation>เลือกสี</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5467,28 +5483,28 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/curvepresetdialog.cpp" line="+32"/>
         <source>Use</source>
-        <translation type="unfinished"></translation>
+        <translation>ใช้</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>ยกเลิก</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+71"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>เปลี่ยนชื่อใหม่</translation>
     </message>
     <message>
         <location line="-68"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>ลบ</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>บันทึก</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -5499,7 +5515,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+0"/>
         <location line="+15"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>ชื่อ</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -5529,12 +5545,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>เรียบ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Linear</source>
-        <translation type="unfinished"></translation>
+        <translation>เชิงเส้น</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5547,7 +5563,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/dumpplaybackdialog.cpp" line="+24"/>
         <source>done</source>
-        <translation type="unfinished"></translation>
+        <translation>สำเร็จ</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5562,12 +5578,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>ไม่ระบุ</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>local user</source>
-        <translation type="unfinished"></translation>
+        <translation>ผู้ใช้ภายใน</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5613,23 +5629,23 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+23"/>
         <location line="+6"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>ชนิด</translation>
     </message>
     <message>
         <location line="-6"/>
         <location line="+6"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>ผู้ใช้</translation>
     </message>
     <message>
         <location line="-6"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>เลิกทำ</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>State</source>
-        <translation type="unfinished"></translation>
+        <translation>สถานะ</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -5639,12 +5655,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+236"/>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>ใช่</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>ไม่</translation>
     </message>
 </context>
 <context>
@@ -5662,7 +5678,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+101"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5688,7 +5704,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>ไตเติ้ล:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -5734,7 +5750,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>ลบ</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -5744,7 +5760,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>ค่าเริ่มต้น</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -5759,7 +5775,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>แนวนอน</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -5807,7 +5823,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+147"/>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation>รับ</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -5832,30 +5848,30 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+21"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>ปิด</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Decline</source>
-        <translation type="unfinished"></translation>
+        <translation>ปฏิเสธ</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+9"/>
         <location line="+15"/>
         <source>Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>กฎ</translation>
     </message>
     <message>
         <location line="-9"/>
         <location line="+15"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>กลับ</translation>
     </message>
     <message>
         <location line="+249"/>
         <source>Remove Account</source>
-        <translation type="unfinished"></translation>
+        <translation>เอาบัญชีออก</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5969,7 +5985,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/netstats.cpp" line="+77"/>
         <source>not connected</source>
-        <translation type="unfinished"></translation>
+        <translation>เชื่อมต่อไม่ได้</translation>
     </message>
 </context>
 <context>
@@ -5977,7 +5993,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="+32"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>การเล่น</translation>
     </message>
     <message>
         <location line="+142"/>
@@ -6005,22 +6021,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>ใหม่</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>เปิด…</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation>เปิดรูปภาพ</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>รีเซ็ต</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6033,17 +6049,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="+22"/>
         <source>Resize</source>
-        <translation type="unfinished"></translation>
+        <translation>ปรับขนาด</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>ศูนย์กลาง</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>ผิดพลาด</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6103,12 +6119,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+68"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>ตัวดำเนินการ</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>เชื่อถือได้</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6118,37 +6134,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>ทุกคน</translation>
     </message>
     <message>
         <location line="+77"/>
         <source>yes</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>ใช่</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>no</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>ไม่</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>change</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>เปลี่ยน</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>assign</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>มอบหมาย</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>never</source>
         <extracomment>&quot;Idle timeout: never&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ไม่เคย</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6184,7 +6200,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>, </source>
         <extracomment>This string joins the hours, minutes and seconds for the idle time.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>, </translation>
     </message>
     <message>
         <location line="+122"/>
@@ -6251,7 +6267,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Plain</source>
-        <translation type="unfinished"></translation>
+        <translation>เรียบง่าย</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -6306,47 +6322,47 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="+32"/>
         <source>Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>ค่ากำหนด</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>ทั่วไป</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>User Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>เชื่อมต่อผู้ใช้</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>ใส่เข้า</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>เครื่องมือ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Network</source>
-        <translation type="unfinished"></translation>
+        <translation>เครือข่าย</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>การแจ้งเตือน</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Servers</source>
-        <translation type="unfinished"></translation>
+        <translation>เซิร์ฟเวอร์</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>ทางลัด</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6356,7 +6372,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>การควบคุมโดยผู้ปกครอง</translation>
     </message>
 </context>
 <context>
@@ -6364,12 +6380,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog.cpp" line="+70"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>เริ่ม</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Welcome</source>
-        <translation type="unfinished"></translation>
+        <translation>ยินดีต้อนรับ</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6419,7 +6435,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Open File</source>
-        <translation type="unfinished"></translation>
+        <translation>เปิดไฟล์</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6449,7 +6465,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>ค่ากำหนด</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6459,22 +6475,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+24"/>
         <source>Record</source>
-        <translation type="unfinished"></translation>
+        <translation>บันทึก</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation>เพิ่มเซิฟเวอร์</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Check for Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>ตรวจสอบสำหรับการอัพเดต</translation>
     </message>
     <message>
         <location line="+272"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>กำลังตรวจสอบ…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6496,17 +6512,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+24"/>
         <source>Join</source>
-        <translation type="unfinished"></translation>
+        <translation>เข้าร่วม</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Host</source>
-        <translation type="unfinished"></translation>
+        <translation>Host</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>สร้าง</translation>
     </message>
 </context>
 <context>
@@ -6545,7 +6561,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/userinfodialog.cpp" line="+31"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>โหลดซ้ำ</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -6557,12 +6573,12 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+9"/>
         <location line="+7"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>ไม่ระบุ</translation>
     </message>
     <message>
         <location line="-22"/>
         <source>Draw</source>
-        <translation type="unfinished"></translation>
+        <translation>วาด</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6572,17 +6588,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Do Nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>ไม่ทำอะไรเลย</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>เปิดใช้งาน</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>ปิดการใช้งาน</translation>
     </message>
 </context>
 <context>
@@ -6610,12 +6626,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Original</source>
-        <translation type="unfinished"></translation>
+        <translation>ต้นฉบับ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Custom:</source>
-        <translation type="unfinished"></translation>
+        <translation>กำหนดเอง:</translation>
     </message>
     <message>
         <location line="+80"/>
@@ -6631,7 +6647,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+107"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>กำลังตรวจสอบ…</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6681,7 +6697,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Restore defaults…</source>
-        <translation type="unfinished"></translation>
+        <translation>คืนค่าเริ่มต้น</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6704,19 +6720,19 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Autosave:</source>
-        <translation type="unfinished"></translation>
+        <translation>บันทึกอัตโนมัติ</translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+99"/>
         <location line="+15"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>ตามระบบ</translation>
     </message>
     <message>
         <location line="-103"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>ภาษา:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6741,7 +6757,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Logging:</source>
-        <translation type="unfinished"></translation>
+        <translation>การบันทึก</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -6791,17 +6807,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Style:</source>
-        <translation type="unfinished"></translation>
+        <translation>สไตล์:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>สว่าง</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>มืด</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6831,7 +6847,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Color scheme:</source>
-        <translation type="unfinished"></translation>
+        <translation>โทนสี</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6849,12 +6865,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/input.cpp" line="+51"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>ใส่เข้า</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>ส่งออก</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6869,7 +6885,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Tablet:</source>
-        <translation type="unfinished"></translation>
+        <translation>แท็บเล็ต</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6951,7 +6967,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>ท่าทาง</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -6962,7 +6978,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-50"/>
         <location line="+52"/>
         <source>Do nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>ไม่ต้องทำอะไร</translation>
     </message>
     <message>
         <location line="-98"/>
@@ -6972,12 +6988,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Android:</source>
-        <translation type="unfinished"></translation>
+        <translation>แอนดรอยด์</translation>
     </message>
     <message>
         <location line="+97"/>
         <source>Draw</source>
-        <translation type="unfinished"></translation>
+        <translation>วาด</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7035,7 +7051,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Updates:</source>
-        <translation type="unfinished"></translation>
+        <translation>อัพเดต</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7060,12 +7076,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Good</source>
-        <translation type="unfinished"></translation>
+        <translation>ดี</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Poor</source>
-        <translation type="unfinished"></translation>
+        <translation>ไม่ดี</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7125,7 +7141,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/notifications.cpp" line="+40"/>
         <source>Event</source>
-        <translation type="unfinished"></translation>
+        <translation>เหตุการณ์</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7145,7 +7161,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>ป๊อปอัพ</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7185,7 +7201,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>ตัวอย่าง</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7210,7 +7226,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Disconnected</source>
-        <translation type="unfinished"></translation>
+        <translation>ตัดการเชื่อมต่อ</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -7220,12 +7236,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+20"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Sound volume:</source>
-        <translation type="unfinished"></translation>
+        <translation>ระดับเสียง</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7235,7 +7251,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Mentions:</source>
-        <translation type="unfinished"></translation>
+        <translation>โต้ตอบ</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7273,7 +7289,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Keywords:</source>
-        <translation type="unfinished"></translation>
+        <translation>คำสำคัญ:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7283,7 +7299,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Unrestricted</source>
-        <translation type="unfinished"></translation>
+        <translation>ไม่จำกัดการเข้าถึง</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7329,7 +7345,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+11"/>
         <location line="+28"/>
         <source>Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>ล๊อค</translation>
     </message>
     <message>
         <location line="-23"/>
@@ -7344,7 +7360,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
+        <translation>ปลดล็อก</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -7369,12 +7385,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Enter password:</source>
-        <translation type="unfinished"></translation>
+        <translation>ใส่รหัสผ่าน:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished"></translation>
+        <translation>รหัสผ่านไม่ถูกต้อง</translation>
     </message>
 </context>
 <context>
@@ -7442,17 +7458,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Move up</source>
-        <translation type="unfinished"></translation>
+        <translation>เลื่อนขึ้น</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Move down</source>
-        <translation type="unfinished"></translation>
+        <translation>เลื่อนลง</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>ดำเนินการต่อ</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -7480,7 +7496,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-4"/>
         <source>Restore defaults…</source>
-        <translation type="unfinished"></translation>
+        <translation>คืนค่าเริ่มต้น</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7498,7 +7514,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Keyboard shortcuts:</source>
-        <translation type="unfinished"></translation>
+        <translation>แป้นพิมพ์ลัด</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7518,7 +7534,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>พิกเซล</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7533,7 +7549,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+25"/>
         <source>Dot</source>
-        <translation type="unfinished"></translation>
+        <translation>จุด</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7543,7 +7559,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Arrow</source>
-        <translation type="unfinished"></translation>
+        <translation>ลูกศร</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7563,7 +7579,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-98"/>
         <source>Shape:</source>
-        <translation type="unfinished"></translation>
+        <translation>รูปร่าง:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7578,7 +7594,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Angle:</source>
-        <translation type="unfinished"></translation>
+        <translation>มุม:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7593,17 +7609,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Direction:</source>
-        <translation type="unfinished"></translation>
+        <translation>ทิศทาง:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>น้อยไปมาก</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>มากไปน้อย</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7636,7 +7652,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Font size: </source>
-        <translation type="unfinished"></translation>
+        <translation>ขนาดตัวอักษร </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7651,7 +7667,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>เดสก์ท็อป</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7666,7 +7682,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>ปิดการใช้งาน</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7696,7 +7712,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Threshold: </source>
-        <translation type="unfinished"></translation>
+        <translation>ระดับ </translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7726,7 +7742,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Miscellaneous:</source>
-        <translation type="unfinished"></translation>
+        <translation>จิปาถะ</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7751,7 +7767,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -7784,12 +7800,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>ตัวกรอง</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Closed</source>
-        <translation type="unfinished"></translation>
+        <translation>ปิดงาน</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7799,7 +7815,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>รหัสผ่าน</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7819,7 +7835,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Inactive</source>
-        <translation type="unfinished"></translation>
+        <translation>เฉื่อยชา</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7829,7 +7845,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Duplicates</source>
-        <translation type="unfinished"></translation>
+        <translation>รายการที่ซ้ำกัน</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7840,18 +7856,18 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+18"/>
         <location line="+4"/>
         <source>Nearby</source>
-        <translation type="unfinished"></translation>
+        <translation>ใกล้ๆ</translation>
     </message>
     <message>
         <location line="-4"/>
         <location line="+144"/>
         <source>Loading...</source>
-        <translation type="unfinished"></translation>
+        <translation>กำลังอ่าน…</translation>
     </message>
     <message>
         <location line="-90"/>
         <source>Join</source>
-        <translation type="unfinished"></translation>
+        <translation>เข้าร่วม</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7890,17 +7906,17 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/startdialog/create.cpp" line="+26"/>
         <location line="+7"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>พิกเซล</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Width:</source>
-        <translation type="unfinished"></translation>
+        <translation>ความกว้าง:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Height:</source>
-        <translation type="unfinished"></translation>
+        <translation>ความสูง:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7910,7 +7926,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Background:</source>
-        <translation type="unfinished"></translation>
+        <translation>พื้นหลัง</translation>
     </message>
 </context>
 <context>
@@ -7923,7 +7939,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>ไตเติ้ล:</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -7933,7 +7949,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Generate</source>
-        <translation type="unfinished"></translation>
+        <translation>สร้าง</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7943,7 +7959,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>รหัสผ่าน:</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -8041,12 +8057,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Recent:</source>
-        <translation type="unfinished"></translation>
+        <translation>ล่าสุด:</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Searching…</source>
-        <translation type="unfinished"></translation>
+        <translation>กำลังค้นหา</translation>
     </message>
     <message>
         <location line="+83"/>
@@ -8059,7 +8075,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="+31"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>ช่วยเหลือ</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8122,12 +8138,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/updatenotice.cpp" line="+60"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>อัปเดต</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>เพิกเฉย</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8193,7 +8209,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>ค้นหา</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -8232,7 +8248,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Icon Size</source>
-        <translation type="unfinished"></translation>
+        <translation>ขนาดไอคอน</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8249,7 +8265,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <location line="+251"/>
         <source>Delete Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>ลบแท็ก</translation>
     </message>
     <message>
         <location line="-249"/>
@@ -8339,38 +8355,38 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorpalette.cpp" line="+186"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>ใหม่</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Duplicate</source>
-        <translation type="unfinished"></translation>
+        <translation>ทำซ้ำ</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+113"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>ลบ</translation>
     </message>
     <message>
         <location line="-111"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>เปลี่ยนชื่อใหม่</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Import...</source>
-        <translation type="unfinished"></translation>
+        <translation>นำเข้า...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export...</source>
-        <translation type="unfinished"></translation>
+        <translation>ส่งออก...</translation>
     </message>
     <message>
         <location line="-51"/>
         <source>Add column</source>
-        <translation type="unfinished"></translation>
+        <translation>เพิ่มคอลัมน์</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -8387,7 +8403,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-46"/>
         <location line="+46"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>ชื่อ</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -8402,7 +8418,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>ทุกไฟล์ (*)</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -8417,7 +8433,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>ผิดพลาด</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8436,19 +8452,19 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../docks/colorsliders.cpp" line="+118"/>
         <source>R</source>
         <extracomment>The &quot;Red&quot; R of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>R</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>G</source>
         <extracomment>The &quot;Green&quot; G of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>เขียว</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>B</source>
         <extracomment>The &quot;Blue&quot; B of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>B</translation>
     </message>
     <message>
         <location line="+132"/>
@@ -8462,7 +8478,7 @@ Values above 0.5 may not be noticeable.</source>
         <source>S</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Saturation&quot; S of HSL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ใต้</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8534,12 +8550,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>ตัวดำเนินการ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>เชื่อถือได้</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8549,7 +8565,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>ทุกคน</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8562,17 +8578,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-276"/>
         <source>Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>ชั้นงาน</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>ความทึบแสง: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+218"/>
@@ -8598,17 +8614,17 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+174"/>
         <location line="+42"/>
         <source>Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>ชั้นงาน</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Group</source>
-        <translation type="unfinished"></translation>
+        <translation>กลุ่ม</translation>
     </message>
     <message>
         <location line="+142"/>
         <source>Delete Layer?</source>
-        <translation type="unfinished"></translation>
+        <translation>ลบชั้นงาน</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8649,7 +8665,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Wrap</source>
-        <translation type="unfinished"></translation>
+        <translation>ห่อหุ้ม</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8677,7 +8693,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/timeline.cpp" line="+19"/>
         <source>Timeline</source>
-        <translation type="unfinished"></translation>
+        <translation>ไทม์ไลน์</translation>
     </message>
     <message>
         <location line="+181"/>
@@ -8700,7 +8716,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>ปิด</translation>
     </message>
 </context>
 <context>
@@ -8708,7 +8724,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+13"/>
         <source>Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>เครื่องมือ</translation>
     </message>
 </context>
 <context>
@@ -8762,23 +8778,23 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Merge</source>
-        <translation type="unfinished"></translation>
+        <translation>รวม</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>ลบ</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>ซ้าย</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+20"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>ศูนย์กลาง</translation>
     </message>
     <message>
         <location line="-17"/>
@@ -8788,17 +8804,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>ขวา</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>บน</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>ล่าง</translation>
     </message>
 </context>
 <context>
@@ -8874,7 +8890,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>ขนาด: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -8887,7 +8903,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/fillsettings.cpp" line="+123"/>
         <source>Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>เลเยอร์ปัจจุบัน:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8900,12 +8916,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+40"/>
         <source>Nearest</source>
-        <translation type="unfinished"></translation>
+        <translation>ใกล้ที่สุด</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Bilinear</source>
-        <translation type="unfinished"></translation>
+        <translation>ไบลิเนียร์</translation>
     </message>
 </context>
 <context>
@@ -8913,7 +8929,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/zoomsettings.cpp" line="+21"/>
         <source>Normal Size</source>
-        <translation type="unfinished"></translation>
+        <translation>ขนาดปกติ</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8926,7 +8942,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../utils/recents.cpp" line="+393"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>มากกว่านี้…</translation>
     </message>
 </context>
 <context>
@@ -8934,7 +8950,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/canvasshortcutedit.cpp" line="+269"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>ยกเลิก</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8977,7 +8993,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../scene/canvasview.cpp" line="+194"/>
         <source>Reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>เชื่อมต่อใหม่</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -8992,7 +9008,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Save As…</source>
-        <translation type="unfinished"></translation>
+        <translation>บันทึกเป็น</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -9075,17 +9091,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatbox.cpp" line="+45"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>เชิญชวน</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session</source>
-        <translation type="unfinished"></translation>
+        <translation>เซสชั่น</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>แชท</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9098,7 +9114,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatwidget.cpp" line="+157"/>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation>สาธารณะ</translation>
     </message>
     <message>
         <location line="+71"/>
@@ -9212,7 +9228,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-623"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>เคลียร์</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9227,7 +9243,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-2"/>
         <source>Attach</source>
-        <translation type="unfinished"></translation>
+        <translation>แนบ</translation>
     </message>
 </context>
 <context>
@@ -9235,7 +9251,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatwindow.cpp" line="+12"/>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>แชท</translation>
     </message>
 </context>
 <context>
@@ -9243,7 +9259,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/colorbutton.cpp" line="+42"/>
         <source>Select a color</source>
-        <translation type="unfinished"></translation>
+        <translation>เลือกสี</translation>
     </message>
 </context>
 <context>
@@ -9251,7 +9267,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/curvewidget.cpp" line="+110"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>คัดลอก</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9261,7 +9277,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>วางสำเนา</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9271,7 +9287,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Presets…</source>
-        <translation type="unfinished"></translation>
+        <translation>ค่าที่ตั้งไว้</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9317,7 +9333,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/netstatus.cpp" line="+58"/>
         <source>Copy address to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>คัดลอกที่อยู่ลงในคลิปบอร์ด</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9337,7 +9353,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>สถิติ</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -9362,12 +9378,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+167"/>
         <source>not connected</source>
-        <translation type="unfinished"></translation>
+        <translation>เชื่อมต่อไม่ได้</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Connecting...</source>
-        <translation type="unfinished"></translation>
+        <translation>กำลังเชื่อมต่อ...</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9377,7 +9393,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Connected</source>
-        <translation type="unfinished"></translation>
+        <translation>เกี่ยวข้อง</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9397,7 +9413,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+38"/>
         <source>Notice</source>
-        <translation type="unfinished"></translation>
+        <translation>ประกาศ</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9407,7 +9423,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished"></translation>
+        <translation>ไม่ต้องแสดงอีก</translation>
     </message>
 </context>
 <context>
@@ -9420,7 +9436,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>เพิกเฉย</translation>
     </message>
 </context>
 <context>
@@ -9428,7 +9444,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="+41"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>เพิ่ม</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9459,22 +9475,22 @@ Hex: %4</source>
     <message>
         <location filename="../widgets/presetselector.cpp" line="+28"/>
         <source>Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>ค่าที่ตั้งไว้</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>โหลด</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>บันทึก</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>ลบ</translation>
     </message>
 </context>
 <context>
@@ -9540,7 +9556,7 @@ Hex: %4</source>
     <message>
         <location line="+6"/>
         <source>Toggle visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>ซ่อน/แสดง</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9557,7 +9573,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+558"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>แทร็ก</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -9605,47 +9621,47 @@ or via Animation ▸ New Track.</source>
     <message>
         <location filename="../chat/useritemdelegate.cpp" line="+167"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>ผู้ควบคุม</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>เชื่อถือได้</translation>
     </message>
     <message>
         <location line="-138"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>ผู้ควบคุม</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>เชื่อถือได้</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>ล๊อค</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>ปิดเสียง</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;เลิกทำ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;ทำซ้ำ</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Kick</source>
-        <translation type="unfinished"></translation>
+        <translation>เตะ</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9670,12 +9686,12 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+107"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation>ผู้ควบคุม</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Bot</source>
-        <translation type="unfinished"></translation>
+        <translation>บอต</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9693,7 +9709,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+40"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>ขยาย</translation>
     </message>
 </context>
 </TS>
