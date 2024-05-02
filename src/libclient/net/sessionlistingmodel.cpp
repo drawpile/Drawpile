@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/net/sessionlistingmodel.h"
 #include "cmake-config/config.h"
+#include "libclient/net/loginsessions.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include <QFont>
 #include <QIcon>
@@ -235,7 +236,9 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 					return QIcon::fromTheme("state-error");
 				}
 			case Title:
-				if(isClosed(session)) {
+				if(!session.protocol.isCompatible()) {
+					return QIcon::fromTheme("dontknow");
+				} else if(isClosed(session)) {
 					return QIcon::fromTheme("cards-block");
 				} else if(session.password) {
 					return QIcon::fromTheme("object-locked");
@@ -289,6 +292,27 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 			return session.owner;
 		case IsInactiveRole:
 			return session.activeDrawingUsers == 0;
+		case JoinableRole:
+#ifndef HAVE_TCPSOCKETS
+			if(!session.allowWeb) {
+				return false;
+			}
+#endif
+			return session.protocol.isCompatible();
+		case JoinDenyReasonsRole: {
+#ifdef HAVE_TCPSOCKETS
+			bool webLoginBlocked = false;
+#else
+			bool webLoginBlocked = !session.allowWeb;
+#endif
+			return net::LoginSessionModel::getJoinDenyReasons(
+				session.closed, false, webLoginBlocked,
+				!session.protocol.isCompatible(), session.protocol.isFuture(),
+				session.protocol.isPast());
+		}
+		case JoinDenyIcon:
+			return net::LoginSessionModel::getJoinDenyIcon(
+				!session.protocol.isCompatible());
 		default:
 			break;
 		}
@@ -336,14 +360,10 @@ Qt::ItemFlags SessionListingModel::flags(const QModelIndex &index) const
 		return Qt::ItemIsEnabled;
 	}
 
-	const auto &listing = m_listings.at(listingIndex(index));
+	const Listing &listing = m_listings.at(listingIndex(index));
 	if(listing.offline()) {
 		return Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
 	}
-
-	const auto &session = listing.sessions.at(index.row());
-	if(!session.protocol.isCompatible())
-		return Qt::ItemNeverHasChildren;
 
 	return QAbstractItemModel::flags(index) | Qt::ItemNeverHasChildren;
 }
@@ -502,6 +522,14 @@ QString SessionListingModel::formatTitle(
 
 	if(includeFlags) {
 		QStringList flags;
+		if(!session.protocol.isCompatible()) {
+			flags.append(tr("incompatible"));
+		}
+#ifndef HAVE_TCPSOCKETS
+		if(!session.allowWeb) {
+			flags.append(tr("joining from web not allowed"));
+		}
+#endif
 		if(isClosed(session)) {
 			flags.append(tr("closed"));
 		}
@@ -532,6 +560,11 @@ bool SessionListingModel::isNsfm(const Session &session) const
 
 bool SessionListingModel::isClosed(const sessionlisting::Session &session) const
 {
+#ifndef HAVE_TCPSOCKETS
+	if(!session.allowWeb) {
+		return true;
+	}
+#endif
 	return session.closed ||
 		   (session.maxUsers > 0 && session.users >= session.maxUsers);
 }

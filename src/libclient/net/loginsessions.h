@@ -121,6 +121,12 @@ public:
 		return m_sessions.isEmpty() ? LoginSession() : m_sessions.first();
 	}
 
+	static QStringList getJoinDenyReasons(
+		bool newLoginsBlocked, bool guestLoginBlocked, bool webLoginBlocked,
+		bool incompatibleVersion, bool futureVersion, bool pastVersion);
+
+	static QIcon getJoinDenyIcon(bool incompatibleVersion);
+
 private:
 	bool isNsfm(const LoginSession &ls) const;
 

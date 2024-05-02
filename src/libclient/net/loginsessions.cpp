@@ -178,49 +178,12 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 			return ls.isCompatibilityMode();
 		case InactiveRole:
 			return ls.activeDrawingUserCount == 0;
-		case JoinDenyReasonsRole: {
-			QStringList reasons;
-			if(ls.newLoginsBlocked) {
-				//: "It" refers to a session that can't be joined.
-				reasons.append(tr("It is full or closed."));
-			}
-			if(ls.guestLoginBlocked) {
-				//: "It" refers to a session that can't be joined.
-				reasons.append(tr("It requires an account."));
-			}
-			if(ls.webLoginBlocked) {
-#ifdef __EMSCRIPTEN__
-				//: "It" refers to a session that can't be joined.
-				reasons.append(
-					tr("It does not allow joining via web browser."));
-#else
-				//: "It" refers to a session that can't be joined.
-				reasons.append(tr("It does not allow joining via WebSockets."));
-#endif
-			}
-			if(ls.isIncompatible()) {
-				if(ls.version.future) {
-					reasons.append(
-						//: "It" refers to a session that can't be joined.
-						tr("It is hosted with a newer version of Drawpile, you "
-						   "have to update. If there is no update available, "
-						   "it may be hosted with a development version of "
-						   "Drawpile."));
-				} else if(ls.version.past) {
-					//: "It" refers to a session that can't be joined.
-					reasons.append(tr("It is hosted with an old, incompatible "
-									  "version of Drawpile."));
-				} else {
-					//: "It" refers to a session that can't be joined.
-					reasons.append(
-						tr("It is hosted with an incompatible protocol."));
-				}
-			}
-			return reasons;
-		}
+		case JoinDenyReasonsRole:
+			return getJoinDenyReasons(
+				ls.newLoginsBlocked, ls.guestLoginBlocked, ls.webLoginBlocked,
+				!ls.version.compatible, ls.version.future, ls.version.past);
 		case JoinDenyIcon:
-			return QIcon::fromTheme(
-				ls.isIncompatible() ? "dontknow" : "cards-block");
+			return getJoinDenyIcon(!ls.version.compatible);
 		default:
 			return QVariant{};
 		}
@@ -275,6 +238,53 @@ void LoginSessionModel::removeSession(const QString &id)
 			return;
 		}
 	}
+}
+
+QStringList LoginSessionModel::getJoinDenyReasons(
+	bool newLoginsBlocked, bool guestLoginBlocked, bool webLoginBlocked,
+	bool incompatibleVersion, bool futureVersion, bool pastVersion)
+{
+	QStringList reasons;
+	if(newLoginsBlocked) {
+		//: "It" refers to a session that can't be joined.
+		reasons.append(tr("It is full or closed."));
+	}
+	if(guestLoginBlocked) {
+		//: "It" refers to a session that can't be joined.
+		reasons.append(tr("It requires an account."));
+	}
+	if(webLoginBlocked) {
+#ifdef __EMSCRIPTEN__
+		//: "It" refers to a session that can't be joined.
+		reasons.append(tr("It does not allow joining via web browser."));
+#else
+		//: "It" refers to a session that can't be joined.
+		reasons.append(tr("It does not allow joining via WebSockets."));
+#endif
+	}
+	if(incompatibleVersion) {
+		if(futureVersion) {
+			reasons.append(
+				//: "It" refers to a session that can't be joined.
+				tr("It is hosted with a newer version of Drawpile, you "
+				   "have to update. If there is no update available, "
+				   "it may be hosted with a development version of "
+				   "Drawpile."));
+		} else if(pastVersion) {
+			//: "It" refers to a session that can't be joined.
+			reasons.append(tr("It is hosted with an old, incompatible "
+							  "version of Drawpile."));
+		} else {
+			//: "It" refers to a session that can't be joined.
+			reasons.append(tr("It is hosted with an incompatible protocol."));
+		}
+	}
+	return reasons;
+}
+
+QIcon LoginSessionModel::getJoinDenyIcon(bool incompatibleVersion)
+{
+	return QIcon::fromTheme(incompatibleVersion ? "dontknow" : "cards-block");
 }
 
 bool LoginSessionModel::isNsfm(const LoginSession &session) const

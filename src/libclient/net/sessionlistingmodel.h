@@ -37,6 +37,9 @@ public:
 		ServerRole,
 		OwnerRole,
 		IsInactiveRole,
+		JoinableRole,
+		JoinDenyReasonsRole,
+		JoinDenyIcon,
 	};
 
 	SessionListingModel(QObject *parent = nullptr);

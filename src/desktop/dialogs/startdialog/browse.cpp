@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/startdialog/browse.h"
+#include "desktop/dialogs/logindialog.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/spanawaretreeview.h"
@@ -312,15 +313,24 @@ void Browse::showListingContextMenu(const QPoint &pos)
 {
 	QModelIndex index = m_listing->selectionModel()->currentIndex();
 	if(isListingIndex(index)) {
-		m_joinAction->setEnabled(canJoinIndex(index));
+		m_joinAction->setEnabled(isSessionIndex(index));
 		m_listingContextMenu->popup(mapToGlobal(pos));
 	}
 }
 
 void Browse::joinIndex(const QModelIndex &index)
 {
-	if(canJoinIndex(index)) {
-		emit join(index.data(SessionListingModel::UrlRole).toUrl());
+	if(isSessionIndex(index)) {
+		if(index.data(SessionListingModel::JoinableRole).toBool()) {
+			emit join(index.data(SessionListingModel::UrlRole).toUrl());
+		} else {
+			QStringList reasons =
+				index.data(SessionListingModel::JoinDenyReasonsRole)
+					.toStringList();
+			QIcon icon =
+				index.data(SessionListingModel::JoinDenyIcon).value<QIcon>();
+			dialogs::LoginDialog::showJoinDenyMessageBox(this, reasons, icon);
+		}
 	}
 }
 
@@ -417,7 +427,7 @@ void Browse::refresh()
 void Browse::updateJoinButton()
 {
 	QModelIndex index = m_listing->selectionModel()->currentIndex();
-	emit enableJoin(canJoinIndex(index));
+	emit enableJoin(isSessionIndex(index));
 }
 
 void Browse::updateColumnSizes()
@@ -481,7 +491,7 @@ QAction *Browse::makeCopySessionDataAction(const QString &text, int role)
 	return action;
 }
 
-bool Browse::canJoinIndex(const QModelIndex &index)
+bool Browse::isSessionIndex(const QModelIndex &index)
 {
 	return isListingIndex(index) && index.flags().testFlag(Qt::ItemIsEnabled);
 }

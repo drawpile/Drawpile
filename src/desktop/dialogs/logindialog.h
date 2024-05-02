@@ -26,6 +26,9 @@ public:
 	explicit LoginDialog(net::LoginHandler *login, QWidget *parent = nullptr);
 	~LoginDialog() override;
 
+	static void showJoinDenyMessageBox(
+		QWidget *parent, const QStringList &reasons, const QIcon &icon);
+
 public slots:
 	void catchupProgress(int value);
 	void onLoginDone(bool join);

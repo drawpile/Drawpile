@@ -66,7 +66,7 @@ private:
 
 	QAction *makeCopySessionDataAction(const QString &text, int role);
 
-	bool canJoinIndex(const QModelIndex &index);
+	bool isSessionIndex(const QModelIndex &index);
 	bool isListingIndex(const QModelIndex &index);
 
 	QWidget *m_noListServers;
