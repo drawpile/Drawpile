@@ -177,3 +177,10 @@ QString WhatIsMyIp::guessLocalAddress()
 	return "127.0.0.1";
 }
 
+bool WhatIsMyIp::looksLikeLocalhost(const QString &host)
+{
+	return host.startsWith(QStringLiteral("localhost"), Qt::CaseInsensitive) ||
+		   host.startsWith(QStringLiteral("127.0.0.1")) ||
+		   host.startsWith(QStringLiteral("::1"));
+}
+

@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/net/sessionlistingmodel.h"
-#include "cmake-config/config.h"
 #include "libclient/net/loginsessions.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include <QFont>
@@ -10,6 +9,11 @@
 #include <QRegularExpression>
 #include <QSize>
 #include <QUrl>
+#ifdef HAVE_TCPSOCKETS
+#	include "cmake-config/config.h"
+#else
+#	include "libshared/util/whatismyip.h"
+#endif
 
 using sessionlisting::Session;
 
@@ -83,12 +87,22 @@ static QString ageString(const qint64 seconds)
 
 static QUrl sessionUrl(const Session &s)
 {
+	QString id = QUrl::toPercentEncoding(s.id);
 	QUrl url;
-	url.setScheme("drawpile");
 	url.setHost(s.host);
-	if(s.port != cmake_config::proto::port())
+#ifdef HAVE_TCPSOCKETS
+	url.setScheme(QStringLiteral("drawpile"));
+	if(s.port != cmake_config::proto::port()) {
 		url.setPort(s.port);
-	url.setPath("/" + s.id);
+	}
+	url.setPath(QStringLiteral("/") + id);
+#else
+	url.setScheme(
+		WhatIsMyIp::looksLikeLocalhost(s.host) ? QStringLiteral("ws")
+											   : QStringLiteral("wss"));
+	url.setPath(QStringLiteral("/drawpile-web/ws"));
+	url.setQuery(QStringLiteral("session=") + id);
+#endif
 	return url;
 }
 

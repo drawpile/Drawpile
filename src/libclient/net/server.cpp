@@ -2,6 +2,7 @@
 #include "libclient/net/server.h"
 #include "libclient/net/login.h"
 #include "libshared/net/servercmd.h"
+#include "libshared/util/whatismyip.h"
 #include <QDebug>
 #ifdef HAVE_TCPSOCKETS
 #	include "libclient/net/tcpserver.h"
@@ -53,13 +54,9 @@ QString Server::addSchemeToUserSuppliedAddress(const QString &remoteAddress)
 #if defined(HAVE_TCPSOCKETS)
 		return QStringLiteral("drawpile://") + remoteAddress;
 #elif defined(HAVE_WEBSOCKETS)
-		bool looksLikeLocalhost =
-			remoteAddress.startsWith(
-				QStringLiteral("localhost"), Qt::CaseInsensitive) ||
-			remoteAddress.startsWith("127.0.0.1") ||
-			remoteAddress.startsWith("::1");
-		QString scheme =
-			looksLikeLocalhost ? QStringLiteral("ws") : QStringLiteral("wss");
+		QString scheme = WhatIsMyIp::looksLikeLocalhost(remoteAddress)
+							 ? QStringLiteral("ws")
+							 : QStringLiteral("wss");
 		QUrl url(scheme + QStringLiteral("://") + remoteAddress);
 		if(url.path().isEmpty() || url.path() == QStringLiteral("/")) {
 			url.setPath(QStringLiteral("/drawpile-web/ws"));
