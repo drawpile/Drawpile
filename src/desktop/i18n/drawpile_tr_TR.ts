@@ -542,12 +542,12 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+6"/>
         <source>Open ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>ORA&apos;yı aç</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>OpenRaster Image</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenRaster Görsel</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -567,12 +567,12 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+7"/>
         <source>Import Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum Engellerini İçe Aktar</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Rolleri İçe Aktar</translation>
     </message>
     <message>
         <location line="+44"/>
@@ -583,7 +583,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="-185"/>
         <source>Export Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Görseli Dışa Aktar</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -658,43 +658,43 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+7"/>
         <source>Export Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum Engellerini Dışa Aktar</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Rolleri Dışa Aktar</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>PSD formatı dipnotları, animasyon zaman çizelgesini ve bazı karışım modlarını desteklememekte. Eğer belirtilen özelliklerin doğru kaydedilmesini istiyorsanız, belgenizi ORA uzantılı olarak kaydediniz.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçilen format, belgeyi düzleştirilmiş bir görsel olarak kaydedecek. Katmanları, dipnotları ve animasyon zaman çizelgesini korumak istiyorsanız, dosyanızı ORA formatı olarak kaydediniz.</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Save as Selected Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçilmiş Format Olarak Kaydet</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save as %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Farklı Kaydet %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save as ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>ORA Olarak Kaydet</translation>
     </message>
     <message>
         <location line="+52"/>
         <location line="+5"/>
         <source>Untitled</source>
-        <translation type="unfinished">Başlıksız</translation>
+        <translation>Başlıksız</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -808,7 +808,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+41"/>
         <source>Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Hız: </translation>
     </message>
     <message>
         <location line="+29"/>
@@ -1087,57 +1087,57 @@ Alt aralık: [%3, %4]</translation>
     <message>
         <location line="+67"/>
         <source>Continue without account</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum açmadan devam et</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Log in with server account</source>
-        <translation type="unfinished"></translation>
+        <translation>Sunucu hesabıyla giriş yap</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Continue with this account, but change the avatar, username or password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu hesap ile devam et ancak; avatar, kullanıcı adı veya şifreyi değiştir.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Edit and log in</source>
-        <translation type="unfinished"></translation>
+        <translation>Düzenle ve giriş yap</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Don&apos;t use any of these accounts.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mevcut hesapları kullanma.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in a different way</source>
-        <translation type="unfinished"></translation>
+        <translation>Farklı bir şekilde giriş yap</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Log in with the selected account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçilen hesap ile giriş yap.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in with this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu hesap ile giriş yap</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Forget this account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu hesabı unut.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Forget this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu hesabı unut</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Don&apos;t ask again unless the rules change</source>
-        <translation type="unfinished"></translation>
+        <translation>Kurallar değişmediği sürece tekrar sorma</translation>
     </message>
     <message>
         <location line="-578"/>
@@ -1281,7 +1281,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     <message>
         <location line="+271"/>
         <source>Opening file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya açılıyor…</translation>
     </message>
     <message>
         <location line="+135"/>
@@ -1709,7 +1709,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+3"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekrandan Seç</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1820,7 +1820,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+15"/>
         <source>Tablet Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablet Sürücüsü</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -2030,7 +2030,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+1"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni Katman Grubu</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="+308"/>
@@ -2178,12 +2178,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+1"/>
         <source>Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Sonraki Key Frame</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Önceki Key Frame</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2302,7 +2302,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="-2416"/>
         <source>Joined the session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturuma katılındı!</translation>
     </message>
     <message>
         <location line="+379"/>
@@ -2317,7 +2317,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+112"/>
         <source>Reason:</source>
-        <translation type="unfinished">Sebep:</translation>
+        <translation>Sebep:</translation>
     </message>
     <message>
         <location line="+123"/>
@@ -2332,92 +2332,92 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+71"/>
         <source>Canvas locked</source>
-        <translation type="unfinished">Tuval kilitlendi</translation>
+        <translation>Tuval kilitlendi</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished">Tuvalin kilidi açıldı</translation>
+        <translation>Tuvalin kilidi açıldı</translation>
     </message>
     <message>
         <location line="+361"/>
         <source>Freehand (erase mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation>Serbest çizim (silme modu, sıfırlamak için tıklayın)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (erase mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Serbest çizim fırça aracı (silme modu)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Freehand (alpha lock mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation>Serbest çizim (alfa kilit modu, sıfırlamak için tıklayın)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (alpha lock mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Serbest çizim fırça aracı (alfa kilit modu, sıfırlamak için tıklayın)</translation>
     </message>
     <message>
         <location line="+629"/>
         <source>Export Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>Görseli Dışa Aktar…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Selection...</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçimi Dışa Aktar...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Import &amp;Drawpile 2.1 Animation…</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.1 Animasyonunu Dışa Aktar…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Import &amp;Brushes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırçaları İçe Aktar...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Session &amp;Template...</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum Şablonunu Dışa Aktar...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Animated &amp;GIF...</source>
-        <translation type="unfinished"></translation>
+        <translation>Hareketli GIF&apos;i Dışa Aktar..</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export Animation &amp;Frames...</source>
-        <translation type="unfinished"></translation>
+        <translation>Animasyon Karelerini Dışa Aktar...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export &amp;Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırçaları Dışa Aktar…</translation>
     </message>
     <message>
         <location line="+115"/>
         <source>&amp;Copy Merged</source>
-        <translation type="unfinished"></translation>
+        <translation>Birleştirileni Kopyala</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy Without Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Arka Plansız Kopyala</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy From &amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Katmandan Kopyala</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cu&amp;t From Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Katmandan Kes</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2428,7 +2428,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <location filename="../docks/layerlistdock.cpp" line="-3"/>
         <location filename="../mainwindow.cpp" line="+408"/>
         <source>Layer Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>Katman Özellikleri…</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+126"/>
@@ -2730,7 +2730,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+1"/>
         <source>Touch Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Temas Deneyici</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3235,17 +3235,17 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+7"/>
         <source>Idle timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaman aşımı eşiği:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>X seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>X saniye</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Disable idle timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaman aşımı eşiğini devre dışı bırak</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -3285,7 +3285,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+7"/>
         <source>Allow joining from the web browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Web tarayıcısından katılıma izin ver</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -3376,19 +3376,19 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+11"/>
         <source>Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Engeller</translation>
     </message>
     <message>
         <location line="+18"/>
         <location line="+82"/>
         <source>Import</source>
-        <translation type="unfinished">İçe aktar</translation>
+        <translation>İçe aktar</translation>
     </message>
     <message>
         <location line="-71"/>
         <location line="+82"/>
         <source>Export</source>
-        <translation type="unfinished">Dışa Aktar</translation>
+        <translation>Dışa Aktar</translation>
     </message>
     <message>
         <location line="-58"/>
@@ -3399,12 +3399,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="-145"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Roller</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Operator</source>
-        <translation type="unfinished">Operatör</translation>
+        <translation>Operatör</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3806,45 +3806,45 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location filename="../dialogs/animationimportdialog.cpp" line="+27"/>
         <source>Import Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Animasyonu İçe Aktar</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>File to Import:</source>
-        <translation type="unfinished"></translation>
+        <translation>İçe Aktarılacak Dosya:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Choose</source>
-        <translation type="unfinished">Seç</translation>
+        <translation>Seç</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Key frame length:</source>
         <extracomment>How many frames each imported key frame gets in the timeline.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Key frame uzunluğu:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Kare Hızı:</translation>
+        <translation>Kare Hızı:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Import</source>
-        <translation type="unfinished">İçe aktar</translation>
+        <translation>İçe aktar</translation>
     </message>
     <message numerus="yes">
         <location line="+28"/>
         <source> frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform> . kare</numerusform>
         </translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Animation Import Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Animasyon İçe Aktarma Hatası</translation>
     </message>
 </context>
 <context>
@@ -4065,7 +4065,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <location line="+57"/>
         <location line="+68"/>
         <source>Input</source>
-        <translation type="unfinished">Girdi</translation>
+        <translation>Girdi</translation>
     </message>
     <message>
         <location line="-152"/>
@@ -4123,32 +4123,32 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="-211"/>
         <source>No dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinamik yok</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Basınç dinamikleri</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Hız dinamikleri</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesafe dinamikleri</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Maksimum Hız: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished"></translation>
+        <translation>Maksimum Mesafe: </translation>
     </message>
     <message>
         <location line="+9"/>
@@ -4160,22 +4160,22 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="-49"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Boyut, opaklık, sertlik ve bulaşma için maksimum hız belirle.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu fırçadaki tüm ayarlar için maksimum hız belirle.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Boyut, opaklık, sertlik ve bulaşma için maksimum mesafe belirle.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu fırçadaki tüm ayarlar için maksimum mesafe belirle.</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -5750,12 +5750,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+101"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>% (%1 FPS)</source>
-        <translation type="unfinished"></translation>
+        <translation>% (%1 FPS)</translation>
     </message>
 </context>
 <context>
@@ -5895,27 +5895,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+147"/>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation>Kabul Et</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Log in with server account</source>
-        <translation type="unfinished"></translation>
+        <translation>Sunucu hesabı ile giriş yap</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hesap şifrenizi girin. Eğer bir hesabınız yoksa hesap oluşturmalısınız. Bu sunucuda hesap oluşturmakla ilgili bir bilgi bulunmamaktadır.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hesap şifrenizi girin. Eğer bir hesabınız yoksa %1 bağlantısından hesap oluşturmalısınız.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu kullanıcı adı var olan bir hesaba aittir. Eğer sizin hesabınız değilse başka bir isimle tekrar deneyin.</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -5925,121 +5925,121 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Decline</source>
-        <translation type="unfinished"></translation>
+        <translation>Reddet</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+9"/>
         <location line="+15"/>
         <source>Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Kurallar</translation>
     </message>
     <message>
         <location line="-9"/>
         <location line="+15"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Geri</translation>
     </message>
     <message>
         <location line="+249"/>
         <source>Remove Account</source>
-        <translation type="unfinished"></translation>
+        <translation>Hesabı Kaldır</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really forget this account? This will only remove it from your recent account list, it won&apos;t delete the account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hesabı unutmak istediğine emin misin? Bu işlem hesabı sadece en sonki hesaplar listesinden kaldıracak. Hesap silinmeyecek.</translation>
     </message>
     <message>
         <location line="+39"/>
         <location line="+161"/>
         <source>Enter the name you want to use.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kullanmak istediğiniz ismi girin.</translation>
     </message>
     <message>
         <location line="-99"/>
         <source>Server Rules for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 İçin Sunucu Kuralları</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Log in with %1 account</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 hesabı ile giriş yap</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kullanmak istediğiniz ismi girin. Bu sunucu hakkında detaylı bilgi için %1 bağlantısını inceleyin.</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>Girdiğiniz kullanıcı adı bu sunucuda bulunmamakta. Bu sizin drawpile.net hesabınız değil!</translation>
     </message>
     <message>
         <location line="+530"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>Girdiğiniz kullanıcı adı ve şifre bu sunucuda bulunmamakta. Bu sizin drawpile.net hesabınız değil!</translation>
     </message>
     <message>
         <location line="-614"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hesabınız olmadan devam edebilirsiniz. Hesap açmak isterseniz %1 bağlantısından işlem gerçekleştirebilirsiniz.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>An account is required. You can register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hesap gereklidir. %1 bağlantısından hesap açabilirsiniz.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You can continue without an account. The server doesn&apos;t provide any information on how to register one either.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hesabınız olmadan devam edebilirsiniz. Bu sunucuda hesap açılımı hakkında bir bilgi bulunmamakta.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>An account is required, but the server doesn&apos;t provide any information on how to register one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hesap gereklidir. Bu sunucuda hesap açılımı hakkında bir bilgi bulunmamaktadır.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>See %1 for more information about this server. To register an account, visit %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sunucu hakkında detaylı bilgi için %1, hesap oluşturmak için %2 bağlantısını inceleyiniz.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sunucu hakkında detaylı bilgi için %1 bağlantısını inceleyiniz.</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>This username belongs to an account, pick a different one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu kullanıcı adı başka bir hesaba ait, farklı bir isim seçin.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>The %1 authentication is not working.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 doğrulama çalışmıyor.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This username doesn&apos;t belong an account on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu kullanıcı adı %1 içerisindeki bir hesaba ait değil.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kullanıcı adı bir sunucu hesabına ait. Bu sunucuda %1 üzerinden giriş yapamazsınız.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>This username belongs to some other login method, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kullanıcı adı bir giriş yapma yöntemine ait. Bu sunucuda %1 üzerinden giriş yapamazsınız.</translation>
     </message>
     <message>
         <location line="+518"/>
         <source>Enter the username and password for your %1 account.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 hesabınız için kullanıcı adı ve şifrenizi girin.</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -6144,16 +6144,16 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location filename="../dialogs/sessionsettings.cpp" line="+340"/>
         <source>Imported %n session ban(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n oturum engeli içe aktarıldı.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>%1 %n was/were not imported because it was/they were invalid or duplicates.</source>
         <extracomment>%1 is the &quot;Imported %n session ban(s).&quot; message.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1%n geçersiz veya mükerrer olduğu için içe aktarılamadı.</numerusform>
         </translation>
     </message>
     <message>
@@ -6161,32 +6161,32 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+477"/>
         <location line="+9"/>
         <source>Session Ban Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum Engeli İçe Aktar</translation>
     </message>
     <message>
         <location line="-465"/>
         <source>Session Ban Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum Engeli Dışa Aktar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error saving bans to &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Engelleri belirtilen adrese &apos;%1&apos; kaydederken hata: %2</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Session Ban Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum Engeli Hatası</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>This list shows only registered users.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu liste sadece kayıtlı kullanıcıları gösterir.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only operators can see this list.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sadece operatörler bu listeyi görebilir.</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -6236,43 +6236,43 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+41"/>
         <source>never</source>
         <extracomment>&quot;Idle timeout: never&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>asla</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>disabled by moderator</source>
         <extracomment>&quot;Idle timeout: disabled by moderator&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>moderatör tarafından devre dışı bırakıldı</translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n hour(s)</source>
         <extracomment>Idle timeout hours. May be joined with minutes and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n saat</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n minute(s)</source>
         <extracomment>Idle timeout minutes. May be joined with hours and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n dakika</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n second(s)</source>
         <extracomment>Idle timeout seconds. May be joined with hours and minutes.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n saniye</numerusform>
         </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>, </source>
         <extracomment>This string joins the hours, minutes and seconds for the idle time.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>, </translation>
     </message>
     <message>
         <location line="+122"/>
@@ -6304,71 +6304,71 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+30"/>
         <location line="+113"/>
         <source>Error opening &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; açılırken hata: %2</translation>
     </message>
     <message>
         <location line="-86"/>
         <source>This server does not support importing encrypted bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu sunucu şifrelenmiş engelleri içe aktarmayı desteklemiyor.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>This server does not support importing plain bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu sunucu sade engelleri içe aktarmayı desteklemiyor.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>File does not appear to contain any ban data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosyada engel verisi bulunamadı.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Choose Ban Export Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Engel Dışa Aktarma Biçimi Seç</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Since you are a moderator, you can export bans encrypted or plain. Encrypted bans can only be imported on this server. Which format do you want to export?</source>
-        <translation type="unfinished"></translation>
+        <translation>Moderatör olduğunuz için, şifreli veya sade biçimde engelleri dışa aktarabilirsiniz. Şifreli engeller sadece bu sunucuda içe aktarılabilir. Hangi biçimi dışa aktarmak istersiniz?</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>Şifreli</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Plain</source>
-        <translation type="unfinished"></translation>
+        <translation>Sade</translation>
     </message>
     <message>
         <location line="+46"/>
         <location line="+10"/>
         <location line="+10"/>
         <source>Role Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Rol İçe Aktar</translation>
     </message>
     <message>
         <location line="-9"/>
         <source>File &apos;%1&apos; does not contain a valid role export.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; dosyası geçerli bir rol dışa aktarması içermiyor.</translation>
     </message>
     <message numerus="yes">
         <location line="+9"/>
         <source>%n role(s) imported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n rol içe aktarıldı.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Role Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Rol Dışa Aktar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error saving roles to &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Roller &apos;%1&apos; adresine kaydedilirken hata oluştu: %2</translation>
     </message>
 </context>
 <context>
@@ -6602,22 +6602,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/touchtestdialog.cpp" line="+212"/>
         <source>Enable touch</source>
-        <translation type="unfinished"></translation>
+        <translation>Teması aktifleştir</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enable gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>Jestleri etkinleştir</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Error Saving Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Kayıt Kaydedilemedi</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Touch test log could not be saved: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Temas denemesi kaydedilemedi: %1</translation>
     </message>
 </context>
 <context>
@@ -6625,7 +6625,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-235"/>
         <source>Touch here.</source>
-        <translation type="unfinished"></translation>
+        <translation>Buraya dokunun.</translation>
     </message>
 </context>
 <context>
@@ -6719,12 +6719,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+107"/>
         <source>Checking…</source>
-        <translation type="unfinished">Kontrol Ediliyor…</translation>
+        <translation>Kontrol Ediliyor…</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Not found. %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Bulunamadı. %1</translation>
     </message>
 </context>
 <context>
@@ -6859,17 +6859,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Canvas view:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuval görünümü:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Prevent jitter at certain zoom and rotation levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Belirli yakınlaştırma ve döndürme seviyelerinde titremeyi engelle</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu seçenekleri aktifleştirmek bazı sistemlerde performansı etkileyebilir.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -6972,18 +6972,18 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Silgiye geç</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçili fırça ile sil</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser action:</source>
         <extracomment>Eraser refers to the eraser tip of a tablet pen.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Silgi aksiyonu:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7029,17 +7029,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Touch mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Temas modu:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished"></translation>
+        <translation>Dokunmatik Ekran</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>Jestler</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7055,12 +7055,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-98"/>
         <source>Capture volume rocker</source>
-        <translation type="unfinished">Ses seviyesi değişikliklerini kayda al</translation>
+        <translation>Ses seviyesi değişikliklerini kayda al</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Android:</source>
-        <translation type="unfinished">Android:</translation>
+        <translation>Android:</translation>
     </message>
     <message>
         <location line="+97"/>
@@ -7090,7 +7090,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Test your tablet here:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabletinizi buradan test edin:</translation>
     </message>
 </context>
 <context>
@@ -7138,7 +7138,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>With this enabled, Drawpile may save passwords in an unencrypted format. Disabling it will forget any insecurely stored passwords.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu seçenek aktif ise Drawpile şifrelenmemiş biçimde şifrelerinizi kaydedebilir. Devre dışı bırakmak, emniyetsiz şekilde kaydedilmiş şifrelerin unutulmasını sağlar.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7213,42 +7213,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/notifications.cpp" line="+40"/>
         <source>Event</source>
-        <translation type="unfinished"></translation>
+        <translation>Olay</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>What triggered this notification</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu bildirimi ne tetikledi?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Play sound</source>
-        <translation type="unfinished"></translation>
+        <translation>Ses oynat</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Play a sound effect when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu olay olduğunda bir ses oynat.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>Popup</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pop up a speech bubble in the corner when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu olay olduğunda bir konuşma balonu oluştur.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flash taskbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Flaşlı görev çubuğu</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Flash the Drawpile window in the taskbar when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu olay olduğunda görev çubuğunda bulunan Drawpile penceresini flaşla.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7263,7 +7263,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Demand attention</source>
-        <translation type="unfinished"></translation>
+        <translation>Dikkat talep et</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7273,27 +7273,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Önizleme</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trigger this event so you can see what happens.</source>
-        <translation type="unfinished"></translation>
+        <translation>Önizleme için olayı tetikle.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Chat message</source>
-        <translation type="unfinished"></translation>
+        <translation>Sohbet mesajı</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Private message</source>
-        <translation type="unfinished"></translation>
+        <translation>Özel mesaj</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>User left</source>
-        <translation type="unfinished"></translation>
+        <translation>Kullanıcı ayrıldı</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7303,7 +7303,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+27"/>
         <source>Preview event</source>
-        <translation type="unfinished"></translation>
+        <translation>Olayı önizle</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -7318,12 +7318,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Use private message notification for mentions</source>
-        <translation type="unfinished"></translation>
+        <translation>Bahsetmelerde, özel mesaj bildirimini kullan</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mentions:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bahsetmeler:</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7839,17 +7839,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>%1px</source>
-        <translation type="unfinished"></translation>
+        <translation>%1px</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1pt</source>
-        <translation type="unfinished"></translation>
+        <translation>%1pt</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7907,7 +7907,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Inactive</source>
-        <translation type="unfinished"></translation>
+        <translation>İnaktif</translation>
     </message>
     <message>
         <location line="+2"/>
