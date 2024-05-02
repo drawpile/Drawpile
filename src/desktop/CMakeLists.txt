@@ -882,7 +882,7 @@ elseif(EMSCRIPTEN)
 		-sEXPORTED_FUNCTIONS=_main,_drawpileHandleBrowserAuth,_drawpileHandleMouseLeave,_drawpileShouldPreventUnload,stringToNewUTF8,UTF8ToString
 		--js-library "${CMAKE_CURRENT_SOURCE_DIR}/wasm/lib.js"
 	)
-	if(CMAKE_BUILD_TYPE MATCHES "^[rR}[eE][lL]")
+	if(CMAKE_BUILD_TYPE MATCHES "^[rR][eE][lL]")
 		target_link_options(drawpile PUBLIC -O3)
 	endif()
 elseif(UNIX)

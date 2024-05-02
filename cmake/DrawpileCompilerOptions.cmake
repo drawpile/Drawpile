@@ -20,9 +20,6 @@ if(EMSCRIPTEN)
     # This flag is required when compiling all objects or linking will fail
     # when --shared-memory is used, which it is implicitly
     add_compile_options(-pthread)
-	if(CMAKE_BUILD_TYPE MATCHES "^[rR}[eE][lL]")
-		add_compile_options(-O3)
-	endif()
 endif()
 
 if(CMAKE_INTERPROCEDURAL_OPTIMIZATION)
