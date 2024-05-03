@@ -68,7 +68,7 @@ bool StateDatabase::Query::remove(const QString &key)
 	return exec(sql, {key}) && numRowsAffected() > 0;
 }
 
-StateDatabase::Query::Query(QMutex &mutex, const QSqlDatabase &db)
+StateDatabase::Query::Query(QRecursiveMutex &mutex, const QSqlDatabase &db)
 	: m_mutex(mutex)
 	, m_query(db)
 {

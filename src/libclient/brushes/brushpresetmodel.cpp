@@ -13,7 +13,7 @@
 #include <QIcon>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QMutex>
+#include <QRecursiveMutex>
 #include <QMutexLocker>
 #include <QPixmap>
 #include <QRegularExpression>
@@ -356,7 +356,7 @@ public:
 	}
 
 private:
-	QMutex m_mutex;
+	QRecursiveMutex m_mutex;
 	QSqlDatabase m_db;
 
 	int readInt(const QString &sql,const QList<QVariant> &params = {}, int defaultValue = 0)
