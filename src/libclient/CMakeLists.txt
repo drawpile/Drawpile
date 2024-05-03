@@ -190,6 +190,7 @@ target_sources(dpclient PRIVATE
 	utils/statedatabase.h
 	utils/usernamevalidator.cpp
 	utils/usernamevalidator.h
+	utils/wasmpersistence.h
 )
 
 if(ANDROID OR EMSCRIPTEN)
@@ -208,7 +209,11 @@ else()
 endif()
 
 if(EMSCRIPTEN)
-	target_sources(dpclient PRIVATE wasmsupport.cpp wasmsupport.h)
+	target_sources(dpclient PRIVATE
+		wasmsupport.cpp
+		wasmsupport.h
+		utils/wasmpersistence.cpp
+	)
 else()
 	target_sources(dpclient PRIVATE utils/news.cpp utils/news.h)
 endif()

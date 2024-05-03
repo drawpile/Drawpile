@@ -2,6 +2,7 @@
 
 #include "libclient/settings.h"
 #include "libclient/utils/listservermodel.h"
+#include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/paths.h"
 
 #include <QImage>
@@ -139,6 +140,7 @@ bool ListServerModel::removeServer(const QString &url)
 
 QIcon ListServerModel::setFavicon(const QString &url, const QImage &icon)
 {
+	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	// Make sure the icon is not huge
 	QImage scaledIcon;
 

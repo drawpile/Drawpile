@@ -1003,8 +1003,17 @@ static void startApplication(DrawpileApp *app)
 	}
 }
 
-int main(int argc, char *argv[])
+
+int main(int argc, char **argv)
 {
+#ifdef __EMSCRIPTEN__
+	browser::mountPersistentFileSystem(argc, argv);
+}
+
+extern "C" void drawpileMain(int argc, char **argv)
+{
+#endif
+
 #ifndef HAVE_QT_COMPAT_DEFAULT_HIGHDPI_PIXMAPS
 	// Set attributes that must be set before QApplication is constructed
 	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -1071,9 +1080,7 @@ int main(int argc, char *argv[])
 
 	startApplication(app);
 
-#ifdef __EMSCRIPTEN__
-	return 0;
-#else
+#ifndef __EMSCRIPTEN__
 	return app->exec();
 #endif
 }

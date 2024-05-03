@@ -13,6 +13,7 @@
 #include "libclient/utils/sessionfilterproxymodel.h"
 #include "libclient/utils/statedatabase.h"
 #include "libclient/utils/usernamevalidator.h"
+#include "libclient/utils/wasmpersistence.h"
 #include "ui_logindialog.h"
 #include <QAction>
 #include <QCryptographicHash>
@@ -255,6 +256,7 @@ struct LoginDialog::Private {
 
 	void saveGuest(const QString &username)
 	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		utils::StateDatabase &state = dpApp().state();
 		state.put(LAST_GUEST_NAME_KEY, username);
 		if(avatarFilename.isEmpty()) {

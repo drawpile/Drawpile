@@ -2,6 +2,7 @@
 
 #include "libclient/utils/avatarlistmodel.h"
 #include "libclient/utils/identicon.h"
+#include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/paths.h"
 
 #include <QDir>
@@ -141,6 +142,7 @@ void AvatarListModel::loadAvatars(bool includeBlank, bool includeAdd)
 
 void AvatarListModel::commit()
 {
+	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	QDir dir = utils::paths::writablePath("avatars", ".");
 
 	// Commit deletions

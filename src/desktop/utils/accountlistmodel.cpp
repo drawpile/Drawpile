@@ -2,6 +2,7 @@
 #include "desktop/utils/accountlistmodel.h"
 #include "libclient/utils/avatarlistmodel.h"
 #include "libclient/utils/statedatabase.h"
+#include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/qtcompat.h"
 #include <QIcon>
 #include <algorithm>
@@ -146,6 +147,7 @@ bool AccountListModel::saveAccount(
 
 	QString username = normalizeUsername(displayUsername);
 	QDateTime lastUsed = QDateTime::currentDateTimeUtc();
+	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 
 	QString sql = QStringLiteral(
 		"insert into accounts (\n"
@@ -198,6 +200,8 @@ void AccountListModel::savePassword(
 						 : " - not saving it");
 			if(fallback) {
 				savePasswordFallback(state, job->key(), fallbackPassword);
+			} else {
+				DRAWPILE_FS_PERSIST();
 			}
 		});
 	writeJob->start();
@@ -258,6 +262,7 @@ void AccountListModel::readPassword(
 void AccountListModel::deleteAccountAt(int i)
 {
 	if(i >= 0 && i < compat::cast_6<int>(m_accounts.size())) {
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		const Account &account = m_accounts[i];
 		QString sql =
 			QStringLiteral("delete from accounts\n"
@@ -277,6 +282,7 @@ void AccountListModel::deleteAccountAt(int i)
 void AccountListModel::deleteAccountPassword(
 	Type type, const QString &displayUsername)
 {
+	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	QString keychainSecretName = buildKeychainSecretName(
 		type, hostForType(type), normalizeUsername(displayUsername));
 	deletePassword(keychainSecretName);
@@ -301,6 +307,7 @@ void AccountListModel::deletePassword(const QString &keychainSecretName)
 					qUtf8Printable(keychainSecretName),
 					qUtf8Printable(job->errorString()), int(error));
 			}
+			DRAWPILE_FS_PERSIST();
 		});
 	deleteJob->start();
 #endif
@@ -350,6 +357,7 @@ bool AccountListModel::canSavePasswords(bool insecureFallback)
 
 void AccountListModel::clearFallbackPasswords()
 {
+	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	utils::StateDatabase::Query qry = m_state.query();
 	QString sql = QStringLiteral("delete from insecure_storage");
 	qry.exec(sql);
@@ -357,6 +365,7 @@ void AccountListModel::clearFallbackPasswords()
 
 void AccountListModel::createTables()
 {
+	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	utils::StateDatabase::Query qry = m_state.query();
 	qry.exec(QStringLiteral("create table if not exists accounts (\n"
 							"	type integer not null,\n"
@@ -435,6 +444,7 @@ void AccountListModel::savePasswordFallback(
 	utils::StateDatabase *state, const QString &keychainSecretName,
 	const QString &password)
 {
+	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	utils::StateDatabase::Query qry = state->query();
 	QString sql =
 		QStringLiteral("insert into insecure_storage (\n"
@@ -447,6 +457,7 @@ void AccountListModel::savePasswordFallback(
 
 void AccountListModel::deletePasswordFallback(const QString &keychainSecretName)
 {
+	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	utils::StateDatabase::Query qry = m_state.query();
 	QString sql = QStringLiteral(
 		"delete from insecure_storage where keychain_secret_name = ?");

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libclient/utils/certificatestoremodel.h"
+#include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/paths.h"
 
 #include <QDir>
@@ -175,6 +176,7 @@ void CertificateStoreModel::revert()
 
 bool CertificateStoreModel::submit()
 {
+	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	for (auto index = m_certificates.size() - 1; index >= 0; --index) {
 		auto &cert = m_certificates[index];
 

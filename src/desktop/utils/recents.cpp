@@ -4,6 +4,7 @@
 #include "cmake-config/config.h"
 #include "desktop/main.h"
 #include "libclient/utils/statedatabase.h"
+#include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/paths.h"
 #include <QFileInfo>
 #include <QMenu>
@@ -25,6 +26,7 @@ Recents::Recents(StateDatabase &state)
 	: QObject{&state}
 	, m_state{state}
 {
+	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	createTables();
 	migrateFilesFromSettings();
 	migrateHostsFromSettings();
@@ -60,6 +62,7 @@ int Recents::fileCount() const
 
 void Recents::addFile(const QString &path)
 {
+	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	bool ok = m_state.tx([&path](StateDatabase::Query &qry) {
 		if(!qry.exec("select recent_file_id, path\n"
 					 "from recent_files order by weight")) {
@@ -114,6 +117,7 @@ void Recents::addFile(const QString &path)
 
 bool Recents::removeFileById(long long id)
 {
+	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	if(removeById("delete from recent_files where recent_file_id = ?", id)) {
 		emit recentFilesChanged();
 		return true;
@@ -170,6 +174,7 @@ void Recents::addHost(const QString &host, int port, bool joined, bool hosted)
 		int port;
 		int flags;
 	};
+	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	bool ok = m_state.tx([&host, port, joined,
 						  hosted](StateDatabase::Query &qry) {
 		if(!qry.exec("select recent_host_id, host, port, flags\n"
@@ -235,6 +240,7 @@ void Recents::addHost(const QString &host, int port, bool joined, bool hosted)
 
 bool Recents::removeHostById(long long id)
 {
+	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	if(removeById("delete from recent_hosts where recent_host_id = ?", id)) {
 		emit recentHostsChanged();
 		return true;
@@ -333,6 +339,7 @@ void Recents::migrateHostsFromSettings()
 
 bool Recents::removeById(const QString &sql, int id)
 {
+	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	StateDatabase::Query qry = m_state.query();
 	return qry.exec(sql, {id}) && qry.numRowsAffected() > 0;
 }

@@ -3,7 +3,7 @@
 #include "libclient/utils/news.h"
 #include "cmake-config/config.h"
 #include "libclient/utils/statedatabase.h"
-#include "libshared/util/database.h"
+#include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/networkaccess.h"
 #include <QDate>
 #include <QJsonArray>
@@ -92,6 +92,7 @@ public:
 	Private(StateDatabase &state)
 		: m_state{state}
 	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		createTables();
 	}
 
@@ -177,6 +178,7 @@ public:
 
 	bool writeNewsAt(const QVector<News::Article> articles, const QDate &today)
 	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		return m_state.tx([&articles, &today](StateDatabase::Query &qry) {
 			if(!qry.exec(QStringLiteral("delete from news"))) {
 				return false;
@@ -202,6 +204,7 @@ public:
 
 	bool writeUpdates(const QVector<News::Update> updates)
 	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		return m_state.tx([&updates](StateDatabase::Query &qry) {
 			if(!qry.exec(QStringLiteral("delete from updates"))) {
 				return false;

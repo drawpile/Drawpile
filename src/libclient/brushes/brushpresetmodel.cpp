@@ -2,6 +2,7 @@
 
 #include "libclient/brushes/brushpresetmodel.h"
 #include "libclient/brushes/brush.h"
+#include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/database.h"
 #include "libshared/util/paths.h"
 #include "libshared/util/qtcompat.h"
@@ -56,6 +57,7 @@ public:
 
 	int createTag(const QString &name)
 	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		if(exec(query, "insert into tag (name) values (?)", {name})) {
@@ -114,6 +116,7 @@ public:
 
 	bool updateTagName(int id, const QString &name)
 	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		if(exec(query, "update tag set name = ? where id = ?", {name, id})) {
@@ -125,6 +128,7 @@ public:
 
 	bool deleteTagById(int id)
 	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		if(exec(query, "delete from tag where id = ?", {id})) {
@@ -137,6 +141,7 @@ public:
 	int createPreset(const QString &type, const QString &name, const QString &description,
 		const QByteArray &thumbnail, const QByteArray &data)
 	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
@@ -151,6 +156,7 @@ public:
 
 	int createPresetFromId(int id)
 	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
@@ -249,6 +255,7 @@ public:
 
 	bool updatePresetData(int id, const QString &type, const QByteArray &data)
 	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		if(exec(query, "update preset set type = ?, data = ? where id = ?", {type, data, id})) {
@@ -261,6 +268,7 @@ public:
 	bool updatePresetMetadata(int id, const QString &name, const QString &description,
 		const QByteArray &thumbnail)
 	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
@@ -304,6 +312,7 @@ public:
 
 	bool createPresetTag(int presetId, int tagId)
 	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
@@ -313,6 +322,7 @@ public:
 
 	bool createPresetTagsFromPresetId(int targetPresetId, int sourcePresetId)
 	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
@@ -323,6 +333,7 @@ public:
 
 	bool deletePresetTag(int presetId, int tagId)
 	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
@@ -336,6 +347,7 @@ public:
 
 	bool createOrUpdateState(const QString &key, const QVariant &value)
 	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(

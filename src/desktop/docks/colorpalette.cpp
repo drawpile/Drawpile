@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/docks/colorpalette.h"
-#include "desktop/dialogs/colordialog.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/main.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/palettewidget.h"
+#include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/paths.h"
 #include <QComboBox>
 #include <QCursor>
@@ -99,6 +99,7 @@ struct ColorPaletteDock::Private {
 			}
 			if(index >= 0) {
 				pm->updatePalette(index, paletteWidget->colorPalette());
+				DRAWPILE_FS_PERSIST();
 			}
 		}
 	}
@@ -282,6 +283,7 @@ void ColorPaletteDock::addPalette()
 		getSharedPaletteModel()->addPalette(pal, false);
 		d->paletteChoiceBox->setCurrentIndex(
 			d->paletteChoiceBox->model()->rowCount() - 1);
+		DRAWPILE_FS_PERSIST();
 	}
 }
 
@@ -295,6 +297,8 @@ void ColorPaletteDock::copyPalette()
 	pm->addPalette(pal, false);
 	d->paletteChoiceBox->setCurrentIndex(pm->rowCount() - 1);
 	renamePalette();
+
+	DRAWPILE_FS_PERSIST();
 }
 
 void ColorPaletteDock::deletePalette()
@@ -309,6 +313,7 @@ void ColorPaletteDock::deletePalette()
 
 		if(ret == QMessageBox::Yes) {
 			getSharedPaletteModel()->removePalette(current);
+			DRAWPILE_FS_PERSIST();
 		}
 	}
 }
@@ -329,6 +334,7 @@ void ColorPaletteDock::renamePalette()
 			d->paletteWidget->colorPalette());
 		d->paletteWidget->setColorPalette(
 			pm->palette(d->paletteChoiceBox->currentIndex()));
+		DRAWPILE_FS_PERSIST();
 	}
 }
 
