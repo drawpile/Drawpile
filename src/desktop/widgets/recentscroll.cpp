@@ -18,6 +18,8 @@
 
 namespace widgets {
 
+#ifndef __EMSCRIPTEN__
+
 RecentScrollEntry *RecentScrollEntry::ofNoFiles()
 {
 	RecentScrollEntry *entry = new RecentScrollEntry;
@@ -44,6 +46,8 @@ RecentScrollEntry *RecentScrollEntry::ofFile(const utils::Recents::File &file)
 	entry->setCursor(Qt::PointingHandCursor);
 	return entry;
 }
+
+#endif
 
 RecentScrollEntry *RecentScrollEntry::ofNoHosts()
 {
@@ -154,23 +158,26 @@ RecentScroll::RecentScroll(Mode mode, QWidget *parent)
 	m_layout->addStretch();
 	m_content->setLayout(m_layout);
 
-	if(mode == Mode::Files) {
-		utils::Recents &recents = dpApp().recents();
-		connect(
-			&recents, &utils::Recents::recentFilesChanged, this,
-			&RecentScroll::updateFiles);
-		updateFiles();
-	} else if(mode == Mode::Join) {
+	if(mode == Mode::Join) {
 		utils::Recents &recents = dpApp().recents();
 		connect(
 			&recents, &utils::Recents::recentHostsChanged, this,
 			&RecentScroll::updateHosts);
 		updateHosts();
+#ifndef __EMSCRIPTEN__
+	} else if(mode == Mode::Files) {
+		utils::Recents &recents = dpApp().recents();
+		connect(
+			&recents, &utils::Recents::recentFilesChanged, this,
+			&RecentScroll::updateFiles);
+		updateFiles();
+#endif
 	} else {
 		qWarning("Unknown recent scroll mode %d", int(mode));
 	}
 }
 
+#ifndef __EMSCRIPTEN__
 void RecentScroll::updateFiles()
 {
 	utils::ScopedUpdateDisabler disabler{this};
@@ -196,6 +203,7 @@ void RecentScroll::updateFiles()
 		}
 	}
 }
+#endif
 
 void RecentScroll::updateHosts()
 {

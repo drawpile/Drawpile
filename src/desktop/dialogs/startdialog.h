@@ -33,7 +33,9 @@ public:
 		Browse,
 		Host,
 		Create,
+#ifndef __EMSCRIPTEN__
 		Recent,
+#endif
 		Open,
 		Layouts,
 		Preferences,

@@ -167,8 +167,6 @@ target_sources(drawpile PRIVATE
 	dialogs/startdialog/links.h
 	dialogs/startdialog/page.cpp
 	dialogs/startdialog/page.h
-	dialogs/startdialog/recent.cpp
-	dialogs/startdialog/recent.h
 	dialogs/startdialog/welcome.cpp
 	dialogs/startdialog/welcome.h
 	dialogs/systeminfodialog.cpp
@@ -628,6 +626,8 @@ add_feature_info("External QtColorWidgets" "TARGET QtColorWidgets::QtColorWidget
 
 if(NOT EMSCRIPTEN)
 	target_sources(drawpile PRIVATE
+		dialogs/startdialog/recent.cpp
+		dialogs/startdialog/recent.h
 		dialogs/startdialog/updatenotice.cpp
 		dialogs/startdialog/updatenotice.h
 	)

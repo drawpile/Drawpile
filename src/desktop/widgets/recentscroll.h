@@ -17,9 +17,10 @@ namespace widgets {
 class RecentScrollEntry final : public QWidget {
 	Q_OBJECT
 public:
+#ifndef __EMSCRIPTEN__
 	static RecentScrollEntry *ofNoFiles();
 	static RecentScrollEntry *ofFile(const utils::Recents::File &file);
-
+#endif
 	static RecentScrollEntry *ofNoHosts();
 	static RecentScrollEntry *ofHost(const utils::Recents::Host &rh);
 
@@ -53,7 +54,12 @@ public:
 	static constexpr int THUMBNAIL_WIDTH = 112;
 	static constexpr int THUMBNAIL_HEIGHT = 63;
 
-	enum class Mode { Files, Join };
+	enum class Mode {
+#ifndef __EMSCRIPTEN__
+		Files,
+#endif
+		Join,
+	};
 
 	explicit RecentScroll(Mode mode, QWidget *parent = nullptr);
 
@@ -65,7 +71,9 @@ protected:
 	void resizeEvent(QResizeEvent *event) override;
 
 private slots:
+#ifndef __EMSCRIPTEN__
 	void updateFiles();
+#endif
 	void updateHosts();
 
 private:
@@ -77,7 +85,6 @@ private:
 	QVBoxLayout *m_layout;
 	QVector<RecentScrollEntry *> m_entries;
 };
-
 }
 
 #endif

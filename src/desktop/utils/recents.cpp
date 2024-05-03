@@ -28,9 +28,13 @@ Recents::Recents(StateDatabase &state)
 {
 	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 	createTables();
+#ifndef __EMSCRIPTEN__
 	migrateFilesFromSettings();
 	migrateHostsFromSettings();
+#endif
 }
+
+#ifndef __EMSCRIPTEN__
 
 QVector<Recents::File> Recents::getFiles() const
 {
@@ -133,6 +137,8 @@ void Recents::bindFileMenu(QMenu *menu)
 	});
 	updateFileMenu(menu);
 }
+
+#endif
 
 QVector<Recents::Host> Recents::getHosts() const
 {
@@ -252,10 +258,12 @@ bool Recents::removeHostById(long long id)
 void Recents::createTables()
 {
 	StateDatabase::Query qry = m_state.query();
+#ifndef __EMSCRIPTEN__
 	qry.exec("create table if not exists recent_files (\n"
 			 "	recent_file_id integer primary key not null,\n"
 			 "	path text not null,\n"
 			 "	weight integer not null)");
+#endif
 	qry.exec("create table if not exists recent_hosts (\n"
 			 "	recent_host_id integer primary key not null,\n"
 			 "	host text not null,\n"
@@ -263,6 +271,8 @@ void Recents::createTables()
 			 "	flags integer not null,\n"
 			 "	weight integer not null)");
 }
+
+#ifndef __EMSCRIPTEN__
 
 void Recents::migrateFilesFromSettings()
 {
@@ -337,6 +347,8 @@ void Recents::migrateHostsFromSettings()
 	});
 }
 
+#endif
+
 bool Recents::removeById(const QString &sql, int id)
 {
 	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
@@ -374,6 +386,7 @@ void Recents::collectSettingsHost(
 	}
 }
 
+#ifndef __EMSCRIPTEN__
 
 void Recents::updateFileMenu(QMenu *menu) const
 {
@@ -413,6 +426,8 @@ QStringList Recents::getFileMenuPaths() const
 	}
 	return paths;
 }
+
+#endif
 
 int Recents::packHostFlags(bool joined, bool hosted)
 {

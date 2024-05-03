@@ -56,7 +56,6 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/documentmetadata.h"
 
-#include "desktop/utils/recents.h"
 #include "libshared/util/whatismyip.h"
 #include "cmake-config/config.h"
 #include "libclient/utils/images.h"
@@ -133,6 +132,10 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
 
+#ifndef __EMSCRIPTEN__
+#	include "desktop/utils/recents.h"
+#endif
+
 #ifdef DP_HAVE_BUILTIN_SERVER
 #	include "libclient/server/builtinserver.h"
 #endif
@@ -169,7 +172,9 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	  m_dumpPlaybackDialog(nullptr),
 	  m_sessionSettings(nullptr),
 	  m_serverLogDialog(nullptr),
+#ifndef __EMSCRIPTEN__
 	  m_recentMenu(nullptr),
+#endif
 	  m_lastLayerViewMode(nullptr),
 	  m_currentdoctools(nullptr),
 	  m_admintools(nullptr),
@@ -633,8 +638,12 @@ void MainWindow::prepareWindowReplacement()
  */
 void MainWindow::addRecentFile(const QString& file)
 {
+#ifdef __EMSCRIPTEN__
+	Q_UNUSED(file);
+#else
 	utils::Recents &recents = dpApp().recents();
 	recents.addFile(file);
+#endif
 }
 
 /**
@@ -878,10 +887,12 @@ void MainWindow::readSettings(bool windowpos)
 	// Customize shortcuts
 	settings.bindShortcuts(this, &MainWindow::loadShortcuts);
 
+#ifndef __EMSCRIPTEN__
 	// Restore recent files
 	if(!m_singleSession) {
 		dpApp().recents().bindFileMenu(m_recentMenu);
 	}
+#endif
 
 	connect(&m_saveWindowDebounce, &QTimer::timeout, this, &MainWindow::saveWindowState);
 	connect(&m_saveSplitterDebounce, &QTimer::timeout, this, &MainWindow::saveSplitterState);
@@ -3725,10 +3736,12 @@ void MainWindow::setupActions()
 	QMenu *filemenu = menuBar()->addMenu(tr("&File"));
 	filemenu->addAction(newdocument);
 	filemenu->addAction(open);
+#ifndef __EMSCRIPTEN__
 	if(!m_singleSession) {
 		m_recentMenu = filemenu->addMenu(tr("Open &Recent"));
 		m_recentMenu->setIcon(QIcon::fromTheme("document-open-recent"));
 	}
+#endif
 	filemenu->addSeparator();
 
 #ifdef __EMSCRIPTEN__
@@ -3785,6 +3798,7 @@ void MainWindow::setupActions()
 	m_toolBarFile->addAction(record);
 #endif
 
+#ifndef __EMSCRIPTEN__
 	if(!m_singleSession) {
 		connect(m_recentMenu, &QMenu::triggered, this, [this](QAction *action) {
 			QVariant filepath = action->property("filepath");
@@ -3796,6 +3810,7 @@ void MainWindow::setupActions()
 			}
 		});
 	}
+#endif
 
 	//
 	// Edit menu

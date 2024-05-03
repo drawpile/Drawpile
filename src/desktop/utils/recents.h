@@ -19,11 +19,12 @@ class StateDatabase;
 class Recents final : public QObject {
 	Q_OBJECT
 public:
+#ifndef __EMSCRIPTEN__
 	struct File {
 		long long id;
 		QString path;
 	};
-
+#endif
 	struct Host {
 		long long id;
 		QString host;
@@ -36,11 +37,13 @@ public:
 
 	explicit Recents(StateDatabase &state);
 
+#ifndef __EMSCRIPTEN__
 	QVector<File> getFiles() const;
 	int fileCount() const;
 	void addFile(const QString &path);
 	bool removeFileById(long long id);
 	void bindFileMenu(QMenu *menu);
+#endif
 
 	QVector<Host> getHosts() const;
 	int hostCount() const;
@@ -48,7 +51,9 @@ public:
 	bool removeHostById(long long id);
 
 signals:
+#ifndef __EMSCRIPTEN__
 	void recentFilesChanged();
+#endif
 	void recentHostsChanged();
 
 private:
@@ -59,15 +64,19 @@ private:
 	static constexpr int FLAG_HOSTED = 0x2;
 
 	void createTables();
+#ifndef __EMSCRIPTEN__
 	void migrateFilesFromSettings();
 	void migrateHostsFromSettings();
+#endif
 	bool removeById(const QString &sql, int id);
 
 	static void
 	collectSettingsHost(QVector<Host> &rhs, const QString &input, bool join);
 
+#ifndef __EMSCRIPTEN__
 	void updateFileMenu(QMenu *menu) const;
 	QStringList getFileMenuPaths() const;
+#endif
 
 	static int packHostFlags(bool joined, bool hosted);
 

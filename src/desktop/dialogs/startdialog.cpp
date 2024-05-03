@@ -9,7 +9,6 @@
 #include "desktop/dialogs/startdialog/join.h"
 #include "desktop/dialogs/startdialog/links.h"
 #include "desktop/dialogs/startdialog/page.h"
-#include "desktop/dialogs/startdialog/recent.h"
 #include "desktop/dialogs/startdialog/welcome.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
@@ -38,6 +37,7 @@
 #include <QVBoxLayout>
 #include <functional>
 #ifndef __EMSCRIPTEN__
+#	include "desktop/dialogs/startdialog/recent.h"
 #	include "desktop/dialogs/startdialog/updatenotice.h"
 #endif
 
@@ -115,7 +115,9 @@ StartDialog::StartDialog(QWidget *parent)
 	startdialog::Browse *browsePage = new startdialog::Browse{this};
 	startdialog::Host *hostPage = new startdialog::Host{this};
 	startdialog::Create *createPage = new startdialog::Create{this};
+#ifndef __EMSCRIPTEN__
 	startdialog::Recent *recentPage = new startdialog::Recent{this};
+#endif
 
 	EntryDefinition defs[Entry::Count];
 	defs[Entry::Welcome] = {
@@ -134,9 +136,11 @@ StartDialog::StartDialog(QWidget *parent)
 		createPage};
 	defs[Entry::Open] = {
 		"document-open", tr("Open File"), tr("Open an image file"), nullptr};
+#ifndef __EMSCRIPTEN__
 	defs[Entry::Recent] = {
 		"document-open-recent", tr("Recent Files"),
 		tr("Reopen a recently used file"), recentPage};
+#endif
 	defs[Entry::Layouts] = {
 		"window_", tr("Layouts"), tr("Choose application layout"), nullptr};
 	defs[Entry::Preferences] = {
@@ -317,9 +321,11 @@ StartDialog::StartDialog(QWidget *parent)
 	connect(
 		createPage, &startdialog::Create::create, this, &StartDialog::create);
 
+#ifndef __EMSCRIPTEN__
 	connect(
 		recentPage, &startdialog::Recent::openPath, this,
 		&StartDialog::openPath);
+#endif
 
 	setMinimumSize(600, 350);
 

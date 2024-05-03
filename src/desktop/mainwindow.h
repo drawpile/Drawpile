@@ -391,7 +391,9 @@ private:
 	dialogs::ServerLogDialog *m_serverLogDialog;
 	dialogs::Flipbook::State m_flipbookState;
 
+#ifndef __EMSCRIPTEN__
 	QMenu *m_recentMenu;
+#endif
 	QAction *m_lastLayerViewMode;
 
 	QActionGroup *m_currentdoctools; // general tools that require no special permissions
