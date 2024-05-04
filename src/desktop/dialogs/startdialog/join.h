@@ -42,7 +42,7 @@ private:
 	void resetAddressPlaceholderText();
 	void updateJoinButton();
 
-	static QString fixUpInviteAddress(const QString &address);
+	static QString fixUpInviteOrWebAddress(const QString &address);
 
 	QUrl getUrl() const;
 

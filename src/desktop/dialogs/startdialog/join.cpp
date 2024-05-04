@@ -85,7 +85,7 @@ void Join::acceptAddress(const QString &address)
 void Join::addressChanged(const QString &address)
 {
 	m_addressMessageLabel->setText(QString{});
-	QString fixedUpUrl = fixUpInviteAddress(address);
+	QString fixedUpUrl = fixUpInviteOrWebAddress(address);
 	if(!fixedUpUrl.isEmpty()) {
 		QSignalBlocker blocker{m_addressEdit};
 		m_addressEdit->setText(fixedUpUrl);
@@ -113,40 +113,59 @@ void Join::updateJoinButton()
 	emit enableJoin(getUrl().isValid());
 }
 
-QString Join::fixUpInviteAddress(const QString &address)
+QString Join::fixUpInviteOrWebAddress(const QString &address)
 {
 	static QRegularExpression inviteRe{
 		"\\A/invites/([^:/]+)(?::([0-9]+))?/+([a-zA-Z0-9-]{1,50})/*\\z"};
 
 	QUrl url = QUrl::fromUserInput(address);
 	if(!url.scheme().startsWith("http", Qt::CaseInsensitive)) {
-		return QString{};
+		return QString();
 	}
 
 	QRegularExpressionMatch match = inviteRe.match(url.path());
-	if(!match.hasMatch()) {
-		return QString{};
+	if(match.hasMatch()) {
+		url.setScheme(QStringLiteral("drawpile"));
+		url.setHost(match.captured(1));
+		int port = match.captured(2).toInt();
+		if(port > 0 && port <= 65535 && port != cmake_config::proto::port()) {
+			url.setPort(port);
+		} else {
+			url.setPort(-1);
+		}
+		url.setPath(QStringLiteral("/%1").arg(match.captured(3)));
+
+		QString password = url.fragment();
+		if(!password.isEmpty()) {
+			QUrlQuery query(url);
+			query.removeAllQueryItems(QStringLiteral("p"));
+			query.addQueryItem(QStringLiteral("p"), password);
+			url.setQuery(query);
+			url.setFragment(QString());
+		}
+
+		return url.toString();
 	}
 
-	url.setScheme("drawpile");
-	url.setHost(match.captured(1));
-	int port = match.captured(2).toInt();
-	if(port > 0 && port <= 65535 && port != cmake_config::proto::port()) {
-		url.setPort(port);
-	} else {
-		url.setPort(-1);
-	}
-	url.setPath(QStringLiteral("/%1").arg(match.captured(3)));
+	QUrlQuery query(url);
+	QString host = query.queryItemValue(QStringLiteral("host"));
+	if(!host.isEmpty()) {
+		url.setScheme(QStringLiteral("drawpile"));
+		url.setHost(host);
+		query.removeAllQueryItems(QStringLiteral("host"));
 
-	QString password = url.fragment();
-	if(!password.isEmpty()) {
-		QUrlQuery query{url};
-		query.addQueryItem(QStringLiteral("p"), password);
+		QString password = url.fragment();
+		if(!password.isEmpty()) {
+			query.removeAllQueryItems(QStringLiteral("p"));
+			query.addQueryItem(QStringLiteral("p"), password);
+			url.setFragment(QString());
+		}
+
 		url.setQuery(query);
-		url.setFragment(QString{});
+		return url.toString();
 	}
 
-	return url.toString();
+	return QString();
 }
 
 QUrl Join::getUrl() const
