@@ -48,7 +48,7 @@ public:
 		const QAction *entries[Entry::Count];
 	};
 
-	StartDialog(QWidget *parent = nullptr);
+	StartDialog(bool smallScreenMode, QWidget *parent = nullptr);
 
 	void setActions(const Actions &actions);
 

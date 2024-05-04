@@ -1343,7 +1343,8 @@ bool MainWindow::event(QEvent *event)
 
 dialogs::StartDialog *MainWindow::showStartDialog()
 {
-	dialogs::StartDialog *dlg = new dialogs::StartDialog{this};
+	dialogs::StartDialog *dlg =
+		new dialogs::StartDialog(m_smallScreenMode, this);
 	dlg->setObjectName(QStringLiteral("startdialog"));
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	connectStartDialog(dlg);

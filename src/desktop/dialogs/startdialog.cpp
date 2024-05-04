@@ -64,7 +64,7 @@ struct LinkDefinition {
 
 }
 
-StartDialog::StartDialog(QWidget *parent)
+StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 	: QDialog{parent, WINDOW_HINTS}
 #ifndef __EMSCRIPTEN__
 	, m_initialUpdateDelayTimer{new QTimer{this}}
@@ -73,6 +73,19 @@ StartDialog::StartDialog(QWidget *parent)
 {
 	setWindowTitle(tr("Start"));
 	setWindowModality(Qt::WindowModal);
+
+#ifdef Q_OS_MACOS
+	Q_UNUSED(smallScreenMode);
+	bool vertical = false;
+	bool menuFirst = true;
+#elif defined(Q_OS_ANDROID)
+	Q_UNUSED(smallScreenMode);
+	bool vertical = false;
+	bool menuFirst = false;
+#else
+	bool vertical = !smallScreenMode;
+	bool menuFirst = !smallScreenMode;
+#endif
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	layout->setContentsMargins(0, 0, 0, 0);
@@ -84,17 +97,21 @@ StartDialog::StartDialog(QWidget *parent)
 	layout->addWidget(m_updateNotice);
 #endif
 
-	QHBoxLayout *mainLayout = new QHBoxLayout;
+	QBoxLayout *mainLayout = new QBoxLayout(
+		vertical ? QBoxLayout::LeftToRight : QBoxLayout::TopToBottom);
 	mainLayout->setContentsMargins(0, 0, 0, 0);
 	mainLayout->setSpacing(0);
 	layout->addLayout(mainLayout);
 
 	QWidget *menu = new QWidget;
-	menu->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
+	menu->setSizePolicy(
+		vertical ? QSizePolicy::Fixed : QSizePolicy::MinimumExpanding,
+		QSizePolicy::MinimumExpanding);
 	menu->setBackgroundRole(QPalette::Midlight);
 	menu->setAutoFillBackground(true);
 
-	QVBoxLayout *menuLayout = new QVBoxLayout;
+	QBoxLayout *menuLayout = new QBoxLayout(
+		vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight);
 	menu->setLayout(menuLayout);
 	int menuMargin = style()->pixelMetric(QStyle::PM_ToolBarFrameWidth) +
 					 style()->pixelMetric(QStyle::PM_ToolBarItemMargin);
@@ -104,11 +121,12 @@ StartDialog::StartDialog(QWidget *parent)
 
 	QScrollArea *menuScroll = new QScrollArea;
 	utils::bindKineticScrollingWith(
-		menuScroll, Qt::ScrollBarAlwaysOff, Qt::ScrollBarAsNeeded);
+		menuScroll, vertical ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded,
+		vertical ? Qt::ScrollBarAsNeeded : Qt ::ScrollBarAlwaysOff);
 	menuScroll->setContentsMargins(0, 0, 0, 0);
 	menuScroll->setWidgetResizable(true);
 	menuScroll->setWidget(menu);
-	mainLayout->addWidget(menuScroll);
+	mainLayout->insertWidget(menuFirst ? mainLayout->count() : 0, menuScroll);
 
 	startdialog::Welcome *welcomePage = new startdialog::Welcome{this};
 	startdialog::Join *joinPage = new startdialog::Join{this};
@@ -155,7 +173,8 @@ StartDialog::StartDialog(QWidget *parent)
 		style()->pixelMetric(QStyle::PM_LayoutTopMargin, nullptr, this),
 		style()->pixelMetric(QStyle::PM_LayoutRightMargin, nullptr, this),
 		style()->pixelMetric(QStyle::PM_LayoutBottomMargin, nullptr, this));
-	mainLayout->addLayout(contentLayout, 1);
+	mainLayout->insertLayout(
+		menuFirst ? mainLayout->count() : 0, contentLayout, 1);
 
 	m_stack = new QStackedWidget;
 	m_stack->setContentsMargins(0, 0, 0, 0);
@@ -202,8 +221,12 @@ StartDialog::StartDialog(QWidget *parent)
 		button->setIcon(QIcon::fromTheme(def.icon));
 		button->setText(def.title);
 		button->setToolTip(def.toolTip);
-		button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-		button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		button->setSizePolicy(
+			vertical ? QSizePolicy::Expanding : QSizePolicy::Fixed,
+			vertical ? QSizePolicy::Fixed : QSizePolicy::Expanding);
+		button->setToolButtonStyle(
+			vertical ? Qt::ToolButtonTextBesideIcon
+					 : Qt::ToolButtonTextUnderIcon);
 		button->setAutoRaise(true);
 		button->setIconSize(QSize(iconSize, iconSize));
 		m_buttons[i] = button;
@@ -233,11 +256,12 @@ StartDialog::StartDialog(QWidget *parent)
 
 	m_linksSeparator = new QFrame;
 	m_linksSeparator->setForegroundRole(QPalette::Dark);
-	m_linksSeparator->setFrameShape(QFrame::VLine);
-	mainLayout->addWidget(m_linksSeparator);
+	m_linksSeparator->setFrameShape(vertical ? QFrame::VLine : QFrame::HLine);
+	mainLayout->insertWidget(
+		menuFirst ? mainLayout->count() : 0, m_linksSeparator);
 
-	m_links = new startdialog::Links;
-	mainLayout->addWidget(m_links);
+	m_links = new startdialog::Links(vertical);
+	mainLayout->insertWidget(menuFirst ? mainLayout->count() : 0, m_links);
 
 	connect(
 		m_addServerButton, &QAbstractButton::clicked, this,
