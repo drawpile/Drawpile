@@ -343,6 +343,7 @@ private:
 	bool shouldUseSmallScreenMode(const desktop::settings::Settings &settings);
 	static bool isSmallScreenModeSize(const QSize &s);
 	void switchInterfaceMode(bool smallScreenMode);
+	bool shouldShowDialogMaximized() const;
 
 	bool m_singleSession;
 	bool m_smallScreenMode;

@@ -1347,7 +1347,7 @@ dialogs::StartDialog *MainWindow::showStartDialog()
 	dlg->setObjectName(QStringLiteral("startdialog"));
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	connectStartDialog(dlg);
-	utils::showWindow(dlg);
+	utils::showWindow(dlg, shouldShowDialogMaximized());
 	return dlg;
 }
 
@@ -1404,7 +1404,7 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 		if(win) {
 			dlg->setParent(win, dlg->windowFlags());
 			win->connectStartDialog(dlg);
-			utils::showWindow(dlg);
+			utils::showWindow(dlg, win->shouldShowDialogMaximized());
 		} else {
 			dlg->deleteLater();
 		}
@@ -1689,7 +1689,7 @@ void MainWindow::importOldAnimation()
 					canvasState, QString(), DP_SAVE_IMAGE_UNKNOWN, true);
 				dlg->deleteLater();
 			});
-		utils::showWindow(dlg);
+		utils::showWindow(dlg, shouldShowDialogMaximized());
 	} else {
 		prepareWindowReplacement();
 		bool newProcessStarted = dpApp().runInNewProcess(
@@ -1967,7 +1967,7 @@ void MainWindow::showFlipbook()
 			fp, &dialogs::Flipbook::exportFramesRequested, this,
 			&MainWindow::exportAnimationFramesWith);
 #endif
-		utils::showWindow(fp);
+		utils::showWindow(fp, shouldShowDialogMaximized());
 	}
 }
 
@@ -2010,7 +2010,7 @@ void MainWindow::showSystemInfo()
 		dlg->setObjectName("systeminfodialog");
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
 	}
-	utils::showWindow(dlg);
+	utils::showWindow(dlg, shouldShowDialogMaximized());
 	dlg->activateWindow();
 	dlg->raise();
 }
@@ -2157,7 +2157,7 @@ void MainWindow::showBrushSettingsDialog()
 		dlg->setGlobalSmoothing(toolCtrl->globalSmoothing());
 	}
 
-	utils::showWindow(dlg);
+	utils::showWindow(dlg, shouldShowDialogMaximized());
 	dlg->activateWindow();
 	dlg->raise();
 }
@@ -2170,7 +2170,7 @@ dialogs::SettingsDialog *MainWindow::showSettings()
 	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog(
 		m_singleSession, m_smallScreenMode, getStartDialogOrThis());
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	utils::showWindow(dlg);
+	utils::showWindow(dlg, shouldShowDialogMaximized());
 	return dlg;
 }
 
@@ -2258,7 +2258,9 @@ void MainWindow::hostSession(
 			true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS));
 	}
 
-	utils::showWindow(new dialogs::LoginDialog(login, getStartDialogOrThis()));
+	utils::showWindow(
+		new dialogs::LoginDialog(login, getStartDialogOrThis()),
+		shouldShowDialogMaximized());
 
 	m_doc->client()->connectToServer(
 		settings.serverTimeout(), login, !useremote);
@@ -2357,7 +2359,7 @@ void MainWindow::reportAbuse()
 		m_doc->sendAbuseReport(dlg->userId(), dlg->message());
 	});
 
-	utils::showWindow(dlg);
+	utils::showWindow(dlg, shouldShowDialogMaximized());
 }
 
 void MainWindow::tryToGainOp()
@@ -2408,7 +2410,7 @@ void MainWindow::resetSession()
 		dlg->setCanReset(false);
 	}
 
-	utils::showWindow(dlg);
+	utils::showWindow(dlg, shouldShowDialogMaximized());
 }
 
 void MainWindow::terminateSession()
@@ -3279,7 +3281,7 @@ void MainWindow::resizeCanvas()
 			m_doc->sendResizeCanvas(r.top, r.right, r.bottom, r.left);
 		}
 	});
-	utils::showWindow(dlg);
+	utils::showWindow(dlg, shouldShowDialogMaximized());
 }
 
 static QIcon makeBackgroundColorIcon(QColor &color)
@@ -3340,7 +3342,7 @@ void MainWindow::changeCanvasBackground()
 	color_widgets::ColorDialog *dlg = dialogs::newDeleteOnCloseColorDialog(
 		m_doc->canvas()->paintEngine()->historyBackgroundColor(), this);
 	connect(dlg, &color_widgets::ColorDialog::colorSelected, m_doc, &Document::sendCanvasBackground);
-	utils::showWindow(dlg);
+	utils::showWindow(dlg, shouldShowDialogMaximized());
 }
 
 void MainWindow::changeLocalCanvasBackground()
@@ -3361,7 +3363,7 @@ void MainWindow::changeLocalCanvasBackground()
 	connect(
 		dlg, &color_widgets::ColorDialog::colorSelected, paintEngine,
 		&canvas::PaintEngine::setLocalBackgroundColor);
-	utils::showWindow(dlg);
+	utils::showWindow(dlg, shouldShowDialogMaximized());
 }
 
 void MainWindow::clearLocalCanvasBackground()
@@ -4425,11 +4427,11 @@ void MainWindow::setupActions()
 	connect(browse, &QAction::triggered, this, &MainWindow::browse);
 	connect(logout, &QAction::triggered, this, &MainWindow::leave);
 	connect(sessionSettings, &QAction::triggered, m_sessionSettings, [this](){
-		utils::showWindow(m_sessionSettings);
+		utils::showWindow(m_sessionSettings, shouldShowDialogMaximized());
 	});
 	connect(sessionUndoDepthLimit, &QAction::triggered, this, &MainWindow::changeUndoDepthLimit);
 	connect(serverlog, &QAction::triggered, m_serverLogDialog, [this](){
-		utils::showWindow(m_serverLogDialog);
+		utils::showWindow(m_serverLogDialog, shouldShowDialogMaximized());
 	});
 	connect(reportabuse, &QAction::triggered, this, &MainWindow::reportAbuse);
 	connect(gainop, &QAction::triggered, this, &MainWindow::tryToGainOp);
@@ -4632,7 +4634,7 @@ void MainWindow::setupActions()
 		versioncheck, &QAction::triggered, this, &MainWindow::checkForUpdates);
 #endif
 
-	connect(tablettester, &QAction::triggered, []() {
+	connect(tablettester, &QAction::triggered, [this]() {
 		dialogs::TabletTestDialog *ttd=nullptr;
 		// Check if dialog is already open
 		for(QWidget *toplevel : qApp->topLevelWidgets()) {
@@ -4644,11 +4646,11 @@ void MainWindow::setupActions()
 			ttd = new dialogs::TabletTestDialog;
 			ttd->setAttribute(Qt::WA_DeleteOnClose);
 		}
-		utils::showWindow(ttd);
+		utils::showWindow(ttd, shouldShowDialogMaximized());
 		ttd->raise();
 	});
 
-	connect(touchtester, &QAction::triggered, [] {
+	connect(touchtester, &QAction::triggered, [this] {
 		dialogs::TouchTestDialog *ttd = nullptr;
 		for(QWidget *toplevel : qApp->topLevelWidgets()) {
 			ttd = qobject_cast<dialogs::TouchTestDialog*>(toplevel);
@@ -4660,7 +4662,7 @@ void MainWindow::setupActions()
 			ttd = new dialogs::TouchTestDialog;
 			ttd->setAttribute(Qt::WA_DeleteOnClose);
 		}
-		utils::showWindow(ttd);
+		utils::showWindow(ttd, shouldShowDialogMaximized());
 		ttd->raise();
 	});
 
@@ -5104,4 +5106,13 @@ void MainWindow::switchInterfaceMode(bool smallScreenMode)
 	m_canvasView->setShowToggleItems(smallScreenMode);
 	updateInterfaceModeActions();
 	reenableUpdates();
+}
+
+bool MainWindow::shouldShowDialogMaximized() const
+{
+#ifdef SINGLE_MAIN_WINDOW
+	return m_smallScreenMode;
+#else
+	return m_smallScreenMode && isMaximized();
+#endif
 }
