@@ -331,7 +331,7 @@ StartDialog::StartDialog(QWidget *parent)
 
 	const desktop::settings::Settings &settings = dpApp().settings();
 	QSize lastSize = settings.lastStartDialogSize();
-	resize(lastSize.isValid() ? lastSize : QSize{800, 450});
+	resize(lastSize.isValid() ? lastSize : QSize{820, 450});
 
 	connect(
 		m_stack, &QStackedWidget::currentChanged, this,
