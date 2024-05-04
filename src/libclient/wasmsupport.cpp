@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/wasmsupport.h"
 #include "libclient/net/login.h"
-#include "libclient/utils/wasmpersistence.h"
+#include <QCoreApplication>
+#include <QHostAddress>
 #include <QString>
+#include <QUrl>
 #include <emscripten.h>
 
 #define DRAWPILE_BROWSER_AUTH_CANCEL -1
@@ -83,6 +85,46 @@ void authenticate(net::LoginHandler *loginHandler, const QByteArray &payload)
 	if(loginHandler == currentLoginHandler) {
 		EM_ASM(window.drawpileAuthenticate($0, $1);
 			   , payload.constData(), int(payload.size()));
+	}
+}
+
+static QString guessFailedConnectionReason(const QUrl &url)
+{
+	// clang-format off
+	bool isOnWebDrawpileNet =
+		EM_ASM_INT(window.location.host === "web.drawpile.net" ? 1 : 0);
+	// clang-format on
+	if(!isOnWebDrawpileNet) {
+		return QCoreApplication::translate(
+			"wasmsupport",
+			"You're not using the official client on web.drawpile.net. Most "
+			"servers do not allow connections from elsewhere.");
+	}
+
+	if(url.scheme().compare(QStringLiteral("wss"), Qt::CaseInsensitive) != 0) {
+		return QCoreApplication::translate(
+			"wasmsupport",
+			"The session address does not look like a valid WebSocket URL.");
+	}
+
+	if(QHostAddress().setAddress(url.host())) {
+		return QCoreApplication::translate(
+			"wasmsupport",
+			"You're trying to connect to an IP address instead of a proper "
+			"domain name. This usually doesn't work unless you've configured "
+			"your browser to allow this first.");
+	}
+
+	return QCoreApplication::translate(
+		"wasmsupport", "The server may not support joining via web browser.");
+}
+
+void intuitFailedConnectionReason(QString &description, const QUrl &url)
+{
+	QString guess = guessFailedConnectionReason(url);
+	if(!guess.isEmpty()) {
+		description.append(QStringLiteral("\n\n"));
+		description.append(guess);
 	}
 }
 

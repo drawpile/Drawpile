@@ -50,6 +50,9 @@ void Client::connectToServer(
 	}
 #endif
 
+	connect(
+		m_server, &Server::initiatingConnection, this,
+		&Client::setConnectionUrl);
 	connect(m_server, &Server::loggingOut, this, &Client::serverDisconnecting);
 	connect(
 		m_server, &Server::serverDisconnected, this, &Client::handleDisconnect);
@@ -146,11 +149,13 @@ void Client::handleConnect(
 }
 
 void Client::handleDisconnect(
-	const QString &message, const QString &errorcode, bool localDisconnect)
+	const QString &message, const QString &errorcode, bool localDisconnect,
+	bool anyMessageReceived)
 {
 	// WebSockets may report multiple disconnects, some with error messages,
 	// some without. We just emit them all so the UI can report what it wants.
-	emit serverDisconnected(message, errorcode, localDisconnect);
+	emit serverDisconnected(
+		message, errorcode, localDisconnect, anyMessageReceived);
 	if(isConnected()) {
 		m_compatibilityMode = false;
 		m_server->deleteLater();
@@ -267,6 +272,11 @@ Client::filterCompatibleMessages(int count, const net::Message *msgs)
 		}
 	}
 	return compatibleMsgs;
+}
+
+void Client::setConnectionUrl(const QUrl &url)
+{
+	m_connectionUrl = url;
 }
 
 void Client::handleMessages(int count, net::Message *msgs)

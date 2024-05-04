@@ -199,7 +199,8 @@ signals:
 	void serverConnected(const QString &address, int port);
 	void serverLoggedIn(bool join, const QString &joinPassword);
 	void serverDisconnected(
-		const QString &message, const QString &errorcode, bool localDisconnect);
+		const QString &message, const QString &errorcode, bool localDisconnect,
+		bool anyMessageReceived);
 	void compatibilityModeChanged(bool compatibilityMode);
 
 	void canvasChanged(canvas::CanvasModel *canvas);

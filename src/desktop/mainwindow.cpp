@@ -132,7 +132,9 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
 
-#ifndef __EMSCRIPTEN__
+#ifdef __EMSCRIPTEN__
+#	include "libclient/wasmsupport.h"
+#else
 #	include "desktop/utils/recents.h"
 #endif
 
@@ -2501,7 +2503,9 @@ void MainWindow::onServerConnected()
 /**
  * Connection lost, so disable and enable some UI elements
  */
-void MainWindow::onServerDisconnected(const QString &message, const QString &errorcode, bool localDisconnect)
+void MainWindow::onServerDisconnected(
+	const QString &message, const QString &errorcode, bool localDisconnect,
+	bool anyMessageReceived)
 {
 	canvas::CanvasModel *canvas = m_doc->canvas();
 	emit hostSessionEnabled(canvas != nullptr);
@@ -2532,9 +2536,23 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 		QString name = QStringLiteral("disconnectederrormessagebox");
 		QMessageBox *msgbox = findChild<QMessageBox *>(name);
 		if(!msgbox) {
-			msgbox = utils::showWarning(
-				getStartDialogOrThis(), tr("Disconnected"),
-				tr("Could not connect to server"));
+			QString title;
+			QString description;
+			if(anyMessageReceived) {
+				title = tr("Disconnected");
+				description = tr("You've been disconnected from the server.");
+			} else {
+				title = tr("Connection Failed");
+				description =
+					tr("Could not establish a connection to the server.");
+#ifdef __EMSCRIPTEN__
+				browser::intuitFailedConnectionReason(
+					description, m_doc->client()->connectionUrl());
+#endif
+			}
+
+			msgbox =
+				utils::showWarning(getStartDialogOrThis(), title, description);
 			msgbox->setObjectName(name);
 		}
 

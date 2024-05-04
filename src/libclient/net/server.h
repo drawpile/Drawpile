@@ -108,6 +108,8 @@ public:
 	void artificialDisconnect() { abortConnection(); }
 
 signals:
+	void initiatingConnection(const QUrl &url);
+
 	void loggedIn(
 		const QUrl &url, uint8_t userid, bool join, bool auth,
 		const QStringList &userFlags, bool hasAutoreset, bool compatibilityMode,
@@ -119,7 +121,8 @@ signals:
 		MessageQueue::GracefulDisconnect, const QString &message);
 
 	void serverDisconnected(
-		const QString &message, const QString &errorcode, bool localDisconnect);
+		const QString &message, const QString &errorcode, bool localDisconnect,
+		bool anyMessageReceived);
 
 	void messagesReceived(int count, net::Message *msgs);
 	void bytesReceived(int);

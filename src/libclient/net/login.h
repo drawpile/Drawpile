@@ -152,6 +152,8 @@ public:
 	 */
 	Mode mode() const { return m_mode; }
 
+	bool anyMessageReceived() const { return m_messageReceived; }
+
 	/**
 	 * @brief Session URL
 	 *
@@ -515,6 +517,7 @@ private:
 	State m_state;
 	State m_passwordState;
 	LoginSessionModel *m_sessions;
+	bool m_messageReceived = false;
 
 	QString m_selectedId;
 	QStringList m_sessionFlags;

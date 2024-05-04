@@ -61,6 +61,8 @@ public:
 	QUrl sessionUrl(bool includeUser = false) const;
 	void setSessionUrl(const QUrl &url) { m_lastUrl = url; }
 
+	const QUrl &connectionUrl() const { return m_connectionUrl; }
+
 	/**
 	 * @brief Is the client connected by network?
 	 * @return true if a network connection is open
@@ -237,7 +239,8 @@ signals:
 		const QString &authId);
 	void serverDisconnecting();
 	void serverDisconnected(
-		const QString &message, const QString &errorcode, bool localDisconnect);
+		const QString &message, const QString &errorcode, bool localDisconnect,
+		bool anyMessageReceived);
 	void youWereKicked(const QString &kickedBy);
 
 	void serverMessage(const QString &message, bool isAlert);
@@ -255,6 +258,7 @@ signals:
 	void currentBrushReceived(int userId, const QJsonObject &info);
 
 private slots:
+	void setConnectionUrl(const QUrl &url);
 	void handleMessages(int count, net::Message *msgs);
 	void handleConnect(
 		const QUrl &url, uint8_t userid, bool join, bool auth,
@@ -262,7 +266,8 @@ private slots:
 		bool compatibilityMode, const QString &joinPassword,
 		const QString &authId);
 	void handleDisconnect(
-		const QString &message, const QString &errorcode, bool localDisconnect);
+		const QString &message, const QString &errorcode, bool localDisconnect,
+		bool anyMessageReceived);
 	void nudgeCatchup();
 
 private:
@@ -288,6 +293,7 @@ private:
 	utils::AndroidWifiLock *m_wifiLock = nullptr;
 #endif
 
+	QUrl m_connectionUrl;
 	QUrl m_lastUrl;
 	uint8_t m_myId = 1;
 	bool m_builtin = false;

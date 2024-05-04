@@ -134,7 +134,9 @@ void Server::login(LoginHandler *login)
 	m_loginstate = login;
 	m_loginstate->setParent(this);
 	m_loginstate->setServer(this);
-	connectToHost(login->url());
+	QUrl url = login->url();
+	emit initiatingConnection(url);
+	connectToHost(url);
 }
 
 void Server::logout()
@@ -151,7 +153,9 @@ int Server::uploadQueueBytes() const
 
 void Server::handleDisconnect()
 {
-	emit serverDisconnected(m_error, m_errorcode, m_localDisconnect);
+	emit serverDisconnected(
+		m_error, m_errorcode, m_localDisconnect,
+		!m_loginstate || m_loginstate->anyMessageReceived());
 }
 
 void Server::handleSocketStateChange(QAbstractSocket::SocketState state)

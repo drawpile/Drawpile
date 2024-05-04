@@ -95,6 +95,7 @@ bool LoginHandler::receiveMessage(const ServerReply &msg)
 	if(lcDpLogin().isDebugEnabled()) {
 		qCDebug(lcDpLogin) << "login <--" << msg.reply;
 	}
+	m_messageReceived = true;
 
 	// Overall, the login process is:
 	// 1. wait for server greeting

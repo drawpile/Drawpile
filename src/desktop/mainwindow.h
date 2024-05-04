@@ -212,7 +212,9 @@ private slots:
 
 	void onServerConnected();
 	void onServerLogin(bool join, const QString &joinPassword);
-	void onServerDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
+	void onServerDisconnected(
+		const QString &message, const QString &errorcode, bool localDisconnect,
+		bool anyMessageReceived);
 	void onCompatibilityModeChanged(bool compatibilityMode);
 	void onNsfmChanged(bool nsfm);
 
