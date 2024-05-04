@@ -30,7 +30,8 @@ void ToggleItem::updateSceneBounds(const QRectF &sceneBounds)
 	qreal s = qreal(totalSize());
 	updatePosition(QPointF(
 		m_right ? sceneBounds.right() - s : sceneBounds.left(),
-		sceneBounds.top() + sceneBounds.height() * m_fromTop - s / 2.0));
+		sceneBounds.top() + sceneBounds.height() * m_fromTop -
+			(m_right ? 0 : s)));
 }
 
 bool ToggleItem::checkHover(const QPointF &scenePos, bool &outWasHovering)
