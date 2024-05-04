@@ -55,6 +55,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Pixel ruler, available under View > Show Rulers. Thanks fluttershydev for contributing.
  * Fix: Ignore mouse clicks caused by briefly touching the canvas on some devices on Windows. Thanks sfin for reporting.
  * Feature: Translate links copied out of the browser version of Drawpile into something that can be joined when they are pasted into the join page.
+ * Feature: Better small-screen mode handling. The toggle items now no longer overlap, dialogs get maximized if appropriate, the start and settings dialogs get arranged horizontally.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.
