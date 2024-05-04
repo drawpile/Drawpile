@@ -4,6 +4,7 @@
 #include "libshared/net/servercmd.h"
 #include "libshared/util/whatismyip.h"
 #include <QDebug>
+#include <QUrlQuery>
 #ifdef HAVE_TCPSOCKETS
 #	include "libclient/net/tcpserver.h"
 #endif
@@ -34,36 +35,83 @@ Server *Server::make(const QUrl &url, int timeoutSecs, QObject *parent)
 
 QString Server::addSchemeToUserSuppliedAddress(const QString &remoteAddress)
 {
-	bool haveValidScheme = false;
-#ifdef HAVE_TCPSOCKETS
-	haveValidScheme = haveValidScheme ||
-					  remoteAddress.startsWith(
-						  QStringLiteral("drawpile://"), Qt::CaseInsensitive);
-#endif
-#ifdef HAVE_WEBSOCKETS
-	haveValidScheme =
-		haveValidScheme ||
+	bool haveValidScheme =
+		remoteAddress.startsWith(
+			QStringLiteral("drawpile://"), Qt::CaseInsensitive) ||
 		remoteAddress.startsWith(
 			QStringLiteral("ws://"), Qt::CaseInsensitive) ||
 		remoteAddress.startsWith(QStringLiteral("wss://"), Qt::CaseInsensitive);
-#endif
-
 	if(haveValidScheme) {
 		return remoteAddress;
 	} else {
-#if defined(HAVE_TCPSOCKETS)
 		return QStringLiteral("drawpile://") + remoteAddress;
-#elif defined(HAVE_WEBSOCKETS)
-		QString scheme = WhatIsMyIp::looksLikeLocalhost(remoteAddress)
-							 ? QStringLiteral("ws")
-							 : QStringLiteral("wss");
-		QUrl url(scheme + QStringLiteral("://") + remoteAddress);
-		if(url.path().isEmpty() || url.path() == QStringLiteral("/")) {
-			url.setPath(QStringLiteral("/drawpile-web/ws"));
-		}
-		return url.toString();
-#endif
 	}
+}
+
+QUrl Server::fixUpAddress(const QUrl &originalUrl, bool join)
+{
+#ifdef HAVE_TCPSOCKETS
+	Q_UNUSED(join);
+#else
+	if(originalUrl.scheme().compare(
+		   QStringLiteral("drawpile"), Qt::CaseInsensitive) == 0) {
+		QUrl url = originalUrl;
+		url.setScheme(
+			WhatIsMyIp::looksLikeLocalhost(url.host()) ? QStringLiteral("ws")
+													   : QStringLiteral("wss"));
+		url.setPort(-1);
+
+		QString path = url.path();
+		url.setPath(QStringLiteral("/drawpile-web/ws"));
+
+		if(join) {
+			QString autoJoinId = extractAutoJoinId(path);
+			if(!autoJoinId.isEmpty()) {
+				QUrlQuery query(url);
+				query.removeAllQueryItems(QStringLiteral("session"));
+				query.addQueryItem(QStringLiteral("session"), autoJoinId);
+				url.setQuery(query);
+			}
+		}
+
+		qInfo(
+			"Fixed up TCP URL '%s' to WebSocket URL '%s'",
+			qUtf8Printable(originalUrl.toDisplayString()),
+			qUtf8Printable(url.toDisplayString()));
+		return url;
+	}
+#endif
+
+#ifndef HAVE_WEBSOCKETS
+	if(originalUrl.scheme().compare(
+		   QStringLiteral("ws"), Qt::CaseInsensitive) == 0 ||
+	   originalUrl.scheme().compare(
+		   QStringLiteral("wss"), Qt::CaseInsensitive) == 0) {
+		QUrl url = originalUrl;
+		url.setScheme(QStringLiteral("drawpile://"));
+		url.setPort(-1);
+		url.setPath(QString());
+		qInfo(
+			"Fixed up WebSocket URL '%s' to TCP URL '%s'",
+			qUtf8Printable(originalUrl.toDisplayString()),
+			qUtf8Printable(url.toDisplayString()));
+		return url;
+	}
+#endif
+
+	return originalUrl;
+}
+
+QString Server::extractAutoJoinId(const QString &path)
+{
+	if(path.length() > 1) {
+		QRegularExpression idre("\\A/?([a-zA-Z0-9:-]{1,64})/?\\z");
+		QRegularExpressionMatch m = idre.match(path);
+		if(m.hasMatch()) {
+			return m.captured(1);
+		}
+	}
+	return QString();
 }
 
 Server::Server(QObject *parent)

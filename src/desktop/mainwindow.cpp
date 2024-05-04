@@ -2191,9 +2191,11 @@ void MainWindow::hostSession(
 	QUrl address;
 
 	if(useremote) {
-		address = QUrl(
-			net::Server::addSchemeToUserSuppliedAddress(remoteAddress),
-			QUrl::TolerantMode);
+		address = net::Server::fixUpAddress(
+			QUrl(
+				net::Server::addSchemeToUserSuppliedAddress(remoteAddress),
+				QUrl::TolerantMode),
+			false);
 	} else {
 		address.setHost(WhatIsMyIp::guessLocalAddress());
 		address.setScheme(QStringLiteral("drawpile"));
@@ -2465,7 +2467,8 @@ void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 	}
 
 	net::LoginHandler *login = new net::LoginHandler(
-			net::LoginHandler::Mode::Join, url, this);
+		net::LoginHandler::Mode::Join, net::Server::fixUpAddress(url, true),
+		this);
 	auto *dlg = new dialogs::LoginDialog(login, getStartDialogOrThis());
 	connect(m_doc, &Document::catchupProgress, dlg, &dialogs::LoginDialog::catchupProgress);
 	connect(m_doc, &Document::serverLoggedIn, dlg, &dialogs::LoginDialog::onLoginDone);

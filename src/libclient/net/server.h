@@ -34,6 +34,8 @@ public:
 	static Server *make(const QUrl &url, int timeoutSecs, QObject *parent);
 
 	static QString addSchemeToUserSuppliedAddress(const QString &remoteAddress);
+	static QUrl fixUpAddress(const QUrl &originalUrl, bool join);
+	static QString extractAutoJoinId(const QString &path);
 
 	explicit Server(QObject *parent);
 

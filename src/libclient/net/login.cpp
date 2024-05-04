@@ -80,12 +80,7 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	if(path.isEmpty()) {
 		path = QUrlQuery(url).queryItemValue(QStringLiteral("session"));
 	}
-	if(path.length() > 1) {
-		QRegularExpression idre("\\A/?([a-zA-Z0-9:-]{1,64})/?\\z");
-		auto m = idre.match(path);
-		if(m.hasMatch())
-			m_autoJoinId = m.captured(1);
-	}
+	m_autoJoinId = net::Server::extractAutoJoinId(path);
 }
 
 #ifdef __EMSCRIPTEN__
