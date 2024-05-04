@@ -160,9 +160,12 @@ Host::Host(QWidget *parent)
 	layout->addWidget(useLocalRadio);
 #ifndef DP_HAVE_BUILTIN_SERVER
 	useLocalRadio->setEnabled(false);
-#	ifdef Q_OS_ANDROID
+#	if defined(Q_OS_ANDROID)
 	QString notAvailableMessage =
 		tr("The built-in server is not available on Android.");
+#	elif defined(__EMSCRIPTEN__)
+	QString notAvailableMessage =
+		tr("The built-in server is not available in the browser.");
 #	else
 	QString notAvailableMessage = tr("The built-in server is not available on "
 									 "this installation of Drawpile.");
