@@ -577,10 +577,10 @@ import { UAParser } from "ua-parser-js";
       return true;
     } else {
       const missing = [];
-      if (!window.crossOriginIsolated) {
+      if ("crossOriginIsolated" in window && !window.crossOriginIsolated) {
         missing.push("cross-origin isolation");
       }
-      if (!window.isSecureContext) {
+      if ("isSecureContext" in window && !window.isSecureContext) {
         missing.push("a secure context");
       }
       const reason =
