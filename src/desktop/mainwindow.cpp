@@ -2167,8 +2167,8 @@ void MainWindow::showBrushSettingsDialog()
  */
 dialogs::SettingsDialog *MainWindow::showSettings()
 {
-	dialogs::SettingsDialog *dlg =
-		new dialogs::SettingsDialog(m_singleSession, getStartDialogOrThis());
+	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog(
+		m_singleSession, m_smallScreenMode, getStartDialogOrThis());
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	utils::showWindow(dlg);
 	return dlg;

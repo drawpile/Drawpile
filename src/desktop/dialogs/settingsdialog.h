@@ -17,7 +17,8 @@ namespace dialogs {
 class SettingsDialog final : public QDialog {
 	Q_OBJECT
 public:
-	SettingsDialog(bool singleSession, QWidget *parent = nullptr);
+	SettingsDialog(
+		bool singleSession, bool smallScreenMode, QWidget *parent = nullptr);
 	~SettingsDialog() override;
 
 	void activateShortcutsPanel();

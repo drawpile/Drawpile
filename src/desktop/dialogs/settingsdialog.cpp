@@ -25,7 +25,8 @@
 
 namespace dialogs {
 
-SettingsDialog::SettingsDialog(bool singleSession, QWidget *parent)
+SettingsDialog::SettingsDialog(
+	bool singleSession, bool smallScreenMode, QWidget *parent)
 	: QDialog(parent)
 	, m_settings(dpApp().settings())
 {
@@ -35,14 +36,16 @@ SettingsDialog::SettingsDialog(bool singleSession, QWidget *parent)
 	setWindowModality(Qt::ApplicationModal);
 
 #ifdef Q_OS_MACOS
+	Q_UNUSED(smallScreenMode);
 	bool vertical = false;
 	bool menuFirst = true;
 #elif defined(Q_OS_ANDROID)
+	Q_UNUSED(smallScreenMode);
 	bool vertical = false;
 	bool menuFirst = false;
 #else
-	bool vertical = true;
-	bool menuFirst = true;
+	bool vertical = !smallScreenMode;
+	bool menuFirst = !smallScreenMode;
 #endif
 
 	QWidget *menu = new QWidget;
