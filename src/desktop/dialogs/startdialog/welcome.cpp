@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/startdialog/welcome.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
-#include "libclient/utils/news.h"
 #include <QDesktopServices>
 #include <QTextBrowser>
 #include <QVBoxLayout>
+#ifdef __EMSCRIPTEN__
+#	include "libclient/wasmsupport.h"
+#else
+#	include "libclient/utils/news.h"
+#endif
 
 namespace dialogs {
 namespace startdialog {
@@ -37,20 +40,18 @@ void Welcome::activate()
 
 #ifdef __EMSCRIPTEN__
 
-void Welcome::showStandaloneWarningText()
+void Welcome::showStandaloneText()
 {
+	QString text = browser::getWelcomeMessage();
 	m_browser->setText(
-		QStringLiteral("<h1>%1</h1>"
-					   "<p style=\"font-size:large;\">%2</p>"
-					   "<p style=\"font-size:large;\">%3</p>")
-			.arg(
-				tr("Standalone Mode"),
-				tr("You are running the web browser version of Drawpile in "
-				   "standalone mode. It will <strong>not</strong> "
-				   "automatically save what you draw. If it crashes, you close "
-				   "the tab or your browser decides to unload the page, "
-				   "<strong>you will lose your work</strong>."),
-				tr("Use at your own peril. Save often.")));
+		text.isEmpty()
+			? QStringLiteral("<h1>%1</h1><p style=\"font-size:large;\">%2</p>")
+				  .arg(
+					  tr("Standalone Mode"),
+					  tr("You are running the web browser version of Drawpile "
+						 "in standalone mode. It will <strong>not</strong> "
+						 "automatically save what you draw, so save often!"))
+			: text);
 }
 
 #else

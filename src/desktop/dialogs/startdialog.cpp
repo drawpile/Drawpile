@@ -362,7 +362,7 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 		&StartDialog::rememberLastPage);
 
 #ifdef __EMSCRIPTEN__
-	welcomePage->showStandaloneWarningText();
+	welcomePage->showStandaloneText();
 #else
 	// Delay showing of the update notice to make it more noticeable. It'll jerk
 	// the whole UI if it comes in after a second, making it hard to miss.

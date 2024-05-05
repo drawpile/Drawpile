@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef LIBCLIENT_WASMSUPPORT_H
 #define LIBCLIENT_WASMSUPPORT_H
+#include <QString>
 
 class QByteArray;
-class QString;
 class QUrl;
 
 namespace net {
@@ -13,6 +13,7 @@ class LoginHandler;
 namespace browser {
 
 bool hasLowPressurePen();
+QString getWelcomeMessage();
 void showLoginModal(net::LoginHandler *loginHandler);
 void cancelLoginModal(net::LoginHandler *loginHandler);
 void authenticate(net::LoginHandler *loginHandler, const QByteArray &payload);

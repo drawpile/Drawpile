@@ -18,7 +18,7 @@ public:
 	void activate() override;
 
 #ifdef __EMSCRIPTEN__
-	void showStandaloneWarningText();
+	void showStandaloneText();
 #else
 	void showFirstStartText();
 #endif

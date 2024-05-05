@@ -3,7 +3,6 @@
 #include "libclient/net/login.h"
 #include <QCoreApplication>
 #include <QHostAddress>
-#include <QString>
 #include <QUrl>
 #include <emscripten.h>
 
@@ -61,6 +60,18 @@ bool hasLowPressurePen()
 {
 	int lowPressurePen = EM_ASM_INT(return window.drawpileHasLowPressurePen(););
 	return lowPressurePen != 0;
+}
+
+QString getWelcomeMessage()
+{
+	char *message = static_cast<char *>(EM_ASM_PTR(
+		return stringToNewUTF8(window.drawpileStandaloneMessage || "");));
+	QString s;
+	if(message) {
+		s = QString::fromUtf8(message);
+		free(message);
+	}
+	return s;
 }
 
 void showLoginModal(net::LoginHandler *loginHandler)

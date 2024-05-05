@@ -654,43 +654,66 @@ import { UAParser } from "ua-parser-js";
     }
   }
 
+  function checkBrowserSupport() {
+    const ua = new UAParser();
+    const os = ua.getOS()?.name || "";
+    const browser = ua.getBrowser()?.name || "";
+    if (os.indexOf("Linux") !== -1 && browser.indexOf("Firefox") !== -1) {
+      return tag("p", [
+        tag("strong", ["❌ Incompatible browser:"]),
+        " Firefox on Linux does not support pressure-sensitive pens. " +
+          "Consider using a different browser or ",
+        tag(
+          "a",
+          { href: "https://drawpile.net/download/" },
+          "the native Linux application",
+        ),
+        ".",
+      ]);
+    }
+    if (os.indexOf("Android") !== -1 && browser.indexOf("Firefox") !== -1) {
+      return tag("p", [
+        tag("strong", ["❌ Incompatible browser:"]),
+        " Firefox on Android is not able to run Drawpile. " +
+          "Consider using a different browser or ",
+        tag(
+          "a",
+          { href: "https://drawpile.net/download/" },
+          "the native Android app",
+        ),
+        ".",
+      ]);
+    }
+    if (os.indexOf("Windows") !== -1 && browser.indexOf("Firefox") !== -1) {
+      return tag("p", [
+        tag("strong", ["❌ Incompatible browser:"]),
+        " Firefox on Windows has some trouble running Drawpile. Inputting " +
+          "text and/or pressing Ctrl+Z to undo may not work properly. " +
+          "Consider using a different browser or ",
+        tag(
+          "a",
+          { href: "https://drawpile.net/download/" },
+          "the native Windows application",
+        ),
+        ".",
+      ]);
+    }
+    return null;
+  }
+
   async function showStartup() {
     const startup = document.querySelector("#startup");
-    startup.appendChild(
-      tag("p", [
-        "This browser version of Drawpile is still ",
-        tag("strong", ["in development"]),
-        ". Some things may not work properly yet. The following are ",
-        tag("strong", ["known issues"]),
-        ":",
-      ]),
-    );
-    startup.appendChild(
-      tag("ul", [
-        tag("li", [
-          "Some settings, such as brush presets or avatars, won't be saved.",
-        ]),
-        tag("li", ["Firefox: Browser steals Ctrl+Z for itself."]),
-      ]),
-    );
-    startup.appendChild(
-      tag("p", [
-        "If you find an issue not listed here, please report it! Check out ",
-        tag("a", { href: "https://drawpile.net/help/", target: "_blank" }, [
-          "the help page on drawpile.net",
-        ]),
-        " for ways to do so.",
-      ]),
-    );
-    startup.appendChild(
-      tag("p", [
-        "The application for Windows, macOS, Linux and Android is available ",
-        tag("a", { href: "https://drawpile.net/download/", target: "_blank" }, [
-          "on drawpile.net",
-        ]),
-        ".",
-      ]),
-    );
+
+    let browserTrouble = false;
+    try {
+      const browserSupportMessage = checkBrowserSupport();
+      if (browserSupportMessage) {
+        startup.appendChild(browserSupportMessage);
+        browserTrouble = true;
+      }
+    } catch (e) {
+      console.error(e);
+    }
 
     const updateLoading = tag("p", { "aria-busy": "true" }, [
       "Checking for updates…",
@@ -699,9 +722,12 @@ import { UAParser } from "ua-parser-js";
     startup.appendChild(updateDiv);
 
     let upToDate = false;
+    let haveNotice = false;
     const commit = document.documentElement.dataset.commit || "-missing-";
+    const params = getQueryParams();
+    const standalone = isStandalone(params);
     try {
-      if (isTrueParam(getQueryParams().get("blockupdatecheck"))) {
+      if (isTrueParam(params.get("blockupdatecheck"))) {
         throw Error("Update check blocked");
       }
 
@@ -711,8 +737,17 @@ import { UAParser } from "ua-parser-js";
 
       try {
         const haveMessage = u.message && isString(u.message);
+        if (haveMessage) {
+          window.drawpileUpdateMessage = u.message;
+        }
+
         const haveLink = u.link && isString(u.link);
-        if (haveLink || haveMessage) {
+        if (haveLink) {
+          window.drawpileUpdateLink = u.link;
+        }
+
+        haveNotice = haveMessage || haveLink;
+        if (haveNotice) {
           const notice = tag("div", { className: "update-notice" });
           if (haveMessage) {
             notice.appendChild(tag("p", [u.message]));
@@ -728,16 +763,12 @@ import { UAParser } from "ua-parser-js";
         console.error(e);
       }
 
+      if (u.standaloneMessage && isString(u.standaloneMessage)) {
+        window.drawpileStandaloneMessage = u.standaloneMessage;
+      }
+
       upToDate = commit === u.commit;
-      if (upToDate) {
-        updateDiv.appendChild(
-          tag("p", [
-            "✔️ This installation is up to date at version ",
-            tag("code", [commit]),
-            ".",
-          ]),
-        );
-      } else {
+      if (!upToDate) {
         updateDiv.appendChild(
           tag("p", [
             tag("strong", ["⛔️ Warning:"]),
@@ -792,14 +823,22 @@ import { UAParser } from "ua-parser-js";
       );
     } finally {
       updateLoading.remove();
-      const button = tag("button", { class: upToDate ? "primary" : "danger" }, [
-        upToDate ? "Start" : "Start Anyway",
-      ]);
-      button.addEventListener("click", (_event) => {
+      const doStart = () => {
         startup.remove();
         start();
-      });
-      startup.appendChild(button);
+      };
+
+      if (!browserTrouble && upToDate && (standalone || !haveNotice)) {
+        doStart();
+      } else {
+        const button = tag(
+          "button",
+          { class: upToDate ? "primary" : "danger" },
+          [upToDate ? "Start" : "Start Anyway"],
+        );
+        button.addEventListener("click", doStart);
+        startup.appendChild(button);
+      }
     }
   }
 
