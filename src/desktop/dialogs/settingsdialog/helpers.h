@@ -124,7 +124,9 @@ execConfirm(const QString &title, const QString &message, QWidget *owner)
 		QMessageBox::Question, title, message,
 		QMessageBox::Yes | QMessageBox::No, owner);
 	box.setDefaultButton(QMessageBox::No);
+#ifndef __EMSCRIPTEN__
 	box.setWindowModality(Qt::WindowModal);
+#endif
 	return box.exec() == QMessageBox::Yes;
 }
 
@@ -135,7 +137,9 @@ inline int execWarning(
 {
 	QMessageBox box(QMessageBox::Warning, title, message, buttons, owner);
 	box.setDefaultButton(defaultButton);
+#ifndef __EMSCRIPTEN__
 	box.setWindowModality(Qt::WindowModal);
+#endif
 	return box.exec();
 }
 

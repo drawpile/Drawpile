@@ -1211,7 +1211,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				tr("Exit Drawpile"),
 				tr("You are still connected to a drawing session."),
 				QMessageBox::NoButton, this);
+#ifndef __EMSCRIPTEN__
 			box.setWindowModality(Qt::WindowModal);
+#endif
 
 			const QPushButton *exitbtn = box.addButton(tr("Exit anyway"),
 					QMessageBox::AcceptRole);
@@ -1237,7 +1239,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			QMessageBox box(QMessageBox::Question, tr("Exit Drawpile"),
 					tr("There are unsaved changes. Save them before exiting?"),
 					QMessageBox::NoButton, this);
+#ifndef __EMSCRIPTEN__
 			box.setWindowModality(Qt::WindowModal);
+#endif
 			const QPushButton *savebtn = box.addButton(tr("Save"),
 					QMessageBox::AcceptRole);
 			box.addButton(tr("Discard"),
@@ -2427,7 +2431,9 @@ void MainWindow::terminateSession()
 		dlg->setWindowTitle(tr("Terminate session"));
 		dlg->setLabelText(tr("Reason:"));
 		dlg->setOkButtonText(tr("Terminate"));
+#ifndef __EMSCRIPTEN__
 		dlg->setWindowModality(Qt::WindowModal);
+#endif
 		connect(
 			dlg, &QInputDialog::textValueSelected, m_doc,
 			&Document::sendTerminateSession);

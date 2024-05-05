@@ -177,9 +177,13 @@ void ParentalControls::toggleLock()
 
 	for(;;) {
 		auto ok = true;
+		Qt::WindowFlags flags;
+#ifndef __EMSCRIPTEN__
+		flags.setFlag(Qt::Sheet);
+#endif
 		const auto pass = QInputDialog::getText(
 			this, title, tr("Enter password:"), QLineEdit::Password, QString(),
-			&ok, Qt::Sheet);
+			&ok, flags);
 		if(!ok) {
 			break;
 		} else if(locked) {
@@ -190,7 +194,9 @@ void ParentalControls::toggleLock()
 				QMessageBox box(
 					QMessageBox::Warning, title, tr("Incorrect password."),
 					QMessageBox::Retry | QMessageBox::Cancel, this);
+#ifndef __EMSCRIPTEN__
 				box.setWindowModality(Qt::WindowModal);
+#endif
 				if(box.exec() == QMessageBox::Cancel) {
 					break;
 				}

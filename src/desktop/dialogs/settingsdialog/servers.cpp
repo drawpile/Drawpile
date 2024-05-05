@@ -190,7 +190,9 @@ askToContinue(const QString &title, const QString &message, QWidget *parent)
 	const auto *ok =
 		box.addButton(Servers::tr("Continue"), QMessageBox::AcceptRole);
 	box.setDefaultButton(QMessageBox::Cancel);
+#ifndef __EMSCRIPTEN__
 	box.setWindowModality(Qt::WindowModal);
+#endif
 	box.exec();
 	return box.clickedButton() == ok;
 }
