@@ -331,11 +331,11 @@ purge-sessions - delete archived drawpile-srv sessions by size or age
 
 To delete archived files by size:
 
-    purge-sessions --max-size=10GB /path/to/sessions/directory
+    purge-sessions --maximum-size=10GB /path/to/sessions/directory
 
 To delete by age:
 
-    purge-sessions --max-age=30days /path/to/sessions/directory
+    purge-sessions --maximum-age=30days /path/to/sessions/directory
 
 Pass C<--dry-run> if you want to just do a test run, but not actually delete
 anything.
@@ -344,7 +344,7 @@ anything.
 
 =over 4
 
-=item B<--max-size=SIZE>, B<-s SIZE>
+=item B<--maximum-size=SIZE>, B<-s SIZE>
 
 Delete archived session files until the maximum given B<SIZE> is reached.
 
@@ -363,7 +363,7 @@ sessions are deleted as well, oldest first. Active files of running sessions
 are never touched though, so if deleting all archived files still doesn't make
 enough room, the script just exits with an error.
 
-=item B<--max-age=AGE>, B<-a AGE>
+=item B<--maximum-age=AGE>, B<-a AGE>
 
 Delete archived session files where the session is older than B<AGE>.
 
