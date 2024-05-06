@@ -650,26 +650,23 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 		return;
 	}
 
-	emit loginOk(m_loginIntent, m_address.host(), m_address.userName());
+	setState(
+		m_mode == Mode::Join ? EXPECT_SESSIONLIST_TO_JOIN
+							 : EXPECT_SESSIONLIST_TO_HOST);
 	m_passwordState = WAIT_FOR_JOIN_PASSWORD;
-
 	m_isGuest = msg.reply["guest"].toBool();
-	for(const QJsonValue f : msg.reply["flags"].toArray())
+	for(const QJsonValue f : msg.reply["flags"].toArray()) {
 		m_userFlags << f.toString().toUpper();
+	}
 
 	m_sessions->setModeratorMode(m_userFlags.contains("MOD"));
 
-	if(m_mode != Mode::Join) {
-		setState(EXPECT_SESSIONLIST_TO_HOST);
-
-	} else {
-		// Show session selector if in multisession mode
-		// In single-session mode we can just automatically join
-		// the first session we see.
-		if(m_multisession)
-			emit sessionChoiceNeeded(m_sessions);
-
-		setState(EXPECT_SESSIONLIST_TO_JOIN);
+	emit loginOk(m_loginIntent, m_address.host(), m_address.userName());
+	// Show session selector if in multisession mode
+	// In single-session mode we can just automatically join
+	// the first session we see.
+	if(m_mode == Mode::Join && m_multisession) {
+		emit sessionChoiceNeeded(m_sessions);
 	}
 }
 
@@ -704,16 +701,12 @@ void LoginHandler::sendHostCommand()
 	}
 
 	send("host", {}, kwargs);
-	m_state = EXPECT_LOGIN_OK;
+	setState(EXPECT_LOGIN_OK);
 }
 
 void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 {
 	Q_ASSERT(m_mode != Mode::HostRemote);
-
-	if(msg.reply.contains("title")) {
-		emit serverTitleChanged(msg.reply["title"].toString());
-	}
 
 	if(msg.reply.contains("sessions")) {
 		for(const QJsonValue &jsv : msg.reply["sessions"].toArray()) {
@@ -754,6 +747,10 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 					session.nsfm, true);
 			}
 		}
+	}
+
+	if(msg.reply.contains("title")) {
+		emit serverTitleChanged(msg.reply["title"].toString());
 	}
 }
 
