@@ -5663,94 +5663,94 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>gone</source>
-        <translation type="unfinished"></translation>
+        <translation>ذهب</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>غير معروف</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>local user</source>
-        <translation type="unfinished"></translation>
+        <translation>المستخدم المحلي</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>properties of layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>خصائص الطبقة%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>annotation %1</source>
-        <translation type="unfinished"></translation>
+        <translation>اداه النص%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>pixels on layer %1, from (%2, %3) to (%4, %5)</source>
-        <translation type="unfinished"></translation>
+        <translation>بكسل على الطبقة%1,من %2,%3 الى %4,%5</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>canvas background</source>
-        <translation type="unfinished"></translation>
+        <translation>خلفيه اللوحه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>document metadata type %1</source>
-        <translation type="unfinished"></translation>
+        <translation>وثيقة metadata type%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>timeline frame %1</source>
-        <translation type="unfinished"></translation>
+        <translation>الإطار الزمني%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>everything</source>
-        <translation type="unfinished"></translation>
+        <translation>كل شيء</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>unknown domain %1</source>
-        <translation type="unfinished"></translation>
+        <translation>دومين غير معروف%1</translation>
     </message>
     <message>
         <location line="+23"/>
         <location line="+6"/>
         <source>Type</source>
-        <translation type="unfinished">النوع</translation>
+        <translation>النوع</translation>
     </message>
     <message>
         <location line="-6"/>
         <location line="+6"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>مستخدم</translation>
     </message>
     <message>
         <location line="-6"/>
         <source>Undo</source>
-        <translation type="unfinished">الغاء</translation>
+        <translation>الغاء</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>State</source>
-        <translation type="unfinished"></translation>
+        <translation>حاله</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Affected Area</source>
-        <translation type="unfinished"></translation>
+        <translation>المنطقه المستخدمه</translation>
     </message>
     <message>
         <location line="+236"/>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>نعم</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>No</source>
-        <translation type="unfinished">لا</translation>
+        <translation>لا</translation>
     </message>
 </context>
 <context>
@@ -5758,12 +5758,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+64"/>
         <source>Export &amp;GIF…</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير &amp;ملف GIF…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export &amp;Frames…</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير المفاتيح…</translation>
     </message>
     <message>
         <location line="+101"/>
@@ -5773,7 +5773,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>% (%1 FPS)</source>
-        <translation type="unfinished"></translation>
+        <translation>% (%1 FPS)</translation>
     </message>
 </context>
 <context>
@@ -5781,7 +5781,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="+106"/>
         <source>Invite link copied to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>تم نسخ رابط الدعوة إلى الحافظة.</translation>
     </message>
 </context>
 <context>
@@ -5789,17 +5789,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/keyframepropertiesdialog.cpp" line="+127"/>
         <source>Key Frame Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>الخصائص المفتاح</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Title:</source>
-        <translation type="unfinished">عنوان:</translation>
+        <translation>عنوان:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Filter Layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>طبقات التصفية:</translation>
     </message>
 </context>
 <context>
@@ -5807,7 +5807,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/layerproperties.cpp" line="+114"/>
         <source>Pass Through</source>
-        <translation type="unfinished"></translation>
+        <translation>مر من خلال</translation>
     </message>
 </context>
 <context>
@@ -5815,92 +5815,92 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/layoutsdialog.cpp" line="+122"/>
         <source>Current (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation>الحالي (غير محفوظ)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (new)</source>
-        <translation type="unfinished"></translation>
+        <translation>(جديد)%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (deleted)</source>
-        <translation type="unfinished"></translation>
+        <translation>(محذوف)%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (renamed from %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1(تمت إعادة تسميته من %2)</translation>
     </message>
     <message>
         <location line="+138"/>
         <source>Undelete</source>
-        <translation type="unfinished"></translation>
+        <translation>إلغاء الحذف</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete</source>
-        <translation type="unfinished">امسح</translation>
+        <translation>امسح</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Layout Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>اسم التصميم:</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>الافتراضي</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Default Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>الانيميشن الافتراضي</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>FireAlpaca-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>FireAlpaca-esque</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>أفقي</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Hyena</source>
-        <translation type="unfinished"></translation>
+        <translation>ضبع</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Krita-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita-esque</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>MediBang-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>MediBang-esque</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Mink</source>
-        <translation type="unfinished"></translation>
+        <translation>Mink</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Paint.NET-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>Paint.NET-esque</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>SAI-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>SAI-esque</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Spider</source>
-        <translation type="unfinished"></translation>
+        <translation>Spider</translation>
     </message>
 </context>
 <context>
@@ -5908,166 +5908,166 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/logindialog.cpp" line="+166"/>
         <source>Report...</source>
-        <translation type="unfinished">تقرير...</translation>
+        <translation>الإبلاغ ...</translation>
     </message>
     <message>
         <location line="+147"/>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation>اقبل</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Log in with server account</source>
-        <translation type="unfinished">ادخل بحساب</translation>
+        <translation>ادخل بحساب</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>أدخل كلمة مرور الحساب. إذا لم يكن لديك حساب، يجب عليك تسجيل واحد. لا يوفر هذا سيرفر أي معلومات حول كيفية القيام بذلك.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>أدخل كلمة مرور الحساب. إذا لم يكن لديك حساب، فيجب عليك تسجيل حساب على %1.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
-        <translation type="unfinished"></translation>
+        <translation>اسم المستخدم هذا ينتمي إلى حساب مسجل. إذا لم يكن هذا هو حسابك، قم بالإلغاء وحاول مرة أخرى باستخدام اسم مختلف.</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Close</source>
-        <translation type="unfinished">اقفل</translation>
+        <translation>اقفل</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Decline</source>
-        <translation type="unfinished"></translation>
+        <translation>رفض</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+9"/>
         <location line="+15"/>
         <source>Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>قواعد</translation>
     </message>
     <message>
         <location line="-9"/>
         <location line="+15"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>تراجع</translation>
     </message>
     <message>
         <location line="+249"/>
         <source>Remove Account</source>
-        <translation type="unfinished"></translation>
+        <translation>إزالة الحساب</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really forget this account? This will only remove it from your recent account list, it won&apos;t delete the account.</source>
-        <translation type="unfinished"></translation>
+        <translation>حقا ننسى هذا الحساب؟ سيؤدي هذا إلى إزالته فقط من قائمة حساباتك الحديثة، ولن يحذف الحساب.</translation>
     </message>
     <message>
         <location line="+39"/>
         <location line="+161"/>
         <source>Enter the name you want to use.</source>
-        <translation type="unfinished"></translation>
+        <translation>أدخل الاسم الذي تريد استخدامه.</translation>
     </message>
     <message>
         <location line="-99"/>
         <source>Server Rules for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>قواعد السيرفر لـ %1</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Log in with %1 account</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بتسجيل الدخول بحساب %1</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>أدخل الاسم الذي تريد استخدامه. راجع %1 لمزيد من المعلومات حول هذا سيرفر.</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>اسم المستخدم هذا لا ينتمي إلى حساب على هذا سيرفر. هذا ليس حسابك في drawpile.net!</translation>
     </message>
     <message>
         <location line="+530"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>أدخل اسم المستخدم وكلمة المرور لحسابك على هذا سيرفر. هذا ليس حسابك في drawpile.net!</translation>
     </message>
     <message>
         <location line="-614"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>يمكنك الاستمرار بدون حساب. إذا كنت تريد تسجيل واحد على أي حال، يمكنك القيام بذلك على %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>An account is required. You can register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>مطلوب حساب. يمكنك تسجيل واحد على %1.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You can continue without an account. The server doesn&apos;t provide any information on how to register one either.</source>
-        <translation type="unfinished"></translation>
+        <translation>يمكنك الاستمرار بدون حساب. لا يوفر سيرفر أي معلومات حول كيفية تسجيل واحد أيضًا.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>An account is required, but the server doesn&apos;t provide any information on how to register one.</source>
-        <translation type="unfinished"></translation>
+        <translation>الحساب مطلوب، لكن سيرفر لا يوفر أي معلومات حول كيفية تسجيل حساب.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>See %1 for more information about this server. To register an account, visit %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>راجع %1 لمزيد من المعلومات حول هذا سيرفر. لتسجيل حساب، قم بزيارة %2.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>راجع %1 لمزيد من المعلومات حول هذا سيرفر.</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>This username belongs to an account, pick a different one.</source>
-        <translation type="unfinished"></translation>
+        <translation>اسم المستخدم هذا ينتمي إلى حساب، اختر حسابًا مختلفًا.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>The %1 authentication is not working.</source>
-        <translation type="unfinished"></translation>
+        <translation>مصادقة %1 لا تعمل.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This username doesn&apos;t belong an account on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>اسم المستخدم هذا لا ينتمي إلى حساب في %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>ينتمي اسم المستخدم هذا إلى حساب خادم، ولا يمكنك استخدامه لتسجيل الدخول من خلال %1 على هذا سيرفر.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>This username belongs to some other login method, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>ينتمي اسم المستخدم هذا إلى طريقة تسجيل دخول أخرى، ولا يمكنك استخدامه لتسجيل الدخول من خلال %1 على هذا سيرفر.</translation>
     </message>
     <message>
         <location line="+518"/>
         <source>Enter the username and password for your %1 account.</source>
-        <translation type="unfinished"></translation>
+        <translation>أدخل اسم المستخدم وكلمة المرور لحساب %1 الخاص بك.</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Log in with &apos;%1&apos; credentials</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بتسجيل الدخول باستخدام بيانات الاعتماد &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log in with &apos;%1&apos; credentials (INSECURE CONNECTION!)</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بتسجيل الدخول باستخدام بيانات الاعتماد &apos;%1&apos; (اتصال غير آمن!)</translation>
     </message>
 </context>
 <context>
@@ -6075,7 +6075,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/netstats.cpp" line="+77"/>
         <source>not connected</source>
-        <translation type="unfinished"></translation>
+        <translation>غير متصل</translation>
     </message>
 </context>
 <context>
@@ -6083,22 +6083,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="+32"/>
         <source>Playback</source>
-        <translation type="unfinished">اعاده المشاهده</translation>
+        <translation>اعاده المشاهده</translation>
     </message>
     <message>
         <location line="+142"/>
         <source>Building index...</source>
-        <translation type="unfinished"></translation>
+        <translation>مؤشر البناء...</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Index building failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل بناء .</translation>
     </message>
     <message>
         <location line="+163"/>
         <source>Video error</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في الفيديو</translation>
     </message>
 </context>
 <context>
@@ -6106,32 +6106,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/resetdialog.cpp" line="+127"/>
         <source>Reset Session</source>
-        <translation type="unfinished"></translation>
+        <translation>إعادة ضبط الجلسة</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>جديد</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>افتح...</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation>افتح الصوره</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Reset</source>
-        <translation type="unfinished">اعاده الضبط</translation>
+        <translation>اعاده الضبط</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Couldn&apos;t open file</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يمكن فتح الملف</translation>
     </message>
 </context>
 <context>
@@ -6139,22 +6139,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="+22"/>
         <source>Resize</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير الحجم</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>مركز</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Size is too large</source>
-        <translation type="unfinished"></translation>
+        <translation>الحجم كبير جدًا</translation>
     </message>
 </context>
 <context>
