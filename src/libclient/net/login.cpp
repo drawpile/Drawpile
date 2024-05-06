@@ -156,6 +156,12 @@ bool LoginHandler::receiveMessage(const ServerReply &msg)
 	return true;
 }
 
+void LoginHandler::setState(State state)
+{
+	qCDebug(lcDpLogin, "Set state to %d", int(state));
+	m_state = state;
+}
+
 void LoginHandler::expectNothing()
 {
 	qCWarning(lcDpLogin, "Got login message while not expecting anything!");
@@ -271,7 +277,7 @@ void LoginHandler::expectHello(const ServerReply &msg)
 	// Start secure mode if possible
 	if(startTls) {
 		if(m_server->hasSslSupport()) {
-			m_state = EXPECT_STARTTLS;
+			setState(EXPECT_STARTTLS);
 			send("startTls");
 		} else {
 			failLogin(tr("Server expects STARTTLS on unsupported socket."));
@@ -316,7 +322,7 @@ void LoginHandler::sendSessionPassword(const QString &password)
 void LoginHandler::lookUpSession()
 {
 	if(m_supportsLookup) {
-		m_state = EXPECT_LOOKUP_OK;
+		setState(EXPECT_LOOKUP_OK);
 		QJsonArray args;
 		if(m_mode == Mode::Join) {
 			args.append(m_autoJoinId);
@@ -384,7 +390,7 @@ void LoginHandler::prepareToSendIdentity()
 		emit usernameNeeded(m_supportsCustomAvatars);
 
 	} else if(m_mustAuth || m_needUserPassword) {
-		m_state = WAIT_FOR_LOGIN_PASSWORD;
+		setState(WAIT_FOR_LOGIN_PASSWORD);
 
 		QString prompt;
 		if(m_mustAuth)
@@ -436,7 +442,7 @@ void LoginHandler::sendIdentity()
 		kwargs["avatar"] = avatar;
 	}
 
-	m_state = EXPECT_IDENTIFIED;
+	setState(EXPECT_IDENTIFIED);
 	send("ident", args, kwargs, !avatar.isEmpty());
 }
 
@@ -478,7 +484,7 @@ void LoginHandler::requestExtAuth(
 		const QJsonObject obj = doc.object();
 		const QString status = obj["status"].toString();
 		if(status == "auth") {
-			m_state = EXPECT_IDENTIFIED;
+			setState(EXPECT_IDENTIFIED);
 			send("ident", {m_address.userName()}, {{"extauth", obj["token"]}});
 			emit extAuthComplete(
 				true, m_loginIntent, m_address.host(), m_address.userName());
@@ -545,7 +551,7 @@ void LoginHandler::browserAuthIdentified(const QString &token)
 {
 	if(inBrowserAuth()) {
 		m_inBrowserAuth = false;
-		m_state = EXPECT_IDENTIFIED;
+		setState(EXPECT_IDENTIFIED);
 		send("ident", {m_address.userName()}, {{"extauth", token}});
 		emit extAuthComplete(
 			true, m_loginIntent, m_address.host(), m_address.userName());
@@ -593,7 +599,7 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 
 	if(state == QStringLiteral("needExtAuth")) {
 		// External authentication needed for this username
-		m_state = WAIT_FOR_EXTAUTH;
+		setState(WAIT_FOR_EXTAUTH);
 		m_extAuthUrl = msg.reply["extauthurl"].toString();
 		m_supportsExtAuthAvatars = msg.reply["avatar"].toBool();
 
@@ -654,7 +660,7 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 	m_sessions->setModeratorMode(m_userFlags.contains("MOD"));
 
 	if(m_mode != Mode::Join) {
-		m_state = EXPECT_SESSIONLIST_TO_HOST;
+		setState(EXPECT_SESSIONLIST_TO_HOST);
 
 	} else {
 		// Show session selector if in multisession mode
@@ -663,7 +669,7 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 		if(m_multisession)
 			emit sessionChoiceNeeded(m_sessions);
 
-		m_state = EXPECT_SESSIONLIST_TO_JOIN;
+		setState(EXPECT_SESSIONLIST_TO_JOIN);
 	}
 }
 
@@ -921,7 +927,7 @@ void LoginHandler::prepareJoinSelectedSession(
 void LoginHandler::confirmJoinSelectedSession()
 {
 	if(m_needSessionPassword && !m_sessions->isModeratorMode()) {
-		m_state = WAIT_FOR_JOIN_PASSWORD;
+		setState(WAIT_FOR_JOIN_PASSWORD);
 		QString joinPasswordFromUrl = QUrlQuery{m_address}.queryItemValue(
 			QStringLiteral("p"), QUrl::FullyDecoded);
 		if(joinPasswordFromUrl.isEmpty()) {
@@ -944,7 +950,7 @@ void LoginHandler::sendJoinCommand()
 	}
 
 	send("join", {m_selectedId}, kwargs);
-	m_state = EXPECT_LOGIN_OK;
+	setState(EXPECT_LOGIN_OK);
 }
 
 void LoginHandler::reportSession(const QString &id, const QString &reason)
@@ -1116,7 +1122,7 @@ void LoginHandler::continueTls()
 
 void LoginHandler::cancelLogin()
 {
-	m_state = ABORT_LOGIN;
+	setState(ABORT_LOGIN);
 	m_server->loginFailure(tr("Cancelled"), "CANCELLED");
 }
 
@@ -1139,7 +1145,7 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 				m_loginIntent, m_address.host(), m_address.userName());
 			return; // Not a fatal error, let the user try again.
 		} else if(m_state == EXPECT_LOGIN_OK) {
-			m_state = WAIT_FOR_JOIN_PASSWORD;
+			setState(WAIT_FOR_JOIN_PASSWORD);
 			emit badSessionPassword();
 			return; // Not a fatal error, let the user try again.
 		} else {
@@ -1182,7 +1188,7 @@ void LoginHandler::failLogin(const QString &message, const QString &errorcode)
 #ifdef __EMSCRIPTEN__
 	cancelBrowserAuth();
 #endif
-	m_state = ABORT_LOGIN;
+	setState(ABORT_LOGIN);
 	m_server->loginFailure(message, errorcode);
 }
 
