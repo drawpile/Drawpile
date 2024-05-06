@@ -225,17 +225,38 @@ void Server::handleTimeout(qint64 idleTimeout)
 
 void Server::connectMessageQueue(MessageQueue *mq)
 {
-	connect(mq, &MessageQueue::messageAvailable, this, &Server::handleMessage);
-	connect(mq, &MessageQueue::bytesReceived, this, &Server::bytesReceived);
-	connect(mq, &MessageQueue::bytesSent, this, &Server::bytesSent);
-	connect(mq, &MessageQueue::badData, this, &Server::handleBadData);
-	connect(mq, &MessageQueue::readError, this, &Server::handleReadError);
-	connect(mq, &MessageQueue::writeError, this, &Server::handleWriteError);
-	connect(mq, &MessageQueue::timedOut, this, &Server::handleTimeout);
-	connect(mq, &MessageQueue::pingPong, this, &Server::lagMeasured);
+#ifdef __EMSCRIPTEN__
+	// AutoConnection doesn't work here in Emscripten.
+	Qt::ConnectionType connectionType = Qt::QueuedConnection;
+#else
+	Qt::ConnectionType connectionType = Qt::AutoConnection;
+#endif
+	connect(
+		mq, &MessageQueue::messageAvailable, this, &Server::handleMessage,
+		connectionType);
+	connect(
+		mq, &MessageQueue::bytesReceived, this, &Server::bytesReceived,
+		connectionType);
+	connect(
+		mq, &MessageQueue::bytesSent, this, &Server::bytesSent, connectionType);
+	connect(
+		mq, &MessageQueue::badData, this, &Server::handleBadData,
+		connectionType);
+	connect(
+		mq, &MessageQueue::readError, this, &Server::handleReadError,
+		connectionType);
+	connect(
+		mq, &MessageQueue::writeError, this, &Server::handleWriteError,
+		connectionType);
+	connect(
+		mq, &MessageQueue::timedOut, this, &Server::handleTimeout,
+		connectionType);
+	connect(
+		mq, &MessageQueue::pingPong, this, &Server::lagMeasured,
+		connectionType);
 	connect(
 		mq, &MessageQueue::gracefulDisconnect, this,
-		&Server::gracefullyDisconnecting);
+		&Server::gracefullyDisconnecting, connectionType);
 }
 
 void Server::handleMessage()
