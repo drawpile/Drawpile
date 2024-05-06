@@ -788,6 +788,7 @@ elseif(EMSCRIPTEN)
 		"icons/drawpile.svg"
 		"icons/favicon.ico"
 		"wasm/drawpile.css"
+		"wasm/drawpile.webmanifest"
 	)
 	foreach(em_file IN LISTS em_files_to_install)
 		set(em_file_source "${CMAKE_CURRENT_SOURCE_DIR}/${em_file}")
@@ -838,14 +839,18 @@ elseif(EMSCRIPTEN)
 	)
 
 	add_custom_command(
-		OUTPUT "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
+		OUTPUT
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/sw.js"
 		COMMAND
 			${CMAKE_COMMAND}
-			"-DINPUT_PATH=${CMAKE_CURRENT_SOURCE_DIR}/wasm/index.html"
-			"-DOUTPUT_PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
+			"-DINDEX_INPUT_PATH=${CMAKE_CURRENT_SOURCE_DIR}/wasm/index.html"
+			"-DINDEX_OUTPUT_PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
+			"-DSW_INPUT_PATH=${CMAKE_CURRENT_SOURCE_DIR}/wasm/sw.js"
+			"-DSW_OUTPUT_PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/sw.js"
 			"-DASSETS_PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets.bundle"
 			"-DWASM_PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.wasm"
-			-P "${PROJECT_SOURCE_DIR}/cmake/GenerateIndexHtml.cmake"
+			-P "${PROJECT_SOURCE_DIR}/cmake/GenerateIndexHtmlAndSwJs.cmake"
 		DEPENDS
 			drawpile_assets_bundle
 			drawpile_init_js
@@ -853,12 +858,14 @@ elseif(EMSCRIPTEN)
 			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/drawpile.css"
 			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/index.html"
 			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/init.js"
-		COMMENT "Generating index.html"
+		COMMENT "Generating index.html and sw.js"
 		VERBATIM
 	)
 	add_custom_target(
-		drawpile_index_html
-		ALL DEPENDS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
+		drawpile_index_html ALL
+		DEPENDS
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/sw.js"
 	)
 
 	install(
@@ -868,11 +875,21 @@ elseif(EMSCRIPTEN)
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.js"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.svg"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.wasm"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.webmanifest"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.worker.js"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/favicon.ico"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/init.js"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qtloader.js"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/sw.js"
+		TYPE BIN
+	)
+
+	install(
+		DIRECTORY
+			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/android"
+			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/ios"
+			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/windows11"
 		TYPE BIN
 	)
 

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
     <title>Drawpile</title>
     <link rel="stylesheet" href="drawpile.css?cachebuster=@CACHEBUSTER@">
+    <link rel="manifest" href="drawpile.webmanifest?cachebuster=@CACHEBUSTER@">
     <link rel="icon" href="drawpile.svg?cachebuster=@CACHEBUSTER@">
   </head>
   <body>
@@ -25,5 +26,21 @@
     <script src="drawpile.js?cachebuster=@CACHEBUSTER@"></script>
     <script src="qtloader.js?cachebuster=@CACHEBUSTER@"></script>
     <script src="init.js?cachebuster=@CACHEBUSTER@"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("sw.js", { updateViaCache: "none" })
+          .then(
+            (registration) => {
+              console.log("Service worker registered:", registration);
+            },
+            (error) => {
+              console.error("Error registering service worker:", error);
+            },
+          );
+      } else {
+        console.warn("Service workers unsupported");
+      }
+    </script>
   </body>
 </html>
