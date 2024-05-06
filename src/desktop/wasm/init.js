@@ -63,7 +63,7 @@ import { UAParser } from "ua-parser-js";
 
   function isStandalone(params) {
     return (
-      (params.get("session") || "") === "" ||
+      (params.get("host") || "") === "" ||
       isTrueParam(params.get("standalone"))
     );
   }
