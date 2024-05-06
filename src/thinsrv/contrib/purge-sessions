@@ -1,0 +1,426 @@
+#!/usr/bin/env perl
+# SPDX-License-Identifier: MIT
+use strict;
+use warnings;
+use feature qw(say);
+use File::Find;
+use File::stat;
+use Getopt::Long;
+use JSON::PP;
+use List::Util qw(all max sum0);
+use Pod::Usage;
+use constant DEBUG => !!$ENV{DEBUG};
+use constant KiB => 1024;
+use constant MiB => KiB * 1024;
+use constant GiB => MiB * 1024;
+use constant TiB => GiB * 1024;
+use constant MINUTE => 60;
+use constant HOUR => MINUTE * 60;
+use constant DAY => HOUR * 24;
+
+
+sub say_debug {
+    my $text = join '', @_;
+    $text =~ s/^/[DEBUG] /gm;
+    print STDERR $text;
+    print STDERR "\n" unless $text =~ /\n\z/;
+}
+
+
+sub parse_size {
+    my ($input) = @_;
+    my $match = $input =~ m{
+        \A \s*
+            ([0-9\.]+)
+        \s*
+            (t|g|m|k|b)\w*
+        \s* \z
+    }ix or die "Invalid size input '$input'\n";
+
+    my ($number, $unit) = ($1, $2);
+    my $size = do {
+        no warnings 'numeric';
+        0 + $number;
+    };
+    die "Invalid size amount '$number'\n" if $size <= 0;
+
+    my %factors = (
+        t => TiB,
+        g => GiB,
+        m => MiB,
+        k => KiB,
+        b => 1,
+    );
+    return int($size * $factors{lc $unit});
+}
+
+sub parse_age {
+    my ($input) = @_;
+    my $match = $input =~ m{
+        \A \s*
+            ([0-9\.]+)
+        \s*
+            (d|h|m|s)\w*
+        \s* \z
+    }ix or die "Invalid age input '$input'\n";
+
+    my ($number, $unit) = ($1, $2);
+    my $age = do {
+        no warnings 'numeric';
+        0 + $number;
+    };
+    die "Invalid age amount '$number'\n" if $age <= 0;
+
+    my %factors = (
+        d => DAY,
+        h => HOUR,
+        m => MINUTE,
+        s => 1,
+    );
+    return int($age * $factors{lc $unit});
+}
+
+sub check_args {
+    die "Usage: $0 DIRECTORIES\n" if @_ == 0;
+
+    my $args_ok = 1;
+    for my $arg (@_) {
+        if (-d $arg) {
+            say_debug("Directory ok '$arg'")
+                if DEBUG;
+        } else {
+            warn "Not a directory: '$arg'";
+            $args_ok = 0;
+        }
+    }
+
+    exit 1 unless $args_ok;
+    return @_;
+}
+
+sub parse_args {
+    my ($help, $maximum_size, $maximum_age, $dry_run);
+    my $ok = GetOptions(
+        'h|help|?' => \$help,
+        's|maximum-size=s' => \$maximum_size,
+        'a|maximum-age=s' => \$maximum_age,
+        'n|dry-run' => \$dry_run,
+    );
+    pod2usage(-exitval => 0, -verbose => 2) if $help;
+    pod2usage(-exitval => 2, -verbose => 0) unless $ok;
+
+    my ($mode, $maximum);
+    if (length $maximum_size) {
+        if (length $maximum_age) {
+            pod2usage(
+                -message => "Can't give both --maximum-size and --maximum-age",
+                -exitval => 2,
+                -verbose => 0,
+            );
+        } else {
+            $mode = 'size';
+            $maximum = parse_size($maximum_size);
+        }
+    } elsif (length $maximum_age) {
+        $mode = 'age';
+        $maximum = parse_age($maximum_age);
+    } else {
+        pod2usage(
+            -message => 'Either --maximum-size or --maximum-age must be given',
+            -exitval => 2,
+            -verbose => 0,
+        );
+    }
+
+    say_debug("mode=$mode, maximum=$maximum, dry_run=$dry_run")
+        if DEBUG;
+
+    return ($mode, $maximum, $dry_run, check_args(@ARGV));
+}
+
+
+sub is_archived_path {
+    my ($path) = @_;
+    return $path =~ /\.archived\z/;
+}
+
+sub gather_sessions {
+    my %sessions;
+    my $wanted = sub {
+        if(-f && /\A([a-z0-9]+)(?:_r[0-9]+)?(?:\.(?:session|dprec))(?:\.archived)?\z/) {
+            my $id = $1;
+            my $st = stat($_) or die "Can't stat '$File::Find::name': $!\n";
+
+            my $session = $sessions{$id} ||= {id => $id, files => []};
+            push @{$session->{files}}, {
+                path => $File::Find::name,
+                size => $st->size,
+                mtime => $st->mtime,
+            };
+        } else {
+            say_debug("Ignored '$File::Find::name'")
+                if DEBUG;
+        }
+    };
+    find({wanted => $wanted}, @_);
+
+    for my $session (values %sessions) {
+        $session->{total_size} = sum0 map { $_->{size} } @{$session->{files}};
+        $session->{newest_mtime} = max map { $_->{mtime} } @{$session->{files}};
+        $session->{archived} = all { is_archived_path($_->{path}) } @{$session->{files}};
+    }
+
+    return sort { $a->{newest_mtime} <=> $b->{newest_mtime} } values %sessions;
+}
+
+
+sub format_size {
+    my ($size) = @_;
+    if ($size >= TiB) {
+        return sprintf('%.2f TiB', $size / TiB);
+    } elsif ($size >= GiB) {
+        return sprintf('%.2f GiB', $size / GiB);
+    } elsif ($size >= MiB) {
+        return sprintf('%.2f MiB', $size / MiB);
+    } elsif ($size >= KiB) {
+        return sprintf('%.2f KiB', $size / KiB);
+    } else {
+        return "$size B";
+    }
+}
+
+sub format_age {
+    my ($age) = @_;
+    my @pieces;
+
+    my $days = int($age / DAY);
+    if ($days != 0) {
+        my $suffix = $days == 1 ? '' : 's';
+        push @pieces, "$days day$suffix";
+        $age -= $days * DAY;
+    }
+
+    my $hours = int($age / HOUR);
+    if ($hours != 0) {
+        my $suffix = $hours == 1 ? '' : 's';
+        push @pieces, "$hours hour$suffix";
+        $age -= $hours * HOUR;
+    }
+
+    my $minutes = int($age / MINUTE);
+    if ($minutes != 0) {
+        my $suffix = $minutes == 1 ? '' : 's';
+        push @pieces, "$minutes minute$suffix";
+        $age -= $minutes * MINUTE;
+    }
+
+    my $seconds = int($age);
+    if ($seconds != 0 || !@pieces) {
+        my $suffix = $seconds == 1 ? '' : 's';
+        push @pieces, "$seconds second$suffix";
+    }
+
+    return join ', ', @pieces;
+}
+
+
+sub delete_archived_path {
+    my ($path, $dry_run) = @_;
+    if (is_archived_path($path)) {
+        if ($dry_run) {
+            say "Dry run: would delete '$path'";
+        } else {
+            say "Delete '$path'";
+            unlink $path or warn "Can't delete '$path': $!\n";
+        }
+    } else {
+        say_debug("Not deleting '$path' because it's not archived")
+            if DEBUG;
+    }
+}
+
+sub delete_session_files {
+    my ($session, $dry_run) = @_;
+    for my $path (map { $_->{path} } @{$session->{files}}) {
+        delete_archived_path($path, $dry_run);
+    }
+}
+
+sub delete_by_size {
+    my ($maximum_size, $dry_run, @sessions) = @_;
+    my $total_size = sum0 map { $_->{total_size} } @sessions;
+    if ($total_size <= $maximum_size) {
+        say_debug("Total size $total_size < $maximum_size, nothing to do")
+            if DEBUG;
+    } else {
+        printf(
+            "Total size %s exceeds maximum %s\n",
+            format_size($total_size), format_size($maximum_size));
+        for my $session (@sessions) {
+            if ($session->{archived}) {
+                $total_size -= $session->{total_size};
+                delete_session_files($session, $dry_run);
+                return if $total_size <= $maximum_size;
+            } else {
+                say_debug("Not pruning $session->{id} because it's not archived")
+                    if DEBUG;
+            }
+        }
+
+        printf(
+            "Total size %s exceeds maximum %s, deleting archived files of running sessions\n",
+            format_size($total_size), format_size($maximum_size));
+        my @archived_files =
+            sort { $a->{mtime} <=> $b->{mtime} }
+            grep { is_archived_path($_->{path}) }
+            map { @{$_->{files}} }
+            @sessions;
+        for my $file (@archived_files) {
+            delete_archived_path($file->{path}, $dry_run);
+            $total_size -= $file->{size};
+            return if $total_size <= $maximum_size;
+        }
+
+        die sprintf(
+            "Total size %s still exceeds maximum %s, but nothing left to delete!\n",
+            format_size($total_size), format_size($maximum_size));
+    }
+}
+
+sub delete_by_age {
+    my ($maximum_age, $dry_run, @sessions) = @_;
+    my $now = time;
+    for my $session (grep { $_->{archived} } @sessions) {
+        my $age = $now - $session->{newest_mtime};
+        if ($age < $maximum_age) {
+            say_debug("Session $session->{id} not old enough")
+                if DEBUG;
+            last; # Sessions are sorted oldest to newest, no need to keep going.
+        } else {
+            printf(
+                "Deleting archived session $session->{id} because its age %s exceeds the maximum %s\n",
+                format_age($age), format_age($maximum_age));
+            delete_session_files($session, $dry_run);
+        }
+    }
+}
+
+
+my ($mode, $maximum, $dry_run, @dirs) = parse_args();
+my @sessions = gather_sessions(@dirs);
+
+say_debug("sessions = ", JSON::PP->new->utf8->pretty->canonical->encode(\@sessions))
+    if DEBUG;
+
+if ($mode eq 'size') {
+    delete_by_size($maximum, $dry_run, @sessions);
+} elsif ($mode eq 'age') {
+    delete_by_age($maximum, $dry_run, @sessions);
+} else {
+    die "Unknown mode '$mode'\n";
+}
+
+
+__END__
+
+=head1 NAME
+
+purge-sessions - delete archived drawpile-srv sessions by size or age
+
+=head1 SYNOPSIS
+
+To delete archived files by size:
+
+    purge-sessions --max-size=10GB /path/to/sessions/directory
+
+To delete by age:
+
+    purge-sessions --max-age=30days /path/to/sessions/directory
+
+Pass C<--dry-run> if you want to just do a test run, but not actually delete
+anything.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<--max-size=SIZE>, B<-s SIZE>
+
+Delete archived session files until the maximum given B<SIZE> is reached.
+
+B<SIZE> is a number and a unit, which can be one of TiB, GiB, MiB, KiB or B.
+Only the first letter of the unit matters, so "10GiB", "10G" or "10 gigabytes"
+all mean the same thing.
+
+If the total size of session files exceeds B<SIZE>, the oldest, fully archived
+sessions will be deleted until enough space is freed. The newest file in a set
+of session files determines the age of that session, so if a session has one
+recording from last year and one from 2 seconds ago, it will be considered 2
+seconds old overall.
+
+If that doesn't free enough space, archived recordings of still-running
+sessions are deleted as well, oldest first. Active files of running sessions
+are never touched though, so if deleting all archived files still doesn't make
+enough room, the script just exits with an error.
+
+=item B<--max-age=AGE>, B<-a AGE>
+
+Delete archived session files where the session is older than B<AGE>.
+
+B<AGE> is a number and a unit, which can be one of days, hours, minutes or seconds.
+Only the first letter of the unit matters, so "10 days", "10DAY" or "10d" all
+mean the same thing.
+
+The newest file in the set of session files determines the age of a session, so
+if it has a recording from last year and one from 2 seconds ago, the session is
+considered to be 2 seconds old overall. Sessions that are still running are not
+touched, even if they have individual recording files that are older than
+B<AGE>.
+
+=item B<--dry-run>, B<-n>
+
+When this flag is passed, the script will not actually delete any files, but
+still log which ones it I<would> delete.
+
+=item B<--help>, B<-h>, B<-?>
+
+Show the help.
+
+=back
+
+=head1 DESCRIPTION
+
+This script cleans up archived drawpile-srv sessions. You can specify what to
+clean either to bring them below a maximum total file size or by deleting
+anything older than a certain age.
+
+Deleting by age and size are mutually exclusive. If you want both, run the
+script by age first, then by size.
+
+To get debug output, set the C<DEBUG> environment variable, like so:
+
+    DEBUG=1 ./purge-sessions ...
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (c) 2024 askmeaboutloom
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+=cut
