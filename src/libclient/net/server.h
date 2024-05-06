@@ -2,7 +2,6 @@
 #ifndef DP_NET_SERVER_H
 #define DP_NET_SERVER_H
 #include "libshared/net/messagequeue.h"
-#include "libshared/net/protover.h"
 #include <QList>
 #include <QObject>
 #include <QSslError>
@@ -12,6 +11,7 @@ class QUrl;
 
 namespace net {
 
+class Client;
 class LoginHandler;
 class Message;
 class MessageQueue;
@@ -31,13 +31,13 @@ public:
 		TRUSTED_HOST // A host we have explicitly marked as trusted
 	};
 
-	static Server *make(const QUrl &url, int timeoutSecs, QObject *parent);
+	static Server *make(const QUrl &url, int timeoutSecs, Client *client);
 
 	static QString addSchemeToUserSuppliedAddress(const QString &remoteAddress);
 	static QUrl fixUpAddress(const QUrl &originalUrl, bool join);
 	static QString extractAutoJoinId(const QString &path);
 
-	explicit Server(QObject *parent);
+	explicit Server(Client *client);
 
 	/**
 	 * \brief Send a message to the server
@@ -124,7 +124,6 @@ signals:
 		const QString &message, const QString &errorcode, bool localDisconnect,
 		bool anyMessageReceived);
 
-	void messagesReceived(int count, net::Message *msgs);
 	void bytesReceived(int);
 	void bytesSent(int);
 	void lagMeasured(qint64 lag);
@@ -158,6 +157,7 @@ private:
 	void loginSuccess();
 	void loginFailure(const QString &message, const QString &errorcode);
 
+	Client *const m_client;
 	net::MessageList m_receiveBuffer;
 	LoginHandler *m_loginstate = nullptr;
 	QString m_error, m_errorcode;

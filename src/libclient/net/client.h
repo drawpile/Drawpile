@@ -6,6 +6,7 @@
 #include <QSslCertificate>
 #include <QUrl>
 
+class Document;
 class QJsonObject;
 class QJsonArray;
 class QTimer;
@@ -35,7 +36,7 @@ public:
 	};
 	Q_DECLARE_FLAGS(UserFlags, UserFlag)
 
-	explicit Client(QObject *parent = nullptr);
+	explicit Client(Document *doc);
 
 	/**
 	 * @brief Connect to a remote server
@@ -214,6 +215,8 @@ public slots:
 	 */
 	void sendResetMessages(int count, const net::Message *msgs);
 
+	void handleMessages(int count, net::Message *msgs);
+
 	void setSmoothDrainRate(int smoothDrainRate);
 
 	void requestBanExport(bool plain);
@@ -221,8 +224,6 @@ public slots:
 	void requestUpdateAuthList(const QJsonArray &list);
 
 signals:
-	void messagesReceived(int count, const net::Message *msgs);
-	void drawingCommandsLocal(int count, const net::Message *msgs);
 	void catchupProgress(int percentage);
 	void bansExported(const QByteArray &bans);
 	void bansImported(int total, int imported);
@@ -259,7 +260,6 @@ signals:
 
 private slots:
 	void setConnectionUrl(const QUrl &url);
-	void handleMessages(int count, net::Message *msgs);
 	void handleConnect(
 		const QUrl &url, uint8_t userid, bool join, bool auth,
 		const QStringList &userFlags, bool supportsAutoReset,
@@ -287,6 +287,7 @@ private:
 	void handleUserInfo(const net::Message &msg, DP_MsgData *md);
 	void finishCatchup(const char *reason, int handledMessageIndex = 0);
 
+	Document *const m_doc;
 	Server *m_server = nullptr;
 #ifdef Q_OS_ANDROID
 	utils::AndroidWakeLock *m_wakeLock = nullptr;

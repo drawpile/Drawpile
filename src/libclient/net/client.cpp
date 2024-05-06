@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/net/client.h"
+#include "libclient/document.h"
 #include "libclient/net/login.h"
 #include "libclient/net/message.h"
 #include "libclient/net/server.h"
@@ -13,8 +14,9 @@
 
 namespace net {
 
-Client::Client(QObject *parent)
-	: QObject(parent)
+Client::Client(Document *doc)
+	: QObject(doc)
+	, m_doc(doc)
 	, m_catchupTimer(new QTimer(this))
 {
 	m_catchupTimer->setSingleShot(true);
@@ -57,7 +59,6 @@ void Client::connectToServer(
 	connect(
 		m_server, &Server::serverDisconnected, this, &Client::handleDisconnect);
 	connect(m_server, &Server::loggedIn, this, &Client::handleConnect);
-	connect(m_server, &Server::messagesReceived, this, &Client::handleMessages);
 	connect(m_server, &Server::bytesReceived, this, &Client::bytesReceived);
 	connect(m_server, &Server::bytesSent, this, &Client::bytesSent);
 	connect(m_server, &Server::lagMeasured, this, &Client::lagMeasured);
@@ -213,14 +214,14 @@ void Client::sendMessages(int count, const net::Message *msgs)
 void Client::sendCompatibleMessages(int count, const net::Message *msgs)
 {
 	if(count > 0) {
-		emit drawingCommandsLocal(count, msgs);
+		emit m_doc->handleLocalCommands(count, msgs);
 		// Note: we could emit drawingCommandLocal only in connected mode,
 		// but it's good to exercise the code path in local mode too
 		// to make potential bugs more obvious.
 		if(m_server) {
 			m_server->sendMessages(count, msgs);
 		} else {
-			emit messagesReceived(count, msgs);
+			m_doc->handleCommands(count, msgs);
 		}
 	}
 }
@@ -248,7 +249,7 @@ void Client::sendCompatibleResetMessages(int count, const net::Message *msgs)
 		if(m_server) {
 			m_server->sendMessages(count, msgs);
 		} else {
-			emit messagesReceived(count, msgs);
+			m_doc->handleCommands(count, msgs);
 		}
 	}
 }
@@ -305,7 +306,7 @@ void Client::handleMessages(int count, net::Message *msgs)
 			break;
 		}
 	}
-	emit messagesReceived(count, msgs);
+	m_doc->handleCommands(count, msgs);
 
 	// The server can send a "catchup" message when there is a significant
 	// number of messages queued. During login, we can show a progress bar and

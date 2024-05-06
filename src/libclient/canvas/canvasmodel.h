@@ -116,13 +116,13 @@ public:
 	 */
 	void resetCanvas();
 
-public slots:
 	//! Handle a meta/command message received from the server
 	void handleCommands(int count, const net::Message *msgs);
 
 	//! Handle a local drawing command (will be put in the local fork)
 	void handleLocalCommands(int count, const net::Message *msgs);
 
+public slots:
 	void pickLayer(int x, int y);
 	void pickColor(int x, int y, int layer, int diameter = 0);
 	void inspectCanvas(int x, int y, bool clobber, bool showTiles);

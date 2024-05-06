@@ -135,12 +135,6 @@ void Document::initCanvas()
 	m_toolctrl->setModel(m_canvas);
 
 	connect(
-		m_client, &net::Client::messagesReceived, m_canvas,
-		&canvas::CanvasModel::handleCommands);
-	connect(
-		m_client, &net::Client::drawingCommandsLocal, m_canvas,
-		&canvas::CanvasModel::handleLocalCommands);
-	connect(
 		m_canvas, &canvas::CanvasModel::canvasModified, this,
 		&Document::markDirty);
 	connect(
@@ -666,6 +660,20 @@ void Document::setDownloadName(const QString &downloadName)
 bool Document::isCompatibilityMode() const
 {
 	return m_client->isCompatibilityMode();
+}
+
+void Document::handleCommands(int count, const net::Message *msgs)
+{
+	if(m_canvas) {
+		m_canvas->handleCommands(count, msgs);
+	}
+}
+
+void Document::handleLocalCommands(int count, const net::Message *msgs)
+{
+	if(m_canvas) {
+		m_canvas->handleLocalCommands(count, msgs);
+	}
 }
 
 void Document::autosave()

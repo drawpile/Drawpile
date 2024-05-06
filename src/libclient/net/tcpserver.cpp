@@ -10,8 +10,8 @@
 
 namespace net {
 
-TcpServer::TcpServer(int timeoutSecs, QObject *parent)
-	: Server(parent)
+TcpServer::TcpServer(int timeoutSecs, Client *client)
+	: Server(client)
 {
 	m_socket = new QSslSocket(this);
 

@@ -194,6 +194,9 @@ public:
 
 	bool isCompatibilityMode() const;
 
+	void handleCommands(int count, const net::Message *msgs);
+	void handleLocalCommands(int count, const net::Message *msgs);
+
 signals:
 	//! Connection opened, but not yet logged in
 	void serverConnected(const QString &address, int port);

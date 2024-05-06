@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/net/server.h"
+#include "libclient/net/client.h"
 #include "libclient/net/login.h"
 #include "libshared/net/servercmd.h"
 #include "libshared/util/whatismyip.h"
@@ -14,20 +15,20 @@
 
 namespace net {
 
-Server *Server::make(const QUrl &url, int timeoutSecs, QObject *parent)
+Server *Server::make(const QUrl &url, int timeoutSecs, Client *client)
 {
 #if defined(HAVE_WEBSOCKETS) && defined(HAVE_TCPSOCKETS)
 	if(url.scheme().startsWith(QStringLiteral("ws"), Qt::CaseInsensitive)) {
-		return new WebSocketServer(timeoutSecs, parent);
+		return new WebSocketServer(timeoutSecs, client);
 	} else {
-		return new TcpServer(timeoutSecs, parent);
+		return new TcpServer(timeoutSecs, client);
 	}
 #elif defined(HAVE_TCPSOCKETS)
 	Q_UNUSED(url);
-	return new TcpServer(timeoutSecs, parent);
+	return new TcpServer(timeoutSecs, client);
 #elif defined(HAVE_WEBSOCKETS)
 	Q_UNUSED(url);
-	return new WebSocketServer(timeoutSecs, parent);
+	return new WebSocketServer(timeoutSecs, client);
 #else
 #	error "No socket implementation compiled in."
 #endif
@@ -114,8 +115,9 @@ QString Server::extractAutoJoinId(const QString &path)
 	return QString();
 }
 
-Server::Server(QObject *parent)
-	: QObject(parent)
+Server::Server(Client *client)
+	: QObject(client)
+	, m_client(client)
 {
 }
 
@@ -274,13 +276,13 @@ void Server::handleMessage()
 				const bool expectMoreLogin = m_loginstate->receiveMessage(sr);
 				const int offset = i + 1;
 				if(!expectMoreLogin && offset < count) {
-					emit messagesReceived(
+					m_client->handleMessages(
 						count - offset, m_receiveBuffer.data() + offset);
 					break;
 				}
 			}
 		} else {
-			emit messagesReceived(count, m_receiveBuffer.data());
+			m_client->handleMessages(count, m_receiveBuffer.data());
 		}
 		m_receiveBuffer.clear();
 	}

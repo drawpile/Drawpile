@@ -16,8 +16,8 @@ const auto WebSocketError =
 
 namespace net {
 
-WebSocketServer::WebSocketServer(int timeoutSecs, QObject *parent)
-	: Server(parent)
+WebSocketServer::WebSocketServer(int timeoutSecs, Client *client)
+	: Server(client)
 {
 	m_socket = new QWebSocket(QString(), QWebSocketProtocol::Version13, this);
 

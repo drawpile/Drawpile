@@ -12,7 +12,7 @@ namespace net {
 class TcpServer final : public Server {
 	Q_OBJECT
 public:
-	explicit TcpServer(int timeoutSecs, QObject *parent = nullptr);
+	explicit TcpServer(int timeoutSecs, Client *client);
 
 	bool isWebSocket() const override;
 
