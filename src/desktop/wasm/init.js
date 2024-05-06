@@ -62,7 +62,10 @@ import { UAParser } from "ua-parser-js";
   }
 
   function isStandalone(params) {
-    return isTrueParam(params.get("standalone"));
+    return (
+      (params.get("session") || "") === "" ||
+      isTrueParam(params.get("standalone"))
+    );
   }
 
   function looksLikeLocalhost(host) {
@@ -429,7 +432,7 @@ import { UAParser } from "ua-parser-js";
       },
     };
 
-    if(!isStandalone(params)) {
+    if (!isStandalone(params)) {
       config.arguments = ["--single-session", "--join", getUrlArgument(params)];
     }
 
@@ -627,7 +630,7 @@ import { UAParser } from "ua-parser-js";
 
   function checkHost() {
     const params = getQueryParams();
-    if(isStandalone(params)) {
+    if (isStandalone(params)) {
       return true;
     }
 
