@@ -23,6 +23,8 @@ public:
 	};
 	Q_ENUM(Reason)
 
+	explicit Lock(QObject *parent = nullptr);
+
 	bool hasReason(Reason reason) const { return m_reasons.testFlag(reason); }
 	void setReasons(QFlags<Reason> reasons);
 	const QString description() const { return m_description; }

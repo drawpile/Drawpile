@@ -256,7 +256,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 
 	m_viewStatusBar->addPermanentWidget(m_lockstatus);
 
-	m_viewLock = new view::Lock();
+	m_viewLock = new view::Lock(this);
 
 	int SPLITTER_WIDGET_IDX = 0;
 

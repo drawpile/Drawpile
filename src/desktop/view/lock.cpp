@@ -3,6 +3,11 @@
 
 namespace view {
 
+Lock::Lock(QObject *parent)
+	: QObject(parent)
+{
+}
+
 void Lock::setReasons(QFlags<Reason> reasons)
 {
 	if(reasons != m_reasons) {
