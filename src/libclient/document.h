@@ -11,6 +11,7 @@ extern "C" {
 #include "libclient/net/announcementlist.h"
 #include "libclient/net/authlistmodel.h"
 #include "libclient/net/banlistmodel.h"
+#include "libclient/net/client.h"
 #include "libclient/net/message.h"
 #include "libshared/util/qtcompat.h"
 #include <QObject>
@@ -28,7 +29,6 @@ namespace canvas {
 class CanvasModel;
 }
 namespace net {
-class Client;
 class BanlistModel;
 class AnnouncementListModel;
 }
@@ -49,7 +49,7 @@ class ToolController;
  * based application or a pure QML app.
  *
  */
-class Document final : public QObject {
+class Document final : public QObject, public net::Client::CommandHandler {
 	Q_PROPERTY(canvas::CanvasModel *canvas READ canvas() NOTIFY canvasChanged)
 	Q_PROPERTY(net::BanlistModel *banlist READ banlist() CONSTANT)
 	Q_PROPERTY(net::AuthListModel *authList READ authList() CONSTANT)
@@ -194,8 +194,8 @@ public:
 
 	bool isCompatibilityMode() const;
 
-	void handleCommands(int count, const net::Message *msgs);
-	void handleLocalCommands(int count, const net::Message *msgs);
+	void handleCommands(int count, const net::Message *msgs) override;
+	void handleLocalCommands(int count, const net::Message *msgs) override;
 
 signals:
 	//! Connection opened, but not yet logged in

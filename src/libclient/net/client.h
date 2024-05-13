@@ -6,7 +6,6 @@
 #include <QSslCertificate>
 #include <QUrl>
 
-class Document;
 class QJsonObject;
 class QJsonArray;
 class QTimer;
@@ -36,7 +35,17 @@ public:
 	};
 	Q_DECLARE_FLAGS(UserFlags, UserFlag)
 
-	explicit Client(Document *doc);
+	class CommandHandler {
+	public:
+		virtual ~CommandHandler();
+
+		virtual void handleCommands(int count, const net::Message *msgs) = 0;
+
+		virtual void
+		handleLocalCommands(int count, const net::Message *msgs) = 0;
+	};
+
+	explicit Client(CommandHandler *commandHandler, QObject *parent = nullptr);
 
 	/**
 	 * @brief Connect to a remote server
@@ -287,7 +296,7 @@ private:
 	void handleUserInfo(const net::Message &msg, DP_MsgData *md);
 	void finishCatchup(const char *reason, int handledMessageIndex = 0);
 
-	Document *const m_doc;
+	CommandHandler *const m_commandHandler;
 	Server *m_server = nullptr;
 #ifdef Q_OS_ANDROID
 	utils::AndroidWakeLock *m_wakeLock = nullptr;

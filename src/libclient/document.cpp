@@ -6,7 +6,6 @@
 #include "libclient/canvas/selection.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/export/canvassaverrunnable.h"
-#include "libclient/net/client.h"
 #include "libclient/settings.h"
 #include "libclient/tools/selection.h"
 #include "libclient/tools/toolcontroller.h"
@@ -64,7 +63,7 @@ Document::Document(
 	, m_sessionOutOfSpace(false)
 {
 	// Initialize
-	m_client = new net::Client(this);
+	m_client = new net::Client(this, this);
 	m_settings.bindMessageQueueDrainRate(
 		m_client, &net::Client::setSmoothDrainRate);
 	m_toolctrl = new tools::ToolController(m_client, this);
