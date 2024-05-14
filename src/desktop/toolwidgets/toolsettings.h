@@ -1,16 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef TOOLSETTINGS_H
-#define TOOLSETTINGS_H
-
+#ifndef DESKTOP_TOOLWIDGETS_TOOLSETTINGS_H
+#define DESKTOP_TOOLWIDGETS_TOOLSETTINGS_H
 #include "libclient/tools/tool.h"
 #include "libclient/tools/toolproperties.h"
-
 #include <QObject>
-
-class QComboBox;
-
-namespace widgets { class BrushPreview; }
 
 namespace tools {
 
@@ -27,7 +20,9 @@ class ToolSettings : public QObject {
 	Q_OBJECT
 public:
 	ToolSettings(ToolController *ctrl, QObject *parent)
-		: QObject(parent), m_ctrl(ctrl), m_widget(nullptr)
+		: QObject(parent)
+		, m_ctrl(ctrl)
+		, m_widget(nullptr)
 	{
 		Q_ASSERT(ctrl);
 	}
@@ -65,7 +60,7 @@ public:
 	virtual void setActiveTool(tools::Tool::Type tool) { Q_UNUSED(tool); }
 
 	//! Set the foreground color
-	virtual void setForeground(const QColor& color) = 0;
+	virtual void setForeground(const QColor &color) = 0;
 
 	/**
 	 * @brief Quick adjust a tool parameter
@@ -141,8 +136,8 @@ public:
 	 * Used for increasing or decreasing MyPaint brush sizes by one step. Their
 	 * size is already logarithmic, so the value change needs to be linear.
 	 */
-	static int stepLinear(
-		int min, int max, int current, bool increase, int stepSize = 12);
+	static int
+	stepLinear(int min, int max, int current, bool increase, int stepSize = 12);
 
 	virtual bool isLocked() { return false; }
 
@@ -150,9 +145,9 @@ public:
 
 public slots:
 	//! Toggle tool eraser mode (if it has one)
-	virtual void toggleEraserMode() { }
+	virtual void toggleEraserMode() {}
 	//! Toggle tool recolor mode (if it has one)
-	virtual void toggleRecolorMode() { }
+	virtual void toggleRecolorMode() {}
 
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent) = 0;
@@ -166,4 +161,3 @@ private:
 }
 
 #endif
-
