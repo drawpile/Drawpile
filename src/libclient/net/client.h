@@ -173,6 +173,16 @@ public:
 	//! Are we expecting more incoming data?
 	bool isFullyCaughtUp() const { return m_catchupTo == 0; }
 
+	// Guess if we're connected to a thick server session. Checking for the
+	// auto-reset support of the session should, at the time of writing, be a
+	// clear indicator to distinguish the thin server from the builtin one. The
+	// difference between them being that the thick server doesn't allow for
+	// unknown message types, so it has extra compatibility constraints.
+	bool seemsConnectedToThickServer() const
+	{
+		return isConnected() && !sessionSupportsAutoReset();
+	}
+
 	int artificialLagMs() const
 	{
 		return m_server ? m_server->artificialLagMs() : 0;

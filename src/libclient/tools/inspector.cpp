@@ -6,43 +6,47 @@
 namespace tools {
 
 Inspector::Inspector(ToolController &owner)
-	: Tool(owner, INSPECTOR, QCursor(Qt::WhatsThisCursor), false, false, false)
+	: Tool(
+		  owner, INSPECTOR, QCursor(Qt::WhatsThisCursor), false, false, false,
+		  true, false)
 {
 }
 
-void Inspector::begin(
-	const canvas::Point &point, bool right, float zoom, const QPointF &viewPos)
+void Inspector::begin(const BeginParams &params)
 {
-	Q_UNUSED(zoom);
-	Q_UNUSED(viewPos);
-	if(!right) {
+	if(!params.right) {
 		m_inspecting = true;
-		m_owner.model()->inspectCanvas(point.x(), point.y(), true, m_showTiles);
+		inspect(params.point, true);
 	}
 }
 
-void Inspector::motion(
-	const canvas::Point &point, bool constrain, bool center,
-	const QPointF &viewPos)
+void Inspector::motion(const MotionParams &params)
 {
-	Q_UNUSED(constrain);
-	Q_UNUSED(center);
-	Q_UNUSED(viewPos);
 	if(m_inspecting) {
-		m_owner.model()->inspectCanvas(
-			point.x(), point.y(), false, m_showTiles);
+		inspect(params.point, false);
 	}
 }
 
 void Inspector::end()
 {
 	m_inspecting = false;
-	m_owner.model()->stopInspectingCanvas();
+	canvas::CanvasModel *canvas = m_owner.model();
+	if(canvas) {
+		canvas->stopInspectingCanvas();
+	}
 }
 
 void Inspector::cancelMultipart()
 {
 	end();
+}
+
+void Inspector::inspect(const QPointF &point, bool clobber) const
+{
+	canvas::CanvasModel *canvas = m_owner.model();
+	if(canvas) {
+		canvas->inspectCanvas(point.x(), point.y(), clobber, m_showTiles);
+	}
 }
 
 }

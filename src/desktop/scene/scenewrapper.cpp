@@ -10,7 +10,7 @@
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
-#include "desktop/toolwidgets/selectionsettings.h"
+#include "desktop/toolwidgets/transformsettings.h"
 #include "desktop/toolwidgets/zoomsettings.h"
 #include "desktop/widgets/canvasframe.h"
 #include "desktop/widgets/viewstatus.h"
@@ -259,6 +259,9 @@ void SceneWrapper::connectDocument(Document *doc)
 		toolCtrl, &tools::ToolController::activeAnnotationChanged, m_scene,
 		&drawingboard::CanvasScene::setActiveAnnotation);
 	connect(
+		toolCtrl, &tools::ToolController::transformToolStateChanged, m_scene,
+		&drawingboard::CanvasScene::setTransformToolState);
+	connect(
 		toolCtrl, &tools::ToolController::busyStateChanged, m_view,
 		&CanvasView::setBusy);
 	connect(
@@ -267,10 +270,16 @@ void SceneWrapper::connectDocument(Document *doc)
 	connect(
 		toolCtrl, &tools::ToolController::zoomRequested, m_view,
 		&CanvasView::zoomTo);
+	connect(
+		toolCtrl, &tools::ToolController::pathPreviewRequested, m_scene,
+		&CanvasScene::setPathPreview);
 
 	connect(
 		m_scene, &drawingboard::CanvasScene::annotationDeleted, toolCtrl,
 		&tools::ToolController::deselectDeletedAnnotation);
+	connect(
+		toolCtrl, &tools::ToolController::toolCapabilitiesChanged, m_scene,
+		&drawingboard::CanvasScene::setToolCapabilities);
 	connect(
 		m_scene, &drawingboard::CanvasScene::canvasResized, toolCtrl,
 		&tools::ToolController::offsetActiveTool);
@@ -286,7 +295,8 @@ void SceneWrapper::connectDocument(Document *doc)
 	m_view->setToolCapabilities(
 		toolCtrl->activeToolAllowColorPick(),
 		toolCtrl->activeToolAllowToolAdjust(),
-		toolCtrl->activeToolHandlesRightClick());
+		toolCtrl->activeToolHandlesRightClick(),
+		toolCtrl->activeToolIsFractional());
 
 	connect(
 		m_view, &CanvasView::penDown, toolCtrl,
@@ -401,7 +411,7 @@ void SceneWrapper::connectToolSettings(docks::ToolSettings *toolSettings)
 		&CanvasView::zoomToFit);
 
 	toolSettings->annotationSettings()->setCanvasView(this);
-	toolSettings->selectionSettings()->setCanvasView(this);
+	toolSettings->transformSettings()->setCanvasView(this);
 }
 
 void SceneWrapper::connectViewStatus(widgets::ViewStatus *viewStatus)

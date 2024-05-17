@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_VIEW_CANVASSCENE_H
 #define DESKTOP_VIEW_CANVASSCENE_H
-#include "libclient/canvas/selection.h"
 #include <QElapsedTimer>
 #include <QGraphicsScene>
 #include <QHash>
 
+class QPainterPath;
 class QTransform;
 
 namespace canvas {
@@ -14,6 +14,7 @@ class CanvasModel;
 
 namespace drawdance {
 class AnnotationList;
+class SelectionSet;
 }
 
 namespace drawingboard {
@@ -26,8 +27,10 @@ class CursorItem;
 class LaserTrailItem;
 class NoticeItem;
 class OutlineItem;
+class PathPreviewItem;
 class SelectionItem;
 class ToggleItem;
+class TransformItem;
 class UserMarkerItem;
 }
 
@@ -42,10 +45,12 @@ class CanvasScene final : public QGraphicsScene {
 	using CursorItem = drawingboard::CursorItem;
 #endif
 	using LaserTrailItem = drawingboard::LaserTrailItem;
-	using SelectionItem = drawingboard::SelectionItem;
 	using NoticeItem = drawingboard::NoticeItem;
 	using OutlineItem = drawingboard::OutlineItem;
+	using PathPreviewItem = drawingboard::PathPreviewItem;
+	using SelectionItem = drawingboard::SelectionItem;
 	using ToggleItem = drawingboard::ToggleItem;
+	using TransformItem = drawingboard::TransformItem;
 	using UserMarkerItem = drawingboard::UserMarkerItem;
 
 public:
@@ -53,6 +58,7 @@ public:
 
 	void setCanvasModel(canvas::CanvasModel *canvasModel);
 	void setCanvasTransform(const QTransform &canvasTransform);
+	void setZoom(qreal zoom);
 
 	void setCanvasVisible(bool canvasVisible);
 	void setShowAnnotations(bool showAnnotations);
@@ -67,6 +73,8 @@ public:
 	void setShowToggleItems(bool showToggleItems);
 	void setUserMarkerPersistence(int userMarkerPersistence);
 
+	void setPathPreview(const QPainterPath &path);
+
 	void setCursorOnCanvas(bool cursorOnCanvas);
 	void setCursorPos(const QPointF &cursorPos);
 	void setOutline(
@@ -79,6 +87,12 @@ public:
 
 	void setActiveAnnotation(int annotationId);
 	AnnotationItem *getAnnotationItem(int annotationId);
+
+	void setToolCapabilities(
+		bool allowColorPick, bool allowToolAdjust, bool allowRightClick,
+		bool fractionalTool, bool ignoresSelections);
+
+	void setTransformToolState(int mode, int handle, bool dragging);
 
 	void setNotificationBarHeight(int height);
 
@@ -109,7 +123,8 @@ private:
 	onCursorMoved(unsigned int flags, int userId, int layerId, int x, int y);
 	void onLaserTrail(int userId, int persistence, const QColor &color);
 
-	void onSelectionChanged(canvas::Selection *sel);
+	void setSelection(bool valid, const QRect &bounds, const QImage &mask);
+	void onTransformChanged();
 
 	void onAnnotationsChanged(const drawdance::AnnotationList &al);
 	void onPreviewAnnotation(int annotationId, const QRect &shape);
@@ -136,12 +151,16 @@ private:
 	bool m_showOwnUserMarker = false;
 	bool m_showLaserTrails = true;
 	bool m_cursorOnCanvas = false;
+	bool m_selectionIgnored = false;
 	int m_userMarkerPersistence = 1000;
+	qreal m_zoom = 1.0;
 	QPointF m_cursorPos;
 	QHash<int, UserMarkerItem *> m_userMarkers;
 	QHash<int, LaserTrailItem *> m_activeLaserTrails;
 
+	PathPreviewItem *m_pathPreview = nullptr;
 	SelectionItem *m_selection = nullptr;
+	TransformItem *m_transform = nullptr;
 	OutlineItem *m_outline = nullptr;
 
 #ifdef HAVE_EMULATED_BITMAP_CURSOR

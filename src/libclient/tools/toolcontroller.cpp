@@ -3,6 +3,7 @@
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/point.h"
+#include "libclient/canvas/transformmodel.h"
 #include "libclient/settings.h"
 #include "libclient/tools/annotation.h"
 #include "libclient/tools/beziertool.h"
@@ -14,6 +15,7 @@
 #include "libclient/tools/pan.h"
 #include "libclient/tools/selection.h"
 #include "libclient/tools/shapetools.h"
+#include "libclient/tools/transform.h"
 #include "libclient/tools/zoom.h"
 #include "libshared/util/functionrunnable.h"
 
@@ -35,7 +37,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_effectiveSmoothing(0)
 	, m_finishStrokes(true)
 	, m_stabilizerUseBrushSampleCount(true)
-	, m_selectInterpolation{DP_MSG_TRANSFORM_REGION_MODE_BILINEAR}
+	, m_transformInterpolation{DP_MSG_TRANSFORM_REGION_MODE_BILINEAR}
 	, m_threadPool{this}
 	, m_taskCount{0}
 {
@@ -57,6 +59,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	registerTool(new PanTool(*this));
 	registerTool(new ZoomTool(*this));
 	registerTool(new Inspector(*this));
+	registerTool(new TransformTool(*this));
 
 	m_activeTool = m_toolbox[Tool::FREEHAND];
 	m_activeLayer = 0;
@@ -77,10 +80,14 @@ void ToolController::registerTool(Tool *tool)
 
 ToolController::~ToolController()
 {
+	// The transform tool may want to switch back to a previous tool when it's
+	// cancelled. That causes signals to be emitted into objects that are being
+	// destroyed, which Qt doesn't appreciate. So we block signals here.
+	blockSignals(true);
 	// May be null if a file failed to open or a session didn't connect.
 	if(m_model) {
 		for(Tool *t : m_toolbox) {
-			t->cancelMultipart(); // Also cancels any asynchronous jobs running.
+			t->dispose();
 		}
 	}
 	m_threadPool.waitForDone();
@@ -106,7 +113,8 @@ void ToolController::setActiveTool(Tool::Type tool)
 		m_activeTool = getTool(tool);
 		emit toolCapabilitiesChanged(
 			activeToolAllowColorPick(), activeToolAllowToolAdjust(),
-			activeToolHandlesRightClick());
+			activeToolHandlesRightClick(), activeToolIsFractional(),
+			activeToolIgnoresSelections());
 		emit toolCursorChanged(activeToolCursor());
 	}
 }
@@ -156,6 +164,18 @@ bool ToolController::activeToolHandlesRightClick() const
 	return m_activeTool->handlesRightClick();
 }
 
+bool ToolController::activeToolIsFractional() const
+{
+	Q_ASSERT(m_activeTool);
+	return m_activeTool->isFractional();
+}
+
+bool ToolController::activeToolIgnoresSelections() const
+{
+	Q_ASSERT(m_activeTool);
+	return m_activeTool->ignoresSelections();
+}
+
 void ToolController::setActiveLayer(uint16_t id)
 {
 	if(m_activeLayer != id) {
@@ -164,7 +184,7 @@ void ToolController::setActiveLayer(uint16_t id)
 			m_model->paintEngine()->setViewLayer(id);
 		}
 
-		updateSelectionPreview();
+		updateTransformPreview();
 		emit activeLayerChanged(id);
 	}
 }
@@ -220,63 +240,62 @@ void ToolController::setModel(canvas::CanvasModel *model)
 		m_model->aclState(), &canvas::AclState::featureAccessChanged, this,
 		&ToolController::onFeatureAccessChange);
 	connect(
-		m_model, &canvas::CanvasModel::selectionChanged, this,
-		&ToolController::onSelectionChange);
-	m_model->setSelectInterpolation(m_selectInterpolation);
+		m_model->transform(), &canvas::TransformModel::transformChanged, this,
+		&ToolController::updateTransformPreview);
+	connect(
+		m_model->transform(), &canvas::TransformModel::transformCut, this,
+		&ToolController::setTransformCutPreview);
+	connect(
+		m_model->transform(), &canvas::TransformModel::transformCutCleared,
+		this, &ToolController::clearTransformCutPreview);
+	m_model->setTransformInterpolation(m_transformInterpolation);
 	emit modelChanged(model);
 }
 
 void ToolController::onFeatureAccessChange(DP_Feature feature, bool canUse)
 {
 	if(feature == DP_FEATURE_REGION_MOVE) {
-		static_cast<SelectionTool *>(getTool(Tool::SELECTION))
-			->setTransformEnabled(canUse);
-		static_cast<SelectionTool *>(getTool(Tool::POLYGONSELECTION))
-			->setTransformEnabled(canUse);
+		static_cast<TransformTool *>(getTool(Tool::TRANSFORM))
+			->setFeatureAccess(canUse);
 	}
 }
 
-void ToolController::onSelectionChange(canvas::Selection *sel)
+void ToolController::updateTransformPreview()
 {
-	if(sel) {
-		connect(
-			sel, &canvas::Selection::pasteImageChanged, this,
-			&ToolController::updateSelectionPreview);
-		connect(
-			sel, &canvas::Selection::shapeChanged, this,
-			&ToolController::updateSelectionPreview);
-		connect(
-			sel, &canvas::Selection::reinitialized, this,
-			&ToolController::clearSelectionPreviews);
+	if(m_model) {
+		canvas::PaintEngine *paintEngine = m_model->paintEngine();
+		canvas::TransformModel *transform = m_model->transform();
+		if(transform->isActive() && transform->isDstQuadValid()) {
+			QPoint point =
+				transform->dstQuad().boundingRect().topLeft().toPoint();
+			paintEngine->previewTransform(
+				m_activeLayer, point.x(), point.y(), transform->image(),
+				transform->dstQuad().polygon().toPolygon(),
+				transform->getEffectiveInterpolation(m_transformInterpolation));
+		} else {
+			paintEngine->clearTransformPreview();
+		}
 	}
-	updateSelectionPreview();
 }
 
-void ToolController::updateSelectionPreview()
+void ToolController::setTransformCutPreview(
+	int layerId, const QRect &maskBounds, const QImage &mask)
 {
-	if(!m_model) {
-		return;
-	}
-
-	canvas::PaintEngine *paintEngine = m_model->paintEngine();
-	canvas::Selection *sel = m_model->selection();
-	if(sel && sel->hasPasteImage()) {
-		QPoint point = sel->shape().boundingRect().topLeft().toPoint();
-		QRect srcRect = sel->isMovedFromCanvas()
-							? sel->moveSourceRegion().boundingRect().toRect()
-							: sel->pasteImage().rect();
-		QPolygon dstQuad = sel->destinationQuad();
-		paintEngine->previewTransform(
-			m_activeLayer, point.x(), point.y(), sel->pasteImage(),
-			sel->destinationQuad(),
-			tools::SelectionTool::getEffectiveInterpolation(
-				srcRect, dstQuad, m_selectInterpolation));
-	} else {
-		paintEngine->clearTransformPreview();
+	if(m_model) {
+		canvas::PaintEngine *paintEngine = m_model->paintEngine();
+		paintEngine->previewCut(layerId, maskBounds, mask);
 	}
 }
 
-void ToolController::clearSelectionPreviews()
+void ToolController::clearTransformCutPreview()
+{
+	if(m_model) {
+		canvas::PaintEngine *paintEngine = m_model->paintEngine();
+		paintEngine->clearCutPreview();
+	}
+}
+
+void ToolController::clearTransformPreviews()
 {
 	if(m_model) {
 		canvas::PaintEngine *paintEngine = m_model->paintEngine();
@@ -304,19 +323,20 @@ void ToolController::updateSmoothing()
 		qBound(0, strength, libclient::settings::maxSmoothing);
 }
 
-void ToolController::setSelectInterpolation(int selectInterpolation)
+void ToolController::setTransformInterpolation(int transformInterpolation)
 {
-	m_selectInterpolation = selectInterpolation;
+	m_transformInterpolation = transformInterpolation;
 	if(m_model) {
-		m_model->setSelectInterpolation(selectInterpolation);
+		m_model->setTransformInterpolation(transformInterpolation);
 	}
-	updateSelectionPreview();
+	updateTransformPreview();
 }
 
 void ToolController::startDrawing(
 	long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
-	qreal ytilt, qreal rotation, bool right, float zoom, const QPointF &viewPos,
-	bool applyGlobalSmoothing, bool eraserOverride)
+	qreal ytilt, qreal rotation, bool right, qreal angle, qreal zoom,
+	bool mirror, bool flip, const QPointF &viewPos, bool applyGlobalSmoothing,
+	bool eraserOverride)
 {
 	Q_ASSERT(m_activeTool);
 
@@ -328,9 +348,9 @@ void ToolController::startDrawing(
 	m_drawing = true;
 	m_applyGlobalSmoothing = applyGlobalSmoothing;
 	m_activebrush.setEraserOverride(eraserOverride);
-	m_activeTool->begin(
-		canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation), right,
-		zoom, viewPos);
+	m_activeTool->begin(Tool::BeginParams{
+		canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation),
+		viewPos, angle, zoom, mirror, flip, right});
 
 	if(!m_activeTool->isMultipart()) {
 		m_model->paintEngine()->setLocalDrawingInProgress(true);
@@ -344,7 +364,8 @@ void ToolController::startDrawing(
 
 void ToolController::continueDrawing(
 	long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
-	qreal ytilt, qreal rotation, bool shift, bool alt, const QPointF &viewPos)
+	qreal ytilt, qreal rotation, bool constrain, bool center,
+	const QPointF &viewPos)
 {
 	Q_ASSERT(m_activeTool);
 
@@ -353,18 +374,19 @@ void ToolController::continueDrawing(
 		return;
 	}
 
-	canvas::Point cp =
-		canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation);
-	m_activeTool->motion(cp, shift, alt, viewPos);
+	m_activeTool->motion(Tool::MotionParams{
+		canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation),
+		viewPos, constrain, center});
 }
 
-void ToolController::hoverDrawing(const QPointF &point)
+void ToolController::hoverDrawing(
+	const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip)
 {
 	Q_ASSERT(m_activeTool);
-	if(!m_model)
-		return;
-
-	m_activeTool->hover(point);
+	if(m_model) {
+		m_activeTool->hover(
+			Tool::HoverParams{point, angle, zoom, mirror, flip});
+	}
 }
 
 void ToolController::endDrawing()
@@ -383,18 +405,24 @@ void ToolController::endDrawing()
 
 bool ToolController::undoMultipartDrawing()
 {
-	Q_ASSERT(m_activeTool);
-
-	if(!m_model) {
-		qWarning("ToolController::undoMultipartDrawing: no model set!");
+	Q_ASSERT(!m_model || m_activeTool);
+	if(m_model && m_activeTool->isMultipart()) {
+		m_activeTool->undoMultipart();
+		return true;
+	} else {
 		return false;
 	}
+}
 
-	if(!m_activeTool->isMultipart())
+bool ToolController::redoMultipartDrawing()
+{
+	Q_ASSERT(!m_model || m_activeTool);
+	if(m_model && m_activeTool->isMultipart()) {
+		m_activeTool->redoMultipart();
+		return true;
+	} else {
 		return false;
-
-	m_activeTool->undoMultipart();
-	return true;
+	}
 }
 
 bool ToolController::isMultipartDrawing() const

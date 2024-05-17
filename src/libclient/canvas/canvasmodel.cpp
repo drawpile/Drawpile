@@ -8,8 +8,9 @@ extern "C" {
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
-#include "libclient/canvas/selection.h"
+#include "libclient/canvas/selectionmodel.h"
 #include "libclient/canvas/timelinemodel.h"
+#include "libclient/canvas/transformmodel.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/drawdance/viewmode.h"
 #include "libclient/settings.h"
@@ -25,7 +26,6 @@ CanvasModel::CanvasModel(
 	int canvasImplementation, int fps, int snapshotMaxCount,
 	long long snapshotMinDelayMs, bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
-	, m_selection(nullptr)
 	, m_localUserId(1)
 	, m_compatibilityMode(false)
 {
@@ -39,6 +39,8 @@ CanvasModel::CanvasModel(
 	m_userlist = new UserListModel(this);
 	m_timeline = new TimelineModel(this);
 	m_metadata = new DocumentMetadata(m_paintengine, this);
+	m_selection = new SelectionModel(this);
+	m_transform = new TransformModel(this);
 
 	connect(
 		m_aclstate, &AclState::userBitsChanged, m_userlist,
@@ -60,6 +62,7 @@ CanvasModel::CanvasModel(
 		&CanvasModel::recorderStateChanged);
 
 	m_aclstate->setLocalUserId(localUserId);
+	m_selection->setLocalUserId(localUserId);
 
 	m_layerlist->setAclState(m_aclstate);
 	m_layerlist->setLayerGetter([this](int id) -> QImage {
@@ -77,13 +80,11 @@ CanvasModel::CanvasModel(
 		m_paintengine, &PaintEngine::timelineChanged, m_timeline,
 		&TimelineModel::setTimeline);
 	connect(
+		m_paintengine, &PaintEngine::selectionsChanged, m_selection,
+		&SelectionModel::setSelections);
+	connect(
 		m_paintengine, &PaintEngine::frameVisibilityChanged, m_layerlist,
 		&LayerListModel::setLayersVisibleInFrame);
-	if(!m_paintengine->useTileCache()) {
-		connect(
-			m_paintengine, &PaintEngine::resized, this,
-			&CanvasModel::onCanvasResize, Qt::QueuedConnection);
-	}
 
 	settings.bindEngineFrameRate(m_paintengine, &PaintEngine::setFps);
 	settings.bindEngineSnapshotCount(
@@ -139,6 +140,7 @@ void CanvasModel::connectedToServer(
 	m_layerlist->setAutoselectAny(true);
 
 	m_aclstate->setLocalUserId(myUserId);
+	m_selection->setLocalUserId(myUserId);
 
 	if(join) {
 		m_paintengine->resetAcl(m_localUserId);
@@ -371,49 +373,24 @@ void CanvasModel::stopInspectingCanvas()
 	m_paintengine->setInspect(0, false);
 }
 
-void CanvasModel::setSelectInterpolation(int selectInterpolation)
+void CanvasModel::setTransformInterpolation(int transformInterpolation)
 {
-	m_selectInterpolation = selectInterpolation;
-}
-
-void CanvasModel::setSelection(Selection *selection)
-{
-	if(m_selection != selection) {
-		m_paintengine->clearCutPreview();
-
-		const bool hadSelection = m_selection != nullptr;
-
-		if(hadSelection && m_selection->parent() == this)
-			m_selection->deleteLater();
-
-		if(selection && !selection->parent())
-			selection->setParent(this);
-
-		m_selection = selection;
-
-		emit selectionChanged(selection);
-		if(hadSelection && !selection)
-			emit selectionRemoved();
-	}
+	m_transformInterpolation = transformInterpolation;
 }
 
 QImage CanvasModel::selectionToImage(int layerId, bool *outFound) const
 {
-	if(m_selection && !m_selection->pasteImage().isNull() && layerId > 0) {
-		if(outFound) {
-			*outFound = true;
-		}
-		return m_selection->transformedPasteImage(m_selectInterpolation);
+	drawdance::CanvasState canvasState = m_paintengine->viewCanvasState();
+	QRect rect(QPoint(), canvasState.size());
+
+	bool validSelection = m_selection->isValid();
+	if(validSelection) {
+		rect = rect.intersected(m_selection->bounds());
 	}
 
-	drawdance::CanvasState canvasState = m_paintengine->viewCanvasState();
-	QRect rect{QPoint(), canvasState.size()};
-	if(m_selection) {
-		rect = rect.intersected(m_selection->boundingRect());
-	}
 	if(rect.isEmpty()) {
 		qWarning("selectionToImage: empty selection");
-		return QImage{};
+		return QImage();
 	}
 
 	QImage img;
@@ -438,16 +415,10 @@ QImage CanvasModel::selectionToImage(int layerId, bool *outFound) const
 		img = layerContent.toImage(rect);
 	}
 
-	if(m_selection && !m_selection->isAxisAlignedRectangle()) {
-		// Mask out pixels outside the selection
+	if(validSelection) {
 		QPainter mp(&img);
 		mp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-
-		QRect maskBounds;
-		const QImage mask = m_selection->shapeMask(Qt::white, &maskBounds);
-
-		mp.drawImage(
-			qMin(0, maskBounds.left()), qMin(0, maskBounds.top()), mask);
+		mp.drawImage(0, 0, m_selection->mask());
 	}
 
 	if(outFound) {
@@ -456,16 +427,16 @@ QImage CanvasModel::selectionToImage(int layerId, bool *outFound) const
 	return img;
 }
 
-void CanvasModel::pasteFromImage(
-	const QImage &image, const QPoint &defaultPoint, bool forceDefault)
+QRect CanvasModel::getPasteBounds(
+	const QSize &imageSize, const QPoint &defaultPoint, bool forceDefault)
 {
 	QPoint center;
 	if(forceDefault) {
 		// Explicitly pasting in view center.
 		center = defaultPoint;
-	} else if(m_selection) {
+	} else if(m_selection->isValid()) {
 		// There's already a selection present, paste it there.
-		QRect bounds = m_selection->boundingRect();
+		QRect bounds = m_selection->bounds();
 		center = QPoint(
 			bounds.x() + bounds.width() / 2, bounds.y() + bounds.height() / 2);
 	} else {
@@ -475,34 +446,12 @@ void CanvasModel::pasteFromImage(
 		int w = canvasSize.width();
 		int h = canvasSize.height();
 		center = QPoint(
-			w <= 0 || image.width() < w ? defaultPoint.x() : w / 2,
-			h <= 0 || image.height() < h ? defaultPoint.y() : h / 2);
+			w <= 0 || imageSize.width() < w ? defaultPoint.x() : w / 2,
+			h <= 0 || imageSize.height() < h ? defaultPoint.y() : h / 2);
 	}
-
-	Selection *paste = new Selection;
-	paste->setShapeRect(QRect(
-		center.x() - image.width() / 2, center.y() - image.height() / 2,
-		image.width(), image.height()));
-	paste->setPasteImage(image);
-
-	setSelection(paste);
-}
-
-void CanvasModel::offsetCanvas(int offsetX, int offsetY)
-{
-	// Adjust selection when new space was added to the left or top side
-	// so it remains visually in the same place
-	if(m_selection) {
-		m_selection->translate(QPoint(offsetX, offsetY));
-	}
-}
-
-void CanvasModel::onCanvasResize(const QSize &newSize, const QPoint &offset)
-{
-	Q_UNUSED(newSize);
-	if(!offset.isNull()) {
-		offsetCanvas(offset.x(), offset.y());
-	}
+	return QRect(
+		center.x() - imageSize.width() / 2, center.y() - imageSize.height() / 2,
+		imageSize.width(), imageSize.height());
 }
 
 void CanvasModel::resetCanvas()

@@ -132,6 +132,16 @@ typedef max_align_t DP_max_align_t;
 #    define DP_NULLPTR         NULL
 #endif
 
+#ifdef DP_NO_STRICT_ALIASING
+#    define DP_TYPEDEF_PERSISTENT(NAME)     \
+        typedef struct DP_##NAME DP_##NAME; \
+        typedef struct DP_Transient##NAME DP_Transient##NAME
+#else
+#    define DP_TYPEDEF_PERSISTENT(NAME)     \
+        typedef struct DP_##NAME DP_##NAME; \
+        typedef struct DP_##NAME DP_Transient##NAME
+#endif
+
 
 typedef enum DP_LogLevel {
     DP_LOG_DEBUG,

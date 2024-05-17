@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef TOOLS_INSPECTOR_H
-#define TOOLS_INSPECTOR_H
+#ifndef LIBCLIENT_TOOLS_INSPECTOR_H
+#define LIBCLIENT_TOOLS_INSPECTOR_H
 #include "libclient/tools/tool.h"
 
 namespace tools {
@@ -14,14 +14,8 @@ class Inspector final : public Tool {
 public:
 	Inspector(ToolController &owner);
 
-	void begin(
-		const canvas::Point &point, bool right, float zoom,
-		const QPointF &viewPos) override;
-
-	void motion(
-		const canvas::Point &point, bool constrain, bool center,
-		const QPointF &viewPos) override;
-
+	void begin(const BeginParams &params) override;
+	void motion(const MotionParams &params) override;
 	void end() override;
 
 	void cancelMultipart() override;
@@ -29,6 +23,8 @@ public:
 	void setShowTiles(bool showTiles) { m_showTiles = showTiles; }
 
 private:
+	void inspect(const QPointF &point, bool clobber) const;
+
 	bool m_inspecting = false;
 	bool m_showTiles = false;
 };

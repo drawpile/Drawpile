@@ -29,7 +29,6 @@ public:
 	void setForeground(const QColor &color) override;
 
 	int getSize() const override;
-	bool getSubpixelMode() const override { return false; }
 	bool isSquare() const override { return true; }
 	bool requiresOutline() const override { return true; }
 

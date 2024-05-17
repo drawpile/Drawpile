@@ -180,6 +180,8 @@ void DP_posterize_mask(DP_Pixel15 *dst, int posterize_num, const uint16_t *mask,
 
 // 8 bit pixel Normal blending.
 
+uint8_t DP_pixel8_mul(unsigned int a, unsigned int b);
+
 void DP_blend_color8_to(DP_Pixel8 *DP_RESTRICT out,
                         const DP_Pixel8 *DP_RESTRICT dst, DP_UPixel8 color,
                         int pixel_count, uint8_t opacity);

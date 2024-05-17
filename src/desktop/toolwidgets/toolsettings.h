@@ -60,7 +60,7 @@ public:
 	virtual void setActiveTool(tools::Tool::Type tool) { Q_UNUSED(tool); }
 
 	//! Set the foreground color
-	virtual void setForeground(const QColor &color) = 0;
+	virtual void setForeground(const QColor &color) { Q_UNUSED(color); }
 
 	/**
 	 * @brief Quick adjust a tool parameter
@@ -85,7 +85,7 @@ public:
 	 * @brief Get the current brush size
 	 * @return size of the current brush
 	 */
-	virtual int getSize() const = 0;
+	virtual int getSize() const { return 0; }
 
 	/**
 	 * @brief Is this tool in subpixel precision mode
@@ -94,7 +94,7 @@ public:
 	 * At integer resolution, the outline should snap to
 	 * pixel edges.
 	 */
-	virtual bool getSubpixelMode() const = 0;
+	virtual bool getSubpixelMode() const { return false; }
 
 	/**
 	 * @brief Does the tool need a square brush outline

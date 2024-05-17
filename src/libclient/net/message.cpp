@@ -210,14 +210,19 @@ Message makeMovePointerMessage(uint8_t contextId, int32_t x, int32_t y)
 	return Message::noinc(DP_msg_move_pointer_new(contextId, x, y));
 }
 
+static QByteArray compressMonoMask(const QImage &mask)
+{
+	Q_ASSERT(mask.format() == QImage::Format_Mono);
+	return qCompress(mask.constBits(), mask.sizeInBytes());
+}
+
 Message makeMoveRegionMessage(
 	uint8_t contextId, uint16_t layer, int32_t bx, int32_t by, int32_t bw,
 	int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3,
 	int32_t y3, int32_t x4, int32_t y4, const QImage &mask)
 {
 	QByteArray compressed =
-		mask.isNull() ? QByteArray{}
-					  : qCompress(mask.constBits(), mask.sizeInBytes());
+		mask.isNull() ? QByteArray() : compressMonoMask(mask);
 	if(compressed.size() <=
 	   DP_MESSAGE_MAX_PAYLOAD_LENGTH - DP_MSG_MOVE_REGION_STATIC_LENGTH) {
 		return Message::noinc(DP_msg_move_region_new(
@@ -286,6 +291,36 @@ Message makePutImageMessage(
 	return Message::noinc(DP_msg_put_image_new(
 		contextId, layer, mode, x, y, w, h, Message::setUchars,
 		compressedImage.size(), const_cast<char *>(compressedImage.data())));
+}
+
+Message makeSelectionClearMessage(
+	bool disguiseAsPutImage, uint8_t contextId, uint8_t selectionId)
+{
+	if(disguiseAsPutImage) {
+		return Message::noinc(DP_msg_put_image_new(
+			contextId, selectionId, DP_BLEND_MODE_COMPAT_SELECTION_CLEAR, 0, 0,
+			0, 0, nullptr, 0, nullptr));
+	} else {
+		return Message::noinc(
+			DP_msg_selection_clear_new(contextId, selectionId));
+	}
+}
+
+Message makeSelectionPutMessage(
+	bool disguiseAsPutImage, uint8_t contextId, uint8_t selectionId, uint8_t op,
+	int32_t x, int32_t y, uint16_t w, uint16_t h,
+	const QByteArray &compressedMask)
+{
+	if(disguiseAsPutImage) {
+		return Message::noinc(DP_msg_put_image_new(
+			contextId, (uint16_t(op) << uint16_t(8)) | uint16_t(selectionId),
+			DP_BLEND_MODE_COMPAT_SELECTION_PUT, x, y, w, h, &Message::setUchars,
+			compressedMask.size(), const_cast<char *>(compressedMask.data())));
+	} else {
+		return Message::noinc(DP_msg_selection_put_new(
+			contextId, selectionId, op, x, y, w, h, &Message::setUchars,
+			compressedMask.size(), const_cast<char *>(compressedMask.data())));
+	}
 }
 
 Message
@@ -367,7 +402,7 @@ static void makePutImagesRecursive(
 	int w = bounds.width();
 	int h = bounds.height();
 	if(w > 0 && h > 0) {
-		int maxSize = 0xffff - 19;
+		int maxSize = DP_MSG_PUT_IMAGE_IMAGE_MAX_SIZE;
 		int compressedSize;
 		// If our estimated size looks good, try compressing. Otherwise assume
 		// that the image is too big to fit into a message and split it up.
@@ -432,6 +467,87 @@ void makePutImageMessages(
 			makePutImagesRecursive(
 				msgs, contextId, layer, mode, x, y, converted, converted.rect(),
 				0);
+		}
+	}
+}
+
+static void makeSelectionsPutRecursive(
+	MessageList &msgs, bool disguiseAsPutImage, uint8_t contextId,
+	uint8_t selectionId, uint8_t &op, int x, int y, const QImage &image,
+	const QRect &bounds, int estimatedSize)
+{
+	int w = bounds.width();
+	int h = bounds.height();
+	if(w > 0 && h > 0) {
+		int maxSize = DP_MSG_SELECTION_PUT_MASK_MAX_SIZE;
+		int compressedSize;
+		if(estimatedSize < maxSize) {
+			QImage subImage =
+				bounds == image.rect() ? image : image.copy(bounds);
+			QByteArray compressed = compressAlphaMask(subImage);
+			compressedSize = compressed.size();
+			if(compressedSize <= maxSize) {
+				msgs.append(makeSelectionPutMessage(
+					disguiseAsPutImage, contextId, selectionId, op, x, y, w, h,
+					compressed));
+				if(op == DP_MSG_SELECTION_PUT_OP_REPLACE) {
+					op = DP_MSG_SELECTION_PUT_OP_UNITE;
+				}
+				return;
+			}
+		} else {
+			compressedSize = estimatedSize;
+		}
+
+		int estimatedSliceSize = compressedSize / 2;
+		if(w > h) {
+			int sx1 = w / 2;
+			int sx2 = w - sx1;
+			makeSelectionsPutRecursive(
+				msgs, disguiseAsPutImage, contextId, selectionId, op, x, y,
+				image, bounds.adjusted(0, 0, -sx1, 0), estimatedSliceSize);
+			makeSelectionsPutRecursive(
+				msgs, disguiseAsPutImage, contextId, selectionId, op, x + sx2,
+				y, image, bounds.adjusted(sx2, 0, 0, 0), estimatedSliceSize);
+		} else {
+			int sy1 = h / 2;
+			int sy2 = h - sy1;
+			makeSelectionsPutRecursive(
+				msgs, disguiseAsPutImage, contextId, selectionId, op, x, y,
+				image, bounds.adjusted(0, 0, 0, -sy1), estimatedSliceSize);
+			makeSelectionsPutRecursive(
+				msgs, disguiseAsPutImage, contextId, selectionId, op, x,
+				y + sy2, image, bounds.adjusted(0, sy2, 0, 0),
+				estimatedSliceSize);
+		}
+	}
+}
+
+void makeSelectionPutMessages(
+	MessageList &msgs, bool disguiseAsPutImage, uint8_t contextId,
+	uint8_t selectionId, uint8_t op, int x, int y, int w, int h,
+	const QImage &image)
+{
+	if(image.isNull()) {
+		msgs.append(makeSelectionPutMessage(
+			disguiseAsPutImage, contextId, selectionId, op, x, y, w, h,
+			QByteArray()));
+	} else if(x >= -image.width() && y >= -image.height()) {
+		QImage converted =
+			image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+		if(x < 0 || y < 0) {
+			int xoffset = x < 0 ? -x : 0;
+			int yoffset = y < 0 ? -y : 0;
+			QImage cropped = converted.copy(
+				xoffset, yoffset, image.width() - xoffset,
+				image.height() - yoffset);
+			makeSelectionsPutRecursive(
+				msgs, disguiseAsPutImage, contextId, selectionId, op,
+				x + xoffset, y + yoffset, cropped, cropped.rect(), 0);
+		} else {
+			makeSelectionsPutRecursive(
+				msgs, disguiseAsPutImage, contextId, selectionId, op, x, y,
+				converted, converted.rect(), 0);
 		}
 	}
 }
@@ -549,6 +665,8 @@ Message makeMessageBackwardCompatible(const Message &msg)
 	case DP_MSG_MOVE_REGION:
 	case DP_MSG_PUT_TILE:
 	case DP_MSG_CANVAS_BACKGROUND:
+	case DP_MSG_SELECTION_PUT:
+	case DP_MSG_SELECTION_CLEAR:
 	case DP_MSG_UNDO:
 		return msg;
 	case DP_MSG_USER_ACL: {

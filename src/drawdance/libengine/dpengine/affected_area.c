@@ -21,10 +21,10 @@
  */
 #include "affected_area.h"
 #include "canvas_state.h"
-#include "tile.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
+#include <dpmsg/blend_mode.h>
 #include <dpmsg/message.h>
 #include <limits.h>
 
@@ -77,6 +77,12 @@ static DP_AffectedArea make_timeline(int track_id)
 {
     return (DP_AffectedArea){DP_AFFECTED_DOMAIN_TIMELINE, track_id,
                              INVALID_BOUNDS};
+}
+
+static DP_AffectedArea make_selections(uint8_t context_id, uint8_t selection_id)
+{
+    return (DP_AffectedArea){DP_AFFECTED_DOMAIN_SELECTIONS,
+                             (context_id << 8) | selection_id, INVALID_BOUNDS};
 }
 
 static DP_AffectedArea make_everything(void)
@@ -290,12 +296,21 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     }
     case DP_MSG_PUT_IMAGE: {
         DP_MsgPutImage *mpi = DP_msg_put_image_cast(msg);
-        return make_pixels(
-            DP_msg_put_image_layer(mpi),
-            DP_rect_make(DP_uint32_to_int(DP_msg_put_image_x(mpi)),
-                         DP_uint32_to_int(DP_msg_put_image_y(mpi)),
-                         DP_uint32_to_int(DP_msg_put_image_w(mpi)),
-                         DP_uint32_to_int(DP_msg_put_image_h(mpi))));
+        switch (DP_msg_put_image_mode(mpi)) {
+        case DP_BLEND_MODE_COMPAT_SELECTION_PUT:
+        case DP_BLEND_MODE_COMPAT_SELECTION_CLEAR:
+            // Compatibility hack: SelectionPut in disguise.
+            return make_selections(
+                DP_uint_to_uint8(DP_message_context_id(msg)),
+                (uint8_t)(DP_msg_put_image_layer(mpi) & 0xff));
+        default:
+            return make_pixels(
+                DP_msg_put_image_layer(mpi),
+                DP_rect_make(DP_uint32_to_int(DP_msg_put_image_x(mpi)),
+                             DP_uint32_to_int(DP_msg_put_image_y(mpi)),
+                             DP_uint32_to_int(DP_msg_put_image_w(mpi)),
+                             DP_uint32_to_int(DP_msg_put_image_h(mpi))));
+        }
     }
     case DP_MSG_PUT_TILE: {
         DP_MsgPutTile *mpt = DP_msg_put_tile_cast(msg);
@@ -465,6 +480,14 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         bool single_track_id = move_track_id == 0 || track_id == move_track_id;
         return make_timeline(single_track_id ? track_id : ALL_IDS);
     }
+    case DP_MSG_SELECTION_PUT:
+        return make_selections(
+            DP_uint_to_uint8(DP_message_context_id(msg)),
+            DP_msg_selection_put_selection_id(DP_message_internal(msg)));
+    case DP_MSG_SELECTION_CLEAR:
+        return make_selections(
+            DP_uint_to_uint8(DP_message_context_id(msg)),
+            DP_msg_selection_clear_selection_id(DP_message_internal(msg)));
     case DP_MSG_UNDO:
         return make_user_attrs();
     default:

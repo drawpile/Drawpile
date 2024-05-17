@@ -47,6 +47,8 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/tabletinput.h"
 
 #include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/selectionmodel.h"
+#include "libclient/canvas/transformmodel.h"
 #include "desktop/view/canvaswrapper.h"
 #include "desktop/view/lock.h"
 #include "desktop/widgets/canvasframe.h"
@@ -96,6 +98,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/toolwidgets/colorpickersettings.h"
 #include "desktop/toolwidgets/fillsettings.h"
 #include "desktop/toolwidgets/selectionsettings.h"
+#include "desktop/toolwidgets/transformsettings.h"
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
 #include "desktop/toolwidgets/inspectorsettings.h"
@@ -187,7 +190,6 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	  m_drawingtools(nullptr),
 	  m_brushSlots(nullptr),
 	  m_dockToggles(nullptr),
-	  m_lastToolBeforePaste(-1),
 #ifndef SINGLE_MAIN_WINDOW
 	  m_fullscreenOldMaximized(false),
 #endif
@@ -404,7 +406,9 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_sessionSettings, &dialogs::SessionSettingsDialog::requestUpdateAuthList, m_doc->client(), &net::Client::requestUpdateAuthList);
 
 	// Tool controller <-> UI connections
-	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, this, &MainWindow::activeAnnotationChanged);
+	connect(
+		m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged,
+		this, &MainWindow::updateSelectTransformActions);
 	connect(m_doc->toolCtrl(), &tools::ToolController::colorUsed, m_dockToolSettings, &docks::ToolSettings::addLastUsedColor);
 	connect(m_doc->toolCtrl(), &tools::ToolController::actionCancelled, m_dockToolSettings->colorPickerSettings(), &tools::ColorPickerSettings::cancelPickFromScreen);
 	connect(
@@ -501,10 +505,6 @@ MainWindow::~MainWindow()
 	MacMenu::instance()->removeWindow(this);
 #endif
 
-	// Get rid of the selection here, otherwise it calls back into an
-	// already-destroyed MainWindow and causes a crash.
-	m_doc->cancelSelection();
-
 	// Clear this out first so there will be no weird signals emitted
 	// while the document is being torn down.
 	m_canvasView->disposeScene();
@@ -551,8 +551,12 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas, &canvas::CanvasModel::canvasInspected, m_dockToolSettings->inspectorSettings(), &tools::InspectorSettings::onCanvasInspected);
 	connect(canvas, &canvas::CanvasModel::previewAnnotationRequested, m_doc->toolCtrl(), &tools::ToolController::setActiveAnnotation);
 
-	connect(canvas, &canvas::CanvasModel::selectionChanged, this, &MainWindow::selectionChanged);
-	connect(canvas, &canvas::CanvasModel::selectionRemoved, this, &MainWindow::selectionRemoved);
+	connect(
+		canvas->selection(), &canvas::SelectionModel::selectionChanged, this,
+		&MainWindow::updateSelectTransformActions);
+	connect(
+		canvas->transform(), &canvas::TransformModel::transformChanged, this,
+		&MainWindow::updateSelectTransformActions);
 
 	connect(canvas, &canvas::CanvasModel::userJoined, this, [this](int, const QString &name) {
 		m_viewStatusBar->showMessage(tr("🙋 %1 joined!").arg(name), 2000);
@@ -590,7 +594,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	onUndoDepthLimitSet(canvas->paintEngine()->undoDepthLimit());
 	getAction("resetsession")->setEnabled(true);
 
-	selectionChanged(canvas->selection());
+	updateSelectTransformActions();
 }
 
 /**
@@ -1174,6 +1178,19 @@ void MainWindow::receiveCurrentBrush(int userId, const QJsonObject &info)
 			bs->setCurrentBrush(brushes::ActiveBrush::fromJson(v.toObject()));
 		}
 	}
+}
+
+void MainWindow::fillArea(const QColor &color, int blendMode, float opacity)
+{
+	if(blendMode != DP_BLEND_MODE_ERASE) {
+		m_dockToolSettings->addLastUsedColor(color);
+	}
+	m_doc->fillArea(color, DP_BlendMode(blendMode), opacity);
+}
+
+void MainWindow::fillAreaWithBlendMode(int blendMode)
+{
+	fillArea(m_dockToolSettings->foregroundColor(), blendMode, 1.0f);
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
@@ -1960,9 +1977,9 @@ void MainWindow::showFlipbook()
 		fp->setObjectName("flipbook");
 		fp->setAttribute(Qt::WA_DeleteOnClose);
 		canvas::CanvasModel *canvas = m_doc->canvas();
-		canvas::Selection *sel = canvas->selection();
+		canvas::SelectionModel *sel = canvas->selection();
 		fp->setPaintEngine(
-			canvas->paintEngine(), sel ? sel->boundingRect() : QRect());
+			canvas->paintEngine(), sel->isValid() ? sel->bounds() : QRect());
 		fp->setRefreshShortcuts(getAction("showflipbook")->shortcuts());
 		connect(
 			fp, &dialogs::Flipbook::exportGifRequested, this,
@@ -2648,7 +2665,7 @@ void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 void MainWindow::onCompatibilityModeChanged(bool compatibilityMode)
 {
 	m_dockToolSettings->brushSettings()->setCompatibilityMode(compatibilityMode);
-	m_dockToolSettings->selectionSettings()->setCompatibilityMode(compatibilityMode);
+	m_dockToolSettings->transformSettings()->setCompatibilityMode(compatibilityMode);
 }
 
 void MainWindow::updateLockWidget()
@@ -2720,6 +2737,7 @@ void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
 	case DP_FEATURE_PUT_IMAGE:
 		m_putimagetools->setEnabled(canUse);
 		getAction("toolfill")->setEnabled(canUse);
+		m_dockToolSettings->selectionSettings()->setPutImageAllowed(canUse);
 		break;
 	case DP_FEATURE_RESIZE:
 		m_resizetools->setEnabled(canUse);
@@ -2741,6 +2759,7 @@ void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
 		break;
 	default: break;
 	}
+	updateLockWidget();
 }
 
 void MainWindow::onUndoDepthLimitSet(int undoDepthLimit)
@@ -3008,7 +3027,6 @@ void MainWindow::selectTool(QAction *tool)
 	} else {
 		m_dockToolSettings->setTool(tools::Tool::Type(idx));
 		m_toolChangeTime.start();
-		m_lastToolBeforePaste = -1;
 	}
 }
 
@@ -3032,10 +3050,6 @@ void MainWindow::toolChanged(tools::Tool::Type tool)
 	m_canvasView->setPointerTracking(
 		isLaserPointerSelected &&
 		m_dockToolSettings->laserPointerSettings()->pointerTracking());
-
-	// Remove selection when not using selection tool
-	if(tool != tools::Tool::SELECTION && tool != tools::Tool::POLYGONSELECTION)
-		m_doc->selectNone();
 
 	// Deselect annotation when tool changed
 	if(tool != tools::Tool::ANNOTATION)
@@ -3091,45 +3105,46 @@ void MainWindow::handleFreehandToolButtonClicked()
 	m_freehandAction->trigger();
 }
 
-void MainWindow::activeAnnotationChanged(int annotationId)
+void MainWindow::updateSelectTransformActions()
 {
 	canvas::CanvasModel *canvas = m_doc->canvas();
-	bool haveSelection = canvas && canvas->selection();
-	getAction("cleararea")->setEnabled(haveSelection || annotationId > 0);
-}
+	bool haveTransform = canvas && canvas->transform()->isActive();
+	bool canApplyTransform =
+		haveTransform && canvas->transform()->isDstQuadValid();
+	bool haveSelection =
+		!haveTransform && canvas && canvas->selection()->isValid();
+	bool haveAnnotation =
+		getAction("tooltext")->isChecked() &&
+		m_dockToolSettings->annotationSettings()->selected() != 0;
 
-void MainWindow::selectionChanged(canvas::Selection *selection)
-{
-	bool haveSelection = selection != nullptr;
 #ifdef __EMSCRIPTEN__
 	getAction("downloadselection")->setEnabled(haveSelection);
 #else
 	getAction("saveselection")->setEnabled(haveSelection);
 #endif
+
+	getAction("cutlayer")->setEnabled(haveSelection);
+	getAction("copylayer")->setEnabled(haveSelection);
+	getAction("copyvisible")->setEnabled(haveSelection);
+	getAction("copymerged")->setEnabled(haveSelection);
+	getAction("paste")->setEnabled(!haveTransform);
+	getAction("paste-centered")->setEnabled(!haveTransform);
+	getAction("pastefile")->setEnabled(!haveTransform);
+	getAction("stamp")->setEnabled(canApplyTransform);
+	getAction("cleararea")->setEnabled(haveSelection || haveAnnotation);
+	getAction("selectall")->setEnabled(!haveTransform);
 	getAction("selectnone")->setEnabled(haveSelection);
-	getAction("stamp")->setEnabled(haveSelection);
+	getAction("selectinvert")->setEnabled(haveSelection);
+	getAction("selectlayerbounds")->setEnabled(!haveTransform);
+	getAction("selectlayercontents")->setEnabled(!haveTransform);
 	getAction("fillfgarea")->setEnabled(haveSelection);
 	getAction("recolorarea")->setEnabled(haveSelection);
 	getAction("colorerasearea")->setEnabled(haveSelection);
-	bool haveAnnotation =
-		getAction("tooltext")->isChecked() &&
-		m_dockToolSettings->annotationSettings()->selected() != 0;
-	getAction("cleararea")->setEnabled(haveSelection || haveAnnotation);
-}
-
-void MainWindow::selectionRemoved()
-{
-#ifdef __EMSCRIPTEN__
-	getAction("downloadselection")->setEnabled(false);
-#else
-	getAction("saveselection")->setEnabled(false);
-#endif
-	if(m_lastToolBeforePaste>=0) {
-		// Selection was just removed and we had just pasted an image
-		// so restore the previously used tool
-		QAction *toolaction = m_drawingtools->actions().at(m_lastToolBeforePaste);
-		toolaction->trigger();
-	}
+	getAction("starttransform")->setEnabled(haveSelection);
+	getAction("transformmirror")->setEnabled(haveTransform);
+	getAction("transformflip")->setEnabled(haveTransform);
+	getAction("transformrotatecw")->setEnabled(haveTransform);
+	getAction("transformrotateccw")->setEnabled(haveTransform);
 }
 
 void MainWindow::copyText()
@@ -3205,15 +3220,17 @@ void MainWindow::pasteImage(
 	const QImage &image, const QPoint *point, bool force)
 {
 	canvas::CanvasModel *canvas = m_canvasView->canvas();
-	if(canvas && canvas->aclState()->canUseFeature(DP_FEATURE_PUT_IMAGE)) {
-		if(m_dockToolSettings->currentTool() != tools::Tool::SELECTION &&
-		   m_dockToolSettings->currentTool() != tools::Tool::POLYGONSELECTION) {
-			int currentTool = m_dockToolSettings->currentTool();
-			getAction("toolselectrect")->trigger();
-			m_lastToolBeforePaste = currentTool;
+	if(canvas && canvas->aclState()->canUseFeature(DP_FEATURE_PUT_IMAGE) &&
+	   !canvas->transform()->isActive() && !image.isNull() &&
+	   !image.size().isEmpty()) {
+		QRect srcBounds = canvas->getPasteBounds(
+			image.size(), point ? *point : m_canvasView->viewCenterPoint(),
+			force);
+		if(!srcBounds.isEmpty()) {
+			m_dockToolSettings->startTransformPaste(
+				srcBounds,
+				image.convertToFormat(QImage::Format_ARGB32_Premultiplied));
 		}
-		m_doc->pasteImage(
-			image, point ? *point : m_canvasView->viewCenterPoint(), force);
 	}
 }
 
@@ -3261,7 +3278,8 @@ void MainWindow::clearOrDelete()
 
 void MainWindow::resizeCanvas()
 {
-	if(!m_doc->canvas()) {
+	canvas::CanvasModel *canvas = m_doc->canvas();
+	if(!canvas) {
 		qWarning("resizeCanvas: no canvas!");
 		return;
 	}
@@ -3275,13 +3293,13 @@ void MainWindow::resizeCanvas()
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
 	// Preset crop from selection if one exists
-	if (m_doc->canvas()->selection()) {
-		dlg->setBounds(m_doc->canvas()->selection()->boundingRect());
+	if (canvas->selection()->isValid()) {
+		dlg->setBounds(canvas->selection()->bounds());
 	}
 
 	connect(dlg, &QDialog::accepted, this, [this, dlg]() {
 		if (m_doc->canvas()->selection()) {
-			m_doc->canvas()->setSelection(nullptr);
+			// m_doc->canvas()->setSelection(nullptr);
 		}
 		dialogs::ResizeVector r = dlg->resizeVector();
 		if(!r.isZero()) {
@@ -3872,7 +3890,6 @@ void MainWindow::setupActions()
 	QAction *cutlayer = makeAction("cutlayer", tr("Cu&t From Layer")).icon("edit-cut").statusTip(tr("Cut selected area of the current layer to the clipboard")).shortcut(QKeySequence::Cut);
 	QAction *paste = makeAction("paste", tr("&Paste")).icon("edit-paste").shortcut(QKeySequence::Paste);
 	QAction *pasteCentered = makeAction("paste-centered", tr("Paste in View Center")).icon("edit-paste").shortcut("Ctrl+Shift+V");
-	QAction *stamp = makeAction("stamp", tr("&Stamp Selection")).shortcut("Ctrl+T");
 #ifndef SINGLE_MAIN_WINDOW
 	QAction *pickFromScreen = makeAction("pickfromscreen", tr("Pic&k From Screen")).icon("monitor").shortcut("Shift+I");
 #endif
@@ -3899,30 +3916,18 @@ void MainWindow::setupActions()
 #	endif
 #endif
 
-	QAction *selectall = makeAction("selectall", tr("Select &All")).shortcut(QKeySequence::SelectAll);
-	QAction *selectnone = makeAction("selectnone", tr("&Deselect"))
-#if (defined(Q_OS_MACOS) || defined(Q_OS_WIN)) // Deselect is not defined on Mac and Win
-		.shortcut("Shift+Ctrl+A")
-#else
-		.shortcut(QKeySequence::Deselect)
-#endif
-	;
-
 	QAction *expandup = makeAction("expandup", tr("Expand &Up")).shortcut(CTRL_KEY | Qt::Key_J);
 	QAction *expanddown = makeAction("expanddown", tr("Expand &Down")).shortcut(CTRL_KEY | Qt::Key_K);
 	QAction *expandleft = makeAction("expandleft", tr("Expand &Left")).shortcut(CTRL_KEY | Qt::Key_H);
 	QAction *expandright = makeAction("expandright", tr("Expand &Right")).shortcut(CTRL_KEY | Qt::Key_L);
 
-	QAction *cleararea = makeAction("cleararea", tr("Delete")).shortcut(QKeySequence::Delete);
-	QAction *fillfgarea = makeAction("fillfgarea", tr("Fill Selection")).shortcut(CTRL_KEY | Qt::Key_Comma);
-	QAction *recolorarea = makeAction("recolorarea", tr("Recolor Selection")).shortcut(CTRL_KEY | Qt::SHIFT | Qt::Key_Comma);
-	QAction *colorerasearea = makeAction("colorerasearea", tr("Color Erase Selection")).shortcut(Qt::SHIFT | Qt::Key_Delete);
+	QAction *cleararea = makeAction("cleararea", tr("Delete"))
+							 .shortcut(QKeySequence::Delete)
+							 .icon("trash-empty");
 
 	m_currentdoctools->addAction(copy);
 	m_currentdoctools->addAction(copylayer);
 	m_currentdoctools->addAction(deleteAnnotations);
-	m_currentdoctools->addAction(selectall);
-	m_currentdoctools->addAction(selectnone);
 
 	m_undotools->addAction(undo);
 	m_undotools->addAction(redo);
@@ -3931,11 +3936,7 @@ void MainWindow::setupActions()
 	m_putimagetools->addAction(paste);
 	m_putimagetools->addAction(pasteCentered);
 	m_putimagetools->addAction(pastefile);
-	m_putimagetools->addAction(stamp);
 	m_putimagetools->addAction(cleararea);
-	m_putimagetools->addAction(fillfgarea);
-	m_putimagetools->addAction(recolorarea);
-	m_putimagetools->addAction(colorerasearea);
 
 	m_canvasbgtools->addAction(canvasBackground);
 	m_resizetools->addAction(resize);
@@ -3952,7 +3953,6 @@ void MainWindow::setupActions()
 	connect(cutlayer, &QAction::triggered, m_doc, &Document::cutLayer);
 	connect(paste, &QAction::triggered, this, &MainWindow::paste);
 	connect(pasteCentered, &QAction::triggered, this, &MainWindow::pasteCentered);
-	connect(stamp, &QAction::triggered, m_doc, &Document::stamp);
 #ifndef SINGLE_MAIN_WINDOW
 	connect(
 		pickFromScreen, &QAction::triggered,
@@ -3960,30 +3960,8 @@ void MainWindow::setupActions()
 		&tools::ColorPickerSettings::startPickFromScreen);
 #endif
 	connect(pastefile, SIGNAL(triggered()), this, SLOT(pasteFile()));
-	connect(selectall, &QAction::triggered, this, [this]() {
-		QAction *selectRect = getAction("toolselectrect");
-		if(!selectRect->isChecked())
-			selectRect->trigger();
-		m_doc->selectAll();
-	});
-	connect(selectnone, &QAction::triggered, m_doc, &Document::selectNone);
 	connect(deleteAnnotations, &QAction::triggered, m_doc, &Document::removeEmptyAnnotations);
 	connect(cleararea, &QAction::triggered, this, &MainWindow::clearOrDelete);
-	connect(fillfgarea, &QAction::triggered, this, [this]() {
-		QColor color = m_dockToolSettings->foregroundColor();
-		m_dockToolSettings->addLastUsedColor(color);
-		m_doc->fillArea(color, DP_BLEND_MODE_NORMAL);
-	});
-	connect(recolorarea, &QAction::triggered, this, [this]() {
-		QColor color = m_dockToolSettings->foregroundColor();
-		m_dockToolSettings->addLastUsedColor(color);
-		m_doc->fillArea(color, DP_BLEND_MODE_RECOLOR);
-	});
-	connect(colorerasearea, &QAction::triggered, this, [this]() {
-		QColor color = m_dockToolSettings->foregroundColor();
-		m_dockToolSettings->addLastUsedColor(color);
-		m_doc->fillArea(color, DP_BLEND_MODE_COLOR_ERASE);
-	});
 	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
 	connect(canvasBackground, &QAction::triggered, this, &MainWindow::changeCanvasBackground);
 	connect(setLocalBackground, &QAction::triggered, this, &MainWindow::changeLocalCanvasBackground);
@@ -4017,14 +3995,9 @@ void MainWindow::setupActions()
 	editmenu->addAction(paste);
 	editmenu->addAction(pasteCentered);
 	editmenu->addAction(pastefile);
-	editmenu->addAction(stamp);
 #ifndef SINGLE_MAIN_WINDOW
 	editmenu->addAction(pickFromScreen);
 #endif
-	editmenu->addSeparator();
-
-	editmenu->addAction(selectall);
-	editmenu->addAction(selectnone);
 	editmenu->addSeparator();
 
 	editmenu->addAction(resize);
@@ -4042,9 +4015,6 @@ void MainWindow::setupActions()
 	editmenu->addSeparator();
 	editmenu->addAction(deleteAnnotations);
 	editmenu->addAction(cleararea);
-	editmenu->addAction(fillfgarea);
-	editmenu->addAction(recolorarea);
-	editmenu->addAction(colorerasearea);
 	editmenu->addSeparator();
 	editmenu->addAction(brushSettings);
 #ifdef Q_OS_WIN32
@@ -4306,6 +4276,132 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerDownAct);
 
 	//
+	// Select menu
+	//
+	// Deselect is not defined on macOS and Windows.
+#if defined(Q_OS_MACOS) || defined(Q_OS_WIN)
+#	define DESELECT_SHORTCUT "Ctrl+Shift+A"
+#else
+#	define DESELECT_SHORTCUT QKeySequence::Deselect
+#endif
+
+	QAction *selectall = makeAction("selectall", tr("Select &All"))
+							 .shortcut(QKeySequence::SelectAll)
+							 .icon("edit-select-all");
+	QAction *selectnone = makeAction("selectnone", tr("&Deselect"))
+							  .shortcut(DESELECT_SHORTCUT)
+							  .icon("edit-select-none");
+	QAction *selectinvert = makeAction("selectinvert", tr("&Invert Selection"))
+								.noDefaultShortcut()
+								.icon("edit-select-invert");
+	QAction *selectlayerbounds =
+		makeAction("selectlayerbounds", tr("Select Layer &Bounds"))
+			.shortcut(Qt::SHIFT | Qt::Key_B)
+			.icon("select-rectangular");
+	QAction *selectlayercontents =
+		makeAction("selectlayercontents", tr("&Layer to Selection"))
+			.shortcut(Qt::SHIFT | Qt::Key_L)
+			.icon("edit-image");
+	QAction *fillfgarea = makeAction("fillfgarea", tr("Fill Selection"))
+							  .shortcut(CTRL_KEY | Qt::Key_Comma);
+	QAction *recolorarea = makeAction("recolorarea", tr("Recolor Selection"))
+							   .shortcut(CTRL_KEY | Qt::SHIFT | Qt::Key_Comma);
+	QAction *colorerasearea =
+		makeAction("colorerasearea", tr("Color Erase Selection"))
+			.shortcut(Qt::SHIFT | Qt::Key_Delete);
+	QAction *starttransform =
+		makeAction("starttransform", tr("&Transform"))
+			.shortcut("T")
+			.icon("transform-move")
+			.statusTip(
+				tr("Transform the selection, switch back tools afterwards"));
+	QAction *transformmirror =
+		makeAction("transformmirror", tr("&Mirror Transform"))
+			.icon("object-flip-horizontal")
+			.noDefaultShortcut();
+	QAction *transformflip = makeAction("transformflip", tr("&Flip Transform"))
+								 .icon("object-flip-vertical")
+								 .noDefaultShortcut();
+	QAction *transformrotatecw =
+		makeAction("transformrotatecw", tr("&Rotate Transform Clockwise"))
+			.icon("object-rotate-right")
+			.noDefaultShortcut();
+	QAction *transformrotateccw =
+		makeAction(
+			"transformrotateccw", tr("Rotate Transform &Counter-Clockwise"))
+			.icon("object-rotate-left")
+			.noDefaultShortcut();
+	QAction *transformshrinktoview =
+		makeAction(
+			"transformshrinktoview", tr("Shrink Transform to &Fit View"))
+			.icon("zoom-out")
+			.noDefaultShortcut();
+	QAction *stamp =
+		makeAction("stamp", tr("&Stamp Transform")).shortcut("Ctrl+T");
+
+	m_currentdoctools->addAction(selectall);
+	m_currentdoctools->addAction(selectnone);
+	m_currentdoctools->addAction(selectinvert);
+	m_currentdoctools->addAction(selectlayerbounds);
+	m_currentdoctools->addAction(selectlayercontents);
+
+	m_putimagetools->addAction(fillfgarea);
+	m_putimagetools->addAction(recolorarea);
+	m_putimagetools->addAction(colorerasearea);
+	m_putimagetools->addAction(stamp);
+
+	connect(selectall, &QAction::triggered, m_doc, &Document::selectAll);
+	connect(selectnone, &QAction::triggered, m_doc, &Document::selectNone);
+	connect(selectinvert, &QAction::triggered, m_doc, &Document::selectInvert);
+	connect(
+		selectlayerbounds, &QAction::triggered, m_doc,
+		&Document::selectLayerBounds);
+	connect(
+		selectlayercontents, &QAction::triggered, m_doc,
+		&Document::selectLayerContents);
+	connect(
+		fillfgarea, &QAction::triggered, this,
+		std::bind(
+			&MainWindow::fillAreaWithBlendMode, this, DP_BLEND_MODE_NORMAL));
+	connect(
+		recolorarea, &QAction::triggered, this,
+		std::bind(
+			&MainWindow::fillAreaWithBlendMode, this, DP_BLEND_MODE_RECOLOR));
+	connect(
+		colorerasearea, &QAction::triggered, this,
+		std::bind(
+			&MainWindow::fillAreaWithBlendMode, this,
+			DP_BLEND_MODE_COLOR_ERASE));
+	connect(
+		starttransform, &QAction::triggered, m_dockToolSettings,
+		&docks::ToolSettings::startTransformMove);
+
+	QMenu *selectMenu = menuBar()->addMenu(tr("Sele&ct"));
+	selectMenu->addAction(selectall);
+	selectMenu->addAction(selectnone);
+	selectMenu->addAction(selectinvert);
+	selectMenu->addAction(selectlayerbounds);
+	selectMenu->addAction(selectlayercontents);
+	selectMenu->addSeparator();
+	selectMenu->addAction(cleararea);
+	selectMenu->addAction(fillfgarea);
+	selectMenu->addAction(recolorarea);
+	selectMenu->addAction(colorerasearea);
+	selectMenu->addSeparator();
+	selectMenu->addAction(starttransform);
+	selectMenu->addAction(transformmirror);
+	selectMenu->addAction(transformflip);
+	selectMenu->addAction(transformrotatecw);
+	selectMenu->addAction(transformrotateccw);
+	selectMenu->addAction(transformshrinktoview);
+	selectMenu->addAction(stamp);
+
+	m_dockToolSettings->selectionSettings()->setAction(starttransform);
+	m_dockToolSettings->transformSettings()->setActions(
+		transformmirror, transformflip, transformrotatecw, transformrotateccw,
+		transformshrinktoview, stamp);
+
+	//
 	// Animation menu
 	//
 	QAction *showFlipbook = makeAction("showflipbook", tr("Flipbook")).icon("media-playback-start").statusTip(tr("Show animation preview window")).shortcut("Ctrl+F");
@@ -4489,6 +4585,7 @@ void MainWindow::setupActions()
 	QAction *lasertool = makeAction("toollaser", tr("&Laser Pointer")).icon("cursor-arrow").statusTip(tr("Point out things on the canvas")).shortcut("L").checkable();
 	QAction *selectiontool = makeAction("toolselectrect", tr("&Select (Rectangular)")).icon("select-rectangular").statusTip(tr("Select area for copying")).shortcut("S").checkable();
 	QAction *lassotool = makeAction("toolselectpolygon", tr("&Select (Free-Form)")).icon("edit-select-lasso").statusTip(tr("Select a free-form area for copying")).shortcut("D").checkable();
+	QAction *transformtool = makeAction("tooltransform", tr("&Transform Tool")).icon("transform-move").statusTip(tr("Transform selection")).noDefaultShortcut().checkable();
 	QAction *pantool = makeAction("toolpan", tr("Pan")).icon("hand").statusTip(tr("Pan canvas view")).shortcut("P").checkable();
 	QAction *zoomtool = makeAction("toolzoom", tr("Zoom")).icon("edit-find").statusTip(tr("Zoom the canvas view")).shortcut("Z").checkable();
 	QAction *inspectortool = makeAction("toolinspector", tr("Inspector")).icon("help-whatsthis").statusTip(tr("Find out who did it")).shortcut("Ctrl+I").checkable();
@@ -4505,6 +4602,7 @@ void MainWindow::setupActions()
 	m_drawingtools->addAction(lasertool);
 	m_drawingtools->addAction(selectiontool);
 	m_drawingtools->addAction(lassotool);
+	m_drawingtools->addAction(transformtool);
 	m_drawingtools->addAction(pantool);
 	m_drawingtools->addAction(zoomtool);
 	m_drawingtools->addAction(inspectortool);

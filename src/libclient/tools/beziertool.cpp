@@ -19,18 +19,18 @@ using canvas::Point;
 static constexpr long long DELTA_MSEC = 10;
 
 BezierTool::BezierTool(ToolController &owner)
-	: Tool(owner, BEZIER, QCursor(QPixmap(":cursors/curve.png"), 2, 2), true, true, false)
+	: Tool(owner, BEZIER, QCursor(QPixmap(":cursors/curve.png"), 2, 2), true, true, false, true, true)
 	, m_brushEngine{}
 {
 }
 
-void BezierTool::begin(const Point& point, bool right, float zoom, const QPointF &viewPos)
+void BezierTool::begin(const BeginParams &params)
 {
-	Q_UNUSED(viewPos);
-	m_rightButton = right;
-	m_zoom = zoom;
+	m_rightButton = params.right;
+	m_zoom = params.zoom;
 
-	if(right) {
+	QPointF point = params.point;
+	if(m_rightButton) {
 		if(m_points.size()>2) {
 			m_points.pop_back();
 			m_points.last() = {point, QPointF()};
@@ -55,12 +55,8 @@ void BezierTool::begin(const Point& point, bool right, float zoom, const QPointF
 	}
 }
 
-void BezierTool::motion(
-	const Point& point, bool constrain, bool center, const QPointF &viewPos)
+void BezierTool::motion(const MotionParams &params)
 {
-	Q_UNUSED(constrain);
-	Q_UNUSED(center);
-	Q_UNUSED(viewPos);
 	if(m_rightButton)
 		return;
 
@@ -69,15 +65,16 @@ void BezierTool::motion(
 		return;
 	}
 
-	m_points.last().cp = m_beginPoint - point;
+	m_points.last().cp = m_beginPoint - params.point;
 	updatePreview();
 }
 
-void BezierTool::hover(const QPointF &point)
+void BezierTool::hover(const HoverParams &params)
 {
 	if(m_points.isEmpty())
 		return;
 
+	QPointF point = params.point;
 	if(!Point::intSame(point, m_points.last().point)) {
 		m_points.last().point = point;
 		updatePreview();

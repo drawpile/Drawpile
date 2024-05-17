@@ -1,290 +1,171 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/toolwidgets/selectionsettings.h"
-#include "libclient/canvas/selection.h"
+#include "desktop/widgets/groupedtoolbutton.h"
 #include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/selectionmodel.h"
 #include "libclient/net/client.h"
-#include "desktop/view/canvaswrapper.h"
 #include "libclient/tools/toolcontroller.h"
-#include "libclient/tools/toolproperties.h"
-#include "libclient/tools/selection.h"
-
-#include "ui_selectsettings.h"
+#include <QAction>
+#include <QButtonGroup>
+#include <QCheckBox>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QWidget>
 
 namespace tools {
 
 namespace props {
-static const ToolProperties::RangedValue<int> interpolation{
-	QStringLiteral("interpolation"), 1, 0, 1};
+static const ToolProperties::Value<bool> antialias{
+	QStringLiteral("antialias"), false};
 }
 
 SelectionSettings::SelectionSettings(ToolController *ctrl, QObject *parent)
-	: ToolSettings{ctrl, parent}
-	, m_ui{nullptr}
-	, m_canvasView(nullptr)
+	: ToolSettings(ctrl, parent)
 {
-}
-
-SelectionSettings::~SelectionSettings()
-{
-	delete m_ui;
-}
-
-
-QWidget *SelectionSettings::createUiWidget(QWidget *parent)
-{
-	QWidget *uiwidget = new QWidget(parent);
-	m_ui = new Ui_SelectionSettings;
-	m_ui->setupUi(uiwidget);
-
-	m_ui->interpolationCombo->addItem(
-		tr("Nearest"), DP_MSG_TRANSFORM_REGION_MODE_NEAREST);
-	m_ui->interpolationCombo->addItem(
-		tr("Bilinear"), DP_MSG_TRANSFORM_REGION_MODE_BILINEAR);
 	connect(
-		m_ui->interpolationCombo,
-		QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-		&SelectionSettings::pushSettings);
-
-	connect(
-		m_ui->flip, &QAbstractButton::clicked, this,
-		&SelectionSettings::flipSelection);
-	connect(
-		m_ui->mirror, &QAbstractButton::clicked, this,
-		&SelectionSettings::mirrorSelection);
-	connect(
-		m_ui->fittoscreen, &QAbstractButton::clicked, this,
-		&SelectionSettings::fitToScreen);
-	connect(
-		m_ui->resetsize, &QAbstractButton::clicked, this,
-		&SelectionSettings::resetSize);
-	connect(
-		m_ui->scale, &QAbstractButton::clicked, this,
-		&SelectionSettings::scale);
-	connect(
-		m_ui->rotateShear, &QAbstractButton::clicked, this,
-		&SelectionSettings::rotateShear);
-	connect(
-		m_ui->distort, &QAbstractButton::clicked, this,
-		&SelectionSettings::distort);
-	connect(
-		controller(), &ToolController::modelChanged, this,
-		&SelectionSettings::modelChanged);
-
-	setControlsEnabled(false);
-
-	return uiwidget;
-}
-
-void SelectionSettings::flipSelection()
-{
-	canvas::CanvasModel *model = controller()->model();
-	if(!model) {
-		return;
-	}
-
-	canvas::Selection *sel = model->selection();
-	if(sel) {
-		cutSelection();
-		sel->scale(1, -1);
-	}
-}
-
-void SelectionSettings::mirrorSelection()
-{
-	canvas::CanvasModel *model = controller()->model();
-	if(!model) {
-		return;
-	}
-
-	canvas::Selection *sel = model->selection();
-	if(sel) {
-		cutSelection();
-		sel->scale(-1, 1);
-	}
-}
-
-void SelectionSettings::fitToScreen()
-{
-	Q_ASSERT(m_canvasView);
-	canvas::CanvasModel *model = controller()->model();
-	if(!model) {
-		return;
-	}
-
-	canvas::Selection *sel = model->selection();
-	if(sel) {
-		cutSelection();
-		const QSizeF size = sel->shape().boundingRect().size();
-		const QRectF screenRect = m_canvasView->screenRect();
-		const QSizeF screen = screenRect.size() * 0.7;
-
-		if(size.width() > screen.width() || size.height() > screen.height()) {
-			const QSizeF newsize = size.scaled(screen, Qt::KeepAspectRatio);
-			sel->scale(
-				newsize.width() / size.width(),
-				newsize.height() / size.height());
-		}
-
-		if(!sel->boundingRect().intersects(screenRect.toRect())) {
-			QPointF offset = screenRect.center() - sel->boundingRect().center();
-			sel->translate(offset.toPoint());
-		}
-	}
-}
-
-void SelectionSettings::resetSize()
-{
-	canvas::CanvasModel *model = controller()->model();
-	if(!model) {
-		return;
-	}
-
-	canvas::Selection *sel = model->selection();
-	if(sel) {
-		sel->resetShape();
-	}
-}
-
-void SelectionSettings::scale()
-{
-	updateSelectionMode(canvas::Selection::AdjustmentMode::Scale);
-}
-
-void SelectionSettings::rotateShear()
-{
-	updateSelectionMode(canvas::Selection::AdjustmentMode::Rotate);
-}
-
-void SelectionSettings::distort()
-{
-	updateSelectionMode(canvas::Selection::AdjustmentMode::Distort);
-}
-
-tools::RectangleSelection *SelectionSettings::getRectangleSelectionTool()
-{
-	return static_cast<tools::RectangleSelection *>(
-		controller()->getTool(Tool::SELECTION));
-}
-
-void SelectionSettings::updateSelectionMode(
-	canvas::Selection::AdjustmentMode mode)
-{
-	canvas::CanvasModel *model = controller()->model();
-	if(!model) {
-		return;
-	}
-
-	canvas::Selection *sel = model->selection();
-	if(sel && sel->adjustmentMode() != mode) {
-		sel->setAdjustmentMode(mode);
-	}
-}
-
-void SelectionSettings::modelChanged(canvas::CanvasModel *model)
-{
-	if(model) {
-		connect(
-			model, &canvas::CanvasModel::selectionChanged, this,
-			&SelectionSettings::selectionChanged);
-		selectionChanged(model->selection());
-	}
-}
-
-void SelectionSettings::selectionChanged(canvas::Selection *selection)
-{
-	setControlsEnabled(selection && selection->isClosed());
-	if(selection) {
-		connect(
-			selection, &canvas::Selection::adjustmentModeChanged, this,
-			&SelectionSettings::selectionAdjustmentModeChanged);
-		connect(
-			selection, &canvas::Selection::closed, this,
-			&SelectionSettings::selectionClosed);
-		selectionAdjustmentModeChanged(selection->adjustmentMode());
-	}
-}
-
-void SelectionSettings::selectionClosed()
-{
-	setControlsEnabled(true);
-}
-
-void SelectionSettings::cutSelection()
-{
-	tools::ToolController *ctrl = controller();
-	canvas::CanvasModel *model = ctrl->model();
-	canvas::Selection *sel = model->selection();
-	int layer = ctrl->activeLayer();
-	bool canCut = sel && sel->pasteImage().isNull() &&
-				  !model->aclState()->isLayerLocked(layer);
-	if(canCut) {
-		getRectangleSelectionTool()->startMove();
-	}
-}
-
-void SelectionSettings::setControlsEnabled(bool enabled)
-{
-	m_ui->flip->setEnabled(enabled);
-	m_ui->mirror->setEnabled(enabled);
-	m_ui->fittoscreen->setEnabled(enabled);
-	m_ui->resetsize->setEnabled(enabled);
-	m_ui->scale->setEnabled(enabled);
-	m_ui->rotateShear->setEnabled(enabled);
-	m_ui->distort->setEnabled(enabled);
-	if(!enabled) {
-		m_ui->scale->setChecked(true);
-	}
-}
-
-void SelectionSettings::setCompatibilityMode(bool compatibilityMode)
-{
-	m_ui->interpolationCombo->setDisabled(compatibilityMode);
+		ctrl, &ToolController::modelChanged, this,
+		&SelectionSettings::setModel);
 }
 
 ToolProperties SelectionSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
-	cfg.setValue(
-		props::interpolation, m_ui->interpolationCombo->currentData().toInt());
+	cfg.setValue(props::antialias, m_antiAliasCheckBox->isChecked());
 	return cfg;
 }
 
 void SelectionSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	int interpolation = cfg.value(props::interpolation);
-	for(int i = 0; i < m_ui->interpolationCombo->count(); ++i) {
-		if(m_ui->interpolationCombo->itemData(i).toInt() == interpolation) {
-			m_ui->interpolationCombo->setCurrentIndex(i);
-			break;
-		}
-	}
-	pushSettings();
+	m_antiAliasCheckBox->setChecked(cfg.value(props::antialias));
+}
+
+bool SelectionSettings::isLocked()
+{
+	// If we're connected to a thick server, we don't want to send it unknown
+	// message types because that'll get us kicked, which requires us to
+	// disguise selection commands as PutImage messages. Those in turn require
+	// the appropriate permission.
+	return !m_putImageAllowed &&
+		   controller()->client()->seemsConnectedToThickServer();
+}
+
+void SelectionSettings::setAction(QAction *starttransform)
+{
+	Q_ASSERT(m_startTransformButton);
+	m_startTransformButton->setIcon(starttransform->icon());
+	m_startTransformButton->setText(starttransform->text());
+	m_startTransformButton->setStatusTip(starttransform->statusTip());
+	m_startTransformButton->setToolTip(starttransform->statusTip());
+	connect(
+		m_startTransformButton, &QPushButton::clicked, starttransform,
+		&QAction::trigger);
 }
 
 void SelectionSettings::pushSettings()
 {
-	int interpolation = m_ui->interpolationCombo->currentData().toInt();
-	controller()->setSelectInterpolation(interpolation);
+	ToolController::SelectionParams selectionParams;
+	selectionParams.antiAlias = m_antiAliasCheckBox->isChecked();
+	selectionParams.defaultOp = m_headerGroup->checkedId();
+	controller()->setSelectionParams(selectionParams);
 }
 
-void SelectionSettings::selectionAdjustmentModeChanged(
-	canvas::Selection::AdjustmentMode mode)
+QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 {
-	switch(mode) {
-	case canvas::Selection::AdjustmentMode::Scale:
-		m_ui->scale->setChecked(true);
-		break;
-	case canvas::Selection::AdjustmentMode::Rotate:
-		m_ui->rotateShear->setChecked(true);
-		break;
-	case canvas::Selection::AdjustmentMode::Distort:
-		m_ui->distort->setChecked(true);
-		break;
-	default:
-		qWarning("SelectionSettings::selectionAdjustmentModeChanged: unknown "
-				 "adjustment mode");
-		break;
+	m_headerWidget = new QWidget(parent);
+	m_headerGroup = new QButtonGroup(m_headerWidget);
+
+	QHBoxLayout *headerLayout = new QHBoxLayout(m_headerWidget);
+	headerLayout->setContentsMargins(0, 0, 0, 0);
+	headerLayout->setSpacing(0);
+	headerLayout->addStretch();
+
+	widgets::GroupedToolButton *m_replaceButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
+	m_replaceButton->setIcon(QIcon::fromTheme("drawpile_selection_replace"));
+	m_replaceButton->setStatusTip(tr("Replace selection"));
+	m_replaceButton->setToolTip(m_replaceButton->statusTip());
+	m_replaceButton->setCheckable(true);
+	m_replaceButton->setChecked(true);
+	headerLayout->addWidget(m_replaceButton);
+	m_headerGroup->addButton(m_replaceButton, DP_MSG_SELECTION_PUT_OP_REPLACE);
+
+	widgets::GroupedToolButton *m_uniteButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
+	m_uniteButton->setIcon(QIcon::fromTheme("drawpile_selection_unite"));
+	m_uniteButton->setStatusTip(tr("Add to selection"));
+	m_uniteButton->setToolTip(m_uniteButton->statusTip());
+	m_uniteButton->setCheckable(true);
+	headerLayout->addWidget(m_uniteButton);
+	m_headerGroup->addButton(m_uniteButton, DP_MSG_SELECTION_PUT_OP_UNITE);
+
+	widgets::GroupedToolButton *m_intersectButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
+	m_intersectButton->setIcon(
+		QIcon::fromTheme("drawpile_selection_intersect"));
+	m_intersectButton->setStatusTip(tr("Intersect with selection"));
+	m_intersectButton->setToolTip(m_intersectButton->statusTip());
+	m_intersectButton->setCheckable(true);
+	headerLayout->addWidget(m_intersectButton);
+	m_headerGroup->addButton(
+		m_intersectButton, DP_MSG_SELECTION_PUT_OP_INTERSECT);
+
+	widgets::GroupedToolButton *m_excludeButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+	m_excludeButton->setIcon(QIcon::fromTheme("drawpile_selection_exclude"));
+	m_excludeButton->setStatusTip(tr("Remove from selection"));
+	m_excludeButton->setToolTip(m_excludeButton->statusTip());
+	m_excludeButton->setCheckable(true);
+	headerLayout->addWidget(m_excludeButton);
+	m_headerGroup->addButton(m_excludeButton, DP_MSG_SELECTION_PUT_OP_EXCLUDE);
+
+	headerLayout->addStretch();
+
+	connect(
+		m_headerGroup,
+		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
+		&SelectionSettings::pushSettings);
+
+	QWidget *widget = new QWidget(parent);
+	QVBoxLayout *layout = new QVBoxLayout(widget);
+
+	m_antiAliasCheckBox = new QCheckBox(tr("Anti-aliasing"));
+	m_antiAliasCheckBox->setStatusTip(tr("Smoothe out selection edges"));
+	m_antiAliasCheckBox->setToolTip(m_antiAliasCheckBox->statusTip());
+	connect(
+		m_antiAliasCheckBox, &QCheckBox::clicked, this,
+		&SelectionSettings::pushSettings);
+	layout->addWidget(m_antiAliasCheckBox);
+
+	m_startTransformButton = new QPushButton;
+	m_startTransformButton->setEnabled(false);
+	layout->addWidget(m_startTransformButton);
+
+	layout->addStretch();
+
+	return widget;
+}
+
+void SelectionSettings::setModel(canvas::CanvasModel *canvas)
+{
+	if(canvas) {
+		connect(
+			canvas->selection(), &canvas::SelectionModel::selectionChanged,
+			this, &SelectionSettings::updateEnabled);
+	}
+	updateEnabledFrom(canvas);
+}
+
+void SelectionSettings::updateEnabled()
+{
+	updateEnabledFrom(controller()->model());
+}
+
+void SelectionSettings::updateEnabledFrom(canvas::CanvasModel *canvas)
+{
+	if(m_startTransformButton) {
+		bool haveSelection = canvas && canvas->selection()->isValid();
+		m_startTransformButton->setEnabled(haveSelection);
 	}
 }
 

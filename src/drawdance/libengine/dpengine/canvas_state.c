@@ -37,6 +37,7 @@
 #include "layer_routes.h"
 #include "ops.h"
 #include "paint.h"
+#include "selection_set.h"
 #include "tile.h"
 #include "tile_iterator.h"
 #include "timeline.h"
@@ -69,6 +70,7 @@ struct DP_CanvasState {
     DP_AnnotationList *const annotations;
     DP_Timeline *const timeline;
     DP_DocumentMetadata *const metadata;
+    DP_SelectionSet *const selections;
 };
 
 struct DP_TransientCanvasState {
@@ -98,6 +100,10 @@ struct DP_TransientCanvasState {
     union {
         DP_DocumentMetadata *metadata;
         DP_TransientDocumentMetadata *transient_metadata;
+    };
+    union {
+        DP_SelectionSet *selections;
+        DP_TransientSelectionSet *transient_selections;
     };
 };
 
@@ -131,6 +137,10 @@ struct DP_CanvasState {
         DP_DocumentMetadata *metadata;
         DP_TransientDocumentMetadata *transient_metadata;
     };
+    union {
+        DP_SelectionSet *selections;
+        DP_TransientSelectionSet *transient_selections;
+    };
 };
 
 #endif
@@ -154,6 +164,7 @@ static DP_TransientCanvasState *allocate_canvas_state(bool transient, int width,
                                     NULL,
                                     {NULL},
                                     {NULL},
+                                    {NULL},
                                     {NULL}};
     return cs;
 }
@@ -167,6 +178,23 @@ DP_CanvasState *DP_canvas_state_new(void)
     tcs->annotations = DP_annotation_list_new();
     tcs->timeline = DP_timeline_new();
     tcs->metadata = DP_document_metadata_new();
+    return (DP_CanvasState *)tcs;
+}
+
+DP_CanvasState *DP_canvas_state_new_with_selections_noinc(DP_CanvasState *cs,
+                                                          DP_SelectionSet *ss)
+{
+    DP_TransientCanvasState *tcs = allocate_canvas_state(
+        false, cs->width, cs->height, cs->offset_x, cs->offset_y);
+    tcs->background_tile = DP_tile_incref_nullable(cs->background_tile);
+    tcs->background_opaque = cs->background_opaque;
+    tcs->layers = DP_layer_list_incref(cs->layers);
+    tcs->layer_props = DP_layer_props_list_incref(cs->layer_props);
+    tcs->layer_routes = DP_layer_routes_incref(cs->layer_routes);
+    tcs->annotations = DP_annotation_list_incref(cs->annotations);
+    tcs->timeline = DP_timeline_incref(cs->timeline);
+    tcs->metadata = DP_document_metadata_incref(cs->metadata);
+    tcs->selections = ss;
     return (DP_CanvasState *)tcs;
 }
 
@@ -188,6 +216,7 @@ void DP_canvas_state_decref(DP_CanvasState *cs)
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     if (DP_atomic_dec(&cs->refcount)) {
+        DP_selection_set_decref_nullable(cs->selections);
         DP_document_metadata_decref(cs->metadata);
         DP_timeline_decref(cs->timeline);
         DP_annotation_list_decref(cs->annotations);
@@ -302,6 +331,13 @@ DP_DocumentMetadata *DP_canvas_state_metadata_noinc(DP_CanvasState *cs)
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     return cs->metadata;
+}
+
+DP_SelectionSet *DP_canvas_state_selections_noinc_nullable(DP_CanvasState *cs)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return cs->selections;
 }
 
 int DP_canvas_state_frame_count(DP_CanvasState *cs)
@@ -447,13 +483,125 @@ static DP_CanvasState *handle_layer_visibility(DP_CanvasState *cs,
                                    DP_msg_layer_visibility_visible(mlv));
 }
 
+static DP_CanvasState *selection_put(DP_CanvasState *cs,
+                                     unsigned int context_id, int selection_id,
+                                     int op, int x, int y, int width,
+                                     int height, size_t in_mask_size,
+                                     const unsigned char *in_mask)
+{
+    if (selection_id == 0) {
+        DP_error_set("Selection put: invalid selection id %d", selection_id);
+        return NULL;
+    }
+
+    if (op >= DP_MSG_SELECTION_PUT_NUM_OP) {
+        DP_error_set("Selection put: unknown op %d", op);
+        return NULL;
+    }
+
+    int left = DP_max_int(x, 0);
+    int top = DP_max_int(y, 0);
+    int right = DP_min_int(x + width, cs->width);
+    int bottom = DP_min_int(y + height, cs->height);
+    if (left >= right || top >= bottom) {
+        if (op == DP_MSG_SELECTION_PUT_OP_REPLACE) {
+            return DP_ops_selection_clear(cs, context_id, selection_id);
+        }
+        else {
+            return DP_canvas_state_incref(cs);
+        }
+    }
+
+    if (in_mask_size == 0) {
+        static_assert(DP_MSG_SELECTION_PUT_NUM_OP == 5, "Update selection ops");
+        switch (op) {
+        case DP_MSG_SELECTION_PUT_OP_REPLACE:
+            return DP_ops_selection_put_replace(cs, context_id, selection_id,
+                                                left, top, right, bottom, NULL);
+        case DP_MSG_SELECTION_PUT_OP_UNITE:
+            return DP_ops_selection_put_unite(cs, context_id, selection_id,
+                                              left, top, right, bottom, NULL);
+        case DP_MSG_SELECTION_PUT_OP_INTERSECT:
+            return DP_ops_selection_put_intersect(
+                cs, context_id, selection_id, left, top, right, bottom, NULL);
+        case DP_MSG_SELECTION_PUT_OP_EXCLUDE:
+            return DP_ops_selection_put_exclude(cs, context_id, selection_id,
+                                                left, top, right, bottom, NULL);
+        case DP_MSG_SELECTION_PUT_OP_COMPLEMENT:
+            return DP_ops_selection_put_complement(
+                cs, context_id, selection_id, left, top, right, bottom, NULL);
+        default:
+            DP_UNREACHABLE();
+        }
+    }
+    else {
+        DP_Image *mask = DP_image_new_from_compressed_alpha_mask(
+            width, height, in_mask, in_mask_size);
+        if (!mask) {
+            return NULL;
+        }
+
+        DP_CanvasState *next_cs;
+        switch (op) {
+        case DP_MSG_SELECTION_PUT_OP_REPLACE:
+            next_cs =
+                DP_ops_selection_put_replace(cs, context_id, selection_id, x, y,
+                                             x + width, y + height, mask);
+            break;
+        case DP_MSG_SELECTION_PUT_OP_UNITE:
+            next_cs =
+                DP_ops_selection_put_unite(cs, context_id, selection_id, x, y,
+                                           x + width, y + height, mask);
+            break;
+        case DP_MSG_SELECTION_PUT_OP_INTERSECT:
+            next_cs =
+                DP_ops_selection_put_intersect(cs, context_id, selection_id, x,
+                                               y, x + width, y + height, mask);
+            break;
+        case DP_MSG_SELECTION_PUT_OP_EXCLUDE:
+            next_cs =
+                DP_ops_selection_put_exclude(cs, context_id, selection_id, x, y,
+                                             x + width, y + height, mask);
+            break;
+        default:
+            DP_UNREACHABLE();
+        }
+
+        DP_image_free(mask);
+        return next_cs;
+    }
+}
+
+static DP_CanvasState *
+selection_clear(DP_CanvasState *cs, unsigned int context_id, int selection_id)
+{
+    return DP_ops_selection_clear(cs, context_id, selection_id);
+}
+
 static DP_CanvasState *handle_put_image(DP_CanvasState *cs,
                                         DP_UserCursors *ucs_or_null,
                                         unsigned int context_id,
                                         DP_MsgPutImage *mpi)
 {
     int blend_mode = DP_msg_put_image_mode(mpi);
-    if (!DP_blend_mode_exists(blend_mode)) {
+    if (blend_mode == DP_BLEND_MODE_COMPAT_SELECTION_PUT) {
+        // Compatibility hack: SelectionPut in disguise.
+        int layer_id = DP_msg_put_image_layer(mpi);
+        size_t in_mask_size;
+        const unsigned char *in_mask =
+            DP_msg_put_image_image(mpi, &in_mask_size);
+        return selection_put(
+            cs, context_id, layer_id & 0xff, (layer_id >> 8) & 0xff,
+            (int32_t)DP_msg_put_image_x(mpi), (int32_t)DP_msg_put_image_y(mpi),
+            (uint16_t)DP_msg_put_image_w(mpi),
+            (uint16_t)DP_msg_put_image_h(mpi), in_mask_size, in_mask);
+    }
+    else if (blend_mode == DP_BLEND_MODE_COMPAT_SELECTION_CLEAR) {
+        // Compatibility hack: SelectionClear in disguise.
+        return selection_clear(cs, context_id,
+                               DP_msg_put_image_layer(mpi) & 0xff);
+    }
+    else if (!DP_blend_mode_exists(blend_mode)) {
         DP_error_set("Put image: unknown blend mode %d", blend_mode);
         return NULL;
     }
@@ -565,19 +713,24 @@ static DP_CanvasState *handle_move_region(DP_CanvasState *cs,
                                           unsigned int context_id,
                                           DP_MsgMoveRegion *mmr)
 {
-    int layer_id = DP_msg_move_region_layer(mmr);
+    int src_layer_id = DP_msg_move_region_layer(mmr);
+    // If the source layer is zero, this is a selection transform. We always
+    // transform the "main" selection, since, at the time of writing, that's the
+    // only selection that actually exists. This message only exists for
+    // backward-compatibility reasons anyway, replaced by TransformRegion.
+    int dst_layer_id = src_layer_id == 0 ? ((1 << 8) | 1) : src_layer_id;
     size_t in_mask_size;
     const unsigned char *in_mask = DP_msg_move_region_mask(mmr, &in_mask_size);
     return handle_region(
-        cs, dc, ucs_or_null, context_id, "Move region", layer_id, layer_id,
-        DP_MSG_TRANSFORM_REGION_MODE_BILINEAR, DP_msg_move_region_bx(mmr),
-        DP_msg_move_region_by(mmr), DP_msg_move_region_bw(mmr),
-        DP_msg_move_region_bh(mmr), DP_msg_move_region_x1(mmr),
-        DP_msg_move_region_y1(mmr), DP_msg_move_region_x2(mmr),
-        DP_msg_move_region_y2(mmr), DP_msg_move_region_x3(mmr),
-        DP_msg_move_region_y3(mmr), DP_msg_move_region_x4(mmr),
-        DP_msg_move_region_y4(mmr), in_mask, in_mask_size,
-        DP_image_new_from_compressed_monochrome);
+        cs, dc, ucs_or_null, context_id, "Move region", src_layer_id,
+        dst_layer_id, DP_MSG_TRANSFORM_REGION_MODE_BILINEAR,
+        DP_msg_move_region_bx(mmr), DP_msg_move_region_by(mmr),
+        DP_msg_move_region_bw(mmr), DP_msg_move_region_bh(mmr),
+        DP_msg_move_region_x1(mmr), DP_msg_move_region_y1(mmr),
+        DP_msg_move_region_x2(mmr), DP_msg_move_region_y2(mmr),
+        DP_msg_move_region_x3(mmr), DP_msg_move_region_y3(mmr),
+        DP_msg_move_region_x4(mmr), DP_msg_move_region_y4(mmr), in_mask,
+        in_mask_size, DP_image_new_from_compressed_monochrome);
 }
 
 static DP_CanvasState *handle_put_tile(DP_CanvasState *cs, DP_DrawContext *dc,
@@ -1163,6 +1316,28 @@ static DP_CanvasState *handle_key_frame_delete(DP_CanvasState *cs,
                                    move_frame_index);
 }
 
+static DP_CanvasState *handle_selection_put(DP_CanvasState *cs,
+                                            unsigned int context_id,
+                                            DP_MsgSelectionPut *msp)
+{
+    size_t in_mask_size;
+    const unsigned char *in_mask =
+        DP_msg_selection_put_mask(msp, &in_mask_size);
+    return selection_put(
+        cs, context_id, DP_msg_selection_put_selection_id(msp),
+        DP_msg_selection_put_op(msp), DP_msg_selection_put_x(msp),
+        DP_msg_selection_put_y(msp), DP_msg_selection_put_w(msp),
+        DP_msg_selection_put_h(msp), in_mask_size, in_mask);
+}
+
+static DP_CanvasState *handle_selection_clear(DP_CanvasState *cs,
+                                              unsigned int context_id,
+                                              DP_MsgSelectionClear *msc)
+{
+    return selection_clear(cs, context_id,
+                           DP_msg_selection_clear_selection_id(msc));
+}
+
 static DP_CanvasState *handle(DP_CanvasState *cs, DP_DrawContext *dc,
                               DP_UserCursors *ucs_or_null, DP_Message *msg,
                               DP_MessageType type)
@@ -1251,6 +1426,12 @@ static DP_CanvasState *handle(DP_CanvasState *cs, DP_DrawContext *dc,
             cs, dc, DP_msg_key_frame_layer_attributes_cast(msg));
     case DP_MSG_KEY_FRAME_DELETE:
         return handle_key_frame_delete(cs, DP_msg_key_frame_delete_cast(msg));
+    case DP_MSG_SELECTION_PUT:
+        return handle_selection_put(cs, DP_message_context_id(msg),
+                                    DP_message_internal(msg));
+    case DP_MSG_SELECTION_CLEAR:
+        return handle_selection_clear(cs, DP_message_context_id(msg),
+                                      DP_message_internal(msg));
     default:
         DP_error_set("Unhandled draw message type %d", (int)type);
         return NULL;
@@ -1651,6 +1832,7 @@ DP_TransientCanvasState *DP_transient_canvas_state_new(DP_CanvasState *cs)
     tcs->annotations = DP_annotation_list_incref(cs->annotations);
     tcs->timeline = DP_timeline_incref(cs->timeline);
     tcs->metadata = DP_document_metadata_incref(cs->metadata);
+    tcs->selections = DP_selection_set_incref_nullable(cs->selections);
     return tcs;
 }
 
@@ -1664,6 +1846,7 @@ DP_TransientCanvasState *DP_transient_canvas_state_new_with_layers_noinc(
     tcs->annotations = DP_annotation_list_incref(cs->annotations);
     tcs->timeline = DP_timeline_incref(cs->timeline);
     tcs->metadata = DP_document_metadata_incref(cs->metadata);
+    tcs->selections = DP_selection_set_incref_nullable(cs->selections);
     return tcs;
 }
 
@@ -1678,6 +1861,7 @@ DP_transient_canvas_state_new_with_timeline_noinc(DP_CanvasState *cs,
     tcs->annotations = DP_annotation_list_incref(cs->annotations);
     tcs->transient_timeline = ttl;
     tcs->metadata = DP_document_metadata_incref(cs->metadata);
+    tcs->selections = DP_selection_set_incref_nullable(cs->selections);
     return tcs;
 }
 
@@ -1731,6 +1915,9 @@ DP_CanvasState *DP_transient_canvas_state_persist(DP_TransientCanvasState *tcs)
     }
     if (DP_document_metadata_transient(tcs->metadata)) {
         DP_transient_document_metadata_persist(tcs->transient_metadata);
+    }
+    if (tcs->selections && DP_selection_set_transient(tcs->selections)) {
+        DP_transient_selection_set_persist(tcs->transient_selections);
     }
     tcs->transient = false;
     return (DP_CanvasState *)tcs;
@@ -1900,6 +2087,15 @@ DP_transient_canvas_state_metadata_noinc(DP_TransientCanvasState *tcs)
     return DP_canvas_state_metadata_noinc((DP_CanvasState *)tcs);
 }
 
+DP_SelectionSet *DP_transient_canvas_state_selections_noinc_nullable(
+    DP_TransientCanvasState *tcs)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    return DP_canvas_state_selections_noinc_nullable((DP_CanvasState *)tcs);
+}
+
 void DP_transient_canvas_state_layers_set_inc(DP_TransientCanvasState *tcs,
                                               DP_LayerList *ll)
 {
@@ -2055,6 +2251,28 @@ DP_transient_canvas_state_transient_metadata(DP_TransientCanvasState *tcs)
         DP_document_metadata_decref(dm);
     }
     return tcs->transient_metadata;
+}
+
+void DP_transient_canvas_state_transient_selections_set_noinc(
+    DP_TransientCanvasState *tcs, DP_TransientSelectionSet *tss)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    DP_ASSERT(tss);
+    DP_ASSERT(tss != tcs->transient_selections);
+    DP_selection_set_decref_nullable(tcs->selections);
+    tcs->transient_selections = tss;
+}
+
+void DP_transient_canvas_state_transient_selections_clear(
+    DP_TransientCanvasState *tcs)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    DP_selection_set_decref_nullable(tcs->selections);
+    tcs->transient_selections = NULL;
 }
 
 void DP_transient_canvas_state_intuit_background(DP_TransientCanvasState *tcs)

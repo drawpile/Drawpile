@@ -26,6 +26,8 @@ public:
 		CatchupType = QGraphicsItem::UserType + 17,
 		OutlineType = QGraphicsItem::UserType + 18,
 		CursorType = QGraphicsItem::UserType + 19,
+		PathPreviewType = QGraphicsItem::UserType + 20,
+		TransformType = QGraphicsItem::UserType + 21,
 	};
 
 	void setUpdateSceneOnRefresh(bool updateSceneOnRefresh);
@@ -44,19 +46,29 @@ private:
 
 	void doUpdateRotation(QGraphicsItem *item, qreal rotation)
 	{
-		if(m_updateSceneOnRefresh) {
-			item->scene()->update(actualSceneBoundingRect(item));
-		}
+		maybeDoSceneUpdate(item);
 		item->setRotation(rotation);
-		if(m_updateSceneOnRefresh) {
-			item->scene()->update(actualSceneBoundingRect(item));
-		}
+		maybeDoSceneUpdate(item);
 	}
 
 	void doRefresh(QGraphicsItem *item)
 	{
 		item->update();
-		if(m_updateSceneOnRefresh) {
+		maybeDoSceneUpdate(item);
+	}
+
+	void doUpdateVisibility(QGraphicsItem *item, bool visible)
+	{
+		if(m_internallyVisible != visible) {
+			m_internallyVisible = visible;
+			item->setVisible(visible);
+			maybeDoSceneUpdate(item);
+		}
+	}
+
+	void maybeDoSceneUpdate(QGraphicsItem *item)
+	{
+		if(m_updateSceneOnRefresh && m_internallyVisible) {
 			item->scene()->update(actualSceneBoundingRect(item));
 		}
 	}
@@ -80,12 +92,14 @@ private:
 	}
 
 	bool m_updateSceneOnRefresh = false;
+	bool m_internallyVisible = true;
 };
 
 class BaseItem : public QGraphicsItem, public Base {
 public:
 	void updatePosition(const QPointF &pos) { doUpdatePosition(this, pos); }
 	void updateRotation(qreal rotation) { doUpdateRotation(this, rotation); }
+	void updateVisibility(bool visible) { doUpdateVisibility(this, visible); }
 
 protected:
 	BaseItem(QGraphicsItem *parent);
@@ -97,6 +111,7 @@ class BaseObject : public QGraphicsObject, public Base {
 public:
 	void updatePosition(const QPointF &pos) { doUpdatePosition(this, pos); }
 	void updateRotation(qreal rotation) { doUpdateRotation(this, rotation); }
+	void updateVisibility(bool visible) { doUpdateVisibility(this, visible); }
 
 protected:
 	BaseObject(QGraphicsItem *parent);

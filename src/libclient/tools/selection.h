@@ -1,38 +1,30 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef TOOLS_SELECTION_H
-#define TOOLS_SELECTION_H
-#include "libclient/canvas/selection.h"
+#ifndef LIBCLIENT_TOOLS_SELECTION_H
+#define LIBCLIENT_TOOLS_SELECTION_H
 #include "libclient/net/message.h"
+#include "libclient/tools/clickdetector.h"
 #include "libclient/tools/tool.h"
+#include "libclient/tools/toolcontroller.h"
+#include <QPolygon>
+#include <QPolygonF>
+#include <QRect>
+#include <QRectF>
 
-class QImage;
-class QPolygon;
+class QPainterPath;
+
+namespace canvas {
+class SelectionModel;
+}
 
 namespace tools {
 
-/**
- * @brief Base class for selection tool
- *
- * These are used for selecting regions for copying & pasting, as well
- * as filling regions with solid color.
- */
 class SelectionTool : public Tool {
 public:
-	SelectionTool(ToolController &owner, Type type, QCursor cursor)
-		: Tool(owner, type, cursor, true, false, false)
-		, m_allowTransform{true}
-	{
-	}
+	SelectionTool(ToolController &owner, Type type, QCursor cursor);
 
-	void begin(
-		const canvas::Point &point, bool right, float zoom,
-		const QPointF &viewPos) override final;
-
-	void motion(
-		const canvas::Point &point, bool constrain, bool center,
-		const QPointF &viewPos) override final;
-
-	void end() override final;
+	void begin(const BeginParams &params) final override;
+	void motion(const MotionParams &params) final override;
+	void end() override;
 
 	void finishMultipart() override final;
 	void cancelMultipart() override final;
@@ -41,42 +33,32 @@ public:
 
 	void offsetActiveTool(int x, int y) override;
 
-	//! Start a layer region move operation
-	void startMove();
-
-	//! Allow selection moving and resizing
-	void setTransformEnabled(bool enable) { m_allowTransform = enable; }
-
-	static QImage transformSelectionImage(
-		const QImage &source, const QPolygon &target, int interpolation,
-		QPoint *offset);
-	static QPolygon destinationQuad(
-		const QImage &source, const QPolygon &target,
-		QRect *outBounds = nullptr);
-	static QImage shapeMask(
-		const QColor &color, const QPolygonF &selection, QRect *maskBounds,
-		bool mono);
-
-	// Figure out the appropriate interpolation for a transformation. If the
-	// image is only translated or rotated by a 90° step, we want to use
-	// nearest-neighbor interpolation to avoid blurring the image.
-	static int getEffectiveInterpolation(
-		const QRect &srcRect, const QPolygon &dstQuad,
-		int requestedInterpolation);
-
 protected:
-	virtual void initSelection(canvas::Selection *selection) = 0;
-	virtual void newSelectionMotion(
-		const canvas::Point &point, bool constrain, bool center) = 0;
+	int op() const { return m_op; }
+	bool antiAlias() const { return m_params.antiAlias; }
+	int defaultOp() const { return m_params.defaultOp; }
+	bool shouldDisguiseAsPutImage() const;
+	const QPointF &startPoint() const { return m_startPoint; }
 
-	QPointF m_start, m_p1, m_end;
-	canvas::Selection::Handle m_handle;
+	void updateSelectionPreview(const QPainterPath &path) const;
+	void removeSelectionPreview() const;
+
+	virtual void beginSelection(const canvas::Point &point) = 0;
+	virtual void continueSelection(const canvas::Point &point) = 0;
+	virtual void offsetSelection(const QPoint &offset) = 0;
+	virtual void cancelSelection() = 0;
+	virtual net::MessageList endSelection(uint8_t contextId) = 0;
 
 private:
-	static bool isRightAngleRotationOrReflection(const QTransform &t1);
+	void setOrRevertOp(int op);
 
-	bool m_allowTransform;
-	net::MessageList m_messages;
+	net::MessageList endDeselection(uint8_t contextId);
+	bool isInsideSelection(const QPointF &point) const;
+
+	int m_op = -1;
+	ToolController::SelectionParams m_params;
+	QPointF m_startPoint;
+	ClickDetector m_clickDetector;
 };
 
 class RectangleSelection final : public SelectionTool {
@@ -84,9 +66,18 @@ public:
 	RectangleSelection(ToolController &owner);
 
 protected:
-	void initSelection(canvas::Selection *selection) override;
-	void newSelectionMotion(
-		const canvas::Point &point, bool constrain, bool center) override;
+	void beginSelection(const canvas::Point &point) override;
+	void continueSelection(const canvas::Point &point) override;
+	void offsetSelection(const QPoint &offset) override;
+	void cancelSelection() override;
+	net::MessageList endSelection(uint8_t contextId) override;
+
+private:
+	void updateRectangleSelectionPreview();
+	QRect getRect() const;
+	QRectF getRectF() const;
+
+	QPointF m_end;
 };
 
 class PolygonSelection final : public SelectionTool {
@@ -94,9 +85,17 @@ public:
 	PolygonSelection(ToolController &owner);
 
 protected:
-	void initSelection(canvas::Selection *selection) override;
-	void newSelectionMotion(
-		const canvas::Point &point, bool constrain, bool center) override;
+	void beginSelection(const canvas::Point &point) override;
+	void continueSelection(const canvas::Point &point) override;
+	void offsetSelection(const QPoint &offset) override;
+	void cancelSelection() override;
+	net::MessageList endSelection(uint8_t contextId) override;
+
+private:
+	void updatePolygonSelectionPreview();
+
+	QPolygon m_polygon;
+	QPolygonF m_polygonF;
 };
 
 }

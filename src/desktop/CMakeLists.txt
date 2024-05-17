@@ -228,12 +228,16 @@ target_sources(drawpile PRIVATE
 	scene/noticeitem.h
 	scene/outlineitem.cpp
 	scene/outlineitem.h
+	scene/pathpreviewitem.cpp
+	scene/pathpreviewitem.h
 	scene/scenewrapper.cpp
 	scene/scenewrapper.h
 	scene/selectionitem.cpp
 	scene/selectionitem.h
 	scene/toggleitem.cpp
 	scene/toggleitem.h
+	scene/transformitem.cpp
+	scene/transformitem.h
 	scene/usermarkeritem.cpp
 	scene/usermarkeritem.h
 	toolwidgets/annotationsettings.cpp
@@ -254,6 +258,8 @@ target_sources(drawpile PRIVATE
 	toolwidgets/selectionsettings.h
 	toolwidgets/toolsettings.cpp
 	toolwidgets/toolsettings.h
+	toolwidgets/transformsettings.cpp
+	toolwidgets/transformsettings.h
 	toolwidgets/zoomsettings.cpp
 	toolwidgets/zoomsettings.h
 	ui/abusereport.ui
@@ -277,7 +283,6 @@ target_sources(drawpile PRIVATE
 	ui/playback.ui
 	ui/resetsession.ui
 	ui/resizedialog.ui
-	ui/selectsettings.ui
 	ui/serverlog.ui
 	ui/sessionsettings.ui
 	ui/tablettest.ui

@@ -61,6 +61,10 @@ struct DumpPlaybackDialog::Private {
 			return tr("document metadata type %1").arg(aa->affected_id);
 		case DP_AFFECTED_DOMAIN_TIMELINE:
 			return tr("timeline frame %1").arg(aa->affected_id);
+		case DP_AFFECTED_DOMAIN_SELECTIONS:
+			return tr("selection %1 of user %2")
+				.arg(aa->affected_id & 0xff)
+				.arg((aa->affected_id >> 8) & 0xff);
 		case DP_AFFECTED_DOMAIN_EVERYTHING:
 			return tr("everything");
 		default:

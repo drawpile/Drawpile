@@ -4,6 +4,8 @@ extern "C" {
 #include <dpengine/canvas_state.h>
 #include <dpengine/flood_fill.h>
 #include <dpengine/image.h>
+#include <dpengine/layer_content.h>
+#include <dpengine/layer_group.h>
 #include <dpengine/layer_list.h>
 #include <dpengine/layer_props.h>
 #include <dpengine/layer_props_list.h>
@@ -157,6 +159,11 @@ Timeline CanvasState::timeline() const
 	return Timeline::inc(DP_canvas_state_timeline_noinc(m_data));
 }
 
+SelectionSet CanvasState::selections() const
+{
+	return SelectionSet::inc(DP_canvas_state_selections_noinc_nullable(m_data));
+}
+
 int CanvasState::frameCount() const
 {
 	return DP_canvas_state_frame_count(m_data);
@@ -215,6 +222,27 @@ QImage CanvasState::layerToFlatImage(int layerId, const QRect &rect) const
 	} else {
 		return QImage{};
 	}
+}
+
+QRect CanvasState::layerBounds(int layerId) const
+{
+	DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(m_data);
+	DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layerId);
+	bool haveBounds = false;
+	DP_Rect bounds = {0, 0, 0, 0}; // MSVC emits bogus uninitialized warnings.
+	if(lre) {
+		if(DP_layer_routes_entry_is_group(lre)) {
+			DP_LayerGroup *lg = DP_layer_routes_entry_group(lre, m_data);
+			haveBounds = DP_layer_group_bounds(lg, &bounds);
+		} else {
+			DP_LayerContent *lc = DP_layer_routes_entry_content(lre, m_data);
+			haveBounds = DP_layer_content_bounds(lc, &bounds);
+		}
+	}
+	return haveBounds ? QRect(
+							DP_rect_x(bounds), DP_rect_y(bounds),
+							DP_rect_width(bounds), DP_rect_height(bounds))
+					  : QRect();
 }
 
 void CanvasState::toResetImage(net::MessageList &msgs, uint8_t contextId) const

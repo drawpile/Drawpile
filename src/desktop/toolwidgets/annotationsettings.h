@@ -41,10 +41,6 @@ public:
 	 */
 	void setFocusAt(int cursorPos);
 
-	void setForeground(const QColor &) override {}
-	int getSize() const override { return 0; }
-	bool getSubpixelMode() const override { return false; }
-
 	void setCanvasView(view::CanvasWrapper *canvasView) { m_canvasView = canvasView; }
 	QWidget *getHeaderWidget() override;
 

@@ -366,9 +366,6 @@ void CanvasController::updateCanvasSize(
 	emitViewRectChanged();
 
 	if(offsetX != 0 || offsetY != 0) {
-		if(m_canvasModel) {
-			m_canvasModel->offsetCanvas(offsetX, offsetY);
-		}
 		emit canvasOffset(offsetX, offsetY);
 	}
 }
@@ -1326,11 +1323,13 @@ void CanvasController::setPointerTracking(bool pointerTracking)
 }
 
 void CanvasController::setToolCapabilities(
-	bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick)
+	bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick,
+	bool fractionalTool)
 {
 	m_allowColorPick = allowColorPick;
 	m_allowToolAdjust = allowToolAdjust;
 	m_toolHandlesRightClick = toolHandlesRightClick;
+	m_fractionalTool = fractionalTool;
 }
 
 void CanvasController::setToolCursor(const QCursor &toolCursor)
@@ -1395,9 +1394,9 @@ void CanvasController::penMoveEvent(
 	if(m_dragMode == ViewDragMode::Started) {
 		moveDrag(posf.toPoint());
 	} else {
-		if(!m_prevPoint.intSame(point)) {
+		if(m_fractionalTool || !m_prevPoint.intSame(point)) {
 			if(m_penState == PenState::Up) {
-				emit penHover(point);
+				emit penHover(point, m_rotation, m_zoom, m_mirror, m_flip);
 				if(m_pointerTracking && m_canvasModel) {
 					emit pointerMove(point);
 				}
@@ -1544,7 +1543,8 @@ void CanvasController::penPressEvent(
 						emit penDown(
 							point.timeMsec(), point, point.pressure(),
 							point.xtilt(), point.ytilt(), point.rotation(),
-							button == Qt::RightButton, m_zoom, posf,
+							button == Qt::RightButton, m_rotation, m_zoom,
+							m_mirror, m_flip, posf,
 							isStylus || m_mouseSmoothing, eraserOverride);
 					break;
 				case PenMode::Colorpick:
@@ -2083,6 +2083,7 @@ void CanvasController::updateSceneTransform()
 {
 	m_scene->setCanvasTransform(calculateCanvasTransformFrom(
 		m_pos + viewToCanvasOffset(), m_zoom, m_rotation, m_mirror, m_flip));
+	m_scene->setZoom(m_zoom);
 }
 
 void CanvasController::updatePosBounds()

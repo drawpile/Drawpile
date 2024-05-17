@@ -1,184 +1,153 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/tools/selection.h"
 #include "libclient/canvas/canvasmodel.h"
-#include "libclient/canvas/paintengine.h"
-#include "libclient/drawdance/image.h"
+#include "libclient/canvas/selectionmodel.h"
 #include "libclient/net/client.h"
-#include "libclient/tools/toolcontroller.h"
-#include "libclient/tools/utils.h"
 #include <QPainter>
-#include <QPixmap>
-#include <QPolygonF>
-#include <QTransform>
-#include <QtMath>
+#include <QPainterPath>
 
 namespace tools {
 
-void SelectionTool::begin(
-	const canvas::Point &point, bool right, float zoom, const QPointF &viewPos)
+SelectionTool::SelectionTool(ToolController &owner, Type type, QCursor cursor)
+	: Tool(owner, type, cursor, true, false, false, true, false)
 {
-	Q_UNUSED(viewPos);
-	if(right) {
-		return;
-	}
+}
 
-	canvas::Selection *sel =
-		m_allowTransform ? m_owner.model()->selection() : nullptr;
-	if(sel)
-		m_handle = sel->handleAt(point, zoom);
-	else
-		m_handle = canvas::Selection::Handle::Outside;
-
-	m_start = point;
-	m_p1 = point;
-	m_end = point;
-
-	if(m_handle == canvas::Selection::Handle::Outside) {
-		net::Client *client = m_owner.client();
-		if(sel &&
-		   sel->pasteOrMoveToCanvas(
-			   m_messages, client->myId(), m_owner.activeLayer(),
-			   m_owner.selectInterpolation(), client->isCompatibilityMode())) {
-			client->sendMessages(m_messages.count(), m_messages.constData());
-			m_messages.clear();
-		}
-
-		sel = new canvas::Selection;
-		initSelection(sel);
-		m_owner.model()->setSelection(sel);
+void SelectionTool::begin(const BeginParams &params)
+{
+	m_clickDetector.begin(params.viewPos);
+	if(params.right) {
+		m_op = -1;
 	} else {
-		sel->beginAdjustment(m_handle);
+		m_params = m_owner.selectionParams();
+		m_op = defaultOp();
+		m_startPoint = params.point;
+		beginSelection(params.point);
 	}
 }
 
-void SelectionTool::motion(
-	const canvas::Point &point, bool constrain, bool center,
-	const QPointF &viewPos)
+void SelectionTool::motion(const MotionParams &params)
 {
-	Q_UNUSED(viewPos);
-	canvas::Selection *sel = m_owner.model()->selection();
-	if(!sel)
-		return;
-
-	m_end = point;
-
-	if(m_handle == canvas::Selection::Handle::Outside) {
-		newSelectionMotion(point, constrain, center);
-
-	} else {
-		if(sel->pasteImage().isNull() &&
-		   !m_owner.model()->aclState()->isLayerLocked(m_owner.activeLayer())) {
-			startMove();
+	m_clickDetector.motion(params.viewPos);
+	if(m_op != -1) {
+		if(params.constrain) {
+			if(params.center) {
+				setOrRevertOp(DP_MSG_SELECTION_PUT_OP_INTERSECT);
+			} else {
+				setOrRevertOp(DP_MSG_SELECTION_PUT_OP_UNITE);
+			}
+		} else if(params.center) {
+			setOrRevertOp(DP_MSG_SELECTION_PUT_OP_EXCLUDE);
+		} else {
+			m_op = defaultOp();
 		}
-
-		sel->adjustGeometry(m_start, point, constrain);
+		continueSelection(params.point);
 	}
 }
 
 void SelectionTool::end()
 {
-	canvas::Selection *sel = m_owner.model()->selection();
-	if(!sel)
-		return;
-
-	// The shape must be closed after the end of the selection operation
-	if(!m_owner.model()->selection()->closeShape(
-		   QRectF(QPointF(), m_owner.model()->size()))) {
-		// Clear selection if it was entirely outside the canvas
-		m_owner.model()->setSelection(nullptr);
-		return;
-	}
-
-	// Remove tiny selections
-	QRectF selrect = sel->boundingRect();
-	if(selrect.width() * selrect.height() <= 2) {
-		m_owner.model()->setSelection(nullptr);
-		return;
-	}
-
-	// Toggle adjustment mode if just clicked
-	if((m_end - m_start).manhattanLength() < 2.0) {
-		canvas::Selection::AdjustmentMode nextMode;
-		switch(sel->adjustmentMode()) {
-		case canvas::Selection::AdjustmentMode::Scale:
-			nextMode = canvas::Selection::AdjustmentMode::Rotate;
-			break;
-		case canvas::Selection::AdjustmentMode::Rotate:
-			nextMode = canvas::Selection::AdjustmentMode::Distort;
-			break;
-		default:
-			nextMode = canvas::Selection::AdjustmentMode::Scale;
-			break;
+	m_clickDetector.end();
+	if(m_op != -1) {
+		bool isClick = m_clickDetector.isClick();
+		if(isClick && isInsideSelection(startPoint())) {
+			cancelSelection();
+			emit m_owner.transformRequested();
+		} else {
+			net::Client *client = m_owner.client();
+			uint8_t contextId = client->myId();
+			net::MessageList msgs = m_op != defaultOp() || !isClick
+										? endSelection(contextId)
+										: endDeselection(contextId);
+			if(!msgs.isEmpty()) {
+				msgs.prepend(net::makeUndoPointMessage(contextId));
+				client->sendMessages(msgs.size(), msgs.constData());
+			}
 		}
-		sel->setAdjustmentMode(nextMode);
+		m_op = -1;
 	}
 }
 
 void SelectionTool::finishMultipart()
 {
-	canvas::Selection *sel = m_owner.model()->selection();
-	net::Client *client = m_owner.client();
-	if(sel &&
-	   sel->pasteOrMoveToCanvas(
-		   m_messages, client->myId(), m_owner.activeLayer(),
-		   m_owner.selectInterpolation(), client->isCompatibilityMode())) {
-		m_owner.client()->sendMessages(
-			m_messages.count(), m_messages.constData());
-		m_messages.clear();
-		m_owner.model()->setSelection(nullptr);
-	}
+	end();
 }
 
 void SelectionTool::cancelMultipart()
 {
-	m_owner.model()->setSelection(nullptr);
+	if(m_op != -1) {
+		cancelSelection();
+		m_op = -1;
+	}
 }
-
 
 void SelectionTool::undoMultipart()
 {
-	canvas::Selection *sel = m_owner.model()->selection();
-	if(sel) {
-		if(sel->isTransformed())
-			sel->reset();
-		else
-			cancelMultipart();
+	if(m_op != -1) {
+		cancelSelection();
+		m_op = -1;
 	}
 }
 
 bool SelectionTool::isMultipart() const
 {
-	return m_owner.model()->selection() != nullptr;
+	return m_op != -1;
 }
 
 void SelectionTool::offsetActiveTool(int x, int y)
 {
-	canvas::Selection *sel = m_owner.model()->selection();
-	if(sel) {
-		sel->offsetBy(x, y);
+	if(m_op != -1) {
+		QPoint offset(x, y);
+		m_startPoint += offset;
+		offsetSelection(offset);
 	}
 }
 
-void SelectionTool::startMove()
+bool SelectionTool::shouldDisguiseAsPutImage() const
 {
-	canvas::CanvasModel *model = m_owner.model();
-	canvas::Selection *sel = model->selection();
-	Q_ASSERT(sel);
-
-	// Get the selection shape mask (needs to be done before the shape is
-	// overwritten by setMoveImage)
-	QRect maskBounds;
-	QImage eraseMask = sel->shapeMask(Qt::white, &maskBounds);
-
-	// Copy layer content into move preview buffer.
-	int layerId = m_owner.activeLayer();
-	const QImage img = model->selectionToImage(layerId);
-	sel->setMoveImage(img, maskBounds, model->size(), layerId);
-
-	// The actual canvas pixels aren't touch yet, so we create a temporary
-	// sublayer to erase the selected region.
-	model->paintEngine()->previewCut(layerId, maskBounds, eraseMask);
+	// If we're connected to a thick server, we don't want to send it unknown
+	// message types because that'll get us kicked.
+	return m_owner.client()->seemsConnectedToThickServer();
 }
+
+void SelectionTool::updateSelectionPreview(const QPainterPath &path) const
+{
+	emit m_owner.pathPreviewRequested(path);
+}
+
+void SelectionTool::removeSelectionPreview() const
+{
+	updateSelectionPreview(QPainterPath());
+}
+
+void SelectionTool::setOrRevertOp(int op)
+{
+	m_op = defaultOp() == op ? DP_MSG_SELECTION_PUT_OP_REPLACE : op;
+}
+
+net::MessageList SelectionTool::endDeselection(uint8_t contextId)
+{
+	cancelSelection();
+	return {net::makeSelectionClearMessage(
+		shouldDisguiseAsPutImage(), contextId,
+		canvas::CanvasModel::MAIN_SELECTION_ID)};
+}
+
+bool SelectionTool::isInsideSelection(const QPointF &point) const
+{
+	canvas::CanvasModel *canvas = m_owner.model();
+	if(canvas) {
+		canvas::SelectionModel *selection = canvas->selection();
+		if(selection->isValid()) {
+			QPoint p = point.toPoint();
+			const QRect &bounds = selection->bounds();
+			return bounds.contains(p) &&
+				   qAlpha(selection->mask().pixel(p - bounds.topLeft())) != 0;
+		}
+	}
+	return false;
+}
+
 
 RectangleSelection::RectangleSelection(ToolController &owner)
 	: SelectionTool(
@@ -187,29 +156,101 @@ RectangleSelection::RectangleSelection(ToolController &owner)
 {
 }
 
-void RectangleSelection::initSelection(canvas::Selection *selection)
+void RectangleSelection::beginSelection(const canvas::Point &point)
 {
-	QPoint p = m_start.toPoint();
-	selection->setShapeRect(QRect(p, p));
+	m_end = point;
+	updateRectangleSelectionPreview();
 }
 
-void RectangleSelection::newSelectionMotion(
-	const canvas::Point &point, bool constrain, bool center)
+void RectangleSelection::continueSelection(const canvas::Point &point)
 {
-	QPointF p;
-	if(constrain)
-		p = constraints::square(m_start, point);
-	else
-		p = point;
-
-	if(center)
-		m_p1 = m_start - (p.toPoint() - m_start);
-	else
-		m_p1 = m_start;
-
-	m_owner.model()->selection()->setShapeRect(
-		QRectF(m_p1, p).normalized().toRect());
+	m_end = point;
+	updateRectangleSelectionPreview();
 }
+
+void RectangleSelection::offsetSelection(const QPoint &offset)
+{
+	m_end += offset;
+	updateRectangleSelectionPreview();
+}
+
+void RectangleSelection::cancelSelection()
+{
+	removeSelectionPreview();
+}
+
+net::MessageList RectangleSelection::endSelection(uint8_t contextId)
+{
+	removeSelectionPreview();
+
+	QRect area;
+	QImage mask;
+	if(antiAlias()) {
+		QRectF rect = getRectF();
+		if(!rect.isEmpty()) {
+			area = rect.toAlignedRect();
+			mask = QImage(area.size(), QImage::Format_ARGB32_Premultiplied);
+			mask.fill(0);
+			QPainter painter(&mask);
+			painter.setPen(Qt::NoPen);
+			painter.setBrush(Qt::black);
+			painter.setRenderHint(QPainter::Antialiasing, true);
+			painter.drawRect(
+				QRectF(rect.topLeft() - QPointF(area.topLeft()), rect.size()));
+		}
+	} else {
+		area = getRect();
+	}
+
+	if(area.isEmpty()) {
+		return {net::makeSelectionClearMessage(
+			shouldDisguiseAsPutImage(), contextId,
+			canvas::CanvasModel::MAIN_SELECTION_ID)};
+	} else {
+		net::MessageList msgs;
+		net::makeSelectionPutMessages(
+			msgs, shouldDisguiseAsPutImage(), contextId,
+			canvas::CanvasModel::MAIN_SELECTION_ID, op(), area.x(), area.y(),
+			area.width(), area.height(), mask);
+		return msgs;
+	}
+}
+
+void RectangleSelection::updateRectangleSelectionPreview()
+{
+	QPainterPath path;
+	if(antiAlias()) {
+		QRectF rect = getRectF();
+		if(!rect.isEmpty()) {
+			path.addRect(rect);
+		}
+	} else {
+		QRect rect = getRect();
+		if(!rect.isEmpty()) {
+			path.addRect(rect);
+		}
+	}
+
+	if(path.isEmpty()) {
+		removeSelectionPreview();
+	} else {
+		updateSelectionPreview(path);
+	}
+}
+
+QRect RectangleSelection::getRect() const
+{
+	return getRectF().toRect();
+}
+
+QRectF RectangleSelection::getRectF() const
+{
+	const QPointF &start = startPoint();
+	return QRectF(
+		QPointF(qMin(start.x(), m_end.x()), qMin(start.y(), m_end.y())),
+		QPointF(qMax(start.x(), m_end.x()), qMax(start.y(), m_end.y())));
+}
+
 
 PolygonSelection::PolygonSelection(ToolController &owner)
 	: SelectionTool(
@@ -218,123 +259,110 @@ PolygonSelection::PolygonSelection(ToolController &owner)
 {
 }
 
-void PolygonSelection::initSelection(canvas::Selection *selection)
+void PolygonSelection::beginSelection(const canvas::Point &point)
 {
-	selection->setShape(QPolygonF({m_start}));
-}
-
-void PolygonSelection::newSelectionMotion(
-	const canvas::Point &point, bool constrain, bool center)
-{
-	Q_UNUSED(constrain);
-	Q_UNUSED(center);
-
-	Q_ASSERT(m_owner.model()->selection());
-	m_owner.model()->selection()->addPointToShape(point);
-}
-
-QImage SelectionTool::transformSelectionImage(
-	const QImage &source, const QPolygon &target, int interpolation,
-	QPoint *offset)
-{
-	Q_ASSERT(!source.isNull());
-	Q_ASSERT(target.size() == 4);
-	QRect bounds;
-	QPolygon dstQuad = destinationQuad(source, target, &bounds);
-	QImage img = drawdance::transformImage(
-		source, dstQuad,
-		getEffectiveInterpolation(source.rect(), dstQuad, interpolation),
-		offset);
-	if(img.isNull()) {
-		qWarning("Couldn't transform selection image: %s", DP_error());
-		return QImage();
+	if(antiAlias()) {
+		m_polygonF.clear();
+		m_polygonF.append(point);
 	} else {
-		if(offset) {
-			*offset += bounds.topLeft();
+		m_polygon.clear();
+		m_polygon.append(point.toPoint());
+	}
+	updatePolygonSelectionPreview();
+}
+
+void PolygonSelection::continueSelection(const canvas::Point &point)
+{
+	if(antiAlias()) {
+		if(!point.intSame(m_polygonF.last())) {
+			m_polygonF.append(point);
+			updatePolygonSelectionPreview();
 		}
-		return img;
-	}
-}
-
-QPolygon SelectionTool::destinationQuad(
-	const QImage &source, const QPolygon &target, QRect *outBounds)
-{
-	Q_ASSERT(!source.isNull());
-	Q_ASSERT(target.size() == 4);
-
-	const QRect bounds = target.boundingRect();
-
-	if(outBounds) {
-		*outBounds = bounds;
-	}
-	return target.translated(-bounds.topLeft());
-}
-
-QImage SelectionTool::shapeMask(
-	const QColor &color, const QPolygonF &selection, QRect *maskBounds,
-	bool mono)
-{
-	const QRectF bf = selection.boundingRect();
-	const QRect b = bf.toRect();
-	const QPolygonF p = selection.translated(-bf.topLeft());
-
-	QImage mask(
-		b.size(),
-		mono ? QImage::Format_Mono : QImage::Format_ARGB32_Premultiplied);
-	mask.fill(0);
-
-	QPainter painter(&mask);
-	painter.setPen(Qt::NoPen);
-	painter.setBrush(color);
-	painter.drawPolygon(p);
-
-	if(maskBounds)
-		*maskBounds = b;
-
-	return mask;
-}
-
-int SelectionTool::getEffectiveInterpolation(
-	const QRect &srcRect, const QPolygon &dstQuad, int requestedInterpolation)
-{
-	if(requestedInterpolation != DP_MSG_TRANSFORM_REGION_MODE_NEAREST &&
-	   dstQuad.size() == 4) {
-		QPolygon srcQuad(
-			{QPoint(0, 0), QPoint(srcRect.width(), 0),
-			 QPoint(srcRect.width(), srcRect.height()),
-			 QPoint(0, srcRect.height())});
-		QTransform tf;
-		if(QTransform::quadToQuad(srcQuad, dstQuad, tf)) {
-			tf.setMatrix( // Remove translation.
-				tf.m11(), tf.m12(), tf.m13(), tf.m21(), tf.m22(), tf.m23(), 0.0,
-				0.0, tf.m33());
-			if(isRightAngleRotationOrReflection(tf)) {
-				return DP_MSG_TRANSFORM_REGION_MODE_NEAREST;
-			}
+	} else {
+		QPoint p = point.toPoint();
+		if(p != m_polygon.last()) {
+			m_polygon.append(p);
+			updatePolygonSelectionPreview();
 		}
 	}
-	return requestedInterpolation;
 }
 
-bool SelectionTool::isRightAngleRotationOrReflection(const QTransform &t1)
+void PolygonSelection::offsetSelection(const QPoint &offset)
 {
-	QPoint scales[] = {
-		QPoint(1, 1), QPoint(-1, 1), QPoint(1, -1), QPoint(-1, -1)};
-	for(int angle = 0; angle <= 270; angle += 90) {
-		for(const QPointF scale : scales) {
-			QTransform t2;
-			if(angle != 0) {
-				t2.rotate(angle);
-			}
-			if(scale.x() != 1 || scale.y() != 1) {
-				t2.scale(scale.x(), scale.y());
-			}
-			if(qFuzzyCompare(t1, t2)) {
-				return true;
-			}
+	if(antiAlias()) {
+		m_polygonF.translate(offset);
+	} else {
+		m_polygon.translate(offset);
+	}
+	updatePolygonSelectionPreview();
+}
+
+void PolygonSelection::cancelSelection()
+{
+	removeSelectionPreview();
+}
+
+net::MessageList PolygonSelection::endSelection(uint8_t contextId)
+{
+	removeSelectionPreview();
+
+	QRect area;
+	if(antiAlias()) {
+		if(m_polygonF.size() >= 2) {
+			QRectF bounds = m_polygonF.boundingRect();
+			area = bounds.toAlignedRect();
+			m_polygonF.translate(-QPointF(area.topLeft()));
+		}
+	} else {
+		if(m_polygon.size() >= 2) {
+			area = m_polygon.boundingRect();
+			m_polygon.translate(-area.topLeft());
 		}
 	}
-	return false;
+
+	if(area.isEmpty()) {
+		return {net::makeSelectionClearMessage(
+			shouldDisguiseAsPutImage(), contextId,
+			canvas::CanvasModel::MAIN_SELECTION_ID)};
+	} else {
+		QImage mask(area.size(), QImage::Format_ARGB32_Premultiplied);
+		mask.fill(0);
+		QPainter painter(&mask);
+		painter.setPen(Qt::NoPen);
+		painter.setBrush(Qt::black);
+		painter.setRenderHint(QPainter::Antialiasing, antiAlias());
+		if(antiAlias()) {
+			painter.drawPolygon(m_polygonF);
+		} else {
+			painter.drawPolygon(m_polygon);
+		}
+		net::MessageList msgs;
+		net::makeSelectionPutMessages(
+			msgs, shouldDisguiseAsPutImage(), contextId,
+			canvas::CanvasModel::MAIN_SELECTION_ID, op(), area.x(), area.y(),
+			area.width(), area.height(), mask);
+		return msgs;
+	}
+}
+
+void PolygonSelection::updatePolygonSelectionPreview()
+{
+	QPainterPath path;
+	if(antiAlias()) {
+		if(m_polygonF.size() >= 2) {
+			path.addPolygon(m_polygonF);
+		}
+	} else {
+		if(m_polygon.size() >= 2) {
+			path.addPolygon(m_polygon);
+		}
+	}
+
+	if(path.isEmpty()) {
+		removeSelectionPreview();
+	} else {
+		updateSelectionPreview(path);
+	}
 }
 
 }

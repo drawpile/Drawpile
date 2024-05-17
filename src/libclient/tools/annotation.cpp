@@ -12,7 +12,7 @@ namespace tools {
 Annotation::Annotation(ToolController &owner)
 	: Tool(
 		  owner, ANNOTATION, QCursor(QPixmap(":cursors/text.png"), 2, 2), false,
-		  false, true)
+		  false, true, false, true)
 	, m_selectedId{0}
 {
 }
@@ -21,20 +21,19 @@ Annotation::Annotation(ToolController &owner)
  * The annotation tool has fairly complex needs. Clicking on an existing
  * annotation selects it, otherwise a new annotation is started.
  */
-void Annotation::begin(
-	const canvas::Point &point, bool right, float zoom, const QPointF &viewPos)
+void Annotation::begin(const BeginParams &params)
 {
-	Q_UNUSED(viewPos);
-	if(right) {
+	if(params.right) {
 		m_selectedId = 0;
 		m_owner.setActiveAnnotation(m_selectedId);
 		return;
 	}
 
+	QPointF point = params.point;
 	m_p1 = point;
 	m_p2 = point;
 
-	const int handleSize = qRound(qMax(10.0, 10.0 / zoom) / 2.0);
+	const int handleSize = qRound(qMax(10.0, 10.0 / params.zoom) / 2.0);
 	drawdance::Annotation selection =
 		m_owner.model()->paintEngine()->getAnnotationAt(
 			point.x(), point.y(), handleSize);
@@ -106,16 +105,12 @@ Annotation::handleAt(const QRect &rect, const QPoint &point, int handleSize)
 /**
  * Change the shape of the selected annotation.
  */
-void Annotation::motion(
-	const canvas::Point &point, bool constrain, bool center,
-	const QPointF &viewPos)
+void Annotation::motion(const MotionParams &params)
 {
-	Q_UNUSED(constrain);
-	Q_UNUSED(center);
-	Q_UNUSED(viewPos);
 	if(m_selectedId == 0)
 		return;
 
+	QPointF point = params.point;
 	const QPoint delta = (point - m_p2).toPoint();
 	if(delta.manhattanLength() == 0)
 		return;

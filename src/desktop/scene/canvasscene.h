@@ -4,13 +4,11 @@
 #define CANVAS_SCENE_H
 
 #include "desktop/scene/toggleitem.h"
-#include "libclient/canvas/selection.h"
 #include <QGraphicsScene>
 #include <QHash>
 
 namespace canvas {
 class CanvasModel;
-class Selection;
 }
 
 namespace drawdance {
@@ -26,7 +24,9 @@ class CatchupItem;
 class LaserTrailItem;
 class NoticeItem;
 class OutlineItem;
+class PathPreviewItem;
 class SelectionItem;
+class TransformItem;
 class UserMarkerItem;
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 class CursorItem;
@@ -49,6 +49,7 @@ public:
 
 	QTransform canvasTransform() const;
 	void setCanvasTransform(const QTransform &matrix);
+	void setZoom(qreal zoom);
 
 	void setCanvasPixelGrid(bool pixelGrid);
 
@@ -81,10 +82,18 @@ public:
 	//! Get an annotation item
 	AnnotationItem *getAnnotationItem(int id);
 
+	void setToolCapabilities(
+		bool allowColorPick, bool allowToolAdjust, bool allowRightClick,
+		bool fractionalTool, bool ignoresSelections);
+
+	void setTransformToolState(int mode, int handle, bool dragging);
+
 	void setShowOwnUserMarker(bool showOwnUserMarker);
 	void setUserMarkerPersistence(int userMarkerPersistence);
 
 	bool hasCatchup() const { return m_catchup != nullptr; }
+
+	void setPathPreview(const QPainterPath &path);
 
 	void setOutline(qreal size, qreal width);
 	void setOutlineTransform(const QPointF &pos, qreal angle);
@@ -141,7 +150,6 @@ signals:
 	void annotationDeleted(int id);
 
 private slots:
-	void onSelectionChanged(canvas::Selection *sel);
 	void onUserJoined(int id, const QString &name);
 	void handleCanvasResize(
 		const QSize newSize, const QPoint &offset, const QSize &oldSize);
@@ -154,6 +162,9 @@ private slots:
 
 	void annotationsChanged(const drawdance::AnnotationList &al);
 	void previewAnnotation(int id, const QRect &shape);
+
+	void setSelection(bool valid, const QRect &bounds, const QImage &mask);
+	void onTransformChanged();
 
 private:
 	static constexpr qreal NOTICE_OFFSET = 16.0;
@@ -178,8 +189,9 @@ private:
 	//! User cursor items
 	QHash<uint8_t, UserMarkerItem *> m_usermarkers;
 
-	//! Current selection
+	PathPreviewItem *m_pathPreview;
 	SelectionItem *m_selection;
+	TransformItem *m_transform;
 
 	qreal m_topOffset = 0.0;
 	NoticeItem *m_transformNotice;
@@ -202,7 +214,9 @@ private:
 	bool m_showLaserTrails;
 	bool m_showOwnUserMarker;
 	bool m_cursorOnCanvas;
+	bool m_selectionIgnored;
 	int m_userMarkerPersistence;
+	qreal m_zoom = 1.0;
 	QPointF m_cursorPos;
 
 	QRectF m_sceneBounds;

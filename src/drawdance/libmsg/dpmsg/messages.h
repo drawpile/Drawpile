@@ -105,6 +105,8 @@ typedef enum DP_MessageType {
     DP_MSG_KEY_FRAME_RETITLE = 171,
     DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES = 172,
     DP_MSG_KEY_FRAME_DELETE = 173,
+    DP_MSG_SELECTION_PUT = 174,
+    DP_MSG_SELECTION_CLEAR = 175,
     DP_MSG_UNDO = 255,
     DP_MSG_TYPE_COUNT,
 } DP_MessageType;
@@ -1355,6 +1357,15 @@ bool DP_msg_layer_visibility_visible(const DP_MsgLayerVisibility *mlv);
  * Note that since the message length is fairly limited, a
  * large image may have to be divided into multiple PutImage
  * commands.
+ *
+ * Compatibility hack: this message is also used to disguise selection
+ * messages when drawing on the builtin server. If the blend mode is
+ * 253, this is really a SelectionPut message; the bottom octet of
+ * layer is the selection id, the upper octet is the operation, x and
+ * y are actually i32, w and h are clamped to u16, the image is the
+ * mask (which may be empty.) If the blend mode is 254, this is really
+ * a SelectionClear message; the bottom octet of layer is the
+ * selection id and everything else is ignored.
  */
 
 #define DP_MSG_PUT_IMAGE_STATIC_LENGTH 19
@@ -1653,6 +1664,8 @@ uint16_t DP_msg_annotation_delete_id(const DP_MsgAnnotationDelete *mad);
  * is DEFLATEd 1 bit per pixel bitmap data.
  *
  * For axis aligned rectangle selections, no bitmap is necessary.
+ *
+ * If the layer is 0, the selection with id 1 is transformed instead.
  */
 
 #define DP_MSG_MOVE_REGION_STATIC_LENGTH 50
@@ -2044,12 +2057,15 @@ int DP_msg_draw_dabs_mypaint_dabs_count(const DP_MsgDrawDabsMyPaint *mddmp);
 /*
  * DP_MSG_MOVE_RECT
  *
- * Move a rectangular area on a layer.
+ * Move a rectangular area on a layer or a selection.
  *
  * A mask image can be given to mask out part of the region
  * to support non-rectangular selections.
  *
  * Source and target rects may be (partially) outside the canvas.
+ *
+ * If source is 0, layer refers to a selection instead: the lower
+ * octet is the source and the upper octet is the target selection id.
  */
 
 #define DP_MSG_MOVE_RECT_STATIC_LENGTH 28
@@ -2315,6 +2331,9 @@ uint16_t DP_msg_layer_tree_delete_merge_to(const DP_MsgLayerTreeDelete *mltd);
  * is DEFLATEd 8 bit alpha.
  *
  * For axis aligned rectangle selections, no bitmap is necessary.
+ *
+ * If source is 0, layer refers to a selection instead: the lower
+ * octet is the source and the upper octet is the target selection id.
  */
 
 #define DP_MSG_TRANSFORM_REGION_STATIC_LENGTH 53
@@ -2698,6 +2717,111 @@ DP_msg_key_frame_delete_move_track_id(const DP_MsgKeyFrameDelete *mkfd);
 
 uint16_t
 DP_msg_key_frame_delete_move_frame_index(const DP_MsgKeyFrameDelete *mkfd);
+
+
+/*
+ * DP_MSG_SELECTION_PUT
+ *
+ * Modify selection, either by a rectangle or a pixel mask.
+ *
+ * The selection_id specifies which of the user's selections is affected.
+ * An id of 0 is invalid.
+ *
+ * The mask is DEFLATEd 8 bit alpha. If absent, this fills the entire
+ * rectangle instead.
+ *
+ * Strictly speaking, this is not compatible with the 2.2 protocol and
+ * clients before version 2.2.2 don't understand it. However, since it
+ * doesn't have any visual effect, it doesn't cause desync, so we accept it
+ * anyway. In sessions on the builtin server, this is disguised as a
+ * PutImage message instead, since that doesn't allow unknown messages.
+ */
+
+#define DP_MSG_SELECTION_PUT_STATIC_LENGTH 14
+
+#define DP_MSG_SELECTION_PUT_OP_REPLACE    0
+#define DP_MSG_SELECTION_PUT_OP_UNITE      1
+#define DP_MSG_SELECTION_PUT_OP_INTERSECT  2
+#define DP_MSG_SELECTION_PUT_OP_EXCLUDE    3
+#define DP_MSG_SELECTION_PUT_OP_COMPLEMENT 4
+
+#define DP_MSG_SELECTION_PUT_NUM_OP 5
+#define DP_MSG_SELECTION_PUT_ALL_OP                                         \
+    DP_MSG_SELECTION_PUT_OP_REPLACE, DP_MSG_SELECTION_PUT_OP_UNITE,         \
+        DP_MSG_SELECTION_PUT_OP_INTERSECT, DP_MSG_SELECTION_PUT_OP_EXCLUDE, \
+        DP_MSG_SELECTION_PUT_OP_COMPLEMENT
+
+const char *DP_msg_selection_put_op_variant_name(unsigned int value);
+
+#define DP_MSG_SELECTION_PUT_MASK_MIN_SIZE 0
+#define DP_MSG_SELECTION_PUT_MASK_MAX_SIZE 65521
+
+typedef struct DP_MsgSelectionPut DP_MsgSelectionPut;
+
+DP_Message *
+DP_msg_selection_put_new(unsigned int context_id, uint8_t selection_id,
+                         uint8_t op, int32_t x, int32_t y, uint16_t w,
+                         uint16_t h,
+                         void (*set_mask)(size_t, unsigned char *, void *),
+                         size_t mask_size, void *mask_user);
+
+DP_Message *DP_msg_selection_put_deserialize(unsigned int context_id,
+                                             const unsigned char *buffer,
+                                             size_t length);
+
+DP_Message *DP_msg_selection_put_parse(unsigned int context_id,
+                                       DP_TextReader *reader);
+
+DP_MsgSelectionPut *DP_msg_selection_put_cast(DP_Message *msg);
+
+uint8_t DP_msg_selection_put_selection_id(const DP_MsgSelectionPut *msp);
+
+uint8_t DP_msg_selection_put_op(const DP_MsgSelectionPut *msp);
+
+int32_t DP_msg_selection_put_x(const DP_MsgSelectionPut *msp);
+
+int32_t DP_msg_selection_put_y(const DP_MsgSelectionPut *msp);
+
+uint16_t DP_msg_selection_put_w(const DP_MsgSelectionPut *msp);
+
+uint16_t DP_msg_selection_put_h(const DP_MsgSelectionPut *msp);
+
+const unsigned char *DP_msg_selection_put_mask(const DP_MsgSelectionPut *msp,
+                                               size_t *out_size);
+
+size_t DP_msg_selection_put_mask_size(const DP_MsgSelectionPut *msp);
+
+
+/*
+ * DP_MSG_SELECTION_CLEAR
+ *
+ * Remove the selection specified by the selection_id, or all selections if
+ * it's 0.
+ *
+ * Strictly speaking, this is not compatible with the 2.2 protocol and
+ * clients before version 2.2.2 don't understand it. However, since it
+ * doesn't have any visual effect, it doesn't cause desync, so we accept it
+ * anyway. In sessions on the builtin server, this is disguised as a
+ * PutImage message instead, since that doesn't allow unknown messages.
+ */
+
+#define DP_MSG_SELECTION_CLEAR_STATIC_LENGTH 1
+
+typedef struct DP_MsgSelectionClear DP_MsgSelectionClear;
+
+DP_Message *DP_msg_selection_clear_new(unsigned int context_id,
+                                       uint8_t selection_id);
+
+DP_Message *DP_msg_selection_clear_deserialize(unsigned int context_id,
+                                               const unsigned char *buffer,
+                                               size_t length);
+
+DP_Message *DP_msg_selection_clear_parse(unsigned int context_id,
+                                         DP_TextReader *reader);
+
+DP_MsgSelectionClear *DP_msg_selection_clear_cast(DP_Message *msg);
+
+uint8_t DP_msg_selection_clear_selection_id(const DP_MsgSelectionClear *msc);
 
 
 /*

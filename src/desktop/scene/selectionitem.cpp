@@ -1,254 +1,156 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/scene/selectionitem.h"
-#include "desktop/scene/arrows_data.h"
-#include "libclient/canvas/selection.h"
-#include <QApplication>
+#include "libclient/utils/selectionoutlinegenerator.h"
 #include <QPainter>
-#include <QStyleOptionGraphicsItem>
+#include <QThreadPool>
+#include <cmath>
 
 namespace drawingboard {
 
-SelectionItem::SelectionItem(
-	canvas::Selection *selection, QGraphicsItem *parent)
+SelectionItem::SelectionItem(bool ignored, QGraphicsItem *parent)
 	: BaseObject(parent)
-	, m_selection(selection)
-	, m_marchingants(0)
+	, m_ignored(ignored)
 {
-	Q_ASSERT(selection);
-	connect(
-		selection, &canvas::Selection::shapeChanged, this,
-		&SelectionItem::onShapeChanged);
-	connect(
-		selection, &canvas::Selection::pasteImageChanged, this,
-		&SelectionItem::onShapeChanged);
-	connect(
-		selection, &canvas::Selection::closed, this,
-		&SelectionItem::onShapeChanged);
-	connect(
-		selection, &canvas::Selection::adjustmentModeChanged, this,
-		&SelectionItem::onAdjustmentModeChanged);
-	m_shape = m_selection->shape();
-}
-
-void SelectionItem::onShapeChanged()
-{
-	refreshGeometry();
-	m_shape = m_selection->shape();
-}
-
-void SelectionItem::onAdjustmentModeChanged()
-{
-	refresh();
 }
 
 QRectF SelectionItem::boundingRect() const
 {
-	const int h = m_selection ? m_selection->handleSize() : 0;
-	return m_shape.boundingRect().adjusted(-h, -h, h, h);
+	return m_boundingRect;
 }
 
-static inline void
-drawPolygon(QPainter *painter, const QPolygonF &polygon, bool closed)
+void SelectionItem::setModel(const QRect &bounds, const QImage &mask)
 {
-	if(closed)
-		painter->drawPolygon(polygon);
-	else
-		painter->drawPolyline(polygon);
-}
-
-static const QPointF *
-getScaleArrow(canvas::Selection::Handle handle, unsigned int &outPlen)
-{
-	switch(handle) {
-	case canvas::Selection::Handle::TopLeft:
-	case canvas::Selection::Handle::BottomRight:
-		outPlen = sizeof(arrows::diag1);
-		return arrows::diag1;
-	case canvas::Selection::Handle::TopRight:
-	case canvas::Selection::Handle::BottomLeft:
-		outPlen = sizeof(arrows::diag2);
-		return arrows::diag2;
-	case canvas::Selection::Handle::Top:
-	case canvas::Selection::Handle::Bottom:
-		outPlen = sizeof(arrows::vertical);
-		return arrows::vertical;
-	case canvas::Selection::Handle::Left:
-	case canvas::Selection::Handle::Right:
-		outPlen = sizeof(arrows::horizontal);
-		return arrows::horizontal;
-	default:
-		return nullptr;
+	++m_executionId;
+	emit outlineRegenerating();
+	m_bounds = bounds;
+	m_mask = mask;
+	m_path.clear();
+	m_maskOpacity = 0.0;
+	updateBoundingRectFromBounds();
+	if(m_bounds.isEmpty()) {
+		qWarning("Selection mask is empty");
+	} else {
+		SelectionOutlineGenerator *gen =
+			new SelectionOutlineGenerator(m_executionId, m_mask, false, 0, 0);
+		connect(
+			this, &SelectionItem::outlineRegenerating, gen,
+			&SelectionOutlineGenerator::cancel, Qt::DirectConnection);
+		connect(
+			gen, &SelectionOutlineGenerator::outlineGenerated, this,
+			&SelectionItem::setOutline, Qt::QueuedConnection);
+		gen->setAutoDelete(true);
+		QThreadPool::globalInstance()->start(gen);
 	}
 }
 
-static const QPointF *
-getRotationArrow(canvas::Selection::Handle handle, unsigned int &outPlen)
+void SelectionItem::setTransparentDelay(qreal transparentDelay)
 {
-	switch(handle) {
-	case canvas::Selection::Handle::TopLeft:
-		outPlen = sizeof(arrows::rotate1);
-		return arrows::rotate1;
-	case canvas::Selection::Handle::TopRight:
-		outPlen = sizeof(arrows::rotate2);
-		return arrows::rotate2;
-	case canvas::Selection::Handle::BottomRight:
-		outPlen = sizeof(arrows::rotate3);
-		return arrows::rotate3;
-	case canvas::Selection::Handle::BottomLeft:
-		outPlen = sizeof(arrows::rotate4);
-		return arrows::rotate4;
-	case canvas::Selection::Handle::Left:
-	case canvas::Selection::Handle::Right:
-		outPlen = sizeof(arrows::verticalSkew);
-		return arrows::verticalSkew;
-	case canvas::Selection::Handle::Top:
-	case canvas::Selection::Handle::Bottom:
-		outPlen = sizeof(arrows::horizontalSkew);
-		return arrows::horizontalSkew;
-	default:
-		return nullptr;
+	if(m_transparentDelay != transparentDelay) {
+		m_transparentDelay = transparentDelay;
+		refresh();
 	}
 }
 
-static const QPointF *
-getDistortArrow(canvas::Selection::Handle handle, unsigned int &outPlen)
+void SelectionItem::setIgnored(bool ignored)
 {
-	switch(handle) {
-	case canvas::Selection::Handle::TopLeft:
-		outPlen = sizeof(arrows::distortTopLeft);
-		return arrows::distortTopLeft;
-	case canvas::Selection::Handle::Top:
-		outPlen = sizeof(arrows::distortTop);
-		return arrows::distortTop;
-	case canvas::Selection::Handle::TopRight:
-		outPlen = sizeof(arrows::distortTopRight);
-		return arrows::distortTopRight;
-	case canvas::Selection::Handle::Right:
-		outPlen = sizeof(arrows::distortRight);
-		return arrows::distortRight;
-	case canvas::Selection::Handle::BottomRight:
-		outPlen = sizeof(arrows::distortBottomRight);
-		return arrows::distortBottomRight;
-	case canvas::Selection::Handle::Bottom:
-		outPlen = sizeof(arrows::distortBottom);
-		return arrows::distortBottom;
-	case canvas::Selection::Handle::BottomLeft:
-		outPlen = sizeof(arrows::distortBottomLeft);
-		return arrows::distortBottomLeft;
-	case canvas::Selection::Handle::Left:
-		outPlen = sizeof(arrows::distortLeft);
-		return arrows::distortLeft;
-	default:
-		return nullptr;
+	if(m_ignored != ignored) {
+		m_ignored = ignored;
+		refresh();
 	}
 }
 
-typedef const QPointF *(*GetArrowFunction)(
-	canvas::Selection::Handle handle, unsigned int &outPlen);
-
-static GetArrowFunction
-mapModeToGetArrowFunction(canvas::Selection::AdjustmentMode mode)
+void SelectionItem::animationStep(qreal dt)
 {
-	switch(mode) {
-	case canvas::Selection::AdjustmentMode::Scale:
-		return getScaleArrow;
-	case canvas::Selection::AdjustmentMode::Rotate:
-		return getRotationArrow;
-	case canvas::Selection::AdjustmentMode::Distort:
-		return getDistortArrow;
-	default:
-		qWarning("mapModeToGetArrowFunction: unknown mode");
-		return nullptr;
+	bool havePath = !m_path.isEmpty();
+	bool haveMask = !m_mask.isNull();
+	bool needsRefresh = false;
+
+	if(haveMask) {
+		if(havePath) {
+			m_maskOpacity -= dt * 5.0;
+			needsRefresh = true;
+			if(m_maskOpacity <= 0.0) {
+				m_mask = QImage();
+			}
+		} else if(m_maskOpacity < 1.0) {
+			// Generating a mask for a large selection can take a while, which
+			// leads to the animation lurching ahead. We mitigate that by
+			// checking if we're at the start of the fade-in.
+			m_maskOpacity = m_maskOpacity == 0.0
+								? 0.001
+								: qMin(1.0, m_maskOpacity + dt * 5.0);
+			needsRefresh = true;
+		}
 	}
-}
 
-static void drawHandle(
-	QPainter *painter, const QPointF &point, qreal size,
-	canvas::Selection::Handle handle, GetArrowFunction getArrow)
-{
-	unsigned int plen;
-	const QPointF *arrow = getArrow(handle, plen);
+	if(havePath && !m_ignored) {
+		qreal prevMarchingAnts = std::floor(m_marchingAnts);
+		m_marchingAnts += dt * 5.0;
+		if(prevMarchingAnts != std::floor(m_marchingAnts)) {
+			needsRefresh = true;
+		}
+	}
 
-	if(arrow) {
-		const QPointF offset = point - QPointF(size / 2, size / 2);
+	if(m_transparentDelay > 0.0) {
+		m_transparentDelay -= dt;
+		if(m_transparentDelay <= 0.0) {
+			m_transparentDelay = 0.0;
+			needsRefresh = true;
+		}
+	}
 
-		QPointF polygon[12];
-		Q_ASSERT(plen <= sizeof(polygon));
-		for(unsigned int i = 0; i < plen / sizeof(*polygon); ++i)
-			polygon[i] = offset + arrow[i] / 10 * size;
-
-		painter->drawPolygon(polygon, plen / sizeof(*polygon));
+	if(needsRefresh) {
+		refresh();
 	}
 }
 
 void SelectionItem::paint(
-	QPainter *painter, const QStyleOptionGraphicsItem *opt, QWidget *)
+	QPainter *painter, const QStyleOptionGraphicsItem *opt, QWidget *widget)
 {
-	painter->setClipRect(boundingRect().adjusted(-1, -1, 1, 1));
+	Q_UNUSED(opt);
+	Q_UNUSED(widget);
+	if(m_transparentDelay <= 0.0) {
+		if(m_maskOpacity > 0.01) {
+			qreal opa = m_maskOpacity * m_maskOpacity;
+			painter->setOpacity(opa * 0.5);
+			painter->drawImage(QPointF(0.0, 0.0), m_mask);
+			painter->setOpacity((1.0 - opa));
+		}
 
-	QPen pen;
-	pen.setWidth(painter->device()->devicePixelRatioF());
-	pen.setCosmetic(true);
-
-	// Rectangular selections should always be *drawn* as closed
-	const bool drawClosed = m_selection->isClosed() || m_shape.size() == 4;
-
-	// Draw base color
-	pen.setColor(Qt::black);
-	painter->setPen(pen);
-	drawPolygon(painter, m_shape, drawClosed);
-
-	// Draw dashes
-	pen.setColor(Qt::white);
-	pen.setDashPattern({4.0, 4.0});
-	pen.setDashOffset(m_marchingants);
-	painter->setPen(pen);
-	drawPolygon(painter, m_shape, drawClosed);
-
-	// Draw resizing handles when initial drawing is finished
-	GetArrowFunction getArrow;
-	if(m_selection->isClosed() &&
-	   (getArrow = mapModeToGetArrowFunction(m_selection->adjustmentMode()))) {
-		pen.setStyle(Qt::SolidLine);
-		painter->setPen(pen);
-		painter->setBrush(Qt::black);
-
-		const QRect rect = m_selection->boundingRect();
-		const qreal s = m_selection->handleSize() /
-						opt->levelOfDetailFromTransform(painter->transform());
-		drawHandle(
-			painter, rect.topLeft(), s, canvas::Selection::Handle::TopLeft,
-			getArrow);
-		drawHandle(
-			painter, rect.topLeft() + QPointF(rect.width() / 2, 0), s,
-			canvas::Selection::Handle::Top, getArrow);
-		drawHandle(
-			painter, rect.topRight() + QPointF{1, 0.0}, s,
-			canvas::Selection::Handle::TopRight, getArrow);
-
-		drawHandle(
-			painter, rect.topLeft() + QPointF(0, rect.height() / 2), s,
-			canvas::Selection::Handle::Left, getArrow);
-		drawHandle(
-			painter, rect.topRight() + QPointF(1, rect.height() / 2), s,
-			canvas::Selection::Handle::Right, getArrow);
-
-		drawHandle(
-			painter, rect.bottomLeft() + QPointF(0, 1), s,
-			canvas::Selection::Handle::BottomLeft, getArrow);
-		drawHandle(
-			painter, rect.bottomLeft() + QPointF(rect.width() / 2, 1), s,
-			canvas::Selection::Handle::Bottom, getArrow);
-		drawHandle(
-			painter, rect.bottomRight() + QPointF(1, 1), s,
-			canvas::Selection::Handle::BottomRight, getArrow);
+		if(!m_path.isEmpty()) {
+			QPen pen;
+			pen.setWidth(painter->device()->devicePixelRatioF());
+			pen.setCosmetic(true);
+			pen.setColor(m_ignored ? Qt::darkGray : Qt::black);
+			painter->setPen(pen);
+			painter->drawPath(m_path);
+			pen.setDashPattern({4.0, 4.0});
+			if(m_ignored) {
+				pen.setColor(Qt::lightGray);
+			} else {
+				pen.setColor(Qt::white);
+				pen.setDashOffset(m_marchingAnts);
+			}
+			painter->setPen(pen);
+			painter->drawPath(m_path);
+		}
 	}
 }
 
-void SelectionItem::marchingAnts(double dt)
+void SelectionItem::setOutline(
+	unsigned int executionId, const SelectionOutlinePath &path)
 {
-	m_marchingants += dt / 0.2;
-	refresh();
+	if(m_executionId == executionId) {
+		m_path = path.value;
+		refresh();
+	}
+}
+
+void SelectionItem::updateBoundingRectFromBounds()
+{
+	refreshGeometry();
+	m_boundingRect = QRectF(QPointF(0.0, 0.0), QSizeF(m_bounds.size()));
+	setPos(m_bounds.topLeft());
 }
 
 }

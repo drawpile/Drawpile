@@ -16,17 +16,18 @@ class ZoomTool final : public Tool {
 public:
 	ZoomTool(ToolController &owner);
 
-	void begin(
-		const canvas::Point &point, bool right, float zoom,
-		const QPointF &viewPos) override;
-	void motion(
-		const canvas::Point &point, bool constrain, bool center,
-		const QPointF &viewPos) override;
+	void begin(const BeginParams &params) override;
+	void motion(const MotionParams &params) override;
 	void end() override;
 
 private:
+	void updatePreview() const;
+	void removePreview() const;
+	QRect getRect() const;
+
 	QPoint m_start, m_end;
 	bool m_reverse;
+	bool m_zooming = false;
 };
 
 }

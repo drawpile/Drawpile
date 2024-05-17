@@ -24,11 +24,6 @@ public:
 
 	QString toolType() const override { return QStringLiteral("inspector"); }
 
-	void setForeground(const QColor &color) override { Q_UNUSED(color); }
-
-	int getSize() const override { return 0; }
-	bool getSubpixelMode() const override { return false; }
-
 	void setUserList(canvas::UserListModel *userlist) { m_userlist = userlist; }
 
 	bool isShowTiles() const;

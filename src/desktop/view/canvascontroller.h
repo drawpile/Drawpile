@@ -129,7 +129,8 @@ public:
 	void setPixelGrid(bool pixelGrid);
 	void setPointerTracking(bool pointerTracking);
 	void setToolCapabilities(
-		bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick);
+		bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick,
+		bool fractionalTool);
 	void setToolCursor(const QCursor &toolCursor);
 	void setBrushBlendMode(int brushBlendMode);
 
@@ -167,13 +168,15 @@ signals:
 	void pointerMove(const QPointF &point);
 	void penDown(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
-		qreal ytilt, qreal rotation, bool right, float zoom,
-		const QPointF &viewPos, bool applyGlobalSmoothing, bool eraserOverride);
+		qreal ytilt, qreal rotation, bool right, qreal angle, qreal zoom,
+		bool mirror, bool flip, const QPointF &viewPos,
+		bool applyGlobalSmoothing, bool eraserOverride);
 	void penMove(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
-		qreal ytilt, qreal rotation, bool shift, bool alt,
+		qreal ytilt, qreal rotation, bool constrain, bool center,
 		const QPointF &viewPos);
-	void penHover(const QPointF &point);
+	void penHover(
+		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip);
 	void penUp();
 	void coordinatesChanged(const QPointF &coordinates);
 	void quickAdjust(qreal value);
@@ -369,6 +372,7 @@ private:
 	bool m_allowColorPick = false;
 	bool m_allowToolAdjust = false;
 	bool m_toolHandlesRightClick = false;
+	bool m_fractionalTool = false;
 
 #ifdef __EMSCRIPTEN__
 	bool m_enableEraserOverride = false;

@@ -24,6 +24,7 @@
 #include <dpcommon/common.h>
 
 typedef struct DP_CanvasDiff DP_CanvasDiff;
+typedef struct DP_Rect DP_Rect;
 typedef struct DP_ViewModeContext DP_ViewModeContext;
 typedef union DP_Pixel8 DP_Pixel8;
 
@@ -69,6 +70,8 @@ int DP_layer_group_width(DP_LayerGroup *lg);
 int DP_layer_group_height(DP_LayerGroup *lg);
 
 DP_LayerList *DP_layer_group_children_noinc(DP_LayerGroup *lg);
+
+bool DP_layer_group_bounds(DP_LayerGroup *lg, DP_Rect *out_bounds);
 
 int DP_layer_group_search_change_bounds(DP_LayerGroup *lg, DP_LayerProps *lp,
                                         unsigned int context_id, int *out_x,

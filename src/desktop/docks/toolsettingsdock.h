@@ -17,6 +17,7 @@ class PanSettings;
 class SelectionSettings;
 class ToolController;
 class ToolSettings;
+class TransformSettings;
 class ZoomSettings;
 }
 
@@ -55,6 +56,7 @@ public:
 	tools::LaserPointerSettings *laserPointerSettings();
 	tools::PanSettings *panSettings();
 	tools::SelectionSettings *selectionSettings();
+	tools::TransformSettings *transformSettings();
 	tools::ZoomSettings *zoomSettings();
 
 	//! Save tool related settings
@@ -67,6 +69,9 @@ public:
 public slots:
 	//! Set the active tool
 	void setTool(tools::Tool::Type tool);
+
+	//! Set the active tool without touching the previous tool and slot values
+	void setToolTemporary(tools::Tool::Type tool);
 
 	//! Select the active tool slot (for those tools that have them)
 	void setToolSlot(int idx);
@@ -113,6 +118,9 @@ public slots:
 	//! Switch to the last used color at the given index
 	void setLastUsedColor(int i);
 
+	void startTransformMove();
+	void startTransformPaste(const QRect &srcBounds, const QImage &image);
+
 signals:
 	//! This signal is emitted when the current tool changes its size
 	void sizeChanged(int size);
@@ -137,6 +145,8 @@ signals:
 private:
 	void selectTool(tools::Tool::Type tool);
 	static bool hasBrushCursor(tools::Tool::Type tool);
+
+	void showMessage(const QString &message);
 
 	struct Private;
 	Private *d;

@@ -9,6 +9,7 @@ extern "C" {
 #include "libclient/drawdance/documentmetadata.h"
 #include "libclient/drawdance/layercontent.h"
 #include "libclient/drawdance/layerlist.h"
+#include "libclient/drawdance/selectionset.h"
 #include "libclient/drawdance/tile.h"
 #include "libclient/drawdance/timeline.h"
 #include "libclient/net/message.h"
@@ -60,6 +61,7 @@ public:
 	LayerList layers() const;
 	AnnotationList annotations() const;
 	Timeline timeline() const;
+	SelectionSet selections() const;
 
 	int frameCount() const;
 	int framerate() const;
@@ -74,6 +76,8 @@ public:
 		const DP_ViewModeFilter *vmf = nullptr) const;
 
 	QImage layerToFlatImage(int layerId, const QRect &rect) const;
+
+	QRect layerBounds(int layerId) const;
 
 	void toResetImage(net::MessageList &msgs, uint8_t contextId) const;
 

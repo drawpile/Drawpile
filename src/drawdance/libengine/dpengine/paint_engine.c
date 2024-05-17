@@ -2275,6 +2275,7 @@ emit_changes(DP_PaintEngine *pe, DP_CanvasState *prev, DP_CanvasState *cs,
              DP_PaintEngineAnnotationsChangedFn annotations_changed,
              DP_PaintEngineDocumentMetadataChangedFn document_metadata_changed,
              DP_PaintEngineTimelineChangedFn timeline_changed,
+             DP_PaintEngineSelectionsChangedFn selections_changed,
              DP_PaintEngineCursorMovedFn cursor_moved, void *user)
 {
     DP_CanvasDiff *diff = pe->diff;
@@ -2304,6 +2305,12 @@ emit_changes(DP_PaintEngine *pe, DP_CanvasState *prev, DP_CanvasState *cs,
         if (tl != DP_canvas_state_timeline_noinc(prev) || catchup_done) {
             timeline_changed(user, tl);
         }
+
+        DP_SelectionSet *ss = DP_canvas_state_selections_noinc_nullable(cs);
+        if (ss != DP_canvas_state_selections_noinc_nullable(prev)
+            || catchup_done) {
+            selections_changed(user, ss);
+        }
     }
 
     DP_UserCursorBuffer *ucb = &pe->meta.ucb;
@@ -2325,6 +2332,7 @@ void DP_paint_engine_tick(
     DP_PaintEngineAnnotationsChangedFn annotations_changed,
     DP_PaintEngineDocumentMetadataChangedFn document_metadata_changed,
     DP_PaintEngineTimelineChangedFn timeline_changed,
+    DP_PaintEngineSelectionsChangedFn selections_changed,
     DP_PaintEngineCursorMovedFn cursor_moved,
     DP_PaintEngineDefaultLayerSetFn default_layer_set,
     DP_PaintEngineUndoDepthLimitSetFn undo_depth_limit_set,
@@ -2423,8 +2431,8 @@ void DP_paint_engine_tick(
         emit_changes(pe, prev_view_cs, next_view_cs, catching_up, catchup_done,
                      tile_bounds, render_outside_tile_bounds,
                      layer_props_changed, annotations_changed,
-                     document_metadata_changed, timeline_changed, cursor_moved,
-                     user);
+                     document_metadata_changed, timeline_changed,
+                     selections_changed, cursor_moved, user);
         DP_canvas_state_decref(prev_view_cs);
         DP_PERF_END(changes);
     }

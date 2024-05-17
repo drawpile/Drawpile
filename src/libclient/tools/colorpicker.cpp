@@ -1,52 +1,45 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include "libclient/canvas/canvasmodel.h"
-
-#include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/colorpicker.h"
-
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/tools/toolcontroller.h"
 #include <QPixmap>
 
 namespace tools {
 
 ColorPicker::ColorPicker(ToolController &owner)
-	: Tool(owner, PICKER, QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29), false, true, false),
-	m_pickFromCurrentLayer(false),
-	m_size(0)
+	: Tool(
+		  owner, PICKER, QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29),
+		  false, true, false, true, false)
 {
 }
 
-void ColorPicker::begin(
-	const canvas::Point& point, bool right, float zoom, const QPointF &viewPos)
+void ColorPicker::begin(const BeginParams &params)
 {
-	Q_UNUSED(zoom);
-	Q_UNUSED(viewPos);
-	if(right) {
-		return;
+	if(!params.right) {
+		m_picking = true;
+		pick(params.point);
 	}
-
-	motion(point, false, false, QPointF());
 }
 
-void ColorPicker::motion(
-	const canvas::Point& point, bool constrain, bool center,
-	const QPointF &viewPos)
+void ColorPicker::motion(const MotionParams &params)
 {
-	Q_UNUSED(constrain);
-	Q_UNUSED(center);
-	Q_UNUSED(viewPos);
-
-	int layer=0;
-	if(m_pickFromCurrentLayer)
-		layer = m_owner.activeLayer();
-
-	m_owner.model()->pickColor(point.x(), point.y(), layer, m_size);
+	if(m_picking) {
+		pick(params.point);
+	}
 }
 
 void ColorPicker::end()
 {
-	// nothing to do here
+	m_picking = false;
+}
+
+void ColorPicker::pick(const QPointF &point) const
+{
+	canvas::CanvasModel *canvas = m_owner.model();
+	if(canvas) {
+		int layer = m_pickFromCurrentLayer ? m_owner.activeLayer() : 0;
+		canvas->pickColor(point.x(), point.y(), layer, m_size);
+	}
 }
 
 }
-

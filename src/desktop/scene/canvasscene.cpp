@@ -6,11 +6,15 @@
 #include "desktop/scene/lasertrailitem.h"
 #include "desktop/scene/noticeitem.h"
 #include "desktop/scene/outlineitem.h"
+#include "desktop/scene/pathpreviewitem.h"
 #include "desktop/scene/selectionitem.h"
+#include "desktop/scene/transformitem.h"
 #include "desktop/scene/usermarkeritem.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/selectionmodel.h"
+#include "libclient/canvas/transformmodel.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/drawdance/annotationlist.h"
 #include <QApplication>
@@ -27,7 +31,9 @@ namespace drawingboard {
 CanvasScene::CanvasScene(QObject *parent)
 	: QGraphicsScene(parent)
 	, m_model(nullptr)
+	, m_pathPreview(nullptr)
 	, m_selection(nullptr)
+	, m_transform(nullptr)
 	, m_transformNotice(nullptr)
 	, m_lockNotice(nullptr)
 	, m_catchup(nullptr)
@@ -41,6 +47,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	, m_showLaserTrails(true)
 	, m_showOwnUserMarker(false)
 	, m_cursorOnCanvas(false)
+	, m_selectionIgnored(false)
 	, m_userMarkerPersistence(1000)
 {
 	setItemIndexMethod(NoIndex);
@@ -78,8 +85,6 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 	m_model = model;
 	m_canvasItem->setPaintEngine(m_model->paintEngine());
 
-	onSelectionChanged(nullptr);
-
 	connect(
 		m_model->paintEngine(), &canvas::PaintEngine::resized, this,
 		&CanvasScene::handleCanvasResize, Qt::QueuedConnection);
@@ -97,11 +102,14 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 		m_model, &canvas::CanvasModel::laserTrail, this,
 		&CanvasScene::laserTrail);
 	connect(
-		m_model, &canvas::CanvasModel::selectionChanged, this,
-		&CanvasScene::onSelectionChanged);
-	connect(
 		m_model, &canvas::CanvasModel::userJoined, this,
 		&CanvasScene::onUserJoined);
+	connect(
+		m_model->selection(), &canvas::SelectionModel::selectionChanged, this,
+		&CanvasScene::setSelection);
+	connect(
+		m_model->transform(), &canvas::TransformModel::transformChanged, this,
+		&CanvasScene::onTransformChanged);
 
 	for(QGraphicsItem *item : m_group->childItems()) {
 		if(item->type() == AnnotationItem::Type ||
@@ -112,6 +120,10 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 	}
 	m_usermarkers.clear();
 	m_activeLaserTrail.clear();
+
+	canvas::SelectionModel *selection = m_model->selection();
+	setSelection(selection->isValid(), selection->bounds(), selection->mask());
+	onTransformChanged();
 
 	QList<QRectF> regions;
 	regions.append(sceneRect());
@@ -126,6 +138,16 @@ QTransform CanvasScene::canvasTransform() const
 void CanvasScene::setCanvasTransform(const QTransform &matrix)
 {
 	m_group->setTransform(matrix);
+}
+
+void CanvasScene::setZoom(qreal zoom)
+{
+	if(zoom != m_zoom) {
+		m_zoom = zoom;
+		if(m_transform) {
+			m_transform->setZoom(zoom);
+		}
+	}
 }
 
 void CanvasScene::setCanvasPixelGrid(bool pixelGrid)
@@ -248,17 +270,6 @@ void CanvasScene::setCatchupProgress(int percent)
 	setCatchupPosition();
 }
 
-void CanvasScene::onSelectionChanged(canvas::Selection *selection)
-{
-	if(m_selection) {
-		delete m_selection;
-		m_selection = nullptr;
-	}
-	if(selection) {
-		m_selection = new SelectionItem(selection, m_group);
-	}
-}
-
 void CanvasScene::onUserJoined(int id, const QString &name)
 {
 	Q_UNUSED(name);
@@ -310,6 +321,27 @@ AnnotationItem *CanvasScene::getAnnotationItem(int id)
 		}
 	}
 	return nullptr;
+}
+
+void CanvasScene::setToolCapabilities(
+	bool allowColorPick, bool allowToolAdjust, bool allowRightClick,
+	bool fractionalTool, bool ignoresSelections)
+{
+	Q_UNUSED(allowColorPick);
+	Q_UNUSED(allowToolAdjust);
+	Q_UNUSED(allowRightClick);
+	Q_UNUSED(fractionalTool);
+	m_selectionIgnored = ignoresSelections;
+	if(m_selection) {
+		m_selection->setIgnored(ignoresSelections);
+	}
+}
+
+void CanvasScene::setTransformToolState(int mode, int handle, bool dragging)
+{
+	if(m_transform) {
+		m_transform->setToolState(mode, handle, dragging);
+	}
 }
 
 void CanvasScene::setActiveAnnotation(int id)
@@ -371,6 +403,54 @@ void CanvasScene::previewAnnotation(int id, const QRect &shape)
 	ai->setGeometry(shape);
 }
 
+void CanvasScene::setSelection(
+	bool valid, const QRect &bounds, const QImage &mask)
+{
+	if(valid) {
+		if(!m_selection) {
+			m_selection = new SelectionItem(m_selectionIgnored, m_group);
+			m_selection->setUpdateSceneOnRefresh(true);
+		}
+		m_selection->setModel(bounds, mask);
+		m_selection->setTransparentDelay(0.0);
+	} else {
+		delete m_selection;
+		m_selection = nullptr;
+	}
+}
+
+void CanvasScene::onTransformChanged()
+{
+	bool hadTransform = m_transform;
+	canvas::TransformModel *transform =
+		m_model ? m_model->transform() : nullptr;
+	bool active = transform && transform->isActive();
+	if(active) {
+		const TransformQuad &quad = transform->dstQuad();
+		bool valid = transform->isDstQuadValid();
+		if(m_transform) {
+			m_transform->setQuad(quad, valid);
+		} else {
+			m_transform = new TransformItem(quad, valid, m_zoom, m_group);
+			m_transform->setUpdateSceneOnRefresh(true);
+		}
+	} else if(m_transform) {
+		delete m_transform;
+		m_transform = nullptr;
+	}
+
+	if(m_selection) {
+		bool haveTransform = m_transform;
+		m_selection->updateVisibility(!haveTransform);
+		// Bit of a hack to mitigate the selection flickering back to the old
+		// location after a transform and then stumbling into the new one by
+		// delaying its display slightly if it was just applied.
+		bool shouldDelaySelection = hadTransform && !haveTransform &&
+									transform && transform->isJustApplied();
+		m_selection->setTransparentDelay(shouldDelaySelection ? 0.5 : 0.0);
+	}
+}
+
 /**
  * @brief Advance canvas animations
  *
@@ -397,7 +477,7 @@ void CanvasScene::advanceAnimations()
 	}
 
 	if(m_selection) {
-		m_selection->marchingAnts(STEP);
+		m_selection->animationStep(STEP);
 	}
 
 	if(m_transformNotice && !m_transformNotice->animationStep(STEP)) {
@@ -619,6 +699,18 @@ void CanvasScene::setUserMarkerPersistence(int userMarkerPersistence)
 		for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
 			item->setPersistence(userMarkerPersistence);
 		}
+	}
+}
+
+void CanvasScene::setPathPreview(const QPainterPath &path)
+{
+	if(path.isEmpty()) {
+		delete m_pathPreview;
+		m_pathPreview = nullptr;
+	} else if(m_pathPreview) {
+		m_pathPreview->setPath(path);
+	} else {
+		m_pathPreview = new PathPreviewItem(path, m_group);
 	}
 }
 

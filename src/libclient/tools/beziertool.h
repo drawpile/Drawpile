@@ -15,13 +15,9 @@ class BezierTool final : public Tool {
 public:
 	BezierTool(ToolController &owner);
 
-	void begin(
-		const canvas::Point &point, bool right, float zoom,
-		const QPointF &viewPos) override;
-	void motion(
-		const canvas::Point &point, bool constrain, bool center,
-		const QPointF &viewPos) override;
-	void hover(const QPointF &point) override;
+	void begin(const BeginParams &params) override;
+	void motion(const MotionParams &params) override;
+	void hover(const HoverParams &params) override;
 	void end() override;
 	void finishMultipart() override;
 	void cancelMultipart() override;
@@ -44,7 +40,7 @@ private:
 	QVector<ControlPoint> m_points;
 	QPointF m_beginPoint;
 	bool m_rightButton;
-	float m_zoom;
+	qreal m_zoom;
 };
 
 }

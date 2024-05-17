@@ -58,17 +58,16 @@ private:
 	canvas::PointVector m_pv;
 };
 
-void ShapeTool::begin(
-	const canvas::Point &point, bool right, float zoom, const QPointF &viewPos)
+void ShapeTool::begin(const BeginParams &params)
 {
-	Q_UNUSED(viewPos);
 	Q_ASSERT(!m_drawing);
-	if(right) {
+	if(params.right) {
 		return;
 	}
 
+	QPointF point = params.point;
 	m_start = point;
-	m_zoom = zoom;
+	m_zoom = params.zoom;
 	m_p1 = point;
 	m_p2 = point;
 	m_drawing = true;
@@ -76,20 +75,17 @@ void ShapeTool::begin(
 	updatePreview();
 }
 
-void ShapeTool::motion(
-	const canvas::Point &point, bool constrain, bool center,
-	const QPointF &viewPos)
+void ShapeTool::motion(const MotionParams &params)
 {
-	Q_UNUSED(viewPos);
 	if(!m_drawing)
 		return;
 
-	if(constrain)
-		m_p2 = constraints::square(m_start, point);
+	if(params.constrain)
+		m_p2 = constraints::square(m_start, params.point);
 	else
-		m_p2 = point;
+		m_p2 = params.point;
 
-	if(center)
+	if(params.center)
 		m_p1 = m_start - (m_p2 - m_start);
 	else
 		m_p1 = m_start;
@@ -150,20 +146,17 @@ Line::Line(ToolController &owner)
 {
 }
 
-void Line::motion(
-	const canvas::Point &point, bool constrain, bool center,
-	const QPointF &viewPos)
+void Line::motion(const MotionParams &params)
 {
-	Q_UNUSED(viewPos);
 	if(!m_drawing)
 		return;
 
-	if(constrain)
-		m_p2 = constraints::angle(m_start, point);
+	if(params.constrain)
+		m_p2 = constraints::angle(m_start, params.point);
 	else
-		m_p2 = point;
+		m_p2 = params.point;
 
-	if(center)
+	if(params.center)
 		m_p1 = m_start - (m_p2 - m_start);
 	else
 		m_p1 = m_start;

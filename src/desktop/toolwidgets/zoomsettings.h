@@ -13,14 +13,9 @@ namespace tools {
 class ZoomSettings final : public ToolSettings {
 	Q_OBJECT
 public:
-	ZoomSettings(ToolController *ctrl, QObject *parent=nullptr);
+	ZoomSettings(ToolController *ctrl, QObject *parent = nullptr);
 
 	QString toolType() const override { return QStringLiteral("zoom"); }
-
-	void setForeground(const QColor &color) override { Q_UNUSED(color); }
-
-	int getSize() const override { return 0; }
-	bool getSubpixelMode() const override { return false; }
 
 signals:
 	void resetZoom();
@@ -33,5 +28,3 @@ protected:
 }
 
 #endif
-
-

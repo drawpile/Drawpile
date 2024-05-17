@@ -33,7 +33,11 @@ public:
         uint16_t *stampBuffer, int x, int y, int diameter, bool opaque,
         int &lastDiameter) const;
 
+    bool isTransparentPixelAt(int x, int y) const;
+
     QImage toImage(const QRect &rect) const;
+
+    QImage toImageMask(const QRect &rect, const QColor &color) const;
 
 private:
     explicit LayerContent(DP_LayerContent *lc);

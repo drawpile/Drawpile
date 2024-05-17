@@ -39,6 +39,7 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_allowColorPick(false)
 	, m_allowToolAdjust(false)
 	, m_toolHandlesRightClick(false)
+	, m_fractionalTool(false)
 	, m_penmode(PenMode::Normal)
 	, m_dragmode(ViewDragMode::None)
 	, m_dragAction(CanvasShortcuts::NO_ACTION)
@@ -667,11 +668,13 @@ void CanvasView::setToolCursor(const QCursor &cursor)
 }
 
 void CanvasView::setToolCapabilities(
-	bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick)
+	bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick,
+	bool fractionalTool)
 {
 	m_allowColorPick = allowColorPick;
 	m_allowToolAdjust = allowToolAdjust;
 	m_toolHandlesRightClick = toolHandlesRightClick;
+	m_fractionalTool = fractionalTool;
 }
 
 void CanvasView::resetCursor()
@@ -935,8 +938,8 @@ void CanvasView::onPenDown(
 			if(!m_locked)
 				emit penDown(
 					p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(),
-					p.rotation(), right, m_zoom, viewPos,
-					isStylus || m_mouseSmoothing, eraserOverride);
+					p.rotation(), right, m_rotate, m_zoom, m_mirror, m_flip,
+					viewPos, isStylus || m_mouseSmoothing, eraserOverride);
 			break;
 		case PenMode::Colorpick:
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
@@ -1141,7 +1144,7 @@ void CanvasView::penMoveEvent(
 		moveDrag(pos.toPoint());
 
 	} else {
-		if(!m_prevpoint.intSame(point)) {
+		if(m_fractionalTool || !m_prevpoint.intSame(point)) {
 			if(m_pendown) {
 				m_pointervelocity = point.distance(m_prevpoint);
 				m_pointerdistance += m_pointervelocity;
@@ -1152,7 +1155,7 @@ void CanvasView::penMoveEvent(
 					match.toolConstraint1(), match.toolConstraint2(), pos);
 
 			} else {
-				emit penHover(point);
+				emit penHover(point, m_rotate, m_zoom, m_mirror, m_flip);
 				if(m_pointertracking && m_scene->hasImage()) {
 					emit pointerMoved(point);
 				}
@@ -2236,6 +2239,7 @@ void CanvasView::updateCanvasTransform(const std::function<void()> &block)
 		updatePosBounds();
 		QRectF rectBefore = m_scene->canvasBounds();
 		m_scene->setCanvasTransform(calculateCanvasTransform());
+		m_scene->setZoom(m_zoom);
 		QRectF rectAfter = m_scene->canvasBounds();
 		updateScrollBars();
 		updateCanvasPixelGrid();

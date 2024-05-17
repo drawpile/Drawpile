@@ -3,7 +3,8 @@
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
-#include "libclient/canvas/selection.h"
+#include "libclient/canvas/selectionmodel.h"
+#include "libclient/canvas/transformmodel.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/export/canvassaverrunnable.h"
 #include "libclient/settings.h"
@@ -24,7 +25,6 @@
 #include <QTimer>
 #include <QtEndian>
 #include <parson.h>
-#include <tuple>
 #ifndef HAVE_CLIPBOARD_EMULATION
 #	include <QClipboard>
 #endif
@@ -984,48 +984,103 @@ void Document::redo()
 {
 	if(!m_canvas)
 		return;
-	// Only allow redos if the pen or mouse button is not down. During multipart
-	// drawing, e.g. with the bezier tool, redo is not possible altogether.
-	if(!m_toolctrl->isDrawing() && !m_toolctrl->isMultipartDrawing()) {
+	// Only allow undos if the pen or mouse button is not down. If we're in a
+	// multipart drawing, e.g. with a transform, we only redo the last part.
+	if(!m_toolctrl->isDrawing() && !m_toolctrl->redoMultipartDrawing()) {
 		m_client->sendMessage(net::makeUndoMessage(m_client->myId(), 0, true));
 	}
 }
 
 void Document::selectAll()
 {
-	if(!m_canvas)
-		return;
-
-	canvas::Selection *selection = new canvas::Selection;
-	selection->setShapeRect(QRect(QPoint(), m_canvas->size()));
-	selection->closeShape();
-	m_canvas->setSelection(selection);
+	selectAllOp(DP_MSG_SELECTION_PUT_OP_REPLACE);
 }
 
 void Document::selectNone()
 {
-	if(m_canvas && m_canvas->selection() &&
-	   m_canvas->selection()->pasteOrMoveToCanvas(
-		   m_messageBuffer, m_client->myId(), m_toolctrl->activeLayer(),
-		   m_toolctrl->selectInterpolation(),
-		   m_client->isCompatibilityMode())) {
-		m_client->sendMessages(
-			m_messageBuffer.count(), m_messageBuffer.constData());
-		m_messageBuffer.clear();
+	if(m_canvas && m_canvas->selection()->isValid()) {
+		unsigned int contextId = m_client->myId();
+		net::Message msgs[] = {
+			net::makeUndoPointMessage(contextId),
+			net::makeSelectionClearMessage(
+				m_client->seemsConnectedToThickServer(), contextId,
+				canvas::CanvasModel::MAIN_SELECTION_ID),
+		};
+		m_client->sendMessages(2, msgs);
 	}
-	cancelSelection();
 }
 
-void Document::cancelSelection()
+void Document::selectInvert()
 {
-	if(m_canvas)
-		m_canvas->setSelection(nullptr);
+	selectAllOp(DP_MSG_SELECTION_PUT_OP_COMPLEMENT);
+}
+
+void Document::selectLayerBounds()
+{
+	selectLayer(false);
+	if(m_canvas) {
+		int layerId = m_toolctrl->activeLayer();
+		QRect bounds =
+			m_canvas->paintEngine()->viewCanvasState().layerBounds(layerId);
+		if(bounds.isEmpty()) {
+			selectNone();
+		} else {
+			selectOp(DP_MSG_SELECTION_PUT_OP_REPLACE, bounds);
+		}
+	}
+}
+
+void Document::selectLayerContents()
+{
+	selectLayer(true);
+}
+
+void Document::selectLayer(bool includeMask)
+{
+	if(m_canvas) {
+		int layerId = m_toolctrl->activeLayer();
+		drawdance::CanvasState canvasState =
+			m_canvas->paintEngine()->viewCanvasState();
+		QRect bounds = canvasState.layerBounds(layerId);
+		if(bounds.isEmpty()) {
+			selectNone();
+		} else {
+			selectOp(
+				DP_MSG_SELECTION_PUT_OP_REPLACE, bounds,
+				includeMask ? canvasState.layerToFlatImage(layerId, bounds)
+							: QImage());
+		}
+	}
+}
+
+void Document::selectAllOp(int op)
+{
+	if(m_canvas) {
+		QSize size = m_canvas->size();
+		if(!size.isEmpty()) {
+			selectOp(op, QRect(QPoint(0, 0), size));
+		}
+	}
+}
+
+void Document::selectOp(int op, const QRect &bounds, const QImage &mask)
+{
+	unsigned int contextId = m_client->myId();
+	net::MessageList msgs;
+	net::makeSelectionPutMessages(
+		msgs, m_client->seemsConnectedToThickServer(), contextId,
+		canvas::CanvasModel::MAIN_SELECTION_ID, op, bounds.x(), bounds.y(),
+		bounds.width(), bounds.height(), mask);
+	if(!msgs.isEmpty()) {
+		msgs.prepend(net::makeUndoPointMessage(contextId));
+		m_client->sendMessages(msgs.size(), msgs.constData());
+	}
 }
 
 bool Document::copyFromLayer(int layer)
 {
-	if(!m_canvas) {
-		qWarning("copyFromLayer: no canvas!");
+	if(!m_canvas || !m_canvas->selection()->isValid() ||
+	   m_canvas->transform()->isActive()) {
 		return false;
 	}
 
@@ -1044,16 +1099,9 @@ bool Document::copyFromLayer(int layer)
 	data->setImageData(img);
 
 	// Store also original coordinates
-	QPoint srcpos;
-	if(m_canvas->selection()) {
-		const auto br = m_canvas->selection()->boundingRect();
-		srcpos = br.topLeft() + QPoint{img.width() / 2, img.height() / 2};
-
-	} else {
-		const QSize s = m_canvas->size();
-		srcpos = QPoint(s.width() / 2, s.height() / 2);
-	}
-
+	QRect bounds = m_canvas->selection()->bounds();
+	QPoint srcpos =
+		bounds.topLeft() + QPoint(img.width() / 2, img.height() / 2);
 	QByteArray srcbuf = QByteArray::number(srcpos.x()) + "," +
 						QByteArray::number(srcpos.y()) + "," +
 						QByteArray::number(qApp->applicationPid()) + "," +
@@ -1171,59 +1219,58 @@ void Document::cutLayer()
 	}
 }
 
-void Document::pasteImage(
-	const QImage &image, const QPoint &point, bool forcePoint)
-{
-	if(m_canvas) {
-		m_canvas->pasteFromImage(image, point, forcePoint);
-	}
-}
-
-void Document::stamp()
-{
-	canvas::Selection *sel = m_canvas ? m_canvas->selection() : nullptr;
-	if(sel && !sel->pasteImage().isNull() &&
-	   sel->pasteOrMoveToCanvas(
-		   m_messageBuffer, m_client->myId(), m_toolctrl->activeLayer(),
-		   m_toolctrl->selectInterpolation(),
-		   m_client->isCompatibilityMode())) {
-		m_client->sendMessages(
-			m_messageBuffer.count(), m_messageBuffer.constData());
-		m_messageBuffer.clear();
-		sel->detachMove();
-	}
-}
-
 void Document::clearArea()
 {
-	if(m_canvas) {
-		canvas::Selection *sel = m_canvas->selection();
-		if(sel && (sel->isMovedFromCanvas() || !sel->hasPasteImage())) {
-			fillArea(Qt::white, DP_BLEND_MODE_ERASE, sel->isMovedFromCanvas());
-		}
-		// Remove selection if it's floating, but keep it for further deletions
-		// if it's just sitting on the canvas without any movement.
-		if(sel && (sel->isMovedFromCanvas() || sel->hasPasteImage())) {
-			m_canvas->setSelection(nullptr);
-		}
-	}
+	fillArea(Qt::white, DP_BLEND_MODE_ERASE, 1.0f);
 }
 
-void Document::fillArea(const QColor &color, DP_BlendMode mode, bool source)
+void Document::fillArea(const QColor &color, DP_BlendMode mode, float opacity)
 {
-	if(!m_canvas) {
-		qWarning("fillArea: no canvas!");
+	if(!m_canvas || opacity <= 0.0f) {
 		return;
 	}
-	if(m_canvas->selection() &&
-	   !m_canvas->aclState()->isLayerLocked(m_toolctrl->activeLayer()) &&
-	   m_canvas->selection()->fillCanvas(
-		   m_messageBuffer, m_client->myId(), color, mode,
-		   m_toolctrl->activeLayer(), source)) {
-		m_client->sendMessages(
-			m_messageBuffer.count(), m_messageBuffer.constData());
-		m_messageBuffer.clear();
+
+	canvas::SelectionModel *selection = m_canvas->selection();
+	if(!selection->isValid()) {
+		return;
 	}
+
+	int layerId = m_toolctrl->activeLayer();
+	if(m_canvas->aclState()->isLayerLocked(layerId)) {
+		return;
+	}
+
+	QImage mask = selection->mask();
+	if(mask.isNull() || mask.size().isEmpty()) {
+		return;
+	}
+
+	{
+		QPainter painter(&mask);
+		painter.setCompositionMode(QPainter::CompositionMode_SourceAtop);
+		QRect maskRect = mask.rect();
+		painter.fillRect(
+			maskRect, QColor(color.red(), color.green(), color.blue()));
+		if(opacity < 1.0f) {
+			painter.setCompositionMode(
+				QPainter::CompositionMode_DestinationOut);
+			painter.fillRect(
+				maskRect,
+				QColor::fromRgbF(0.0f, 0.0f, 0.0f, 1.0f - qMin(opacity, 1.0f)));
+		}
+	}
+
+	uint8_t contextId = m_client->myId();
+	QPoint pos = selection->bounds().topLeft();
+	net::makePutImageMessages(
+		m_messageBuffer, contextId, layerId, mode, pos.x(), pos.y(), mask);
+	if(m_messageBuffer.isEmpty()) {
+		return;
+	}
+
+	m_messageBuffer.prepend(net::makeUndoPointMessage(contextId));
+	m_client->sendMessages(m_messageBuffer.size(), m_messageBuffer.constData());
+	m_messageBuffer.clear();
 }
 
 void Document::removeEmptyAnnotations()

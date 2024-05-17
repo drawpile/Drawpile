@@ -29,12 +29,14 @@ target_sources(dpclient PRIVATE
 	canvas/paintengine.cpp
 	canvas/paintengine.h
 	canvas/point.h
-	canvas/selection.cpp
-	canvas/selection.h
+	canvas/selectionmodel.cpp
+	canvas/selectionmodel.h
 	canvas/tilecache.cpp
 	canvas/tilecache.h
 	canvas/timelinemodel.cpp
 	canvas/timelinemodel.h
+	canvas/transformmodel.cpp
+	canvas/transformmodel.h
 	canvas/userlist.cpp
 	canvas/userlist.h
 	parentalcontrols/parentalcontrols.cpp
@@ -77,6 +79,10 @@ target_sources(dpclient PRIVATE
 	drawdance/paintengine.h
 	drawdance/perf.cpp
 	drawdance/perf.h
+	drawdance/selection.cpp
+	drawdance/selection.h
+	drawdance/selectionset.cpp
+	drawdance/selectionset.h
 	drawdance/snapshotqueue.cpp
 	drawdance/snapshotqueue.h
 	drawdance/tile.cpp
@@ -121,6 +127,7 @@ target_sources(dpclient PRIVATE
 	tools/annotation.h
 	tools/beziertool.cpp
 	tools/beziertool.h
+	tools/clickdetector.h
 	tools/colorpicker.cpp
 	tools/colorpicker.h
 	tools/floodfill.cpp
@@ -143,6 +150,8 @@ target_sources(dpclient PRIVATE
 	tools/toolcontroller.h
 	tools/toolproperties.cpp
 	tools/toolproperties.h
+	tools/transform.cpp
+	tools/transform.h
 	tools/utils.cpp
 	tools/utils.h
 	tools/zoom.cpp
@@ -180,6 +189,8 @@ target_sources(dpclient PRIVATE
 	utils/listservermodel.h
 	utils/logging.cpp
 	utils/logging.h
+	utils/selectionoutlinegenerator.cpp
+	utils/selectionoutlinegenerator.h
 	utils/sessionfilterproxymodel.cpp
 	utils/sessionfilterproxymodel.h
 	utils/sessionidvalidator.cpp
@@ -188,6 +199,7 @@ target_sources(dpclient PRIVATE
 	utils/shortcutdetector.h
 	utils/statedatabase.cpp
 	utils/statedatabase.h
+	utils/transformquad.h
 	utils/usernamevalidator.cpp
 	utils/usernamevalidator.h
 	utils/wasmpersistence.h

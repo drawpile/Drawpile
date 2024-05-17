@@ -13,7 +13,7 @@ namespace tools {
 Freehand::Freehand(ToolController &owner, bool isEraser)
 	: Tool(
 		  owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor, true, true,
-		  false)
+		  false, false, true)
 	, m_pollTimer{}
 	, m_brushEngine{std::bind(&Freehand::pollControl, this, _1)}
 	, m_drawing(false)
@@ -28,12 +28,10 @@ Freehand::Freehand(ToolController &owner, bool isEraser)
 
 Freehand::~Freehand() {}
 
-void Freehand::begin(
-	const canvas::Point &point, bool right, float zoom, const QPointF &viewPos)
+void Freehand::begin(const BeginParams &params)
 {
-	Q_UNUSED(viewPos);
 	Q_ASSERT(!m_drawing);
-	if(right) {
+	if(params.right) {
 		return;
 	}
 
@@ -45,17 +43,12 @@ void Freehand::begin(
 	// The pressure value of the first point is unreliable
 	// because it is (or was?) possible to get a synthetic MousePress event
 	// before the StylusPress event.
-	m_start = point;
-	m_zoom = zoom;
+	m_start = params.point;
+	m_zoom = params.zoom;
 }
 
-void Freehand::motion(
-	const canvas::Point &point, bool constrain, bool center,
-	const QPointF &viewPos)
+void Freehand::motion(const MotionParams &params)
 {
-	Q_UNUSED(constrain);
-	Q_UNUSED(center);
-	Q_UNUSED(viewPos);
 	if(!m_drawing)
 		return;
 
@@ -65,11 +58,11 @@ void Freehand::motion(
 	if(m_firstPoint) {
 		m_firstPoint = false;
 		m_brushEngine.beginStroke(m_owner.client()->myId(), true, m_zoom);
-		m_start.setPressure(qMin(m_start.pressure(), point.pressure()));
+		m_start.setPressure(qMin(m_start.pressure(), params.point.pressure()));
 		m_brushEngine.strokeTo(m_start, canvasState);
 	}
 
-	m_brushEngine.strokeTo(point, canvasState);
+	m_brushEngine.strokeTo(params.point, canvasState);
 	m_brushEngine.sendMessagesTo(m_owner.client());
 }
 

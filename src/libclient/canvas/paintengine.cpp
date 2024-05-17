@@ -154,8 +154,9 @@ void PaintEngine::timerEvent(QTimerEvent *)
 		&PaintEngine::onResetLockChanged, &PaintEngine::onRecorderStateChanged,
 		&PaintEngine::onLayerPropsChanged, &PaintEngine::onAnnotationsChanged,
 		&PaintEngine::onDocumentMetadataChanged,
-		&PaintEngine::onTimelineChanged, &PaintEngine::onCursorMoved,
-		&PaintEngine::onDefaultLayer, &PaintEngine::onUndoDepthLimitSet,
+		&PaintEngine::onTimelineChanged, &PaintEngine::onSelectionsChanged,
+		&PaintEngine::onCursorMoved, &PaintEngine::onDefaultLayer,
+		&PaintEngine::onUndoDepthLimitSet,
 		&PaintEngine::onCensoredLayerRevealed, this);
 	if(m_tileCacheDirtyCheckOnTick && m_tileCache.needsDirtyCheck()) {
 		emit tileCacheDirtyCheckNeeded();
@@ -881,6 +882,14 @@ void PaintEngine::onTimelineChanged(void *user, DP_Timeline *tl)
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	pe->m_updateLayersVisibleInFrame = true;
 	emit pe->timelineChanged(drawdance::Timeline::inc(tl));
+}
+
+void PaintEngine::onSelectionsChanged(void *user, DP_SelectionSet *ssOrNull)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->selectionsChanged(
+		ssOrNull ? drawdance::SelectionSet::inc(ssOrNull)
+				 : drawdance::SelectionSet::null());
 }
 
 void PaintEngine::onCursorMoved(

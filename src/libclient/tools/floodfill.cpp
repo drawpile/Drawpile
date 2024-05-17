@@ -80,7 +80,7 @@ private:
 FloodFill::FloodFill(ToolController &owner)
 	: Tool(
 		  owner, FLOODFILL, QCursor(QPixmap(":cursors/bucket.png"), 2, 29),
-		  true, true, false)
+		  true, true, false, false, true)
 	, m_tolerance(0.01)
 	, m_expansion(0)
 	, m_featherRadius(0)
@@ -94,12 +94,9 @@ FloodFill::FloodFill(ToolController &owner)
 {
 }
 
-void FloodFill::begin(
-	const canvas::Point &point, bool right, float zoom, const QPointF &viewPos)
+void FloodFill::begin(const BeginParams &params)
 {
-	Q_UNUSED(zoom);
-	Q_UNUSED(viewPos);
-	if(right) {
+	if(params.right) {
 		cancelMultipart();
 	} else if(!m_running) {
 		canvas::CanvasModel *model = m_owner.model();
@@ -110,21 +107,17 @@ void FloodFill::begin(
 		m_cancel = false;
 		canvas::PaintEngine *paintEngine = model->paintEngine();
 		m_owner.executeAsync(new Task{
-			this, m_cancel, paintEngine->viewCanvasState(), point, fillColor,
-			m_tolerance, m_layerId, m_size, m_gap, m_expansion, m_featherRadius,
-			m_continuous, m_owner.activeLayer(), paintEngine->viewMode(),
-			paintEngine->viewLayer(), paintEngine->viewFrame()});
+			this, m_cancel, paintEngine->viewCanvasState(), params.point,
+			fillColor, m_tolerance, m_layerId, m_size, m_gap, m_expansion,
+			m_featherRadius, m_continuous, m_owner.activeLayer(),
+			paintEngine->viewMode(), paintEngine->viewLayer(),
+			paintEngine->viewFrame()});
 	}
 }
 
-void FloodFill::motion(
-	const canvas::Point &point, bool constrain, bool center,
-	const QPointF &viewPos)
+void FloodFill::motion(const MotionParams &params)
 {
-	Q_UNUSED(point);
-	Q_UNUSED(constrain);
-	Q_UNUSED(center);
-	Q_UNUSED(viewPos);
+	Q_UNUSED(params);
 }
 
 void FloodFill::end() {}
@@ -134,6 +127,11 @@ void FloodFill::cancelMultipart()
 	if(m_running) {
 		m_cancel = true;
 	}
+}
+
+void FloodFill::dispose()
+{
+	cancelMultipart();
 }
 
 void FloodFill::floodFillFinished(Task *task)

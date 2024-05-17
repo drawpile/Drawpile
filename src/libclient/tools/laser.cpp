@@ -10,19 +10,16 @@ namespace tools {
 LaserPointer::LaserPointer(ToolController &owner)
 	: Tool(
 		  owner, LASERPOINTER, QCursor(QPixmap(":cursors/arrow.png"), 0, 0),
-		  false, true, false)
+		  false, true, false, false, false)
 	, m_persistence(1)
 	, m_drawing(false)
 {
 }
 
-void LaserPointer::begin(
-	const canvas::Point &point, bool right, float zoom, const QPointF &viewPos)
+void LaserPointer::begin(const BeginParams &params)
 {
-	Q_UNUSED(zoom);
-	Q_UNUSED(viewPos);
 	Q_ASSERT(!m_drawing);
-	if(right) {
+	if(params.right) {
 		return;
 	}
 
@@ -33,21 +30,18 @@ void LaserPointer::begin(
 	uint32_t color = m_owner.activeBrush().qColor().rgb();
 	net::Message messages[] = {
 		net::makeLaserTrailMessage(contextId, color, m_persistence),
-		net::makeMovePointerMessage(contextId, point.x() * 4, point.y() * 4),
+		net::makeMovePointerMessage(
+			contextId, params.point.x() * 4, params.point.y() * 4),
 	};
 	client->sendMessages(DP_ARRAY_LENGTH(messages), messages);
 }
 
-void LaserPointer::motion(
-	const canvas::Point &point, bool constrain, bool center,
-	const QPointF &viewPos)
+void LaserPointer::motion(const MotionParams &params)
 {
-	Q_UNUSED(constrain);
-	Q_UNUSED(center);
-	Q_UNUSED(viewPos);
 	if(m_drawing) {
 		m_owner.client()->sendMessage(net::makeMovePointerMessage(
-			m_owner.client()->myId(), point.x() * 4, point.y() * 4));
+			m_owner.client()->myId(), params.point.x() * 4,
+			params.point.y() * 4));
 	}
 }
 

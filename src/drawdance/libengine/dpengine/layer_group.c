@@ -178,6 +178,45 @@ DP_LayerList *DP_layer_group_children_noinc(DP_LayerGroup *lg)
     return lg->children;
 }
 
+bool DP_layer_group_bounds(DP_LayerGroup *lg, DP_Rect *out_bounds)
+{
+    DP_ASSERT(lg);
+    DP_ASSERT(DP_atomic_get(&lg->refcount) > 0);
+    DP_Rect bounds;
+    bool have_bounds = false;
+
+    DP_LayerList *ll = lg->children;
+    int count = DP_layer_list_count(ll);
+    for (int i = 0; i < count; ++i) {
+        DP_Rect child_bounds;
+        bool have_child_bounds;
+        DP_LayerListEntry *lle = DP_layer_list_at_noinc(ll, i);
+        if (DP_layer_list_entry_is_group(lle)) {
+            have_child_bounds = DP_layer_group_bounds(
+                DP_layer_list_entry_group_noinc(lle), &child_bounds);
+        }
+        else {
+            have_child_bounds = DP_layer_content_bounds(
+                DP_layer_list_entry_content_noinc(lle), &child_bounds);
+        }
+
+        if (have_child_bounds) {
+            if (have_bounds) {
+                bounds = DP_rect_union(bounds, child_bounds);
+            }
+            else {
+                have_bounds = true;
+                bounds = child_bounds;
+            }
+        }
+    }
+
+    if (have_bounds && out_bounds) {
+        *out_bounds = bounds;
+    }
+    return have_bounds;
+}
+
 int DP_layer_group_search_change_bounds(DP_LayerGroup *lg, DP_LayerProps *lp,
                                         unsigned int context_id, int *out_x,
                                         int *out_y, int *out_width,

@@ -264,24 +264,20 @@ public slots:
 	void undo();
 	void redo();
 
-	void
-	selectAll(); // Note: selection tool should be activated before calling this
+	void selectAll();
 	void selectNone();
-	void cancelSelection();
+	void selectInvert();
+	void selectLayerBounds();
+	void selectLayerContents();
 
 	void copyVisible();
 	void copyMerged();
 	void copyLayer();
 	void cutLayer();
-	void pasteImage(
-		const QImage &image, const QPoint &point,
-		bool forcePoint); // Note: selection tool should be activated before
-						  // calling this
-	void stamp();
 
 	void removeEmptyAnnotations();
 	void clearArea();
-	void fillArea(const QColor &color, DP_BlendMode mode, bool source = false);
+	void fillArea(const QColor &color, DP_BlendMode mode, float opacity);
 
 	void addServerLogEntry(const QString &log);
 
@@ -333,6 +329,9 @@ private:
 
 	bool copyFromLayer(int layer);
 	void fillBackground(QImage &img);
+	void selectLayer(bool includeMask);
+	void selectAllOp(int op);
+	void selectOp(int op, const QRect &bounds, const QImage &mask = QImage());
 
 	void autosave();
 

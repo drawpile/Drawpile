@@ -9,6 +9,7 @@ extern "C" {
 #include "libclient/drawdance/canvashistory.h"
 #include "libclient/drawdance/canvasstate.h"
 #include "libclient/drawdance/paintengine.h"
+#include "libclient/drawdance/selectionset.h"
 #include "libclient/drawdance/snapshotqueue.h"
 #include <QObject>
 #include <QPainter>
@@ -266,6 +267,7 @@ signals:
 	void recorderStateChanged(bool started);
 	void documentMetadataChanged(const drawdance::DocumentMetadata &dm);
 	void timelineChanged(const drawdance::Timeline &tl);
+	void selectionsChanged(const drawdance::SelectionSet &ss);
 	void frameVisibilityChanged(const QSet<int> layers, bool frameMode);
 	void aclsChanged(
 		const drawdance::AclState &acls, int aclChangeFlags, bool reset);
@@ -303,6 +305,7 @@ private:
 	static void onAnnotationsChanged(void *user, DP_AnnotationList *al);
 	static void onDocumentMetadataChanged(void *user, DP_DocumentMetadata *dm);
 	static void onTimelineChanged(void *user, DP_Timeline *tl);
+	static void onSelectionsChanged(void *user, DP_SelectionSet *ssOrNull);
 	static void onCursorMoved(
 		void *user, unsigned int flags, unsigned int contextId, int layerId,
 		int x, int y);

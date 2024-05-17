@@ -35,6 +35,7 @@
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
 #include <dpmsg/blend_mode.h>
+#include <limits.h>
 
 
 #ifdef DP_NO_STRICT_ALIASING
@@ -564,6 +565,77 @@ static bool get_sublayer_change_bounds(DP_LayerContent *lc, int i, int *out_x,
     }
 }
 
+static bool layer_content_crop(DP_LayerContent *lc, int *out_x, int *out_y,
+                               int *out_width, int *out_height)
+{
+    int tile_left, tile_top, tile_right, tile_bottom;
+    if (!layer_content_tile_bounds(lc, &tile_left, &tile_top, &tile_right,
+                                   &tile_bottom)) {
+        return false;
+    }
+
+    DP_Rect dst =
+        DP_rect_make(tile_left * DP_TILE_SIZE, tile_top * DP_TILE_SIZE,
+                     (tile_right - tile_left + 1) * DP_TILE_SIZE,
+                     (tile_bottom - tile_top + 1) * DP_TILE_SIZE);
+    DP_Rect crop = {INT_MAX, INT_MAX, INT_MIN, INT_MIN};
+    DP_TileIterator ti = DP_tile_iterator_make(lc->width, lc->height, dst);
+    while (DP_tile_iterator_next(&ti)) {
+        DP_Tile *t = DP_layer_content_tile_at_noinc(lc, ti.col, ti.row);
+        if (t) {
+            DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(&ti);
+            while (DP_tile_into_dst_iterator_next(&tidi)) {
+                bool crop_left = tidi.dst_x < crop.x1;
+                bool crop_right = tidi.dst_x > crop.x2;
+                bool crop_top = tidi.dst_y < crop.y1;
+                bool crop_bottom = tidi.dst_y > crop.y2;
+                bool change_crop =
+                    (crop_left || crop_right || crop_top || crop_bottom)
+                    && DP_tile_pixel_at(t, tidi.tile_x, tidi.tile_y).a != 0;
+                if (change_crop) {
+                    if (crop_left) {
+                        crop.x1 = tidi.dst_x;
+                    }
+                    if (crop_right) {
+                        crop.x2 = tidi.dst_x;
+                    }
+                    if (crop_top) {
+                        crop.y1 = tidi.dst_y;
+                    }
+                    if (crop_bottom) {
+                        crop.y2 = tidi.dst_y;
+                    }
+                }
+            }
+        }
+    }
+
+    if (crop.x2 < crop.x1 || crop.y2 < crop.y1) {
+        return false;
+    }
+
+    *out_x = dst.x1 + crop.x1;
+    *out_y = dst.y1 + crop.y1;
+    *out_width = DP_rect_width(crop);
+    *out_height = DP_rect_height(crop);
+    return true;
+}
+
+bool DP_layer_content_bounds(DP_LayerContent *lc, DP_Rect *out_bounds)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_ASSERT(out_bounds);
+    int x, y, width, height;
+    if (layer_content_crop(lc, &x, &y, &width, &height)) {
+        *out_bounds = DP_rect_make(x, y, width, height);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 bool DP_layer_content_search_change_bounds(DP_LayerContent *lc,
                                            unsigned int context_id, int *out_x,
                                            int *out_y, int *out_width,
@@ -607,6 +679,27 @@ DP_Image *DP_layer_content_to_image(DP_LayerContent *lc)
     return img;
 }
 
+static bool layer_content_crop_censored(DP_LayerContent *lc, int *out_x,
+                                        int *out_y, int *out_width,
+                                        int *out_height)
+{
+    int tile_left, tile_top, tile_right, tile_bottom;
+    if (!layer_content_tile_bounds(lc, &tile_left, &tile_top, &tile_right,
+                                   &tile_bottom)) {
+        return false;
+    }
+
+    DP_Rect crop =
+        DP_rect_make(tile_left * DP_TILE_SIZE, tile_top * DP_TILE_SIZE,
+                     (tile_right - tile_left + 1) * DP_TILE_SIZE,
+                     (tile_bottom - tile_top + 1) * DP_TILE_SIZE);
+    *out_x = crop.x1;
+    *out_y = crop.y1;
+    *out_width = DP_rect_width(crop);
+    *out_height = DP_rect_height(crop);
+    return true;
+}
+
 DP_UPixel8 *
 DP_layer_content_to_upixels8_cropped(DP_LayerContent *lc, bool censored,
                                      int *out_offset_x, int *out_offset_y,
@@ -615,87 +708,67 @@ DP_layer_content_to_upixels8_cropped(DP_LayerContent *lc, bool censored,
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
 
-    int left, top, right, bottom;
-    if (!layer_content_tile_bounds(lc, &left, &top, &right, &bottom)) {
-        return NULL; // Whole layer seems to be blank.
-    }
-
-    int width = (right - left + 1) * DP_TILE_SIZE;
-    int height = (bottom - top + 1) * DP_TILE_SIZE;
-    DP_UPixel8 *pixels = DP_malloc(sizeof(*pixels) * DP_int_to_size(width)
-                                   * DP_int_to_size(height));
-    DP_Tile *censor_tile = censored ? DP_tile_censored_noinc() : NULL;
-    for (int y = top; y <= bottom; ++y) {
-        int target_y = (y - top) * DP_TILE_SIZE;
-        for (int x = left; x <= right; ++x) {
-            DP_Tile *t = DP_layer_content_tile_at_noinc(lc, x, y);
-            int target_x = (x - left) * DP_TILE_SIZE;
-            DP_tile_copy_to_upixels8(censored && t ? censor_tile : t, pixels,
-                                     target_x, target_y, width, height);
+    int x, y, width, height;
+    DP_UPixel8 *pixels;
+    if (censored) {
+        if (layer_content_crop_censored(lc, &x, &y, &width, &height)) {
+            pixels =
+                DP_layer_content_to_upixels8_censored(lc, x, y, width, height);
         }
-    }
-
-    int min_x = width;
-    int min_y = height;
-    int max_x = -1;
-    int max_y = -1;
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
-            DP_UPixel8 pixel = pixels[y * width + x];
-            if (pixel.a != 0) {
-                if (x < min_x) {
-                    min_x = x;
-                }
-                if (y < min_y) {
-                    min_y = y;
-                }
-                if (x > max_x) {
-                    max_x = x;
-                }
-                if (y > max_y) {
-                    max_y = y;
-                }
-            }
+        else {
+            return NULL;
         }
-    }
-
-    if (max_x < min_x || max_y < min_y) {
-        // Turns out the image is empty after all. Can happen if almost
-        // transparent 15 bit pixels become actually transparent in 8 bits.
-        DP_free(pixels);
-        return NULL;
-    }
-
-    int pixel_width, pixel_height;
-    if (min_x == 0 && min_y == 0 && max_x == width - 1 && max_y == height - 1) {
-        pixel_width = width;
-        pixel_height = height;
     }
     else {
-        pixel_width = max_x - min_x + 1;
-        pixel_height = max_y - min_y + 1;
-        for (int y = 0; y < pixel_height; ++y) {
-            for (int x = 0; x < pixel_width; ++x) {
-                int tx = x + min_x;
-                int ty = y + min_y;
-                pixels[y * pixel_width + x] = pixels[ty * width + tx];
-            }
+        if (layer_content_crop(lc, &x, &y, &width, &height)) {
+            pixels = DP_layer_content_to_upixels8(lc, x, y, width, height);
+        }
+        else {
+            return NULL;
         }
     }
 
     if (out_offset_x) {
-        *out_offset_x = left * DP_TILE_SIZE + min_x;
+        *out_offset_x = x;
     }
     if (out_offset_y) {
-        *out_offset_y = top * DP_TILE_SIZE + min_y;
+        *out_offset_y = y;
     }
     if (out_width) {
-        *out_width = pixel_width;
+        *out_width = width;
     }
     if (out_height) {
-        *out_height = pixel_height;
+        *out_height = height;
     }
     return pixels;
+}
+
+DP_Pixel8 *DP_layer_content_to_pixels8_cropped(DP_LayerContent *lc,
+                                               int *out_offset_x,
+                                               int *out_offset_y,
+                                               int *out_width, int *out_height)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    int x, y, width, height;
+    if (layer_content_crop(lc, &x, &y, &width, &height)) {
+        if (out_offset_x) {
+            *out_offset_x = x;
+        }
+        if (out_offset_y) {
+            *out_offset_y = y;
+        }
+        if (out_width) {
+            *out_width = width;
+        }
+        if (out_height) {
+            *out_height = height;
+        }
+        return DP_layer_content_to_pixels8(lc, x, y, width, height);
+    }
+    else {
+        return NULL;
+    }
 }
 
 DP_UPixel8 *DP_layer_content_to_upixels8(DP_LayerContent *lc, int x, int y,
@@ -726,6 +799,34 @@ DP_UPixel8 *DP_layer_content_to_upixels8(DP_LayerContent *lc, int x, int y,
     return pixels;
 }
 
+DP_UPixel8 *DP_layer_content_to_upixels8_censored(DP_LayerContent *lc, int x,
+                                                  int y, int width, int height)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_ASSERT(width > 0);
+    DP_ASSERT(height > 0);
+
+    DP_TileIterator ti = DP_tile_iterator_make(
+        lc->width, lc->height, DP_rect_make(x, y, width, height));
+    DP_UPixel8 *pixels = DP_malloc_zeroed(
+        sizeof(*pixels) * DP_int_to_size(width) * DP_int_to_size(height));
+
+    DP_Tile *censor_tile = DP_tile_censored_noinc();
+    while (DP_tile_iterator_next(&ti)) {
+        if (DP_layer_content_tile_at_noinc(lc, ti.col, ti.row)) {
+            DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(&ti);
+            while (DP_tile_into_dst_iterator_next(&tidi)) {
+                pixels[tidi.dst_y * width + tidi.dst_x] =
+                    DP_upixel15_to_8(DP_pixel15_unpremultiply(DP_tile_pixel_at(
+                        censor_tile, tidi.tile_x, tidi.tile_y)));
+            }
+        }
+    }
+
+    return pixels;
+}
+
 DP_Pixel8 *DP_layer_content_to_pixels8(DP_LayerContent *lc, int x, int y,
                                        int width, int height)
 {
@@ -746,6 +847,43 @@ DP_Pixel8 *DP_layer_content_to_pixels8(DP_LayerContent *lc, int x, int y,
             while (DP_tile_into_dst_iterator_next(&tidi)) {
                 pixels[tidi.dst_y * width + tidi.dst_x] = DP_pixel15_to_8(
                     DP_tile_pixel_at(t, tidi.tile_x, tidi.tile_y));
+            }
+        }
+    }
+
+    return pixels;
+}
+
+DP_Pixel8 *DP_layer_content_to_pixels8_mask(DP_LayerContent *lc, int x, int y,
+                                            int width, int height,
+                                            DP_UPixel8 color)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_ASSERT(width > 0);
+    DP_ASSERT(height > 0);
+
+    DP_TileIterator ti = DP_tile_iterator_make(
+        lc->width, lc->height, DP_rect_make(x, y, width, height));
+    DP_Pixel8 *pixels = DP_malloc_zeroed(sizeof(*pixels) * DP_int_to_size(width)
+                                         * DP_int_to_size(height));
+
+    while (DP_tile_iterator_next(&ti)) {
+        DP_Tile *t = DP_layer_content_tile_at_noinc(lc, ti.col, ti.row);
+        if (t) {
+            DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(&ti);
+            while (DP_tile_into_dst_iterator_next(&tidi)) {
+                uint16_t a = DP_tile_pixel_at(t, tidi.tile_x, tidi.tile_y).a;
+                if (a != 0) {
+                    unsigned int a8 = DP_max_uint(
+                        1, DP_pixel8_mul(DP_channel15_to_8(a), color.a));
+                    pixels[tidi.dst_y * width + tidi.dst_x] = (DP_Pixel8){
+                        .b = DP_pixel8_mul(a8, color.b),
+                        .g = DP_pixel8_mul(a8, color.g),
+                        .r = DP_pixel8_mul(a8, color.r),
+                        .a = DP_uint_to_uint8(a8),
+                    };
+                }
             }
         }
     }
@@ -1268,6 +1406,17 @@ DP_transient_layer_content_sub_props_noinc(DP_TransientLayerContent *tlc)
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     return DP_layer_content_sub_props_noinc((DP_LayerContent *)tlc);
+}
+
+
+bool DP_transient_layer_content_bounds(DP_TransientLayerContent *tlc,
+                                       DP_Rect *out_bounds)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    DP_ASSERT(out_bounds);
+    return DP_layer_content_bounds((DP_LayerContent *)tlc, out_bounds);
 }
 
 

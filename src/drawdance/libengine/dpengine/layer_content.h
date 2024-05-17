@@ -96,6 +96,8 @@ DP_LayerPropsList *DP_layer_content_sub_props_noinc(DP_LayerContent *lc);
 
 bool DP_layer_content_same_pixel(DP_LayerContent *lc, DP_Pixel15 *out_pixel);
 
+bool DP_layer_content_bounds(DP_LayerContent *lc, DP_Rect *out_bounds);
+
 bool DP_layer_content_search_change_bounds(DP_LayerContent *lc,
                                            unsigned int context_id, int *out_x,
                                            int *out_y, int *out_width,
@@ -108,11 +110,23 @@ DP_layer_content_to_upixels8_cropped(DP_LayerContent *lc, bool censored,
                                      int *out_offset_x, int *out_offset_y,
                                      int *out_width, int *out_height);
 
+DP_Pixel8 *DP_layer_content_to_pixels8_cropped(DP_LayerContent *lc,
+                                               int *out_offset_x,
+                                               int *out_offset_y,
+                                               int *out_width, int *out_height);
+
 DP_UPixel8 *DP_layer_content_to_upixels8(DP_LayerContent *lc, int x, int y,
                                          int width, int height);
 
+DP_UPixel8 *DP_layer_content_to_upixels8_censored(DP_LayerContent *lc, int x,
+                                                  int y, int width, int height);
+
 DP_Pixel8 *DP_layer_content_to_pixels8(DP_LayerContent *lc, int x, int y,
                                        int width, int height);
+
+DP_Pixel8 *DP_layer_content_to_pixels8_mask(DP_LayerContent *lc, int x, int y,
+                                            int width, int height,
+                                            DP_UPixel8 color);
 
 DP_Image *DP_layer_content_select(DP_LayerContent *lc, const DP_Rect *rect,
                                   DP_Image *mask);
@@ -164,6 +178,9 @@ DP_transient_layer_content_sub_contents_noinc(DP_TransientLayerContent *tlc);
 
 DP_LayerPropsList *
 DP_transient_layer_content_sub_props_noinc(DP_TransientLayerContent *tlc);
+
+bool DP_transient_layer_content_bounds(DP_TransientLayerContent *tlc,
+                                       DP_Rect *out_bounds);
 
 DP_TransientLayerContent *
 DP_transient_layer_content_resize_to(DP_TransientLayerContent *tlc,

@@ -40,6 +40,8 @@ dp_target_sources(dpengine
     dpengine/renderer.c
     dpengine/save.c
     dpengine/save_psd.c
+    dpengine/selection.c
+    dpengine/selection_set.c
     dpengine/snapshots.c
     dpengine/text.c
     dpengine/tile.c
@@ -85,6 +87,8 @@ dp_target_sources(dpengine
     dpengine/preview.h
     dpengine/recorder.h
     dpengine/renderer.h
+    dpengine/selection.h
+    dpengine/selection_set.h
     dpengine/snapshots.h
     dpengine/text.h
     dpengine/tile.h

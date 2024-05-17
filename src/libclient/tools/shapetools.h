@@ -3,8 +3,8 @@
 #ifndef TOOLS_SHAPETOOLS_H
 #define TOOLS_SHAPETOOLS_H
 
-#include "libclient/tools/tool.h"
 #include "libclient/drawdance/brushengine.h"
+#include "libclient/tools/tool.h"
 
 #include <QRectF>
 
@@ -16,21 +16,18 @@ namespace tools {
 class ShapeTool : public Tool {
 public:
 	ShapeTool(ToolController &owner, Type type, QCursor cursor)
-		: Tool{owner, type, cursor, true, true, false}
+		: Tool{owner, type, cursor, true, true, false, true, true}
 		, m_drawing{false}
 		, m_brushEngine{}
 	{
 	}
 
-	void begin(
-		const canvas::Point &point, bool right, float zoom,
-		const QPointF &viewPos) override;
-	void motion(
-		const canvas::Point &point, bool constrain, bool center,
-		const QPointF &viewPos) override;
-	void end() override;
-	void cancelMultipart() override;
-	bool usesBrushColor() const override { return true; }
+	void begin(const BeginParams &params) final override;
+	void motion(const MotionParams &params) override;
+	void end() final override;
+
+	void cancelMultipart() final override;
+	bool usesBrushColor() const final override { return true; }
 
 protected:
 	virtual canvas::PointVector pointVector() const = 0;
@@ -41,7 +38,7 @@ protected:
 	bool m_drawing;
 
 private:
-	float m_zoom;
+	qreal m_zoom;
 	drawdance::BrushEngine m_brushEngine;
 };
 
@@ -54,9 +51,7 @@ class Line final : public ShapeTool {
 public:
 	Line(ToolController &owner);
 
-	void motion(
-		const canvas::Point &point, bool constrain, bool center,
-		const QPointF &viewPos) override;
+	void motion(const MotionParams &params) override;
 
 protected:
 	canvas::PointVector pointVector() const override;

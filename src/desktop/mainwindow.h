@@ -70,7 +70,7 @@ namespace drawingboard {
 }
 namespace canvas {
 	class CanvasModel;
-	class Selection;
+	class SelectionModel;
 }
 namespace drawdance {
 	class CanvasState;
@@ -256,9 +256,7 @@ private slots:
 	void updateFreehandToolButton(int brushMode);
 	void handleFreehandToolButtonClicked();
 
-	void activeAnnotationChanged(int annotationId);
-	void selectionChanged(canvas::Selection *selection);
-	void selectionRemoved();
+	void updateSelectTransformActions();
 
 	void setFreezeDocks(bool freeze);
 	void setDocksHidden(bool hidden);
@@ -329,6 +327,9 @@ private:
 	void requestCurrentBrush(int userId);
 	void sendCurrentBrush(int userId, const QString &correlator);
 	void receiveCurrentBrush(int userId, const QJsonObject &info);
+
+	void fillArea(const QColor &color, int blendMode, float opacity);
+	void fillAreaWithBlendMode(int blendMode);
 
 	void createDocks();
 	void resetDefaultDocks();
@@ -411,8 +412,6 @@ private:
 	QActionGroup *m_desktopModeActions;
 	QActionGroup *m_smallScreenModeActions;
 	QVector<QAction *> m_smallScreenEditActions;
-
-	int m_lastToolBeforePaste; // Last selected tool before Paste was used
 
 	QMetaObject::Connection m_textCopyConnection;
 

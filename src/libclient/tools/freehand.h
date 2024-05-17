@@ -13,14 +13,8 @@ public:
 	Freehand(ToolController &owner, bool isEraser);
 	~Freehand() override;
 
-	void begin(
-		const canvas::Point &point, bool right, float zoom,
-		const QPointF &viewPos) override;
-
-	void motion(
-		const canvas::Point &point, bool constrain, bool center,
-		const QPointF &viewPos) override;
-
+	void begin(const BeginParams &params) override;
+	void motion(const MotionParams &params) override;
 	void end() override;
 
 	bool usesBrushColor() const override { return true; }
@@ -36,7 +30,7 @@ private:
 	bool m_drawing;
 	bool m_firstPoint;
 	canvas::Point m_start;
-	float m_zoom;
+	qreal m_zoom;
 };
 
 }

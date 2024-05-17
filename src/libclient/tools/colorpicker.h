@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef TOOLS_COLORPICKER_H
-#define TOOLS_COLORPICKER_H
-
+#ifndef LIBCLIENT_TOOLS_COLORPICKER_H
+#define LIBCLIENT_TOOLS_COLORPICKER_H
 #include "libclient/tools/tool.h"
 
 namespace tools {
@@ -16,12 +14,8 @@ class ColorPicker final : public Tool {
 public:
 	ColorPicker(ToolController &owner);
 
-	void begin(
-		const canvas::Point &point, bool right, float zoom,
-		const QPointF &viewPos) override;
-	void motion(
-		const canvas::Point &point, bool constrain, bool center,
-		const QPointF &viewPos) override;
+	void begin(const BeginParams &params) override;
+	void motion(const MotionParams &params) override;
 	void end() override;
 
 	//! Pick from the current active layer only?
@@ -31,8 +25,11 @@ public:
 	void setSize(int size) { m_size = size; }
 
 private:
-	bool m_pickFromCurrentLayer;
-	int m_size;
+	void pick(const QPointF &point) const;
+
+	bool m_picking = false;
+	bool m_pickFromCurrentLayer = false;
+	int m_size = 1;
 };
 
 }

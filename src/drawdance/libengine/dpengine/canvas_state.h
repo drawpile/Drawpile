@@ -35,6 +35,7 @@ typedef struct DP_LayerPropsList DP_LayerPropsList;
 typedef struct DP_LayerRoutes DP_LayerRoutes;
 typedef struct DP_Message DP_Message;
 typedef struct DP_Rect DP_Rect;
+typedef struct DP_SelectionSet DP_SelectionSet;
 typedef struct DP_Tile DP_Tile;
 typedef struct DP_Timeline DP_Timeline;
 typedef struct DP_UserCursors DP_UserCursors;
@@ -55,6 +56,7 @@ typedef struct DP_TransientLayerContent DP_TransientLayerContent;
 typedef struct DP_TransientLayerList DP_TransientLayerList;
 typedef struct DP_TransientLayerPropsList DP_TransientLayerPropsList;
 typedef struct DP_TransientLayerRoutes DP_TransientLayerRoutes;
+typedef struct DP_TransientSelectionSet DP_TransientSelectionSet;
 typedef struct DP_TransientTile DP_TransientTile;
 typedef struct DP_TransientTimeline DP_TransientTimeline;
 #else
@@ -64,12 +66,16 @@ typedef struct DP_LayerContent DP_TransientLayerContent;
 typedef struct DP_LayerList DP_TransientLayerList;
 typedef struct DP_LayerPropsList DP_TransientLayerPropsList;
 typedef struct DP_LayerRoutes DP_TransientLayerRoutes;
+typedef struct DP_SelectionSet DP_TransientSelectionSet;
 typedef struct DP_Tile DP_TransientTile;
 typedef struct DP_Timeline DP_TransientTimeline;
 #endif
 
 
 DP_CanvasState *DP_canvas_state_new(void);
+
+DP_CanvasState *DP_canvas_state_new_with_selections_noinc(DP_CanvasState *cs,
+                                                    DP_SelectionSet *ss);
 
 DP_CanvasState *DP_canvas_state_incref(DP_CanvasState *cs);
 
@@ -106,6 +112,8 @@ DP_AnnotationList *DP_canvas_state_annotations_noinc(DP_CanvasState *cs);
 DP_Timeline *DP_canvas_state_timeline_noinc(DP_CanvasState *cs);
 
 DP_DocumentMetadata *DP_canvas_state_metadata_noinc(DP_CanvasState *cs);
+
+DP_SelectionSet *DP_canvas_state_selections_noinc_nullable(DP_CanvasState *cs);
 
 int DP_canvas_state_frame_count(DP_CanvasState *cs);
 
@@ -226,6 +234,9 @@ DP_transient_canvas_state_layer_routes_noinc(DP_TransientCanvasState *tcs);
 DP_DocumentMetadata *
 DP_transient_canvas_state_metadata_noinc(DP_TransientCanvasState *tcs);
 
+DP_SelectionSet *DP_transient_canvas_state_selections_noinc_nullable(
+    DP_TransientCanvasState *tcs);
+
 void DP_transient_canvas_state_layers_set_inc(DP_TransientCanvasState *tcs,
                                               DP_LayerList *ll);
 
@@ -262,6 +273,12 @@ void DP_transient_canvas_state_transient_timeline_set_noinc(
 
 DP_TransientDocumentMetadata *
 DP_transient_canvas_state_transient_metadata(DP_TransientCanvasState *tcs);
+
+void DP_transient_canvas_state_transient_selections_set_noinc(
+    DP_TransientCanvasState *tcs, DP_TransientSelectionSet *tss);
+
+void DP_transient_canvas_state_transient_selections_clear(
+    DP_TransientCanvasState *tcs);
 
 // Translates a single-colored, normal, fully opaque layer at the bottom into a
 // background tile, for compatibility with software that doesn't do backgrounds.

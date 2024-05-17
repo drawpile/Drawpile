@@ -8,11 +8,20 @@
         <file>ellipse.png</file>
         <file>eraser.png</file>
         <file>line.png</file>
+        <file>move.png</file>
         <file>rectangle.png</file>
         <file>rotate.png</file>
         <file>rotate-discrete.png</file>
         <file>select-lasso.png</file>
+        <file>select-lasso-add.png</file>
+        <file>select-lasso-remove.png</file>
         <file>select-rectangle.png</file>
+        <file>select-rectangle-add.png</file>
+        <file>select-rectangle-remove.png</file>
+        <file>shear-bdiag.png</file>
+        <file>shear-fdiag.png</file>
+        <file>shear-h.png</file>
+        <file>shear-v.png</file>
         <file>text.png</file>
         <file>triangle-left.png</file>
         <file>triangle-right.png</file>

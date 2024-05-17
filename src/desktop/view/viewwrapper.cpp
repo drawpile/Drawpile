@@ -8,8 +8,7 @@
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
-#include "desktop/toolwidgets/pansettings.h"
-#include "desktop/toolwidgets/selectionsettings.h"
+#include "desktop/toolwidgets/transformsettings.h"
 #include "desktop/toolwidgets/zoomsettings.h"
 #include "desktop/view/canvascontroller.h"
 #include "desktop/view/canvasscene.h"
@@ -258,6 +257,9 @@ void ViewWrapper::connectDocument(Document *doc)
 		toolCtrl, &tools::ToolController::activeAnnotationChanged, m_scene,
 		&CanvasScene::setActiveAnnotation);
 	connect(
+		toolCtrl, &tools::ToolController::transformToolStateChanged, m_scene,
+		&CanvasScene::setTransformToolState);
+	connect(
 		toolCtrl, &tools::ToolController::busyStateChanged, m_controller,
 		&CanvasController::setBusy);
 	connect(
@@ -266,10 +268,16 @@ void ViewWrapper::connectDocument(Document *doc)
 	connect(
 		toolCtrl, &tools::ToolController::zoomRequested, m_controller,
 		&CanvasController::zoomTo);
+	connect(
+		toolCtrl, &tools::ToolController::pathPreviewRequested, m_scene,
+		&CanvasScene::setPathPreview);
 
 	connect(
 		m_scene, &CanvasScene::annotationDeleted, toolCtrl,
 		&tools::ToolController::deselectDeletedAnnotation);
+	connect(
+		toolCtrl, &tools::ToolController::toolCapabilitiesChanged, m_scene,
+		&CanvasScene::setToolCapabilities);
 	connect(
 		m_controller, &CanvasController::canvasOffset, toolCtrl,
 		&tools::ToolController::offsetActiveTool);
@@ -285,7 +293,8 @@ void ViewWrapper::connectDocument(Document *doc)
 	m_controller->setToolCapabilities(
 		toolCtrl->activeToolAllowColorPick(),
 		toolCtrl->activeToolAllowToolAdjust(),
-		toolCtrl->activeToolHandlesRightClick());
+		toolCtrl->activeToolHandlesRightClick(),
+		toolCtrl->activeToolIsFractional());
 
 	connect(
 		m_controller, &CanvasController::penDown, toolCtrl,
@@ -400,7 +409,7 @@ void ViewWrapper::connectToolSettings(docks::ToolSettings *toolSettings)
 		&CanvasController::zoomToFit);
 
 	toolSettings->annotationSettings()->setCanvasView(this);
-	toolSettings->selectionSettings()->setCanvasView(this);
+	toolSettings->transformSettings()->setCanvasView(this);
 }
 
 void ViewWrapper::connectViewStatus(widgets::ViewStatus *viewStatus)

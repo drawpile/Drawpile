@@ -122,6 +122,8 @@ bool DP_message_type_command(DP_MessageType type)
     case DP_MSG_KEY_FRAME_RETITLE:
     case DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES:
     case DP_MSG_KEY_FRAME_DELETE:
+    case DP_MSG_SELECTION_PUT:
+    case DP_MSG_SELECTION_CLEAR:
     case DP_MSG_UNDO:
         return true;
     default:
@@ -258,6 +260,10 @@ const char *DP_message_type_name(DP_MessageType type)
         return "keyframelayerattributes";
     case DP_MSG_KEY_FRAME_DELETE:
         return "keyframedelete";
+    case DP_MSG_SELECTION_PUT:
+        return "selectionput";
+    case DP_MSG_SELECTION_CLEAR:
+        return "selectionclear";
     case DP_MSG_UNDO:
         return "undo";
     default:
@@ -394,6 +400,10 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES";
     case DP_MSG_KEY_FRAME_DELETE:
         return "DP_MSG_KEY_FRAME_DELETE";
+    case DP_MSG_SELECTION_PUT:
+        return "DP_MSG_SELECTION_PUT";
+    case DP_MSG_SELECTION_CLEAR:
+        return "DP_MSG_SELECTION_CLEAR";
     case DP_MSG_UNDO:
         return "DP_MSG_UNDO";
     default:
@@ -586,6 +596,12 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     else if (DP_str_equal(type_name, "keyframedelete")) {
         return DP_MSG_KEY_FRAME_DELETE;
     }
+    else if (DP_str_equal(type_name, "selectionput")) {
+        return DP_MSG_SELECTION_PUT;
+    }
+    else if (DP_str_equal(type_name, "selectionclear")) {
+        return DP_MSG_SELECTION_CLEAR;
+    }
     else if (DP_str_equal(type_name, "undo")) {
         return DP_MSG_UNDO;
     }
@@ -760,6 +776,10 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
                                                                  buf, length);
         case DP_MSG_KEY_FRAME_DELETE:
             return DP_msg_key_frame_delete_deserialize(context_id, buf, length);
+        case DP_MSG_SELECTION_PUT:
+            return DP_msg_selection_put_deserialize(context_id, buf, length);
+        case DP_MSG_SELECTION_CLEAR:
+            return DP_msg_selection_clear_deserialize(context_id, buf, length);
         case DP_MSG_UNDO:
             return DP_msg_undo_deserialize(context_id, buf, length);
         default:
@@ -908,6 +928,10 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return DP_msg_key_frame_layer_attributes_parse(context_id, reader);
     case DP_MSG_KEY_FRAME_DELETE:
         return DP_msg_key_frame_delete_parse(context_id, reader);
+    case DP_MSG_SELECTION_PUT:
+        return DP_msg_selection_put_parse(context_id, reader);
+    case DP_MSG_SELECTION_CLEAR:
+        return DP_msg_selection_clear_parse(context_id, reader);
     case DP_MSG_UNDO:
         return DP_msg_undo_parse(context_id, reader);
     default:
@@ -9243,6 +9267,307 @@ DP_msg_key_frame_delete_move_frame_index(const DP_MsgKeyFrameDelete *mkfd)
 {
     DP_ASSERT(mkfd);
     return mkfd->move_frame_index;
+}
+
+
+/* DP_MSG_SELECTION_PUT */
+
+const char *DP_msg_selection_put_op_variant_name(unsigned int value)
+{
+    switch (value) {
+    case DP_MSG_SELECTION_PUT_OP_REPLACE:
+        return "Replace";
+    case DP_MSG_SELECTION_PUT_OP_UNITE:
+        return "Unite";
+    case DP_MSG_SELECTION_PUT_OP_INTERSECT:
+        return "Intersect";
+    case DP_MSG_SELECTION_PUT_OP_EXCLUDE:
+        return "Exclude";
+    case DP_MSG_SELECTION_PUT_OP_COMPLEMENT:
+        return "Complement";
+    default:
+        return NULL;
+    }
+}
+
+struct DP_MsgSelectionPut {
+    uint8_t selection_id;
+    uint8_t op;
+    int32_t x;
+    int32_t y;
+    uint16_t w;
+    uint16_t h;
+    uint16_t mask_size;
+    unsigned char mask[];
+};
+
+static size_t msg_selection_put_payload_length(DP_Message *msg)
+{
+    DP_MsgSelectionPut *msp = DP_message_internal(msg);
+    return ((size_t)14) + msp->mask_size;
+}
+
+static size_t msg_selection_put_serialize_payload(DP_Message *msg,
+                                                  unsigned char *data)
+{
+    DP_MsgSelectionPut *msp = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint8(msp->selection_id, data + written);
+    written += DP_write_bigendian_uint8(msp->op, data + written);
+    written += DP_write_bigendian_int32(msp->x, data + written);
+    written += DP_write_bigendian_int32(msp->y, data + written);
+    written += DP_write_bigendian_uint16(msp->w, data + written);
+    written += DP_write_bigendian_uint16(msp->h, data + written);
+    written += write_bytes(msp->mask, msp->mask_size, data + written);
+    DP_ASSERT(written == msg_selection_put_payload_length(msg));
+    return written;
+}
+
+static bool msg_selection_put_write_payload_text(DP_Message *msg,
+                                                 DP_TextWriter *writer)
+{
+    DP_MsgSelectionPut *msp = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "h", msp->h, false)
+        && DP_text_writer_write_base64(writer, "mask", msp->mask,
+                                       msp->mask_size)
+        && DP_text_writer_write_uint(writer, "op", msp->op, false)
+        && DP_text_writer_write_uint(writer, "selection_id", msp->selection_id,
+                                     true)
+        && DP_text_writer_write_uint(writer, "w", msp->w, false)
+        && DP_text_writer_write_int(writer, "x", msp->x)
+        && DP_text_writer_write_int(writer, "y", msp->y);
+}
+
+static bool msg_selection_put_equals(DP_Message *DP_RESTRICT msg,
+                                     DP_Message *DP_RESTRICT other)
+{
+    DP_MsgSelectionPut *a = DP_message_internal(msg);
+    DP_MsgSelectionPut *b = DP_message_internal(other);
+    return a->selection_id == b->selection_id && a->op == b->op && a->x == b->x
+        && a->y == b->y && a->w == b->w && a->h == b->h
+        && a->mask_size == b->mask_size
+        && memcmp(a->mask, b->mask, DP_uint16_to_size(a->mask_size)) == 0;
+}
+
+static const DP_MessageMethods msg_selection_put_methods = {
+    msg_selection_put_payload_length,
+    msg_selection_put_serialize_payload,
+    msg_selection_put_write_payload_text,
+    msg_selection_put_equals,
+};
+
+DP_Message *
+DP_msg_selection_put_new(unsigned int context_id, uint8_t selection_id,
+                         uint8_t op, int32_t x, int32_t y, uint16_t w,
+                         uint16_t h,
+                         void (*set_mask)(size_t, unsigned char *, void *),
+                         size_t mask_size, void *mask_user)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_SELECTION_PUT, context_id, &msg_selection_put_methods,
+        DP_FLEX_SIZEOF(DP_MsgSelectionPut, mask, mask_size));
+    DP_MsgSelectionPut *msp = DP_message_internal(msg);
+    msp->selection_id = selection_id;
+    msp->op = op;
+    msp->x = x;
+    msp->y = y;
+    msp->w = w;
+    msp->h = h;
+    msp->mask_size = DP_size_to_uint16(mask_size);
+    if (set_mask) {
+        set_mask(msp->mask_size, msp->mask, mask_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_selection_put_deserialize(unsigned int context_id,
+                                             const unsigned char *buffer,
+                                             size_t length)
+{
+    if (length < 14 || length > 65535) {
+        DP_error_set("Wrong length for selectionput message; "
+                     "expected between 14 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint8_t selection_id = read_uint8(buffer + read, &read);
+    uint8_t op = read_uint8(buffer + read, &read);
+    int32_t x = read_int32(buffer + read, &read);
+    int32_t y = read_int32(buffer + read, &read);
+    uint16_t w = read_uint16(buffer + read, &read);
+    uint16_t h = read_uint16(buffer + read, &read);
+    size_t mask_bytes = length - read;
+    uint16_t mask_size = DP_size_to_uint16(mask_bytes);
+    void *mask_user = (void *)(buffer + read);
+    return DP_msg_selection_put_new(context_id, selection_id, op, x, y, w, h,
+                                    read_bytes, mask_size, mask_user);
+}
+
+DP_Message *DP_msg_selection_put_parse(unsigned int context_id,
+                                       DP_TextReader *reader)
+{
+    uint8_t selection_id = (uint8_t)DP_text_reader_get_ulong_hex(
+        reader, "selection_id", UINT8_MAX);
+    uint8_t op = (uint8_t)DP_text_reader_get_ulong(reader, "op", UINT8_MAX);
+    int32_t x =
+        (int32_t)DP_text_reader_get_long(reader, "x", INT32_MIN, INT32_MAX);
+    int32_t y =
+        (int32_t)DP_text_reader_get_long(reader, "y", INT32_MIN, INT32_MAX);
+    uint16_t w = (uint16_t)DP_text_reader_get_ulong(reader, "w", UINT16_MAX);
+    uint16_t h = (uint16_t)DP_text_reader_get_ulong(reader, "h", UINT16_MAX);
+    size_t mask_size;
+    DP_TextReaderParseParams mask_params =
+        DP_text_reader_get_base64_string(reader, "mask", &mask_size);
+    return DP_msg_selection_put_new(context_id, selection_id, op, x, y, w, h,
+                                    DP_text_reader_parse_base64, mask_size,
+                                    &mask_params);
+}
+
+DP_MsgSelectionPut *DP_msg_selection_put_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_SELECTION_PUT);
+}
+
+uint8_t DP_msg_selection_put_selection_id(const DP_MsgSelectionPut *msp)
+{
+    DP_ASSERT(msp);
+    return msp->selection_id;
+}
+
+uint8_t DP_msg_selection_put_op(const DP_MsgSelectionPut *msp)
+{
+    DP_ASSERT(msp);
+    return msp->op;
+}
+
+int32_t DP_msg_selection_put_x(const DP_MsgSelectionPut *msp)
+{
+    DP_ASSERT(msp);
+    return msp->x;
+}
+
+int32_t DP_msg_selection_put_y(const DP_MsgSelectionPut *msp)
+{
+    DP_ASSERT(msp);
+    return msp->y;
+}
+
+uint16_t DP_msg_selection_put_w(const DP_MsgSelectionPut *msp)
+{
+    DP_ASSERT(msp);
+    return msp->w;
+}
+
+uint16_t DP_msg_selection_put_h(const DP_MsgSelectionPut *msp)
+{
+    DP_ASSERT(msp);
+    return msp->h;
+}
+
+const unsigned char *DP_msg_selection_put_mask(const DP_MsgSelectionPut *msp,
+                                               size_t *out_size)
+{
+    DP_ASSERT(msp);
+    if (out_size) {
+        *out_size = msp->mask_size;
+    }
+    return msp->mask;
+}
+
+size_t DP_msg_selection_put_mask_size(const DP_MsgSelectionPut *msp)
+{
+    return msp->mask_size;
+}
+
+
+/* DP_MSG_SELECTION_CLEAR */
+
+struct DP_MsgSelectionClear {
+    uint8_t selection_id;
+};
+
+static size_t msg_selection_clear_payload_length(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)1);
+}
+
+static size_t msg_selection_clear_serialize_payload(DP_Message *msg,
+                                                    unsigned char *data)
+{
+    DP_MsgSelectionClear *msc = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint8(msc->selection_id, data + written);
+    DP_ASSERT(written == msg_selection_clear_payload_length(msg));
+    return written;
+}
+
+static bool msg_selection_clear_write_payload_text(DP_Message *msg,
+                                                   DP_TextWriter *writer)
+{
+    DP_MsgSelectionClear *msc = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "selection_id", msc->selection_id,
+                                     true);
+}
+
+static bool msg_selection_clear_equals(DP_Message *DP_RESTRICT msg,
+                                       DP_Message *DP_RESTRICT other)
+{
+    DP_MsgSelectionClear *a = DP_message_internal(msg);
+    DP_MsgSelectionClear *b = DP_message_internal(other);
+    return a->selection_id == b->selection_id;
+}
+
+static const DP_MessageMethods msg_selection_clear_methods = {
+    msg_selection_clear_payload_length,
+    msg_selection_clear_serialize_payload,
+    msg_selection_clear_write_payload_text,
+    msg_selection_clear_equals,
+};
+
+DP_Message *DP_msg_selection_clear_new(unsigned int context_id,
+                                       uint8_t selection_id)
+{
+    DP_Message *msg = DP_message_new(DP_MSG_SELECTION_CLEAR, context_id,
+                                     &msg_selection_clear_methods,
+                                     sizeof(DP_MsgSelectionClear));
+    DP_MsgSelectionClear *msc = DP_message_internal(msg);
+    msc->selection_id = selection_id;
+    return msg;
+}
+
+DP_Message *DP_msg_selection_clear_deserialize(unsigned int context_id,
+                                               const unsigned char *buffer,
+                                               size_t length)
+{
+    if (length != 1) {
+        DP_error_set("Wrong length for selectionclear message; "
+                     "expected 1, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint8_t selection_id = read_uint8(buffer + read, &read);
+    return DP_msg_selection_clear_new(context_id, selection_id);
+}
+
+DP_Message *DP_msg_selection_clear_parse(unsigned int context_id,
+                                         DP_TextReader *reader)
+{
+    uint8_t selection_id = (uint8_t)DP_text_reader_get_ulong_hex(
+        reader, "selection_id", UINT8_MAX);
+    return DP_msg_selection_clear_new(context_id, selection_id);
+}
+
+DP_MsgSelectionClear *DP_msg_selection_clear_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_SELECTION_CLEAR);
+}
+
+uint8_t DP_msg_selection_clear_selection_id(const DP_MsgSelectionClear *msc)
+{
+    DP_ASSERT(msc);
+    return msc->selection_id;
 }
 
 

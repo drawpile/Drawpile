@@ -35,21 +35,50 @@ public:
 		LASERPOINTER,
 		SELECTION,
 		POLYGONSELECTION,
+		TRANSFORM,
 		PAN,
 		ZOOM,
 		INSPECTOR,
 		_LASTTOOL,
 	};
 
+	struct BeginParams {
+		canvas::Point point;
+		QPointF viewPos;
+		qreal angle;
+		qreal zoom;
+		bool mirror;
+		bool flip;
+		bool right;
+	};
+
+	struct MotionParams {
+		canvas::Point point;
+		QPointF viewPos;
+		bool constrain;
+		bool center;
+	};
+
+	struct HoverParams {
+		QPointF point;
+		qreal angle;
+		qreal zoom;
+		bool mirror;
+		bool flip;
+	};
+
 	Tool(
 		ToolController &owner, Type type, const QCursor &cursor,
-		bool allowColorPick, bool allowToolAdjust, bool allowRightClick)
+		bool allowColorPick, bool allowToolAdjust, bool allowRightClick,
+		bool fractional, bool ignoresSelections)
 		: m_owner{owner}
 		, m_type{type}
 		, m_cursor{cursor}
 		, m_allowColorPick{allowColorPick}
 		, m_allowToolAdjust{allowToolAdjust}
 		, m_handlesRightClick{allowRightClick}
+		, m_fractional(fractional)
+		, m_ignoresSelections(ignoresSelections)
 	{
 	}
 
@@ -65,37 +94,12 @@ public:
 	bool allowColorPick() const { return m_allowColorPick; }
 	bool allowToolAdjust() const { return m_allowToolAdjust; }
 	bool handlesRightClick() const { return m_handlesRightClick; }
+	bool isFractional() const { return m_fractional; }
+	bool ignoresSelections() const { return m_ignoresSelections; }
 
-	/**
-	 * @brief Start a new stroke
-	 * @param point starting point
-	 * @param right is the right mouse/pen button pressed instead of the left
-	 * one
-	 * @param zoom the current view zoom factor
-	 * @param viewPos the starting point in view coordinates
-	 */
-	virtual void begin(
-		const canvas::Point &point, bool right, float zoom,
-		const QPointF &viewPos) = 0;
-
-	/**
-	 * @brief Continue a stroke
-	 * @param point new point
-	 * @param constrain is the "constrain motion" button pressed
-	 * @param center is the "center on start point" button pressed
-	 * @param viewPos new point in view coordinates
-	 */
-	virtual void motion(
-		const canvas::Point &point, bool constrain, bool center,
-		const QPointF &viewPos) = 0;
-
-	/**
-	 * @brief Tool hovering over the canvas
-	 * @param point tool position
-	 */
-	virtual void hover(const QPointF &point) { Q_UNUSED(point); }
-
-	//! End stroke
+	virtual void begin(const BeginParams &params) = 0;
+	virtual void motion(const MotionParams &params) = 0;
+	virtual void hover(const HoverParams &params) { Q_UNUSED(params); }
 	virtual void end() = 0;
 
 	//! Finish and commit a multipart stroke
@@ -108,8 +112,14 @@ public:
 	//! should cancel the stroke
 	virtual void undoMultipart() {}
 
+	//! Redo the previously undone step of a multipart stroke, if any.
+	virtual void redoMultipart() {}
+
 	//! Is there a multipart stroke in progress at the moment?
 	virtual bool isMultipart() const { return false; }
+
+	//! Called before destruction, get rid of whatever necessary.
+	virtual void dispose() {}
 
 	//! Does this tool update the color swatch when used?
 	virtual bool usesBrushColor() const { return false; }
@@ -133,6 +143,8 @@ private:
 	const bool m_allowColorPick;
 	const bool m_allowToolAdjust;
 	bool m_handlesRightClick; // May change during tool operation.
+	const bool m_fractional;
+	const bool m_ignoresSelections;
 };
 
 }

@@ -34,6 +34,8 @@
 #include "layer_props_list.h"
 #include "layer_routes.h"
 #include "paint.h"
+#include "selection.h"
+#include "selection_set.h"
 #include "tile.h"
 #include "timeline.h"
 #include "track.h"
@@ -75,6 +77,18 @@ DP_CanvasState *DP_ops_canvas_resize(DP_CanvasState *cs,
         DP_TransientLayerList *tll =
             DP_layer_list_resize(ll, context_id, top, right, bottom, left);
         DP_transient_canvas_state_transient_layers_set_noinc(tcs, tll);
+    }
+
+    DP_SelectionSet *ss = DP_canvas_state_selections_noinc_nullable(cs);
+    if (ss) {
+        DP_TransientSelectionSet *tss =
+            DP_selection_set_resize(ss, top, right, bottom, left);
+        if (tss) {
+            DP_transient_canvas_state_transient_selections_set_noinc(tcs, tss);
+        }
+        else {
+            DP_transient_canvas_state_transient_selections_clear(tcs);
+        }
     }
 
     return DP_transient_canvas_state_persist(tcs);
@@ -796,18 +810,12 @@ static bool looks_like_translation_only(DP_Rect src_rect, DP_Quad dst_quad)
         && dst_quad.x1 < dst_quad.x2;
 }
 
-static DP_CanvasState *
-move_image(DP_CanvasState *cs, DP_LayerRoutesEntry *src_lre,
-           DP_LayerRoutesEntry *dst_lre, unsigned int context_id,
-           const DP_Rect *src_rect, DP_Image *mask, DP_Image *src_img,
-           int offset_x, int offset_y, DP_Image *dst_img)
+static void move_image_on(unsigned int context_id, const DP_Rect *src_rect,
+                          DP_Image *mask, DP_Image *src_img, int offset_x,
+                          int offset_y, DP_Image *dst_img,
+                          DP_TransientLayerContent *src_tlc,
+                          DP_TransientLayerContent *dst_tlc)
 {
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-    DP_TransientLayerContent *src_tlc =
-        DP_layer_routes_entry_transient_content(src_lre, tcs);
-    DP_TransientLayerContent *dst_tlc =
-        DP_layer_routes_entry_transient_content(dst_lre, tcs);
-
     if (mask) {
         DP_transient_layer_content_put_image(
             src_tlc, context_id, DP_BLEND_MODE_ERASE, DP_rect_x(*src_rect),
@@ -827,16 +835,95 @@ move_image(DP_CanvasState *cs, DP_LayerRoutesEntry *src_lre,
         DP_image_free(dst_img);
     }
     DP_image_free(src_img);
+}
+
+static DP_CanvasState *
+move_image_layer(DP_CanvasState *cs, DP_LayerRoutesEntry *src_lre,
+                 DP_LayerRoutesEntry *dst_lre, unsigned int context_id,
+                 const DP_Rect *src_rect, DP_Image *mask, DP_Image *src_img,
+                 int offset_x, int offset_y, DP_Image *dst_img)
+{
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientLayerContent *src_tlc =
+        DP_layer_routes_entry_transient_content(src_lre, tcs);
+    DP_TransientLayerContent *dst_tlc =
+        DP_layer_routes_entry_transient_content(dst_lre, tcs);
+
+    move_image_on(context_id, src_rect, mask, src_img, offset_x, offset_y,
+                  dst_img, src_tlc, dst_tlc);
 
     return DP_transient_canvas_state_persist(tcs);
 }
 
-DP_CanvasState *DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
-                                   DP_UserCursors *ucs_or_null,
-                                   unsigned int context_id, int src_layer_id,
-                                   int dst_layer_id, const DP_Rect *src_rect,
-                                   const DP_Quad *dst_quad, int interpolation,
-                                   DP_Image *mask)
+static DP_CanvasState *
+move_image_selection(DP_CanvasState *cs, int src_index, int dst_index,
+                     unsigned int context_id, const DP_Rect *src_rect,
+                     DP_Image *mask, DP_Image *src_img, int offset_x,
+                     int offset_y, DP_Image *dst_img)
+{
+    DP_SelectionSet *ss = DP_canvas_state_selections_noinc_nullable(cs);
+    DP_Selection *src_sel = DP_selection_set_at_noinc(ss, src_index);
+    DP_TransientLayerContent *src_tlc =
+        DP_transient_layer_content_new(DP_selection_content_noinc(src_sel));
+
+    DP_Selection *dst_sel;
+    DP_TransientLayerContent *dst_tlc;
+    if (src_index == dst_index) {
+        dst_sel = src_sel;
+        dst_tlc = src_tlc;
+    }
+    else {
+        dst_sel = DP_selection_set_at_noinc(ss, dst_index);
+        dst_tlc =
+            DP_transient_layer_content_new(DP_selection_content_noinc(dst_sel));
+    }
+
+    move_image_on(context_id, src_rect, mask, src_img, offset_x, offset_y,
+                  dst_img, src_tlc, dst_tlc);
+
+    DP_TransientSelectionSet *tss = DP_transient_selection_set_new(ss, 0);
+    DP_Rect src_bounds;
+    bool have_src_bounds =
+        DP_transient_layer_content_bounds(src_tlc, &src_bounds);
+    if (have_src_bounds) {
+        DP_transient_selection_set_replace_at_noinc(
+            tss, src_index,
+            DP_selection_new_init(context_id, DP_selection_id(src_sel),
+                                  DP_transient_layer_content_persist(src_tlc),
+                                  &src_bounds));
+    }
+    else {
+        DP_transient_selection_set_delete_at(tss, src_index);
+        DP_transient_layer_content_decref(src_tlc);
+    }
+
+    if (src_index != dst_index) {
+        int new_dst_index = have_src_bounds || dst_index < src_index
+                              ? dst_index
+                              : dst_index - 1;
+        DP_Rect dst_bounds;
+        if (DP_transient_layer_content_bounds(dst_tlc, &dst_bounds)) {
+            DP_transient_selection_set_replace_at_noinc(
+                tss, new_dst_index,
+                DP_selection_new_init(
+                    context_id, DP_selection_id(dst_sel),
+                    DP_transient_layer_content_persist(dst_tlc), &dst_bounds));
+        }
+        else {
+            DP_transient_selection_set_delete_at(tss, new_dst_index);
+            DP_transient_layer_content_decref(dst_tlc);
+        }
+    }
+
+    return DP_canvas_state_new_with_selections_noinc(
+        cs, DP_transient_selection_set_persist(tss));
+}
+
+static DP_CanvasState *
+move_region_layer(DP_CanvasState *cs, DP_DrawContext *dc,
+                  DP_UserCursors *ucs_or_null, unsigned int context_id,
+                  int src_layer_id, int dst_layer_id, const DP_Rect *src_rect,
+                  const DP_Quad *dst_quad, int interpolation, DP_Image *mask)
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
     DP_LayerRoutesEntry *src_lre = DP_layer_routes_search(lr, src_layer_id);
@@ -893,15 +980,90 @@ DP_CanvasState *DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
             DP_rect_y(dst_bounds) + DP_rect_height(dst_bounds) / 2);
     }
 
-    return move_image(cs, src_lre, dst_lre, context_id, src_rect, mask, src_img,
-                      offset_x, offset_y, dst_img);
+    return move_image_layer(cs, src_lre, dst_lre, context_id, src_rect, mask,
+                            src_img, offset_x, offset_y, dst_img);
 }
 
-DP_CanvasState *DP_ops_move_rect(DP_CanvasState *cs,
-                                 DP_UserCursors *ucs_or_null,
-                                 unsigned int context_id, int src_layer_id,
-                                 int dst_layer_id, const DP_Rect *src_rect,
-                                 int dst_x, int dst_y, DP_Image *mask)
+static DP_CanvasState *move_region_selection(
+    DP_CanvasState *cs, DP_DrawContext *dc, unsigned int context_id,
+    int src_selection_id, int dst_selection_id, const DP_Rect *src_rect,
+    const DP_Quad *dst_quad, int interpolation, DP_Image *mask)
+{
+    DP_SelectionSet *ss = DP_canvas_state_selections_noinc_nullable(cs);
+    if (!ss) {
+        DP_error_set("Move region: no selections");
+        return NULL;
+    }
+
+    int src_index =
+        DP_selection_set_search_index(ss, context_id, src_selection_id);
+    if (src_index == -1) {
+        DP_error_set("Move region: source selection id %d not found",
+                     src_selection_id);
+        return NULL;
+    }
+
+    int dst_index;
+    if (src_selection_id == dst_selection_id) {
+        dst_index = src_index;
+    }
+    else {
+        dst_index =
+            DP_selection_set_search_index(ss, context_id, dst_selection_id);
+        if (dst_index == -1) {
+            DP_error_set("Move region: target selection id %d not found",
+                         dst_selection_id);
+            return NULL;
+        }
+    }
+
+    DP_Image *src_img = DP_layer_content_select(
+        DP_selection_content_noinc(DP_selection_set_at_noinc(ss, src_index)),
+        src_rect, mask);
+
+    int offset_x, offset_y;
+    DP_Image *dst_img;
+    if (looks_like_translation_only(*src_rect, *dst_quad)) {
+        offset_x = dst_quad->x1;
+        offset_y = dst_quad->y2;
+        dst_img = src_img;
+    }
+    else {
+        dst_img = DP_image_transform(src_img, dc, dst_quad, interpolation,
+                                     &offset_x, &offset_y);
+        if (!dst_img) {
+            DP_free(src_img);
+            return NULL;
+        }
+    }
+
+    return move_image_selection(cs, src_index, dst_index, context_id, src_rect,
+                                mask, src_img, offset_x, offset_y, dst_img);
+}
+
+DP_CanvasState *DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
+                                   DP_UserCursors *ucs_or_null,
+                                   unsigned int context_id, int src_layer_id,
+                                   int dst_layer_id, const DP_Rect *src_rect,
+                                   const DP_Quad *dst_quad, int interpolation,
+                                   DP_Image *mask)
+{
+    if (src_layer_id == 0) {
+        return move_region_selection(cs, dc, context_id, dst_layer_id & 0xff,
+                                     (dst_layer_id >> 8) & 0xff, src_rect,
+                                     dst_quad, interpolation, mask);
+    }
+    else {
+        return move_region_layer(cs, dc, ucs_or_null, context_id, src_layer_id,
+                                 dst_layer_id, src_rect, dst_quad,
+                                 interpolation, mask);
+    }
+}
+
+static DP_CanvasState *
+move_rect_layer(DP_CanvasState *cs, DP_UserCursors *ucs_or_null,
+                unsigned int context_id, int src_layer_id, int dst_layer_id,
+                const DP_Rect *src_rect, int dst_x, int dst_y, DP_Image *mask)
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
     DP_LayerRoutesEntry *src_lre = DP_layer_routes_search(lr, src_layer_id);
@@ -939,8 +1101,67 @@ DP_CanvasState *DP_ops_move_rect(DP_CanvasState *cs,
 
     DP_Image *src_img = DP_layer_content_select(
         DP_layer_routes_entry_content(src_lre, cs), src_rect, mask);
-    return move_image(cs, src_lre, dst_lre, context_id, src_rect, mask, src_img,
-                      dst_x, dst_y, src_img);
+    return move_image_layer(cs, src_lre, dst_lre, context_id, src_rect, mask,
+                            src_img, dst_x, dst_y, src_img);
+}
+
+static DP_CanvasState *move_rect_selection(DP_CanvasState *cs,
+                                           unsigned int context_id,
+                                           int src_selection_id,
+                                           int dst_selection_id,
+                                           const DP_Rect *src_rect, int dst_x,
+                                           int dst_y, DP_Image *mask)
+{
+    DP_SelectionSet *ss = DP_canvas_state_selections_noinc_nullable(cs);
+    if (!ss) {
+        DP_error_set("Move rect: no selections");
+        return NULL;
+    }
+
+    int src_index =
+        DP_selection_set_search_index(ss, context_id, src_selection_id);
+    if (src_index == -1) {
+        DP_error_set("Move rect: source selection id %d not found",
+                     src_selection_id);
+        return NULL;
+    }
+
+    int dst_index;
+    if (src_selection_id == dst_selection_id) {
+        dst_index = src_index;
+    }
+    else {
+        dst_index =
+            DP_selection_set_search_index(ss, context_id, dst_selection_id);
+        if (dst_index == -1) {
+            DP_error_set("Move rect: target selection id %d not found",
+                         dst_selection_id);
+            return NULL;
+        }
+    }
+
+    DP_Image *src_img = DP_layer_content_select(
+        DP_selection_content_noinc(DP_selection_set_at_noinc(ss, src_index)),
+        src_rect, mask);
+    return move_image_selection(cs, src_index, dst_index, context_id, src_rect,
+                                mask, src_img, dst_x, dst_y, src_img);
+}
+
+DP_CanvasState *DP_ops_move_rect(DP_CanvasState *cs,
+                                 DP_UserCursors *ucs_or_null,
+                                 unsigned int context_id, int src_layer_id,
+                                 int dst_layer_id, const DP_Rect *src_rect,
+                                 int dst_x, int dst_y, DP_Image *mask)
+{
+    if (src_layer_id == 0) {
+        return move_rect_selection(cs, context_id, dst_layer_id & 0xff,
+                                   (dst_layer_id >> 8) & 0xff, src_rect, dst_x,
+                                   dst_y, mask);
+    }
+    else {
+        return move_rect_layer(cs, ucs_or_null, context_id, src_layer_id,
+                               dst_layer_id, src_rect, dst_x, dst_y, mask);
+    }
 }
 
 
@@ -1755,4 +1976,226 @@ DP_CanvasState *DP_ops_key_frame_delete(DP_CanvasState *cs, int track_id,
         tt, DP_transient_track_key_frame_search_at(tt, frame_index));
 
     return DP_transient_canvas_state_persist(tcs);
+}
+
+
+DP_Selection *search_selection(DP_CanvasState *cs, unsigned int context_id,
+                               int selection_id)
+{
+    DP_SelectionSet *ss = DP_canvas_state_selections_noinc_nullable(cs);
+    return ss ? DP_selection_set_search_noinc(ss, context_id, selection_id)
+              : NULL;
+}
+
+DP_CanvasState *set_selection(DP_CanvasState *cs, unsigned int context_id,
+                              int selection_id, DP_LayerContent *lc)
+{
+    DP_Rect bounds;
+    if (DP_layer_content_bounds(lc, &bounds)) {
+        DP_Selection *sel =
+            DP_selection_new_init(context_id, selection_id, lc, &bounds);
+        DP_SelectionSet *ss = DP_canvas_state_selections_noinc_nullable(cs);
+        DP_TransientSelectionSet *tss;
+        if (ss) {
+            int index =
+                DP_selection_set_search_index(ss, context_id, selection_id);
+            if (index < 0) {
+                tss = DP_transient_selection_set_new(ss, 1);
+                DP_transient_selection_set_insert_at_noinc(
+                    tss, DP_selection_set_count(ss), sel);
+            }
+            else {
+                tss = DP_transient_selection_set_new(ss, 0);
+                DP_transient_selection_set_replace_at_noinc(tss, index, sel);
+            }
+        }
+        else {
+            tss = DP_transient_selection_set_new_init(1);
+            DP_transient_selection_set_insert_at_noinc(tss, 0, sel);
+        }
+        return DP_canvas_state_new_with_selections_noinc(
+            cs, DP_transient_selection_set_persist(tss));
+    }
+    else {
+        DP_layer_content_decref(lc);
+        return DP_ops_selection_clear(cs, context_id, selection_id);
+    }
+}
+
+DP_CanvasState *DP_ops_selection_put_replace(DP_CanvasState *cs,
+                                             unsigned int context_id,
+                                             int selection_id, int left,
+                                             int top, int right, int bottom,
+                                             DP_Image *mask)
+{
+    DP_TransientLayerContent *tlc = DP_transient_layer_content_new_init(
+        DP_canvas_state_width(cs), DP_canvas_state_height(cs), NULL);
+
+    if (mask) {
+        DP_transient_layer_content_put_image(
+            tlc, context_id, DP_BLEND_MODE_REPLACE, left, top, mask);
+    }
+    else {
+        DP_transient_layer_content_fill_rect(
+            tlc, context_id, DP_BLEND_MODE_REPLACE, left, top, right, bottom,
+            (DP_UPixel15){0, 0, 0, DP_BIT15});
+    }
+
+    return set_selection(cs, context_id, selection_id,
+                         DP_transient_layer_content_persist(tlc));
+}
+
+DP_CanvasState *DP_ops_selection_put_unite(DP_CanvasState *cs,
+                                           unsigned int context_id,
+                                           int selection_id, int left, int top,
+                                           int right, int bottom,
+                                           DP_Image *mask)
+{
+    DP_Selection *sel = search_selection(cs, context_id, selection_id);
+    if (sel) {
+        DP_TransientLayerContent *tlc =
+            DP_transient_layer_content_new(DP_selection_content_noinc(sel));
+
+        if (mask) {
+            DP_transient_layer_content_put_image(
+                tlc, context_id, DP_BLEND_MODE_NORMAL, left, top, mask);
+        }
+        else {
+            DP_transient_layer_content_fill_rect(
+                tlc, context_id, DP_BLEND_MODE_NORMAL, left, top, right, bottom,
+                (DP_UPixel15){0, 0, 0, DP_BIT15});
+        }
+
+        return set_selection(cs, context_id, selection_id,
+                             DP_transient_layer_content_persist(tlc));
+    }
+    else {
+        return DP_ops_selection_put_replace(cs, context_id, selection_id, left,
+                                            top, right, bottom, mask);
+    }
+}
+
+DP_CanvasState *DP_ops_selection_put_intersect(DP_CanvasState *cs,
+                                               unsigned int context_id,
+                                               int selection_id, int left,
+                                               int top, int right, int bottom,
+                                               DP_Image *mask)
+{
+    DP_Selection *sel = search_selection(cs, context_id, selection_id);
+    if (sel) {
+        DP_Tile *t = DP_tile_new_from_pixel15(context_id,
+                                              (DP_Pixel15){0, 0, 0, DP_BIT15});
+        DP_TransientLayerContent *mask_tlc =
+            DP_transient_layer_content_new_init(DP_canvas_state_width(cs),
+                                                DP_canvas_state_height(cs), t);
+        DP_tile_decref(t);
+
+        if (mask) {
+            DP_transient_layer_content_put_image(
+                mask_tlc, context_id, DP_BLEND_MODE_ERASE, left, top, mask);
+        }
+        else {
+            DP_transient_layer_content_fill_rect(
+                mask_tlc, context_id, DP_BLEND_MODE_ERASE, left, top, right,
+                bottom, (DP_UPixel15){0, 0, 0, DP_BIT15});
+        }
+
+        DP_TransientLayerContent *tlc =
+            DP_transient_layer_content_new(DP_selection_content_noinc(sel));
+        DP_transient_layer_content_merge(tlc, context_id,
+                                         (DP_LayerContent *)mask_tlc, DP_BIT15,
+                                         DP_BLEND_MODE_ERASE, false);
+        DP_transient_layer_content_decref(mask_tlc);
+
+        return set_selection(cs, context_id, selection_id,
+                             DP_transient_layer_content_persist(tlc));
+    }
+    else {
+        return DP_canvas_state_incref(cs);
+    }
+}
+
+DP_CanvasState *DP_ops_selection_put_exclude(DP_CanvasState *cs,
+                                             unsigned int context_id,
+                                             int selection_id, int left,
+                                             int top, int right, int bottom,
+                                             DP_Image *mask)
+{
+    DP_Selection *sel = search_selection(cs, context_id, selection_id);
+    if (sel) {
+        DP_TransientLayerContent *tlc =
+            DP_transient_layer_content_new(DP_selection_content_noinc(sel));
+
+        if (mask) {
+            DP_transient_layer_content_put_image(
+                tlc, context_id, DP_BLEND_MODE_ERASE, left, top, mask);
+        }
+        else {
+            DP_transient_layer_content_fill_rect(
+                tlc, context_id, DP_BLEND_MODE_ERASE, left, top, right, bottom,
+                (DP_UPixel15){0, 0, 0, DP_BIT15});
+        }
+
+        return set_selection(cs, context_id, selection_id,
+                             DP_transient_layer_content_persist(tlc));
+    }
+    else {
+        return DP_canvas_state_incref(cs);
+    }
+}
+
+DP_CanvasState *DP_ops_selection_put_complement(DP_CanvasState *cs,
+                                                unsigned int context_id,
+                                                int selection_id, int left,
+                                                int top, int right, int bottom,
+                                                DP_Image *mask)
+{
+    DP_Selection *sel = search_selection(cs, context_id, selection_id);
+    if (sel) {
+        DP_TransientLayerContent *tlc = DP_transient_layer_content_new_init(
+            DP_canvas_state_width(cs), DP_canvas_state_height(cs), NULL);
+
+        if (mask) {
+            DP_transient_layer_content_put_image(
+                tlc, context_id, DP_BLEND_MODE_REPLACE, left, top, mask);
+        }
+        else {
+            DP_transient_layer_content_fill_rect(
+                tlc, context_id, DP_BLEND_MODE_REPLACE, left, top, right,
+                bottom, (DP_UPixel15){0, 0, 0, DP_BIT15});
+        }
+
+        DP_transient_layer_content_merge(tlc, context_id,
+                                         DP_selection_content_noinc(sel),
+                                         DP_BIT15, DP_BLEND_MODE_ERASE, false);
+
+        return set_selection(cs, context_id, selection_id,
+                             DP_transient_layer_content_persist(tlc));
+    }
+    else {
+        return DP_ops_selection_put_replace(cs, context_id, selection_id, left,
+                                            top, right, bottom, mask);
+    }
+}
+
+DP_CanvasState *DP_ops_selection_clear(DP_CanvasState *cs,
+                                       unsigned int context_id,
+                                       int selection_id)
+{
+    DP_SelectionSet *ss = DP_canvas_state_selections_noinc_nullable(cs);
+    if (ss) {
+        DP_TransientSelectionSet *tss =
+            DP_selection_set_remove(ss, context_id, selection_id);
+        if (tss) {
+            if (DP_transient_selection_set_count(tss) == 0) {
+                DP_transient_selection_set_decref(tss);
+                return DP_canvas_state_new_with_selections_noinc(cs, NULL);
+            }
+            else {
+                return DP_canvas_state_new_with_selections_noinc(
+                    cs, DP_transient_selection_set_persist(tss));
+            }
+        }
+    }
+    return DP_canvas_state_incref(cs);
 }

@@ -39,6 +39,7 @@ typedef struct DP_Image DP_Image;
 typedef struct DP_LayerPropsList DP_LayerPropsList;
 typedef struct DP_Message DP_Message;
 typedef struct DP_Quad DP_Quad;
+typedef struct DP_SelectionSet DP_SelectionSet;
 typedef union DP_Pixel8 DP_Pixel8;
 
 #ifdef DP_NO_STRICT_ALIASING
@@ -69,6 +70,8 @@ typedef void (*DP_PaintEngineAnnotationsChangedFn)(void *user,
 typedef void (*DP_PaintEngineDocumentMetadataChangedFn)(
     void *user, DP_DocumentMetadata *dm);
 typedef void (*DP_PaintEngineTimelineChangedFn)(void *user, DP_Timeline *tl);
+typedef void (*DP_PaintEngineSelectionsChangedFn)(void *user,
+                                                  DP_SelectionSet *ss_or_null);
 typedef void (*DP_PaintEngineCursorMovedFn)(void *user, unsigned int flags,
                                             unsigned int context_id,
                                             int layer_id, int x, int y);
@@ -217,6 +220,7 @@ void DP_paint_engine_tick(
     DP_PaintEngineAnnotationsChangedFn annotations_changed,
     DP_PaintEngineDocumentMetadataChangedFn document_metadata_changed,
     DP_PaintEngineTimelineChangedFn timeline_changed,
+    DP_PaintEngineSelectionsChangedFn selections_changed,
     DP_PaintEngineCursorMovedFn cursor_moved,
     DP_PaintEngineDefaultLayerSetFn default_layer_set,
     DP_PaintEngineUndoDepthLimitSetFn undo_depth_limit_set,

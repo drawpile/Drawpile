@@ -1,9 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/toolwidgets/pansettings.h"
-#include "desktop/widgets/groupedtoolbutton.h"
-#include <QButtonGroup>
-#include <QPushButton>
-#include <QVBoxLayout>
 #include <QWidget>
 
 namespace tools {

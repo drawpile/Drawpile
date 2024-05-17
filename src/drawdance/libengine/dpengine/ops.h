@@ -160,5 +160,39 @@ DP_CanvasState *DP_ops_key_frame_delete(DP_CanvasState *cs, int track_id,
                                         int frame_index, int move_track_id,
                                         int move_frame_index);
 
+DP_CanvasState *DP_ops_selection_put_replace(DP_CanvasState *cs,
+                                             unsigned int context_id,
+                                             int selection_id, int left,
+                                             int top, int right, int bottom,
+                                             DP_Image *mask);
+
+DP_CanvasState *DP_ops_selection_put_unite(DP_CanvasState *cs,
+                                           unsigned int context_id,
+                                           int selection_id, int left, int top,
+                                           int right, int bottom,
+                                           DP_Image *mask);
+
+DP_CanvasState *DP_ops_selection_put_intersect(DP_CanvasState *cs,
+                                               unsigned int context_id,
+                                               int selection_id, int left,
+                                               int top, int right, int bottom,
+                                               DP_Image *mask);
+
+DP_CanvasState *DP_ops_selection_put_exclude(DP_CanvasState *cs,
+                                             unsigned int context_id,
+                                             int selection_id, int left,
+                                             int top, int right, int bottom,
+                                             DP_Image *mask);
+
+DP_CanvasState *DP_ops_selection_put_complement(DP_CanvasState *cs,
+                                                unsigned int context_id,
+                                                int selection_id, int left,
+                                                int top, int right, int bottom,
+                                                DP_Image *mask);
+
+DP_CanvasState *DP_ops_selection_clear(DP_CanvasState *cs,
+                                       unsigned int context_id,
+                                       int selection_id);
+
 
 #endif

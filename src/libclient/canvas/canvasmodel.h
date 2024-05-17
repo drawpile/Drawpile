@@ -10,6 +10,7 @@ struct DP_Player;
 
 namespace drawdance {
 class CanvasState;
+class SelectionSet;
 }
 
 namespace libclient {
@@ -24,13 +25,16 @@ class AclState;
 class UserListModel;
 class LayerListModel;
 class TimelineModel;
-class Selection;
+class SelectionModel;
+class TransformModel;
 class DocumentMetadata;
 class PaintEngine;
 
 class CanvasModel final : public QObject {
 	Q_OBJECT
 public:
+	static constexpr uint8_t MAIN_SELECTION_ID = 1;
+
 	CanvasModel(
 		libclient::settings::Settings &settings, uint8_t localUserId,
 		int canvasImplementation, int fps, int snapshotMaxCount,
@@ -60,9 +64,6 @@ public:
 
 	QString pinnedMessage() const { return m_pinnedMessage; }
 
-	Selection *selection() const { return m_selection; }
-	void setSelection(Selection *selection);
-
 	net::MessageList generateSnapshot(
 		bool includePinnedMessage, unsigned int aclIncludeFlags) const;
 
@@ -73,8 +74,9 @@ public:
 	uint8_t localUserId() const { return m_localUserId; }
 
 	QImage selectionToImage(int layerId, bool *outFound = nullptr) const;
-	void pasteFromImage(
-		const QImage &image, const QPoint &defaultPoint, bool forceDefault);
+
+	QRect getPasteBounds(
+		const QSize &imageSize, const QPoint &defaultPoint, bool forceDefault);
 
 	void connectedToServer(uint8_t myUserId, bool join, bool compatibilityMode);
 	void disconnectedFromServer();
@@ -84,6 +86,8 @@ public:
 	LayerListModel *layerlist() const { return m_layerlist; }
 	TimelineModel *timeline() const { return m_timeline; }
 	DocumentMetadata *metadata() const { return m_metadata; }
+	SelectionModel *selection() const { return m_selection; }
+	TransformModel *transform() const { return m_transform; }
 	bool isCompatibilityMode() const { return m_compatibilityMode; }
 
 	//! Open a recording file and start recording
@@ -129,15 +133,11 @@ public slots:
 	void inspectCanvas(int contextId, bool showTiles);
 	void stopInspectingCanvas();
 
-	void setSelectInterpolation(int selectInterpolation);
-
-	void offsetCanvas(int offsetX, int offsetY);
+	void setTransformInterpolation(int transformInterpolation);
 
 signals:
 	void layerAutoselectRequest(int id);
 	void canvasModified();
-	void selectionChanged(Selection *selection);
-	void selectionRemoved();
 
 	void previewAnnotationRequested(int id, const QRect &shape);
 
@@ -162,7 +162,6 @@ signals:
 	void compatibilityModeChanged(bool compatibilityMode);
 
 private slots:
-	void onCanvasResize(const QSize &newSize, const QPoint &offset);
 	void onLaserTrail(int userId, int persistence, uint32_t color);
 
 private:
@@ -177,10 +176,11 @@ private:
 	LayerListModel *m_layerlist;
 	TimelineModel *m_timeline;
 	DocumentMetadata *m_metadata;
+	SelectionModel *m_selection;
+	TransformModel *m_transform;
 
 	PaintEngine *m_paintengine;
-	Selection *m_selection;
-	int m_selectInterpolation = 0;
+	int m_transformInterpolation = 0;
 
 	QString m_title;
 	QString m_pinnedMessage;

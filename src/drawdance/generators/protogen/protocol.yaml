@@ -485,6 +485,15 @@ PutImage:
              Note that since the message length is fairly limited, a
              large image may have to be divided into multiple PutImage
              commands.
+
+             Compatibility hack: this message is also used to disguise selection
+             messages when drawing on the builtin server. If the blend mode is
+             253, this is really a SelectionPut message; the bottom octet of
+             layer is the selection id, the upper octet is the operation, x and
+             y are actually i32, w and h are clamped to u16, the image is the
+             mask (which may be empty.) If the blend mode is 254, this is really
+             a SelectionClear message; the bottom octet of layer is the
+             selection id and everything else is ignored.
     fields:
         - layer u16: hex
         - mode blendmode
@@ -606,6 +615,8 @@ MoveRegion:
              is DEFLATEd 1 bit per pixel bitmap data.
 
              For axis aligned rectangle selections, no bitmap is necessary.
+
+             If the layer is 0, the selection with id 1 is transformed instead.
     fields:
         - layer u16: hex
         - bx i32
@@ -739,12 +750,15 @@ DrawDabsMyPaint:
 MoveRect:
     id: 160
     comment: |
-             Move a rectangular area on a layer.
+             Move a rectangular area on a layer or a selection.
 
              A mask image can be given to mask out part of the region
              to support non-rectangular selections.
 
              Source and target rects may be (partially) outside the canvas.
+
+             If source is 0, layer refers to a selection instead: the lower
+             octet is the source and the upper octet is the target selection id.
     fields:
       - layer u16: hex
       - source u16: hex
@@ -866,6 +880,9 @@ TransformRegion:
              is DEFLATEd 8 bit alpha.
 
              For axis aligned rectangle selections, no bitmap is necessary.
+
+             If source is 0, layer refers to a selection instead: the lower
+             octet is the source and the upper octet is the target selection id.
     fields:
         - layer u16: hex
         - source u16: hex
@@ -988,6 +1005,52 @@ KeyFrameDelete:
         - frame_index u16
         - move_track_id u16: hex
         - move_frame_index u16
+
+SelectionPut:
+    id: 174
+    comment: |
+        Modify selection, either by a rectangle or a pixel mask.
+
+        The selection_id specifies which of the user's selections is affected.
+        An id of 0 is invalid.
+
+        The mask is DEFLATEd 8 bit alpha. If absent, this fills the entire
+        rectangle instead.
+
+        Strictly speaking, this is not compatible with the 2.2 protocol and
+        clients before version 2.2.2 don't understand it. However, since it
+        doesn't have any visual effect, it doesn't cause desync, so we accept it
+        anyway. In sessions on the builtin server, this is disguised as a
+        PutImage message instead, since that doesn't allow unknown messages.
+    fields:
+        - selection_id u8: hex
+        - op enum:
+          name: Op
+          variants:
+              - Replace
+              - Unite
+              - Intersect
+              - Exclude
+              - Complement
+        - x i32
+        - y i32
+        - w u16
+        - h u16
+        - mask bytes
+
+SelectionClear:
+    id: 175
+    comment: |
+        Remove the selection specified by the selection_id, or all selections if
+        it's 0.
+
+        Strictly speaking, this is not compatible with the 2.2 protocol and
+        clients before version 2.2.2 don't understand it. However, since it
+        doesn't have any visual effect, it doesn't cause desync, so we accept it
+        anyway. In sessions on the builtin server, this is disguised as a
+        PutImage message instead, since that doesn't allow unknown messages.
+    fields:
+        - selection_id u8: hex
 
 Undo:
     id: 255

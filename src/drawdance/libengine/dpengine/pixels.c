@@ -2298,7 +2298,7 @@ void DP_posterize_mask(DP_Pixel15 *dst, int posterize_num, const uint16_t *mask,
 // SPDX-SnippetBegin
 // SPDX-License-Identifier: GPL-3.0-or-later
 // SDPX—SnippetName: 8 bit multiplication adapted from Krita
-static uint8_t mul(unsigned int a, unsigned int b)
+uint8_t DP_pixel8_mul(unsigned int a, unsigned int b)
 {
     unsigned int c = a * b + 0x80u;
     return DP_uint_to_uint8(((c >> 8u) + c) >> 8u);
@@ -2310,19 +2310,19 @@ void DP_blend_color8_to(DP_Pixel8 *DP_RESTRICT out,
                         int pixel_count, uint8_t opacity)
 {
     DP_Pixel8 src = DP_pixel8_premultiply(color);
-    unsigned int sa1 = 255u - mul(src.a, opacity);
+    unsigned int sa1 = 255u - DP_pixel8_mul(src.a, opacity);
     if (sa1 != 255u) {
-        unsigned int sb = mul(src.b, opacity);
-        unsigned int sg = mul(src.g, opacity);
-        unsigned int sr = mul(src.r, opacity);
-        unsigned int sa = mul(src.a, opacity);
+        unsigned int sb = DP_pixel8_mul(src.b, opacity);
+        unsigned int sg = DP_pixel8_mul(src.g, opacity);
+        unsigned int sr = DP_pixel8_mul(src.r, opacity);
+        unsigned int sa = DP_pixel8_mul(src.a, opacity);
         for (int i = 0; i < pixel_count; ++i) {
             DP_Pixel8 d = dst[i];
             out[i] = (DP_Pixel8){
-                .b = (uint8_t)(sb + mul(d.b, sa1)),
-                .g = (uint8_t)(sg + mul(d.g, sa1)),
-                .r = (uint8_t)(sr + mul(d.r, sa1)),
-                .a = (uint8_t)(sa + mul(d.a, sa1)),
+                .b = (uint8_t)(sb + DP_pixel8_mul(d.b, sa1)),
+                .g = (uint8_t)(sg + DP_pixel8_mul(d.g, sa1)),
+                .r = (uint8_t)(sr + DP_pixel8_mul(d.r, sa1)),
+                .a = (uint8_t)(sa + DP_pixel8_mul(d.a, sa1)),
             };
         }
     }
@@ -2335,13 +2335,13 @@ void DP_blend_pixels8(DP_Pixel8 *DP_RESTRICT dst,
     for (int i = 0; i < pixel_count; ++i) {
         DP_Pixel8 s = src[i];
         DP_Pixel8 d = dst[i];
-        unsigned int sa1 = 255u - mul(s.a, opacity);
+        unsigned int sa1 = 255u - DP_pixel8_mul(s.a, opacity);
         if (sa1 != 255u) {
             dst[i] = (DP_Pixel8){
-                .b = (uint8_t)(mul(s.b, opacity) + mul(d.b, sa1)),
-                .g = (uint8_t)(mul(s.g, opacity) + mul(d.g, sa1)),
-                .r = (uint8_t)(mul(s.r, opacity) + mul(d.r, sa1)),
-                .a = (uint8_t)(mul(s.a, opacity) + mul(d.a, sa1)),
+                .b = (uint8_t)(DP_pixel8_mul(s.b, opacity) + DP_pixel8_mul(d.b, sa1)),
+                .g = (uint8_t)(DP_pixel8_mul(s.g, opacity) + DP_pixel8_mul(d.g, sa1)),
+                .r = (uint8_t)(DP_pixel8_mul(s.r, opacity) + DP_pixel8_mul(d.r, sa1)),
+                .a = (uint8_t)(DP_pixel8_mul(s.a, opacity) + DP_pixel8_mul(d.a, sa1)),
             };
         }
     }

@@ -57,7 +57,6 @@ public:
 	void stepAdjust1(bool increase) override;
 
 	int getSize() const override;
-	bool getSubpixelMode() const override { return false; }
 
 	QWidget *getHeaderWidget() override { return m_headerWidget; }
 

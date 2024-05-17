@@ -139,13 +139,15 @@ signals:
 
 	void penDown(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
-		qreal ytilt, qreal rotation, bool right, float zoom,
-		const QPointF &viewPos, bool applyGlobalSmoothing, bool eraserOverride);
+		qreal ytilt, qreal rotation, bool right, qreal angle, qreal zoom,
+		bool mirror, bool flip, const QPointF &viewPos,
+		bool applyGlobalSmoothing, bool eraserOverride);
 	void penMove(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
-		qreal ytilt, qreal rotation, bool shift, bool alt,
+		qreal ytilt, qreal rotation, bool constrain, bool center,
 		const QPointF &viewPos);
-	void penHover(const QPointF &point);
+	void penHover(
+		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip);
 	void penUp();
 	void quickAdjust(qreal value);
 	void coordinatesChanged(const QPointF &coordinates);
@@ -225,7 +227,8 @@ public slots:
 
 	void setToolCursor(const QCursor &cursor);
 	void setToolCapabilities(
-		bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick);
+		bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick,
+		bool fractionalTool);
 
 	void setBrushCursorStyle(int style);
 	void setEraseCursorStyle(int style);
@@ -374,6 +377,7 @@ private:
 	bool m_allowColorPick;
 	bool m_allowToolAdjust;
 	bool m_toolHandlesRightClick;
+	bool m_fractionalTool;
 	PenMode m_penmode;
 
 	//! Is the view being dragged

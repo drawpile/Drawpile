@@ -11,9 +11,12 @@
 #include "desktop/toolwidgets/lasersettings.h"
 #include "desktop/toolwidgets/pansettings.h"
 #include "desktop/toolwidgets/selectionsettings.h"
+#include "desktop/toolwidgets/transformsettings.h"
 #include "desktop/toolwidgets/zoomsettings.h"
+#include "desktop/widgets/toolmessage.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
+#include "libclient/tools/transform.h"
 #include <QIcon>
 #include <QLabel>
 #include <QStackedWidget>
@@ -113,6 +116,11 @@ struct ToolSettings::Private {
 		pages[tools::Tool::POLYGONSELECTION] = {
 			sel, "selection", QIcon::fromTheme("edit-select-lasso"),
 			QApplication::tr("Selection (Free-Form)")};
+		pages[tools::Tool::TRANSFORM] = {
+			QSharedPointer<tools::ToolSettings>(
+				new tools::TransformSettings(ctrl)),
+			"transform", QIcon::fromTheme("transform-move"),
+			QApplication::tr("Transform")};
 		pages[tools::Tool::PAN] = {
 			QSharedPointer<tools::ToolSettings>(new tools::PanSettings(ctrl)),
 			"pan", QIcon::fromTheme("hand"), QApplication::tr("Pan")};
@@ -215,6 +223,16 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	connect(
 		d->backgroundColorDialog, &color_widgets::ColorDialog::colorSelected,
 		this, &ToolSettings::setBackgroundColor);
+
+	connect(
+		d->ctrl, &tools::ToolController::transformRequested, this,
+		&ToolSettings::startTransformMove);
+	connect(
+		d->ctrl, &tools::ToolController::toolSwitchRequested, this,
+		&ToolSettings::setToolTemporary);
+	connect(
+		d->ctrl, &tools::ToolController::showMessageRequested, this,
+		&ToolSettings::showMessage);
 
 	// Tool settings are only saved periodically currently, see TODO below.
 	// Mixing periodic and instantaneous saving causes some desynchronization
@@ -326,6 +344,12 @@ tools::SelectionSettings *ToolSettings::selectionSettings()
 		getToolSettingsPage(tools::Tool::SELECTION));
 }
 
+tools::TransformSettings *ToolSettings::transformSettings()
+{
+	return static_cast<tools::TransformSettings *>(
+		getToolSettingsPage(tools::Tool::TRANSFORM));
+}
+
 tools::ZoomSettings *ToolSettings::zoomSettings()
 {
 	return static_cast<tools::ZoomSettings *>(
@@ -343,6 +367,13 @@ void ToolSettings::setTool(tools::Tool::Type tool)
 		tools::BrushSettings *bs =
 			qobject_cast<tools::BrushSettings *>(d->currentSettings());
 		d->previousToolSlot = bs ? bs->currentBrushSlot() : 0;
+		selectTool(tool);
+	}
+}
+
+void ToolSettings::setToolTemporary(tools::Tool::Type tool)
+{
+	if(tool != d->currentTool) {
 		selectTool(tool);
 	}
 }
@@ -463,6 +494,37 @@ void ToolSettings::setLastUsedColor(int i)
 	QColor color = d->lastUsedColors.colorAt(i);
 	if(color.isValid()) {
 		setForegroundColor(color);
+	}
+}
+
+void ToolSettings::startTransformMove()
+{
+	tools::Tool::Type toolToReturnTo = d->currentTool;
+	setToolTemporary(tools::Tool::TRANSFORM);
+	if(d->ctrl->activeTool() == tools::Tool::TRANSFORM) {
+		tools::TransformTool *transformTool =
+			static_cast<tools::TransformTool *>(
+				d->ctrl->getTool(tools::Tool::TRANSFORM));
+		transformTool->beginTemporaryMove(toolToReturnTo);
+	} else {
+		qWarning(
+			"ToolSettings::startTransformMove: active tool is not transform");
+	}
+}
+
+void ToolSettings::startTransformPaste(
+	const QRect &srcBounds, const QImage &image)
+{
+	tools::Tool::Type toolToReturnTo = d->currentTool;
+	setToolTemporary(tools::Tool::TRANSFORM);
+	if(d->ctrl->activeTool() == tools::Tool::TRANSFORM) {
+		tools::TransformTool *transformTool =
+			static_cast<tools::TransformTool *>(
+				d->ctrl->getTool(tools::Tool::TRANSFORM));
+		transformTool->beginTemporaryPaste(toolToReturnTo, srcBounds, image);
+	} else {
+		qWarning(
+			"ToolSettings::startTransformPaste: active tool is not transform");
 	}
 }
 
@@ -600,6 +662,13 @@ bool ToolSettings::hasBrushCursor(tools::Tool::Type tool)
 		return true;
 	default:
 		return false;
+	}
+}
+
+void ToolSettings::showMessage(const QString &message)
+{
+	if(!message.isEmpty()) {
+		ToolMessage::showText(message);
 	}
 }
 

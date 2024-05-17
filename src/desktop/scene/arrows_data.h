@@ -4,7 +4,7 @@
 
 namespace arrows {
 
-static const QPointF
+static constexpr QPointF
  diag1[] {
 	{0,0}, {6,0}, {4,2}, {8,6}, {10,4}, {10,10},
 	{4, 10}, {6,8}, {2,4}, {0,6}
@@ -66,6 +66,9 @@ static const QPointF
 }
 ,distortLeft[] {
 	{0,3}, {5,3}, {5,8}, {0,8}
+}
+,distort[] {
+	{1.5,1.5}, {8.5,1.5}, {8.5,8.5}, {1.5,8.5}
 }
 ;
 

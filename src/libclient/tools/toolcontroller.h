@@ -5,13 +5,13 @@
 #include "libclient/canvas/acl.h"
 #include "libclient/tools/tool.h"
 #include <QObject>
+#include <QPainterPath>
 #include <QThreadPool>
 
 class QCursor;
 
 namespace canvas {
 class CanvasModel;
-class Selection;
 }
 
 namespace drawdance {
@@ -43,6 +43,11 @@ class ToolController final : public QObject {
 
 	Q_OBJECT
 public:
+	struct SelectionParams {
+		bool antiAlias = true;
+		int defaultOp = 0;
+	};
+
 	class Task : public QObject {
 	public:
 		virtual ~Task() override {}
@@ -60,6 +65,8 @@ public:
 	bool activeToolAllowColorPick() const;
 	bool activeToolAllowToolAdjust() const;
 	bool activeToolHandlesRightClick() const;
+	bool activeToolIsFractional() const;
+	bool activeToolIgnoresSelections() const;
 
 	void setActiveLayer(uint16_t id);
 	uint16_t activeLayer() const { return m_activeLayer; }
@@ -98,11 +105,16 @@ public:
 	void setGlobalSmoothing(int smoothing);
 	int globalSmoothing() const { return m_globalSmoothing; }
 
-	void setSelectInterpolation(int selectInterpolation);
-	int selectInterpolation() const { return m_selectInterpolation; }
+	void setTransformInterpolation(int transformInterpolation);
+	int transformInterpolation() const { return m_transformInterpolation; }
 
-	// TODO this is used just for sending the commands. Replace with a signal?
-	inline net::Client *client() const { return m_client; }
+	const SelectionParams &selectionParams() const { return m_selectionParams; }
+	void setSelectionParams(const SelectionParams &selectionParams)
+	{
+		m_selectionParams = selectionParams;
+	}
+
+	net::Client *client() const { return m_client; }
 
 	Tool *getTool(Tool::Type type);
 
@@ -136,17 +148,19 @@ public slots:
 	//! Start a new stroke
 	void startDrawing(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
-		qreal ytilt, qreal rotation, bool right, float zoom,
-		const QPointF &viewPos, bool applyGlobalSmoothing, bool eraserOverride);
+		qreal ytilt, qreal rotation, bool right, qreal angle, qreal zoom,
+		bool mirror, bool flip, const QPointF &viewPos,
+		bool applyGlobalSmoothing, bool eraserOverride);
 
 	//! Continue a stroke
 	void continueDrawing(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
-		qreal ytilt, qreal rotation, bool shift, bool alt,
+		qreal ytilt, qreal rotation, bool constrain, bool center,
 		const QPointF &viewPos);
 
 	//! Stylus hover (not yet drawing)
-	void hoverDrawing(const QPointF &point);
+	void hoverDrawing(
+		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip);
 
 	//! End a stroke
 	void endDrawing();
@@ -160,6 +174,7 @@ public slots:
 	 * @return false if there was nothing to undo
 	 */
 	bool undoMultipartDrawing();
+	bool redoMultipartDrawing();
 
 	//! Commit the current multipart drawing (if any)
 	void finishMultipartDrawing();
@@ -171,11 +186,13 @@ public slots:
 
 signals:
 	void toolCapabilitiesChanged(
-		bool allowColorPick, bool allowToolAdjust, bool allowRightClick);
+		bool allowColorPick, bool allowToolAdjust, bool allowRightClick,
+		bool fractionalTool, bool ignoresSelections);
 	void toolCursorChanged(const QCursor &cursor);
 	void activeLayerChanged(int layerId);
 	void activeAnnotationChanged(uint16_t annotationId);
 	void activeBrushChanged(const brushes::ActiveBrush &);
+	void transformToolStateChanged(int mode, int handle, bool dragging);
 	void modelChanged(canvas::CanvasModel *model);
 	void globalSmoothingChanged(int smoothing);
 	void stabilizerUseBrushSampleCountChanged(bool useBrushSampleCount);
@@ -184,15 +201,21 @@ signals:
 	void colorUsed(const QColor &color);
 	void panRequested(int x, int y);
 	void zoomRequested(const QRect &rect, int steps);
+	void pathPreviewRequested(const QPainterPath &path);
+	void transformRequested();
+	void toolSwitchRequested(tools::Tool::Type tool);
+	void showMessageRequested(const QString &message);
 
 	void busyStateChanged(bool busy);
 	void asyncExecutionFinished(Task *task);
 
 private slots:
 	void onFeatureAccessChange(DP_Feature feature, bool canUse);
-	void onSelectionChange(canvas::Selection *sel);
-	void updateSelectionPreview();
-	void clearSelectionPreviews();
+	void updateTransformPreview();
+	void setTransformCutPreview(
+		int layerId, const QRect &maskBounds, const QImage &mask);
+	void clearTransformCutPreview();
+	void clearTransformPreviews();
 	void notifyAsyncExecutionFinished(Task *task);
 
 private:
@@ -220,7 +243,8 @@ private:
 	bool m_finishStrokes;
 	bool m_stabilizerUseBrushSampleCount;
 
-	int m_selectInterpolation;
+	int m_transformInterpolation;
+	SelectionParams m_selectionParams;
 
 	QThreadPool m_threadPool;
 	QAtomicInt m_taskCount;

@@ -23,9 +23,6 @@ public:
 	void quickAdjust1(qreal adjustment) override;
 	void stepAdjust1(bool increase) override;
 
-	virtual int getSize() const override { return 0; }
-	virtual bool getSubpixelMode() const override { return false; }
-
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;
 

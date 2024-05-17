@@ -7,33 +7,27 @@
 namespace tools {
 
 PanTool::PanTool(ToolController &owner)
-	: Tool(owner, PAN, QCursor(Qt::OpenHandCursor), true, false, true)
+	: Tool(
+		  owner, PAN, QCursor(Qt::OpenHandCursor), true, false, false, true,
+		  false)
 {
 }
 
-void PanTool::begin(
-	const canvas::Point &point, bool right, float zoom, const QPointF &viewPos)
+void PanTool::begin(const BeginParams &params)
 {
-	Q_UNUSED(point);
-	Q_UNUSED(zoom);
-	if(!right) {
+	if(!params.right) {
 		setCursor(Qt::ClosedHandCursor);
-		m_lastViewPos = viewPos;
+		m_lastViewPos = params.viewPos;
 		m_panning = true;
 	}
 }
 
-void PanTool::motion(
-	const canvas::Point &point, bool constrain, bool center,
-	const QPointF &viewPos)
+void PanTool::motion(const MotionParams &params)
 {
-	Q_UNUSED(point);
-	Q_UNUSED(constrain);
-	Q_UNUSED(center);
 	if(m_panning) {
-		QPointF delta = m_lastViewPos - viewPos;
+		QPointF delta = m_lastViewPos - params.viewPos;
 		emit m_owner.panRequested(qRound(delta.x()), qRound(delta.y()));
-		m_lastViewPos = viewPos;
+		m_lastViewPos = params.viewPos;
 	}
 }
 
