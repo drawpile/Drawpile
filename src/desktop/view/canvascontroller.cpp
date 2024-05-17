@@ -364,7 +364,8 @@ void CanvasController::updateCanvasSize(
 
 	emitScrollAreaChanged();
 	emitViewRectChanged();
-	if(offsetX != 0 && offsetY != 0) {
+
+	if(offsetX != 0 || offsetY != 0) {
 		if(m_canvasModel) {
 			m_canvasModel->offsetCanvas(offsetX, offsetY);
 		}
