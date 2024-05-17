@@ -183,7 +183,7 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 
 void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
 {
-	event->ignore();
+	mousePressEvent(event);
 }
 
 void CanvasView::wheelEvent(QWheelEvent *event)

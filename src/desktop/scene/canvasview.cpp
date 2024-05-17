@@ -1408,9 +1408,9 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 		getMouseModifiers(event));
 }
 
-void CanvasView::mouseDoubleClickEvent(QMouseEvent *)
+void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
 {
-	// Ignore doubleclicks
+	mousePressEvent(event);
 }
 
 void CanvasView::wheelEvent(QWheelEvent *event)
