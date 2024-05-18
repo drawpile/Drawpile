@@ -4377,7 +4377,7 @@ void MainWindow::setupActions()
 		starttransform, &QAction::triggered, m_dockToolSettings,
 		&docks::ToolSettings::startTransformMove);
 
-	QMenu *selectMenu = menuBar()->addMenu(tr("Sele&ct"));
+	QMenu *selectMenu = menuBar()->addMenu(tr("Selectio&n"));
 	selectMenu->addAction(selectall);
 	selectMenu->addAction(selectnone);
 	selectMenu->addAction(selectinvert);
