@@ -3145,6 +3145,7 @@ void MainWindow::updateSelectTransformActions()
 	getAction("transformflip")->setEnabled(haveTransform);
 	getAction("transformrotatecw")->setEnabled(haveTransform);
 	getAction("transformrotateccw")->setEnabled(haveTransform);
+	getAction("transformshrinktoview")->setEnabled(haveTransform);
 }
 
 void MainWindow::copyText()
