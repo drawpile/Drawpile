@@ -107,8 +107,10 @@ Tool *ToolController::getTool(Tool::Type type)
 void ToolController::setActiveTool(Tool::Type tool)
 {
 	if(activeTool() != tool) {
-		m_activeTool->cancelMultipart();
 		endDrawing();
+		if(m_activeTool->isMultipart()) {
+			m_activeTool->finishMultipart();
+		}
 
 		m_activeTool = getTool(tool);
 		emit toolCapabilitiesChanged(
@@ -339,26 +341,22 @@ void ToolController::startDrawing(
 	bool eraserOverride)
 {
 	Q_ASSERT(m_activeTool);
+	if(m_model) {
+		m_drawing = true;
+		m_applyGlobalSmoothing = applyGlobalSmoothing;
+		m_activebrush.setEraserOverride(eraserOverride);
+		m_activeTool->begin(Tool::BeginParams{
+			canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation),
+			viewPos, angle, zoom, mirror, flip, right});
 
-	if(!m_model) {
-		qWarning("ToolController::startDrawing: no model set!");
-		return;
-	}
+		if(!m_activeTool->isMultipart()) {
+			m_model->paintEngine()->setLocalDrawingInProgress(true);
+		}
 
-	m_drawing = true;
-	m_applyGlobalSmoothing = applyGlobalSmoothing;
-	m_activebrush.setEraserOverride(eraserOverride);
-	m_activeTool->begin(Tool::BeginParams{
-		canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation),
-		viewPos, angle, zoom, mirror, flip, right});
-
-	if(!m_activeTool->isMultipart()) {
-		m_model->paintEngine()->setLocalDrawingInProgress(true);
-	}
-
-	if(m_activeTool->usesBrushColor() && !m_activebrush.isEraser() &&
-	   !m_activebrush.isEraserOverride()) {
-		emit colorUsed(m_activebrush.qColor());
+		if(m_activeTool->usesBrushColor() && !m_activebrush.isEraser() &&
+		   !m_activebrush.isEraserOverride()) {
+			emit colorUsed(m_activebrush.qColor());
+		}
 	}
 }
 
@@ -368,15 +366,11 @@ void ToolController::continueDrawing(
 	const QPointF &viewPos)
 {
 	Q_ASSERT(m_activeTool);
-
-	if(!m_model) {
-		qWarning("ToolController::continueDrawing: no model set!");
-		return;
+	if(m_model) {
+		m_activeTool->motion(Tool::MotionParams{
+			canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation),
+			viewPos, constrain, center});
 	}
-
-	m_activeTool->motion(Tool::MotionParams{
-		canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation),
-		viewPos, constrain, center});
 }
 
 void ToolController::hoverDrawing(
@@ -392,15 +386,13 @@ void ToolController::hoverDrawing(
 void ToolController::endDrawing()
 {
 	Q_ASSERT(m_activeTool);
-
-	if(!m_model) {
-		qWarning("ToolController::endDrawing: no model set!");
-		return;
+	if(m_model) {
+		if(m_drawing) {
+			m_drawing = false;
+			m_activeTool->end();
+		}
+		m_model->paintEngine()->setLocalDrawingInProgress(false);
 	}
-
-	m_drawing = false;
-	m_activeTool->end();
-	m_model->paintEngine()->setLocalDrawingInProgress(false);
 }
 
 bool ToolController::undoMultipartDrawing()
