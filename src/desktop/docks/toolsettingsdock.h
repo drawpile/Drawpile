@@ -144,6 +144,7 @@ signals:
 
 private:
 	void selectTool(tools::Tool::Type tool);
+	void clearTemporaryTransform();
 	static bool hasBrushCursor(tools::Tool::Type tool);
 
 	void showMessage(const QString &message);

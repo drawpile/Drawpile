@@ -180,6 +180,11 @@ void TransformTool::beginTemporaryPaste(
 	}
 }
 
+void TransformTool::clearTemporary()
+{
+	m_toolToReturnTo = Tool::Type::_LASTTOOL;
+}
+
 void TransformTool::setMode(Mode mode)
 {
 	canvas::TransformModel *transform = getActiveTransformModel();

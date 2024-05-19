@@ -55,6 +55,7 @@ public:
 	void beginTemporaryMove(Tool::Type toolToReturnTo);
 	void beginTemporaryPaste(
 		Tool::Type toolToReturnTo, const QRect &srcBounds, const QImage &image);
+	void clearTemporary();
 
 	void setMode(Mode mode);
 

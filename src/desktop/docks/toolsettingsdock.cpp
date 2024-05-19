@@ -363,6 +363,7 @@ tools::ZoomSettings *ToolSettings::zoomSettings()
 void ToolSettings::setTool(tools::Tool::Type tool)
 {
 	if(tool != d->currentTool) {
+		clearTemporaryTransform();
 		d->previousTool = d->currentTool;
 		tools::BrushSettings *bs =
 			qobject_cast<tools::BrushSettings *>(d->currentSettings());
@@ -526,6 +527,13 @@ void ToolSettings::startTransformPaste(
 		qWarning(
 			"ToolSettings::startTransformPaste: active tool is not transform");
 	}
+}
+
+void ToolSettings::clearTemporaryTransform()
+{
+	tools::TransformTool *transformTool = static_cast<tools::TransformTool *>(
+		d->ctrl->getTool(tools::Tool::TRANSFORM));
+	transformTool->clearTemporary();
 }
 
 void ToolSettings::setPreviousTool()
