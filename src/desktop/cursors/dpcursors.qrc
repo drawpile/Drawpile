@@ -13,11 +13,7 @@
         <file>rotate.png</file>
         <file>rotate-discrete.png</file>
         <file>select-lasso.png</file>
-        <file>select-lasso-add.png</file>
-        <file>select-lasso-remove.png</file>
         <file>select-rectangle.png</file>
-        <file>select-rectangle-add.png</file>
-        <file>select-rectangle-remove.png</file>
         <file>shear-bdiag.png</file>
         <file>shear-fdiag.png</file>
         <file>shear-h.png</file>
