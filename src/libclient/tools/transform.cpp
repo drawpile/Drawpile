@@ -27,12 +27,13 @@ void TransformTool::begin(const BeginParams &params)
 	m_swapDiagonal = params.mirror != params.flip;
 	if(!params.right) {
 		canvas::TransformModel *transform = getActiveTransformModel();
-		if(transform) {
-			startDrag(transform, params.point);
-		} else {
-			tryBeginMove();
+		if(!transform) {
+			transform = tryBeginMove(true);
 		}
 		updateHoverHandle(transform, params.point);
+		if(transform) {
+			startDrag(transform, params.point);
+		}
 	}
 }
 
@@ -67,19 +68,25 @@ void TransformTool::end()
 		int clicks = m_clickDetector.clicks();
 		bool finish = false;
 		if(clicks > 0) {
-			if(m_dragHandle == Handle::Inside) {
-				// User clicked into the transform, switch modes.
-				m_mode = m_mode == Mode::Scale ? Mode::Distort : Mode::Scale;
-			} else if(
-				m_dragHandle == Handle::Outside &&
-				m_doubleClickHandle == Handle::Outside && clicks > 1) {
-				// User double-clicked outside of the transform, apply it.
-				finish = true;
+			// If this is the click that started the transform, don't act on it.
+			if(m_firstClick) {
+				m_doubleClickHandle = Handle::None;
 			} else {
-				// User clicked somewhere else, just disregard that.
+				if(m_dragHandle == Handle::Inside) {
+					// User clicked into the transform, switch modes.
+					m_mode =
+						m_mode == Mode::Scale ? Mode::Distort : Mode::Scale;
+				} else if(
+					m_dragHandle == Handle::Outside &&
+					m_doubleClickHandle == Handle::Outside && clicks > 1) {
+					// User double-clicked outside of the transform, apply it.
+					finish = true;
+				} else {
+					// User clicked somewhere else, just disregard that.
+				}
+				m_doubleClickHandle = m_dragHandle;
 			}
 			transform->setDstQuad(m_quadStack[m_quadStackTop]);
-			m_doubleClickHandle = m_dragHandle;
 		} else {
 			const TransformQuad &dstQuad = transform->dstQuad();
 			if(dstQuad != m_dragStartQuad) {
@@ -89,6 +96,7 @@ void TransformTool::end()
 			}
 		}
 
+		m_firstClick = false;
 		m_dragHandle = Handle::None;
 		emitStateChange(transform, m_hoverHandle);
 
@@ -167,7 +175,7 @@ void TransformTool::beginTemporaryMove(Tool::Type toolToReturnTo)
 {
 	if(!isTransformActive()) {
 		m_toolToReturnTo = toolToReturnTo;
-		tryBeginMove();
+		tryBeginMove(false);
 	}
 }
 
@@ -316,7 +324,7 @@ canvas::TransformModel *TransformTool::getActiveTransformModel() const
 	return nullptr;
 }
 
-void TransformTool::tryBeginMove()
+canvas::TransformModel *TransformTool::tryBeginMove(bool firstClick)
 {
 	Q_ASSERT(!isTransformActive());
 	Q_ASSERT(m_quadStack.isEmpty());
@@ -326,7 +334,7 @@ void TransformTool::tryBeginMove()
 			"tools::TransformSettings",
 			"You don't have permission to transform selections."));
 		returnToPreviousTool();
-		return;
+		return nullptr;
 	}
 
 	canvas::CanvasModel *canvas = m_owner.model();
@@ -334,7 +342,7 @@ void TransformTool::tryBeginMove()
 		emit m_owner.showMessageRequested(QCoreApplication::translate(
 			"tools::TransformSettings", "No canvas present."));
 		returnToPreviousTool();
-		return;
+		return nullptr;
 	}
 
 	canvas::SelectionModel *selection = canvas->selection();
@@ -343,7 +351,7 @@ void TransformTool::tryBeginMove()
 			"tools::TransformSettings",
 			"Nothing selected that could be transformed."));
 		returnToPreviousTool();
-		return;
+		return nullptr;
 	}
 
 	int layerId = m_owner.activeLayer();
@@ -353,18 +361,20 @@ void TransformTool::tryBeginMove()
 		emit m_owner.showMessageRequested(QCoreApplication::translate(
 			"tools::TransformSettings", "Layer not found."));
 		returnToPreviousTool();
-		return;
+		return nullptr;
 	}
 
 	canvas::TransformModel *transform = canvas->transform();
 	transform->beginFromCanvas(
 		selection->bounds(), selection->mask(), image, layerId);
 	m_mode = Mode::Scale;
+	m_firstClick = firstClick;
 	m_hoverHandle = Handle::Invalid;
 	m_dragHandle = Handle::None;
 	m_quadStack.clear();
 	m_quadStack.append(transform->dstQuad());
 	m_quadStackTop = 0;
+	return transform;
 }
 
 void TransformTool::tryBeginPaste(const QRect &srcBounds, const QImage &image)
@@ -385,6 +395,7 @@ void TransformTool::tryBeginPaste(const QRect &srcBounds, const QImage &image)
 	canvas::TransformModel *transform = canvas->transform();
 	transform->beginFloating(srcBounds, image);
 	m_mode = Mode::Scale;
+	m_firstClick = false;
 	m_hoverHandle = Handle::Invalid;
 	m_dragHandle = Handle::None;
 	m_quadStack.clear();

@@ -73,7 +73,7 @@ private:
 
 	bool isTransformActive() const;
 	canvas::TransformModel *getActiveTransformModel() const;
-	void tryBeginMove();
+	canvas::TransformModel *tryBeginMove(bool firstClick);
 	void tryBeginPaste(const QRect &srcBounds, const QImage &image);
 	void endTransform(canvas::TransformModel *transform, bool applied);
 
@@ -196,6 +196,7 @@ private:
 	Mode m_mode = Mode::Scale;
 	bool m_canTransform = true;
 	bool m_swapDiagonal = false;
+	bool m_firstClick = false;
 	qreal m_angle = 0.0;
 	qreal m_zoom = 1.0;
 	Handle m_hoverHandle = Handle::Invalid;
