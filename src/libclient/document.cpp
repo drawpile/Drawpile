@@ -10,6 +10,7 @@
 #include "libclient/settings.h"
 #include "libclient/tools/selection.h"
 #include "libclient/tools/toolcontroller.h"
+#include "libclient/tools/transform.h"
 #include "libclient/utils/images.h"
 #include "libshared/net/servercmd.h"
 #include "libshared/util/functionrunnable.h"
@@ -998,7 +999,8 @@ void Document::selectAll()
 
 void Document::selectNone()
 {
-	if(m_canvas && m_canvas->selection()->isValid()) {
+	if(!m_toolctrl->transformTool()->handleDeselect() && m_canvas &&
+	   m_canvas->selection()->isValid()) {
 		unsigned int contextId = m_client->myId();
 		net::Message msgs[] = {
 			net::makeUndoPointMessage(contextId),

@@ -3133,7 +3133,7 @@ void MainWindow::updateSelectTransformActions()
 	getAction("stamp")->setEnabled(canApplyTransform);
 	getAction("cleararea")->setEnabled(haveSelection || haveAnnotation);
 	getAction("selectall")->setEnabled(!haveTransform);
-	getAction("selectnone")->setEnabled(haveSelection);
+	getAction("selectnone")->setEnabled(haveSelection || canApplyTransform);
 	getAction("selectinvert")->setEnabled(haveSelection);
 	getAction("selectlayerbounds")->setEnabled(!haveTransform);
 	getAction("selectlayercontents")->setEnabled(!haveTransform);

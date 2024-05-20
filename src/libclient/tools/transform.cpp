@@ -112,9 +112,9 @@ void TransformTool::finishMultipart()
 	if(transform) {
 		net::Client *client = m_owner.client();
 		QVector<net::Message> msgs = transform->applyActiveTransform(
-			client->myId(), m_owner.activeLayer(),
-			m_owner.transformInterpolation(), client->isCompatibilityMode(),
-			false);
+			client->seemsConnectedToThickServer(), client->myId(),
+			m_owner.activeLayer(), m_owner.transformInterpolation(),
+			client->isCompatibilityMode(), false);
 		bool applied = !msgs.isEmpty();
 		if(applied) {
 			client->sendMessages(msgs.size(), msgs.constData());
@@ -191,6 +191,18 @@ void TransformTool::beginTemporaryPaste(
 void TransformTool::clearTemporary()
 {
 	m_toolToReturnTo = Tool::Type::_LASTTOOL;
+}
+
+bool TransformTool::handleDeselect()
+{
+	canvas::TransformModel *transform = getActiveTransformModel();
+	if(transform) {
+		transform->setDeselectOnApply(true);
+		finishMultipart();
+		return true;
+	} else {
+		return false;
+	}
 }
 
 void TransformTool::setMode(Mode mode)
@@ -297,9 +309,9 @@ void TransformTool::stamp()
 	if(transform) {
 		net::Client *client = m_owner.client();
 		QVector<net::Message> msgs = transform->applyActiveTransform(
-			client->myId(), m_owner.activeLayer(),
-			m_owner.transformInterpolation(), client->isCompatibilityMode(),
-			true);
+			client->seemsConnectedToThickServer(), client->myId(),
+			m_owner.activeLayer(), m_owner.transformInterpolation(),
+			client->isCompatibilityMode(), true);
 		if(!msgs.isEmpty()) {
 			client->sendMessages(msgs.size(), msgs.constData());
 		}

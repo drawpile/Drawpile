@@ -28,13 +28,14 @@ public:
 
 	void beginFloating(const QRect &srcBounds, const QImage &image);
 
+	void setDeselectOnApply(bool deselectOnApply);
 	void setDstQuad(const TransformQuad &dstQuad);
 
 	void applyOffset(int x, int y);
 
 	QVector<net::Message> applyActiveTransform(
-		uint8_t contextId, int layerId, int interpolation,
-		bool compatibilityMode, bool stamp);
+		bool disguiseAsPutImage, uint8_t contextId, int layerId,
+		int interpolation, bool compatibilityMode, bool stamp);
 
 	void endActiveTransform(bool applied);
 
@@ -47,12 +48,12 @@ signals:
 
 private:
 	QVector<net::Message> applyFromCanvas(
-		uint8_t contextId, int layerId, int interpolation,
-		bool compatibilityMode);
+		bool disguiseAsPutImage, uint8_t contextId, int layerId,
+		int interpolation, bool compatibilityMode);
 
 	QVector<net::Message> applyFloating(
-		uint8_t contextId, int layerId, int interpolation,
-		bool compatibilityMode, bool stamp);
+		bool disguiseAsPutImage, uint8_t contextId, int layerId,
+		int interpolation, bool compatibilityMode, bool stamp);
 
 	void clear();
 
@@ -70,6 +71,7 @@ private:
 
 	bool m_active = false;
 	bool m_pasted = false;
+	bool m_deselectOnApply = false;
 	bool m_stamped = false;
 	bool m_dstQuadValid = false;
 	bool m_justApplied = false;

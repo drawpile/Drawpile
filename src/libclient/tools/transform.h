@@ -57,6 +57,8 @@ public:
 		Tool::Type toolToReturnTo, const QRect &srcBounds, const QImage &image);
 	void clearTemporary();
 
+	bool handleDeselect();
+
 	void setMode(Mode mode);
 
 	void setFeatureAccess(bool canTransform) { m_canTransform = canTransform; }
