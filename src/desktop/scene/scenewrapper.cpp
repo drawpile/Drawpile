@@ -17,6 +17,9 @@
 #include "desktop/widgets/viewstatusbar.h"
 #include "libclient/document.h"
 #include "libclient/tools/toolcontroller.h"
+#include <functional>
+
+using std::placeholders::_5;
 
 namespace drawingboard {
 
@@ -278,11 +281,13 @@ void SceneWrapper::connectDocument(Document *doc)
 		m_scene, &drawingboard::CanvasScene::annotationDeleted, toolCtrl,
 		&tools::ToolController::deselectDeletedAnnotation);
 	connect(
-		toolCtrl, &tools::ToolController::toolCapabilitiesChanged, m_scene,
-		&drawingboard::CanvasScene::setToolCapabilities);
-	connect(
 		m_scene, &drawingboard::CanvasScene::canvasResized, toolCtrl,
 		&tools::ToolController::offsetActiveTool);
+	connect(
+		toolCtrl, &tools::ToolController::toolCapabilitiesChanged, m_scene,
+		std::bind(
+			&drawingboard::CanvasScene::setSelectionIgnored, m_scene, _5));
+	m_scene->setSelectionIgnored(toolCtrl->activeToolIgnoresSelections());
 
 	connect(
 		toolCtrl, &tools::ToolController::toolCursorChanged, m_view,

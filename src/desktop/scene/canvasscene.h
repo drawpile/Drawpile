@@ -82,9 +82,7 @@ public:
 	//! Get an annotation item
 	AnnotationItem *getAnnotationItem(int id);
 
-	void setToolCapabilities(
-		bool allowColorPick, bool allowToolAdjust, bool allowRightClick,
-		bool fractionalTool, bool ignoresSelections);
+	void setSelectionIgnored(bool selectionIgnored);
 
 	void setTransformToolState(int mode, int handle, bool dragging);
 

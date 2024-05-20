@@ -354,17 +354,11 @@ drawingboard::AnnotationItem *CanvasScene::getAnnotationItem(int annotationId)
 	return nullptr;
 }
 
-void CanvasScene::setToolCapabilities(
-	bool allowColorPick, bool allowToolAdjust, bool allowRightClick,
-	bool fractionalTool, bool ignoresSelections)
+void CanvasScene::setSelectionIgnored(bool selectionIgnored)
 {
-	Q_UNUSED(allowColorPick);
-	Q_UNUSED(allowToolAdjust);
-	Q_UNUSED(allowRightClick);
-	Q_UNUSED(fractionalTool);
-	m_selectionIgnored = ignoresSelections;
+	m_selectionIgnored = selectionIgnored;
 	if(m_selection) {
-		m_selection->setIgnored(ignoresSelections);
+		m_selection->setIgnored(selectionIgnored);
 	}
 }
 

@@ -20,6 +20,9 @@
 #include "desktop/widgets/viewstatusbar.h"
 #include "libclient/document.h"
 #include "libclient/tools/toolcontroller.h"
+#include <functional>
+
+using std::placeholders::_5;
 
 namespace view {
 
@@ -276,11 +279,12 @@ void ViewWrapper::connectDocument(Document *doc)
 		m_scene, &CanvasScene::annotationDeleted, toolCtrl,
 		&tools::ToolController::deselectDeletedAnnotation);
 	connect(
-		toolCtrl, &tools::ToolController::toolCapabilitiesChanged, m_scene,
-		&CanvasScene::setToolCapabilities);
-	connect(
 		m_controller, &CanvasController::canvasOffset, toolCtrl,
 		&tools::ToolController::offsetActiveTool);
+	connect(
+		toolCtrl, &tools::ToolController::toolCapabilitiesChanged, m_scene,
+		std::bind(&view::CanvasScene::setSelectionIgnored, m_scene, _5));
+	m_scene->setSelectionIgnored(toolCtrl->activeToolIgnoresSelections());
 
 	connect(
 		toolCtrl, &tools::ToolController::toolCursorChanged, m_controller,
