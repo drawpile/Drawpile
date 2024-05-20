@@ -503,10 +503,7 @@ void ToolSettings::startTransformMove()
 	tools::Tool::Type toolToReturnTo = d->currentTool;
 	setToolTemporary(tools::Tool::TRANSFORM);
 	if(d->ctrl->activeTool() == tools::Tool::TRANSFORM) {
-		tools::TransformTool *transformTool =
-			static_cast<tools::TransformTool *>(
-				d->ctrl->getTool(tools::Tool::TRANSFORM));
-		transformTool->beginTemporaryMove(toolToReturnTo);
+		d->ctrl->transformTool()->beginTemporaryMove(toolToReturnTo);
 	} else {
 		qWarning(
 			"ToolSettings::startTransformMove: active tool is not transform");
@@ -519,10 +516,8 @@ void ToolSettings::startTransformPaste(
 	tools::Tool::Type toolToReturnTo = d->currentTool;
 	setToolTemporary(tools::Tool::TRANSFORM);
 	if(d->ctrl->activeTool() == tools::Tool::TRANSFORM) {
-		tools::TransformTool *transformTool =
-			static_cast<tools::TransformTool *>(
-				d->ctrl->getTool(tools::Tool::TRANSFORM));
-		transformTool->beginTemporaryPaste(toolToReturnTo, srcBounds, image);
+		d->ctrl->transformTool()->beginTemporaryPaste(
+			toolToReturnTo, srcBounds, image);
 	} else {
 		qWarning(
 			"ToolSettings::startTransformPaste: active tool is not transform");
@@ -531,9 +526,7 @@ void ToolSettings::startTransformPaste(
 
 void ToolSettings::clearTemporaryTransform()
 {
-	tools::TransformTool *transformTool = static_cast<tools::TransformTool *>(
-		d->ctrl->getTool(tools::Tool::TRANSFORM));
-	transformTool->clearTemporary();
+	d->ctrl->transformTool()->clearTemporary();
 }
 
 void ToolSettings::setPreviousTool()

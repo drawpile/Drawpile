@@ -25,6 +25,7 @@ class Client;
 namespace tools {
 
 class Tool;
+class TransformTool;
 
 /**
  * @brief The ToolController dispatches user input to the currently active tool
@@ -117,6 +118,7 @@ public:
 	net::Client *client() const { return m_client; }
 
 	Tool *getTool(Tool::Type type);
+	TransformTool *transformTool();
 
 	//! Is there a multipart drawing operation in progress?
 	bool isMultipartDrawing() const;

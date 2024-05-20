@@ -104,6 +104,11 @@ Tool *ToolController::getTool(Tool::Type type)
 	return t;
 }
 
+TransformTool *ToolController::transformTool()
+{
+	return static_cast<TransformTool *>(m_toolbox[Tool::TRANSFORM]);
+}
+
 void ToolController::setActiveTool(Tool::Type tool)
 {
 	if(activeTool() != tool) {
@@ -257,8 +262,7 @@ void ToolController::setModel(canvas::CanvasModel *model)
 void ToolController::onFeatureAccessChange(DP_Feature feature, bool canUse)
 {
 	if(feature == DP_FEATURE_REGION_MOVE) {
-		static_cast<TransformTool *>(getTool(Tool::TRANSFORM))
-			->setFeatureAccess(canUse);
+		transformTool()->setFeatureAccess(canUse);
 	}
 }
 
