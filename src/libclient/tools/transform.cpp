@@ -111,15 +111,16 @@ void TransformTool::finishMultipart()
 	canvas::TransformModel *transform = getActiveTransformModel();
 	if(transform) {
 		net::Client *client = m_owner.client();
+		bool movedSelection = false;
 		QVector<net::Message> msgs = transform->applyActiveTransform(
 			client->seemsConnectedToThickServer(), client->myId(),
 			m_owner.activeLayer(), m_owner.transformInterpolation(),
-			client->isCompatibilityMode(), false);
-		bool applied = !msgs.isEmpty();
-		if(applied) {
+			client->isCompatibilityMode(), false, &movedSelection);
+		bool send = !msgs.isEmpty();
+		if(send) {
 			client->sendMessages(msgs.size(), msgs.constData());
 		}
-		endTransform(transform, applied);
+		endTransform(transform, send && movedSelection);
 	}
 	returnToPreviousTool();
 }

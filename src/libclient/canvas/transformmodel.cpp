@@ -77,20 +77,20 @@ void TransformModel::applyOffset(int x, int y)
 
 QVector<net::Message> TransformModel::applyActiveTransform(
 	bool disguiseAsPutImage, uint8_t contextId, int layerId, int interpolation,
-	bool compatibilityMode, bool stamp)
+	bool compatibilityMode, bool stamp, bool *outMovedSelection)
 {
 	if(m_active && m_dstQuadValid) {
 		if(m_pasted) {
 			return applyFloating(
 				disguiseAsPutImage, contextId, layerId, interpolation,
-				compatibilityMode, stamp);
+				compatibilityMode, stamp, outMovedSelection);
 		} else {
 			if(stamp) {
 				m_stamped = true;
 			}
 			return applyFromCanvas(
 				disguiseAsPutImage, contextId, layerId, interpolation,
-				compatibilityMode);
+				compatibilityMode, outMovedSelection);
 		}
 	} else {
 		return {};
@@ -129,7 +129,7 @@ int TransformModel::getEffectiveInterpolation(int interpolation) const
 
 QVector<net::Message> TransformModel::applyFromCanvas(
 	bool disguiseAsPutImage, uint8_t contextId, int layerId, int interpolation,
-	bool compatibilityMode)
+	bool compatibilityMode, bool *outMovedSelection)
 {
 	Q_ASSERT(m_active);
 	Q_ASSERT(!m_pasted || m_stamped);
@@ -219,6 +219,9 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 				m_mask = QImage();
 				emit transformCutCleared();
 			}
+			if(outMovedSelection) {
+				*outMovedSelection = moveSelection;
+			}
 			return msgs;
 		}
 	}
@@ -227,7 +230,7 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 
 QVector<net::Message> TransformModel::applyFloating(
 	bool disguiseAsPutImage, uint8_t contextId, int layerId, int interpolation,
-	bool compatibilityMode, bool stamp)
+	bool compatibilityMode, bool stamp, bool *outMovedSelection)
 {
 	Q_ASSERT(m_active);
 	Q_ASSERT(m_pasted);
@@ -246,7 +249,7 @@ QVector<net::Message> TransformModel::applyFloating(
 	if(m_stamped && !stamp) {
 		msgs = applyFromCanvas(
 			disguiseAsPutImage, contextId, layerId, interpolation,
-			compatibilityMode);
+			compatibilityMode, outMovedSelection);
 	}
 
 	// May be empty either if the transform wasn't stamped or if there was

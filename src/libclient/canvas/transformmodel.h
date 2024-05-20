@@ -35,7 +35,8 @@ public:
 
 	QVector<net::Message> applyActiveTransform(
 		bool disguiseAsPutImage, uint8_t contextId, int layerId,
-		int interpolation, bool compatibilityMode, bool stamp);
+		int interpolation, bool compatibilityMode, bool stamp,
+		bool *outMovedSelection = nullptr);
 
 	void endActiveTransform(bool applied);
 
@@ -49,11 +50,12 @@ signals:
 private:
 	QVector<net::Message> applyFromCanvas(
 		bool disguiseAsPutImage, uint8_t contextId, int layerId,
-		int interpolation, bool compatibilityMode);
+		int interpolation, bool compatibilityMode, bool *outMovedSelection);
 
 	QVector<net::Message> applyFloating(
 		bool disguiseAsPutImage, uint8_t contextId, int layerId,
-		int interpolation, bool compatibilityMode, bool stamp);
+		int interpolation, bool compatibilityMode, bool stamp,
+		bool *outMovedSelection);
 
 	void clear();
 
