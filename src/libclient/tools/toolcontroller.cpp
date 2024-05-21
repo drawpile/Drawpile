@@ -29,6 +29,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_activeTool(nullptr)
 	, m_drawing(false)
 	, m_applyGlobalSmoothing(true)
+	, m_mouseSmoothing(false)
 	, m_globalSmoothing(0)
 	, m_interpolateInputs(false)
 	, m_stabilizationMode(brushes::Stabilizer)
@@ -319,6 +320,11 @@ void ToolController::setGlobalSmoothing(int smoothing)
 	}
 }
 
+void ToolController::setMouseSmoothing(bool mouseSmoothing)
+{
+	m_mouseSmoothing = mouseSmoothing;
+}
+
 void ToolController::updateSmoothing()
 {
 	int strength = m_globalSmoothing;
@@ -341,17 +347,18 @@ void ToolController::setTransformInterpolation(int transformInterpolation)
 void ToolController::startDrawing(
 	long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 	qreal ytilt, qreal rotation, bool right, qreal angle, qreal zoom,
-	bool mirror, bool flip, const QPointF &viewPos, bool applyGlobalSmoothing,
+	bool mirror, bool flip, const QPointF &viewPos, int deviceType,
 	bool eraserOverride)
 {
 	Q_ASSERT(m_activeTool);
 	if(m_model) {
 		m_drawing = true;
-		m_applyGlobalSmoothing = applyGlobalSmoothing;
+		m_applyGlobalSmoothing =
+			deviceType != int(DeviceType::Tablet) && m_mouseSmoothing;
 		m_activebrush.setEraserOverride(eraserOverride);
 		m_activeTool->begin(Tool::BeginParams{
 			canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation),
-			viewPos, angle, zoom, mirror, flip, right});
+			viewPos, angle, zoom, DeviceType(deviceType), mirror, flip, right});
 
 		if(!m_activeTool->isMultipart()) {
 			m_model->paintEngine()->setLocalDrawingInProgress(true);

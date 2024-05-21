@@ -16,6 +16,7 @@ SETTING(checkerColor1               , CheckerColor1               , "settings/ch
 SETTING(checkerColor2               , CheckerColor2               , "settings/checkercolor2"                , CHECKER_COLOR2_DEFAULT)
 SETTING(interpolateInputs           , InterpolateInputs           , "settings/input/interpolate"            , true)
 SETTING(messageQueueDrainRate       , MessageQueueDrainRate       , "settings/messagequeuedrainrate"        , net::MessageQueue::DEFAULT_SMOOTH_DRAIN_RATE)
+SETTING(mouseSmoothing              , MouseSmoothing              , "settings/input/mousesmoothing"         , false)
 SETTING(parentalControlsAutoTag     , ParentalControlsAutoTag     , "pc/autotag"                            , true)
 SETTING(parentalControlsForceCensor , ParentalControlsForceCensor , "pc/noUncensoring"                      , false)
 SETTING(parentalControlsLevel       , ParentalControlsLevel       , "pc/level"                              , parentalcontrols::Level::Unrestricted)

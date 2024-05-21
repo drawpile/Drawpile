@@ -21,7 +21,7 @@ TransformTool::TransformTool(ToolController &owner)
 
 void TransformTool::begin(const BeginParams &params)
 {
-	m_clickDetector.begin(params.viewPos);
+	m_clickDetector.begin(params.viewPos, params.deviceType);
 	m_angle = params.angle;
 	m_zoom = params.zoom;
 	m_swapDiagonal = params.mirror != params.flip;

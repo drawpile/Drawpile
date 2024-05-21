@@ -12,6 +12,7 @@ extern "C" {
 #include "desktop/widgets/notifbar.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/drawdance/eventlog.h"
+#include "libclient/tools/devicetype.h"
 #include "libshared/util/qtcompat.h"
 #include <QApplication>
 #include <QDateTime>
@@ -58,7 +59,6 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_scene(nullptr)
 	, m_zoomWheelDelta(0)
 	, m_enableTablet(true)
-	, m_mouseSmoothing(false)
 	, m_locked(false)
 	, m_busy(false)
 	, m_saveInProgress(false)
@@ -128,7 +128,6 @@ CanvasView::CanvasView(QWidget *parent)
 	}
 
 	settings.bindTabletEvents(this, &widgets::CanvasView::setTabletEnabled);
-	settings.bindMouseSmoothing(this, &widgets::CanvasView::setMouseSmoothing);
 	settings.bindOneFingerDraw(this, &widgets::CanvasView::setTouchDraw);
 	settings.bindOneFingerScroll(this, &widgets::CanvasView::setTouchScroll);
 	settings.bindTwoFingerZoom(this, &widgets::CanvasView::setTouchPinch);
@@ -929,7 +928,7 @@ void CanvasView::setPointerTracking(bool tracking)
 }
 
 void CanvasView::onPenDown(
-	const canvas::Point &p, bool right, const QPointF &viewPos, bool isStylus,
+	const canvas::Point &p, bool right, const QPointF &viewPos, int deviceType,
 	bool eraserOverride)
 {
 	if(m_scene->hasImage()) {
@@ -939,7 +938,7 @@ void CanvasView::onPenDown(
 				emit penDown(
 					p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(),
 					p.rotation(), right, m_rotate, m_zoom, m_mirror, m_flip,
-					viewPos, isStylus || m_mouseSmoothing, eraserOverride);
+					viewPos, deviceType, eraserOverride);
 			break;
 		case PenMode::Colorpick:
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
@@ -993,7 +992,7 @@ void CanvasView::onPenUp()
 void CanvasView::penPressEvent(
 	QEvent *event, long long timeMsec, const QPointF &pos, qreal pressure,
 	qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button,
-	Qt::KeyboardModifiers modifiers, bool isStylus, bool eraserOverride)
+	Qt::KeyboardModifiers modifiers, int deviceType, bool eraserOverride)
 {
 	if(m_pendown != NOTDOWN) {
 		return;
@@ -1073,7 +1072,8 @@ void CanvasView::penPressEvent(
 	} else if(
 		(button == Qt::LeftButton || button == Qt::RightButton) &&
 		m_dragmode == ViewDragMode::None) {
-		m_pendown = isStylus ? TABLETDOWN : MOUSEDOWN;
+		m_pendown = deviceType == int(tools::DeviceType::Tablet) ? TABLETDOWN
+																 : MOUSEDOWN;
 		m_pointerdistance = 0;
 		m_pointervelocity = 0;
 		m_prevpoint =
@@ -1084,7 +1084,7 @@ void CanvasView::penPressEvent(
 		}
 		onPenDown(
 			mapToCanvas(timeMsec, pos, pressure, xtilt, ytilt, rotation),
-			button == Qt::RightButton, pos, isStylus, eraserOverride);
+			button == Qt::RightButton, pos, deviceType, eraserOverride);
 	}
 }
 
@@ -1128,7 +1128,8 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 
 	penPressEvent(
 		event, QDateTime::currentMSecsSinceEpoch(), mousePos, 1.0, 0.0, 0.0,
-		0.0, event->button(), getMouseModifiers(event), false, false);
+		0.0, event->button(), getMouseModifiers(event),
+		int(tools::DeviceType::Mouse), false);
 }
 
 void CanvasView::penMoveEvent(
@@ -1286,7 +1287,7 @@ void CanvasView::touchPressEvent(
 {
 	penPressEvent(
 		event, timeMsec, pos, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton,
-		Qt::NoModifier, false, false);
+		Qt::NoModifier, int(tools::DeviceType::Touch), false);
 }
 
 void CanvasView::touchMoveEvent(long long timeMsec, const QPointF &pos)
@@ -2021,8 +2022,8 @@ bool CanvasView::viewportEvent(QEvent *event)
 		penPressEvent(
 			event, QDateTime::currentMSecsSinceEpoch(), compat::tabPosF(*tabev),
 			tabev->pressure(), tabev->xTilt(), tabev->yTilt(),
-			qDegreesToRadians(tabev->rotation()), button, modifiers, true,
-			eraserOverride);
+			qDegreesToRadians(tabev->rotation()), button, modifiers,
+			int(tools::DeviceType::Tablet), eraserOverride);
 	} else if(type == QEvent::TabletMove && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent *>(event);
 		const auto tabPos = compat::tabPosF(*tabev);

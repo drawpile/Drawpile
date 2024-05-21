@@ -2,6 +2,7 @@
 #ifndef LIBCLIENT_TOOLS_TOOL_H
 #define LIBCLIENT_TOOLS_TOOL_H
 #include "libclient/canvas/point.h"
+#include "libclient/tools/devicetype.h"
 #include <QCursor>
 #include <QMetaType>
 
@@ -47,6 +48,7 @@ public:
 		QPointF viewPos;
 		qreal angle;
 		qreal zoom;
+		DeviceType deviceType;
 		bool mirror;
 		bool flip;
 		bool right;

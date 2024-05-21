@@ -15,7 +15,7 @@ SelectionTool::SelectionTool(ToolController &owner, Type type, QCursor cursor)
 
 void SelectionTool::begin(const BeginParams &params)
 {
-	m_clickDetector.begin(params.viewPos);
+	m_clickDetector.begin(params.viewPos, params.deviceType);
 	if(params.right) {
 		m_op = -1;
 	} else {

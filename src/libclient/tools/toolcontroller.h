@@ -106,6 +106,8 @@ public:
 	void setGlobalSmoothing(int smoothing);
 	int globalSmoothing() const { return m_globalSmoothing; }
 
+	void setMouseSmoothing(bool mouseSmoothing);
+
 	void setTransformInterpolation(int transformInterpolation);
 	int transformInterpolation() const { return m_transformInterpolation; }
 
@@ -151,8 +153,8 @@ public slots:
 	void startDrawing(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 		qreal ytilt, qreal rotation, bool right, qreal angle, qreal zoom,
-		bool mirror, bool flip, const QPointF &viewPos,
-		bool applyGlobalSmoothing, bool eraserOverride);
+		bool mirror, bool flip, const QPointF &viewPos, int deviceType,
+		bool eraserOverride);
 
 	//! Continue a stroke
 	void continueDrawing(
@@ -235,6 +237,7 @@ private:
 	uint16_t m_activeAnnotation;
 	bool m_drawing;
 	bool m_applyGlobalSmoothing;
+	bool m_mouseSmoothing;
 
 	int m_globalSmoothing;
 	bool m_interpolateInputs;
