@@ -14,6 +14,7 @@ TcpServer::TcpServer(int timeoutSecs, Client *client)
 	: Server(client)
 {
 	m_socket = new QSslSocket(this);
+	m_socket->setSocketOption(QAbstractSocket::LowDelayOption, true);
 
 	QSslConfiguration sslconf = m_socket->sslConfiguration();
 	sslconf.setSslOption(QSsl::SslOptionDisableCompression, false);

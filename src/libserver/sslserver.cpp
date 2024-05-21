@@ -182,6 +182,7 @@ void SslServer::incomingConnection(qintptr handle)
 	}
 
 	QSslSocket *socket = new QSslSocket(this);
+	socket->setSocketOption(QAbstractSocket::LowDelayOption, true);
 	socket->setSocketDescriptor(handle);
 	socket->setLocalCertificateChain(m_certchain);
 	socket->setPrivateKey(m_key);
