@@ -57,6 +57,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Translate links copied out of the browser version of Drawpile into something that can be joined when they are pasted into the join page.
  * Feature: Better small-screen mode handling. The toggle items now no longer overlap, dialogs get maximized if appropriate, the start and settings dialogs get arranged horizontally.
  * Feature: Rework selections and transforms entirely. They're now distinct operations. Selections participate in the undo stack.
+ * Feature: Show layouts action in dock menus. Thanks Elisa for suggesting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

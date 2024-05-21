@@ -4883,7 +4883,8 @@ void MainWindow::setupActions()
 		m_canvasView->viewWidget()->setFocus();
 	});
 
-	const QList<QAction *> globalDockActions = {sideTabDocks, hideDocks, hideDockTitleBars};
+	const QList<QAction *> globalDockActions = {
+		sideTabDocks, hideDocks, hideDockTitleBars, nullptr, layoutsAction};
 	for(auto *dw : findChildren<QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
 		if(auto *titlebar = qobject_cast<docks::TitleWidget *>(dw->titleBarWidget())) {
 			titlebar->addGlobalDockActions(globalDockActions);

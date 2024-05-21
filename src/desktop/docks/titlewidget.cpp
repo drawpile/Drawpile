@@ -82,7 +82,13 @@ void TitleWidget::addCenteringSpacer()
 void TitleWidget::addGlobalDockActions(const QList<QAction *> &actions)
 {
 	m_menu->addSeparator();
-	m_menu->addActions(actions);
+	for(QAction *action : actions) {
+		if(action) {
+			m_menu->addAction(action);
+		} else {
+			m_menu->addSeparator();
+		}
+	}
 }
 
 void TitleWidget::setKeepButtonSpace(bool keepButtonSpace)
