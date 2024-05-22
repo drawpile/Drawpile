@@ -3,6 +3,7 @@
 #define DESKTOP_SCENE_TRANSFORMITEM_H
 #include "desktop/scene/baseitem.h"
 #include "libclient/utils/transformquad.h"
+#include <QImage>
 
 namespace drawingboard {
 
@@ -19,6 +20,7 @@ public:
 	QRectF boundingRect() const override { return m_boundingRect; }
 
 	void setQuad(const TransformQuad &quad, bool valid);
+	void setPreviewImage(const QImage &image);
 	void setZoom(qreal zoom);
 	void setToolState(int mode, int handle, bool dragging);
 
@@ -28,6 +30,8 @@ protected:
 		QWidget *widget) override;
 
 private:
+	void updatePreviewTransform();
+
 	static int calculateHandleSize(qreal zoom);
 	QRectF calculateBoundingRect() const;
 
@@ -44,6 +48,9 @@ private:
 	int m_activeHandle;
 	bool m_valid;
 	bool m_dragging = false;
+	bool m_previewTransformValid = false;
+	QTransform m_previewTransform;
+	QImage m_previewImage;
 };
 
 }

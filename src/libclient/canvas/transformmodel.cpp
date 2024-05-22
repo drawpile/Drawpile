@@ -66,6 +66,16 @@ void TransformModel::setDstQuad(const TransformQuad &dstQuad)
 	}
 }
 
+void TransformModel::setPreviewAccurate(bool previewAccurate)
+{
+	if(previewAccurate != m_previewAccurate) {
+		m_previewAccurate = previewAccurate;
+		if(m_active) {
+			emit transformChanged();
+		}
+	}
+}
+
 void TransformModel::applyOffset(int x, int y)
 {
 	if(m_active) {

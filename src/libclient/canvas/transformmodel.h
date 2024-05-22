@@ -18,9 +18,10 @@ public:
 	bool isPasted() const { return m_pasted; }
 	bool isDstQuadValid() const { return m_dstQuadValid; }
 	bool isJustApplied() const { return m_justApplied; }
+	bool isPreviewAccurate() const { return m_previewAccurate; }
 	TransformQuad srcQuad() const { return TransformQuad(m_srcBounds); }
 	const TransformQuad &dstQuad() const { return m_dstQuad; }
-	QImage image() const { return m_image; }
+	const QImage &image() const { return m_image; }
 
 	void beginFromCanvas(
 		const QRect &srcBounds, const QImage &mask, const QImage &image,
@@ -30,6 +31,7 @@ public:
 
 	void setDeselectOnApply(bool deselectOnApply);
 	void setDstQuad(const TransformQuad &dstQuad);
+	void setPreviewAccurate(bool previewAccurate);
 
 	void applyOffset(int x, int y);
 
@@ -77,6 +79,7 @@ private:
 	bool m_stamped = false;
 	bool m_dstQuadValid = false;
 	bool m_justApplied = false;
+	bool m_previewAccurate = true;
 	int m_sourceLayerId = 0;
 	QRect m_srcBounds;
 	TransformQuad m_dstQuad;

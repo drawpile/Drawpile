@@ -20,6 +20,8 @@
 namespace tools {
 
 namespace props {
+static const ToolProperties::Value<bool> accuratepreview{
+	QStringLiteral("accuratepreview"), true};
 static const ToolProperties::RangedValue<int> interpolation{
 	QStringLiteral("interpolation"), 1, 0, 1};
 }
@@ -65,22 +67,30 @@ void TransformSettings::setActions(
 ToolProperties TransformSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
+	cfg.setValue(props::accuratepreview, m_previewGroup->checkedId() != 0);
 	cfg.setValue(props::interpolation, m_interpolationGroup->checkedId());
 	return cfg;
 }
 
 void TransformSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	QAbstractButton *button =
+	QAbstractButton *previewButton =
+		m_previewGroup->button(cfg.value(props::accuratepreview) ? 1 : 0);
+	if(previewButton) {
+		previewButton->setChecked(true);
+	}
+
+	QAbstractButton *interpolationButton =
 		m_interpolationGroup->button(cfg.value(props::interpolation));
-	if(button) {
-		button->setChecked(true);
+	if(interpolationButton) {
+		interpolationButton->setChecked(true);
 	}
 }
 
 void TransformSettings::pushSettings()
 {
-	controller()->setTransformInterpolation(m_interpolationGroup->checkedId());
+	controller()->setTransformParams(
+		m_previewGroup->checkedId() != 0, m_interpolationGroup->checkedId());
 	tool()->setMode(tools::TransformTool::Mode(m_handlesGroup->checkedId()));
 }
 
@@ -116,6 +126,41 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 
 	QWidget *widget = new QWidget(parent);
 	QFormLayout *layout = new QFormLayout(widget);
+
+	widgets::GroupedToolButton *fastButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
+	fastButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+	fastButton->setText(tr("Fast"));
+	fastButton->setStatusTip(tr("Quick preview not taking into account "
+								"layering, opacity or anything else"));
+	fastButton->setToolTip(fastButton->statusTip());
+	fastButton->setCheckable(true);
+
+	widgets::GroupedToolButton *accurateButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+	accurateButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+	accurateButton->setText(tr("Accurate"));
+	accurateButton->setStatusTip(
+		tr("Preview the transform exactly how will look when applied"));
+	accurateButton->setToolTip(accurateButton->statusTip());
+	accurateButton->setCheckable(true);
+	accurateButton->setChecked(true);
+
+	QHBoxLayout *previewLayout = new QHBoxLayout;
+	previewLayout->setContentsMargins(0, 0, 0, 0);
+	previewLayout->setSpacing(0);
+	previewLayout->addWidget(fastButton);
+	previewLayout->addWidget(accurateButton);
+	QLabel *previewLabel = new QLabel(tr("Preview:"));
+	layout->addRow(previewLabel, previewLayout);
+
+	m_previewGroup = new QButtonGroup(this);
+	m_previewGroup->addButton(fastButton, 0);
+	m_previewGroup->addButton(accurateButton, 1);
+	connect(
+		m_previewGroup,
+		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
+		&TransformSettings::pushSettings);
 
 	widgets::GroupedToolButton *nearestButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);

@@ -27,8 +27,20 @@ void TransformItem::setQuad(const TransformQuad &quad, bool valid)
 		m_quad = quad;
 		m_valid = valid;
 		m_boundingRect = calculateBoundingRect();
+		updatePreviewTransform();
 	} else if(valid != m_valid) {
 		m_valid = valid;
+		updatePreviewTransform();
+		refresh();
+	}
+}
+
+void TransformItem::setPreviewImage(const QImage &image)
+{
+	bool imageChanged = image != m_previewImage;
+	if(imageChanged) {
+		m_previewImage = image;
+		updatePreviewTransform();
 		refresh();
 	}
 }
@@ -60,6 +72,14 @@ void TransformItem::paint(
 	Q_UNUSED(widget);
 	if(!m_quad.isNull()) {
 		painter->setRenderHint(QPainter::Antialiasing, false);
+		painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
+
+		if(m_previewTransformValid) {
+			painter->save();
+			painter->setTransform(m_previewTransform, true);
+			painter->drawImage(0.0, 0.0, m_previewImage);
+			painter->restore();
+		}
 
 		QPen pen(m_valid ? Qt::gray : Qt::darkRed);
 		pen.setCosmetic(true);
@@ -107,6 +127,23 @@ void TransformItem::paint(
 				painter, int(tools::TransformTool::Handle::Left), m_quad.left(),
 				m_quad.leftAngle());
 		}
+	}
+}
+
+void TransformItem::updatePreviewTransform()
+{
+	if(m_valid && !m_previewImage.isNull()) {
+		QRectF imageRect(m_previewImage.rect());
+		QPolygonF imagePolygon({
+			imageRect.topLeft(),
+			imageRect.topRight(),
+			imageRect.bottomRight(),
+			imageRect.bottomLeft(),
+		});
+		m_previewTransformValid = QTransform::quadToQuad(
+			imagePolygon, m_quad.polygon(), m_previewTransform);
+	} else {
+		m_previewTransformValid = false;
 	}
 }
 

@@ -428,6 +428,12 @@ void CanvasScene::onTransformChanged()
 			m_transform = new TransformItem(quad, valid, m_zoom, m_group);
 			m_transform->setUpdateSceneOnRefresh(true);
 		}
+		// Accurate previews happen in the paint engine, fast ones in the item.
+		if(transform->isPreviewAccurate()) {
+			m_transform->setPreviewImage(QImage());
+		} else {
+			m_transform->setPreviewImage(transform->image());
+		}
 	} else if(m_transform) {
 		delete m_transform;
 		m_transform = nullptr;

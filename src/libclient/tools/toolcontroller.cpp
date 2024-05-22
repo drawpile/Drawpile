@@ -38,6 +38,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_effectiveSmoothing(0)
 	, m_finishStrokes(true)
 	, m_stabilizerUseBrushSampleCount(true)
+	, m_transformPreviewAccurate(true)
 	, m_transformInterpolation{DP_MSG_TRANSFORM_REGION_MODE_BILINEAR}
 	, m_threadPool{this}
 	, m_taskCount{0}
@@ -257,6 +258,7 @@ void ToolController::setModel(canvas::CanvasModel *model)
 		m_model->transform(), &canvas::TransformModel::transformCutCleared,
 		this, &ToolController::clearTransformCutPreview);
 	m_model->setTransformInterpolation(m_transformInterpolation);
+	m_model->transform()->setPreviewAccurate(m_transformPreviewAccurate);
 	emit modelChanged(model);
 }
 
@@ -272,7 +274,8 @@ void ToolController::updateTransformPreview()
 	if(m_model) {
 		canvas::PaintEngine *paintEngine = m_model->paintEngine();
 		canvas::TransformModel *transform = m_model->transform();
-		if(transform->isActive() && transform->isDstQuadValid()) {
+		if(m_transformPreviewAccurate && transform->isActive() &&
+		   transform->isDstQuadValid()) {
 			QPoint point =
 				transform->dstQuad().boundingRect().topLeft().toPoint();
 			paintEngine->previewTransform(
@@ -335,13 +338,17 @@ void ToolController::updateSmoothing()
 		qBound(0, strength, libclient::settings::maxSmoothing);
 }
 
-void ToolController::setTransformInterpolation(int transformInterpolation)
+void ToolController::setTransformParams(bool accurate, int interpolation)
 {
-	m_transformInterpolation = transformInterpolation;
-	if(m_model) {
-		m_model->setTransformInterpolation(transformInterpolation);
+	if(accurate != m_transformPreviewAccurate ||
+	   interpolation != m_transformInterpolation) {
+		m_transformPreviewAccurate = accurate;
+		m_transformInterpolation = interpolation;
+		if(m_model) {
+			m_model->transform()->setPreviewAccurate(accurate);
+		}
+		updateTransformPreview();
 	}
-	updateTransformPreview();
 }
 
 void ToolController::startDrawing(

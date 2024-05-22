@@ -72,6 +72,7 @@ private:
 	widgets::GroupedToolButton *m_rotateCwButton = nullptr;
 	widgets::GroupedToolButton *m_rotateCcwButton = nullptr;
 	widgets::GroupedToolButton *m_shrinkToViewButton = nullptr;
+	QButtonGroup *m_previewGroup = nullptr;
 	QButtonGroup *m_interpolationGroup = nullptr;
 	widgets::GroupedToolButton *m_scaleButton = nullptr;
 	widgets::GroupedToolButton *m_distortButton = nullptr;

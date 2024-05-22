@@ -108,7 +108,7 @@ public:
 
 	void setMouseSmoothing(bool mouseSmoothing);
 
-	void setTransformInterpolation(int transformInterpolation);
+	void setTransformParams(bool accurate, int interpolation);
 	int transformInterpolation() const { return m_transformInterpolation; }
 
 	const SelectionParams &selectionParams() const { return m_selectionParams; }
@@ -248,6 +248,7 @@ private:
 	bool m_finishStrokes;
 	bool m_stabilizerUseBrushSampleCount;
 
+	bool m_transformPreviewAccurate;
 	int m_transformInterpolation;
 	SelectionParams m_selectionParams;
 
