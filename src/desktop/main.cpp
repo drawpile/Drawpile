@@ -43,6 +43,9 @@
 #elif defined(__EMSCRIPTEN__)
 #	include "libclient/wasmsupport.h"
 #endif
+#ifdef HAVE_PROXY_STYLE
+#	include "desktop/utils/fusionui.h"
+#endif
 #ifdef HAVE_RUN_IN_NEW_PROCESS
 #	include <QProcess>
 #endif
@@ -176,13 +179,20 @@ void DrawpileApp::setThemeStyle(const QString &themeStyle)
 	if(themeStyle.isEmpty() || themeStyle.startsWith(QStringLiteral("mac"))) {
 		foundStyle = true;
 		setStyle(new macui::MacProxyStyle);
-	} else {
-		foundStyle = setStyle(themeStyle);
 	}
-#else
-	foundStyle =
-		setStyle(themeStyle.isEmpty() ? m_originalSystemStyle : themeStyle);
 #endif
+
+#ifdef HAVE_PROXY_STYLE
+	if(!foundStyle && fusionui::looksLikeFusionStyle(themeStyle)) {
+		foundStyle = true;
+		setStyle(new fusionui::FusionProxyStyle(themeStyle));
+	}
+#endif
+
+	if(!foundStyle) {
+		foundStyle =
+			setStyle(themeStyle.isEmpty() ? m_originalSystemStyle : themeStyle);
+	}
 
 	if(!foundStyle) {
 		qWarning() << "Could not find style" << themeStyle;

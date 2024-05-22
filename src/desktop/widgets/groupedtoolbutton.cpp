@@ -15,6 +15,9 @@
 #include <QStylePainter>
 #include <QToolButton>
 #include <QWidget>
+#ifdef HAVE_PROXY_STYLE
+#	include "desktop/utils/fusionui.h"
+#endif
 
 namespace widgets {
 
@@ -101,7 +104,17 @@ private:
 		// old style to unpolish themselves
 		auto *oldStyle = g_instance.data();
 
-		g_instance = new GroupedToolButtonStyle(compat::styleName(*QApplication::style()));
+		QString themeStyle = compat::styleName(*QApplication::style());
+#ifdef HAVE_PROXY_STYLE
+		if(fusionui::looksLikeFusionStyle(themeStyle)) {
+			g_instance = new GroupedToolButtonStyle(
+				new fusionui::FusionProxyStyle(themeStyle));
+		} else {
+			g_instance = new GroupedToolButtonStyle(themeStyle);
+		}
+#else
+		g_instance = new GroupedToolButtonStyle(themeStyle);
+#endif
 		g_instance->setParent(qApp);
 
 		for (auto &widget : qApp->allWidgets()) {

@@ -59,6 +59,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Rework selections and transforms entirely. They're now distinct operations. Selections participate in the undo stack.
  * Feature: Show layouts action in dock menus. Thanks Elisa for suggesting.
  * Fix: Set TCP_NODELAY on sockets to reduce unnecessary latency.
+ * Feature: Build option -DPROXY_STYLE=ON to fix the bad contrast in dark themes when not building a patched version of Qt yourself.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

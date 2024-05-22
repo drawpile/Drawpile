@@ -263,6 +263,9 @@ QString SystemInfoDialog::getCompileFeatures()
 #ifdef HAVE_QTKEYCHAIN
 	features.append(QStringLiteral("HAVE_QTKEYCHAIN"));
 #endif
+#ifdef HAVE_PROXY_STYLE
+	features.append(QStringLiteral("HAVE_PROXY_STYLE"));
+#endif
 #ifdef SINGLE_MAIN_WINDOW
 	features.append(QStringLiteral("SINGLE_MAIN_WINDOW"));
 #endif

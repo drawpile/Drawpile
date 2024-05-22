@@ -467,6 +467,14 @@ if(WIN32 AND QT_VERSION_MAJOR VERSION_EQUAL 6)
 	target_include_directories(drawpile PRIVATE "${Qt6Gui_PRIVATE_INCLUDE_DIRS}")
 endif()
 
+if(PROXY_STYLE)
+	target_compile_definitions(drawpile PRIVATE HAVE_PROXY_STYLE=1)
+	target_sources(drawpile PRIVATE utils/fusionui.cpp utils/fusionui.h)
+	# Can't proxy Fusion UI without getting our hands on some private headers.
+	target_include_directories(drawpile PRIVATE
+		"${Qt${QT_VERSION_MAJOR}Widgets_PRIVATE_INCLUDE_DIRS}")
+endif()
+
 # Some special handling for Android:
 # * It can't deal with multiple main windows properly, trying to open a second
 #	one hides the first with no way to switch between them.
