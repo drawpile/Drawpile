@@ -1,45 +1,55 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 extern "C" {
-#include <dpmsg/message.h>
 #include <dpengine/pixels.h>
+#include <dpmsg/message.h>
 }
-
 #include "libclient/canvas/layerlist.h"
 #include "libclient/drawdance/layerpropslist.h"
 #include "libshared/util/qtcompat.h"
-
 #include <QDebug>
 #include <QImage>
-#include <QStringList>
 #include <QRegularExpression>
+#include <QStringList>
 
 namespace canvas {
 
 LayerListModel::LayerListModel(QObject *parent)
-	: QAbstractItemModel(parent), m_aclstate(nullptr),
-	  m_rootLayerCount(0), m_defaultLayer(0), m_autoselectAny(true),
-	  m_frameMode(false), m_layerIdToSelect(0)
+	: QAbstractItemModel(parent)
+	, m_aclstate(nullptr)
+	, m_rootLayerCount(0)
+	, m_defaultLayer(0)
+	, m_autoselectAny(true)
+	, m_frameMode(false)
+	, m_layerIdToSelect(0)
 {
 }
 
 QVariant LayerListModel::data(const QModelIndex &index, int role) const
 {
-	if(!index.isValid())
+	if(!index.isValid()) {
 		return QVariant();
+	}
 
 	const LayerListItem &item = m_items.at(index.internalId());
 
 	switch(role) {
-	case Qt::DisplayRole: return QVariant::fromValue(item);
+	case Qt::DisplayRole:
+		return QVariant::fromValue(item);
 	case TitleRole:
-	case Qt::EditRole: return item.title;
-	case IdRole: return item.id;
-	case IsDefaultRole: return item.id == m_defaultLayer;
-	case IsLockedRole: return m_aclstate && m_aclstate->isLayerLocked(item.id);
-	case IsGroupRole: return item.group;
-	case IsEmptyRole: return item.children == 0;
-	case IsHiddenInFrameRole: return m_frameMode && !m_frameLayers.contains(item.id);
+	case Qt::EditRole:
+		return item.title;
+	case IdRole:
+		return item.id;
+	case IsDefaultRole:
+		return item.id == m_defaultLayer;
+	case IsLockedRole:
+		return m_aclstate && m_aclstate->isLayerLocked(item.id);
+	case IsGroupRole:
+		return item.group;
+	case IsEmptyRole:
+		return item.children == 0;
+	case IsHiddenInFrameRole:
+		return m_frameMode && !m_frameLayers.contains(item.id);
 	case IsHiddenInTreeRole:
 		if(item.hidden) {
 			return true;
@@ -73,14 +83,17 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 	return QVariant();
 }
 
-Qt::ItemFlags LayerListModel::flags(const QModelIndex& index) const
+Qt::ItemFlags LayerListModel::flags(const QModelIndex &index) const
 {
 	if(index.isValid()) {
-		const bool isGroup = m_items.at(index.internalId()).group;
-
-		return Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | (isGroup ? Qt::ItemIsDropEnabled : Qt::NoItemFlags);
+		bool isGroup = m_items.at(index.internalId()).group;
+		return Qt::ItemIsEnabled | Qt::ItemIsDragEnabled |
+			   Qt::ItemIsSelectable | Qt::ItemIsEditable |
+			   (isGroup ? Qt::ItemIsDropEnabled : Qt::NoItemFlags);
+	} else {
+		return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled |
+			   Qt::ItemIsDropEnabled | Qt::ItemIsEnabled;
 	}
-	return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsEnabled;
 }
 
 Qt::DropActions LayerListModel::supportedDropActions() const
@@ -88,25 +101,29 @@ Qt::DropActions LayerListModel::supportedDropActions() const
 	return Qt::MoveAction;
 }
 
-QStringList LayerListModel::mimeTypes() const {
-		return QStringList() << "application/x-qt-image";
+QStringList LayerListModel::mimeTypes() const
+{
+	return {QStringLiteral("application/x-qt-image")};
 }
 
-QMimeData *LayerListModel::mimeData(const QModelIndexList& indexes) const
+QMimeData *LayerListModel::mimeData(const QModelIndexList &indexes) const
 {
 	return new LayerMimeData(this, indexes[0].data().value<LayerListItem>().id);
 }
 
-bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+bool LayerListModel::dropMimeData(
+	const QMimeData *data, Qt::DropAction action, int row, int column,
+	const QModelIndex &parent)
 {
 	Q_UNUSED(action);
 	Q_UNUSED(column);
 	Q_UNUSED(parent);
 
-	const LayerMimeData *ldata = qobject_cast<const LayerMimeData*>(data);
+	const LayerMimeData *ldata = qobject_cast<const LayerMimeData *>(data);
 	if(ldata && ldata->source() == this) {
-		if(m_items.size() < 2)
+		if(m_items.size() < 2) {
 			return false;
+		}
 
 		int targetId;
 		bool intoGroup = false;
@@ -117,29 +134,24 @@ bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 				targetId = m_items.at(parent.internalId()).id;
 				intoGroup = true;
 			} else {
-				// row<0, no parent: the empty area below the layer list (move to root/bottom)
-				targetId = m_items.at(index(rowCount()-1, 0).internalId()).id;
+				// row<0, no parent: the empty area below the layer list (move
+				// to root/bottom)
+				targetId = m_items.at(index(rowCount() - 1, 0).internalId()).id;
 				below = true;
 			}
 		} else {
 			const int children = rowCount(parent);
 			if(row >= children) {
-				// row >= number of children in group (or root): move below the last item in the group
-				targetId = m_items.at(index(children-1, 0, parent).internalId()).id;
+				// row >= number of children in group (or root): move below the
+				// last item in the group
+				targetId =
+					m_items.at(index(children - 1, 0, parent).internalId()).id;
 				below = true;
 			} else {
 				// the standard case: move above this layer
 				targetId = m_items.at(index(row, 0, parent).internalId()).id;
 			}
 		}
-
-#if 0
-		qInfo("Drop row=%d (parent row=%d, id=%d, rowCount=%d)", row, parent.row(), parent.internalId(), rowCount(parent));
-		for(int i=0;i<m_items.size();++i) {
-			qInfo("[%d] id=%d, children=%d", i, m_items.at(i).id, m_items.at(i).children);
-		}
-		qInfo("Requesting move of %d to %s %d, into=%d", ldata->layerId(), below ? "below" : "above", targetId, intoGroup);
-#endif
 
 		emit moveRequested(ldata->layerId(), targetId, intoGroup, below);
 
@@ -152,31 +164,33 @@ bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 
 QModelIndex LayerListModel::layerIndex(uint16_t id) const
 {
-	for(int i=0;i<m_items.size();++i) {
+	for(int i = 0; i < m_items.size(); ++i) {
 		if(m_items.at(i).id == id) {
 			return createIndex(m_items.at(i).relIndex, 0, i);
 		}
 	}
-
 	return QModelIndex();
 }
 
 int LayerListModel::findNearestLayer(int layerId) const
 {
-	const auto i = layerIndex(layerId);
-	const int row = i.row();
+	QModelIndex i = layerIndex(layerId);
+	int row = i.row();
 
-	auto nearest = i.sibling(row+1, 0);
-	if(nearest.isValid())
+	QModelIndex nearest = i.sibling(row + 1, 0);
+	if(nearest.isValid()) {
 		return m_items.at(nearest.internalId()).id;
+	}
 
-	nearest = i.sibling(row-1, 0);
-	if(nearest.isValid())
+	nearest = i.sibling(row - 1, 0);
+	if(nearest.isValid()) {
 		return m_items.at(nearest.internalId()).id;
+	}
 
 	nearest = i.parent();
-	if(nearest.isValid())
+	if(nearest.isValid()) {
 		return m_items.at(nearest.internalId()).id;
+	}
 
 	return 0;
 }
@@ -198,8 +212,9 @@ int LayerListModel::columnCount(const QModelIndex &parent) const
 
 QModelIndex LayerListModel::parent(const QModelIndex &index) const
 {
-	if(!index.isValid())
+	if(!index.isValid()) {
 		return QModelIndex();
+	}
 
 	int seek = index.internalId();
 
@@ -213,53 +228,46 @@ QModelIndex LayerListModel::parent(const QModelIndex &index) const
 	return QModelIndex();
 }
 
-QModelIndex LayerListModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex
+LayerListModel::index(int row, int column, const QModelIndex &parent) const
 {
-	if(m_items.isEmpty() || row < 0 || column != 0)
+	if(m_items.isEmpty() || row < 0 || column != 0) {
 		return QModelIndex();
+	}
 
 	int cursor;
 
 	if(parent.isValid()) {
 		Q_ASSERT(m_items.at(parent.internalId()).group);
 		cursor = parent.internalId();
-		if(row >= m_items.at(cursor).children)
+		if(row >= m_items.at(cursor).children) {
 			return QModelIndex();
-
+		}
 		cursor += 1; // point to the first child element
 
 	} else {
-		if(row >= m_rootLayerCount)
+		if(row >= m_rootLayerCount) {
 			return QModelIndex();
-
+		}
 		cursor = 0;
 	}
 
 	int next = m_items.at(cursor).right + 1;
-
 	int i = 0;
 	while(i < row) {
-		while(cursor < m_items.size() && m_items.at(cursor).left < next)
+		while(cursor < m_items.size() && m_items.at(cursor).left < next) {
 			++cursor;
+		}
 
-		if(cursor == m_items.size() || m_items.at(cursor).left > next)
+		if(cursor == m_items.size() || m_items.at(cursor).left > next) {
 			return QModelIndex();
+		}
 
 		next = m_items.at(cursor).right + 1;
 		++i;
 	}
 
-#if 0
-	qInfo("index(row=%d), parent row=%d (id=%d, children=%d, group=%d), relIndex=%d, cursor=%d, left=%d, right=%d",
-		  row,
-		  parent.row(), int(parent.internalId()), m_items.at(parent.internalId()).children, m_items.at(parent.internalId()).group,
-		  m_items.at(cursor).relIndex, cursor,
-		  m_items.at(cursor).left, m_items.at(cursor).right
-		  );
-#endif
-
 	Q_ASSERT(m_items.at(cursor).relIndex == row);
-
 	return createIndex(row, column, cursor);
 }
 
@@ -270,11 +278,20 @@ static LayerListItem makeItem(
 {
 	int id = lp.id();
 	return LayerListItem{
-		uint16_t(id), lp.title(), float(lp.opacity()) / float(DP_BIT15),
-		DP_BlendMode(lp.blendMode()), lp.hidden(), lp.censored(),
-		revealedLayers.contains(id), lp.isolated(), isGroup,
-		uint16_t(isGroup ? children.count() : 0), uint16_t(relIndex),
-		left, right};
+		uint16_t(id),
+		lp.title(),
+		float(lp.opacity()) / float(DP_BIT15),
+		DP_BlendMode(lp.blendMode()),
+		lp.hidden(),
+		lp.censored(),
+		revealedLayers.contains(id),
+		lp.isolated(),
+		isGroup,
+		uint16_t(isGroup ? children.count() : 0),
+		uint16_t(relIndex),
+		left,
+		right,
+	};
 }
 
 static void flattenLayerList(
@@ -288,8 +305,8 @@ static void flattenLayerList(
 		drawdance::LayerPropsList children;
 		if(lp.isGroup(&children)) {
 			int pos = newItems.count();
-			newItems.append(makeItem(
-				lp, revealedLayers, true, children, i, index, -1));
+			newItems.append(
+				makeItem(lp, revealedLayers, true, children, i, index, -1));
 			++index;
 			flattenLayerList(newItems, index, children, revealedLayers);
 			newItems[pos].right = index;
@@ -317,8 +334,9 @@ static bool isNewLayerId(
 }
 
 static int getAutoselect(
-	uint8_t localUser, bool autoselectAny, int layerIdToSelect, int defaultLayer,
-	const QVector<LayerListItem> &oldItems, const QVector<LayerListItem> &newItems)
+	uint8_t localUser, bool autoselectAny, int layerIdToSelect,
+	int defaultLayer, const QVector<LayerListItem> &oldItems,
+	const QVector<LayerListItem> &newItems)
 {
 	if(autoselectAny) {
 		// We haven't participated yet: select the default layer if it exists.
@@ -357,9 +375,10 @@ void LayerListModel::setLayers(
 	int index = 0;
 	flattenLayerList(newItems, index, lpl, revealedLayers);
 
-	const uint8_t localUser = m_aclstate ? m_aclstate->localUserId() : 0;
+	uint8_t localUser = m_aclstate ? m_aclstate->localUserId() : 0;
 	int autoselect = getAutoselect(
-		localUser, m_autoselectAny, m_layerIdToSelect, m_defaultLayer, m_items, newItems);
+		localUser, m_autoselectAny, m_layerIdToSelect, m_defaultLayer, m_items,
+		newItems);
 
 	if(m_layerIdToSelect != 0) {
 		for(const LayerListItem &item : newItems) {
@@ -381,13 +400,14 @@ void LayerListModel::setLayers(
 	}
 }
 
-void LayerListModel::setLayersVisibleInFrame(const QSet<int> &layers, bool frameMode)
+void LayerListModel::setLayersVisibleInFrame(
+	const QSet<int> &layers, bool frameMode)
 {
 	QSet<int> changedFrameLayers;
 	if(frameMode) {
 		changedFrameLayers.unite(layers);
 	}
-	if (m_frameMode) {
+	if(m_frameMode) {
 		changedFrameLayers.unite(m_frameLayers);
 	}
 	if(frameMode && m_frameMode) {
@@ -412,20 +432,23 @@ void LayerListModel::setLayersVisibleInFrame(const QSet<int> &layers, bool frame
 
 void LayerListModel::setDefaultLayer(uint16_t id)
 {
-	if(id == m_defaultLayer)
+	if(id == m_defaultLayer) {
 		return;
+	}
 
-	const QVector<int> role { IsDefaultRole };
+	const QVector<int> role = {IsDefaultRole};
 
-	const auto oldIdx = layerIndex(m_defaultLayer);
-	if(oldIdx.isValid())
+	QModelIndex oldIdx = layerIndex(m_defaultLayer);
+	if(oldIdx.isValid()) {
 		emit dataChanged(oldIdx, oldIdx, role);
+	}
 
 	m_defaultLayer = id;
 
-	const auto newIdx = layerIndex(m_defaultLayer);
-	if(newIdx.isValid())
+	QModelIndex newIdx = layerIndex(m_defaultLayer);
+	if(newIdx.isValid()) {
 		emit dataChanged(newIdx, newIdx, role);
+	}
 
 	if(m_defaultLayer > 0 && m_autoselectAny) {
 		emit autoSelectRequest(m_defaultLayer);
@@ -510,12 +533,14 @@ QStringList LayerMimeData::formats() const
 	return QStringList() << "application/x-qt-image";
 }
 
-QVariant LayerMimeData::retrieveData(const QString &mimeType, compat::RetrieveDataMetaType type) const
+QVariant LayerMimeData::retrieveData(
+	const QString &mimeType, compat::RetrieveDataMetaType type) const
 {
-	if(compat::isImageMime(mimeType, type) && m_source->m_getlayerfn)
+	if(compat::isImageMime(mimeType, type) && m_source->m_getlayerfn) {
 		return m_source->m_getlayerfn(m_id);
-
-	return QVariant();
+	} else {
+		return QVariant();
+	}
 }
 
 int LayerListModel::getAvailableLayerId() const
@@ -567,7 +592,7 @@ QString LayerListModel::getAvailableLayerName(QString basename) const
 
 	QRegularExpression suffixNumRe("(\\d+)$");
 	{
-		auto m = suffixNumRe.match(basename);
+		QRegularExpressionMatch m = suffixNumRe.match(basename);
 		if(m.hasMatch()) {
 			basename = basename.mid(0, m.capturedStart()).trimmed();
 		}
@@ -585,15 +610,13 @@ QString LayerListModel::getAvailableLayerName(QString basename) const
 	}
 
 	// Make unique name
-	return QString("%2 %1").arg(suffix+1).arg(basename);
+	return QString("%2 %1").arg(suffix + 1).arg(basename);
 }
 
 uint8_t LayerListItem::attributeFlags() const
 {
 	return (actuallyCensored() ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
-			(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0)
-			;
+		   (isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0);
 }
 
 }
-

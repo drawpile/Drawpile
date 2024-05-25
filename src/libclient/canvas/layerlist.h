@@ -1,25 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef DP_NET_LAYERLIST_H
-#define DP_NET_LAYERLIST_H
-
+#ifndef LIBCLIENT_CANVAS_LAYERLIST_H
+#define LIBCLIENT_CANVAS_LAYERLIST_H
 extern "C" {
 #include <dpmsg/blend_mode.h>
 }
-
 #include "libclient/canvas/acl.h"
 #include "libclient/utils/keyframelayermodel.h"
 #include "libshared/util/qtcompat.h"
-
 #include <QAbstractItemModel>
 #include <QMimeData>
 #include <QSet>
 #include <QVector>
-
 #include <functional>
 
 namespace drawdance {
-	class LayerPropsList;
+class LayerPropsList;
 }
 
 namespace canvas {
@@ -87,6 +82,7 @@ typedef std::function<QImage(int id)> GetLayerFunction;
 class LayerListModel final : public QAbstractItemModel {
 	Q_OBJECT
 	friend class LayerMimeData;
+
 public:
 	enum LayerListRoles {
 		IdRole = Qt::UserRole + 1,
@@ -100,17 +96,22 @@ public:
 		IsCensoredInTreeRole,
 	};
 
-	LayerListModel(QObject *parent=nullptr);
+	LayerListModel(QObject *parent = nullptr);
 
-	int rowCount(const QModelIndex &parent=QModelIndex()) const override;
-	int columnCount(const QModelIndex &parent=QModelIndex()) const override;
-	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
-	Qt::ItemFlags flags(const QModelIndex& index) const override;
+	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+	QVariant
+	data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+	Qt::ItemFlags flags(const QModelIndex &index) const override;
 	Qt::DropActions supportedDropActions() const override;
 	QStringList mimeTypes() const override;
-	QMimeData *mimeData(const QModelIndexList& indexes) const override;
-	bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
-	QModelIndex index(int row, int column, const QModelIndex &parent=QModelIndex()) const override;
+	QMimeData *mimeData(const QModelIndexList &indexes) const override;
+	bool dropMimeData(
+		const QMimeData *data, Qt::DropAction action, int row, int column,
+		const QModelIndex &parent) override;
+	QModelIndex index(
+		int row, int column,
+		const QModelIndex &parent = QModelIndex()) const override;
 	QModelIndex parent(const QModelIndex &index) const override;
 
 	QModelIndex layerIndex(uint16_t id) const;
@@ -161,7 +162,10 @@ public:
 	 */
 	int findNearestLayer(int layerId) const;
 
-	bool isLayerVisibleInFrame(int layerId) const { return m_frameLayers.contains(layerId); }
+	bool isLayerVisibleInFrame(int layerId) const
+	{
+		return m_frameLayers.contains(layerId);
+	}
 
 	KeyFrameLayerModel *toKeyFrameLayerModel(
 		int rootLayerId, const QHash<int, bool> &layerVisibility) const;
@@ -204,12 +208,15 @@ private:
  * A specialization of QMimeData for passing layers around inside
  * the application.
  */
-class LayerMimeData final : public QMimeData
-{
-Q_OBJECT
+class LayerMimeData final : public QMimeData {
+	Q_OBJECT
 public:
 	LayerMimeData(const LayerListModel *source, uint16_t id)
-		: QMimeData(), m_source(source), m_id(id) {}
+		: QMimeData()
+		, m_source(source)
+		, m_id(id)
+	{
+	}
 
 	const LayerListModel *source() const { return m_source; }
 
@@ -218,7 +225,9 @@ public:
 	QStringList formats() const override;
 
 protected:
-	QVariant retrieveData(const QString& mimeType, compat::RetrieveDataMetaType type) const override;
+	QVariant retrieveData(
+		const QString &mimeType,
+		compat::RetrieveDataMetaType type) const override;
 
 private:
 	const LayerListModel *m_source;
@@ -232,4 +241,3 @@ private:
 Q_DECLARE_METATYPE(canvas::LayerListItem)
 
 #endif
-
