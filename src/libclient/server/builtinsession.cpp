@@ -65,7 +65,7 @@ void BuiltinSession::doInternalReset(const drawdance::CanvasState &canvasState)
 	net::Message catchup = net::ServerReply::makeCatchup(msgs.size(), 1);
 	net::Message caughtup = net::ServerReply::makeCaughtUp(1);
 	for(Client *c : awaitingClients) {
-		c->setAwaitingReset(false);
+		c->setResetFlags(Client::ResetFlag::None);
 		c->sendDirectMessage(catchup);
 		c->sendDirectMessages(msgs);
 		c->sendDirectMessage(caughtup);
@@ -152,7 +152,7 @@ void BuiltinSession::onClientJoin(Client *client, bool host)
 	} else {
 		// The new client has to wait until the soft reset point is processed.
 		// The paint engine will call us back once it has done so.
-		client->setAwaitingReset(true);
+		client->setResetFlags(Client::ResetFlag::Awaiting);
 		if(!m_softResetRequested) {
 			directToAll(net::makeSoftResetMessage(
 				m_paintEngine->aclState().localUserId()));

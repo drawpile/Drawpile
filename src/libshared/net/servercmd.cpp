@@ -330,12 +330,21 @@ ServerReply::makeReset(const QString &message, const QString &state)
 		 {QStringLiteral("state"), state}});
 }
 
-net::Message ServerReply::makeResetRequest(int maxSize, bool query)
+net::Message ServerReply::makeResetQuery(int maxSize, const QString &payload)
 {
 	return make(
 		{{QStringLiteral("type"), QStringLiteral("autoreset")},
 		 {QStringLiteral("maxSize"), maxSize},
-		 {QStringLiteral("query"), query}});
+		 {QStringLiteral("query"), true},
+		 {QStringLiteral("payload"), payload}});
+}
+
+net::Message ServerReply::makeResetRequest(int maxSize)
+{
+	return make(
+		{{QStringLiteral("type"), QStringLiteral("autoreset")},
+		 {QStringLiteral("maxSize"), maxSize},
+		 {QStringLiteral("query"), false}});
 }
 
 net::Message ServerReply::makeResultHostLookup(const QString &message)

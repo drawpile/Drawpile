@@ -4,6 +4,8 @@
 #include "libserver/session.h"
 #include <QDeadlineTimer>
 
+class QTimer;
+
 namespace server {
 
 /**
@@ -31,15 +33,15 @@ protected:
 private:
 	enum class AutoResetState { NotSent, Queried, Requested };
 
-	void resetLastStatusUpdate()
-	{
-		m_lastStatusUpdate.setRemainingTime(10000);
-	}
+	void resetLastStatusUpdate() { m_lastStatusUpdate.setRemainingTime(10000); }
+
+	void generateAutoResetPayload();
 
 	QDeadlineTimer m_lastStatusUpdate;
 	QDeadlineTimer m_lastSizeWarning;
-
 	AutoResetState m_autoResetRequestStatus = AutoResetState::NotSent;
+	QTimer *m_autoResetTimer;
+	QString m_autoResetPayload;
 };
 
 }

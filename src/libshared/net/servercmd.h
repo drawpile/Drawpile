@@ -153,7 +153,8 @@ struct ServerReply {
 
 	static net::Message makeReset(const QString &message, const QString &state);
 
-	static net::Message makeResetRequest(int maxSize, bool query);
+	static net::Message makeResetQuery(int maxSize, const QString &payload);
+	static net::Message makeResetRequest(int maxSize);
 
 	static net::Message makeResultHostLookup(const QString &message);
 

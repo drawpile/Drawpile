@@ -5,6 +5,8 @@
 #include "libserver/thinserverclient.h"
 #include "libshared/net/message.h"
 #include "libshared/net/servercmd.h"
+#include <QRandomGenerator>
+#include <QTimer>
 
 namespace server {
 
@@ -12,6 +14,7 @@ ThinSession::ThinSession(
 	SessionHistory *history, ServerConfig *config,
 	sessionlisting::Announcements *announcements, QObject *parent)
 	: Session(history, config, announcements, parent)
+	, m_autoResetTimer(new QTimer(this))
 {
 	history->setSizeLimit(config->getConfigSize(config::SessionSizeLimit));
 	history->setAutoResetThreshold(
@@ -91,12 +94,17 @@ void ThinSession::addToHistory(const net::Message &msg)
 		// New style for Drawpile 2.1.0 and newer
 		// Autoreset request: send an autoreset query to each logged in
 		// operator. The user that responds first gets to perform the reset.
-		net::Message reqMsg =
-			net::ServerReply::makeResetRequest(history()->sizeLimit(), true);
+		generateAutoResetPayload();
+		net::Message reqMsg = net::ServerReply::makeResetQuery(
+			history()->sizeLimit(), m_autoResetPayload);
 
 		for(Client *c : clients()) {
-			if(c->isOperator())
+			if(c->isOperator()) {
+				c->setResetFlags(Client::ResetFlag::Queried);
 				c->sendDirectMessage(reqMsg);
+			} else {
+				c->setResetFlags(Client::ResetFlag::None);
+			}
 		}
 
 		m_autoResetRequestStatus = AutoResetState::Queried;
@@ -123,7 +131,16 @@ void ThinSession::cleanupHistoryCache()
 
 void ThinSession::readyToAutoReset(int ctxId)
 {
-	Client *c = getClientById(ctxId);
+	Client *c = nullptr;
+	for(Client *candidate : clients()) {
+		if(candidate->id() == ctxId) {
+			c = candidate;
+		} else if(candidate->resetFlags().testFlag(
+					  Client::ResetFlag::Responded)) {
+		}
+	}
+
+	getClientById(ctxId);
 	if(!c) {
 		// Shouldn't happen
 		log(Log()
@@ -136,6 +153,7 @@ void ThinSession::readyToAutoReset(int ctxId)
 	if(!c->isOperator()) {
 		// Unlikely to happen normally, but possible if connection is
 		// really slow and user is deopped at just the right moment
+		c->setResetFlags(Client::ResetFlag::None);
 		log(Log()
 				.about(Log::Level::Warn, Log::Topic::RuleBreak)
 				.message(QString("User %1 is not an operator, but sent "
@@ -145,7 +163,7 @@ void ThinSession::readyToAutoReset(int ctxId)
 	}
 
 	if(m_autoResetRequestStatus != AutoResetState::Queried) {
-		// Only the first response in handled
+		c->setResetFlags(Client::ResetFlag::None);
 		log(Log()
 				.about(Log::Level::Debug, Log::Topic::Status)
 				.message(
@@ -155,13 +173,23 @@ void ThinSession::readyToAutoReset(int ctxId)
 		return;
 	}
 
+	if(!c->resetFlags().testFlag(Client::ResetFlag::Queried)) {
+		c->setResetFlags(Client::ResetFlag::None);
+		log(Log()
+				.about(Log::Level::Warn, Log::Topic::RuleBreak)
+				.message(QString("User %1 responded to an autoreset request "
+								 "without being in query state")
+							 .arg(ctxId)));
+		return;
+	}
+
 	log(Log()
 			.about(Log::Level::Info, Log::Topic::Status)
 			.message(QString("User %1 responded to autoreset request first")
 						 .arg(ctxId)));
 
 	c->sendDirectMessage(
-		net::ServerReply::makeResetRequest(history()->sizeLimit(), false));
+		net::ServerReply::makeResetRequest(history()->sizeLimit()));
 
 	m_autoResetRequestStatus = AutoResetState::Requested;
 }
@@ -191,6 +219,21 @@ void ThinSession::onClientJoin(Client *client, bool host)
 		client->sendDirectMessage(net::ServerReply::makeCatchup(
 			history()->lastIndex() - history()->firstIndex(),
 			caughtUpAdded ? catchupKey : -1));
+	}
+}
+
+void ThinSession::generateAutoResetPayload()
+{
+	constexpr int AUTO_RESET_PAYLOAD_SIZE = 50000;
+	m_autoResetPayload.clear();
+	m_autoResetPayload.reserve(AUTO_RESET_PAYLOAD_SIZE);
+	QString payloadChars = QStringLiteral(
+		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+	quint32 payloadCharsCount = quint32(payloadChars.length());
+	QRandomGenerator *random = QRandomGenerator::global();
+	for(int i = 0; i < AUTO_RESET_PAYLOAD_SIZE; ++i) {
+		m_autoResetPayload.append(
+			payloadChars[random->generate() % payloadCharsCount]);
 	}
 }
 
