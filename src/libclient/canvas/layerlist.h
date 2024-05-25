@@ -94,6 +94,7 @@ public:
 		IsHiddenInFrameRole,
 		IsHiddenInTreeRole,
 		IsCensoredInTreeRole,
+		IsFillSourceRole,
 	};
 
 	LayerListModel(QObject *parent = nullptr);
@@ -174,6 +175,7 @@ public slots:
 	void setLayers(
 		const drawdance::LayerPropsList &lpl, const QSet<int> &revealedLayers);
 	void setLayersVisibleInFrame(const QSet<int> &layers, bool frameMode);
+	void setFillSourceLayerId(int fillSourceLayerId);
 
 signals:
 	void layersChanged(const QVector<LayerListItem> &items);
@@ -195,13 +197,14 @@ private:
 
 	QVector<LayerListItem> m_items;
 	QSet<int> m_frameLayers;
-	GetLayerFunction m_getlayerfn;
-	AclState *m_aclstate;
-	int m_rootLayerCount;
-	uint16_t m_defaultLayer;
-	bool m_autoselectAny;
-	bool m_frameMode;
-	int m_layerIdToSelect;
+	GetLayerFunction m_getlayerfn = nullptr;
+	AclState *m_aclstate = nullptr;
+	int m_rootLayerCount = 0;
+	uint16_t m_defaultLayer = 0;
+	bool m_autoselectAny = true;
+	bool m_frameMode = false;
+	int m_layerIdToSelect = 0;
+	int m_fillSourceLayerId = 0;
 };
 
 /**

@@ -575,6 +575,10 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	m_dockNavigator->setCanvasModel(canvas);
 	m_dockTimeline->setCanvas(canvas);
 
+	connect(
+		m_dockToolSettings->fillSettings(), &tools::FillSettings::fillSourceSet,
+		canvas->layerlist(), &canvas::LayerListModel::setFillSourceLayerId);
+
 	connect(m_dockTimeline, &docks::Timeline::frameSelected, canvas->paintEngine(), &canvas::PaintEngine::setViewFrame);
 	connect(m_dockTimeline, &docks::Timeline::trackHidden, canvas->paintEngine(), &canvas::PaintEngine::setTrackVisibility);
 	connect(m_dockTimeline, &docks::Timeline::trackOnionSkinEnabled, canvas->paintEngine(), &canvas::PaintEngine::setTrackOnionSkin);

@@ -249,8 +249,12 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 		&FillSettings::pushSettings);
 	connect(
 		m_ui->layer, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-		[this]() {
+		[this](int index) {
 			m_ui->layer->setToolTip(m_ui->layer->currentText());
+			emit fillSourceSet(
+				index < FillLayerModel::PREFIX_ROWS
+					? 0
+					: m_ui->layer->itemData(index).toInt());
 			pushSettings();
 		});
 	connect(

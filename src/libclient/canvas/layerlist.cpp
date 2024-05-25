@@ -15,12 +15,6 @@ namespace canvas {
 
 LayerListModel::LayerListModel(QObject *parent)
 	: QAbstractItemModel(parent)
-	, m_aclstate(nullptr)
-	, m_rootLayerCount(0)
-	, m_defaultLayer(0)
-	, m_autoselectAny(true)
-	, m_frameMode(false)
-	, m_layerIdToSelect(0)
 {
 }
 
@@ -78,6 +72,8 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 			}
 			return false;
 		}
+	case IsFillSourceRole:
+		return m_fillSourceLayerId != 0 && item.id == m_fillSourceLayerId;
 	}
 
 	return QVariant();
@@ -395,6 +391,9 @@ void LayerListModel::setLayers(
 	endResetModel();
 
 	emit layersChanged(m_items);
+	if(m_fillSourceLayerId != 0 && !layerIndex(m_fillSourceLayerId).isValid()) {
+		m_fillSourceLayerId = 0;
+	}
 	if(autoselect >= 0) {
 		emit autoSelectRequest(autoselect);
 	}
@@ -427,6 +426,27 @@ void LayerListModel::setLayersVisibleInFrame(
 			}
 		}
 		emit layersVisibleInFrameChanged();
+	}
+}
+
+void LayerListModel::setFillSourceLayerId(int fillSourceLayerId)
+{
+	if(fillSourceLayerId != m_fillSourceLayerId) {
+		if(m_fillSourceLayerId != 0) {
+			QModelIndex oldIndex = layerIndex(m_fillSourceLayerId);
+			if(oldIndex.isValid()) {
+				emit dataChanged(oldIndex, oldIndex, {IsFillSourceRole});
+			}
+		}
+
+		m_fillSourceLayerId = 0;
+		if(fillSourceLayerId != 0) {
+			QModelIndex newIndex = layerIndex(fillSourceLayerId);
+			if(newIndex.isValid()) {
+				m_fillSourceLayerId = fillSourceLayerId;
+				emit dataChanged(newIndex, newIndex, {IsFillSourceRole});
+			}
+		}
 	}
 }
 

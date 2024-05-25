@@ -9,8 +9,6 @@
 
 namespace docks {
 
-static const QSize ICON_SIZE{16, 16};
-
 LayerListDelegate::LayerListDelegate(QObject *parent)
 	: QItemDelegate(parent)
 	, m_visibleIcon(QIcon::fromTheme("layer-visible-on"))
@@ -18,6 +16,7 @@ LayerListDelegate::LayerListDelegate(QObject *parent)
 	, m_censoredIcon(QIcon(":/icons/censored.svg"))
 	, m_hiddenIcon(QIcon::fromTheme("layer-visible-off"))
 	, m_groupHiddenIcon(QIcon::fromTheme("drawpile_folderhidden"))
+	, m_fillIcon(QIcon::fromTheme("fill-color"))
 {
 }
 
@@ -40,24 +39,29 @@ void LayerListDelegate::paint(
 
 	drawBackground(painter, opt, index);
 
-	QRect textrect = opt.rect;
+	QRect textRect = opt.rect;
 
-	// Draw layer opacity glyph
-	QRect stylerect(
-		opt.rect.topLeft() + QPoint(0, opt.rect.height() / 2 - 12),
-		QSize(24, 24));
+	QRect opacityGlyphRect(
+		opt.rect.topLeft() + QPoint(0, opt.rect.height() / 2 - GLYPH_SIZE / 2),
+		QSize(GLYPH_SIZE, GLYPH_SIZE));
 	drawOpacityGlyph(
-		stylerect, painter, layer.opacity, layer.hidden,
+		opacityGlyphRect, painter, layer.opacity, layer.hidden,
 		layer.actuallyCensored(), layer.group);
+	textRect.setLeft(opacityGlyphRect.right());
 
-	// Draw layer name
-	textrect.setLeft(stylerect.right());
+	if(index.data(canvas::LayerListModel::IsFillSourceRole).toBool()) {
+		QRect fillGlyphRect(
+			opt.rect.topRight() +
+				QPoint(-GLYPH_SIZE, opt.rect.height() / 2 - GLYPH_SIZE / 2),
+			QSize(GLYPH_SIZE, GLYPH_SIZE));
+		drawFillGlyph(fillGlyphRect, painter);
+		textRect.setRight(fillGlyphRect.left());
+	}
 
 	if(index.data(canvas::LayerListModel::IsDefaultRole).toBool()) {
 		opt.font.setUnderline(true);
 	}
-
-	drawDisplay(painter, opt, textrect, layer.title);
+	drawDisplay(painter, opt, textRect, layer.title);
 
 	painter->restore();
 }
@@ -75,10 +79,10 @@ bool LayerListDelegate::editorEvent(
 		const QMouseEvent *me = static_cast<QMouseEvent *>(event);
 
 		if(me->button() == Qt::LeftButton) {
-			const QRect glyphrect{
+			QRect glyphrect(
 				option.rect.topLeft() +
-					QPoint(0, option.rect.height() / 2 - 12),
-				QSize(24, 24)};
+					QPoint(0, option.rect.height() / 2 - GLYPH_SIZE / 2),
+				QSize(GLYPH_SIZE, GLYPH_SIZE));
 
 			if(glyphrect.contains(me->pos())) {
 				// Clicked on opacity glyph: toggle visibility
@@ -102,10 +106,10 @@ bool LayerListDelegate::editorEvent(
 		m_justToggledVisibility = false;
 		const QMouseEvent *me = static_cast<QMouseEvent *>(event);
 		if(me->button() == Qt::LeftButton) {
-			const QRect glyphrect{
+			QRect glyphrect(
 				option.rect.topLeft() +
-					QPoint(0, option.rect.height() / 2 - 12),
-				QSize(24, 24)};
+					QPoint(0, option.rect.height() / 2 - GLYPH_SIZE / 2),
+				QSize(GLYPH_SIZE, GLYPH_SIZE));
 
 			if(!glyphrect.contains(me->pos())) {
 				emit editProperties(index);
@@ -123,20 +127,11 @@ QSize LayerListDelegate::sizeHint(
 {
 	QSize size = QItemDelegate::sizeHint(option, index);
 	QFontMetrics fm(option.font);
-	int minheight = qMax(fm.height() * 3 / 2, ICON_SIZE.height()) + 2;
+	int minheight = qMax(fm.height() * 3 / 2, ICON_SIZE) + 2;
 	if(size.height() < minheight) {
 		size.setHeight(minheight);
 	}
 	return size;
-}
-
-void LayerListDelegate::updateEditorGeometry(
-	QWidget *editor, const QStyleOptionViewItem &option,
-	const QModelIndex &) const
-{
-	int btnwidth = 24;
-	static_cast<QLineEdit *>(editor)->setFrame(true);
-	editor->setGeometry(option.rect.adjusted(btnwidth, 0, -btnwidth, 0));
 }
 
 void LayerListDelegate::drawOpacityGlyph(
@@ -144,9 +139,9 @@ void LayerListDelegate::drawOpacityGlyph(
 	bool censored, bool group) const
 {
 	QRect r(
-		int(rect.left() + rect.width() / 2 - ICON_SIZE.width() / 2),
-		int(rect.top() + rect.height() / 2 - ICON_SIZE.height() / 2),
-		ICON_SIZE.width(), ICON_SIZE.height());
+		int(rect.left() + rect.width() / 2 - ICON_SIZE / 2),
+		int(rect.top() + rect.height() / 2 - ICON_SIZE / 2), ICON_SIZE,
+		ICON_SIZE);
 
 	if(hidden) {
 		if(group) {
@@ -166,6 +161,16 @@ void LayerListDelegate::drawOpacityGlyph(
 		}
 		painter->restore();
 	}
+}
+
+void LayerListDelegate::drawFillGlyph(
+	const QRectF &rect, QPainter *painter) const
+{
+	QRect r(
+		int(rect.left() + rect.width() / 2 - ICON_SIZE / 2),
+		int(rect.top() + rect.height() / 2 - ICON_SIZE / 2), ICON_SIZE,
+		ICON_SIZE);
+	m_fillIcon.paint(painter, r);
 }
 
 }

@@ -41,6 +41,7 @@ public:
 
 signals:
 	void pixelSizeChanged(int size);
+	void fillSourceSet(int layerId);
 
 public slots:
 	void pushSettings() override;
