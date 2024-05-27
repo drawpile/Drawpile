@@ -650,9 +650,9 @@ bool PaintEngine::closePlayback()
 }
 
 void PaintEngine::previewCut(
-	int layerId, const QRect &bounds, const QImage &mask)
+	const QSet<int> &layerIds, const QRect &bounds, const QImage &mask)
 {
-	m_paintEngine.previewCut(layerId, bounds, mask);
+	m_paintEngine.previewCut(layerIds, bounds, mask);
 }
 
 void PaintEngine::clearCutPreview()
@@ -661,16 +661,21 @@ void PaintEngine::clearCutPreview()
 }
 
 void PaintEngine::previewTransform(
-	int layerId, int x, int y, const QImage &img, const QPolygon &dstPolygon,
-	int interpolation)
+	int id, int layerId, int x, int y, const QImage &img,
+	const QPolygon &dstPolygon, int interpolation)
 {
 	m_paintEngine.previewTransform(
-		layerId, x, y, img, dstPolygon, interpolation);
+		id, layerId, x, y, img, dstPolygon, interpolation);
 }
 
-void PaintEngine::clearTransformPreview()
+void PaintEngine::clearTransformPreview(int id)
 {
-	m_paintEngine.clearTransformPreview();
+	m_paintEngine.clearTransformPreview(id);
+}
+
+void PaintEngine::clearAllTransformPreviews()
+{
+	m_paintEngine.clearAllTransformPreviews();
 }
 
 void PaintEngine::previewDabs(int layerId, const net::MessageList &msgs)

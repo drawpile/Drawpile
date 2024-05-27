@@ -42,6 +42,7 @@
 #define TYPE_LAYER        2
 #define TYPE_FRAME_MANUAL 3
 #define TYPE_FRAME_RENDER 4
+#define TYPE_CALLBACK     5
 
 
 typedef struct DP_ViewModeTrack {
@@ -331,6 +332,17 @@ DP_ViewModeFilter DP_view_mode_filter_make_from_active(DP_ViewModeBuffer *vmb,
     return DP_view_mode_filter_make(vmb, vm, cs, active, active, oss);
 }
 
+DP_ViewModeFilter
+DP_view_mode_filter_make_callback(DP_ViewModeCallback *callback)
+{
+    if (callback) {
+        return (DP_ViewModeFilter){TYPE_CALLBACK, {.callback = callback}};
+    }
+    else {
+        return make_normal_filter();
+    }
+}
+
 bool DP_view_mode_filter_excludes_everything(const DP_ViewModeFilter *vmf)
 {
     DP_ASSERT(vmf);
@@ -385,6 +397,18 @@ static DP_ViewModeResult apply_frame(int internal_type, int track_index,
     else {
         return make_result(false,
                            make_frame_context(internal_type, track_index, vmb));
+    }
+}
+
+static DP_ViewModeResult apply_callback(DP_ViewModeCallback *callback,
+                                        DP_LayerProps *lp)
+{
+    if (callback->is_visible(callback->user, lp)) {
+        return make_result(
+            false, (DP_ViewModeContext){TYPE_CALLBACK, {.callback = callback}});
+    }
+    else {
+        return make_result(true, make_nothing_context());
     }
 }
 
@@ -462,7 +486,15 @@ DP_ViewModeContext DP_view_mode_context_root_at(
         *out_lp = DP_layer_props_list_at_noinc(lpl, index);
         *out_os = NULL;
         *out_parent_opacity = DP_BIT15;
-        return (DP_ViewModeContext){internal_type, {.layer_id = vmf->layer_id}};
+        DP_ViewModeContext vmc;
+        vmc.internal_type = internal_type;
+        if (internal_type == TYPE_CALLBACK) {
+            vmc.callback = vmf->callback;
+        }
+        else {
+            vmc.layer_id = vmf->layer_id;
+        }
+        return vmc;
     }
 }
 
@@ -490,6 +522,8 @@ DP_ViewModeResult DP_view_mode_context_apply(const DP_ViewModeContext *vmc,
     case TYPE_FRAME_RENDER:
         return apply_frame(TYPE_FRAME_RENDER, vmc->frame.track_index,
                            vmc->frame.vmb, lp);
+    case TYPE_CALLBACK:
+        return apply_callback(vmc->callback, lp);
     default:
         DP_UNREACHABLE();
     }

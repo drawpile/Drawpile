@@ -27,22 +27,29 @@ public:
 		QEvent *event, QAbstractItemModel *model,
 		const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
-	void setShowNumbers(bool show);
-
 signals:
 	void interacted();
 	void toggleVisibility(int layerId, bool visible);
+	void toggleChecked(int layerId, bool checked);
 	void editProperties(QModelIndex index);
 
 private:
 	static constexpr int GLYPH_SIZE = 24;
 	static constexpr int ICON_SIZE = 16;
 
+	static QRect getOpacityGlyphRect(const QStyleOptionViewItem &opt);
+	static QRect getCheckRect(const QStyleOptionViewItem &opt);
+	static bool hasCheckBox(int checkState);
+
 	void drawOpacityGlyph(
-		const QRectF &rect, QPainter *painter, float value, bool hidden,
+		const QRect &rect, QPainter *painter, float value, bool hidden,
 		bool censored, bool group) const;
 
-	void drawFillGlyph(const QRectF &rect, QPainter *painter) const;
+	void drawSelectionCheckBox(
+		const QRect &rect, QPainter *painter,
+		const QStyleOptionViewItem &option, int checkState) const;
+
+	void drawFillGlyph(const QRect &rect, QPainter *painter) const;
 
 	QIcon m_visibleIcon;
 	QIcon m_groupIcon;
@@ -50,6 +57,7 @@ private:
 	QIcon m_hiddenIcon;
 	QIcon m_groupHiddenIcon;
 	QIcon m_fillIcon;
+	QIcon m_forbiddenIcon;
 	bool m_justToggledVisibility = false;
 };
 

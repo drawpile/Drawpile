@@ -367,19 +367,9 @@ canvas::TransformModel *TransformTool::tryBeginMove(bool firstClick)
 		return nullptr;
 	}
 
-	int layerId = m_owner.activeLayer();
-	bool found;
-	QImage image = canvas->selectionToImage(layerId, &found);
-	if(!found || image.isNull()) {
-		emit m_owner.showMessageRequested(QCoreApplication::translate(
-			"tools::TransformSettings", "Layer not found."));
-		returnToPreviousTool();
-		return nullptr;
-	}
-
 	canvas::TransformModel *transform = canvas->transform();
 	transform->beginFromCanvas(
-		selection->bounds(), selection->mask(), image, layerId);
+		selection->bounds(), selection->mask(), m_owner.activeLayer());
 	m_mode = Mode::Scale;
 	m_firstClick = firstClick;
 	m_hoverHandle = Handle::Invalid;

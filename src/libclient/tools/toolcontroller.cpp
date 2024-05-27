@@ -40,6 +40,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_stabilizerUseBrushSampleCount(true)
 	, m_transformPreviewAccurate(true)
 	, m_transformInterpolation{DP_MSG_TRANSFORM_REGION_MODE_BILINEAR}
+	, m_transformPreviewIdsUsed(0)
 	, m_threadPool{this}
 	, m_taskCount{0}
 {
@@ -274,26 +275,60 @@ void ToolController::updateTransformPreview()
 	if(m_model) {
 		canvas::PaintEngine *paintEngine = m_model->paintEngine();
 		canvas::TransformModel *transform = m_model->transform();
-		if(m_transformPreviewAccurate && transform->isActive() &&
-		   transform->isDstQuadValid()) {
+		if(transform->isActive() && transform->isDstQuadValid() &&
+		   transform->isPreviewAccurate()) {
 			QPoint point =
 				transform->dstQuad().boundingRect().topLeft().toPoint();
-			paintEngine->previewTransform(
-				m_activeLayer, point.x(), point.y(), transform->image(),
-				transform->dstQuad().polygon().toPolygon(),
-				transform->getEffectiveInterpolation(m_transformInterpolation));
+			int x = point.x();
+			int y = point.y();
+			QPolygon dstPolygon = transform->dstQuad().polygon().toPolygon();
+			int interpolation =
+				transform->getEffectiveInterpolation(m_transformInterpolation);
+			int idsUsed = 0;
+			if(transform->isMovedFromCanvas()) {
+				int singleLayerMoveId =
+					transform->getSingleLayerMoveId(m_activeLayer);
+				if(singleLayerMoveId > 0) {
+					paintEngine->previewTransform(
+						idsUsed++, m_activeLayer, x, y,
+						transform->layerImage(singleLayerMoveId), dstPolygon,
+						interpolation);
+				} else {
+					for(int layerId : transform->layerIds()) {
+						QImage layerImage = transform->layerImage(layerId);
+						if(!layerImage.isNull()) {
+							paintEngine->previewTransform(
+								idsUsed++, layerId, x, y, layerImage,
+								dstPolygon, interpolation);
+						}
+					}
+				}
+			} else {
+				paintEngine->previewTransform(
+					idsUsed++, m_activeLayer, x, y, transform->floatingImage(),
+					dstPolygon, interpolation);
+			}
+
+			for(int i = idsUsed; i < m_transformPreviewIdsUsed; ++i) {
+				paintEngine->clearTransformPreview(i);
+			}
+			m_transformPreviewIdsUsed = idsUsed;
 		} else {
-			paintEngine->clearTransformPreview();
+			paintEngine->clearAllTransformPreviews();
 		}
 	}
 }
 
 void ToolController::setTransformCutPreview(
-	int layerId, const QRect &maskBounds, const QImage &mask)
+	const QSet<int> &layerIds, const QRect &maskBounds, const QImage &mask)
 {
 	if(m_model) {
 		canvas::PaintEngine *paintEngine = m_model->paintEngine();
-		paintEngine->previewCut(layerId, maskBounds, mask);
+		if(layerIds.isEmpty()) {
+			paintEngine->clearCutPreview();
+		} else {
+			paintEngine->previewCut(layerIds, maskBounds, mask);
+		}
 	}
 }
 
@@ -309,7 +344,7 @@ void ToolController::clearTransformPreviews()
 {
 	if(m_model) {
 		canvas::PaintEngine *paintEngine = m_model->paintEngine();
-		paintEngine->clearTransformPreview();
+		paintEngine->clearAllTransformPreviews();
 		paintEngine->clearCutPreview();
 	}
 }

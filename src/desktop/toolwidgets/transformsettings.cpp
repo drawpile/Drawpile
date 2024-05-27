@@ -127,36 +127,50 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 	QWidget *widget = new QWidget(parent);
 	QFormLayout *layout = new QFormLayout(widget);
 
-	widgets::GroupedToolButton *fastButton =
+	m_fastButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
-	fastButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
-	fastButton->setText(tr("Fast"));
-	fastButton->setStatusTip(tr("Quick preview not taking into account "
-								"layering, opacity or anything else"));
-	fastButton->setToolTip(fastButton->statusTip());
-	fastButton->setCheckable(true);
+	m_fastButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+	m_fastButton->setText(tr("Fast"));
+	m_fastButton->setStatusTip(tr("Quick preview not taking into account "
+								  "layering, opacity or anything else"));
+	m_fastButton->setToolTip(m_fastButton->statusTip());
+	m_fastButton->setCheckable(true);
 
-	widgets::GroupedToolButton *accurateButton =
+	m_accurateButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
-	accurateButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
-	accurateButton->setText(tr("Accurate"));
-	accurateButton->setStatusTip(
+	m_accurateButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+	m_accurateButton->setText(tr("Accurate"));
+	m_accurateButton->setStatusTip(
 		tr("Preview the transform exactly how will look when applied"));
-	accurateButton->setToolTip(accurateButton->statusTip());
-	accurateButton->setCheckable(true);
-	accurateButton->setChecked(true);
+	m_accurateButton->setToolTip(m_accurateButton->statusTip());
+	m_accurateButton->setCheckable(true);
+	m_accurateButton->setChecked(true);
+
+	m_pseudoFastButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped);
+	m_pseudoFastButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+	m_pseudoFastButton->setText(m_fastButton->text());
+	m_pseudoFastButton->setStatusTip(
+		tr("Too many layers selected for accurate preview, only fast preview "
+		   "is available."));
+	m_pseudoFastButton->setToolTip(m_pseudoFastButton->statusTip());
+	m_pseudoFastButton->setCheckable(true);
+	m_pseudoFastButton->setChecked(true);
+	m_pseudoFastButton->setEnabled(false);
+	m_pseudoFastButton->hide();
 
 	QHBoxLayout *previewLayout = new QHBoxLayout;
 	previewLayout->setContentsMargins(0, 0, 0, 0);
 	previewLayout->setSpacing(0);
-	previewLayout->addWidget(fastButton);
-	previewLayout->addWidget(accurateButton);
+	previewLayout->addWidget(m_fastButton);
+	previewLayout->addWidget(m_accurateButton);
+	previewLayout->addWidget(m_pseudoFastButton);
 	QLabel *previewLabel = new QLabel(tr("Preview:"));
 	layout->addRow(previewLabel, previewLayout);
 
 	m_previewGroup = new QButtonGroup(this);
-	m_previewGroup->addButton(fastButton, 0);
-	m_previewGroup->addButton(accurateButton, 1);
+	m_previewGroup->addButton(m_fastButton, 0);
+	m_previewGroup->addButton(m_accurateButton, 1);
 	connect(
 		m_previewGroup,
 		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
@@ -321,12 +335,27 @@ void TransformSettings::updateEnabledFrom(canvas::CanvasModel *canvas)
 	if(m_applyButton) {
 		canvas::TransformModel *transform =
 			canvas ? canvas->transform() : nullptr;
+
 		bool haveTransform = transform && transform->isActive();
 		bool canApplyTransform = haveTransform && transform->isDstQuadValid();
 		m_scaleButton->setEnabled(haveTransform);
 		m_distortButton->setEnabled(haveTransform);
 		m_applyButton->setEnabled(canApplyTransform);
 		m_cancelButton->setEnabled(haveTransform);
+
+		bool canChangePreview =
+			!haveTransform || transform->canPreviewAccurate();
+		if(canChangePreview != m_accurateButton->isEnabled()) {
+			// Hide the controls first to prevent the dock being forced wider.
+			m_accurateButton->hide();
+			m_fastButton->hide();
+			m_pseudoFastButton->hide();
+			m_accurateButton->setEnabled(canChangePreview);
+			m_accurateButton->setVisible(canChangePreview);
+			m_fastButton->setEnabled(canChangePreview);
+			m_fastButton->setVisible(canChangePreview);
+			m_pseudoFastButton->setVisible(!canChangePreview);
+		}
 	}
 }
 

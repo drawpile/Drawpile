@@ -1,33 +1,86 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
+#include <dpengine/layer_props.h>
+#include <dpengine/preview.h>
 #include <dpmsg/blend_mode.h>
 }
 #include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/layerlist.h"
+#include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/drawdance/image.h"
 
 namespace canvas {
 
-TransformModel::TransformModel(QObject *parent)
-	: QObject(parent)
+TransformModel::TransformModel(CanvasModel *canvas)
+	: QObject(canvas)
+	, m_canvas(canvas)
 {
+	LayerListModel *layerlist = canvas->layerlist();
+	connect(
+		layerlist, &LayerListModel::modelReset, this,
+		&TransformModel::updateLayerIds);
+	connect(
+		layerlist, &LayerListModel::layerCheckStateToggled, this,
+		&TransformModel::updateLayerIds);
+}
+
+bool TransformModel::isPreviewAccurate() const
+{
+	return m_previewAccurate && canPreviewAccurate();
+}
+
+bool TransformModel::canPreviewAccurate() const
+{
+	return m_pasted || m_layerIds.size() <= DP_PREVIEW_TRANSFORM_COUNT;
+}
+
+const QImage &TransformModel::floatingImage()
+{
+	if(!m_pasted && m_floatingImage.isNull()) {
+		switch(m_layerIds.size()) {
+		case 0:
+			break;
+		case 1:
+			m_floatingImage = getLayerImage(*m_layerIds.constBegin());
+			break;
+		default:
+			m_floatingImage = getMergedImage();
+			break;
+		}
+	}
+	return m_floatingImage;
+}
+
+QImage TransformModel::layerImage(int layerId)
+{
+	if(m_layerIds.contains(layerId)) {
+		QHash<int, QImage>::iterator it = m_layerImages.find(layerId);
+		if(it == m_layerImages.end()) {
+			QImage img = getLayerImage(layerId);
+			m_layerImages.insert(layerId, img);
+			return img;
+		} else {
+			return it.value();
+		}
+	} else {
+		return QImage();
+	}
 }
 
 void TransformModel::beginFromCanvas(
-	const QRect &srcBounds, const QImage &mask, const QImage &image,
-	int sourceLayerId)
+	const QRect &srcBounds, const QImage &mask, int sourceLayerId)
 {
 	clear();
 	m_active = true;
 	m_justApplied = false;
-	m_sourceLayerId = sourceLayerId;
 	m_srcBounds = srcBounds;
 	m_dstQuad = TransformQuad(srcBounds);
 	m_dstQuadValid = isQuadValid(m_dstQuad);
 	m_mask = mask;
-	m_image = image;
-	emit transformChanged();
-	emit transformCut(m_sourceLayerId, srcBounds, m_mask);
+	LayerListModel *layerlist = m_canvas->layerlist();
+	layerlist->initCheckedLayers(sourceLayerId);
+	setLayers(layerlist->checkedLayers());
 }
 
 void TransformModel::beginFloating(const QRect &srcBounds, const QImage &image)
@@ -36,11 +89,11 @@ void TransformModel::beginFloating(const QRect &srcBounds, const QImage &image)
 	m_active = true;
 	m_pasted = true;
 	m_justApplied = false;
-	m_sourceLayerId = 0;
 	m_srcBounds = srcBounds;
 	m_dstQuad = TransformQuad(srcBounds);
 	m_dstQuadValid = isQuadValid(m_dstQuad);
-	m_image = image;
+	m_floatingImage = image;
+	m_canvas->layerlist()->clearCheckedLayers();
 	emit transformChanged();
 }
 
@@ -96,7 +149,12 @@ QVector<net::Message> TransformModel::applyActiveTransform(
 				compatibilityMode, stamp, outMovedSelection);
 		} else {
 			if(stamp) {
-				m_stamped = true;
+				if(isStampable()) {
+					m_stamped = true;
+				} else {
+					qWarning("Attempt to stamp unstampable transform");
+					return {};
+				}
 			}
 			return applyFromCanvas(
 				disguiseAsPutImage, contextId, layerId, interpolation,
@@ -115,6 +173,7 @@ void TransformModel::endActiveTransform(bool applied)
 		}
 		clear();
 		m_justApplied = applied;
+		m_canvas->layerlist()->clearCheckedLayers();
 		emit transformChanged();
 	}
 }
@@ -135,6 +194,19 @@ int TransformModel::getEffectiveInterpolation(int interpolation) const
 		}
 	}
 	return interpolation;
+}
+
+int TransformModel::getSingleLayerMoveId(int layerId) const
+{
+	if(m_layerIds.size() == 1) {
+		QModelIndex idx = m_canvas->layerlist()->layerIndex(layerId);
+		if(idx.isValid() && !idx.data(LayerListModel::IsGroupRole).toBool() &&
+		   !idx.data(LayerListModel::IsCensoredInTreeRole).toBool() &&
+		   !idx.data(LayerListModel::IsLockedRole).toBool()) {
+			return *m_layerIds.constBegin();
+		}
+	}
+	return 0;
 }
 
 QVector<net::Message> TransformModel::applyFromCanvas(
@@ -179,12 +251,14 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 					dstBottomRightY, dstBottomLeftX, dstBottomLeftY, QImage()));
 			}
 			if(moveContents) {
-				msgs.append(net::makeMoveRegionMessage(
-					contextId, m_sourceLayerId, srcX, srcY, srcW, srcH,
-					dstTopLeftX, dstTopLeftY, dstTopRightX, dstTopRightY,
-					dstBottomRightX, dstBottomRightY, dstBottomLeftX,
-					dstBottomLeftY,
-					needsMask ? convertMaskToMono() : QImage()));
+				for(int layerIdToMove : m_layerIds) {
+					msgs.append(net::makeMoveRegionMessage(
+						contextId, layerIdToMove, srcX, srcY, srcW, srcH,
+						dstTopLeftX, dstTopLeftY, dstTopRightX, dstTopRightY,
+						dstBottomRightX, dstBottomRightY, dstBottomLeftX,
+						dstBottomLeftY,
+						needsMask ? convertMaskToMono() : QImage()));
+				}
 			}
 		} else if(moveIsOnlyTranslated()) {
 			if(moveSelection) {
@@ -193,10 +267,20 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 					dstTopLeftY, srcW, srcH, QImage()));
 			}
 			if(moveContents) {
-				msgs.append(net::makeMoveRectMessage(
-					contextId, layerId, m_sourceLayerId, srcX, srcY,
-					dstTopLeftX, dstTopLeftY, srcW, srcH,
-					needsMask ? m_mask : QImage()));
+				int singleLayerSourceId = getSingleLayerMoveId(layerId);
+				if(singleLayerSourceId > 0) {
+					msgs.append(net::makeMoveRectMessage(
+						contextId, layerId, singleLayerSourceId, srcX, srcY,
+						dstTopLeftX, dstTopLeftY, srcW, srcH,
+						needsMask ? m_mask : QImage()));
+				} else {
+					for(int layerIdToMove : m_layerIds) {
+						msgs.append(net::makeMoveRectMessage(
+							contextId, layerIdToMove, layerIdToMove, srcX, srcY,
+							dstTopLeftX, dstTopLeftY, srcW, srcH,
+							needsMask ? m_mask : QImage()));
+					}
+				}
 			}
 		} else {
 			int dstTopRightX = qRound(m_dstQuad.topRight().x());
@@ -214,12 +298,26 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 					QImage()));
 			}
 			if(moveContents) {
-				msgs.append(net::makeTransformRegionMessage(
-					contextId, layerId, m_sourceLayerId, srcX, srcY, srcW, srcH,
-					dstTopLeftX, dstTopLeftY, dstTopRightX, dstTopRightY,
-					dstBottomRightX, dstBottomRightY, dstBottomLeftX,
-					dstBottomLeftY, getEffectiveInterpolation(interpolation),
-					needsMask ? m_mask : QImage()));
+				int singleLayerSourceId = getSingleLayerMoveId(layerId);
+				if(singleLayerSourceId > 0) {
+					msgs.append(net::makeTransformRegionMessage(
+						contextId, layerId, singleLayerSourceId, srcX, srcY,
+						srcW, srcH, dstTopLeftX, dstTopLeftY, dstTopRightX,
+						dstTopRightY, dstBottomRightX, dstBottomRightY,
+						dstBottomLeftX, dstBottomLeftY,
+						getEffectiveInterpolation(interpolation),
+						needsMask ? m_mask : QImage()));
+				} else {
+					for(int layerIdToMove : m_layerIds) {
+						msgs.append(net::makeTransformRegionMessage(
+							contextId, layerIdToMove, layerIdToMove, srcX, srcY,
+							srcW, srcH, dstTopLeftX, dstTopLeftY, dstTopRightX,
+							dstTopRightY, dstBottomRightX, dstBottomRightY,
+							dstBottomLeftX, dstBottomLeftY,
+							getEffectiveInterpolation(interpolation),
+							needsMask ? m_mask : QImage()));
+					}
+				}
 			}
 		}
 		if(!msgs.isEmpty() && !containsNullMessages(msgs)) {
@@ -227,7 +325,23 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 			if(m_stamped && !m_pasted) {
 				m_pasted = true;
 				m_mask = QImage();
+				QHash<int, QImage>::const_iterator imageIt =
+					m_layerImages.constBegin();
+				if(imageIt == m_layerImages.constEnd()) {
+					QSet<int>::const_iterator idIt = m_layerIds.constBegin();
+					if(idIt == m_layerIds.constEnd()) {
+						m_floatingImage = QImage();
+					} else {
+						m_floatingImage = getLayerImage(*idIt);
+					}
+				} else {
+					m_floatingImage = *imageIt;
+				}
+				m_layerImages.clear();
+				m_layerIds.clear();
+				m_canvas->layerlist()->clearCheckedLayers();
 				emit transformCutCleared();
+				emit transformChanged();
 			}
 			if(outMovedSelection) {
 				*outMovedSelection = moveSelection;
@@ -246,7 +360,7 @@ QVector<net::Message> TransformModel::applyFloating(
 	Q_ASSERT(m_pasted);
 	QPoint offset;
 	QImage transformedImage = drawdance::transformImage(
-		m_image, m_dstQuad.polygon().toPolygon(),
+		m_floatingImage, m_dstQuad.polygon().toPolygon(),
 		getEffectiveInterpolation(interpolation), &offset);
 	if(transformedImage.isNull()) {
 		qWarning(
@@ -283,10 +397,82 @@ void TransformModel::clear()
 	m_deselectOnApply = false;
 	m_stamped = false;
 	m_dstQuadValid = false;
+	m_layerIds.clear();
 	m_srcBounds = QRect();
 	m_dstQuad.clear();
 	m_mask = QImage();
-	m_image = QImage();
+	m_floatingImage = QImage();
+	m_layerImages.clear();
+}
+
+void TransformModel::updateLayerIds()
+{
+	if(isMovedFromCanvas()) {
+		QSet<int> layerIds = m_canvas->layerlist()->checkedLayers();
+		if(layerIds != m_layerIds) {
+			setLayers(layerIds);
+		}
+	}
+}
+
+void TransformModel::setLayers(const QSet<int> &layerIds)
+{
+	m_layerIds = layerIds;
+	m_floatingImage = QImage();
+
+	// Don't try replacing this with `erase`, that's bugged and causes botched
+	// assertions in Qt. Also avoid similar functions like `erase_if`.
+	QVector<int> layerIdsToRemove;
+	for(QHash<int, QImage>::key_iterator it = m_layerImages.keyBegin(),
+										 end = m_layerImages.keyEnd();
+		it != end; ++it) {
+		int layerId = *it;
+		if(!layerIds.contains(layerId)) {
+			layerIdsToRemove.append(layerId);
+		}
+	}
+	for(int layerId : layerIdsToRemove) {
+		m_layerImages.remove(layerId);
+	}
+
+	emit transformCut(m_layerIds, m_srcBounds, m_mask);
+	emit transformChanged();
+}
+
+QImage TransformModel::getLayerImage(int layerId) const
+{
+	drawdance::CanvasState canvasState =
+		m_canvas->paintEngine()->viewCanvasState();
+	QRect rect = QRect(QPoint(), canvasState.size()).intersected(m_srcBounds);
+	if(!rect.isEmpty()) {
+		drawdance::LayerSearchResult lsr =
+			canvasState.searchLayer(layerId, false);
+		if(drawdance::LayerContent *layerContent =
+			   std::get_if<drawdance::LayerContent>(&lsr.data)) {
+			return layerContent->toImage(rect);
+		}
+	}
+	return QImage();
+}
+
+QImage TransformModel::getMergedImage() const
+{
+	if(!m_layerIds.isEmpty()) {
+		drawdance::CanvasState canvasState =
+			m_canvas->paintEngine()->viewCanvasState();
+		QRect rect =
+			QRect(QPoint(), canvasState.size()).intersected(m_srcBounds);
+		if(!rect.isEmpty()) {
+			DP_ViewModeCallback callback = {
+				TransformModel::isVisibleInViewModeCallback,
+				const_cast<QSet<int> *>(&m_layerIds),
+			};
+			DP_ViewModeFilter vmf =
+				DP_view_mode_filter_make_callback(&callback);
+			return canvasState.toFlatImage(false, false, &rect, &vmf);
+		}
+	}
+	return QImage();
 }
 
 bool TransformModel::moveNeedsMask() const
@@ -386,6 +572,14 @@ int TransformModel::crossProductSign(
 	qreal crossProduct =
 		(b.x() - a.x()) * (c.y() - b.y()) - (b.y() - a.y()) * (c.x() - b.x());
 	return crossProduct < 0.0 ? -1 : crossProduct > 0.0 ? 1 : 0;
+}
+
+bool TransformModel::isVisibleInViewModeCallback(void *user, DP_LayerProps *lp)
+{
+	return !DP_layer_props_hidden(lp) &&
+		   (DP_layer_props_children_noinc(lp) ||
+			static_cast<const QSet<int> *>(user)->contains(
+				DP_layer_props_id(lp)));
 }
 
 }

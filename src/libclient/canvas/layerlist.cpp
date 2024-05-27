@@ -13,6 +13,56 @@ extern "C" {
 
 namespace canvas {
 
+namespace {
+
+class CheckStateAccumulator {
+public:
+	void add(LayerListModel::CheckState checkState)
+	{
+		switch(checkState) {
+		case LayerListModel::Checked:
+			m_hasChecked = true;
+			break;
+		case LayerListModel::PartiallyChecked:
+			m_hasChecked = true;
+			m_hasUnchecked = true;
+			break;
+		case LayerListModel::Unchecked:
+			m_hasUnchecked = true;
+			break;
+		case LayerListModel::NotApplicable:
+			m_hasNotApplicable = true;
+			break;
+		case LayerListModel::NotCheckable:
+			m_hasNotCheckable = true;
+			break;
+		}
+	}
+
+	LayerListModel::CheckState get() const
+	{
+		if(m_hasChecked) {
+			return m_hasUnchecked || m_hasNotCheckable
+					   ? LayerListModel::PartiallyChecked
+					   : LayerListModel::Checked;
+		} else if(m_hasNotCheckable && !m_hasUnchecked) {
+			return LayerListModel::NotCheckable;
+		} else if(m_hasNotApplicable && !m_hasUnchecked) {
+			return LayerListModel::NotApplicable;
+		} else {
+			return LayerListModel::Unchecked;
+		}
+	}
+
+private:
+	bool m_hasChecked = false;
+	bool m_hasUnchecked = false;
+	bool m_hasNotApplicable = false;
+	bool m_hasNotCheckable = false;
+};
+
+}
+
 LayerListModel::LayerListModel(QObject *parent)
 	: QAbstractItemModel(parent)
 {
@@ -74,6 +124,10 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 		}
 	case IsFillSourceRole:
 		return m_fillSourceLayerId != 0 && item.id == m_fillSourceLayerId;
+	case CheckStateRole:
+		return int(
+			m_checkMode ? m_checkStates.value(item.id, Unchecked)
+						: NotApplicable);
 	}
 
 	return QVariant();
@@ -290,28 +344,56 @@ static LayerListItem makeItem(
 	};
 }
 
-static void flattenLayerList(
-	QVector<LayerListItem> &newItems, int &index,
-	const drawdance::LayerPropsList &lpl, const QSet<int> &revealedLayers)
+LayerListModel::CheckState LayerListModel::flattenLayerList(
+	QVector<LayerListItem> &newItems, QHash<int, CheckState> &checkStates,
+	int &index, const drawdance::LayerPropsList &lpl,
+	const QSet<int> &revealedLayers, bool parentCensored)
 {
 	int count = lpl.count();
-	for(int i = 0; i < count; ++i) {
-		// Layers are shown in reverse in the UI.
-		drawdance::LayerProps lp = lpl.at(count - i - 1);
-		drawdance::LayerPropsList children;
-		if(lp.isGroup(&children)) {
-			int pos = newItems.count();
-			newItems.append(
-				makeItem(lp, revealedLayers, true, children, i, index, -1));
-			++index;
-			flattenLayerList(newItems, index, children, revealedLayers);
-			newItems[pos].right = index;
-			++index;
-		} else {
-			newItems.append(makeItem(
-				lp, revealedLayers, false, children, i, index, index + 1));
-			index += 2;
+	if(count > 0) {
+		CheckStateAccumulator csa;
+		for(int i = 0; i < count; ++i) {
+			// Layers are shown in reverse in the UI.
+			drawdance::LayerProps lp = lpl.at(count - i - 1);
+			drawdance::LayerPropsList children;
+			int id = lp.id();
+			CheckState checkState;
+			if(lp.isGroup(&children)) {
+				int pos = newItems.count();
+				newItems.append(
+					makeItem(lp, revealedLayers, true, children, i, index, -1));
+				++index;
+				bool censored = parentCensored || newItems[pos].censored;
+				checkState = flattenLayerList(
+					newItems, checkStates, index, children, revealedLayers,
+					censored);
+				newItems[pos].right = index;
+				++index;
+			} else {
+				int pos = newItems.count();
+				newItems.append(makeItem(
+					lp, revealedLayers, false, children, i, index, index + 1));
+				index += 2;
+
+				if(parentCensored || newItems[pos].censored ||
+				   (m_aclstate && m_aclstate->isLayerLocked(id))) {
+					checkState = NotCheckable;
+				} else if(m_checkStates.value(id, Unchecked) == Checked) {
+					checkState = Checked;
+				} else {
+					checkState = Unchecked;
+				}
+			}
+
+			if(m_checkMode) {
+				csa.add(checkState);
+				checkStates.insert(id, checkState);
+			}
 		}
+
+		return m_checkMode ? csa.get() : NotApplicable;
+	} else {
+		return NotApplicable;
 	}
 }
 
@@ -368,8 +450,9 @@ void LayerListModel::setLayers(
 	const drawdance::LayerPropsList &lpl, const QSet<int> &revealedLayers)
 {
 	QVector<LayerListItem> newItems;
+	QHash<int, CheckState> checkStates;
 	int index = 0;
-	flattenLayerList(newItems, index, lpl, revealedLayers);
+	flattenLayerList(newItems, checkStates, index, lpl, revealedLayers, false);
 
 	uint8_t localUser = m_aclstate ? m_aclstate->localUserId() : 0;
 	int autoselect = getAutoselect(
@@ -388,6 +471,9 @@ void LayerListModel::setLayers(
 	beginResetModel();
 	m_rootLayerCount = lpl.count();
 	m_items = newItems;
+	if(m_checkMode) {
+		m_checkStates = checkStates;
+	}
 	endResetModel();
 
 	emit layersChanged(m_items);
@@ -429,6 +515,213 @@ void LayerListModel::setLayersVisibleInFrame(
 	}
 }
 
+void LayerListModel::initCheckedLayers(int initialLayerId)
+{
+	// Resolve groups into checking the layers contained withing.
+	QHash<int, CheckState> checkStates;
+	gatherCheckedLayers(checkStates, layerIndex(initialLayerId));
+
+	// Fill in check states of groups and unchecked layers.
+	int rootCount = rowCount();
+	for(int i = 0; i < rootCount; ++i) {
+		fillCheckStates(checkStates, index(i, 0));
+	}
+
+	if(m_checkMode) {
+		// Collect the changed states.
+		QSet<int> layerIds;
+		for(QHash<int, CheckState>::key_iterator it = checkStates.keyBegin(),
+												 end = checkStates.keyEnd();
+			it != end; ++it) {
+			int layerId = *it;
+			if(checkStates.value(layerId, Unchecked) !=
+			   m_checkStates.value(layerId, Unchecked)) {
+				layerIds.insert(layerId);
+			}
+		}
+		for(QHash<int, CheckState>::key_iterator it = m_checkStates.keyBegin(),
+												 end = m_checkStates.keyEnd();
+			it != end; ++it) {
+			int layerId = *it;
+			if(checkStates.value(layerId, Unchecked) !=
+			   m_checkStates.value(layerId, Unchecked)) {
+				layerIds.insert(layerId);
+			}
+		}
+
+		// Actually update the check states and emit change events.
+		m_checkStates = checkStates;
+		for(int layerId : layerIds) {
+			QModelIndex idx = layerIndex(layerId);
+			if(idx.isValid()) {
+				emit dataChanged(idx, idx, {CheckStateRole});
+			}
+		}
+	} else {
+		m_checkMode = true;
+		m_checkStates = checkStates;
+		emitCheckStatesChanged();
+	}
+}
+
+void LayerListModel::clearCheckedLayers()
+{
+	if(m_checkMode) {
+		m_checkMode = false;
+		m_checkStates.clear();
+		emitCheckStatesChanged();
+	}
+}
+
+QSet<int> LayerListModel::checkedLayers() const
+{
+	QSet<int> layerIds;
+	if(m_checkMode) {
+		for(QHash<int, CheckState>::const_iterator
+				it = m_checkStates.constBegin(),
+				end = m_checkStates.constEnd();
+			it != end; ++it) {
+			if(it.value() == Checked) {
+				int layerId = it.key();
+				QModelIndex idx = layerIndex(layerId);
+				if(idx.isValid() && !idx.data(IsGroupRole).toBool()) {
+					layerIds.insert(layerId);
+				}
+			}
+		}
+	}
+	return layerIds;
+}
+
+void LayerListModel::setLayerChecked(int layerId, bool checked)
+{
+	if(m_checkMode) {
+		QModelIndex idx = layerIndex(layerId);
+		if(idx.isValid()) {
+			setLayerCheckedChildren(idx, checked);
+			refreshLayerCheckedParents(idx);
+		}
+		emit layerCheckStateToggled();
+	}
+}
+
+LayerListModel::CheckState
+LayerListModel::setLayerCheckedChildren(const QModelIndex &idx, bool checked)
+{
+	if(idx.data(IsGroupRole).toBool()) {
+		int childCount = rowCount(idx);
+		if(childCount > 0) {
+			CheckStateAccumulator csa;
+			for(int i = 0; i < childCount; ++i) {
+				QModelIndex childIdx = index(i, 0, idx);
+				if(childIdx.isValid()) {
+					csa.add(setLayerCheckedChildren(childIdx, checked));
+				}
+			}
+			CheckState checkState = csa.get();
+			updateLayerCheckState(idx, checkState);
+			return checkState;
+		} else {
+			return NotApplicable;
+		}
+	} else {
+		return updateLayerChecked(idx, checked);
+	}
+}
+
+void LayerListModel::refreshLayerCheckedParents(const QModelIndex &idx)
+{
+	for(QModelIndex par = idx.parent(); par.isValid(); par = par.parent()) {
+		updateLayerCheckState(par, getGroupCheckState(m_checkStates, par));
+	}
+}
+
+LayerListModel::CheckState
+LayerListModel::updateLayerChecked(const QModelIndex &idx, bool checked)
+{
+	if(isLayerCheckable(idx)) {
+		CheckState checkState = checked ? Checked : Unchecked;
+		updateLayerCheckState(idx, checkState);
+		return checkState;
+	} else {
+		return NotCheckable;
+	}
+}
+
+void LayerListModel::updateLayerCheckState(
+	const QModelIndex &idx, CheckState checkState)
+{
+	int layerId = idx.data(IdRole).toInt();
+	if(m_checkStates.value(layerId, Unchecked) != checkState) {
+		m_checkStates.insert(layerId, checkState);
+		emit dataChanged(idx, idx, {CheckStateRole});
+	}
+}
+
+bool LayerListModel::isLayerCheckable(const QModelIndex &idx)
+{
+	return !idx.data(IsCensoredInTreeRole).toBool() &&
+		   !idx.data(IsLockedRole).toBool();
+}
+
+void LayerListModel::gatherCheckedLayers(
+	QHash<int, CheckState> &checkStates, const QModelIndex &idx)
+{
+	if(idx.isValid()) {
+		if(idx.data(IsGroupRole).toBool()) {
+			int childCount = rowCount(idx);
+			for(int i = 0; i < childCount; ++i) {
+				gatherCheckedLayers(checkStates, index(i, 0, idx));
+			}
+		} else {
+			checkStates.insert(
+				idx.data(IdRole).toInt(),
+				isLayerCheckable(idx) ? Checked : NotCheckable);
+		}
+	}
+}
+
+LayerListModel::CheckState LayerListModel::fillCheckStates(
+	QHash<int, CheckState> &checkStates, const QModelIndex &idx)
+{
+	if(idx.isValid()) {
+		int layerId = idx.data(IdRole).toInt();
+		QHash<int, CheckState>::const_iterator it =
+			checkStates.constFind(layerId);
+		if(it == checkStates.constEnd()) {
+			CheckState checkState;
+			if(idx.data(IsGroupRole).toBool()) {
+				checkState = getGroupCheckState(checkStates, idx);
+			} else if(isLayerCheckable(idx)) {
+				checkState = Unchecked;
+			} else {
+				checkState = NotCheckable;
+			}
+			checkStates.insert(layerId, checkState);
+			return checkState;
+		} else {
+			return it.value();
+		}
+	} else {
+		return Unchecked;
+	}
+}
+
+LayerListModel::CheckState LayerListModel::getGroupCheckState(
+	QHash<int, CheckState> &checkStates, const QModelIndex &idx)
+{
+	int childCount = rowCount(idx);
+	if(childCount > 0) {
+		CheckStateAccumulator csa;
+		for(int i = 0; i < childCount; ++i) {
+			csa.add(fillCheckStates(checkStates, index(i, 0, idx)));
+		}
+		return csa.get();
+	} else {
+		return NotApplicable;
+	}
+}
+
 void LayerListModel::setFillSourceLayerId(int fillSourceLayerId)
 {
 	if(fillSourceLayerId != m_fillSourceLayerId) {
@@ -448,6 +741,14 @@ void LayerListModel::setFillSourceLayerId(int fillSourceLayerId)
 			}
 		}
 	}
+}
+
+void LayerListModel::setAclState(AclState *aclstate)
+{
+	m_aclstate = aclstate;
+	connect(
+		aclstate, &AclState::layerAclChanged, this,
+		&LayerListModel::updateCheckedLayerAcl);
 }
 
 void LayerListModel::setDefaultLayer(uint16_t id)
@@ -558,8 +859,7 @@ QSet<int> LayerListModel::getModifiableLayers(int layerId) const
 void LayerListModel::gatherModifiableLayers(
 	QSet<int> &layerIds, const QModelIndex &idx) const
 {
-	if(idx.isValid() && !idx.data(IsHiddenInTreeRole).toBool() &&
-	   !idx.data(IsCensoredInTreeRole).toBool()) {
+	if(idx.isValid() && !idx.data(IsCensoredInTreeRole).toBool()) {
 		if(idx.data(IsGroupRole).toBool()) {
 			int childCount = rowCount(idx);
 			for(int i = 0; i < childCount; ++i) {
@@ -570,6 +870,22 @@ void LayerListModel::gatherModifiableLayers(
 			!idx.data(IsHiddenInFrameRole).toBool()) {
 			layerIds.insert(idx.data(IdRole).toInt());
 		}
+	}
+}
+
+void LayerListModel::emitCheckStatesChanged(const QModelIndex &parent)
+{
+	int childCount = rowCount(parent);
+	if(childCount > 0) {
+		for(int i = 0; i < childCount; ++i) {
+			QModelIndex idx = index(i, 0, parent);
+			if(idx.isValid()) {
+				emitCheckStatesChanged(idx);
+			}
+		}
+		emit dataChanged(
+			index(0, 0, parent), index(childCount - 1, 0, parent),
+			{CheckStateRole});
 	}
 }
 
@@ -613,6 +929,26 @@ int LayerListModel::getAvailableLayerId() const
 	}
 
 	return layerId;
+}
+
+void LayerListModel::updateCheckedLayerAcl(int layerId)
+{
+	if(m_checkMode) {
+		QModelIndex idx = layerIndex(layerId);
+		if(idx.isValid() && !idx.data(IsGroupRole).toBool()) {
+			CheckState prevCheckState = m_checkStates.value(layerId, Unchecked);
+			bool wasCheckable = prevCheckState != NotCheckable;
+			bool isCheckable = isLayerCheckable(idx);
+			if(isCheckable != wasCheckable) {
+				updateLayerCheckState(
+					idx, isCheckable ? Unchecked : NotCheckable);
+				refreshLayerCheckedParents(idx);
+				if(prevCheckState == Checked) {
+					emit layerCheckStateToggled();
+				}
+			}
+		}
+	}
 }
 
 int LayerListModel::searchAvailableLayerId(

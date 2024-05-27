@@ -3,29 +3,36 @@
 #define LIBCLIENT_CANVAS_TRANSFORMMODEL_H
 #include "libclient/net/message.h"
 #include "libclient/utils/transformquad.h"
+#include <QHash>
 #include <QImage>
 #include <QObject>
+#include <QSet>
 #include <QVector>
 
 namespace canvas {
 
+class CanvasModel;
+
 class TransformModel : public QObject {
 	Q_OBJECT
 public:
-	TransformModel(QObject *parent = nullptr);
+	TransformModel(CanvasModel *canvas);
 
 	bool isActive() const { return m_active; }
-	bool isPasted() const { return m_pasted; }
+	bool isMovedFromCanvas() const { return m_active && !m_pasted; }
+	bool isStampable() const { return m_pasted || m_layerIds.size() == 1; }
 	bool isDstQuadValid() const { return m_dstQuadValid; }
 	bool isJustApplied() const { return m_justApplied; }
-	bool isPreviewAccurate() const { return m_previewAccurate; }
+	bool isPreviewAccurate() const;
+	bool canPreviewAccurate() const;
+	const QSet<int> &layerIds() const { return m_layerIds; }
 	TransformQuad srcQuad() const { return TransformQuad(m_srcBounds); }
 	const TransformQuad &dstQuad() const { return m_dstQuad; }
-	const QImage &image() const { return m_image; }
+	const QImage &floatingImage();
+	QImage layerImage(int layerId);
 
 	void beginFromCanvas(
-		const QRect &srcBounds, const QImage &mask, const QImage &image,
-		int sourceLayerId);
+		const QRect &srcBounds, const QImage &mask, int sourceLayerId);
 
 	void beginFloating(const QRect &srcBounds, const QImage &image);
 
@@ -44,9 +51,12 @@ public:
 
 	int getEffectiveInterpolation(int interpolation) const;
 
+	int getSingleLayerMoveId(int layerId) const;
+
 signals:
 	void transformChanged();
-	void transformCut(int layerId, const QRect &maskBounds, const QImage &mask);
+	void transformCut(
+		const QSet<int> &layerIds, const QRect &maskBounds, const QImage &mask);
 	void transformCutCleared();
 
 private:
@@ -61,6 +71,12 @@ private:
 
 	void clear();
 
+	void updateLayerIds();
+	void setLayers(const QSet<int> &layerIds);
+
+	QImage getLayerImage(int layerId) const;
+	QImage getMergedImage() const;
+
 	bool moveNeedsMask() const;
 	bool moveIsOnlyTranslated() const;
 	QImage convertMaskToMono() const;
@@ -73,6 +89,9 @@ private:
 	static int
 	crossProductSign(const QPointF &a, const QPointF &b, const QPointF &c);
 
+	static bool isVisibleInViewModeCallback(void *user, DP_LayerProps *lp);
+
+	CanvasModel *m_canvas;
 	bool m_active = false;
 	bool m_pasted = false;
 	bool m_deselectOnApply = false;
@@ -80,11 +99,12 @@ private:
 	bool m_dstQuadValid = false;
 	bool m_justApplied = false;
 	bool m_previewAccurate = true;
-	int m_sourceLayerId = 0;
+	QSet<int> m_layerIds;
 	QRect m_srcBounds;
 	TransformQuad m_dstQuad;
 	QImage m_mask;
-	QImage m_image;
+	QImage m_floatingImage;
+	QHash<int, QImage> m_layerImages;
 };
 
 }

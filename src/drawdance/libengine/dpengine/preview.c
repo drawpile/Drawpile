@@ -25,6 +25,7 @@
 #define RENDER_DONE   3
 #define RENDER_CANCEL 4
 
+typedef const int *(*DP_PreviewGetLayerIdsFn)(DP_Preview *pv, int *out_count);
 typedef void (*DP_PreviewRenderFn)(DP_Preview *pv, DP_DrawContext *dc,
                                    int offset_x, int offset_y,
                                    DP_TransientLayerContent *tlc);
@@ -33,39 +34,82 @@ typedef void (*DP_PreviewDisposeFn)(DP_Preview *pv);
 struct DP_Preview {
     DP_Atomic refcount;
     DP_Atomic status;
-    DP_PreviewType type;
+    int type;
     int blend_mode;
-    int layer_id;
     int initial_offset_x, initial_offset_y;
     DP_AtomicPtr render_lc;
     DP_LayerContent *lc;
     DP_LayerProps *lp;
+    DP_PreviewGetLayerIdsFn get_layer_ids;
     DP_PreviewRenderFn render;
     DP_PreviewDisposeFn dispose;
 };
 
+struct DP_PreviewRenderer {
+    struct {
+        DP_PreviewRenderedFn rendered;
+        DP_PreviewRerenderedFn rerendered;
+        DP_PreviewClearFn clear;
+        void *user;
+    } fn;
+    // Temporary buffer to collect layer route entries to render a preview onto.
+    struct {
+        int capacity;
+        DP_LayerRoutesEntry **entries;
+    } lre_buffer;
+    DP_Queue queue;
+    DP_DrawContext *dc;
+    DP_Mutex *queue_mutex;
+    DP_Semaphore *queue_sem;
+    DP_Thread *thread;
+};
+
+typedef enum DP_PreviewRenderJobType {
+    DP_PREVIEW_RENDER_JOB_RENDER,
+    DP_PREVIEW_RENDER_JOB_RERENDER,
+    DP_PREVIEW_RENDER_JOB_CLEAR,
+    DP_PREVIEW_RENDER_JOB_CLEAR_ALL_TRANSFORMS,
+    DP_PREVIEW_RENDER_JOB_QUIT,
+} DP_PreviewRenderJobType;
+
+typedef struct DP_PreviewRenderJob {
+    DP_PreviewRenderJobType type;
+    union {
+        struct {
+            DP_Preview *pv;
+            int canvas_width, canvas_height;
+            int offset_x, offset_y;
+        } render;
+        struct {
+            int type;
+        } clear;
+    };
+} DP_PreviewRenderJob;
+
+
 DP_Preview DP_preview_null;
 
-static void init_preview(DP_Preview *pv, DP_PreviewType type, int blend_mode,
-                         int layer_id, int initial_offset_x,
-                         int initial_offset_y, DP_PreviewRenderFn render,
-                         DP_PreviewDisposeFn dispose)
+static void init_preview(DP_Preview *pv, int type, int blend_mode,
+                         int initial_offset_x, int initial_offset_y,
+                         DP_PreviewGetLayerIdsFn get_layer_ids,
+                         DP_PreviewRenderFn render, DP_PreviewDisposeFn dispose)
 {
     DP_ASSERT(pv);
     DP_ASSERT(DP_blend_mode_exists((int)blend_mode));
     DP_ASSERT(type >= 0);
     DP_ASSERT(type < DP_PREVIEW_COUNT);
+    DP_ASSERT(get_layer_ids);
     DP_ASSERT(render);
     DP_atomic_set(&pv->refcount, 1);
     DP_atomic_set(&pv->status, RENDER_NEEDED);
     pv->type = type;
     pv->blend_mode = blend_mode;
-    pv->layer_id = layer_id;
     pv->initial_offset_x = initial_offset_x;
     pv->initial_offset_y = initial_offset_y;
     DP_atomic_ptr_set(&pv->render_lc, NULL);
     pv->lc = NULL;
     pv->lp = NULL;
+    pv->get_layer_ids = get_layer_ids;
     pv->render = render;
     pv->dispose = dispose;
 }
@@ -114,7 +158,7 @@ int DP_preview_refcount(DP_Preview *pv)
     return DP_atomic_get(&pv->refcount);
 }
 
-DP_PreviewType DP_preview_type(DP_Preview *pv)
+int DP_preview_type(DP_Preview *pv)
 {
     DP_ASSERT(pv);
     DP_ASSERT(DP_atomic_get(&pv->refcount) > 0);
@@ -134,6 +178,40 @@ get_or_make_transient_canvas_state(DP_CanvasState *cs)
     }
 }
 
+static DP_LayerRoutesEntry **
+preview_renderer_lre_buffer_require(DP_PreviewRenderer *pvr, int count)
+{
+    DP_ASSERT(pvr);
+    if (pvr->lre_buffer.capacity < count) {
+        DP_free(pvr->lre_buffer.entries);
+        pvr->lre_buffer.entries =
+            DP_malloc(sizeof(*pvr->lre_buffer.entries) * DP_int_to_size(count));
+        pvr->lre_buffer.capacity = count;
+    }
+    return pvr->lre_buffer.entries;
+}
+
+static DP_LayerRoutesEntry **get_layer_route_entries(DP_Preview *pv,
+                                                     DP_CanvasState *cs,
+                                                     DP_PreviewRenderer *pvr,
+                                                     int *out_count)
+{
+    int layer_id_count;
+    const int *layer_ids = pv->get_layer_ids(pv, &layer_id_count);
+    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+    int lre_count = 0;
+    DP_LayerRoutesEntry **lres =
+        preview_renderer_lre_buffer_require(pvr, layer_id_count);
+    for (int i = 0; i < layer_id_count; ++i) {
+        DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_ids[i]);
+        if (lre && !DP_layer_routes_entry_is_group(lre)) {
+            lres[lre_count++] = lre;
+        }
+    }
+    *out_count = lre_count;
+    return lres;
+}
+
 DP_CanvasState *DP_preview_apply(DP_Preview *pv, DP_CanvasState *cs,
                                  DP_PreviewRenderer *pvr)
 {
@@ -141,10 +219,10 @@ DP_CanvasState *DP_preview_apply(DP_Preview *pv, DP_CanvasState *cs,
     DP_ASSERT(DP_atomic_get(&pv->refcount) > 0);
 
     // Figure out where to put the preview or bail out if there's nowhere.
-    int layer_id = pv->layer_id;
-    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
-    if (!lre || DP_layer_routes_entry_is_group(lre)) {
+    int lre_count;
+    DP_LayerRoutesEntry **lres =
+        get_layer_route_entries(pv, cs, pvr, &lre_count);
+    if (lre_count == 0) {
         return cs;
     }
 
@@ -188,9 +266,12 @@ DP_CanvasState *DP_preview_apply(DP_Preview *pv, DP_CanvasState *cs,
 
     // Jam the preview into the canvas state.
     DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
-    DP_TransientLayerContent *tlc =
-        DP_layer_routes_entry_transient_content(lre, tcs);
-    DP_transient_layer_content_sublayer_insert_inc(tlc, lc, lp);
+    for (int i = 0; i < lre_count; ++i) {
+        DP_LayerRoutesEntry *lre = lres[i];
+        DP_TransientLayerContent *tlc =
+            DP_layer_routes_entry_transient_content(lre, tcs);
+        DP_transient_layer_content_sublayer_insert_inc(tlc, lc, lp);
+    }
     return (DP_CanvasState *)tcs;
 }
 
@@ -212,9 +293,32 @@ typedef struct DP_PreviewCut {
     DP_Preview parent;
     int x, y;
     int width, height;
-    bool have_mask;
-    uint8_t mask[];
+    int layer_id_count;
+    // Flexible-length data: first layer ids as ints, then a byte that says
+    // whether there's a mask or not, then the mask bytes.
+    alignas(int) unsigned char data[];
 } DP_PreviewCut;
+
+static const int *preview_cut_get_layer_ids(DP_Preview *pv, int *out_count)
+{
+    DP_PreviewCut *pvc = (DP_PreviewCut *)pv;
+    *out_count = pvc->layer_id_count;
+    // Have to cast to void * intead of int * because otherwise Clang emits a
+    // bogus warning about alignment, it doesn't understand alignas I guess.
+    return (void *)pvc->data;
+}
+
+static const uint8_t *preview_cut_mask(DP_PreviewCut *pvc)
+{
+    unsigned char *mask_data =
+        pvc->data + sizeof(int) * DP_int_to_size(pvc->layer_id_count);
+    if (*mask_data) {
+        return (uint8_t *)mask_data + 1;
+    }
+    else {
+        return NULL;
+    }
+}
 
 static void preview_cut_render(DP_Preview *pv, DP_UNUSED DP_DrawContext *dc,
                                int offset_x, int offset_y,
@@ -228,10 +332,11 @@ static void preview_cut_render(DP_Preview *pv, DP_UNUSED DP_DrawContext *dc,
     int right = DP_min_int(DP_transient_layer_content_width(tlc), left + width);
     int bottom =
         DP_min_int(DP_transient_layer_content_height(tlc), top + height);
-    if (pvc->have_mask) {
+    const uint8_t *mask = preview_cut_mask(pvc);
+    if (mask) {
         for (int y = top; y < bottom; ++y) {
             for (int x = left; x < right; ++x) {
-                uint8_t a = pvc->mask[(y - top) * width + (x - left)];
+                uint8_t a = mask[(y - top) * width + (x - left)];
                 if (a != 0) {
                     DP_transient_layer_content_pixel_at_set(
                         tlc, 0, x, y,
@@ -248,21 +353,27 @@ static void preview_cut_render(DP_Preview *pv, DP_UNUSED DP_DrawContext *dc,
 }
 
 DP_Preview *DP_preview_new_cut(int initial_offset_x, int initial_offset_y,
-                               int layer_id, int x, int y, int width,
-                               int height, const DP_Pixel8 *mask_or_null)
+                               int x, int y, int width, int height,
+                               const DP_Pixel8 *mask_or_null,
+                               int layer_id_count, const int *layer_ids)
 {
-    int mask_count = mask_or_null ? width * height : 0;
-    DP_PreviewCut *pvc = DP_malloc(
-        DP_FLEX_SIZEOF(DP_PreviewCut, mask, DP_int_to_size(mask_count)));
-    init_preview(&pvc->parent, DP_PREVIEW_CUT, DP_BLEND_MODE_ERASE, layer_id,
-                 initial_offset_x, initial_offset_y, preview_cut_render, NULL);
+    size_t mask_size =
+        mask_or_null ? DP_int_to_size(width) * DP_int_to_size(height) : 0;
+    size_t layer_ids_size = sizeof(int) * DP_int_to_size(layer_id_count);
+    DP_PreviewCut *pvc = DP_malloc(DP_FLEX_SIZEOF(
+        DP_PreviewCut, data, layer_ids_size + (size_t)1 + mask_size));
+    init_preview(&pvc->parent, DP_PREVIEW_CUT, DP_BLEND_MODE_ERASE,
+                 initial_offset_x, initial_offset_y, preview_cut_get_layer_ids,
+                 preview_cut_render, NULL);
     pvc->x = x;
     pvc->y = y;
     pvc->width = width;
     pvc->height = height;
-    pvc->have_mask = mask_or_null;
-    for (int i = 0; i < mask_count; ++i) {
-        pvc->mask[i] = mask_or_null[i].a;
+    pvc->layer_id_count = layer_id_count;
+    memcpy(pvc->data, layer_ids, layer_ids_size);
+    pvc->data[layer_ids_size] = mask_or_null != NULL;
+    for (size_t i = 0; i < mask_size; ++i) {
+        pvc->data[layer_ids_size + (size_t)1 + i] = mask_or_null[i].a;
     }
     return &pvc->parent;
 }
@@ -270,6 +381,7 @@ DP_Preview *DP_preview_new_cut(int initial_offset_x, int initial_offset_y,
 
 typedef struct DP_PreviewTransform {
     DP_Preview parent;
+    int layer_id;
     int x, y, width, height;
     DP_Quad dst_quad;
     int interpolation;
@@ -280,6 +392,14 @@ typedef struct DP_PreviewTransform {
         void *user;
     } pixels;
 } DP_PreviewTransform;
+
+static const int *preview_transform_get_layer_ids(DP_Preview *pv,
+                                                  int *out_count)
+{
+    DP_PreviewTransform *pvtf = (DP_PreviewTransform *)pv;
+    *out_count = 1;
+    return &pvtf->layer_id;
+}
 
 static bool preview_transform_prepare_image(DP_PreviewTransform *pvtf,
                                             DP_DrawContext *dc)
@@ -336,20 +456,24 @@ static void preview_transform_dispose(DP_Preview *pv)
 }
 
 DP_Preview *DP_preview_new_transform(
-    int initial_offset_x, int initial_offset_y, int layer_id, int x, int y,
-    int width, int height, const DP_Quad *dst_quad, int interpolation,
+    int id, int initial_offset_x, int initial_offset_y, int layer_id, int x,
+    int y, int width, int height, const DP_Quad *dst_quad, int interpolation,
     DP_PreviewTransformGetPixelsFn get_pixels,
     DP_PreviewTransformDisposePixelsFn dispose_pixels, void *user)
 {
+    DP_ASSERT(id >= 0);
+    DP_ASSERT(id < DP_PREVIEW_TRANSFORM_COUNT);
     DP_ASSERT(width > 0);
     DP_ASSERT(height > 0);
     DP_ASSERT(dst_quad);
     DP_ASSERT(get_pixels);
     DP_ASSERT(dispose_pixels);
     DP_PreviewTransform *pvtf = DP_malloc(sizeof(*pvtf));
-    init_preview(&pvtf->parent, DP_PREVIEW_TRANSFORM, DP_BLEND_MODE_NORMAL,
-                 layer_id, initial_offset_x, initial_offset_y,
-                 preview_transform_render, preview_transform_dispose);
+    init_preview(&pvtf->parent, DP_PREVIEW_TRANSFORM_FIRST + id,
+                 DP_BLEND_MODE_NORMAL, initial_offset_x, initial_offset_y,
+                 preview_transform_get_layer_ids, preview_transform_render,
+                 preview_transform_dispose);
+    pvtf->layer_id = layer_id;
     pvtf->x = x;
     pvtf->y = y;
     pvtf->width = width;
@@ -366,9 +490,17 @@ DP_Preview *DP_preview_new_transform(
 
 typedef struct DP_PreviewDabs {
     DP_Preview parent;
+    int layer_id;
     int count;
     DP_Message *messages[];
 } DP_PreviewDabs;
+
+static const int *preview_dabs_get_layer_ids(DP_Preview *pv, int *out_count)
+{
+    DP_PreviewDabs *pvd = (DP_PreviewDabs *)pv;
+    *out_count = 1;
+    return &pvd->layer_id;
+}
 
 static int preview_dabs_blend_mode(DP_Message *msg)
 {
@@ -507,9 +639,10 @@ DP_Preview *DP_preview_new_dabs_inc(int initial_offset_x, int initial_offset_y,
     DP_PreviewDabs *pvd = DP_malloc(
         DP_FLEX_SIZEOF(DP_PreviewDabs, messages, DP_int_to_size(count)));
     init_preview(&pvd->parent, DP_PREVIEW_DABS,
-                 preview_dabs_blend_mode(messages[0]), layer_id,
-                 initial_offset_x, initial_offset_y, preview_dabs_render,
-                 preview_dabs_dispose);
+                 preview_dabs_blend_mode(messages[0]), initial_offset_x,
+                 initial_offset_y, preview_dabs_get_layer_ids,
+                 preview_dabs_render, preview_dabs_dispose);
+    pvd->layer_id = layer_id;
     pvd->count = count;
     for (int i = 0; i < count; ++i) {
         pvd->messages[i] = DP_message_incref(messages[i]);
@@ -517,41 +650,6 @@ DP_Preview *DP_preview_new_dabs_inc(int initial_offset_x, int initial_offset_y,
     return &pvd->parent;
 }
 
-
-struct DP_PreviewRenderer {
-    struct {
-        DP_PreviewRenderedFn rendered;
-        DP_PreviewRerenderedFn rerendered;
-        DP_PreviewClearFn clear;
-        void *user;
-    } fn;
-    DP_Queue queue;
-    DP_DrawContext *dc;
-    DP_Mutex *queue_mutex;
-    DP_Semaphore *queue_sem;
-    DP_Thread *thread;
-};
-
-typedef enum DP_PreviewRenderJobType {
-    DP_PREVIEW_RENDER_JOB_RENDER,
-    DP_PREVIEW_RENDER_JOB_RERENDER,
-    DP_PREVIEW_RENDER_JOB_CLEAR,
-    DP_PREVIEW_RENDER_JOB_QUIT,
-} DP_PreviewRenderJobType;
-
-typedef struct DP_PreviewRenderJob {
-    DP_PreviewRenderJobType type;
-    union {
-        struct {
-            DP_Preview *pv;
-            int canvas_width, canvas_height;
-            int offset_x, offset_y;
-        } render;
-        struct {
-            DP_PreviewType type;
-        } clear;
-    };
-} DP_PreviewRenderJob;
 
 static DP_PreviewRenderJob shift_render_job(DP_Queue *queue)
 {
@@ -626,6 +724,11 @@ static void run_worker_thread(void *user)
         else if (job.type == DP_PREVIEW_RENDER_JOB_CLEAR) {
             clear(fn_user, job.clear.type);
         }
+        else if (job.type == DP_PREVIEW_RENDER_JOB_CLEAR_ALL_TRANSFORMS) {
+            for (int i = 0; i < DP_PREVIEW_TRANSFORM_COUNT; ++i) {
+                clear(fn_user, DP_PREVIEW_TRANSFORM_FIRST + i);
+            }
+        }
         else {
             DP_ASSERT(job.type == DP_PREVIEW_RENDER_JOB_QUIT);
             break;
@@ -643,6 +746,7 @@ DP_PreviewRenderer *DP_preview_renderer_new(DP_DrawContext *dc,
     DP_PreviewRenderer *pvr = DP_malloc(sizeof(*pvr));
     *pvr = (DP_PreviewRenderer){
         {rendered, rerendered, clear, user},
+        {0, NULL},
         DP_QUEUE_NULL,
         dc,
         NULL,
@@ -684,6 +788,7 @@ void DP_preview_renderer_free(DP_PreviewRenderer *pvr)
         DP_semaphore_free(pvr->queue_sem);
         DP_mutex_free(pvr->queue_mutex);
         DP_queue_dispose(&pvr->queue);
+        DP_free(pvr->lre_buffer.entries);
         DP_free(pvr);
     }
 }
@@ -693,7 +798,7 @@ static bool is_render_job_for_type(void *element, void *user)
     DP_PreviewRenderJob *job = element;
     if (job->type == DP_PREVIEW_RENDER_JOB_RENDER) {
         DP_Preview *pv = job->render.pv;
-        return pv->type == *(DP_PreviewType *)user
+        return pv->type == *(int *)user
             && DP_atomic_get(&pv->status) != RENDER_CANCEL;
     }
     else {
@@ -762,13 +867,13 @@ static void cancel_render_job(void *element, void *user)
     DP_PreviewRenderJob *job = element;
     if (job->type == DP_PREVIEW_RENDER_JOB_RENDER) {
         DP_Preview *pv = job->render.pv;
-        if (pv->type == *(DP_PreviewType *)user) {
+        if (pv->type == *(int *)user) {
             DP_atomic_set(&pv->status, RENDER_CANCEL);
         }
     }
 }
 
-void DP_preview_renderer_cancel(DP_PreviewRenderer *pvr, DP_PreviewType type)
+void DP_preview_renderer_cancel(DP_PreviewRenderer *pvr, int type)
 {
     DP_ASSERT(pvr);
     DP_ASSERT(type >= 0);
@@ -780,6 +885,34 @@ void DP_preview_renderer_cancel(DP_PreviewRenderer *pvr, DP_PreviewType type)
     DP_PreviewRenderJob *job = DP_queue_push(queue, sizeof(*job));
     *job =
         (DP_PreviewRenderJob){DP_PREVIEW_RENDER_JOB_CLEAR, {.clear = {type}}};
+    DP_SEMAPHORE_MUST_POST(pvr->queue_sem);
+    DP_MUTEX_MUST_UNLOCK(queue_mutex);
+}
+
+static void cancel_all_transform_render_jobs(void *element,
+                                             DP_UNUSED void *user)
+{
+    DP_PreviewRenderJob *job = element;
+    if (job->type == DP_PREVIEW_RENDER_JOB_RENDER) {
+        DP_Preview *pv = job->render.pv;
+        int type = pv->type;
+        if (type >= DP_PREVIEW_TRANSFORM_FIRST
+            && type <= DP_PREVIEW_TRANSFORM_LAST) {
+            DP_atomic_set(&pv->status, RENDER_CANCEL);
+        }
+    }
+}
+
+void DP_preview_renderer_cancel_all_transforms(DP_PreviewRenderer *pvr)
+{
+    DP_ASSERT(pvr);
+    DP_Queue *queue = &pvr->queue;
+    DP_Mutex *queue_mutex = pvr->queue_mutex;
+    DP_MUTEX_MUST_LOCK(queue_mutex);
+    DP_queue_each(queue, sizeof(DP_PreviewRenderJob),
+                  cancel_all_transform_render_jobs, NULL);
+    DP_PreviewRenderJob *job = DP_queue_push(queue, sizeof(*job));
+    job->type = DP_PREVIEW_RENDER_JOB_CLEAR_ALL_TRANSFORMS;
     DP_SEMAPHORE_MUST_POST(pvr->queue_sem);
     DP_MUTEX_MUST_UNLOCK(queue_mutex);
 }

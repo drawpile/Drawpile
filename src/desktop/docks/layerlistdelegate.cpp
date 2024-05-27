@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/docks/layerlistdelegate.h"
+#include "desktop/main.h"
 #include "libclient/canvas/layerlist.h"
 #include <QDebug>
 #include <QIcon>
@@ -17,6 +18,7 @@ LayerListDelegate::LayerListDelegate(QObject *parent)
 	, m_hiddenIcon(QIcon::fromTheme("layer-visible-off"))
 	, m_groupHiddenIcon(QIcon::fromTheme("drawpile_folderhidden"))
 	, m_fillIcon(QIcon::fromTheme("fill-color"))
+	, m_forbiddenIcon(QIcon::fromTheme("cards-block"))
 {
 }
 
@@ -41,21 +43,27 @@ void LayerListDelegate::paint(
 
 	QRect textRect = opt.rect;
 
-	QRect opacityGlyphRect(
-		opt.rect.topLeft() + QPoint(0, opt.rect.height() / 2 - GLYPH_SIZE / 2),
-		QSize(GLYPH_SIZE, GLYPH_SIZE));
+	QRect opacityGlyphRect = getOpacityGlyphRect(option);
 	drawOpacityGlyph(
 		opacityGlyphRect, painter, layer.opacity, layer.hidden,
 		layer.actuallyCensored(), layer.group);
-	textRect.setLeft(opacityGlyphRect.right());
+
+	int checkState = index.data(canvas::LayerListModel::CheckStateRole).toInt();
+	if(checkState != int(canvas::LayerListModel::NotApplicable)) {
+		QRect checkRect = getCheckRect(opt);
+		drawSelectionCheckBox(checkRect, painter, opt, checkState);
+		textRect.setRight(checkRect.left());
+	}
 
 	if(index.data(canvas::LayerListModel::IsFillSourceRole).toBool()) {
 		QRect fillGlyphRect(
-			opt.rect.topRight() +
-				QPoint(-GLYPH_SIZE, opt.rect.height() / 2 - GLYPH_SIZE / 2),
+			opacityGlyphRect.topRight() +
+				QPoint(0, opt.rect.height() / 2 - GLYPH_SIZE / 2),
 			QSize(GLYPH_SIZE, GLYPH_SIZE));
 		drawFillGlyph(fillGlyphRect, painter);
-		textRect.setRight(fillGlyphRect.left());
+		textRect.setLeft(fillGlyphRect.right());
+	} else {
+		textRect.setLeft(opacityGlyphRect.right());
 	}
 
 	if(index.data(canvas::LayerListModel::IsDefaultRole).toBool()) {
@@ -74,21 +82,29 @@ bool LayerListDelegate::editorEvent(
 	if(type == QEvent::MouseButtonPress) {
 		emit interacted();
 
-		const canvas::LayerListItem &layer =
-			index.data().value<canvas::LayerListItem>();
 		const QMouseEvent *me = static_cast<QMouseEvent *>(event);
 
 		if(me->button() == Qt::LeftButton) {
-			QRect glyphrect(
-				option.rect.topLeft() +
-					QPoint(0, option.rect.height() / 2 - GLYPH_SIZE / 2),
-				QSize(GLYPH_SIZE, GLYPH_SIZE));
+			QPoint pos = me->pos();
 
-			if(glyphrect.contains(me->pos())) {
+			if(getOpacityGlyphRect(option).contains(pos)) {
 				// Clicked on opacity glyph: toggle visibility
+				const canvas::LayerListItem &layer =
+					index.data().value<canvas::LayerListItem>();
 				emit toggleVisibility(layer.id, layer.hidden);
 				m_justToggledVisibility = true;
 				return true;
+			}
+
+			if(getCheckRect(option).contains(pos)) {
+				int checkState =
+					index.data(canvas::LayerListModel::CheckStateRole).toInt();
+				if(hasCheckBox(checkState)) {
+					emit toggleChecked(
+						index.data(canvas::LayerListModel::IdRole).toInt(),
+						checkState == int(canvas::LayerListModel::Unchecked));
+					return true;
+				}
 			}
 		}
 		m_justToggledVisibility = false;
@@ -106,12 +122,11 @@ bool LayerListDelegate::editorEvent(
 		m_justToggledVisibility = false;
 		const QMouseEvent *me = static_cast<QMouseEvent *>(event);
 		if(me->button() == Qt::LeftButton) {
-			QRect glyphrect(
-				option.rect.topLeft() +
-					QPoint(0, option.rect.height() / 2 - GLYPH_SIZE / 2),
-				QSize(GLYPH_SIZE, GLYPH_SIZE));
-
-			if(!glyphrect.contains(me->pos())) {
+			QPoint pos = me->pos();
+			if(!getOpacityGlyphRect(option).contains(pos) &&
+			   !(getCheckRect(option).contains(pos) &&
+				 hasCheckBox(index.data(canvas::LayerListModel::CheckStateRole)
+								 .toInt()))) {
 				emit editProperties(index);
 			}
 
@@ -134,8 +149,34 @@ QSize LayerListDelegate::sizeHint(
 	return size;
 }
 
+QRect LayerListDelegate::getOpacityGlyphRect(const QStyleOptionViewItem &opt)
+{
+	return QRect(
+		opt.rect.topLeft() + QPoint(0, opt.rect.height() / 2 - GLYPH_SIZE / 2),
+		QSize(GLYPH_SIZE, GLYPH_SIZE));
+}
+
+QRect LayerListDelegate::getCheckRect(const QStyleOptionViewItem &opt)
+{
+	return QRect(
+		opt.rect.topRight() +
+			QPoint(-GLYPH_SIZE, opt.rect.height() / 2 - GLYPH_SIZE / 2),
+		QSize(GLYPH_SIZE, GLYPH_SIZE));
+}
+
+bool LayerListDelegate::hasCheckBox(int checkState)
+{
+	switch(checkState) {
+	case int(canvas::LayerListModel::CheckState::NotApplicable):
+	case int(canvas::LayerListModel::CheckState::NotCheckable):
+		return false;
+	default:
+		return true;
+	}
+}
+
 void LayerListDelegate::drawOpacityGlyph(
-	const QRectF &rect, QPainter *painter, float value, bool hidden,
+	const QRect &rect, QPainter *painter, float value, bool hidden,
 	bool censored, bool group) const
 {
 	QRect r(
@@ -163,8 +204,31 @@ void LayerListDelegate::drawOpacityGlyph(
 	}
 }
 
+void LayerListDelegate::drawSelectionCheckBox(
+	const QRect &rect, QPainter *painter, const QStyleOptionViewItem &option,
+	int checkState) const
+{
+	if(checkState == int(canvas::LayerListModel::NotCheckable)) {
+		QRect r(
+			int(rect.left() + rect.width() / 2 - ICON_SIZE / 2),
+			int(rect.top() + rect.height() / 2 - ICON_SIZE / 2), ICON_SIZE,
+			ICON_SIZE);
+		m_forbiddenIcon.paint(painter, r);
+	} else {
+		const QStyle *style = dpApp().style();
+		int width =
+			qMin(rect.width(), style->pixelMetric(QStyle::PM_IndicatorWidth));
+		int height =
+			qMin(rect.height(), style->pixelMetric(QStyle::PM_IndicatorHeight));
+		QRect r(
+			int(rect.left() + rect.width() / 2 - width / 2),
+			int(rect.top() + rect.height() / 2 - height / 2), width, height);
+		drawCheck(painter, option, r, Qt::CheckState(checkState));
+	}
+}
+
 void LayerListDelegate::drawFillGlyph(
-	const QRectF &rect, QPainter *painter) const
+	const QRect &rect, QPainter *painter) const
 {
 	QRect r(
 		int(rect.left() + rect.width() / 2 - ICON_SIZE / 2),

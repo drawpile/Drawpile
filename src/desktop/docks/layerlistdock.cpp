@@ -8,11 +8,11 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
-#include "libclient/canvas/blendmodes.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/timelinemodel.h"
+#include "libclient/canvas/transformmodel.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/utils/changeflags.h"
 #include <QAction>
@@ -131,6 +131,8 @@ LayerList::LayerList(QWidget *parent)
 		del, &LayerListDelegate::toggleVisibility, this,
 		&LayerList::setLayerVisibility);
 	connect(
+		del, &LayerListDelegate::toggleChecked, this, &LayerList::layerChecked);
+	connect(
 		del, &LayerListDelegate::editProperties, this,
 		&LayerList::showPropertiesOfIndex);
 	m_view->setItemDelegate(del);
@@ -154,6 +156,9 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 		canvas->layerlist(),
 		&canvas::LayerListModel::layersVisibleInFrameChanged, this,
 		&LayerList::activeLayerVisibilityChanged);
+	connect(
+		this, &LayerList::layerChecked, canvas->layerlist(),
+		&canvas::LayerListModel::setLayerChecked);
 
 	connect(
 		canvas->aclState(), &canvas::AclState::featureAccessChanged, this,

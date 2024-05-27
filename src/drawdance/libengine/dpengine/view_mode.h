@@ -46,11 +46,17 @@ typedef struct DP_ViewModeBuffer {
     DP_ViewModeTrack *tracks;
 } DP_ViewModeBuffer;
 
+typedef struct DP_ViewModeCallback {
+    bool (*is_visible)(void *, DP_LayerProps *);
+    void *user;
+} DP_ViewModeCallback;
+
 typedef struct DP_ViewModeFilter {
     int internal_type;
     union {
         int layer_id;
         DP_ViewModeBuffer *vmb;
+        DP_ViewModeCallback *callback;
     } DP_ANONYMOUS(data);
 } DP_ViewModeFilter;
 
@@ -62,6 +68,7 @@ typedef struct DP_ViewModeContext {
             int track_index;
             DP_ViewModeBuffer *vmb;
         } frame;
+        DP_ViewModeCallback *callback;
     } DP_ANONYMOUS(data);
 } DP_ViewModeContext;
 
@@ -110,6 +117,9 @@ DP_ViewModeFilter
 DP_view_mode_filter_make_from_active(DP_ViewModeBuffer *vmb, DP_ViewMode vm,
                                      DP_CanvasState *cs, int active,
                                      const DP_OnionSkins *oss);
+
+DP_ViewModeFilter
+DP_view_mode_filter_make_callback(DP_ViewModeCallback *callback);
 
 bool DP_view_mode_filter_excludes_everything(const DP_ViewModeFilter *vmf);
 

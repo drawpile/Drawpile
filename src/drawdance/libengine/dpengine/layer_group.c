@@ -285,7 +285,8 @@ DP_TransientLayerGroup *DP_layer_group_resize(DP_LayerGroup *lg,
 }
 
 DP_Pixel8 *DP_layer_group_to_pixels8(DP_LayerGroup *lg, DP_LayerProps *lp,
-                                     int x, int y, int width, int height)
+                                     int x, int y, int width, int height,
+                                     bool reveal_censored)
 {
     DP_ASSERT(lg);
     DP_ASSERT(DP_atomic_get(&lg->refcount) > 0);
@@ -297,7 +298,7 @@ DP_Pixel8 *DP_layer_group_to_pixels8(DP_LayerGroup *lg, DP_LayerProps *lp,
         DP_transient_layer_content_new_init(lg->width, lg->height, NULL);
     DP_layer_list_merge_to_flat_image(lg->children,
                                       DP_layer_props_children_noinc(lp), tlc,
-                                      DP_BIT15, true, false);
+                                      DP_BIT15, true, reveal_censored, false);
     DP_Pixel8 *pixels = DP_layer_content_to_pixels8((DP_LayerContent *)tlc, x,
                                                     y, width, height);
     DP_transient_layer_content_decref(tlc);
@@ -314,7 +315,7 @@ DP_TransientLayerContent *DP_layer_group_merge(DP_LayerGroup *lg,
     DP_TransientLayerContent *tlc =
         DP_transient_layer_content_new_init(lg->width, lg->height, NULL);
     DP_layer_list_merge_to_flat_image(lg->children, lpl, tlc, DP_BIT15, true,
-                                      false);
+                                      true, false);
     return tlc;
 }
 
@@ -339,7 +340,7 @@ void DP_layer_group_merge_to_flat_image(DP_LayerGroup *lg, DP_LayerProps *lp,
             DP_transient_layer_content_width(tlc),
             DP_transient_layer_content_height(tlc), NULL);
         DP_layer_list_merge_to_flat_image(lg->children, lpl, gtlc, DP_BIT15,
-                                          include_sublayers, false);
+                                          include_sublayers, true, false);
         DP_transient_layer_content_merge(tlc, 0, (DP_LayerContent *)gtlc,
                                          opacity, DP_layer_props_blend_mode(lp),
                                          censored);
@@ -349,7 +350,7 @@ void DP_layer_group_merge_to_flat_image(DP_LayerGroup *lg, DP_LayerProps *lp,
         // Flatten the containing layers one by one, disregarding the blend
         // mode, but taking the opacity into account individually.
         DP_layer_list_merge_to_flat_image(lg->children, lpl, tlc, opacity,
-                                          include_sublayers, censored);
+                                          include_sublayers, true, censored);
     }
 }
 

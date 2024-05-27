@@ -598,7 +598,7 @@ void CanvasScene::onTransformChanged()
 		if(transform->isPreviewAccurate()) {
 			m_transform->setPreviewImage(QImage());
 		} else {
-			m_transform->setPreviewImage(transform->image());
+			m_transform->setPreviewImage(transform->floatingImage());
 		}
 	} else if(m_transform) {
 		delete m_transform;

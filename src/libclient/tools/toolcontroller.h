@@ -6,6 +6,7 @@
 #include "libclient/tools/tool.h"
 #include <QObject>
 #include <QPainterPath>
+#include <QSet>
 #include <QThreadPool>
 
 class QCursor;
@@ -217,7 +218,7 @@ private slots:
 	void onFeatureAccessChange(DP_Feature feature, bool canUse);
 	void updateTransformPreview();
 	void setTransformCutPreview(
-		int layerId, const QRect &maskBounds, const QImage &mask);
+		const QSet<int> &layerIds, const QRect &maskBounds, const QImage &mask);
 	void clearTransformCutPreview();
 	void clearTransformPreviews();
 	void notifyAsyncExecutionFinished(Task *task);
@@ -250,6 +251,7 @@ private:
 
 	bool m_transformPreviewAccurate;
 	int m_transformInterpolation;
+	int m_transformPreviewIdsUsed;
 	SelectionParams m_selectionParams;
 
 	QThreadPool m_threadPool;

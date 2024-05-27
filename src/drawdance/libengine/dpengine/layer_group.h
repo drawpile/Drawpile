@@ -83,7 +83,8 @@ DP_TransientLayerGroup *DP_layer_group_resize(DP_LayerGroup *lg,
                                               int right, int bottom, int left);
 
 DP_Pixel8 *DP_layer_group_to_pixels8(DP_LayerGroup *lg, DP_LayerProps *lp,
-                                     int x, int y, int width, int height);
+                                     int x, int y, int width, int height,
+                                     bool reveal_censored);
 
 DP_TransientLayerContent *DP_layer_group_merge(DP_LayerGroup *lg,
                                                DP_LayerProps *lp);

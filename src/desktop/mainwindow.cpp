@@ -3093,9 +3093,10 @@ void MainWindow::handleFreehandToolButtonClicked()
 void MainWindow::updateSelectTransformActions()
 {
 	canvas::CanvasModel *canvas = m_doc->canvas();
-	bool haveTransform = canvas && canvas->transform()->isActive();
-	bool canApplyTransform =
-		haveTransform && canvas->transform()->isDstQuadValid();
+	canvas::TransformModel *transform = canvas ? canvas->transform() : nullptr;
+	bool haveTransform = transform && transform->isActive();
+	bool canApplyTransform = haveTransform && transform->isDstQuadValid();
+	bool canStampTransform = canApplyTransform && transform->isStampable();
 	bool haveSelection =
 		!haveTransform && canvas && canvas->selection()->isValid();
 	bool haveAnnotation =
@@ -3115,7 +3116,7 @@ void MainWindow::updateSelectTransformActions()
 	getAction("paste")->setEnabled(!haveTransform);
 	getAction("paste-centered")->setEnabled(!haveTransform);
 	getAction("pastefile")->setEnabled(!haveTransform);
-	getAction("stamp")->setEnabled(canApplyTransform);
+	getAction("stamp")->setEnabled(canStampTransform);
 	getAction("cleararea")->setEnabled(haveSelection || haveAnnotation);
 	getAction("selectall")->setEnabled(!haveTransform);
 	getAction("selectnone")->setEnabled(haveSelection || canApplyTransform);

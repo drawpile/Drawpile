@@ -87,6 +87,7 @@ public slots:
 signals:
 	//! A layer was selected by the user
 	void layerSelected(int id);
+	void layerChecked(int layerId, bool checked);
 	void activeLayerVisibilityChanged();
 	void fillSourceSet(int layerId);
 

@@ -8,6 +8,7 @@ extern "C" {
 #include "libclient/utils/keyframelayermodel.h"
 #include "libshared/util/qtcompat.h"
 #include <QAbstractItemModel>
+#include <QHash>
 #include <QMimeData>
 #include <QSet>
 #include <QVector>
@@ -98,6 +99,15 @@ public:
 		IsHiddenInTreeRole,
 		IsCensoredInTreeRole,
 		IsFillSourceRole,
+		CheckStateRole,
+	};
+
+	enum CheckState {
+		Unchecked = Qt::Unchecked,
+		PartiallyChecked = Qt::PartiallyChecked,
+		Checked = Qt::Checked,
+		NotApplicable,
+		NotCheckable,
 	};
 
 	LayerListModel(QObject *parent = nullptr);
@@ -122,7 +132,7 @@ public:
 	const QVector<LayerListItem> &layerItems() const { return m_items; }
 
 	void setLayerGetter(GetLayerFunction fn) { m_getlayerfn = fn; }
-	void setAclState(AclState *state) { m_aclstate = state; }
+	void setAclState(AclState *aclstate);
 
 	/**
 	 * Enable/disable any (not just own) layer autoselect requests
@@ -178,10 +188,17 @@ public:
 	// return the ids of non-group, non-locked, non-hidden, non-censored layers.
 	QSet<int> getModifiableLayers(int layerId) const;
 
+	void initCheckedLayers(int initialLayerId);
+	void clearCheckedLayers();
+
+	// Retrieves all checked layers, not including groups.
+	QSet<int> checkedLayers() const;
+
 public slots:
 	void setLayers(
 		const drawdance::LayerPropsList &lpl, const QSet<int> &revealedLayers);
 	void setLayersVisibleInFrame(const QSet<int> &layers, bool frameMode);
+	void setLayerChecked(int layerId, bool checked);
 	void setFillSourceLayerId(int fillSourceLayerId);
 
 signals:
@@ -194,25 +211,53 @@ signals:
 	void moveRequested(int sourceId, int targetId, bool intoGroup, bool below);
 
 	void layersVisibleInFrameChanged();
+	void layerCheckStateToggled();
+
+private slots:
+	void updateCheckedLayerAcl(int layerId);
 
 private:
 	static int searchAvailableLayerId(const QSet<int> &takenIds, int contextId);
+
+	CheckState flattenLayerList(
+		QVector<LayerListItem> &newItems, QHash<int, CheckState> &checkStates,
+		int &index, const drawdance::LayerPropsList &lpl,
+		const QSet<int> &revealedLayers, bool parentCensored);
 
 	void flattenKeyFrameLayer(
 		QVector<KeyFrameLayerItem> &items, int &index, int &layerIndex,
 		int relIndex, const QHash<int, bool> &layerVisibiltiy) const;
 
+	void gatherCheckedLayers(
+		QHash<int, CheckState> &checkStates, const QModelIndex &idx);
+
+	CheckState fillCheckStates(
+		QHash<int, CheckState> &checkStates, const QModelIndex &idx);
+
+	CheckState getGroupCheckState(
+		QHash<int, CheckState> &checkStates, const QModelIndex &idx);
+
+	CheckState setLayerCheckedChildren(const QModelIndex &idx, bool checked);
+	void refreshLayerCheckedParents(const QModelIndex &idx);
+	CheckState updateLayerChecked(const QModelIndex &idx, bool checked);
+	void updateLayerCheckState(const QModelIndex &idx, CheckState checkState);
+	static bool isLayerCheckable(const QModelIndex &idx);
+
 	void
 	gatherModifiableLayers(QSet<int> &layerIds, const QModelIndex &idx) const;
 
+	void emitCheckStatesChanged(const QModelIndex &parent = QModelIndex());
+
 	QVector<LayerListItem> m_items;
 	QSet<int> m_frameLayers;
+	QHash<int, CheckState> m_checkStates;
 	GetLayerFunction m_getlayerfn = nullptr;
 	AclState *m_aclstate = nullptr;
 	int m_rootLayerCount = 0;
 	uint16_t m_defaultLayer = 0;
 	bool m_autoselectAny = true;
 	bool m_frameMode = false;
+	bool m_checkMode = false;
 	int m_layerIdToSelect = 0;
 	int m_fillSourceLayerId = 0;
 };

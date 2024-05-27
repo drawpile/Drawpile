@@ -67,7 +67,7 @@ QImage LayerGroup::toImage(const LayerProps &layerProps, const QRect &rect) cons
         return QImage{};
     } else {
         DP_Pixel8 *pixels = DP_layer_group_to_pixels8(
-            m_data, layerProps.get(), rect.x(), rect.y(), rect.width(), rect.height());
+            m_data, layerProps.get(), rect.x(), rect.y(), rect.width(), rect.height(), false);
         return wrapPixels8(rect.width(), rect.height(), pixels);
     }
 }

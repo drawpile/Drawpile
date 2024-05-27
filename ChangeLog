@@ -64,6 +64,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Disable the image memory limit when using Qt 6, because that breaks the loading large files. Thanks LiterallyMe for reporting.
  * Feature: Indicate fill source in layer list.
  * Fix: Make canvas lock and layers not lock tools that don't actually act on them.
+ * Feature: Allow transforming multiple layers at once.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

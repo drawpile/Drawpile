@@ -374,16 +374,17 @@ bool PaintEngine::closePlayback()
 }
 
 void PaintEngine::previewCut(
-	int layerId, const QRect &bounds, const QImage &mask)
+	const QSet<int> &layerIds, const QRect &bounds, const QImage &mask)
 {
 	Q_ASSERT(
 		mask.isNull() || mask.format() == QImage::Format_ARGB32_Premultiplied);
 	Q_ASSERT(mask.isNull() || mask.size() == bounds.size());
+	QVector<int> layerIdsVec(layerIds.begin(), layerIds.end());
 	DP_paint_engine_preview_cut(
-		m_data, layerId, bounds.x(), bounds.y(), bounds.width(),
-		bounds.height(),
+		m_data, bounds.x(), bounds.y(), bounds.width(), bounds.height(),
 		mask.isNull() ? nullptr
-					  : reinterpret_cast<const DP_Pixel8 *>(mask.constBits()));
+					  : reinterpret_cast<const DP_Pixel8 *>(mask.constBits()),
+		layerIdsVec.size(), layerIdsVec.constData());
 }
 
 void PaintEngine::clearCutPreview()
@@ -392,10 +393,10 @@ void PaintEngine::clearCutPreview()
 }
 
 void PaintEngine::previewTransform(
-	int layerId, int x, int y, const QImage &img, const QPolygon &dstPolygon,
-	int interpolation)
+	int id, int layerId, int x, int y, const QImage &img,
+	const QPolygon &dstPolygon, int interpolation)
 {
-	if(dstPolygon.count() == 4) {
+	if(id >= 0 && id < DP_PREVIEW_TRANSFORM_COUNT) {
 		QPoint p1 = dstPolygon.point(0);
 		QPoint p2 = dstPolygon.point(1);
 		QPoint p3 = dstPolygon.point(2);
@@ -403,17 +404,26 @@ void PaintEngine::previewTransform(
 		DP_Quad dstQuad = DP_quad_make(
 			p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y(), p4.x(), p4.y());
 		DP_paint_engine_preview_transform(
-			m_data, layerId, x, y, img.width(), img.height(), &dstQuad,
+			m_data, id, layerId, x, y, img.width(), img.height(), &dstQuad,
 			interpolation, getTransformPreviewPixels,
 			disposeTransformPreviewPixels, new QImage{img});
 	} else {
-		qWarning("Preview transform destination is not a quad");
+		qWarning("Invalid preview transform id %d", id);
 	}
 }
 
-void PaintEngine::clearTransformPreview()
+void PaintEngine::clearTransformPreview(int id)
 {
-	DP_paint_engine_preview_clear(m_data, DP_PREVIEW_TRANSFORM);
+	if(id >= 0 && id < DP_PREVIEW_TRANSFORM_COUNT) {
+		DP_paint_engine_preview_clear(m_data, DP_PREVIEW_TRANSFORM_FIRST + id);
+	} else {
+		qWarning("Invalid preview transform id %d", id);
+	}
+}
+
+void PaintEngine::clearAllTransformPreviews()
+{
+	DP_paint_engine_preview_clear_all_transforms(m_data);
 }
 
 void PaintEngine::previewDabs(int layerId, int count, const net::Message *msgs)

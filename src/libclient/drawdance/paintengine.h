@@ -123,12 +123,14 @@ public:
 	bool flushPlayback(net::MessageList &outMsgs);
 	bool closePlayback();
 
-	void previewCut(int layerId, const QRect &bounds, const QImage &mask);
+	void previewCut(
+		const QSet<int> &layerIds, const QRect &bounds, const QImage &mask);
 	void clearCutPreview();
 	void previewTransform(
-		int layerId, int x, int y, const QImage &img,
+		int id, int layerId, int x, int y, const QImage &img,
 		const QPolygon &dstPolygon, int interpolation);
-	void clearTransformPreview();
+	void clearTransformPreview(int id);
+	void clearAllTransformPreviews();
 	void previewDabs(int layerId, int count, const net::Message *msgs);
 	void clearDabsPreview();
 

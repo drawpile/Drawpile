@@ -234,20 +234,21 @@ void DP_paint_engine_change_bounds(DP_PaintEngine *pe, DP_Rect tile_bounds,
 
 void DP_paint_engine_render_everything(DP_PaintEngine *pe);
 
-void DP_paint_engine_preview_cut(DP_PaintEngine *pe, int layer_id, int x, int y,
-                                 int width, int height,
-                                 const DP_Pixel8 *mask_or_null);
+void DP_paint_engine_preview_cut(DP_PaintEngine *pe, int x, int y, int width,
+                                 int height, const DP_Pixel8 *mask_or_null,
+                                 int layer_id_count, const int *layer_ids);
 
 void DP_paint_engine_preview_transform(
-    DP_PaintEngine *pe, int layer_id, int x, int y, int width, int height,
-    const DP_Quad *dst_quad, int interpolation,
+    DP_PaintEngine *pe, int id, int layer_id, int x, int y, int width,
+    int height, const DP_Quad *dst_quad, int interpolation,
     DP_PreviewTransformGetPixelsFn get_pixels,
     DP_PreviewTransformDisposePixelsFn dispose_pixels, void *user);
 
 void DP_paint_engine_preview_dabs_inc(DP_PaintEngine *pe, int layer_id,
                                       int count, DP_Message **messages);
 
-void DP_paint_engine_preview_clear(DP_PaintEngine *pe, DP_PreviewType type);
+void DP_paint_engine_preview_clear(DP_PaintEngine *pe, int type);
+void DP_paint_engine_preview_clear_all_transforms(DP_PaintEngine *pe);
 
 DP_CanvasState *DP_paint_engine_view_canvas_state_inc(DP_PaintEngine *pe);
 

@@ -353,6 +353,7 @@ void DP_layer_list_merge_to_flat_image(DP_LayerList *ll, DP_LayerPropsList *lpl,
                                        DP_TransientLayerContent *tlc,
                                        uint16_t parent_opacity,
                                        bool include_sublayers,
+                                       bool reveal_censored,
                                        bool pass_through_censored)
 {
     DP_ASSERT(ll);
@@ -375,17 +376,19 @@ void DP_layer_list_merge_to_flat_image(DP_LayerList *ll, DP_LayerPropsList *lpl,
                 uint16_t opacity =
                     DP_fix15_mul(parent_opacity, DP_layer_props_opacity(lp));
                 int blend_mode = DP_layer_props_blend_mode(lp);
+                bool censored =
+                    pass_through_censored
+                    || (!reveal_censored && DP_layer_props_censored(lp));
                 if (include_sublayers) {
                     DP_LayerContent *sub_lc =
                         DP_layer_content_merge_sublayers(lc);
                     DP_transient_layer_content_merge(tlc, 0, sub_lc, opacity,
-                                                     blend_mode,
-                                                     pass_through_censored);
+                                                     blend_mode, censored);
                     DP_layer_content_decref(sub_lc);
                 }
                 else {
-                    DP_transient_layer_content_merge(
-                        tlc, 0, lc, opacity, blend_mode, pass_through_censored);
+                    DP_transient_layer_content_merge(tlc, 0, lc, opacity,
+                                                     blend_mode, censored);
                 }
             }
         }

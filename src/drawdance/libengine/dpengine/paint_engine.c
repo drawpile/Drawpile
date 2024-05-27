@@ -313,11 +313,14 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
         push_cleanup_message(pe, DP_msg_internal_catchup_new(0, 100));
         DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
         break;
-    case DP_MSG_INTERNAL_TYPE_PREVIEW:
-        free_preview(DP_atomic_ptr_xch(
-            &pe->next_previews[DP_msg_internal_preview_type(mi)],
-            DP_msg_internal_preview_data(mi)));
+    case DP_MSG_INTERNAL_TYPE_PREVIEW: {
+        int preview_type = DP_msg_internal_preview_type(mi);
+        DP_ASSERT(preview_type >= 0);
+        DP_ASSERT(preview_type < DP_PREVIEW_COUNT);
+        free_preview(DP_atomic_ptr_xch(&pe->next_previews[preview_type],
+                                       DP_msg_internal_preview_data(mi)));
         break;
+    }
     case DP_MSG_INTERNAL_TYPE_RECORDER_START:
         DP_SEMAPHORE_MUST_POST(pe->record.start_sem);
         break;
@@ -630,13 +633,12 @@ static void local_view_invalidated(void *user, bool check_all, int layer_id)
     invalidate_local_view(pe, check_all);
 }
 
-static void sync_preview(DP_PaintEngine *pe, DP_PreviewType type,
-                         DP_Preview *pv)
+static void sync_preview(DP_PaintEngine *pe, int type, DP_Preview *pv)
 {
     // Make the preview go through the paint engine so that there's less jerking
     // as previews are created and cleared. There may still be flickering, but
     // it won't look like transforms undo themselves for a moment.
-    DP_Message *msg = DP_msg_internal_preview_new(0, (int)type, pv);
+    DP_Message *msg = DP_msg_internal_preview_new(0, type, pv);
     DP_MUTEX_MUST_LOCK(pe->queue_mutex);
     DP_message_queue_push_noinc(&pe->local_queue, msg);
     DP_SEMAPHORE_MUST_POST(pe->queue_sem);
@@ -646,7 +648,7 @@ static void sync_preview(DP_PaintEngine *pe, DP_PreviewType type,
 static void preview_rendered(void *user, DP_Preview *pv)
 {
     DP_PaintEngine *pe = user;
-    DP_PreviewType type = DP_preview_type(pv);
+    int type = DP_preview_type(pv);
     sync_preview(pe, type, DP_preview_incref(pv));
 }
 
@@ -656,7 +658,7 @@ static void preview_rerendered(void *user)
     DP_atomic_set(&pe->preview_rerendered, true);
 }
 
-static void preview_clear(void *user, DP_PreviewType type)
+static void preview_clear(void *user, int type)
 {
     DP_PaintEngine *pe = user;
     sync_preview(pe, type, &DP_preview_null);
@@ -2494,24 +2496,30 @@ void DP_paint_engine_render_everything(DP_PaintEngine *pe)
 }
 
 
-void DP_paint_engine_preview_cut(DP_PaintEngine *pe, int layer_id, int x, int y,
-                                 int width, int height,
-                                 const DP_Pixel8 *mask_or_null)
+void DP_paint_engine_preview_cut(DP_PaintEngine *pe, int x, int y, int width,
+                                 int height, const DP_Pixel8 *mask_or_null,
+                                 int layer_id_count, const int *layer_ids)
 {
     DP_ASSERT(pe);
-    DP_CanvasState *cs = pe->view_cs;
-    int offset_x = DP_canvas_state_offset_x(cs);
-    int offset_y = DP_canvas_state_offset_y(cs);
-    DP_Preview *pv = DP_preview_new_cut(offset_x, offset_y, layer_id, x, y,
-                                        width, height, mask_or_null);
-    DP_preview_renderer_push_noinc(
-        pe->preview_renderer, pv, DP_canvas_state_width(cs),
-        DP_canvas_state_height(cs), offset_x, offset_y);
+    if (width > 0 && height > 0 && layer_id_count > 0) {
+        DP_CanvasState *cs = pe->view_cs;
+        int offset_x = DP_canvas_state_offset_x(cs);
+        int offset_y = DP_canvas_state_offset_y(cs);
+        DP_Preview *pv =
+            DP_preview_new_cut(offset_x, offset_y, x, y, width, height,
+                               mask_or_null, layer_id_count, layer_ids);
+        DP_preview_renderer_push_noinc(
+            pe->preview_renderer, pv, DP_canvas_state_width(cs),
+            DP_canvas_state_height(cs), offset_x, offset_y);
+    }
+    else {
+        DP_paint_engine_preview_clear(pe, DP_PREVIEW_CUT);
+    }
 }
 
 void DP_paint_engine_preview_transform(
-    DP_PaintEngine *pe, int layer_id, int x, int y, int width, int height,
-    const DP_Quad *dst_quad, int interpolation,
+    DP_PaintEngine *pe, int id, int layer_id, int x, int y, int width,
+    int height, const DP_Quad *dst_quad, int interpolation,
     DP_PreviewTransformGetPixelsFn get_pixels,
     DP_PreviewTransformDisposePixelsFn dispose_pixels, void *user)
 {
@@ -2521,7 +2529,7 @@ void DP_paint_engine_preview_transform(
         int offset_x = DP_canvas_state_offset_x(cs);
         int offset_y = DP_canvas_state_offset_y(cs);
         DP_Preview *pv = DP_preview_new_transform(
-            offset_x, offset_y, layer_id, x, y, width, height, dst_quad,
+            id, offset_x, offset_y, layer_id, x, y, width, height, dst_quad,
             interpolation, get_pixels, dispose_pixels, user);
         DP_preview_renderer_push_noinc(
             pe->preview_renderer, pv, DP_canvas_state_width(cs),
@@ -2529,7 +2537,7 @@ void DP_paint_engine_preview_transform(
     }
     else {
         dispose_pixels(user);
-        DP_paint_engine_preview_clear(pe, DP_PREVIEW_TRANSFORM);
+        DP_paint_engine_preview_clear(pe, DP_PREVIEW_TRANSFORM_FIRST + id);
     }
 }
 
@@ -2552,12 +2560,18 @@ void DP_paint_engine_preview_dabs_inc(DP_PaintEngine *pe, int layer_id,
     }
 }
 
-void DP_paint_engine_preview_clear(DP_PaintEngine *pe, DP_PreviewType type)
+void DP_paint_engine_preview_clear(DP_PaintEngine *pe, int type)
 {
     DP_ASSERT(pe);
     DP_ASSERT(type >= 0);
     DP_ASSERT(type < DP_PREVIEW_COUNT);
     DP_preview_renderer_cancel(pe->preview_renderer, type);
+}
+
+void DP_paint_engine_preview_clear_all_transforms(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    DP_preview_renderer_cancel_all_transforms(pe->preview_renderer);
 }
 
 

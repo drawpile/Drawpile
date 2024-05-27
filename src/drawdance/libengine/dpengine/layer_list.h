@@ -100,6 +100,7 @@ void DP_layer_list_merge_to_flat_image(DP_LayerList *ll, DP_LayerPropsList *lpl,
                                        DP_TransientLayerContent *tlc,
                                        uint16_t parent_opacity,
                                        bool include_sublayers,
+                                       bool reveal_censored,
                                        bool pass_through_censored);
 
 DP_TransientTile *DP_layer_list_entry_flatten_tile_to(
