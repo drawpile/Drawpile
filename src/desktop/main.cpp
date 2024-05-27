@@ -1088,6 +1088,7 @@ extern "C" void drawpileMain(int argc, char **argv)
 	DrawpileApp *app = &appInstance;
 #endif
 
+	compat::disableImageReaderAllocationLimit();
 	startApplication(app);
 
 #ifndef __EMSCRIPTEN__
