@@ -401,9 +401,16 @@ QImage CanvasModel::selectionToImage(int layerId, bool *outFound) const
 		drawdance::ViewModeBuffer vmb;
 		img = m_paintengine->getFlatImage(vmb, canvasState, false, true, &rect);
 	} else {
-		drawdance::LayerContent layerContent =
-			canvasState.searchLayerContent(layerId, false);
-		if(layerContent.isNull()) {
+		drawdance::LayerSearchResult lsr =
+			canvasState.searchLayer(layerId, false);
+		if(drawdance::LayerContent *layerContent =
+			   std::get_if<drawdance::LayerContent>(&lsr.data)) {
+			img = layerContent->toImage(rect);
+		} else if(
+			drawdance::LayerGroup *layerGroup =
+				std::get_if<drawdance::LayerGroup>(&lsr.data)) {
+			img = layerGroup->toImage(lsr.props, rect);
+		} else {
 			qWarning("selectionToImage: layer %d not found", layerId);
 			img = QImage(rect.size(), QImage::Format_ARGB32_Premultiplied);
 			img.fill(0);
@@ -412,7 +419,6 @@ QImage CanvasModel::selectionToImage(int layerId, bool *outFound) const
 			}
 			return img;
 		}
-		img = layerContent.toImage(rect);
 	}
 
 	if(validSelection) {

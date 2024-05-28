@@ -483,14 +483,15 @@ QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
 				m_sampleColorLastDiameter);
 		}
 	} else {
-		drawdance::LayerContent lc =
-			viewCanvasState().searchLayerContent(layerId, false);
-		if(lc.isNull()) {
-			return Qt::transparent;
-		} else {
-			return lc.sampleColorAt(
+		drawdance::LayerSearchResult lsr =
+			viewCanvasState().searchLayer(layerId, false);
+		if(drawdance::LayerContent *layerContent =
+			   std::get_if<drawdance::LayerContent>(&lsr.data)) {
+			return layerContent->sampleColorAt(
 				m_sampleColorStampBuffer, x, y, diameter, true,
 				m_sampleColorLastDiameter);
+		} else {
+			return Qt::transparent;
 		}
 	}
 }

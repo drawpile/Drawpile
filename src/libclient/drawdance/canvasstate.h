@@ -8,7 +8,9 @@ extern "C" {
 #include "libclient/drawdance/annotationlist.h"
 #include "libclient/drawdance/documentmetadata.h"
 #include "libclient/drawdance/layercontent.h"
+#include "libclient/drawdance/layergroup.h"
 #include "libclient/drawdance/layerlist.h"
+#include "libclient/drawdance/layerprops.h"
 #include "libclient/drawdance/selectionset.h"
 #include "libclient/drawdance/tile.h"
 #include "libclient/drawdance/timeline.h"
@@ -18,11 +20,17 @@ extern "C" {
 #include <QPoint>
 #include <QSet>
 #include <QSize>
+#include <variant>
 
 struct DP_CanvasState;
 struct DP_ViewModeFilter;
 
 namespace drawdance {
+
+struct LayerSearchResult {
+	LayerProps props;
+	std::variant<std::monostate, LayerContent, LayerGroup> data;
+};
 
 class CanvasState final {
 public:
@@ -88,7 +96,7 @@ public:
 		uint8_t contextId, int sourceId, int targetId, bool intoGroup,
 		bool below) const;
 
-	LayerContent searchLayerContent(int layerId, bool showCensored) const;
+	LayerSearchResult searchLayer(int layerId, bool showCensored) const;
 
 	DP_FloodFillResult floodFill(
 		int x, int y, const QColor &fillColor, double tolerance, int layerId,

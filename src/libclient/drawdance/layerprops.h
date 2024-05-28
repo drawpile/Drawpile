@@ -13,6 +13,7 @@ class LayerPropsList;
 
 class LayerProps final {
 public:
+    static LayerProps null();
     static LayerProps inc(DP_LayerProps *lp);
     static LayerProps noinc(DP_LayerProps *lp);
 

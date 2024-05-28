@@ -10,6 +10,11 @@ extern "C" {
 
 namespace drawdance {
 
+LayerProps LayerProps::null()
+{
+    return LayerProps{nullptr};
+}
+
 LayerProps LayerProps::inc(DP_LayerProps *lp)
 {
     return LayerProps{DP_layer_props_incref_nullable(lp)};
