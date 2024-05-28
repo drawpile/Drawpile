@@ -17,6 +17,9 @@ public:
 
 	QString toolType() const override { return QStringLiteral("laser"); }
 
+	bool affectsCanvas() override { return true; }
+	bool affectsLayer() override { return false; }
+
 	bool pointerTracking() const;
 
 	void setForeground(const QColor& color) override;

@@ -24,6 +24,9 @@ public:
 
 	QString toolType() const override { return QStringLiteral("fill"); }
 
+	bool affectsCanvas() override { return true; }
+	bool affectsLayer() override { return true; }
+
 	void quickAdjust1(qreal adjustment) override;
 	void stepAdjust1(bool increase) override;
 	void setForeground(const QColor &color) override;

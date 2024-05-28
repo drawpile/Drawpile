@@ -139,6 +139,8 @@ public:
 	static int
 	stepLinear(int min, int max, int current, bool increase, int stepSize = 12);
 
+	virtual bool affectsCanvas() = 0;
+	virtual bool affectsLayer() = 0;
 	virtual bool isLocked() { return false; }
 
 	virtual bool keepTitleBarButtonSpace() const { return false; }

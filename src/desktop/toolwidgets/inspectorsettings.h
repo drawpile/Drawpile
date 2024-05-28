@@ -24,6 +24,9 @@ public:
 
 	QString toolType() const override { return QStringLiteral("inspector"); }
 
+	bool affectsCanvas() override { return false; }
+	bool affectsLayer() override { return false; }
+
 	void setUserList(canvas::UserListModel *userlist) { m_userlist = userlist; }
 
 	bool isShowTiles() const;

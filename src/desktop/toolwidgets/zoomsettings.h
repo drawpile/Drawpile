@@ -17,6 +17,9 @@ public:
 
 	QString toolType() const override { return QStringLiteral("zoom"); }
 
+	bool affectsCanvas() override { return false; }
+	bool affectsLayer() override { return false; }
+
 signals:
 	void resetZoom();
 	void fitToWindow();

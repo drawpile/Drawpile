@@ -12,6 +12,9 @@ public:
 
 	QString toolType() const override { return QStringLiteral("pan"); }
 
+	bool affectsCanvas() override { return false; }
+	bool affectsLayer() override { return false; }
+
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 };

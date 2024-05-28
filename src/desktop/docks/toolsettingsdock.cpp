@@ -270,6 +270,16 @@ void ToolSettings::saveSettings()
 	settings.setLastTool(currentTool());
 }
 
+bool ToolSettings::currentToolAffectsCanvas() const
+{
+	return d->pages[d->currentTool].settings->affectsCanvas();
+}
+
+bool ToolSettings::currentToolAffectsLayer() const
+{
+	return d->pages[d->currentTool].settings->affectsLayer();
+}
+
 bool ToolSettings::isCurrentToolLocked() const
 {
 	return d->pages[d->currentTool].settings->isLocked();

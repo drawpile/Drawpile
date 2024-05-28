@@ -24,6 +24,8 @@ public:
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;
 
+	bool affectsCanvas() override { return true; }
+	bool affectsLayer() override { return false; }
 	bool isLocked() override;
 
 	void setAction(QAction *starttransform);

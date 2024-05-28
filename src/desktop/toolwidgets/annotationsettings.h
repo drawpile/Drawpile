@@ -29,6 +29,9 @@ public:
 
 	QString toolType() const override { return QStringLiteral("annotation"); }
 
+	bool affectsCanvas() override { return true; }
+	bool affectsLayer() override { return false; }
+
 	/**
 	 * @brief Get the ID of the currently selected annotation
 	 * @return ID or 0 if none selected

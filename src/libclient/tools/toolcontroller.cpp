@@ -451,13 +451,6 @@ void ToolController::finishMultipartDrawing()
 		return;
 	}
 
-	if(m_model->aclState()->isLayerLocked(m_activeLayer)) {
-		// It is possible for the active layer to become locked
-		// before the user has finished multipart drawing.
-		qWarning("Cannot finish multipart drawing: active layer is locked!");
-		return;
-	}
-
 	m_activeTool->finishMultipart();
 }
 

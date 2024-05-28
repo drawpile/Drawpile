@@ -49,6 +49,9 @@ public:
 
 	QString toolType() const override { return QStringLiteral("picker"); }
 
+	bool affectsCanvas() override { return true; }
+	bool affectsLayer() override { return true; }
+
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;
 

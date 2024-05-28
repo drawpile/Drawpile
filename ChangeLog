@@ -63,6 +63,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Build option -DPROXY_STYLE=ON to fix the bad contrast in dark themes when not building a patched version of Qt yourself.
  * Fix: Disable the image memory limit when using Qt 6, because that breaks the loading large files. Thanks LiterallyMe for reporting.
  * Feature: Indicate fill source in layer list.
+ * Fix: Make canvas lock and layers not lock tools that don't actually act on them.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

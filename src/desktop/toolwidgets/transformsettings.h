@@ -30,6 +30,9 @@ public:
 
 	QString toolType() const override { return QStringLiteral("transform"); }
 
+	bool affectsCanvas() override { return true; }
+	bool affectsLayer() override { return false; }
+
 	void setCompatibilityMode(bool compatibilityMode);
 
 	void setActions(

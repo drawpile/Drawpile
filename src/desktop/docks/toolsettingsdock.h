@@ -62,6 +62,8 @@ public:
 	//! Save tool related settings
 	void saveSettings();
 
+	bool currentToolAffectsCanvas() const;
+	bool currentToolAffectsLayer() const;
 	bool isCurrentToolLocked() const;
 
 	void triggerUpdate();

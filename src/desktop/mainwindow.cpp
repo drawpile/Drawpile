@@ -2667,10 +2667,6 @@ void MainWindow::updateLockWidget()
 
 	bool sessionLocked = aclState && aclState->isSessionLocked();
 	getAction("locksession")->setChecked(sessionLocked);
-	if(sessionLocked) {
-		reasons.setFlag(Reason::Canvas);
-	}
-
 	if(!m_notificationsMuted) {
 		if(sessionLocked && !m_wasSessionLocked) {
 			dpApp().notifications()->trigger(
@@ -2682,10 +2678,17 @@ void MainWindow::updateLockWidget()
 	}
 	m_wasSessionLocked = sessionLocked;
 
-	reasons |= m_dockLayers->currentLayerLock();
+	if(m_dockToolSettings->currentToolAffectsCanvas()) {
+		if(sessionLocked) {
+			reasons.setFlag(Reason::Canvas);
+		}
+		if(aclState && aclState->isLocked(aclState->localUserId())) {
+			reasons.setFlag(Reason::User);
+		}
+	}
 
-	if(aclState && aclState->isLocked(aclState->localUserId())) {
-		reasons.setFlag(Reason::User);
+	if(m_dockToolSettings->currentToolAffectsLayer()) {
+		reasons |= m_dockLayers->currentLayerLock();
 	}
 
 	if(m_dockToolSettings->isCurrentToolLocked()) {

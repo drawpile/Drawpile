@@ -27,6 +27,9 @@ public:
 
 	QString toolType() const override { return QStringLiteral("brush"); }
 
+	bool affectsCanvas() override { return true; }
+	bool affectsLayer() override { return true; }
+
 	void setActiveTool(tools::Tool::Type tool) override;
 	void setForeground(const QColor &color) override;
 	void quickAdjust1(qreal adjustment) override;
