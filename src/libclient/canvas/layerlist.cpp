@@ -548,6 +548,31 @@ void LayerListModel::flattenKeyFrameLayer(
 	++index;
 }
 
+QSet<int> LayerListModel::getModifiableLayers(int layerId) const
+{
+	QSet<int> layerIds;
+	gatherModifiableLayers(layerIds, layerIndex(layerId));
+	return layerIds;
+}
+
+void LayerListModel::gatherModifiableLayers(
+	QSet<int> &layerIds, const QModelIndex &idx) const
+{
+	if(idx.isValid() && !idx.data(IsHiddenInTreeRole).toBool() &&
+	   !idx.data(IsCensoredInTreeRole).toBool()) {
+		if(idx.data(IsGroupRole).toBool()) {
+			int childCount = rowCount(idx);
+			for(int i = 0; i < childCount; ++i) {
+				gatherModifiableLayers(layerIds, index(i, 0, idx));
+			}
+		} else if(
+			!idx.data(IsLockedRole).toBool() &&
+			!idx.data(IsHiddenInFrameRole).toBool()) {
+			layerIds.insert(idx.data(IdRole).toInt());
+		}
+	}
+}
+
 QStringList LayerMimeData::formats() const
 {
 	return QStringList() << "application/x-qt-image";

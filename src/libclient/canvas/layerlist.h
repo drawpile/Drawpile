@@ -171,6 +171,10 @@ public:
 	KeyFrameLayerModel *toKeyFrameLayerModel(
 		int rootLayerId, const QHash<int, bool> &layerVisibility) const;
 
+	// Retrieves all modifiable layers under the given id. That is, it will
+	// return the ids of non-group, non-locked, non-hidden, non-censored layers.
+	QSet<int> getModifiableLayers(int layerId) const;
+
 public slots:
 	void setLayers(
 		const drawdance::LayerPropsList &lpl, const QSet<int> &revealedLayers);
@@ -194,6 +198,9 @@ private:
 	void flattenKeyFrameLayer(
 		QVector<KeyFrameLayerItem> &items, int &index, int &layerIndex,
 		int relIndex, const QHash<int, bool> &layerVisibiltiy) const;
+
+	void
+	gatherModifiableLayers(QSet<int> &layerIds, const QModelIndex &idx) const;
 
 	QVector<LayerListItem> m_items;
 	QSet<int> m_frameLayers;

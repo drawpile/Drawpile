@@ -1237,8 +1237,9 @@ void Document::fillArea(const QColor &color, DP_BlendMode mode, float opacity)
 		return;
 	}
 
-	int layerId = m_toolctrl->activeLayer();
-	if(m_canvas->aclState()->isLayerLocked(layerId)) {
+	QSet<int> layerIds =
+		m_canvas->layerlist()->getModifiableLayers(m_toolctrl->activeLayer());
+	if(layerIds.isEmpty()) {
 		return;
 	}
 
@@ -1264,8 +1265,10 @@ void Document::fillArea(const QColor &color, DP_BlendMode mode, float opacity)
 
 	uint8_t contextId = m_client->myId();
 	QPoint pos = selection->bounds().topLeft();
-	net::makePutImageMessages(
-		m_messageBuffer, contextId, layerId, mode, pos.x(), pos.y(), mask);
+	for(int layerId : layerIds) {
+		net::makePutImageMessages(
+			m_messageBuffer, contextId, layerId, mode, pos.x(), pos.y(), mask);
+	}
 	if(m_messageBuffer.isEmpty()) {
 		return;
 	}
