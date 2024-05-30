@@ -658,6 +658,16 @@ QString LayerListModel::getAvailableLayerName(QString basename) const
 	return QString("%2 %1").arg(suffix + 1).arg(basename);
 }
 
+LayerListItem LayerListItem::null()
+{
+	return LayerListItem{
+		0,	   QString(), 1.0f,	 DP_BLEND_MODE_NORMAL,
+		false, false,	  false, false,
+		false, 0,		  0,	 0,
+		0,
+	};
+}
+
 uint8_t LayerListItem::attributeFlags() const
 {
 	return (actuallyCensored() ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |

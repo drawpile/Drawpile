@@ -59,7 +59,7 @@ private:
 	static int searchBlendModeIndex(QComboBox *combo, DP_BlendMode mode);
 
 	Ui_LayerProperties *m_ui;
-	canvas::LayerListItem m_item;
+	canvas::LayerListItem m_item = canvas::LayerListItem::null();
 	int m_selectedId = 0;
 	bool m_wasDefault = false;
 	bool m_compatibilityMode = false;

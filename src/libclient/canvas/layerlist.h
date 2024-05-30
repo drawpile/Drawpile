@@ -62,6 +62,9 @@ struct LayerListItem {
 	//! Right index (MPTT)
 	int right;
 
+	//! Get a null layer list item with everything set 0 or the default.
+	static LayerListItem null();
+
 	//! Get the LayerAttributes flags as a bitfield
 	uint8_t attributeFlags() const;
 
