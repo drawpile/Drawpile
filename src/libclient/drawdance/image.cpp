@@ -68,21 +68,26 @@ QImage transformImage(
 	const QImage &source, const QPolygon &dstQuad, int interpolation,
 	QPoint *outOffset)
 {
-	DrawContext drawContext = DrawContextPool::acquire();
-	DP_Quad quad = DP_quad_make(
-		dstQuad.point(0).x(), dstQuad.point(0).y(), dstQuad.point(1).x(),
-		dstQuad.point(1).y(), dstQuad.point(2).x(), dstQuad.point(2).y(),
-		dstQuad.point(3).x(), dstQuad.point(3).y());
-	int offsetX, offsetY;
-	DP_Image *img = DP_image_transform_pixels(
-		source.width(), source.height(),
-		reinterpret_cast<const DP_Pixel8 *>(source.constBits()),
-		drawContext.get(), &quad, interpolation, &offsetX, &offsetY);
-	if(img && outOffset) {
-		outOffset->setX(offsetX);
-		outOffset->setY(offsetY);
+	if(source.isNull()) {
+		DP_error_set("Source image is null");
+	} else {
+		DrawContext drawContext = DrawContextPool::acquire();
+		DP_Quad quad = DP_quad_make(
+			dstQuad.point(0).x(), dstQuad.point(0).y(), dstQuad.point(1).x(),
+			dstQuad.point(1).y(), dstQuad.point(2).x(), dstQuad.point(2).y(),
+			dstQuad.point(3).x(), dstQuad.point(3).y());
+		int offsetX, offsetY;
+		DP_Image *img = DP_image_transform_pixels(
+			source.width(), source.height(),
+			reinterpret_cast<const DP_Pixel8 *>(source.constBits()),
+			drawContext.get(), &quad, interpolation, &offsetX, &offsetY);
+		if(img && outOffset) {
+			outOffset->setX(offsetX);
+			outOffset->setY(offsetY);
+			return wrapImage(img);
+		}
 	}
-	return wrapImage(img);
+	return QImage();
 }
 
 }
