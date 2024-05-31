@@ -551,22 +551,17 @@ int LayerList::makeAddLayerOrGroupCommands(
 	} else {
 		int targetId = -1;
 		int sourceId = 0;
+		int targetFrame = -1;
+		int moveId = -1;
 		uint8_t flags = group ? DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP : 0;
 
 		if(keyFrame && m_trackId != 0 && m_frame != -1) {
 			// TODO: having to do a layer move here is dumb, there should be a
 			// layer create flag that throws the layer at the bottom instead.
-			int targetFrame = m_frame + keyFrameOffset;
-			int moveId = intuitKeyFrameTarget(
+			targetFrame = m_frame + keyFrameOffset;
+			moveId = intuitKeyFrameTarget(
 				duplicateKeyFrame ? m_frame : -1, targetFrame, sourceId,
 				targetId, flags);
-			msgs.append(net::makeKeyFrameSetMessage(
-				contextId, m_trackId, targetFrame, id, 0,
-				DP_MSG_KEY_FRAME_SET_SOURCE_LAYER));
-			if(moveId != -1) {
-				msgs.append(net::makeLayerTreeMoveMessage(
-					contextId, id, targetId, moveId));
-			}
 		}
 
 		if(targetId == -1 && index.isValid()) {
@@ -600,6 +595,15 @@ int LayerList::makeAddLayerOrGroupCommands(
 		msgs.append(net::makeLayerTreeCreateMessage(
 			contextId, id, sourceId, qMax(0, targetId), 0, flags,
 			effectiveTitle));
+		if(targetFrame >= 0) {
+			msgs.append(net::makeKeyFrameSetMessage(
+				contextId, m_trackId, targetFrame, id, 0,
+				DP_MSG_KEY_FRAME_SET_SOURCE_LAYER));
+		}
+		if(moveId != -1) {
+			msgs.append(
+				net::makeLayerTreeMoveMessage(contextId, id, targetId, moveId));
+		}
 	}
 
 	layers->setLayerIdToSelect(id);
