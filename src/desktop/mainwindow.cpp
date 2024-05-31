@@ -68,6 +68,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "libclient/utils/customshortcutmodel.h"
 #include "libclient/utils/logging.h"
 #include "desktop/utils/actionbuilder.h"
+#include "desktop/utils/connections.h"
 #include "desktop/utils/widgetutils.h"
 
 #include "desktop/widgets/dualcolorbutton.h"
@@ -1380,38 +1381,15 @@ void MainWindow::showPopupMessage(const QString &message)
 
 void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 {
-	static constexpr char key[] = "startdialogconnections";
-	class Connections final : public QObject {
-	public:
-		Connections(QObject *parent)
-			: QObject{parent}
-		{
-			setObjectName(key);
-		}
-
-		void add(const QMetaObject::Connection &con)
-		{
-			m_values.append(con);
-		}
-
-		void clear()
-		{
-			for(const QMetaObject::Connection &con : m_values) {
-				disconnect(con);
-			}
-		}
-
-	private:
-		QVector<QMetaObject::Connection> m_values;
-	};
-
-	Connections *previousConnections = dlg->findChild<Connections *>(key);
+	QString key = QStringLiteral("startdialogconnections");
+	utils::Connections *previousConnections =
+		dlg->findChild<utils::Connections *>(key);
 	if(previousConnections) {
 		previousConnections->clear();
 		delete previousConnections;
 	}
 
-	Connections *connections = new Connections{dlg};
+	utils::Connections *connections = new utils::Connections(key, dlg);
 	connections->add(connect(dlg, &dialogs::StartDialog::openFile, this, &MainWindow::open));
 	connections->add(connect(dlg, &dialogs::StartDialog::openPath, this, std::bind(&MainWindow::openPath, this, _1, nullptr)));
 	connections->add(connect(dlg, &dialogs::StartDialog::layouts, this, &MainWindow::showLayoutsDialog));

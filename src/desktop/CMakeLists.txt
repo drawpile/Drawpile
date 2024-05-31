@@ -293,6 +293,7 @@ target_sources(drawpile PRIVATE
 	utils/accountlistmodel.cpp
 	utils/accountlistmodel.h
 	utils/actionbuilder.h
+	utils/connections.h
 	utils/globalkeyeventfilter.cpp
 	utils/globalkeyeventfilter.h
 	utils/listserverdelegate.cpp
