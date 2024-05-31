@@ -906,6 +906,12 @@ QVariant LayerMimeData::retrieveData(
 
 int LayerListModel::getAvailableLayerId() const
 {
+	QVector<int> foundIds = getAvailableLayerIds(1);
+	return foundIds.isEmpty() ? 0 : foundIds.first();
+}
+
+QVector<int> LayerListModel::getAvailableLayerIds(int count) const
+{
 	Q_ASSERT(m_aclstate);
 
 	QSet<int> takenIds;
@@ -915,20 +921,31 @@ int LayerListModel::getAvailableLayerId() const
 	}
 
 	int localUserId = m_aclstate->localUserId();
-	int layerId = searchAvailableLayerId(takenIds, localUserId);
-	if(layerId == 0 && m_aclstate->amOperator()) {
-		layerId = searchAvailableLayerId(takenIds, 0);
-		if(layerId == 0) {
-			for(int i = 255; i > 0; --i) {
-				layerId = searchAvailableLayerId(takenIds, i);
-				if(layerId != 0) {
-					break;
+	QVector<int> foundIds;
+	foundIds.reserve(count);
+	while(int(foundIds.size()) < count) {
+		int layerId = searchAvailableLayerId(takenIds, localUserId);
+		if(layerId == 0 && m_aclstate->amOperator()) {
+			layerId = searchAvailableLayerId(takenIds, 0);
+			if(layerId == 0) {
+				for(int i = 255; i > 0; --i) {
+					layerId = searchAvailableLayerId(takenIds, i);
+					if(layerId != 0) {
+						break;
+					}
 				}
 			}
 		}
+
+		if(layerId == 0) {
+			break;
+		} else {
+			foundIds.append(layerId);
+			takenIds.insert(layerId);
+		}
 	}
 
-	return layerId;
+	return foundIds;
 }
 
 void LayerListModel::updateCheckedLayerAcl(int layerId)

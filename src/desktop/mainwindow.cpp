@@ -4426,9 +4426,9 @@ void MainWindow::setupActions()
 	QAction *trackAbove = makeAction("track-above", tr("Track Above")).icon("arrow-up").shortcut("Ctrl+Shift+K").autoRepeat();
 	QAction *trackBelow = makeAction("track-below", tr("Track Below")).icon("arrow-down").shortcut("Ctrl+Shift+J").autoRepeat();
 
-	QAction *keyFrameCreateLayer = makeAction("key-frame-create-layer", tr("Create Layer on Current Key Frame")).icon("keyframe-add").shortcut("Ctrl+Shift+R");
-	QAction *keyFrameCreateLayerNext = makeAction("key-frame-create-layer-next", tr("Create Layer on Next Key Frame")).icon("keyframe-next").shortcut("Ctrl+Shift+T");
-	QAction *keyFrameCreateLayerPrev = makeAction("key-frame-create-layer-prev", tr("Create Layer on Previous Key Frame")).icon("keyframe-previous").shortcut("Ctrl+Shift+E");
+	QAction *keyFrameCreateLayer = makeAction("key-frame-create-layer", tr("Create Layers on Current Key Frame")).icon("keyframe-add").shortcut("Ctrl+Shift+R");
+	QAction *keyFrameCreateLayerNext = makeAction("key-frame-create-layer-next", tr("Create Layers on Next Key Frame")).icon("keyframe-next").shortcut("Ctrl+Shift+T");
+	QAction *keyFrameCreateLayerPrev = makeAction("key-frame-create-layer-prev", tr("Create Layers on Previous Key Frame")).icon("keyframe-previous").shortcut("Ctrl+Shift+E");
 	QAction *keyFrameCreateGroup = makeAction("key-frame-create-group", tr("Create Group on Current Key Frame")).icon("keyframe-add").noDefaultShortcut();
 	QAction *keyFrameCreateGroupNext = makeAction("key-frame-create-group-next", tr("Create Group on Next Key Frame")).icon("keyframe-next").noDefaultShortcut();
 	QAction *keyFrameCreateGroupPrev = makeAction("key-frame-create-group-prev", tr("Create Group on Previous Key Frame")).icon("keyframe-previous").noDefaultShortcut();
@@ -4462,7 +4462,7 @@ void MainWindow::setupActions()
 	animationMenu->addAction(keyFrameExposureDecrease);
 	animationMenu->addSeparator();
 	QMenu *animationLayerMenu = animationMenu->addMenu(
-		QIcon::fromTheme("layer-visible-on"), tr("Create Layer on Key Frame"));
+		QIcon::fromTheme("layer-visible-on"), tr("Create Layers on Key Frame"));
 	animationLayerMenu->addAction(keyFrameCreateLayer);
 	animationLayerMenu->addAction(keyFrameCreateLayerNext);
 	animationLayerMenu->addAction(keyFrameCreateLayerPrev);

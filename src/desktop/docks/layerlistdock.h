@@ -24,6 +24,7 @@ class QTreeView;
 
 namespace canvas {
 class CanvasModel;
+class LayerListModel;
 }
 
 namespace dialogs {
@@ -139,9 +140,19 @@ private:
 		QVector<net::Message> &msgs, int selectedId, bool group,
 		bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset,
 		const QString &title);
+	QModelIndex searchKeyFrameReference(int &outRequiredIdCount) const;
+	static int countRequiredIds(
+		const canvas::LayerListModel *layerlist, const QModelIndex &idx);
 	int intuitKeyFrameTarget(
 		int sourceFrame, int targetFrame, int &sourceId, int &targetId,
-		uint8_t &flags);
+		uint8_t &flags) const;
+	void makeKeyFrameReferenceAddCommands(
+		const canvas::LayerListModel *layerlist, QVector<net::Message> &msgs,
+		QVector<int> ids, int &idIndex, uint8_t contextId,
+		const QModelIndex &parent, int parentId) const;
+	void makeKeyFrameReferenceEditCommands(
+		QVector<net::Message> &msgs, uint8_t contextId, const QModelIndex &idx,
+		int id) const;
 
 	void showPropertiesForNew(bool group);
 	void showPropertiesOfSelected();

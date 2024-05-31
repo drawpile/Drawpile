@@ -529,13 +529,27 @@ int LayerList::makeAddLayerOrGroupCommands(
 	const QString &title)
 {
 	canvas::LayerListModel *layers = m_canvas->layerlist();
-	const int id = layers->getAvailableLayerId();
-	if(id == 0) {
-		qWarning(
-			"Couldn't find a free ID for a new %s!", group ? "group" : "layer");
+
+	// If we're creating new key frame layers, we intuit the structure from a
+	// surrounding key frame if we can find one. That's generally more useful
+	// than just creating a plain layer when the track contains other stuff.
+	int requiredIdCount = 1;
+	QModelIndex referenceIdx;
+	if(keyFrame && !group && !duplicateKeyFrame && m_trackId != 0 &&
+	   m_frame != -1) {
+		referenceIdx = searchKeyFrameReference(requiredIdCount);
+		if(referenceIdx.isValid()) {
+			group = true;
+		}
+	}
+
+	QVector<int> ids = layers->getAvailableLayerIds(requiredIdCount);
+	if(ids.isEmpty() || int(ids.size()) < requiredIdCount) {
+		qWarning("Couldn't find %d free layer id(s)", requiredIdCount);
 		return 0;
 	}
 
+	int firstId = ids.first();
 	uint8_t contextId = m_canvas->localUserId();
 	msgs.append(net::makeUndoPointMessage(contextId));
 
@@ -545,7 +559,7 @@ int LayerList::makeAddLayerOrGroupCommands(
 		uint16_t targetId = index.isValid() ? selectedId : 0;
 		uint8_t flags = targetId == 0 ? 0 : DP_MSG_LAYER_CREATE_FLAGS_INSERT;
 		msgs.append(net::makeLayerCreateMessage(
-			contextId, id, targetId, 0, flags,
+			contextId, firstId, targetId, 0, flags,
 			title.isEmpty() ? layers->getAvailableLayerName(getBaseName(false))
 							: title));
 	} else {
@@ -593,26 +607,94 @@ int LayerList::makeAddLayerOrGroupCommands(
 		}
 
 		msgs.append(net::makeLayerTreeCreateMessage(
-			contextId, id, sourceId, qMax(0, targetId), 0, flags,
+			contextId, firstId, sourceId, qMax(0, targetId), 0, flags,
 			effectiveTitle));
 		if(targetFrame >= 0) {
 			msgs.append(net::makeKeyFrameSetMessage(
-				contextId, m_trackId, targetFrame, id, 0,
+				contextId, m_trackId, targetFrame, firstId, 0,
 				DP_MSG_KEY_FRAME_SET_SOURCE_LAYER));
 		}
 		if(moveId != -1) {
-			msgs.append(
-				net::makeLayerTreeMoveMessage(contextId, id, targetId, moveId));
+			msgs.append(net::makeLayerTreeMoveMessage(
+				contextId, firstId, targetId, moveId));
+		}
+
+		if(referenceIdx.isValid()) {
+			makeKeyFrameReferenceEditCommands(
+				msgs, contextId, referenceIdx, firstId);
+			int idIndex = 1;
+			makeKeyFrameReferenceAddCommands(
+				layers, msgs, ids, idIndex, contextId, referenceIdx, firstId);
 		}
 	}
 
-	layers->setLayerIdToSelect(id);
-	return id;
+	layers->setLayerIdToSelect(firstId);
+	return firstId;
+}
+
+QModelIndex LayerList::searchKeyFrameReference(int &outRequiredIdCount) const
+{
+	const canvas::TimelineModel *timeline = m_canvas->timeline();
+	const canvas::TimelineTrack *track = timeline->getTrackById(m_trackId);
+	if(!track) {
+		return QModelIndex();
+	}
+
+	int bestFrameIndex = -1;
+	QModelIndex idx;
+	const canvas::LayerListModel *layerlist = m_canvas->layerlist();
+	for(const canvas::TimelineKeyFrame &keyFrame : track->keyFrames) {
+		if(keyFrame.layerId == 0) {
+			continue;
+		}
+
+		QModelIndex candidate = layerlist->layerIndex(keyFrame.layerId);
+		if(!candidate.isValid()) {
+			continue;
+		}
+
+		if(idx.isValid()) {
+			if(bestFrameIndex <= m_frame) {
+				if(keyFrame.frameIndex > m_frame ||
+				   keyFrame.frameIndex < bestFrameIndex) {
+					continue;
+				}
+			} else if(keyFrame.frameIndex > bestFrameIndex) {
+				continue;
+			}
+		}
+
+		bestFrameIndex = keyFrame.frameIndex;
+		idx = candidate;
+	}
+
+	if(!idx.isValid() ||
+	   !idx.data(canvas::LayerListModel::IsGroupRole).toBool()) {
+		return QModelIndex();
+	}
+
+	outRequiredIdCount = countRequiredIds(layerlist, idx);
+	return idx;
+}
+
+int LayerList::countRequiredIds(
+	const canvas::LayerListModel *layerlist, const QModelIndex &idx)
+{
+	if(idx.isValid()) {
+		int count = 1;
+		int childCount = layerlist->rowCount(idx);
+		for(int i = 0; i < childCount; ++i) {
+			count += countRequiredIds(layerlist, layerlist->index(i, 0, idx));
+		}
+		return count;
+	} else {
+		return 0;
+	}
 }
 
 int LayerList::intuitKeyFrameTarget(
 	int sourceFrame, int targetFrame, int &sourceId, int &targetId,
-	uint8_t &flags)
+	uint8_t &flags) const
 {
 	// Guess where we're supposed to throw this new layer in relation to
 	// surrounding frames in the timeline. If there's a previous key frame, we
@@ -671,6 +753,50 @@ int LayerList::intuitKeyFrameTarget(
 		}
 	} else {
 		return -1;
+	}
+}
+
+void LayerList::makeKeyFrameReferenceAddCommands(
+	const canvas::LayerListModel *layerlist, QVector<net::Message> &msgs,
+	QVector<int> ids, int &idIndex, uint8_t contextId,
+	const QModelIndex &parent, int parentId) const
+{
+	int childCount = layerlist->rowCount(parent);
+	for(int i = 0; i < childCount; ++i) {
+		QModelIndex idx = layerlist->index(childCount - i - 1, 0, parent);
+		if(idx.isValid() && idIndex < ids.size()) {
+			int id = ids[idIndex++];
+			bool group = idx.data(canvas::LayerListModel::IsGroupRole).toBool();
+			uint8_t flags = DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO |
+							(group ? DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP : 0);
+			msgs.append(net::makeLayerTreeCreateMessage(
+				contextId, id, 0, parentId, 0, flags,
+				idx.data(canvas::LayerListModel::TitleRole).toString()));
+			makeKeyFrameReferenceEditCommands(msgs, contextId, idx, id);
+			if(group) {
+				makeKeyFrameReferenceAddCommands(
+					layerlist, msgs, ids, idIndex, contextId, idx, id);
+			}
+		}
+	}
+}
+
+void LayerList::makeKeyFrameReferenceEditCommands(
+	QVector<net::Message> &msgs, uint8_t contextId, const QModelIndex &idx,
+	int id) const
+{
+	const canvas::LayerListItem &layer =
+		idx.data().value<canvas::LayerListItem>();
+	if(layer.opacity != 1.0f || layer.blend != DP_BLEND_MODE_NORMAL ||
+	   layer.censored || (layer.group && !layer.isolated)) {
+		uint8_t flags =
+			(layer.censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
+			(layer.group && layer.isolated
+				 ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED
+				 : 0);
+		msgs.append(net::makeLayerAttributesMessage(
+			contextId, id, 0, flags, uint8_t(layer.opacity * 255.0f),
+			uint8_t(layer.blend)));
 	}
 }
 

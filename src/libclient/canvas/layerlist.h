@@ -158,6 +158,7 @@ public:
 	 * @return layer ID or 0 if all are taken
 	 */
 	int getAvailableLayerId() const;
+	QVector<int> getAvailableLayerIds(int count) const;
 
 	/**
 	 * @brief Find a unique name for a layer
