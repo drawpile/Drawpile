@@ -35,6 +35,7 @@ pub const DP_CANVAS_HISTORY_UNDO_DEPTH_MAX: u32 = 255;
 pub const DP_LOAD_FLAG_NONE: u32 = 0;
 pub const DP_LOAD_FLAG_SINGLE_THREAD: u32 = 1;
 pub const DP_PREVIEW_BASE_SUBLAYER_ID: i32 = -100;
+pub const DP_PREVIEW_TRANSFORM_COUNT: u32 = 16;
 pub const DP_ACL_ALL_LOCKED_BIT: u32 = 128;
 pub const DP_ACL_STATE_FILTERED_BIT: u32 = 1;
 pub const DP_ACL_STATE_CHANGE_USERS_BIT: u32 = 2;
@@ -239,6 +240,16 @@ pub const DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_STATIC_LENGTH: u32 = 4;
 pub const DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_LAYERS_MIN_COUNT: u32 = 0;
 pub const DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_LAYERS_MAX_COUNT: u32 = 32765;
 pub const DP_MSG_KEY_FRAME_DELETE_STATIC_LENGTH: u32 = 8;
+pub const DP_MSG_SELECTION_PUT_STATIC_LENGTH: u32 = 14;
+pub const DP_MSG_SELECTION_PUT_OP_REPLACE: u32 = 0;
+pub const DP_MSG_SELECTION_PUT_OP_UNITE: u32 = 1;
+pub const DP_MSG_SELECTION_PUT_OP_INTERSECT: u32 = 2;
+pub const DP_MSG_SELECTION_PUT_OP_EXCLUDE: u32 = 3;
+pub const DP_MSG_SELECTION_PUT_OP_COMPLEMENT: u32 = 4;
+pub const DP_MSG_SELECTION_PUT_NUM_OP: u32 = 5;
+pub const DP_MSG_SELECTION_PUT_MASK_MIN_SIZE: u32 = 0;
+pub const DP_MSG_SELECTION_PUT_MASK_MAX_SIZE: u32 = 65521;
+pub const DP_MSG_SELECTION_CLEAR_STATIC_LENGTH: u32 = 1;
 pub const DP_MSG_UNDO_STATIC_LENGTH: u32 = 2;
 pub const DP_MESSAGE_MAX: u32 = 255;
 pub const DP_MESSAGE_HEADER_LENGTH: u32 = 4;
@@ -1514,6 +1525,9 @@ extern "C" {
     );
 }
 extern "C" {
+    pub fn DP_pixel8_mul(a: ::std::os::raw::c_uint, b: ::std::os::raw::c_uint) -> u8;
+}
+extern "C" {
     pub fn DP_blend_color8_to(
         out: *mut DP_Pixel8,
         dst: *const DP_Pixel8,
@@ -1572,6 +1586,11 @@ pub struct DP_Message {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct DP_SelectionSet {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct DP_Tile {
     _unused: [u8; 0],
 }
@@ -1596,10 +1615,17 @@ pub type DP_TransientLayerContent = DP_LayerContent;
 pub type DP_TransientLayerList = DP_LayerList;
 pub type DP_TransientLayerPropsList = DP_LayerPropsList;
 pub type DP_TransientLayerRoutes = DP_LayerRoutes;
+pub type DP_TransientSelectionSet = DP_SelectionSet;
 pub type DP_TransientTile = DP_Tile;
 pub type DP_TransientTimeline = DP_Timeline;
 extern "C" {
     pub fn DP_canvas_state_new() -> *mut DP_CanvasState;
+}
+extern "C" {
+    pub fn DP_canvas_state_new_with_selections_noinc(
+        cs: *mut DP_CanvasState,
+        ss: *mut DP_SelectionSet,
+    ) -> *mut DP_CanvasState;
 }
 extern "C" {
     pub fn DP_canvas_state_incref(cs: *mut DP_CanvasState) -> *mut DP_CanvasState;
@@ -1654,6 +1680,11 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_canvas_state_metadata_noinc(cs: *mut DP_CanvasState) -> *mut DP_DocumentMetadata;
+}
+extern "C" {
+    pub fn DP_canvas_state_selections_noinc_nullable(
+        cs: *mut DP_CanvasState,
+    ) -> *mut DP_SelectionSet;
 }
 extern "C" {
     pub fn DP_canvas_state_frame_count(cs: *mut DP_CanvasState) -> ::std::os::raw::c_int;
@@ -1870,6 +1901,11 @@ extern "C" {
     ) -> *mut DP_DocumentMetadata;
 }
 extern "C" {
+    pub fn DP_transient_canvas_state_selections_noinc_nullable(
+        tcs: *mut DP_TransientCanvasState,
+    ) -> *mut DP_SelectionSet;
+}
+extern "C" {
     pub fn DP_transient_canvas_state_layers_set_inc(
         tcs: *mut DP_TransientCanvasState,
         ll: *mut DP_LayerList,
@@ -1933,6 +1969,15 @@ extern "C" {
     pub fn DP_transient_canvas_state_transient_metadata(
         tcs: *mut DP_TransientCanvasState,
     ) -> *mut DP_TransientDocumentMetadata;
+}
+extern "C" {
+    pub fn DP_transient_canvas_state_transient_selections_set_noinc(
+        tcs: *mut DP_TransientCanvasState,
+        tss: *mut DP_TransientSelectionSet,
+    );
+}
+extern "C" {
+    pub fn DP_transient_canvas_state_transient_selections_clear(tcs: *mut DP_TransientCanvasState);
 }
 extern "C" {
     pub fn DP_transient_canvas_state_intuit_background(tcs: *mut DP_TransientCanvasState);
@@ -2625,6 +2670,9 @@ extern "C" {
     ) -> bool;
 }
 extern "C" {
+    pub fn DP_layer_content_bounds(lc: *mut DP_LayerContent, out_bounds: *mut DP_Rect) -> bool;
+}
+extern "C" {
     pub fn DP_layer_content_search_change_bounds(
         lc: *mut DP_LayerContent,
         context_id: ::std::os::raw::c_uint,
@@ -2648,7 +2696,25 @@ extern "C" {
     ) -> *mut DP_UPixel8;
 }
 extern "C" {
+    pub fn DP_layer_content_to_pixels8_cropped(
+        lc: *mut DP_LayerContent,
+        out_offset_x: *mut ::std::os::raw::c_int,
+        out_offset_y: *mut ::std::os::raw::c_int,
+        out_width: *mut ::std::os::raw::c_int,
+        out_height: *mut ::std::os::raw::c_int,
+    ) -> *mut DP_Pixel8;
+}
+extern "C" {
     pub fn DP_layer_content_to_upixels8(
+        lc: *mut DP_LayerContent,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+        width: ::std::os::raw::c_int,
+        height: ::std::os::raw::c_int,
+    ) -> *mut DP_UPixel8;
+}
+extern "C" {
+    pub fn DP_layer_content_to_upixels8_censored(
         lc: *mut DP_LayerContent,
         x: ::std::os::raw::c_int,
         y: ::std::os::raw::c_int,
@@ -2663,6 +2729,16 @@ extern "C" {
         y: ::std::os::raw::c_int,
         width: ::std::os::raw::c_int,
         height: ::std::os::raw::c_int,
+    ) -> *mut DP_Pixel8;
+}
+extern "C" {
+    pub fn DP_layer_content_to_pixels8_mask(
+        lc: *mut DP_LayerContent,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+        width: ::std::os::raw::c_int,
+        height: ::std::os::raw::c_int,
+        color: DP_UPixel8,
     ) -> *mut DP_Pixel8;
 }
 extern "C" {
@@ -2769,6 +2845,12 @@ extern "C" {
     pub fn DP_transient_layer_content_sub_props_noinc(
         tlc: *mut DP_TransientLayerContent,
     ) -> *mut DP_LayerPropsList;
+}
+extern "C" {
+    pub fn DP_transient_layer_content_bounds(
+        tlc: *mut DP_TransientLayerContent,
+        out_bounds: *mut DP_Rect,
+    ) -> bool;
 }
 extern "C" {
     pub fn DP_transient_layer_content_resize_to(
@@ -2961,6 +3043,9 @@ extern "C" {
     pub fn DP_layer_group_children_noinc(lg: *mut DP_LayerGroup) -> *mut DP_LayerList;
 }
 extern "C" {
+    pub fn DP_layer_group_bounds(lg: *mut DP_LayerGroup, out_bounds: *mut DP_Rect) -> bool;
+}
+extern "C" {
     pub fn DP_layer_group_search_change_bounds(
         lg: *mut DP_LayerGroup,
         lp: *mut DP_LayerProps,
@@ -2989,6 +3074,7 @@ extern "C" {
         y: ::std::os::raw::c_int,
         width: ::std::os::raw::c_int,
         height: ::std::os::raw::c_int,
+        reveal_censored: bool,
     ) -> *mut DP_Pixel8;
 }
 extern "C" {
@@ -3173,6 +3259,7 @@ extern "C" {
         tlc: *mut DP_TransientLayerContent,
         parent_opacity: u16,
         include_sublayers: bool,
+        reveal_censored: bool,
         pass_through_censored: bool,
     );
 }
@@ -3951,7 +4038,8 @@ pub const DP_AFFECTED_DOMAIN_PIXELS: DP_AffectedDomain = 3;
 pub const DP_AFFECTED_DOMAIN_CANVAS_BACKGROUND: DP_AffectedDomain = 4;
 pub const DP_AFFECTED_DOMAIN_DOCUMENT_METADATA: DP_AffectedDomain = 5;
 pub const DP_AFFECTED_DOMAIN_TIMELINE: DP_AffectedDomain = 6;
-pub const DP_AFFECTED_DOMAIN_EVERYTHING: DP_AffectedDomain = 7;
+pub const DP_AFFECTED_DOMAIN_SELECTIONS: DP_AffectedDomain = 7;
+pub const DP_AFFECTED_DOMAIN_EVERYTHING: DP_AffectedDomain = 8;
 pub type DP_AffectedDomain = ::std::os::raw::c_uint;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -4996,6 +5084,49 @@ fn bindgen_test_layout_DP_ViewModeBuffer() {
     );
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_ViewModeCallback {
+    pub is_visible: ::std::option::Option<
+        unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void, arg2: *mut DP_LayerProps) -> bool,
+    >,
+    pub user: *mut ::std::os::raw::c_void,
+}
+#[test]
+fn bindgen_test_layout_DP_ViewModeCallback() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_ViewModeCallback> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_ViewModeCallback>(),
+        16usize,
+        concat!("Size of: ", stringify!(DP_ViewModeCallback))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_ViewModeCallback>(),
+        8usize,
+        concat!("Alignment of ", stringify!(DP_ViewModeCallback))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).is_visible) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_ViewModeCallback),
+            "::",
+            stringify!(is_visible)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).user) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_ViewModeCallback),
+            "::",
+            stringify!(user)
+        )
+    );
+}
+#[repr(C)]
 #[derive(Copy, Clone)]
 pub struct DP_ViewModeFilter {
     pub internal_type: ::std::os::raw::c_int,
@@ -5006,6 +5137,7 @@ pub struct DP_ViewModeFilter {
 pub union DP_ViewModeFilter__bindgen_ty_1 {
     pub layer_id: ::std::os::raw::c_int,
     pub vmb: *mut DP_ViewModeBuffer,
+    pub callback: *mut DP_ViewModeCallback,
 }
 #[test]
 fn bindgen_test_layout_DP_ViewModeFilter__bindgen_ty_1() {
@@ -5040,6 +5172,16 @@ fn bindgen_test_layout_DP_ViewModeFilter__bindgen_ty_1() {
             stringify!(DP_ViewModeFilter__bindgen_ty_1),
             "::",
             stringify!(vmb)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).callback) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_ViewModeFilter__bindgen_ty_1),
+            "::",
+            stringify!(callback)
         )
     );
 }
@@ -5079,6 +5221,7 @@ pub struct DP_ViewModeContext {
 pub union DP_ViewModeContext__bindgen_ty_1 {
     pub layer_id: ::std::os::raw::c_int,
     pub frame: DP_ViewModeContext__bindgen_ty_1__bindgen_ty_1,
+    pub callback: *mut DP_ViewModeCallback,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -5164,6 +5307,16 @@ fn bindgen_test_layout_DP_ViewModeContext__bindgen_ty_1() {
             stringify!(DP_ViewModeContext__bindgen_ty_1),
             "::",
             stringify!(frame)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).callback) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_ViewModeContext__bindgen_ty_1),
+            "::",
+            stringify!(callback)
         )
     );
 }
@@ -5402,6 +5555,11 @@ extern "C" {
         cs: *mut DP_CanvasState,
         active: ::std::os::raw::c_int,
         oss: *const DP_OnionSkins,
+    ) -> DP_ViewModeFilter;
+}
+extern "C" {
+    pub fn DP_view_mode_filter_make_callback(
+        callback: *mut DP_ViewModeCallback,
     ) -> DP_ViewModeFilter;
 }
 extern "C" {
@@ -6125,9 +6283,10 @@ extern "C" {
     ) -> *mut DP_Image;
 }
 pub const DP_PREVIEW_CUT: DP_PreviewType = 0;
-pub const DP_PREVIEW_TRANSFORM: DP_PreviewType = 1;
-pub const DP_PREVIEW_DABS: DP_PreviewType = 2;
-pub const DP_PREVIEW_COUNT: DP_PreviewType = 3;
+pub const DP_PREVIEW_DABS: DP_PreviewType = 1;
+pub const DP_PREVIEW_TRANSFORM_FIRST: DP_PreviewType = 2;
+pub const DP_PREVIEW_TRANSFORM_LAST: DP_PreviewType = 17;
+pub const DP_PREVIEW_COUNT: DP_PreviewType = 18;
 pub type DP_PreviewType = ::std::os::raw::c_uint;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -6150,7 +6309,7 @@ pub type DP_PreviewRenderedFn = ::std::option::Option<
 pub type DP_PreviewRerenderedFn =
     ::std::option::Option<unsafe extern "C" fn(user: *mut ::std::os::raw::c_void)>;
 pub type DP_PreviewClearFn = ::std::option::Option<
-    unsafe extern "C" fn(user: *mut ::std::os::raw::c_void, type_: DP_PreviewType),
+    unsafe extern "C" fn(user: *mut ::std::os::raw::c_void, type_: ::std::os::raw::c_int),
 >;
 extern "C" {
     pub static mut DP_preview_null: DP_Preview;
@@ -6171,7 +6330,7 @@ extern "C" {
     pub fn DP_preview_refcount(pv: *mut DP_Preview) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn DP_preview_type(pv: *mut DP_Preview) -> DP_PreviewType;
+    pub fn DP_preview_type(pv: *mut DP_Preview) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn DP_preview_apply(
@@ -6194,16 +6353,18 @@ extern "C" {
     pub fn DP_preview_new_cut(
         initial_offset_x: ::std::os::raw::c_int,
         initial_offset_y: ::std::os::raw::c_int,
-        layer_id: ::std::os::raw::c_int,
         x: ::std::os::raw::c_int,
         y: ::std::os::raw::c_int,
         width: ::std::os::raw::c_int,
         height: ::std::os::raw::c_int,
         mask_or_null: *const DP_Pixel8,
+        layer_id_count: ::std::os::raw::c_int,
+        layer_ids: *const ::std::os::raw::c_int,
     ) -> *mut DP_Preview;
 }
 extern "C" {
     pub fn DP_preview_new_transform(
+        id: ::std::os::raw::c_int,
         initial_offset_x: ::std::os::raw::c_int,
         initial_offset_y: ::std::os::raw::c_int,
         layer_id: ::std::os::raw::c_int,
@@ -6260,7 +6421,10 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn DP_preview_renderer_cancel(pvr: *mut DP_PreviewRenderer, type_: DP_PreviewType);
+    pub fn DP_preview_renderer_cancel(pvr: *mut DP_PreviewRenderer, type_: ::std::os::raw::c_int);
+}
+extern "C" {
+    pub fn DP_preview_renderer_cancel_all_transforms(pvr: *mut DP_PreviewRenderer);
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -6312,6 +6476,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_renderer_checkers(renderer: *mut DP_Renderer) -> bool;
+}
+extern "C" {
+    pub fn DP_renderer_checkers_visible(renderer: *mut DP_Renderer) -> bool;
 }
 extern "C" {
     pub fn DP_renderer_apply(
@@ -6394,6 +6561,9 @@ pub type DP_PaintEngineDocumentMetadataChangedFn = ::std::option::Option<
 >;
 pub type DP_PaintEngineTimelineChangedFn = ::std::option::Option<
     unsafe extern "C" fn(user: *mut ::std::os::raw::c_void, tl: *mut DP_Timeline),
+>;
+pub type DP_PaintEngineSelectionsChangedFn = ::std::option::Option<
+    unsafe extern "C" fn(user: *mut ::std::os::raw::c_void, ss_or_null: *mut DP_SelectionSet),
 >;
 pub type DP_PaintEngineCursorMovedFn = ::std::option::Option<
     unsafe extern "C" fn(
@@ -6511,6 +6681,9 @@ extern "C" {
         context_id: ::std::os::raw::c_uint,
         show_tiles: bool,
     );
+}
+extern "C" {
+    pub fn DP_paint_engine_checkers_visible(pe: *mut DP_PaintEngine) -> bool;
 }
 extern "C" {
     pub fn DP_paint_engine_checker_color1(pe: *mut DP_PaintEngine) -> u32;
@@ -6670,6 +6843,7 @@ extern "C" {
         annotations_changed: DP_PaintEngineAnnotationsChangedFn,
         document_metadata_changed: DP_PaintEngineDocumentMetadataChangedFn,
         timeline_changed: DP_PaintEngineTimelineChangedFn,
+        selections_changed: DP_PaintEngineSelectionsChangedFn,
         cursor_moved: DP_PaintEngineCursorMovedFn,
         default_layer_set: DP_PaintEngineDefaultLayerSetFn,
         undo_depth_limit_set: DP_PaintEngineUndoDepthLimitSetFn,
@@ -6697,17 +6871,19 @@ extern "C" {
 extern "C" {
     pub fn DP_paint_engine_preview_cut(
         pe: *mut DP_PaintEngine,
-        layer_id: ::std::os::raw::c_int,
         x: ::std::os::raw::c_int,
         y: ::std::os::raw::c_int,
         width: ::std::os::raw::c_int,
         height: ::std::os::raw::c_int,
         mask_or_null: *const DP_Pixel8,
+        layer_id_count: ::std::os::raw::c_int,
+        layer_ids: *const ::std::os::raw::c_int,
     );
 }
 extern "C" {
     pub fn DP_paint_engine_preview_transform(
         pe: *mut DP_PaintEngine,
+        id: ::std::os::raw::c_int,
         layer_id: ::std::os::raw::c_int,
         x: ::std::os::raw::c_int,
         y: ::std::os::raw::c_int,
@@ -6729,7 +6905,10 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn DP_paint_engine_preview_clear(pe: *mut DP_PaintEngine, type_: DP_PreviewType);
+    pub fn DP_paint_engine_preview_clear(pe: *mut DP_PaintEngine, type_: ::std::os::raw::c_int);
+}
+extern "C" {
+    pub fn DP_paint_engine_preview_clear_all_transforms(pe: *mut DP_PaintEngine);
 }
 extern "C" {
     pub fn DP_paint_engine_view_canvas_state_inc(pe: *mut DP_PaintEngine) -> *mut DP_CanvasState;
@@ -7118,6 +7297,16 @@ extern "C" {
         img: *mut DP_Image,
         x: ::std::os::raw::c_int,
         y: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_tile_copy_to_pixels8(
+        tile_or_null: *mut DP_Tile,
+        pixels: *mut DP_Pixel8,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+        pixels_width: ::std::os::raw::c_int,
+        pixels_height: ::std::os::raw::c_int,
     );
 }
 extern "C" {
@@ -7927,6 +8116,8 @@ pub const DP_BLEND_MODE_LUMINOSITY: DP_BlendMode = 23;
 pub const DP_BLEND_MODE_COLOR: DP_BlendMode = 24;
 pub const DP_BLEND_MODE_ALPHA_DARKEN: DP_BlendMode = 25;
 pub const DP_BLEND_MODE_LAST_EXCEPT_REPLACE: DP_BlendMode = 26;
+pub const DP_BLEND_MODE_COMPAT_SELECTION_PUT: DP_BlendMode = 253;
+pub const DP_BLEND_MODE_COMPAT_SELECTION_CLEAR: DP_BlendMode = 254;
 pub const DP_BLEND_MODE_REPLACE: DP_BlendMode = 255;
 pub const DP_BLEND_MODE_COUNT: DP_BlendMode = 256;
 pub type DP_BlendMode = ::std::os::raw::c_uint;
@@ -8122,6 +8313,8 @@ pub const DP_MSG_KEY_FRAME_SET: DP_MessageType = 170;
 pub const DP_MSG_KEY_FRAME_RETITLE: DP_MessageType = 171;
 pub const DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES: DP_MessageType = 172;
 pub const DP_MSG_KEY_FRAME_DELETE: DP_MessageType = 173;
+pub const DP_MSG_SELECTION_PUT: DP_MessageType = 174;
+pub const DP_MSG_SELECTION_CLEAR: DP_MessageType = 175;
 pub const DP_MSG_UNDO: DP_MessageType = 255;
 pub const DP_MSG_TYPE_COUNT: DP_MessageType = 256;
 pub type DP_MessageType = ::std::os::raw::c_uint;
@@ -10982,6 +11175,109 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_msg_key_frame_delete_move_frame_index(mkfd: *const DP_MsgKeyFrameDelete) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_selection_put_op_variant_name(
+        value: ::std::os::raw::c_uint,
+    ) -> *const ::std::os::raw::c_char;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_MsgSelectionPut {
+    _unused: [u8; 0],
+}
+extern "C" {
+    pub fn DP_msg_selection_put_new(
+        context_id: ::std::os::raw::c_uint,
+        selection_id: u8,
+        op: u8,
+        x: i32,
+        y: i32,
+        w: u16,
+        h: u16,
+        set_mask: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: usize,
+                arg2: *mut ::std::os::raw::c_uchar,
+                arg3: *mut ::std::os::raw::c_void,
+            ),
+        >,
+        mask_size: usize,
+        mask_user: *mut ::std::os::raw::c_void,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_selection_put_deserialize(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_selection_put_parse(
+        context_id: ::std::os::raw::c_uint,
+        reader: *mut DP_TextReader,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_selection_put_cast(msg: *mut DP_Message) -> *mut DP_MsgSelectionPut;
+}
+extern "C" {
+    pub fn DP_msg_selection_put_selection_id(msp: *const DP_MsgSelectionPut) -> u8;
+}
+extern "C" {
+    pub fn DP_msg_selection_put_op(msp: *const DP_MsgSelectionPut) -> u8;
+}
+extern "C" {
+    pub fn DP_msg_selection_put_x(msp: *const DP_MsgSelectionPut) -> i32;
+}
+extern "C" {
+    pub fn DP_msg_selection_put_y(msp: *const DP_MsgSelectionPut) -> i32;
+}
+extern "C" {
+    pub fn DP_msg_selection_put_w(msp: *const DP_MsgSelectionPut) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_selection_put_h(msp: *const DP_MsgSelectionPut) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_selection_put_mask(
+        msp: *const DP_MsgSelectionPut,
+        out_size: *mut usize,
+    ) -> *const ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn DP_msg_selection_put_mask_size(msp: *const DP_MsgSelectionPut) -> usize;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_MsgSelectionClear {
+    _unused: [u8; 0],
+}
+extern "C" {
+    pub fn DP_msg_selection_clear_new(
+        context_id: ::std::os::raw::c_uint,
+        selection_id: u8,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_selection_clear_deserialize(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_selection_clear_parse(
+        context_id: ::std::os::raw::c_uint,
+        reader: *mut DP_TextReader,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_selection_clear_cast(msg: *mut DP_Message) -> *mut DP_MsgSelectionClear;
+}
+extern "C" {
+    pub fn DP_msg_selection_clear_selection_id(msc: *const DP_MsgSelectionClear) -> u8;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

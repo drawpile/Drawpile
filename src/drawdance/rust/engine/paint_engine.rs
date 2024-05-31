@@ -2,9 +2,9 @@ use super::{AclState, DrawContext, Image, Player};
 use crate::{
     dp_error_anyhow, msg::Message, DP_AnnotationList, DP_CanvasState, DP_DocumentMetadata,
     DP_LayerPropsList, DP_Message, DP_PaintEngine, DP_Pixel8, DP_PlayerResult, DP_Rect,
-    DP_Timeline, DP_canvas_state_decref, DP_paint_engine_free_join, DP_paint_engine_handle_inc,
-    DP_paint_engine_new_inc, DP_paint_engine_playback_begin, DP_paint_engine_playback_play,
-    DP_paint_engine_playback_skip_by, DP_paint_engine_playback_step,
+    DP_SelectionSet, DP_Timeline, DP_canvas_state_decref, DP_paint_engine_free_join,
+    DP_paint_engine_handle_inc, DP_paint_engine_new_inc, DP_paint_engine_playback_begin,
+    DP_paint_engine_playback_play, DP_paint_engine_playback_skip_by, DP_paint_engine_playback_step,
     DP_paint_engine_render_everything, DP_paint_engine_reveal_censored_set, DP_paint_engine_tick,
     DP_paint_engine_view_canvas_state_inc, DP_save, DP_PLAYER_RECORDING_END, DP_PLAYER_SUCCESS,
     DP_SAVE_IMAGE_ORA, DP_SAVE_RESULT_SUCCESS, DP_TILE_SIZE,
@@ -262,6 +262,7 @@ impl PaintEngine {
                 Some(Self::on_annotations_changed),
                 Some(Self::on_document_metadata_changed),
                 Some(Self::on_timeline_changed),
+                Some(Self::on_selections_changed),
                 Some(Self::on_cursor_moved),
                 Some(Self::on_default_layer_set),
                 Some(Self::on_undo_depth_limit_set),
@@ -280,6 +281,7 @@ impl PaintEngine {
     extern "C" fn on_annotations_changed(_user: *mut c_void, _al: *mut DP_AnnotationList) {}
     extern "C" fn on_document_metadata_changed(_user: *mut c_void, _dm: *mut DP_DocumentMetadata) {}
     extern "C" fn on_timeline_changed(_user: *mut c_void, _tl: *mut DP_Timeline) {}
+    extern "C" fn on_selections_changed(_user: *mut c_void, _ss_or_null: *mut DP_SelectionSet) {}
     extern "C" fn on_cursor_moved(
         _user: *mut c_void,
         _flags: c_uint,
