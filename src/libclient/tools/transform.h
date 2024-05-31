@@ -52,7 +52,7 @@ public:
 
 	void offsetActiveTool(int x, int y) override;
 
-	void beginTemporaryMove(Tool::Type toolToReturnTo);
+	void beginTemporaryMove(Tool::Type toolToReturnTo, bool onlyMask);
 	void beginTemporaryPaste(
 		Tool::Type toolToReturnTo, const QRect &srcBounds, const QImage &image);
 	void clearTemporary();
@@ -75,7 +75,7 @@ private:
 
 	bool isTransformActive() const;
 	canvas::TransformModel *getActiveTransformModel() const;
-	canvas::TransformModel *tryBeginMove(bool firstClick);
+	canvas::TransformModel *tryBeginMove(bool firstClick, bool onlyMask);
 	void tryBeginPaste(const QRect &srcBounds, const QImage &image);
 	void endTransform(canvas::TransformModel *transform, bool applied);
 

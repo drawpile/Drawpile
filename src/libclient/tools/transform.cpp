@@ -28,7 +28,7 @@ void TransformTool::begin(const BeginParams &params)
 	if(!params.right) {
 		canvas::TransformModel *transform = getActiveTransformModel();
 		if(!transform) {
-			transform = tryBeginMove(true);
+			transform = tryBeginMove(true, false);
 		}
 		updateHoverHandle(transform, params.point);
 		if(transform) {
@@ -172,11 +172,11 @@ void TransformTool::offsetActiveTool(int x, int y)
 	}
 }
 
-void TransformTool::beginTemporaryMove(Tool::Type toolToReturnTo)
+void TransformTool::beginTemporaryMove(Tool::Type toolToReturnTo, bool onlyMask)
 {
 	if(!isTransformActive()) {
 		m_toolToReturnTo = toolToReturnTo;
-		tryBeginMove(false);
+		tryBeginMove(false, onlyMask);
 	}
 }
 
@@ -337,7 +337,8 @@ canvas::TransformModel *TransformTool::getActiveTransformModel() const
 	return nullptr;
 }
 
-canvas::TransformModel *TransformTool::tryBeginMove(bool firstClick)
+canvas::TransformModel *
+TransformTool::tryBeginMove(bool firstClick, bool onlyMask)
 {
 	Q_ASSERT(!isTransformActive());
 	Q_ASSERT(m_quadStack.isEmpty());
@@ -369,7 +370,8 @@ canvas::TransformModel *TransformTool::tryBeginMove(bool firstClick)
 
 	canvas::TransformModel *transform = canvas->transform();
 	transform->beginFromCanvas(
-		selection->bounds(), selection->mask(), m_owner.activeLayer());
+		selection->bounds(), selection->mask(),
+		onlyMask ? 0 : m_owner.activeLayer());
 	m_mode = Mode::Scale;
 	m_firstClick = firstClick;
 	m_hoverHandle = Handle::Invalid;

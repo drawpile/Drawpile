@@ -120,7 +120,8 @@ public slots:
 	//! Switch to the last used color at the given index
 	void setLastUsedColor(int i);
 
-	void startTransformMove();
+	void startTransformMoveActiveLayer();
+	void startTransformMoveMask();
 	void startTransformPaste(const QRect &srcBounds, const QImage &image);
 
 signals:
@@ -146,6 +147,7 @@ signals:
 
 private:
 	void selectTool(tools::Tool::Type tool);
+	void startTransformMove(bool onlyMask);
 	void clearTemporaryTransform();
 	static bool hasBrushCursor(tools::Tool::Type tool);
 

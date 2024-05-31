@@ -3127,6 +3127,7 @@ void MainWindow::updateSelectTransformActions()
 	getAction("recolorarea")->setEnabled(haveSelection);
 	getAction("colorerasearea")->setEnabled(haveSelection);
 	getAction("starttransform")->setEnabled(haveSelection);
+	getAction("starttransformmask")->setEnabled(haveSelection);
 	getAction("transformmirror")->setEnabled(haveTransform);
 	getAction("transformflip")->setEnabled(haveTransform);
 	getAction("transformrotatecw")->setEnabled(haveTransform);
@@ -4302,6 +4303,11 @@ void MainWindow::setupActions()
 			.icon("transform-move")
 			.statusTip(
 				tr("Transform the selection, switch back tools afterwards"));
+	QAction *starttransformmask =
+		makeAction("starttransformmask", tr("Transform Selection &Mask"))
+			.icon("transform-crop-and-resize")
+			.statusTip(tr("Transform only the selection mask itself, switch "
+						  "back tools afterwards"));
 	QAction *transformmirror =
 		makeAction("transformmirror", tr("&Mirror Transform"))
 			.icon("object-flip-horizontal")
@@ -4361,7 +4367,10 @@ void MainWindow::setupActions()
 			DP_BLEND_MODE_COLOR_ERASE));
 	connect(
 		starttransform, &QAction::triggered, m_dockToolSettings,
-		&docks::ToolSettings::startTransformMove);
+		&docks::ToolSettings::startTransformMoveActiveLayer);
+	connect(
+		starttransformmask, &QAction::triggered, m_dockToolSettings,
+		&docks::ToolSettings::startTransformMoveMask);
 
 	QMenu *selectMenu = menuBar()->addMenu(tr("Selectio&n"));
 	selectMenu->addAction(selectall);
@@ -4376,6 +4385,7 @@ void MainWindow::setupActions()
 	selectMenu->addAction(colorerasearea);
 	selectMenu->addSeparator();
 	selectMenu->addAction(starttransform);
+	selectMenu->addAction(starttransformmask);
 	selectMenu->addAction(transformmirror);
 	selectMenu->addAction(transformflip);
 	selectMenu->addAction(transformrotatecw);

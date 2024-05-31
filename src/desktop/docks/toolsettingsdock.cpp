@@ -226,7 +226,7 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 
 	connect(
 		d->ctrl, &tools::ToolController::transformRequested, this,
-		&ToolSettings::startTransformMove, Qt::QueuedConnection);
+		&ToolSettings::startTransformMoveActiveLayer, Qt::QueuedConnection);
 	connect(
 		d->ctrl, &tools::ToolController::toolSwitchRequested, this,
 		&ToolSettings::setToolTemporary);
@@ -508,12 +508,22 @@ void ToolSettings::setLastUsedColor(int i)
 	}
 }
 
-void ToolSettings::startTransformMove()
+void ToolSettings::startTransformMoveActiveLayer()
+{
+	startTransformMove(false);
+}
+
+void ToolSettings::startTransformMoveMask()
+{
+	startTransformMove(true);
+}
+
+void ToolSettings::startTransformMove(bool onlyMask)
 {
 	tools::Tool::Type toolToReturnTo = d->currentTool;
 	setToolTemporary(tools::Tool::TRANSFORM);
 	if(d->ctrl->activeTool() == tools::Tool::TRANSFORM) {
-		d->ctrl->transformTool()->beginTemporaryMove(toolToReturnTo);
+		d->ctrl->transformTool()->beginTemporaryMove(toolToReturnTo, onlyMask);
 	} else {
 		qWarning(
 			"ToolSettings::startTransformMove: active tool is not transform");
