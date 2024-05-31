@@ -77,7 +77,7 @@ void TransformModel::beginFromCanvas(
 	m_srcBounds = srcBounds;
 	m_dstQuad = TransformQuad(srcBounds);
 	m_dstQuadValid = isQuadValid(m_dstQuad);
-	m_mask = mask;
+	m_mask = isMaskRelevant(mask) ? mask : QImage();
 	LayerListModel *layerlist = m_canvas->layerlist();
 	layerlist->initCheckedLayers(sourceLayerId);
 	setLayers(layerlist->checkedLayers());
@@ -227,7 +227,7 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 		bool moveContents = !m_pasted;
 		bool alterSelection = !moveContents || !m_stamped;
 		bool moveSelection = alterSelection && !m_deselectOnApply;
-		bool needsMask = moveContents && moveNeedsMask();
+		bool needsMask = moveContents && !m_mask.isNull();
 		QVector<net::Message> msgs;
 		msgs.reserve(1 + (moveContents ? 1 : 0) + (alterSelection ? 1 : 0));
 
@@ -449,7 +449,9 @@ QImage TransformModel::getLayerImage(int layerId) const
 			canvasState.searchLayer(layerId, false);
 		if(drawdance::LayerContent *layerContent =
 			   std::get_if<drawdance::LayerContent>(&lsr.data)) {
-			return layerContent->toImage(rect);
+			QImage img = layerContent->toImage(rect);
+			applyMaskToImage(img);
+			return img;
 		}
 	}
 	return QImage();
@@ -469,18 +471,28 @@ QImage TransformModel::getMergedImage() const
 			};
 			DP_ViewModeFilter vmf =
 				DP_view_mode_filter_make_callback(&callback);
-			return canvasState.toFlatImage(false, false, &rect, &vmf);
+			QImage img = canvasState.toFlatImage(false, false, &rect, &vmf);
+			applyMaskToImage(img);
+			return img;
 		}
 	}
 	return QImage();
 }
 
-bool TransformModel::moveNeedsMask() const
+void TransformModel::applyMaskToImage(QImage &img) const
 {
-	Q_ASSERT(!m_pasted);
-	Q_ASSERT(m_mask.format() == QImage::Format_ARGB32_Premultiplied);
-	size_t count = size_t(m_mask.width()) * size_t(m_mask.height());
-	const uint32_t *pixels = reinterpret_cast<const uint32_t *>(m_mask.bits());
+	if(!m_mask.isNull()) {
+		QPainter mp(&img);
+		mp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+		mp.drawImage(0, 0, m_mask);
+	}
+}
+
+bool TransformModel::isMaskRelevant(const QImage &mask)
+{
+	Q_ASSERT(mask.format() == QImage::Format_ARGB32_Premultiplied);
+	size_t count = size_t(mask.width()) * size_t(mask.height());
+	const uint32_t *pixels = reinterpret_cast<const uint32_t *>(mask.bits());
 	for(size_t i = 0; i < count; ++i) {
 		if(qAlpha(pixels[i]) != 255) {
 			return true;
