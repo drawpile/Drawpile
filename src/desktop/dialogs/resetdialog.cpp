@@ -24,6 +24,7 @@ namespace {
 struct ResetPoint {
 	drawdance::CanvasState canvasState;
 	QPixmap thumbnail;
+	bool external;
 };
 
 QVector<ResetPoint> makeResetPoints(const canvas::PaintEngine *pe)
@@ -38,6 +39,7 @@ QVector<ResetPoint> makeResetPoints(const canvas::PaintEngine *pe)
 					drawdance::CanvasState::inc(
 						DP_snapshot_canvas_state_noinc(s)),
 					QPixmap{},
+					false,
 				});
 			}
 		});
@@ -50,6 +52,7 @@ QVector<ResetPoint> makeResetPoints(const canvas::PaintEngine *pe)
 		resetPoints.append(ResetPoint{
 			currentCanvasState,
 			QPixmap{},
+			false,
 		});
 	}
 
@@ -197,10 +200,12 @@ void ResetDialog::onOpenSuccess(const drawdance::CanvasState &canvasState)
 {
 	setEnabled(true);
 	QApplication::restoreOverrideCursor();
-	d->resetPoints.append(
-		{d->compatibilityMode ? canvasState.makeBackwardCompatible()
-							  : canvasState,
-		 QPixmap()});
+	d->resetPoints.append({
+		d->compatibilityMode ? canvasState.makeBackwardCompatible()
+							 : canvasState,
+		QPixmap(),
+		true,
+	});
 	d->ui->snapshotSlider->setMaximum(d->resetPoints.size());
 	d->ui->snapshotSlider->setValue(0);
 	d->selection = d->resetPoints.size() - 1;
@@ -223,6 +228,11 @@ net::MessageList ResetDialog::getResetImage() const
 	net::MessageList resetImage;
 	d->resetPoints[d->selection].canvasState.toResetImage(resetImage, 0);
 	return resetImage;
+}
+
+bool ResetDialog::isExternalResetImage() const
+{
+	return d->resetPoints[d->selection].external;
 }
 
 }

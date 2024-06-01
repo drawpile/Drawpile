@@ -2402,6 +2402,11 @@ void MainWindow::resetSession()
 			utils::ScopedOverrideCursor innerWaitCursor;
 			canvas::CanvasModel *canvas = m_doc->canvas();
 			if(canvas->aclState()->amOperator()) {
+				if(dlg->isExternalResetImage()) {
+					// The user picked an external file to reset to, clear the
+					// save file path so they don't accidentally overwrite it.
+					m_doc->clearCurrentPath();
+				}
 				net::MessageList snapshot = dlg->getResetImage();
 				canvas->amendSnapshotMetadata(
 					snapshot, true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS);

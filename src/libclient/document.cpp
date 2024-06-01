@@ -646,6 +646,11 @@ QString Document::sessionTitle() const
 		return QString();
 }
 
+void Document::clearCurrentPath()
+{
+	setCurrentPath(QString(), DP_SAVE_IMAGE_UNKNOWN);
+}
+
 QString Document::downloadName() const
 {
 	return (m_downloadName.isEmpty() ? sessionTitle() : m_downloadName)

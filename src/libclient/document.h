@@ -150,6 +150,7 @@ public:
 
 	QString currentPath() const { return m_currentPath; }
 	DP_SaveImageType currentType() const { return m_currentType; }
+	void clearCurrentPath();
 
 	QString downloadName() const;
 	void setDownloadName(const QString &downloadName);
