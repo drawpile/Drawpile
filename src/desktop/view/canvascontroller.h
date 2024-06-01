@@ -7,6 +7,7 @@
 #include "libclient/utils/kis_cubic_curve.h"
 #include <QColor>
 #include <QCursor>
+#include <QDeadlineTimer>
 #include <QObject>
 #include <QPointF>
 #include <QPolygonF>
@@ -208,6 +209,7 @@ private:
 	void setOutlineWidth(qreal outlineWidth);
 	void setCanvasShortcuts(QVariantMap canvasShortcuts);
 	void setShowTransformNotices(bool showTransformNotices);
+	void setTabletPressTimerDelay(int tabletPressTimerDelay);
 
 	void penMoveEvent(
 		long long timeMsec, const QPointF &posf, qreal pressure, qreal xtilt,
@@ -380,6 +382,8 @@ private:
 	QSet<Qt::Key> m_keysDown;
 	PenMode m_penMode = PenMode::Normal;
 	PenState m_penState = PenState::Up;
+	QDeadlineTimer m_tabletPressTimer;
+	int m_tabletPressTimerDelay = 0;
 
 	bool m_enableTouchScroll = true;
 	bool m_enableTouchDraw = false;

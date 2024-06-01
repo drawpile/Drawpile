@@ -5,8 +5,8 @@
 #include "desktop/view/lock.h"
 #include "libclient/canvas/canvasshortcuts.h"
 #include "libclient/canvas/point.h"
-#include "libclient/tools/tool.h"
 #include "libclient/utils/kis_cubic_curve.h"
+#include <QDeadlineTimer>
 #include <QGraphicsView>
 #include <functional>
 
@@ -231,6 +231,7 @@ public slots:
 	void setAlphaLockCursorStyle(int style);
 	void setBrushOutlineWidth(qreal outlineWidth);
 	void setBrushBlendMode(int brushBlendMode);
+	void setTabletPressTimerDelay(int tabletPressTimerDelay);
 
 	void setShowTransformNotices(bool showTransformNotices);
 #ifdef __EMSCRIPTEN__
@@ -375,6 +376,8 @@ private:
 	bool m_toolHandlesRightClick;
 	bool m_fractionalTool;
 	PenMode m_penmode;
+	QDeadlineTimer m_tabletPressTimer;
+	int m_tabletPressTimerDelay;
 
 	//! Is the view being dragged
 	ViewDragMode m_dragmode;

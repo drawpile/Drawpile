@@ -167,6 +167,7 @@ SETTING(notifSoundPrivateChat     , NotifSoundPrivateChat     , "notifications/p
 SETTING(notifSoundUnlock          , NotifSoundUnlock          , "notifications/unlock"                  , true)
 SETTING(oneFingerDraw             , OneFingerDraw             , "settings/input/touchdraw"              , false)
 SETTING(oneFingerScroll           , OneFingerScroll           , "settings/input/touchscroll"            , true)
+SETTING(tabletPressTimerDelay     , TabletPressTimerDelay     , "settings/input/tabletpresstimerdelay"  , 500)
 SETTING(touchGestures             , TouchGestures             , "settings/input/touchgestures"          , false)
 SETTING(onionSkinsFrameCount      , OnionSkinsFrameCount      , "onionskins/framecount"                 , 8)
 SETTING_GETSET_V(

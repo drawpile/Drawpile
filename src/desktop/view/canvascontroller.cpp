@@ -69,6 +69,8 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 	settings.bindEraseCursor(this, &CanvasController::setEraseCursorStyle);
 	settings.bindAlphaLockCursor(
 		this, &CanvasController::setAlphaLockCursorStyle);
+	settings.bindTabletPressTimerDelay(
+		this, &CanvasController::setTabletPressTimerDelay);
 
 	resetCanvasTransform();
 }
@@ -444,7 +446,8 @@ void CanvasController::handleMousePress(QMouseEvent *event)
 		int(m_penState), int(m_touching), qulonglong(event->timestamp()));
 
 	if(((!m_tabletEnabled || !isSynthetic(event))) &&
-	   !isSyntheticTouch(event) && !m_touching) {
+	   !isSyntheticTouch(event) && !m_touching &&
+	   m_tabletPressTimer.hasExpired()) {
 		event->accept();
 		penPressEvent(
 			QDateTime::currentMSecsSinceEpoch(), posf, 1.0, 0.0, 0.0, 0.0,
@@ -507,6 +510,9 @@ void CanvasController::handleTabletPress(QTabletEvent *event)
 {
 	if(m_tabletEnabled) {
 		event->accept();
+		if(m_tabletPressTimerDelay > 0) {
+			m_tabletPressTimer.setRemainingTime(m_tabletPressTimerDelay);
+		}
 
 		QPointF posf = tabletPosF(event);
 		qreal rotation = qDegreesToRadians(event->rotation());
@@ -1375,6 +1381,12 @@ QPointF CanvasController::outlinePos() const
 void CanvasController::setShowTransformNotices(bool showTransformNotices)
 {
 	m_showTransformNotices = showTransformNotices;
+}
+
+void CanvasController::setTabletPressTimerDelay(int tabletPressTimerDelay)
+{
+	m_tabletPressTimerDelay = tabletPressTimerDelay;
+	m_tabletPressTimer.setRemainingTime(0);
 }
 
 void CanvasController::penMoveEvent(

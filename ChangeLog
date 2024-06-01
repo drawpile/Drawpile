@@ -67,6 +67,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Allow transforming multiple layers at once.
  * Feature: Make creating a key frame layer copy the layer structure of the closest frame if that's assigned to a layer group. Thanks Ausjamcian for suggesting.
  * Fix: Don't overwrite last file on save after resetting the canvas to an external image. Thanks Bluestrings for reporting.
+ * Fix: Ignore bogus mouse clicks emitted by some tablets after briefly tapping the pen on them. Thanks Ausjamcian for reporting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

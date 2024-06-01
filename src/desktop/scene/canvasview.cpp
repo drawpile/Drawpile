@@ -42,6 +42,7 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_toolHandlesRightClick(false)
 	, m_fractionalTool(false)
 	, m_penmode(PenMode::Normal)
+	, m_tabletPressTimerDelay(0)
 	, m_dragmode(ViewDragMode::None)
 	, m_dragAction(CanvasShortcuts::NO_ACTION)
 	, m_dragButton(Qt::NoButton)
@@ -143,6 +144,8 @@ CanvasView::CanvasView(QWidget *parent)
 		this, &widgets::CanvasView::setAlphaLockCursorStyle);
 	settings.bindBrushOutlineWidth(
 		this, &widgets::CanvasView::setBrushOutlineWidth);
+	settings.bindTabletPressTimerDelay(
+		this, &CanvasView::setTabletPressTimerDelay);
 
 	settings.bindGlobalPressureCurve(this, [=](QString serializedCurve) {
 		KisCubicCurve curve;
@@ -648,6 +651,12 @@ void CanvasView::setBrushBlendMode(int brushBlendMode)
 	resetCursor();
 }
 
+void CanvasView::setTabletPressTimerDelay(int tabletPressTimerDelay)
+{
+	m_tabletPressTimerDelay = tabletPressTimerDelay;
+	m_tabletPressTimer.setRemainingTime(0);
+}
+
 void CanvasView::setShowTransformNotices(bool showTransformNotices)
 {
 	m_showTransformNotices = showTransformNotices;
@@ -1122,7 +1131,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 	updateCursorPos(mousePos);
 
 	if((m_enableTablet && isSynthetic(event)) || isSyntheticTouch(event) ||
-	   m_touching) {
+	   m_touching || !m_tabletPressTimer.hasExpired()) {
 		return;
 	}
 
@@ -1975,6 +1984,10 @@ bool CanvasView::viewportEvent(QEvent *event)
 		!m_useGestureEvents) {
 		touchEvent(static_cast<QTouchEvent *>(event));
 	} else if(type == QEvent::TabletPress && m_enableTablet) {
+		if(m_tabletPressTimerDelay > 0) {
+			m_tabletPressTimer.setRemainingTime(m_tabletPressTimerDelay);
+		}
+
 		QTabletEvent *tabev = static_cast<QTabletEvent *>(event);
 		const auto tabPos = compat::tabPosF(*tabev);
 		Qt::KeyboardModifiers modifiers = getTabletModifiers(tabev);
