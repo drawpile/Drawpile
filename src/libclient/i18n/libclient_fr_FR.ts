@@ -11,7 +11,7 @@
     <message>
         <location line="+19"/>
         <source>Add avatar…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter un avatar…</translation>
     </message>
 </context>
 <context>
@@ -19,22 +19,22 @@
     <message>
         <location filename="../export/canvassaverrunnable.cpp" line="+35"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mauvais arguments, c&apos;est probablement un bug dans Drawpile.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Format non supporter.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;image n&apos;a pas pu être applatie.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec de l&apos;ouverture du fichier pour l&apos;écriture.</translation>
     </message>
     <message>
         <location line="+2"/>
