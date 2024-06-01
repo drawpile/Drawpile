@@ -87,6 +87,9 @@ public:
 
 	QRect layerBounds(int layerId) const;
 
+	bool
+	isBlankIn(int layerId, const QRect &rect, const QImage &mask) const;
+
 	void toResetImage(net::MessageList &msgs, uint8_t contextId) const;
 
 	net::Message makeLayerOrder(

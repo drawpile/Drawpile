@@ -103,6 +103,12 @@ bool DP_layer_content_search_change_bounds(DP_LayerContent *lc,
                                            int *out_y, int *out_width,
                                            int *out_height);
 
+bool DP_layer_content_is_blank_in_bounds(DP_LayerContent *lc,
+                                         const DP_Rect *rect);
+
+bool DP_layer_content_is_blank_in_mask(DP_LayerContent *lc, const DP_Rect *rect,
+                                       const DP_Pixel8 *mask);
+
 DP_Image *DP_layer_content_to_image(DP_LayerContent *lc);
 
 DP_UPixel8 *

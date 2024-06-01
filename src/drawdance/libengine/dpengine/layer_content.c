@@ -656,6 +656,46 @@ bool DP_layer_content_search_change_bounds(DP_LayerContent *lc,
     return false;
 }
 
+bool DP_layer_content_is_blank_in_bounds(DP_LayerContent *lc,
+                                         const DP_Rect *rect)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_ASSERT(rect);
+    DP_TileIterator ti = DP_tile_iterator_make(lc->width, lc->height, *rect);
+    while (DP_tile_iterator_next(&ti)) {
+        DP_Tile *t = DP_layer_content_tile_at_noinc(lc, ti.col, ti.row);
+        if (t && !DP_tile_blank(t)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool DP_layer_content_is_blank_in_mask(DP_LayerContent *lc, const DP_Rect *rect,
+                                       const DP_Pixel8 *mask)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_ASSERT(rect);
+    DP_ASSERT(mask);
+    int mask_width = DP_rect_width(*rect);
+    DP_TileIterator ti = DP_tile_iterator_make(lc->width, lc->height, *rect);
+    while (DP_tile_iterator_next(&ti)) {
+        DP_Tile *t = DP_layer_content_tile_at_noinc(lc, ti.col, ti.row);
+        if (t) {
+            DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(&ti);
+            while (DP_tile_into_dst_iterator_next(&tidi)) {
+                if (mask[tidi.dst_y * mask_width + tidi.dst_x].a != 0
+                    && DP_tile_pixel_at(t, tidi.tile_x, tidi.tile_y).a != 0) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
 DP_Image *DP_layer_content_to_image(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);

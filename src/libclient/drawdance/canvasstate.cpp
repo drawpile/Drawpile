@@ -245,6 +245,32 @@ QRect CanvasState::layerBounds(int layerId) const
 					  : QRect();
 }
 
+bool CanvasState::isBlankIn(
+	int layerId, const QRect &rect, const QImage &mask) const
+{
+	Q_ASSERT(
+		mask.isNull() || mask.format() == QImage::Format_ARGB32_Premultiplied);
+	QRect bounds = QRect(QPoint(0, 0), size()).intersected(rect);
+	if(bounds.isEmpty()) {
+		return true;
+	}
+
+	DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(m_data);
+	DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layerId);
+	if(!lre || DP_layer_routes_entry_is_group(lre)) {
+		return true;
+	}
+
+	DP_LayerContent *lc = DP_layer_routes_entry_content(lre, m_data);
+	DP_Rect area =
+		DP_rect_make(rect.x(), rect.y(), rect.width(), rect.height());
+	return mask.isNull()
+			   ? DP_layer_content_is_blank_in_bounds(lc, &area)
+			   : DP_layer_content_is_blank_in_mask(
+					 lc, &area,
+					 reinterpret_cast<const DP_Pixel8 *>(mask.constBits()));
+}
+
 void CanvasState::toResetImage(net::MessageList &msgs, uint8_t contextId) const
 {
 	DP_reset_image_build(m_data, contextId, &CanvasState::pushMessage, &msgs);

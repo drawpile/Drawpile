@@ -289,10 +289,13 @@ void ToolController::updateTransformPreview()
 				int singleLayerMoveId =
 					transform->getSingleLayerMoveId(m_activeLayer);
 				if(singleLayerMoveId > 0) {
-					paintEngine->previewTransform(
-						idsUsed++, m_activeLayer, x, y,
-						transform->layerImage(singleLayerMoveId), dstPolygon,
-						interpolation);
+					QImage layerImage =
+						transform->layerImage(singleLayerMoveId);
+					if(!layerImage.isNull()) {
+						paintEngine->previewTransform(
+							idsUsed++, m_activeLayer, x, y, layerImage,
+							dstPolygon, interpolation);
+					}
 				} else {
 					for(int layerId : transform->layerIds()) {
 						QImage layerImage = transform->layerImage(layerId);

@@ -77,9 +77,11 @@ private:
 	QImage getLayerImage(int layerId) const;
 	QImage getMergedImage() const;
 	void applyMaskToImage(QImage &img) const;
+	static bool isImageBlank(const QImage &img);
 
 	static bool isMaskRelevant(const QImage &mask);
 	bool moveIsOnlyTranslated() const;
+	bool hasContentInSelection(int layerId) const;
 	QImage convertMaskToMono() const;
 	static bool containsNullMessages(const QVector<net::Message> &msgs);
 

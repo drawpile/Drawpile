@@ -252,12 +252,14 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 			}
 			if(moveContents) {
 				for(int layerIdToMove : m_layerIds) {
-					msgs.append(net::makeMoveRegionMessage(
-						contextId, layerIdToMove, srcX, srcY, srcW, srcH,
-						dstTopLeftX, dstTopLeftY, dstTopRightX, dstTopRightY,
-						dstBottomRightX, dstBottomRightY, dstBottomLeftX,
-						dstBottomLeftY,
-						needsMask ? convertMaskToMono() : QImage()));
+					if(hasContentInSelection(layerIdToMove)) {
+						msgs.append(net::makeMoveRegionMessage(
+							contextId, layerIdToMove, srcX, srcY, srcW, srcH,
+							dstTopLeftX, dstTopLeftY, dstTopRightX,
+							dstTopRightY, dstBottomRightX, dstBottomRightY,
+							dstBottomLeftX, dstBottomLeftY,
+							needsMask ? convertMaskToMono() : QImage()));
+					}
 				}
 			}
 		} else if(moveIsOnlyTranslated()) {
@@ -269,16 +271,20 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 			if(moveContents) {
 				int singleLayerSourceId = getSingleLayerMoveId(layerId);
 				if(singleLayerSourceId > 0) {
-					msgs.append(net::makeMoveRectMessage(
-						contextId, layerId, singleLayerSourceId, srcX, srcY,
-						dstTopLeftX, dstTopLeftY, srcW, srcH,
-						needsMask ? m_mask : QImage()));
-				} else {
-					for(int layerIdToMove : m_layerIds) {
+					if(hasContentInSelection(singleLayerSourceId)) {
 						msgs.append(net::makeMoveRectMessage(
-							contextId, layerIdToMove, layerIdToMove, srcX, srcY,
+							contextId, layerId, singleLayerSourceId, srcX, srcY,
 							dstTopLeftX, dstTopLeftY, srcW, srcH,
 							needsMask ? m_mask : QImage()));
+					}
+				} else {
+					for(int layerIdToMove : m_layerIds) {
+						if(hasContentInSelection(layerIdToMove)) {
+							msgs.append(net::makeMoveRectMessage(
+								contextId, layerIdToMove, layerIdToMove, srcX,
+								srcY, dstTopLeftX, dstTopLeftY, srcW, srcH,
+								needsMask ? m_mask : QImage()));
+						}
 					}
 				}
 			}
@@ -300,22 +306,26 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 			if(moveContents) {
 				int singleLayerSourceId = getSingleLayerMoveId(layerId);
 				if(singleLayerSourceId > 0) {
-					msgs.append(net::makeTransformRegionMessage(
-						contextId, layerId, singleLayerSourceId, srcX, srcY,
-						srcW, srcH, dstTopLeftX, dstTopLeftY, dstTopRightX,
-						dstTopRightY, dstBottomRightX, dstBottomRightY,
-						dstBottomLeftX, dstBottomLeftY,
-						getEffectiveInterpolation(interpolation),
-						needsMask ? m_mask : QImage()));
-				} else {
-					for(int layerIdToMove : m_layerIds) {
+					if(hasContentInSelection(singleLayerSourceId)) {
 						msgs.append(net::makeTransformRegionMessage(
-							contextId, layerIdToMove, layerIdToMove, srcX, srcY,
+							contextId, layerId, singleLayerSourceId, srcX, srcY,
 							srcW, srcH, dstTopLeftX, dstTopLeftY, dstTopRightX,
 							dstTopRightY, dstBottomRightX, dstBottomRightY,
 							dstBottomLeftX, dstBottomLeftY,
 							getEffectiveInterpolation(interpolation),
 							needsMask ? m_mask : QImage()));
+					}
+				} else {
+					for(int layerIdToMove : m_layerIds) {
+						if(hasContentInSelection(layerIdToMove)) {
+							msgs.append(net::makeTransformRegionMessage(
+								contextId, layerIdToMove, layerIdToMove, srcX,
+								srcY, srcW, srcH, dstTopLeftX, dstTopLeftY,
+								dstTopRightX, dstTopRightY, dstBottomRightX,
+								dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
+								getEffectiveInterpolation(interpolation),
+								needsMask ? m_mask : QImage()));
+						}
 					}
 				}
 			}
@@ -451,7 +461,9 @@ QImage TransformModel::getLayerImage(int layerId) const
 			   std::get_if<drawdance::LayerContent>(&lsr.data)) {
 			QImage img = layerContent->toImage(rect);
 			applyMaskToImage(img);
-			return img;
+			if(!isImageBlank(img)) {
+				return img;
+			}
 		}
 	}
 	return QImage();
@@ -488,6 +500,19 @@ void TransformModel::applyMaskToImage(QImage &img) const
 	}
 }
 
+bool TransformModel::isImageBlank(const QImage &img)
+{
+	const uint32_t *pixels =
+		reinterpret_cast<const uint32_t *>(img.constBits());
+	size_t size = size_t(img.width()) * size_t(img.height());
+	for(size_t i = 0; i < size; ++i) {
+		if(pixels[i] != 0) {
+			return false;
+		}
+	}
+	return true;
+}
+
 bool TransformModel::isMaskRelevant(const QImage &mask)
 {
 	Q_ASSERT(mask.format() == QImage::Format_ARGB32_Premultiplied);
@@ -513,6 +538,12 @@ bool TransformModel::moveIsOnlyTranslated() const
 		}
 	}
 	return true;
+}
+
+bool TransformModel::hasContentInSelection(int layerId) const
+{
+	return !m_canvas->paintEngine()->historyCanvasState().isBlankIn(
+		layerId, m_srcBounds, m_mask);
 }
 
 QImage TransformModel::convertMaskToMono() const
