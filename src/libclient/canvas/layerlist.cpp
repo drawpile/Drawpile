@@ -562,6 +562,7 @@ void LayerListModel::initCheckedLayers(int initialLayerId)
 		m_checkStates = checkStates;
 		emitCheckStatesChanged();
 	}
+	emit layerCheckStateToggled();
 }
 
 void LayerListModel::clearCheckedLayers()
@@ -570,6 +571,21 @@ void LayerListModel::clearCheckedLayers()
 		m_checkMode = false;
 		m_checkStates.clear();
 		emitCheckStatesChanged();
+		emit layerCheckStateToggled();
+	}
+}
+
+void LayerListModel::setAllChecked(bool checked)
+{
+	if(m_checkMode) {
+		int childCount = rowCount();
+		for(int i = 0; i < childCount; ++i) {
+			QModelIndex idx = index(i, 0);
+			if(idx.isValid()) {
+				setLayerCheckedChildren(idx, checked);
+			}
+		}
+		emit layerCheckStateToggled();
 	}
 }
 
@@ -591,6 +607,21 @@ QSet<int> LayerListModel::checkedLayers() const
 		}
 	}
 	return layerIds;
+}
+
+bool LayerListModel::isLayerCheckStateToggleable(const QModelIndex &idx) const
+{
+	if(m_checkMode && idx.isValid()) {
+		switch(idx.data(CheckStateRole).toInt()) {
+		case int(Checked):
+		case int(PartiallyChecked):
+		case int(Unchecked):
+			return true;
+		default:
+			break;
+		}
+	}
+	return false;
 }
 
 void LayerListModel::setLayerChecked(int layerId, bool checked)

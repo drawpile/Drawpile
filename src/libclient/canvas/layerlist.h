@@ -189,11 +189,15 @@ public:
 	// return the ids of non-group, non-locked, non-hidden, non-censored layers.
 	QSet<int> getModifiableLayers(int layerId) const;
 
+	bool isCheckMode() const { return m_checkMode; }
 	void initCheckedLayers(int initialLayerId);
 	void clearCheckedLayers();
+	void setAllChecked(bool checked);
 
 	// Retrieves all checked layers, not including groups.
 	QSet<int> checkedLayers() const;
+
+	bool isLayerCheckStateToggleable(const QModelIndex &idx) const;
 
 public slots:
 	void setLayers(

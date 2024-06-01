@@ -153,6 +153,12 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 		canvas->layerlist(), &canvas::LayerListModel::modelReset, this,
 		&LayerList::afterLayerReset);
 	connect(
+		canvas->layerlist(), &canvas::LayerListModel::layerCheckStateToggled,
+		this, &LayerList::updateActionLabels);
+	connect(
+		canvas->layerlist(), &canvas::LayerListModel::layerCheckStateToggled,
+		this, &LayerList::updateCheckActions);
+	connect(
 		canvas->layerlist(),
 		&canvas::LayerListModel::layersVisibleInFrameChanged, this,
 		&LayerList::activeLayerVisibilityChanged);
@@ -187,6 +193,7 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	m_view->setEnabled(true);
 	updateActionLabels();
 	updateLockedControls();
+	updateCheckActions();
 }
 
 static void addLayerButton(
@@ -285,9 +292,19 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	connect(
 		m_actions.setFillSource, &QAction::triggered, this,
 		&LayerList::setFillSourceToSelected);
+	connect(
+		m_actions.layerCheckToggle, &QAction::triggered, this,
+		&LayerList::toggleChecked);
+	connect(
+		m_actions.layerCheckAll, &QAction::triggered, this,
+		&LayerList::checkAll);
+	connect(
+		m_actions.layerUncheckAll, &QAction::triggered, this,
+		&LayerList::uncheckAll);
 
 	updateActionLabels();
 	updateLockedControls();
+	updateCheckActions();
 }
 
 void LayerList::onFeatureAccessChange(DP_Feature feature, bool canUse)
@@ -305,11 +322,28 @@ void LayerList::onFeatureAccessChange(DP_Feature feature, bool canUse)
 
 void LayerList::updateActionLabels()
 {
-	if(isGroupSelected()) {
+	QModelIndex idx = currentSelection();
+	bool group, check;
+	if(idx.isValid()) {
+		group = idx.data(canvas::LayerListModel::IsGroupRole).toBool();
+		int checkState =
+			idx.data(canvas::LayerListModel::CheckStateRole).toInt();
+		check = checkState == int(canvas::LayerListModel::Unchecked) ||
+				checkState == int(canvas::LayerListModel::NotApplicable) ||
+				checkState == int(canvas::LayerListModel::NotCheckable);
+	} else {
+		group = false;
+		check = true;
+	}
+
+	if(group) {
 		setActionLabel(m_actions.duplicate, tr("Duplicate Layer Group"));
 		setActionLabel(m_actions.merge, tr("Merge Layer Group"));
 		setActionLabel(m_actions.properties, tr("Layer Group Properties…"));
 		setActionLabel(m_actions.del, tr("Delete Layer Group"));
+		setActionLabel(
+			m_actions.layerCheckToggle,
+			check ? tr("Check Layer Group") : tr("Uncheck Layer Group"));
 	} else {
 		setActionLabel(
 			m_actions.duplicate,
@@ -323,6 +357,9 @@ void LayerList::updateActionLabels()
 		setActionLabel(
 			m_actions.del,
 			QCoreApplication::translate("MainWindow", "Delete Layer"));
+		setActionLabel(
+			m_actions.layerCheckToggle,
+			check ? tr("Check Layer") : tr("Uncheck Layer"));
 	}
 }
 
@@ -378,6 +415,20 @@ void LayerList::updateBlendModes(bool compatibilityMode)
 		dialogs::LayerProperties::updateBlendMode(
 			m_blendModeCombo, layer.blend, layer.group, layer.isolated,
 			compatibilityMode);
+	}
+}
+
+void LayerList::updateCheckActions()
+{
+	if(m_actions.layerCheckAll) {
+		canvas::LayerListModel *layerlist =
+			m_canvas ? m_canvas->layerlist() : nullptr;
+		bool checkMode = layerlist && layerlist->isCheckMode();
+		bool canToggle = checkMode && layerlist->isLayerCheckStateToggleable(
+										  currentSelection());
+		m_actions.layerCheckToggle->setEnabled(canToggle);
+		m_actions.layerCheckAll->setEnabled(checkMode);
+		m_actions.layerUncheckAll->setEnabled(checkMode);
 	}
 }
 
@@ -927,6 +978,34 @@ void LayerList::setFillSourceToSelected()
 	}
 }
 
+void LayerList::toggleChecked()
+{
+	if(m_canvas) {
+		QModelIndex idx = currentSelection();
+		canvas::LayerListModel *layerlist = m_canvas->layerlist();
+		if(layerlist->isLayerCheckStateToggleable(idx)) {
+			emit layerChecked(
+				idx.data(canvas::LayerListModel::IdRole).toInt(),
+				idx.data(canvas::LayerListModel::CheckStateRole).toInt() ==
+					int(canvas::LayerListModel::Unchecked));
+		}
+	}
+}
+
+void LayerList::checkAll()
+{
+	if(m_canvas) {
+		m_canvas->layerlist()->setAllChecked(true);
+	}
+}
+
+void LayerList::uncheckAll()
+{
+	if(m_canvas) {
+		m_canvas->layerlist()->setAllChecked(false);
+	}
+}
+
 void LayerList::showPropertiesForNew(bool group)
 {
 	QString dialogObjectName = QStringLiteral("layerpropertiesnewlayer");
@@ -1077,6 +1156,7 @@ void LayerList::afterLayerReset()
 
 	m_view->verticalScrollBar()->setValue(m_lastScrollPosition);
 	m_view->setAnimated(wasAnimated);
+	updateCheckActions();
 }
 
 bool LayerList::isGroupSelected() const
@@ -1145,6 +1225,7 @@ void LayerList::selectionChanged(const QItemSelection &selected)
 
 	updateActionLabels();
 	updateLockedControls();
+	updateCheckActions();
 
 	emit layerSelected(m_selectedId);
 }
@@ -1165,6 +1246,7 @@ void LayerList::updateUiFromSelection()
 	layerLockStatusChanged(layer.id);
 	updateActionLabels();
 	updateLockedControls();
+	updateCheckActions();
 
 	// TODO use change flags to detect if this really changed
 	emit activeLayerVisibilityChanged();
@@ -1187,6 +1269,7 @@ void LayerList::layerLockStatusChanged(int layerId)
 void LayerList::userLockStatusChanged(bool)
 {
 	updateLockedControls();
+	updateCheckActions();
 }
 
 void LayerList::blendModeChanged(int index)

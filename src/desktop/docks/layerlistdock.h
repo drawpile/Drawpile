@@ -60,6 +60,9 @@ public:
 		QAction *keyFrameDuplicateNext = nullptr;
 		QAction *keyFrameDuplicatePrev = nullptr;
 		QActionGroup *layerKeyFrameGroup = nullptr;
+		QAction *layerCheckToggle = nullptr;
+		QAction *layerCheckAll = nullptr;
+		QAction *layerUncheckAll = nullptr;
 	};
 
 	LayerList(QWidget *parent = nullptr);
@@ -104,6 +107,9 @@ private slots:
 	void deleteSelected();
 	void mergeSelected();
 	void setFillSourceToSelected();
+	void toggleChecked();
+	void checkAll();
+	void uncheckAll();
 
 	void showContextMenu(const QPoint &pos);
 	void censorSelected(bool censor);
@@ -125,6 +131,7 @@ private:
 	void setActionLabel(QAction *action, const QString &text);
 	void updateLockedControls();
 	void updateBlendModes(bool compatibilityMode);
+	void updateCheckActions();
 	bool canMergeCurrent() const;
 
 	void updateUiFromSelection();
