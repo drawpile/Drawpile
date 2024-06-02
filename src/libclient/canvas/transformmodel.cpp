@@ -217,7 +217,11 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 	Q_ASSERT(!m_pasted || m_stamped);
 	constexpr int SELECTION_IDS =
 		(CanvasModel::MAIN_SELECTION_ID << 8) | CanvasModel::MAIN_SELECTION_ID;
-	if(TransformQuad(m_srcBounds) != m_dstQuad) {
+	bool identity = TransformQuad(m_srcBounds) == m_dstQuad;
+	int singleLayerSourceId =
+		compatibilityMode ? 0 : getSingleLayerMoveId(layerId);
+	if(!identity ||
+	   (singleLayerSourceId > 0 && singleLayerSourceId != layerId)) {
 		int srcX = m_srcBounds.x();
 		int srcY = m_srcBounds.y();
 		int srcW = m_srcBounds.width();
@@ -244,7 +248,7 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 			int dstBottomRightY = qRound(m_dstQuad.bottomRight().y());
 			int dstBottomLeftX = qRound(m_dstQuad.bottomLeft().x());
 			int dstBottomLeftY = qRound(m_dstQuad.bottomLeft().y());
-			if(moveSelection && !m_deselectOnApply) {
+			if(moveSelection && !identity) {
 				msgs.append(net::makeMoveRegionMessage(
 					contextId, 0, srcX, srcY, srcW, srcH, dstTopLeftX,
 					dstTopLeftY, dstTopRightX, dstTopRightY, dstBottomRightX,
@@ -263,13 +267,12 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 				}
 			}
 		} else if(moveIsOnlyTranslated()) {
-			if(moveSelection) {
+			if(moveSelection && !identity) {
 				msgs.append(net::makeMoveRectMessage(
 					contextId, SELECTION_IDS, 0, srcX, srcY, dstTopLeftX,
 					dstTopLeftY, srcW, srcH, QImage()));
 			}
 			if(moveContents) {
-				int singleLayerSourceId = getSingleLayerMoveId(layerId);
 				if(singleLayerSourceId > 0) {
 					if(hasContentInSelection(singleLayerSourceId)) {
 						msgs.append(net::makeMoveRectMessage(
@@ -295,7 +298,7 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 			int dstBottomRightY = qRound(m_dstQuad.bottomRight().y());
 			int dstBottomLeftX = qRound(m_dstQuad.bottomLeft().x());
 			int dstBottomLeftY = qRound(m_dstQuad.bottomLeft().y());
-			if(moveSelection) {
+			if(moveSelection && !identity) {
 				msgs.append(net::makeTransformRegionMessage(
 					contextId, SELECTION_IDS, 0, srcX, srcY, srcW, srcH,
 					dstTopLeftX, dstTopLeftY, dstTopRightX, dstTopRightY,
@@ -304,7 +307,6 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 					QImage()));
 			}
 			if(moveContents) {
-				int singleLayerSourceId = getSingleLayerMoveId(layerId);
 				if(singleLayerSourceId > 0) {
 					if(hasContentInSelection(singleLayerSourceId)) {
 						msgs.append(net::makeTransformRegionMessage(
