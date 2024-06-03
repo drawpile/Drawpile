@@ -13,6 +13,12 @@ body {
   padding: 0;
 }
 
+@supports(height: 100dvh) {
+  .fullscreen {
+    height: 100dvh;
+  }
+}
+
 #init {
   line-height: 150%;
   margin-top: 1.5em;
@@ -152,6 +158,12 @@ progress {
   margin-right: auto;
   margin-top: 1em;
   max-width: 60em;
+}
+
+@supports(height: calc(100dvh - 2em)) {
+  .modal-container {
+    height: calc(100dvh - 2em);
+  }
 }
 
 .modal-body {
