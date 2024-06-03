@@ -45,7 +45,7 @@ Unreleased Version 2.2.2-pre
  * Feature: On Windows and Linux, new windows now open in a separate process, since that's more efficient and resilient. Can be disabled by setting the DRAWPILE_SINGLE_PROCESS environment variable. Thanks Bluestrings for suggesting.
  * Fix: The main window should now properly restore to its previous position even when that's on a secondary screen. Thanks Moe for reporting.
  * Removed Feature: Roomcodes. They are a vestige from a time where Drawpile only had a single, central listing server. Nowadays nobody uses these anymore, invite links are the replacement.
- * Feature: Disable global smoothing and jagged curve compensation for mouse and touch drawing by default, since those don't really only make sense for pen tablets. Can be toggled in the input preferences. Thanks nililfin for suggesting.
+ * Feature: Disable global smoothing for mouse drawing by default, since that really only make sense for tablets and touch. Can be toggled in the input preferences. Thanks nililfin for suggesting.
  * Feature: Always show drawing tools toolbar in small screen mode. Thanks Blozzom for suggesting.
  * Fix: Increase contrast on depressed buttons in dark themes. This is a patch to Qt. Thanks MorrowShore for reporting.
  * Fix: Switch out the icon for the extension buttons on squashed menus and toolbars so that they're actually visible in dark themes. This is a patch to Qt.

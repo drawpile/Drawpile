@@ -399,7 +399,7 @@ void ToolController::startDrawing(
 	if(m_model) {
 		m_drawing = true;
 		m_applyGlobalSmoothing =
-			deviceType == int(DeviceType::Tablet) || m_mouseSmoothing;
+			deviceType != int(DeviceType::Mouse) || m_mouseSmoothing;
 		m_activebrush.setEraserOverride(eraserOverride);
 		m_activeTool->begin(Tool::BeginParams{
 			canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation),
@@ -524,9 +524,11 @@ void ToolController::setBrushEngineBrush(
 		m_finishStrokes,
 	};
 	if(freehand) {
-		stroke.interpolate = m_applyGlobalSmoothing && m_interpolateInputs;
+		stroke.interpolate = m_interpolateInputs;
 		stroke.smoothing =
-			m_applyGlobalSmoothing ? m_effectiveSmoothing : m_smoothing;
+			m_applyGlobalSmoothing || m_stabilizationMode == brushes::Smoothing
+				? m_effectiveSmoothing
+				: m_smoothing;
 		if(m_stabilizerUseBrushSampleCount) {
 			if(brush.stabilizationMode() == brushes::Stabilizer) {
 				stroke.stabilizer_sample_count = brush.stabilizerSampleCount();

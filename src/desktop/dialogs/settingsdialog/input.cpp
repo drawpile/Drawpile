@@ -76,15 +76,15 @@ void Input::initTablet(
 	settings.bindInterpolateInputs(interpolate);
 	form->addRow(nullptr, interpolate);
 
-	auto *mouseSmoothing = new QCheckBox(tr("Smoothe mouse and touch drawing"));
-	settings.bindMouseSmoothing(mouseSmoothing);
-	form->addRow(nullptr, mouseSmoothing);
-
 	auto *smoothing = new KisSliderSpinBox;
 	smoothing->setMaximum(libclient::settings::maxSmoothing);
-	smoothing->setPrefix(tr("Smoothing: "));
+	smoothing->setPrefix(tr("Global smoothing: "));
 	settings.bindSmoothing(smoothing);
 	form->addRow(nullptr, smoothing);
+
+	auto *mouseSmoothing = new QCheckBox(tr("Apply global smoothing to mouse"));
+	settings.bindMouseSmoothing(mouseSmoothing);
+	form->addRow(nullptr, mouseSmoothing);
 
 	auto *eraserAction = new QComboBox;
 	eraserAction->addItem(
