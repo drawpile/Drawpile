@@ -346,6 +346,9 @@ private:
 	void switchInterfaceMode(bool smallScreenMode);
 	bool shouldShowDialogMaximized() const;
 
+	void startRefitWindowDebounce();
+	void refitWindow();
+
 	bool m_singleSession;
 	bool m_smallScreenMode;
 	bool m_updatingInterfaceMode;
@@ -354,6 +357,10 @@ private:
 
 	QTimer m_saveWindowDebounce;
 	QTimer m_saveSplitterDebounce;
+#ifdef SINGLE_MAIN_WINDOW
+	QTimer m_refitWindowDebounce;
+	bool m_refitting = false;
+#endif
 	QMap<QString, bool> m_actionsConfig;
 
 	QSplitter *m_splitter;

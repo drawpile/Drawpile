@@ -211,6 +211,10 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	m_saveWindowDebounce.setSingleShot(true);
 	m_saveSplitterDebounce.setInterval(DEBOUNCE_MS);
 	m_saveWindowDebounce.setInterval(DEBOUNCE_MS);
+#ifdef SINGLE_MAIN_WINDOW
+	m_refitWindowDebounce.setSingleShot(true);
+	m_refitWindowDebounce.setInterval(DEBOUNCE_MS);
+#endif
 
 	// The document (initially empty)
 	desktop::settings::Settings &settings = dpApp().settings();
@@ -498,6 +502,13 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 
 	m_updatingInterfaceMode = false;
 	updateInterfaceMode();
+
+#ifdef SINGLE_MAIN_WINDOW
+	connect(
+		compat::widgetScreen(*this), &QScreen::availableGeometryChanged, this,
+		&MainWindow::startRefitWindowDebounce);
+#endif
+	startRefitWindowDebounce();
 }
 
 MainWindow::~MainWindow()
@@ -907,6 +918,11 @@ void MainWindow::readSettings(bool windowpos)
 
 	connect(&m_saveWindowDebounce, &QTimer::timeout, this, &MainWindow::saveWindowState);
 	connect(&m_saveSplitterDebounce, &QTimer::timeout, this, &MainWindow::saveSplitterState);
+#ifdef SINGLE_MAIN_WINDOW
+	connect(
+		&m_refitWindowDebounce, &QTimer::timeout, this,
+		&MainWindow::refitWindow);
+#endif
 
 	// QMainWindow produces no event when there is a change that would cause the
 	// serialised state to be different, so we will just have to make some
@@ -917,10 +933,8 @@ void MainWindow::readSettings(bool windowpos)
 		}
 	}
 
-#ifdef SINGLE_MAIN_WINDOW
-	dpApp().processEvents();
-	resize(compat::widgetScreen(*this)->availableSize());
-#endif
+	refitWindow();
+	startRefitWindowDebounce();
 }
 
 void MainWindow::restoreSettings(const desktop::settings::Settings &settings)
@@ -1005,6 +1019,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 	case QEvent::Resize:
 	case QEvent::Close:
 		m_saveWindowDebounce.start();
+		startRefitWindowDebounce();
 		break;
 	case QEvent::Shortcut: {
 		QShortcutEvent *shortcutEvent = static_cast<QShortcutEvent *>(event);
@@ -2982,9 +2997,7 @@ void MainWindow::handleToggleAction(int action)
 			setDefaultDockSizes();
 		}
 
-#ifdef SINGLE_MAIN_WINDOW
-		resize(compat::widgetScreen(*this)->availableSize());
-#endif
+		refitWindow();
 	});
 }
 
@@ -3406,6 +3419,7 @@ void MainWindow::showLayoutsDialog()
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
 		connect(dlg, &dialogs::LayoutsDialog::applyState, [this](const QByteArray &state) {
 			restoreState(state);
+			refitWindow();
 		});
 	}
 	dlg->show();
@@ -5235,5 +5249,26 @@ bool MainWindow::shouldShowDialogMaximized() const
 	return m_smallScreenMode;
 #else
 	return m_smallScreenMode && isMaximized();
+#endif
+}
+
+void MainWindow::startRefitWindowDebounce()
+{
+#ifdef SINGLE_MAIN_WINDOW
+	if(!m_refitting) {
+		m_refitWindowDebounce.start();
+	}
+#endif
+}
+
+void MainWindow::refitWindow()
+{
+#ifdef SINGLE_MAIN_WINDOW
+	if(!m_refitting) {
+		QScopedValueRollback<bool> rollback(m_refitting, true);
+		m_refitWindowDebounce.stop();
+		QCoreApplication::processEvents();
+		resize(compat::widgetScreen(*this)->availableSize());
+	}
 #endif
 }
