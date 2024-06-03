@@ -3,6 +3,7 @@ body {
   background-color: #fff;
   color: #363636;
   font-family: sans-serif;
+  touch-action: pan-y;
 }
 
 .fullscreen {
