@@ -698,6 +698,25 @@ import { UAParser } from "ua-parser-js";
         ".",
       ]);
     }
+    const device = ua.getDevice()?.model || "";
+    const iDevice =
+      device.indexOf("iPad") !== -1
+        ? "iPad"
+        : device.indexOf("iPhone") !== -1
+          ? "iPhone"
+          : null;
+    if (iDevice) {
+      const engine = ua.getEngine()?.name || "";
+      if (browser.indexOf("Chrome") !== -1 && engine.indexOf("WebKit") !== -1) {
+        return tag("p", [
+          tag("strong", ["❌ Incompatible browser:"]),
+          `Chrome on ${iDevice} has some trouble running Drawpile. It's really ` +
+            "just the system browser (Safari) in a different shell, which " +
+            "causes problems with controls ending up off-screen. Consider " +
+            `using the ${iDevice} system browser (Safari) directly instead.`,
+        ]);
+      }
+    }
     return null;
   }
 
