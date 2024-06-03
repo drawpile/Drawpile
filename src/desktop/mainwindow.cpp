@@ -4089,7 +4089,10 @@ void MainWindow::setupActions()
 	QAction *showgrid = makeAction("showgrid", tr("Show Pixel &Grid")).noDefaultShortcut().checked().remembered();
 	QAction *showrulers = makeAction("showrulers", tr("Show &Rulers")).noDefaultShortcut().checkable().remembered();
 
-#ifndef SINGLE_MAIN_WINDOW
+#ifdef SINGLE_MAIN_WINDOW
+	QAction *fittoscreen =
+		makeAction("fittoscreen", tr("&Fit to Screen")).noDefaultShortcut();
+#else
 	QAction *fullscreen = makeAction("fullscreen", tr("&Full Screen")).shortcut(QKeySequence::FullScreen).checkable();
 	if(windowHandle()) { // mainwindow should always be a native window, but better safe than sorry
 		connect(windowHandle(), &QWindow::windowStateChanged, fullscreen, [fullscreen](Qt::WindowState state) {
@@ -4148,7 +4151,9 @@ void MainWindow::setupActions()
 		 viewflip, viewmirror, showgrid, showusermarkers, showusernames,
 		 showuserlayers, showuseravatars, evadeusercursors});
 
-#ifndef SINGLE_MAIN_WINDOW
+#ifdef SINGLE_MAIN_WINDOW
+	connect(fittoscreen, &QAction::triggered, this, &MainWindow::refitWindow);
+#else
 	connect(fullscreen, &QAction::triggered, this, &MainWindow::toggleFullscreen);
 #endif
 
@@ -4247,8 +4252,10 @@ void MainWindow::setupActions()
 	viewmenu->addAction(showgrid);
 	viewmenu->addAction(showrulers);
 
-#ifndef SINGLE_MAIN_WINDOW
 	viewmenu->addSeparator();
+#ifdef SINGLE_MAIN_WINDOW
+	viewmenu->addAction(fittoscreen);
+#else
 	viewmenu->addAction(fullscreen);
 #endif
 
