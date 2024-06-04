@@ -1,156 +1,141 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include <QApplication>
-#include <QActionGroup>
-#include <QIcon>
-#include <QMenuBar>
-#include <QToolBar>
-#include <QStatusBar>
-#include <QSettings>
-#include <QDesktopServices>
-#include <QScreen>
-#include <QUrl>
-#include <QLabel>
-#include <QMessageBox>
-#include <QInputDialog>
-#include <QProgressDialog>
-#include <QCloseEvent>
-#include <QPushButton>
-#include <QToolButton>
-#include <QImageReader>
-#include <QImageWriter>
-#include <QShortcutEvent>
-#include <QSplitter>
-#include <QMimeData>
-#include <QFile>
-#include <QWindow>
-#include <QVBoxLayout>
-#include <QTimer>
-#include <QTextEdit>
-#include <QThreadPool>
-#include <QKeySequence>
-#include <QJsonDocument>
-#include <QScopedValueRollback>
-#include <QSignalBlocker>
-#include <QTemporaryFile>
-
-#ifdef Q_OS_MACOS
-static constexpr auto CTRL_KEY = Qt::META;
-#include "desktop/widgets/macmenu.h"
-#else
-static constexpr auto CTRL_KEY = Qt::CTRL;
-#endif
-
 #include "desktop/mainwindow.h"
-#include "libclient/document.h"
-#include "desktop/main.h"
-#include "desktop/tabletinput.h"
-
-#include "libclient/canvas/canvasmodel.h"
-#include "libclient/canvas/selectionmodel.h"
-#include "libclient/canvas/transformmodel.h"
-#include "desktop/view/canvaswrapper.h"
-#include "desktop/view/lock.h"
-#include "desktop/widgets/canvasframe.h"
-#include "desktop/scene/selectionitem.h"
-#include "desktop/scene/toggleitem.h"
-#include "libclient/canvas/userlist.h"
-#include "libclient/canvas/paintengine.h"
-#include "libclient/canvas/documentmetadata.h"
-
-#include "libshared/util/whatismyip.h"
 #include "cmake-config/config.h"
-#include "libclient/utils/images.h"
-#include "libshared/util/networkaccess.h"
-#include "libshared/util/paths.h"
-#include "libshared/util/qtcompat.h"
-#include "libclient/utils/shortcutdetector.h"
-#include "libclient/utils/customshortcutmodel.h"
-#include "libclient/utils/logging.h"
-#include "desktop/utils/actionbuilder.h"
-#include "desktop/utils/connections.h"
-#include "desktop/utils/widgetutils.h"
-
-#include "desktop/widgets/dualcolorbutton.h"
-#include "desktop/widgets/viewstatus.h"
-#include "desktop/widgets/viewstatusbar.h"
-#include "desktop/widgets/netstatus.h"
 #include "desktop/chat/chatbox.h"
-
-#include "desktop/docks/toolsettingsdock.h"
-#include "desktop/docks/brushpalettedock.h"
-#include "desktop/docks/navigator.h"
-#include "desktop/docks/colorpalette.h"
-#include "desktop/docks/colorspinner.h"
-#include "desktop/docks/colorsliders.h"
-#include "desktop/docks/layerlistdock.h"
-#include "desktop/docks/onionskins.h"
-#include "desktop/docks/timeline.h"
-#include "desktop/docks/titlewidget.h"
-
-#include "libclient/net/client.h"
-#include "libclient/net/login.h"
-#include "libclient/canvas/layerlist.h"
-#include "libclient/import/canvasloaderrunnable.h"
-#include "libclient/parentalcontrols/parentalcontrols.h"
-
-#include "libclient/tools/toolcontroller.h"
-#include "desktop/toolwidgets/brushsettings.h"
-#include "desktop/toolwidgets/colorpickersettings.h"
-#include "desktop/toolwidgets/fillsettings.h"
-#include "desktop/toolwidgets/selectionsettings.h"
-#include "desktop/toolwidgets/transformsettings.h"
-#include "desktop/toolwidgets/annotationsettings.h"
-#include "desktop/toolwidgets/lasersettings.h"
-#include "desktop/toolwidgets/inspectorsettings.h"
-
-#include "desktop/filewrangler.h"
-#include "libclient/export/animationsaverrunnable.h"
-#include "libclient/drawdance/eventlog.h"
-#include "libclient/drawdance/perf.h"
-
+#include "desktop/dialogs/abusereport.h"
+#include "desktop/dialogs/animationimportdialog.h"
+#include "desktop/dialogs/brushsettingsdialog.h"
 #include "desktop/dialogs/colordialog.h"
+#include "desktop/dialogs/dumpplaybackdialog.h"
 #include "desktop/dialogs/invitedialog.h"
 #include "desktop/dialogs/layoutsdialog.h"
 #include "desktop/dialogs/logindialog.h"
-#include "desktop/dialogs/settingsdialog.h"
-#include "desktop/dialogs/resizedialog.h"
 #include "desktop/dialogs/playbackdialog.h"
-#include "desktop/dialogs/dumpplaybackdialog.h"
 #include "desktop/dialogs/resetdialog.h"
-#include "desktop/dialogs/sessionsettings.h"
+#include "desktop/dialogs/resizedialog.h"
 #include "desktop/dialogs/serverlogdialog.h"
+#include "desktop/dialogs/sessionsettings.h"
+#include "desktop/dialogs/sessionundodepthlimitdialog.h"
+#include "desktop/dialogs/settingsdialog.h"
+#include "desktop/dialogs/startdialog.h"
+#include "desktop/dialogs/systeminfodialog.h"
 #include "desktop/dialogs/tablettester.h"
 #include "desktop/dialogs/touchtestdialog.h"
-#include "desktop/dialogs/abusereport.h"
-#include "desktop/dialogs/brushsettingsdialog.h"
-#include "desktop/dialogs/sessionundodepthlimitdialog.h"
 #include "desktop/dialogs/userinfodialog.h"
-#include "desktop/dialogs/startdialog.h"
-#include "desktop/dialogs/animationimportdialog.h"
-#include "desktop/dialogs/systeminfodialog.h"
+#include "desktop/docks/brushpalettedock.h"
+#include "desktop/docks/colorpalette.h"
+#include "desktop/docks/colorsliders.h"
+#include "desktop/docks/colorspinner.h"
+#include "desktop/docks/layerlistdock.h"
+#include "desktop/docks/navigator.h"
+#include "desktop/docks/onionskins.h"
+#include "desktop/docks/timeline.h"
+#include "desktop/docks/titlewidget.h"
+#include "desktop/docks/toolsettingsdock.h"
+#include "desktop/filewrangler.h"
+#include "desktop/main.h"
+#include "desktop/scene/toggleitem.h"
+#include "desktop/tabletinput.h"
+#include "desktop/toolwidgets/annotationsettings.h"
+#include "desktop/toolwidgets/brushsettings.h"
+#include "desktop/toolwidgets/colorpickersettings.h"
+#include "desktop/toolwidgets/fillsettings.h"
+#include "desktop/toolwidgets/inspectorsettings.h"
+#include "desktop/toolwidgets/lasersettings.h"
+#include "desktop/toolwidgets/selectionsettings.h"
+#include "desktop/toolwidgets/transformsettings.h"
+#include "desktop/utils/actionbuilder.h"
+#include "desktop/utils/connections.h"
+#include "desktop/utils/widgetutils.h"
+#include "desktop/view/canvaswrapper.h"
+#include "desktop/view/lock.h"
+#include "desktop/widgets/canvasframe.h"
+#include "desktop/widgets/dualcolorbutton.h"
+#include "desktop/widgets/netstatus.h"
+#include "desktop/widgets/viewstatus.h"
+#include "desktop/widgets/viewstatusbar.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/documentmetadata.h"
+#include "libclient/canvas/layerlist.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/selectionmodel.h"
+#include "libclient/canvas/transformmodel.h"
+#include "libclient/canvas/userlist.h"
+#include "libclient/document.h"
+#include "libclient/drawdance/eventlog.h"
+#include "libclient/drawdance/perf.h"
+#include "libclient/export/animationsaverrunnable.h"
+#include "libclient/import/canvasloaderrunnable.h"
 #include "libclient/import/loadresult.h"
+#include "libclient/net/client.h"
+#include "libclient/net/login.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
+#include "libclient/tools/toolcontroller.h"
+#include "libclient/utils/customshortcutmodel.h"
+#include "libclient/utils/images.h"
+#include "libclient/utils/logging.h"
+#include "libclient/utils/shortcutdetector.h"
+#include "libshared/util/networkaccess.h"
+#include "libshared/util/paths.h"
+#include "libshared/util/whatismyip.h"
+#include <QActionGroup>
+#include <QApplication>
+#include <QCloseEvent>
+#include <QDesktopServices>
+#include <QFile>
+#include <QIcon>
+#include <QImageReader>
+#include <QImageWriter>
+#include <QInputDialog>
+#include <QJsonDocument>
+#include <QKeySequence>
+#include <QLabel>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QMimeData>
+#include <QProgressDialog>
+#include <QPushButton>
+#include <QScopedValueRollback>
+#include <QScreen>
+#include <QSettings>
+#include <QShortcutEvent>
+#include <QSignalBlocker>
+#include <QSplitter>
+#include <QStatusBar>
+#include <QTemporaryFile>
+#include <QTextEdit>
+#include <QThreadPool>
+#include <QTimer>
+#include <QToolBar>
+#include <QToolButton>
+#include <QUrl>
+#include <QVBoxLayout>
+#include <QWindow>
 #include <functional>
-
 #ifdef Q_OS_WIN
-#include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
+#	include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
-
 #ifdef __EMSCRIPTEN__
 #	include "libclient/wasmsupport.h"
 #else
 #	include "desktop/utils/recents.h"
 #endif
-
 #ifdef DP_HAVE_BUILTIN_SERVER
 #	include "libclient/server/builtinserver.h"
 #endif
+#ifdef Q_OS_MACOS
+static constexpr auto CTRL_KEY = Qt::META;
+#	include "desktop/widgets/macmenu.h"
+#else
+static constexpr auto CTRL_KEY = Qt::CTRL;
+#endif
 
+using desktop::settings::Settings;
 using std::placeholders::_1;
 using std::placeholders::_2;
-using desktop::settings::Settings;
-// Totally arbitrary nonsense
-constexpr auto DEBOUNCE_MS = 250;
+static constexpr int DEBOUNCE_MS = 250;
+
+// clang-format off
 
 MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	: QMainWindow(),

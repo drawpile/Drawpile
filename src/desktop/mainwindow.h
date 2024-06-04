@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-
+#ifndef DESKTOP_MAINWINDOW_H
+#define DESKTOP_MAINWINDOW_H
 extern "C" {
 #include <dpengine/load.h>
 }
-
-#include <QMainWindow>
+#include "desktop/dialogs/flipbook.h"
+#include "libclient/canvas/acl.h"
+#include "libclient/drawdance/canvasstate.h"
+#include "libclient/export/animationsaverrunnable.h"
+#include "libclient/tools/tool.h"
 #include <QByteArray>
 #include <QDeadlineTimer>
 #include <QElapsedTimer>
+#include <QMainWindow>
 #include <QMap>
 #include <QPointer>
 #include <QString>
@@ -18,12 +20,9 @@ extern "C" {
 #include <QUrl>
 #include <QVariantMap>
 
-#include "desktop/dialogs/flipbook.h"
-#include "libclient/tools/tool.h"
-#include "libclient/canvas/acl.h"
-#include "libclient/drawdance/canvasstate.h"
-#include "libclient/export/animationsaverrunnable.h"
-
+class ActionBuilder;
+class Document;
+class MainActions;
 class QActionGroup;
 class QLabel;
 class QShortcutEvent;
@@ -31,58 +30,57 @@ class QSplitter;
 class QTemporaryFile;
 class QToolButton;
 
-class Document;
-class MainActions;
-class ActionBuilder;
-
 namespace widgets {
-	class CanvasFrame;
-	class DualColorButton;
-	class NetStatus;
-	class ChatBox;
-	class ViewStatus;
-	class ViewStatusBar;
+class CanvasFrame;
+class DualColorButton;
+class NetStatus;
+class ChatBox;
+class ViewStatus;
+class ViewStatusBar;
 }
+
 namespace docks {
-	class ToolSettings;
-	class BrushPalette;
-	class InputSettings;
-	class LayerList;
-	class PaletteBox;
-	class ColorPaletteDock;
-	class ColorSpinnerDock;
-	class ColorSliderDock;
-	class Navigator;
-	class OnionSkinsDock;
-	class Timeline;
+class ToolSettings;
+class BrushPalette;
+class InputSettings;
+class LayerList;
+class PaletteBox;
+class ColorPaletteDock;
+class ColorSpinnerDock;
+class ColorSliderDock;
+class Navigator;
+class OnionSkinsDock;
+class Timeline;
 }
+
 namespace dialogs {
-	class DumpPlaybackDialog;
-	class PlaybackDialog;
-	class HostDialog;
-	class SessionSettingsDialog;
-	class ServerLogDialog;
-	class SettingsDialog;
-	class StartDialog;
+class DumpPlaybackDialog;
+class PlaybackDialog;
+class HostDialog;
+class SessionSettingsDialog;
+class ServerLogDialog;
+class SettingsDialog;
+class StartDialog;
 }
-namespace drawingboard {
-	class CanvasScene;
-}
+
 namespace canvas {
-	class CanvasModel;
-	class SelectionModel;
+class CanvasModel;
+class SelectionModel;
 }
+
 namespace drawdance {
-	class CanvasState;
+class CanvasState;
 }
+
 namespace desktop {
 namespace settings {
 class Settings;
 }
 }
+
 namespace view {
-class Lock;
 class CanvasWrapper;
+class Lock;
 }
 
 class ShortcutDetector;
@@ -99,10 +97,12 @@ public:
 
 	void hostSession(
 		const QString &title, const QString &password, const QString &alias,
-		bool nsfm, const QString &announcementUrl, const QString &remoteAddress);
+		bool nsfm, const QString &announcementUrl,
+		const QString &remoteAddress);
 
 	//! Connect to a host and join a session if full URL is provided.
-	void joinSession(const QUrl& url, const QString &autoRecordFilename=QString());
+	void
+	joinSession(const QUrl &url, const QString &autoRecordFilename = QString());
 
 	//! Check if the current board can be replaced
 	bool canReplace() const;
@@ -231,7 +231,8 @@ private slots:
 	void pasteCentered();
 	void pasteFile();
 	void pasteFilePath(const QString &path);
-	void pasteImage(const QImage &image, const QPoint *point=nullptr, bool force=false);
+	void pasteImage(
+		const QImage &image, const QPoint *point = nullptr, bool force = false);
 
 	void clearOrDelete();
 
@@ -272,7 +273,8 @@ private slots:
 	void onCanvasSaved(const QString &errorMessage);
 #ifdef __EMSCRIPTEN__
 	void onCanvasDownloadStarted();
-	void onCanvasDownloadReady(const QString &defaultName, const QByteArray &bytes);
+	void
+	onCanvasDownloadReady(const QString &defaultName, const QByteArray &bytes);
 	void onCanvasDownloadError(const QString &errorMessage);
 #endif
 	void onTemplateExported(const QString &errorMessage);
@@ -303,18 +305,19 @@ private:
 	QAction *getAction(const QString &name);
 
 	//! Add a new entry to recent files list
-	void addRecentFile(const QString& file);
+	void addRecentFile(const QString &file);
 
 	//! Enable or disable drawing tools
 	void setDrawingToolsEnabled(bool enable);
 
 	//! Display an error message
 	void showErrorMessage(const QString &message);
-	void showErrorMessageWithDetails(const QString &message, const QString &details);
+	void
+	showErrorMessageWithDetails(const QString &message, const QString &details);
 	void showLoadResultMessage(DP_LoadResult result);
 	void handleAmbiguousShortcut(QShortcutEvent *shortcutEvent);
 
-	void readSettings(bool windowpos=true);
+	void readSettings(bool windowpos = true);
 	void restoreSettings(const desktop::settings::Settings &settings);
 	void initSmallScreenState();
 	void initDefaultDocks();
@@ -407,15 +410,16 @@ private:
 #endif
 	QAction *m_lastLayerViewMode;
 
-	QActionGroup *m_currentdoctools; // general tools that require no special permissions
-	QActionGroup *m_admintools;      // session operator actions
-	QActionGroup *m_canvasbgtools;   // tools related to canvas background feature
-	QActionGroup *m_resizetools;     // tools related to canvas resizing feature
-	QActionGroup *m_putimagetools;   // Cut&Paste related tools
-	QActionGroup *m_undotools;       // undo&redo related tools
-	QActionGroup *m_drawingtools;    // drawing tool selection
-	QActionGroup *m_brushSlots;      // tool slot shortcuts
-	QActionGroup *m_dockToggles;     // dock visibility toggles
+	QActionGroup
+		*m_currentdoctools; // general tools that require no special permissions
+	QActionGroup *m_admintools;	   // session operator actions
+	QActionGroup *m_canvasbgtools; // tools related to canvas background feature
+	QActionGroup *m_resizetools;   // tools related to canvas resizing feature
+	QActionGroup *m_putimagetools; // Cut&Paste related tools
+	QActionGroup *m_undotools;	   // undo&redo related tools
+	QActionGroup *m_drawingtools;  // drawing tool selection
+	QActionGroup *m_brushSlots;	   // tool slot shortcuts
+	QActionGroup *m_dockToggles;   // dock visibility toggles
 	QActionGroup *m_desktopModeActions;
 	QActionGroup *m_smallScreenModeActions;
 	QVector<QAction *> m_smallScreenEditActions;
@@ -428,7 +432,8 @@ private:
 	bool m_fullscreenOldMaximized;
 #endif
 
-	QElapsedTimer m_toolChangeTime; // how long the user has held down the tool change button
+	QElapsedTimer m_toolChangeTime; // how long the user has held down the tool
+									// change button
 	ShortcutDetector *m_tempToolSwitchShortcut;
 	bool m_titleBarsHidden;
 	bool m_wasSessionLocked;
@@ -438,7 +443,7 @@ private:
 	Document *m_doc;
 	MainActions *m_ma;
 #ifndef __EMSCRIPTEN__
-	enum { RUNNING, DISCONNECTING, SAVING } m_exitAction;
+	enum {RUNNING, DISCONNECTING, SAVING} m_exitAction;
 #endif
 
 	drawdance::CanvasState m_preResetCanvasState;
@@ -449,4 +454,3 @@ private:
 };
 
 #endif
-
