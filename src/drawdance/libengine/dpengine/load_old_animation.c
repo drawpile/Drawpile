@@ -150,7 +150,7 @@ convert_animation(DP_CanvasState *cs, DP_DrawContext *dc, int hold_time,
 
             for (int i = 0; i < frame_run; ++i) {
                 DP_transient_layer_list_set_inc(
-                    tll, DP_layer_list_at_noinc(ll, layer_index), i);
+                    child_tll, DP_layer_list_at_noinc(ll, layer_index), i);
 
                 DP_TransientLayerProps *child_tlp =
                     DP_transient_layer_props_new(
@@ -191,6 +191,10 @@ convert_animation(DP_CanvasState *cs, DP_DrawContext *dc, int hold_time,
 
             ++group_index;
         }
+
+        ++track_index;
+        ++next_track_id;
+        ++next_layer_id;
     }
 
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
