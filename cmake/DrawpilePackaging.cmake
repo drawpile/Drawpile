@@ -39,6 +39,22 @@ elseif(WIN32)
 		set(CPACK_WIX_PROPERTY_ARPURLUPDATEINFO ${PROJECT_HOMEPAGE_URL}/download/)
 		set(CPACK_WIX_PROPERTY_ARPHELPLINK ${PROJECT_HOMEPAGE_URL}/help/)
 
+		# CMake didn't set the install scope properly. They "fixed" this in
+		# version 3.29. Unfortunately, this causes the installer to no longer
+		# be compatible with previous installs, leading to updates becoming
+		# impossible! It'll check if the application is already installed,
+		# notice that the existing install is per-user while the new one is
+		# per-machine and then MSI in all its wisdom will just install the
+		# application halfway a second time and not replace any files, leading
+		# to the user having multiple desktop shortcuts and start menu entries
+		# and aaargh it hurts. I don't know if there's a way around this, but
+		# for now, we're reverting to the old, now-deprecated behavior, because
+		# that actually works. Yeah it won't create start menu shortcuts
+		# properly if you have multiple users on your machine, but that's such
+		# a niche use case that supporting it really doesn't matter. See
+		# https://gitlab.kitware.com/cmake/cmake/-/issues/20962
+		set(CPACK_WIX_INSTALL_SCOPE NONE)
+
 		include(DrawpileFileExtensions)
 		get_wix_extensions("${PROJECT_NAME}" "drawpile.exe" WIX_DRAWPILE_PROGIDS)
 		if(MSVC)
