@@ -1609,6 +1609,8 @@ void MainWindow::open()
 		std::bind(&MainWindow::openPath, this, _1, _2));
 }
 
+// clang-format on
+
 #ifdef __EMSCRIPTEN__
 void MainWindow::download()
 {
@@ -1663,7 +1665,17 @@ void MainWindow::exportImage()
 }
 #endif
 
-void MainWindow::importOldAnimation()
+void MainWindow::importAnimationFrames()
+{
+	importAnimation(int(dialogs::AnimationImportDialog::Source::Frames));
+}
+
+void MainWindow::importAnimationLayers()
+{
+	importAnimation(int(dialogs::AnimationImportDialog::Source::Layers));
+}
+
+void MainWindow::importAnimation(int source)
 {
 	// If we're on a single-window system, don't clobber that window just to
 	// show the dialog. Otherwise a single mis-click could obliterate work.
@@ -1674,7 +1686,7 @@ void MainWindow::importOldAnimation()
 #endif
 	if(showDialogNow) {
 		dialogs::AnimationImportDialog *dlg =
-			new dialogs::AnimationImportDialog(this);
+			new dialogs::AnimationImportDialog(source, this);
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
 		connect(
 			dlg, &dialogs::AnimationImportDialog::canvasStateImported, this,
@@ -1695,17 +1707,21 @@ void MainWindow::importOldAnimation()
 			});
 		utils::showWindow(dlg, shouldShowDialogMaximized());
 	} else {
-		prepareWindowReplacement();
-		bool newProcessStarted = dpApp().runInNewProcess(
-			{QStringLiteral("--no-restore-window-position"),
-			 QStringLiteral("--start-page"),
-			 QStringLiteral("import-old-animation")});
-		if(newProcessStarted) {
-			emit windowReplacementFailed(nullptr);
-		} else {
-			MainWindow *win = new MainWindow(false);
-			emit windowReplacementFailed(win);
-			win->importOldAnimation();
+		QString startPageArgument =
+			dialogs::AnimationImportDialog::getStartPageArgumentForSource(
+				source);
+		if(!startPageArgument.isEmpty()) {
+			prepareWindowReplacement();
+			bool newProcessStarted = dpApp().runInNewProcess(
+				{QStringLiteral("--no-restore-window-position"),
+				 QStringLiteral("--start-page"), startPageArgument});
+			if(newProcessStarted) {
+				emit windowReplacementFailed(nullptr);
+			} else {
+				MainWindow *win = new MainWindow(false);
+				emit windowReplacementFailed(win);
+				win->importAnimationLayers();
+			}
 		}
 	}
 }
@@ -1757,6 +1773,8 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 		close();
 #endif
 }
+
+// clang-format off
 
 #ifdef __EMSCRIPTEN__
 void MainWindow::onCanvasDownloadStarted()
@@ -3706,7 +3724,8 @@ void MainWindow::setupActions()
 	QAction *exportAnimationFrames = makeAction("exportanimframes", tr("Export Animation &Frames...")).noDefaultShortcut();
 #endif
 #endif
-	QAction *importOldAnimation = makeAction("importoldanimation", tr("Import &Drawpile 2.1 Animation…")).noDefaultShortcut();
+	QAction *importAnimationFrames = makeAction("importanimationframes", tr("Import Animation &Frames…")).noDefaultShortcut();
+	QAction *importAnimationLayers = makeAction("importoldanimation", tr("Import Animation from &Layers…")).noDefaultShortcut();
 	QAction *importBrushes = makeAction("importbrushes", tr("Import &Brushes...")).noDefaultShortcut();
 	QAction *exportBrushes = makeAction("exportbrushes", tr("Export &Brushes…")).noDefaultShortcut();
 
@@ -3759,7 +3778,12 @@ void MainWindow::setupActions()
 #endif
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
 #endif
-	connect(importOldAnimation, &QAction::triggered, this, &MainWindow::importOldAnimation);
+	connect(
+		importAnimationFrames, &QAction::triggered, this,
+		&MainWindow::importAnimationFrames);
+	connect(
+		importAnimationLayers, &QAction::triggered, this,
+		&MainWindow::importAnimationLayers);
 	connect(importBrushes, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::importBrushes);
 	connect(exportBrushes, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::exportBrushes);
 	connect(start, &QAction::triggered, this, &MainWindow::start);
@@ -3801,7 +3825,8 @@ void MainWindow::setupActions()
 
 	QMenu *importMenu = filemenu->addMenu(tr("&Import"));
 	importMenu->setIcon(QIcon::fromTheme("document-import"));
-	importMenu->addAction(importOldAnimation);
+	importMenu->addAction(importAnimationFrames);
+	importMenu->addAction(importAnimationLayers);
 	importMenu->addAction(importBrushes);
 
 	QMenu *exportMenu = filemenu->addMenu(tr("&Export"));
@@ -4925,7 +4950,8 @@ void MainWindow::setupActions()
 		singleGroup->addAction(newdocument);
 		singleGroup->addAction(open);
 		singleGroup->addAction(start);
-		singleGroup->addAction(importOldAnimation);
+		singleGroup->addAction(importAnimationFrames);
+		singleGroup->addAction(importAnimationLayers);
 		singleGroup->addAction(host);
 		singleGroup->addAction(browse);
 	}

@@ -58,6 +58,8 @@ typedef enum DP_LoadResult {
 
 typedef void (*DP_LoadFixedLayerFn)(void *user, int layer_id);
 
+DP_SaveImageType DP_load_guess(const unsigned char *buf, size_t size);
+
 DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
                         const char *flat_image_layer_title, unsigned int flags,
                         DP_LoadResult *out_result, DP_SaveImageType *out_type);

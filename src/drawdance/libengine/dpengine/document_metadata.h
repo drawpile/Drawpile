@@ -65,6 +65,8 @@ int DP_document_metadata_frame_count(DP_DocumentMetadata *dm);
 DP_TransientDocumentMetadata *
 DP_transient_document_metadata_new(DP_DocumentMetadata *dm);
 
+DP_TransientDocumentMetadata *DP_transient_document_metadata_new_init(void);
+
 DP_TransientDocumentMetadata *
 DP_transient_document_metadata_incref(DP_TransientDocumentMetadata *tdm);
 

@@ -2,12 +2,15 @@
 #ifndef DESKTOP_DIALOGS_ANIMATIONIMPORTDIALOG
 #define DESKTOP_DIALOGS_ANIMATIONIMPORTDIALOG
 #include "libclient/drawdance/canvasstate.h"
+#include <QCollator>
 #include <QDialog>
 
 class QAbstractButton;
 class QDialogButtonBox;
 class QLineEdit;
+class QListWidget;
 class QPushButton;
+class QTabWidget;
 class QTemporaryFile;
 class QSpinBox;
 
@@ -16,25 +19,42 @@ namespace dialogs {
 class AnimationImportDialog final : public QDialog {
 	Q_OBJECT
 public:
-	explicit AnimationImportDialog(QWidget *parent = nullptr);
+	enum class Source { Frames = 0, Layers = 1 };
+
+	explicit AnimationImportDialog(int source, QWidget *parent = nullptr);
 	~AnimationImportDialog() override;
+
+	static QString getStartPageArgumentForSource(int source);
 
 signals:
 	void canvasStateImported(const drawdance::CanvasState &canvasState);
 
 private slots:
-	void chooseFile();
+	void chooseFramesFiles();
+	void removeSelectedFrames();
+	void updateFrameButtons();
+	void chooseLayersFile();
 	void updateHoldTimeSuffix(int value);
-	void updateImportButton(const QString &path);
+	void updateImportButton();
 	void buttonClicked(QAbstractButton *button);
 	void importFinished(
 		const drawdance::CanvasState &canvasState, const QString &error);
 
 private:
-	void onOpen(const QString &path, QTemporaryFile *tempFile);
+	void sortFramesPaths(bool ascending, bool numeric);
+	void addFramesPaths(QStringList &paths);
+	QStringList getFramesPaths() const;
+	void onOpenLayersFile(const QString &path, QTemporaryFile *tempFile);
 	void runImport();
 
-	QLineEdit *m_pathEdit;
+	bool m_ascending = true;
+	QCollator m_collator;
+	QTabWidget *m_tabs;
+	QPushButton *m_addButton;
+	QPushButton *m_removeButton;
+	QPushButton *m_sortButton;
+	QListWidget *m_framesPathsList;
+	QLineEdit *m_layersPathEdit;
 	QPushButton *m_chooseButton;
 	QSpinBox *m_holdTime;
 	QSpinBox *m_framerate;

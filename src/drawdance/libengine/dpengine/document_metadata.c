@@ -160,6 +160,14 @@ DP_transient_document_metadata_new(DP_DocumentMetadata *dm)
                                       dm->frame_count);
 }
 
+DP_TransientDocumentMetadata *DP_transient_document_metadata_new_init(void)
+{
+    return allocate_document_metadata(true, DP_DOCUMENT_METADATA_DPIX_DEFAULT,
+                                      DP_DOCUMENT_METADATA_DPIY_DEFAULT,
+                                      DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT,
+                                      DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT);
+}
+
 DP_TransientDocumentMetadata *
 DP_transient_document_metadata_incref(DP_TransientDocumentMetadata *tdm)
 {

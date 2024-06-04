@@ -70,30 +70,16 @@ static bool guess_jpeg(const unsigned char *buf, size_t size)
         && ((buf[3] >= 0xe0 && buf[3] <= 0xef) || buf[3] == 0xdb);
 }
 
-DP_Image *DP_image_new_from_file_guess(DP_Input *input,
-                                       const unsigned char *buf, size_t size,
-                                       DP_ImageFileType *out_type)
+DP_ImageFileType DP_image_guess(const unsigned char *buf, size_t size)
 {
-    DP_Image *(*read_fn)(DP_Input *);
     if (guess_png(buf, size)) {
-        assign_type(out_type, DP_IMAGE_FILE_TYPE_PNG);
-        read_fn = DP_image_png_read;
+        return DP_IMAGE_FILE_TYPE_PNG;
     }
     else if (guess_jpeg(buf, size)) {
-        assign_type(out_type, DP_IMAGE_FILE_TYPE_JPEG);
-        read_fn = DP_image_jpeg_read;
+        return DP_IMAGE_FILE_TYPE_JPEG;
     }
     else {
-        assign_type(out_type, DP_IMAGE_FILE_TYPE_UNKNOWN);
-        DP_error_set("Could not guess image file format");
-        return NULL;
-    }
-
-    if (DP_input_rewind_by(input, size)) {
-        return read_fn(input);
-    }
-    else {
-        return NULL;
+        return DP_IMAGE_FILE_TYPE_UNKNOWN;
     }
 }
 
@@ -105,9 +91,28 @@ static DP_Image *read_image_guess(DP_Input *input, DP_ImageFileType *out_type)
     if (error) {
         return NULL;
     }
-    else {
-        return DP_image_new_from_file_guess(input, buf, read, out_type);
+
+    DP_ImageFileType type = DP_image_guess(buf, read);
+    assign_type(out_type, type);
+
+    DP_Image *(*read_fn)(DP_Input *);
+    switch (type) {
+    case DP_IMAGE_FILE_TYPE_PNG:
+        read_fn = DP_image_png_read;
+        break;
+    case DP_IMAGE_FILE_TYPE_JPEG:
+        read_fn = DP_image_jpeg_read;
+        break;
+    default:
+        DP_error_set("Could not guess image format");
+        return NULL;
     }
+
+    if (!DP_input_rewind(input)) {
+        return NULL;
+    }
+
+    return read_fn(input);
 }
 
 DP_Image *DP_image_new_from_file(DP_Input *input, DP_ImageFileType type,

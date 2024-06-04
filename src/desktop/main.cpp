@@ -565,12 +565,18 @@ void DrawpileApp::openStart(const QString &page, bool restoreWindowPosition)
 	MainWindow *win = new MainWindow(restoreWindowPosition);
 	win->newDocument(
 		m_settings.newCanvasSize(), m_settings.newCanvasBackColor());
-	// Importing an old animation is not actually a start dialog page, it's just
+	// Importing an animation is not actually a start dialog page, it's just
 	// here as an internal option to let us start a new process if the user
 	// requests an animation import on a dirty canvas.
 	if(page.compare(
-		   QStringLiteral("import-old-animation"), Qt::CaseInsensitive) == 0) {
-		win->importOldAnimation();
+		   QStringLiteral("import-animation-frames"), Qt::CaseInsensitive) ==
+	   0) {
+		win->importAnimationFrames();
+	} else if(
+		page.compare(
+			QStringLiteral("import-animation-layers"), Qt::CaseInsensitive) ==
+		0) {
+		win->importAnimationLayers();
 	} else if(page.compare(QStringLiteral("none"), Qt::CaseInsensitive) != 0) {
 		dialogs::StartDialog *dlg = win->showStartDialog();
 		dlg->showPage(getStartDialogEntry(page));

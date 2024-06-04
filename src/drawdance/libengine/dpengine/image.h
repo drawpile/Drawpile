@@ -43,11 +43,7 @@ typedef DP_Pixel8 (*DP_ImageGetPixelFn)(void *user, int x, int y);
 
 DP_Image *DP_image_new(int width, int height);
 
-// Expects `size` bytes to have been read into `buf` to check file magic. 8
-// bytes are enough. This function takes care of rewinding `input` if needed.
-DP_Image *DP_image_new_from_file_guess(DP_Input *input,
-                                       const unsigned char *buf, size_t size,
-                                       DP_ImageFileType *out_type);
+DP_ImageFileType DP_image_guess(const unsigned char *buf, size_t size);
 
 DP_Image *DP_image_new_from_file(DP_Input *input, DP_ImageFileType type,
                                  DP_ImageFileType *out_type);

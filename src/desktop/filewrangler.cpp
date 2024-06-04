@@ -43,11 +43,24 @@ void FileWrangler::openMain(const MainOpenFn &onOpen) const
 		onOpen);
 }
 
-void FileWrangler::openAnimationImport(const MainOpenFn &onOpen) const
+QStringList FileWrangler::openAnimationFramesImport() const
+{
+	QStringList paths = QFileDialog::getOpenFileNames(
+		parentWidget(), tr("Import Animation Frames"),
+		getLastPath(LastPath::ANIMATION_FRAMES),
+		utils::fileFormatFilterList(utils::FileFormatOption::OpenImages)
+			.join(QStringLiteral(";;")));
+	if(!paths.isEmpty()) {
+		updateLastPath(LastPath::ANIMATION_FRAMES, paths.first());
+	}
+	return paths;
+}
+
+void FileWrangler::openAnimationLayersImport(const MainOpenFn &onOpen) const
 {
 	openMainContent(
-		tr("Import Animation"), LastPath::IMAGE,
-		{QStringLiteral("%1 (*.ora)").arg(tr("OpenRaster Image"))}, onOpen);
+		tr("Import Animation from Layers"), LastPath::IMAGE,
+		{QStringLiteral("%1 (*.ora *.psd)").arg(tr("Layered Image"))}, onOpen);
 }
 
 void FileWrangler::openDebugDump(const MainOpenFn &onOpen) const
@@ -637,6 +650,22 @@ void FileWrangler::setLastPath(LastPath type, const QString &path)
 	settings.setLastFileOpenPaths(paths);
 }
 
+void FileWrangler::updateLastPath(LastPath type, const QString &path)
+{
+#ifdef Q_OS_ANDROID
+	// On Android, the last path is really just the name of the last
+	// file, since paths are weird content URIs that don't interact
+	// with the native Android file picker in any kind of sensible
+	// way.
+	QString basename = utils::paths::extractBasename(path);
+	if(!basename.isEmpty()) {
+		setLastPath(type, basename);
+	}
+#else
+	setLastPath(type, path);
+#endif
+}
+
 QString FileWrangler::getLastPathKey(LastPath type)
 {
 	switch(type) {
@@ -1016,18 +1045,7 @@ void FileWrangler::showOpenFileContentDialog(
 		[=](const QString &fileName) {
 			QByteArray fileContent;
 			if(!fileName.isNull()) {
-#	ifdef Q_OS_ANDROID
-				// On Android, the last path is really just the name of the last
-				// file, since paths are weird content URIs that don't interact
-				// with the native Android file picker in any kind of sensible
-				// way.
-				QString basename = utils::paths::extractBasename(fileName);
-				if(!basename.isEmpty()) {
-					setLastPath(type, basename);
-				}
-#	else
-				setLastPath(type, fileName);
-#	endif
+				updateLastPath(type, fileName);
 				QFile selectedFile(fileName);
 				if(selectedFile.open(QIODevice::ReadOnly)) {
 					fileContent = selectedFile.readAll();

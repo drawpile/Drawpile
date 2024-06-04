@@ -143,7 +143,8 @@ public slots:
 	void saveSelection();
 	void exportImage();
 #endif
-	void importOldAnimation();
+	void importAnimationFrames();
+	void importAnimationLayers();
 	void showFlipbook();
 
 	void showBrushSettingsDialog();
@@ -297,6 +298,7 @@ private:
 	void closeStartDialog(dialogs::StartDialog *dlg, bool join);
 	QWidget *getStartDialogOrThis();
 
+	void importAnimation(int source);
 	void exportAnimation(
 		const drawdance::CanvasState &canvasState, const QString &path,
 		AnimationSaverRunnable::SaveFn saveFn);

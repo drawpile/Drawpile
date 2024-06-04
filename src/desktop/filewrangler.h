@@ -75,7 +75,8 @@ public:
 	void openPasteImage(const ImageOpenFn &imageOpenCompleted);
 
 	void openMain(const MainOpenFn &onOpen) const;
-	void openAnimationImport(const MainOpenFn &onOpen) const;
+	QStringList openAnimationFramesImport() const;
+	void openAnimationLayersImport(const MainOpenFn &onOpen) const;
 	void openDebugDump(const MainOpenFn &onOpen) const;
 	void openBrushPack(const MainOpenFn &onOpen) const;
 
@@ -146,6 +147,7 @@ private:
 
 	static QString getLastPath(LastPath type, const QString &ext = QString{});
 	static void setLastPath(LastPath type, const QString &path);
+	static void updateLastPath(LastPath type, const QString &path);
 	static QString getLastPathKey(LastPath type);
 	static QString getDefaultLastPath(LastPath type, const QString &ext);
 

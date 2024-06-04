@@ -27,7 +27,7 @@ dp_target_sources(dpengine
     dpengine/layer_props_list.c
     dpengine/layer_routes.c
     dpengine/load.c
-    dpengine/load_old_animation.c
+    dpengine/load_animation.c
     dpengine/load_psd.cpp
     dpengine/local_state.c
     dpengine/ops.c
@@ -98,7 +98,7 @@ dp_target_sources(dpengine
     dpengine/user_cursors.h
     dpengine/view_mode.h
     dpengine/load.h
-    dpengine/load_old_animation.h
+    dpengine/load_animation.h
     dpengine/save.h
     dpengine/utf16be.h
     dpengine/xml_stream.h

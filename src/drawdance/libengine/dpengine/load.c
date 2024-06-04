@@ -1208,32 +1208,53 @@ static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
 }
 
 
-DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
-                                const char *flat_image_layer_title,
-                                const unsigned char *buf, size_t size,
-                                DP_LoadResult *out_result,
-                                DP_SaveImageType *out_type)
+static bool guess_zip(const unsigned char *buf, size_t size)
 {
-    DP_ImageFileType type;
-    DP_Image *img = DP_image_new_from_file_guess(input, buf, size, &type);
-    if (!img) {
-        assign_load_result(out_result, type == DP_IMAGE_FILE_TYPE_UNKNOWN
-                                           ? DP_LOAD_RESULT_UNKNOWN_FORMAT
-                                           : DP_LOAD_RESULT_READ_ERROR);
-        assign_type(out_type, DP_SAVE_IMAGE_UNKNOWN);
-        return NULL;
+    return size >= 4 && buf[0] == 0x50 && buf[1] == 0x4B && buf[2] == 0x03
+        && (buf[3] == 0x04 || buf[3] == 0x06 || buf[3] == 0x08);
+}
+
+static bool guess_psd(const unsigned char *buf, size_t size)
+{
+    return size >= 4 && buf[0] == 0x38 && buf[1] == 0x42 && buf[2] == 0x50
+        && buf[3] == 0x53;
+}
+
+DP_SaveImageType DP_load_guess(const unsigned char *buf, size_t size)
+{
+    // We could also check if there's an uncompressed mimetype file at the
+    // beginning of the ZIP archive like the spec says, but since we only
+    // support one ZIP-based format, that's not necessary and would preclude ORA
+    // files with the pretty unimportant defect of compressing a file wrong.
+    if (guess_zip(buf, size)) {
+        return DP_SAVE_IMAGE_ORA;
     }
 
-    switch (type) {
+    if (guess_psd(buf, size)) {
+        return DP_SAVE_IMAGE_PSD;
+    }
+
+    switch (DP_image_guess(buf, size)) {
     case DP_IMAGE_FILE_TYPE_PNG:
-        assign_type(out_type, DP_SAVE_IMAGE_PNG);
-        break;
+        return DP_SAVE_IMAGE_PNG;
     case DP_IMAGE_FILE_TYPE_JPEG:
-        assign_type(out_type, DP_SAVE_IMAGE_JPEG);
-        break;
+        return DP_SAVE_IMAGE_JPEG;
     default:
-        assign_type(out_type, DP_SAVE_IMAGE_UNKNOWN);
-        break;
+        return DP_SAVE_IMAGE_UNKNOWN;
+    }
+}
+
+
+static DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
+                                       DP_ImageFileType type,
+                                       const char *flat_image_layer_title,
+                                       DP_LoadResult *out_result)
+{
+    DP_Image *img = DP_image_new_from_file(input, type, NULL);
+    DP_input_free(input);
+    if (!img) {
+        assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
+        return NULL;
     }
 
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new_init();
@@ -1270,18 +1291,6 @@ DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
 }
 
 
-static bool guess_zip(const unsigned char *buf, size_t size)
-{
-    return size >= 4 && buf[0] == 0x50 && buf[1] == 0x4B && buf[2] == 0x03
-        && (buf[3] == 0x04 || buf[3] == 0x06 || buf[3] == 0x08);
-}
-
-static bool guess_psd(const unsigned char *buf, size_t size)
-{
-    return size >= 4 && buf[0] == 0x38 && buf[1] == 0x42 && buf[2] == 0x50
-        && buf[3] == 0x53;
-}
-
 static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
                             const char *flat_image_layer_title,
                             unsigned int flags, DP_LoadResult *out_result,
@@ -1298,36 +1307,45 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
     bool error;
     size_t read = DP_input_read(input, buf, sizeof(buf), &error);
     if (error) {
+        DP_input_free(input);
         assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
         assign_type(out_type, DP_SAVE_IMAGE_UNKNOWN);
         return NULL;
     }
 
-    // We could also check if there's an uncompressed mimetype file at the
-    // beginning of the ZIP archive like the spec says, but since we only
-    // support one ZIP-based format, that's not necessary and would preclude ORA
-    // files with the pretty unimportant defect of compressing a file wrong.
-    if (guess_zip(buf, read)) {
+    DP_SaveImageType type = DP_load_guess(buf, read);
+    assign_type(out_type, type);
+    if (type == DP_SAVE_IMAGE_UNKNOWN) {
         DP_input_free(input);
-        assign_type(out_type, DP_SAVE_IMAGE_ORA);
+        assign_load_result(out_result, DP_LOAD_RESULT_UNKNOWN_FORMAT);
+        return NULL;
+    }
+
+    if (type == DP_SAVE_IMAGE_ORA) {
+        DP_input_free(input);
         return load_ora(dc, path, flags, NULL, NULL, out_result);
     }
 
-    if (guess_psd(buf, read)) {
-        assign_type(out_type, DP_SAVE_IMAGE_PSD);
-        if (DP_input_rewind_by(input, read)) {
-            return DP_load_psd(dc, input, out_result);
-        }
-        else {
-            assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
-            return NULL;
-        }
+    if (!DP_input_rewind(input)) {
+        DP_input_free(input);
+        assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
+        return NULL;
     }
 
-    DP_CanvasState *cs = load_flat_image(dc, input, flat_image_layer_title, buf,
-                                         read, out_result, out_type);
-    DP_input_free(input);
-    return cs;
+    switch (type) {
+    case DP_SAVE_IMAGE_PSD:
+        return DP_load_psd(dc, input, out_result);
+    case DP_SAVE_IMAGE_PNG:
+        return load_flat_image(dc, input, DP_IMAGE_FILE_TYPE_PNG,
+                               flat_image_layer_title, out_result);
+    case DP_SAVE_IMAGE_JPEG:
+        return load_flat_image(dc, input, DP_IMAGE_FILE_TYPE_JPEG,
+                               flat_image_layer_title, out_result);
+    default:
+        assign_load_result(out_result, DP_LOAD_RESULT_INTERNAL_ERROR);
+        DP_error_set("Unknown image type %d", (int)type);
+        return NULL;
+    }
 }
 
 DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,

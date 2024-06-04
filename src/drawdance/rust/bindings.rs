@@ -2023,6 +2023,9 @@ extern "C" {
     ) -> *mut DP_TransientDocumentMetadata;
 }
 extern "C" {
+    pub fn DP_transient_document_metadata_new_init() -> *mut DP_TransientDocumentMetadata;
+}
+extern "C" {
     pub fn DP_transient_document_metadata_incref(
         tdm: *mut DP_TransientDocumentMetadata,
     ) -> *mut DP_TransientDocumentMetadata;
@@ -2297,12 +2300,7 @@ extern "C" {
     ) -> *mut DP_Image;
 }
 extern "C" {
-    pub fn DP_image_new_from_file_guess(
-        input: *mut DP_Input,
-        buf: *const ::std::os::raw::c_uchar,
-        size: usize,
-        out_type: *mut DP_ImageFileType,
-    ) -> *mut DP_Image;
+    pub fn DP_image_guess(buf: *const ::std::os::raw::c_uchar, size: usize) -> DP_ImageFileType;
 }
 extern "C" {
     pub fn DP_image_new_from_file(
@@ -2680,6 +2678,19 @@ extern "C" {
         out_y: *mut ::std::os::raw::c_int,
         out_width: *mut ::std::os::raw::c_int,
         out_height: *mut ::std::os::raw::c_int,
+    ) -> bool;
+}
+extern "C" {
+    pub fn DP_layer_content_is_blank_in_bounds(
+        lc: *mut DP_LayerContent,
+        rect: *const DP_Rect,
+    ) -> bool;
+}
+extern "C" {
+    pub fn DP_layer_content_is_blank_in_mask(
+        lc: *mut DP_LayerContent,
+        rect: *const DP_Rect,
+        mask: *const DP_Pixel8,
     ) -> bool;
 }
 extern "C" {
@@ -6024,6 +6035,9 @@ pub type DP_LoadResult = ::std::os::raw::c_uint;
 pub type DP_LoadFixedLayerFn = ::std::option::Option<
     unsafe extern "C" fn(user: *mut ::std::os::raw::c_void, layer_id: ::std::os::raw::c_int),
 >;
+extern "C" {
+    pub fn DP_load_guess(buf: *const ::std::os::raw::c_uchar, size: usize) -> DP_SaveImageType;
+}
 extern "C" {
     pub fn DP_load(
         dc: *mut DP_DrawContext,

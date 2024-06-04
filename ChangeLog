@@ -69,6 +69,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Don't overwrite last file on save after resetting the canvas to an external image. Thanks Bluestrings for reporting.
  * Fix: Ignore bogus mouse clicks emitted by some tablets after briefly tapping the pen on them. Thanks Ausjamcian for reporting.
  * Fix: Make the window fit itself to the screen harder in the browser and on Android. There's also an option under View -> Fit to Screen now to manually force it to do so. Thanks Sidca for reporting and Meru for testing.
+ * Feature: Allow importing animation frames from multiple files and as layers from PSD files, to be found under File -> Import. Thanks Meru, BulletPepper, Ben and RubberRoss for suggesting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.
