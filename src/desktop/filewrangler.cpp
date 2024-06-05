@@ -48,8 +48,8 @@ QStringList FileWrangler::openAnimationFramesImport() const
 	QStringList paths = QFileDialog::getOpenFileNames(
 		parentWidget(), tr("Import Animation Frames"),
 		getLastPath(LastPath::ANIMATION_FRAMES),
-		utils::fileFormatFilterList(utils::FileFormatOption::OpenImages)
-			.join(QStringLiteral(";;")));
+		tr("%1 (%2)").arg(
+			tr("Frame Images"), cmake_config::file_group::flatImage()));
 	if(!paths.isEmpty()) {
 		updateLastPath(LastPath::ANIMATION_FRAMES, paths.first());
 	}
@@ -60,7 +60,9 @@ void FileWrangler::openAnimationLayersImport(const MainOpenFn &onOpen) const
 {
 	openMainContent(
 		tr("Import Animation from Layers"), LastPath::IMAGE,
-		{QStringLiteral("%1 (*.ora *.psd)").arg(tr("Layered Image"))}, onOpen);
+		{QStringLiteral("%1 (%2)").arg(
+			tr("Layered Images"), cmake_config::file_group::layeredImage())},
+		onOpen);
 }
 
 void FileWrangler::openDebugDump(const MainOpenFn &onOpen) const

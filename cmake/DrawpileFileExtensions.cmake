@@ -26,7 +26,7 @@ set(SUPPORTED_FILE_TYPES
 	TYPE
 		IMPORTED
 		NAME OpenRaster image
-		GROUP IMAGE
+		GROUP LAYERED_IMAGE
 		MIME image/openraster
 		REFERENCE https://www.freedesktop.org/wiki/Specifications/OpenRaster/
 		UTI org.krita.ora
@@ -34,21 +34,21 @@ set(SUPPORTED_FILE_TYPES
 
 	TYPE
 		NAME PNG image
-		GROUP IMAGE
+		GROUP FLAT_IMAGE
 		MIME image/png
 		UTI public.png
 		EXT png
 
 	TYPE
 		NAME JPEG image
-		GROUP IMAGE
+		GROUP FLAT_IMAGE
 		MIME image/jpeg
 		UTI public.jpeg
 		EXT jpg jpeg
 
 	TYPE
 		NAME Photoshop document
-		GROUP IMAGE
+		GROUP LAYERED_IMAGE
 		MIME image/vnd.adobe.photoshop
 		UTI com.adobe.photoshop-image
 		EXT psd

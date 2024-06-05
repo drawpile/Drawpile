@@ -25,6 +25,8 @@ constexpr const char *sourceAssetsDesktop() { return DRAWPILE_SOURCE_ASSETS_DESK
 
 namespace file_group {
 	constexpr const char *image() { return "@DRAWPILE_FILE_GROUP_IMAGE@"; }
+	constexpr const char *layeredImage() { return "@DRAWPILE_FILE_GROUP_LAYERED_IMAGE@"; }
+	constexpr const char *flatImage() { return "@DRAWPILE_FILE_GROUP_FLAT_IMAGE@"; }
 	constexpr const char *recording() { return "@DRAWPILE_FILE_GROUP_RECORDING@"; }
 } // namespace file_group
 
