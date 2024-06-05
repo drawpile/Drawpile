@@ -171,6 +171,7 @@ AnimationImportDialog::AnimationImportDialog(int source, QWidget *parent)
 	m_framerate = new QSpinBox;
 	m_framerate->setRange(1, 999);
 	m_framerate->setValue(24);
+	m_framerate->setSuffix(tr(" FPS"));
 	form->addRow(tr("Framerate:"), m_framerate);
 
 	m_buttons = new QDialogButtonBox(QDialogButtonBox::Cancel);
