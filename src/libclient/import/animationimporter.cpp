@@ -68,9 +68,11 @@ DP_CanvasState *AnimationLayersImporter::load(DP_LoadResult *outResult)
 
 
 AnimationFramesImporter::AnimationFramesImporter(
-	const QStringList &paths, int holdTime, int framerate)
+	const QStringList &paths, const QColor &backgroundColor, int holdTime,
+	int framerate)
 	: AnimationImporter(holdTime, framerate)
 	, m_pathsBytes(pathsToUtf8(paths))
+	, m_backgroundColor(backgroundColor)
 {
 }
 
@@ -78,8 +80,9 @@ DP_CanvasState *AnimationFramesImporter::load(DP_LoadResult *outResult)
 {
 	drawdance::DrawContext drawContext = drawdance::DrawContextPool::acquire();
 	return DP_load_animation_frames(
-		drawContext.get(), m_pathsBytes.size(), getPathAt, this, m_holdTime,
-		m_framerate, setLayerTitle, setGroupTitle, setTrackTitle, outResult);
+		drawContext.get(), m_pathsBytes.size(), getPathAt, this,
+		m_backgroundColor.rgba(), m_holdTime, m_framerate, setLayerTitle,
+		setGroupTitle, setTrackTitle, outResult);
 }
 
 QVector<QByteArray>

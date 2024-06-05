@@ -27,7 +27,7 @@ typedef void (*DP_LoadAnimationSetTrackTitleFn)(DP_TransientTrack *tt, int i);
 
 DP_CanvasState *DP_load_animation_frames(
     DP_DrawContext *dc, int path_count, DP_LoadAnimationFramesPathAtFn path_at,
-    void *user, int hold_time, int framerate,
+    void *user, uint32_t background_color, int hold_time, int framerate,
     DP_LoadAnimationSetLayerTitleFn set_layer_title,
     DP_LoadAnimationSetGroupTitleFn set_group_title,
     DP_LoadAnimationSetTrackTitleFn set_track_title, DP_LoadResult *out_result);

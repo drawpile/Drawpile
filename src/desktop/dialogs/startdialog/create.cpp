@@ -36,21 +36,14 @@ Create::Create(QWidget *parent)
 	m_heightSpinner->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
 	layout->addRow(tr("Height:"), m_heightSpinner);
 
-	m_backgroundPreview = new ColorPreview;
-	m_backgroundPreview->setDisplayMode(ColorPreview::DisplayMode::AllAlpha);
-	m_backgroundPreview->setToolTip(tr("Canvas background color"));
-	m_backgroundPreview->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-	m_backgroundPreview->setCursor(Qt::PointingHandCursor);
-	layout->addRow(tr("Background:"), m_backgroundPreview);
-
 	const desktop::settings::Settings &settings = dpApp().settings();
 	QSize lastSize = settings.newCanvasSize();
 	bool lastSizeValid = lastSize.isValid() && utils::checkImageSize(lastSize);
 	m_widthSpinner->setValue(lastSizeValid ? lastSize.width() : 1920);
 	m_heightSpinner->setValue(lastSizeValid ? lastSize.height() : 1080);
 
-	QColor lastColor = settings.newCanvasBackColor();
-	m_backgroundPreview->setColor(lastColor.isValid() ? lastColor : Qt::white);
+	m_backgroundPreview = makeBackgroundPreview(settings.newCanvasBackColor());
+	layout->addRow(tr("Background:"), m_backgroundPreview);
 
 	connect(
 		m_widthSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
@@ -77,6 +70,17 @@ void Create::accept()
 	settings.setNewCanvasSize(size);
 	settings.setNewCanvasBackColor(backgroundColor);
 	emit create(size, backgroundColor);
+}
+
+color_widgets::ColorPreview *Create::makeBackgroundPreview(const QColor &color)
+{
+	ColorPreview *backgroundPreview = new ColorPreview;
+	backgroundPreview->setDisplayMode(ColorPreview::DisplayMode::AllAlpha);
+	backgroundPreview->setToolTip(tr("Canvas background color"));
+	backgroundPreview->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	backgroundPreview->setCursor(Qt::PointingHandCursor);
+	backgroundPreview->setColor(color.isValid() ? color : Qt::white);
+	return backgroundPreview;
 }
 
 void Create::updateCreateButton()

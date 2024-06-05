@@ -22,6 +22,9 @@ public:
 	void activate() final override;
 	void accept() final override;
 
+	static color_widgets::ColorPreview *
+	makeBackgroundPreview(const QColor &color);
+
 signals:
 	void showButtons();
 	void enableCreate(bool enabled);

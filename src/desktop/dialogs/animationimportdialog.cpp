@@ -3,7 +3,10 @@ extern "C" {
 #include <dpengine/canvas_state.h>
 }
 #include "desktop/dialogs/animationimportdialog.h"
+#include "desktop/dialogs/colordialog.h"
+#include "desktop/dialogs/startdialog/create.h"
 #include "desktop/filewrangler.h"
+#include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/import/animationimporter.h"
 #include <QAction>
@@ -23,8 +26,11 @@ extern "C" {
 #include <QTemporaryFile>
 #include <QThreadPool>
 #include <QVBoxLayout>
+#include <QtColorWidgets/ColorPreview>
 #include <functional>
 
+using color_widgets::ColorDialog;
+using color_widgets::ColorPreview;
 using std::placeholders::_1;
 using std::placeholders::_2;
 
@@ -53,16 +59,23 @@ AnimationImportDialog::AnimationImportDialog(int source, QWidget *parent)
 	m_tabs->setTabToolTip(
 		framesIndex, tr("Import a series of images as timeline frames."));
 
-	QVBoxLayout *framesLayout = new QVBoxLayout(framesPage);
+	QFormLayout *framesLayout = new QFormLayout(framesPage);
+
+	m_backgroundPreview = dialogs::startdialog::Create::makeBackgroundPreview(
+		dpApp().settings().newCanvasBackColor());
+	framesLayout->addRow(tr("Canvas Background:"), m_backgroundPreview);
+	connect(
+		m_backgroundPreview, &ColorPreview::clicked, this,
+		&AnimationImportDialog::showColorPicker);
 
 	m_framesPathsList = new QListWidget;
 	m_framesPathsList->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	m_framesPathsList->setDragDropMode(QAbstractItemView::InternalMove);
-	framesLayout->addWidget(m_framesPathsList);
+	framesLayout->addRow(m_framesPathsList);
 
 	QHBoxLayout *framesButtonLayout = new QHBoxLayout;
 	framesButtonLayout->addStretch();
-	framesLayout->addLayout(framesButtonLayout);
+	framesLayout->addRow(framesButtonLayout);
 
 	m_addButton = new QPushButton(QIcon::fromTheme("list-add"), tr("Add"));
 	framesButtonLayout->addWidget(m_addButton);
@@ -196,6 +209,16 @@ QString AnimationImportDialog::getStartPageArgumentForSource(int source)
 	}
 }
 
+void AnimationImportDialog::showColorPicker()
+{
+	ColorDialog *dlg = dialogs::newDeleteOnCloseColorDialog(
+		m_backgroundPreview->color(), this);
+	connect(
+		dlg, &ColorDialog::colorSelected, m_backgroundPreview,
+		&ColorPreview::setColor);
+	dlg->show();
+}
+
 void AnimationImportDialog::chooseFramesFiles()
 {
 	QStringList paths = FileWrangler(this).openAnimationFramesImport();
@@ -313,10 +336,13 @@ void AnimationImportDialog::runImport()
 		int holdTime = m_holdTime->value();
 		int framerate = m_framerate->value();
 		switch(source) {
-		case int(Source::Frames):
+		case int(Source::Frames): {
+			QColor backgroundColor = m_backgroundPreview->color();
+			dpApp().settings().setNewCanvasBackColor(backgroundColor);
 			importer = new impex::AnimationFramesImporter(
-				getFramesPaths(), holdTime, framerate);
+				getFramesPaths(), backgroundColor, holdTime, framerate);
 			break;
+		}
 		case int(Source::Layers):
 			importer = new impex::AnimationLayersImporter(
 				m_tempFile ? m_tempFile->fileName()

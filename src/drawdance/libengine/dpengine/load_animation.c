@@ -10,6 +10,7 @@
 #include "layer_list.h"
 #include "layer_props.h"
 #include "layer_props_list.h"
+#include "tile.h"
 #include "timeline.h"
 #include "track.h"
 #include <dpcommon/common.h>
@@ -29,7 +30,7 @@ static void assign_load_result(DP_LoadResult *out_result, DP_LoadResult result)
 
 DP_CanvasState *DP_load_animation_frames(
     DP_DrawContext *dc, int path_count, DP_LoadAnimationFramesPathAtFn path_at,
-    void *user, int hold_time, int framerate,
+    void *user, uint32_t background_color, int hold_time, int framerate,
     DP_LoadAnimationSetLayerTitleFn set_layer_title,
     DP_LoadAnimationSetGroupTitleFn set_group_title,
     DP_LoadAnimationSetTrackTitleFn set_track_title, DP_LoadResult *out_result)
@@ -106,6 +107,13 @@ DP_CanvasState *DP_load_animation_frames(
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new_init();
     DP_transient_canvas_state_width_set(tcs, width);
     DP_transient_canvas_state_height_set(tcs, height);
+
+    uint32_t background_alpha = background_color & 0xff000000u;
+    if (background_alpha != 0) {
+        DP_transient_canvas_state_background_tile_set_noinc(
+            tcs, DP_tile_new_from_bgra(0, background_color),
+            background_alpha == 0xff000000u);
+    }
 
     DP_TransientLayerList *root_tll =
         DP_transient_canvas_state_transient_layers(tcs, 1);

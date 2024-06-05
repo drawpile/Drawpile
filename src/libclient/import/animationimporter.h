@@ -55,7 +55,8 @@ class AnimationFramesImporter final : public AnimationImporter {
 	Q_OBJECT
 public:
 	AnimationFramesImporter(
-		const QStringList &paths, int holdTime, int framerate);
+		const QStringList &paths, const QColor &backgroundColor, int holdTime,
+		int framerate);
 
 protected:
 	DP_CanvasState *load(DP_LoadResult *outResult) override;
@@ -65,6 +66,7 @@ private:
 	static const char *getPathAt(void *user, int index);
 
 	const QVector<QByteArray> m_pathsBytes;
+	const QColor m_backgroundColor;
 };
 
 }

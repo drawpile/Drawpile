@@ -14,6 +14,10 @@ class QTabWidget;
 class QTemporaryFile;
 class QSpinBox;
 
+namespace color_widgets {
+class ColorPreview;
+}
+
 namespace dialogs {
 
 class AnimationImportDialog final : public QDialog {
@@ -30,6 +34,7 @@ signals:
 	void canvasStateImported(const drawdance::CanvasState &canvasState);
 
 private slots:
+	void showColorPicker();
 	void chooseFramesFiles();
 	void removeSelectedFrames();
 	void updateFrameButtons();
@@ -50,10 +55,11 @@ private:
 	bool m_ascending = true;
 	QCollator m_collator;
 	QTabWidget *m_tabs;
+	color_widgets::ColorPreview *m_backgroundPreview;
+	QListWidget *m_framesPathsList;
 	QPushButton *m_addButton;
 	QPushButton *m_removeButton;
 	QPushButton *m_sortButton;
-	QListWidget *m_framesPathsList;
 	QLineEdit *m_layersPathEdit;
 	QPushButton *m_chooseButton;
 	QSpinBox *m_holdTime;
