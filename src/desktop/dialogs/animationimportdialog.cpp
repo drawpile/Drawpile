@@ -41,11 +41,15 @@ AnimationImportDialog::AnimationImportDialog(int source, QWidget *parent)
 {
 	setModal(true);
 	setWindowTitle(tr("Import Animation"));
-	resize(800, 600);
 
+#ifdef __EMSCRIPTEN__
+	resize(800, 300);
+#else
+	resize(800, 600);
 	m_collator.setCaseSensitivity(Qt::CaseInsensitive);
 	m_collator.setIgnorePunctuation(true);
 	m_collator.setNumericMode(true);
+#endif
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	setLayout(layout);
@@ -60,6 +64,14 @@ AnimationImportDialog::AnimationImportDialog(int source, QWidget *parent)
 		framesIndex, tr("Import a series of images as timeline frames."));
 
 	QFormLayout *framesLayout = new QFormLayout(framesPage);
+
+#ifdef __EMSCRIPTEN__
+	QLabel *framesLabel =
+		new QLabel(tr("Importing animation frames is not supported in the web "
+					  "browser version of Drawpile."));
+	framesLabel->setWordWrap(true);
+	framesLayout->addRow(framesLabel);
+#else
 
 	m_backgroundPreview = dialogs::startdialog::Create::makeBackgroundPreview(
 		dpApp().settings().newCanvasBackColor());
@@ -119,6 +131,7 @@ AnimationImportDialog::AnimationImportDialog(int source, QWidget *parent)
 	connect(
 		sortAlphabeticDescending, &QAction::triggered, this,
 		std::bind(&AnimationImportDialog::sortFramesPaths, this, false, false));
+#endif
 
 	QWidget *layersPage = new QWidget;
 	int layersIndex = m_tabs->addTab(layersPage, tr("Layers"));
@@ -176,16 +189,17 @@ AnimationImportDialog::AnimationImportDialog(int source, QWidget *parent)
 		m_buttons, &QDialogButtonBox::clicked, this,
 		&AnimationImportDialog::buttonClicked);
 	connect(
-		m_framesPathsList, &QListWidget::itemSelectionChanged, this,
-		&AnimationImportDialog::updateFrameButtons);
-	connect(
 		m_layersPathEdit, &QLineEdit::textChanged, this,
 		&AnimationImportDialog::updateImportButton);
 	connect(
 		m_tabs, &QTabWidget::currentChanged, this,
 		&AnimationImportDialog::updateImportButton);
-
+#ifndef __EMSCRIPTEN__
+	connect(
+		m_framesPathsList, &QListWidget::itemSelectionChanged, this,
+		&AnimationImportDialog::updateFrameButtons);
 	updateFrameButtons();
+#endif
 	updateImportButton();
 }
 
@@ -208,6 +222,8 @@ QString AnimationImportDialog::getStartPageArgumentForSource(int source)
 		return QString();
 	}
 }
+
+#ifndef __EMSCRIPTEN__
 
 void AnimationImportDialog::showColorPicker()
 {
@@ -240,6 +256,8 @@ void AnimationImportDialog::updateFrameButtons()
 	m_sortButton->setEnabled(m_framesPathsList->model()->rowCount() != 0);
 }
 
+#endif
+
 void AnimationImportDialog::chooseLayersFile()
 {
 	FileWrangler(this).openAnimationLayersImport(
@@ -255,9 +273,11 @@ void AnimationImportDialog::updateImportButton()
 {
 	bool enabled;
 	switch(m_tabs->currentIndex()) {
+#ifndef __EMSCRIPTEN__
 	case int(Source::Frames):
 		enabled = m_framesPathsList->count() != 0;
 		break;
+#endif
 	case int(Source::Layers):
 		enabled = !m_layersPathEdit->text().trimmed().isEmpty();
 		break;
@@ -286,6 +306,8 @@ void AnimationImportDialog::importFinished(
 		emit canvasStateImported(canvasState);
 	}
 }
+
+#ifndef __EMSCRIPTEN__
 
 void AnimationImportDialog::sortFramesPaths(bool ascending, bool numeric)
 {
@@ -317,6 +339,8 @@ QStringList AnimationImportDialog::getFramesPaths() const
 	return paths;
 }
 
+#endif
+
 void AnimationImportDialog::onOpenLayersFile(
 	const QString &path, QTemporaryFile *tempFile)
 {
@@ -336,6 +360,7 @@ void AnimationImportDialog::runImport()
 		int holdTime = m_holdTime->value();
 		int framerate = m_framerate->value();
 		switch(source) {
+#ifndef __EMSCRIPTEN__
 		case int(Source::Frames): {
 			QColor backgroundColor = m_backgroundPreview->color();
 			dpApp().settings().setNewCanvasBackColor(backgroundColor);
@@ -343,6 +368,7 @@ void AnimationImportDialog::runImport()
 				getFramesPaths(), backgroundColor, holdTime, framerate);
 			break;
 		}
+#endif
 		case int(Source::Layers):
 			importer = new impex::AnimationLayersImporter(
 				m_tempFile ? m_tempFile->fileName()

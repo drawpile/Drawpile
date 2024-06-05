@@ -34,10 +34,12 @@ signals:
 	void canvasStateImported(const drawdance::CanvasState &canvasState);
 
 private slots:
+#ifndef __EMSCRIPTEN__
 	void showColorPicker();
 	void chooseFramesFiles();
 	void removeSelectedFrames();
 	void updateFrameButtons();
+#endif
 	void chooseLayersFile();
 	void updateHoldTimeSuffix(int value);
 	void updateImportButton();
@@ -46,20 +48,24 @@ private slots:
 		const drawdance::CanvasState &canvasState, const QString &error);
 
 private:
+#ifndef __EMSCRIPTEN__
 	void sortFramesPaths(bool ascending, bool numeric);
 	void addFramesPaths(QStringList &paths);
 	QStringList getFramesPaths() const;
+#endif
 	void onOpenLayersFile(const QString &path, QTemporaryFile *tempFile);
 	void runImport();
 
+	QTabWidget *m_tabs;
+#ifndef __EMSCRIPTEN__
 	bool m_ascending = true;
 	QCollator m_collator;
-	QTabWidget *m_tabs;
 	color_widgets::ColorPreview *m_backgroundPreview;
 	QListWidget *m_framesPathsList;
 	QPushButton *m_addButton;
 	QPushButton *m_removeButton;
 	QPushButton *m_sortButton;
+#endif
 	QLineEdit *m_layersPathEdit;
 	QPushButton *m_chooseButton;
 	QSpinBox *m_holdTime;

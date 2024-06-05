@@ -3724,7 +3724,9 @@ void MainWindow::setupActions()
 	QAction *exportAnimationFrames = makeAction("exportanimframes", tr("Export Animation &Frames...")).noDefaultShortcut();
 #endif
 #endif
+#ifndef __EMSCRIPTEN__
 	QAction *importAnimationFrames = makeAction("importanimationframes", tr("Import Animation &Frames…")).noDefaultShortcut();
+#endif
 	QAction *importAnimationLayers = makeAction("importoldanimation", tr("Import Animation from &Layers…")).noDefaultShortcut();
 	QAction *importBrushes = makeAction("importbrushes", tr("Import &Brushes...")).noDefaultShortcut();
 	QAction *exportBrushes = makeAction("exportbrushes", tr("Export &Brushes…")).noDefaultShortcut();
@@ -3778,9 +3780,11 @@ void MainWindow::setupActions()
 #endif
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
 #endif
+#ifndef __EMSCRIPTEN__
 	connect(
 		importAnimationFrames, &QAction::triggered, this,
 		&MainWindow::importAnimationFrames);
+#endif
 	connect(
 		importAnimationLayers, &QAction::triggered, this,
 		&MainWindow::importAnimationLayers);
@@ -3825,7 +3829,9 @@ void MainWindow::setupActions()
 
 	QMenu *importMenu = filemenu->addMenu(tr("&Import"));
 	importMenu->setIcon(QIcon::fromTheme("document-import"));
+#ifndef __EMSCRIPTEN__
 	importMenu->addAction(importAnimationFrames);
+#endif
 	importMenu->addAction(importAnimationLayers);
 	importMenu->addAction(importBrushes);
 
@@ -4950,7 +4956,9 @@ void MainWindow::setupActions()
 		singleGroup->addAction(newdocument);
 		singleGroup->addAction(open);
 		singleGroup->addAction(start);
+#ifndef __EMSCRIPTEN__
 		singleGroup->addAction(importAnimationFrames);
+#endif
 		singleGroup->addAction(importAnimationLayers);
 		singleGroup->addAction(host);
 		singleGroup->addAction(browse);
