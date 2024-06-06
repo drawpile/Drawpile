@@ -3380,6 +3380,7 @@ void MainWindow::changeCanvasBackground()
 	utils::showWindow(dlg, shouldShowDialogMaximized());
 }
 
+// clang-format on
 void MainWindow::changeLocalCanvasBackground()
 {
 	if(!m_doc->canvas()) {
@@ -3410,26 +3411,33 @@ void MainWindow::clearLocalCanvasBackground()
 	m_doc->canvas()->paintEngine()->clearLocalBackgroundColor();
 }
 
-
 void MainWindow::showLayoutsDialog()
 {
-	dialogs::LayoutsDialog *dlg = findChild<dialogs::LayoutsDialog *>(
-		"layoutsdialog", Qt::FindDirectChildrenOnly);
-	if(dlg) {
-		dlg->setParent(getStartDialogOrThis());
-	} else {
-		dlg = new dialogs::LayoutsDialog{saveState(), getStartDialogOrThis()};
-		dlg->setObjectName("layoutsdialog");
-		dlg->setAttribute(Qt::WA_DeleteOnClose);
-		connect(dlg, &dialogs::LayoutsDialog::applyState, [this](const QByteArray &state) {
-			restoreState(state);
-			refitWindow();
-		});
+	if(!m_smallScreenMode) {
+		dialogs::LayoutsDialog *dlg = findChild<dialogs::LayoutsDialog *>(
+			"layoutsdialog", Qt::FindDirectChildrenOnly);
+		if(dlg) {
+			dlg->setParent(getStartDialogOrThis());
+		} else {
+			dlg =
+				new dialogs::LayoutsDialog{saveState(), getStartDialogOrThis()};
+			dlg->setObjectName("layoutsdialog");
+			dlg->setAttribute(Qt::WA_DeleteOnClose);
+			connect(
+				dlg, &dialogs::LayoutsDialog::applyState,
+				[this](const QByteArray &state) {
+					if(!m_smallScreenMode) {
+						restoreState(state);
+						refitWindow();
+					}
+				});
+		}
+		dlg->show();
+		dlg->activateWindow();
+		dlg->raise();
 	}
-	dlg->show();
-	dlg->activateWindow();
-	dlg->raise();
 }
+// clang-format off
 
 void MainWindow::showUserInfoDialog(int userId)
 {
