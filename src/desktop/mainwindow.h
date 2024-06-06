@@ -126,6 +126,7 @@ public:
 
 signals:
 	void hostSessionEnabled(bool enabled);
+	void smallScreenModeChanged(bool smallScreenMode);
 	void windowReplacementFailed(MainWindow *win);
 	void viewShifted(qreal deltaX, qreal deltaY);
 

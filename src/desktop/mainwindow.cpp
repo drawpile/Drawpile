@@ -1404,6 +1404,7 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 	connections->add(connect(m_doc, &Document::canvasChanged, dlg, std::bind(&MainWindow::closeStartDialog, this, dlg, true)));
 	connections->add(connect(m_doc, &Document::serverLoggedIn, dlg, std::bind(&MainWindow::closeStartDialog, this, dlg, _1)));
 	connections->add(connect(this, &MainWindow::hostSessionEnabled, dlg, &dialogs::StartDialog::hostPageEnabled));
+	connections->add(connect(this, &MainWindow::smallScreenModeChanged, dlg, &dialogs::StartDialog::setSmallScreenMode));
 	connections->add(connect(this, &MainWindow::windowReplacementFailed, dlg, [dlg](MainWindow *win){
 		if(win) {
 			dlg->setParent(win, dlg->windowFlags());
@@ -5267,6 +5268,8 @@ void MainWindow::switchInterfaceMode(bool smallScreenMode)
 	m_canvasView->setShowToggleItems(smallScreenMode);
 	updateInterfaceModeActions();
 	reenableUpdates();
+
+	emit smallScreenModeChanged(smallScreenMode);
 }
 
 bool MainWindow::shouldShowDialogMaximized() const

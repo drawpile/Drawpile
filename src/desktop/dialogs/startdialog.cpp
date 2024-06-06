@@ -75,11 +75,9 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 	setWindowModality(Qt::WindowModal);
 
 #ifdef Q_OS_MACOS
-	Q_UNUSED(smallScreenMode);
 	bool vertical = false;
 	bool menuFirst = true;
 #elif defined(Q_OS_ANDROID)
-	Q_UNUSED(smallScreenMode);
 	bool vertical = false;
 	bool menuFirst = false;
 #else
@@ -352,6 +350,7 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 #endif
 
 	setMinimumSize(600, 350);
+	setSmallScreenMode(smallScreenMode);
 
 	const desktop::settings::Settings &settings = dpApp().settings();
 	QSize lastSize = settings.lastStartDialogSize();
@@ -447,6 +446,12 @@ void StartDialog::checkForUpdates()
 	m_news.forceCheck(CHECK_FOR_UPDATES_DELAY_MSEC);
 }
 #endif
+
+void StartDialog::setSmallScreenMode(bool smallScreenMode)
+{
+	m_buttons[Entry::Layouts]->setEnabled(!smallScreenMode);
+	m_buttons[Entry::Layouts]->setVisible(!smallScreenMode);
+}
 
 void StartDialog::resizeEvent(QResizeEvent *event)
 {

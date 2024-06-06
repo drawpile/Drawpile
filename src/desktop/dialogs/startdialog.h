@@ -60,6 +60,7 @@ public slots:
 #ifndef __EMSCRIPTEN__
 	void checkForUpdates();
 #endif
+	void setSmallScreenMode(bool smallScreenMode);
 
 signals:
 	void openFile();
