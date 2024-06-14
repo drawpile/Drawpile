@@ -25,7 +25,7 @@ private:
 	void floodFillFinished(Task *task);
 
 	int m_op = -1;
-	bool m_running;
+	bool m_running = false;
 	QAtomicInt m_cancel;
 };
 
