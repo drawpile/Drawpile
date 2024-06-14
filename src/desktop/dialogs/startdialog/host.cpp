@@ -119,6 +119,9 @@ Host::Host(QWidget *parent)
 	generalSection->addRow(tr("Title:"), m_titleEdit);
 	connect(
 		m_titleEdit, &QLineEdit::textChanged, this, &Host::updateHostEnabled);
+	connect(
+		m_titleEdit, &QLineEdit::textChanged, this,
+		&Host::updateNsfmBasedOnTitle);
 
 	QHBoxLayout *passwordLayout = new QHBoxLayout;
 	passwordLayout->setContentsMargins(0, 0, 0, 0);
