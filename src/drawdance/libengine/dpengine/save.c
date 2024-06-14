@@ -934,7 +934,7 @@ static void copy_frame(struct DP_SaveFrameContext *c, char *source_path,
     DP_free(target_path);
 }
 
-int count_frames(int start, int end_inclusive)
+static int count_frames(int start, int end_inclusive)
 {
     return end_inclusive - start + 1;
 }
