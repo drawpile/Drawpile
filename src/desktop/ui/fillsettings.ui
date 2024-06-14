@@ -46,7 +46,7 @@
    <item row="6" column="0" colspan="2">
     <widget class="KisSliderSpinBox" name="feather">
      <property name="suffix">
-      <string> px</string>
+      <string>px</string>
      </property>
      <property name="prefix">
       <string>Feather: </string>
@@ -175,7 +175,7 @@
    <item row="5" column="0" colspan="2">
     <widget class="KisSliderSpinBox" name="expand">
      <property name="suffix">
-      <string> px</string>
+      <string>px</string>
      </property>
      <property name="prefix">
       <string>Expand: </string>
