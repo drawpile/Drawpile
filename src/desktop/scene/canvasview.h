@@ -136,8 +136,8 @@ signals:
 	void penDown(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 		qreal ytilt, qreal rotation, bool right, qreal angle, qreal zoom,
-		bool mirror, bool flip, const QPointF &viewPos, int deviceType,
-		bool eraserOverride);
+		bool mirror, bool flip, bool constrain, bool center,
+		const QPointF &viewPos, int deviceType, bool eraserOverride);
 	void penMove(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 		qreal ytilt, qreal rotation, bool constrain, bool center,
@@ -322,7 +322,7 @@ private:
 
 	void onPenDown(
 		const canvas::Point &p, bool right, const QPointF &viewPos,
-		int deviceType, bool eraserOverride);
+		Qt::KeyboardModifiers modifiers, int deviceType, bool eraserOverride);
 	void onPenMove(
 		const canvas::Point &p, bool right, bool constrain1, bool constrain2,
 		const QPointF &viewPos);

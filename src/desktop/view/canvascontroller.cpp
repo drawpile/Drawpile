@@ -1549,12 +1549,18 @@ void CanvasController::penPressEvent(
 			if(m_canvasModel) {
 				switch(m_penMode) {
 				case PenMode::Normal:
-					if(!m_locked)
+					if(!m_locked) {
+						CanvasShortcuts::ConstraintMatch constraintMatch =
+							m_canvasShortcuts.matchConstraints(
+								modifiers, m_keysDown);
 						emit penDown(
 							point.timeMsec(), point, point.pressure(),
 							point.xtilt(), point.ytilt(), point.rotation(),
 							button == Qt::RightButton, m_rotation, m_zoom,
-							m_mirror, m_flip, posf, deviceType, eraserOverride);
+							m_mirror, m_flip, constraintMatch.toolConstraint1(),
+							constraintMatch.toolConstraint2(), posf, deviceType,
+							eraserOverride);
+					}
 					break;
 				case PenMode::Colorpick:
 					m_canvasModel->pickColor(point.x(), point.y(), 0, 0);

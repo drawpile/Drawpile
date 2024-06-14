@@ -392,8 +392,8 @@ void ToolController::setTransformParams(bool accurate, int interpolation)
 void ToolController::startDrawing(
 	long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 	qreal ytilt, qreal rotation, bool right, qreal angle, qreal zoom,
-	bool mirror, bool flip, const QPointF &viewPos, int deviceType,
-	bool eraserOverride)
+	bool mirror, bool flip, bool constrain, bool center, const QPointF &viewPos,
+	int deviceType, bool eraserOverride)
 {
 	Q_ASSERT(m_activeTool);
 	if(m_model) {
@@ -403,7 +403,8 @@ void ToolController::startDrawing(
 		m_activebrush.setEraserOverride(eraserOverride);
 		m_activeTool->begin(Tool::BeginParams{
 			canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation),
-			viewPos, angle, zoom, DeviceType(deviceType), mirror, flip, right});
+			viewPos, angle, zoom, DeviceType(deviceType), mirror, flip, right,
+			constrain, center});
 
 		if(!m_activeTool->isMultipart()) {
 			m_model->paintEngine()->setLocalDrawingInProgress(true);

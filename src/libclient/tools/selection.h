@@ -33,6 +33,8 @@ public:
 
 	void offsetActiveTool(int x, int y) override;
 
+	static int resolveOp(bool constrain, bool center, int defaultOp);
+
 protected:
 	int op() const { return m_op; }
 	bool antiAlias() const { return m_params.antiAlias; }
@@ -50,8 +52,6 @@ protected:
 	virtual net::MessageList endSelection(uint8_t contextId) = 0;
 
 private:
-	void setOrRevertOp(int op);
-
 	net::MessageList endDeselection(uint8_t contextId);
 	bool isInsideSelection(const QPointF &point) const;
 

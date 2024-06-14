@@ -52,6 +52,8 @@ public:
 		bool mirror;
 		bool flip;
 		bool right;
+		bool constrain;
+		bool center;
 	};
 
 	struct MotionParams {

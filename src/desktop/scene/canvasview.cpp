@@ -937,17 +937,22 @@ void CanvasView::setPointerTracking(bool tracking)
 }
 
 void CanvasView::onPenDown(
-	const canvas::Point &p, bool right, const QPointF &viewPos, int deviceType,
-	bool eraserOverride)
+	const canvas::Point &p, bool right, const QPointF &viewPos,
+	Qt::KeyboardModifiers modifiers, int deviceType, bool eraserOverride)
 {
 	if(m_scene->hasImage()) {
 		switch(m_penmode) {
 		case PenMode::Normal:
-			if(!m_locked)
+			if(!m_locked) {
+				CanvasShortcuts::ConstraintMatch constraintMatch =
+					m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
 				emit penDown(
 					p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(),
 					p.rotation(), right, m_rotate, m_zoom, m_mirror, m_flip,
-					viewPos, deviceType, eraserOverride);
+					constraintMatch.toolConstraint1(),
+					constraintMatch.toolConstraint2(), viewPos, deviceType,
+					eraserOverride);
+			}
 			break;
 		case PenMode::Colorpick:
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
@@ -1093,7 +1098,8 @@ void CanvasView::penPressEvent(
 		}
 		onPenDown(
 			mapToCanvas(timeMsec, pos, pressure, xtilt, ytilt, rotation),
-			button == Qt::RightButton, pos, deviceType, eraserOverride);
+			button == Qt::RightButton, pos, modifiers, deviceType,
+			eraserOverride);
 	}
 }
 

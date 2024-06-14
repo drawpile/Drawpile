@@ -154,8 +154,8 @@ public slots:
 	void startDrawing(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 		qreal ytilt, qreal rotation, bool right, qreal angle, qreal zoom,
-		bool mirror, bool flip, const QPointF &viewPos, int deviceType,
-		bool eraserOverride);
+		bool mirror, bool flip, bool constrain, bool center,
+		const QPointF &viewPos, int deviceType, bool eraserOverride);
 
 	//! Continue a stroke
 	void continueDrawing(

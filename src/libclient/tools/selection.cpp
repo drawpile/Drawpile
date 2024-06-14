@@ -20,7 +20,7 @@ void SelectionTool::begin(const BeginParams &params)
 		m_op = -1;
 	} else {
 		m_params = m_owner.selectionParams();
-		m_op = defaultOp();
+		m_op = resolveOp(params.constrain, params.center, defaultOp());
 		m_startPoint = params.point;
 		beginSelection(params.point);
 	}
@@ -30,17 +30,7 @@ void SelectionTool::motion(const MotionParams &params)
 {
 	m_clickDetector.motion(params.viewPos);
 	if(m_op != -1) {
-		if(params.constrain) {
-			if(params.center) {
-				setOrRevertOp(DP_MSG_SELECTION_PUT_OP_INTERSECT);
-			} else {
-				setOrRevertOp(DP_MSG_SELECTION_PUT_OP_UNITE);
-			}
-		} else if(params.center) {
-			setOrRevertOp(DP_MSG_SELECTION_PUT_OP_EXCLUDE);
-		} else {
-			m_op = defaultOp();
-		}
+		m_op = resolveOp(params.constrain, params.center, defaultOp());
 		continueSelection(params.point);
 	}
 }
@@ -110,6 +100,23 @@ bool SelectionTool::shouldDisguiseAsPutImage() const
 	return m_owner.client()->seemsConnectedToThickServer();
 }
 
+int SelectionTool::resolveOp(bool constrain, bool center, int defaultOp)
+{
+	int op;
+	if(constrain) {
+		if(center) {
+			op = DP_MSG_SELECTION_PUT_OP_INTERSECT;
+		} else {
+			op = DP_MSG_SELECTION_PUT_OP_UNITE;
+		}
+	} else if(center) {
+		op = DP_MSG_SELECTION_PUT_OP_EXCLUDE;
+	} else {
+		return defaultOp;
+	}
+	return op == defaultOp ? DP_MSG_SELECTION_PUT_OP_REPLACE : op;
+}
+
 void SelectionTool::updateSelectionPreview(const QPainterPath &path) const
 {
 	emit m_owner.pathPreviewRequested(path);
@@ -118,11 +125,6 @@ void SelectionTool::updateSelectionPreview(const QPainterPath &path) const
 void SelectionTool::removeSelectionPreview() const
 {
 	updateSelectionPreview(QPainterPath());
-}
-
-void SelectionTool::setOrRevertOp(int op)
-{
-	m_op = defaultOp() == op ? DP_MSG_SELECTION_PUT_OP_REPLACE : op;
 }
 
 net::MessageList SelectionTool::endDeselection(uint8_t contextId)
