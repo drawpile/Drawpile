@@ -44,6 +44,10 @@ public:
 			m_size, m_gap, m_expansion, m_featherRadius, m_continuous,
 			m_viewMode, m_activeLayerId, m_activeFrameIndex, m_cancel, m_img,
 			m_x, m_y);
+		if(m_result != DP_FLOOD_FILL_SUCCESS &&
+		   m_result != DP_FLOOD_FILL_CANCELLED) {
+			m_error = QString::fromUtf8(DP_error());
+		}
 	}
 
 	void finished() override { m_tool->floodFillFinished(this); }
@@ -53,6 +57,7 @@ public:
 	const QImage &img() const { return m_img; }
 	int x() const { return m_x; }
 	int y() const { return m_y; }
+	const QString &error() const { return m_error; }
 
 private:
 	FloodFill *m_tool;
@@ -75,6 +80,7 @@ private:
 	QImage m_img;
 	int m_x;
 	int m_y;
+	QString m_error;
 };
 
 FloodFill::FloodFill(ToolController &owner)
@@ -147,7 +153,7 @@ void FloodFill::floodFillFinished(Task *task)
 			task->y(), task->img());
 		m_owner.client()->sendMessages(msgs.count(), msgs.constData());
 	} else if(result != DP_FLOOD_FILL_CANCELLED) {
-		qWarning("Flood fill failed: %s", DP_error());
+		qWarning("Flood fill failed: %s", qUtf8Printable(task->error()));
 	}
 }
 
