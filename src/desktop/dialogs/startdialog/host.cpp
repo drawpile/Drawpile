@@ -238,8 +238,11 @@ Host::Host(QWidget *parent)
 	settings.bindParentalControlsLevel(
 		this, [this](parentalcontrols::Level level) {
 			m_allowNsfm = level < parentalcontrols::Level::NoJoin;
+			m_nsfmBox->setEnabled(m_allowNsfm);
 			m_nsfmBox->setVisible(m_allowNsfm);
-			updateNsfmBasedOnTitle();
+			if(!m_allowNsfm) {
+				updateNsfmBasedOnTitle();
+			}
 		});
 	settings.bindLastHostRemote(m_useGroup);
 
@@ -322,7 +325,7 @@ void Host::updateNsfmBasedOnTitle()
 	bool nsfmTitle = parentalcontrols::isNsfmTitle(m_titleEdit->text());
 	if(nsfmTitle) {
 		m_nsfmBox->setChecked(true);
-	} else if(!m_nsfmBox->isVisible()) {
+	} else if(!m_nsfmBox->isEnabled()) {
 		m_nsfmBox->setChecked(false);
 	}
 }
