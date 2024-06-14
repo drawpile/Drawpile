@@ -1,15 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef ANIMATIONSAVERRUNNABLE_H
-#define ANIMATIONSAVERRUNNABLE_H
-
+#ifndef LIBCLIENT_EXPORT_ANIMATIONSAVERRUNNABLE_H
+#define LIBCLIENT_EXPORT_ANIMATIONSAVERRUNNABLE_H
 extern "C" {
 #include <dpengine/save.h>
 }
 #include "libclient/drawdance/canvasstate.h"
 #include <QObject>
 #include <QRunnable>
-#include <functional>
 
 /**
  * @brief A runnable for saving the canvas content as an animation in a
@@ -18,12 +15,13 @@ extern "C" {
 class AnimationSaverRunnable final : public QObject, public QRunnable {
 	Q_OBJECT
 public:
-	using SaveFn = std::function<DP_SaveResult(
-		DP_CanvasState *, const char *, DP_SaveAnimationProgressFn, void *)>;
-
 	AnimationSaverRunnable(
-		const drawdance::CanvasState &canvasState, SaveFn saveFn,
-		const QString &filename, QObject *parent = nullptr);
+#ifndef __EMSCRIPTEN__
+		const QString &path,
+#endif
+		int format, int loops, int start, int end, int framerate,
+		const QRect &crop, const drawdance::CanvasState &canvasState,
+		QObject *parent = nullptr);
 
 	void run() override;
 
@@ -33,14 +31,32 @@ public slots:
 signals:
 	void progress(int progress);
 	void saveComplete(const QString &error);
+#ifdef __EMSCRIPTEN__
+	void downloadReady(const QString &defaultName, const QByteArray &bytes);
+#endif
 
 private:
-	const drawdance::CanvasState m_canvasState;
-	QString m_filename;
-	SaveFn m_saveFn;
-	bool m_cancelled;
+#ifdef __EMSCRIPTEN__
+	QString getFormatExtension() const;
+#endif
+
+#ifdef DP_LIBAV
+	int formatToSaveVideoFormat() const;
+#endif
 
 	static bool onProgress(void *user, double progress);
+
+#ifndef __EMSCRIPTEN__
+	const QString m_path;
+#endif
+	const int m_format;
+	const int m_loops;
+	const int m_start;
+	const int m_end;
+	const int m_framerate;
+	const QRect m_crop;
+	const drawdance::CanvasState m_canvasState;
+	bool m_cancelled;
 };
 
 #endif

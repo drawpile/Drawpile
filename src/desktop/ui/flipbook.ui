@@ -208,8 +208,8 @@
         <string>Export</string>
        </property>
        <property name="icon">
-        <iconset theme="document-save-as">
-         <normaloff>theme:document-save-as.svg</normaloff>theme:document-save-as.svg</iconset>
+        <iconset theme="document-save-all">
+         <normaloff>theme:document-save-all.svg</normaloff>theme:document-save-all.svg</iconset>
        </property>
        <property name="iconSize">
         <size>

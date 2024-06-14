@@ -143,7 +143,6 @@ signals:
 
 	void titleChanged(QString title);
 	void pinnedMessageChanged(QString message);
-	void imageSizeChanged();
 
 	void colorPicked(const QColor &color);
 	void canvasInspected(int lastEditedBy);

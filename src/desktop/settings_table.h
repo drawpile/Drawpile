@@ -61,6 +61,7 @@ SETTING_GETSET_V(
 #ifdef Q_OS_ANDROID
 SETTING(androidStylusChecked      , AndroidStylusChecked      , "settings/android/styluschecked"        , false)
 #endif
+SETTING(animationExportFormat     , AnimationExportFormat     , "animationexport/format"                , int(-1))
 SETTING_GETSET_V(
 	V1, brushCursor               , BrushCursor               , "settings/brushcursor"                  , int(view::Cursor::TriangleRight),
 	&viewCursor::get, &viewCursor::set)

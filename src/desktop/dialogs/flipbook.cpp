@@ -9,12 +9,10 @@ extern "C" {
 #include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/drawdance/viewmode.h"
-#include "libshared/util/qtcompat.h"
 #include "ui_flipbook.h"
 #include <QAction>
 #include <QEvent>
 #include <QHash>
-#include <QMenu>
 #include <QPixmap>
 #include <QRect>
 #include <QScreen>
@@ -60,14 +58,6 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 		d->ui.refreshButton->animateClick();
 	});
 
-	QMenu *exportMenu = new QMenu{this};
-	QAction *exportGifAction = exportMenu->addAction(tr("Export &GIF…"));
-#ifndef Q_OS_ANDROID
-	QAction *exportFramesAction = exportMenu->addAction(tr("Export &Frames…"));
-#endif
-	d->ui.exportButton->setMenu(exportMenu);
-	d->ui.exportButton->setPopupMode(QToolButton::InstantPopup);
-
 	connect(d->ui.rewindButton, &QToolButton::clicked, this, &Flipbook::rewind);
 	connect(
 		d->ui.playButton, &QToolButton::clicked, this, &Flipbook::playPause);
@@ -90,11 +80,9 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 	connect(
 		d->ui.refreshButton, &QToolButton::clicked, this,
 		&Flipbook::refreshCanvas);
-	connect(exportGifAction, &QAction::triggered, this, &Flipbook::exportGif);
-#ifndef Q_OS_ANDROID
 	connect(
-		exportFramesAction, &QAction::triggered, this, &Flipbook::exportFrames);
-#endif
+		d->ui.exportButton, &QToolButton::clicked, this,
+		&Flipbook::exportRequested);
 	connect(
 		d->ui.buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
@@ -132,6 +120,7 @@ void Flipbook::updateRange()
 	d->ui.layerIndex->setMaximum(loopEnd);
 	d->state.loopStart = loopStart;
 	d->state.loopEnd = loopEnd;
+	emit stateChanged();
 }
 
 void Flipbook::rewind()
@@ -154,6 +143,7 @@ void Flipbook::updateSpeed()
 {
 	int speedPercent = d->ui.speedSpinner->value();
 	d->state.speedPercent = speedPercent;
+	emit stateChanged();
 	updateSpeedSuffix();
 	if(d->timer.isActive()) {
 		d->timer.setInterval(getTimerInterval());
@@ -212,6 +202,7 @@ void Flipbook::setCrop(const QRectF &rect)
 	d->state.lastCanvasOffset =
 		d->canvasState.isNull() ? QPoint{} : d->canvasState.offset();
 	d->state.lastCanvasSize = canvasSize;
+	emit stateChanged();
 
 	renderFrames();
 }
@@ -225,25 +216,6 @@ void Flipbook::refreshCanvas()
 {
 	resetCanvas(true, QRect());
 }
-
-void Flipbook::exportGif()
-{
-	if(!d->canvasState.isNull()) {
-		emit exportGifRequested(
-			d->canvasState, getExportRect(), getExportStart(), getExportEnd(),
-			getExportFramerate());
-	}
-}
-
-#ifndef Q_OS_ANDROID
-void Flipbook::exportFrames()
-{
-	if(!d->canvasState.isNull()) {
-		emit exportFramesRequested(
-			d->canvasState, getExportRect(), getExportStart(), getExportEnd());
-	}
-}
-#endif
 
 void Flipbook::resetCanvas(bool refresh, const QRect &crop)
 {

@@ -7,7 +7,6 @@ extern "C" {
 #include "desktop/dialogs/flipbook.h"
 #include "libclient/canvas/acl.h"
 #include "libclient/drawdance/canvasstate.h"
-#include "libclient/export/animationsaverrunnable.h"
 #include "libclient/tools/tool.h"
 #include <QByteArray>
 #include <QDeadlineTimer>
@@ -191,18 +190,7 @@ private slots:
 	void toggleTabletEventLog();
 
 	void exportTemplate();
-	void exportGifAnimation();
-	void exportGifAnimationWith(
-		const drawdance::CanvasState &canvasState, const QRect &crop, int start,
-		int end, int framerate);
-	// On Android, we can only save stuff to individual files that the user
-	// specifies, we're not allowed to spew multiple files into a directory.
-#ifndef Q_OS_ANDROID
-	void exportAnimationFrames();
-	void exportAnimationFramesWith(
-		const drawdance::CanvasState &canvasState, const QRect &crop, int start,
-		int end);
-#endif
+	void updateFlipbookState();
 
 	void showResetNoticeDialog(const drawdance::CanvasState &canvasState);
 	void updateCatchupProgress(int percent);
@@ -300,9 +288,13 @@ private:
 	QWidget *getStartDialogOrThis();
 
 	void importAnimation(int source);
+	void showAnimationExportDialog(bool fromFlipbook);
 	void exportAnimation(
-		const drawdance::CanvasState &canvasState, const QString &path,
-		AnimationSaverRunnable::SaveFn saveFn);
+#ifndef __EMSCRIPTEN__
+		const QString &path,
+#endif
+		int format, int loops, int start, int end, int framerate,
+		const QRect &crop);
 
 	ActionBuilder makeAction(const char *name, const QString &text = QString{});
 	QAction *getAction(const QString &name);

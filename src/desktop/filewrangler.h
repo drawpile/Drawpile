@@ -100,7 +100,11 @@ public:
 	QString saveSelectionAs(Document *doc) const;
 	QString getSaveRecordingPath() const;
 	QString getSaveTemplatePath() const;
-	QString getSaveGifPath() const;
+	QString getSaveAnimationGifPath() const;
+	QString getSaveAnimationFramesPath() const;
+	QString getSaveAnimationMp4Path() const;
+	QString getSaveAnimationWebmPath() const;
+	QString getSaveAnimationWebpPath() const;
 	QString getSavePerformanceProfilePath() const;
 	QString getSaveTabletEventLogPath() const;
 #ifdef HAVE_VIDEO_EXPORT
@@ -108,9 +112,6 @@ public:
 	QString getSaveFfmpegWebmPath() const;
 	QString getSaveFfmpegCustomPath() const;
 	QString getSaveImageSeriesPath() const;
-#endif
-#ifndef Q_OS_ANDROID
-	QString getSaveAnimationFramesPath() const;
 #endif
 
 #ifdef __EMSCRIPTEN__

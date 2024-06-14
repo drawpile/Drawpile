@@ -95,6 +95,8 @@ target_sources(dpclient PRIVATE
 	drawdance/viewmode.h
 	drawdance/ziparchive.cpp
 	drawdance/ziparchive.h
+	export/animationformat.cpp
+	export/animationformat.h
 	export/animationsaverrunnable.cpp
 	export/animationsaverrunnable.h
 	export/canvassaverrunnable.cpp

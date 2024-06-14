@@ -41,15 +41,8 @@ public:
 	bool event(QEvent *event) override;
 
 signals:
-	void exportGifRequested(
-		const drawdance::CanvasState &canvasState, const QRect &crop, int start,
-		int end, int framerate);
-
-#ifndef Q_OS_ANDROID
-	void exportFramesRequested(
-		const drawdance::CanvasState &canvasState, const QRect &crop, int start,
-		int end);
-#endif
+	void stateChanged();
+	void exportRequested();
 
 private slots:
 	void insertRenderedFrames(
@@ -64,10 +57,6 @@ private slots:
 	void setCrop(const QRectF &rect);
 	void resetCrop();
 	void refreshCanvas();
-	void exportGif();
-#ifndef Q_OS_ANDROID
-	void exportFrames();
-#endif
 
 private:
 	void resetCanvas(bool refresh, const QRect &crop);

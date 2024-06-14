@@ -3,6 +3,7 @@
 #include "cmake-config/config.h"
 #include "desktop/chat/chatbox.h"
 #include "desktop/dialogs/abusereport.h"
+#include "desktop/dialogs/animationexportdialog.h"
 #include "desktop/dialogs/animationimportdialog.h"
 #include "desktop/dialogs/brushsettingsdialog.h"
 #include "desktop/dialogs/colordialog.h"
@@ -1883,87 +1884,83 @@ void MainWindow::onTemplateExported(const QString &errorMessage)
 	}
 }
 
-void MainWindow::exportGifAnimation()
-{
-	exportGifAnimationWith(
-		m_doc->canvas()->paintEngine()->viewCanvasState(), QRect{}, -1, -1, -1);
-}
+// clang-format on
 
-void MainWindow::exportGifAnimationWith(
-	const drawdance::CanvasState &canvasState, const QRect &crop, int start,
-	int end, int framerate)
+void MainWindow::showAnimationExportDialog(bool fromFlipbook)
 {
-	QString filename = FileWrangler{this}.getSaveGifPath();
-	if(!filename.isEmpty()) {
-		exportAnimation(
-			canvasState, filename,
-			[=](DP_CanvasState *cs, const char *path, DP_SaveAnimationProgressFn progress, void *user){
-				DP_Rect r, *pr;
-				if(crop.isEmpty()) {
-					pr = nullptr;
-				} else {
-					r = DP_rect_make(
-						crop.x(), crop.y(), crop.width(), crop.height());
-					pr = &r;
-				}
-				return DP_save_animation_gif(
-					cs, path, pr, start, end, framerate, progress, user);
-			});
+	QString objectName = QStringLiteral("animationexportdialog");
+	dialogs::AnimationExportDialog *dlg =
+		findChild<dialogs::AnimationExportDialog *>(
+			objectName, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else {
+		dlg = new dialogs::AnimationExportDialog(this);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setObjectName(objectName);
+		dlg->setCanvas(m_doc->canvas());
+		dlg->setFlipbookState(
+			m_flipbookState.loopStart, m_flipbookState.loopEnd,
+			m_flipbookState.speedPercent, m_flipbookState.crop, fromFlipbook);
+		connect(
+			dlg, &dialogs::AnimationExportDialog::exportRequested, this,
+			&MainWindow::exportAnimation);
+		utils::showWindow(dlg, shouldShowDialogMaximized());
 	}
 }
 
-#ifndef Q_OS_ANDROID
-void MainWindow::exportAnimationFrames()
+void MainWindow::updateFlipbookState()
 {
-	exportAnimationFramesWith(
-		m_doc->canvas()->paintEngine()->viewCanvasState(), QRect{}, -1, -1);
-}
-
-void MainWindow::exportAnimationFramesWith(
-	const drawdance::CanvasState &canvasState, const QRect &crop, int start,
-	int end)
-{
-	QString dirname = FileWrangler{this}.getSaveAnimationFramesPath();
-	if(!dirname.isEmpty()) {
-		exportAnimation(
-			canvasState, dirname,
-			[=](DP_CanvasState *cs, const char *path, DP_SaveAnimationProgressFn progress, void *user){
-				DP_Rect r, *pr;
-				if(crop.isEmpty()) {
-					pr = nullptr;
-				} else {
-					r = DP_rect_make(
-						crop.x(), crop.y(), crop.width(), crop.height());
-					pr = &r;
-				}
-				return DP_save_animation_frames(cs, path, pr, start, end, progress, user);
-			});
+	dialogs::AnimationExportDialog *dlg =
+		findChild<dialogs::AnimationExportDialog *>(
+			QStringLiteral("animationexportdialog"),
+			Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->setFlipbookState(
+			m_flipbookState.loopStart, m_flipbookState.loopEnd,
+			m_flipbookState.speedPercent, m_flipbookState.crop, false);
 	}
 }
-#endif
 
 void MainWindow::exportAnimation(
-	const drawdance::CanvasState &canvasState, const QString &path,
-	AnimationSaverRunnable::SaveFn saveFn)
+#ifndef __EMSCRIPTEN__
+	const QString &path,
+#endif
+	int format, int loops, int start, int end, int framerate, const QRect &crop)
 {
-	auto *progressDialog = new QProgressDialog(
-		tr("Saving animation..."),
-		tr("Cancel"),
-		0,
-		100,
-		this);
+	QProgressDialog *progressDialog = new QProgressDialog(
+		tr("Saving animation..."), tr("Cancel"), 0, 100, this);
 	progressDialog->setMinimumDuration(500);
-
-	AnimationSaverRunnable *saver =
-		new AnimationSaverRunnable(canvasState, saveFn, path);
-
-	connect(saver, &AnimationSaverRunnable::progress, progressDialog, &QProgressDialog::setValue);
-	connect(saver, &AnimationSaverRunnable::saveComplete, this, &MainWindow::showErrorMessage);
-	connect(progressDialog, &QProgressDialog::canceled, saver, &AnimationSaverRunnable::cancelExport);
-
 	progressDialog->setValue(0);
+
+	AnimationSaverRunnable *saver = new AnimationSaverRunnable(
+#ifndef __EMSCRIPTEN__
+		path,
+#endif
+		format, loops, start, end, framerate, crop,
+		m_doc->canvas()->paintEngine()->viewCanvasState(), this);
+	saver->setAutoDelete(true);
+
+	connect(
+		saver, &AnimationSaverRunnable::progress, progressDialog,
+		&QProgressDialog::setValue);
+	connect(
+		saver, &AnimationSaverRunnable::saveComplete, this,
+		&MainWindow::showErrorMessage);
+	connect(
+		progressDialog, &QProgressDialog::canceled, saver,
+		&AnimationSaverRunnable::cancelExport);
+#ifdef __EMSCRIPTEN__
+	connect(
+		saver, &AnimationSaverRunnable::downloadReady, this,
+		&MainWindow::onCanvasDownloadReady);
+#endif
+
 	QThreadPool::globalInstance()->start(saver);
 }
+
+// clang-format off
 
 void MainWindow::showFlipbook()
 {
@@ -1979,17 +1976,15 @@ void MainWindow::showFlipbook()
 		fp->setAttribute(Qt::WA_DeleteOnClose);
 		canvas::CanvasModel *canvas = m_doc->canvas();
 		canvas::SelectionModel *sel = canvas->selection();
+		connect(
+			fp, &dialogs::Flipbook::stateChanged, this,
+			&MainWindow::updateFlipbookState);
 		fp->setPaintEngine(
 			canvas->paintEngine(), sel->isValid() ? sel->bounds() : QRect());
 		fp->setRefreshShortcuts(getAction("showflipbook")->shortcuts());
 		connect(
-			fp, &dialogs::Flipbook::exportGifRequested, this,
-			&MainWindow::exportGifAnimationWith);
-#ifndef Q_OS_ANDROID
-		connect(
-			fp, &dialogs::Flipbook::exportFramesRequested, this,
-			&MainWindow::exportAnimationFramesWith);
-#endif
+			fp, &dialogs::Flipbook::exportRequested, this,
+			std::bind(&MainWindow::showAnimationExportDialog, this, true));
 		utils::showWindow(fp, shouldShowDialogMaximized());
 	}
 }
@@ -3728,11 +3723,8 @@ void MainWindow::setupActions()
 	QAction *savesel = makeAction("saveselection", tr("Export Selection...")).icon("select-rectangular").noDefaultShortcut();
 	QAction *autosave = makeAction("autosave", tr("Autosave")).noDefaultShortcut().checkable().disabled();
 	QAction *exportTemplate = makeAction("exporttemplate", tr("Export Session &Template...")).noDefaultShortcut();
-	QAction *exportGifAnimation = makeAction("exportanimgif", tr("Export Animated &GIF...")).noDefaultShortcut();
-#ifndef Q_OS_ANDROID
-	QAction *exportAnimationFrames = makeAction("exportanimframes", tr("Export Animation &Frames...")).noDefaultShortcut();
 #endif
-#endif
+	QAction *exportAnimation = makeAction("exportanim", tr("Export &Animation…")).icon("document-save-all").noDefaultShortcut();
 #ifndef __EMSCRIPTEN__
 	QAction *importAnimationFrames = makeAction("importanimationframes", tr("Import Animation &Frames…")).noDefaultShortcut();
 #endif
@@ -3760,12 +3752,9 @@ void MainWindow::setupActions()
 	m_currentdoctools->addAction(exportTemplate);
 	m_currentdoctools->addAction(savesel);
 	m_currentdoctools->addAction(exportDocument);
-	m_currentdoctools->addAction(exportGifAnimation);
-#ifndef Q_OS_ANDROID
-	m_currentdoctools->addAction(exportAnimationFrames);
-#endif
 	m_currentdoctools->addAction(record);
 #endif
+	m_currentdoctools->addAction(exportAnimation);
 
 	connect(newdocument, SIGNAL(triggered()), this, SLOT(showNew()));
 	connect(open, SIGNAL(triggered()), this, SLOT(open()));
@@ -3783,12 +3772,13 @@ void MainWindow::setupActions()
 	connect(m_doc, &Document::autosaveChanged, autosave, &QAction::setChecked);
 	connect(m_doc, &Document::canAutosaveChanged, autosave, &QAction::setEnabled);
 
-	connect(exportGifAnimation, &QAction::triggered, this, &MainWindow::exportGifAnimation);
-#ifndef Q_OS_ANDROID
-	connect(exportAnimationFrames, &QAction::triggered, this, &MainWindow::exportAnimationFrames);
-#endif
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
 #endif
+
+	connect(
+		exportAnimation, &QAction::triggered, this,
+		std::bind(&MainWindow::showAnimationExportDialog, this, false));
+
 #ifndef __EMSCRIPTEN__
 	connect(
 		importAnimationFrames, &QAction::triggered, this,
@@ -3849,11 +3839,8 @@ void MainWindow::setupActions()
 #ifndef __EMSCRIPTEN__
 	exportMenu->addAction(exportDocument);
 	exportMenu->addAction(exportTemplate);
-	exportMenu->addAction(exportGifAnimation);
-#	ifndef Q_OS_ANDROID
-	exportMenu->addAction(exportAnimationFrames);
-#	endif
 #endif
+	exportMenu->addAction(exportAnimation);
 	exportMenu->addAction(exportBrushes);
 #ifndef __EMSCRIPTEN__
 	filemenu->addAction(record);
@@ -4513,6 +4500,7 @@ void MainWindow::setupActions()
 	animationMenu->addAction(showFlipbook);
 	animationMenu->addAction(frameCountSet);
 	animationMenu->addAction(framerateSet);
+	animationMenu->addAction(exportAnimation);
 	animationMenu->addSeparator();
 	animationMenu->addAction(keyFrameSetLayer);
 	animationMenu->addAction(keyFrameSetEmpty);

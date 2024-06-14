@@ -282,11 +282,45 @@ QString FileWrangler::getSaveTemplatePath() const
 		utils::FileFormatOption::SaveRecordings);
 }
 
-QString FileWrangler::getSaveGifPath() const
+QString FileWrangler::getSaveAnimationFramesPath() const
+{
+	QString dirname = QFileDialog::getExistingDirectory(
+		parentWidget(), tr("Save Animation Frames"),
+		getLastPath(LastPath::ANIMATION_FRAMES));
+	if(dirname.isEmpty()) {
+		return QString{};
+	} else {
+		setLastPath(LastPath::ANIMATION_FRAMES, dirname);
+		return dirname;
+	}
+}
+
+QString FileWrangler::getSaveAnimationGifPath() const
 {
 	return showSaveFileDialog(
 		tr("Export Animated GIF"), LastPath::IMAGE, ".gif",
 		utils::FileFormatOption::SaveGif);
+}
+
+QString FileWrangler::getSaveAnimationMp4Path() const
+{
+	return showSaveFileDialogFilters(
+		tr("Export MP4 Video"), LastPath::IMAGE, ".mp4",
+		{QStringLiteral("MP4 (*.mp4)")});
+}
+
+QString FileWrangler::getSaveAnimationWebmPath() const
+{
+	return showSaveFileDialogFilters(
+		tr("Export WEBM Video"), LastPath::IMAGE, ".webm",
+		{QStringLiteral("WEBM (*.webm)")});
+}
+
+QString FileWrangler::getSaveAnimationWebpPath() const
+{
+	return showSaveFileDialogFilters(
+		tr("Export Animated WEBP"), LastPath::IMAGE, ".webp",
+		{QStringLiteral("WEBP (*.webp)")});
 }
 
 QString FileWrangler::getSavePerformanceProfilePath() const
@@ -338,22 +372,6 @@ QString FileWrangler::getSaveImageSeriesPath() const
 	}
 }
 #endif
-
-#ifndef Q_OS_ANDROID
-QString FileWrangler::getSaveAnimationFramesPath() const
-{
-	QString dirname = QFileDialog::getExistingDirectory(
-		parentWidget(), tr("Save Animation Frames"),
-		getLastPath(LastPath::ANIMATION_FRAMES));
-	if(dirname.isEmpty()) {
-		return QString{};
-	} else {
-		setLastPath(LastPath::ANIMATION_FRAMES, dirname);
-		return dirname;
-	}
-}
-#endif
-
 
 #ifdef __EMSCRIPTEN__
 void FileWrangler::downloadImage(Document *doc)

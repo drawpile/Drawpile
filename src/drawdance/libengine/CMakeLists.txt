@@ -137,6 +137,15 @@ else()
     message(SEND_ERROR "Unknown IMAGE_IMPL value '${IMAGE_IMPL}'")
 endif()
 
+if(TARGET LIBAV::LIBAV)
+    target_sources(dpengine PRIVATE
+        dpengine/save_video.c
+        dpengine/save_video.h
+    )
+    target_link_libraries(dpengine PUBLIC LIBAV::LIBAV)
+    target_compile_definitions(dpengine PUBLIC DP_LIBAV=1)
+endif()
+
 if(TESTS)
     add_library(dptest_engine)
     target_sources(dptest_engine PRIVATE
