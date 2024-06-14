@@ -45,9 +45,17 @@ class ToolController final : public QObject {
 
 	Q_OBJECT
 public:
+	enum class SelectionSource { Merged, MergedWithoutBackground, Layer };
+
 	struct SelectionParams {
 		bool antiAlias = true;
 		int defaultOp = 0;
+		qreal tolerance = 0.0;
+		int expansion = 0;
+		int featherRadius = 0;
+		int gap = 0;
+		int source = int(SelectionSource::Layer);
+		bool continuous = true;
 	};
 
 	class Task : public QObject {

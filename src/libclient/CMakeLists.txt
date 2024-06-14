@@ -141,6 +141,8 @@ target_sources(dpclient PRIVATE
 	tools/inspector.h
 	tools/laser.cpp
 	tools/laser.h
+	tools/magicwand.cpp
+	tools/magicwand.h
 	tools/pan.cpp
 	tools/pan.h
 	tools/selection.cpp

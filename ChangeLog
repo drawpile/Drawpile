@@ -71,6 +71,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Make the window fit itself to the screen harder in the browser and on Android. There's also an option under View -> Fit to Screen now to manually force it to do so. Thanks Sidca for reporting and Meru for testing.
  * Feature: Allow importing animation frames from multiple files and as layers from PSD files, to be found under File -> Import. Thanks Meru, BulletPepper, Ben and RubberRoss for suggesting.
  * Feature: Extend animation export to be a dialog where you pick the format. You can now export frames to a ZIP, allowing Android and the browser to save a series of frames as well. Exporting to MP4 and WEBM videos as well as animated WEBP is also implemented via ffmpeg's libraries.
+ * Feature: Magic wand select tool. Basically a fill tool, but for selections. Thanks ChristianJohnsten for suggesting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

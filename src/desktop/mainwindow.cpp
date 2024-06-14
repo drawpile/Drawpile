@@ -4634,6 +4634,7 @@ void MainWindow::setupActions()
 	QAction *lasertool = makeAction("toollaser", tr("&Laser Pointer")).icon("cursor-arrow").statusTip(tr("Point out things on the canvas")).shortcut("L").checkable();
 	QAction *selectiontool = makeAction("toolselectrect", tr("&Select")).icon("select-rectangular").statusTip(tr("Select rectangular area")).shortcut("S").checkable();
 	QAction *lassotool = makeAction("toolselectpolygon", tr("&Lasso Select")).icon("edit-select-lasso").statusTip(tr("Select a free-form area")).shortcut("D").checkable();
+	QAction *magicwandtool = makeAction("toolselectmagicwand", tr("&Magic Wand Select")).icon("drawpile_magicwand").statusTip(tr("Select areas with similar colors")).shortcut("W").checkable();
 	QAction *transformtool = makeAction("tooltransform", tr("&Transform Tool")).icon("transform-move").statusTip(tr("Transform selection")).noDefaultShortcut().checkable();
 	QAction *pantool = makeAction("toolpan", tr("Pan")).icon("hand").statusTip(tr("Pan canvas view")).shortcut("P").checkable();
 	QAction *zoomtool = makeAction("toolzoom", tr("Zoom")).icon("edit-find").statusTip(tr("Zoom the canvas view")).shortcut("Z").checkable();
@@ -4651,6 +4652,7 @@ void MainWindow::setupActions()
 	m_drawingtools->addAction(lasertool);
 	m_drawingtools->addAction(selectiontool);
 	m_drawingtools->addAction(lassotool);
+	m_drawingtools->addAction(magicwandtool);
 	m_drawingtools->addAction(transformtool);
 	m_drawingtools->addAction(pantool);
 	m_drawingtools->addAction(zoomtool);

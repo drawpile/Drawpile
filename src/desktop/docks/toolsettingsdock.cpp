@@ -116,6 +116,9 @@ struct ToolSettings::Private {
 		pages[tools::Tool::POLYGONSELECTION] = {
 			sel, "selection", QIcon::fromTheme("edit-select-lasso"),
 			QApplication::tr("Selection (Free-Form)")};
+		pages[tools::Tool::MAGICWAND] = {
+			sel, "selection", QIcon::fromTheme("drawpile_magicwand"),
+			QApplication::tr("Selection (Magic Wand)")};
 		pages[tools::Tool::TRANSFORM] = {
 			QSharedPointer<tools::ToolSettings>(
 				new tools::TransformSettings(ctrl)),
