@@ -14,6 +14,8 @@ public:
 	void begin(const BeginParams &params) override;
 	void motion(const MotionParams &params) override;
 	void end() override;
+	bool isMultipart() const override;
+	void undoMultipart() override;
 	void cancelMultipart() override;
 	void dispose() override;
 	bool usesBrushColor() const override { return true; }

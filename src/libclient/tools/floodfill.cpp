@@ -128,6 +128,16 @@ void FloodFill::motion(const MotionParams &params)
 
 void FloodFill::end() {}
 
+bool FloodFill::isMultipart() const
+{
+	return m_running && !m_cancel;
+}
+
+void FloodFill::undoMultipart()
+{
+	cancelMultipart();
+}
+
 void FloodFill::cancelMultipart()
 {
 	if(m_running) {
