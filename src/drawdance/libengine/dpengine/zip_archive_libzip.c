@@ -159,7 +159,9 @@ DP_ZipWriter *DP_zip_writer_new(const char *path)
 void DP_zip_writer_free_abort(DP_ZipWriter *zw)
 {
     zip_t *archive = (zip_t *)zw;
-    zip_discard(archive);
+    if (archive) {
+        zip_discard(archive);
+    }
 }
 
 bool DP_zip_writer_free_finish(DP_ZipWriter *zw)

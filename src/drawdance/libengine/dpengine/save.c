@@ -49,9 +49,7 @@
 #include <dpcommon/threading.h>
 #include <dpcommon/worker.h>
 #include <dpmsg/blend_mode.h>
-#include <ctype.h>
 #include <jo_gifx.h>
-#include <limits.h>
 #include <math.h>
 #include <uthash_inc.h>
 
@@ -883,7 +881,8 @@ struct DP_SaveFrameContext {
     const char *separator;
     DP_SaveAnimationProgressFn progress_fn;
     void *user;
-    DP_Mutex *progress_mutex;
+    DP_ZipWriter *zw;
+    DP_Mutex *mutex;
     DP_Atomic result;
     int frames_done;
 };
@@ -903,10 +902,68 @@ static void set_error_result(struct DP_SaveFrameContext *c,
     }
 }
 
+static unsigned char *generate_frame_png(struct DP_SaveFrameContext *c,
+                                         DP_ViewModeBuffer *vmb,
+                                         int frame_index, size_t *out_size)
+{
+    DP_CanvasState *cs = c->cs;
+    DP_ViewModeFilter vmf =
+        DP_view_mode_filter_make_frame_render(vmb, cs, frame_index);
+    DP_Image *img = DP_canvas_state_to_flat_image(
+        cs, DP_FLAT_IMAGE_RENDER_FLAGS, c->crop, &vmf);
+    if (!img) {
+        DP_warn("Flatten frame %d: %s", frame_index, DP_error());
+        set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
+        return NULL;
+    }
+
+    void **buffer_ptr;
+    size_t *size_ptr;
+    DP_Output *output = DP_mem_output_new(64, false, &buffer_ptr, &size_ptr);
+    bool ok = DP_image_write_png(img, output);
+    void *buffer = *buffer_ptr;
+    size_t size = *size_ptr;
+    DP_output_free_discard(output);
+    DP_image_free(img);
+    if (!ok) {
+        DP_output_free_discard(output);
+        DP_warn("Write PNG %d: %s", frame_index, DP_error());
+        set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
+        return NULL;
+    }
+
+    if (!buffer || size == 0) {
+        DP_warn("Output %d is null", frame_index);
+        set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
+        return NULL;
+    }
+
+    *out_size = size;
+    return buffer;
+}
+
 static char *format_frame_path(struct DP_SaveFrameContext *c, int frame_index)
 {
-    return DP_format("%s%sframe-%03d.png", c->path, c->separator,
-                     frame_index + 1);
+    if (c->zw) {
+        return DP_format("frame-%03d.png", frame_index + 1);
+    }
+    else {
+        return DP_format("%s%sframe-%03d.png", c->path, c->separator,
+                         frame_index + 1);
+    }
+}
+
+static void write_frame_to_zip(struct DP_SaveFrameContext *c, int frame_index,
+                               unsigned char *buffer, size_t size)
+{
+    DP_ZipWriter *zw = c->zw;
+    char *path = format_frame_path(c, frame_index);
+    bool ok = DP_zip_writer_add_file(zw, path, buffer, size, false, true);
+    DP_free(path);
+    if (!ok) {
+        DP_warn("Error zipping frame %d: %s", frame_index, DP_error());
+        set_error_result(c, DP_SAVE_RESULT_WRITE_ERROR);
+    }
 }
 
 static char *save_frame(struct DP_SaveFrameContext *c, DP_ViewModeBuffer *vmb,
@@ -943,12 +1000,12 @@ static void report_progress(struct DP_SaveFrameContext *c)
 {
     DP_SaveAnimationProgressFn progress_fn = c->progress_fn;
     if (progress_fn && DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
-        DP_Mutex *progress_mutex = c->progress_mutex;
-        DP_MUTEX_MUST_LOCK(progress_mutex);
+        DP_Mutex *mutex = c->mutex;
+        DP_MUTEX_MUST_LOCK(mutex);
         int done = ++c->frames_done;
         bool keep_going = progress_fn(
             c->user, DP_int_to_double(done) / DP_int_to_double(c->frame_count));
-        DP_MUTEX_MUST_UNLOCK(progress_mutex);
+        DP_MUTEX_MUST_UNLOCK(mutex);
         if (!keep_going) {
             set_error_result(c, DP_SAVE_RESULT_CANCEL);
         }
@@ -962,19 +1019,45 @@ static void save_frame_job(void *element, int thread_index)
     struct DP_SaveFrameContext *c = params->c;
     if (DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
         DP_ViewModeBuffer *vmb = &c->vmbs[thread_index];
-        // Render and save the first frame given.
         int first_frame = params->frames[0];
-        char *path = save_frame(c, vmb, first_frame);
-        report_progress(c);
-        // Subsequent frames are the same, so just copy the files.
-        int count = params->count;
-        for (int i = 1; i < count; ++i) {
-            if (DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
-                copy_frame(c, path, params->frames[i]);
-                report_progress(c);
+        if (c->zw) {
+            size_t size;
+            void *buffer = generate_frame_png(c, vmb, first_frame, &size);
+            if (buffer) {
+                int count = params->count;
+                for (int i = 0; i < count; ++i) {
+                    if (DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
+                        void *frame_buffer;
+                        if (i == count - 1) {
+                            frame_buffer = buffer;
+                            buffer = NULL;
+                        }
+                        else {
+                            frame_buffer = DP_malloc(size);
+                            memcpy(frame_buffer, buffer, size);
+                        }
+                        write_frame_to_zip(c, params->frames[i], frame_buffer,
+                                           size);
+                        report_progress(c);
+                    }
+                }
+                DP_free(buffer);
             }
         }
-        DP_free(path);
+        else {
+            // Render and save the first frame given.
+            char *path = save_frame(c, vmb, first_frame);
+            report_progress(c);
+            // Subsequent frames are the same, so just copy the files.
+            int count = params->count;
+            for (int i = 1; i < count; ++i) {
+                if (DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
+                    copy_frame(c, path, params->frames[i]);
+                    report_progress(c);
+                }
+            }
+            DP_free(path);
+        }
     }
     DP_free(params);
 }
@@ -982,21 +1065,33 @@ static void save_frame_job(void *element, int thread_index)
 static DP_SaveResult
 save_animation_frames(DP_CanvasState *cs, const char *path,
                       DP_SaveAnimationProgressFn progress_fn, void *user,
-                      DP_Rect *crop, int start, int end_inclusive)
+                      DP_Rect *crop, int start, int end_inclusive, bool zip)
 {
     if (end_inclusive < start) {
         return DP_SAVE_RESULT_SUCCESS;
     }
 
-    DP_Mutex *progress_mutex;
+    DP_ZipWriter *zw;
+    if (zip) {
+        zw = DP_zip_writer_new(path);
+        if (!zw) {
+            return DP_SAVE_RESULT_OPEN_ERROR;
+        }
+    }
+    else {
+        zw = NULL;
+    }
+
+    DP_Mutex *mutex;
     if (progress_fn) {
-        progress_mutex = DP_mutex_new();
-        if (!progress_mutex) {
+        mutex = DP_mutex_new();
+        if (!mutex) {
+            DP_zip_writer_free_abort(zw);
             return DP_SAVE_RESULT_INTERNAL_ERROR;
         }
     }
     else {
-        progress_mutex = NULL;
+        mutex = NULL;
     }
 
     int frame_count = count_frames(start, end_inclusive);
@@ -1004,7 +1099,8 @@ save_animation_frames(DP_CanvasState *cs, const char *path,
                                       sizeof(struct DP_SaveFrameJobParams *),
                                       DP_worker_cpu_count(128), save_frame_job);
     if (!worker) {
-        DP_mutex_free(progress_mutex);
+        DP_mutex_free(mutex);
+        DP_zip_writer_free_abort(zw);
         return DP_SAVE_RESULT_INTERNAL_ERROR;
     }
 
@@ -1018,7 +1114,8 @@ save_animation_frames(DP_CanvasState *cs, const char *path,
         get_path_separator(path),
         progress_fn,
         user,
-        progress_mutex,
+        zw,
+        mutex,
         DP_ATOMIC_INIT(DP_SAVE_RESULT_SUCCESS),
         0,
     };
@@ -1062,14 +1159,25 @@ save_animation_frames(DP_CanvasState *cs, const char *path,
 
     DP_free(frames);
     DP_worker_free_join(worker);
-    DP_mutex_free(progress_mutex);
+    DP_mutex_free(mutex);
 
     for (int i = 0; i < thread_count; ++i) {
         DP_view_mode_buffer_dispose(&c.vmbs[i]);
     }
     DP_free(c.vmbs);
 
-    return (DP_SaveResult)DP_atomic_get(&c.result);
+    DP_SaveResult result = (DP_SaveResult)DP_atomic_get(&c.result);
+    if (zw) {
+        if (result == DP_SAVE_RESULT_SUCCESS) {
+            if (!DP_zip_writer_free_finish(zw)) {
+                result = DP_SAVE_RESULT_WRITE_ERROR;
+            }
+        }
+        else {
+            DP_zip_writer_free_abort(zw);
+        }
+    }
+    return result;
 }
 
 DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, const char *path,
@@ -1090,7 +1198,33 @@ DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, const char *path,
         DP_PERF_BEGIN_DETAIL(fn, "animation_frames", "frame_count=%d,path=%s",
                              count_frames(start, end_inclusive), path);
         DP_SaveResult result = save_animation_frames(
-            cs, path, progress_fn, user, crop, start, end_inclusive);
+            cs, path, progress_fn, user, crop, start, end_inclusive, false);
+        DP_PERF_END(fn);
+        return result;
+    }
+    else {
+        return DP_SAVE_RESULT_BAD_ARGUMENTS;
+    }
+}
+
+DP_SaveResult DP_save_animation_zip(DP_CanvasState *cs, const char *path,
+                                    DP_Rect *crop, int start, int end_inclusive,
+                                    DP_SaveAnimationProgressFn progress_fn,
+                                    void *user)
+{
+    if (cs && path) {
+        int frame_count = DP_canvas_state_frame_count(cs);
+        if (start < 0) {
+            start = 0;
+        }
+        if (end_inclusive < 0) {
+            end_inclusive = frame_count - 1;
+        }
+
+        DP_PERF_BEGIN_DETAIL(fn, "animation_zip", "frame_count=%d,path=%s",
+                             count_frames(start, end_inclusive), path);
+        DP_SaveResult result = save_animation_frames(
+            cs, path, progress_fn, user, crop, start, end_inclusive, true);
         DP_PERF_END(fn);
         return result;
     }

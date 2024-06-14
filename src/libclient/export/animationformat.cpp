@@ -15,6 +15,7 @@ bool isAnimationFormatSupported(AnimationFormat format)
 	case AnimationFormat::Frames:
 		return true;
 #endif
+	case AnimationFormat::Zip:
 	case AnimationFormat::Gif:
 		return true;
 #ifdef DP_LIBAV

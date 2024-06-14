@@ -39,6 +39,7 @@ AnimationExportDialog::AnimationExportDialog(QWidget *parent)
 	m_formatCombo = new QComboBox;
 	QPair<QString, AnimationFormat> formats[] = {
 		{tr("Frames as PNGs"), AnimationFormat::Frames},
+		{tr("Frames as PNGs in ZIP"), AnimationFormat::Zip},
 		{tr("Animated GIF"), AnimationFormat::Gif},
 		{tr("Animated WEBP"), AnimationFormat::Webp},
 		{tr("MP4 Video"), AnimationFormat::Mp4},
@@ -229,6 +230,8 @@ QString AnimationExportDialog::choosePath()
 		return FileWrangler(this).getSaveAnimationFramesPath();
 	case AnimationFormat::Gif:
 		return FileWrangler(this).getSaveAnimationGifPath();
+	case AnimationFormat::Zip:
+		return FileWrangler(this).getSaveAnimationZipPath();
 	case AnimationFormat::Webp:
 		return FileWrangler(this).getSaveAnimationWebpPath();
 	case AnimationFormat::Mp4:

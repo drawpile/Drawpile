@@ -65,6 +65,11 @@ void AnimationSaverRunnable::run()
 			&onProgress, this);
 		break;
 #endif
+	case int(AnimationFormat::Zip):
+		result = DP_save_animation_zip(
+			m_canvasState.get(), pathBytes.constData(), pr, m_start, m_end,
+			&onProgress, this);
+		break;
 	case int(AnimationFormat::Gif):
 		result = DP_save_animation_gif(
 			m_canvasState.get(), pathBytes.constData(), pr, m_start, m_end,
@@ -123,6 +128,8 @@ QString AnimationSaverRunnable::getFormatExtension() const
 	switch(m_format) {
 	case int(AnimationFormat::Gif):
 		return QStringLiteral(".gif");
+	case int(AnimationFormat::Zip):
+		return QStringLiteral(".zip");
 	case int(AnimationFormat::Webp):
 		return QStringLiteral(".webp");
 	case int(AnimationFormat::Mp4):

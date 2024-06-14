@@ -302,6 +302,13 @@ QString FileWrangler::getSaveAnimationGifPath() const
 		utils::FileFormatOption::SaveGif);
 }
 
+QString FileWrangler::getSaveAnimationZipPath() const
+{
+	return showSaveFileDialogFilters(
+		tr("Export Frames in ZIP"), LastPath::IMAGE, ".zip",
+		{QStringLiteral("ZIP (*.zip)")});
+}
+
 QString FileWrangler::getSaveAnimationMp4Path() const
 {
 	return showSaveFileDialogFilters(

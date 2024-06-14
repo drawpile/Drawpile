@@ -102,6 +102,7 @@ public:
 	QString getSaveTemplatePath() const;
 	QString getSaveAnimationGifPath() const;
 	QString getSaveAnimationFramesPath() const;
+	QString getSaveAnimationZipPath() const;
 	QString getSaveAnimationMp4Path() const;
 	QString getSaveAnimationWebmPath() const;
 	QString getSaveAnimationWebpPath() const;
