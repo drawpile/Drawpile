@@ -278,6 +278,9 @@ QString SystemInfoDialog::getCompileFeatures()
 #ifdef DP_QT_IO_KARCHIVE
 	features.append(QStringLiteral("DP_QT_IO_KARCHIVE"));
 #endif
+#ifdef DP_LIBAV
+	features.append(QStringLiteral("DP_LIBAV"));
+#endif
 	return features.join(QStringLiteral(", "));
 }
 

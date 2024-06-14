@@ -1640,14 +1640,40 @@ static void *flatten_canvas(
     return buffer;
 }
 
-static void *to_flat_image_get_buffer(DP_UNUSED void *user, int width,
-                                      int height)
+DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags,
+                                        const DP_Rect *area_or_null,
+                                        const DP_ViewModeFilter *vmf_or_null)
 {
-    return DP_image_new(width, height);
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return DP_canvas_state_into_flat_image(cs, flags, area_or_null, vmf_or_null,
+                                           NULL);
 }
 
-static void to_flat_image_to_buffer(void *buffer, DP_TransientTile *tt,
-                                    DP_TileIterator *ti)
+static void *into_flat_image_get_buffer(void *user, int width, int height)
+{
+    DP_Image **pp = user;
+    if (pp) {
+        DP_Image *img = *pp;
+        if (img) {
+            if (DP_image_width(img) == width
+                && DP_image_height(img) == height) {
+                return img;
+            }
+            else {
+                DP_image_free(img);
+            }
+        }
+    }
+    DP_Image *img = DP_image_new(width, height);
+    if (pp) {
+        *pp = img;
+    }
+    return img;
+}
+
+static void into_flat_image_to_buffer(void *buffer, DP_TransientTile *tt,
+                                      DP_TileIterator *ti)
 {
     DP_Image *img = buffer;
     DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(ti);
@@ -1658,15 +1684,17 @@ static void to_flat_image_to_buffer(void *buffer, DP_TransientTile *tt,
     }
 }
 
-DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags,
-                                        const DP_Rect *area_or_null,
-                                        const DP_ViewModeFilter *vmf_or_null)
+DP_Image *DP_canvas_state_into_flat_image(DP_CanvasState *cs,
+                                          unsigned int flags,
+                                          const DP_Rect *area_or_null,
+                                          const DP_ViewModeFilter *vmf_or_null,
+                                          DP_Image **inout_img_or_null)
 {
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     return flatten_canvas(cs, flags, area_or_null, vmf_or_null,
-                          to_flat_image_get_buffer, to_flat_image_to_buffer,
-                          NULL);
+                          into_flat_image_get_buffer, into_flat_image_to_buffer,
+                          inout_img_or_null);
 }
 
 static void *to_flat_separated_urgba8_get_buffer(void *user,

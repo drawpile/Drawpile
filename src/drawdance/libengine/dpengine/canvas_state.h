@@ -75,7 +75,7 @@ typedef struct DP_Timeline DP_TransientTimeline;
 DP_CanvasState *DP_canvas_state_new(void);
 
 DP_CanvasState *DP_canvas_state_new_with_selections_noinc(DP_CanvasState *cs,
-                                                    DP_SelectionSet *ss);
+                                                          DP_SelectionSet *ss);
 
 DP_CanvasState *DP_canvas_state_incref(DP_CanvasState *cs);
 
@@ -143,6 +143,12 @@ DP_canvas_state_to_flat_layer(DP_CanvasState *cs, unsigned int flags,
 DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags,
                                         const DP_Rect *area_or_null,
                                         const DP_ViewModeFilter *vmf_or_null);
+
+DP_Image *DP_canvas_state_into_flat_image(DP_CanvasState *cs,
+                                          unsigned int flags,
+                                          const DP_Rect *area_or_null,
+                                          const DP_ViewModeFilter *vmf_or_null,
+                                          DP_Image **inout_img_or_null);
 
 bool DP_canvas_state_to_flat_separated_urgba8(
     DP_CanvasState *cs, unsigned int flags, const DP_Rect *area_or_null,
