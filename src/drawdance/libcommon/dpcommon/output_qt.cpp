@@ -22,14 +22,20 @@ static size_t do_write(const char *type, QIODevice *dev, const void *buffer,
     return written;
 }
 
-static bool do_flush(const char *type, QFileDevice *dev)
+static bool do_flush(const char *type, QFileDevice *dev, bool discard)
 {
     if (dev->flush()) {
         return true;
     }
     else {
-        DP_error_set("%s output flush error: %s", type,
-                     qUtf8Printable(dev->errorString()));
+        if (discard) {
+            DP_warn("%s output flush error: %s", type,
+                    qUtf8Printable(dev->errorString()));
+        }
+        else {
+            DP_error_set("%s output flush error: %s", type,
+                         qUtf8Printable(dev->errorString()));
+        }
         return false;
     }
 }
@@ -79,7 +85,7 @@ static size_t qfile_output_write(void *internal, const void *buffer,
 
 static bool qfile_output_flush(void *internal)
 {
-    return do_flush("QFile", get_file(internal));
+    return do_flush("QFile", get_file(internal), false);
 }
 
 static size_t qfile_output_tell(void *internal, bool *out_error)
@@ -97,11 +103,11 @@ static QIODevice *qfile_output_qiodevice(void *internal)
     return get_file(internal);
 }
 
-static bool qfile_output_dispose(void *internal)
+static bool qfile_output_dispose(void *internal, bool discard)
 {
     DP_QFileOutputState *state = static_cast<DP_QFileOutputState *>(internal);
     QFile *file = state->file;
-    bool ok = do_flush("QFile", file);
+    bool ok = do_flush("QFile", file, discard);
     if (state->close) {
         delete file;
     }
@@ -161,7 +167,7 @@ static size_t qsavefile_output_write(void *internal, const void *buffer,
 
 static bool qsavefile_output_flush(void *internal)
 {
-    return do_flush("QSaveFile", get_save_file(internal));
+    return do_flush("QSaveFile", get_save_file(internal), false);
 }
 
 static size_t qsavefile_output_tell(void *internal, bool *out_error)
@@ -179,8 +185,9 @@ static QIODevice *qsavefile_output_qiodevice(void *internal)
     return get_save_file(internal);
 }
 
-static bool qsavefile_output_dispose(void *internal)
+static bool qsavefile_output_dispose(void *internal, bool discard)
 {
+    Q_UNUSED(discard);
     QSaveFile *sf = get_save_file(internal);
     bool ok = sf->commit();
     delete sf;
@@ -251,14 +258,20 @@ static QIODevice *kcompressiondevice_output_qiodevice(void *internal)
     return get_dev(internal);
 }
 
-static bool kcompressiondevice_output_dispose(void *internal)
+static bool kcompressiondevice_output_dispose(void *internal, bool discard)
 {
     KCompressionDevice *dev = get_dev(internal);
     dev->close();
     bool ok = dev->error() == QFileDevice::NoError;
     if (!ok) {
-        DP_error_set("KCompressionDevice output flush error: %s",
-                     qUtf8Printable(dev->errorString()));
+        if (discard) {
+            DP_warn("KCompressionDevice output flush error: %s",
+                    qUtf8Printable(dev->errorString()));
+        }
+        else {
+            DP_error_set("KCompressionDevice output flush error: %s",
+                         qUtf8Printable(dev->errorString()));
+        }
     }
     delete dev;
     return ok;

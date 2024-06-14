@@ -47,14 +47,18 @@ typedef struct DP_OutputMethods {
     size_t (*tell)(void *internal, bool *out_error);
     bool (*seek)(void *internal, size_t offset);
     QIODevice *(*qiodevice)(void *internal);
-    bool (*dispose)(void *internal);
+    bool (*dispose)(void *internal, bool discard);
 } DP_OutputMethods;
 
 typedef const DP_OutputMethods *(*DP_OutputInitFn)(void *internal, void *arg);
 
 DP_Output *DP_output_new(DP_OutputInitFn init, void *arg, size_t internal_size);
 
+// Uses DP_error_set on error.
 bool DP_output_free(DP_Output *output);
+
+// Uses DP_warn on error, leaves DP_error alone.
+bool DP_output_free_discard(DP_Output *output);
 
 bool DP_output_write(DP_Output *output, const void *buffer, size_t size);
 

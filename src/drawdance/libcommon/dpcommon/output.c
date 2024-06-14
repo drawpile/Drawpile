@@ -58,11 +58,11 @@ DP_Output *DP_output_new(DP_OutputInitFn init, void *arg, size_t internal_size)
     }
 }
 
-bool DP_output_free(DP_Output *output)
+static bool free_output(DP_Output *output, bool discard)
 {
     if (output) {
-        bool (*dispose)(void *) = output->methods->dispose;
-        bool ok = dispose ? dispose(output->internal) : true;
+        bool (*dispose)(void *, bool) = output->methods->dispose;
+        bool ok = dispose ? dispose(output->internal, discard) : true;
         DP_free(output->buffer);
         DP_free(output);
         return ok;
@@ -70,6 +70,16 @@ bool DP_output_free(DP_Output *output)
     else {
         return true;
     }
+}
+
+bool DP_output_free(DP_Output *output)
+{
+    return free_output(output, false);
+}
+
+bool DP_output_free_discard(DP_Output *output)
+{
+    return free_output(output, true);
 }
 
 bool DP_output_write(DP_Output *output, const void *buffer, size_t size)
@@ -245,11 +255,16 @@ static bool file_output_seek(void *internal, size_t offset)
     }
 }
 
-static bool file_output_dispose(void *internal)
+static bool file_output_dispose(void *internal, bool discard)
 {
     DP_FileOutputState *state = internal;
     if (state->close && fclose(state->fp) != 0) {
-        DP_error_set("File output close error: %s", strerror(errno));
+        if (discard) {
+            DP_warn("File output close error: %s", strerror(errno));
+        }
+        else {
+            DP_error_set("File output close error: %s", strerror(errno));
+        }
         return false;
     }
     else {
@@ -378,14 +393,19 @@ static bool gzip_output_seek(void *internal, size_t offset)
     }
 }
 
-static bool gzip_output_dispose(void *internal)
+static bool gzip_output_dispose(void *internal, bool discard)
 {
     DP_GzipOutputState *state = internal;
     gzFile gf = state->gf;
     if (state->close) {
         int errnum = gzclose(gf);
         if (errnum != Z_OK) {
-            DP_error_set("GZip output close error: %s", zError(errnum));
+            if (discard) {
+                DP_warn("GZip output close error: %s", zError(errnum));
+            }
+            else {
+                DP_error_set("GZip output close error: %s", zError(errnum));
+            }
             return false;
         }
     }
@@ -463,7 +483,7 @@ static bool mem_output_clear(void *internal)
     return true;
 }
 
-static bool mem_output_dispose(void *internal)
+static bool mem_output_dispose(void *internal, DP_UNUSED bool discard)
 {
     DP_MemOutputState *state = internal;
     if (state->free_on_close) {
