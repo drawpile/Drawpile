@@ -80,35 +80,34 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	headerLayout->setSpacing(0);
 	headerLayout->addStretch();
 
-	widgets::GroupedToolButton *m_replaceButton =
+	widgets::GroupedToolButton *replaceButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
-	m_replaceButton->setIcon(QIcon::fromTheme("drawpile_selection_replace"));
-	m_replaceButton->setStatusTip(tr("Replace selection"));
-	m_replaceButton->setToolTip(m_replaceButton->statusTip());
-	m_replaceButton->setCheckable(true);
-	m_replaceButton->setChecked(true);
-	headerLayout->addWidget(m_replaceButton);
-	m_headerGroup->addButton(m_replaceButton, DP_MSG_SELECTION_PUT_OP_REPLACE);
+	replaceButton->setIcon(QIcon::fromTheme("drawpile_selection_replace"));
+	replaceButton->setStatusTip(tr("Replace selection"));
+	replaceButton->setToolTip(replaceButton->statusTip());
+	replaceButton->setCheckable(true);
+	replaceButton->setChecked(true);
+	headerLayout->addWidget(replaceButton);
+	m_headerGroup->addButton(replaceButton, DP_MSG_SELECTION_PUT_OP_REPLACE);
 
-	widgets::GroupedToolButton *m_uniteButton =
+	widgets::GroupedToolButton *uniteButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
-	m_uniteButton->setIcon(QIcon::fromTheme("drawpile_selection_unite"));
-	m_uniteButton->setStatusTip(tr("Add to selection"));
-	m_uniteButton->setToolTip(m_uniteButton->statusTip());
-	m_uniteButton->setCheckable(true);
-	headerLayout->addWidget(m_uniteButton);
-	m_headerGroup->addButton(m_uniteButton, DP_MSG_SELECTION_PUT_OP_UNITE);
+	uniteButton->setIcon(QIcon::fromTheme("drawpile_selection_unite"));
+	uniteButton->setStatusTip(tr("Add to selection"));
+	uniteButton->setToolTip(uniteButton->statusTip());
+	uniteButton->setCheckable(true);
+	headerLayout->addWidget(uniteButton);
+	m_headerGroup->addButton(uniteButton, DP_MSG_SELECTION_PUT_OP_UNITE);
 
-	widgets::GroupedToolButton *m_intersectButton =
+	widgets::GroupedToolButton *intersectButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
-	m_intersectButton->setIcon(
-		QIcon::fromTheme("drawpile_selection_intersect"));
-	m_intersectButton->setStatusTip(tr("Intersect with selection"));
-	m_intersectButton->setToolTip(m_intersectButton->statusTip());
-	m_intersectButton->setCheckable(true);
-	headerLayout->addWidget(m_intersectButton);
+	intersectButton->setIcon(QIcon::fromTheme("drawpile_selection_intersect"));
+	intersectButton->setStatusTip(tr("Intersect with selection"));
+	intersectButton->setToolTip(intersectButton->statusTip());
+	intersectButton->setCheckable(true);
+	headerLayout->addWidget(intersectButton);
 	m_headerGroup->addButton(
-		m_intersectButton, DP_MSG_SELECTION_PUT_OP_INTERSECT);
+		intersectButton, DP_MSG_SELECTION_PUT_OP_INTERSECT);
 
 	widgets::GroupedToolButton *m_excludeButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
