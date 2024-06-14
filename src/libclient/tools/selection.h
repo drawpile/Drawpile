@@ -39,7 +39,6 @@ protected:
 	int op() const { return m_op; }
 	bool antiAlias() const { return m_params.antiAlias; }
 	int defaultOp() const { return m_params.defaultOp; }
-	bool shouldDisguiseAsPutImage() const;
 	const QPointF &startPoint() const { return m_startPoint; }
 
 	void updateSelectionPreview(const QPainterPath &path) const;

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libclient/tools/tool.h"
+#include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
 
 namespace tools {
@@ -21,6 +21,13 @@ void Tool::setCursor(const QCursor &cursor)
 		m_cursor = cursor;
 		emit m_owner.toolCursorChanged(cursor);
 	}
+}
+
+bool Tool::shouldDisguiseSelectionsAsPutImage() const
+{
+	// If we're connected to a thick server, we don't want to send it unknown
+	// message types because that'll get us kicked.
+	return m_owner.client()->seemsConnectedToThickServer();
 }
 
 }

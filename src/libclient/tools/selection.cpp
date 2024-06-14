@@ -93,13 +93,6 @@ void SelectionTool::offsetActiveTool(int x, int y)
 	}
 }
 
-bool SelectionTool::shouldDisguiseAsPutImage() const
-{
-	// If we're connected to a thick server, we don't want to send it unknown
-	// message types because that'll get us kicked.
-	return m_owner.client()->seemsConnectedToThickServer();
-}
-
 int SelectionTool::resolveOp(bool constrain, bool center, int defaultOp)
 {
 	int op;
@@ -131,7 +124,7 @@ net::MessageList SelectionTool::endDeselection(uint8_t contextId)
 {
 	cancelSelection();
 	return {net::makeSelectionClearMessage(
-		shouldDisguiseAsPutImage(), contextId,
+		shouldDisguiseSelectionsAsPutImage(), contextId,
 		canvas::CanvasModel::MAIN_SELECTION_ID)};
 }
 
@@ -206,12 +199,12 @@ net::MessageList RectangleSelection::endSelection(uint8_t contextId)
 
 	if(area.isEmpty()) {
 		return {net::makeSelectionClearMessage(
-			shouldDisguiseAsPutImage(), contextId,
+			shouldDisguiseSelectionsAsPutImage(), contextId,
 			canvas::CanvasModel::MAIN_SELECTION_ID)};
 	} else {
 		net::MessageList msgs;
 		net::makeSelectionPutMessages(
-			msgs, shouldDisguiseAsPutImage(), contextId,
+			msgs, shouldDisguiseSelectionsAsPutImage(), contextId,
 			canvas::CanvasModel::MAIN_SELECTION_ID, op(), area.x(), area.y(),
 			area.width(), area.height(), mask);
 		return msgs;
@@ -324,7 +317,7 @@ net::MessageList PolygonSelection::endSelection(uint8_t contextId)
 
 	if(area.isEmpty()) {
 		return {net::makeSelectionClearMessage(
-			shouldDisguiseAsPutImage(), contextId,
+			shouldDisguiseSelectionsAsPutImage(), contextId,
 			canvas::CanvasModel::MAIN_SELECTION_ID)};
 	} else {
 		QImage mask(area.size(), QImage::Format_ARGB32_Premultiplied);
@@ -340,7 +333,7 @@ net::MessageList PolygonSelection::endSelection(uint8_t contextId)
 		}
 		net::MessageList msgs;
 		net::makeSelectionPutMessages(
-			msgs, shouldDisguiseAsPutImage(), contextId,
+			msgs, shouldDisguiseSelectionsAsPutImage(), contextId,
 			canvas::CanvasModel::MAIN_SELECTION_ID, op(), area.x(), area.y(),
 			area.width(), area.height(), mask);
 		return msgs;
