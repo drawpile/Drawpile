@@ -552,10 +552,18 @@ DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_UPixelFloat fill_color,
 
     c.width = DP_canvas_state_width(cs);
     c.height = DP_canvas_state_height(cs);
-    c.area.x1 = DP_max_int(0, x - size);
-    c.area.y1 = DP_max_int(0, y - size);
-    c.area.x2 = DP_min_int(c.width - 1, x + size);
-    c.area.y2 = DP_min_int(c.height - 1, y + size);
+    if (size < 0) {
+        c.area.x1 = 0;
+        c.area.y1 = 0;
+        c.area.x2 = c.width - 1;
+        c.area.y2 = c.height - 1;
+    }
+    else {
+        c.area.x1 = DP_max_int(0, x - size);
+        c.area.y1 = DP_max_int(0, y - size);
+        c.area.x2 = DP_min_int(c.width - 1, x + size);
+        c.area.y2 = DP_min_int(c.height - 1, y + size);
+    }
     if (x < 0 || y < 0 || x >= c.width || y >= c.height
         || !DP_rect_valid(c.area)) {
         DP_error_set("Flood fill: initial point out of bounds");
