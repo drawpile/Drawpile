@@ -38,8 +38,9 @@ const struct ConversionType conversion_types[] = {
     {"int8_t", "int8"},     {"uint8_t", "uint8"},
     {"int16_t", "int16"},   {"uint16_t", "uint16"},
     {"int32_t", "int32"},   {"uint32_t", "uint32"},
-    {"uint64_t", "uint64"}, {"float", "float"},
-    {"double", "double"},   {"size_t", "size"},
+    {"int64_t", "int64"},   {"uint64_t", "uint64"},
+    {"float", "float"},     {"double", "double"},
+    {"size_t", "size"},
 };
 
 static void generate_conversion_function(FILE *fp, int i, int j)

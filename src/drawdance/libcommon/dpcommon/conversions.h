@@ -85,6 +85,11 @@ DP_INLINE uint32_t DP_char_to_uint32(char x)
     return DP_CONVERT_CAST(uint32_t, x);
 }
 
+DP_INLINE int64_t DP_char_to_int64(char x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
+}
+
 DP_INLINE uint64_t DP_char_to_uint64(char x)
 {
     return DP_CONVERT_CAST(uint64_t, x);
@@ -178,6 +183,11 @@ DP_INLINE int32_t DP_uchar_to_int32(unsigned char x)
 DP_INLINE uint32_t DP_uchar_to_uint32(unsigned char x)
 {
     return DP_CONVERT_CAST(uint32_t, x);
+}
+
+DP_INLINE int64_t DP_uchar_to_int64(unsigned char x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
 }
 
 DP_INLINE uint64_t DP_uchar_to_uint64(unsigned char x)
@@ -275,6 +285,11 @@ DP_INLINE uint32_t DP_short_to_uint32(short x)
     return DP_CONVERT_CAST(uint32_t, x);
 }
 
+DP_INLINE int64_t DP_short_to_int64(short x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
+}
+
 DP_INLINE uint64_t DP_short_to_uint64(short x)
 {
     return DP_CONVERT_CAST(uint64_t, x);
@@ -368,6 +383,11 @@ DP_INLINE int32_t DP_ushort_to_int32(unsigned short x)
 DP_INLINE uint32_t DP_ushort_to_uint32(unsigned short x)
 {
     return DP_CONVERT_CAST(uint32_t, x);
+}
+
+DP_INLINE int64_t DP_ushort_to_int64(unsigned short x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
 }
 
 DP_INLINE uint64_t DP_ushort_to_uint64(unsigned short x)
@@ -465,6 +485,11 @@ DP_INLINE uint32_t DP_int_to_uint32(int x)
     return DP_CONVERT_CAST(uint32_t, x);
 }
 
+DP_INLINE int64_t DP_int_to_int64(int x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
+}
+
 DP_INLINE uint64_t DP_int_to_uint64(int x)
 {
     return DP_CONVERT_CAST(uint64_t, x);
@@ -558,6 +583,11 @@ DP_INLINE int32_t DP_uint_to_int32(unsigned int x)
 DP_INLINE uint32_t DP_uint_to_uint32(unsigned int x)
 {
     return DP_CONVERT_CAST(uint32_t, x);
+}
+
+DP_INLINE int64_t DP_uint_to_int64(unsigned int x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
 }
 
 DP_INLINE uint64_t DP_uint_to_uint64(unsigned int x)
@@ -655,6 +685,11 @@ DP_INLINE uint32_t DP_long_to_uint32(long x)
     return DP_CONVERT_CAST(uint32_t, x);
 }
 
+DP_INLINE int64_t DP_long_to_int64(long x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
+}
+
 DP_INLINE uint64_t DP_long_to_uint64(long x)
 {
     return DP_CONVERT_CAST(uint64_t, x);
@@ -748,6 +783,11 @@ DP_INLINE int32_t DP_ulong_to_int32(unsigned long x)
 DP_INLINE uint32_t DP_ulong_to_uint32(unsigned long x)
 {
     return DP_CONVERT_CAST(uint32_t, x);
+}
+
+DP_INLINE int64_t DP_ulong_to_int64(unsigned long x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
 }
 
 DP_INLINE uint64_t DP_ulong_to_uint64(unsigned long x)
@@ -845,6 +885,11 @@ DP_INLINE uint32_t DP_llong_to_uint32(long long x)
     return DP_CONVERT_CAST(uint32_t, x);
 }
 
+DP_INLINE int64_t DP_llong_to_int64(long long x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
+}
+
 DP_INLINE uint64_t DP_llong_to_uint64(long long x)
 {
     return DP_CONVERT_CAST(uint64_t, x);
@@ -938,6 +983,11 @@ DP_INLINE int32_t DP_ullong_to_int32(unsigned long long x)
 DP_INLINE uint32_t DP_ullong_to_uint32(unsigned long long x)
 {
     return DP_CONVERT_CAST(uint32_t, x);
+}
+
+DP_INLINE int64_t DP_ullong_to_int64(unsigned long long x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
 }
 
 DP_INLINE uint64_t DP_ullong_to_uint64(unsigned long long x)
@@ -1035,6 +1085,11 @@ DP_INLINE uint32_t DP_int8_to_uint32(int8_t x)
     return DP_CONVERT_CAST(uint32_t, x);
 }
 
+DP_INLINE int64_t DP_int8_to_int64(int8_t x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
+}
+
 DP_INLINE uint64_t DP_int8_to_uint64(int8_t x)
 {
     return DP_CONVERT_CAST(uint64_t, x);
@@ -1128,6 +1183,11 @@ DP_INLINE int32_t DP_uint8_to_int32(uint8_t x)
 DP_INLINE uint32_t DP_uint8_to_uint32(uint8_t x)
 {
     return DP_CONVERT_CAST(uint32_t, x);
+}
+
+DP_INLINE int64_t DP_uint8_to_int64(uint8_t x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
 }
 
 DP_INLINE uint64_t DP_uint8_to_uint64(uint8_t x)
@@ -1225,6 +1285,11 @@ DP_INLINE uint32_t DP_int16_to_uint32(int16_t x)
     return DP_CONVERT_CAST(uint32_t, x);
 }
 
+DP_INLINE int64_t DP_int16_to_int64(int16_t x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
+}
+
 DP_INLINE uint64_t DP_int16_to_uint64(int16_t x)
 {
     return DP_CONVERT_CAST(uint64_t, x);
@@ -1318,6 +1383,11 @@ DP_INLINE int32_t DP_uint16_to_int32(uint16_t x)
 DP_INLINE uint32_t DP_uint16_to_uint32(uint16_t x)
 {
     return DP_CONVERT_CAST(uint32_t, x);
+}
+
+DP_INLINE int64_t DP_uint16_to_int64(uint16_t x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
 }
 
 DP_INLINE uint64_t DP_uint16_to_uint64(uint16_t x)
@@ -1415,6 +1485,11 @@ DP_INLINE uint32_t DP_int32_to_uint32(int32_t x)
     return DP_CONVERT_CAST(uint32_t, x);
 }
 
+DP_INLINE int64_t DP_int32_to_int64(int32_t x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
+}
+
 DP_INLINE uint64_t DP_int32_to_uint64(int32_t x)
 {
     return DP_CONVERT_CAST(uint64_t, x);
@@ -1510,6 +1585,11 @@ DP_INLINE int32_t DP_uint32_to_int32(uint32_t x)
     return DP_CONVERT_CAST(int32_t, x);
 }
 
+DP_INLINE int64_t DP_uint32_to_int64(uint32_t x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
+}
+
 DP_INLINE uint64_t DP_uint32_to_uint64(uint32_t x)
 {
     return DP_CONVERT_CAST(uint64_t, x);
@@ -1526,6 +1606,106 @@ DP_INLINE double DP_uint32_to_double(uint32_t x)
 }
 
 DP_INLINE size_t DP_uint32_to_size(uint32_t x)
+{
+    return DP_CONVERT_CAST(size_t, x);
+}
+
+DP_INLINE char DP_int64_to_char(int64_t x)
+{
+    return DP_CONVERT_CAST(char, x);
+}
+
+DP_INLINE unsigned char DP_int64_to_uchar(int64_t x)
+{
+    return DP_CONVERT_CAST(unsigned char, x);
+}
+
+DP_INLINE short DP_int64_to_short(int64_t x)
+{
+    return DP_CONVERT_CAST(short, x);
+}
+
+DP_INLINE unsigned short DP_int64_to_ushort(int64_t x)
+{
+    return DP_CONVERT_CAST(unsigned short, x);
+}
+
+DP_INLINE int DP_int64_to_int(int64_t x)
+{
+    return DP_CONVERT_CAST(int, x);
+}
+
+DP_INLINE unsigned int DP_int64_to_uint(int64_t x)
+{
+    return DP_CONVERT_CAST(unsigned int, x);
+}
+
+DP_INLINE long DP_int64_to_long(int64_t x)
+{
+    return DP_CONVERT_CAST(long, x);
+}
+
+DP_INLINE unsigned long DP_int64_to_ulong(int64_t x)
+{
+    return DP_CONVERT_CAST(unsigned long, x);
+}
+
+DP_INLINE long long DP_int64_to_llong(int64_t x)
+{
+    return DP_CONVERT_CAST(long long, x);
+}
+
+DP_INLINE unsigned long long DP_int64_to_ullong(int64_t x)
+{
+    return DP_CONVERT_CAST(unsigned long long, x);
+}
+
+DP_INLINE int8_t DP_int64_to_int8(int64_t x)
+{
+    return DP_CONVERT_CAST(int8_t, x);
+}
+
+DP_INLINE uint8_t DP_int64_to_uint8(int64_t x)
+{
+    return DP_CONVERT_CAST(uint8_t, x);
+}
+
+DP_INLINE int16_t DP_int64_to_int16(int64_t x)
+{
+    return DP_CONVERT_CAST(int16_t, x);
+}
+
+DP_INLINE uint16_t DP_int64_to_uint16(int64_t x)
+{
+    return DP_CONVERT_CAST(uint16_t, x);
+}
+
+DP_INLINE int32_t DP_int64_to_int32(int64_t x)
+{
+    return DP_CONVERT_CAST(int32_t, x);
+}
+
+DP_INLINE uint32_t DP_int64_to_uint32(int64_t x)
+{
+    return DP_CONVERT_CAST(uint32_t, x);
+}
+
+DP_INLINE uint64_t DP_int64_to_uint64(int64_t x)
+{
+    return DP_CONVERT_CAST(uint64_t, x);
+}
+
+DP_INLINE float DP_int64_to_float(int64_t x)
+{
+    return DP_CONVERT_CAST(float, x);
+}
+
+DP_INLINE double DP_int64_to_double(int64_t x)
+{
+    return DP_CONVERT_CAST(double, x);
+}
+
+DP_INLINE size_t DP_int64_to_size(int64_t x)
 {
     return DP_CONVERT_CAST(size_t, x);
 }
@@ -1608,6 +1788,11 @@ DP_INLINE int32_t DP_uint64_to_int32(uint64_t x)
 DP_INLINE uint32_t DP_uint64_to_uint32(uint64_t x)
 {
     return DP_CONVERT_CAST(uint32_t, x);
+}
+
+DP_INLINE int64_t DP_uint64_to_int64(uint64_t x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
 }
 
 DP_INLINE float DP_uint64_to_float(uint64_t x)
@@ -1705,6 +1890,11 @@ DP_INLINE uint32_t DP_float_to_uint32(float x)
     return DP_CONVERT_CAST(uint32_t, x);
 }
 
+DP_INLINE int64_t DP_float_to_int64(float x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
+}
+
 DP_INLINE uint64_t DP_float_to_uint64(float x)
 {
     return DP_CONVERT_CAST(uint64_t, x);
@@ -1800,6 +1990,11 @@ DP_INLINE uint32_t DP_double_to_uint32(double x)
     return DP_CONVERT_CAST(uint32_t, x);
 }
 
+DP_INLINE int64_t DP_double_to_int64(double x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
+}
+
 DP_INLINE uint64_t DP_double_to_uint64(double x)
 {
     return DP_CONVERT_CAST(uint64_t, x);
@@ -1893,6 +2088,11 @@ DP_INLINE int32_t DP_size_to_int32(size_t x)
 DP_INLINE uint32_t DP_size_to_uint32(size_t x)
 {
     return DP_CONVERT_CAST(uint32_t, x);
+}
+
+DP_INLINE int64_t DP_size_to_int64(size_t x)
+{
+    return DP_CONVERT_CAST(int64_t, x);
 }
 
 DP_INLINE uint64_t DP_size_to_uint64(size_t x)
