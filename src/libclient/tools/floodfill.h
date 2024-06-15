@@ -2,8 +2,10 @@
 #ifndef TOOLS_FLOODFILL_H
 #define TOOLS_FLOODFILL_H
 #include "libclient/tools/tool.h"
+#include "libshared/net/message.h"
 #include <QAtomicInt>
 #include <QCoreApplication>
+#include <QCursor>
 
 namespace tools {
 
@@ -15,10 +17,12 @@ public:
 	void motion(const MotionParams &params) override;
 	void end() override;
 	bool isMultipart() const override;
+	void finishMultipart() override;
 	void undoMultipart() override;
 	void cancelMultipart() override;
 	void dispose() override;
 	bool usesBrushColor() const override { return true; }
+	ToolState toolState() const override;
 
 	void setTolerance(qreal tolerance) { m_tolerance = tolerance; }
 	void setExpansion(int expansion) { m_expansion = expansion; }
@@ -38,6 +42,10 @@ private:
 
 	void floodFillFinished(Task *task);
 
+	bool havePending() const { return !m_pending.isEmpty(); }
+	void flushPending();
+	void disposePending();
+
 	qreal m_tolerance;
 	int m_expansion;
 	int m_featherRadius;
@@ -48,6 +56,7 @@ private:
 	bool m_continuous;
 	bool m_running;
 	QAtomicInt m_cancel;
+	net::MessageList m_pending;
 };
 
 }

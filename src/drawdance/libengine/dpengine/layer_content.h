@@ -207,6 +207,12 @@ void DP_transient_layer_content_pixel_at_set(DP_TransientLayerContent *tlc,
                                              unsigned int context_id, int x,
                                              int y, DP_Pixel15 pixel);
 
+void DP_transient_layer_content_put_pixels(DP_TransientLayerContent *tlc,
+                                           unsigned int context_id,
+                                           int blend_mode, int left, int top,
+                                           int width, int height,
+                                           const DP_Pixel8 *pixels);
+
 void DP_transient_layer_content_put_image(DP_TransientLayerContent *tlc,
                                           unsigned int context_id,
                                           int blend_mode, int left, int top,

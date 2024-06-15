@@ -3,6 +3,7 @@
 #define LIBCLIENT_TOOLS_TOOL_H
 #include "libclient/canvas/point.h"
 #include "libclient/tools/devicetype.h"
+#include "libclient/tools/toolstate.h"
 #include <QCursor>
 #include <QMetaType>
 
@@ -135,6 +136,10 @@ public:
 		Q_UNUSED(x)
 		Q_UNUSED(y) /* most tools don't need to do anything here */
 	}
+
+	//! If this tool is operating or is waiting for a click to confirm
+	//! something. For example, the fill tool asks for confirmation to fill.
+	virtual ToolState toolState() const { return ToolState::Normal; }
 
 protected:
 	void setHandlesRightClick(bool handlesRightClick);

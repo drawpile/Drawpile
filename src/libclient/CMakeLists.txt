@@ -155,6 +155,7 @@ target_sources(dpclient PRIVATE
 	tools/toolcontroller.h
 	tools/toolproperties.cpp
 	tools/toolproperties.h
+	tools/toolstate.h
 	tools/transform.cpp
 	tools/transform.h
 	tools/utils.cpp

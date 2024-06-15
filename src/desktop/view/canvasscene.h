@@ -25,6 +25,7 @@ class CatchupItem;
 class CursorItem;
 #endif
 class LaserTrailItem;
+class MaskPreviewItem;
 class NoticeItem;
 class OutlineItem;
 class PathPreviewItem;
@@ -45,6 +46,7 @@ class CanvasScene final : public QGraphicsScene {
 	using CursorItem = drawingboard::CursorItem;
 #endif
 	using LaserTrailItem = drawingboard::LaserTrailItem;
+	using MaskPreviewItem = drawingboard::MaskPreviewItem;
 	using NoticeItem = drawingboard::NoticeItem;
 	using OutlineItem = drawingboard::OutlineItem;
 	using PathPreviewItem = drawingboard::PathPreviewItem;
@@ -73,6 +75,7 @@ public:
 	void setShowToggleItems(bool showToggleItems);
 	void setUserMarkerPersistence(int userMarkerPersistence);
 
+	void setMaskPreview(const QPoint &pos, const QImage &mask);
 	void setPathPreview(const QPainterPath &path);
 
 	void setCursorOnCanvas(bool cursorOnCanvas);
@@ -98,6 +101,8 @@ public:
 
 	bool showLockNotice(const QString &text);
 	bool hideLockNotice();
+
+	void setToolNotice(const QString &text);
 
 	bool hasCatchup() const;
 	void setCatchupProgress(int percent);
@@ -129,6 +134,7 @@ private:
 
 	void setTransformNoticePosition();
 	void setLockNoticePosition();
+	void setToolNoticePosition();
 	void setCatchupPosition();
 	void setTogglePositions();
 
@@ -156,6 +162,7 @@ private:
 	QHash<int, UserMarkerItem *> m_userMarkers;
 	QHash<int, LaserTrailItem *> m_activeLaserTrails;
 
+	MaskPreviewItem *m_maskPreview = nullptr;
 	PathPreviewItem *m_pathPreview = nullptr;
 	SelectionItem *m_selection = nullptr;
 	TransformItem *m_transform = nullptr;
@@ -168,6 +175,7 @@ private:
 	qreal m_topOffset = 0.0;
 	NoticeItem *m_transformNotice = nullptr;
 	NoticeItem *m_lockNotice = nullptr;
+	NoticeItem *m_toolNotice = nullptr;
 
 	CatchupItem *m_catchup = nullptr;
 

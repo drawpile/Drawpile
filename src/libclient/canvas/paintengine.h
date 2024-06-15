@@ -244,6 +244,9 @@ public:
 	void clearAllTransformPreviews();
 	void previewDabs(int layerId, const net::MessageList &msgs);
 	void clearDabsPreview();
+	void
+	previewFill(int layerId, int blendMode, int x, int y, const QImage &img);
+	void clearFillPreview();
 
 signals:
 	// Only emitted in tile cache mode.

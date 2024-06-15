@@ -263,8 +263,8 @@ void ViewWrapper::connectDocument(Document *doc)
 		toolCtrl, &tools::ToolController::transformToolStateChanged, m_scene,
 		&CanvasScene::setTransformToolState);
 	connect(
-		toolCtrl, &tools::ToolController::busyStateChanged, m_controller,
-		&CanvasController::setBusy);
+		toolCtrl, &tools::ToolController::toolStateChanged, m_controller,
+		&CanvasController::setToolState, Qt::QueuedConnection);
 	connect(
 		toolCtrl, &tools::ToolController::panRequested, m_controller,
 		&CanvasController::scrollBy);
@@ -272,8 +272,14 @@ void ViewWrapper::connectDocument(Document *doc)
 		toolCtrl, &tools::ToolController::zoomRequested, m_controller,
 		&CanvasController::zoomTo);
 	connect(
+		toolCtrl, &tools::ToolController::maskPreviewRequested, m_scene,
+		&CanvasScene::setMaskPreview);
+	connect(
 		toolCtrl, &tools::ToolController::pathPreviewRequested, m_scene,
 		&CanvasScene::setPathPreview);
+	connect(
+		toolCtrl, &tools::ToolController::toolNoticeRequested, m_scene,
+		&CanvasScene::setToolNotice, Qt::QueuedConnection);
 
 	connect(
 		m_scene, &CanvasScene::annotationDeleted, toolCtrl,

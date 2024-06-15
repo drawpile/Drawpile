@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/toolwidgets/selectionsettings.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/canvas/canvasmodel.h"
@@ -9,6 +10,7 @@
 #include <QAction>
 #include <QButtonGroup>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QCoreApplication>
 #include <QFormLayout>
 #include <QHBoxLayout>
@@ -26,6 +28,7 @@ static const ToolProperties::Value<bool> antialias{
 static const ToolProperties::RangedValue<int> expand{
 	QStringLiteral("expand"), 0, 0, 100},
 	featherRadius{QStringLiteral("featherRadius"), 0, 0, 40},
+	size{QStringLiteral("size"), 500, 10, 5000},
 	gap{QStringLiteral("gap"), 0, 0, 32},
 	source{QStringLiteral("source"), 2, 0, 2},
 	area{QStringLiteral("area"), 0, 0, 1};
@@ -36,16 +39,15 @@ static const ToolProperties::RangedValue<double> tolerance{
 SelectionSettings::SelectionSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent)
 {
-	connect(
-		ctrl, &ToolController::modelChanged, this,
-		&SelectionSettings::setModel);
 }
 
 void SelectionSettings::setActiveTool(tools::Tool::Type tool)
 {
+	bool isMagicWand = tool == Tool::MAGICWAND;
+	m_sizeSlider->setEnabled(isMagicWand);
 	// Hide first, then show. Otherwise the UI temporarily gets larger and
 	// expands the surrounding dock unnecessarily.
-	if(tool == Tool::MAGICWAND) {
+	if(isMagicWand) {
 		m_selectionContainer->hide();
 		m_magicWandContainer->show();
 	} else {
@@ -58,6 +60,7 @@ ToolProperties SelectionSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
 	cfg.setValue(props::antialias, m_antiAliasCheckBox->isChecked());
+	cfg.setValue(props::size, m_sizeSlider->value());
 	cfg.setValue(
 		props::tolerance,
 		m_toleranceSlider->value() / qreal(m_toleranceSlider->maximum()));
@@ -72,6 +75,7 @@ ToolProperties SelectionSettings::saveToolSettings()
 void SelectionSettings::restoreToolSettings(const ToolProperties &cfg)
 {
 	m_antiAliasCheckBox->setChecked(cfg.value(props::antialias));
+	m_sizeSlider->setValue(cfg.value(props::size));
 	m_toleranceSlider->setValue(
 		cfg.value(props::tolerance) * m_toleranceSlider->maximum());
 	m_expandSlider->setValue(cfg.value(props::expand));
@@ -100,6 +104,21 @@ bool SelectionSettings::isLocked()
 		   controller()->client()->seemsConnectedToThickServer();
 }
 
+void SelectionSettings::stepAdjust1(bool increase)
+{
+	if(m_sizeSlider->isEnabled()) {
+		m_sizeSlider->setValue(stepLogarithmic(
+			m_sizeSlider->minimum(), m_sizeSlider->maximum(),
+			m_sizeSlider->value(), increase));
+	}
+}
+
+int SelectionSettings::getSize() const
+{
+	int size = m_sizeSlider->value();
+	return calculatePixelSize(size, isSizeUnlimited(size));
+}
+
 void SelectionSettings::setAction(QAction *starttransform)
 {
 	Q_ASSERT(m_startTransformButton);
@@ -112,11 +131,19 @@ void SelectionSettings::setAction(QAction *starttransform)
 		&QAction::trigger);
 }
 
+void SelectionSettings::setActionEnabled(bool enabled)
+{
+	Q_ASSERT(m_startTransformButton);
+	m_startTransformButton->setEnabled(enabled);
+}
+
 void SelectionSettings::pushSettings()
 {
 	ToolController::SelectionParams selectionParams;
 	selectionParams.antiAlias = m_antiAliasCheckBox->isChecked();
 	selectionParams.defaultOp = m_headerGroup->checkedId();
+	int size = m_sizeSlider->value();
+	selectionParams.size = isSizeUnlimited(size) ? -1 : size;
 	selectionParams.tolerance =
 		m_toleranceSlider->value() / qreal(m_toleranceSlider->maximum());
 	selectionParams.expansion = m_expandSlider->value();
@@ -185,10 +212,13 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 
 	QWidget *widget = new QWidget(parent);
 	QVBoxLayout *layout = new QVBoxLayout(widget);
+	layout->setContentsMargins(3, 3, 3, 3);
+	layout->setSpacing(3);
 
 	m_selectionContainer = new QWidget;
 	QVBoxLayout *selectionLayout = new QVBoxLayout(m_selectionContainer);
 	selectionLayout->setContentsMargins(0, 0, 0, 0);
+	selectionLayout->setSpacing(3);
 	layout->addWidget(m_selectionContainer);
 
 	m_antiAliasCheckBox = new QCheckBox(tr("Anti-aliasing"));
@@ -202,14 +232,26 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	m_magicWandContainer = new QWidget;
 	QFormLayout *magicWandLayout = new QFormLayout(m_magicWandContainer);
 	magicWandLayout->setContentsMargins(0, 0, 0, 0);
+	magicWandLayout->setSpacing(3);
 	layout->addWidget(m_magicWandContainer);
+
+	m_sizeSlider = new KisSliderSpinBox;
+	m_sizeSlider->setRange(props::size.min, props::size.max);
+	m_sizeSlider->setPrefix(
+		QCoreApplication::translate("FillSettings", "Size: "));
+	m_sizeSlider->setSuffix(QCoreApplication::translate("FillSettings", "px"));
+	connect(
+		m_sizeSlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
+		&SelectionSettings::pushSettings);
+	connect(
+		m_sizeSlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
+		&SelectionSettings::updateSize);
+	magicWandLayout->addRow(m_sizeSlider);
 
 	m_toleranceSlider = new KisSliderSpinBox;
 	m_toleranceSlider->setRange(0, 254);
 	m_toleranceSlider->setPrefix(
 		QCoreApplication::translate("FillSettings", "Tolerance: "));
-	m_toleranceSlider->setSuffix(
-		QCoreApplication::translate("FillSettings", "px"));
 	m_toleranceSlider->setBlockUpdateSignalOnDrag(true);
 	connect(
 		m_toleranceSlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
@@ -302,7 +344,15 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 		sourceLayerButton, int(ToolController::SelectionSource::Layer));
 	sourceLayout->addWidget(sourceLayerButton);
 
-	sourceLayout->addStretch();
+	// Add a dummy hidden combo box to match the fill tool layout exactly.
+	// Otherwise the tool buttons end up slightly shorter.
+	QComboBox *m_sourceDummyCombo = new QComboBox;
+	m_sourceDummyCombo->setSizePolicy(
+		QSizePolicy::Expanding, QSizePolicy::Preferred);
+	utils::setWidgetRetainSizeWhenHidden(m_sourceDummyCombo, true);
+	m_sourceDummyCombo->hide();
+	sourceLayout->addWidget(m_sourceDummyCombo);
+
 	magicWandLayout->addRow(
 		QCoreApplication::translate("FillSettings", "Source:"), sourceLayout);
 
@@ -336,7 +386,14 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	m_areaGroup->addButton(areaSimilarButton, int(Area::Similar));
 	areaLayout->addWidget(areaSimilarButton);
 
-	areaLayout->addStretch();
+	// See sourceDummyCombo above.
+	QComboBox *m_areaDummyCombo = new QComboBox;
+	m_areaDummyCombo->setSizePolicy(
+		QSizePolicy::Expanding, QSizePolicy::Preferred);
+	utils::setWidgetRetainSizeWhenHidden(m_areaDummyCombo, true);
+	m_areaDummyCombo->hide();
+	areaLayout->addWidget(m_areaDummyCombo);
+
 	magicWandLayout->addRow(
 		QCoreApplication::translate("FillSettings", "Mode:"), areaLayout);
 
@@ -346,31 +403,29 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 
 	layout->addStretch();
 
-	m_magicWandContainer->hide();
+	setActiveTool(tools::Tool::SELECTION);
+	updateSize(m_sizeSlider->value());
 	return widget;
 }
 
-void SelectionSettings::setModel(canvas::CanvasModel *canvas)
+void SelectionSettings::updateSize(int size)
 {
-	if(canvas) {
-		connect(
-			canvas->selection(), &canvas::SelectionModel::selectionChanged,
-			this, &SelectionSettings::updateEnabled);
-	}
-	updateEnabledFrom(canvas);
+	bool unlimited = isSizeUnlimited(size);
+	m_sizeSlider->setOverrideText(
+		unlimited
+			? QCoreApplication::translate("FillSettings", "Size: Unlimited")
+			: QString());
+	emit pixelSizeChanged(calculatePixelSize(size, unlimited));
 }
 
-void SelectionSettings::updateEnabled()
+bool SelectionSettings::isSizeUnlimited(int size)
 {
-	updateEnabledFrom(controller()->model());
+	return size >= props::size.max;
 }
 
-void SelectionSettings::updateEnabledFrom(canvas::CanvasModel *canvas)
+int SelectionSettings::calculatePixelSize(int size, bool unlimited)
 {
-	if(m_startTransformButton) {
-		bool haveSelection = canvas && canvas->selection()->isValid();
-		m_startTransformButton->setEnabled(haveSelection);
-	}
+	return unlimited ? 0 : size * 2 + 1;
 }
 
 }

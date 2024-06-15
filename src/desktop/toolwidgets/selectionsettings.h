@@ -36,7 +36,14 @@ public:
 	bool affectsLayer() override { return false; }
 	bool isLocked() override;
 
+	void stepAdjust1(bool increase) override;
+
+	int getSize() const override;
+	bool isSquare() const override { return true; }
+	bool requiresOutline() const override { return true; }
+
 	void setAction(QAction *starttransform);
+	void setActionEnabled(bool enabled);
 
 	void setPutImageAllowed(bool putImageAllowed)
 	{
@@ -48,21 +55,25 @@ public:
 public slots:
 	void pushSettings() override;
 
+signals:
+	void pixelSizeChanged(int size);
+
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
 	enum Area { Continuous, Similar };
 
-	void setModel(canvas::CanvasModel *canvas);
-	void updateEnabled();
-	void updateEnabledFrom(canvas::CanvasModel *canvas);
+	void updateSize(int size);
+	static bool isSizeUnlimited(int size);
+	static int calculatePixelSize(int size, bool unlimited);
 
 	QWidget *m_headerWidget = nullptr;
 	QButtonGroup *m_headerGroup = nullptr;
 	QWidget *m_selectionContainer = nullptr;
 	QCheckBox *m_antiAliasCheckBox = nullptr;
 	QWidget *m_magicWandContainer = nullptr;
+	KisSliderSpinBox *m_sizeSlider = nullptr;
 	KisSliderSpinBox *m_toleranceSlider = nullptr;
 	KisSliderSpinBox *m_expandSlider = nullptr;
 	KisSliderSpinBox *m_featherSlider = nullptr;

@@ -4,6 +4,7 @@
 #include "desktop/scene/canvasitem.h"
 #include "desktop/scene/catchupitem.h"
 #include "desktop/scene/lasertrailitem.h"
+#include "desktop/scene/maskpreviewitem.h"
 #include "desktop/scene/noticeitem.h"
 #include "desktop/scene/outlineitem.h"
 #include "desktop/scene/pathpreviewitem.h"
@@ -31,11 +32,13 @@ namespace drawingboard {
 CanvasScene::CanvasScene(QObject *parent)
 	: QGraphicsScene(parent)
 	, m_model(nullptr)
+	, m_maskPreview(nullptr)
 	, m_pathPreview(nullptr)
 	, m_selection(nullptr)
 	, m_transform(nullptr)
 	, m_transformNotice(nullptr)
 	, m_lockNotice(nullptr)
+	, m_toolNotice(nullptr)
 	, m_catchup(nullptr)
 	, m_showAnnotationBorders(false)
 	, m_showAnnotations(true)
@@ -171,6 +174,9 @@ void CanvasScene::setSceneBounds(const QRectF &sceneBounds)
 	if(m_lockNotice) {
 		setLockNoticePosition();
 	}
+	if(m_toolNotice) {
+		setToolNoticePosition();
+	}
 	if(m_catchup) {
 		setCatchupPosition();
 	}
@@ -220,6 +226,26 @@ void CanvasScene::hideLockNotice()
 {
 	delete m_lockNotice;
 	m_lockNotice = nullptr;
+}
+
+void CanvasScene::setToolNotice(const QString &text)
+{
+	if(text.isEmpty()) {
+		if(m_toolNotice) {
+			delete m_toolNotice;
+			m_toolNotice = nullptr;
+		}
+	} else {
+		if(m_toolNotice) {
+			if(m_toolNotice->setText(text)) {
+				setToolNoticePosition();
+			}
+		} else {
+			m_toolNotice = new NoticeItem(text);
+			addItem(m_toolNotice);
+			setToolNoticePosition();
+		}
+	}
 }
 
 ToggleItem::Action
@@ -672,6 +698,15 @@ void CanvasScene::setLockNoticePosition()
 			NOTICE_OFFSET + m_topOffset));
 }
 
+void CanvasScene::setToolNoticePosition()
+{
+	m_toolNotice->updatePosition(
+		m_sceneBounds.bottomLeft() +
+		QPointF(
+			NOTICE_OFFSET,
+			-m_toolNotice->boundingRect().height() - NOTICE_OFFSET));
+}
+
 void CanvasScene::setCatchupPosition()
 {
 	QRectF catchupBounds = m_catchup->boundingRect();
@@ -699,6 +734,20 @@ void CanvasScene::setUserMarkerPersistence(int userMarkerPersistence)
 		for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
 			item->setPersistence(userMarkerPersistence);
 		}
+	}
+}
+
+void CanvasScene::setMaskPreview(const QPoint &pos, const QImage &mask)
+{
+	if(mask.isNull() || mask.size().isEmpty()) {
+		delete m_maskPreview;
+		m_maskPreview = nullptr;
+	} else if(m_maskPreview) {
+		m_maskPreview->updatePosition(QPointF(pos));
+		m_maskPreview->setMask(mask);
+	} else {
+		m_maskPreview = new MaskPreviewItem(mask, m_group);
+		m_maskPreview->updatePosition(QPointF(pos));
 	}
 }
 

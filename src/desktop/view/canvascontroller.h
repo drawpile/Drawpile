@@ -148,7 +148,7 @@ public:
 
 	void setLockReasons(QFlags<view::Lock::Reason> reasons);
 	void setLockDescription(const QString &lockDescription);
-	void setBusy(bool busy);
+	void setToolState(int toolState);
 	void setSaveInProgress(bool saveInProgress);
 
 signals:
@@ -361,6 +361,7 @@ private:
 	QCursor m_zoomCursor;
 	QCursor m_rotateCursor;
 	QCursor m_rotateDiscreteCursor;
+	QCursor m_checkCursor;
 	QCursor m_toolCursor;
 	QCursor m_currentCursor;
 
@@ -418,7 +419,7 @@ private:
 	bool m_canvasSizeChanging = false;
 	bool m_blockNotices = false;
 	bool m_showTransformNotices = false;
-	bool m_busy = false;
+	int m_toolState;
 	bool m_locked = false;
 	QString m_lockDescription;
 	bool m_saveInProgress = false;

@@ -190,7 +190,7 @@ public slots:
 
 	void setLockReasons(QFlags<view::Lock::Reason> reasons);
 	void setLockDescription(const QString &lockDescription);
-	void setBusy(bool busy);
+	void setToolState(int toolState);
 	void setSaveInProgress(bool saveInProgress);
 
 	//! Send pointer position updates even when not drawing
@@ -404,6 +404,7 @@ private:
 	QCursor m_dotcursor, m_trianglerightcursor, m_triangleleftcursor;
 	QCursor m_colorpickcursor, m_layerpickcursor, m_zoomcursor, m_rotatecursor;
 	QCursor m_rotatediscretecursor, m_erasercursor, m_toolcursor;
+	QCursor m_checkCursor;
 
 	QPointF m_pos;		// Canvas position
 	qreal m_zoom;		// View zoom in percents
@@ -419,7 +420,7 @@ private:
 	bool m_enableTablet;
 	bool m_locked;
 	QString m_lockDescription;
-	bool m_busy;
+	int m_toolState;
 	bool m_saveInProgress;
 	bool m_pointertracking;
 	bool m_pixelgrid;

@@ -50,6 +50,7 @@ public:
 	struct SelectionParams {
 		bool antiAlias = true;
 		int defaultOp = 0;
+		int size = -1;
 		qreal tolerance = 0.0;
 		int expansion = 0;
 		int featherRadius = 0;
@@ -157,6 +158,8 @@ public:
 	 */
 	void executeAsync(Task *task);
 
+	void refreshToolState();
+
 public slots:
 	//! Start a new stroke
 	void startDrawing(
@@ -214,12 +217,14 @@ signals:
 	void colorUsed(const QColor &color);
 	void panRequested(int x, int y);
 	void zoomRequested(const QRect &rect, int steps);
+	void maskPreviewRequested(const QPoint &pos, const QImage &mask);
 	void pathPreviewRequested(const QPainterPath &path);
 	void transformRequested();
 	void toolSwitchRequested(tools::Tool::Type tool);
 	void showMessageRequested(const QString &message);
+	void toolNoticeRequested(const QString &text);
 
-	void busyStateChanged(bool busy);
+	void toolStateChanged(int state);
 	void asyncExecutionFinished(Task *task);
 
 private slots:

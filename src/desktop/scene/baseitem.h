@@ -28,6 +28,7 @@ public:
 		CursorType = QGraphicsItem::UserType + 19,
 		PathPreviewType = QGraphicsItem::UserType + 20,
 		TransformType = QGraphicsItem::UserType + 21,
+		MaskPreviewType = QGraphicsItem::UserType + 22,
 	};
 
 	void setUpdateSceneOnRefresh(bool updateSceneOnRefresh);

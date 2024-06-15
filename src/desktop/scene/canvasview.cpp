@@ -13,6 +13,7 @@ extern "C" {
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/drawdance/eventlog.h"
 #include "libclient/tools/devicetype.h"
+#include "libclient/tools/toolstate.h"
 #include "libshared/util/qtcompat.h"
 #include <QApplication>
 #include <QDateTime>
@@ -61,7 +62,7 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_zoomWheelDelta(0)
 	, m_enableTablet(true)
 	, m_locked(false)
-	, m_busy(false)
+	, m_toolState(int(tools::ToolState::Normal))
 	, m_saveInProgress(false)
 	, m_pointertracking(false)
 	, m_pixelgrid(true)
@@ -116,6 +117,7 @@ CanvasView::CanvasView(QWidget *parent)
 	m_rotatecursor = QCursor(QPixmap(":/cursors/rotate.png"), 16, 16);
 	m_rotatediscretecursor =
 		QCursor(QPixmap(":/cursors/rotate-discrete.png"), 16, 16);
+	m_checkCursor = QCursor(QPixmap(":/cursors/check.png"), 16, 16);
 	m_erasercursor = QCursor(QPixmap(":/cursors/eraser.png"), 2, 2);
 
 	// Generate the minimalistic dot cursor
@@ -615,9 +617,9 @@ void CanvasView::setLockDescription(const QString &lockDescription)
 	updateLockNotice();
 }
 
-void CanvasView::setBusy(bool busy)
+void CanvasView::setToolState(int toolState)
 {
-	m_busy = busy;
+	m_toolState = toolState;
 	resetCursor();
 }
 
@@ -733,8 +735,11 @@ void CanvasView::resetCursor()
 	if(m_locked) {
 		setViewportCursor(Qt::ForbiddenCursor);
 		return;
-	} else if(m_busy) {
+	} else if(m_toolState == int(tools::ToolState::Busy)) {
 		setViewportCursor(Qt::WaitCursor);
+		return;
+	} else if(m_toolState == int(tools::ToolState::AwaitingConfirmation)) {
+		setViewportCursor(m_checkCursor);
 		return;
 	}
 
@@ -2097,7 +2102,8 @@ bool CanvasView::viewportEvent(QEvent *event)
 
 void CanvasView::updateOutlinePos(QPointF point)
 {
-	if(m_showoutline && !m_locked && !m_busy && !m_hoveringOverHud &&
+	if(m_showoutline && !m_locked &&
+	   m_toolState == int(tools::ToolState::Normal) && !m_hoveringOverHud &&
 	   (!canvas::Point::roughlySame(point, m_prevoutlinepoint))) {
 		if(!m_subpixeloutline) {
 			point.setX(qFloor(point.x()) + 0.5);
@@ -2116,7 +2122,8 @@ void CanvasView::updateOutline()
 		m_scene->setOutlineVisibleInMode(
 			!m_hoveringOverHud &&
 			(m_dragmode == ViewDragMode::None
-				 ? m_penmode == PenMode::Normal && !m_locked && !m_busy
+				 ? m_penmode == PenMode::Normal && !m_locked &&
+					   m_toolState == int(tools::ToolState::Normal)
 				 : m_dragAction == CanvasShortcuts::TOOL_ADJUST));
 	}
 }

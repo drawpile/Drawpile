@@ -1652,21 +1652,21 @@ static int put_image_handle_pixel(int blend_mode, DP_Pixel8 pixel,
     }
 }
 
-void DP_transient_layer_content_put_image(DP_TransientLayerContent *tlc,
-                                          unsigned int context_id,
-                                          int blend_mode, int left, int top,
-                                          DP_Image *img)
+void DP_transient_layer_content_put_pixels(DP_TransientLayerContent *tlc,
+                                           unsigned int context_id,
+                                           int blend_mode, int left, int top,
+                                           int width, int height,
+                                           const DP_Pixel8 *pixels)
 {
     DP_ASSERT(tlc);
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
-    DP_ASSERT(img);
+    DP_ASSERT(pixels);
 
-    int width = tlc->width;
-    int wt = DP_tile_count_round(width);
+    int canvas_width = tlc->width;
+    int wt = DP_tile_count_round(canvas_width);
     DP_TileIterator ti = DP_tile_iterator_make(
-        width, tlc->height,
-        DP_rect_make(left, top, DP_image_width(img), DP_image_height(img)));
+        canvas_width, tlc->height, DP_rect_make(left, top, width, height));
 
     while (DP_tile_iterator_next(&ti)) {
         int i = ti.row * wt + ti.col;
@@ -1674,8 +1674,7 @@ void DP_transient_layer_content_put_image(DP_TransientLayerContent *tlc,
             DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(&ti);
             DP_TransientTile *tt = NULL;
             while (DP_tile_into_dst_iterator_next(&tidi)) {
-                DP_Pixel8 pixel =
-                    DP_image_pixel_at(img, tidi.dst_x, tidi.dst_y);
+                DP_Pixel8 pixel = pixels[tidi.dst_y * width + tidi.dst_x];
                 DP_Pixel15 dst_pixel;
                 switch (put_image_handle_pixel(blend_mode, pixel, &dst_pixel)) {
                 case PUT_IMAGE_PIXEL_SKIP:
@@ -1698,6 +1697,20 @@ void DP_transient_layer_content_put_image(DP_TransientLayerContent *tlc,
             }
         }
     }
+}
+
+void DP_transient_layer_content_put_image(DP_TransientLayerContent *tlc,
+                                          unsigned int context_id,
+                                          int blend_mode, int left, int top,
+                                          DP_Image *img)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    DP_ASSERT(img);
+    DP_transient_layer_content_put_pixels(
+        tlc, context_id, blend_mode, left, top, DP_image_width(img),
+        DP_image_height(img), DP_image_pixels(img));
 }
 
 

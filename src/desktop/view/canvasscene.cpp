@@ -5,6 +5,7 @@ extern "C" {
 #include "desktop/scene/annotationitem.h"
 #include "desktop/scene/catchupitem.h"
 #include "desktop/scene/lasertrailitem.h"
+#include "desktop/scene/maskpreviewitem.h"
 #include "desktop/scene/noticeitem.h"
 #include "desktop/scene/outlineitem.h"
 #include "desktop/scene/pathpreviewitem.h"
@@ -271,6 +272,21 @@ void CanvasScene::setUserMarkerPersistence(int userMarkerPersistence)
 	}
 }
 
+void CanvasScene::setMaskPreview(const QPoint &pos, const QImage &mask)
+{
+	if(mask.isNull() || mask.size().isEmpty()) {
+		delete m_maskPreview;
+		m_maskPreview = nullptr;
+	} else if(m_maskPreview) {
+		m_maskPreview->updatePosition(QPointF(pos));
+		m_maskPreview->setMask(mask);
+	} else {
+		m_maskPreview = new MaskPreviewItem(mask, m_canvasGroup);
+		m_maskPreview->setUpdateSceneOnRefresh(true);
+		m_maskPreview->updatePosition(QPointF(pos));
+	}
+}
+
 void CanvasScene::setPathPreview(const QPainterPath &path)
 {
 	if(path.isEmpty()) {
@@ -380,6 +396,9 @@ void CanvasScene::setNotificationBarHeight(int height)
 		if(m_lockNotice) {
 			setLockNoticePosition();
 		}
+		if(m_toolNotice) {
+			setToolNoticePosition();
+		}
 	}
 }
 
@@ -420,6 +439,26 @@ bool CanvasScene::hideLockNotice()
 		return true;
 	} else {
 		return false;
+	}
+}
+
+void CanvasScene::setToolNotice(const QString &text)
+{
+	if(text.isEmpty()) {
+		if(m_toolNotice) {
+			delete m_toolNotice;
+			m_toolNotice = nullptr;
+		}
+	} else {
+		if(m_toolNotice) {
+			if(m_toolNotice->setText(text)) {
+				setToolNoticePosition();
+			}
+		} else {
+			m_toolNotice = new NoticeItem(text);
+			addSceneItem(m_toolNotice);
+			setToolNoticePosition();
+		}
 	}
 }
 
@@ -473,6 +512,9 @@ void CanvasScene::onSceneRectChanged()
 	}
 	if(m_lockNotice) {
 		setLockNoticePosition();
+	}
+	if(m_toolNotice) {
+		setToolNoticePosition();
 	}
 	if(m_catchup) {
 		setCatchupPosition();
@@ -681,6 +723,15 @@ void CanvasScene::setLockNoticePosition()
 		QPointF(
 			-m_lockNotice->boundingRect().width() - NOTICE_OFFSET,
 			NOTICE_OFFSET + m_topOffset));
+}
+
+void CanvasScene::setToolNoticePosition()
+{
+	m_toolNotice->updatePosition(
+		sceneRect().bottomLeft() +
+		QPointF(
+			NOTICE_OFFSET,
+			-m_toolNotice->boundingRect().height() - NOTICE_OFFSET));
 }
 
 void CanvasScene::setCatchupPosition()

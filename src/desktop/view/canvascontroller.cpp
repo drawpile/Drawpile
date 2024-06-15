@@ -12,6 +12,7 @@ extern "C" {
 #include "libclient/canvas/paintengine.h"
 #include "libclient/drawdance/eventlog.h"
 #include "libclient/tools/devicetype.h"
+#include "libclient/tools/toolstate.h"
 #include "libshared/util/qtcompat.h"
 #include <QDateTime>
 #include <QGestureEvent>
@@ -44,11 +45,13 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 	, m_rotateCursor(QCursor(QPixmap(":/cursors/rotate.png"), 16, 16))
 	, m_rotateDiscreteCursor(
 		  QCursor(QPixmap(":/cursors/rotate-discrete.png"), 16, 16))
+	, m_checkCursor(QCursor(QPixmap(":/cursors/check.png"), 16, 16))
 	, m_currentCursor(Qt::BlankCursor)
 	, m_brushCursorStyle(int(Cursor::TriangleRight))
 	, m_eraseCursorStyle(int(Cursor::SameAsBrush))
 	, m_alphaLockCursorStyle(int(Cursor::SameAsBrush))
 	, m_brushBlendMode(DP_BLEND_MODE_NORMAL)
+	, m_toolState(int(tools::ToolState::Normal))
 {
 	desktop::settings::Settings &settings = dpApp().settings();
 	settings.bindCanvasViewBackgroundColor(
@@ -1266,10 +1269,10 @@ void CanvasController::setLockReasons(QFlags<view::Lock::Reason> reasons)
 	}
 }
 
-void CanvasController::setBusy(bool busy)
+void CanvasController::setToolState(int toolState)
 {
-	if(busy != m_busy) {
-		m_busy = busy;
+	if(toolState != m_toolState) {
+		m_toolState = toolState;
 		updateOutline();
 		resetCursor();
 	}
@@ -1789,8 +1792,11 @@ void CanvasController::resetCursor()
 	if(m_locked) {
 		setViewportCursor(Qt::ForbiddenCursor);
 		return;
-	} else if(m_busy) {
+	} else if(m_toolState == int(tools::ToolState::Busy)) {
 		setViewportCursor(Qt::WaitCursor);
+		return;
+	} else if(m_toolState == int(tools::ToolState::AwaitingConfirmation)) {
+		setViewportCursor(m_checkCursor);
 		return;
 	}
 
@@ -1887,7 +1893,8 @@ void CanvasController::updateOutlineVisibleInMode()
 	m_outlineVisibleInMode =
 		!m_hoveringOverHud &&
 		(m_dragMode == ViewDragMode::None
-			 ? m_penMode == PenMode::Normal && !m_locked && !m_busy
+			 ? m_penMode == PenMode::Normal && !m_locked &&
+				   m_toolState == int(tools::ToolState::Normal)
 			 : m_dragAction == CanvasShortcuts::TOOL_ADJUST);
 }
 

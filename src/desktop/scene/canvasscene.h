@@ -22,6 +22,7 @@ class AnnotationItem;
 class CanvasItem;
 class CatchupItem;
 class LaserTrailItem;
+class MaskPreviewItem;
 class NoticeItem;
 class OutlineItem;
 class PathPreviewItem;
@@ -68,6 +69,8 @@ public:
 	void showLockNotice(const QString &text);
 	void hideLockNotice();
 
+	void setToolNotice(const QString &text);
+
 	ToggleItem::Action
 	checkHover(const QPointF &scenePos, bool *outWasHovering = nullptr);
 
@@ -91,6 +94,7 @@ public:
 
 	bool hasCatchup() const { return m_catchup != nullptr; }
 
+	void setMaskPreview(const QPoint &pos, const QImage &mask);
 	void setPathPreview(const QPainterPath &path);
 
 	void setOutline(qreal size, qreal width);
@@ -170,6 +174,7 @@ private:
 
 	void setTransformNoticePosition();
 	void setLockNoticePosition();
+	void setToolNoticePosition();
 	void setCatchupPosition();
 
 	//! The actual canvas model
@@ -187,6 +192,7 @@ private:
 	//! User cursor items
 	QHash<uint8_t, UserMarkerItem *> m_usermarkers;
 
+	MaskPreviewItem *m_maskPreview;
 	PathPreviewItem *m_pathPreview;
 	SelectionItem *m_selection;
 	TransformItem *m_transform;
@@ -194,6 +200,7 @@ private:
 	qreal m_topOffset = 0.0;
 	NoticeItem *m_transformNotice;
 	NoticeItem *m_lockNotice;
+	NoticeItem *m_toolNotice;
 	CatchupItem *m_catchup;
 	QVector<ToggleItem *> m_toggleItems;
 

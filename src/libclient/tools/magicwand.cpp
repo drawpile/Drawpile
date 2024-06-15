@@ -4,6 +4,8 @@
 #include "libclient/canvas/paintengine.h"
 #include "libclient/net/client.h"
 #include "libclient/tools/selection.h"
+#include <QCoreApplication>
+#include <QPainter>
 
 namespace tools {
 
@@ -12,13 +14,14 @@ public:
 	Task(
 		MagicWandTool *tool, const QAtomicInt &cancel,
 		const drawdance::CanvasState &canvasState, const QPointF &point,
-		double tolerance, int sourceLayerId, int gap, int expansion,
+		int size, double tolerance, int sourceLayerId, int gap, int expansion,
 		int featherRadius, bool continuous, int targetLayerId,
 		DP_ViewMode viewMode, int activeLayerId, int activeFrameIndex)
 		: m_tool(tool)
 		, m_cancel(cancel)
 		, m_canvasState(canvasState)
 		, m_point(point)
+		, m_size(size)
 		, m_tolerance(tolerance)
 		, m_sourceLayerId(sourceLayerId)
 		, m_gap(gap)
@@ -36,8 +39,9 @@ public:
 	{
 		m_result = m_canvasState.floodFill(
 			m_point.x(), m_point.y(), Qt::black, m_tolerance, m_sourceLayerId,
-			-1, m_gap, m_expansion, m_featherRadius, m_continuous, m_viewMode,
-			m_activeLayerId, m_activeFrameIndex, m_cancel, m_img, m_x, m_y);
+			m_size, m_gap, m_expansion, m_featherRadius, m_continuous,
+			m_viewMode, m_activeLayerId, m_activeFrameIndex, m_cancel, m_img,
+			m_x, m_y);
 		if(m_result != DP_FLOOD_FILL_SUCCESS &&
 		   m_result != DP_FLOOD_FILL_CANCELLED) {
 			m_error = QString::fromUtf8(DP_error());
@@ -48,7 +52,7 @@ public:
 
 	int targetLayerId() const { return m_targetLayerId; }
 	DP_FloodFillResult result() const { return m_result; }
-	const QImage &img() const { return m_img; }
+	QImage &&takeImage() { return std::move(m_img); }
 	int x() const { return m_x; }
 	int y() const { return m_y; }
 	const QString &error() const { return m_error; }
@@ -58,6 +62,7 @@ private:
 	const QAtomicInt &m_cancel;
 	drawdance::CanvasState m_canvasState;
 	QPointF m_point;
+	int m_size;
 	double m_tolerance;
 	int m_sourceLayerId;
 	int m_gap;
@@ -87,6 +92,8 @@ void MagicWandTool::begin(const BeginParams &params)
 {
 	if(params.right) {
 		cancelMultipart();
+	} else if(havePending()) {
+		flushPending();
 	} else if(!m_running) {
 		m_running = true;
 		m_cancel = false;
@@ -109,13 +116,17 @@ void MagicWandTool::begin(const BeginParams &params)
 			break;
 		}
 
+		emit m_owner.toolNoticeRequested(
+			QCoreApplication::translate("MagicWandSettings", "Selecting…"));
+
 		canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
 		m_owner.executeAsync(new Task(
 			this, m_cancel, paintEngine->viewCanvasState(), params.point,
-			selectionParams.tolerance, layerId, selectionParams.gap,
-			selectionParams.expansion, selectionParams.featherRadius,
-			selectionParams.continuous, activeLayerId, paintEngine->viewMode(),
-			paintEngine->viewLayer(), paintEngine->viewFrame()));
+			selectionParams.size, selectionParams.tolerance, layerId,
+			selectionParams.gap, selectionParams.expansion,
+			selectionParams.featherRadius, selectionParams.continuous,
+			activeLayerId, paintEngine->viewMode(), paintEngine->viewLayer(),
+			paintEngine->viewFrame()));
 	}
 }
 
@@ -128,7 +139,12 @@ void MagicWandTool::end() {}
 
 bool MagicWandTool::isMultipart() const
 {
-	return m_running && !m_cancel;
+	return (m_running && !m_cancel) || havePending();
+}
+
+void MagicWandTool::finishMultipart()
+{
+	flushPending();
 }
 
 void MagicWandTool::undoMultipart()
@@ -138,40 +154,81 @@ void MagicWandTool::undoMultipart()
 
 void MagicWandTool::cancelMultipart()
 {
+	dispose();
+	disposePending();
+}
+
+void MagicWandTool::dispose()
+{
 	if(m_running) {
 		m_cancel = true;
 	}
 }
 
-void MagicWandTool::dispose()
+ToolState MagicWandTool::toolState() const
 {
-	cancelMultipart();
+	return havePending() ? ToolState::AwaitingConfirmation : ToolState::Normal;
 }
 
 void MagicWandTool::floodFillFinished(Task *task)
 {
 	m_running = false;
 	DP_FloodFillResult result = task->result();
+	QString toolNoticeText;
 	if(result == DP_FLOOD_FILL_SUCCESS) {
-		const QImage &img = task->img();
+		QImage img = task->takeImage();
 		if(img.size().isEmpty()) {
 			qWarning("Magic wand: filled image is empty");
 		} else {
+			Q_ASSERT(m_pending.isEmpty());
 			uint8_t contextId = m_owner.model()->localUserId();
-			net::MessageList msgs;
+			int x = task->x();
+			int y = task->y();
 			net::makeSelectionPutMessages(
-				msgs, shouldDisguiseSelectionsAsPutImage(), contextId,
-				canvas::CanvasModel::MAIN_SELECTION_ID, m_op, task->x(),
-				task->y(), img.width(), img.height(), img);
-			if(msgs.isEmpty()) {
+				m_pending, shouldDisguiseSelectionsAsPutImage(), contextId,
+				canvas::CanvasModel::MAIN_SELECTION_ID, m_op, x, y, img.width(),
+				img.height(), img);
+			if(m_pending.isEmpty()) {
 				qWarning("Magic wand: no messages");
 			} else {
-				msgs.prepend(net::makeUndoPointMessage(contextId));
-				m_owner.client()->sendMessages(msgs.count(), msgs.constData());
+				m_pending.prepend(net::makeUndoPointMessage(contextId));
+				toolNoticeText = QCoreApplication::translate(
+									 "MagicWandSettings",
+									 "Selected area is %1 by %2 pixels.\n"
+									 "Click to apply, undo to cancel.")
+									 .arg(img.width())
+									 .arg(img.height());
+				{
+					QPainter painter(&img);
+					painter.setCompositionMode(
+						QPainter::CompositionMode_SourceAtop);
+					painter.fillRect(img.rect(), QColor(0, 170, 255));
+				}
+				emit m_owner.maskPreviewRequested(QPoint(x, y), img);
 			}
 		}
 	} else if(result != DP_FLOOD_FILL_CANCELLED) {
 		qWarning("Magic wand failed: %s", qUtf8Printable(task->error()));
+	}
+	emit m_owner.toolNoticeRequested(toolNoticeText);
+	m_owner.refreshToolState();
+}
+
+void MagicWandTool::flushPending()
+{
+	if(havePending()) {
+		m_owner.client()->sendMessages(m_pending.size(), m_pending.constData());
+		disposePending();
+	}
+}
+
+void MagicWandTool::disposePending()
+{
+	if(havePending()) {
+		m_pending.clear();
+		emit m_owner.maskPreviewRequested(QPoint(), QImage());
+		emit m_owner.toolNoticeRequested(QString());
+		m_owner.refreshToolState();
 	}
 }
 

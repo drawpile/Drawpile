@@ -17,6 +17,7 @@ typedef union DP_Pixel8 DP_Pixel8;
 typedef enum DP_PreviewType {
     DP_PREVIEW_CUT,
     DP_PREVIEW_DABS,
+    DP_PREVIEW_FILL,
     // The amount of layers that can be previewed with an accurate transform
     // preview is limited because at some point it's just too slow. If the user
     // selects that many layers, we force the "fast" preview mode instead, which
@@ -74,6 +75,10 @@ DP_Preview *DP_preview_new_transform(
 DP_Preview *DP_preview_new_dabs_inc(int initial_offset_x, int initial_offset_y,
                                     int layer_id, int count,
                                     DP_Message **messages);
+
+DP_Preview *DP_preview_new_fill(int initial_offset_x, int initial_offset_y,
+                                int layer_id, int blend_mode, int x, int y,
+                                int width, int height, const DP_Pixel8 *pixels);
 
 
 DP_PreviewRenderer *DP_preview_renderer_new(DP_DrawContext *dc,

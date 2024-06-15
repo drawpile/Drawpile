@@ -104,6 +104,8 @@ void FloodFill::begin(const BeginParams &params)
 {
 	if(params.right) {
 		cancelMultipart();
+	} else if(havePending()) {
+		flushPending();
 	} else if(!m_running) {
 		canvas::CanvasModel *model = m_owner.model();
 		QColor fillColor = m_blendMode == DP_BLEND_MODE_ERASE
@@ -112,6 +114,8 @@ void FloodFill::begin(const BeginParams &params)
 		m_running = true;
 		m_cancel = false;
 		canvas::PaintEngine *paintEngine = model->paintEngine();
+		emit m_owner.toolNoticeRequested(
+			QCoreApplication::translate("FillSettings", "Filling…"));
 		m_owner.executeAsync(new Task{
 			this, m_cancel, paintEngine->viewCanvasState(), params.point,
 			fillColor, m_tolerance, m_layerId, m_size, m_gap, m_expansion,
@@ -130,7 +134,12 @@ void FloodFill::end() {}
 
 bool FloodFill::isMultipart() const
 {
-	return m_running && !m_cancel;
+	return (m_running && !m_cancel) || havePending();
+}
+
+void FloodFill::finishMultipart()
+{
+	flushPending();
 }
 
 void FloodFill::undoMultipart()
@@ -140,30 +149,75 @@ void FloodFill::undoMultipart()
 
 void FloodFill::cancelMultipart()
 {
+	dispose();
+	disposePending();
+}
+
+void FloodFill::dispose()
+{
 	if(m_running) {
 		m_cancel = true;
 	}
 }
 
-void FloodFill::dispose()
+ToolState FloodFill::toolState() const
 {
-	cancelMultipart();
+	return havePending() ? ToolState::AwaitingConfirmation : ToolState::Normal;
 }
 
 void FloodFill::floodFillFinished(Task *task)
 {
 	m_running = false;
 	DP_FloodFillResult result = task->result();
+	QString toolNoticeText;
 	if(result == DP_FLOOD_FILL_SUCCESS) {
+		Q_ASSERT(m_pending.isEmpty());
 		uint8_t contextId = m_owner.model()->localUserId();
-		net::MessageList msgs;
-		msgs.append(net::makeUndoPointMessage(contextId));
+		int layerId = task->targetLayerId();
+		int x = task->x();
+		int y = task->y();
+		const QImage &img = task->img();
 		net::makePutImageMessages(
-			msgs, contextId, task->targetLayerId(), m_blendMode, task->x(),
-			task->y(), task->img());
-		m_owner.client()->sendMessages(msgs.count(), msgs.constData());
+			m_pending, contextId, layerId, m_blendMode, x, y, img);
+		if(havePending()) {
+			m_pending.prepend(net::makeUndoPointMessage(contextId));
+			canvas::CanvasModel *model = m_owner.model();
+			if(model) {
+				model->paintEngine()->previewFill(
+					layerId, m_blendMode, x, y, img);
+			}
+			toolNoticeText =
+				QCoreApplication::translate(
+					"FillSettings", "Filled area is %1 by %2 pixels.\n"
+									"Click to apply, undo to cancel.")
+					.arg(img.width())
+					.arg(img.height());
+		}
 	} else if(result != DP_FLOOD_FILL_CANCELLED) {
 		qWarning("Flood fill failed: %s", qUtf8Printable(task->error()));
+	}
+	emit m_owner.toolNoticeRequested(toolNoticeText);
+	m_owner.refreshToolState();
+}
+
+void FloodFill::flushPending()
+{
+	if(havePending()) {
+		m_owner.client()->sendMessages(m_pending.size(), m_pending.constData());
+		disposePending();
+	}
+}
+
+void FloodFill::disposePending()
+{
+	if(havePending()) {
+		m_pending.clear();
+		canvas::CanvasModel *model = m_owner.model();
+		if(model) {
+			model->paintEngine()->clearFillPreview();
+		}
+		emit m_owner.toolNoticeRequested(QString());
+		m_owner.refreshToolState();
 	}
 }
 

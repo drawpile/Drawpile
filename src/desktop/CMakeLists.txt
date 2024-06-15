@@ -226,6 +226,8 @@ target_sources(drawpile PRIVATE
 	scene/catchupitem.h
 	scene/lasertrailitem.cpp
 	scene/lasertrailitem.h
+	scene/maskpreviewitem.cpp
+	scene/maskpreviewitem.h
 	scene/noticeitem.cpp
 	scene/noticeitem.h
 	scene/outlineitem.cpp

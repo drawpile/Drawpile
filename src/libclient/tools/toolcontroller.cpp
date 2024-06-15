@@ -16,6 +16,7 @@
 #include "libclient/tools/pan.h"
 #include "libclient/tools/selection.h"
 #include "libclient/tools/shapetools.h"
+#include "libclient/tools/toolstate.h"
 #include "libclient/tools/transform.h"
 #include "libclient/tools/zoom.h"
 #include "libshared/util/functionrunnable.h"
@@ -128,6 +129,8 @@ void ToolController::setActiveTool(Tool::Type tool)
 			activeToolHandlesRightClick(), activeToolIsFractional(),
 			activeToolIgnoresSelections());
 		emit toolCursorChanged(activeToolCursor());
+		emit toolNoticeRequested(QString());
+		refreshToolState();
 	}
 }
 
@@ -547,13 +550,13 @@ void ToolController::executeAsync(Task *task)
 {
 	task->setParent(this);
 	if(m_taskCount++ == 0) {
-		emit busyStateChanged(true);
+		emit toolStateChanged(int(ToolState::Busy));
 	}
 	m_threadPool.start(utils::FunctionRunnable::create([=]() {
 		task->run();
 		emit asyncExecutionFinished(task);
 		if(--m_taskCount == 0) {
-			emit busyStateChanged(false);
+			emit toolStateChanged(int(m_activeTool->toolState()));
 		}
 	}));
 }
@@ -562,6 +565,13 @@ void ToolController::notifyAsyncExecutionFinished(Task *task)
 {
 	task->finished();
 	task->deleteLater();
+}
+
+void ToolController::refreshToolState()
+{
+	if(m_taskCount == 0) {
+		emit toolStateChanged(int(m_activeTool->toolState()));
+	}
 }
 
 }

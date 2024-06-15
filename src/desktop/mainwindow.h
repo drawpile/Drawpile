@@ -254,7 +254,7 @@ private slots:
 	void setDockTitleBarsHidden(bool hidden);
 	void updateSideTabDocks();
 	void setNotificationsMuted(bool muted);
-	void setBusy(bool busy);
+	void setToolState(int toolState);
 
 	void updateTitle();
 
@@ -434,6 +434,7 @@ private:
 	bool m_wasSessionLocked;
 	bool m_notificationsMuted;
 	bool m_initialCatchup;
+	bool m_toolStateNormal;
 
 	Document *m_doc;
 	MainActions *m_ma;

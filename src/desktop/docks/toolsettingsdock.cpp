@@ -212,6 +212,14 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 		&tools::FillSettings::setActiveLayer);
 
 	connect(
+		selectionSettings(), &tools::SelectionSettings::pixelSizeChanged, this,
+		[this](int size) {
+			if(d->currentTool == tools::Tool::MAGICWAND) {
+				emit sizeChanged(size);
+			}
+		});
+
+	connect(
 		d->ctrl, &tools::ToolController::activeBrushChanged, this,
 		&ToolSettings::activeBrushChanged);
 

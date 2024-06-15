@@ -437,6 +437,19 @@ void PaintEngine::clearDabsPreview()
 	DP_paint_engine_preview_clear(m_data, DP_PREVIEW_DABS);
 }
 
+void PaintEngine::previewFill(
+	int layerId, int blendMode, int x, int y, const QImage &img)
+{
+	DP_paint_engine_preview_fill(
+		m_data, layerId, blendMode, x, y, img.width(), img.height(),
+		reinterpret_cast<const DP_Pixel8 *>(img.constBits()));
+}
+
+void PaintEngine::clearFillPreview()
+{
+	DP_paint_engine_preview_clear(m_data, DP_PREVIEW_FILL);
+}
+
 CanvasState PaintEngine::viewCanvasState() const
 {
 	return drawdance::CanvasState::noinc(

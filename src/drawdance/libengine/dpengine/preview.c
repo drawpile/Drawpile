@@ -651,6 +651,97 @@ DP_Preview *DP_preview_new_dabs_inc(int initial_offset_x, int initial_offset_y,
 }
 
 
+typedef struct DP_PreviewFill {
+    DP_Preview parent;
+    int layer_id;
+    int x, y, width, height;
+    DP_Pixel8 pixels[];
+} DP_PreviewFill;
+
+static int preview_fill_stripe_size(int dimension)
+{
+    if (dimension < 5) {
+        return 1;
+    }
+    else if (dimension < 10) {
+        return dimension / 2;
+    }
+    else if (dimension < 20) {
+        return dimension / 4;
+    }
+    else if (dimension < 40) {
+        return dimension / 8;
+    }
+    else {
+        return DP_min_int(64, dimension / 16);
+    }
+}
+
+static void preview_fill_pixels_set(DP_Pixel8 *dst, const DP_Pixel8 *src,
+                                    int width, int height)
+{
+    int stripe_size_x = preview_fill_stripe_size(width);
+    int stripe_size_y = preview_fill_stripe_size(height);
+    for (int y = 0; y < height; ++y) {
+        bool stripe_y = y % (stripe_size_y * 2) < stripe_size_y;
+        for (int x = 0; x < width; ++x) {
+            int i = y * width + x;
+            DP_Pixel8 src_pixel = src[i];
+            bool stripe_x = x % (stripe_size_x * 2) < stripe_size_x;
+            bool stripe = (stripe_x && stripe_y) || (!stripe_x && !stripe_y);
+            dst[i] = stripe ? src_pixel
+                            : (DP_Pixel8){
+                                .b = src_pixel.b / 4,
+                                .g = src_pixel.g / 4,
+                                .r = src_pixel.r / 4,
+                                .a = src_pixel.a / 4,
+                            };
+        }
+    }
+}
+
+static const int *preview_fill_get_layer_ids(DP_Preview *pv, int *out_count)
+{
+    DP_PreviewTransform *pvtf = (DP_PreviewTransform *)pv;
+    *out_count = 1;
+    return &pvtf->layer_id;
+}
+
+static void preview_fill_render(DP_Preview *pv, DP_UNUSED DP_DrawContext *dc,
+                                int offset_x, int offset_y,
+                                DP_TransientLayerContent *tlc)
+{
+    DP_PreviewFill *pvf = (DP_PreviewFill *)pv;
+    int left = pvf->x + offset_x;
+    int top = pvf->y + offset_y;
+    DP_transient_layer_content_put_pixels(tlc, 0, DP_BLEND_MODE_REPLACE, left,
+                                          top, pvf->width, pvf->height,
+                                          pvf->pixels);
+}
+
+DP_Preview *DP_preview_new_fill(int initial_offset_x, int initial_offset_y,
+                                int layer_id, int blend_mode, int x, int y,
+                                int width, int height, const DP_Pixel8 *pixels)
+{
+    DP_ASSERT(width > 0);
+    DP_ASSERT(height > 0);
+    DP_ASSERT(pixels);
+    size_t pixel_count = DP_int_to_size(width) * DP_int_to_size(height);
+    DP_PreviewFill *pvf =
+        DP_malloc(DP_FLEX_SIZEOF(DP_PreviewFill, pixels, pixel_count));
+    init_preview(&pvf->parent, DP_PREVIEW_FILL, blend_mode, initial_offset_x,
+                 initial_offset_y, preview_fill_get_layer_ids,
+                 preview_fill_render, NULL);
+    pvf->layer_id = layer_id;
+    pvf->x = x;
+    pvf->y = y;
+    pvf->width = width;
+    pvf->height = height;
+    preview_fill_pixels_set(pvf->pixels, pixels, width, height);
+    return &pvf->parent;
+}
+
+
 static DP_PreviewRenderJob shift_render_job(DP_Queue *queue)
 {
     DP_PreviewRenderJob *peeked = DP_queue_peek(queue, sizeof(*peeked));

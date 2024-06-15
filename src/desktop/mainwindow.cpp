@@ -185,6 +185,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	  m_wasSessionLocked(false),
 	  m_notificationsMuted(false),
 	  m_initialCatchup(false),
+	  m_toolStateNormal(true),
 	  m_doc(nullptr)
 #ifndef __EMSCRIPTEN__
 	  , m_exitAction(RUNNING)
@@ -403,8 +404,8 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_doc->toolCtrl(), &tools::ToolController::colorUsed, m_dockToolSettings, &docks::ToolSettings::addLastUsedColor);
 	connect(m_doc->toolCtrl(), &tools::ToolController::actionCancelled, m_dockToolSettings->colorPickerSettings(), &tools::ColorPickerSettings::cancelPickFromScreen);
 	connect(
-		m_doc->toolCtrl(), &tools::ToolController::busyStateChanged, this,
-		&MainWindow::setBusy);
+		m_doc->toolCtrl(), &tools::ToolController::toolStateChanged, this,
+		&MainWindow::setToolState, Qt::QueuedConnection);
 
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_doc->toolCtrl(), &tools::ToolController::setActiveLayer);
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_dockTimeline, &docks::Timeline::setCurrentLayer);
@@ -3000,15 +3001,21 @@ void MainWindow::handleToggleAction(int action)
 	});
 }
 
+// clang-format on
+
 void MainWindow::setNotificationsMuted(bool muted)
 {
 	m_notificationsMuted = muted;
 }
 
-void MainWindow::setBusy(bool busy)
+void MainWindow::setToolState(int toolState)
 {
-	setDrawingToolsEnabled(!busy);
+	setDrawingToolsEnabled(toolState != int(tools::ToolState::Busy));
+	m_toolStateNormal = toolState == int(tools::ToolState::Normal);
+	updateSelectTransformActions();
 }
+
+// clang-format off
 
 /**
  * User selected a tool
@@ -3107,6 +3114,8 @@ void MainWindow::handleFreehandToolButtonClicked()
 	m_freehandAction->trigger();
 }
 
+// clang-format on
+
 void MainWindow::updateSelectTransformActions()
 {
 	canvas::CanvasModel *canvas = m_doc->canvas();
@@ -3114,8 +3123,8 @@ void MainWindow::updateSelectTransformActions()
 	bool haveTransform = transform && transform->isActive();
 	bool canApplyTransform = haveTransform && transform->isDstQuadValid();
 	bool canStampTransform = canApplyTransform && transform->isStampable();
-	bool haveSelection =
-		!haveTransform && canvas && canvas->selection()->isValid();
+	bool haveSelection = m_toolStateNormal && !haveTransform && canvas &&
+						 canvas->selection()->isValid();
 	bool haveAnnotation =
 		getAction("tooltext")->isChecked() &&
 		m_dockToolSettings->annotationSettings()->selected() != 0;
@@ -3150,7 +3159,10 @@ void MainWindow::updateSelectTransformActions()
 	getAction("transformrotatecw")->setEnabled(haveTransform);
 	getAction("transformrotateccw")->setEnabled(haveTransform);
 	getAction("transformshrinktoview")->setEnabled(haveTransform);
+	m_dockToolSettings->selectionSettings()->setActionEnabled(haveSelection);
 }
+
+// clang-format off
 
 void MainWindow::copyText()
 {

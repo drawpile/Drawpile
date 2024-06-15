@@ -688,6 +688,17 @@ void PaintEngine::clearDabsPreview()
 	m_paintEngine.clearDabsPreview();
 }
 
+void PaintEngine::previewFill(
+	int layerId, int blendMode, int x, int y, const QImage &img)
+{
+	m_paintEngine.previewFill(layerId, blendMode, x, y, img);
+}
+
+void PaintEngine::clearFillPreview()
+{
+	m_paintEngine.clearFillPreview();
+}
+
 void PaintEngine::withPixmap(
 	const std::function<void(const QPixmap &)> &fn) const
 {
