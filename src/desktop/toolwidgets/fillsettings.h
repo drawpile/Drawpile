@@ -63,6 +63,9 @@ private:
 	enum Area { Continuous, Similar };
 
 	void updateLayerCombo(int source);
+	void updateSize(int size);
+	static bool isSizeUnlimited(int size);
+	static int calculatePixelSize(int size, bool unlimited);
 
 	Ui_FillSettings *m_ui = nullptr;
 	QButtonGroup *m_sourceGroup = nullptr;

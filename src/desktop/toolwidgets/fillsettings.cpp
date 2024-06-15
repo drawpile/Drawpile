@@ -229,9 +229,7 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 
 	connect(
 		m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		[this](int size) {
-			emit pixelSizeChanged(size * 2 + 1);
-		});
+		&FillSettings::updateSize);
 	connect(
 		m_ui->tolerance, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&FillSettings::pushSettings);
@@ -271,6 +269,7 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 		m_areaGroup,
 		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
 		&FillSettings::pushSettings);
+	updateSize(m_ui->size->value());
 	return uiwidget;
 }
 
@@ -282,7 +281,8 @@ void FillSettings::pushSettings()
 		m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()));
 	tool->setExpansion(m_ui->expand->value());
 	tool->setFeatherRadius(m_ui->feather->value());
-	tool->setSize(m_ui->size->value());
+	int size = m_ui->size->value();
+	tool->setSize(isSizeUnlimited(size) ? -1 : size);
 	tool->setGap(m_ui->gap->value());
 	tool->setContinuous(m_areaGroup->checkedId() == int(Area::Continuous));
 
@@ -354,7 +354,8 @@ void FillSettings::setForeground(const QColor &color)
 
 int FillSettings::getSize() const
 {
-	return m_ui->size->value() * 2 + 1;
+	int size = m_ui->size->value();
+	return calculatePixelSize(size, isSizeUnlimited(size));
 }
 
 void FillSettings::restoreToolSettings(const ToolProperties &cfg)
@@ -437,6 +438,23 @@ void FillSettings::updateLayerCombo(int source)
 	m_fillLayerModel->setSource(source);
 	m_ui->layer->setToolTip(m_ui->layer->currentText());
 	m_ui->layer->setEnabled(source == int(Source::Layer));
+}
+
+void FillSettings::updateSize(int size)
+{
+	bool unlimited = isSizeUnlimited(size);
+	m_ui->size->setOverrideText(unlimited ? tr("Size: Unlimited") : QString());
+	emit pixelSizeChanged(calculatePixelSize(size, unlimited));
+}
+
+bool FillSettings::isSizeUnlimited(int size)
+{
+	return size >= props::size.max;
+}
+
+int FillSettings::calculatePixelSize(int size, bool unlimited)
+{
+	return unlimited ? 0 : size * 2 + 1;
 }
 
 }
