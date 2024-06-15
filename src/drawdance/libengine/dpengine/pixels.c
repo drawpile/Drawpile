@@ -869,7 +869,7 @@ static void blend_tile_behind_sse42(DP_Pixel15 *DP_RESTRICT dst,
         load_aligned_sse42(&dst[i], &dstB, &dstG, &dstR, &dstA);
 
         // Behind blend
-        __m128i a1 = mul_sse42(_mm_sub_epi32(_mm_set1_epi32(DP_BIT15), dstA), mul_sse42(srcA, o));
+        __m128i a1 = mul_sse42(_mm_sub_epi32(_mm_set1_epi32(DP_BIT15), dstA), o);
 
         dstB = _mm_add_epi32(dstB, mul_sse42(srcB, a1));
         dstG = _mm_add_epi32(dstG, mul_sse42(srcG, a1));
@@ -1150,7 +1150,7 @@ static void blend_tile_behind_avx2(DP_Pixel15 *DP_RESTRICT dst,
         load_aligned_avx2(&dst[i], &dstB, &dstG, &dstR, &dstA);
 
         // Behind blend
-        __m256i a1 = mul_avx2(_mm256_sub_epi32(_mm256_set1_epi32(DP_BIT15), dstA), mul_avx2(srcA, o));
+        __m256i a1 = mul_avx2(_mm256_sub_epi32(_mm256_set1_epi32(DP_BIT15), dstA), o);
 
         dstB = _mm256_add_epi32(dstB, mul_avx2(srcB, a1));
         dstG = _mm256_add_epi32(dstG, mul_avx2(srcG, a1));
@@ -1306,7 +1306,7 @@ static BGRA15 blend_normal(BGR15 cb, BGR15 cs, Fix15 ab, Fix15 as, Fix15 o)
 
 static BGRA15 blend_behind(BGR15 cb, BGR15 cs, Fix15 ab, Fix15 as, Fix15 o)
 {
-    Fix15 a1 = fix15_mul(BIT15_FIX - ab, fix15_mul(as, o));
+    Fix15 a1 = fix15_mul(BIT15_FIX - ab, o);
     return (BGRA15){
         .b = cb.b + fix15_mul(cs.b, a1),
         .g = cb.g + fix15_mul(cs.g, a1),
