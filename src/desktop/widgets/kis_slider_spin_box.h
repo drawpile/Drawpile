@@ -187,6 +187,9 @@ public:
      */
     void setSoftMaximum(int newSoftMaximum);
 
+    // Drawpile addition: override text to be shown, set empty to clear.
+    void setOverrideText(const QString &overrideText);
+
 Q_SIGNALS:
     void draggingFinished();
 

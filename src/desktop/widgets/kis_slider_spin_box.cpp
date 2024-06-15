@@ -104,6 +104,12 @@ void KisSliderSpinBox::setSoftMaximum(int newSoftMaximum)
     setSoftRange(d->softMinimum(), newSoftMaximum);
 }
 
+// Drawpile patch
+void KisSliderSpinBox::setOverrideText(const QString &overrideText)
+{
+    d->setOverrideText(overrideText);
+}
+
 void KisSliderSpinBox::setInternalValue(int newValue, bool newBlockUpdateSignal)
 {
     d->setValue(newValue, newBlockUpdateSignal);

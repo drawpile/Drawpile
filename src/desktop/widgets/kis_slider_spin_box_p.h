@@ -363,6 +363,15 @@ public:
         m_lineEdit->update();
     }
 
+    // Drawpile patch
+    void setOverrideText(const QString &overrideText)
+    {
+        if(overrideText != m_overrideText) {
+            m_overrideText = overrideText;
+            m_lineEdit->update();
+        }
+    }
+
     void updateWidgetRangeToggleTooltip()
     {
         m_widgetRangeToggle->setToolTip(
@@ -681,7 +690,8 @@ public:
         const double hardSliderWidth = computeSliderWidth(static_cast<double>(m_q->minimum()), static_cast<double>(m_q->maximum()), value);
         const double softSliderWidth = computeSliderWidth(m_softMinimum, m_softMaximum, value);
         if (!isEditModeActive()) {
-            QString text = m_q->text();
+            // Drawpile patch: override text
+            QString text = m_overrideText.isEmpty() ? m_q->text() : m_overrideText;
             if (isSoftRangeValid()) {
                 if (m_softRangeViewMode == SoftRangeViewMode_AlwaysShowSoftRange) {
                     paintSlider(painter, text, softSliderWidth);
@@ -957,6 +967,7 @@ private:
     bool m_isSoftRangeActive {true};
     QVariantAnimation m_sliderAnimation;
     QVariantAnimation m_rangeToggleHoverAnimation;
+    QString m_overrideText; // Drawpile patch
 
     enum SoftRangeViewMode
     {
