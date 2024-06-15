@@ -43,11 +43,10 @@ SelectionSettings::SelectionSettings(ToolController *ctrl, QObject *parent)
 
 void SelectionSettings::setActiveTool(tools::Tool::Type tool)
 {
-	bool isMagicWand = tool == Tool::MAGICWAND;
-	m_sizeSlider->setEnabled(isMagicWand);
+	m_isMagicWand = tool == Tool::MAGICWAND;
 	// Hide first, then show. Otherwise the UI temporarily gets larger and
 	// expands the surrounding dock unnecessarily.
-	if(isMagicWand) {
+	if(m_isMagicWand) {
 		m_selectionContainer->hide();
 		m_magicWandContainer->show();
 	} else {
@@ -106,7 +105,7 @@ bool SelectionSettings::isLocked()
 
 void SelectionSettings::stepAdjust1(bool increase)
 {
-	if(m_sizeSlider->isEnabled()) {
+	if(m_isMagicWand) {
 		m_sizeSlider->setValue(stepLogarithmic(
 			m_sizeSlider->minimum(), m_sizeSlider->maximum(),
 			m_sizeSlider->value(), increase));
@@ -115,8 +114,12 @@ void SelectionSettings::stepAdjust1(bool increase)
 
 int SelectionSettings::getSize() const
 {
-	int size = m_sizeSlider->value();
-	return calculatePixelSize(size, isSizeUnlimited(size));
+	if(m_isMagicWand) {
+		int size = m_sizeSlider->value();
+		return calculatePixelSize(size, isSizeUnlimited(size));
+	} else {
+		return 0;
+	}
 }
 
 void SelectionSettings::setAction(QAction *starttransform)

@@ -81,6 +81,7 @@ private:
 	QButtonGroup *m_sourceGroup = nullptr;
 	QButtonGroup *m_areaGroup = nullptr;
 	QPushButton *m_startTransformButton = nullptr;
+	bool m_isMagicWand = false;
 	bool m_putImageAllowed = true;
 };
 
