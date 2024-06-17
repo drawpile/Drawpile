@@ -136,6 +136,9 @@ void setWidgetRetainSizeWhenHidden(QWidget *widget, bool retainSize);
 bool moveIfOnScreen(QWidget *widget, const QPoint &pos);
 bool setGeometryIfOnScreen(QWidget *widget, const QRect &geometry);
 
+QRect moveRectToFit(const QRect &subjectRect, const QRect &boundingRect);
+QRectF moveRectToFitF(const QRectF &subjectRect, const QRectF &boundingRect);
+
 // Sets header to sort by no column (as opposed to the first one) and enables
 // clearing the sort indicator if the Qt version is >= 6.1.0.
 void initSortingHeader(

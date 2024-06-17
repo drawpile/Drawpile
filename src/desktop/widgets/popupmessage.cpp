@@ -9,6 +9,7 @@
 #include <QTimer>
 
 #include "desktop/utils/qtguicompat.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/popupmessage.h"
 
 // On Windows, giving this widget a real parent causes the main window to get
@@ -88,29 +89,15 @@ void PopupMessage::showMessage(const QPoint &point, const QString &message)
 
 	resize(m_doc->size().toSize() + QSize(PADDING * 2, PADDING * 2 + ARROW_H));
 
-	QRect rect(point - QPoint(width() - width() / 6, height()), size());
-
 #ifdef Q_OS_WIN
 	QWidget *pw = m_parentWidget;
 #else
 	QWidget *pw = parentWidget();
 #endif
-	const QRect screen = compat::widgetScreen(*pw)->availableGeometry();
-
-	// Make sure the popup fits horizontally
-	if(rect.x() + rect.width() > screen.x() + screen.width()) {
-		rect.moveRight(screen.x() + screen.width() - 1);
-	} else if(rect.x() < screen.x()) {
-		rect.moveLeft(screen.x());
-	}
+	QRect rect = utils::moveRectToFit(
+		QRect(point - QPoint(width() - width() / 6, height()), size()),
+		compat::widgetScreen(*pw)->availableGeometry());
 	m_arrowoffset = point.x() - rect.x();
-
-	// Make sure the popup fits vertically
-	if(rect.y() + rect.height() > screen.y() + screen.height()) {
-		rect.moveBottom(screen.y() + screen.height() - 1);
-	} else if(rect.y() < screen.y()) {
-		rect.moveTop(screen.y());
-	}
 
 	// Redraw the background and show on screen
 	redrawBubble();

@@ -13,6 +13,7 @@ extern "C" {
 #include "desktop/scene/toggleitem.h"
 #include "desktop/scene/transformitem.h"
 #include "desktop/scene/usermarkeritem.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/view/canvasscene.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
@@ -326,6 +327,9 @@ void CanvasScene::setCursorPos(const QPointF &cursorPos)
 		for(UserMarkerItem *item : std::as_const(m_userMarkers)) {
 			item->setCursorPos(cursorPos);
 		}
+		if(m_toolNotice) {
+			setToolNoticePosition(false);
+		}
 	}
 }
 
@@ -397,7 +401,7 @@ void CanvasScene::setNotificationBarHeight(int height)
 			setLockNoticePosition();
 		}
 		if(m_toolNotice) {
-			setToolNoticePosition();
+			setToolNoticePosition(false);
 		}
 	}
 }
@@ -452,12 +456,13 @@ void CanvasScene::setToolNotice(const QString &text)
 	} else {
 		if(m_toolNotice) {
 			if(m_toolNotice->setText(text)) {
-				setToolNoticePosition();
+				setToolNoticePosition(false);
 			}
 		} else {
 			m_toolNotice = new NoticeItem(text);
+			m_toolNotice->setZValue(BaseItem::Z_TOOL_NOTICE);
 			addSceneItem(m_toolNotice);
-			setToolNoticePosition();
+			setToolNoticePosition(true);
 		}
 	}
 }
@@ -514,7 +519,7 @@ void CanvasScene::onSceneRectChanged()
 		setLockNoticePosition();
 	}
 	if(m_toolNotice) {
-		setToolNoticePosition();
+		setToolNoticePosition(false);
 	}
 	if(m_catchup) {
 		setCatchupPosition();
@@ -725,13 +730,21 @@ void CanvasScene::setLockNoticePosition()
 			NOTICE_OFFSET + m_topOffset));
 }
 
-void CanvasScene::setToolNoticePosition()
+void CanvasScene::setToolNoticePosition(bool initial)
 {
+	QRectF sceneBounds = sceneRect();
+	QSizeF size = m_toolNotice->boundingRect().size();
+	QPointF pos;
+	if(m_cursorOnCanvas) {
+		pos = m_cursorPos + QPointF(TOOL_NOTICE_OFFSET, TOOL_NOTICE_OFFSET);
+	} else if(initial) {
+		pos = sceneBounds.center() -
+			  QPointF(size.width() / 2.0, size.height() / 2.0);
+	} else {
+		pos = m_toolNotice->pos();
+	}
 	m_toolNotice->updatePosition(
-		sceneRect().bottomLeft() +
-		QPointF(
-			NOTICE_OFFSET,
-			-m_toolNotice->boundingRect().height() - NOTICE_OFFSET));
+		utils::moveRectToFitF(QRectF(pos, size), sceneBounds).topLeft());
 }
 
 void CanvasScene::setCatchupPosition()

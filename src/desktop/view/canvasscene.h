@@ -116,6 +116,7 @@ signals:
 private:
 	static constexpr qreal NOTICE_OFFSET = 16.0;
 	static constexpr qreal NOTICE_PERSIST = 1.0;
+	static constexpr qreal TOOL_NOTICE_OFFSET = 8.0;
 
 	void addSceneItem(BaseItem *item);
 
@@ -134,7 +135,7 @@ private:
 
 	void setTransformNoticePosition();
 	void setLockNoticePosition();
-	void setToolNoticePosition();
+	void setToolNoticePosition(bool initial);
 	void setCatchupPosition();
 	void setTogglePositions();
 

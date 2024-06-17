@@ -11,6 +11,7 @@
 #include "desktop/scene/selectionitem.h"
 #include "desktop/scene/transformitem.h"
 #include "desktop/scene/usermarkeritem.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
@@ -175,7 +176,7 @@ void CanvasScene::setSceneBounds(const QRectF &sceneBounds)
 		setLockNoticePosition();
 	}
 	if(m_toolNotice) {
-		setToolNoticePosition();
+		setToolNoticePosition(false);
 	}
 	if(m_catchup) {
 		setCatchupPosition();
@@ -238,12 +239,13 @@ void CanvasScene::setToolNotice(const QString &text)
 	} else {
 		if(m_toolNotice) {
 			if(m_toolNotice->setText(text)) {
-				setToolNoticePosition();
+				setToolNoticePosition(false);
 			}
 		} else {
 			m_toolNotice = new NoticeItem(text);
+			m_toolNotice->setZValue(BaseItem::Z_TOOL_NOTICE);
 			addItem(m_toolNotice);
-			setToolNoticePosition();
+			setToolNoticePosition(true);
 		}
 	}
 }
@@ -698,13 +700,20 @@ void CanvasScene::setLockNoticePosition()
 			NOTICE_OFFSET + m_topOffset));
 }
 
-void CanvasScene::setToolNoticePosition()
+void CanvasScene::setToolNoticePosition(bool initial)
 {
+	QSizeF size = m_toolNotice->boundingRect().size();
+	QPointF pos;
+	if(m_cursorOnCanvas) {
+		pos = m_cursorPos + QPointF(TOOL_NOTICE_OFFSET, TOOL_NOTICE_OFFSET);
+	} else if(initial) {
+		pos = m_sceneBounds.center() -
+			  QPointF(size.width() / 2.0, size.height() / 2.0);
+	} else {
+		pos = m_toolNotice->pos();
+	}
 	m_toolNotice->updatePosition(
-		m_sceneBounds.bottomLeft() +
-		QPointF(
-			NOTICE_OFFSET,
-			-m_toolNotice->boundingRect().height() - NOTICE_OFFSET));
+		utils::moveRectToFitF(QRectF(pos, size), m_sceneBounds).topLeft());
 }
 
 void CanvasScene::setCatchupPosition()
@@ -812,6 +821,9 @@ void CanvasScene::setCursorPos(const QPointF &pos)
 #endif
 		for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
 			item->setCursorPos(pos);
+		}
+		if(m_toolNotice) {
+			setToolNoticePosition(false);
 		}
 	}
 }

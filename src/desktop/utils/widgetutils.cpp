@@ -563,6 +563,44 @@ bool setGeometryIfOnScreen(QWidget *widget, const QRect &geometry)
 	return false;
 }
 
+QRect moveRectToFit(const QRect &subjectRect, const QRect &boundingRect)
+{
+	QRect rect = subjectRect;
+
+	if(rect.x() + rect.width() > boundingRect.x() + boundingRect.width()) {
+		rect.moveRight(boundingRect.x() + boundingRect.width() - 1);
+	} else if(rect.x() < boundingRect.x()) {
+		rect.moveLeft(boundingRect.x());
+	}
+
+	if(rect.y() + rect.height() > boundingRect.y() + boundingRect.height()) {
+		rect.moveBottom(boundingRect.y() + boundingRect.height() - 1);
+	} else if(rect.y() < boundingRect.y()) {
+		rect.moveTop(boundingRect.y());
+	}
+
+	return rect;
+}
+
+QRectF moveRectToFitF(const QRectF &subjectRect, const QRectF &boundingRect)
+{
+	QRectF rect = subjectRect;
+
+	if(rect.x() + rect.width() > boundingRect.x() + boundingRect.width()) {
+		rect.moveRight(boundingRect.x() + boundingRect.width() - 1.0);
+	} else if(rect.x() < boundingRect.x()) {
+		rect.moveLeft(boundingRect.x());
+	}
+
+	if(rect.y() + rect.height() > boundingRect.y() + boundingRect.height()) {
+		rect.moveBottom(boundingRect.y() + boundingRect.height() - 1.0);
+	} else if(rect.y() < boundingRect.y()) {
+		rect.moveTop(boundingRect.y());
+	}
+
+	return rect;
+}
+
 void initSortingHeader(QHeaderView *header, int sortColumn, Qt::SortOrder order)
 {
 	header->setSortIndicator(sortColumn, order);
