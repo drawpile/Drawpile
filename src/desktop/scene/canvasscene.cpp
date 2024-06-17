@@ -792,6 +792,7 @@ void CanvasScene::setOutlineVisibleInMode(bool visibleInMode)
 void CanvasScene::setCursorOnCanvas(bool onCanvas)
 {
 	if(onCanvas != m_cursorOnCanvas) {
+		m_cursorOnCanvas = onCanvas;
 		m_outlineItem->setOnCanvas(onCanvas);
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 		m_cursorItem->setOnCanvas(onCanvas);
