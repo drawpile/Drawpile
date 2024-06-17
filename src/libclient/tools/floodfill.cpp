@@ -114,6 +114,7 @@ void FloodFill::begin(const BeginParams &params)
 		m_running = true;
 		m_cancel = false;
 		canvas::PaintEngine *paintEngine = model->paintEngine();
+		setHandlesRightClick(true);
 		emit m_owner.toolNoticeRequested(
 			QCoreApplication::translate("FillSettings", "Filling…"));
 		m_owner.executeAsync(new Task{
@@ -196,6 +197,7 @@ void FloodFill::floodFillFinished(Task *task)
 	} else if(result != DP_FLOOD_FILL_CANCELLED) {
 		qWarning("Flood fill failed: %s", qUtf8Printable(task->error()));
 	}
+	setHandlesRightClick(havePending());
 	emit m_owner.toolNoticeRequested(toolNoticeText);
 	m_owner.refreshToolState();
 }
@@ -216,6 +218,7 @@ void FloodFill::disposePending()
 		if(model) {
 			model->paintEngine()->clearFillPreview();
 		}
+		setHandlesRightClick(false);
 		emit m_owner.toolNoticeRequested(QString());
 		m_owner.refreshToolState();
 	}

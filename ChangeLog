@@ -75,6 +75,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Properly remember NSFM setting in host dialog. Thanks Bluestrings and cupcake for reporting.
  * Fix: Properly check NSFM setting in host dialog based on title if that is configured in the parental controls preferences. Thanks Bluestrings for reporting.
  * Fix: Behind blend mode now does opacity math correctly. Thanks Blozzom for reporting.
+ * Fix: Allow cancelling fill tool with right-click even when that's bound to something else. Thanks SadColor for reporting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.
