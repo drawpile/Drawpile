@@ -16,7 +16,7 @@ ToggleItem::ToggleItem(
 	, m_icon{icon}
 {
 	setFlag(ItemIgnoresTransformations);
-	setZValue(99999);
+	setZValue(Z_TOGGLE);
 }
 
 QRectF ToggleItem::boundingRect() const

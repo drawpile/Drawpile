@@ -16,7 +16,7 @@ CatchupItem::CatchupItem(const QString &text, QGraphicsItem *parent)
 	, m_fade(1.0)
 {
 	setFlag(ItemIgnoresTransformations);
-	setZValue(9999);
+	setZValue(Z_CATCHUP);
 	updateBarText();
 }
 

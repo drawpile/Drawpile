@@ -16,7 +16,7 @@ NoticeItem::NoticeItem(
 	, m_persist(persist)
 {
 	setFlag(ItemIgnoresTransformations);
-	setZValue(9999);
+	setZValue(Z_NOTICE);
 	setText(text);
 }
 

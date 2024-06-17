@@ -15,7 +15,7 @@ UserMarkerItem::UserMarkerItem(int id, int persistence, QGraphicsItem *parent)
 {
 	setFlag(ItemIgnoresTransformations);
 	m_bgbrush.setStyle(Qt::SolidPattern);
-	setZValue(9999);
+	setZValue(Z_USER_MARKER);
 	setColor(Qt::black);
 }
 

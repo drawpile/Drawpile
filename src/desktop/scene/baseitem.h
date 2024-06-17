@@ -31,6 +31,12 @@ public:
 		MaskPreviewType = QGraphicsItem::UserType + 22,
 	};
 
+	static constexpr qreal Z_USER_MARKER = 999.0;
+	static constexpr qreal Z_NOTICE = 9999.0;
+	static constexpr qreal Z_CATCHUP = Z_NOTICE;
+	static constexpr qreal Z_TOGGLE = 99999.0;
+	static constexpr qreal Z_CURSOR = 999999.0;
+
 	void setUpdateSceneOnRefresh(bool updateSceneOnRefresh);
 
 private:

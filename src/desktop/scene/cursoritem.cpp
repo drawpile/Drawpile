@@ -8,7 +8,7 @@ CursorItem::CursorItem(QGraphicsItem *parent)
 	: BaseItem(parent)
 {
 	setFlag(ItemIgnoresTransformations);
-	setZValue(999999);
+	setZValue(Z_CURSOR);
 	updateVisibility();
 }
 
