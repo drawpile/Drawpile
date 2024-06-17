@@ -84,7 +84,7 @@ private:
 MagicWandTool::MagicWandTool(ToolController &owner)
 	: Tool(
 		  owner, MAGICWAND, QCursor(QPixmap(":cursors/magicwand.png"), 2, 2),
-		  false, false, false, false, false)
+		  true, false, false, false, false)
 {
 }
 
@@ -116,6 +116,7 @@ void MagicWandTool::begin(const BeginParams &params)
 			break;
 		}
 
+		setHandlesRightClick(true);
 		emit m_owner.toolNoticeRequested(
 			QCoreApplication::translate("MagicWandSettings", "Selecting…"));
 
@@ -210,6 +211,7 @@ void MagicWandTool::floodFillFinished(Task *task)
 	} else if(result != DP_FLOOD_FILL_CANCELLED) {
 		qWarning("Magic wand failed: %s", qUtf8Printable(task->error()));
 	}
+	setHandlesRightClick(havePending());
 	emit m_owner.toolNoticeRequested(toolNoticeText);
 	m_owner.refreshToolState();
 }
@@ -227,6 +229,7 @@ void MagicWandTool::disposePending()
 	if(havePending()) {
 		m_pending.clear();
 		emit m_owner.maskPreviewRequested(QPoint(), QImage());
+		setHandlesRightClick(false);
 		emit m_owner.toolNoticeRequested(QString());
 		m_owner.refreshToolState();
 	}
