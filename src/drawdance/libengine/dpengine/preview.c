@@ -658,48 +658,6 @@ typedef struct DP_PreviewFill {
     DP_Pixel8 pixels[];
 } DP_PreviewFill;
 
-static int preview_fill_stripe_size(int dimension)
-{
-    if (dimension < 5) {
-        return 1;
-    }
-    else if (dimension < 10) {
-        return dimension / 2;
-    }
-    else if (dimension < 20) {
-        return dimension / 4;
-    }
-    else if (dimension < 40) {
-        return dimension / 8;
-    }
-    else {
-        return DP_min_int(64, dimension / 16);
-    }
-}
-
-static void preview_fill_pixels_set(DP_Pixel8 *dst, const DP_Pixel8 *src,
-                                    int width, int height)
-{
-    int stripe_size_x = preview_fill_stripe_size(width);
-    int stripe_size_y = preview_fill_stripe_size(height);
-    for (int y = 0; y < height; ++y) {
-        bool stripe_y = y % (stripe_size_y * 2) < stripe_size_y;
-        for (int x = 0; x < width; ++x) {
-            int i = y * width + x;
-            DP_Pixel8 src_pixel = src[i];
-            bool stripe_x = x % (stripe_size_x * 2) < stripe_size_x;
-            bool stripe = (stripe_x && stripe_y) || (!stripe_x && !stripe_y);
-            dst[i] = stripe ? src_pixel
-                            : (DP_Pixel8){
-                                .b = src_pixel.b / 4,
-                                .g = src_pixel.g / 4,
-                                .r = src_pixel.r / 4,
-                                .a = src_pixel.a / 4,
-                            };
-        }
-    }
-}
-
 static const int *preview_fill_get_layer_ids(DP_Preview *pv, int *out_count)
 {
     DP_PreviewTransform *pvtf = (DP_PreviewTransform *)pv;
@@ -737,7 +695,7 @@ DP_Preview *DP_preview_new_fill(int initial_offset_x, int initial_offset_y,
     pvf->y = y;
     pvf->width = width;
     pvf->height = height;
-    preview_fill_pixels_set(pvf->pixels, pixels, width, height);
+    memcpy(pvf->pixels, pixels, sizeof(*pvf->pixels) * pixel_count);
     return &pvf->parent;
 }
 
