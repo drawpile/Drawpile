@@ -266,6 +266,7 @@ private slots:
 	void
 	onCanvasDownloadReady(const QString &defaultName, const QByteArray &bytes);
 	void onCanvasDownloadError(const QString &errorMessage);
+	void offerDownload(const QString &defaultName, const QByteArray &bytes);
 #endif
 	void onTemplateExported(const QString &errorMessage);
 

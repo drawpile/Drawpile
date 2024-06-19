@@ -1748,8 +1748,8 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 {
 	QApplication::restoreOverrideCursor();
 #ifdef __EMSCRIPTEN__
-	getAction("downloaddocument")->setEnabled(false);
-	getAction("downloadselection")->setEnabled(false);
+	getAction("downloaddocument")->setEnabled(true);
+	getAction("downloadselection")->setEnabled(true);
 #else
 	getAction("savedocument")->setEnabled(true);
 	getAction("savedocumentas")->setEnabled(true);
@@ -1777,17 +1777,27 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 #endif
 }
 
-// clang-format off
-
 #ifdef __EMSCRIPTEN__
 void MainWindow::onCanvasDownloadStarted()
 {
 	onCanvasSaveStarted();
 }
 
-void MainWindow::onCanvasDownloadReady(const QString &defaultName, const QByteArray &bytes)
+void MainWindow::onCanvasDownloadReady(
+	const QString &defaultName, const QByteArray &bytes)
 {
 	onCanvasSaved(QString());
+	offerDownload(defaultName, bytes);
+}
+
+void MainWindow::onCanvasDownloadError(const QString &errorMessage)
+{
+	onCanvasSaved(errorMessage);
+}
+
+void MainWindow::offerDownload(
+	const QString &defaultName, const QByteArray &bytes)
+{
 	QMessageBox *msgbox = utils::makeInformationWithSaveButton(
 		this, tr("Download Complete"),
 		tr("Download complete, click on \"Save\" to save your file."));
@@ -1798,12 +1808,9 @@ void MainWindow::onCanvasDownloadReady(const QString &defaultName, const QByteAr
 		});
 	msgbox->show();
 }
-
-void MainWindow::onCanvasDownloadError(const QString &errorMessage)
-{
-	onCanvasSaved(errorMessage);
-}
 #endif
+
+// clang-format off
 
 void MainWindow::showResetNoticeDialog(const drawdance::CanvasState &canvasState)
 {
@@ -1955,7 +1962,7 @@ void MainWindow::exportAnimation(
 #ifdef __EMSCRIPTEN__
 	connect(
 		saver, &AnimationSaverRunnable::downloadReady, this,
-		&MainWindow::onCanvasDownloadReady);
+		&MainWindow::offerDownload);
 #endif
 
 	QThreadPool::globalInstance()->start(saver);
