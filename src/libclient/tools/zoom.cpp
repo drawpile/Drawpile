@@ -58,7 +58,7 @@ void ZoomTool::removePreview() const
 QRect ZoomTool::getRect() const
 {
 	if(m_start == m_end) {
-		return QRect();
+		return QRect(m_start, m_end);
 	} else {
 		return QRect(
 			QPoint(qMin(m_start.x(), m_end.x()), qMin(m_start.y(), m_end.y())),
