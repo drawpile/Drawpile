@@ -36,6 +36,7 @@ struct DP_Preview {
     DP_Atomic status;
     int type;
     int blend_mode;
+    uint16_t opacity;
     int initial_offset_x, initial_offset_y;
     DP_AtomicPtr render_lc;
     DP_LayerContent *lc;
@@ -90,7 +91,8 @@ typedef struct DP_PreviewRenderJob {
 DP_Preview DP_preview_null;
 
 static void init_preview(DP_Preview *pv, int type, int blend_mode,
-                         int initial_offset_x, int initial_offset_y,
+                         uint16_t opacity, int initial_offset_x,
+                         int initial_offset_y,
                          DP_PreviewGetLayerIdsFn get_layer_ids,
                          DP_PreviewRenderFn render, DP_PreviewDisposeFn dispose)
 {
@@ -104,6 +106,7 @@ static void init_preview(DP_Preview *pv, int type, int blend_mode,
     DP_atomic_set(&pv->status, RENDER_NEEDED);
     pv->type = type;
     pv->blend_mode = blend_mode;
+    pv->opacity = opacity > DP_BIT15 ? DP_BIT15 : opacity;
     pv->initial_offset_x = initial_offset_x;
     pv->initial_offset_y = initial_offset_y;
     DP_atomic_ptr_set(&pv->render_lc, NULL);
@@ -260,6 +263,7 @@ DP_CanvasState *DP_preview_apply(DP_Preview *pv, DP_CanvasState *cs,
         DP_TransientLayerProps *tlp = DP_transient_layer_props_new_init(
             DP_PREVIEW_SUBLAYER_ID(pv->type), false);
         DP_transient_layer_props_blend_mode_set(tlp, pv->blend_mode);
+        DP_transient_layer_props_opacity_set(tlp, pv->opacity);
         lp = DP_transient_layer_props_persist(tlp);
         pv->lp = lp;
     }
@@ -362,7 +366,7 @@ DP_Preview *DP_preview_new_cut(int initial_offset_x, int initial_offset_y,
     size_t layer_ids_size = sizeof(int) * DP_int_to_size(layer_id_count);
     DP_PreviewCut *pvc = DP_malloc(DP_FLEX_SIZEOF(
         DP_PreviewCut, data, layer_ids_size + (size_t)1 + mask_size));
-    init_preview(&pvc->parent, DP_PREVIEW_CUT, DP_BLEND_MODE_ERASE,
+    init_preview(&pvc->parent, DP_PREVIEW_CUT, DP_BLEND_MODE_ERASE, DP_BIT15,
                  initial_offset_x, initial_offset_y, preview_cut_get_layer_ids,
                  preview_cut_render, NULL);
     pvc->x = x;
@@ -470,9 +474,9 @@ DP_Preview *DP_preview_new_transform(
     DP_ASSERT(dispose_pixels);
     DP_PreviewTransform *pvtf = DP_malloc(sizeof(*pvtf));
     init_preview(&pvtf->parent, DP_PREVIEW_TRANSFORM_FIRST + id,
-                 DP_BLEND_MODE_NORMAL, initial_offset_x, initial_offset_y,
-                 preview_transform_get_layer_ids, preview_transform_render,
-                 preview_transform_dispose);
+                 DP_BLEND_MODE_NORMAL, DP_BIT15, initial_offset_x,
+                 initial_offset_y, preview_transform_get_layer_ids,
+                 preview_transform_render, preview_transform_dispose);
     pvtf->layer_id = layer_id;
     pvtf->x = x;
     pvtf->y = y;
@@ -639,8 +643,8 @@ DP_Preview *DP_preview_new_dabs_inc(int initial_offset_x, int initial_offset_y,
     DP_PreviewDabs *pvd = DP_malloc(
         DP_FLEX_SIZEOF(DP_PreviewDabs, messages, DP_int_to_size(count)));
     init_preview(&pvd->parent, DP_PREVIEW_DABS,
-                 preview_dabs_blend_mode(messages[0]), initial_offset_x,
-                 initial_offset_y, preview_dabs_get_layer_ids,
+                 preview_dabs_blend_mode(messages[0]), DP_BIT15,
+                 initial_offset_x, initial_offset_y, preview_dabs_get_layer_ids,
                  preview_dabs_render, preview_dabs_dispose);
     pvd->layer_id = layer_id;
     pvd->count = count;
@@ -678,8 +682,9 @@ static void preview_fill_render(DP_Preview *pv, DP_UNUSED DP_DrawContext *dc,
 }
 
 DP_Preview *DP_preview_new_fill(int initial_offset_x, int initial_offset_y,
-                                int layer_id, int blend_mode, int x, int y,
-                                int width, int height, const DP_Pixel8 *pixels)
+                                int layer_id, int blend_mode, uint16_t opacity,
+                                int x, int y, int width, int height,
+                                const DP_Pixel8 *pixels)
 {
     DP_ASSERT(width > 0);
     DP_ASSERT(height > 0);
@@ -687,8 +692,8 @@ DP_Preview *DP_preview_new_fill(int initial_offset_x, int initial_offset_y,
     size_t pixel_count = DP_int_to_size(width) * DP_int_to_size(height);
     DP_PreviewFill *pvf =
         DP_malloc(DP_FLEX_SIZEOF(DP_PreviewFill, pixels, pixel_count));
-    init_preview(&pvf->parent, DP_PREVIEW_FILL, blend_mode, initial_offset_x,
-                 initial_offset_y, preview_fill_get_layer_ids,
+    init_preview(&pvf->parent, DP_PREVIEW_FILL, blend_mode, opacity,
+                 initial_offset_x, initial_offset_y, preview_fill_get_layer_ids,
                  preview_fill_render, NULL);
     pvf->layer_id = layer_id;
     pvf->x = x;

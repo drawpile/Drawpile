@@ -2561,8 +2561,9 @@ void DP_paint_engine_preview_dabs_inc(DP_PaintEngine *pe, int layer_id,
 }
 
 void DP_paint_engine_preview_fill(DP_PaintEngine *pe, int layer_id,
-                                  int blend_mode, int x, int y, int width,
-                                  int height, const DP_Pixel8 *pixels)
+                                  int blend_mode, uint16_t opacity, int x,
+                                  int y, int width, int height,
+                                  const DP_Pixel8 *pixels)
 {
     DP_ASSERT(pe);
     if (width > 0 && height > 0 && pixels) {
@@ -2570,8 +2571,8 @@ void DP_paint_engine_preview_fill(DP_PaintEngine *pe, int layer_id,
         int offset_x = DP_canvas_state_offset_x(cs);
         int offset_y = DP_canvas_state_offset_y(cs);
         DP_Preview *pv =
-            DP_preview_new_fill(offset_x, offset_y, layer_id, blend_mode, x, y,
-                                width, height, pixels);
+            DP_preview_new_fill(offset_x, offset_y, layer_id, blend_mode,
+                                opacity, x, y, width, height, pixels);
         DP_preview_renderer_push_noinc(
             pe->preview_renderer, pv, DP_canvas_state_width(cs),
             DP_canvas_state_height(cs), offset_x, offset_y);

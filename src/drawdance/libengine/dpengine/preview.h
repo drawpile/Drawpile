@@ -77,8 +77,9 @@ DP_Preview *DP_preview_new_dabs_inc(int initial_offset_x, int initial_offset_y,
                                     DP_Message **messages);
 
 DP_Preview *DP_preview_new_fill(int initial_offset_x, int initial_offset_y,
-                                int layer_id, int blend_mode, int x, int y,
-                                int width, int height, const DP_Pixel8 *pixels);
+                                int layer_id, int blend_mode, uint16_t opacity,
+                                int x, int y, int width, int height,
+                                const DP_Pixel8 *pixels);
 
 
 DP_PreviewRenderer *DP_preview_renderer_new(DP_DrawContext *dc,

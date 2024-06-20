@@ -137,6 +137,12 @@ public:
 		Q_UNUSED(y) /* most tools don't need to do anything here */
 	}
 
+	//! Active layer id changed, most tools don't need to do anything here
+	virtual void setActiveLayer(int layerId) { Q_UNUSED(layerId); }
+
+	//! Current foreground color changed
+	virtual void setForegroundColor(const QColor &color) { Q_UNUSED(color); }
+
 	//! If this tool is operating or is waiting for a click to confirm
 	//! something. For example, the fill tool asks for confirmation to fill.
 	virtual ToolState toolState() const { return ToolState::Normal; }

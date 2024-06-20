@@ -50,6 +50,7 @@ public:
 		QAction *properties = nullptr;
 		QAction *del = nullptr;
 		QAction *setFillSource = nullptr;
+		QAction *clearFillSource = nullptr;
 		QAction *keyFrameSetLayer = nullptr;
 		QAction *keyFrameCreateLayer = nullptr;
 		QAction *keyFrameCreateLayerNext = nullptr;
@@ -87,6 +88,7 @@ public slots:
 
 	void setTrackId(int trackId);
 	void setFrame(int frame);
+	void updateFillSourceLayerId();
 
 signals:
 	//! A layer was selected by the user
@@ -107,6 +109,7 @@ private slots:
 	void deleteSelected();
 	void mergeSelected();
 	void setFillSourceToSelected();
+	void clearFillSource();
 	void toggleChecked();
 	void checkAll();
 	void uncheckAll();

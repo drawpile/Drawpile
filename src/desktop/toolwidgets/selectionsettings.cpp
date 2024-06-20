@@ -3,8 +3,6 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
-#include "libclient/canvas/canvasmodel.h"
-#include "libclient/canvas/selectionmodel.h"
 #include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
 #include <QAction>
@@ -19,6 +17,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <libclient/tools/magicwand.h>
 
 namespace tools {
 
@@ -29,6 +28,7 @@ static const ToolProperties::RangedValue<int> expand{
 	QStringLiteral("expand"), 0, 0, 100},
 	featherRadius{QStringLiteral("featherRadius"), 0, 0, 40},
 	size{QStringLiteral("size"), 500, 10, 5000},
+	opacity{QStringLiteral("opacity"), 100, 1, 100},
 	gap{QStringLiteral("gap"), 0, 0, 32},
 	source{QStringLiteral("source"), 2, 0, 2},
 	area{QStringLiteral("area"), 0, 0, 1};
@@ -60,6 +60,7 @@ ToolProperties SelectionSettings::saveToolSettings()
 	ToolProperties cfg(toolType());
 	cfg.setValue(props::antialias, m_antiAliasCheckBox->isChecked());
 	cfg.setValue(props::size, m_sizeSlider->value());
+	cfg.setValue(props::opacity, m_opacitySlider->value());
 	cfg.setValue(
 		props::tolerance,
 		m_toleranceSlider->value() / qreal(m_toleranceSlider->maximum()));
@@ -75,6 +76,7 @@ void SelectionSettings::restoreToolSettings(const ToolProperties &cfg)
 {
 	m_antiAliasCheckBox->setChecked(cfg.value(props::antialias));
 	m_sizeSlider->setValue(cfg.value(props::size));
+	m_opacitySlider->setValue(cfg.value(props::opacity));
 	m_toleranceSlider->setValue(
 		cfg.value(props::tolerance) * m_toleranceSlider->maximum());
 	m_expandSlider->setValue(cfg.value(props::expand));
@@ -147,15 +149,22 @@ void SelectionSettings::pushSettings()
 	selectionParams.defaultOp = m_headerGroup->checkedId();
 	int size = m_sizeSlider->value();
 	selectionParams.size = isSizeUnlimited(size) ? -1 : size;
+	selectionParams.opacity = m_opacitySlider->value() / 100.0;
 	selectionParams.tolerance =
 		m_toleranceSlider->value() / qreal(m_toleranceSlider->maximum());
 	selectionParams.expansion = m_expandSlider->value();
 	selectionParams.featherRadius = m_featherSlider->value();
 	selectionParams.gap = m_closeGapsSlider->value();
 	selectionParams.source = m_sourceGroup->checkedId();
-	selectionParams.continuous =
-		m_areaGroup->checkedId() == int(Area::Continuous);
-	controller()->setSelectionParams(selectionParams);
+	bool continuous = m_areaGroup->checkedId() == int(Area::Continuous);
+	selectionParams.continuous = continuous;
+	m_closeGapsSlider->setEnabled(continuous);
+	ToolController *ctrl = controller();
+	ctrl->setSelectionParams(selectionParams);
+	if(ctrl->activeTool() == Tool::MAGICWAND) {
+		static_cast<MagicWandTool *>(ctrl->getTool(Tool::MAGICWAND))
+			->updatePendingToolNotice();
+	}
 }
 
 QWidget *SelectionSettings::createUiWidget(QWidget *parent)
@@ -241,7 +250,7 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	m_sizeSlider = new KisSliderSpinBox;
 	m_sizeSlider->setRange(props::size.min, props::size.max);
 	m_sizeSlider->setPrefix(
-		QCoreApplication::translate("FillSettings", "Size: "));
+		QCoreApplication::translate("FillSettings", "Size Limit: "));
 	m_sizeSlider->setSuffix(QCoreApplication::translate("FillSettings", "px"));
 	connect(
 		m_sizeSlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
@@ -250,6 +259,17 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 		m_sizeSlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&SelectionSettings::updateSize);
 	magicWandLayout->addRow(m_sizeSlider);
+
+	m_opacitySlider = new KisSliderSpinBox;
+	m_opacitySlider->setRange(props::opacity.min, props::opacity.max);
+	m_opacitySlider->setPrefix(
+		QCoreApplication::translate("FillSettings", "Opacity: "));
+	m_opacitySlider->setSuffix(
+		QCoreApplication::translate("FillSettings", "%"));
+	connect(
+		m_opacitySlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &SelectionSettings::pushSettings);
+	magicWandLayout->addRow(m_opacitySlider);
 
 	m_toleranceSlider = new KisSliderSpinBox;
 	m_toleranceSlider->setRange(0, 254);
@@ -415,9 +435,9 @@ void SelectionSettings::updateSize(int size)
 {
 	bool unlimited = isSizeUnlimited(size);
 	m_sizeSlider->setOverrideText(
-		unlimited
-			? QCoreApplication::translate("FillSettings", "Size: Unlimited")
-			: QString());
+		unlimited ? QCoreApplication::translate(
+						"FillSettings", "Size Limit: Unlimited")
+				  : QString());
 	emit pixelSizeChanged(calculatePixelSize(size, unlimited));
 }
 

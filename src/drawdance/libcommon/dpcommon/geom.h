@@ -100,6 +100,11 @@ DP_INLINE bool DP_rect_valid(DP_Rect rect)
     return rect.x1 <= rect.x2 && rect.y1 <= rect.y2;
 }
 
+DP_INLINE bool DP_rect_empty(DP_Rect rect)
+{
+    return rect.x1 >= rect.x2 && rect.y1 >= rect.y2;
+}
+
 DP_INLINE int DP_rect_x(DP_Rect rect)
 {
     DP_ASSERT(DP_rect_valid(rect));

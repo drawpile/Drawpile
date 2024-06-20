@@ -479,6 +479,7 @@ void LayerListModel::setLayers(
 	emit layersChanged(m_items);
 	if(m_fillSourceLayerId != 0 && !layerIndex(m_fillSourceLayerId).isValid()) {
 		m_fillSourceLayerId = 0;
+		emit fillSourceSet(0);
 	}
 	if(autoselect >= 0) {
 		emit autoSelectRequest(autoselect);
@@ -771,6 +772,8 @@ void LayerListModel::setFillSourceLayerId(int fillSourceLayerId)
 				emit dataChanged(newIndex, newIndex, {IsFillSourceRole});
 			}
 		}
+
+		emit fillSourceSet(fillSourceLayerId);
 	}
 }
 

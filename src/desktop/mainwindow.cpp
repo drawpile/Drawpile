@@ -409,8 +409,6 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_doc->toolCtrl(), &tools::ToolController::setActiveLayer);
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_dockTimeline, &docks::Timeline::setCurrentLayer);
-	connect(m_dockLayers, &docks::LayerList::fillSourceSet,
-		m_dockToolSettings->fillSettings(), &tools::FillSettings::setSourceLayerId);
 	connect(m_dockTimeline, &docks::Timeline::layerSelected, m_dockLayers, &docks::LayerList::selectLayer);
 	connect(m_dockTimeline, &docks::Timeline::trackSelected, m_dockLayers, &docks::LayerList::setTrackId);
 	m_dockLayers->setTrackId(m_dockTimeline->currentTrackId());
@@ -550,12 +548,28 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas, &canvas::CanvasModel::canvasInspected, m_dockToolSettings->inspectorSettings(), &tools::InspectorSettings::onCanvasInspected);
 	connect(canvas, &canvas::CanvasModel::previewAnnotationRequested, m_doc->toolCtrl(), &tools::ToolController::setActiveAnnotation);
 
+	// clang-format on
+	connect(
+		m_dockLayers, &docks::LayerList::fillSourceSet, canvas->layerlist(),
+		&canvas::LayerListModel::setFillSourceLayerId);
+	connect(
+		canvas->layerlist(), &canvas::LayerListModel::fillSourceSet,
+		m_dockLayers, &docks::LayerList::updateFillSourceLayerId);
+	connect(
+		canvas->layerlist(), &canvas::LayerListModel::fillSourceSet,
+		m_dockToolSettings->fillSettings(),
+		&tools::FillSettings::updateFillSourceLayerId);
 	connect(
 		canvas->selection(), &canvas::SelectionModel::selectionChanged, this,
 		&MainWindow::updateSelectTransformActions);
 	connect(
 		canvas->transform(), &canvas::TransformModel::transformChanged, this,
 		&MainWindow::updateSelectTransformActions);
+	connect(
+		canvas->selection(), &canvas::SelectionModel::selectionChanged,
+		m_dockToolSettings->fillSettings(),
+		&tools::FillSettings::updateSelection);
+	// clang-format off
 
 	connect(canvas, &canvas::CanvasModel::userJoined, this, [this](int, const QString &name) {
 		m_viewStatusBar->showMessage(tr("🙋 %1 joined!").arg(name), 2000);
@@ -573,10 +587,6 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	m_dockNavigator->setCanvasModel(canvas);
 	m_dockTimeline->setCanvas(canvas);
 
-	connect(
-		m_dockToolSettings->fillSettings(), &tools::FillSettings::fillSourceSet,
-		canvas->layerlist(), &canvas::LayerListModel::setFillSourceLayerId);
-
 	connect(m_dockTimeline, &docks::Timeline::frameSelected, canvas->paintEngine(), &canvas::PaintEngine::setViewFrame);
 	connect(m_dockTimeline, &docks::Timeline::trackHidden, canvas->paintEngine(), &canvas::PaintEngine::setTrackVisibility);
 	connect(m_dockTimeline, &docks::Timeline::trackOnionSkinEnabled, canvas->paintEngine(), &canvas::PaintEngine::setTrackOnionSkin);
@@ -584,7 +594,6 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(m_dockOnionSkins, &docks::OnionSkinsDock::onionSkinsChanged, canvas->paintEngine(), &canvas::PaintEngine::setOnionSkins);
 	m_dockOnionSkins->triggerUpdate();
 
-	m_dockToolSettings->fillSettings()->setLayerList(canvas->layerlist());
 	m_dockToolSettings->inspectorSettings()->setUserList(canvas->userlist());
 
 	// Make sure the UI matches the default feature access level
@@ -4299,7 +4308,8 @@ void MainWindow::setupActions()
 	QAction *layerMerge = makeAction("layermerge", tr("Merge Layer")).icon("arrow-down-double").noDefaultShortcut();
 	QAction *layerProperties = makeAction("layerproperties", tr("Layer Properties…")).icon("configure").noDefaultShortcut();
 	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer")).icon("trash-empty").noDefaultShortcut();
-	QAction *layerSetFillSource = makeAction("layersetfillsource", tr("Set as Fill Source")).icon("fill-color").noDefaultShortcut();
+	QAction *layerSetFillSource = makeAction("layersetfillsource", tr("Set as Fill Source")).icon("tag").noDefaultShortcut();
+	QAction *layerClearFillSource = makeAction("layerclearfillsource", tr("Clear Fill Source")).icon("tag-delete").noDefaultShortcut();
 
 	QAction *layerUpAct = makeAction("layer-up", tr("Select Above")).shortcut("Shift+X").autoRepeat();
 	QAction *layerDownAct = makeAction("layer-down", tr("Select Below")).shortcut("Shift+Z").autoRepeat();
@@ -4323,6 +4333,7 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerDelete);
 	layerMenu->addAction(layerProperties);
 	layerMenu->addAction(layerSetFillSource);
+	layerMenu->addAction(layerClearFillSource);
 
 	layerMenu->addSeparator();
 	layerMenu->addAction(layerUpAct);
@@ -4562,7 +4573,7 @@ void MainWindow::setupActions()
 	animationMenu->addAction(trackBelow);
 
 	m_currentdoctools->addAction(showFlipbook);
-	m_dockLayers->setLayerEditActions({layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, layerSetFillSource, keyFrameSetLayer, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, layerKeyFrameGroup, layerCheckToggle, layerCheckAll, layerUncheckAll});
+	m_dockLayers->setLayerEditActions({layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, layerSetFillSource, layerClearFillSource, keyFrameSetLayer, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, layerKeyFrameGroup, layerCheckToggle, layerCheckAll, layerUncheckAll});
 	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, keyFrameExposureIncrease, keyFrameExposureDecrease, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, keyFrameNext, keyFramePrev, trackAbove, trackBelow, animationLayerMenu, animationGroupMenu, animationDuplicateMenu}, layerViewNormal, layerViewCurrentFrame, showFlipbook);
 
 	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);

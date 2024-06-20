@@ -133,8 +133,9 @@ public:
 	void clearAllTransformPreviews();
 	void previewDabs(int layerId, int count, const net::Message *msgs);
 	void clearDabsPreview();
-	void
-	previewFill(int layerId, int x, int y, int blendMode, const QImage &img);
+	void previewFill(
+		int layerId, int blendMode, qreal opacity, int x, int y,
+		const QImage &img);
 	void clearFillPreview();
 
 	CanvasState viewCanvasState() const;

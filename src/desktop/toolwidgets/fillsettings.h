@@ -38,41 +38,33 @@ public:
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;
 
-	void setLayerList(canvas::LayerListModel *layerlist);
-
-	static int modeIndexToBlendMode(int mode);
-
 signals:
 	void pixelSizeChanged(int size);
-	void fillSourceSet(int layerId);
 
 public slots:
 	void pushSettings() override;
 	void toggleEraserMode() override;
-	void setActiveLayer(int layerId);
-	void setSourceLayerId(int layerId);
-	void setLayers(const QVector<canvas::LayerListItem> &items);
+	void toggleRecolorMode() override;
+	void updateSelection();
+	void updateFillSourceLayerId(int layerId);
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
-	class FillLayerModel;
-	enum class Source { Merged, MergedWithoutBackground, Layer };
-	enum Mode { Normal, Behind, Erase };
-	enum Area { Continuous, Similar };
-
-	void updateLayerCombo(int source);
-	void updateSize(int size);
+	void updateSize();
 	static bool isSizeUnlimited(int size);
-	static int calculatePixelSize(int size, bool unlimited);
+	int calculatePixelSize(int size) const;
+
+	void selectBlendMode(int blendMode);
 
 	Ui_FillSettings *m_ui = nullptr;
 	QButtonGroup *m_sourceGroup = nullptr;
 	QButtonGroup *m_areaGroup = nullptr;
-	FillLayerModel *m_fillLayerModel;
-	Mode m_previousMode = Normal;
+	int m_previousMode;
+	int m_previousEraseMode;
 	qreal m_quickAdjust1 = 0.0;
+	bool m_haveSelection = false;
 };
 
 }

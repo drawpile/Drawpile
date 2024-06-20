@@ -340,6 +340,17 @@ DP_SelectionSet *DP_canvas_state_selections_noinc_nullable(DP_CanvasState *cs)
     return cs->selections;
 }
 
+DP_Selection *DP_canvas_state_selection_search_noinc(DP_CanvasState *cs,
+                                                     unsigned int context_id,
+                                                     int selection_id)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    DP_SelectionSet *ss = cs->selections;
+    return ss ? DP_selection_set_search_noinc(ss, context_id, selection_id)
+              : NULL;
+}
+
 int DP_canvas_state_frame_count(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);

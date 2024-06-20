@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/toolwidgets/fillsettings.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/canvas/blendmodes.h"
+#include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
+#include "libclient/canvas/selectionmodel.h"
 #include "libclient/tools/floodfill.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
@@ -15,188 +18,22 @@ namespace props {
 static const ToolProperties::RangedValue<int> expand{
 	QStringLiteral("expand"), 0, 0, 100},
 	featherRadius{QStringLiteral("featherRadius"), 0, 0, 40},
-	mode{QStringLiteral("mode"), 0, 0, 2},
+	blendMode{
+		QStringLiteral("blendMode"), DP_BLEND_MODE_NORMAL, 0,
+		DP_BLEND_MODE_MAX},
 	size{QStringLiteral("size"), 500, 10, 5000},
+	opacity{QStringLiteral("opacity"), 100, 1, 100},
 	gap{QStringLiteral("gap"), 0, 0, 32},
-	source{QStringLiteral("source"), 2, 0, 2},
-	area{QStringLiteral("area"), 0, 0, 1};
+	source{QStringLiteral("source"), 2, 0, 3},
+	area{QStringLiteral("area"), 0, 0, 2};
 static const ToolProperties::RangedValue<double> tolerance{
 	QStringLiteral("tolerance"), 0.0, 0.0, 1.0};
 }
 
-class FillSettings::FillLayerModel final : public QAbstractItemModel {
-public:
-	static constexpr int CURRENT_LAYER_ROW = 0;
-	static constexpr int PREFIX_ROWS = 1;
-
-	FillLayerModel(QObject *parent)
-		: QAbstractItemModel{parent}
-		, m_activeLayer{0}
-		, m_source{int(FillSettings::Source::Layer)}
-		, m_layers{}
-		, m_layerIcon(QIcon::fromTheme("layer-visible-on"))
-		, m_groupIcon(QIcon::fromTheme("folder"))
-	{
-	}
-
-	QModelIndex index(
-		int row, int column,
-		const QModelIndex &parent = QModelIndex()) const override
-	{
-		if(parent.isValid() || column != 0) {
-			return QModelIndex{};
-		} else if(row == CURRENT_LAYER_ROW) {
-			return createIndex(row, column, quintptr(0));
-		} else {
-			const Layer *layer = layerAt(row);
-			return layer ? createIndex(row, column, quintptr(layer->id))
-						 : QModelIndex{};
-		}
-	}
-
-	QModelIndex parent(const QModelIndex &) const override
-	{
-		return QModelIndex{};
-	}
-
-	int rowCount(const QModelIndex &parent = QModelIndex()) const override
-	{
-		return parent.isValid() ? 0 : PREFIX_ROWS + m_layers.size();
-	}
-
-	int columnCount(const QModelIndex &parent = QModelIndex()) const override
-	{
-		return parent.isValid() ? 0 : 1;
-	}
-
-	QVariant
-	data(const QModelIndex &index, int role = Qt::DisplayRole) const override
-	{
-		if(!index.isValid() || index.parent().isValid() ||
-		   index.column() != 0) {
-			return QVariant{};
-		}
-
-		switch(role) {
-		case Qt::DisplayRole:
-		case Qt::ToolTipRole:
-			return getDisplayText(index);
-		case Qt::DecorationRole:
-			return getDecoration(index);
-		case Qt::UserRole:
-			return getLayerId(index);
-		default:
-			return QVariant{};
-		}
-	}
-
-	void setActiveLayer(int layerId) { m_activeLayer = layerId; }
-
-	void setSource(int source)
-	{
-		m_source = source;
-		dataChanged(index(0, 0), index(columnCount() - 1, rowCount() - 1));
-	}
-
-	void setLayers(const QVector<canvas::LayerListItem> &items)
-	{
-		beginResetModel();
-		m_layers.clear();
-		int i = 0;
-		while(i < items.size()) {
-			const canvas::LayerListItem &item = items[i++];
-			m_layers.append({item.id, item.title, item.group});
-			addLayersRecursive(items, i, item, 1);
-		}
-		endResetModel();
-	}
-
-	int searchRowByLayerId(int layerId)
-	{
-		int count = m_layers.size();
-		for(int i = 0; i < count; ++i) {
-			if(m_layers[i].id == layerId) {
-				return PREFIX_ROWS + i;
-			}
-		}
-		return CURRENT_LAYER_ROW;
-	}
-
-private:
-	struct Layer {
-		int id;
-		QString displayText;
-		bool group;
-	};
-
-	QString getDisplayText(const QModelIndex &index) const
-	{
-		switch(m_source) {
-		case int(FillSettings::Source::Merged):
-			return FillSettings::tr("Merged Image");
-		case int(FillSettings::Source::MergedWithoutBackground):
-			return FillSettings::tr("Merged Without Background");
-		default:
-			int row = index.row();
-			if(row == CURRENT_LAYER_ROW) {
-				return FillSettings::tr("Current Layer");
-			} else {
-				const Layer *layer = layerAt(row);
-				return layer ? layer->displayText : QString{};
-			}
-		}
-	}
-
-	int getLayerId(const QModelIndex &index) const
-	{
-		switch(index.row()) {
-		case CURRENT_LAYER_ROW:
-			return m_activeLayer;
-		default:
-			return int(index.internalId());
-		}
-	}
-
-	QVariant getDecoration(const QModelIndex &index) const
-	{
-		if(m_source == int(FillSettings::Source::Layer)) {
-			const Layer *layer = layerAt(index.row());
-			if(layer) {
-				return layer->group ? m_groupIcon : m_layerIcon;
-			}
-		}
-		return QVariant();
-	}
-
-	void addLayersRecursive(
-		const QVector<canvas::LayerListItem> &items, int &i,
-		const canvas::LayerListItem &parent, int nesting)
-	{
-		int children = parent.children;
-		for(int j = 0; j < children && i < items.size(); ++j) {
-			const canvas::LayerListItem &item = items[i++];
-			m_layers.append({item.id, item.title, item.group});
-			addLayersRecursive(items, i, item, nesting + 1);
-		}
-	}
-
-	const Layer *layerAt(int row) const
-	{
-		int i = row - PREFIX_ROWS;
-		return i >= 0 && i < m_layers.size() ? &m_layers[i] : nullptr;
-	}
-
-	int m_activeLayer;
-	int m_source;
-	QVector<Layer> m_layers;
-	QIcon m_layerIcon;
-	QIcon m_groupIcon;
-};
-
-
 FillSettings::FillSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent)
-	, m_fillLayerModel(new FillLayerModel(this))
+	, m_previousMode(DP_BLEND_MODE_NORMAL)
+	, m_previousEraseMode(DP_BLEND_MODE_ERASE)
 {
 }
 
@@ -210,26 +47,41 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	QWidget *uiwidget = new QWidget(parent);
 	m_ui = new Ui_FillSettings;
 	m_ui->setupUi(uiwidget);
-	m_ui->layer->setModel(m_fillLayerModel);
 	m_ui->size->setExponentRatio(3.0);
-	utils::setWidgetRetainSizeWhenHidden(m_ui->layer, true);
+	utils::setWidgetRetainSizeWhenHidden(m_ui->sourceDummyCombo, true);
+	m_ui->sourceDummyCombo->hide();
 
 	m_sourceGroup = new QButtonGroup(this);
 	m_sourceGroup->setExclusive(true);
-	m_sourceGroup->addButton(m_ui->sourceMerged, int(Source::Merged));
+	m_sourceGroup->addButton(
+		m_ui->sourceMerged, int(FloodFill::Source::Merged));
 	m_sourceGroup->addButton(
 		m_ui->sourceMergedWithoutBackground,
-		int(Source::MergedWithoutBackground));
-	m_sourceGroup->addButton(m_ui->sourceLayer, int(Source::Layer));
+		int(FloodFill::Source::MergedWithoutBackground));
+	m_sourceGroup->addButton(
+		m_ui->sourceLayer, int(FloodFill::Source::CurrentLayer));
+	m_sourceGroup->addButton(
+		m_ui->sourceFillSource, int(FloodFill::Source::FillSourceLayer));
 
 	m_areaGroup = new QButtonGroup(this);
 	m_areaGroup->setExclusive(true);
-	m_areaGroup->addButton(m_ui->areaContinuous, int(Area::Continuous));
-	m_areaGroup->addButton(m_ui->areaSimilar, int(Area::Similar));
+	m_areaGroup->addButton(
+		m_ui->areaContinuous, int(FloodFill::Area::Continuous));
+	m_areaGroup->addButton(m_ui->areaSimilar, int(FloodFill::Area::Similar));
+	m_areaGroup->addButton(
+		m_ui->areaSelection, int(FloodFill::Area::Selection));
+
+	for(const canvas::blendmode::Named &named :
+		canvas::blendmode::fillModeNames()) {
+		m_ui->blendModeCombo->addItem(named.name, int(named.mode));
+	}
 
 	connect(
 		m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&FillSettings::updateSize);
+	connect(
+		m_ui->opacity, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&FillSettings::pushSettings);
 	connect(
 		m_ui->tolerance, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&FillSettings::pushSettings);
@@ -246,30 +98,22 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 		m_ui->gap, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&FillSettings::pushSettings);
 	connect(
-		m_ui->layer, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-		[this](int index) {
-			m_ui->layer->setToolTip(m_ui->layer->currentText());
-			emit fillSourceSet(
-				index < FillLayerModel::PREFIX_ROWS
-					? 0
-					: m_ui->layer->itemData(index).toInt());
-			pushSettings();
-		});
-	connect(
-		m_ui->mode, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-		&FillSettings::pushSettings);
-	connect(
 		m_sourceGroup,
 		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
-		[this]() {
-			updateLayerCombo(m_sourceGroup->checkedId());
-			pushSettings();
-		});
+		&FillSettings::pushSettings);
 	connect(
 		m_areaGroup,
 		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
 		&FillSettings::pushSettings);
-	updateSize(m_ui->size->value());
+	connect(
+		m_areaGroup,
+		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
+		&FillSettings::updateSize);
+	connect(
+		m_ui->blendModeCombo,
+		QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+		&FillSettings::pushSettings);
+	updateSize();
 	return uiwidget;
 }
 
@@ -283,32 +127,84 @@ void FillSettings::pushSettings()
 	tool->setFeatherRadius(m_ui->feather->value());
 	int size = m_ui->size->value();
 	tool->setSize(isSizeUnlimited(size) ? -1 : size);
+	tool->setOpacity(m_ui->opacity->value() / 100.0);
 	tool->setGap(m_ui->gap->value());
-	tool->setContinuous(m_areaGroup->checkedId() == int(Area::Continuous));
+	tool->setSource(FloodFill::Source(m_sourceGroup->checkedId()));
 
-	switch(m_sourceGroup->checkedId()) {
-	case int(Source::Merged):
-		tool->setLayerId(0);
-		break;
-	case int(Source::MergedWithoutBackground):
-		tool->setLayerId(-1);
-		break;
-	case int(Source::Layer):
-		tool->setLayerId(m_ui->layer->currentData().toInt());
-		break;
+	int area = m_areaGroup->checkedId();
+	tool->setArea(FloodFill::Area(area));
+	bool floodOptionsEnabled = area != int(FloodFill::Area::Selection);
+	m_ui->size->setEnabled(floodOptionsEnabled && !m_haveSelection);
+	m_ui->tolerance->setEnabled(floodOptionsEnabled);
+	m_ui->gap->setEnabled(area == int(FloodFill::Area::Continuous));
+	m_ui->sourceMerged->setEnabled(floodOptionsEnabled);
+	m_ui->sourceMergedWithoutBackground->setEnabled(floodOptionsEnabled);
+	m_ui->sourceLayer->setEnabled(floodOptionsEnabled);
+	canvas::CanvasModel *canvas = controller()->model();
+	bool haveFillSource =
+		canvas && canvas->layerlist()->fillSourceLayerId() != 0;
+	m_ui->sourceLayer->setGroupPosition(
+		haveFillSource ? widgets::GroupedToolButton::GroupCenter
+					   : widgets::GroupedToolButton::GroupRight);
+	m_ui->sourceFillSource->setEnabled(floodOptionsEnabled && haveFillSource);
+	m_ui->sourceFillSource->setVisible(haveFillSource);
+
+	int blendMode = m_ui->blendModeCombo->currentData().toInt();
+	tool->setBlendMode(blendMode);
+	if(canvas::blendmode::isValidEraseMode(DP_BlendMode(blendMode))) {
+		m_previousEraseMode = blendMode;
+	} else {
+		m_previousMode = blendMode;
 	}
 
-	const auto mode = static_cast<Mode>(m_ui->mode->currentIndex());
-	tool->setBlendMode(modeIndexToBlendMode(mode));
-	if(mode != Erase) {
-		m_previousMode = mode;
+	if(!m_ui->sourceFillSource->isEnabled() &&
+	   m_ui->sourceFillSource->isChecked()) {
+		m_ui->sourceLayer->click();
 	}
 }
 
 void FillSettings::toggleEraserMode()
 {
-	int mode = m_ui->mode->currentIndex();
-	m_ui->mode->setCurrentIndex(mode == Erase ? m_previousMode : Erase);
+	int blendMode = m_ui->blendModeCombo->currentData().toInt();
+	selectBlendMode(
+		canvas::blendmode::isValidEraseMode(DP_BlendMode(blendMode))
+			? m_previousMode
+			: m_previousEraseMode);
+}
+
+void FillSettings::toggleRecolorMode()
+{
+	int blendMode = m_ui->blendModeCombo->currentData().toInt();
+	selectBlendMode(
+		blendMode == DP_BLEND_MODE_RECOLOR ? DP_BLEND_MODE_NORMAL
+										   : DP_BLEND_MODE_RECOLOR);
+}
+
+void FillSettings::updateSelection()
+{
+	canvas::CanvasModel *canvas = controller()->model();
+	m_haveSelection = canvas && canvas->selection()->isValid();
+	m_ui->size->setEnabled(
+		m_areaGroup->checkedId() != int(FloodFill::Area::Selection) &&
+		!m_haveSelection);
+	updateSize();
+}
+
+void FillSettings::updateFillSourceLayerId(int layerId)
+{
+	bool haveFillSource = layerId != 0;
+	m_ui->sourceFillSource->setEnabled(
+		haveFillSource &&
+		m_areaGroup->checkedId() != int(FloodFill::Area::Selection));
+	m_ui->sourceFillSource->setVisible(haveFillSource);
+	m_ui->sourceLayer->setGroupPosition(
+		haveFillSource ? widgets::GroupedToolButton::GroupCenter
+					   : widgets::GroupedToolButton::GroupRight);
+	if(haveFillSource) {
+		m_ui->sourceFillSource->click();
+	} else {
+		m_ui->sourceLayer->click();
+	}
 }
 
 ToolProperties FillSettings::saveToolSettings()
@@ -320,28 +216,12 @@ ToolProperties FillSettings::saveToolSettings()
 	cfg.setValue(props::expand, m_ui->expand->value());
 	cfg.setValue(props::featherRadius, m_ui->feather->value());
 	cfg.setValue(props::size, m_ui->size->value());
+	cfg.setValue(props::opacity, m_ui->opacity->value());
 	cfg.setValue(props::gap, m_ui->gap->value());
-	cfg.setValue(props::mode, m_ui->mode->currentIndex());
+	cfg.setValue(props::blendMode, m_ui->blendModeCombo->currentData().toInt());
 	cfg.setValue(props::source, m_sourceGroup->checkedId());
 	cfg.setValue(props::area, m_areaGroup->checkedId());
 	return cfg;
-}
-
-void FillSettings::setActiveLayer(int layerId)
-{
-	m_fillLayerModel->setActiveLayer(layerId);
-	if(m_ui->layer->currentIndex() == FillLayerModel::CURRENT_LAYER_ROW) {
-		pushSettings();
-	}
-}
-
-void FillSettings::setSourceLayerId(int layerId)
-{
-	int row = m_fillLayerModel->searchRowByLayerId(layerId);
-	if(row >= FillLayerModel::PREFIX_ROWS) {
-		m_ui->layer->setCurrentIndex(row);
-		m_ui->sourceLayer->click();
-	}
 }
 
 void FillSettings::setForeground(const QColor &color)
@@ -354,8 +234,7 @@ void FillSettings::setForeground(const QColor &color)
 
 int FillSettings::getSize() const
 {
-	int size = m_ui->size->value();
-	return calculatePixelSize(size, isSizeUnlimited(size));
+	return calculatePixelSize(m_ui->size->value());
 }
 
 void FillSettings::restoreToolSettings(const ToolProperties &cfg)
@@ -365,12 +244,21 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 	m_ui->expand->setValue(cfg.value(props::expand));
 	m_ui->feather->setValue(cfg.value(props::featherRadius));
 	m_ui->size->setValue(cfg.value(props::size));
+	m_ui->opacity->setValue(cfg.value(props::opacity));
 	m_ui->gap->setValue(cfg.value(props::gap));
-	m_ui->mode->setCurrentIndex(cfg.value(props::mode));
 
-	int source = cfg.value(props::source);
-	updateLayerCombo(source);
-	QAbstractButton *sourceButton = m_sourceGroup->button(source);
+	int blendMode = cfg.value(props::blendMode);
+	selectBlendMode(blendMode);
+	if(canvas::blendmode::isValidEraseMode(DP_BlendMode(blendMode))) {
+		m_previousMode = DP_BLEND_MODE_NORMAL;
+		m_previousEraseMode = blendMode;
+	} else {
+		m_previousMode = blendMode;
+		m_previousEraseMode = DP_BLEND_MODE_ERASE;
+	}
+
+	QAbstractButton *sourceButton =
+		m_sourceGroup->button(cfg.value(props::source));
 	if(sourceButton) {
 		sourceButton->setChecked(true);
 	}
@@ -383,68 +271,38 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 	pushSettings();
 }
 
-void FillSettings::setLayerList(canvas::LayerListModel *layerlist)
-{
-	connect(
-		layerlist, &canvas::LayerListModel::layersChanged, this,
-		&FillSettings::setLayers);
-	setLayers(layerlist->layerItems());
-}
-
-void FillSettings::setLayers(const QVector<canvas::LayerListItem> &items)
-{
-	int index = m_ui->layer->currentIndex();
-	int layerId = m_ui->layer->currentData().toInt();
-	m_fillLayerModel->setLayers(items);
-	if(index >= FillLayerModel::PREFIX_ROWS) {
-		index = m_fillLayerModel->searchRowByLayerId(layerId);
-	}
-	m_ui->layer->setCurrentIndex(index);
-}
-
-int FillSettings::modeIndexToBlendMode(int mode)
-{
-	switch(mode) {
-	case Behind:
-		return DP_BLEND_MODE_BEHIND;
-	case Erase:
-		return DP_BLEND_MODE_ERASE;
-	default:
-		return DP_BLEND_MODE_NORMAL;
-	}
-}
-
 void FillSettings::quickAdjust1(qreal adjustment)
 {
-	m_quickAdjust1 += adjustment * 10.0;
-	qreal i;
-	qreal f = modf(m_quickAdjust1, &i);
-	if(int(i)) {
-		m_quickAdjust1 = f;
-		m_ui->size->setValue(m_ui->size->value() + i);
+	KisSliderSpinBox *size = m_ui->size;
+	if(size->isEnabled()) {
+		m_quickAdjust1 += adjustment * 10.0;
+		qreal i;
+		qreal f = modf(m_quickAdjust1, &i);
+		if(int(i)) {
+			m_quickAdjust1 = f;
+			size->setValue(size->value() + i);
+		}
 	}
 }
 
 void FillSettings::stepAdjust1(bool increase)
 {
 	KisSliderSpinBox *size = m_ui->size;
-	size->setValue(stepLogarithmic(
-		size->minimum(), size->maximum(), size->value(), increase));
+	if(size->isEnabled()) {
+		size->setValue(stepLogarithmic(
+			size->minimum(), size->maximum(), size->value(), increase));
+	}
 }
 
-void FillSettings::updateLayerCombo(int source)
+void FillSettings::updateSize()
 {
-	m_ui->layer->setEnabled(true);
-	m_fillLayerModel->setSource(source);
-	m_ui->layer->setToolTip(m_ui->layer->currentText());
-	m_ui->layer->setEnabled(source == int(Source::Layer));
-}
-
-void FillSettings::updateSize(int size)
-{
-	bool unlimited = isSizeUnlimited(size);
-	m_ui->size->setOverrideText(unlimited ? tr("Size: Unlimited") : QString());
-	emit pixelSizeChanged(calculatePixelSize(size, unlimited));
+	int size = m_ui->size->value();
+	int pixelSize = calculatePixelSize(size);
+	m_ui->size->setOverrideText(
+		m_haveSelection	 ? tr("Size Limit: Selection")
+		: pixelSize == 0 ? tr("Size Limit: Unlimited")
+						 : QString());
+	emit pixelSizeChanged(pixelSize);
 }
 
 bool FillSettings::isSizeUnlimited(int size)
@@ -452,9 +310,23 @@ bool FillSettings::isSizeUnlimited(int size)
 	return size >= props::size.max;
 }
 
-int FillSettings::calculatePixelSize(int size, bool unlimited)
+int FillSettings::calculatePixelSize(int size) const
 {
+	bool unlimited =
+		m_haveSelection || isSizeUnlimited(size) ||
+		m_areaGroup->checkedId() == int(FloodFill::Area::Selection);
 	return unlimited ? 0 : size * 2 + 1;
+}
+
+void FillSettings::selectBlendMode(int blendMode)
+{
+	int count = m_ui->blendModeCombo->count();
+	for(int i = 0; i < count; ++i) {
+		if(m_ui->blendModeCombo->itemData(i).toInt() == blendMode) {
+			m_ui->blendModeCombo->setCurrentIndex(i);
+			break;
+		}
+	}
 }
 
 }

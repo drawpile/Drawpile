@@ -26,140 +26,13 @@
    <property name="spacing">
     <number>3</number>
    </property>
-   <item row="3" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="tolerance">
-     <property name="prefix">
-      <string>Tolerance: </string>
-     </property>
-     <property name="maximum">
-      <number>254</number>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="0">
-    <widget class="QLabel" name="modeLabel">
-     <property name="text">
-      <string>Mode:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="feather">
-     <property name="suffix">
-      <string>px</string>
-     </property>
-     <property name="prefix">
-      <string>Feather: </string>
-     </property>
-     <property name="maximum">
-      <number>40</number>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="0">
-    <widget class="QLabel" name="sourceLabel">
-     <property name="text">
-      <string>Source:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="widgets::GroupedToolButton" name="sourceMerged">
-       <property name="toolTip">
-        <string>Merged image</string>
-       </property>
-       <property name="icon">
-        <iconset theme="arrow-down-double">
-         <normaloff>theme:arrow-down-double.svg</normaloff>theme:arrow-down-double.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="groupPosition">
-        <enum>widgets::GroupedToolButton::GroupLeft</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="widgets::GroupedToolButton" name="sourceMergedWithoutBackground">
-       <property name="toolTip">
-        <string>Merged without background</string>
-       </property>
-       <property name="icon">
-        <iconset theme="arrow-down">
-         <normaloff>theme:arrow-down.svg</normaloff>theme:arrow-down.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="groupPosition">
-        <enum>widgets::GroupedToolButton::GroupCenter</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="widgets::GroupedToolButton" name="sourceLayer">
-       <property name="toolTip">
-        <string>Layer</string>
-       </property>
-       <property name="icon">
-        <iconset theme="layer-visible-on">
-         <normaloff>theme:layer-visible-on.svg</normaloff>theme:layer-visible-on.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="groupPosition">
-        <enum>widgets::GroupedToolButton::GroupRight</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Maximum</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>6</width>
-         <height>0</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QComboBox" name="layer">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>24</width>
-         <height>0</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="2" column="0" colspan="2">
     <widget class="KisSliderSpinBox" name="size">
      <property name="suffix">
       <string>px</string>
      </property>
      <property name="prefix">
-      <string>Size: </string>
+      <string>Size Limit: </string>
      </property>
      <property name="minimum">
       <number>20</number>
@@ -172,46 +45,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="expand">
-     <property name="suffix">
-      <string>px</string>
-     </property>
-     <property name="prefix">
-      <string>Expand: </string>
-     </property>
-     <property name="maximum">
-      <number>30</number>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="gap">
-     <property name="suffix">
-      <string>px</string>
-     </property>
-     <property name="prefix">
-      <string>Close Gaps: </string>
-     </property>
-     <property name="maximum">
-      <number>32</number>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="0" colspan="2">
-    <spacer>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="10" column="1">
+   <item row="11" column="1">
     <layout class="QHBoxLayout" name="modeLayout">
      <property name="spacing">
       <number>0</number>
@@ -219,6 +53,9 @@
      <item>
       <widget class="widgets::GroupedToolButton" name="areaContinuous">
        <property name="toolTip">
+        <string>Fill continuous area</string>
+       </property>
+       <property name="statusTip">
         <string>Fill continuous area</string>
        </property>
        <property name="icon">
@@ -238,9 +75,32 @@
        <property name="toolTip">
         <string>Fill all similar colors</string>
        </property>
+       <property name="statusTip">
+        <string>Fill all similar colors</string>
+       </property>
        <property name="icon">
         <iconset theme="color-picker">
          <normaloff>theme:color-picker.svg</normaloff>theme:color-picker.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="groupPosition">
+        <enum>widgets::GroupedToolButton::GroupCenter</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="widgets::GroupedToolButton" name="areaSelection">
+       <property name="toolTip">
+        <string>Fill entire selection</string>
+       </property>
+       <property name="statusTip">
+        <string>Fill entire selection</string>
+       </property>
+       <property name="icon">
+        <iconset theme="select-rectangular">
+         <normaloff>theme:select-rectangular.svg</normaloff>theme:select-rectangular.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -267,7 +127,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QComboBox" name="mode">
+      <widget class="QComboBox" name="blendModeCombo">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -280,24 +140,204 @@
          <height>0</height>
         </size>
        </property>
-       <item>
-        <property name="text">
-         <string>Normal</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Behind</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Erase</string>
-        </property>
-       </item>
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="11" column="0">
+    <widget class="QLabel" name="modeLabel">
+     <property name="text">
+      <string>Mode:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="expand">
+     <property name="suffix">
+      <string>px</string>
+     </property>
+     <property name="prefix">
+      <string>Expand: </string>
+     </property>
+     <property name="maximum">
+      <number>30</number>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="feather">
+     <property name="suffix">
+      <string>px</string>
+     </property>
+     <property name="prefix">
+      <string>Feather: </string>
+     </property>
+     <property name="maximum">
+      <number>40</number>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="tolerance">
+     <property name="prefix">
+      <string>Tolerance: </string>
+     </property>
+     <property name="maximum">
+      <number>254</number>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="0" colspan="2">
+    <spacer name="bottomSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="10" column="0">
+    <widget class="QLabel" name="sourceLabel">
+     <property name="text">
+      <string>Source:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="gap">
+     <property name="suffix">
+      <string>px</string>
+     </property>
+     <property name="prefix">
+      <string>Close Gaps: </string>
+     </property>
+     <property name="maximum">
+      <number>32</number>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1">
+    <layout class="QHBoxLayout" name="sourceLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="widgets::GroupedToolButton" name="sourceMerged">
+       <property name="toolTip">
+        <string>Merged image</string>
+       </property>
+       <property name="statusTip">
+        <string>Merged image</string>
+       </property>
+       <property name="icon">
+        <iconset theme="arrow-down-double">
+         <normaloff>theme:arrow-down-double.svg</normaloff>theme:arrow-down-double.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="groupPosition">
+        <enum>widgets::GroupedToolButton::GroupLeft</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="widgets::GroupedToolButton" name="sourceMergedWithoutBackground">
+       <property name="toolTip">
+        <string>Merged without background</string>
+       </property>
+       <property name="statusTip">
+        <string>Merged without background</string>
+       </property>
+       <property name="icon">
+        <iconset theme="arrow-down">
+         <normaloff>theme:arrow-down.svg</normaloff>theme:arrow-down.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="groupPosition">
+        <enum>widgets::GroupedToolButton::GroupCenter</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="widgets::GroupedToolButton" name="sourceLayer">
+       <property name="toolTip">
+        <string>Current layer</string>
+       </property>
+       <property name="statusTip">
+        <string>Current layer</string>
+       </property>
+       <property name="icon">
+        <iconset theme="layer-visible-on">
+         <normaloff>theme:layer-visible-on.svg</normaloff>theme:layer-visible-on.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="groupPosition">
+        <enum>widgets::GroupedToolButton::GroupCenter</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="widgets::GroupedToolButton" name="sourceFillSource">
+       <property name="toolTip">
+        <string>Fill source layer</string>
+       </property>
+       <property name="statusTip">
+        <string>Fill source layer</string>
+       </property>
+       <property name="icon">
+        <iconset theme="tag">
+         <normaloff>theme:tag.svg</normaloff>theme:tag.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="groupPosition">
+        <enum>widgets::GroupedToolButton::GroupRight</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="sourceDummyCombo">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="opacity">
+     <property name="suffix">
+      <string>%</string>
+     </property>
+     <property name="prefix">
+      <string>Opacity: </string>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>100</number>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

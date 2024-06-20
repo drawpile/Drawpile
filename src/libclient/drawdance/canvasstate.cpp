@@ -313,19 +313,42 @@ LayerSearchResult CanvasState::searchLayer(int layerId, bool showCensored) const
 	}
 }
 
+bool CanvasState::selectionExists(unsigned int contextId, int selectionId) const
+{
+	return DP_canvas_state_selection_search_noinc(
+		m_data, contextId, selectionId);
+}
+
 DP_FloodFillResult CanvasState::floodFill(
-	int x, int y, const QColor &fillColor, double tolerance, int layerId,
-	int sizeLimit, int gap, int expand, int featherRadius, bool continuous,
+	unsigned int contextId, int selectionId, int x, int y,
+	const QColor &fillColor, double tolerance, int layerId, int sizeLimit,
+	int gap, int expand, int featherRadius, bool continuous,
 	DP_ViewMode viewMode, int activeLayerId, int activeFrameIndex,
 	const QAtomicInt &cancel, QImage &outImg, int &outX, int &outY) const
 {
 	DP_UPixelFloat fillPixel = DP_upixel_float_from_color(fillColor.rgba());
 	DP_Image *img;
 	DP_FloodFillResult result = DP_flood_fill(
-		m_data, x, y, fillPixel, tolerance, layerId, sizeLimit, gap, expand,
-		featherRadius, continuous, viewMode, activeLayerId, activeFrameIndex,
-		&img, &outX, &outY, shouldCancelFloodFill,
-		const_cast<QAtomicInt *>(&cancel));
+		m_data, contextId, selectionId, x, y, fillPixel, tolerance, layerId,
+		sizeLimit, gap, expand, featherRadius, continuous, viewMode,
+		activeLayerId, activeFrameIndex, &img, &outX, &outY,
+		shouldCancelFloodFill, const_cast<QAtomicInt *>(&cancel));
+	if(result == DP_FLOOD_FILL_SUCCESS) {
+		outImg = wrapImage(img);
+	}
+	return result;
+}
+
+DP_FloodFillResult CanvasState::selectionFill(
+	unsigned int contextId, int selectionId, const QColor &fillColor,
+	int expand, int featherRadius, const QAtomicInt &cancel, QImage &outImg,
+	int &outX, int &outY) const
+{
+	DP_UPixelFloat fillPixel = DP_upixel_float_from_color(fillColor.rgba());
+	DP_Image *img;
+	DP_FloodFillResult result = DP_selection_fill(
+		m_data, contextId, selectionId, fillPixel, expand, featherRadius, &img,
+		&outX, &outY, shouldCancelFloodFill, const_cast<QAtomicInt *>(&cancel));
 	if(result == DP_FLOOD_FILL_SUCCESS) {
 		outImg = wrapImage(img);
 	}

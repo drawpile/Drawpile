@@ -87,8 +87,7 @@ public:
 
 	QRect layerBounds(int layerId) const;
 
-	bool
-	isBlankIn(int layerId, const QRect &rect, const QImage &mask) const;
+	bool isBlankIn(int layerId, const QRect &rect, const QImage &mask) const;
 
 	void toResetImage(net::MessageList &msgs, uint8_t contextId) const;
 
@@ -101,11 +100,19 @@ public:
 
 	LayerSearchResult searchLayer(int layerId, bool showCensored) const;
 
+	bool selectionExists(unsigned int contextId, int selectionId) const;
+
 	DP_FloodFillResult floodFill(
-		int x, int y, const QColor &fillColor, double tolerance, int layerId,
-		int sizeLimit, int gap, int expand, int featherRadius, bool continuous,
+		unsigned int contextId, int selectionId, int x, int y,
+		const QColor &fillColor, double tolerance, int layerId, int sizeLimit,
+		int gap, int expand, int featherRadius, bool continuous,
 		DP_ViewMode viewMode, int activeLayerId, int activeFrameIndex,
 		const QAtomicInt &cancel, QImage &outImg, int &outX, int &outY) const;
+
+	DP_FloodFillResult selectionFill(
+		unsigned int contextId, int selectionId, const QColor &fillColor,
+		int expand, int featherRadius, const QAtomicInt &cancel, QImage &outImg,
+		int &outX, int &outY) const;
 
 	drawdance::CanvasState makeBackwardCompatible() const;
 

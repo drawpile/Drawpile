@@ -160,6 +160,16 @@ static const BlendModeInfo BLEND_MODE[] = {
 
 static const int BLEND_MODES = sizeof(BLEND_MODE)/sizeof(BlendModeInfo);
 
+QString translatedName(int mode)
+{
+	for(const BlendModeInfo &info : BLEND_MODE) {
+		if(int(info.id) == mode) {
+			return info.name;
+		}
+	}
+	return QT_TRANSLATE_NOOP("blendmode", "Unknown");
+}
+
 QString svgName(DP_BlendMode mode)
 {
 	return QString::fromUtf8(DP_blend_mode_svg_name(mode));
@@ -198,6 +208,11 @@ QVector<Named> eraserModeNames()
 QVector<Named> layerModeNames()
 {
 	return modeNames(LayerMode);
+}
+
+QVector<Named> fillModeNames()
+{
+	return modeNames(0xff); // Fill tool supports all modes.
 }
 
 static bool hasFlag(DP_BlendMode mode, uint8_t flag)

@@ -37,11 +37,12 @@ public:
 
 	void run() override
 	{
+		QColor fillColor = QColor(0, 170, 255);
 		m_result = m_canvasState.floodFill(
-			m_point.x(), m_point.y(), Qt::black, m_tolerance, m_sourceLayerId,
-			m_size, m_gap, m_expansion, m_featherRadius, m_continuous,
-			m_viewMode, m_activeLayerId, m_activeFrameIndex, m_cancel, m_img,
-			m_x, m_y);
+			0, 0, m_point.x(), m_point.y(), fillColor, m_tolerance,
+			m_sourceLayerId, m_size, m_continuous ? m_gap : 0, m_expansion,
+			m_featherRadius, m_continuous, m_viewMode, m_activeLayerId,
+			m_activeFrameIndex, m_cancel, m_img, m_x, m_y);
 		if(m_result != DP_FLOOD_FILL_SUCCESS &&
 		   m_result != DP_FLOOD_FILL_CANCELLED) {
 			m_error = QString::fromUtf8(DP_error());
@@ -53,8 +54,7 @@ public:
 	int targetLayerId() const { return m_targetLayerId; }
 	DP_FloodFillResult result() const { return m_result; }
 	QImage &&takeImage() { return std::move(m_img); }
-	int x() const { return m_x; }
-	int y() const { return m_y; }
+	QPoint pos() const { return QPoint(m_x, m_y); }
 	const QString &error() const { return m_error; }
 
 private:
@@ -171,55 +171,67 @@ ToolState MagicWandTool::toolState() const
 	return havePending() ? ToolState::AwaitingConfirmation : ToolState::Normal;
 }
 
+void MagicWandTool::updatePendingToolNotice()
+{
+	if(havePending()) {
+		updateToolNotice();
+	}
+}
+
 void MagicWandTool::floodFillFinished(Task *task)
 {
 	m_running = false;
 	DP_FloodFillResult result = task->result();
 	QString toolNoticeText;
 	if(result == DP_FLOOD_FILL_SUCCESS) {
-		QImage img = task->takeImage();
-		if(img.size().isEmpty()) {
-			qWarning("Magic wand: filled image is empty");
+		m_pendingImage = task->takeImage();
+		if(m_pendingImage.isNull()) {
+			qWarning("Magic wand failed: image is null");
 		} else {
-			Q_ASSERT(m_pending.isEmpty());
-			uint8_t contextId = m_owner.model()->localUserId();
-			int x = task->x();
-			int y = task->y();
-			net::makeSelectionPutMessages(
-				m_pending, shouldDisguiseSelectionsAsPutImage(), contextId,
-				canvas::CanvasModel::MAIN_SELECTION_ID, m_op, x, y, img.width(),
-				img.height(), img);
-			if(m_pending.isEmpty()) {
-				qWarning("Magic wand: no messages");
-			} else {
-				m_pending.prepend(net::makeUndoPointMessage(contextId));
-				toolNoticeText = QCoreApplication::translate(
-									 "MagicWandSettings",
-									 "Selected area is %1 by %2 pixels.\n"
-									 "Click to apply, undo to cancel.")
-									 .arg(img.width())
-									 .arg(img.height());
-				{
-					QPainter painter(&img);
-					painter.setCompositionMode(
-						QPainter::CompositionMode_SourceAtop);
-					painter.fillRect(img.rect(), QColor(0, 170, 255));
-				}
-				emit m_owner.maskPreviewRequested(QPoint(x, y), img);
-			}
+			m_pendingPos = task->pos();
+			emit m_owner.maskPreviewRequested(m_pendingPos, m_pendingImage);
 		}
 	} else if(result != DP_FLOOD_FILL_CANCELLED) {
 		qWarning("Magic wand failed: %s", qUtf8Printable(task->error()));
 	}
+	updateToolNotice();
 	setHandlesRightClick(havePending());
-	emit m_owner.toolNoticeRequested(toolNoticeText);
 	m_owner.refreshToolState();
+}
+
+void MagicWandTool::updateToolNotice()
+{
+	QString toolNoticeText;
+	if(havePending()) {
+		toolNoticeText =
+			QCoreApplication::translate(
+				"MagicWandSettings", "%1 by %2 pixels, %3% opacity.\n"
+									 "Click to apply, undo to cancel.")
+				.arg(
+					QString::number(m_pendingImage.width()),
+					QString::number(m_pendingImage.height()),
+					QString::number(
+						qRound(m_owner.selectionParams().opacity * 100.0)));
+	}
+	emit m_owner.toolNoticeRequested(toolNoticeText);
 }
 
 void MagicWandTool::flushPending()
 {
 	if(havePending()) {
-		m_owner.client()->sendMessages(m_pending.size(), m_pending.constData());
+		adjustPendingImage();
+		net::Client *client = m_owner.client();
+		uint8_t contextId = client->myId();
+		net::MessageList msgs;
+		net::makeSelectionPutMessages(
+			msgs, shouldDisguiseSelectionsAsPutImage(), contextId,
+			canvas::CanvasModel::MAIN_SELECTION_ID, m_op, m_pendingPos.x(),
+			m_pendingPos.y(), m_pendingImage.width(), m_pendingImage.height(),
+			m_pendingImage);
+		if(!msgs.isEmpty()) {
+			msgs.prepend(net::makeUndoPointMessage(contextId));
+			client->sendMessages(msgs.size(), msgs.constData());
+		}
 		disposePending();
 	}
 }
@@ -227,11 +239,22 @@ void MagicWandTool::flushPending()
 void MagicWandTool::disposePending()
 {
 	if(havePending()) {
-		m_pending.clear();
+		m_pendingImage = QImage();
 		emit m_owner.maskPreviewRequested(QPoint(), QImage());
 		setHandlesRightClick(false);
 		emit m_owner.toolNoticeRequested(QString());
 		m_owner.refreshToolState();
+	}
+}
+
+void MagicWandTool::adjustPendingImage()
+{
+	qreal opacity = m_owner.selectionParams().opacity;
+	if(opacity < 1.0) {
+		QPainter painter(&m_pendingImage);
+		painter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+		painter.setOpacity(opacity);
+		painter.fillRect(m_pendingImage.rect(), Qt::black);
 	}
 }
 

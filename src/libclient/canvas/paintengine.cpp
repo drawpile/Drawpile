@@ -689,9 +689,9 @@ void PaintEngine::clearDabsPreview()
 }
 
 void PaintEngine::previewFill(
-	int layerId, int blendMode, int x, int y, const QImage &img)
+	int layerId, int blendMode, qreal opacity, int x, int y, const QImage &img)
 {
-	m_paintEngine.previewFill(layerId, blendMode, x, y, img);
+	m_paintEngine.previewFill(layerId, blendMode, opacity, x, y, img);
 }
 
 void PaintEngine::clearFillPreview()

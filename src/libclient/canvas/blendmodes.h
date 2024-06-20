@@ -20,6 +20,8 @@ namespace blendmode {
 		QString name;
 	};
 
+	QString translatedName(int mode);
+
 	//! Get the SVG name for the given blend mode
 	QString svgName(DP_BlendMode mode);
 
@@ -35,6 +37,9 @@ namespace blendmode {
 
 	//! Get a list of layer blend modes and their translated names
 	QVector<Named> layerModeNames();
+
+	//! Get a list of fill tool blend modes and their translated names
+	QVector<Named> fillModeNames();
 
 	bool isValidBrushMode(DP_BlendMode mode);
 	bool isValidEraseMode(DP_BlendMode mode);

@@ -438,11 +438,12 @@ void PaintEngine::clearDabsPreview()
 }
 
 void PaintEngine::previewFill(
-	int layerId, int blendMode, int x, int y, const QImage &img)
+	int layerId, int blendMode, qreal opacity, int x, int y, const QImage &img)
 {
 	DP_paint_engine_preview_fill(
-		m_data, layerId, blendMode, x, y, img.width(), img.height(),
-		reinterpret_cast<const DP_Pixel8 *>(img.constBits()));
+		m_data, layerId, blendMode,
+		DP_channel_float_to_15(qBound(0.0, opacity, 1.0)), x, y, img.width(),
+		img.height(), reinterpret_cast<const DP_Pixel8 *>(img.constBits()));
 }
 
 void PaintEngine::clearFillPreview()

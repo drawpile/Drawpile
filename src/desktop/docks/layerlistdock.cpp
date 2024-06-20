@@ -246,6 +246,7 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	m_contextMenu->addAction(m_actions.properties);
 	m_contextMenu->addSeparator();
 	m_contextMenu->addAction(m_actions.setFillSource);
+	m_contextMenu->addAction(m_actions.clearFillSource);
 	m_contextMenu->addAction(m_actions.keyFrameSetLayer);
 
 	// Action functionality
@@ -292,6 +293,9 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	connect(
 		m_actions.setFillSource, &QAction::triggered, this,
 		&LayerList::setFillSourceToSelected);
+	connect(
+		m_actions.clearFillSource, &QAction::triggered, this,
+		&LayerList::clearFillSource);
 	connect(
 		m_actions.layerCheckToggle, &QAction::triggered, this,
 		&LayerList::toggleChecked);
@@ -404,6 +408,8 @@ void LayerList::updateLockedControls()
 		m_actions.merge->setEnabled(enabled && canMergeCurrent());
 		m_actions.setFillSource->setEnabled(m_selectedId != 0);
 	}
+
+	updateFillSourceLayerId();
 }
 
 void LayerList::updateBlendModes(bool compatibilityMode)
@@ -457,6 +463,16 @@ void LayerList::setTrackId(int trackId)
 void LayerList::setFrame(int frame)
 {
 	m_frame = frame;
+}
+
+void LayerList::updateFillSourceLayerId()
+{
+	if(m_canvas) {
+		int fillSourceLayerId = m_canvas->layerlist()->fillSourceLayerId();
+		m_actions.setFillSource->setEnabled(
+			m_selectedId != 0 && m_selectedId != fillSourceLayerId);
+		m_actions.clearFillSource->setEnabled(fillSourceLayerId != 0);
+	}
 }
 
 void LayerList::selectLayerIndex(QModelIndex index, bool scrollTo)
@@ -976,6 +992,11 @@ void LayerList::setFillSourceToSelected()
 	if(index.isValid()) {
 		emit fillSourceSet(index.data(canvas::LayerListModel::IdRole).toInt());
 	}
+}
+
+void LayerList::clearFillSource()
+{
+	emit fillSourceSet(0);
 }
 
 void LayerList::toggleChecked()

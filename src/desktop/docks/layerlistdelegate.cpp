@@ -17,7 +17,7 @@ LayerListDelegate::LayerListDelegate(QObject *parent)
 	, m_censoredIcon(QIcon(":/icons/censored.svg"))
 	, m_hiddenIcon(QIcon::fromTheme("layer-visible-off"))
 	, m_groupHiddenIcon(QIcon::fromTheme("drawpile_folderhidden"))
-	, m_fillIcon(QIcon::fromTheme("fill-color"))
+	, m_fillIcon(QIcon::fromTheme("tag"))
 	, m_forbiddenIcon(QIcon::fromTheme("cards-block"))
 {
 }

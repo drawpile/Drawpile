@@ -35,6 +35,7 @@ typedef struct DP_LayerPropsList DP_LayerPropsList;
 typedef struct DP_LayerRoutes DP_LayerRoutes;
 typedef struct DP_Message DP_Message;
 typedef struct DP_Rect DP_Rect;
+typedef struct DP_Selection DP_Selection;
 typedef struct DP_SelectionSet DP_SelectionSet;
 typedef struct DP_Tile DP_Tile;
 typedef struct DP_Timeline DP_Timeline;
@@ -114,6 +115,10 @@ DP_Timeline *DP_canvas_state_timeline_noinc(DP_CanvasState *cs);
 DP_DocumentMetadata *DP_canvas_state_metadata_noinc(DP_CanvasState *cs);
 
 DP_SelectionSet *DP_canvas_state_selections_noinc_nullable(DP_CanvasState *cs);
+
+DP_Selection *DP_canvas_state_selection_search_noinc(DP_CanvasState *cs,
+                                                     unsigned int context_id,
+                                                     int selection_id);
 
 int DP_canvas_state_frame_count(DP_CanvasState *cs);
 

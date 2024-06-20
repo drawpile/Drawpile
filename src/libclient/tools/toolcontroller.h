@@ -4,6 +4,7 @@
 #include "libclient/brushes/brush.h"
 #include "libclient/canvas/acl.h"
 #include "libclient/tools/tool.h"
+#include <QColor>
 #include <QObject>
 #include <QPainterPath>
 #include <QSet>
@@ -51,6 +52,7 @@ public:
 		bool antiAlias = true;
 		int defaultOp = 0;
 		int size = -1;
+		qreal opacity = 1.0;
 		qreal tolerance = 0.0;
 		int expansion = 0;
 		int featherRadius = 0;
@@ -87,6 +89,9 @@ public:
 
 	void setActiveBrush(const brushes::ActiveBrush &b);
 	const brushes::ActiveBrush &activeBrush() const { return m_activebrush; }
+
+	void setForegroundColor(const QColor &color);
+	const QColor &foregroundColor() const { return m_foregroundColor; }
 
 	bool isDrawing() const { return m_drawing; }
 
@@ -249,6 +254,7 @@ private:
 	Tool *m_activeTool;
 	uint16_t m_activeLayer;
 	uint16_t m_activeAnnotation;
+	QColor m_foregroundColor;
 	bool m_drawing;
 	bool m_applyGlobalSmoothing;
 	bool m_mouseSmoothing;

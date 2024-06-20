@@ -248,8 +248,9 @@ void DP_paint_engine_preview_dabs_inc(DP_PaintEngine *pe, int layer_id,
                                       int count, DP_Message **messages);
 
 void DP_paint_engine_preview_fill(DP_PaintEngine *pe, int layer_id,
-                                  int blend_mode, int x, int y, int width,
-                                  int height, const DP_Pixel8 *pixels);
+                                  int blend_mode, uint16_t opacity, int x,
+                                  int y, int width, int height,
+                                  const DP_Pixel8 *pixels);
 
 void DP_paint_engine_preview_clear(DP_PaintEngine *pe, int type);
 void DP_paint_engine_preview_clear_all_transforms(DP_PaintEngine *pe);

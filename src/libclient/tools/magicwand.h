@@ -3,7 +3,8 @@
 #define LIBCLIENT_TOOLS_MAGICWAND_H
 #include "libclient/tools/tool.h"
 #include "libclient/tools/toolcontroller.h"
-#include "libshared/net/message.h"
+#include <QImage>
+#include <QPoint>
 
 namespace tools {
 
@@ -21,20 +22,26 @@ public:
 	void dispose() override;
 	ToolState toolState() const override;
 
+	void updatePendingToolNotice();
+
 private:
 	class Task;
 	friend Task;
 
 	void floodFillFinished(Task *task);
 
-	bool havePending() const { return !m_pending.isEmpty(); }
+	bool havePending() const { return !m_pendingImage.isNull(); }
+	void updateToolNotice();
 	void flushPending();
 	void disposePending();
+
+	void adjustPendingImage();
 
 	int m_op = -1;
 	bool m_running = false;
 	QAtomicInt m_cancel;
-	net::MessageList m_pending;
+	QImage m_pendingImage;
+	QPoint m_pendingPos;
 };
 
 }

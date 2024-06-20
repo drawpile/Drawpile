@@ -151,6 +151,8 @@ public:
 	uint16_t defaultLayer() const { return m_defaultLayer; }
 	void setDefaultLayer(uint16_t id);
 
+	int fillSourceLayerId() const { return m_fillSourceLayerId; }
+
 	AclState::Layer layerAcl(uint16_t id);
 
 	/**
@@ -217,6 +219,7 @@ signals:
 
 	void layersVisibleInFrameChanged();
 	void layerCheckStateToggled();
+	void fillSourceSet(int layerId);
 
 private slots:
 	void updateCheckedLayerAcl(int layerId);

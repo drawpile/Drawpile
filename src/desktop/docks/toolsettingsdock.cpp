@@ -207,9 +207,6 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 			emit sizeChanged(size);
 		}
 	});
-	connect(
-		d->ctrl, &tools::ToolController::activeLayerChanged, fs,
-		&tools::FillSettings::setActiveLayer);
 
 	connect(
 		selectionSettings(), &tools::SelectionSettings::pixelSizeChanged, this,
@@ -645,6 +642,7 @@ void ToolSettings::setForegroundColor(const QColor &color)
 			d->foregroundColorDialog->setColor(color);
 		}
 
+		d->ctrl->setForegroundColor(color);
 		emit foregroundColorChanged(color);
 	}
 }

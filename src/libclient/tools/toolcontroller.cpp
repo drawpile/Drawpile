@@ -198,7 +198,9 @@ void ToolController::setActiveLayer(uint16_t id)
 		if(m_model) {
 			m_model->paintEngine()->setViewLayer(id);
 		}
-
+		if(m_activeTool) {
+			m_activeTool->setActiveLayer(id);
+		}
 		updateTransformPreview();
 		emit activeLayerChanged(id);
 	}
@@ -208,6 +210,16 @@ void ToolController::setActiveBrush(const brushes::ActiveBrush &b)
 {
 	m_activebrush = b;
 	emit activeBrushChanged(b);
+}
+
+void ToolController::setForegroundColor(const QColor &color)
+{
+	if(color != m_foregroundColor) {
+		m_foregroundColor = color;
+		if(m_activeTool) {
+			m_activeTool->setForegroundColor(color);
+		}
+	}
 }
 
 void ToolController::setInterpolateInputs(bool interpolateInputs)

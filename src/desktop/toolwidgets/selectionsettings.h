@@ -74,6 +74,7 @@ private:
 	QCheckBox *m_antiAliasCheckBox = nullptr;
 	QWidget *m_magicWandContainer = nullptr;
 	KisSliderSpinBox *m_sizeSlider = nullptr;
+	KisSliderSpinBox *m_opacitySlider = nullptr;
 	KisSliderSpinBox *m_toleranceSlider = nullptr;
 	KisSliderSpinBox *m_expandSlider = nullptr;
 	KisSliderSpinBox *m_featherSlider = nullptr;
