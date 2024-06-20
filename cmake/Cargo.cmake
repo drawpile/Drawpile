@@ -80,6 +80,13 @@ function(_cargo_set_libs target triple)
 		message(STATUS "Determined Rust libraries: ${libs}")
 	endif()
 
+	if(WIN32 AND MSVC)
+		# This parameter spontaneously appeared in the library list, breaking
+		# the build because it's not a library. It's generally not something we
+		# want in our static libraries' interface link flags, so we toss it.
+		list(REMOVE_ITEM libs "/defaultlib:msvcrt")
+	endif()
+
 	set_target_properties("${target}" PROPERTIES
 		INTERFACE_LINK_LIBRARIES "${libs}"
 	)
