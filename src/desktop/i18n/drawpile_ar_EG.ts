@@ -2765,7 +2765,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation>ملف السجل غير موجود، هل تحتاج إلى تمكين تسجيل الدخول في التفضيلات؟</translation>
+        <translation>ملف السجل غير موجود، هل تحتاج إلى تفعيل تسجيل الدخول في التفضيلات؟</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6575,7 +6575,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Layouts</source>
-        <translation type="unfinished">التخطيطات</translation>
+        <translation>التخطيطات</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6620,34 +6620,34 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location line="+2"/>
         <source>Last check: %n day(s) ago.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>آخر فحص: قبل %n يوم.</numerusform>
+            <numerusform>آخر فحص: قبل %n يوم.</numerusform>
+            <numerusform>آخر فحص: منذ %n يومًا.</numerusform>
+            <numerusform>آخر فحص: منذ %n يومًا.</numerusform>
+            <numerusform>آخر فحص: منذ %n يومًا.</numerusform>
+            <numerusform>آخر فحص: منذ %n يومًا.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Last check: never.</source>
-        <translation type="unfinished"></translation>
+        <translation>الفحص الأخير: أبدا.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Join</source>
-        <translation type="unfinished">ادخل</translation>
+        <translation>ادخل</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Host</source>
-        <translation type="unfinished"></translation>
+        <translation>افتح جلسه</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>خلق</translation>
     </message>
 </context>
 <context>
@@ -6655,22 +6655,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/touchtestdialog.cpp" line="+212"/>
         <source>Enable touch</source>
-        <translation type="unfinished"></translation>
+        <translation>تفعيل اللمس</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enable gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>تفعيل حركات اللمس</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Error Saving Log</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في حفظ السجل</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Touch test log could not be saved: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>تعذر حفظ سجل اختبار اللمس: %1</translation>
     </message>
 </context>
 <context>
@@ -6678,7 +6678,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-235"/>
         <source>Touch here.</source>
-        <translation type="unfinished"></translation>
+        <translation>المس هنا.</translation>
     </message>
 </context>
 <context>
@@ -6686,7 +6686,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/userinfodialog.cpp" line="+31"/>
         <source>Refresh</source>
-        <translation type="unfinished">إعادة تشغيل</translation>
+        <translation>إعادة تشغيل</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -6698,32 +6698,32 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+9"/>
         <location line="+7"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>غير معروف</translation>
     </message>
     <message>
         <location line="-22"/>
         <source>Draw</source>
-        <translation type="unfinished"></translation>
+        <translation>ارسم</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>حرك اللوحه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Do Nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>لا تفعل شيئا</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>مفعل</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>غير مفعل</translation>
     </message>
 </context>
 <context>
@@ -6731,53 +6731,53 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/videoexportdialog.cpp" line="+31"/>
         <source>Image Series</source>
-        <translation type="unfinished"></translation>
+        <translation>سلسلة الصور</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>فيديو MP4</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>WebM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>فيديو WebM</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Custom FFmpeg Command</source>
-        <translation type="unfinished"></translation>
+        <translation>أمر FFmpeg مخصص</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Original</source>
-        <translation type="unfinished"></translation>
+        <translation>الاصلي</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Custom:</source>
-        <translation type="unfinished"></translation>
+        <translation>مخصص:</translation>
     </message>
     <message>
         <location line="+80"/>
         <source>Executables</source>
         <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>الملفات التنفيذية</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Choose ffmpeg path</source>
-        <translation type="unfinished"></translation>
+        <translation>اختر مسار ffmpeg</translation>
     </message>
     <message>
         <location line="+107"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>تحقق…</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Not found. %1</source>
-        <translation type="unfinished"></translation>
+        <translation>غير معثور عليه. %1</translation>
     </message>
 </context>
 <context>
@@ -6785,59 +6785,59 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/canvasshortcuts.cpp" line="+37"/>
         <source>Search actions…</source>
-        <translation type="unfinished"></translation>
+        <translation>إجراءات البحث…</translation>
     </message>
     <message>
         <location line="+74"/>
         <source>Edit Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير اختصار اللوحه</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Add canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>إضافة اختصار اللوحة…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>New Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>ابني اختصار الوحه جديده</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Remove selected canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>إزالة اختصار اللوحة المحدد…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove canvas shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>إزالة اختصار اللوحة</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>هل تريد بالفعل إزالة %n من اختصار اللوحة ؟</numerusform>
+            <numerusform>هل تريد بالفعل إزالة %n من اختصار اللوحة ؟</numerusform>
+            <numerusform>هل تريد حقًا إزالة %n من اختصارات اللوحة؟</numerusform>
+            <numerusform>هل تريد حقًا إزالة %n من اختصارات اللوحة؟</numerusform>
+            <numerusform>هل تريد حقًا إزالة %n من اختصارات اللوحة؟</numerusform>
+            <numerusform>هل تريد حقًا إزالة %n من اختصارات اللوحة؟</numerusform>
         </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Restore defaults…</source>
-        <translation type="unfinished"></translation>
+        <translation>استعادة الضبط الافتراضي…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Restore Canvas Shortcut Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>استعادة الإعدادات الافتراضية لاختصارات اللوحة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really restore all canvas shortcuts to their default values?</source>
-        <translation type="unfinished"></translation>
+        <translation>هل تريد حقًا استعادة جميع اختصارات اللوحة إلى قيمها الافتراضية؟</translation>
     </message>
 </context>
 <context>
@@ -6845,149 +6845,149 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/general.cpp" line="+62"/>
         <source>When enabled, save every %1 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>عند افتعال، احفظ كل %1 دقيقة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autosave:</source>
-        <translation type="unfinished"></translation>
+        <translation>الحفظ التلقائي:</translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+99"/>
         <location line="+15"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>نظام</translation>
     </message>
     <message>
         <location line="-103"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>اللغه:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Language changes apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>يتم تطبيق تغييرات اللغة بعد إعادة تشغيل Drawpile.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>%1 (%2) / %3 (%4)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2) / %3 (%4)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Write debugging log to file</source>
-        <translation type="unfinished"></translation>
+        <translation>كتابة سجل التصحيح إلى الملف</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Logging:</source>
-        <translation type="unfinished"></translation>
+        <translation>تسجيل:</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Keep %1 canvas snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation>احتفظ بلقطات%1 اللوحه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas snapshots:</source>
-        <translation type="unfinished"></translation>
+        <translation>لقطات اللوحه:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Take one snapshot every %1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>التقط لقطة واحدة كل %1 ثانية</translation>
     </message>
     <message>
         <location line="-93"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
-        <translation type="unfinished"></translation>
+        <translation>يمكن تفعيل الحفظ التلقائي للملف الحالي ضمن ملف ▸ الحفظ التلقائي.</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <translation type="unfinished"></translation>
+        <translation>يتم الاستيفاء عند تكبير العرض أو تدويره</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas view:</source>
-        <translation type="unfinished"></translation>
+        <translation>عرض اللوحه:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Prevent jitter at certain zoom and rotation levels</source>
-        <translation type="unfinished"></translation>
+        <translation>منع تقطع عند مستويات تكبير/تصغير معينة وتدويرها</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <translation type="unfinished"></translation>
+        <translation>قد يؤثر تفعيل هذه الخيارات على الأداء في بعض الأنظمة.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Snapshots can be restored from the Session ▸ Reset… menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>يمكن استعادة اللقطات من قائمة الجلسة ▸ إعادة تعيين....</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Style:</source>
-        <translation type="unfinished"></translation>
+        <translation>أسلوب:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>ضوء</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>مظلم</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Krita Bright</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita Bright</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita Dark</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Krita Darker</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita Darker</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Qt Fusion</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt Fusion</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hotdog Stand</source>
-        <translation type="unfinished"></translation>
+        <translation>عربة نقانق</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Color scheme:</source>
-        <translation type="unfinished"></translation>
+        <translation>نظام الألوان:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Use %1 undo levels by default</source>
-        <translation type="unfinished"></translation>
+        <translation>استخدم %1 مستويات التراجع بشكل افتراضي</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session history:</source>
-        <translation type="unfinished"></translation>
+        <translation>تاريخ الجلسة:</translation>
     </message>
 </context>
 <context>
@@ -6995,104 +6995,104 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/input.cpp" line="+51"/>
         <source>Input</source>
-        <translation type="unfinished">مدخل</translation>
+        <translation>دخل</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>نتاج</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Global pressure curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>منحنى الضغط العالمي:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Enable pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>تفعيل حساسيه الضغط</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet:</source>
-        <translation type="unfinished"></translation>
+        <translation>التابلت:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Compensate jagged curves</source>
-        <translation type="unfinished"></translation>
+        <translation>تعويض المنحنيات الخشنة</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Smoothing: </source>
-        <translation type="unfinished">تنعيم الخط: </translation>
+        <translation>تنعيم الخط: </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بالتبديل إلى فتحة الممحاة</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished"></translation>
+        <translation>امسح بالفرشاة الحالية</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser action:</source>
         <extracomment>Eraser refers to the eraser tip of a tablet pen.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>عمل الممحاة:</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../mainwindow.cpp" line="-966"/>
         <source>KisTablet Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>KisTablet Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Wintab</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>KisTablet Wintab Relative</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Wintab Relative</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+2"/>
         <source>Qt5</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt5</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+2"/>
         <source>Qt6 Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Qt6 Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Wintab</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Driver:</source>
-        <translation type="unfinished"></translation>
+        <translation>سائق:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Touch mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>وضع اللمس:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished"></translation>
+        <translation>شاشة اللمس</translation>
     </message>
     <message>
         <location line="+1"/>
