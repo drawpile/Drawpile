@@ -1558,7 +1558,7 @@
     <message>
         <location line="-23"/>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
-        <translation>تم تعطيل التحقق التلقائي من التحديثات، &lt;a href=&quot;#autoupdate&quot;&gt;انقر هنا لتمكينه&lt;/a&gt;.</translation>
+        <translation>تم تعطيل التحقق التلقائي من التحديثات، &lt;a href=&quot;#autoupdate&quot;&gt;انقر هنا لتفعيله&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+2"/>
