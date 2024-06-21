@@ -58,6 +58,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Better small-screen mode handling. The toggle items now no longer overlap, dialogs get maximized if appropriate, the start and settings dialogs get arranged horizontally.
  * Feature: Rework selections and transforms entirely. They're now distinct operations. Selections participate in the undo stack.
  * Feature: Allow toggling between accurate and fast transform previews. The former is the current kind of preview that actually gets previewed on the layer, the latter is like in Drawpile 2.1, where it's just a vector image drawn on top of everything.
+ * Feature: Allow picking blend modes and opacity when pasting, stamping and transforming. Thanks blurymind for suggesting.
  * Feature: Show layouts action in dock menus. Thanks Elisa for suggesting.
  * Fix: Set TCP_NODELAY on sockets to reduce unnecessary latency.
  * Feature: Build option -DPROXY_STYLE=ON to fix the bad contrast in dark themes when not building a patched version of Qt yourself.

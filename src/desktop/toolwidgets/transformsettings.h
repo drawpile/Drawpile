@@ -3,8 +3,10 @@
 #define DESKTOP_TOOLWIDGETS_TRANSFORMSETTINGS_H
 #include "desktop/toolwidgets/toolsettings.h"
 
+class KisSliderSpinBox;
 class QAction;
 class QButtonGroup;
+class QComboBox;
 class QPushButton;
 
 namespace canvas {
@@ -51,6 +53,10 @@ public:
 
 	QWidget *getHeaderWidget() override { return m_headerWidget; }
 
+signals:
+	void blendModeChanged(int blendMode);
+	void opacityChanged(qreal opacity);
+
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
@@ -66,6 +72,12 @@ private:
 	void updateEnabled();
 	void updateEnabledFrom(canvas::CanvasModel *canvas);
 	void updateHandles(int mode);
+
+	void updateBlendMode(int index);
+	void selectBlendMode(int blendMode);
+
+	void updateOpacity(int value);
+	void setOpacity(qreal opacity);
 
 	TransformTool *tool();
 
@@ -83,6 +95,8 @@ private:
 	widgets::GroupedToolButton *m_scaleButton = nullptr;
 	widgets::GroupedToolButton *m_distortButton = nullptr;
 	QButtonGroup *m_handlesGroup = nullptr;
+	QComboBox *m_blendModeCombo = nullptr;
+	KisSliderSpinBox *m_opacitySlider = nullptr;
 	QPushButton *m_applyButton = nullptr;
 	QPushButton *m_cancelButton = nullptr;
 	view::CanvasWrapper *m_canvasView = nullptr;

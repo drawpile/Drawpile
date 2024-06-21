@@ -30,6 +30,8 @@ public:
 	const TransformQuad &dstQuad() const { return m_dstQuad; }
 	const QImage &floatingImage();
 	QImage layerImage(int layerId);
+	int blendMode() const { return m_blendMode; }
+	qreal opacity() const { return m_opacity; }
 
 	void beginFromCanvas(
 		const QRect &srcBounds, const QImage &mask, int sourceLayerId);
@@ -39,6 +41,8 @@ public:
 	void setDeselectOnApply(bool deselectOnApply);
 	void setDstQuad(const TransformQuad &dstQuad);
 	void setPreviewAccurate(bool previewAccurate);
+	void setBlendMode(int blendMode);
+	void setOpacity(qreal opacity);
 
 	void applyOffset(int x, int y);
 
@@ -64,6 +68,24 @@ private:
 		bool disguiseAsPutImage, uint8_t contextId, int layerId,
 		int interpolation, bool compatibilityMode, bool *outMovedSelection);
 
+	void applyMoveRect(
+		QVector<net::Message> &msgs, unsigned int contextId, int layerId,
+		int sourceId, int srcX, int srcY, int dstTopLeftX, int dstTopLeftY,
+		int srcW, int srcH, const QImage &mask) const;
+
+	void applyTransformRegion(
+		QVector<net::Message> &msgs, unsigned int contextId, int layerId,
+		int sourceId, int srcX, int srcY, int srcW, int srcH, int dstTopLeftX,
+		int dstTopLeftY, int dstTopRightX, int dstTopRightY,
+		int dstBottomRightX, int dstBottomRightY, int dstBottomLeftX,
+		int dstBottomLeftY, int interpolation, const QImage &mask) const;
+
+	bool needsCutAndPaste() const;
+
+	void applyCut(
+		QVector<net::Message> &msgs, unsigned int contextId, int sourceId,
+		int srcX, int srcY, int srcW, int srcH, const QImage &mask) const;
+
 	QVector<net::Message> applyFloating(
 		bool disguiseAsPutImage, uint8_t contextId, int layerId,
 		int interpolation, bool compatibilityMode, bool stamp,
@@ -75,8 +97,10 @@ private:
 	void setLayers(const QSet<int> &layerIds);
 
 	QImage getLayerImage(int layerId) const;
+	QImage getLayerImageWithMask(int layerId, const QImage &mask) const;
 	QImage getMergedImage() const;
-	void applyMaskToImage(QImage &img) const;
+	static void applyMaskToImage(QImage &img, const QImage &mask);
+	void applyOpacityToImage(QImage &img) const;
 	static bool isImageBlank(const QImage &img);
 
 	static bool isMaskRelevant(const QImage &mask);
@@ -108,6 +132,8 @@ private:
 	QImage m_mask;
 	QImage m_floatingImage;
 	QHash<int, QImage> m_layerImages;
+	int m_blendMode;
+	qreal m_opacity = 1.0;
 };
 
 }

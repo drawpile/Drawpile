@@ -9,12 +9,14 @@ extern "C" {
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/drawdance/image.h"
+#include <QPainter>
 
 namespace canvas {
 
 TransformModel::TransformModel(CanvasModel *canvas)
 	: QObject(canvas)
 	, m_canvas(canvas)
+	, m_blendMode(DP_BLEND_MODE_NORMAL)
 {
 	LayerListModel *layerlist = canvas->layerlist();
 	connect(
@@ -126,6 +128,22 @@ void TransformModel::setPreviewAccurate(bool previewAccurate)
 		if(m_active) {
 			emit transformChanged();
 		}
+	}
+}
+
+void TransformModel::setBlendMode(int blendMode)
+{
+	if(blendMode != m_blendMode) {
+		m_blendMode = blendMode;
+		emit transformChanged();
+	}
+}
+
+void TransformModel::setOpacity(qreal opacity)
+{
+	if(opacity != m_opacity) {
+		m_opacity = opacity;
+		emit transformChanged();
 	}
 }
 
@@ -275,18 +293,18 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 			if(moveContents) {
 				if(singleLayerSourceId > 0) {
 					if(hasContentInSelection(singleLayerSourceId)) {
-						msgs.append(net::makeMoveRectMessage(
-							contextId, layerId, singleLayerSourceId, srcX, srcY,
-							dstTopLeftX, dstTopLeftY, srcW, srcH,
-							needsMask ? m_mask : QImage()));
+						applyMoveRect(
+							msgs, contextId, layerId, singleLayerSourceId, srcX,
+							srcY, dstTopLeftX, dstTopLeftY, srcW, srcH,
+							needsMask ? m_mask : QImage());
 					}
 				} else {
 					for(int layerIdToMove : m_layerIds) {
 						if(hasContentInSelection(layerIdToMove)) {
-							msgs.append(net::makeMoveRectMessage(
-								contextId, layerIdToMove, layerIdToMove, srcX,
-								srcY, dstTopLeftX, dstTopLeftY, srcW, srcH,
-								needsMask ? m_mask : QImage()));
+							applyMoveRect(
+								msgs, contextId, layerIdToMove, layerIdToMove,
+								srcX, srcY, dstTopLeftX, dstTopLeftY, srcW,
+								srcH, needsMask ? m_mask : QImage());
 						}
 					}
 				}
@@ -309,24 +327,25 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 			if(moveContents) {
 				if(singleLayerSourceId > 0) {
 					if(hasContentInSelection(singleLayerSourceId)) {
-						msgs.append(net::makeTransformRegionMessage(
-							contextId, layerId, singleLayerSourceId, srcX, srcY,
-							srcW, srcH, dstTopLeftX, dstTopLeftY, dstTopRightX,
-							dstTopRightY, dstBottomRightX, dstBottomRightY,
-							dstBottomLeftX, dstBottomLeftY,
+						applyTransformRegion(
+							msgs, contextId, layerId, singleLayerSourceId, srcX,
+							srcY, srcW, srcH, dstTopLeftX, dstTopLeftY,
+							dstTopRightX, dstTopRightY, dstBottomRightX,
+							dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
 							getEffectiveInterpolation(interpolation),
-							needsMask ? m_mask : QImage()));
+							needsMask ? m_mask : QImage());
 					}
 				} else {
 					for(int layerIdToMove : m_layerIds) {
 						if(hasContentInSelection(layerIdToMove)) {
-							msgs.append(net::makeTransformRegionMessage(
-								contextId, layerIdToMove, layerIdToMove, srcX,
-								srcY, srcW, srcH, dstTopLeftX, dstTopLeftY,
-								dstTopRightX, dstTopRightY, dstBottomRightX,
-								dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
+							applyTransformRegion(
+								msgs, contextId, layerIdToMove, layerIdToMove,
+								srcX, srcY, srcW, srcH, dstTopLeftX,
+								dstTopLeftY, dstTopRightX, dstTopRightY,
+								dstBottomRightX, dstBottomRightY,
+								dstBottomLeftX, dstBottomLeftY,
 								getEffectiveInterpolation(interpolation),
-								needsMask ? m_mask : QImage()));
+								needsMask ? m_mask : QImage());
 						}
 					}
 				}
@@ -364,6 +383,82 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 	return {};
 }
 
+void TransformModel::applyMoveRect(
+	QVector<net::Message> &msgs, unsigned int contextId, int layerId,
+	int sourceId, int srcX, int srcY, int dstTopLeftX, int dstTopLeftY,
+	int srcW, int srcH, const QImage &mask) const
+{
+	if(needsCutAndPaste()) {
+		QImage img = getLayerImageWithMask(sourceId, mask);
+		if(img.isNull()) {
+			qWarning("applyMoveRect: image from layer %d is null", layerId);
+		} else {
+			applyCut(msgs, contextId, sourceId, srcX, srcY, srcW, srcH, mask);
+			applyOpacityToImage(img);
+			net::makePutImageMessages(
+				msgs, contextId, layerId, m_blendMode, dstTopLeftX, dstTopLeftY,
+				img);
+		}
+	} else {
+		msgs.append(net::makeMoveRectMessage(
+			contextId, layerId, sourceId, srcX, srcY, dstTopLeftX, dstTopLeftY,
+			srcW, srcH, mask));
+	}
+}
+
+void TransformModel::applyTransformRegion(
+	QVector<net::Message> &msgs, unsigned int contextId, int layerId,
+	int sourceId, int srcX, int srcY, int srcW, int srcH, int dstTopLeftX,
+	int dstTopLeftY, int dstTopRightX, int dstTopRightY, int dstBottomRightX,
+	int dstBottomRightY, int dstBottomLeftX, int dstBottomLeftY,
+	int interpolation, const QImage &mask) const
+{
+	if(needsCutAndPaste()) {
+		QPoint offset;
+		QImage img = drawdance::transformImage(
+			getLayerImageWithMask(sourceId, mask),
+			m_dstQuad.polygon().toPolygon(),
+			getEffectiveInterpolation(interpolation), &offset);
+		if(img.isNull()) {
+			qWarning(
+				"TransformModel::applyTransformRegion: could not transform "
+				"image: %s",
+				DP_error());
+		} else {
+			applyCut(msgs, contextId, sourceId, srcX, srcY, srcW, srcH, mask);
+			applyOpacityToImage(img);
+			net::makePutImageMessages(
+				msgs, contextId, layerId, m_blendMode, offset.x(), offset.y(),
+				img);
+		}
+	} else {
+		msgs.append(net::makeTransformRegionMessage(
+			contextId, layerId, sourceId, srcX, srcY, srcW, srcH, dstTopLeftX,
+			dstTopLeftY, dstTopRightX, dstTopRightY, dstBottomRightX,
+			dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
+			getEffectiveInterpolation(interpolation), mask));
+	}
+}
+
+bool TransformModel::needsCutAndPaste() const
+{
+	return m_blendMode != int(DP_BLEND_MODE_NORMAL) || m_opacity < 1.0;
+}
+
+void TransformModel::applyCut(
+	QVector<net::Message> &msgs, unsigned int contextId, int sourceId, int srcX,
+	int srcY, int srcW, int srcH, const QImage &mask) const
+{
+	if(mask.isNull()) {
+		msgs.append(net::makeFillRectMessage(
+			contextId, sourceId, DP_BLEND_MODE_ERASE, srcX, srcY, srcW, srcH,
+			Qt::black));
+	} else {
+		net::makePutImageMessages(
+			msgs, contextId, sourceId, DP_BLEND_MODE_ERASE, srcX, srcY, mask);
+	}
+}
+
 QVector<net::Message> TransformModel::applyFloating(
 	bool disguiseAsPutImage, uint8_t contextId, int layerId, int interpolation,
 	bool compatibilityMode, bool stamp, bool *outMovedSelection)
@@ -381,6 +476,8 @@ QVector<net::Message> TransformModel::applyFloating(
 		return {};
 	}
 
+	applyOpacityToImage(transformedImage);
+
 	QVector<net::Message> msgs;
 	if(m_stamped && !stamp) {
 		msgs = applyFromCanvas(
@@ -396,7 +493,7 @@ QVector<net::Message> TransformModel::applyFloating(
 	}
 
 	net::makePutImageMessages(
-		msgs, contextId, layerId, DP_BLEND_MODE_NORMAL, offset.x(), offset.y(),
+		msgs, contextId, layerId, m_blendMode, offset.x(), offset.y(),
 		transformedImage);
 
 	return msgs;
@@ -415,6 +512,8 @@ void TransformModel::clear()
 	m_mask = QImage();
 	m_floatingImage = QImage();
 	m_layerImages.clear();
+	m_blendMode = DP_BLEND_MODE_NORMAL;
+	m_opacity = 1.0;
 }
 
 void TransformModel::updateLayerIds()
@@ -453,6 +552,12 @@ void TransformModel::setLayers(const QSet<int> &layerIds)
 
 QImage TransformModel::getLayerImage(int layerId) const
 {
+	return getLayerImageWithMask(layerId, m_mask);
+}
+
+QImage
+TransformModel::getLayerImageWithMask(int layerId, const QImage &mask) const
+{
 	drawdance::CanvasState canvasState =
 		m_canvas->paintEngine()->viewCanvasState();
 	QRect rect = QRect(QPoint(), canvasState.size()).intersected(m_srcBounds);
@@ -462,7 +567,7 @@ QImage TransformModel::getLayerImage(int layerId) const
 		if(drawdance::LayerContent *layerContent =
 			   std::get_if<drawdance::LayerContent>(&lsr.data)) {
 			QImage img = layerContent->toImage(rect);
-			applyMaskToImage(img);
+			applyMaskToImage(img, mask);
 			if(!isImageBlank(img)) {
 				return img;
 			}
@@ -486,19 +591,29 @@ QImage TransformModel::getMergedImage() const
 			DP_ViewModeFilter vmf =
 				DP_view_mode_filter_make_callback(&callback);
 			QImage img = canvasState.toFlatImage(false, false, &rect, &vmf);
-			applyMaskToImage(img);
+			applyMaskToImage(img, m_mask);
 			return img;
 		}
 	}
 	return QImage();
 }
 
-void TransformModel::applyMaskToImage(QImage &img) const
+void TransformModel::applyMaskToImage(QImage &img, const QImage &mask)
 {
-	if(!m_mask.isNull()) {
+	if(!mask.isNull()) {
 		QPainter mp(&img);
 		mp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-		mp.drawImage(0, 0, m_mask);
+		mp.drawImage(0, 0, mask);
+	}
+}
+
+void TransformModel::applyOpacityToImage(QImage &img) const
+{
+	if(m_opacity < 1.0) {
+		QPainter p(&img);
+		p.setOpacity(m_opacity);
+		p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+		p.fillRect(img.rect(), Qt::black);
 	}
 }
 

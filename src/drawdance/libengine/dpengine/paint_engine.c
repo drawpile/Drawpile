@@ -2518,9 +2518,9 @@ void DP_paint_engine_preview_cut(DP_PaintEngine *pe, int x, int y, int width,
 }
 
 void DP_paint_engine_preview_transform(
-    DP_PaintEngine *pe, int id, int layer_id, int x, int y, int width,
-    int height, const DP_Quad *dst_quad, int interpolation,
-    DP_PreviewTransformGetPixelsFn get_pixels,
+    DP_PaintEngine *pe, int id, int layer_id, int blend_mode, uint16_t opacity,
+    int x, int y, int width, int height, const DP_Quad *dst_quad,
+    int interpolation, DP_PreviewTransformGetPixelsFn get_pixels,
     DP_PreviewTransformDisposePixelsFn dispose_pixels, void *user)
 {
     DP_ASSERT(dispose_pixels);
@@ -2529,8 +2529,8 @@ void DP_paint_engine_preview_transform(
         int offset_x = DP_canvas_state_offset_x(cs);
         int offset_y = DP_canvas_state_offset_y(cs);
         DP_Preview *pv = DP_preview_new_transform(
-            id, offset_x, offset_y, layer_id, x, y, width, height, dst_quad,
-            interpolation, get_pixels, dispose_pixels, user);
+            id, offset_x, offset_y, layer_id, blend_mode, opacity, x, y, width,
+            height, dst_quad, interpolation, get_pixels, dispose_pixels, user);
         DP_preview_renderer_push_noinc(
             pe->preview_renderer, pv, DP_canvas_state_width(cs),
             DP_canvas_state_height(cs), offset_x, offset_y);

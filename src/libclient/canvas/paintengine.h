@@ -238,8 +238,8 @@ public:
 		const QSet<int> &layerIds, const QRect &bounds, const QImage &mask);
 	void clearCutPreview();
 	void previewTransform(
-		int id, int layerId, int x, int y, const QImage &img,
-		const QPolygon &dstPolygon, int interpolation);
+		int id, int layerId, int blendMode, qreal opacity, int x, int y,
+		const QImage &img, const QPolygon &dstPolygon, int interpolation);
 	void clearTransformPreview(int id);
 	void clearAllTransformPreviews();
 	void previewDabs(int layerId, const net::MessageList &msgs);

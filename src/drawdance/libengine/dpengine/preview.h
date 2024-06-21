@@ -67,8 +67,9 @@ DP_Preview *DP_preview_new_cut(int initial_offset_x, int initial_offset_y,
                                int layer_id_count, const int *layer_ids);
 
 DP_Preview *DP_preview_new_transform(
-    int id, int initial_offset_x, int initial_offset_y, int layer_id, int x,
-    int y, int width, int height, const DP_Quad *dst_quad, int interpolation,
+    int id, int initial_offset_x, int initial_offset_y, int layer_id,
+    int blend_mode, uint16_t opacity, int x, int y, int width, int height,
+    const DP_Quad *dst_quad, int interpolation,
     DP_PreviewTransformGetPixelsFn get_pixels,
     DP_PreviewTransformDisposePixelsFn dispose_pixels, void *user);
 

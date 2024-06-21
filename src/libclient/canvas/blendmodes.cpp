@@ -210,7 +210,7 @@ QVector<Named> layerModeNames()
 	return modeNames(LayerMode);
 }
 
-QVector<Named> fillModeNames()
+QVector<Named> pasteModeNames()
 {
 	return modeNames(0xff); // Fill tool supports all modes.
 }

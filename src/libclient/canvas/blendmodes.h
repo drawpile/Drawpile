@@ -38,8 +38,8 @@ namespace blendmode {
 	//! Get a list of layer blend modes and their translated names
 	QVector<Named> layerModeNames();
 
-	//! Get a list of fill tool blend modes and their translated names
-	QVector<Named> fillModeNames();
+	//! Get a list of paste/fill blend modes and their translated names
+	QVector<Named> pasteModeNames();
 
 	bool isValidBrushMode(DP_BlendMode mode);
 	bool isValidEraseMode(DP_BlendMode mode);

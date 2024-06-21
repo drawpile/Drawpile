@@ -72,7 +72,7 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 		m_ui->areaSelection, int(FloodFill::Area::Selection));
 
 	for(const canvas::blendmode::Named &named :
-		canvas::blendmode::fillModeNames()) {
+		canvas::blendmode::pasteModeNames()) {
 		m_ui->blendModeCombo->addItem(named.name, int(named.mode));
 	}
 

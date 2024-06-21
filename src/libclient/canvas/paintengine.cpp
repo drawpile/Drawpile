@@ -661,11 +661,11 @@ void PaintEngine::clearCutPreview()
 }
 
 void PaintEngine::previewTransform(
-	int id, int layerId, int x, int y, const QImage &img,
-	const QPolygon &dstPolygon, int interpolation)
+	int id, int layerId, int blendMode, qreal opacity, int x, int y,
+	const QImage &img, const QPolygon &dstPolygon, int interpolation)
 {
 	m_paintEngine.previewTransform(
-		id, layerId, x, y, img, dstPolygon, interpolation);
+		id, layerId, blendMode, opacity, x, y, img, dstPolygon, interpolation);
 }
 
 void PaintEngine::clearTransformPreview(int id)

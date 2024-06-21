@@ -393,8 +393,8 @@ void PaintEngine::clearCutPreview()
 }
 
 void PaintEngine::previewTransform(
-	int id, int layerId, int x, int y, const QImage &img,
-	const QPolygon &dstPolygon, int interpolation)
+	int id, int layerId, int blendMode, qreal opacity, int x, int y,
+	const QImage &img, const QPolygon &dstPolygon, int interpolation)
 {
 	if(id >= 0 && id < DP_PREVIEW_TRANSFORM_COUNT) {
 		QPoint p1 = dstPolygon.point(0);
@@ -404,9 +404,11 @@ void PaintEngine::previewTransform(
 		DP_Quad dstQuad = DP_quad_make(
 			p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y(), p4.x(), p4.y());
 		DP_paint_engine_preview_transform(
-			m_data, id, layerId, x, y, img.width(), img.height(), &dstQuad,
-			interpolation, getTransformPreviewPixels,
-			disposeTransformPreviewPixels, new QImage{img});
+			m_data, id, layerId, blendMode,
+			DP_channel_float_to_15(qBound(0.0, opacity, 1.0)), x, y,
+			img.width(), img.height(), &dstQuad, interpolation,
+			getTransformPreviewPixels, disposeTransformPreviewPixels,
+			new QImage{img});
 	} else {
 		qWarning("Invalid preview transform id %d", id);
 	}

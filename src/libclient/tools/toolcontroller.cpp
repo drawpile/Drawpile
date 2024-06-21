@@ -296,6 +296,8 @@ void ToolController::updateTransformPreview()
 		   transform->isPreviewAccurate()) {
 			QPoint point =
 				transform->dstQuad().boundingRect().topLeft().toPoint();
+			int blendMode = transform->blendMode();
+			qreal opacity = transform->opacity();
 			int x = point.x();
 			int y = point.y();
 			QPolygon dstPolygon = transform->dstQuad().polygon().toPolygon();
@@ -310,23 +312,23 @@ void ToolController::updateTransformPreview()
 						transform->layerImage(singleLayerMoveId);
 					if(!layerImage.isNull()) {
 						paintEngine->previewTransform(
-							idsUsed++, m_activeLayer, x, y, layerImage,
-							dstPolygon, interpolation);
+							idsUsed++, m_activeLayer, blendMode, opacity, x, y,
+							layerImage, dstPolygon, interpolation);
 					}
 				} else {
 					for(int layerId : transform->layerIds()) {
 						QImage layerImage = transform->layerImage(layerId);
 						if(!layerImage.isNull()) {
 							paintEngine->previewTransform(
-								idsUsed++, layerId, x, y, layerImage,
-								dstPolygon, interpolation);
+								idsUsed++, layerId, blendMode, opacity, x, y,
+								layerImage, dstPolygon, interpolation);
 						}
 					}
 				}
 			} else {
 				paintEngine->previewTransform(
-					idsUsed++, m_activeLayer, x, y, transform->floatingImage(),
-					dstPolygon, interpolation);
+					idsUsed++, m_activeLayer, blendMode, opacity, x, y,
+					transform->floatingImage(), dstPolygon, interpolation);
 			}
 
 			for(int i = idsUsed; i < m_transformPreviewIdsUsed; ++i) {

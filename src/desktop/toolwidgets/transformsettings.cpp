@@ -2,13 +2,17 @@
 #include "desktop/toolwidgets/transformsettings.h"
 #include "desktop/view/canvaswrapper.h"
 #include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
+#include "libclient/canvas/blendmodes.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/transformmodel.h"
+#include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
 #include "libclient/tools/transform.h"
 #include <QAction>
 #include <QButtonGroup>
+#include <QComboBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -42,6 +46,8 @@ void TransformSettings::setCompatibilityMode(bool compatibilityMode)
 	for(QAbstractButton *button : m_interpolationGroup->buttons()) {
 		button->setDisabled(compatibilityMode);
 	}
+	m_blendModeCombo->setDisabled(compatibilityMode);
+	m_opacitySlider->setDisabled(compatibilityMode);
 }
 
 void TransformSettings::setActions(
@@ -253,6 +259,27 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
 		&TransformSettings::pushSettings);
 
+	m_blendModeCombo = new QComboBox;
+	for(const canvas::blendmode::Named &named :
+		canvas::blendmode::pasteModeNames()) {
+		m_blendModeCombo->addItem(named.name, int(named.mode));
+	}
+	selectBlendMode(DP_BLEND_MODE_NORMAL);
+	layout->addRow(tr("Mode:"), m_blendModeCombo);
+	connect(
+		m_blendModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, &TransformSettings::updateBlendMode);
+
+	m_opacitySlider = new KisSliderSpinBox;
+	m_opacitySlider->setRange(1, 100);
+	m_opacitySlider->setPrefix(tr("Opacity: "));
+	m_opacitySlider->setSuffix(tr("%"));
+	m_opacitySlider->setValue(100);
+	layout->addRow(m_opacitySlider);
+	connect(
+		m_opacitySlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &TransformSettings::updateOpacity);
+
 	m_applyButton = new QPushButton(
 		widget->style()->standardIcon(QStyle::SP_DialogApplyButton),
 		tr("Apply"));
@@ -318,9 +345,16 @@ void TransformSettings::stamp()
 void TransformSettings::setModel(canvas::CanvasModel *canvas)
 {
 	if(canvas) {
+		canvas::TransformModel *transform = canvas->transform();
 		connect(
-			canvas->transform(), &canvas::TransformModel::transformChanged,
-			this, &TransformSettings::updateEnabled);
+			transform, &canvas::TransformModel::transformChanged, this,
+			&TransformSettings::updateEnabled);
+		connect(
+			this, &TransformSettings::blendModeChanged, transform,
+			&canvas::TransformModel::setBlendMode);
+		connect(
+			this, &TransformSettings::opacityChanged, transform,
+			&canvas::TransformModel::setOpacity);
 	}
 	updateEnabledFrom(canvas);
 }
@@ -335,11 +369,14 @@ void TransformSettings::updateEnabledFrom(canvas::CanvasModel *canvas)
 	if(m_applyButton) {
 		canvas::TransformModel *transform =
 			canvas ? canvas->transform() : nullptr;
+		bool compatibilityMode = controller()->client()->isCompatibilityMode();
 
 		bool haveTransform = transform && transform->isActive();
 		bool canApplyTransform = haveTransform && transform->isDstQuadValid();
 		m_scaleButton->setEnabled(haveTransform);
 		m_distortButton->setEnabled(haveTransform);
+		m_blendModeCombo->setEnabled(haveTransform && !compatibilityMode);
+		m_opacitySlider->setEnabled(haveTransform && !compatibilityMode);
 		m_applyButton->setEnabled(canApplyTransform);
 		m_cancelButton->setEnabled(haveTransform);
 
@@ -356,6 +393,11 @@ void TransformSettings::updateEnabledFrom(canvas::CanvasModel *canvas)
 			m_fastButton->setVisible(canChangePreview);
 			m_pseudoFastButton->setVisible(!canChangePreview);
 		}
+
+		if(transform) {
+			selectBlendMode(transform->blendMode());
+			setOpacity(transform->opacity());
+		}
 	}
 }
 
@@ -366,6 +408,32 @@ void TransformSettings::updateHandles(int mode)
 		QSignalBlocker blocker(m_handlesGroup);
 		button->setChecked(true);
 	}
+}
+
+void TransformSettings::updateBlendMode(int index)
+{
+	emit blendModeChanged(m_blendModeCombo->itemData(index).toInt());
+}
+
+void TransformSettings::selectBlendMode(int blendMode)
+{
+	int count = m_blendModeCombo->count();
+	for(int i = 0; i < count; ++i) {
+		if(m_blendModeCombo->itemData(i).toInt() == blendMode) {
+			m_blendModeCombo->setCurrentIndex(i);
+			break;
+		}
+	}
+}
+
+void TransformSettings::updateOpacity(int value)
+{
+	emit opacityChanged(value / 100.0);
+}
+
+void TransformSettings::setOpacity(qreal opacity)
+{
+	m_opacitySlider->setValue(qRound(opacity * 100.0));
 }
 
 TransformTool *TransformSettings::tool()

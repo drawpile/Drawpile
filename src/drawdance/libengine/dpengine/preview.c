@@ -460,8 +460,9 @@ static void preview_transform_dispose(DP_Preview *pv)
 }
 
 DP_Preview *DP_preview_new_transform(
-    int id, int initial_offset_x, int initial_offset_y, int layer_id, int x,
-    int y, int width, int height, const DP_Quad *dst_quad, int interpolation,
+    int id, int initial_offset_x, int initial_offset_y, int layer_id,
+    int blend_mode, uint16_t opacity, int x, int y, int width, int height,
+    const DP_Quad *dst_quad, int interpolation,
     DP_PreviewTransformGetPixelsFn get_pixels,
     DP_PreviewTransformDisposePixelsFn dispose_pixels, void *user)
 {
@@ -473,10 +474,10 @@ DP_Preview *DP_preview_new_transform(
     DP_ASSERT(get_pixels);
     DP_ASSERT(dispose_pixels);
     DP_PreviewTransform *pvtf = DP_malloc(sizeof(*pvtf));
-    init_preview(&pvtf->parent, DP_PREVIEW_TRANSFORM_FIRST + id,
-                 DP_BLEND_MODE_NORMAL, DP_BIT15, initial_offset_x,
-                 initial_offset_y, preview_transform_get_layer_ids,
-                 preview_transform_render, preview_transform_dispose);
+    init_preview(&pvtf->parent, DP_PREVIEW_TRANSFORM_FIRST + id, blend_mode,
+                 opacity, initial_offset_x, initial_offset_y,
+                 preview_transform_get_layer_ids, preview_transform_render,
+                 preview_transform_dispose);
     pvtf->layer_id = layer_id;
     pvtf->x = x;
     pvtf->y = y;
