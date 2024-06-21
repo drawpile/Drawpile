@@ -11,6 +11,7 @@
 #include "ui_fillsettings.h"
 #include <QButtonGroup>
 #include <QIcon>
+#include <QSignalBlocker>
 
 namespace tools {
 
@@ -71,10 +72,7 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	m_areaGroup->addButton(
 		m_ui->areaSelection, int(FloodFill::Area::Selection));
 
-	for(const canvas::blendmode::Named &named :
-		canvas::blendmode::pasteModeNames()) {
-		m_ui->blendModeCombo->addItem(named.name, int(named.mode));
-	}
+	initBlendModeOptions();
 
 	connect(
 		m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this,
@@ -115,6 +113,15 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 		&FillSettings::pushSettings);
 	updateSize();
 	return uiwidget;
+}
+
+void FillSettings::setCompatibilityMode(bool compatibilityMode)
+{
+	if((compatibilityMode && !m_compatibilityMode) ||
+	   (!compatibilityMode && m_compatibilityMode)) {
+		m_compatibilityMode = compatibilityMode;
+		initBlendModeOptions();
+	}
 }
 
 void FillSettings::pushSettings()
@@ -316,6 +323,29 @@ int FillSettings::calculatePixelSize(int size) const
 		m_haveSelection || isSizeUnlimited(size) ||
 		m_areaGroup->checkedId() == int(FloodFill::Area::Selection);
 	return unlimited ? 0 : size * 2 + 1;
+}
+
+void FillSettings::initBlendModeOptions()
+{
+	int selectedBlendMode = m_ui->blendModeCombo->count() == 0
+								? DP_BLEND_MODE_NORMAL
+								: m_ui->blendModeCombo->currentData().toInt();
+	{
+		QSignalBlocker blocker(m_ui->blendModeCombo);
+		m_ui->blendModeCombo->clear();
+		for(const canvas::blendmode::Named &named :
+			canvas::blendmode::pasteModeNames()) {
+			if(!m_compatibilityMode ||
+			   canvas::blendmode::isBackwardCompatibleMode(named.mode)) {
+				m_ui->blendModeCombo->addItem(named.name, int(named.mode));
+			}
+		}
+	}
+	selectBlendMode(
+		!m_compatibilityMode || canvas::blendmode::isBackwardCompatibleMode(
+									DP_BlendMode(selectedBlendMode))
+			? selectedBlendMode
+			: DP_BLEND_MODE_NORMAL);
 }
 
 void FillSettings::selectBlendMode(int blendMode)

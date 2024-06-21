@@ -38,6 +38,8 @@ public:
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;
 
+	void setCompatibilityMode(bool compatibilityMode);
+
 signals:
 	void pixelSizeChanged(int size);
 
@@ -56,6 +58,7 @@ private:
 	static bool isSizeUnlimited(int size);
 	int calculatePixelSize(int size) const;
 
+	void initBlendModeOptions();
 	void selectBlendMode(int blendMode);
 
 	Ui_FillSettings *m_ui = nullptr;
@@ -65,6 +68,7 @@ private:
 	int m_previousEraseMode;
 	qreal m_quickAdjust1 = 0.0;
 	bool m_haveSelection = false;
+	bool m_compatibilityMode = false;
 };
 
 }

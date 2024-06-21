@@ -2683,6 +2683,7 @@ void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 void MainWindow::onCompatibilityModeChanged(bool compatibilityMode)
 {
 	m_dockToolSettings->brushSettings()->setCompatibilityMode(compatibilityMode);
+	m_dockToolSettings->fillSettings()->setCompatibilityMode(compatibilityMode);
 	m_dockToolSettings->transformSettings()->setCompatibilityMode(compatibilityMode);
 }
 
