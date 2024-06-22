@@ -691,7 +691,7 @@ struct DP_PickFrameContext {
 static void pick_frame_layer(void *user, int layer_id, bool visible)
 {
     struct DP_PickFrameContext *c = user;
-    if (visible && !c->found) {
+    if (visible) {
         DP_CanvasState *cs = c->cs;
         DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
         DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);

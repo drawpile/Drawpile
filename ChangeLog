@@ -78,6 +78,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Behind blend mode now does opacity math correctly. Thanks Blozzom for reporting.
  * Fix: Allow cancelling fill tool with right-click even when that's bound to something else. Thanks SadColor for reporting.
  * Feature: The fill tool now previews fills instead of doing them immediately, allowing cancelling and changing layers before applying it. You can also pick more blend modes, change the opacity and fill the entire selection with it now.
+ * Fix: Make layer picking work properly in frame mode, it picked the bottom-most instead of the top-most one.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.
