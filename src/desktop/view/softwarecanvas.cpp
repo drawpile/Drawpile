@@ -149,9 +149,9 @@ struct SoftwareCanvas::Private {
 					painter->setPen(pen);
 
 					int left = exposed.left();
-					int right = exposed.right() + 1;
+					int right = exposed.right();
 					int top = exposed.top();
-					int bottom = exposed.bottom() + 1;
+					int bottom = exposed.bottom();
 					for(int x = left; x < right; ++x) {
 						painter->drawLine(x, top, x, bottom);
 					}
