@@ -32,6 +32,7 @@ SETTING(serverDnssd                 , ServerDnssd                 , "settings/se
 SETTING(serverPrivateUserList       , ServerPrivateUserList       , "settings/server/privateUserList"       , false)
 SETTING(serverPort                  , ServerPort                  , "settings/server/port"                  , cmake_config::proto::port())
 SETTING(serverTimeout               , ServerTimeout               , "settings/server/timeout"               , 60)
+SETTING(showFillNotices             , ShowFillNotices             , "settings/showfillnotices"              , true)
 SETTING(smoothing                   , Smoothing                   , "settings/input/smooth"                 , defaultSmoothing)
 
 #include "libclient/settings_table_macros.h"

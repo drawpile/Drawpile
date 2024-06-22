@@ -32,6 +32,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_drawing(false)
 	, m_applyGlobalSmoothing(true)
 	, m_mouseSmoothing(false)
+	, m_showFillNotices(true)
 	, m_globalSmoothing(0)
 	, m_interpolateInputs(false)
 	, m_stabilizationMode(brushes::Stabilizer)
@@ -383,6 +384,11 @@ void ToolController::setGlobalSmoothing(int smoothing)
 void ToolController::setMouseSmoothing(bool mouseSmoothing)
 {
 	m_mouseSmoothing = mouseSmoothing;
+}
+
+void ToolController::setShowFillNotices(bool showFillNotices)
+{
+	m_showFillNotices = showFillNotices;
 }
 
 void ToolController::updateSmoothing()

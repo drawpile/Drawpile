@@ -291,34 +291,37 @@ void FloodFill::previewPending()
 						layerId, m_blendMode, m_opacity, m_pendingPos.x(),
 						m_pendingPos.y(), m_pendingImage);
 
-					QString areaText;
-					switch(m_pendingArea) {
-					case Area::Continuous:
-						areaText = QCoreApplication::translate(
-							"FillSettings", "Continuous fill");
-						break;
-					case Area::Similar:
-						areaText = QCoreApplication::translate(
-							"FillSettings", "Similar color fill");
-						break;
-					case Area::Selection:
-						areaText = QCoreApplication::translate(
-							"FillSettings", "Selection fill");
-						break;
+					if(m_owner.showFillNotices()) {
+						QString areaText;
+						switch(m_pendingArea) {
+						case Area::Continuous:
+							areaText = QCoreApplication::translate(
+								"FillSettings", "Continuous fill");
+							break;
+						case Area::Similar:
+							areaText = QCoreApplication::translate(
+								"FillSettings", "Similar color fill");
+							break;
+						case Area::Selection:
+							areaText = QCoreApplication::translate(
+								"FillSettings", "Selection fill");
+							break;
+						}
+						toolNoticeText =
+							QCoreApplication::translate(
+								"FillSettings",
+								"%1, %2 by %3 pixels.\n"
+								"%4 at %5% opacity on %6.\n"
+								"Click to apply, undo to cancel.")
+								.arg(
+									areaText,
+									QString::number(m_pendingImage.width()),
+									QString::number(m_pendingImage.height()),
+									canvas::blendmode::translatedName(
+										m_blendMode),
+									QString::number(qRound(m_opacity * 100.0)),
+									layerTitle);
 					}
-
-					toolNoticeText =
-						QCoreApplication::translate(
-							"FillSettings", "%1, %2 by %3 pixels.\n"
-											"%4 at %5% opacity on %6.\n"
-											"Click to apply, undo to cancel.")
-							.arg(
-								areaText,
-								QString::number(m_pendingImage.width()),
-								QString::number(m_pendingImage.height()),
-								canvas::blendmode::translatedName(m_blendMode),
-								QString::number(qRound(m_opacity * 100.0)),
-								layerTitle);
 				}
 			}
 		} else {

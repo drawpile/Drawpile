@@ -122,6 +122,8 @@ public:
 	int globalSmoothing() const { return m_globalSmoothing; }
 
 	void setMouseSmoothing(bool mouseSmoothing);
+	void setShowFillNotices(bool showFillNotices);
+	bool showFillNotices() const { return m_showFillNotices; }
 
 	void setTransformParams(bool accurate, int interpolation);
 	int transformInterpolation() const { return m_transformInterpolation; }
@@ -258,6 +260,7 @@ private:
 	bool m_drawing;
 	bool m_applyGlobalSmoothing;
 	bool m_mouseSmoothing;
+	bool m_showFillNotices;
 
 	int m_globalSmoothing;
 	bool m_interpolateInputs;

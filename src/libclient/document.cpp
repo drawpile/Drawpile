@@ -74,6 +74,8 @@ Document::Document(
 		m_toolctrl, &tools::ToolController::setInterpolateInputs);
 	m_settings.bindMouseSmoothing(
 		m_toolctrl, &tools::ToolController::setMouseSmoothing);
+	m_settings.bindShowFillNotices(
+		m_toolctrl, &tools::ToolController::setShowFillNotices);
 	m_banlist = new net::BanlistModel(this);
 	m_authList = new net::AuthListModel(this);
 	m_announcementlist =

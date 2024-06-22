@@ -144,6 +144,16 @@ void UserInterface::initMiscellaneous(
 			CHECKER_COLOR2_DEFAULT);
 	});
 
+	QCheckBox *showTransformNotices =
+		new QCheckBox(tr("Zoom, rotate, mirror and flip notices"));
+	settings.bindShowTransformNotices(showTransformNotices);
+	form->addRow(tr("On-canvas notices:"), showTransformNotices);
+
+	QCheckBox *showFillNotices =
+		new QCheckBox(tr("Fill and magic wand confirmation"));
+	settings.bindShowFillNotices(showFillNotices);
+	form->addRow(nullptr, showFillNotices);
+
 	QCheckBox *scrollBars = new QCheckBox(tr("Show scroll bars on canvas"));
 	settings.bindCanvasScrollBars(scrollBars);
 	form->addRow(tr("Miscellaneous:"), scrollBars);
@@ -155,11 +165,6 @@ void UserInterface::initMiscellaneous(
 	QCheckBox *confirmDelete = new QCheckBox(tr("Ask before deleting layers"));
 	settings.bindConfirmLayerDelete(confirmDelete);
 	form->addRow(nullptr, confirmDelete);
-
-	QCheckBox *showTransformNotices =
-		new QCheckBox(tr("Show zoom, rotate, mirror and flip notices"));
-	settings.bindShowTransformNotices(showTransformNotices);
-	form->addRow(nullptr, showTransformNotices);
 }
 
 void UserInterface::initRequiringRestart(

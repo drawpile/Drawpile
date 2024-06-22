@@ -202,7 +202,7 @@ void MagicWandTool::floodFillFinished(Task *task)
 void MagicWandTool::updateToolNotice()
 {
 	QString toolNoticeText;
-	if(havePending()) {
+	if(havePending() && m_owner.showFillNotices()) {
 		toolNoticeText =
 			QCoreApplication::translate(
 				"MagicWandSettings", "%1 by %2 pixels, %3% opacity.\n"
