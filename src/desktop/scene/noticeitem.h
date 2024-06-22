@@ -20,6 +20,8 @@ public:
 
 	bool setPersist(qreal seconds);
 
+	bool setOpacity(qreal opacity);
+
 	bool animationStep(qreal dt);
 
 protected:
@@ -36,6 +38,7 @@ private:
 	QRectF m_bounds;
 	QString m_text;
 	qreal m_persist;
+	qreal m_opacity = 1.0;
 };
 
 }

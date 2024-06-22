@@ -48,6 +48,17 @@ bool NoticeItem::setPersist(qreal seconds)
 	return changed;
 }
 
+bool NoticeItem::setOpacity(qreal opacity)
+{
+	if(opacity != m_opacity) {
+		m_opacity = opacity;
+		refresh();
+		return true;
+	} else {
+		return false;
+	}
+}
+
 bool NoticeItem::animationStep(qreal dt)
 {
 	if(m_persist < 0.0) {
@@ -70,11 +81,17 @@ void NoticeItem::paint(
 	QPalette palette = qApp->palette();
 	painter->setPen(Qt::NoPen);
 	painter->setBrush(palette.base());
+	if(m_opacity < 1.0) {
+		painter->setOpacity(m_opacity);
+	}
 	painter->drawRect(m_bounds);
 
 	painter->setFont(qApp->font());
 	painter->setPen(palette.text().color());
 	painter->setBrush(Qt::NoBrush);
+	if(m_opacity < 1.0) {
+		painter->setOpacity(1.0);
+	}
 	painter->drawText(m_textBounds, Qt::AlignLeft | Qt::AlignVCenter, m_text);
 }
 

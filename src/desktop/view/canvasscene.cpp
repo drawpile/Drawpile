@@ -460,6 +460,7 @@ void CanvasScene::setToolNotice(const QString &text)
 			}
 		} else {
 			m_toolNotice = new NoticeItem(text);
+			m_toolNotice->setOpacity(0.7);
 			m_toolNotice->setZValue(BaseItem::Z_TOOL_NOTICE);
 			addSceneItem(m_toolNotice);
 			setToolNoticePosition(true);
