@@ -86,6 +86,7 @@ public:
 	AnnotationItem *getAnnotationItem(int id);
 
 	void setSelectionIgnored(bool selectionIgnored);
+	void setShowSelectionMask(bool showSelectionMask);
 
 	void setTransformToolState(int mode, int handle, bool dragging);
 
@@ -221,6 +222,7 @@ private:
 	bool m_showOwnUserMarker;
 	bool m_cursorOnCanvas;
 	bool m_selectionIgnored;
+	bool m_showSelectionMask;
 	int m_userMarkerPersistence;
 	qreal m_zoom = 1.0;
 	QPointF m_cursorPos;

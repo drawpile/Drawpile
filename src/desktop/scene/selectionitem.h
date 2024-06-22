@@ -18,7 +18,7 @@ class SelectionItem final : public BaseObject {
 public:
 	enum { Type = SelectionType };
 
-	SelectionItem(bool ignored, QGraphicsItem *parent = nullptr);
+	SelectionItem(bool ignored, bool showMask, QGraphicsItem *parent = nullptr);
 
 	int type() const override { return Type; }
 
@@ -29,6 +29,7 @@ public:
 	void setTransparentDelay(qreal transparentDelay);
 
 	void setIgnored(bool ignored);
+	void setShowMask(bool showMask);
 
 	void animationStep(qreal dt);
 
@@ -53,6 +54,7 @@ private:
 	qreal m_transparentDelay = 0.0;
 	unsigned int m_executionId = 0;
 	bool m_ignored;
+	bool m_showMask;
 };
 
 }

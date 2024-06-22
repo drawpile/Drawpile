@@ -360,6 +360,14 @@ void CanvasScene::setSelectionIgnored(bool selectionIgnored)
 	}
 }
 
+void CanvasScene::setShowSelectionMask(bool showSelectionMask)
+{
+	m_showSelectionMask = showSelectionMask;
+	if(m_selection) {
+		m_selection->setShowMask(showSelectionMask);
+	}
+}
+
 void CanvasScene::setTransformToolState(int mode, int handle, bool dragging)
 {
 	if(m_transform) {
@@ -431,7 +439,8 @@ void CanvasScene::setSelection(
 {
 	if(valid) {
 		if(!m_selection) {
-			m_selection = new SelectionItem(m_selectionIgnored, m_group);
+			m_selection = new SelectionItem(
+				m_selectionIgnored, m_showSelectionMask, m_group);
 			m_selection->setUpdateSceneOnRefresh(true);
 		}
 		m_selection->setModel(bounds, mask);

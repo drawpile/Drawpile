@@ -73,6 +73,7 @@ public:
 	void setShowOwnUserMarker(bool showOwnUserMarker);
 	void setShowLaserTrails(bool showLaserTrails);
 	void setShowToggleItems(bool showToggleItems);
+	void setShowSelectionMask(bool showSelectionMask);
 	void setUserMarkerPersistence(int userMarkerPersistence);
 
 	void setMaskPreview(const QPoint &pos, const QImage &mask);
@@ -157,6 +158,7 @@ private:
 	bool m_showLaserTrails = true;
 	bool m_cursorOnCanvas = false;
 	bool m_selectionIgnored = false;
+	bool m_showSelectionMask = false;
 	int m_userMarkerPersistence = 1000;
 	qreal m_zoom = 1.0;
 	QPointF m_cursorPos;

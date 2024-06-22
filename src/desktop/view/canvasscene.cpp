@@ -263,6 +263,14 @@ void CanvasScene::setShowToggleItems(bool showToggleItems)
 	}
 }
 
+void CanvasScene::setShowSelectionMask(bool showSelectionMask)
+{
+	m_showSelectionMask = showSelectionMask;
+	if(m_selection) {
+		m_selection->setShowMask(showSelectionMask);
+	}
+}
+
 void CanvasScene::setUserMarkerPersistence(int userMarkerPersistence)
 {
 	if(userMarkerPersistence != m_userMarkerPersistence) {
@@ -616,7 +624,8 @@ void CanvasScene::setSelection(
 {
 	if(valid) {
 		if(!m_selection) {
-			m_selection = new SelectionItem(m_selectionIgnored, m_canvasGroup);
+			m_selection = new SelectionItem(
+				m_selectionIgnored, m_showSelectionMask, m_canvasGroup);
 			m_selection->setUpdateSceneOnRefresh(true);
 		}
 		m_selection->setModel(bounds, mask);

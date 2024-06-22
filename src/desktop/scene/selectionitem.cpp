@@ -7,9 +7,10 @@
 
 namespace drawingboard {
 
-SelectionItem::SelectionItem(bool ignored, QGraphicsItem *parent)
+SelectionItem::SelectionItem(bool ignored, bool showMask, QGraphicsItem *parent)
 	: BaseObject(parent)
 	, m_ignored(ignored)
+	, m_showMask(showMask)
 {
 }
 
@@ -59,6 +60,14 @@ void SelectionItem::setIgnored(bool ignored)
 	}
 }
 
+void SelectionItem::setShowMask(bool showMask)
+{
+	if(m_showMask != showMask) {
+		m_showMask = showMask;
+		refresh();
+	}
+}
+
 void SelectionItem::animationStep(qreal dt)
 {
 	bool havePath = !m_path.isEmpty();
@@ -69,9 +78,6 @@ void SelectionItem::animationStep(qreal dt)
 		if(havePath) {
 			m_maskOpacity -= dt * 5.0;
 			needsRefresh = true;
-			if(m_maskOpacity <= 0.0) {
-				m_mask = QImage();
-			}
 		} else if(m_maskOpacity < 1.0) {
 			// Generating a mask for a large selection can take a while, which
 			// leads to the animation lurching ahead. We mitigate that by
@@ -110,29 +116,34 @@ void SelectionItem::paint(
 	Q_UNUSED(opt);
 	Q_UNUSED(widget);
 	if(m_transparentDelay <= 0.0) {
-		if(m_maskOpacity > 0.01) {
-			qreal opa = m_maskOpacity * m_maskOpacity;
-			painter->setOpacity(opa * 0.5);
+		if(m_showMask) {
+			painter->setOpacity(0.5);
 			painter->drawImage(QPointF(0.0, 0.0), m_mask);
-			painter->setOpacity((1.0 - opa));
-		}
-
-		if(!m_path.isEmpty()) {
-			QPen pen;
-			pen.setWidth(painter->device()->devicePixelRatioF());
-			pen.setCosmetic(true);
-			pen.setColor(m_ignored ? Qt::darkGray : Qt::black);
-			painter->setPen(pen);
-			painter->drawPath(m_path);
-			pen.setDashPattern({4.0, 4.0});
-			if(m_ignored) {
-				pen.setColor(Qt::lightGray);
-			} else {
-				pen.setColor(Qt::white);
-				pen.setDashOffset(m_marchingAnts);
+		} else {
+			if(m_maskOpacity > 0.01) {
+				qreal opa = m_maskOpacity * m_maskOpacity;
+				painter->setOpacity(opa * 0.5);
+				painter->drawImage(QPointF(0.0, 0.0), m_mask);
+				painter->setOpacity((1.0 - opa));
 			}
-			painter->setPen(pen);
-			painter->drawPath(m_path);
+
+			if(!m_path.isEmpty()) {
+				QPen pen;
+				pen.setWidth(painter->device()->devicePixelRatioF());
+				pen.setCosmetic(true);
+				pen.setColor(m_ignored ? Qt::darkGray : Qt::black);
+				painter->setPen(pen);
+				painter->drawPath(m_path);
+				pen.setDashPattern({4.0, 4.0});
+				if(m_ignored) {
+					pen.setColor(Qt::lightGray);
+				} else {
+					pen.setColor(Qt::white);
+					pen.setDashOffset(m_marchingAnts);
+				}
+				painter->setPen(pen);
+				painter->drawPath(m_path);
+			}
 		}
 	}
 }

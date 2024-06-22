@@ -137,6 +137,13 @@ void SceneWrapper::setPointerTracking(bool pointerTracking)
 	m_view->setPointerTracking(pointerTracking);
 }
 
+void SceneWrapper::setShowSelectionMask(bool showSelectionMask)
+{
+	if(m_scene) {
+		m_scene->setShowSelectionMask(showSelectionMask);
+	}
+}
+
 void SceneWrapper::setShowToggleItems(bool showToggleItems)
 {
 	if(m_scene) {

@@ -4129,6 +4129,14 @@ void MainWindow::setupActions()
 	QAction *showlasers = makeAction("showlasers", tr("Show La&ser Trails")).noDefaultShortcut().checked().remembered();
 	QAction *showgrid = makeAction("showgrid", tr("Show Pixel &Grid")).noDefaultShortcut().checked().remembered();
 	QAction *showrulers = makeAction("showrulers", tr("Show &Rulers")).noDefaultShortcut().checkable().remembered();
+	// clang-tidy on
+	QAction *showselectionmask =
+		makeAction("showselectionmask", tr("Show Selection &Mask"))
+		.statusTip(tr("Toggle selection display between a mask and an outline"))
+			.noDefaultShortcut()
+			.checkable()
+			.remembered();
+	// clang-tidy off
 
 #ifdef SINGLE_MAIN_WINDOW
 	QAction *fittoscreen =
@@ -4182,9 +4190,16 @@ void MainWindow::setupActions()
 	});
 	connect(m_chatbox, &widgets::ChatBox::muteChanged, this, &MainWindow::setNotificationsMuted);
 
+	// clang-format on
 	connect(
 		showrulers, &QAction::toggled, m_canvasFrame,
 		&widgets::CanvasFrame::setShowRulers);
+	connect(
+		showselectionmask, &QAction::toggled, this,
+		[this](bool showSelectionMask) {
+			m_canvasView->setShowSelectionMask(showSelectionMask);
+		});
+	// clang-format off
 
 	m_canvasView->connectActions(
 		{moveleft, moveright, moveup, movedown, zoomin, zoomout, zoomorig,
@@ -4292,6 +4307,7 @@ void MainWindow::setupActions()
 
 	viewmenu->addAction(showgrid);
 	viewmenu->addAction(showrulers);
+	viewmenu->addAction(showselectionmask);
 
 	viewmenu->addSeparator();
 #ifdef SINGLE_MAIN_WINDOW
