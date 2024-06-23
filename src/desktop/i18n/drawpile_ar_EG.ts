@@ -7097,58 +7097,58 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>حركات اللمس</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>One-finger input:</source>
-        <translation type="unfinished"></translation>
+        <translation>مدخل الصباع الواحد:</translation>
     </message>
     <message>
         <location line="-50"/>
         <location line="+52"/>
         <source>Do nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>ما تعملش حاجه</translation>
     </message>
     <message>
         <location line="-98"/>
         <source>Capture volume rocker</source>
-        <translation type="unfinished"></translation>
+        <translation>التقاط حجم rocker</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Android:</source>
-        <translation type="unfinished"></translation>
+        <translation>Android:</translation>
     </message>
     <message>
         <location line="+97"/>
         <source>Draw</source>
-        <translation type="unfinished"></translation>
+        <translation>رسم</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pan canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>حرك اللوحه</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Pinch to zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>قرص للتكبير</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Twist to rotate</source>
-        <translation type="unfinished"></translation>
+        <translation>دور صباعين للتكبير</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Touch gestures:</source>
-        <translation type="unfinished"></translation>
+        <translation>حركات اللمس:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Test your tablet here:</source>
-        <translation type="unfinished"></translation>
+        <translation>اختبر جهازك اللوحي هنا:</translation>
     </message>
 </context>
 <context>
@@ -7156,118 +7156,118 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/network.cpp" line="+84"/>
         <source>Hide user list in announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>إخفاء قائمة المستخدمين في الإعلانات</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Builtin server:</source>
-        <translation type="unfinished"></translation>
+        <translation>Builtin سيرفر :</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Announce with Zeroconf</source>
-        <translation type="unfinished"></translation>
+        <translation>أعلن مع Zeroconf</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Host on port %1 if available</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بالمضيف على المنفذ %1 إذا كان متاحًا</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Automatically check for updates</source>
-        <translation type="unfinished"></translation>
+        <translation>ابحث عن التحديثات تلقائيا</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Updates:</source>
-        <translation type="unfinished"></translation>
+        <translation>التحديثات:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Allow insecure local storage</source>
-        <translation type="unfinished"></translation>
+        <translation>السماح بالتخزين المحلي غير الآمن</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Password security:</source>
-        <translation type="unfinished"></translation>
+        <translation>أمان كلمة المرور:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>With this enabled, Drawpile may save passwords in an unencrypted format. Disabling it will forget any insecurely stored passwords.</source>
-        <translation type="unfinished"></translation>
+        <translation>مع تمكين هذا، قد يقوم Drawpile بحفظ كلمات المرور بتنسيق غير مشفر. سيؤدي تعطيله إلى نسيان أي كلمات مرور مخزنة بشكل غير آمن.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Connection quality:</source>
-        <translation type="unfinished"></translation>
+        <translation>جودة الاتصال:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Good</source>
-        <translation type="unfinished"></translation>
+        <translation>جيده</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Poor</source>
-        <translation type="unfinished"></translation>
+        <translation>ضعيفة</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>If all operators in a session set connection quality to Poor, auto-reset will not work and the server will stop processing updates until the session is manually reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>إذا قام جميع المشغلين في الجلسة بتعيين جودة الاتصال على &quot;ضعيفة&quot;، فلن تعمل إعادة الضبط التلقائي وسيتوقف الخادم عن معالجة التحديثات حتى تتم إعادة تعيين الجلسة يدويًا.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Network timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>مهلة الشبكة:</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>%1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ثانية</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Receive delay:</source>
-        <translation type="unfinished"></translation>
+        <translation>تأخير الاستلام:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The higher the value, the smoother strokes from other users come in.</source>
-        <translation type="unfinished"></translation>
+        <translation>كلما ارتفعت القيمة، ظهرت رسم أكثر سلاسة من المستخدمين الآخرين.</translation>
     </message>
     <message>
         <location line="-107"/>
         <source>Chat avatars:</source>
-        <translation type="unfinished"></translation>
+        <translation>الصور الرمزية:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Add avatar…</source>
-        <translation type="unfinished"></translation>
+        <translation>إضافة الصورة الرمزية…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Delete selected avatars…</source>
-        <translation type="unfinished"></translation>
+        <translation>حذف الصور الرمزية المحددة…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete avatars</source>
-        <translation type="unfinished"></translation>
+        <translation>حذف الصور الرمزية</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really delete %n avatar(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>هل تريد حقًا حذف الصورة الرمزية %n؟</numerusform>
+            <numerusform>هل تريد حقًا حذف الصورة الرمزية %n؟</numerusform>
+            <numerusform>هل تريد حقًا حذف %n من الصور الرمزية؟</numerusform>
+            <numerusform>هل تريد حقًا حذف %n من الصور الرمزية؟</numerusform>
+            <numerusform>هل تريد حقًا حذف %n من الصور الرمزية؟</numerusform>
+            <numerusform>هل تريد حقًا حذف %n من الصور الرمزية؟</numerusform>
         </translation>
     </message>
 </context>
@@ -7276,47 +7276,47 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/notifications.cpp" line="+40"/>
         <source>Event</source>
-        <translation type="unfinished"></translation>
+        <translation>حدث</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>What triggered this notification</source>
-        <translation type="unfinished"></translation>
+        <translation>ما الذي أثار هذا الإخطار</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Play sound</source>
-        <translation type="unfinished"></translation>
+        <translation>تشغيل الصوت</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Play a sound effect when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بتشغيل مؤثر صوتي عند حدوث هذا الحدث.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>الرساله الظاهره</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pop up a speech bubble in the corner when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>الرساله الظاهره فقاعة الكلام في الزاوية عند حدوث هذا الحدث.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flash taskbar</source>
-        <translation type="unfinished"></translation>
+        <translation>اضاء أيقونة شريط المهام</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Flash the Drawpile window in the taskbar when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>بيتم اضاءه صوره Drawpile في شريط المهام عند حدوث هذا الحدث.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bounce dock</source>
-        <translation type="unfinished"></translation>
+        <translation>افتح النافذه</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7326,92 +7326,92 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Demand attention</source>
-        <translation type="unfinished"></translation>
+        <translation>اطلب الاهتمام</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark Drawpile&apos;s window as requiring attention. How exactly this looks depends on your system.</source>
-        <translation type="unfinished"></translation>
+        <translation>ضع علامة على نافذة Drawpile على أنها تتطلب الاهتمام. كيف يبدو هذا بالضبط يعتمد على نظامك.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>معاينة</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trigger this event so you can see what happens.</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بتشغيل هذا الحدث حتى تتمكن من رؤية ما يحدث.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Chat message</source>
-        <translation type="unfinished"></translation>
+        <translation>رسالة الدردشة</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Private message</source>
-        <translation type="unfinished"></translation>
+        <translation>رسالة خاصة</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>User left</source>
-        <translation type="unfinished"></translation>
+        <translation>مستخدم غادر</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Disconnected</source>
-        <translation type="unfinished"></translation>
+        <translation>انقطع الاتصال</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Preview event</source>
-        <translation type="unfinished"></translation>
+        <translation>معاينة الحدث</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Sound volume:</source>
-        <translation type="unfinished"></translation>
+        <translation>حجم الصوت:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Use private message notification for mentions</source>
-        <translation type="unfinished"></translation>
+        <translation>استخدم إشعار الرسائل الخاصة للإشارات</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mentions:</source>
-        <translation type="unfinished"></translation>
+        <translation>إشارات ذكر:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Additional triggers go here, one per line.</source>
-        <translation type="unfinished"></translation>
+        <translation>توجد مشغلات إضافية هنا، واحدة في كل سطر.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your username always counts as a mention. You can add additional trigger words or phrases that you want to count as well, such as other nicknames. One word or phrase per line, case doesn&apos;t matter.</source>
-        <translation type="unfinished"></translation>
+        <translation>يعتبر اسم المستخدم الخاص بك دائمًا بمثابة إشارة. يمكنك إضافة كلمات أو عبارات تحفيزية إضافية تريد احتسابها أيضًا، مثل الألقاب الأخرى. كلمة أو عبارة واحدة في كل سطر، لا يهم حالة الأحرف.</translation>
     </message>
     <message>
         <location line="-81"/>
         <source>User joined</source>
-        <translation type="unfinished"></translation>
+        <translation>انضم المستخدم</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Canvas locked</source>
-        <translation type="unfinished">اللوحه مقفله</translation>
+        <translation>اللوحه مقفله</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished">اللوحه فتحت</translation>
+        <translation>اللوحه فتحت</translation>
     </message>
 </context>
 <context>
@@ -7419,113 +7419,113 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+57"/>
         <source>Consider sessions whose titles contain these keywords NSFM.</source>
-        <translation type="unfinished"></translation>
+        <translation>فكر في الجلسات التي تحتوي عناوينها على هذه الكلمات الأساسية NSFM.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Keywords:</source>
-        <translation type="unfinished"></translation>
+        <translation>الكلمات الدالة:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Filter mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>وضع التصفية:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Unrestricted</source>
-        <translation type="unfinished"></translation>
+        <translation>غير مقيد</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove NSFM sessions from listings</source>
-        <translation type="unfinished"></translation>
+        <translation>إزالة جلسات NSFM من القوائم</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Prevent joining NSFM sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>منع الانضمام إلى جلسات NSFM</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Prevent joining NSFM sessions and disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>منع الانضمام إلى جلسات NSFM وقطع الاتصال</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings, but can still be joined by following a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيتم إخفاء جلسات NSFM من قوائم الخادم، ولكن لا يزال من الممكن الانضمام إليها باتباع رابط مباشر.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيتم إخفاء جلسات NSFM من قوائم الخادم ولا يمكن الانضمام إليها.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined. Connected sessions that change their title or NSFM flag will automatically disconnect.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيتم إخفاء جلسات NSFM من قوائم الخادم ولا يمكن الانضمام إليها. سيتم قطع اتصال الجلسات المتصلة التي تغير عنوانها أو علامة NSFM الخاصة بها تلقائيًا.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disallow uncensoring of layers</source>
-        <translation type="unfinished"></translation>
+        <translation>عدم السماح بإلغاء الرقابة على الطبقات</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Warn when joining NSFM sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>تحذير عند الانضمام إلى جلسات NSFM</translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+28"/>
         <source>Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>اغلق</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Hide settings when locked</source>
-        <translation type="unfinished"></translation>
+        <translation>إخفاء الإعدادات عند القفل</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Parental controls are currently locked.</source>
-        <translation type="unfinished"></translation>
+        <translation>­أدوات الرقابة الأبوية مقفلة حاليًا.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
+        <translation>الغاء القفل</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>These settings configure the handling of sessions that are marked not suitable for minors (NSFM) and of layers that have been censored.</source>
-        <translation type="unfinished"></translation>
+        <translation>تقوم هذه الإعدادات بتكوين معالجة الجلسات التي تم وضع علامة &quot;غير مناسبة لصغار&quot; (NSFM) والطبقات الخاضعة للرقابة.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Parental controls are currently managed by the operating system.</source>
-        <translation type="unfinished"></translation>
+        <translation>تتم إدارة أدوات الرقابة الأبوية حاليًا بواسطة نظام التشغيل.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Unlock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>فتح الرقابة الأبوية</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>قفل الرقابة الأبوية</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Enter password:</source>
-        <translation type="unfinished"></translation>
+        <translation>أدخل كلمة المرور:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished">كلمه المرور خاطئه.</translation>
+        <translation>كلمه المرور خاطئه.</translation>
     </message>
 </context>
 <context>
@@ -7533,22 +7533,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/servers.cpp" line="+45"/>
         <source>Known hosts:</source>
-        <translation type="unfinished"></translation>
+        <translation>السيرفر المعروفين:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Import trusted certificate…</source>
-        <translation type="unfinished"></translation>
+        <translation>استيراد شهادة موثوقة…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove selected hosts…</source>
-        <translation type="unfinished"></translation>
+        <translation>إزالة السيرفر المحددين…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove known hosts</source>
-        <translation type="unfinished"></translation>
+        <translation>إزالة السيرفر المعروفين</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
