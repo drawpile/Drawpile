@@ -31,7 +31,7 @@ void SelectionItem::setModel(const QRect &bounds, const QImage &mask)
 	updateBoundingRectFromBounds();
 	if(m_bounds.isEmpty()) {
 		qWarning("Selection mask is empty");
-	} else {
+	} else if(canShowOutline()) {
 		SelectionOutlineGenerator *gen =
 			new SelectionOutlineGenerator(m_executionId, m_mask, false, 0, 0);
 		connect(
@@ -119,7 +119,7 @@ void SelectionItem::paint(
 	Q_UNUSED(opt);
 	Q_UNUSED(widget);
 	if(m_transparentDelay <= 0.0) {
-		if(m_showMask) {
+		if(m_showMask || !canShowOutline()) {
 			painter->setOpacity(0.5);
 			painter->drawImage(QPointF(0.0, 0.0), m_mask);
 		} else {
@@ -149,6 +149,16 @@ void SelectionItem::paint(
 			}
 		}
 	}
+}
+
+bool SelectionItem::canShowOutline() const
+{
+	// Generating outlines uses a lot of memory. Cap it at a bit more than 8K of
+	// size, anything larger than that gets previewed as a mask instead.
+	constexpr long long MAX_AREA = 35000000LL;
+	long long width = m_mask.width();
+	long long height = m_mask.height();
+	return width * height < MAX_AREA;
 }
 
 void SelectionItem::setOutline(
