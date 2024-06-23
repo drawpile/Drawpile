@@ -53,6 +53,7 @@ private:
 	qreal m_maskOpacity = 0.0;
 	qreal m_transparentDelay = 0.0;
 	unsigned int m_executionId = 0;
+	bool m_haveTemporaryMask = false;
 	bool m_ignored;
 	bool m_showMask;
 };

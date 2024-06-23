@@ -27,6 +27,7 @@ void SelectionItem::setModel(const QRect &bounds, const QImage &mask)
 	m_mask = mask;
 	m_path.clear();
 	m_maskOpacity = 0.0;
+	m_haveTemporaryMask = true;
 	updateBoundingRectFromBounds();
 	if(m_bounds.isEmpty()) {
 		qWarning("Selection mask is empty");
@@ -71,13 +72,15 @@ void SelectionItem::setShowMask(bool showMask)
 void SelectionItem::animationStep(qreal dt)
 {
 	bool havePath = !m_path.isEmpty();
-	bool haveMask = !m_mask.isNull();
 	bool needsRefresh = false;
 
-	if(haveMask) {
+	if(m_haveTemporaryMask) {
 		if(havePath) {
 			m_maskOpacity -= dt * 5.0;
-			needsRefresh = true;
+			needsRefresh = !m_showMask;
+			if(m_maskOpacity <= 0.0) {
+				m_haveTemporaryMask = false;
+			}
 		} else if(m_maskOpacity < 1.0) {
 			// Generating a mask for a large selection can take a while, which
 			// leads to the animation lurching ahead. We mitigate that by
@@ -85,11 +88,11 @@ void SelectionItem::animationStep(qreal dt)
 			m_maskOpacity = m_maskOpacity == 0.0
 								? 0.001
 								: qMin(1.0, m_maskOpacity + dt * 5.0);
-			needsRefresh = true;
+			needsRefresh = !m_showMask;
 		}
 	}
 
-	if(havePath && !m_ignored) {
+	if(havePath && !m_ignored && !m_showMask) {
 		qreal prevMarchingAnts = std::floor(m_marchingAnts);
 		m_marchingAnts += dt * 5.0;
 		if(prevMarchingAnts != std::floor(m_marchingAnts)) {
