@@ -2,7 +2,7 @@
 # Common beginning for setup.bash and configure.bash.
 
 # Qt strongly suggests using the same Emscripten version they use.
-RECOMMENDED_EMSCRIPTEN_VERSION='3.1.37'
+RECOMMENDED_EMSCRIPTEN_VERSION='3.1.50'
 
 carp() {
     echo 1>&2

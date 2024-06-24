@@ -66,7 +66,7 @@ extern "C" DP_ZipReaderFile *DP_zip_reader_read_file(DP_ZipReader *zr,
 
 extern "C" size_t DP_zip_reader_file_size(DP_ZipReaderFile *zrf)
 {
-    return DP_int_to_size(zrf->data.size());
+    return size_t(zrf->data.size());
 }
 
 extern "C" void *DP_zip_reader_file_content(DP_ZipReaderFile *zrf)

@@ -41,27 +41,31 @@ inputs:
     type: string
   libmicrohttpd:
     description: Version of libmicrohttpd to build
-    default: 0.9.75
+    default: 1.0.1
     type: string
   libsodium:
     description: Version of libsodium to build
-    default: 1.0.18
+    default: 1.0.20
     type: string
   qtkeychain:
-    description: Git revision of qtkeychain to build
-    default: c6f0b66318f8da6917fb4681103f7303b1836194
+    description: Version of qtkeychain to build
+    default: 0.14.3
     type: string
   libzip:
     description: Version of libzip to build (Qt6 only)
-    default: 1.9.2
+    default: 1.10.1
     type: string
-  karchive:
+  karchive5:
     description: Version of karchive to build (Qt5 only)
-    default: 5.105.0
+    default: 5.116.0
+    type: string
+  karchive6:
+    description: Version of karchive to build (Qt6 only)
+    default: 6.3.0
     type: string
   zlib:
     description: Version of zlib to build (Win32 only)
-    default: 1.2.13
+    default: 1.3.1
     type: string
 
 outputs:
@@ -92,7 +96,7 @@ runs:
     - uses: ./.github/actions/build-and-cache
       with:
         name: other dependencies
-        cache_key: other-${{ inputs.cache_key }}-${{ inputs.libmicrohttpd }}-${{ inputs.libsodium }}-${{ inputs.qtkeychain }}-${{ inputs.qt }}-${{ inputs.libzip }}-${{ inputs.zlib }}
+        cache_key: other-${{ inputs.cache_key }}-${{ inputs.libmicrohttpd }}-${{ inputs.libsodium }}-${{ inputs.qtkeychain }}-${{ inputs.qt }}-${{ inputs.libzip }}-${{ inputs.karchive5 }}-${{ inputs.karchive6 }}-${{ inputs.zlib }}
         path: ${{ inputs.path }}/other
         pre_build: ${{ inputs.other_pre_build }}
         build: >
@@ -103,6 +107,8 @@ runs:
           "-DLIBSODIUM=${{ inputs.libsodium }}"
           "-DQTKEYCHAIN=${{ inputs.qtkeychain }}"
           "-DLIBZIP=${{ inputs.libzip }}"
+          "-DKARCHIVE5=v${{ inputs.karchive5 }}"
+          "-DKARCHIVE6=v${{ inputs.karchive6 }}"
           "-DCMAKE_PREFIX_PATH=${{ github.workspace }}/${{ inputs.path }}/qt"
           "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/${{ inputs.path }}/other"
           "-DTARGET_ARCH=${{ inputs.target_arch }}"

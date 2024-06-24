@@ -427,7 +427,7 @@ import { UAParser } from "ua-parser-js";
           }
           alert(message);
         },
-        entryFunction: window.createQtAppInstance,
+        entryFunction: window.drawpile_entry,
         containerElements: [screen],
       },
     };

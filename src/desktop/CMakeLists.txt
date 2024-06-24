@@ -1,4 +1,6 @@
-find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Gui OpenGL Sql Svg Widgets Multimedia)
+find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS
+	Gui Multimedia OpenGL Sql Svg Widgets Xml
+)
 if(QT_VERSION VERSION_GREATER_EQUAL 6)
 	find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS OpenGLWidgets)
 endif()
@@ -408,12 +410,13 @@ target_link_libraries(drawpile PRIVATE
 	${QT_PACKAGE_NAME}::Core
 	${QT_PACKAGE_NAME}::Gui
 	${QT_PACKAGE_NAME}::OpenGL
-	# Svg and Sql are needed only indirectly and are linked transitively, but
-	# Android and Emscripten need them here to load their plugins properly.
+	# Svg, Sql and Xml are needed only indirectly and are linked transitively,
+	# but Android and Emscripten need them here to load their plugins properly.
 	${QT_PACKAGE_NAME}::Sql
 	${QT_PACKAGE_NAME}::Svg
 	${QT_PACKAGE_NAME}::Widgets
 	${QT_PACKAGE_NAME}::Multimedia
+	${QT_PACKAGE_NAME}::Xml
 )
 
 if(QT_VERSION VERSION_GREATER_EQUAL 6)

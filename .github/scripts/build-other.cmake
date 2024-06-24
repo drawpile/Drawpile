@@ -5,18 +5,20 @@ list(APPEND CMAKE_MODULE_PATH
 	${CMAKE_CURRENT_LIST_DIR}/../../cmake
 )
 
-set(ZLIB "1.2.13" CACHE STRING
+set(ZLIB "1.3.1" CACHE STRING
 	"The version of zlib to build")
-set(LIBMICROHTTPD "0.9.75" CACHE STRING
+set(LIBMICROHTTPD "1.0.1" CACHE STRING
 	"The version of libmicrohttpd to build")
-set(LIBSODIUM "1.0.18" CACHE STRING
+set(LIBSODIUM "1.0.20" CACHE STRING
 	"The version of libsodium to build")
-set(QTKEYCHAIN "c6f0b66318f8da6917fb4681103f7303b1836194" CACHE STRING
+set(QTKEYCHAIN "0.14.3" CACHE STRING
 	"The Git refspec of QtKeychain to build")
-set(LIBZIP "1.9.2" CACHE STRING
+set(LIBZIP "1.10.1" CACHE STRING
 	"The version of libzip to build")
-set(KARCHIVE "v5.105.0" CACHE STRING
-	"The version of KArchive to build")
+set(KARCHIVE5 "v5.116.0" CACHE STRING
+	"The version of KArchive for Qt5 to build")
+set(KARCHIVE6 "v6.3.0" CACHE STRING
+	"The version of KArchive for Qt6 to build")
 option(KEEP_ARCHIVES "Keep downloaded archives instead of deleting them" OFF)
 option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
 option(KEEP_BINARY_DIRS "Keep build directories instead of deleting them" OFF)
@@ -50,8 +52,10 @@ set(QT_VERSION ${PACKAGE_VERSION})
 
 if(QT_VERSION VERSION_GREATER_EQUAL 6)
 	set(BUILD_WITH_QT6 on)
+	set(KARCHIVE "${KARCHIVE6}")
 else()
 	set(BUILD_WITH_QT6 off)
+	set(KARCHIVE "${KARCHIVE5}")
 endif()
 
 include(QtMacDeploymentTarget)
@@ -70,8 +74,8 @@ if(WIN32 AND ZLIB)
 		URL https://github.com/madler/zlib/releases/download/v@version@/zlib-@version@.tar.xz
 		TARGET_ARCH "${TARGET_ARCH}"
 		VERSIONS
-			1.2.13
-			SHA384=57f9fd368500c413cf5fafd5ffddf150651a43de580051d659fab0fcacbf1fb63f4954851895148e530afa3b75d48433
+			1.3.1
+			SHA384=fc5ef6aa369bb70bbdef1f699cd7f182404ac5305e652f67470bd70320592e8b501d516267c74957cc02beee7e06ad14
 		ALL_PLATFORMS
 			CMAKE
 				ALL -DBUILD_SHARED_LIBS=on ${extra_cmake_flags}
@@ -87,8 +91,8 @@ if(LIBMICROHTTPD)
 		URL https://ftpmirror.gnu.org/libmicrohttpd/libmicrohttpd-@version@.tar.gz
 		TARGET_ARCH "${TARGET_ARCH}"
 		VERSIONS
-			0.9.75
-			SHA384=5a853f06d5f82c1e708c4d19758ffb77f5d1efd8431133cc956118aa49ce9b1d5b57ca468d9098127a81ed42582a97ec
+			1.0.1
+			SHA384=ac9f27e91d7b05084dfd3d2a68b00297f374af3cecb41700b207c80269147339d3da8511809dbb06fec65e9d5fdfd4be
 		WIN32
 			MSBUILD
 				SOLUTION w32/VS-Any-Version/libmicrohttpd.vcxproj
@@ -111,8 +115,8 @@ if(LIBSODIUM)
 		URL https://download.libsodium.org/libsodium/releases/libsodium-@version@.tar.gz
 		TARGET_ARCH "${TARGET_ARCH}"
 		VERSIONS
-			1.0.18
-			SHA384=1dd0171eb6aa3444f4c7aeb35dc57871f151a2e66da13a487a5cd97f2d9d5e280b995b90de53b12b174f7f649d9acd0d
+			1.0.20
+			SHA384=67473eaecf7085446feac68c36859cbdb2cc3ecc2748b0209ca364dd00f0c836f7000790c8dec5e890cd97d6646303f1
 		WIN32
 			MSBUILD
 				SOLUTION builds/msvc/vs2019/libsodium.sln
@@ -131,8 +135,8 @@ if(QTKEYCHAIN)
 		URL https://github.com/frankosterfeld/qtkeychain/archive/@version@.tar.gz
 		TARGET_ARCH "${TARGET_ARCH}"
 		VERSIONS
-			c6f0b66318f8da6917fb4681103f7303b1836194
-			SHA384=4dd6c985f0b8e2ad0a4e01cade0c230d8924ea564965098e5fa5a246ac5166ae0d9524516e2f19981af9f975955c563a
+			0.14.3
+			SHA384=52d84992ce397a123591191afb47490b3ad53e29684a35241af5e25545408f7bd631223797b2b8c7ecf00380997786bc
 		ALL_PLATFORMS
 			CMAKE
 				ALL
@@ -146,8 +150,8 @@ if(LIBZIP AND BUILD_WITH_QT6)
 		URL https://libzip.org/download/libzip-@version@.tar.xz
 		TARGET_ARCH "${TARGET_ARCH}"
 		VERSIONS
-			1.9.2
-			SHA384=3fae34c63ac4e40d696bf5b95ff25d38c572c9e01f71350f065902f371c93db14fdee727d0179421f03b67c129d0f567
+			1.10.1
+			SHA384=b614bd95cff0c915074f9113b517298e4c10c5e4e0d2dcf25fad82516ae852da54d9330a1d910b08e8d30a733da5f86c
 		ALL_PLATFORMS
 			CMAKE
 				ALL
@@ -176,8 +180,10 @@ if(KARCHIVE AND NOT BUILD_WITH_QT6)
 		URL https://invent.kde.org/frameworks/extra-cmake-modules/-/archive/@version@/extra-cmake-modules-@version@.tar.gz
 		TARGET_ARCH "${TARGET_ARCH}"
 		VERSIONS
-			v5.105.0
-			SHA384=e7f6cdee1f388d44024fc20ef663562a0ab2e0851745003c83b437aa620d0f808dea7ddb60fbf1e33161a83f08815a9c
+			v5.116.0
+			SHA384=c791c8d6ed0ce8ae80ac6e2479bdfb29dfb03cb36ae40e76118fe8f52058ba07dbe6d8bfca42b48891c4f9ce6f08b5ed
+			v6.3.0
+			SHA384=215c1b649fba07a2a57534cb30cfff9d03fcbe9b4c97d5181d46b367b4014230a5eff35b965682e3c6a6d3b0c744cf0d
 		ALL_PLATFORMS
 			CMAKE
 				ALL
@@ -188,8 +194,10 @@ if(KARCHIVE AND NOT BUILD_WITH_QT6)
 		URL https://invent.kde.org/frameworks/karchive/-/archive/@version@/karchive-@version@.tar.gz
 		TARGET_ARCH "${TARGET_ARCH}"
 		VERSIONS
-			v5.105.0
-			SHA384=51b17b9f8d75927c6a9708c705eaef1611c3b76f157bf04f550af8ff82bf02d55e46f03b4add369751d7ef0b51086eb7
+			v5.116.0
+			SHA384=4a782fed01e559371cb12efe94060b15e31022dca90e7853b5ede0b56d2fba58410f0992ad0363fc5e495954f6d8ae56
+			v6.3.0
+			SHA384=5fad9c2b4196f3b698209202770cd9a8f176c09c6bd6733cc667d7c44c07146f58ef9597e9ebe6506f4f0addf051dd7f
 		ALL_PLATFORMS
 			CMAKE
 				ALL

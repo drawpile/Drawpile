@@ -83,7 +83,7 @@ if(FILE_IO_IMPL STREQUAL "QT")
 
     if(ZIP_IMPL STREQUAL "KARCHIVE")
         target_compile_definitions(dpcommon PUBLIC DP_QT_IO_KARCHIVE)
-        target_link_libraries(dpcommon PUBLIC KF5::Archive)
+        target_link_libraries(dpcommon PUBLIC "KF${QT_VERSION_MAJOR}::Archive")
     endif()
 elseif(NOT FILE_IO_IMPL STREQUAL "STDIO")
     message(SEND_ERROR "Unknown FILE_IO_IMPL value '${FILE_IO_IMPL}'")

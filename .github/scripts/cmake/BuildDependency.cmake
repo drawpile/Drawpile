@@ -289,6 +289,10 @@ function(_build_cmake build_type target_bits source_dir)
 		)
 	endif()
 
+	if(ANDROID_SDK_ROOT)
+		list(APPEND default_flags "-DANDROID_SDK=${ANDROID_SDK_ROOT}")
+	endif()
+
 	if(CMAKE_ARG_NO_DEFAULT_FLAGS OR CMAKE_ARG_NO_DEFAULT_BUILD_TYPE)
 		set(build_flag "")
 	elseif(build_type STREQUAL "debug")

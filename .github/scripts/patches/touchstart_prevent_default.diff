@@ -1,15 +1,12 @@
 Description: Blocks default behavior of touchstart events, which on iOS can
-trigger gestures that refresh the page or navigate back and forth. Also remove
-that bogus setParent call, because that just spews the warning "This plugin does
-not support setParent!" into the console.
+trigger gestures that refresh the page or navigate back and forth.
 
 --- a/src/plugins/platforms/wasm/qwasmwindow.cpp
 +++ b/src/plugins/platforms/wasm/qwasmwindow.cpp
-@@ -138,7 +138,13 @@
+@@ -148,6 +148,14 @@
              std::make_unique<qstdweb::EventCallback>(keyFocusWindow, "keydown", keyCallback);
      m_keyUpCallback = std::make_unique<qstdweb::EventCallback>(keyFocusWindow, "keyup", keyCallback);
  
--    setParent(parent());
 +    // Drawpile patch: prevent gestures on iOS from going back a page. This also
 +    // prevents scrolling the page, but we don't want that either, so it's fine.
 +    m_touchStartCallback = std::make_unique<qstdweb::EventCallback>(
@@ -17,6 +14,8 @@ not support setParent!" into the console.
 +                event.call<void>("preventDefault");
 +                return false;
 +            });
++
+     setParent(parent());
  }
  
  QWasmWindow::~QWasmWindow()

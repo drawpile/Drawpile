@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: MIT
 # Builds Emscripten dependencies locally. Only tested to work on Linux.
 QT_VERSION_MAJOR=6
-QT_VERSION_MINOR=6
-QT_VERSION_PATCH=3
+QT_VERSION_MINOR=7
+QT_VERSION_PATCH=2
 QT_VERSION="$QT_VERSION_MAJOR.$QT_VERSION_MINOR.$QT_VERSION_PATCH"
-LIBZIP_VERSION='1.9.2'
+LIBZIP_VERSION='1.10.1'
 
 SCRIPT_DIR="$(readlink -f "$(dirname "$0")")"
 if [[ -z "$SCRIPT_DIR" ]]; then

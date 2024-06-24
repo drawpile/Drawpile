@@ -14,23 +14,20 @@ ones. We adjust those pretty hard to be actually visible.
 
 --- a/src/widgets/styles/qcommonstyle.cpp
 +++ b/src/widgets/styles/qcommonstyle.cpp
-@@ -6138,6 +6138,12 @@
-                 }
+@@ -5796,6 +5796,10 @@
+                 return QIcon::fromTheme(themeName);
+             break;
          }
-         break;
-+        case SP_ToolBarHorizontalExtensionButton:
-+            icon = QIcon::fromTheme(rtl ? "toolbar-ext-h-rtl-drawpile"_L1 : "toolbar-ext-h-drawpile"_L1);
-+            break;
-+        case SP_ToolBarVerticalExtensionButton:
-+            icon = QIcon::fromTheme("toolbar-ext-v-drawpile"_L1);
-+            break;
++        case QStyle::SP_ToolBarHorizontalExtensionButton:
++            return QIcon::fromTheme(rtl(option) ? "toolbar-ext-h-rtl-drawpile"_L1 : "toolbar-ext-h-drawpile"_L1);
++        case QStyle::SP_ToolBarVerticalExtensionButton:
++            return QIcon::fromTheme("toolbar-ext-v-drawpile"_L1);
          default:
              break;
          }
-
 --- a/src/widgets/styles/qfusionstyle.cpp
 +++ b/src/widgets/styles/qfusionstyle.cpp
-@@ -724,7 +724,8 @@
+@@ -634,7 +634,8 @@
              gradient.setColorAt(1, (state & State_Sunken) ? pressedColor : option->palette.base().color());
 
              painter->setBrush((state & State_Sunken) ? QBrush(pressedColor) : gradient);
@@ -40,7 +37,7 @@ ones. We adjust those pretty hard to be actually visible.
 
              if (option->state & State_HasFocus && option->state & State_KeyboardFocusChange)
                  painter->setPen(QPen(highlightedOutline));
-@@ -898,7 +899,12 @@
+@@ -808,7 +809,12 @@
 
          QLinearGradient gradient = qt_fusion_gradient(rect, (isEnabled && option->state & State_MouseOver ) ? buttonColor : buttonColor.darker(104));
          p->setPen(Qt::transparent);
@@ -53,4 +50,3 @@ ones. We adjust those pretty hard to be actually visible.
 +        }
          p->drawRoundedRect(r, 2.0, 2.0);
          p->setBrush(Qt::NoBrush);
-

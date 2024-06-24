@@ -40,7 +40,7 @@ if(ZIP_IMPL STREQUAL "LIBZIP")
         endif()
     endif()
 elseif(ZIP_IMPL STREQUAL "KARCHIVE")
-    dp_find_package(KF5Archive REQUIRED)
+    dp_find_package("KF${QT_VERSION_MAJOR}Archive" REQUIRED)
 endif()
 
 if(USE_GENERATORS)
