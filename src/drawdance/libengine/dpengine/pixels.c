@@ -1552,18 +1552,28 @@ static BGR15 comp_color(BGR15 a, BGR15 b)
 }
 
 
+#define FOR_MASK_PIXEL_WITH(CALC_A, DST, MASK, OPACITY, W, H, MASK_SKIP, \
+                            DST_SKIP, X, Y, A, BLOCK)                    \
+    do {                                                                 \
+        for (int Y = 0; Y < H; ++Y) {                                    \
+            for (int X = 0; X < W; ++X, ++DST, ++MASK) {                 \
+                Fix15 A = CALC_A;                                        \
+                BLOCK                                                    \
+            }                                                            \
+            DST += DST_SKIP;                                             \
+            MASK += MASK_SKIP;                                           \
+        }                                                                \
+    } while (0)
+
 #define FOR_MASK_PIXEL(DST, MASK, OPACITY, W, H, MASK_SKIP, DST_SKIP, X, Y, A, \
                        BLOCK)                                                  \
-    do {                                                                       \
-        for (int Y = 0; Y < H; ++Y) {                                          \
-            for (int X = 0; X < W; ++X, ++DST, ++MASK) {                       \
-                Fix15 A = fix15_mul(*MASK, OPACITY);                           \
-                BLOCK                                                          \
-            }                                                                  \
-            DST += DST_SKIP;                                                   \
-            MASK += MASK_SKIP;                                                 \
-        }                                                                      \
-    } while (0)
+    FOR_MASK_PIXEL_WITH(fix15_mul(*MASK, OPACITY), DST, MASK, OPACITY, W, H,   \
+                        MASK_SKIP, DST_SKIP, X, Y, A, BLOCK)
+
+#define FOR_MASK_PIXEL_M(DST, MASK, OPACITY, W, H, MASK_SKIP, DST_SKIP, X, Y, \
+                         A, BLOCK)                                            \
+    FOR_MASK_PIXEL_WITH(*MASK, DST, MASK, OPACITY, W, H, MASK_SKIP, DST_SKIP, \
+                        X, Y, A, BLOCK)
 
 static void blend_mask_alpha_op(DP_Pixel15 *dst, DP_UPixel15 src,
                                 const uint16_t *mask, Fix15 opacity, int w,
@@ -1837,6 +1847,25 @@ static void blend_mask_alpha_darken(DP_Pixel15 *dst, DP_UPixel15 src,
     });
 }
 
+static void blend_mask_alpha_darken_lerp(DP_Pixel15 *dst, DP_UPixel15 src,
+                                         const uint16_t *mask, Fix15 opacity,
+                                         int w, int h, int mask_skip,
+                                         int base_skip)
+{
+    FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, m, {
+        Fix15 da = dst->a;
+        if (m != 0 && da < opacity) {
+            Fix15 a = da + fix15_mul(m, opacity - da);
+            *dst = DP_pixel15_premultiply((DP_UPixel15){
+                src.b,
+                src.g,
+                src.r,
+                from_fix(a),
+            });
+        }
+    });
+}
+
 static void blend_mask_recolor(DP_Pixel15 *dst, DP_UPixel15 src,
                                const uint16_t *mask, Fix15 opacity, int w,
                                int h, int mask_skip, int base_skip)
@@ -1909,6 +1938,10 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
     case DP_BLEND_MODE_ALPHA_DARKEN:
         blend_mask_alpha_darken(dst, src, mask, to_fix(opacity), w, h,
                                 mask_skip, base_skip);
+        break;
+    case DP_BLEND_MODE_ALPHA_DARKEN_LERP:
+        blend_mask_alpha_darken_lerp(dst, src, mask, to_fix(opacity), w, h,
+                                     mask_skip, base_skip);
         break;
     case DP_BLEND_MODE_REPLACE:
         blend_mask_alpha_op(dst, src, mask, to_fix(opacity), w, h, mask_skip,

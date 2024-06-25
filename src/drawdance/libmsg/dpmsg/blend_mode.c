@@ -231,7 +231,17 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         {
             INCREASE_OPACITY | BLEND_BLANK,
             "DP_BLEND_MODE_ALPHA_DARKEN",
+            // Actually, the lerp variant of this blend mode is closer to what
+            // Krita uses. However, this blend mode is only ever used for
+            // brushes, so it doesn't end up in anything you'd open in Krita.
             "krita:alphadarken",
+            "Alpha Darken",
+        },
+    [DP_BLEND_MODE_ALPHA_DARKEN_LERP] =
+        {
+            INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_ALPHA_DARKEN_LERP",
+            "-dp-alpha-darken-lerp",
             "Alpha Darken",
         },
     [DP_BLEND_MODE_REPLACE] =
