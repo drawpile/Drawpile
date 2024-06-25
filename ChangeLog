@@ -80,6 +80,7 @@ Unreleased Version 2.2.2-pre
  * Feature: The fill tool now previews fills instead of doing them immediately, allowing cancelling and changing layers before applying it. You can also pick more blend modes, change the opacity and fill the entire selection with it now.
  * Fix: Make layer picking work properly in frame mode, it picked the bottom-most instead of the top-most one.
  * Feature: Add View > Show Selection Mask, which lets you view selections as a solid mask instead of an outline. This lets you see opacity properly.
+ * Removed Feature: Zeroconf support, an obscure LAN-only discovery thing that wasn't working anymore anyway.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

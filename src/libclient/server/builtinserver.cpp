@@ -8,9 +8,6 @@
 #include "libserver/loginhandler.h"
 #include <QJsonArray>
 #include <QTcpServer>
-#ifdef HAVE_DNSSD
-#	include "libshared/listings/zeroconfannouncement.h"
-#endif
 
 namespace server {
 
@@ -58,17 +55,12 @@ std::tuple<Session *, QString> BuiltinServer::createSession(
 
 	m_session = new BuiltinSession(
 		m_config, m_announcements, m_paintEngine, id, idAlias, founder, this);
-#ifdef HAVE_DNSSD
-	connect(
-		m_session, &Session::sessionAttributeChanged, this,
-		&BuiltinServer::updateZeroconfAnnouncement);
-#endif
 
 	return {m_session, QString{}};
 }
 
 bool BuiltinServer::start(
-	quint16 preferredPort, int clientTimeout, bool privateUserList, bool dnssd,
+	quint16 preferredPort, int clientTimeout, bool privateUserList,
 	QString *outErrorMessage)
 {
 	Q_ASSERT(!m_server);
@@ -100,15 +92,6 @@ bool BuiltinServer::start(
 
 	qInfo("Builtin server started listening on port %d", actualPort);
 
-#ifdef HAVE_DNSSD
-	if(dnssd) {
-		m_zeroconfAnnouncement = new ZeroConfAnnouncement{this};
-		m_zeroconfAnnouncement->publish(actualPort);
-	}
-#else
-	Q_UNUSED(dnssd);
-#endif
-
 	return true;
 }
 
@@ -119,10 +102,6 @@ void BuiltinServer::stop()
 			m_session->unlistAnnouncement(QUrl(), false);
 		}
 
-#ifdef HAVE_DNSSD
-		delete m_zeroconfAnnouncement;
-		m_zeroconfAnnouncement = nullptr;
-#endif
 		delete m_server;
 		m_server = nullptr;
 
@@ -174,15 +153,6 @@ void BuiltinServer::removeClient(BuiltinClient *client)
 		deleteLater();
 	}
 }
-
-#ifdef HAVE_DNSSD
-void BuiltinServer::updateZeroconfAnnouncement()
-{
-	if(m_zeroconfAnnouncement) {
-		m_zeroconfAnnouncement->setTitle(m_session->history()->title());
-	}
-}
-#endif
 
 ServerConfig *BuiltinServer::initConfig()
 {

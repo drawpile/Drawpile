@@ -22,10 +22,6 @@
 #include <QTimer>
 #include <QVBoxLayout>
 
-#ifdef HAVE_DNSSD
-#	include "libshared/listings/zeroconfdiscovery.h"
-#endif
-
 namespace dialogs {
 namespace startdialog {
 
@@ -124,20 +120,6 @@ Browse::Browse(QWidget *parent)
 	layout->addWidget(m_listing);
 
 	m_sessions = new SessionListingModel{this};
-
-#ifdef HAVE_DNSSD
-	if(ZeroconfDiscovery::isAvailable()) {
-		ZeroconfDiscovery *zeroconfDiscovery = new ZeroconfDiscovery{this};
-		m_sessions->setMessage(tr("Nearby"), tr("Loading..."));
-		connect(
-			zeroconfDiscovery, &ZeroconfDiscovery::serverListUpdated, this,
-			[this](const QVector<sessionlisting::Session> &servers) {
-				m_sessions->setList(tr("Nearby"), servers);
-				m_filteredSessions->refreshDuplicates();
-			});
-		zeroconfDiscovery->discover();
-	}
-#endif
 
 	m_filteredSessions = new ListingSessionFilterProxyModel(this);
 	m_filteredSessions->setSourceModel(m_sessions);

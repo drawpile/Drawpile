@@ -6,7 +6,6 @@
 #include <QVector>
 
 class QTcpServer;
-class ZeroConfAnnouncement;
 
 namespace canvas {
 class PaintEngine;
@@ -52,7 +51,7 @@ public:
 
 	bool start(
 		quint16 preferredPort, int clientTimeout, bool privateUserList,
-		bool dnssd, QString *outErrorMessage = nullptr);
+		QString *outErrorMessage = nullptr);
 
 public slots:
 	void stop();
@@ -61,9 +60,6 @@ public slots:
 private slots:
 	void newClient();
 	void removeClient(BuiltinClient *client);
-#ifdef HAVE_DNSSD
-	void updateZeroconfAnnouncement();
-#endif
 
 private:
 	ServerConfig *initConfig();
@@ -74,9 +70,6 @@ private:
 	QTcpServer *m_server = nullptr;
 	BuiltinSession *m_session = nullptr;
 	QVector<BuiltinClient *> m_clients;
-#ifdef HAVE_DNSSD
-	ZeroConfAnnouncement *m_zeroconfAnnouncement = nullptr;
-#endif
 };
 
 }

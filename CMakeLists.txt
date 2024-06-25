@@ -199,16 +199,6 @@ if(CLIENT OR SERVER)
 	add_feature_info("Ext-auth support" "TARGET libsodium::libsodium" "")
 	add_feature_info("WebSocket support" "TARGET ${QT_PACKAGE_NAME}::WebSockets" "")
 
-	#find_package(KF5DNSSD NO_MODULE) # disabled pending built-in server rewrite
-	if(TARGET KF5::DNSSD)
-		add_compile_definitions(HAVE_DNSSD)
-		# KF5DNSSD 5.84.0 moves a bunch of headers to a different place.
-		if("${KF5DNSSD_VERSION}" VERSION_LESS "5.84.0")
-			add_compile_definitions(HAVE_DNSSD_BEFORE_5_84_0)
-		endif()
-	endif()
-	add_feature_info("Zeroconf support" "TARGET KF5::DNSSD" "")
-
 	message(STATUS "Adding drawdance")
 	add_subdirectory(src/drawdance)
 

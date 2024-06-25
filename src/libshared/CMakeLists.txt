@@ -84,16 +84,6 @@ if(TARGET ${QT_PACKAGE_NAME}::WebSockets)
 	target_link_libraries(dpshared PUBLIC ${QT_PACKAGE_NAME}::WebSockets)
 endif()
 
-if(TARGET KF5::DNSSD)
-	target_sources(dpshared PRIVATE
-		listings/zeroconfannouncement.cpp
-		listings/zeroconfannouncement.h
-		listings/zeroconfdiscovery.cpp
-		listings/zeroconfdiscovery.h
-	)
-	target_link_libraries(dpshared PUBLIC KF5::DNSSD)
-endif()
-
 if(TESTS)
 	add_subdirectory(tests)
 endif()

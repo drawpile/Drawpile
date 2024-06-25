@@ -85,12 +85,6 @@ void Network::initBuiltinServer(
 	settings.bindServerPrivateUserList(privateUserList);
 	form->addRow(tr("Builtin server:"), privateUserList);
 
-#ifdef HAVE_DNSSD
-	auto *dnssd = new QCheckBox(tr("Announce with Zeroconf"));
-	settings.bindServerDnssd(dnssd);
-	form->addRow(nullptr, dnssd);
-#endif
-
 	auto *port = new QSpinBox;
 	port->setAlignment(Qt::AlignLeft);
 	port->setRange(1, UINT16_MAX);

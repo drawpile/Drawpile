@@ -2254,8 +2254,7 @@ void MainWindow::hostSession(
 		QString errorMessage;
 		bool serverStarted = server->start(
 			settings.serverPort(), settings.serverTimeout(),
-			settings.serverPrivateUserList(), settings.serverDnssd(),
-			&errorMessage);
+			settings.serverPrivateUserList(), &errorMessage);
 		if(!serverStarted) {
 			QMessageBox::warning(this, tr("Host Session"), errorMessage);
 			delete server;
