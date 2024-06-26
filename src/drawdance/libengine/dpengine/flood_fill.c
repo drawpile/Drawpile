@@ -373,6 +373,107 @@ static void apply_expansion_kernel(float *mask, int mask_width, float value,
     }
 }
 
+static bool expand_feather_left(int expand_min_x, int feather_radius,
+                                float *mask, int img_width, int img_height)
+{
+    int left = expand_min_x - feather_radius;
+    if (left < 0) {
+        for (int y = feather_radius; y < img_height - feather_radius; ++y) {
+            float edge = mask[y * img_width - left];
+            if (edge != 0.0f) {
+                for (int x = left; x < 0; ++x) {
+                    mask[y * img_width + x - left] = edge;
+                }
+            }
+        }
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+static bool expand_feather_right(int canvas_width, int expand_max_x,
+                                 int feather_radius, float *mask, int img_width,
+                                 int img_height)
+{
+    int right = expand_max_x + feather_radius;
+    int canvas_right = canvas_width - 1;
+    if (right > canvas_right) {
+        int r = img_width - (right - canvas_right) - 1;
+        for (int y = feather_radius; y < img_height - feather_radius; ++y) {
+            float edge = mask[y * img_width + r];
+            if (edge != 0.0f) {
+                for (int x = right; x > canvas_right; --x) {
+                    mask[y * img_width + img_width - (x - canvas_right)] = edge;
+                }
+            }
+        }
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+static void expand_feather_top(int expand_min_y, int feather_radius,
+                               float *mask, int img_width, int x_start,
+                               int width)
+{
+    int top = expand_min_y - feather_radius;
+    if (top < 0) {
+        for (int x = x_start; x < width; ++x) {
+            float edge = mask[-top * img_width + x];
+            if (edge != 0.0f) {
+                for (int y = top; y < 0; ++y) {
+                    mask[(y - top) * img_width + x] = edge;
+                }
+            }
+        }
+    }
+}
+
+static void expand_feather_bottom(int canvas_height, int expand_max_y,
+                                  int feather_radius, float *mask,
+                                  int img_width, int img_height, int x_start,
+                                  int width)
+{
+    int bottom = expand_max_y + feather_radius;
+    int canvas_bottom = canvas_height - 1;
+    if (bottom > canvas_bottom) {
+        int b = img_height - (bottom - canvas_bottom) - 1;
+        for (int x = x_start; x < width; ++x) {
+            float edge = mask[b * img_width + x];
+            if (edge != 0.0f) {
+                for (int y = bottom; y > canvas_bottom; --y) {
+                    mask[(img_height - (y - canvas_bottom)) * img_width + x] =
+                        edge;
+                }
+            }
+        }
+    }
+}
+
+static void expand_feather_edges(int canvas_width, int canvas_height,
+                                 int expand_min_x, int expand_min_y,
+                                 int expand_max_x, int expand_max_y,
+                                 int feather_radius, float *mask, int img_width,
+                                 int img_height)
+{
+    bool left_expanded = expand_feather_left(expand_min_x, feather_radius, mask,
+                                             img_width, img_height);
+    bool right_expanded =
+        expand_feather_right(canvas_width, expand_max_x, feather_radius, mask,
+                             img_width, img_height);
+
+    int x_start = left_expanded ? 0 : feather_radius;
+    int width = img_width - (right_expanded ? 0 : feather_radius);
+    expand_feather_top(expand_min_y, feather_radius, mask, img_width, x_start,
+                       width);
+    expand_feather_bottom(canvas_height, expand_max_y, feather_radius, mask,
+                          img_width, img_height, x_start, width);
+}
+
 static float *generate_gaussian_kernel(int radius)
 {
     // Based on Krita's Gaussian kernel generation, see license above.
@@ -509,6 +610,11 @@ static float *make_mask(DP_FillContext *c,
     }
 
     if (feather_radius != 0) {
+        // We don't want to feather along the canvas edges, so we expand the
+        // mask's contents if we're flush up against one or more of those.
+        expand_feather_edges(c->width, c->height, expand_min_x, expand_min_y,
+                             expand_max_x, expand_max_y, feather_radius, mask,
+                             img_width, img_height);
         float *tmp = DP_malloc(mask_size * sizeof(*mask));
         feather_mask(c, mask, tmp, img_width, img_height, feather_radius);
         DP_free(tmp);
