@@ -86,6 +86,8 @@ bool DP_message_write_text(DP_Message *msg,
 
 bool DP_message_equals(DP_Message *msg, DP_Message *other);
 
+bool DP_message_payload_equals(DP_Message *msg, DP_Message *other);
+
 
 DP_Message *DP_message_deserialize_length(const unsigned char *buf,
                                           size_t bufsize, size_t body_length,

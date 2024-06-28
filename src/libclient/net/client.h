@@ -173,16 +173,6 @@ public:
 	//! Are we expecting more incoming data?
 	bool isFullyCaughtUp() const { return m_catchupTo == 0; }
 
-	// Guess if we're connected to a thick server session. Checking for the
-	// auto-reset support of the session should, at the time of writing, be a
-	// clear indicator to distinguish the thin server from the builtin one. The
-	// difference between them being that the thick server doesn't allow for
-	// unknown message types, so it has extra compatibility constraints.
-	bool seemsConnectedToThickServer() const
-	{
-		return isConnected() && !sessionSupportsAutoReset();
-	}
-
 	int artificialLagMs() const
 	{
 		return m_server ? m_server->artificialLagMs() : 0;
@@ -292,10 +282,23 @@ private slots:
 private:
 	static constexpr int CATCHUP_TIMER_MSEC = 4000;
 
+	// Guess if we're connected to a thick server session. Checking for the
+	// auto-reset support of the session should, at the time of writing, be a
+	// clear indicator to distinguish the thin server from the builtin one. The
+	// difference between them being that the thick server doesn't allow for
+	// unknown message types, so it has extra compatibility constraints.
+	bool seemsConnectedToThickServer() const
+	{
+		return isConnected() && !sessionSupportsAutoReset();
+	}
+
 	void sendCompatibleMessages(int count, const net::Message *msgs);
 	void sendCompatibleResetMessages(int count, const net::Message *msgs);
+	void sendRemoteMessages(int count, const net::Message *msgs);
 	QVector<net::Message>
 	filterCompatibleMessages(int count, const net::Message *msgs);
+	QVector<net::Message>
+	replaceLocalMatchMessages(int count, const net::Message *msgs);
 
 	void handleServerReply(const ServerReply &msg, int handledMessageIndex = 0);
 	QString translateMessage(

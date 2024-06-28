@@ -23,11 +23,4 @@ void Tool::setCursor(const QCursor &cursor)
 	}
 }
 
-bool Tool::shouldDisguiseSelectionsAsPutImage() const
-{
-	// If we're connected to a thick server, we don't want to send it unknown
-	// message types because that'll get us kicked.
-	return m_owner.client()->seemsConnectedToThickServer();
-}
-
 }

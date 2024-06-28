@@ -6,6 +6,7 @@ dp_target_sources(dpmsg
     dpmsg/binary_reader.c
     dpmsg/binary_writer.c
     dpmsg/blend_mode.c
+    dpmsg/local_match.c
     dpmsg/message.c
     dpmsg/messages.c
     dpmsg/message_queue.c
@@ -18,6 +19,7 @@ dp_target_sources(dpmsg
     dpmsg/binary_reader.h
     dpmsg/binary_writer.h
     dpmsg/blend_mode.h
+    dpmsg/local_match.h
     dpmsg/message.h
     dpmsg/messages.h
     dpmsg/message_queue.h

@@ -31,6 +31,7 @@
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
 #include <dpmsg/acl.h>
+#include <dpmsg/local_match.h>
 #include <dpmsg/message.h>
 #include <dpmsg/msg_internal.h>
 #include <time.h>
@@ -39,7 +40,7 @@
 
 
 #define INITIAL_CAPACITY              1024
-#define EXPAND_CAPACITY(OLD_CAPACITY) ((OLD_CAPACITY)*2)
+#define EXPAND_CAPACITY(OLD_CAPACITY) ((OLD_CAPACITY) * 2)
 
 #define MAX_FALLBEHIND 10000
 
@@ -1323,6 +1324,20 @@ static bool handle_command(DP_CanvasHistory *ch, DP_DrawContext *dc,
     }
 }
 
+static bool match_message(DP_Message *msg, DP_MessageType type,
+                          DP_Message *peeked_msg, DP_MessageType peeked_type)
+{
+    if (type == peeked_type) {
+        return DP_message_payload_equals(msg, peeked_msg);
+    }
+    else if (DP_msg_local_match_is_local_match(msg)) {
+        return DP_msg_local_match_matches(peeked_msg, msg);
+    }
+    else {
+        return false;
+    }
+}
+
 static void clear_fork_fallbehind(DP_CanvasHistory *ch)
 {
     HISTORY_DEBUG("Fork fallbehind cleared");
@@ -1336,26 +1351,45 @@ static void clear_fork_fallbehind(DP_CanvasHistory *ch)
     }
 }
 
+static void maybe_append_to_history_inc(DP_CanvasHistory *ch, DP_Message *msg,
+                                        int *out_index)
+{
+    if (out_index) {
+        *out_index = append_to_history_inc(ch, msg, DP_UNDO_DONE);
+    }
+}
+
 static DP_ForkAction reconcile_remote_command(DP_CanvasHistory *ch,
                                               DP_Message *msg,
                                               DP_MessageType type,
-                                              bool local_drawing_in_progress)
+                                              bool local_drawing_in_progress,
+                                              int *out_index)
 {
     DP_ASSERT(DP_message_type(msg) == type);
 
     size_t used = ch->fork.queue.used;
     if (used == 0) {
+        maybe_append_to_history_inc(ch, msg, out_index);
         return DP_FORK_ACTION_CONCURRENT;
     }
 
     DP_Message *peeked_msg = peek_fork_entry_message(ch);
     if (DP_message_context_id(msg) == DP_message_context_id(peeked_msg)) {
-        if (DP_message_equals(msg, peeked_msg)) {
+        DP_MessageType peeked_type = DP_message_type(peeked_msg);
+        if (match_message(msg, type, peeked_msg, peeked_type)) {
             shift_fork_entry_nodec(ch);
-            DP_message_decref(peeked_msg);
+            if (out_index) {
+                *out_index =
+                    append_to_history_noinc(ch, peeked_msg, DP_UNDO_DONE);
+            }
+            else {
+                DP_message_decref(peeked_msg);
+            }
+
             if (used == 1) {
                 clear_fork_fallbehind(ch);
             }
+
             if (type == DP_MSG_UNDO || type == DP_MSG_UNDO_POINT) {
                 // Undo operations aren't handled locally.
                 return DP_FORK_ACTION_CONCURRENT;
@@ -1365,7 +1399,7 @@ static DP_ForkAction reconcile_remote_command(DP_CanvasHistory *ch,
             }
         }
         else {
-            DP_MessageType peeked_type = DP_message_type(peeked_msg);
+            maybe_append_to_history_inc(ch, msg, out_index);
             DP_warn("Rollback at %d: fork %s != received %s",
                     ch->offset + ch->used,
                     DP_message_type_enum_name_unprefixed(peeked_type),
@@ -1375,49 +1409,64 @@ static DP_ForkAction reconcile_remote_command(DP_CanvasHistory *ch,
             return DP_FORK_ACTION_ROLLBACK;
         }
     }
-    else if (++ch->fork.fallbehind >= MAX_FALLBEHIND) {
-        DP_warn("Rollback at %d: fork fallbehind %d >= max fallbehind %d",
-                ch->offset + ch->used, ch->fork.fallbehind, MAX_FALLBEHIND);
-        ch->fork.fallbehind = 0;
-        clear_fork_entries(ch);
-        return DP_FORK_ACTION_ROLLBACK;
-    }
-    else if (fork_entries_concurrent_with(ch, msg)) {
-        return DP_FORK_ACTION_CONCURRENT;
-    }
     else {
-        // Avoid a rollback storm by clearing the local fork, but not when
-        // drawing is in progress, since that would cause a feedback loop.
-        if (local_drawing_in_progress) {
-            DP_warn("Rollback at %d: fork not concurrent with %s - "
-                    "not clearing fork due to local drawing in progress",
-                    ch->offset + ch->used,
-                    DP_message_type_enum_name_unprefixed(type));
+        maybe_append_to_history_inc(ch, msg, out_index);
+        if (++ch->fork.fallbehind >= MAX_FALLBEHIND) {
+            DP_warn("Rollback at %d: fork fallbehind %d >= max fallbehind %d",
+                    ch->offset + ch->used, ch->fork.fallbehind, MAX_FALLBEHIND);
+            ch->fork.fallbehind = 0;
+            clear_fork_entries(ch);
+            return DP_FORK_ACTION_ROLLBACK;
+        }
+        else if (fork_entries_concurrent_with(ch, msg)) {
+            return DP_FORK_ACTION_CONCURRENT;
         }
         else {
-            DP_warn("Rollback at %d: fork not concurrent with %s - "
-                    "clearing fork",
-                    ch->offset + ch->used,
-                    DP_message_type_enum_name_unprefixed(type));
-            clear_fork_entries(ch);
+            // Avoid a rollback storm by clearing the local fork, but not when
+            // drawing is in progress, since that would cause a feedback loop.
+            if (local_drawing_in_progress) {
+                DP_warn("Rollback at %d: fork not concurrent with %s - "
+                        "not clearing fork due to local drawing in progress",
+                        ch->offset + ch->used,
+                        DP_message_type_enum_name_unprefixed(type));
+            }
+            else {
+                DP_warn("Rollback at %d: fork not concurrent with %s - "
+                        "clearing fork",
+                        ch->offset + ch->used,
+                        DP_message_type_enum_name_unprefixed(type));
+                clear_fork_entries(ch);
+            }
+            return DP_FORK_ACTION_ROLLBACK;
         }
-        return DP_FORK_ACTION_ROLLBACK;
     }
 }
 
 static bool handle_remote_command(DP_CanvasHistory *ch, DP_DrawContext *dc,
                                   DP_Message *msg, DP_MessageType type,
-                                  bool local_drawing_in_progress, int index)
+                                  bool local_drawing_in_progress,
+                                  bool append_to_history)
 {
     DP_ASSERT(DP_message_type(msg) == type);
     HISTORY_DEBUG("Handle remote %s command from user %u",
                   DP_message_type_enum_name_unprefixed(type),
                   DP_message_context_id(msg));
-    DP_ForkAction fork_action =
-        reconcile_remote_command(ch, msg, type, local_drawing_in_progress);
+    int index;
+    DP_ForkAction fork_action;
+    if (append_to_history) {
+        fork_action = reconcile_remote_command(
+            ch, msg, type, local_drawing_in_progress, &index);
+    }
+    else {
+        index = -1;
+        fork_action = reconcile_remote_command(ch, msg, type,
+                                               local_drawing_in_progress, NULL);
+    }
+
     switch (fork_action) {
-    case DP_FORK_ACTION_CONCURRENT:
+    case DP_FORK_ACTION_CONCURRENT: {
         return handle_command(ch, dc, msg, type, index);
+    }
     case DP_FORK_ACTION_ROLLBACK:
         return search_and_replay_from(ch, dc, ch->fork.start - ch->offset,
                                       true);
@@ -1444,13 +1493,12 @@ static bool handle_remote_message(DP_CanvasHistory *ch, DP_DrawContext *dc,
         }
         else {
             return handle_remote_command(ch, dc, msg, type,
-                                         local_drawing_in_progress, -1);
+                                         local_drawing_in_progress, false);
         }
     default:
         if (ch->mark_command_done) {
-            return handle_remote_command(
-                ch, dc, msg, type, local_drawing_in_progress,
-                append_to_history_inc(ch, msg, DP_UNDO_DONE));
+            return handle_remote_command(ch, dc, msg, type,
+                                         local_drawing_in_progress, true);
         }
         else {
             ch->mark_command_done = true;
@@ -1537,7 +1585,7 @@ void DP_canvas_history_handle_multidab_dec(DP_CanvasHistory *ch,
         DP_Message *msg = msgs[i];
         append_to_history_noinc(ch, msg, DP_UNDO_DONE);
         DP_ForkAction fork_action = reconcile_remote_command(
-            ch, msg, DP_message_type(msg), local_drawing_in_progress);
+            ch, msg, DP_message_type(msg), local_drawing_in_progress, false);
         switch (fork_action) {
         case DP_FORK_ACTION_ROLLBACK:
             search_and_replay_from(ch, dc, ch->fork.start - ch->offset, true);
@@ -1659,11 +1707,17 @@ bool DP_canvas_history_reset_image_new(
                 return false;
             }
             DP_FALLTHROUGH();
-        case DP_UNDO_DONE:
-            if (!accept_message(user, DP_message_incref(entry->msg))) {
-                return false;
+        case DP_UNDO_DONE: {
+            DP_Message *msg = entry->msg;
+            // Local match messages are for local synchronization and don't
+            // contain any useful information, so we don't need to record them.
+            if (DP_msg_local_match_is_local_match(msg)) {
+                if (!accept_message(user, DP_message_incref(msg))) {
+                    return false;
+                }
             }
             break;
+        }
         default:
             break;
         }

@@ -238,8 +238,7 @@ bool isValidEraseMode(DP_BlendMode mode)
 bool isBackwardCompatibleMode(DP_BlendMode mode)
 {
 	return hasFlag(mode, BackwardCompatibleMode) ||
-		   mode == DP_BLEND_MODE_COMPAT_SELECTION_PUT ||
-		   mode == DP_BLEND_MODE_COMPAT_SELECTION_CLEAR;
+		   mode == DP_BLEND_MODE_COMPAT_LOCAL_MATCH;
 }
 
 void setCompatibilityMode(QStandardItemModel *model, bool compatibilityMode)

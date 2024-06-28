@@ -1017,11 +1017,8 @@ SelectionPut:
         The mask is DEFLATEd 8 bit alpha. If absent, this fills the entire
         rectangle instead.
 
-        Strictly speaking, this is not compatible with the 2.2 protocol and
-        clients before version 2.2.2 don't understand it. However, since it
-        doesn't have any visual effect, it doesn't cause desync, so we accept it
-        anyway. In sessions on the builtin server, this is disguised as a
-        PutImage message instead, since that doesn't allow unknown messages.
+        Currently, only selection id 1 is used and these messages are not sent
+        over the network; LocalMatch commands are used instead.
     fields:
         - selection_id u8: hex
         - op enum:
@@ -1044,13 +1041,33 @@ SelectionClear:
         Remove the selection specified by the selection_id, or all selections if
         it's 0.
 
-        Strictly speaking, this is not compatible with the 2.2 protocol and
-        clients before version 2.2.2 don't understand it. However, since it
-        doesn't have any visual effect, it doesn't cause desync, so we accept it
-        anyway. In sessions on the builtin server, this is disguised as a
-        PutImage message instead, since that doesn't allow unknown messages.
+        Currently, only selection id 1 is used and these messages are not sent
+        over the network; LocalMatch commands are used instead.
     fields:
         - selection_id u8: hex
+
+LocalMatch:
+    id: 176
+    comment: |
+        A command that is sent over the network just to match it with another
+        message in the local fork. It has no effect in itself. This is currently
+        used for selections, which only have an effect on the local user and
+        other users don't need to bother with processing them.
+
+        The type describes the message type this is matched with and the
+        contents of data depend on that type being matched. It usually contains
+        the same stuff as the matched message, minus any variable-length
+        buffers, where only the size is sent along, since that's good enough for
+        getting a match in practice.
+
+        Strictly speaking, this is not compatible with the 2.2 protocol and
+        clients before version 2.2.2 don't understand it. However, since it
+        doesn't have any effect for other users, it doesn't cause desync, so we
+        accept it anyway. In sessions on the builtin server, a PutImage message
+        with an invalid blend mode is used instead.
+    fields:
+        - type u8: hex
+        - data bytes
 
 Undo:
     id: 255

@@ -150,7 +150,6 @@ public:
 protected:
 	void setHandlesRightClick(bool handlesRightClick);
 	void setCursor(const QCursor &cursor);
-	bool shouldDisguiseSelectionsAsPutImage() const;
 
 	ToolController &m_owner;
 

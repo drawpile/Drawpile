@@ -34,7 +34,6 @@ public:
 
 	bool affectsCanvas() override { return true; }
 	bool affectsLayer() override { return false; }
-	bool isLocked() override;
 
 	void stepAdjust1(bool increase) override;
 

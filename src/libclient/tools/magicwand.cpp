@@ -224,10 +224,9 @@ void MagicWandTool::flushPending()
 		uint8_t contextId = client->myId();
 		net::MessageList msgs;
 		net::makeSelectionPutMessages(
-			msgs, shouldDisguiseSelectionsAsPutImage(), contextId,
-			canvas::CanvasModel::MAIN_SELECTION_ID, m_op, m_pendingPos.x(),
-			m_pendingPos.y(), m_pendingImage.width(), m_pendingImage.height(),
-			m_pendingImage);
+			msgs, contextId, canvas::CanvasModel::MAIN_SELECTION_ID, m_op,
+			m_pendingPos.x(), m_pendingPos.y(), m_pendingImage.width(),
+			m_pendingImage.height(), m_pendingImage);
 		if(!msgs.isEmpty()) {
 			msgs.prepend(net::makeUndoPointMessage(contextId));
 			client->sendMessages(msgs.size(), msgs.constData());

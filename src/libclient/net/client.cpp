@@ -215,14 +215,16 @@ void Client::sendMessages(int count, const net::Message *msgs)
 void Client::sendCompatibleMessages(int count, const net::Message *msgs)
 {
 	if(count > 0) {
-		emit m_commandHandler->handleLocalCommands(count, msgs);
-		// Note: we could emit drawingCommandLocal only in connected mode,
-		// but it's good to exercise the code path in local mode too
-		// to make potential bugs more obvious.
-		if(m_server) {
-			m_server->sendMessages(count, msgs);
+		m_commandHandler->handleLocalCommands(count, msgs);
+		// Note: we could only send only local commands here when offline, but
+		// do the remote part anyway to not have to deal with two code paths.
+		QVector<net::Message> matched = replaceLocalMatchMessages(count, msgs);
+		int matchedCount = matched.size();
+		if(matchedCount == 0) {
+			sendRemoteMessages(count, msgs);
 		} else {
-			m_commandHandler->handleCommands(count, msgs);
+			Q_ASSERT(matchedCount == count);
+			sendRemoteMessages(matchedCount, matched.constData());
 		}
 	}
 }
@@ -247,11 +249,17 @@ void Client::sendResetMessages(int count, const net::Message *msgs)
 void Client::sendCompatibleResetMessages(int count, const net::Message *msgs)
 {
 	if(count > 0) {
-		if(m_server) {
-			m_server->sendMessages(count, msgs);
-		} else {
-			m_commandHandler->handleCommands(count, msgs);
-		}
+		sendRemoteMessages(count, msgs);
+	}
+}
+
+void Client::sendRemoteMessages(int count, const net::Message *msgs)
+{
+	Q_ASSERT(count > 0);
+	if(m_server) {
+		m_server->sendMessages(count, msgs);
+	} else {
+		m_commandHandler->handleCommands(count, msgs);
 	}
 }
 
@@ -274,6 +282,35 @@ Client::filterCompatibleMessages(int count, const net::Message *msgs)
 		}
 	}
 	return compatibleMsgs;
+}
+
+QVector<net::Message>
+Client::replaceLocalMatchMessages(int count, const net::Message *msgs)
+{
+	// If we're connected to a thick server, we don't want to send it unknown
+	// message types because that'll get us kicked.
+	bool shouldDisguiseAsPutImage = seemsConnectedToThickServer();
+	for(int i = 0; i < count; ++i) {
+		DP_Message *first =
+			net::makeLocalMatchMessage(msgs[i], shouldDisguiseAsPutImage);
+		if(first) {
+			QVector<net::Message> matched;
+			matched.reserve(count);
+			for(int j = 0; j < i; ++j) {
+				matched.append(msgs[j]);
+			}
+			matched.append(net::Message::noinc(first));
+
+			for(int j = i + 1; j < count; ++j) {
+				DP_Message *m = net::makeLocalMatchMessage(
+					msgs[j], shouldDisguiseAsPutImage);
+				matched.append(m ? net::Message::noinc(m) : msgs[j]);
+			}
+
+			return matched;
+		}
+	}
+	return {};
 }
 
 void Client::setConnectionUrl(const QUrl &url)

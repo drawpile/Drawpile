@@ -113,9 +113,9 @@ void TransformTool::finishMultipart()
 		net::Client *client = m_owner.client();
 		bool movedSelection = false;
 		QVector<net::Message> msgs = transform->applyActiveTransform(
-			client->seemsConnectedToThickServer(), client->myId(),
-			m_owner.activeLayer(), m_owner.transformInterpolation(),
-			client->isCompatibilityMode(), false, &movedSelection);
+			client->myId(), m_owner.activeLayer(),
+			m_owner.transformInterpolation(), client->isCompatibilityMode(),
+			false, &movedSelection);
 		bool send = !msgs.isEmpty();
 		if(send) {
 			client->sendMessages(msgs.size(), msgs.constData());
@@ -310,9 +310,9 @@ void TransformTool::stamp()
 	if(transform) {
 		net::Client *client = m_owner.client();
 		QVector<net::Message> msgs = transform->applyActiveTransform(
-			client->seemsConnectedToThickServer(), client->myId(),
-			m_owner.activeLayer(), m_owner.transformInterpolation(),
-			client->isCompatibilityMode(), true);
+			client->myId(), m_owner.activeLayer(),
+			m_owner.transformInterpolation(), client->isCompatibilityMode(),
+			true);
 		if(!msgs.isEmpty()) {
 			client->sendMessages(msgs.size(), msgs.constData());
 		}

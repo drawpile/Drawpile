@@ -307,12 +307,20 @@ bool DP_message_equals(DP_Message *msg, DP_Message *other)
         return true;
     }
     else if (msg && other && msg->type == other->type) {
-        DP_ASSERT(DP_message_opaque(msg) == DP_message_opaque(other));
-        return msg->methods->equals(msg, other);
+        return DP_message_payload_equals(msg, other);
     }
     else {
         return false;
     }
+}
+
+bool DP_message_payload_equals(DP_Message *msg, DP_Message *other)
+{
+    DP_ASSERT(msg);
+    DP_ASSERT(other);
+    DP_ASSERT(msg->type == other->type);
+    DP_ASSERT(DP_message_opaque(msg) == DP_message_opaque(other));
+    return msg->methods->equals(msg, other);
 }
 
 

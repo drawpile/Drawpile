@@ -107,6 +107,7 @@ typedef enum DP_MessageType {
     DP_MSG_KEY_FRAME_DELETE = 173,
     DP_MSG_SELECTION_PUT = 174,
     DP_MSG_SELECTION_CLEAR = 175,
+    DP_MSG_LOCAL_MATCH = 176,
     DP_MSG_UNDO = 255,
     DP_MSG_TYPE_COUNT,
 } DP_MessageType;
@@ -2730,11 +2731,8 @@ DP_msg_key_frame_delete_move_frame_index(const DP_MsgKeyFrameDelete *mkfd);
  * The mask is DEFLATEd 8 bit alpha. If absent, this fills the entire
  * rectangle instead.
  *
- * Strictly speaking, this is not compatible with the 2.2 protocol and
- * clients before version 2.2.2 don't understand it. However, since it
- * doesn't have any visual effect, it doesn't cause desync, so we accept it
- * anyway. In sessions on the builtin server, this is disguised as a
- * PutImage message instead, since that doesn't allow unknown messages.
+ * Currently, only selection id 1 is used and these messages are not sent
+ * over the network; LocalMatch commands are used instead.
  */
 
 #define DP_MSG_SELECTION_PUT_STATIC_LENGTH 14
@@ -2798,11 +2796,8 @@ size_t DP_msg_selection_put_mask_size(const DP_MsgSelectionPut *msp);
  * Remove the selection specified by the selection_id, or all selections if
  * it's 0.
  *
- * Strictly speaking, this is not compatible with the 2.2 protocol and
- * clients before version 2.2.2 don't understand it. However, since it
- * doesn't have any visual effect, it doesn't cause desync, so we accept it
- * anyway. In sessions on the builtin server, this is disguised as a
- * PutImage message instead, since that doesn't allow unknown messages.
+ * Currently, only selection id 1 is used and these messages are not sent
+ * over the network; LocalMatch commands are used instead.
  */
 
 #define DP_MSG_SELECTION_CLEAR_STATIC_LENGTH 1
@@ -2822,6 +2817,56 @@ DP_Message *DP_msg_selection_clear_parse(unsigned int context_id,
 DP_MsgSelectionClear *DP_msg_selection_clear_cast(DP_Message *msg);
 
 uint8_t DP_msg_selection_clear_selection_id(const DP_MsgSelectionClear *msc);
+
+
+/*
+ * DP_MSG_LOCAL_MATCH
+ *
+ * A command that is sent over the network just to match it with another
+ * message in the local fork. It has no effect in itself. This is currently
+ * used for selections, which only have an effect on the local user and
+ * other users don't need to bother with processing them.
+ *
+ * The type describes the message type this is matched with and the
+ * contents of data depend on that type being matched. It usually contains
+ * the same stuff as the matched message, minus any variable-length
+ * buffers, where only the size is sent along, since that's good enough for
+ * getting a match in practice.
+ *
+ * Strictly speaking, this is not compatible with the 2.2 protocol and
+ * clients before version 2.2.2 don't understand it. However, since it
+ * doesn't have any effect for other users, it doesn't cause desync, so we
+ * accept it anyway. In sessions on the builtin server, a PutImage message
+ * with an invalid blend mode is used instead.
+ */
+
+#define DP_MSG_LOCAL_MATCH_STATIC_LENGTH 1
+
+#define DP_MSG_LOCAL_MATCH_DATA_MIN_SIZE 0
+#define DP_MSG_LOCAL_MATCH_DATA_MAX_SIZE 65534
+
+typedef struct DP_MsgLocalMatch DP_MsgLocalMatch;
+
+DP_Message *DP_msg_local_match_new(unsigned int context_id, uint8_t type,
+                                   void (*set_data)(size_t, unsigned char *,
+                                                    void *),
+                                   size_t data_size, void *data_user);
+
+DP_Message *DP_msg_local_match_deserialize(unsigned int context_id,
+                                           const unsigned char *buffer,
+                                           size_t length);
+
+DP_Message *DP_msg_local_match_parse(unsigned int context_id,
+                                     DP_TextReader *reader);
+
+DP_MsgLocalMatch *DP_msg_local_match_cast(DP_Message *msg);
+
+uint8_t DP_msg_local_match_type(const DP_MsgLocalMatch *mlm);
+
+const unsigned char *DP_msg_local_match_data(const DP_MsgLocalMatch *mlm,
+                                             size_t *out_size);
+
+size_t DP_msg_local_match_data_size(const DP_MsgLocalMatch *mlm);
 
 
 /*

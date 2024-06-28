@@ -1014,8 +1014,7 @@ void Document::selectNone()
 		net::Message msgs[] = {
 			net::makeUndoPointMessage(contextId),
 			net::makeSelectionClearMessage(
-				m_client->seemsConnectedToThickServer(), contextId,
-				canvas::CanvasModel::MAIN_SELECTION_ID),
+				contextId, canvas::CanvasModel::MAIN_SELECTION_ID),
 		};
 		m_client->sendMessages(2, msgs);
 	}
@@ -1079,9 +1078,8 @@ void Document::selectOp(int op, const QRect &bounds, const QImage &mask)
 	unsigned int contextId = m_client->myId();
 	net::MessageList msgs;
 	net::makeSelectionPutMessages(
-		msgs, m_client->seemsConnectedToThickServer(), contextId,
-		canvas::CanvasModel::MAIN_SELECTION_ID, op, bounds.x(), bounds.y(),
-		bounds.width(), bounds.height(), mask);
+		msgs, contextId, canvas::CanvasModel::MAIN_SELECTION_ID, op, bounds.x(),
+		bounds.y(), bounds.width(), bounds.height(), mask);
 	if(!msgs.isEmpty()) {
 		msgs.prepend(net::makeUndoPointMessage(contextId));
 		m_client->sendMessages(msgs.size(), msgs.constData());

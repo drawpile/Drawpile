@@ -20,6 +20,7 @@
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
 #include "acl.h"
+#include "blend_mode.h"
 #include "message.h"
 #include "msg_internal.h"
 #include <dpcommon/common.h>
@@ -958,13 +959,16 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
     }
     case DP_MSG_LAYER_VISIBILITY:
         return false; // Layer hiding is client-side.
-    case DP_MSG_PUT_IMAGE:
+    case DP_MSG_PUT_IMAGE: {
+        DP_MsgPutImage *mpi = DP_message_internal(msg);
         return override
+            // Compatibility hack: local match command disguised as put image.
+            || DP_msg_put_image_mode(mpi) == DP_BLEND_MODE_COMPAT_LOCAL_MATCH
             || (DP_acl_state_can_use_feature(acls, DP_FEATURE_PUT_IMAGE,
                                              user_id)
-                && !DP_acl_state_layer_locked_for(
-                    acls, user_id,
-                    DP_msg_put_image_layer(DP_msg_put_image_cast(msg))));
+                && !DP_acl_state_layer_locked_for(acls, user_id,
+                                                  DP_msg_put_image_layer(mpi)));
+    }
     case DP_MSG_FILL_RECT:
         return override
             || (DP_acl_state_can_use_feature(acls, DP_FEATURE_PUT_IMAGE,

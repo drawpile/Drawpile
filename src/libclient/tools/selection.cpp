@@ -124,8 +124,7 @@ net::MessageList SelectionTool::endDeselection(uint8_t contextId)
 {
 	cancelSelection();
 	return {net::makeSelectionClearMessage(
-		shouldDisguiseSelectionsAsPutImage(), contextId,
-		canvas::CanvasModel::MAIN_SELECTION_ID)};
+		contextId, canvas::CanvasModel::MAIN_SELECTION_ID)};
 }
 
 bool SelectionTool::isInsideSelection(const QPointF &point) const
@@ -199,14 +198,12 @@ net::MessageList RectangleSelection::endSelection(uint8_t contextId)
 
 	if(area.isEmpty()) {
 		return {net::makeSelectionClearMessage(
-			shouldDisguiseSelectionsAsPutImage(), contextId,
-			canvas::CanvasModel::MAIN_SELECTION_ID)};
+			contextId, canvas::CanvasModel::MAIN_SELECTION_ID)};
 	} else {
 		net::MessageList msgs;
 		net::makeSelectionPutMessages(
-			msgs, shouldDisguiseSelectionsAsPutImage(), contextId,
-			canvas::CanvasModel::MAIN_SELECTION_ID, op(), area.x(), area.y(),
-			area.width(), area.height(), mask);
+			msgs, contextId, canvas::CanvasModel::MAIN_SELECTION_ID, op(),
+			area.x(), area.y(), area.width(), area.height(), mask);
 		return msgs;
 	}
 }
@@ -317,8 +314,7 @@ net::MessageList PolygonSelection::endSelection(uint8_t contextId)
 
 	if(area.isEmpty()) {
 		return {net::makeSelectionClearMessage(
-			shouldDisguiseSelectionsAsPutImage(), contextId,
-			canvas::CanvasModel::MAIN_SELECTION_ID)};
+			contextId, canvas::CanvasModel::MAIN_SELECTION_ID)};
 	} else {
 		QImage mask(area.size(), QImage::Format_ARGB32_Premultiplied);
 		mask.fill(0);
@@ -333,9 +329,8 @@ net::MessageList PolygonSelection::endSelection(uint8_t contextId)
 		}
 		net::MessageList msgs;
 		net::makeSelectionPutMessages(
-			msgs, shouldDisguiseSelectionsAsPutImage(), contextId,
-			canvas::CanvasModel::MAIN_SELECTION_ID, op(), area.x(), area.y(),
-			area.width(), area.height(), mask);
+			msgs, contextId, canvas::CanvasModel::MAIN_SELECTION_ID, op(),
+			area.x(), area.y(), area.width(), area.height(), mask);
 		return msgs;
 	}
 }

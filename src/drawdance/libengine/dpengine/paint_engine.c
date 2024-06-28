@@ -57,11 +57,10 @@
 #include <dpcommon/worker.h>
 #include <dpmsg/acl.h>
 #include <dpmsg/blend_mode.h>
+#include <dpmsg/local_match.h>
 #include <dpmsg/message.h>
 #include <dpmsg/message_queue.h>
 #include <dpmsg/msg_internal.h>
-#include <ctype.h>
-#include <limits.h>
 
 #define DP_PERF_CONTEXT "paint_engine"
 
@@ -1715,7 +1714,8 @@ static void record_message(DP_PaintEngine *pe, DP_Message *msg,
                 restart_recording(pe);
             }
         }
-        else if (!DP_message_type_control(type)) {
+        else if (!DP_message_type_control(type)
+                 && !DP_msg_local_match_is_local_match(msg)) {
             if (!DP_recorder_message_push_inc(r, msg)) {
                 DP_warn("Failed to push message to recorder: %s", DP_error());
                 DP_paint_engine_recorder_stop(pe);

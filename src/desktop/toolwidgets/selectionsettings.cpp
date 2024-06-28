@@ -95,16 +95,6 @@ void SelectionSettings::restoreToolSettings(const ToolProperties &cfg)
 	}
 }
 
-bool SelectionSettings::isLocked()
-{
-	// If we're connected to a thick server, we don't want to send it unknown
-	// message types because that'll get us kicked, which requires us to
-	// disguise selection commands as PutImage messages. Those in turn require
-	// the appropriate permission.
-	return !m_putImageAllowed &&
-		   controller()->client()->seemsConnectedToThickServer();
-}
-
 void SelectionSettings::stepAdjust1(bool increase)
 {
 	if(m_isMagicWand) {

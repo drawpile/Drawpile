@@ -595,22 +595,10 @@ static DP_CanvasState *handle_put_image(DP_CanvasState *cs,
                                         DP_MsgPutImage *mpi)
 {
     int blend_mode = DP_msg_put_image_mode(mpi);
-    if (blend_mode == DP_BLEND_MODE_COMPAT_SELECTION_PUT) {
-        // Compatibility hack: SelectionPut in disguise.
-        int layer_id = DP_msg_put_image_layer(mpi);
-        size_t in_mask_size;
-        const unsigned char *in_mask =
-            DP_msg_put_image_image(mpi, &in_mask_size);
-        return selection_put(
-            cs, context_id, layer_id & 0xff, (layer_id >> 8) & 0xff,
-            (int32_t)DP_msg_put_image_x(mpi), (int32_t)DP_msg_put_image_y(mpi),
-            (uint16_t)DP_msg_put_image_w(mpi),
-            (uint16_t)DP_msg_put_image_h(mpi), in_mask_size, in_mask);
-    }
-    else if (blend_mode == DP_BLEND_MODE_COMPAT_SELECTION_CLEAR) {
-        // Compatibility hack: SelectionClear in disguise.
-        return selection_clear(cs, context_id,
-                               DP_msg_put_image_layer(mpi) & 0xff);
+    if (blend_mode == DP_BLEND_MODE_COMPAT_LOCAL_MATCH) {
+        // This is a local match message disguised as a put image one for
+        // compatibility. We don't need to act on local matches.
+        return DP_canvas_state_incref(cs);
     }
     else if (!DP_blend_mode_exists(blend_mode)) {
         DP_error_set("Put image: unknown blend mode %d", blend_mode);
@@ -1443,6 +1431,10 @@ static DP_CanvasState *handle(DP_CanvasState *cs, DP_DrawContext *dc,
     case DP_MSG_SELECTION_CLEAR:
         return handle_selection_clear(cs, DP_message_context_id(msg),
                                       DP_message_internal(msg));
+    case DP_MSG_LOCAL_MATCH:
+        // Local synchronization message, presumably from another user. It
+        // doesn't contain any interesting information for us.
+        return DP_canvas_state_incref(cs);
     default:
         DP_error_set("Unhandled draw message type %d", (int)type);
         return NULL;

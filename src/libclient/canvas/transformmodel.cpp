@@ -157,14 +157,14 @@ void TransformModel::applyOffset(int x, int y)
 }
 
 QVector<net::Message> TransformModel::applyActiveTransform(
-	bool disguiseAsPutImage, uint8_t contextId, int layerId, int interpolation,
-	bool compatibilityMode, bool stamp, bool *outMovedSelection)
+	uint8_t contextId, int layerId, int interpolation, bool compatibilityMode,
+	bool stamp, bool *outMovedSelection)
 {
 	if(m_active && m_dstQuadValid) {
 		if(m_pasted) {
 			return applyFloating(
-				disguiseAsPutImage, contextId, layerId, interpolation,
-				compatibilityMode, stamp, outMovedSelection);
+				contextId, layerId, interpolation, compatibilityMode, stamp,
+				outMovedSelection);
 		} else {
 			if(stamp) {
 				if(isStampable()) {
@@ -175,8 +175,8 @@ QVector<net::Message> TransformModel::applyActiveTransform(
 				}
 			}
 			return applyFromCanvas(
-				disguiseAsPutImage, contextId, layerId, interpolation,
-				compatibilityMode, outMovedSelection);
+				contextId, layerId, interpolation, compatibilityMode,
+				outMovedSelection);
 		}
 	} else {
 		return {};
@@ -228,8 +228,8 @@ int TransformModel::getSingleLayerMoveId(int layerId) const
 }
 
 QVector<net::Message> TransformModel::applyFromCanvas(
-	bool disguiseAsPutImage, uint8_t contextId, int layerId, int interpolation,
-	bool compatibilityMode, bool *outMovedSelection)
+	uint8_t contextId, int layerId, int interpolation, bool compatibilityMode,
+	bool *outMovedSelection)
 {
 	Q_ASSERT(m_active);
 	Q_ASSERT(!m_pasted || m_stamped);
@@ -255,8 +255,7 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 
 		if(alterSelection && !moveSelection) {
 			msgs.append(net::makeSelectionClearMessage(
-				disguiseAsPutImage, contextId,
-				canvas::CanvasModel::MAIN_SELECTION_ID));
+				contextId, canvas::CanvasModel::MAIN_SELECTION_ID));
 		}
 
 		if(compatibilityMode) {
@@ -460,8 +459,8 @@ void TransformModel::applyCut(
 }
 
 QVector<net::Message> TransformModel::applyFloating(
-	bool disguiseAsPutImage, uint8_t contextId, int layerId, int interpolation,
-	bool compatibilityMode, bool stamp, bool *outMovedSelection)
+	uint8_t contextId, int layerId, int interpolation, bool compatibilityMode,
+	bool stamp, bool *outMovedSelection)
 {
 	Q_ASSERT(m_active);
 	Q_ASSERT(m_pasted);
@@ -481,8 +480,8 @@ QVector<net::Message> TransformModel::applyFloating(
 	QVector<net::Message> msgs;
 	if(m_stamped && !stamp) {
 		msgs = applyFromCanvas(
-			disguiseAsPutImage, contextId, layerId, interpolation,
-			compatibilityMode, outMovedSelection);
+			contextId, layerId, interpolation, compatibilityMode,
+			outMovedSelection);
 	}
 
 	// May be empty either if the transform wasn't stamped or if there was

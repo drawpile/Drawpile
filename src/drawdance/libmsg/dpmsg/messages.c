@@ -124,6 +124,7 @@ bool DP_message_type_command(DP_MessageType type)
     case DP_MSG_KEY_FRAME_DELETE:
     case DP_MSG_SELECTION_PUT:
     case DP_MSG_SELECTION_CLEAR:
+    case DP_MSG_LOCAL_MATCH:
     case DP_MSG_UNDO:
         return true;
     default:
@@ -264,6 +265,8 @@ const char *DP_message_type_name(DP_MessageType type)
         return "selectionput";
     case DP_MSG_SELECTION_CLEAR:
         return "selectionclear";
+    case DP_MSG_LOCAL_MATCH:
+        return "localmatch";
     case DP_MSG_UNDO:
         return "undo";
     default:
@@ -404,6 +407,8 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_SELECTION_PUT";
     case DP_MSG_SELECTION_CLEAR:
         return "DP_MSG_SELECTION_CLEAR";
+    case DP_MSG_LOCAL_MATCH:
+        return "DP_MSG_LOCAL_MATCH";
     case DP_MSG_UNDO:
         return "DP_MSG_UNDO";
     default:
@@ -602,6 +607,9 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     else if (DP_str_equal(type_name, "selectionclear")) {
         return DP_MSG_SELECTION_CLEAR;
     }
+    else if (DP_str_equal(type_name, "localmatch")) {
+        return DP_MSG_LOCAL_MATCH;
+    }
     else if (DP_str_equal(type_name, "undo")) {
         return DP_MSG_UNDO;
     }
@@ -780,6 +788,8 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
             return DP_msg_selection_put_deserialize(context_id, buf, length);
         case DP_MSG_SELECTION_CLEAR:
             return DP_msg_selection_clear_deserialize(context_id, buf, length);
+        case DP_MSG_LOCAL_MATCH:
+            return DP_msg_local_match_deserialize(context_id, buf, length);
         case DP_MSG_UNDO:
             return DP_msg_undo_deserialize(context_id, buf, length);
         default:
@@ -932,6 +942,8 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return DP_msg_selection_put_parse(context_id, reader);
     case DP_MSG_SELECTION_CLEAR:
         return DP_msg_selection_clear_parse(context_id, reader);
+    case DP_MSG_LOCAL_MATCH:
+        return DP_msg_local_match_parse(context_id, reader);
     case DP_MSG_UNDO:
         return DP_msg_undo_parse(context_id, reader);
     default:
@@ -9568,6 +9580,131 @@ uint8_t DP_msg_selection_clear_selection_id(const DP_MsgSelectionClear *msc)
 {
     DP_ASSERT(msc);
     return msc->selection_id;
+}
+
+
+/* DP_MSG_LOCAL_MATCH */
+
+struct DP_MsgLocalMatch {
+    uint8_t type;
+    uint16_t data_size;
+    unsigned char data[];
+};
+
+static size_t msg_local_match_payload_length(DP_Message *msg)
+{
+    DP_MsgLocalMatch *mlm = DP_message_internal(msg);
+    return ((size_t)1) + mlm->data_size;
+}
+
+static size_t msg_local_match_serialize_payload(DP_Message *msg,
+                                                unsigned char *data)
+{
+    DP_MsgLocalMatch *mlm = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint8(mlm->type, data + written);
+    written += write_bytes(mlm->data, mlm->data_size, data + written);
+    DP_ASSERT(written == msg_local_match_payload_length(msg));
+    return written;
+}
+
+static bool msg_local_match_write_payload_text(DP_Message *msg,
+                                               DP_TextWriter *writer)
+{
+    DP_MsgLocalMatch *mlm = DP_message_internal(msg);
+    return DP_text_writer_write_base64(writer, "data", mlm->data,
+                                       mlm->data_size)
+        && DP_text_writer_write_uint(writer, "type", mlm->type, true);
+}
+
+static bool msg_local_match_equals(DP_Message *DP_RESTRICT msg,
+                                   DP_Message *DP_RESTRICT other)
+{
+    DP_MsgLocalMatch *a = DP_message_internal(msg);
+    DP_MsgLocalMatch *b = DP_message_internal(other);
+    return a->type == b->type && a->data_size == b->data_size
+        && memcmp(a->data, b->data, DP_uint16_to_size(a->data_size)) == 0;
+}
+
+static const DP_MessageMethods msg_local_match_methods = {
+    msg_local_match_payload_length,
+    msg_local_match_serialize_payload,
+    msg_local_match_write_payload_text,
+    msg_local_match_equals,
+};
+
+DP_Message *DP_msg_local_match_new(unsigned int context_id, uint8_t type,
+                                   void (*set_data)(size_t, unsigned char *,
+                                                    void *),
+                                   size_t data_size, void *data_user)
+{
+    DP_Message *msg =
+        DP_message_new(DP_MSG_LOCAL_MATCH, context_id, &msg_local_match_methods,
+                       DP_FLEX_SIZEOF(DP_MsgLocalMatch, data, data_size));
+    DP_MsgLocalMatch *mlm = DP_message_internal(msg);
+    mlm->type = type;
+    mlm->data_size = DP_size_to_uint16(data_size);
+    if (set_data) {
+        set_data(mlm->data_size, mlm->data, data_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_local_match_deserialize(unsigned int context_id,
+                                           const unsigned char *buffer,
+                                           size_t length)
+{
+    if (length < 1 || length > 65535) {
+        DP_error_set("Wrong length for localmatch message; "
+                     "expected between 1 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint8_t type = read_uint8(buffer + read, &read);
+    size_t data_bytes = length - read;
+    uint16_t data_size = DP_size_to_uint16(data_bytes);
+    void *data_user = (void *)(buffer + read);
+    return DP_msg_local_match_new(context_id, type, read_bytes, data_size,
+                                  data_user);
+}
+
+DP_Message *DP_msg_local_match_parse(unsigned int context_id,
+                                     DP_TextReader *reader)
+{
+    uint8_t type =
+        (uint8_t)DP_text_reader_get_ulong_hex(reader, "type", UINT8_MAX);
+    size_t data_size;
+    DP_TextReaderParseParams data_params =
+        DP_text_reader_get_base64_string(reader, "data", &data_size);
+    return DP_msg_local_match_new(context_id, type, DP_text_reader_parse_base64,
+                                  data_size, &data_params);
+}
+
+DP_MsgLocalMatch *DP_msg_local_match_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_LOCAL_MATCH);
+}
+
+uint8_t DP_msg_local_match_type(const DP_MsgLocalMatch *mlm)
+{
+    DP_ASSERT(mlm);
+    return mlm->type;
+}
+
+const unsigned char *DP_msg_local_match_data(const DP_MsgLocalMatch *mlm,
+                                             size_t *out_size)
+{
+    DP_ASSERT(mlm);
+    if (out_size) {
+        *out_size = mlm->data_size;
+    }
+    return mlm->data;
+}
+
+size_t DP_msg_local_match_data_size(const DP_MsgLocalMatch *mlm)
+{
+    return mlm->data_size;
 }
 
 

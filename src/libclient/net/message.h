@@ -121,13 +121,11 @@ Message makePutImageMessage(
 	uint8_t contextId, uint16_t layer, uint8_t mode, uint32_t x, uint32_t y,
 	uint32_t w, uint32_t h, const QByteArray &compressedImage);
 
-Message makeSelectionClearMessage(
-	bool disguiseAsPutImage, uint8_t contextId, uint8_t selectionId);
+Message makeSelectionClearMessage(uint8_t contextId, uint8_t selectionId);
 
 Message makeSelectionPutMessage(
-	bool disguiseAsPutImage, uint8_t contextId, uint8_t selectionId, uint8_t op,
-	int32_t x, int32_t y, uint16_t w, uint16_t h,
-	const QByteArray &compressedMask);
+	uint8_t contextId, uint8_t selectionId, uint8_t op, int32_t x, int32_t y,
+	uint16_t w, uint16_t h, const QByteArray &compressedMask);
 
 Message
 makeSetMetadataIntMessage(uint8_t contextId, uint8_t field, int32_t value);
@@ -165,9 +163,8 @@ void makePutImageMessages(
 	int y, const QImage &image);
 
 void makeSelectionPutMessages(
-	MessageList &msgs, bool disguiseAsPutImage, uint8_t contextId,
-	uint8_t selectionId, uint8_t op, int x, int y, int w, int h,
-	const QImage &image);
+	MessageList &msgs, uint8_t contextId, uint8_t selectionId, uint8_t op,
+	int x, int y, int w, int h, const QImage &image);
 
 Message makeLocalChangeLayerVisibilityMessage(int layerId, bool hidden);
 Message makeLocalChangeBackgroundColorMessage(const QColor &color);
@@ -180,6 +177,8 @@ Message makeLocalChangeTrackVisibilityMessage(int trackId, bool hidden);
 Message makeLocalChangeTrackOnionSkinMessage(int trackId, bool onionSkin);
 
 Message makeMessageBackwardCompatible(const Message &msg);
+
+DP_Message *makeLocalMatchMessage(const Message &msg, bool disguiseAsPutImage);
 
 }
 

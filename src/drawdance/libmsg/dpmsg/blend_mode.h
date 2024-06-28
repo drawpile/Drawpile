@@ -58,8 +58,11 @@ typedef enum DP_BlendMode {
     // Compatibility hack, not actual blend modes. Selections need new commands,
     // which are not accepted on the thick/builtin server. So we disguise them
     // as PutImage commands there with these blend modes instead.
-    DP_BLEND_MODE_COMPAT_SELECTION_PUT = DP_BLEND_MODE_MAX - 2,
-    DP_BLEND_MODE_COMPAT_SELECTION_CLEAR = DP_BLEND_MODE_MAX - 1,
+    DP_BLEND_MODE_COMPAT_LOCAL_MATCH = DP_BLEND_MODE_MAX - 3,
+    // The following two compatibility blend modes were used temporarily during
+    // development. Consider them reserved for now.
+    // DP_BLEND_MODE_COMPAT_SELECTION_PUT = DP_BLEND_MODE_MAX - 2,
+    // DP_BLEND_MODE_COMPAT_SELECTION_CLEAR = DP_BLEND_MODE_MAX - 1,
     DP_BLEND_MODE_REPLACE = DP_BLEND_MODE_MAX,
     DP_BLEND_MODE_COUNT,
 } DP_BlendMode;
