@@ -52,6 +52,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	, m_showOwnUserMarker(false)
 	, m_cursorOnCanvas(false)
 	, m_selectionIgnored(false)
+	, m_showSelectionMask(false)
 	, m_userMarkerPersistence(1000)
 {
 	setItemIndexMethod(NoIndex);
