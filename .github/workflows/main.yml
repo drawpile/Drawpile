@@ -453,6 +453,8 @@ jobs:
           path: |
             **/*.log
             **/*.wxs
+            build/android-build/*.properties
+            build/android_deployment_settings.json
 
       - name: Save sccache
         uses: ./.github/actions/post-sccache
