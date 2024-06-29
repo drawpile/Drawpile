@@ -353,16 +353,6 @@ jobs:
           key: gradle-${{ runner.os }}-${{ matrix.arch }}+${{ matrix.cross_os }}-${{ matrix.qt }}
         if: matrix.cross_os == 'Android'
 
-      - name: Install Android 64 bit Rust target
-        run: >
-          rustup target add aarch64-linux-android
-        if: matrix.cross_os == 'Android' && matrix.arch == 'arm64'
-
-      - name: Install Android 32 bit Rust target
-        run: >
-          rustup target add armv7-linux-androideabi
-        if: matrix.cross_os == 'Android' && matrix.arch == 'arm32'
-
       - name: Prepare Windows signing
         run: |
           if ($env:WINDOWS_CERTIFICATE) {
