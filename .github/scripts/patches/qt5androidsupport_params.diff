@@ -1,0 +1,22 @@
+Description: Qt5AndroidSupport.cmake doesn't pass the jdk and android-platform
+parameters correctly. Instead of using a list, it creates a string with a space
+in it, leading to androiddeployqt ignoring them altogether. We need to be able
+to pass the latter though, because without it androiddeplyqt will use the latest
+Android platform, which isn't compatible anymore since android-35.
+
+--- a/src/corelib/Qt5AndroidSupport.cmake
++++ b/src/corelib/Qt5AndroidSupport.cmake
+@@ -140,11 +140,11 @@
+     set(JAVA_HOME $ENV{JAVA_HOME} CACHE INTERNAL "Saved JAVA_HOME variable")
+   endif()
+   if (JAVA_HOME)
+-    set(android_deploy_qt_jdk "--jdk ${JAVA_HOME}")
++    set(android_deploy_qt_jdk "--jdk" "${JAVA_HOME}")
+   endif()
+
+   if (ANDROID_SDK_PLATFORM)
+-    set(android_deploy_qt_platform "--android-platform ${ANDROID_SDK_PLATFORM}")
++    set(android_deploy_qt_platform "--android-platform" "${ANDROID_SDK_PLATFORM}")
+   endif()
+
+   if(NOT TARGET apk)
