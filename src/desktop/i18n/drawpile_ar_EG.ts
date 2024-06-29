@@ -2765,7 +2765,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation>ملف السجل غير موجود، هل تحتاج إلى تمكين تسجيل الدخول في التفضيلات؟</translation>
+        <translation>ملف السجل غير موجود، هل تحتاج إلى تفعيل تسجيل الدخول في التفضيلات؟</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -5768,7 +5768,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+101"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6162,26 +6162,26 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location filename="../dialogs/sessionsettings.cpp" line="+340"/>
         <source>Imported %n session ban(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>تم استيراد %n حظر للجلسة.</numerusform>
+            <numerusform>تم استيراد %n حظر للجلسة.</numerusform>
+            <numerusform>تم استيراد %n حظر للجلسة.</numerusform>
+            <numerusform>تم استيراد %n حظر للجلسة.</numerusform>
+            <numerusform>تم استيراد %n حظر للجلسة.</numerusform>
+            <numerusform>تم استيراد %n حظر للجلسة.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>%1 %n was/were not imported because it was/they were invalid or duplicates.</source>
         <extracomment>%1 is the &quot;Imported %n session ban(s).&quot; message.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>لم يتم استيراد %1 %n لأنها كانت غير صالحة أو مكررة.</numerusform>
+            <numerusform>لم يتم استيراد %1 %n لأنها كانت غير صالحة أو مكررة.</numerusform>
+            <numerusform>لم يتم استيراد %1 %n لانهم كانوا غير الصالحين أو مكررين.</numerusform>
+            <numerusform>لم يتم استيراد %1 %n لانهم كانوا غير الصالحين أو مكررين.</numerusform>
+            <numerusform>لم يتم استيراد %1 %n لانهم كانوا غير الصالحين أو مكررين.</numerusform>
+            <numerusform>لم يتم استيراد %1 %n لانهم كانوا غير الصالحين أو مكررين.</numerusform>
         </translation>
     </message>
     <message>
@@ -6189,234 +6189,234 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+477"/>
         <location line="+9"/>
         <source>Session Ban Import</source>
-        <translation type="unfinished"></translation>
+        <translation>استيراد ا حظر الجلسة</translation>
     </message>
     <message>
         <location line="-465"/>
         <source>Session Ban Export</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير ا حظر الجلسة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error saving bans to &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في عمليات حفظ الاحظر في &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Session Ban Error</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في حظر الجلسة</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>This list shows only registered users.</source>
-        <translation type="unfinished"></translation>
+        <translation>تظهر هذه القائمة للمستخدمين المسجلين فقط.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only operators can see this list.</source>
-        <translation type="unfinished"></translation>
+        <translation>يمكن الرؤساء فقط رؤية هذه القائمة.</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Operators</source>
-        <translation type="unfinished">الرؤساء</translation>
+        <translation>الرؤساء</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trusted</source>
-        <translation type="unfinished">موثوق</translation>
+        <translation>موثوق</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Registered</source>
-        <translation type="unfinished">مسجل</translation>
+        <translation>مسجل</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>الجميع</translation>
     </message>
     <message>
         <location line="+77"/>
         <source>yes</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>نعم</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>no</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>لا</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>change</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>تغيير</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>assign</source>
         <comment>password</comment>
-        <translation type="unfinished"></translation>
+        <translation>تعيين</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>never</source>
         <extracomment>&quot;Idle timeout: never&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>أبداً</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>disabled by moderator</source>
         <extracomment>&quot;Idle timeout: disabled by moderator&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>تم تعطيله من قبل المشرف</translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n hour(s)</source>
         <extracomment>Idle timeout hours. May be joined with minutes and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n ساعة</numerusform>
+            <numerusform>%n ساعة</numerusform>
+            <numerusform>%n ساعات</numerusform>
+            <numerusform>%n ساعات</numerusform>
+            <numerusform>%n ساعات</numerusform>
+            <numerusform>%n ساعات</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n minute(s)</source>
         <extracomment>Idle timeout minutes. May be joined with hours and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n دقيقة</numerusform>
+            <numerusform>%n دقيقة</numerusform>
+            <numerusform>%n دقائق</numerusform>
+            <numerusform>%n دقائق</numerusform>
+            <numerusform>%n دقائق</numerusform>
+            <numerusform>%n دقائق</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n second(s)</source>
         <extracomment>Idle timeout seconds. May be joined with hours and minutes.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n ثانية</numerusform>
+            <numerusform>%n ثانية</numerusform>
+            <numerusform>%n ثواني</numerusform>
+            <numerusform>%n ثواني</numerusform>
+            <numerusform>%n ثواني</numerusform>
+            <numerusform>%n ثواني</numerusform>
         </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>, </source>
         <extracomment>This string joins the hours, minutes and seconds for the idle time.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>, </translation>
     </message>
     <message>
         <location line="+122"/>
         <location line="+18"/>
         <source>Set a new password or leave blank to remove.</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بتعيين كلمة مرور جديدة أو اتركها فارغة لإزالتها.</translation>
     </message>
     <message>
         <location line="-16"/>
         <source>Set a password for the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بتعيين كلمة مرور للجلسة.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session Password</source>
-        <translation type="unfinished"></translation>
+        <translation>كلمة مرور الجلسة</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Set a password for gaining operator status.</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بتعيين كلمة مرور للحصول على حالة المشغل.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Operator Password</source>
-        <translation type="unfinished"></translation>
+        <translation>كلمة مرور المشغل</translation>
     </message>
     <message>
         <location line="+30"/>
         <location line="+113"/>
         <source>Error opening &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في فتح &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="-86"/>
         <source>This server does not support importing encrypted bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يدعم هذا الخادم استيراد عمليات الحظر المشفرة.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>This server does not support importing plain bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يدعم هذا الخادم استيراد عمليات الحظر البسيطة.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>File does not appear to contain any ban data.</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يبدو أن الملف يحتوي على أي بيانات حظر.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Choose Ban Export Type</source>
-        <translation type="unfinished"></translation>
+        <translation>اختر حظر التصدير، اكتب أي بيانات حظر</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Since you are a moderator, you can export bans encrypted or plain. Encrypted bans can only be imported on this server. Which format do you want to export?</source>
-        <translation type="unfinished"></translation>
+        <translation>نظرًا لأنك مشرف، يمكنك تصدير عمليات الحظر مشفرة أو عادية. لا يمكن استيراد عمليات الحظر المشفرة إلا على هذا الخادم. ما التنسيق الذي تريد تصديره؟</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>مشفرة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Plain</source>
-        <translation type="unfinished"></translation>
+        <translation>بسيط</translation>
     </message>
     <message>
         <location line="+46"/>
         <location line="+10"/>
         <location line="+10"/>
         <source>Role Import</source>
-        <translation type="unfinished"></translation>
+        <translation>استيراد الدور</translation>
     </message>
     <message>
         <location line="-9"/>
         <source>File &apos;%1&apos; does not contain a valid role export.</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يحتوي الملف &apos;%1&apos; على تصدير دور صالح.</translation>
     </message>
     <message numerus="yes">
         <location line="+9"/>
         <source>%n role(s) imported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n الدور مستورد.</numerusform>
+            <numerusform>%n الدور مستورد.</numerusform>
+            <numerusform>%n الأدوار مستوردة.</numerusform>
+            <numerusform>%n الأدوار مستوردة.</numerusform>
+            <numerusform>%n الأدوار مستوردة.</numerusform>
+            <numerusform>%n الأدوار مستوردة.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Role Export</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير الدور</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error saving roles to &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في حفظ الأدوار إلى &apos;%1&apos;: %2</translation>
     </message>
 </context>
 <context>
@@ -6424,17 +6424,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/sessionundodepthlimitdialog.cpp" line="+21"/>
         <source>Change Session Undo Depth Limit</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير حد التراجع عن الجلسة</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Undo Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>حد التراجع: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Choose a new undo limit for this session, the current limit is %1. Undos are shared between all participants. Changing the limit will start the undo stack anew, you won&apos;t be able to undo before the point where you changed it.</source>
-        <translation type="unfinished"></translation>
+        <translation>اختر حدًا جديدًا للتراجع لهذه الجلسة، الحد الحالي هو %1. تتم مشاركة عمليات التراجع بين جميع المشاركين. سيؤدي تغيير الحد إلى بدء مكدس التراجع من جديد، ولن تتمكن من التراجع قبل النقطة التي قمت بتغييره فيها.</translation>
     </message>
 </context>
 <context>
@@ -6442,57 +6442,57 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="+32"/>
         <source>Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>التفضيلات</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>General</source>
-        <translation type="unfinished">عام</translation>
+        <translation>عام</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>User Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>واجهه المستخدم</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Input</source>
-        <translation type="unfinished">مدخل</translation>
+        <translation>مدخل</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>الادوات</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Network</source>
-        <translation type="unfinished"></translation>
+        <translation>الشبكه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>الإخطارات</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Servers</source>
-        <translation type="unfinished"></translation>
+        <translation>السيرفرات</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>الاختصارات</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>اختصارات اللوحه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>الرقابة الأبوية</translation>
     </message>
 </context>
 <context>
@@ -6500,154 +6500,154 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog.cpp" line="+70"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>بدأ</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Welcome</source>
-        <translation type="unfinished"></translation>
+        <translation>مرحباً</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>News and updates</source>
-        <translation type="unfinished"></translation>
+        <translation>الأخبار والتحديثات</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Join Session</source>
-        <translation type="unfinished"></translation>
+        <translation>انضم لجلسه</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Connect to a drawing session directly</source>
-        <translation type="unfinished"></translation>
+        <translation>الاتصال بجلسة الرسم مباشرة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Browse Sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>تصفح الجلسات</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Browse publicly listed drawing sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>تصفح جلسات الرسم المدرجة للعامة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Host Session</source>
-        <translation type="unfinished">استضيف جلسه</translation>
+        <translation>فتح جلسه</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Share your canvas with others</source>
-        <translation type="unfinished">شارك لوحتك مع الاخرين</translation>
+        <translation>شارك لوحتك مع الاخرين</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>New Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>لوحه جديده</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Create a new, empty canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>افتح لوحه جديده فاضيه</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Open File</source>
-        <translation type="unfinished"></translation>
+        <translation>افتح الملف</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Open an image file</source>
-        <translation type="unfinished"></translation>
+        <translation>افتح ملف صورة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Recent Files</source>
-        <translation type="unfinished"></translation>
+        <translation>الملفات الأخيرة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reopen a recently used file</source>
-        <translation type="unfinished"></translation>
+        <translation>أعد فتح ملف تم استخدامه مؤخرًا</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layouts</source>
-        <translation type="unfinished">التخطيطات</translation>
+        <translation>التخطيطات</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Choose application layout</source>
-        <translation type="unfinished"></translation>
+        <translation>اختر تخطيط التطبيق</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>Preferences</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Change application settings</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير إعدادات التطبيق</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Record</source>
-        <translation type="unfinished"></translation>
+        <translation>سِجِلّ</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Add Server</source>
-        <translation type="unfinished">إضافة خادم</translation>
+        <translation>اضافه سيرفر</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Check for Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>تحقق من وجود تحديثات</translation>
     </message>
     <message>
         <location line="+272"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>تدقيق…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Last check: today.</source>
-        <translation type="unfinished"></translation>
+        <translation>الفحص الأخير: اليوم.</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>Last check: %n day(s) ago.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>آخر فحص: قبل %n يوم.</numerusform>
+            <numerusform>آخر فحص: قبل %n يوم.</numerusform>
+            <numerusform>آخر فحص: منذ %n يومًا.</numerusform>
+            <numerusform>آخر فحص: منذ %n يومًا.</numerusform>
+            <numerusform>آخر فحص: منذ %n يومًا.</numerusform>
+            <numerusform>آخر فحص: منذ %n يومًا.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Last check: never.</source>
-        <translation type="unfinished"></translation>
+        <translation>الفحص الأخير: أبدا.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Join</source>
-        <translation type="unfinished">ادخل</translation>
+        <translation>ادخل</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Host</source>
-        <translation type="unfinished"></translation>
+        <translation>افتح جلسه</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>خلق</translation>
     </message>
 </context>
 <context>
@@ -6655,22 +6655,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/touchtestdialog.cpp" line="+212"/>
         <source>Enable touch</source>
-        <translation type="unfinished"></translation>
+        <translation>تفعيل اللمس</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enable gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>تفعيل حركات اللمس</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Error Saving Log</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في حفظ السجل</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Touch test log could not be saved: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>تعذر حفظ سجل اختبار اللمس: %1</translation>
     </message>
 </context>
 <context>
@@ -6678,7 +6678,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-235"/>
         <source>Touch here.</source>
-        <translation type="unfinished"></translation>
+        <translation>المس هنا.</translation>
     </message>
 </context>
 <context>
@@ -6686,7 +6686,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/userinfodialog.cpp" line="+31"/>
         <source>Refresh</source>
-        <translation type="unfinished">إعادة تشغيل</translation>
+        <translation>إعادة تشغيل</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -6698,32 +6698,32 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+9"/>
         <location line="+7"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>غير معروف</translation>
     </message>
     <message>
         <location line="-22"/>
         <source>Draw</source>
-        <translation type="unfinished"></translation>
+        <translation>ارسم</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>حرك اللوحه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Do Nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>لا تفعل شيئا</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>مفعل</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>غير مفعل</translation>
     </message>
 </context>
 <context>
@@ -6731,53 +6731,53 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/videoexportdialog.cpp" line="+31"/>
         <source>Image Series</source>
-        <translation type="unfinished"></translation>
+        <translation>سلسلة الصور</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>فيديو MP4</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>WebM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>فيديو WebM</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Custom FFmpeg Command</source>
-        <translation type="unfinished"></translation>
+        <translation>أمر FFmpeg مخصص</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Original</source>
-        <translation type="unfinished"></translation>
+        <translation>الاصلي</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Custom:</source>
-        <translation type="unfinished"></translation>
+        <translation>مخصص:</translation>
     </message>
     <message>
         <location line="+80"/>
         <source>Executables</source>
         <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>الملفات التنفيذية</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Choose ffmpeg path</source>
-        <translation type="unfinished"></translation>
+        <translation>اختر مسار ffmpeg</translation>
     </message>
     <message>
         <location line="+107"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>تحقق…</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Not found. %1</source>
-        <translation type="unfinished"></translation>
+        <translation>غير معثور عليه. %1</translation>
     </message>
 </context>
 <context>
@@ -6785,59 +6785,59 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/canvasshortcuts.cpp" line="+37"/>
         <source>Search actions…</source>
-        <translation type="unfinished"></translation>
+        <translation>إجراءات البحث…</translation>
     </message>
     <message>
         <location line="+74"/>
         <source>Edit Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير اختصار اللوحه</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Add canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>إضافة اختصار اللوحة…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>New Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>ابني اختصار الوحه جديده</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Remove selected canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>إزالة اختصار اللوحة المحدد…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove canvas shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>إزالة اختصار اللوحة</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>هل تريد بالفعل إزالة %n من اختصار اللوحة ؟</numerusform>
+            <numerusform>هل تريد بالفعل إزالة %n من اختصار اللوحة ؟</numerusform>
+            <numerusform>هل تريد حقًا إزالة %n من اختصارات اللوحة؟</numerusform>
+            <numerusform>هل تريد حقًا إزالة %n من اختصارات اللوحة؟</numerusform>
+            <numerusform>هل تريد حقًا إزالة %n من اختصارات اللوحة؟</numerusform>
+            <numerusform>هل تريد حقًا إزالة %n من اختصارات اللوحة؟</numerusform>
         </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Restore defaults…</source>
-        <translation type="unfinished"></translation>
+        <translation>استعادة الضبط الافتراضي…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Restore Canvas Shortcut Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>استعادة الإعدادات الافتراضية لاختصارات اللوحة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really restore all canvas shortcuts to their default values?</source>
-        <translation type="unfinished"></translation>
+        <translation>هل تريد حقًا استعادة جميع اختصارات اللوحة إلى قيمها الافتراضية؟</translation>
     </message>
 </context>
 <context>
@@ -6845,149 +6845,149 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/general.cpp" line="+62"/>
         <source>When enabled, save every %1 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>عند افتعال، احفظ كل %1 دقيقة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autosave:</source>
-        <translation type="unfinished"></translation>
+        <translation>الحفظ التلقائي:</translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+99"/>
         <location line="+15"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>نظام</translation>
     </message>
     <message>
         <location line="-103"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>اللغه:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Language changes apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>يتم تطبيق تغييرات اللغة بعد إعادة تشغيل Drawpile.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>%1 (%2) / %3 (%4)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2) / %3 (%4)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Write debugging log to file</source>
-        <translation type="unfinished"></translation>
+        <translation>كتابة سجل التصحيح إلى الملف</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Logging:</source>
-        <translation type="unfinished"></translation>
+        <translation>تسجيل:</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Keep %1 canvas snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation>احتفظ بلقطات%1 اللوحه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas snapshots:</source>
-        <translation type="unfinished"></translation>
+        <translation>لقطات اللوحه:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Take one snapshot every %1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>التقط لقطة واحدة كل %1 ثانية</translation>
     </message>
     <message>
         <location line="-93"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
-        <translation type="unfinished"></translation>
+        <translation>يمكن تفعيل الحفظ التلقائي للملف الحالي ضمن ملف ▸ الحفظ التلقائي.</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <translation type="unfinished"></translation>
+        <translation>يتم الاستيفاء عند تكبير العرض أو تدويره</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas view:</source>
-        <translation type="unfinished"></translation>
+        <translation>عرض اللوحه:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Prevent jitter at certain zoom and rotation levels</source>
-        <translation type="unfinished"></translation>
+        <translation>منع تقطع عند مستويات تكبير/تصغير معينة وتدويرها</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <translation type="unfinished"></translation>
+        <translation>قد يؤثر تفعيل هذه الخيارات على الأداء في بعض الأنظمة.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Snapshots can be restored from the Session ▸ Reset… menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>يمكن استعادة اللقطات من قائمة الجلسة ▸ إعادة تعيين....</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Style:</source>
-        <translation type="unfinished"></translation>
+        <translation>أسلوب:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>ضوء</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>مظلم</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Krita Bright</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita Bright</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita Dark</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Krita Darker</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita Darker</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Qt Fusion</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt Fusion</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hotdog Stand</source>
-        <translation type="unfinished"></translation>
+        <translation>عربة نقانق</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Color scheme:</source>
-        <translation type="unfinished"></translation>
+        <translation>نظام الألوان:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Use %1 undo levels by default</source>
-        <translation type="unfinished"></translation>
+        <translation>استخدم %1 مستويات التراجع بشكل افتراضي</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session history:</source>
-        <translation type="unfinished"></translation>
+        <translation>تاريخ الجلسة:</translation>
     </message>
 </context>
 <context>
@@ -6995,160 +6995,160 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/input.cpp" line="+51"/>
         <source>Input</source>
-        <translation type="unfinished">مدخل</translation>
+        <translation>دخل</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>نتاج</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Global pressure curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>منحنى الضغط العالمي:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Enable pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>تفعيل حساسيه الضغط</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet:</source>
-        <translation type="unfinished"></translation>
+        <translation>التابلت:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Compensate jagged curves</source>
-        <translation type="unfinished"></translation>
+        <translation>تعويض المنحنيات الخشنة</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Smoothing: </source>
-        <translation type="unfinished">تنعيم الخط: </translation>
+        <translation>تنعيم الخط: </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بالتبديل إلى فتحة الممحاة</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished"></translation>
+        <translation>امسح بالفرشاة الحالية</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser action:</source>
         <extracomment>Eraser refers to the eraser tip of a tablet pen.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>عمل الممحاة:</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../mainwindow.cpp" line="-966"/>
         <source>KisTablet Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>KisTablet Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Wintab</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>KisTablet Wintab Relative</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Wintab Relative</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+2"/>
         <source>Qt5</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt5</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+2"/>
         <source>Qt6 Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Qt6 Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Wintab</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Driver:</source>
-        <translation type="unfinished"></translation>
+        <translation>سائق:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Touch mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>وضع اللمس:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished"></translation>
+        <translation>شاشة اللمس</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>حركات اللمس</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>One-finger input:</source>
-        <translation type="unfinished"></translation>
+        <translation>مدخل الصباع الواحد:</translation>
     </message>
     <message>
         <location line="-50"/>
         <location line="+52"/>
         <source>Do nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>ما تعملش حاجه</translation>
     </message>
     <message>
         <location line="-98"/>
         <source>Capture volume rocker</source>
-        <translation type="unfinished"></translation>
+        <translation>التقاط حجم rocker</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Android:</source>
-        <translation type="unfinished"></translation>
+        <translation>Android:</translation>
     </message>
     <message>
         <location line="+97"/>
         <source>Draw</source>
-        <translation type="unfinished"></translation>
+        <translation>رسم</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pan canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>حرك اللوحه</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Pinch to zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>قرص للتكبير</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Twist to rotate</source>
-        <translation type="unfinished"></translation>
+        <translation>دور صباعين للتكبير</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Touch gestures:</source>
-        <translation type="unfinished"></translation>
+        <translation>حركات اللمس:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Test your tablet here:</source>
-        <translation type="unfinished"></translation>
+        <translation>اختبر جهازك اللوحي هنا:</translation>
     </message>
 </context>
 <context>
@@ -7156,118 +7156,118 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/network.cpp" line="+84"/>
         <source>Hide user list in announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>إخفاء قائمة المستخدمين في الإعلانات</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Builtin server:</source>
-        <translation type="unfinished"></translation>
+        <translation>Builtin سيرفر :</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Announce with Zeroconf</source>
-        <translation type="unfinished"></translation>
+        <translation>أعلن مع Zeroconf</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Host on port %1 if available</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بالمضيف على المنفذ %1 إذا كان متاحًا</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Automatically check for updates</source>
-        <translation type="unfinished"></translation>
+        <translation>ابحث عن التحديثات تلقائيا</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Updates:</source>
-        <translation type="unfinished"></translation>
+        <translation>التحديثات:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Allow insecure local storage</source>
-        <translation type="unfinished"></translation>
+        <translation>السماح بالتخزين المحلي غير الآمن</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Password security:</source>
-        <translation type="unfinished"></translation>
+        <translation>أمان كلمة المرور:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>With this enabled, Drawpile may save passwords in an unencrypted format. Disabling it will forget any insecurely stored passwords.</source>
-        <translation type="unfinished"></translation>
+        <translation>مع تمكين هذا، قد يقوم Drawpile بحفظ كلمات المرور بتنسيق غير مشفر. سيؤدي تعطيله إلى نسيان أي كلمات مرور مخزنة بشكل غير آمن.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Connection quality:</source>
-        <translation type="unfinished"></translation>
+        <translation>جودة الاتصال:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Good</source>
-        <translation type="unfinished"></translation>
+        <translation>جيده</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Poor</source>
-        <translation type="unfinished"></translation>
+        <translation>ضعيفة</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>If all operators in a session set connection quality to Poor, auto-reset will not work and the server will stop processing updates until the session is manually reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>إذا قام جميع المشغلين في الجلسة بتعيين جودة الاتصال على &quot;ضعيفة&quot;، فلن تعمل إعادة الضبط التلقائي وسيتوقف الخادم عن معالجة التحديثات حتى تتم إعادة تعيين الجلسة يدويًا.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Network timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>مهلة الشبكة:</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>%1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ثانية</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Receive delay:</source>
-        <translation type="unfinished"></translation>
+        <translation>تأخير الاستلام:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The higher the value, the smoother strokes from other users come in.</source>
-        <translation type="unfinished"></translation>
+        <translation>كلما ارتفعت القيمة، ظهرت رسم أكثر سلاسة من المستخدمين الآخرين.</translation>
     </message>
     <message>
         <location line="-107"/>
         <source>Chat avatars:</source>
-        <translation type="unfinished"></translation>
+        <translation>الصور الرمزية:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Add avatar…</source>
-        <translation type="unfinished"></translation>
+        <translation>إضافة الصورة الرمزية…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Delete selected avatars…</source>
-        <translation type="unfinished"></translation>
+        <translation>حذف الصور الرمزية المحددة…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete avatars</source>
-        <translation type="unfinished"></translation>
+        <translation>حذف الصور الرمزية</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really delete %n avatar(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>هل تريد حقًا حذف الصورة الرمزية %n؟</numerusform>
+            <numerusform>هل تريد حقًا حذف الصورة الرمزية %n؟</numerusform>
+            <numerusform>هل تريد حقًا حذف %n من الصور الرمزية؟</numerusform>
+            <numerusform>هل تريد حقًا حذف %n من الصور الرمزية؟</numerusform>
+            <numerusform>هل تريد حقًا حذف %n من الصور الرمزية؟</numerusform>
+            <numerusform>هل تريد حقًا حذف %n من الصور الرمزية؟</numerusform>
         </translation>
     </message>
 </context>
@@ -7276,47 +7276,47 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/notifications.cpp" line="+40"/>
         <source>Event</source>
-        <translation type="unfinished"></translation>
+        <translation>حدث</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>What triggered this notification</source>
-        <translation type="unfinished"></translation>
+        <translation>ما الذي أثار هذا الإخطار</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Play sound</source>
-        <translation type="unfinished"></translation>
+        <translation>تشغيل الصوت</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Play a sound effect when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بتشغيل مؤثر صوتي عند حدوث هذا الحدث.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>الرساله الظاهره</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pop up a speech bubble in the corner when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>الرساله الظاهره فقاعة الكلام في الزاوية عند حدوث هذا الحدث.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flash taskbar</source>
-        <translation type="unfinished"></translation>
+        <translation>اضاء أيقونة شريط المهام</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Flash the Drawpile window in the taskbar when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>بيتم اضاءه صوره Drawpile في شريط المهام عند حدوث هذا الحدث.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bounce dock</source>
-        <translation type="unfinished"></translation>
+        <translation>افتح النافذه</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7326,92 +7326,92 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Demand attention</source>
-        <translation type="unfinished"></translation>
+        <translation>اطلب الاهتمام</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark Drawpile&apos;s window as requiring attention. How exactly this looks depends on your system.</source>
-        <translation type="unfinished"></translation>
+        <translation>ضع علامة على نافذة Drawpile على أنها تتطلب الاهتمام. كيف يبدو هذا بالضبط يعتمد على نظامك.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>معاينة</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trigger this event so you can see what happens.</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بتشغيل هذا الحدث حتى تتمكن من رؤية ما يحدث.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Chat message</source>
-        <translation type="unfinished"></translation>
+        <translation>رسالة الدردشة</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Private message</source>
-        <translation type="unfinished"></translation>
+        <translation>رسالة خاصة</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>User left</source>
-        <translation type="unfinished"></translation>
+        <translation>مستخدم غادر</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Disconnected</source>
-        <translation type="unfinished"></translation>
+        <translation>انقطع الاتصال</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Preview event</source>
-        <translation type="unfinished"></translation>
+        <translation>معاينة الحدث</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Sound volume:</source>
-        <translation type="unfinished"></translation>
+        <translation>حجم الصوت:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Use private message notification for mentions</source>
-        <translation type="unfinished"></translation>
+        <translation>استخدم إشعار الرسائل الخاصة للإشارات</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mentions:</source>
-        <translation type="unfinished"></translation>
+        <translation>إشارات ذكر:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Additional triggers go here, one per line.</source>
-        <translation type="unfinished"></translation>
+        <translation>توجد مشغلات إضافية هنا، واحدة في كل سطر.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your username always counts as a mention. You can add additional trigger words or phrases that you want to count as well, such as other nicknames. One word or phrase per line, case doesn&apos;t matter.</source>
-        <translation type="unfinished"></translation>
+        <translation>يعتبر اسم المستخدم الخاص بك دائمًا بمثابة إشارة. يمكنك إضافة كلمات أو عبارات تحفيزية إضافية تريد احتسابها أيضًا، مثل الألقاب الأخرى. كلمة أو عبارة واحدة في كل سطر، لا يهم حالة الأحرف.</translation>
     </message>
     <message>
         <location line="-81"/>
         <source>User joined</source>
-        <translation type="unfinished"></translation>
+        <translation>انضم المستخدم</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Canvas locked</source>
-        <translation type="unfinished">اللوحه مقفله</translation>
+        <translation>اللوحه مقفله</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished">اللوحه فتحت</translation>
+        <translation>اللوحه فتحت</translation>
     </message>
 </context>
 <context>
@@ -7419,113 +7419,113 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+57"/>
         <source>Consider sessions whose titles contain these keywords NSFM.</source>
-        <translation type="unfinished"></translation>
+        <translation>فكر في الجلسات التي تحتوي عناوينها على هذه الكلمات الأساسية NSFM.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Keywords:</source>
-        <translation type="unfinished"></translation>
+        <translation>الكلمات الدالة:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Filter mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>وضع التصفية:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Unrestricted</source>
-        <translation type="unfinished"></translation>
+        <translation>غير مقيد</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove NSFM sessions from listings</source>
-        <translation type="unfinished"></translation>
+        <translation>إزالة جلسات NSFM من القوائم</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Prevent joining NSFM sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>منع الانضمام إلى جلسات NSFM</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Prevent joining NSFM sessions and disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>منع الانضمام إلى جلسات NSFM وقطع الاتصال</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings, but can still be joined by following a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيتم إخفاء جلسات NSFM من قوائم الخادم، ولكن لا يزال من الممكن الانضمام إليها باتباع رابط مباشر.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيتم إخفاء جلسات NSFM من قوائم الخادم ولا يمكن الانضمام إليها.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined. Connected sessions that change their title or NSFM flag will automatically disconnect.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيتم إخفاء جلسات NSFM من قوائم الخادم ولا يمكن الانضمام إليها. سيتم قطع اتصال الجلسات المتصلة التي تغير عنوانها أو علامة NSFM الخاصة بها تلقائيًا.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disallow uncensoring of layers</source>
-        <translation type="unfinished"></translation>
+        <translation>عدم السماح بإلغاء الرقابة على الطبقات</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Warn when joining NSFM sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>تحذير عند الانضمام إلى جلسات NSFM</translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+28"/>
         <source>Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>اغلق</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Hide settings when locked</source>
-        <translation type="unfinished"></translation>
+        <translation>إخفاء الإعدادات عند القفل</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Parental controls are currently locked.</source>
-        <translation type="unfinished"></translation>
+        <translation>­أدوات الرقابة الأبوية مقفلة حاليًا.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
+        <translation>الغاء القفل</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>These settings configure the handling of sessions that are marked not suitable for minors (NSFM) and of layers that have been censored.</source>
-        <translation type="unfinished"></translation>
+        <translation>تقوم هذه الإعدادات بتكوين معالجة الجلسات التي تم وضع علامة &quot;غير مناسبة لصغار&quot; (NSFM) والطبقات الخاضعة للرقابة.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Parental controls are currently managed by the operating system.</source>
-        <translation type="unfinished"></translation>
+        <translation>تتم إدارة أدوات الرقابة الأبوية حاليًا بواسطة نظام التشغيل.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Unlock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>فتح الرقابة الأبوية</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>قفل الرقابة الأبوية</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Enter password:</source>
-        <translation type="unfinished"></translation>
+        <translation>أدخل كلمة المرور:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished">كلمه المرور خاطئه.</translation>
+        <translation>كلمه المرور خاطئه.</translation>
     </message>
 </context>
 <context>
@@ -7533,22 +7533,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/servers.cpp" line="+45"/>
         <source>Known hosts:</source>
-        <translation type="unfinished"></translation>
+        <translation>السيرفر المعروفين:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Import trusted certificate…</source>
-        <translation type="unfinished"></translation>
+        <translation>استيراد شهادة موثوقة…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove selected hosts…</source>
-        <translation type="unfinished"></translation>
+        <translation>إزالة السيرفر المحددين…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove known hosts</source>
-        <translation type="unfinished"></translation>
+        <translation>إزالة السيرفر المعروفين</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>

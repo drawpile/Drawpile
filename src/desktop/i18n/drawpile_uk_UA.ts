@@ -6,17 +6,17 @@
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+67"/>
         <source>Add New</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати новий</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Вгору</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Вниз</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -29,7 +29,7 @@
     <message>
         <location filename="../ui/abusereport.ui" line="+14"/>
         <source>Report Abuse</source>
-        <translation>Сповіщення щодо образи</translation>
+        <translation>Сповістити про образу</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -49,7 +49,7 @@
     <message>
         <location line="+8"/>
         <source>Offender:</source>
-        <translation type="unfinished"></translation>
+        <translation>Образник:</translation>
     </message>
 </context>
 <context>
@@ -57,17 +57,17 @@
     <message>
         <location filename="../ui/addserverdialog.ui" line="+14"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати сервер</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>Введіть URL-адресу сервера:</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви можете знайти ще сервери на &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -75,7 +75,7 @@
     <message>
         <location filename="../ui/androidfiledialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва:</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -111,7 +111,7 @@
     <message>
         <location line="+20"/>
         <source>MyPaint Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Пензель MyPaint</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -136,17 +136,17 @@
     <message>
         <location line="+27"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Розмір: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Radius: </source>
-        <translation type="unfinished"></translation>
+        <translation>Радіус: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Непрозорість: </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -159,7 +159,7 @@
         <location line="+14"/>
         <location line="+33"/>
         <source>Pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Чутливість натискання</translation>
     </message>
     <message>
         <location line="-16"/>
@@ -207,33 +207,34 @@
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>Опис:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished"></translation>
+        <translation>Піктограма:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Choose File...</source>
-        <translation type="unfinished"></translation>
+        <translation>Обрати файл...</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Will be resized
 to 64x64 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Буде масштабовано
+до 64x64 пк.</translation>
     </message>
     <message>
         <location line="+75"/>
         <source>Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>Мітка:</translation>
     </message>
 </context>
 <context>
@@ -241,43 +242,43 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/canvasshortcutsdialog.ui" line="+14"/>
         <source>Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Скорочення полотна</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Скорочення</translation>
     </message>
     <message>
         <location line="+16"/>
         <location line="+50"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Дія</translation>
     </message>
     <message>
         <location line="-26"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Інвертує напрями введення. Наприклад, прокручування вгору буде віддаляти а не наближати.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>Інвертована</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation type="unfinished"></translation>
+        <translation>Міняє місцями горизонтальні та вертикальні напрями. Наприклад, щоб змінювати розмір пензля рухами курсору вгору-вниз намість рухів ліворуч-праворуч.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемкнути осі</translation>
     </message>
 </context>
 <context>
@@ -419,7 +420,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+3"/>
         <source>Playback Delay: </source>
-        <translation type="unfinished"></translation>
+        <translation>Затримка відтворення: </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -454,12 +455,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+11"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Стан</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>History Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Розмір історії:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -468,7 +469,7 @@ to 64x64 pixels.</source>
         <location line="+21"/>
         <location line="+14"/>
         <source>0</source>
-        <translation type="unfinished"></translation>
+        <translation>0</translation>
     </message>
     <message>
         <location line="-56"/>
@@ -478,7 +479,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>Ні</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -493,7 +494,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>History Offset:</source>
-        <translation type="unfinished"></translation>
+        <translation>Зсув історії:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -503,17 +504,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="+15"/>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>Історія</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Hide Entries Without State</source>
-        <translation type="unfinished"></translation>
+        <translation>Приховати записи без стану</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Hide Gone Entries</source>
-        <translation type="unfinished"></translation>
+        <translation>Приховати зниклі записи</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -531,22 +532,22 @@ to 64x64 pixels.</source>
     <message>
         <location line="+9"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпорт</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Open ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити ORA</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>OpenRaster Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Зображення OpenRaster</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -562,17 +563,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Import Brush Pack</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпортувати пакет пензлів</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпортувати бани сеансу</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпортувати ролі</translation>
     </message>
     <message>
         <location line="+44"/>
@@ -583,17 +584,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="-185"/>
         <source>Export Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати зображення</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Save Pre-Reset Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти зображення до скидання</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Save Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти вибране</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -603,12 +604,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Save Session Template</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти як шаблон сеансу</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати як анімоване GIF</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -628,67 +629,67 @@ to 64x64 pixels.</source>
     <message>
         <location line="+8"/>
         <source>Export MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати як MP4 відео</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export WebM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати як WebM відео</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Custom FFmpeg Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати як користувацьке FFmpeg відео</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти кадри анімації</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Save Image Series</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти послідовність зображень</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати пензлі</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати бани сеансу</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати ролі</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Формат PSD бракує підтримки анотацій, часової шкали анімації та деяких режимів змішування. Експортуйте у форматі ORA, якщо бажаєте зберегти їх належним чином.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Обраний формат збереже об&apos;єднане зображення. Експортуйте у форматі ORA, якщо хочете зберегти анотації, шари та часову шкалу анімації.</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Save as Selected Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти як обраний формат</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save as %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти як %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save as ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти як ORA</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -700,7 +701,7 @@ to 64x64 pixels.</source>
         <location line="+68"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Без назви%1</translation>
     </message>
 </context>
 <context>
@@ -730,7 +731,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+16"/>
         <source>Source:</source>
-        <translation type="unfinished"></translation>
+        <translation>Джерело:</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -755,12 +756,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="-99"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Звичайний</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished"></translation>
+        <translation>Позаду</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -778,12 +779,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+28"/>
         <source>Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути масштаб</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Оновити</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -813,7 +814,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+29"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати</translation>
     </message>
 </context>
 <context>
@@ -834,42 +835,42 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/invitedialog.ui" line="+14"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>Запросити</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Copy Invite Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Копіювати посилання запрошення</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Web link</source>
-        <translation type="unfinished"></translation>
+        <translation>Веб-посилання</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Direct link</source>
-        <translation type="unfinished"></translation>
+        <translation>Пряме посилання</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Include password</source>
-        <translation type="unfinished"></translation>
+        <translation>Вбудувати пароль</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>&lt;strong&gt;Note:&lt;/strong&gt; changing the session password will cause the link to stop working! If someone else changes the password, you have to reconnect for this dialog to update.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Примітка:&lt;/strong&gt; при зміні паролю сеансу поточне посилання перестане працювати! Якщо хтось інший змінив пароль, вам треба переприєднатись.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви розгорнули сеанс локально. Див. &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;допомогу з хостингом&lt;/a&gt; якщо інші не можуть приєднатись.</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви розгорнули сеанс локально, тому Drawpile потрібно знайти вашу зовнішню IP-адресу. Див. &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;допомогу з хостингом&lt;/a&gt; щоб отримати більше інформації.</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -879,12 +880,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+37"/>
         <source>Show this dialog when hosting a session</source>
-        <translation type="unfinished"></translation>
+        <translation>Показувати цей діалог при розгортанні сеансу</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>You can find this dialog again under &lt;i&gt;Session ▸ Invite…&lt;/i&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви можете викликати цей діалог ще раз під &lt;i&gt;Сеанс ▸ Запросити…&lt;/i&gt;</translation>
     </message>
 </context>
 <context>
@@ -953,12 +954,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/layerproperties.ui" line="+17"/>
         <source>Layer Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Властивості шару</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -968,42 +969,42 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Blending Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим змішування:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Visibility:</source>
-        <translation type="unfinished"></translation>
+        <translation>Видимість:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Visible to you</source>
-        <translation type="unfinished"></translation>
+        <translation>Видимий вам</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Censor content</source>
-        <translation type="unfinished"></translation>
+        <translation>Цензурувати вміст</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Collaboration:</source>
-        <translation type="unfinished"></translation>
+        <translation>Співпраця:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Default for new users</source>
-        <translation type="unfinished"></translation>
+        <translation>Початковий шар для нових користувачів</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Created by:</source>
-        <translation type="unfinished"></translation>
+        <translation>Створено:</translation>
     </message>
 </context>
 <context>
@@ -1021,7 +1022,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейменувати</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1065,7 +1066,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+52"/>
         <source>This session is password-protected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Цей сеанс захищений паролем.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1075,77 +1076,77 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+183"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Цей сеанс зазначає, що його вміст&lt;em&gt;не підходить для неповнолітніх&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Вам потрібно бути більше 18 років та мати дозвіл на перегляд контенту для дорослих щоб продовжити.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Ви все ще впевнені що хочете приєднатись?&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Show this warning again next time</source>
-        <translation type="unfinished"></translation>
+        <translation>Показувати це попередження у наступні рази</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>Continue without account</source>
-        <translation type="unfinished"></translation>
+        <translation>Продовжити без облікового запису</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Log in with server account</source>
-        <translation type="unfinished"></translation>
+        <translation>Увійти з обліковим записом сервера</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Continue with this account, but change the avatar, username or password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Продовжити з цим обліковим записом, але змінити аватар, ім&apos;я чи пароль.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Edit and log in</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити та увійти</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Don&apos;t use any of these accounts.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не використовувати жоден з цих облікових записів.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in a different way</source>
-        <translation type="unfinished"></translation>
+        <translation>Увійти іншим методом</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Log in with the selected account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Увійти з вибраним обліковим записом.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in with this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Увійти з цим обліковим записом</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Forget this account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Забути цей обліковий запис.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Forget this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Забути цей обліковий запис</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Don&apos;t ask again unless the rules change</source>
-        <translation type="unfinished"></translation>
+        <translation>Не питати знову до наступної зміни правил</translation>
     </message>
     <message>
         <location line="-578"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати сеанси з вмістом, який не підходить для неповнолітніх (NSFM)</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Введіть &lt;b&gt;пароль сеансу&lt;/b&gt;, &lt;i&gt;не&lt;/i&gt; вашої обліківки.</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -1217,7 +1218,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+269"/>
         <source>🙋 %1 joined!</source>
-        <translation type="unfinished"></translation>
+        <translation>🙋 %1 приєднується!</translation>
     </message>
     <message>
         <location line="+92"/>
@@ -1281,7 +1282,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+25"/>
         <source>Joined the session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Приєднано до сеансу!</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -1291,17 +1292,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+5"/>
         <source>Compatibility Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим сумісності</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Session template saved</source>
-        <translation type="unfinished"></translation>
+        <translation>Шаблон сеансу збережено</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export session template</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося експортувати шаблон сеансу</translation>
     </message>
     <message>
         <location line="+122"/>
@@ -1450,12 +1451,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-1628"/>
         <source>Saving animation...</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберігаємо анімацію...</translation>
     </message>
     <message>
         <location line="+203"/>
         <source>No canvas to host! Create one or open a file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Немає полотна для розгортання! Створіть нове або відкрийте файл.</translation>
     </message>
     <message>
         <location line="+1437"/>
@@ -1624,7 +1625,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+152"/>
         <source>Normal View</source>
-        <translation type="unfinished"></translation>
+        <translation>Звичайний перегляд</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -1634,12 +1635,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Layer View</source>
-        <translation type="unfinished"></translation>
+        <translation>Перегляд шарів</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show only the current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати тільки поточний шар</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1649,12 +1650,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+0"/>
         <source>Show only layers in the current frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати шари тільки цього кадру</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Нова група шарів</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -1679,12 +1680,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+195"/>
         <source>Canvas locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Полотно заблоковано</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Полотно розблоковано</translation>
     </message>
     <message>
         <location line="+361"/>
@@ -1709,42 +1710,42 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+629"/>
         <source>Export Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати зображення…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Selection...</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати вибране...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Import &amp;Drawpile 2.1 Animation…</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпортувати анімацію &amp;Drawpile 2.1…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Import &amp;Brushes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпортувати &amp;пензлі...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Session &amp;Template...</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати шаблон &amp;сеансу...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Animated &amp;GIF...</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати анімований &amp;GIF...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export Animation &amp;Frames...</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати кадри &amp;анімації...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export &amp;Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати &amp;пензлі…</translation>
     </message>
     <message>
         <location line="+338"/>
@@ -1862,47 +1863,47 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../mainwindow.cpp" line="+43"/>
         <source>Next Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Наступний кадр</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Попередній кадр</translation>
     </message>
     <message>
         <location line="+79"/>
         <source>Share your canvas with others</source>
-        <translation type="unfinished"></translation>
+        <translation>Поділитися своїм полотном з іншими</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Invite...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Запросити...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Invite another user to this session</source>
-        <translation type="unfinished"></translation>
+        <translation>Запросити іншого користувача до цього сеансу</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Browse...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Шукати...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Browse session listings</source>
-        <translation type="unfinished"></translation>
+        <translation>Переглянути списки сеансів</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change session settings, permissions, announcements and bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити налаштування, дозволи, оголошення та бани сеансу</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Undo Limit…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ліміт скасувань дій…</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1977,12 +1978,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+459"/>
         <source>Opening file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкриваємо файл…</translation>
     </message>
     <message>
         <location line="+393"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Формат не підтримується.</translation>
     </message>
     <message>
         <location line="+3"/>
