@@ -1711,7 +1711,7 @@ bool DP_canvas_history_reset_image_new(
             DP_Message *msg = entry->msg;
             // Local match messages are for local synchronization and don't
             // contain any useful information, so we don't need to record them.
-            if (DP_msg_local_match_is_local_match(msg)) {
+            if (!DP_msg_local_match_is_local_match(msg)) {
                 if (!accept_message(user, DP_message_incref(msg))) {
                     return false;
                 }
