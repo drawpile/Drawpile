@@ -224,6 +224,8 @@ signals:
 	void colorUsed(const QColor &color);
 	void panRequested(int x, int y);
 	void zoomRequested(const QRect &rect, int steps);
+	void anchorLineRequested(const QVector<QPointF> &points, int activeIndex);
+	void anchorLineActiveIndexRequested(int activeIndex);
 	void maskPreviewRequested(const QPoint &pos, const QImage &mask);
 	void pathPreviewRequested(const QPainterPath &path);
 	void transformRequested();

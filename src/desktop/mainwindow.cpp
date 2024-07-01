@@ -4674,6 +4674,7 @@ void MainWindow::setupActions()
 	QAction *ellipsetool = makeAction("toolellipse", tr("&Ellipse")).icon("draw-ellipse").statusTip(tr("Draw unfilled circles and ellipses")).shortcut("O").checkable();
 	QAction *beziertool = makeAction("toolbezier", tr("Bezier Curve")).icon("draw-bezier-curves").statusTip(tr("Draw bezier curves")).shortcut("Ctrl+B").checkable();
 	QAction *filltool = makeAction("toolfill", tr("&Flood Fill")).icon("fill-color").statusTip(tr("Fill areas")).shortcut("F").checkable();
+	QAction *gradienttool = makeAction("toolgradient", tr("&Gradient")).icon("adjusthsl").statusTip(tr("Create a gradient inside selected areas")).shortcut("G").checkable();
 	QAction *annotationtool = makeAction("tooltext", tr("&Annotation")).icon("draw-text").statusTip(tr("Add text to the picture")).shortcut("A").checked();
 
 	QAction *pickertool = makeAction("toolpicker", tr("&Color Picker")).icon("color-picker").statusTip(tr("Pick colors from the image")).shortcut("I").checkable();
@@ -4693,6 +4694,7 @@ void MainWindow::setupActions()
 	m_drawingtools->addAction(ellipsetool);
 	m_drawingtools->addAction(beziertool);
 	m_drawingtools->addAction(filltool);
+	m_drawingtools->addAction(gradienttool);
 	m_drawingtools->addAction(annotationtool);
 	m_drawingtools->addAction(pickertool);
 	m_drawingtools->addAction(lasertool);

@@ -29,6 +29,7 @@ public:
 		PathPreviewType = QGraphicsItem::UserType + 20,
 		TransformType = QGraphicsItem::UserType + 21,
 		MaskPreviewType = QGraphicsItem::UserType + 22,
+		AnchorLineItemType = QGraphicsItem::UserType + 23,
 	};
 
 	static constexpr qreal Z_USER_MARKER = 999.0;

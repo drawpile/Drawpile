@@ -18,6 +18,7 @@ class SelectionSet;
 }
 
 namespace drawingboard {
+class AnchorLineItem;
 class AnnotationItem;
 class BaseItem;
 class CatchupItem;
@@ -39,6 +40,7 @@ namespace view {
 
 class CanvasScene final : public QGraphicsScene {
 	Q_OBJECT
+	using AnchorLineItem = drawingboard::AnchorLineItem;
 	using AnnotationItem = drawingboard::AnnotationItem;
 	using BaseItem = drawingboard::BaseItem;
 	using CatchupItem = drawingboard::CatchupItem;
@@ -76,6 +78,8 @@ public:
 	void setShowSelectionMask(bool showSelectionMask);
 	void setUserMarkerPersistence(int userMarkerPersistence);
 
+	void setAnchorLine(const QVector<QPointF> &points, int activeIndex);
+	void setAnchorLineActiveIndex(int activeIndex);
 	void setMaskPreview(const QPoint &pos, const QImage &mask);
 	void setPathPreview(const QPainterPath &path);
 
@@ -165,6 +169,7 @@ private:
 	QHash<int, UserMarkerItem *> m_userMarkers;
 	QHash<int, LaserTrailItem *> m_activeLaserTrails;
 
+	AnchorLineItem *m_anchorLine = nullptr;
 	MaskPreviewItem *m_maskPreview = nullptr;
 	PathPreviewItem *m_pathPreview = nullptr;
 	SelectionItem *m_selection = nullptr;
