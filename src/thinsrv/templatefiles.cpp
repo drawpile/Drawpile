@@ -215,6 +215,10 @@ bool TemplateFiles::init(SessionHistory *session) const
 		flags |= SessionHistory::PreserveChat;
 	if(getHeaderBool(header, "deputies"))
 		flags |= SessionHistory::Deputies;
+	if(getHeaderBool(header, "idleOverride"))
+		flags |= SessionHistory::IdleOverride;
+	if(getHeaderBool(header, "allowWeb"))
+		flags |= SessionHistory::AllowWeb;
 	session->setFlags(flags);
 
 	// Set initial history
