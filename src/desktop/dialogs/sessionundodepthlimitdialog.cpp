@@ -19,18 +19,19 @@ SessionUndoDepthLimitDialog::SessionUndoDepthLimitDialog(
 {
 	setModal(true);
 	setWindowTitle(tr("Change Session Undo Depth Limit"));
-	setLayout(new QVBoxLayout);
+	resize(400, 180);
+
+	QVBoxLayout *layout = new QVBoxLayout(this);
 
 	m_undoDepthLimitSpinner = new KisSliderSpinBox{this};
-	layout()->addWidget(m_undoDepthLimitSpinner);
+	layout->addWidget(m_undoDepthLimitSpinner);
 	m_undoDepthLimitSpinner->setPrefix(tr("Undo Limit: "));
 	m_undoDepthLimitSpinner->setRange(
 		DP_CANVAS_HISTORY_UNDO_DEPTH_MIN, DP_CANVAS_HISTORY_UNDO_DEPTH_MAX);
 	m_undoDepthLimitSpinner->setValue(undoDepthLimit);
 
 	QLabel *label = new QLabel{this};
-	layout()->addWidget(label);
-	label->setMinimumWidth(400);
+	layout->addWidget(label);
 	label->setWordWrap(true);
 	label->setText(
 		tr("Choose a new undo limit for this session, the current "
@@ -39,9 +40,11 @@ SessionUndoDepthLimitDialog::SessionUndoDepthLimitDialog(
 		   "able to undo before the point where you changed it.")
 			.arg(undoDepthLimit));
 
+	layout->addStretch();
+
 	QDialogButtonBox *buttons = new QDialogButtonBox{
 		QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this};
-	layout()->addWidget(buttons);
+	layout->addWidget(buttons);
 
 	connect(buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
 	connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
