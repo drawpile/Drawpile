@@ -45,8 +45,8 @@ public:
 		if(m_area == Area::Selection) {
 			m_result = m_canvasState.selectionFill(
 				m_contextId, canvas::CanvasModel::MAIN_SELECTION_ID,
-				m_fillColor, m_expansion, m_featherRadius, m_cancel, m_img, m_x,
-				m_y);
+				m_fillColor, m_expansion, m_featherRadius, false, m_cancel,
+				m_img, m_x, m_y);
 		} else {
 			int size = m_canvasState.selectionExists(
 						   m_contextId, canvas::CanvasModel::MAIN_SELECTION_ID)
@@ -57,7 +57,7 @@ public:
 				m_contextId, canvas::CanvasModel::MAIN_SELECTION_ID,
 				m_point.x(), m_point.y(), m_fillColor, m_tolerance,
 				m_sourceLayerId, size, continuous ? m_gap : 0, m_expansion,
-				m_featherRadius, continuous, m_viewMode, m_activeLayerId,
+				m_featherRadius, false, continuous, m_viewMode, m_activeLayerId,
 				m_activeFrameIndex, m_cancel, m_img, m_x, m_y);
 		}
 		if(m_result != DP_FLOOD_FILL_SUCCESS &&

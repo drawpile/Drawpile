@@ -16,6 +16,8 @@
 namespace tools {
 
 namespace props {
+static const ToolProperties::Value<bool> shrink{
+	QStringLiteral("shrink"), false};
 static const ToolProperties::RangedValue<int> expand{
 	QStringLiteral("expand"), 0, 0, 100},
 	featherRadius{QStringLiteral("featherRadius"), 0, 0, 40},
@@ -52,6 +54,10 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	utils::setWidgetRetainSizeWhenHidden(m_ui->sourceDummyCombo, true);
 	m_ui->sourceDummyCombo->hide();
 
+	m_expandGroup = new QButtonGroup(this);
+	m_expandGroup->addButton(m_ui->expandButton, 0);
+	m_expandGroup->addButton(m_ui->shrinkButton, 1);
+
 	m_sourceGroup = new QButtonGroup(this);
 	m_sourceGroup->setExclusive(true);
 	m_sourceGroup->addButton(
@@ -85,6 +91,10 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 		&FillSettings::pushSettings);
 	connect(
 		m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&FillSettings::pushSettings);
+	connect(
+		m_expandGroup,
+		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
 		&FillSettings::pushSettings);
 	connect(
 		m_ui->expand, QOverload<int>::of(&QSpinBox::valueChanged), this,
@@ -130,7 +140,8 @@ void FillSettings::pushSettings()
 		static_cast<FloodFill *>(controller()->getTool(Tool::FLOODFILL));
 	tool->setTolerance(
 		m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()));
-	tool->setExpansion(m_ui->expand->value());
+	bool shrink = m_expandGroup->checkedId() != 0;
+	tool->setExpansion(m_ui->expand->value() * (shrink ? -1 : 1));
 	tool->setFeatherRadius(m_ui->feather->value());
 	int size = m_ui->size->value();
 	tool->setSize(isSizeUnlimited(size) ? -1 : size);
@@ -163,6 +174,8 @@ void FillSettings::pushSettings()
 	} else {
 		m_previousMode = blendMode;
 	}
+
+	m_ui->expand->setPrefix(shrink ? tr("Shrink: ") : tr("Expand: "));
 
 	if(!m_ui->sourceFillSource->isEnabled() &&
 	   m_ui->sourceFillSource->isChecked()) {
@@ -220,6 +233,7 @@ ToolProperties FillSettings::saveToolSettings()
 	cfg.setValue(
 		props::tolerance,
 		m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()));
+	cfg.setValue(props::shrink, m_expandGroup->checkedId() != 0);
 	cfg.setValue(props::expand, m_ui->expand->value());
 	cfg.setValue(props::featherRadius, m_ui->feather->value());
 	cfg.setValue(props::size, m_ui->size->value());
@@ -248,6 +262,7 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 {
 	m_ui->tolerance->setValue(
 		cfg.value(props::tolerance) * m_ui->tolerance->maximum());
+	checkGroupButton(m_expandGroup, cfg.value(props::shrink) ? 1 : 0);
 	m_ui->expand->setValue(cfg.value(props::expand));
 	m_ui->feather->setValue(cfg.value(props::featherRadius));
 	m_ui->size->setValue(cfg.value(props::size));
@@ -264,16 +279,8 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 		m_previousEraseMode = DP_BLEND_MODE_ERASE;
 	}
 
-	QAbstractButton *sourceButton =
-		m_sourceGroup->button(cfg.value(props::source));
-	if(sourceButton) {
-		sourceButton->setChecked(true);
-	}
-
-	QAbstractButton *areaButton = m_areaGroup->button(cfg.value(props::area));
-	if(areaButton) {
-		areaButton->setChecked(true);
-	}
+	checkGroupButton(m_sourceGroup, cfg.value(props::source));
+	checkGroupButton(m_areaGroup, cfg.value(props::area));
 
 	pushSettings();
 }

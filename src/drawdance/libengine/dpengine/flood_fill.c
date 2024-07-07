@@ -345,8 +345,8 @@ static unsigned char *generate_expansion_kernel(int expand)
 }
 
 static void apply_expansion_kernel(float *mask, int mask_width, float value,
-                                   unsigned char *kernel, int width, int height,
-                                   int expand, int feather_radius,
+                                   const unsigned char *kernel, int width,
+                                   int height, int expand, int feather_radius,
                                    int expand_min_x, int expand_min_y, int x0,
                                    int y0)
 {
@@ -373,8 +373,48 @@ static void apply_expansion_kernel(float *mask, int mask_width, float value,
     }
 }
 
-static bool expand_feather_left(int expand_min_x, int feather_radius,
-                                float *mask, int img_width, int img_height)
+static float erode_mask_pixel(const float *in_mask, int mask_width,
+                              const unsigned char *kernel, int shrink,
+                              int diameter, int x0, int y0)
+{
+    int start_x = x0 - shrink;
+    int start_y = y0 - shrink;
+    int end_x = x0 + shrink;
+    int end_y = y0 + shrink;
+    float value = 1.0f;
+    for (int y = start_y; y <= end_y; ++y) {
+        for (int x = start_x; x <= end_x; ++x) {
+            int kernel_x = x - start_x;
+            int kernel_y = y - start_y;
+            if (kernel[kernel_y * diameter + kernel_x]) {
+                value = DP_min_float(value, in_mask[y * mask_width + x]);
+                if (value == 0.0f) {
+                    return 0.0f;
+                }
+            }
+        }
+    }
+    return value;
+}
+
+static void erode_mask(DP_FillContext *c, const float *in_mask, int in_width,
+                       int in_height, float *out_mask, int out_width,
+                       int feather_radius, int shrink,
+                       const unsigned char *kernel)
+{
+    int diameter = get_kernel_diameter(shrink);
+    for (int y = shrink; y < in_height - shrink && !is_cancelled(c); ++y) {
+        int out_y = y - shrink + feather_radius;
+        for (int x = shrink; x < in_width - shrink; ++x) {
+            int out_x = x - shrink + feather_radius;
+            out_mask[out_y * out_width + out_x] = erode_mask_pixel(
+                in_mask, in_width, kernel, shrink, diameter, x, y);
+        }
+    }
+}
+
+static bool expand_left_edge(int expand_min_x, int feather_radius, float *mask,
+                             int img_width, int img_height)
 {
     int left = expand_min_x - feather_radius;
     if (left < 0) {
@@ -393,9 +433,9 @@ static bool expand_feather_left(int expand_min_x, int feather_radius,
     }
 }
 
-static bool expand_feather_right(int canvas_width, int expand_max_x,
-                                 int feather_radius, float *mask, int img_width,
-                                 int img_height)
+static bool expand_right_edge(int canvas_width, int expand_max_x,
+                              int feather_radius, float *mask, int img_width,
+                              int img_height)
 {
     int right = expand_max_x + feather_radius;
     int canvas_right = canvas_width - 1;
@@ -416,9 +456,8 @@ static bool expand_feather_right(int canvas_width, int expand_max_x,
     }
 }
 
-static void expand_feather_top(int expand_min_y, int feather_radius,
-                               float *mask, int img_width, int x_start,
-                               int width)
+static void expand_top_edge(int expand_min_y, int feather_radius, float *mask,
+                            int img_width, int x_start, int width)
 {
     int top = expand_min_y - feather_radius;
     if (top < 0) {
@@ -433,10 +472,9 @@ static void expand_feather_top(int expand_min_y, int feather_radius,
     }
 }
 
-static void expand_feather_bottom(int canvas_height, int expand_max_y,
-                                  int feather_radius, float *mask,
-                                  int img_width, int img_height, int x_start,
-                                  int width)
+static void expand_bottom_edge(int canvas_height, int expand_max_y,
+                               int feather_radius, float *mask, int img_width,
+                               int img_height, int x_start, int width)
 {
     int bottom = expand_max_y + feather_radius;
     int canvas_bottom = canvas_height - 1;
@@ -454,24 +492,23 @@ static void expand_feather_bottom(int canvas_height, int expand_max_y,
     }
 }
 
-static void expand_feather_edges(int canvas_width, int canvas_height,
-                                 int expand_min_x, int expand_min_y,
-                                 int expand_max_x, int expand_max_y,
-                                 int feather_radius, float *mask, int img_width,
-                                 int img_height)
+static void expand_edges(int canvas_width, int canvas_height, int expand_min_x,
+                         int expand_min_y, int expand_max_x, int expand_max_y,
+                         int feather_radius, float *mask, int img_width,
+                         int img_height)
 {
-    bool left_expanded = expand_feather_left(expand_min_x, feather_radius, mask,
-                                             img_width, img_height);
+    bool left_expanded = expand_left_edge(expand_min_x, feather_radius, mask,
+                                          img_width, img_height);
     bool right_expanded =
-        expand_feather_right(canvas_width, expand_max_x, feather_radius, mask,
-                             img_width, img_height);
+        expand_right_edge(canvas_width, expand_max_x, feather_radius, mask,
+                          img_width, img_height);
 
     int x_start = left_expanded ? 0 : feather_radius;
     int width = img_width - (right_expanded ? 0 : feather_radius);
-    expand_feather_top(expand_min_y, feather_radius, mask, img_width, x_start,
-                       width);
-    expand_feather_bottom(canvas_height, expand_max_y, feather_radius, mask,
-                          img_width, img_height, x_start, width);
+    expand_top_edge(expand_min_y, feather_radius, mask, img_width, x_start,
+                    width);
+    expand_bottom_edge(canvas_height, expand_max_y, feather_radius, mask,
+                       img_width, img_height, x_start, width);
 }
 
 static float *generate_gaussian_kernel(int radius)
@@ -556,19 +593,21 @@ static void feather_mask(DP_FillContext *c, float *mask, float *tmp, int width,
 
 static float *make_mask(DP_FillContext *c,
                         float (*get_output)(void *, int, int), int expand,
-                        int feather_radius, int *out_img_x, int *out_img_y,
-                        int *out_img_width, int *out_img_height)
+                        int feather_radius, bool from_edge, int *out_img_x,
+                        int *out_img_y, int *out_img_width, int *out_img_height)
 {
     int min_x = c->min_x, min_y = c->min_y;
     int max_x = c->max_x, max_y = c->max_y;
-    int expand_min_x = DP_max_int(min_x - expand, 0);
-    int expand_min_y = DP_max_int(min_y - expand, 0);
-    int expand_max_x = DP_min_int(max_x + expand, c->width - 1);
-    int expand_max_y = DP_min_int(max_y + expand, c->height - 1);
+    int positive_expand = DP_max_int(expand, 0);
+    int expand_min_x = DP_max_int(min_x - positive_expand, 0);
+    int expand_min_y = DP_max_int(min_y - positive_expand, 0);
+    int expand_max_x = DP_min_int(max_x + positive_expand, c->width - 1);
+    int expand_max_y = DP_min_int(max_y + positive_expand, c->height - 1);
     int img_width = expand_max_x - expand_min_x + feather_radius * 2 + 1;
     int img_height = expand_max_y - expand_min_y + feather_radius * 2 + 1;
     size_t mask_size = DP_int_to_size(img_width) * DP_int_to_size(img_height);
-    float *mask = DP_malloc_zeroed(mask_size * sizeof(*mask));
+    size_t mask_bytes = mask_size * sizeof(float);
+    float *mask = DP_malloc_zeroed(mask_bytes);
     *out_img_x = expand_min_x - feather_radius;
     *out_img_y = expand_min_y - feather_radius;
     *out_img_width = img_width;
@@ -589,7 +628,7 @@ static float *make_mask(DP_FillContext *c,
             }
         }
     }
-    else {
+    else if (expand > 0) {
         unsigned char *kernel = generate_expansion_kernel(expand);
         for (int y = min_y; y <= max_y; ++y) {
             if (is_cancelled(c)) {
@@ -608,14 +647,49 @@ static float *make_mask(DP_FillContext *c,
         }
         DP_free(kernel);
     }
+    else {
+        int shrink = -expand;
+        int tmp_width = expand_max_x - expand_min_x + shrink * 2 + 1;
+        int tmp_height = expand_max_y - expand_min_y + shrink * 2 + 1;
+        size_t tmp_size =
+            DP_int_to_size(tmp_width) * DP_int_to_size(tmp_height);
+        float *tmp = DP_malloc_zeroed(tmp_size * sizeof(float));
 
-    if (feather_radius != 0) {
-        // We don't want to feather along the canvas edges, so we expand the
-        // mask's contents if we're flush up against one or more of those.
-        expand_feather_edges(c->width, c->height, expand_min_x, expand_min_y,
-                             expand_max_x, expand_max_y, feather_radius, mask,
-                             img_width, img_height);
-        float *tmp = DP_malloc(mask_size * sizeof(*mask));
+        for (int y = min_y; y <= max_y; ++y) {
+            if (is_cancelled(c)) {
+                DP_free(tmp);
+                return mask;
+            }
+            for (int x = min_x; x <= max_x; ++x) {
+                float value = get_output(c, x, y);
+                if (value > 0.0f) {
+                    int mx = x - min_x + shrink;
+                    int my = y - min_y + shrink;
+                    tmp[my * tmp_width + mx] = value;
+                }
+            }
+        }
+
+        if (!from_edge) {
+            expand_edges(c->width, c->height, expand_min_x, expand_min_y,
+                         expand_max_x, expand_max_y, shrink, tmp, tmp_width,
+                         tmp_height);
+        }
+
+        unsigned char *kernel = generate_expansion_kernel(shrink);
+        erode_mask(c, tmp, tmp_width, tmp_height, mask, img_width,
+                   feather_radius, shrink, kernel);
+        DP_free(kernel);
+        DP_free(tmp);
+    }
+
+    if (!is_cancelled(c) && feather_radius != 0) {
+        if (!from_edge) {
+            expand_edges(c->width, c->height, expand_min_x, expand_min_y,
+                         expand_max_x, expand_max_y, feather_radius, mask,
+                         img_width, img_height);
+        }
+        float *tmp = DP_malloc(mask_bytes);
         feather_mask(c, mask, tmp, img_width, img_height, feather_radius);
         DP_free(tmp);
     }
@@ -724,9 +798,10 @@ DP_FloodFillResult
 DP_flood_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
               int x, int y, DP_UPixelFloat fill_color, double tolerance,
               int layer_id, int size, int gap, int expand, int feather_radius,
-              bool continuous, DP_ViewMode view_mode, int active_layer_id,
-              int active_frame_index, DP_Image **out_img, int *out_x,
-              int *out_y, DP_FloodFillShouldCancelFn should_cancel, void *user)
+              bool from_edge, bool continuous, DP_ViewMode view_mode,
+              int active_layer_id, int active_frame_index, DP_Image **out_img,
+              int *out_x, int *out_y, DP_FloodFillShouldCancelFn should_cancel,
+              void *user)
 {
     DP_ASSERT(cs);
 
@@ -860,9 +935,9 @@ DP_flood_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
     }
 
     int img_x, img_y, img_width, img_height;
-    float *mask = make_mask(
-        &c.parent, get_flood_mask_value, DP_max_int(expand, 0),
-        DP_max_int(feather_radius, 0), &img_x, &img_y, &img_width, &img_height);
+    float *mask = make_mask(&c.parent, get_flood_mask_value, expand,
+                            DP_max_int(feather_radius, 0), from_edge, &img_x,
+                            &img_y, &img_width, &img_height);
     DP_free(c.output);
     if (is_cancelled(&c.parent)) {
         DP_free(mask);
@@ -935,7 +1010,7 @@ static float get_selection_mask_value(void *user, int x, int y)
 DP_FloodFillResult
 DP_selection_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
                   DP_UPixelFloat fill_color, int expand, int feather_radius,
-                  DP_Image **out_img, int *out_x, int *out_y,
+                  bool from_edge, DP_Image **out_img, int *out_x, int *out_y,
                   DP_FloodFillShouldCancelFn should_cancel, void *user)
 {
     DP_ASSERT(cs);
@@ -953,9 +1028,9 @@ DP_selection_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
     }
 
     int img_x, img_y, img_width, img_height;
-    float *mask = make_mask(&c, get_selection_mask_value, DP_max_int(expand, 0),
-                            DP_max_int(feather_radius, 0), &img_x, &img_y,
-                            &img_width, &img_height);
+    float *mask = make_mask(&c, get_selection_mask_value, expand,
+                            DP_max_int(feather_radius, 0), from_edge, &img_x,
+                            &img_y, &img_width, &img_height);
     if (is_cancelled(&c)) {
         DP_free(mask);
         return DP_FLOOD_FILL_CANCELLED;

@@ -83,6 +83,7 @@ Unreleased Version 2.2.2-pre
  * Removed Feature: Zeroconf support, an obscure LAN-only discovery thing that wasn't working anymore anyway.
  * Fix: Make the fill tool not feather along canvas edge. Thanks Meru for reporting.
  * Server Feature: Allow specifying idleOverride and allowWeb in session templates. Thanks MorrowShore for suggesting.
+ * Feature: Allow shrinking fills and magic wand selections. Thanks Meru for suggesting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

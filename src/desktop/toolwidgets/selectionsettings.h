@@ -75,6 +75,7 @@ private:
 	KisSliderSpinBox *m_sizeSlider = nullptr;
 	KisSliderSpinBox *m_opacitySlider = nullptr;
 	KisSliderSpinBox *m_toleranceSlider = nullptr;
+	QButtonGroup *m_expandGroup = nullptr;
 	KisSliderSpinBox *m_expandSlider = nullptr;
 	KisSliderSpinBox *m_featherSlider = nullptr;
 	KisSliderSpinBox *m_closeGapsSlider = nullptr;

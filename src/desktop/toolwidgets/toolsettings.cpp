@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/toolwidgets/toolsettings.h"
 #include "libclient/tools/toolproperties.h"
+#include <QAbstractButton>
+#include <QButtonGroup>
 #include <functional>
 
 namespace tools {
@@ -53,6 +55,14 @@ int ToolSettings::stepLinear(
 	return step(min, max, current, increase, [&](int size) {
 		return size + stepSize;
 	});
+}
+
+void ToolSettings::checkGroupButton(QButtonGroup *group, int id)
+{
+	QAbstractButton *button = group->button(id);
+	if(button) {
+		button->setChecked(true);
+	}
 }
 
 }

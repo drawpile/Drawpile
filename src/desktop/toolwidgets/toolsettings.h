@@ -5,6 +5,8 @@
 #include "libclient/tools/toolproperties.h"
 #include <QObject>
 
+class QButtonGroup;
+
 namespace tools {
 
 class ToolController;
@@ -154,6 +156,8 @@ public slots:
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent) = 0;
 	ToolController *controller() { return m_ctrl; }
+
+	static void checkGroupButton(QButtonGroup *group, int id);
 
 private:
 	ToolController *m_ctrl;

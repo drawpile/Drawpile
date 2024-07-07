@@ -105,14 +105,14 @@ public:
 	DP_FloodFillResult floodFill(
 		unsigned int contextId, int selectionId, int x, int y,
 		const QColor &fillColor, double tolerance, int layerId, int sizeLimit,
-		int gap, int expand, int featherRadius, bool continuous,
+		int gap, int expand, int featherRadius, bool fromEdge, bool continuous,
 		DP_ViewMode viewMode, int activeLayerId, int activeFrameIndex,
 		const QAtomicInt &cancel, QImage &outImg, int &outX, int &outY) const;
 
 	DP_FloodFillResult selectionFill(
 		unsigned int contextId, int selectionId, const QColor &fillColor,
-		int expand, int featherRadius, const QAtomicInt &cancel, QImage &outImg,
-		int &outX, int &outY) const;
+		int expand, int featherRadius, bool fromEdge, const QAtomicInt &cancel,
+		QImage &outImg, int &outX, int &outY) const;
 
 	drawdance::CanvasState makeBackwardCompatible() const;
 
