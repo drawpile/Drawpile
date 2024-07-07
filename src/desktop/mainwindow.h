@@ -235,6 +235,8 @@ private slots:
 	void showLayoutsDialog();
 	void showUserInfoDialog(int userId);
 
+	void showAlterSelectionDialog();
+	void alterSelection(int expand, int feather, bool fromEdge);
 	void changeUndoDepthLimit();
 
 	void updateDevToolsActions();

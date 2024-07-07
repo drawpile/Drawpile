@@ -195,6 +195,8 @@ target_sources(dpclient PRIVATE
 	utils/listservermodel.h
 	utils/logging.cpp
 	utils/logging.h
+	utils/selectionalteration.cpp
+	utils/selectionalteration.h
 	utils/selectionoutlinegenerator.cpp
 	utils/selectionoutlinegenerator.h
 	utils/sessionfilterproxymodel.cpp

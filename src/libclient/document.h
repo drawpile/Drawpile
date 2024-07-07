@@ -270,6 +270,7 @@ public slots:
 	void selectInvert();
 	void selectLayerBounds();
 	void selectLayerContents();
+	void selectMask(const QImage &img, int x, int y);
 
 	void copyVisible();
 	void copyMerged();

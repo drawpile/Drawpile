@@ -1045,6 +1045,17 @@ void Document::selectLayerContents()
 	selectLayer(true);
 }
 
+void Document::selectMask(const QImage &img, int x, int y)
+{
+	if(img.isNull()) {
+		selectNone();
+	} else {
+		selectOp(
+			DP_MSG_SELECTION_PUT_OP_REPLACE,
+			QRect(x, y, img.width(), img.height()), img);
+	}
+}
+
 void Document::selectLayer(bool includeMask)
 {
 	if(m_canvas) {

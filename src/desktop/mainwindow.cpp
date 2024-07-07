@@ -14,6 +14,7 @@
 #include "desktop/dialogs/playbackdialog.h"
 #include "desktop/dialogs/resetdialog.h"
 #include "desktop/dialogs/resizedialog.h"
+#include "desktop/dialogs/selectionalterdialog.h"
 #include "desktop/dialogs/serverlogdialog.h"
 #include "desktop/dialogs/sessionsettings.h"
 #include "desktop/dialogs/sessionundodepthlimitdialog.h"
@@ -75,6 +76,7 @@
 #include "libclient/utils/customshortcutmodel.h"
 #include "libclient/utils/images.h"
 #include "libclient/utils/logging.h"
+#include "libclient/utils/selectionalteration.h"
 #include "libclient/utils/shortcutdetector.h"
 #include "libshared/util/networkaccess.h"
 #include "libshared/util/paths.h"
@@ -3165,6 +3167,7 @@ void MainWindow::updateSelectTransformActions()
 	getAction("selectinvert")->setEnabled(haveSelection);
 	getAction("selectlayerbounds")->setEnabled(!haveTransform);
 	getAction("selectlayercontents")->setEnabled(!haveTransform);
+	getAction("selectalter")->setEnabled(haveSelection && !haveTransform);
 	getAction("fillfgarea")->setEnabled(haveSelection);
 	getAction("recolorarea")->setEnabled(haveSelection);
 	getAction("colorerasearea")->setEnabled(haveSelection);
@@ -3176,6 +3179,16 @@ void MainWindow::updateSelectTransformActions()
 	getAction("transformrotateccw")->setEnabled(haveTransform);
 	getAction("transformshrinktoview")->setEnabled(haveTransform);
 	m_dockToolSettings->selectionSettings()->setActionEnabled(haveSelection);
+
+	if(!haveSelection || haveTransform) {
+		dialogs::SelectionAlterDialog *dlg =
+			findChild<dialogs::SelectionAlterDialog *>(
+				QStringLiteral("selectionalterdialog"),
+				Qt::FindDirectChildrenOnly);
+		if(dlg) {
+			dlg->deleteLater();
+		}
+	}
 }
 
 // clang-format off
@@ -3487,6 +3500,57 @@ void MainWindow::showUserInfoDialog(int userId)
 	dlg->show();
 }
 
+// clang-format on
+void MainWindow::showAlterSelectionDialog()
+{
+	QString name = QStringLiteral("selectionalterdialog");
+	dialogs::SelectionAlterDialog *dlg =
+		findChild<dialogs::SelectionAlterDialog *>(
+			name, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else {
+		dlg = new dialogs::SelectionAlterDialog(this);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setWindowTitle(getAction("selectalter")->text());
+		connect(
+			dlg, &dialogs::SelectionAlterDialog::alterSelectionRequested, this,
+			&MainWindow::alterSelection, Qt::QueuedConnection);
+		utils::showWindow(dlg);
+	}
+}
+
+void MainWindow::alterSelection(int expand, int feather, bool fromEdge)
+{
+	canvas::CanvasModel *canvas = m_doc->canvas();
+	if(canvas) {
+		SelectionAlteration *sa = new SelectionAlteration(
+			canvas->paintEngine()->viewCanvasState(), m_doc->client()->myId(),
+			canvas::CanvasModel::MAIN_SELECTION_ID, expand, feather, fromEdge);
+		sa->setAutoDelete(true);
+		connect(
+			sa, &SelectionAlteration::success, m_doc, &Document::selectMask);
+
+		QProgressDialog *progressDialog = new QProgressDialog(this);
+		progressDialog->setWindowModality(Qt::WindowModal);
+		progressDialog->setRange(0, 0);
+		progressDialog->setMinimumDuration(0);
+		progressDialog->setLabelText(tr("Altering selection…"));
+		connect(
+			sa, &SelectionAlteration::success, progressDialog,
+			&QProgressDialog::deleteLater);
+		connect(
+			sa, &SelectionAlteration::failure, progressDialog,
+			&QProgressDialog::deleteLater);
+		connect(
+			progressDialog, &QProgressDialog::canceled, sa,
+			&SelectionAlteration::cancel);
+		progressDialog->show();
+
+		QThreadPool::globalInstance()->start(sa);
+	}
+}
 
 void MainWindow::changeUndoDepthLimit()
 {
@@ -3504,7 +3568,7 @@ void MainWindow::changeUndoDepthLimit()
 		}
 	}
 }
-
+// clang-format off
 
 void MainWindow::updateDevToolsActions()
 {
@@ -4387,6 +4451,11 @@ void MainWindow::setupActions()
 		makeAction("selectlayercontents", tr("&Layer to Selection"))
 			.shortcut(Qt::SHIFT | Qt::Key_L)
 			.icon("edit-image");
+	QAction *selectalter =
+		//: "Feather" is a verb here, referring to blurring the selection.
+		makeAction("selectalter", tr("&Expand/Shrink/Feather Selection"))
+			.noDefaultShortcut()
+			.icon("zoom-select");
 	QAction *fillfgarea = makeAction("fillfgarea", tr("Fill Selection"))
 							  .shortcut(CTRL_KEY | Qt::Key_Comma);
 	QAction *recolorarea = makeAction("recolorarea", tr("Recolor Selection"))
@@ -4434,6 +4503,7 @@ void MainWindow::setupActions()
 	m_currentdoctools->addAction(selectinvert);
 	m_currentdoctools->addAction(selectlayerbounds);
 	m_currentdoctools->addAction(selectlayercontents);
+	m_currentdoctools->addAction(selectalter);
 
 	m_putimagetools->addAction(fillfgarea);
 	m_putimagetools->addAction(recolorarea);
@@ -4449,6 +4519,9 @@ void MainWindow::setupActions()
 	connect(
 		selectlayercontents, &QAction::triggered, m_doc,
 		&Document::selectLayerContents);
+	connect(
+		selectalter, &QAction::triggered, this,
+		&MainWindow::showAlterSelectionDialog);
 	connect(
 		fillfgarea, &QAction::triggered, this,
 		std::bind(
@@ -4475,6 +4548,7 @@ void MainWindow::setupActions()
 	selectMenu->addAction(selectinvert);
 	selectMenu->addAction(selectlayerbounds);
 	selectMenu->addAction(selectlayercontents);
+	selectMenu->addAction(selectalter);
 	selectMenu->addSeparator();
 	selectMenu->addAction(cleararea);
 	selectMenu->addAction(fillfgarea);

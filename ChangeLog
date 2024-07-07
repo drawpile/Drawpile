@@ -84,6 +84,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Make the fill tool not feather along canvas edge. Thanks Meru for reporting.
  * Server Feature: Allow specifying idleOverride and allowWeb in session templates. Thanks MorrowShore for suggesting.
  * Feature: Allow shrinking fills and magic wand selections. Thanks Meru for suggesting.
+ * Feature: New dialog Selection > Expand/Shrink/Feather Selection that alters selections accordingly. Thanks MorrowShore for suggesting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.
