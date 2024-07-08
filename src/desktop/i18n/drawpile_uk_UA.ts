@@ -2005,7 +2005,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+6"/>
         <source>Error opening profile.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error opening profile.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2191,7 +2191,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+2"/>
         <source>Paste in View Center</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Paste in View Center</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3792,7 +3792,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+74"/>
         <source>Check</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Check</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3810,7 +3810,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../dialogs/animationimportdialog.cpp" line="+27"/>
         <source>Import Animation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Import Animation</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3953,7 +3953,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+2"/>
         <source>Round Pixel Brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Round Pixel Brush</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4293,7 +4293,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>Direction</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Direction</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4608,13 +4608,13 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Slow position tracking</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Slow position tracking</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slow tracking per dab</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Slow tracking per dab</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4986,7 +4986,7 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <location line="+2"/>
         <source>Same as &apos;fine speed filter&apos;, but note that the range is different</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Same as &apos;fine speed filter&apos;, but note that the range is different</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5716,7 +5716,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+0"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">No</translation>
     </message>
 </context>
 <context>
@@ -5894,7 +5894,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enter account password. If you don&apos;t have an account, you must register one on %1.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6518,12 +6518,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Reopen a recently used file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Reopen a recently used file</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layouts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Layouts</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6869,7 +6869,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+6"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enabling these options may impact performance on some systems.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -9152,7 +9152,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+18"/>
         <source>Horizontal mirror: ON</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Horizontal mirror: ON</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9278,7 +9278,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+11"/>
         <source>/unpin: only operators are allowed to unpin.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">/unpin: only operators are allowed to unpin.</translation>
     </message>
     <message>
         <location line="+3"/>
