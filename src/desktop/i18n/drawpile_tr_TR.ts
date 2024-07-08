@@ -8187,7 +8187,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>libera.chat</source>
-        <translation type="unfinished">libera.chat</translation>
+        <translation type="unfinished">Libera.Chat</translation>
     </message>
     <message>
         <location line="+1"/>
