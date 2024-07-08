@@ -3720,7 +3720,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+1"/>
         <location line="+13"/>
         <source>Open Palette</source>
-        <translation type="unfinished">Open Palette</translation>
+        <translation type="unfinished">Відкрити палітру</translation>
     </message>
     <message>
         <location line="+1"/>
