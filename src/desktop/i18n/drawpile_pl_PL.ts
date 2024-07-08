@@ -415,7 +415,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+6"/>
         <source> ms</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> ms</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -760,7 +760,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+7"/>
         <source>Tolerance: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tolerance: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -960,7 +960,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Name:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1033,7 +1033,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</translation>
     </message>
 </context>
 <context>
@@ -1052,7 +1052,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="-36"/>
         <source>Remember my password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Remember my password</translation>
     </message>
     <message>
         <location line="-24"/>
@@ -2044,7 +2044,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Merge Layer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Merge Layer</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2085,7 +2085,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Change Frame Count...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Change Frame Count...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2314,7 +2314,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+66"/>
         <source>Really leave and terminate the session?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Really leave and terminate the session?</translation>
     </message>
     <message>
         <location line="+112"/>
@@ -2556,7 +2556,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+0"/>
         <source>Draw unfilled circles and ellipses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Draw unfilled circles and ellipses</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2957,7 +2957,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+39"/>
         <source>Export Video...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Export Video...</translation>
     </message>
 </context>
 <context>
@@ -3088,7 +3088,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+27"/>
         <location line="+3"/>
         <source>Shrink to View</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Shrink to View</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -3406,7 +3406,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+72"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Operator</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -4335,7 +4335,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>Declination/Tilt Y</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Declination/Tilt Y</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6368,9 +6368,9 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+9"/>
         <source>%n role(s) imported.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n role imported.</numerusform>
+            <numerusform>%n roles imported.</numerusform>
+            <numerusform>%n roles imported.</numerusform>
         </translation>
     </message>
     <message>
@@ -6447,7 +6447,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Shortcuts</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6734,7 +6734,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+107"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Checking…</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7018,7 +7018,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>KisTablet Wintab Relative</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">KisTablet Wintab Relative</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7051,7 +7051,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Touchscreen</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7545,9 +7545,9 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+1"/>
         <source>Really remove %n list server(s)?</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Really remove %n list server?</numerusform>
+            <numerusform>Really remove %n list servers?</numerusform>
+            <numerusform>Really remove %n list servers?</numerusform>
         </translation>
     </message>
     <message>
@@ -7935,7 +7935,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Show sessions that have zero actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Show sessions that have zero actively drawing users</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8461,7 +8461,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Duplicate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Duplicate</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8679,7 +8679,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-276"/>
         <source>Layers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Layers</translation>
     </message>
     <message>
         <location line="+44"/>
