@@ -24,7 +24,7 @@
     <message>
         <location line="+2"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μη υποστηριζόμενη μορφή</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -49,7 +49,7 @@
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Άγνωστο σφάλμα.</translation>
     </message>
 </context>
 <context>
@@ -57,35 +57,35 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+94"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συντόμευση</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ενέργεια</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Modifiers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τροποποιητές</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>%1</source>
         <extracomment>Example: &quot;Pan Canvas&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%1 (%2)</source>
         <extracomment>Example: &quot;Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (%2)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1: %2</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -96,33 +96,33 @@
     <message>
         <location line="+48"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τροχός Ποντικιού</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>+</source>
         <extracomment>Joins shortcut components, probably doesn&apos;t need to be translated.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">+</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Unset</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αναίρεση ρύθμισης</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Left Click</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αριστερό-πάτημα</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right Click</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Δεξί Κλίκ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μεσαίο-Πάτημα</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -152,7 +152,7 @@
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επιλογή χρώματος</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -192,7 +192,7 @@
     <message>
         <location line="+2"/>
         <source>Unknown Action %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Άγνωστη Εντολή</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -202,7 +202,7 @@
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αντεστραμμένο</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -263,27 +263,27 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σύγκρουση</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ενέργεια</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συντόμευση</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εναλλακτικό</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προεπιλογή</translation>
     </message>
 </context>
 <context>
@@ -291,7 +291,7 @@
     <message>
         <location filename="../document.cpp" line="+715"/>
         <source>Unknown format.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Άγνωστη μορφή</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -301,7 +301,7 @@
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σφάλμα κατά το άνοιγμα του αρχείου</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -311,7 +311,7 @@
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Άγνωστο σφάλμα.</translation>
     </message>
 </context>
 <context>
@@ -371,7 +371,7 @@
     <message>
         <location filename="../utils/images.cpp" line="+84"/>
         <source>Images (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εικόνες (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -441,12 +441,12 @@
     <message>
         <location line="+5"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όλα τα υποστιριζόμενα αρχεία (%s)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όλα τα αρχεία (*)</translation>
     </message>
 </context>
 <context>
@@ -454,7 +454,7 @@
     <message>
         <location filename="../drawdance/canvasstate.cpp" line="+45"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Στρώμα</translation>
     </message>
 </context>
 <context>
@@ -462,22 +462,22 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-103"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Shift</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ctrl</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Meta</translation>
     </message>
 </context>
 <context>
@@ -485,29 +485,29 @@
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="+71"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1η %2ω %3λ</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1ω %2λ</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1m</translation>
     </message>
     <message>
         <location line="+370"/>
         <source>(untitled)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">(χωρίς τίτλο)</translation>
     </message>
     <message numerus="yes">
         <location line="-274"/>
         <source>%n users</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n χρήστες</numerusform>
+            <numerusform>%n χρήστες</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -534,7 +534,7 @@
     <message>
         <location line="+18"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συμβατό</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -554,52 +554,52 @@
     <message>
         <location line="+1"/>
         <source>unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;άγνωστη έκδοση&gt;</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συμβατότητα</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τίτλος</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διακομιστής</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρήστες</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ενεργό</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κάτοχος</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Age</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ηλικία</translation>
     </message>
     <message>
         <location line="+171"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κλειστό</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προστατευμένο με κωδικό</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -612,72 +612,72 @@
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+40"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κανονικό</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recolor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επαναχρωματισμός</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">πίσω</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Multiply</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Πολλαπλασιασμός</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Οθόνη</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Επικάλυψη</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Divide</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χώρισμα</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Burn</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Burn</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dodge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αποφυγή</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Darken</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σκούρο</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Lighten</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φωτεινότερο</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Subtract</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αφαίρεση</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προσθήκη</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διαγραφή</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -687,12 +687,12 @@
     <message>
         <location line="+5"/>
         <source>Hard Light</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Έντονο φως</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Soft Light</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απαλό φως</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -712,22 +712,22 @@
     <message>
         <location line="+5"/>
         <source>Hue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Απόχρωση</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κορεσμός</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Luminosity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Φωτεινότητα</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρώμα</translation>
     </message>
 </context>
 <context>
@@ -735,7 +735,7 @@
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="+600"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προεπιλογή</translation>
     </message>
 </context>
 <context>
@@ -743,12 +743,12 @@
     <message>
         <location line="-103"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Όλα</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χωρίς ετικέτα</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -763,7 +763,7 @@
     <message>
         <location line="+171"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Προεπιλογή</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -789,7 +789,7 @@
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χωρίς κατηγορία</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -872,7 +872,7 @@
     <message>
         <location filename="../canvas/paintengine.cpp" line="+169"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Στρώμα</translation>
     </message>
 </context>
 <context>
@@ -880,57 +880,57 @@
     <message>
         <location filename="../canvas/userlist.cpp" line="+64"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συντονιστής</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χειριστής</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Έμπιστος</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ημερομηνία Εγγραφής</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Online</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σε σύνδεση</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Εκτός σύνδεσης</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρήστης</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τύπος</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Κατάσταση</translation>
     </message>
     <message>
         <location line="+182"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διακομιστής</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>User #%1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρήστης %1</translation>
     </message>
 </context>
 <context>
@@ -947,17 +947,17 @@
     <message>
         <location filename="../net/announcementlist.cpp" line="+31"/>
         <source>Private</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ιδιωτικό</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Public</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διακομιστής</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -967,7 +967,7 @@
     <message>
         <location line="+1"/>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mode</translation>
     </message>
 </context>
 <context>
@@ -975,27 +975,27 @@
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Συντονιστής</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χειριστής</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Έμπιστος</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρήστης</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ρόλοι</translation>
     </message>
 </context>
 <context>
@@ -1004,18 +1004,18 @@
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ταυτότητα</translation>
     </message>
     <message>
         <location line="-13"/>
         <location line="+15"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρήστης</translation>
     </message>
     <message>
         <location line="-13"/>
         <source>IP address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Διεύθυνση IP</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1059,7 +1059,7 @@
     <message>
         <location line="-392"/>
         <source>You have been kicked.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Έχετε διωχθεί</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1079,7 +1079,7 @@
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ο σαρωτής τίθεται εκτός λειτουργίας.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1089,12 +1089,12 @@
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αποσυνδεδεμένο</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Αποσυνδέθηκε, %s</translation>
     </message>
     <message>
         <location line="+324"/>
@@ -1105,7 +1105,7 @@
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σφάλμα διακομιστή</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1217,7 +1217,7 @@
         <location line="+165"/>
         <location line="+47"/>
         <source>Incompatible server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μη συμβατοί διακομιστές</translation>
     </message>
     <message>
         <location line="-651"/>
@@ -1303,12 +1303,12 @@
     <message>
         <location line="+52"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Νέα έκδοση</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Άγνωστη Έκδοση</translation>
     </message>
     <message>
         <location line="-42"/>
@@ -1349,7 +1349,7 @@
     <message>
         <location line="+58"/>
         <source>Cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ακυρωμένο</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1359,7 +1359,7 @@
     <message>
         <location line="+15"/>
         <source>Invalid username!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Μη έγκυρο όνομα χρήστη</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1369,7 +1369,7 @@
     <message>
         <location line="+2"/>
         <source>Username already taken!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Username is already taken.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1389,7 +1389,7 @@
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σας έχει απαγορευθεί η είσοδος σε αυτή την αίθουσα</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1422,7 +1422,7 @@
     <message>
         <location filename="../net/loginsessions.cpp" line="+48"/>
         <source>(untitled)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">(χωρίς τίτλο)</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -1442,7 +1442,7 @@
     <message>
         <location line="+4"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ασύμβατη έκδοση</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1480,22 +1480,22 @@
     <message>
         <location line="+57"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Τίτλος</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Started by</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ξεκινησε {}</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Χρήστες</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ενεργό</translation>
     </message>
 </context>
 <context>
@@ -1537,7 +1537,7 @@
         <location filename="../utils/news.cpp" line="+280"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Έλεγχος για ενημερώσεις…</translation>
     </message>
     <message>
         <location line="-23"/>
@@ -1552,7 +1552,7 @@
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Σφάλμα δικτύου %s</translation>
     </message>
     <message>
         <location line="+12"/>
