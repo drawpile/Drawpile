@@ -8021,7 +8021,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Generate</source>
-        <translation type="unfinished">Generate</translation>
+        <translation type="unfinished">Oluştur</translation>
     </message>
     <message>
         <location line="+1"/>
