@@ -3974,7 +3974,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+23"/>
         <location line="+14"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished">Blend Mode:</translation>
+        <translation type="unfinished">Режим змішування:</translation>
     </message>
     <message>
         <location line="+14"/>
