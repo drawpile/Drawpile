@@ -1711,7 +1711,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+3"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pic&amp;k From Screen</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2435,7 +2435,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../mainwindow.cpp" line="+126"/>
         <source>Join another user&apos;s drawing session</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Join another user&apos;s drawing session</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3099,7 +3099,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+26"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Scale</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3956,7 +3956,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+3"/>
         <source>Square Pixel Brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Square Pixel Brush</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5369,7 +5369,7 @@ Negative values do the reverse</translation>
         <location line="+2"/>
         <source>Follows the view orientation to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Follows the view orientation to offset the dabs to one side.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8104,7 +8104,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+57"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Not suitable for minors (NSFM)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8730,7 +8730,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Really delete the layer &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Really delete the layer &apos;%1&apos;?</translation>
     </message>
 </context>
 <context>
@@ -9408,7 +9408,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>Clipboard does not appear to contain a curve.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Clipboard does not appear to contain a curve.</translation>
     </message>
 </context>
 <context>
