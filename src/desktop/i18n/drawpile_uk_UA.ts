@@ -1995,7 +1995,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished">Unknown error.</translation>
+        <translation type="unfinished">Невідома помилка.</translation>
     </message>
     <message>
         <location line="+10"/>
