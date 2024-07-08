@@ -4112,7 +4112,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="-268"/>
         <source>Smudging: </source>
-        <translation type="unfinished">Smudging: </translation>
+        <translation type="unfinished">Розмазування: </translation>
     </message>
     <message>
         <location line="+12"/>
