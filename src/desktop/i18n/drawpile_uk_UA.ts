@@ -2082,7 +2082,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+13"/>
         <source>Set Artificial Lag</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Set Artificial Lag</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2151,7 +2151,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+4"/>
         <source>Vertical Tabs on Sides</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vertical Tabs on Sides</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -2338,7 +2338,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Copy Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Copy Key Frame</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2458,7 +2458,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+12"/>
         <source>&amp;Animation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Animation</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3644,7 +3644,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+74"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (%2 colors)</translation>
     </message>
 </context>
 <context>
@@ -3667,7 +3667,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+38"/>
         <source>Delete the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Delete the current palette</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4180,7 +4180,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4410,7 +4410,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4585,7 +4585,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Fine speed gamma</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fine speed gamma</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5862,7 +5862,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+18"/>
         <source>Mink</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mink</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -5974,7 +5974,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+530"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enter the username and password for your account on this server. This is not your drawpile.net account!</translation>
     </message>
     <message>
         <location line="-614"/>
@@ -6479,7 +6479,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Connect to a drawing session directly</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Connect to a drawing session directly</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6850,7 +6850,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Canvas snapshots:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Canvas snapshots:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7831,7 +7831,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Miscellaneous:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Miscellaneous:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8280,7 +8280,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8298,7 +8298,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+13"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Search</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -9676,7 +9676,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+57"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rename Track</translation>
     </message>
     <message>
         <location line="+0"/>
