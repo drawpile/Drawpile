@@ -3672,7 +3672,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+12"/>
         <source>Revert changes to the current palette</source>
-        <translation type="unfinished">Revert changes to the current palette</translation>
+        <translation type="unfinished">Скасувати зміни поточної палітри</translation>
     </message>
     <message>
         <location line="+12"/>
