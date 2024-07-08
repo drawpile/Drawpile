@@ -415,7 +415,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+6"/>
         <source> ms</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> ms</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1034,7 +1034,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</translation>
     </message>
 </context>
 <context>
@@ -2025,7 +2025,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+66"/>
         <source>Really leave and terminate the session?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Really leave and terminate the session?</translation>
     </message>
     <message>
         <location line="+235"/>
@@ -2201,7 +2201,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+2"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pic&amp;k From Screen</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3101,7 +3101,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+26"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Scale</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3958,7 +3958,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+3"/>
         <source>Square Pixel Brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Square Pixel Brush</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5325,7 +5325,9 @@ The longer the smudge length the more a color will spread and will also boost pe
 You can control which bucket to use to improve variability and realism of the brush.
 Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">There are 256 buckets that each can hold a color picked up from the canvas.
+You can control which bucket to use to improve variability and realism of the brush.
+Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5369,7 +5371,7 @@ Negative values do the reverse</translation>
         <location line="+2"/>
         <source>Follows the view orientation to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Follows the view orientation to offset the dabs to one side.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7051,12 +7053,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Touchscreen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gestures</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7614,7 +7616,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Double-tap Alt key to focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Double-tap Alt key to focus canvas</translation>
     </message>
     <message>
         <location line="-61"/>
@@ -7724,7 +7726,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>HSV (Hue–Saturation–Value)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">HSV (Hue–Saturation–Value)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8104,7 +8106,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+57"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Not suitable for minors (NSFM)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8730,7 +8732,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Really delete the layer &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Really delete the layer &apos;%1&apos;?</translation>
     </message>
 </context>
 <context>
@@ -9408,7 +9410,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>Clipboard does not appear to contain a curve.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Clipboard does not appear to contain a curve.</translation>
     </message>
 </context>
 <context>
@@ -9687,7 +9689,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+0"/>
         <source>Track Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Track Name</translation>
     </message>
     <message>
         <location line="+36"/>
