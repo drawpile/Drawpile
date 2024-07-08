@@ -9117,7 +9117,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>Save As…</source>
-        <translation type="unfinished">Save As…</translation>
+        <translation type="unfinished">Зберегти як…</translation>
     </message>
     <message>
         <location line="+60"/>
