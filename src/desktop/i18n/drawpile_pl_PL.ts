@@ -96,7 +96,7 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+74"/>
         <source>Pixel brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pixel brush</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -1263,7 +1263,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
         <location line="+27"/>
         <location line="+573"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cancel</translation>
     </message>
     <message>
         <location line="-580"/>
@@ -1762,7 +1762,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Deselect</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Deselect</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1792,7 +1792,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Fill Selection</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fill Selection</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1987,7 +1987,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+0"/>
         <source>Show all layers normally</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Show all layers normally</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2271,7 +2271,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Invite...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Invite...</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3094,7 +3094,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+27"/>
         <location line="+3"/>
         <source>Reset Transform</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Reset Transform</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -3931,7 +3931,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+85"/>
         <source>Brush Editor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brush Editor</translation>
     </message>
     <message>
         <location line="+48"/>
@@ -4059,7 +4059,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="-1"/>
         <source>Minimum Size: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Minimum Size: </translation>
     </message>
     <message>
         <location line="+10"/>
@@ -4115,7 +4115,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+12"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Color Pickup: 1/</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -4933,7 +4933,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
  0.7 means 2 pixels
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Basic brush radius (logarithmic)
+ 0.7 means 2 pixels
+ 3.0 means 20 pixels</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5618,7 +5620,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Smooth</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6739,7 +6741,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+8"/>
         <source>Not found. %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Not found. %1</translation>
     </message>
 </context>
 <context>
@@ -6757,7 +6759,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+9"/>
         <source>Add canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Add canvas shortcut…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6906,7 +6908,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+0"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dark</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6954,7 +6956,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/input.cpp" line="+51"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Input</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7471,7 +7473,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+0"/>
         <source>Lock Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lock Parental Controls</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7792,7 +7794,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>On right-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">On right-click drag</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8910,7 +8912,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+11"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Top</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -9339,7 +9341,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+9"/>
         <source>Detach</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Detach</translation>
     </message>
     <message>
         <location line="-2"/>
@@ -9607,7 +9609,7 @@ Hex: %4</translation>
     <message>
         <location line="+26"/>
         <source>No recent hosts.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">No recent hosts.</translation>
     </message>
     <message>
         <location line="+59"/>
