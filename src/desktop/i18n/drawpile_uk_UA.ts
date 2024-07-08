@@ -2211,7 +2211,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Set Local Background...</source>
-        <translation type="unfinished">Set Local Background...</translation>
+        <translation type="unfinished">Встановити тло…</translation>
     </message>
     <message>
         <location line="+1"/>
