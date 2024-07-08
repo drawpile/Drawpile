@@ -137,7 +137,7 @@
     <message>
         <location line="+8"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pan Canvas</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -202,12 +202,12 @@
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Инвертировано</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Переключить оси</translation>
     </message>
 </context>
 <context>
@@ -311,7 +311,7 @@
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Неизвестная ошибка.</translation>
     </message>
 </context>
 <context>
@@ -607,7 +607,7 @@
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">NSFM</translation>
     </message>
 </context>
 <context>
@@ -675,7 +675,7 @@
     <message>
         <location line="+5"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Добавить</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1067,22 +1067,22 @@
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вас выгоняет %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Произошла ошибка сервера!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Произошла ошибка сервера!</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сервер выключается!</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1465,7 +1465,7 @@
     <message>
         <location line="+5"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не подходит для несовершеннолетних (NSFM)</translation>
     </message>
     <message>
         <location line="+5"/>
