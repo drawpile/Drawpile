@@ -537,7 +537,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+15"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Open</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -718,7 +718,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erase</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -970,7 +970,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="+7"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1435,7 +1435,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
         <location line="+2"/>
         <location line="+1868"/>
         <source>Terminate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Terminate</translation>
     </message>
     <message>
         <location line="-1781"/>
@@ -1465,7 +1465,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+1"/>
         <source>Change the session&apos;s undo limit, current limit is %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Change the session&apos;s undo limit, current limit is %1.</translation>
     </message>
     <message>
         <location line="+423"/>
@@ -2892,7 +2892,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+17"/>
         <source>Skip Backward</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Skip Backward</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3800,7 +3800,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+11"/>
         <source>Checking %1...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Checking %1...</translation>
     </message>
 </context>
 <context>
@@ -4426,7 +4426,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">This is a user defined input. Look at the &apos;custom input&apos; setting for details.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4488,7 +4488,10 @@ For the Radius setting, using a value of -4.15 makes the brush size roughly cons
 +90 when twisted clockwise 90 degrees
 -90 when twisted counterclockwise 90 degrees</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Barrel rotation of stylus.
+0 when not twisted
++90 when twisted clockwise 90 degrees
+-90 when twisted counterclockwise 90 degrees</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4686,7 +4689,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Smudge length</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Smudge length</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4782,7 +4785,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>GridMap Scale X</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">GridMap Scale X</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5698,7 +5701,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="-6"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Undo</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -5848,7 +5851,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+20"/>
         <source>MediBang-esque</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">MediBang-esque</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -6379,7 +6382,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Undo Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Undo Limit: </translation>
     </message>
     <message>
         <location line="+10"/>
@@ -6427,7 +6430,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Servers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Servers</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6714,7 +6717,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Choose ffmpeg path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Choose ffmpeg path</translation>
     </message>
     <message>
         <location line="+107"/>
@@ -7689,7 +7692,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+7"/>
         <source>Direction:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Direction:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7714,7 +7717,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>HSL (Hue–Saturation–Lightness)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">HSL (Hue–Saturation–Lightness)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7752,7 +7755,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Small screen (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Small screen (experimental)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8276,7 +8279,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Next time, you&apos;ll see news and updates on this page.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Next time, you&apos;ll see news and updates on this page.</translation>
     </message>
 </context>
 <context>
@@ -8284,7 +8287,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../docks/brushpalettedock.cpp" line="+104"/>
         <source>Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brushes</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -8669,7 +8672,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+44"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opacity: </translation>
     </message>
     <message>
         <location line="+1"/>
