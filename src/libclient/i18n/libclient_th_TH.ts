@@ -102,12 +102,12 @@
         <location line="+4"/>
         <source>+</source>
         <extracomment>Joins shortcut components, probably doesn&apos;t need to be translated.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">+</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Unset</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ยกเลิกการตั้งค่า</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -132,7 +132,7 @@
     <message>
         <location line="+2"/>
         <source>Button %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ปุ่ม 1</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -263,7 +263,7 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ขัดแย้ง</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -278,7 +278,7 @@
     <message>
         <location line="+1"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ทางเลือก</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -301,7 +301,7 @@
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">เกิดข้อผิดพลาดระหว่างการเปิดไฟล์</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -441,7 +441,7 @@
     <message>
         <location line="+5"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ไฟล์สนับสนุนทั้งหมด (%s)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -462,17 +462,17 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-103"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Shift</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ctrl</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -485,22 +485,22 @@
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="+71"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 วัน %2 ชม. %3 น.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 ชม. %2 น.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 นาที</translation>
     </message>
     <message>
         <location line="+370"/>
         <source>(untitled)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ไม่มีชื่อ</translation>
     </message>
     <message numerus="yes">
         <location line="-274"/>
@@ -531,7 +531,7 @@
     <message>
         <location line="+18"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">เข้ากันได้</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -556,17 +556,17 @@
     <message>
         <location line="+67"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ความเข้ากันได้</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ชื่อเพลง</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">เซิร์ฟเวอร์</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -576,27 +576,27 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">เปิดใช้งาน</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ผู้มีกรรมสิทธิ์</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Age</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">อายุ</translation>
     </message>
     <message>
         <location line="+171"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">สิ้นสุดแล้ว</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">การป้องกันด้วยพาสเวิร์ด</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -624,22 +624,22 @@
     <message>
         <location line="+5"/>
         <source>Multiply</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">หลากหลาย</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">จอภาพ</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">โอเวอร์เลย์</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Divide</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ตัวแบ่ง</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -654,12 +654,12 @@
     <message>
         <location line="+5"/>
         <source>Darken</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">มืดลง</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Lighten</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">สว่าง</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -724,7 +724,7 @@
     <message>
         <location line="+5"/>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">สี</translation>
     </message>
 </context>
 <context>
@@ -740,12 +740,12 @@
     <message>
         <location line="-103"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ทั้งหมด</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ไม่ระบุแท็ก</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -786,7 +786,7 @@
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ไม่มีหมวดหมู่</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -892,17 +892,17 @@
     <message>
         <location line="+2"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">สมัครสมาชิก</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Online</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ออนไลน์</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ออฟไลน์</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -922,7 +922,7 @@
     <message>
         <location line="+182"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">เซิร์ฟเวอร์</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -944,7 +944,7 @@
     <message>
         <location filename="../net/announcementlist.cpp" line="+31"/>
         <source>Private</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ส่วนตัว</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -954,7 +954,7 @@
     <message>
         <location line="+24"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">เซิร์ฟเวอร์</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -964,7 +964,7 @@
     <message>
         <location line="+1"/>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">โหมด</translation>
     </message>
 </context>
 <context>
@@ -1001,7 +1001,7 @@
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -1012,7 +1012,7 @@
     <message>
         <location line="-13"/>
         <source>IP address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ที่อยู่ IP</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1086,12 +1086,12 @@
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ตัดการเชื่อม</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ตัดการเชื่อมต่อ %s</translation>
     </message>
     <message>
         <location line="+324"/>
@@ -1102,7 +1102,7 @@
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ข้อผิดพลาดเซิร์ฟเวอร์</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1214,7 +1214,7 @@
         <location line="+165"/>
         <location line="+47"/>
         <source>Incompatible server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">เซิร์ฟเวอร์ที่เข้ากันไม่ได้</translation>
     </message>
     <message>
         <location line="-651"/>
@@ -1300,7 +1300,7 @@
     <message>
         <location line="+52"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">เวอร์ชั่นใหม่</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1346,7 +1346,7 @@
     <message>
         <location line="+58"/>
         <source>Cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ยกเลิก</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1356,7 +1356,7 @@
     <message>
         <location line="+15"/>
         <source>Invalid username!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ชื่อผู้ใช้ที่ไม่ถูกต้อง</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1366,7 +1366,7 @@
     <message>
         <location line="+2"/>
         <source>Username already taken!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ผู้ใช้งานมีอยู่ในระบบแล้ว</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1386,7 +1386,7 @@
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">คุณถูกสั่งห้ามไมให้เข้าห้องนี้</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1419,7 +1419,7 @@
     <message>
         <location filename="../net/loginsessions.cpp" line="+48"/>
         <source>(untitled)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ไม่มีชื่อ</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -1439,7 +1439,7 @@
     <message>
         <location line="+4"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">รุ่นที่เข้ากันไม่ได้</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1476,7 +1476,7 @@
     <message>
         <location line="+57"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ชื่อเพลง</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1491,7 +1491,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">เปิดใช้งาน</translation>
     </message>
 </context>
 <context>
@@ -1533,7 +1533,7 @@
         <location filename="../utils/news.cpp" line="+280"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">กำลังตรวจสอบการอัปเดต</translation>
     </message>
     <message>
         <location line="-23"/>
