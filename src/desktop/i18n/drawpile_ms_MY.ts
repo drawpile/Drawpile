@@ -6,22 +6,22 @@
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+67"/>
         <source>Add New</source>
-        <translation type="unfinished">Add New</translation>
+        <translation type="unfinished">Tambah baru</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Move Up</source>
-        <translation type="unfinished">Move Up</translation>
+        <translation type="unfinished">Bergerak ke atas</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Down</source>
-        <translation type="unfinished">Move Down</translation>
+        <translation type="unfinished">Bergerak ke bawah</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished">Remove</translation>
+        <translation type="unfinished">Buang</translation>
     </message>
 </context>
 <context>
@@ -34,12 +34,12 @@
     <message>
         <location line="+6"/>
         <source>Session:</source>
-        <translation type="unfinished">Session:</translation>
+        <translation type="unfinished">Sesi</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Reason:</source>
-        <translation type="unfinished">Reason:</translation>
+        <translation type="unfinished">Sebab</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -75,12 +75,12 @@
     <message>
         <location filename="../ui/androidfiledialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished">Name:</translation>
+        <translation type="unfinished">Nama:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished">Type:</translation>
+        <translation type="unfinished">Jenis:</translation>
     </message>
 </context>
 <context>
@@ -106,7 +106,7 @@
     <message>
         <location line="+20"/>
         <source>Brush</source>
-        <translation type="unfinished">Brush</translation>
+        <translation type="unfinished">Berus</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -141,22 +141,22 @@
     <message>
         <location line="+3"/>
         <source>Size: </source>
-        <translation type="unfinished">Size: </translation>
+        <translation type="unfinished">Saiz: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Radius: </source>
-        <translation type="unfinished">Radius: </translation>
+        <translation type="unfinished">Jejari </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opacity: </translation>
+        <translation type="unfinished">Kelegapan: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Hardness: </source>
-        <translation type="unfinished">Hardness: </translation>
+        <translation type="unfinished">kekerasan </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -184,7 +184,7 @@
     <message>
         <location line="+19"/>
         <source>Gain: </source>
-        <translation type="unfinished">Gain: </translation>
+        <translation type="unfinished">Dapatan: </translation>
     </message>
     <message>
         <location line="+22"/>
@@ -207,22 +207,22 @@
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation type="unfinished">Name:</translation>
+        <translation type="unfinished">Nama:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Description:</source>
-        <translation type="unfinished">Description:</translation>
+        <translation type="unfinished">Keterangan:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished">Thumbnail:</translation>
+        <translation type="unfinished">Lakaran kenit</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Choose File...</source>
-        <translation type="unfinished">Choose File...</translation>
+        <translation type="unfinished">Pilih fail</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -247,18 +247,18 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+9"/>
         <source>Type</source>
-        <translation type="unfinished">Type</translation>
+        <translation type="unfinished">Jenis</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Shortcut</source>
-        <translation type="unfinished">Shortcut</translation>
+        <translation type="unfinished">Pintasan</translation>
     </message>
     <message>
         <location line="+16"/>
         <location line="+50"/>
         <source>Action</source>
-        <translation type="unfinished">Action</translation>
+        <translation type="unfinished">Aksi</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -268,7 +268,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+3"/>
         <source>Inverted</source>
-        <translation type="unfinished">Inverted</translation>
+        <translation type="unfinished">Songsang</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -292,7 +292,7 @@ to 64x64 pixels.</translation>
         <location line="+6"/>
         <location line="+107"/>
         <source>Organization:</source>
-        <translation type="unfinished">Organization:</translation>
+        <translation type="unfinished">Pertubuhan</translation>
     </message>
     <message>
         <location line="-100"/>
@@ -307,18 +307,18 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+7"/>
         <source>Expires on:</source>
-        <translation type="unfinished">Expires on:</translation>
+        <translation type="unfinished">Tamat tempoh pada %s</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>MD5 fingerprint:</source>
-        <translation type="unfinished">MD5 fingerprint:</translation>
+        <translation type="unfinished">Cap Jari:</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+14"/>
         <source>Organization unit:</source>
-        <translation type="unfinished">Organization unit:</translation>
+        <translation type="unfinished">Pertubuhan</translation>
     </message>
     <message>
         <location line="-7"/>
@@ -334,7 +334,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="-43"/>
         <source>Serial number:</source>
-        <translation type="unfinished">Serial number:</translation>
+        <translation type="unfinished">Nombor siri</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -349,12 +349,12 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+13"/>
         <source>Fingerprints</source>
-        <translation type="unfinished">Fingerprints</translation>
+        <translation type="unfinished">Cap Jari</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Details</source>
-        <translation type="unfinished">Details</translation>
+        <translation type="unfinished">Butiran</translation>
     </message>
 </context>
 <context>
@@ -362,17 +362,17 @@ to 64x64 pixels.</translation>
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.ui" line="+14"/>
         <source>Select Color</source>
-        <translation type="unfinished">Select Color</translation>
+        <translation type="unfinished">Pilih Warna</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Saturation</source>
-        <translation type="unfinished">Saturation</translation>
+        <translation type="unfinished">Ketepuan</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Hue</source>
-        <translation type="unfinished">Hue</translation>
+        <translation type="unfinished">Rona</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -382,27 +382,27 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+7"/>
         <source>Blue</source>
-        <translation type="unfinished">Blue</translation>
+        <translation type="unfinished">Biru</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Value</source>
-        <translation type="unfinished">Value</translation>
+        <translation type="unfinished">Nilai</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Green</source>
-        <translation type="unfinished">Green</translation>
+        <translation type="unfinished">Hijau</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Alpha</source>
-        <translation type="unfinished">Alpha</translation>
+        <translation type="unfinished">alfa</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Red</source>
-        <translation type="unfinished">Red</translation>
+        <translation type="unfinished">Merah</translation>
     </message>
 </context>
 <context>
@@ -425,12 +425,12 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+16"/>
         <source>Play/Pause</source>
-        <translation type="unfinished">Play/Pause</translation>
+        <translation type="unfinished">Main/Jeda</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Jump</source>
-        <translation type="unfinished">Jump</translation>
+        <translation type="unfinished">Lompat</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -450,7 +450,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+13"/>
         <source>Position: </source>
-        <translation type="unfinished">Position: </translation>
+        <translation type="unfinished">Kedudukan: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -479,7 +479,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+7"/>
         <source>No</source>
-        <translation type="unfinished">No</translation>
+        <translation type="unfinished">Tidak</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -504,7 +504,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+15"/>
         <source>History</source>
-        <translation type="unfinished">History</translation>
+        <translation type="unfinished">Sejarah</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -537,7 +537,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+15"/>
         <source>Open</source>
-        <translation type="unfinished">Open</translation>
+        <translation type="unfinished">Buka</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -567,7 +567,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+7"/>
         <source>Import Session Bans</source>
-        <translation type="unfinished">Import Session Bans</translation>
+        <translation type="unfinished">Import sesi</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -578,7 +578,7 @@ to 64x64 pixels.</translation>
         <location line="+44"/>
         <location line="+185"/>
         <source>Save Image</source>
-        <translation type="unfinished">Save Image</translation>
+        <translation type="unfinished">Simpan imej</translation>
     </message>
     <message>
         <location line="-185"/>
@@ -593,7 +593,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+17"/>
         <source>Save Selection</source>
-        <translation type="unfinished">Save Selection</translation>
+        <translation type="unfinished">Simpan Pilihan</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -628,7 +628,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+8"/>
         <source>Export MP4 Video</source>
-        <translation type="unfinished">Export MP4 Video</translation>
+        <translation type="unfinished">Eksport video</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -683,7 +683,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+1"/>
         <source>Save as %1</source>
-        <translation type="unfinished">Save as %1</translation>
+        <translation type="unfinished">Simpan sebagai</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -694,13 +694,13 @@ to 64x64 pixels.</translation>
         <location line="+52"/>
         <location line="+5"/>
         <source>Untitled</source>
-        <translation type="unfinished">Untitled</translation>
+        <translation type="unfinished">Tiada tajuk</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
-        <translation type="unfinished">Untitled%1</translation>
+        <translation type="unfinished">Tiada tajuk</translation>
     </message>
 </context>
 <context>
@@ -708,17 +708,17 @@ to 64x64 pixels.</translation>
     <message>
         <location filename="../ui/fillsettings.ui" line="+45"/>
         <source>Normal</source>
-        <translation type="unfinished">Normal</translation>
+        <translation type="unfinished">Biasa</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished">Behind</translation>
+        <translation type="unfinished">sebelum</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished">Erase</translation>
+        <translation type="unfinished">Padam</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -734,7 +734,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+13"/>
         <source>Expand: </source>
-        <translation type="unfinished">Expand: </translation>
+        <translation type="unfinished">Expand </translation>
     </message>
     <message>
         <location line="+23"/>
@@ -745,7 +745,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="-40"/>
         <source>Size: </source>
-        <translation type="unfinished">Size: </translation>
+        <translation type="unfinished">Saiz: </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -755,12 +755,12 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+7"/>
         <source>Mode:</source>
-        <translation type="unfinished">Mode:</translation>
+        <translation type="unfinished">Mod</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tolerance: </source>
-        <translation type="unfinished">Tolerance: </translation>
+        <translation type="unfinished">Had terima </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -778,7 +778,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+28"/>
         <source>Reset Zoom</source>
-        <translation type="unfinished">Reset Zoom</translation>
+        <translation type="unfinished">Set Semula Zum</translation>
     </message>
     <message>
         <location line="-17"/>
@@ -798,22 +798,22 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+17"/>
         <source>Frame:</source>
-        <translation type="unfinished">Frame:</translation>
+        <translation type="unfinished">Bingkai</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Range</source>
-        <translation type="unfinished">Range</translation>
+        <translation type="unfinished">julat / jarak</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Speed: </source>
-        <translation type="unfinished">Speed: </translation>
+        <translation type="unfinished">Kelajuan: </translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Export</source>
-        <translation type="unfinished">Export</translation>
+        <translation type="unfinished">Eksport</translation>
     </message>
 </context>
 <context>
@@ -821,7 +821,7 @@ to 64x64 pixels.</translation>
     <message>
         <location filename="../ui/inspectorsettings.ui" line="+17"/>
         <source>Last edited by:</source>
-        <translation type="unfinished">Last edited by:</translation>
+        <translation type="unfinished">Edit terakhir pada</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -834,7 +834,7 @@ to 64x64 pixels.</translation>
     <message>
         <location filename="../ui/invitedialog.ui" line="+14"/>
         <source>Invite</source>
-        <translation type="unfinished">Invite</translation>
+        <translation type="unfinished">Ajak</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -897,7 +897,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+1"/>
         <source>Reset</source>
-        <translation type="unfinished">Reset</translation>
+        <translation type="unfinished">Ulangtetap</translation>
     </message>
 </context>
 <context>
@@ -914,7 +914,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="+175"/>
         <source>&amp;Select All</source>
-        <translation type="unfinished">&amp;Select All</translation>
+        <translation type="unfinished">_Pilih Semua</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -932,7 +932,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location filename="../ui/lasersettings.ui" line="+17"/>
         <source>Color:</source>
-        <translation type="unfinished">Color:</translation>
+        <translation type="unfinished">Warna:</translation>
     </message>
     <message>
         <location line="+87"/>
@@ -955,17 +955,17 @@ Subrange: [%3, %4]</translation>
     <message>
         <location filename="../ui/layerproperties.ui" line="+17"/>
         <source>Layer Properties</source>
-        <translation type="unfinished">Layer Properties</translation>
+        <translation type="unfinished">Sifat Lapisan</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation type="unfinished">Name:</translation>
+        <translation type="unfinished">Nama:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Opacity:</source>
-        <translation type="unfinished">Opacity:</translation>
+        <translation type="unfinished">Kelegapan:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -975,17 +975,17 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="+10"/>
         <source>Blending Mode:</source>
-        <translation type="unfinished">Blending Mode:</translation>
+        <translation type="unfinished">Mod Adun</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Visibility:</source>
-        <translation type="unfinished">Visibility:</translation>
+        <translation type="unfinished">Keterlihatan</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Visible to you</source>
-        <translation type="unfinished">Visible to you</translation>
+        <translation type="unfinished">Kelihatan kepada:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1013,22 +1013,22 @@ Subrange: [%3, %4]</translation>
     <message>
         <location filename="../ui/layoutsdialog.ui" line="+14"/>
         <source>Layouts</source>
-        <translation type="unfinished">Layouts</translation>
+        <translation type="unfinished">Susun atur</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Save</source>
-        <translation type="unfinished">Save</translation>
+        <translation type="unfinished">Simpan</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Rename</source>
-        <translation type="unfinished">Rename</translation>
+        <translation type="unfinished">Namakan semula</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Delete</source>
-        <translation type="unfinished">Delete</translation>
+        <translation type="unfinished">Padam</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -1042,12 +1042,12 @@ Subrange: [%3, %4]</translation>
         <location filename="../ui/logindialog.ui" line="+103"/>
         <location line="+234"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished">Incorrect password.</translation>
+        <translation type="unfinished">Kata laluan tidak betul</translation>
     </message>
     <message>
         <location line="-191"/>
         <source>Password</source>
-        <translation type="unfinished">Password</translation>
+        <translation type="unfinished">Kata laluan</translation>
     </message>
     <message>
         <location line="-36"/>
@@ -1062,7 +1062,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="+158"/>
         <source>Filter</source>
-        <translation type="unfinished">Filter</translation>
+        <translation type="unfinished">Penapis</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -1072,7 +1072,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="+22"/>
         <source>Password:</source>
-        <translation type="unfinished">Password:</translation>
+        <translation type="unfinished">Kata laluan:</translation>
     </message>
     <message>
         <location line="+183"/>
@@ -1175,7 +1175,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location filename="../widgets/macmenu.cpp" line="+66"/>
         <source>Minimize</source>
-        <translation type="unfinished">Minimize</translation>
+        <translation type="unfinished">Minimumkan</translation>
     </message>
     <message numerus="yes">
         <location line="+129"/>
@@ -1192,12 +1192,12 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="+1"/>
         <source>Review changes...</source>
-        <translation type="unfinished">Review changes...</translation>
+        <translation type="unfinished">Semak perubahan</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discard changes</source>
-        <translation type="unfinished">Discard changes</translation>
+        <translation type="unfinished">Membuang perubahan</translation>
     </message>
 </context>
 <context>
@@ -1223,7 +1223,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
         <location line="+92"/>
         <location line="+1466"/>
         <source>Untitled</source>
-        <translation type="unfinished">Untitled</translation>
+        <translation type="unfinished">Tiada tajuk</translation>
     </message>
     <message>
         <location line="-1088"/>
@@ -1261,7 +1261,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
         <location line="+27"/>
         <location line="+573"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation type="unfinished">Batal</translation>
     </message>
     <message>
         <location line="-580"/>
@@ -1271,12 +1271,12 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished">Save</translation>
+        <translation type="unfinished">Simpan</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discard</source>
-        <translation type="unfinished">Discard</translation>
+        <translation type="unfinished">Buang</translation>
     </message>
     <message>
         <location line="+271"/>
@@ -1286,7 +1286,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+135"/>
         <source>Saving...</source>
-        <translation type="unfinished">Saving...</translation>
+        <translation type="unfinished">Menyimpan...</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1326,7 +1326,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+54"/>
         <source>Pause</source>
-        <translation type="unfinished">Pause</translation>
+        <translation type="unfinished">Henti sebentar</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1336,18 +1336,18 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+5"/>
         <source>Stop Recording</source>
-        <translation type="unfinished">Stop Recording</translation>
+        <translation type="unfinished">Hentikan rakaman</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+1573"/>
         <source>Record...</source>
-        <translation type="unfinished">Record...</translation>
+        <translation type="unfinished">Rakam</translation>
     </message>
     <message>
         <location line="-1548"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished">Unsupported format.</translation>
+        <translation type="unfinished">Format fail tidak disokong</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1357,7 +1357,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished">Unknown error.</translation>
+        <translation type="unfinished">Ralat tidak diketahui.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1367,7 +1367,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+6"/>
         <source>Error opening profile.</source>
-        <translation type="unfinished">Error opening profile.</translation>
+        <translation type="unfinished">Ralat membuka fail</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1387,7 +1387,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+19"/>
         <source>Invalid address</source>
-        <translation type="unfinished">Invalid address</translation>
+        <translation type="unfinished">Alamat tidak sah</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1402,12 +1402,12 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+6"/>
         <source>Leave</source>
-        <translation type="unfinished">Leave</translation>
+        <translation type="unfinished">Keluar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stay</source>
-        <translation type="unfinished">Stay</translation>
+        <translation type="unfinished">Kekal</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -1438,7 +1438,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="-1781"/>
         <source>Could not connect to server</source>
-        <translation type="unfinished">Could not connect to server</translation>
+        <translation type="unfinished">Tidak dapat menyambung ke pelayan</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1448,7 +1448,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+2"/>
         <source>Join</source>
-        <translation type="unfinished">Join</translation>
+        <translation type="unfinished">Sertai</translation>
     </message>
     <message>
         <location line="+117"/>
@@ -1468,7 +1468,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+423"/>
         <source>The image could not be loaded</source>
-        <translation type="unfinished">The image could not be loaded</translation>
+        <translation type="unfinished">Imej tidak dapat dimuatkan</translation>
     </message>
     <message>
         <location line="+236"/>
@@ -1495,7 +1495,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
         <location line="+0"/>
         <location line="+1001"/>
         <source>Profile...</source>
-        <translation type="unfinished">Profile...</translation>
+        <translation type="unfinished">Profile</translation>
     </message>
     <message>
         <location line="-994"/>
@@ -1600,33 +1600,33 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+9"/>
         <location filename="../widgets/macmenu.cpp" line="-169"/>
         <source>&amp;New</source>
-        <translation type="unfinished">&amp;New</translation>
+        <translation type="unfinished">&amp;Baru</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Open...</source>
-        <translation type="unfinished">&amp;Open...</translation>
+        <translation type="unfinished">&amp;Buka...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Close</source>
-        <translation type="unfinished">Close</translation>
+        <translation type="unfinished">Tutup</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">&amp;Save</translation>
+        <translation type="unfinished">&amp;Simpan</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save &amp;As...</source>
-        <translation type="unfinished">Save &amp;As...</translation>
+        <translation type="unfinished">Simpan Seb&amp;agai...</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Autosave</source>
-        <translation type="unfinished">Autosave</translation>
+        <translation type="unfinished">Autosimpan</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -1637,7 +1637,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
-        <translation type="unfinished">&amp;Quit</translation>
+        <translation type="unfinished">&amp;Keluar</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -1649,17 +1649,17 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+3"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Open &amp;Recent</source>
-        <translation type="unfinished">Open &amp;Recent</translation>
+        <translation type="unfinished">Buka Terkini</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>&amp;Import</source>
-        <translation type="unfinished">&amp;Import</translation>
+        <translation type="unfinished">Import</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Export</source>
-        <translation type="unfinished">&amp;Export</translation>
+        <translation type="unfinished">Eksport</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1669,12 +1669,12 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+28"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished">&amp;Undo</translation>
+        <translation type="unfinished">Buat A&amp;sal</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished">&amp;Redo</translation>
+        <translation type="unfinished">Buat S&amp;emula</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1699,7 +1699,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished">&amp;Paste</translation>
+        <translation type="unfinished">Ta&amp;mpal</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1719,7 +1719,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Delete Empty Annotations</source>
-        <translation type="unfinished">Delete Empty Annotations</translation>
+        <translation type="unfinished">Padam anotasi</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1750,17 +1750,17 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Prefere&amp;nces</source>
-        <translation type="unfinished">Prefere&amp;nces</translation>
+        <translation type="unfinished">Preferences</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Select &amp;All</source>
-        <translation type="unfinished">Select &amp;All</translation>
+        <translation type="unfinished">Pilih Semu&amp;a</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Deselect</source>
-        <translation type="unfinished">&amp;Deselect</translation>
+        <translation type="unfinished">Nyahpilih</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1785,12 +1785,12 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+2"/>
         <source>Delete</source>
-        <translation type="unfinished">Delete</translation>
+        <translation type="unfinished">Padam</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fill Selection</source>
-        <translation type="unfinished">Fill Selection</translation>
+        <translation type="unfinished">Isi Pemilihan</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1800,12 +1800,12 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Color Erase Selection</source>
-        <translation type="unfinished">Color Erase Selection</translation>
+        <translation type="unfinished">Padam Pemilihan</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished">&amp;Edit</translation>
+        <translation type="unfinished">&amp;Sunting</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1835,7 +1835,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+2"/>
         <source>&amp;Toolbars</source>
-        <translation type="unfinished">&amp;Toolbars</translation>
+        <translation type="unfinished">_Toolbar</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1870,17 +1870,17 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Zoom &amp;In</source>
-        <translation type="unfinished">Zoom &amp;In</translation>
+        <translation type="unfinished">Zum Masuk</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom &amp;Out</source>
-        <translation type="unfinished">Zoom &amp;Out</translation>
+        <translation type="unfinished">Zum Keluar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Normal Size</source>
-        <translation type="unfinished">&amp;Normal Size</translation>
+        <translation type="unfinished">Saiz Biasa</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1905,22 +1905,22 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Rotate Canvas Clockwise</source>
-        <translation type="unfinished">Rotate Canvas Clockwise</translation>
+        <translation type="unfinished">Putar 90° Ikut Jam</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rotate Canvas Counterclockwise</source>
-        <translation type="unfinished">Rotate Canvas Counterclockwise</translation>
+        <translation type="unfinished">Putar Lawan Jam</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror</source>
-        <translation type="unfinished">Mirror</translation>
+        <translation type="unfinished">Cermin</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Flip</source>
-        <translation type="unfinished">Flip</translation>
+        <translation type="unfinished">Flip V.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1935,12 +1935,12 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Show Names</source>
-        <translation type="unfinished">Show Names</translation>
+        <translation type="unfinished">Tunjuk Nama Nota</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Layers</source>
-        <translation type="unfinished">Show Layers</translation>
+        <translation type="unfinished">Tunjuk Lapisan</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1960,22 +1960,22 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+3"/>
         <source>&amp;Full Screen</source>
-        <translation type="unfinished">&amp;Full Screen</translation>
+        <translation type="unfinished">Full screen</translation>
     </message>
     <message>
         <location line="+86"/>
         <source>&amp;View</source>
-        <translation type="unfinished">&amp;View</translation>
+        <translation type="unfinished">&amp;Lihat</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>&amp;Zoom</source>
-        <translation type="unfinished">&amp;Zoom</translation>
+        <translation type="unfinished">Zum</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Rotation</source>
-        <translation type="unfinished">Rotation</translation>
+        <translation type="unfinished">Putaran</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -2025,30 +2025,30 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+20"/>
         <source>New Layer</source>
-        <translation type="unfinished">New Layer</translation>
+        <translation type="unfinished">Tambah Lapisan Baharu</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>New Layer Group</source>
-        <translation type="unfinished">New Layer Group</translation>
+        <translation type="unfinished">Grup Lapisan Baru</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="+308"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Duplicate Layer</source>
-        <translation type="unfinished">Duplicate Layer</translation>
+        <translation type="unfinished">Duplikasi Lapisan</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Merge Layer</source>
-        <translation type="unfinished">Merge Layer</translation>
+        <translation type="unfinished">Gabung Lapisan Bawah</translation>
     </message>
     <message>
         <location line="+6"/>
         <location filename="../mainwindow.cpp" line="+2"/>
         <source>Delete Layer</source>
-        <translation type="unfinished">Delete Layer</translation>
+        <translation type="unfinished">Padam Lapisan</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+1"/>
@@ -2068,7 +2068,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+5"/>
         <source>&amp;Layer</source>
-        <translation type="unfinished">&amp;Layer</translation>
+        <translation type="unfinished">Lapisan</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -2163,17 +2163,17 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Delete Track</source>
-        <translation type="unfinished">Delete Track</translation>
+        <translation type="unfinished">Padamkan lagu?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Next Frame</source>
-        <translation type="unfinished">Next Frame</translation>
+        <translation type="unfinished">Bidang seterusnya</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Frame</source>
-        <translation type="unfinished">Previous Frame</translation>
+        <translation type="unfinished">Bidang sebelumnya</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2183,7 +2183,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <translation type="unfinished">Previous Key Frame</translation>
+        <translation type="unfinished">Bidang sebelumnya</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2238,7 +2238,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+12"/>
         <source>&amp;Animation</source>
-        <translation type="unfinished">&amp;Animation</translation>
+        <translation type="unfinished">Animasi</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2317,7 +2317,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+112"/>
         <source>Reason:</source>
-        <translation type="unfinished">Reason:</translation>
+        <translation type="unfinished">Sebab</translation>
     </message>
     <message>
         <location line="+123"/>
@@ -2327,7 +2327,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished">Disconnected: %1</translation>
+        <translation type="unfinished">Terputus</translation>
     </message>
     <message>
         <location line="+71"/>
@@ -2367,7 +2367,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Export Selection...</source>
-        <translation type="unfinished">Export Selection...</translation>
+        <translation type="unfinished">Eksport Pemilihan</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2402,7 +2402,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+115"/>
         <source>&amp;Copy Merged</source>
-        <translation type="unfinished">&amp;Copy Merged</translation>
+        <translation type="unfinished">Salin Bergabung</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2428,7 +2428,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location filename="../docks/layerlistdock.cpp" line="-3"/>
         <location filename="../mainwindow.cpp" line="+408"/>
         <source>Layer Properties…</source>
-        <translation type="unfinished">Layer Properties…</translation>
+        <translation type="unfinished">Sifat Lapisan</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+126"/>
@@ -2448,7 +2448,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Leave</source>
-        <translation type="unfinished">&amp;Leave</translation>
+        <translation type="unfinished">Keluar</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2463,7 +2463,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Settings...</source>
-        <translation type="unfinished">Settings...</translation>
+        <translation type="unfinished">Tetapan...</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2488,7 +2488,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+2"/>
         <source>Report...</source>
-        <translation type="unfinished">Report...</translation>
+        <translation type="unfinished">Lapor</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2499,17 +2499,17 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+30"/>
         <location filename="../widgets/macmenu.cpp" line="-2"/>
         <source>&amp;Session</source>
-        <translation type="unfinished">&amp;Session</translation>
+        <translation type="unfinished">Sesi</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Moderation</source>
-        <translation type="unfinished">Moderation</translation>
+        <translation type="unfinished">Moderation Log</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Freehand</source>
-        <translation type="unfinished">Freehand</translation>
+        <translation type="unfinished">Gaya bebas</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2519,7 +2519,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Eraser</source>
-        <translation type="unfinished">Eraser</translation>
+        <translation type="unfinished">pemadam</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2529,7 +2529,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Line</source>
-        <translation type="unfinished">&amp;Line</translation>
+        <translation type="unfinished">Baris</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2539,7 +2539,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Rectangle</source>
-        <translation type="unfinished">&amp;Rectangle</translation>
+        <translation type="unfinished">Segi Empat Tepat</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2549,7 +2549,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Ellipse</source>
-        <translation type="unfinished">&amp;Ellipse</translation>
+        <translation type="unfinished">elips</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2569,7 +2569,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Flood Fill</source>
-        <translation type="unfinished">&amp;Flood Fill</translation>
+        <translation type="unfinished">Isian</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2579,7 +2579,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Annotation</source>
-        <translation type="unfinished">&amp;Annotation</translation>
+        <translation type="unfinished">Catatan:</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2589,7 +2589,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+2"/>
         <source>&amp;Color Picker</source>
-        <translation type="unfinished">&amp;Color Picker</translation>
+        <translation type="unfinished">Pemilih Warna</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2629,7 +2629,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Zoom</source>
-        <translation type="unfinished">Zoom</translation>
+        <translation type="unfinished">Zum</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2639,7 +2639,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Inspector</source>
-        <translation type="unfinished">Inspector</translation>
+        <translation type="unfinished">Pemeriksa</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2649,17 +2649,17 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+17"/>
         <source>&amp;Tools</source>
-        <translation type="unfinished">&amp;Tools</translation>
+        <translation type="unfinished">&amp;Alat</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Shortcuts</source>
-        <translation type="unfinished">&amp;Shortcuts</translation>
+        <translation type="unfinished">Pintasan</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Developer Tools</source>
-        <translation type="unfinished">Developer Tools</translation>
+        <translation type="unfinished">Peralatan pemaju</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2679,7 +2679,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Statistics…</source>
-        <translation type="unfinished">Statistics…</translation>
+        <translation type="unfinished">Statistik</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2720,7 +2720,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+57"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Homepage</source>
-        <translation type="unfinished">&amp;Homepage</translation>
+        <translation type="unfinished">Laman Utama</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2747,12 +2747,12 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+2"/>
         <source>About &amp;Qt</source>
-        <translation type="unfinished">About &amp;Qt</translation>
+        <translation type="unfinished">Perihal &amp;Qt</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Check For Updates</source>
-        <translation type="unfinished">Check For Updates</translation>
+        <translation type="unfinished">Periksa Kemaskini</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -2773,7 +2773,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="-7"/>
         <source>Could not read source file: %1</source>
-        <translation type="unfinished">Could not read source file: %1</translation>
+        <translation type="unfinished">Tidak dapat membaca fail %s.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -2784,7 +2784,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+11"/>
         <location filename="../widgets/macmenu.cpp" line="-5"/>
         <source>&amp;Help</source>
-        <translation type="unfinished">&amp;Help</translation>
+        <translation type="unfinished">&amp;Bantuan</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -2819,7 +2819,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+51"/>
         <source>Palette</source>
-        <translation type="unfinished">Palette</translation>
+        <translation type="unfinished">Palet</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -2837,17 +2837,17 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../ui/netstats.ui" line="+14"/>
         <source>Statistics</source>
-        <translation type="unfinished">Statistics</translation>
+        <translation type="unfinished">Statistik</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Latency:</source>
-        <translation type="unfinished">Latency:</translation>
+        <translation type="unfinished">Kependaman</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Tiles:</source>
-        <translation type="unfinished">Tiles:</translation>
+        <translation type="unfinished">Jubin</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -2857,7 +2857,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+14"/>
         <source>Contexts:</source>
-        <translation type="unfinished">Contexts:</translation>
+        <translation type="unfinished">Konteks</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2867,12 +2867,12 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="-86"/>
         <source>Sent:</source>
-        <translation type="unfinished">Sent:</translation>
+        <translation type="unfinished">Dihantar:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Received:</source>
-        <translation type="unfinished">Received:</translation>
+        <translation type="unfinished">DiTerima</translation>
     </message>
 </context>
 <context>
@@ -2880,7 +2880,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../ui/playback.ui" line="+14"/>
         <source>Playback</source>
-        <translation type="unfinished">Playback</translation>
+        <translation type="unfinished">Main Balik</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -2910,7 +2910,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+32"/>
         <source>Playback Speed: </source>
-        <translation type="unfinished">Playback Speed: </translation>
+        <translation type="unfinished">Kelajuan main semula </translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2940,7 +2940,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+3"/>
         <source>Autosave</source>
-        <translation type="unfinished">Autosave</translation>
+        <translation type="unfinished">Autosimpan</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -2950,12 +2950,12 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+7"/>
         <source>Stop</source>
-        <translation type="unfinished">Stop</translation>
+        <translation type="unfinished">Henti</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Export Video...</source>
-        <translation type="unfinished">Export Video...</translation>
+        <translation type="unfinished">Eksport video</translation>
     </message>
 </context>
 <context>
@@ -2964,32 +2964,32 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
         <location filename="../filewrangler.cpp" line="-450"/>
         <source>All files (*)</source>
-        <translation type="unfinished">All files (*)</translation>
+        <translation type="unfinished">Semua Fail (*)</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+77"/>
         <source>Freehand</source>
-        <translation type="unfinished">Freehand</translation>
+        <translation type="unfinished">Gaya bebas</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Eraser</source>
-        <translation type="unfinished">Eraser</translation>
+        <translation type="unfinished">pemadam</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Line</source>
-        <translation type="unfinished">Line</translation>
+        <translation type="unfinished">Baris</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Rectangle</source>
-        <translation type="unfinished">Rectangle</translation>
+        <translation type="unfinished">Segi Empat Tepat</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Ellipse</source>
-        <translation type="unfinished">Ellipse</translation>
+        <translation type="unfinished">elips</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2999,17 +2999,17 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+6"/>
         <source>Flood Fill</source>
-        <translation type="unfinished">Flood Fill</translation>
+        <translation type="unfinished">Isian</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Annotation</source>
-        <translation type="unfinished">Annotation</translation>
+        <translation type="unfinished">Catatan:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Picker</source>
-        <translation type="unfinished">Color Picker</translation>
+        <translation type="unfinished">Pemilih Warna</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3029,12 +3029,12 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+6"/>
         <source>Zoom</source>
-        <translation type="unfinished">Zoom</translation>
+        <translation type="unfinished">Zum</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Inspector</source>
-        <translation type="unfinished">Inspector</translation>
+        <translation type="unfinished">Pemeriksa</translation>
     </message>
 </context>
 <context>
@@ -3050,7 +3050,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../ui/resizedialog.ui" line="+14"/>
         <source>Resize Canvas</source>
-        <translation type="unfinished">Resize Canvas</translation>
+        <translation type="unfinished">Saiz Semula Kanvas</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -3063,18 +3063,18 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../ui/selectsettings.ui" line="+29"/>
         <source>Interpolation:</source>
-        <translation type="unfinished">Interpolation:</translation>
+        <translation type="unfinished">sisipan</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Transform</source>
-        <translation type="unfinished">Transform</translation>
+        <translation type="unfinished">Jelmaan</translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+3"/>
         <source>Flip Horizontally</source>
-        <translation type="unfinished">Flip Horizontally</translation>
+        <translation type="unfinished">Terbalikkan secara mendatar</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -3097,7 +3097,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+26"/>
         <source>Scale</source>
-        <translation type="unfinished">Scale</translation>
+        <translation type="unfinished">Penimbang</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3107,7 +3107,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+7"/>
         <source>Distort</source>
-        <translation type="unfinished">Distort</translation>
+        <translation type="unfinished">Herot</translation>
     </message>
 </context>
 <context>
@@ -3122,12 +3122,12 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+6"/>
         <location line="+26"/>
         <source>Filter</source>
-        <translation type="unfinished">Filter</translation>
+        <translation type="unfinished">Penapis</translation>
     </message>
     <message>
         <location line="-8"/>
         <source>Users</source>
-        <translation type="unfinished">Users</translation>
+        <translation type="unfinished">Pengguna</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -3142,17 +3142,17 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+7"/>
         <source>Ban</source>
-        <translation type="unfinished">Ban</translation>
+        <translation type="unfinished">Haramkan</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Undo</source>
-        <translation type="unfinished">Undo</translation>
+        <translation type="unfinished">Buat Asal</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Redo</source>
-        <translation type="unfinished">Redo</translation>
+        <translation type="unfinished">Buat Semula</translation>
     </message>
 </context>
 <context>
@@ -3165,12 +3165,12 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+10"/>
         <source>Settings</source>
-        <translation type="unfinished">Settings</translation>
+        <translation type="unfinished">Tetapan</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session</source>
-        <translation type="unfinished">Session</translation>
+        <translation type="unfinished">Sesi</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3195,12 +3195,12 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+3"/>
         <source> MB</source>
-        <translation type="unfinished"> MB</translation>
+        <translation type="unfinished"> 0 MB</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Options:</source>
-        <translation type="unfinished">Options:</translation>
+        <translation type="unfinished">Pilihan:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3240,7 +3240,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+7"/>
         <source>X seconds</source>
-        <translation type="unfinished">X seconds</translation>
+        <translation type="unfinished">0 saat</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3250,12 +3250,12 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+13"/>
         <source>Title:</source>
-        <translation type="unfinished">Title:</translation>
+        <translation type="unfinished">Tajuk:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Login</source>
-        <translation type="unfinished">Login</translation>
+        <translation type="unfinished">Daftar Masuk</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3305,7 +3305,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+10"/>
         <source>permissions</source>
-        <translation type="unfinished">permissions</translation>
+        <translation type="unfinished">keizinan</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3345,7 +3345,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+8"/>
         <source>Operators</source>
-        <translation type="unfinished">Operators</translation>
+        <translation type="unfinished">Operator</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3388,7 +3388,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="-71"/>
         <location line="+82"/>
         <source>Export</source>
-        <translation type="unfinished">Export</translation>
+        <translation type="unfinished">Eksport</translation>
     </message>
     <message>
         <location line="-58"/>
@@ -3399,17 +3399,17 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="-145"/>
         <source>Roles</source>
-        <translation type="unfinished">Roles</translation>
+        <translation type="unfinished">Peranan</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Operator</source>
-        <translation type="unfinished">Operator</translation>
+        <translation type="unfinished">Pengendali</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Announcements</source>
-        <translation type="unfinished">Announcements</translation>
+        <translation type="unfinished">Pengumuman</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -3445,22 +3445,22 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+32"/>
         <source>Background color</source>
-        <translation type="unfinished">Background color</translation>
+        <translation type="unfinished">Warna latar</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Text color</source>
-        <translation type="unfinished">Text color</translation>
+        <translation type="unfinished">Warna Teks</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Bold</source>
-        <translation type="unfinished">Bold</translation>
+        <translation type="unfinished">Tebal</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Italic</source>
-        <translation type="unfinished">Italic</translation>
+        <translation type="unfinished">Condong</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3470,7 +3470,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+17"/>
         <source>Strikethrough</source>
-        <translation type="unfinished">Strikethrough</translation>
+        <translation type="unfinished">Coret Tembus</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -3488,7 +3488,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+8"/>
         <source>Qt Version:</source>
-        <translation type="unfinished">Qt Version:</translation>
+        <translation type="unfinished">Versi:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3508,7 +3508,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+17"/>
         <source>Pen Pressure:</source>
-        <translation type="unfinished">Pen Pressure:</translation>
+        <translation type="unfinished">Tekanan:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3528,12 +3528,12 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+20"/>
         <source>Operating System:</source>
-        <translation type="unfinished">Operating System:</translation>
+        <translation type="unfinished">Sistem Operasi</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Name:</source>
-        <translation type="unfinished">Name:</translation>
+        <translation type="unfinished">Nama:</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -3566,12 +3566,12 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+28"/>
         <source>Size:</source>
-        <translation type="unfinished">Size:</translation>
+        <translation type="unfinished">Saiz:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Framerate:</translation>
+        <translation type="unfinished">Kadar bingkai:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3586,7 +3586,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+31"/>
         <source>Image format:</source>
-        <translation type="unfinished">Image format:</translation>
+        <translation type="unfinished">Format Gambar:</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -3606,7 +3606,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+16"/>
         <source>Choose</source>
-        <translation type="unfinished">Choose</translation>
+        <translation type="unfinished">Pilih…</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -3619,7 +3619,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.cpp" line="+79"/>
         <source>Pick</source>
-        <translation type="unfinished">Pick</translation>
+        <translation type="unfinished">ambil balik</translation>
     </message>
 </context>
 <context>
@@ -3627,7 +3627,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette.cpp" line="+429"/>
         <source>Unnamed</source>
-        <translation type="unfinished">Unnamed</translation>
+        <translation type="unfinished">Tanpa Nama</translation>
     </message>
 </context>
 <context>
@@ -3635,7 +3635,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_model.cpp" line="+70"/>
         <source>Unnamed</source>
-        <translation type="unfinished">Unnamed</translation>
+        <translation type="unfinished">Tanpa Nama</translation>
     </message>
     <message>
         <location line="+74"/>
@@ -3695,7 +3695,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="-14"/>
         <location line="+15"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation type="unfinished">Nama</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -3710,13 +3710,13 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>All Files (*)</source>
-        <translation type="unfinished">All Files (*)</translation>
+        <translation type="unfinished">Semua Fail (*)</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+13"/>
         <source>Open Palette</source>
-        <translation type="unfinished">Open Palette</translation>
+        <translation type="unfinished">Buka Fail Palet</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3770,7 +3770,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../dialogs/abusereport.cpp" line="+17"/>
         <source>Report</source>
-        <translation type="unfinished">Report</translation>
+        <translation type="unfinished">Lapor</translation>
     </message>
 </context>
 <context>
@@ -3788,12 +3788,12 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+74"/>
         <source>Check</source>
-        <translation type="unfinished">Check</translation>
+        <translation type="unfinished">periksa</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Add</source>
-        <translation type="unfinished">Add</translation>
+        <translation type="unfinished">Tambah</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -3816,7 +3816,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+5"/>
         <source>Choose</source>
-        <translation type="unfinished">Choose</translation>
+        <translation type="unfinished">Pilih…</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3827,7 +3827,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+9"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Framerate:</translation>
+        <translation type="unfinished">Kadar bingkai:</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -3838,7 +3838,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+28"/>
         <source> frame(s)</source>
         <translation type="unfinished">
-            <numerusform> frame</numerusform>
+            <numerusform> bingkai</numerusform>
         </translation>
     </message>
     <message>
@@ -3883,7 +3883,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+17"/>
         <source>Export</source>
         <extracomment>This text on a button, so it&apos;s a verb, not a noun.</extracomment>
-        <translation type="unfinished">Export</translation>
+        <translation type="unfinished">Eksport</translation>
     </message>
     <message>
         <location line="+162"/>
@@ -3928,7 +3928,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+48"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation type="unfinished">Umum</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3964,7 +3964,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+23"/>
         <location line="+14"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished">Blend Mode:</translation>
+        <translation type="unfinished">Mod Adun</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4040,7 +4040,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+31"/>
         <source>Size: </source>
-        <translation type="unfinished">Size: </translation>
+        <translation type="unfinished">Saiz: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4057,7 +4057,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+10"/>
         <location line="+405"/>
         <source>Size</source>
-        <translation type="unfinished">Size</translation>
+        <translation type="unfinished">Saiz</translation>
     </message>
     <message>
         <location line="-405"/>
@@ -4070,7 +4070,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="-152"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opacity: </translation>
+        <translation type="unfinished">Kelegapan: </translation>
     </message>
     <message>
         <location line="+17"/>
@@ -4081,12 +4081,12 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+10"/>
         <location line="+350"/>
         <source>Opacity</source>
-        <translation type="unfinished">Opacity</translation>
+        <translation type="unfinished">Opasiti</translation>
     </message>
     <message>
         <location line="-320"/>
         <source>Hardness: </source>
-        <translation type="unfinished">Hardness: </translation>
+        <translation type="unfinished">kekerasan </translation>
     </message>
     <message>
         <location line="+17"/>
@@ -4097,7 +4097,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+10"/>
         <location line="+298"/>
         <source>Hardness</source>
-        <translation type="unfinished">Hardness</translation>
+        <translation type="unfinished">kekerasan</translation>
     </message>
     <message>
         <location line="-268"/>
@@ -4155,7 +4155,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+17"/>
         <location line="+34"/>
         <source>Apply to All</source>
-        <translation type="unfinished">Apply to All</translation>
+        <translation type="unfinished">Terapkan ke semua</translation>
     </message>
     <message>
         <location line="-49"/>
@@ -4190,7 +4190,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+21"/>
         <source>Value: </source>
-        <translation type="unfinished">Value: </translation>
+        <translation type="unfinished">Nilai: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4251,39 +4251,39 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+12"/>
         <source>Pressure</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished">Pressure</translation>
+        <translation type="unfinished">Tekanan</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fine speed</source>
         <comment>mypaintinput</comment>
         <extracomment>&quot;fine&quot; refers to the accuracy and update frequency of the speed value, as in &quot;fine grained&quot;</extracomment>
-        <translation type="unfinished">Fine speed</translation>
+        <translation type="unfinished">Kelajuan halus</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Gross speed</source>
         <comment>mypaintinput</comment>
         <extracomment>changes more smoothly but is less accurate than &quot;Fine speed&quot;</extracomment>
-        <translation type="unfinished">Gross speed</translation>
+        <translation type="unfinished">Kelajuan kasar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Random</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished">Random</translation>
+        <translation type="unfinished">Rambang</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished">Stroke</translation>
+        <translation type="unfinished">Lejang</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Direction</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished">Direction</translation>
+        <translation type="unfinished">Arah</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4309,7 +4309,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <source>Direction 360</source>
         <comment>mypaintinput</comment>
         <extracomment>refers to the direction of the stroke</extracomment>
-        <translation type="unfinished">Direction 360</translation>
+        <translation type="unfinished">Arah</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4333,20 +4333,20 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>GridMap X</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished">GridMap X</translation>
+        <translation type="unfinished">Peta Grid</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap Y</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished">GridMap Y</translation>
+        <translation type="unfinished">Peta Grid</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Zoom Level</source>
         <comment>mypaintinput</comment>
         <extracomment>refers to canvas zoom</extracomment>
-        <translation type="unfinished">Zoom Level</translation>
+        <translation type="unfinished">Tahap zum</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4376,31 +4376,31 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished">How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</translation>
+        <translation type="unfinished">Berapa pantas anda bergerak. Ia boleh diubah dengan sangat cepat. Cuba &apos;cetak nilai input&apos; dari menu &apos;bantuan&apos; untuk dapatkan julat: nilai negatif adalah jarang tetapi boleh untuk kelajuan sangat rendah.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished">Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</translation>
+        <translation type="unfinished">Sama seperti kelajuan halus, tetapi perubahan lebih lambat. Lihat juga tetapan &apos;penapis kelajuan kasar&apos;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fast random noise, changing at each evaluation. Evenly distributed between 0 and 1.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished">Fast random noise, changing at each evaluation. Evenly distributed between 0 and 1.</translation>
+        <translation type="unfinished">Hingar rawak pantas, menukar pada setiap penilaian. Diedar secara sekata diantar 0 hingga 1.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the &apos;stroke duration&apos; and &apos;stroke hold time&apos; settings.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished">This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the &apos;stroke duration&apos; and &apos;stroke hold time&apos; settings.</translation>
+        <translation type="unfinished">Input ini perlahan-lahan dari sifar menjadi satu bila anda melukis lejang. Ia juga boleh dikonfigur untuk lompat kembali ke sifat secara berkala semasa anda bergerak. Lihat tetapan &apos;jangkamasa lejang&apos; dan &apos;masa tahan lejang&apos;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished">The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</translation>
+        <translation type="unfinished">Sudut lejang, dalam darjah. Nilai akan kekal diantara 0.0 hingga 180.0, secara efektif mengabaikan pusingan 180 darjah.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4418,7 +4418,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished">This is a user defined input. Look at the &apos;custom input&apos; setting for details.</translation>
+        <translation type="unfinished">Ini merupakan input ditakrif pengguna. Lihat pada tetapan &apos;input suai&apos; dalam perincian.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4504,7 +4504,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+10"/>
         <source>Opacity</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Opacity</translation>
+        <translation type="unfinished">Opasiti</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4522,13 +4522,13 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Radius</translation>
+        <translation type="unfinished">Jejari</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hardness</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Hardness</translation>
+        <translation type="unfinished">kekerasan</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4540,105 +4540,105 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Dabs per basic radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Dabs per basic radius</translation>
+        <translation type="unfinished">palit per jejari asas</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per actual radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Dabs per actual radius</translation>
+        <translation type="unfinished">palit per jejari sebenar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per second</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Dabs per second</translation>
+        <translation type="unfinished">palit sesaat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Radius by random</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Radius by random</translation>
+        <translation type="unfinished">jejari secara rawak</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fine speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Fine speed filter</translation>
+        <translation type="unfinished">penapis kelajuan halus</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Gross speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Gross speed filter</translation>
+        <translation type="unfinished">penapis kelajuan kasar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fine speed gamma</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Fine speed gamma</translation>
+        <translation type="unfinished">gamma kelajuan halus</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Gross speed gamma</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Gross speed gamma</translation>
+        <translation type="unfinished">Gamma kelajuan kasar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Jitter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Jitter</translation>
+        <translation type="unfinished">ketaran</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset by speed</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Offset by speed</translation>
+        <translation type="unfinished">ofset mengikut kelajuan</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset by speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Offset by speed filter</translation>
+        <translation type="unfinished">ofset mengikut penapis kelajuan</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slow position tracking</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Slow position tracking</translation>
+        <translation type="unfinished">penjejakan kedudukan lambat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slow tracking per dab</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Slow tracking per dab</translation>
+        <translation type="unfinished">lambatkan penjejakan per palit</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tracking noise</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Tracking noise</translation>
+        <translation type="unfinished">penjejakan hingar</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+137"/>
         <source>Color hue</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Color hue</translation>
+        <translation type="unfinished">rona warna</translation>
     </message>
     <message>
         <location line="-135"/>
         <location line="+137"/>
         <source>Color saturation</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Color saturation</translation>
+        <translation type="unfinished">ketepuan warna</translation>
     </message>
     <message>
         <location line="-135"/>
         <source>Color value</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Color value</translation>
+        <translation type="unfinished">nilai warna</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4650,43 +4650,43 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Change color hue</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Change color hue</translation>
+        <translation type="unfinished">ubah rona warna</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change color lightness (HSL)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Change color lightness (HSL)</translation>
+        <translation type="unfinished">ubah kecerahan warna (HSL)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change color satur. (HSL)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Change color satur. (HSL)</translation>
+        <translation type="unfinished">ubah ketepuan warna (HSL)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change color value (HSV)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Change color value (HSV)</translation>
+        <translation type="unfinished">ubah nilai warna (HSV)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change color satur. (HSV)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Change color satur. (HSV)</translation>
+        <translation type="unfinished">ubah ketepuan warna (HSV)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Smudge</translation>
+        <translation type="unfinished">comotan</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge length</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Smudge length</translation>
+        <translation type="unfinished">panjang comotan</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4698,49 +4698,49 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Eraser</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Eraser</translation>
+        <translation type="unfinished">pemadam</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke threshold</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Stroke threshold</translation>
+        <translation type="unfinished">ambang lejang</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke duration</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Stroke duration</translation>
+        <translation type="unfinished">tempoh lejang</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke hold time</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Stroke hold time</translation>
+        <translation type="unfinished">masa tahan lejang</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Custom input</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Custom input</translation>
+        <translation type="unfinished">input suai</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Custom input filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Custom input filter</translation>
+        <translation type="unfinished">penapis input suai</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Elliptical dab: ratio</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Elliptical dab: ratio</translation>
+        <translation type="unfinished">palit elips: nisbah</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Elliptical dab: angle</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Elliptical dab: angle</translation>
+        <translation type="unfinished">palit elips: sudut</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4812,7 +4812,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Offset Y</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Offset Y</translation>
+        <translation type="unfinished">Offset</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4915,9 +4915,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
 0.0 the opaque value above is for the individual dabs
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Correct the nonlinearity introduced by blending multiple dabs on top of each other. This correction should get you a linear (&quot;natural&quot;) pressure response when pressure is mapped to opaque_multiply, as it is usually done. 0.9 is good for standard strokes, set it smaller if your brush scatters a lot, or higher if you use dabs_per_second.
-0.0 the opaque value above is for the individual dabs
-1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</translation>
+        <translation type="unfinished">Betulkan tak-linear yang diperkenal oleh pengadunan palit berbilang diatas antara satu sama lain. Pembetulan ini seharusnya memberikan anda respon tekanan linear (&quot;natural&quot;) bila tekanan dipetakan ke legap_berbilang, bila ia selesai. 0.9 adalah lejang piawai yang baik, tetapkannya lebih kecil jika serakan berus anda adalah banyak, atau lebih tinggi jika anda guna palit_per_saat.
+0.0 nilai legap diatas adalah untuk palit individu
+1.0 nilai legap diatas adalah untuk lejang berus akhir, mengganggap setiap piksel mendapat palit berus (palit_per_jejari*2) secara purata semasa melukis lejang</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4925,9 +4925,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
  0.7 means 2 pixels
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Basic brush radius (logarithmic)
- 0.7 means 2 pixels
- 3.0 means 20 pixels</translation>
+        <translation type="unfinished">jejari berus asas (logaritmik)
+0.7 bermaksud 2 piksel
+3.0 bermaksud 20 piksel</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4951,19 +4951,19 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <location line="+2"/>
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</translation>
+        <translation type="unfinished">berapa banyak palit untuk dilukis semasa penuding gerak satu jarak dari sejejari berus (lebih tepat: nilai dasar jejari)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Same as above, but the radius actually drawn is used, which can change dynamically</translation>
+        <translation type="unfinished">sama seperti diatas, tetapi jejari biasanya yang dilukis digunakan, yang dapat diubah secara dinamik</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs to draw each second, no matter how far the pointer moves</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Dabs to draw each second, no matter how far the pointer moves</translation>
+        <translation type="unfinished">palit untuk dilukis setiap saat, tidak kira berapa jauh penuding bergerak</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4971,23 +4971,23 @@ This setting is responsible to stop painting when there is zero pressure. This i
 1) the opaque value will be corrected such that a big-radius dabs is more transparent
 2) it will not change the actual radius seen by dabs_per_actual_radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Alter the radius randomly each dab. You can also do this with the by_random input on the radius setting. If you do it here, there are two differences:
-1) the opaque value will be corrected such that a big-radius dabs is more transparent
-2) it will not change the actual radius seen by dabs_per_actual_radius</translation>
+        <translation type="unfinished">Ubah jejari secara rawak pada setiap palit. Anda juga boleh lakukannya dengan_input rawak pada tetapan jejari. Jika anda tidak membuatnya disini, terdapat dua perbezaan:
+1) nilai legap akan dibetulkan supaya palit jejari-besar lebih lutsinar
+2) ia tidak akan mengubah jejari sebenar yang dilihat oleh jejari_sebenar_per_palit</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How slow the input fine speed is following the real speed
 0.0 change immediately as your speed changes (not recommended, but try it)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">How slow the input fine speed is following the real speed
-0.0 change immediately as your speed changes (not recommended, but try it)</translation>
+        <translation type="unfinished">berapa perlahankah kelajuan halus input mengikuti kelajuan sebenar
+0.0 ubah serta-merta bilamana kelajuan anda berubah (tidak disarankan, tetapi boleh cuba ia)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as &apos;fine speed filter&apos;, but note that the range is different</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Same as &apos;fine speed filter&apos;, but note that the range is different</translation>
+        <translation type="unfinished">sama seperti &apos;penapis kelajuan halus&apos;, tetapi ambil perhatian julatnya berbeza</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4996,16 +4996,16 @@ This setting is responsible to stop painting when there is zero pressure. This i
 +8.0 very fast speed increases &apos;fine speed&apos; a lot
 For very slow speed the opposite happens.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">This changes the reaction of the &apos;fine speed&apos; input to extreme physical speed. You will see the difference best if &apos;fine speed&apos; is mapped to the radius.
--8.0 very fast speed does not increase &apos;fine speed&apos; much more
-+8.0 very fast speed increases &apos;fine speed&apos; a lot
-For very slow speed the opposite happens.</translation>
+        <translation type="unfinished">Ia mengubah rekasi input &apos;kelajuan halus&apos; menjadi kelajuan fizikal yang ekstrem. Anda akan lihat perbezaan yang terbaik jika &apos;kelajuan halus&apos; dipetakan ke jejari.
+-8.0 kelajuan sangat pantas tidak tingkatkan sangat &apos;kelajuan halus&apos;
++8.0 kelajuan sangat pantaas tingkatkan &apos;kelajuan halus&apos; dengan ketara
+Untuk kelajuan sangat perlahan yang berlawanan akan berlaku.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as &apos;fine speed gamma&apos; for gross speed</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Same as &apos;fine speed gamma&apos; for gross speed</translation>
+        <translation type="unfinished">sama seperti &apos;gamma kelajuan halus&apos; untuk kelajuan kasar</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5014,10 +5014,10 @@ For very slow speed the opposite happens.</translation>
  1.0 standard deviation is one basic radius away
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Add a random offset to the position where each dab is drawn
- 0.0 disabled
- 1.0 standard deviation is one basic radius away
-&lt;0.0 negative values produce no jitter</translation>
+        <translation type="unfinished">tambah ofset rawak ke keduudkan yang man setiap palit dilukis
+0.0 dilumpuhkan
+1.0 sisihan piawai ialah satu jajari asas jauhnya
+&lt;0.0 nilai negatif tidak hasilkan ketaran</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5035,13 +5035,13 @@ For very slow speed the opposite happens.</translation>
         <location line="+2"/>
         <source>How slow the offset goes back to zero when the cursor stops moving</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">How slow the offset goes back to zero when the cursor stops moving</translation>
+        <translation type="unfinished">berapa lambatkan ofset kembali menjadi sifar bila kursor tidak bergerak</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.</translation>
+        <translation type="unfinished">Perlahankan kelajuan penjejakan penuding. 0 lumpuhkannya, nilai lebih tinggi buang lebih ketaran dalam pergerakan kursor. Berguna untuk melukis garis luar seakan komik yang licin.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5053,13 +5053,13 @@ For very slow speed the opposite happens.</translation>
         <location line="+2"/>
         <source>Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</translation>
+        <translation type="unfinished">tambah kerawakan ke penuding tetikus; ia biasanya menjana banyak garis kecil dalam arah rawak; mungkin boleh cuba bersama-sama dengan &apos;penjejakan perlahan&apos;</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color value (brightness, intensity)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Color value (brightness, intensity)</translation>
+        <translation type="unfinished">nilai warna (kecerahan, keamatan)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5080,10 +5080,10 @@ For very slow speed the opposite happens.</translation>
  0.0 disable
  0.5 counterclockwise hue shift by 180 degrees</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Change color hue.
--0.1 small clockwise color hue shift
- 0.0 disable
- 0.5 counterclockwise hue shift by 180 degrees</translation>
+        <translation type="unfinished">Ubah rona warna.
+-0.1 anjak rona warna arah jam kecil
+0.0 dilumpuhkan
+0.5 anjak rona lawan jam sebanyak 180 darjah</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5104,10 +5104,10 @@ For very slow speed the opposite happens.</translation>
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Change the color saturation using the HSL color model.
--1.0 more grayish
- 0.0 disable
- 1.0 more saturated</translation>
+        <translation type="unfinished">Ubah ketepuan warna menggunakan model warna HSL.
+-1.0 lebih kelabu
+0.0 dilumpuhkan
+1.0 lebih tepu</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5116,10 +5116,10 @@ For very slow speed the opposite happens.</translation>
  0.0 disable
  1.0 brigher</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Change the color value (brightness, intensity) using the HSV color model. HSV changes are applied before HSL.
--1.0 darker
- 0.0 disable
- 1.0 brigher</translation>
+        <translation type="unfinished">Ubah nilai warna (kecerahan, keamatan) menggunakan model warna HSV. Perubahan HSV dilaksanakan sebelum HSL.
+-1.0 lebih gelap
+0.0 dilumpuhkan
+1.0 lebih cerah</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5128,10 +5128,10 @@ For very slow speed the opposite happens.</translation>
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Change the color saturation using the HSV color model. HSV changes are applied before HSL.
--1.0 more grayish
- 0.0 disable
- 1.0 more saturated</translation>
+        <translation type="unfinished">Ubah ketepuan warna menggunakan model warna HSV. Perubahan HSV dilaksana sebelum HSL.
+-1.0 lebih kelabu
+0.0 dilumpuhkan
+1.0 lebih tepu</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5140,10 +5140,10 @@ For very slow speed the opposite happens.</translation>
  0.5 mix the smudge color with the brush color
  1.0 use only the smudge color</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Paint with the smudge color instead of the brush color. The smudge color is slowly changed to the color you are painting on.
- 0.0 do not use the smudge color
- 0.5 mix the smudge color with the brush color
- 1.0 use only the smudge color</translation>
+        <translation type="unfinished">Lukis dengan warna comotan selain dari warna berus. Warna comotan berubah perlahan-lahan ke warna yang anda kehendaki.
+0.0 tidak guna warna comotan
+0.5 campur warna comotan dengan warna berus
+1.0 hanya guna warna comotan</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5178,10 +5178,10 @@ For very slow speed the opposite happens.</translation>
  1.0 standard eraser
  0.5 pixels go towards 50% transparency</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">how much this tool behaves like an eraser
- 0.0 normal painting
- 1.0 standard eraser
- 0.5 pixels go towards 50% transparency</translation>
+        <translation type="unfinished">bagaimana alat ini berkelakuan seperti pemadam
+0.0 lukisan biasa
+1.0 pemadam piawai
+0.5 piksel menjadi 50% lutsinar</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5210,8 +5210,8 @@ For very slow speed the opposite happens.</translation>
         <source>Set the custom input to this value. If it is slowed down, move it towards this value (see below). The idea is that you make this input depend on a mixture of pressure/speed/whatever, and then make other settings depend on this &apos;custom input&apos; instead of repeating this combination everywhere you need it.
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Set the custom input to this value. If it is slowed down, move it towards this value (see below). The idea is that you make this input depend on a mixture of pressure/speed/whatever, and then make other settings depend on this &apos;custom input&apos; instead of repeating this combination everywhere you need it.
-If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</translation>
+        <translation type="unfinished">Tetapkan input suai untuk nilai ini. Jika ia diperlahankan, gerak ia kearah nilai ini (lihat dibawah). Ideanya adalah anda buat input ini bergantung pada campuran tekanan/kelajuan/apa-sahaja, dan menjadikan tetapan lain bergantung pada &apos;input suai&apos; ini selain dari mengulang gabungan ini dimana sahaja anda perlukannya.
+Jika anda jadikan perubahan &apos;secara rawak&apos; anda boleh jana input rawak (lancar) perlahan.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5225,7 +5225,7 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
         <location line="+2"/>
         <source>Aspect ratio of the dabs; must be &gt;= 1.0, where 1.0 means a perfectly round dab.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Aspect ratio of the dabs; must be &gt;= 1.0, where 1.0 means a perfectly round dab.</translation>
+        <translation type="unfinished">nisbah bidang palit; mestilah &gt;= 1.0, yang mana 1.0 bermaksud palit bundar sempurna.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5243,7 +5243,7 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
         <location line="+2"/>
         <source>A low value will make the direction input adapt more quickly, a high value will make it smoother</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">A low value will make the direction input adapt more quickly, a high value will make it smoother</translation>
+        <translation type="unfinished">Nilai rendah akan menjadikan input arah disesuaikan dengan lebih pantas, nilai tinggi menjadikannya lebih licin</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5432,17 +5432,17 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/canvasshortcutsdialog.cpp" line="+24"/>
         <source>Key Combination</source>
-        <translation type="unfinished">Key Combination</translation>
+        <translation type="unfinished">Kombinasi Kekunci</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mouse Button</source>
-        <translation type="unfinished">Mouse Button</translation>
+        <translation type="unfinished">Butang Kiri Mouse</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished">Mouse Wheel</translation>
+        <translation type="unfinished">Roda Atas Mouse</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5473,7 +5473,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Pick Color</source>
-        <translation type="unfinished">Pick Color</translation>
+        <translation type="unfinished">Ambil Warna</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5483,7 +5483,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished">Change Brush Size</translation>
+        <translation type="unfinished">Tukar Berus…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5523,7 +5523,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+7"/>
         <source>Unknown type %1.</source>
-        <translation type="unfinished">Unknown type %1.</translation>
+        <translation type="unfinished">Unknown mod type: %1</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -5554,28 +5554,28 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/curvepresetdialog.cpp" line="+32"/>
         <source>Use</source>
-        <translation type="unfinished">Use</translation>
+        <translation type="unfinished">Pengguna</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation type="unfinished">Batal</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+71"/>
         <source>Rename</source>
-        <translation type="unfinished">Rename</translation>
+        <translation type="unfinished">Namakan semula</translation>
     </message>
     <message>
         <location line="-68"/>
         <source>Delete</source>
-        <translation type="unfinished">Delete</translation>
+        <translation type="unfinished">Padam</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Save</source>
-        <translation type="unfinished">Save</translation>
+        <translation type="unfinished">Simpan</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -5586,7 +5586,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+0"/>
         <location line="+15"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation type="unfinished">Nama</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -5611,12 +5611,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Smooth In</source>
-        <translation type="unfinished">Smooth In</translation>
+        <translation type="unfinished">Licin</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smooth</source>
-        <translation type="unfinished">Smooth</translation>
+        <translation type="unfinished">Licin</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5634,22 +5634,22 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/dumpplaybackdialog.cpp" line="+24"/>
         <source>done</source>
-        <translation type="unfinished">done</translation>
+        <translation type="unfinished">selesai</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>undone</source>
-        <translation type="unfinished">undone</translation>
+        <translation type="unfinished">buat asal (k.k.)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>gone</source>
-        <translation type="unfinished">gone</translation>
+        <translation type="unfinished">Hilang</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>unknown</source>
-        <translation type="unfinished">unknown</translation>
+        <translation type="unfinished">tidak diketahui</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -5664,7 +5664,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>annotation %1</source>
-        <translation type="unfinished">annotation %1</translation>
+        <translation type="unfinished">Catatan:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5694,7 +5694,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>unknown domain %1</source>
-        <translation type="unfinished">unknown domain %1</translation>
+        <translation type="unfinished">Nama domain tidak diketahui.</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -5706,17 +5706,17 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="-6"/>
         <location line="+6"/>
         <source>User</source>
-        <translation type="unfinished">User</translation>
+        <translation type="unfinished">Pengguna</translation>
     </message>
     <message>
         <location line="-6"/>
         <source>Undo</source>
-        <translation type="unfinished">Undo</translation>
+        <translation type="unfinished">Buat Asal</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>State</source>
-        <translation type="unfinished">State</translation>
+        <translation type="unfinished">Keadaan</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -5726,12 +5726,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+236"/>
         <source>Yes</source>
-        <translation type="unfinished">Yes</translation>
+        <translation type="unfinished">Ya</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>No</source>
-        <translation type="unfinished">No</translation>
+        <translation type="unfinished">Tidak</translation>
     </message>
 </context>
 <context>
@@ -5744,7 +5744,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Export &amp;Frames…</source>
-        <translation type="unfinished">Export &amp;Frames…</translation>
+        <translation type="unfinished">Eksport bingkai</translation>
     </message>
     <message>
         <location line="+101"/>
@@ -5762,7 +5762,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="+106"/>
         <source>Invite link copied to clipboard.</source>
-        <translation type="unfinished">Invite link copied to clipboard.</translation>
+        <translation type="unfinished">Pautan undangan telah disalin ke papan klip</translation>
     </message>
 </context>
 <context>
@@ -5775,7 +5775,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+6"/>
         <source>Title:</source>
-        <translation type="unfinished">Title:</translation>
+        <translation type="unfinished">Tajuk:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -5816,12 +5816,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+138"/>
         <source>Undelete</source>
-        <translation type="unfinished">Undelete</translation>
+        <translation type="unfinished">Nyahpadam</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete</source>
-        <translation type="unfinished">Delete</translation>
+        <translation type="unfinished">Padam</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -5831,7 +5831,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+15"/>
         <source>Default</source>
-        <translation type="unfinished">Default</translation>
+        <translation type="unfinished">Asal</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -5846,7 +5846,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+19"/>
         <source>Horizontal</source>
-        <translation type="unfinished">Horizontal</translation>
+        <translation type="unfinished">Mod kanan kiri</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -5889,12 +5889,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/logindialog.cpp" line="+166"/>
         <source>Report...</source>
-        <translation type="unfinished">Report...</translation>
+        <translation type="unfinished">Lapor</translation>
     </message>
     <message>
         <location line="+147"/>
         <source>Accept</source>
-        <translation type="unfinished">Accept</translation>
+        <translation type="unfinished">Terima</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -5919,30 +5919,30 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+21"/>
         <source>Close</source>
-        <translation type="unfinished">Close</translation>
+        <translation type="unfinished">Tutup</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Decline</source>
-        <translation type="unfinished">Decline</translation>
+        <translation type="unfinished">Tolak</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+9"/>
         <location line="+15"/>
         <source>Rules</source>
-        <translation type="unfinished">Rules</translation>
+        <translation type="unfinished">Peraturan</translation>
     </message>
     <message>
         <location line="-9"/>
         <location line="+15"/>
         <source>Back</source>
-        <translation type="unfinished">Back</translation>
+        <translation type="unfinished">Undur</translation>
     </message>
     <message>
         <location line="+249"/>
         <source>Remove Account</source>
-        <translation type="unfinished">Remove Account</translation>
+        <translation type="unfinished">Buang akaun</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6056,7 +6056,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/netstats.cpp" line="+77"/>
         <source>not connected</source>
-        <translation type="unfinished">not connected</translation>
+        <translation type="unfinished">Tidak Disambungkan</translation>
     </message>
 </context>
 <context>
@@ -6064,7 +6064,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="+32"/>
         <source>Playback</source>
-        <translation type="unfinished">Playback</translation>
+        <translation type="unfinished">Main Balik</translation>
     </message>
     <message>
         <location line="+142"/>
@@ -6092,22 +6092,22 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+10"/>
         <source>New</source>
-        <translation type="unfinished">New</translation>
+        <translation type="unfinished">Baru</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Open...</source>
-        <translation type="unfinished">Open...</translation>
+        <translation type="unfinished">Buka...</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Open Image</source>
-        <translation type="unfinished">Open Image</translation>
+        <translation type="unfinished">Buka Imej</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Reset</source>
-        <translation type="unfinished">Reset</translation>
+        <translation type="unfinished">Ulangtetap</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6120,17 +6120,17 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="+22"/>
         <source>Resize</source>
-        <translation type="unfinished">Resize</translation>
+        <translation type="unfinished">Saiz semula</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center</source>
-        <translation type="unfinished">Center</translation>
+        <translation type="unfinished">Tengah</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>Error</source>
-        <translation type="unfinished">Error</translation>
+        <translation type="unfinished">Ralat</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6175,7 +6175,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+12"/>
         <source>Session Ban Error</source>
-        <translation type="unfinished">Session Ban Error</translation>
+        <translation type="unfinished">Sesi mengalami keralatan</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -6190,7 +6190,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+68"/>
         <source>Operators</source>
-        <translation type="unfinished">Operators</translation>
+        <translation type="unfinished">Operator</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6200,7 +6200,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+0"/>
         <source>Registered</source>
-        <translation type="unfinished">Registered</translation>
+        <translation type="unfinished">Daftar</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6211,13 +6211,13 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+77"/>
         <source>yes</source>
         <comment>password</comment>
-        <translation type="unfinished">yes</translation>
+        <translation type="unfinished">ya</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>no</source>
         <comment>password</comment>
-        <translation type="unfinished">no</translation>
+        <translation type="unfinished">tidak</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -6235,7 +6235,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+41"/>
         <source>never</source>
         <extracomment>&quot;Idle timeout: never&quot;</extracomment>
-        <translation type="unfinished">never</translation>
+        <translation type="unfinished">tidak sesekali</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6256,7 +6256,7 @@ Values above 0.5 may not be noticeable.</translation>
         <source>%n minute(s)</source>
         <extracomment>Idle timeout minutes. May be joined with hours and seconds.</extracomment>
         <translation type="unfinished">
-            <numerusform>%n minute</numerusform>
+            <numerusform>5 minit</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -6264,7 +6264,7 @@ Values above 0.5 may not be noticeable.</translation>
         <source>%n second(s)</source>
         <extracomment>Idle timeout seconds. May be joined with hours and minutes.</extracomment>
         <translation type="unfinished">
-            <numerusform>%n second</numerusform>
+            <numerusform>0 saat</numerusform>
         </translation>
     </message>
     <message>
@@ -6333,7 +6333,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Encrypted</source>
-        <translation type="unfinished">Encrypted</translation>
+        <translation type="unfinished">Disulitkan</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6398,12 +6398,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+45"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation type="unfinished">Umum</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>User Interface</source>
-        <translation type="unfinished">User Interface</translation>
+        <translation type="unfinished">Antara Muka Pengguna</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6413,12 +6413,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Tools</source>
-        <translation type="unfinished">Tools</translation>
+        <translation type="unfinished">Alatan</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Network</source>
-        <translation type="unfinished">Network</translation>
+        <translation type="unfinished">Rangkaian</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6428,12 +6428,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Servers</source>
-        <translation type="unfinished">Servers</translation>
+        <translation type="unfinished">Pelayan</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shortcuts</source>
-        <translation type="unfinished">Shortcuts</translation>
+        <translation type="unfinished">Pintasan</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6451,12 +6451,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/startdialog.cpp" line="+70"/>
         <source>Start</source>
-        <translation type="unfinished">Start</translation>
+        <translation type="unfinished">Mula</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Welcome</source>
-        <translation type="unfinished">Welcome</translation>
+        <translation type="unfinished">Selamat Datang</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6506,12 +6506,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>Open File</source>
-        <translation type="unfinished">Open File</translation>
+        <translation type="unfinished">Buka fail</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Open an image file</source>
-        <translation type="unfinished">Open an image file</translation>
+        <translation type="unfinished">Buka Fail Imej</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6526,7 +6526,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Layouts</source>
-        <translation type="unfinished">Layouts</translation>
+        <translation type="unfinished">Susun atur</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6546,7 +6546,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+24"/>
         <source>Record</source>
-        <translation type="unfinished">Record</translation>
+        <translation type="unfinished">Rakam</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6556,12 +6556,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Check for Updates</source>
-        <translation type="unfinished">Check for Updates</translation>
+        <translation type="unfinished">Periksa Kemaskini</translation>
     </message>
     <message>
         <location line="+272"/>
         <source>Checking…</source>
-        <translation type="unfinished">Checking…</translation>
+        <translation type="unfinished">Memeriksa…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6583,7 +6583,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+24"/>
         <source>Join</source>
-        <translation type="unfinished">Join</translation>
+        <translation type="unfinished">Sertai</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -6632,7 +6632,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/userinfodialog.cpp" line="+31"/>
         <source>Refresh</source>
-        <translation type="unfinished">Refresh</translation>
+        <translation type="unfinished">Muat Semula</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -6644,12 +6644,12 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+9"/>
         <location line="+7"/>
         <source>Unknown</source>
-        <translation type="unfinished">Unknown</translation>
+        <translation type="unfinished">Tidak Diketahui</translation>
     </message>
     <message>
         <location line="-22"/>
         <source>Draw</source>
-        <translation type="unfinished">Draw</translation>
+        <translation type="unfinished">Lukis</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6659,17 +6659,17 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Do Nothing</source>
-        <translation type="unfinished">Do Nothing</translation>
+        <translation type="unfinished">Tiada</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Enabled</source>
-        <translation type="unfinished">Enabled</translation>
+        <translation type="unfinished">Di</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disabled</source>
-        <translation type="unfinished">Disabled</translation>
+        <translation type="unfinished">Dinyahkan</translation>
     </message>
 </context>
 <context>
@@ -6697,18 +6697,18 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>Original</source>
-        <translation type="unfinished">Original</translation>
+        <translation type="unfinished">Asal</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Custom:</source>
-        <translation type="unfinished">Custom:</translation>
+        <translation type="unfinished">Custom</translation>
     </message>
     <message>
         <location line="+80"/>
         <source>Executables</source>
         <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation type="unfinished">Executables</translation>
+        <translation type="unfinished">Boleh Laku</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -6718,12 +6718,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+107"/>
         <source>Checking…</source>
-        <translation type="unfinished">Checking…</translation>
+        <translation type="unfinished">Memeriksa…</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Not found. %1</source>
-        <translation type="unfinished">Not found. %1</translation>
+        <translation type="unfinished">Tidak menjumpai %s.</translation>
     </message>
 </context>
 <context>
@@ -6768,7 +6768,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>Restore defaults…</source>
-        <translation type="unfinished">Restore defaults…</translation>
+        <translation type="unfinished">Kembali kepada asal</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6791,19 +6791,19 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Autosave:</source>
-        <translation type="unfinished">Autosave:</translation>
+        <translation type="unfinished">Autosimpan</translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+99"/>
         <location line="+15"/>
         <source>System</source>
-        <translation type="unfinished">System</translation>
+        <translation type="unfinished">Sistem</translation>
     </message>
     <message>
         <location line="-103"/>
         <source>Language:</source>
-        <translation type="unfinished">Language:</translation>
+        <translation type="unfinished">Bahasa:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6828,7 +6828,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Logging:</source>
-        <translation type="unfinished">Logging:</translation>
+        <translation type="unfinished">Log</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -6878,12 +6878,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+18"/>
         <source>Style:</source>
-        <translation type="unfinished">Style:</translation>
+        <translation type="unfinished">Gaya</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Light</source>
-        <translation type="unfinished">Light</translation>
+        <translation type="unfinished">Cerah</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6918,7 +6918,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Color scheme:</source>
-        <translation type="unfinished">Color scheme:</translation>
+        <translation type="unfinished">Skema Warna</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6941,7 +6941,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+0"/>
         <source>Output</source>
-        <translation type="unfinished">Output</translation>
+        <translation type="unfinished">Keluaran</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6956,7 +6956,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Tablet:</source>
-        <translation type="unfinished">Tablet:</translation>
+        <translation type="unfinished">Tablet</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7023,7 +7023,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Driver:</source>
-        <translation type="unfinished">Driver:</translation>
+        <translation type="unfinished">Pemacu:</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7033,7 +7033,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished">Touchscreen</translation>
+        <translation type="unfinished">Skrin Sentuh</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7059,12 +7059,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Android:</source>
-        <translation type="unfinished">Android:</translation>
+        <translation type="unfinished">Android</translation>
     </message>
     <message>
         <location line="+97"/>
         <source>Draw</source>
-        <translation type="unfinished">Draw</translation>
+        <translation type="unfinished">Lukis</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7074,7 +7074,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+9"/>
         <source>Pinch to zoom</source>
-        <translation type="unfinished">Pinch to zoom</translation>
+        <translation type="unfinished">Cubit untuk zum</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7117,7 +7117,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+7"/>
         <source>Automatically check for updates</source>
-        <translation type="unfinished">Automatically check for updates</translation>
+        <translation type="unfinished">Semakan automatik untuk Kemas Kini</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7147,12 +7147,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Good</source>
-        <translation type="unfinished">Good</translation>
+        <translation type="unfinished">Baik</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Poor</source>
-        <translation type="unfinished">Poor</translation>
+        <translation type="unfinished">Teruk</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7167,7 +7167,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+0"/>
         <source>%1 seconds</source>
-        <translation type="unfinished">%1 seconds</translation>
+        <translation type="unfinished">%1 saat</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7212,7 +7212,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/notifications.cpp" line="+40"/>
         <source>Event</source>
-        <translation type="unfinished">Event</translation>
+        <translation type="unfinished">Peristiwa</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7222,7 +7222,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Play sound</source>
-        <translation type="unfinished">Play sound</translation>
+        <translation type="unfinished">Mainkan bunyi</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7297,7 +7297,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+12"/>
         <source>Disconnected</source>
-        <translation type="unfinished">Disconnected</translation>
+        <translation type="unfinished">Terputus</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -7312,7 +7312,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Sound volume:</source>
-        <translation type="unfinished">Sound volume:</translation>
+        <translation type="unfinished">Kekuatan Bunyi</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7322,7 +7322,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Mentions:</source>
-        <translation type="unfinished">Mentions:</translation>
+        <translation type="unfinished">Mentions</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7360,7 +7360,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Keywords:</source>
-        <translation type="unfinished">Keywords:</translation>
+        <translation type="unfinished">kata kunci</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7370,7 +7370,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Unrestricted</source>
-        <translation type="unfinished">Unrestricted</translation>
+        <translation type="unfinished">Tidak disekat</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7416,7 +7416,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+11"/>
         <location line="+28"/>
         <source>Lock</source>
-        <translation type="unfinished">Lock</translation>
+        <translation type="unfinished">Kunci</translation>
     </message>
     <message>
         <location line="-23"/>
@@ -7431,7 +7431,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+13"/>
         <source>Unlock</source>
-        <translation type="unfinished">Unlock</translation>
+        <translation type="unfinished">Buka</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -7456,12 +7456,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Enter password:</source>
-        <translation type="unfinished">Enter password:</translation>
+        <translation type="unfinished">Masukkan kata laluan</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished">Incorrect password.</translation>
+        <translation type="unfinished">Kata laluan tidak betul</translation>
     </message>
 </context>
 <context>
@@ -7529,17 +7529,17 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Move up</source>
-        <translation type="unfinished">Move up</translation>
+        <translation type="unfinished">Bergerak ke atas</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Move down</source>
-        <translation type="unfinished">Move down</translation>
+        <translation type="unfinished">Bergerak ke bawah</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Continue</source>
-        <translation type="unfinished">Continue</translation>
+        <translation type="unfinished">Sambung</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -7567,7 +7567,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="-4"/>
         <source>Restore defaults…</source>
-        <translation type="unfinished">Restore defaults…</translation>
+        <translation type="unfinished">Kembali kepada asal</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7585,7 +7585,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Keyboard shortcuts:</source>
-        <translation type="unfinished">Keyboard shortcuts:</translation>
+        <translation type="unfinished">Keyboard Shortcuts</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7630,7 +7630,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Arrow</source>
-        <translation type="unfinished">Arrow</translation>
+        <translation type="unfinished">Anak Panah</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7655,22 +7655,22 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Triangle</source>
-        <translation type="unfinished">Triangle</translation>
+        <translation type="unfinished">segi tiga</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Square</source>
-        <translation type="unfinished">Square</translation>
+        <translation type="unfinished">Segi Empat Sama</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Angle:</source>
-        <translation type="unfinished">Angle:</translation>
+        <translation type="unfinished">Sudut:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fixed</source>
-        <translation type="unfinished">Fixed</translation>
+        <translation type="unfinished">tetap</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7680,17 +7680,17 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+7"/>
         <source>Direction:</source>
-        <translation type="unfinished">Direction:</translation>
+        <translation type="unfinished">Arah:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Ascending</source>
-        <translation type="unfinished">Ascending</translation>
+        <translation type="unfinished">Menaik</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Descending</source>
-        <translation type="unfinished">Descending</translation>
+        <translation type="unfinished">Menurun</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7723,12 +7723,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+6"/>
         <source>Font size: </source>
-        <translation type="unfinished">Font size: </translation>
+        <translation type="unfinished">Saiz fon </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>pt</source>
-        <translation type="unfinished">pt</translation>
+        <translation type="unfinished">apt</translation>
     </message>
     <message>
         <location line="-138"/>
@@ -7753,7 +7753,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+13"/>
         <source>Disabled</source>
-        <translation type="unfinished">Disabled</translation>
+        <translation type="unfinished">Dinyahkan</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7783,7 +7783,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Threshold: </source>
-        <translation type="unfinished">Threshold: </translation>
+        <translation type="unfinished">nilai ambang </translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7813,7 +7813,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Miscellaneous:</source>
-        <translation type="unfinished">Miscellaneous:</translation>
+        <translation type="unfinished">Pelbagai</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7871,12 +7871,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+14"/>
         <source>Filter</source>
-        <translation type="unfinished">Filter</translation>
+        <translation type="unfinished">Penapis</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Closed</source>
-        <translation type="unfinished">Closed</translation>
+        <translation type="unfinished">Ditutup</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7886,7 +7886,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>Password</source>
-        <translation type="unfinished">Password</translation>
+        <translation type="unfinished">Kata laluan</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7906,7 +7906,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+6"/>
         <source>Inactive</source>
-        <translation type="unfinished">Inactive</translation>
+        <translation type="unfinished">tidak aktif</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7916,7 +7916,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>Duplicates</source>
-        <translation type="unfinished">Duplicates</translation>
+        <translation type="unfinished">Pendua</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7933,12 +7933,12 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="-4"/>
         <location line="+144"/>
         <source>Loading...</source>
-        <translation type="unfinished">Loading...</translation>
+        <translation type="unfinished">Memuatkan...</translation>
     </message>
     <message>
         <location line="-90"/>
         <source>Join</source>
-        <translation type="unfinished">Join</translation>
+        <translation type="unfinished">Sertai</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7963,7 +7963,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+87"/>
         <source>Nothing here yet!</source>
-        <translation type="unfinished">Nothing here yet!</translation>
+        <translation type="unfinished">Tiada di sini.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7982,22 +7982,22 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="-3"/>
         <source>Width:</source>
-        <translation type="unfinished">Width:</translation>
+        <translation type="unfinished">Lebar:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Height:</source>
-        <translation type="unfinished">Height:</translation>
+        <translation type="unfinished">Tinggi:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas background color</source>
-        <translation type="unfinished">Canvas background color</translation>
+        <translation type="unfinished">Warna latar</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Background:</source>
-        <translation type="unfinished">Background:</translation>
+        <translation type="unfinished">Latar Belakang:</translation>
     </message>
 </context>
 <context>
@@ -8010,7 +8010,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Title:</source>
-        <translation type="unfinished">Title:</translation>
+        <translation type="unfinished">Tajuk:</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -8020,7 +8020,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+7"/>
         <source>Generate</source>
-        <translation type="unfinished">Generate</translation>
+        <translation type="unfinished">(men)jana</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8030,7 +8030,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+6"/>
         <source>Password:</source>
-        <translation type="unfinished">Password:</translation>
+        <translation type="unfinished">Kata laluan:</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -8045,7 +8045,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+29"/>
         <source>Enable advanced options</source>
-        <translation type="unfinished">Enable advanced options</translation>
+        <translation type="unfinished">Pilihan lanjutan</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -8128,12 +8128,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+15"/>
         <source>Recent:</source>
-        <translation type="unfinished">Recent:</translation>
+        <translation type="unfinished">Terkini:</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Searching…</source>
-        <translation type="unfinished">Searching…</translation>
+        <translation type="unfinished">Menggelintar</translation>
     </message>
     <message>
         <location line="+83"/>
@@ -8146,7 +8146,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="+31"/>
         <source>Help</source>
-        <translation type="unfinished">Help</translation>
+        <translation type="unfinished">Bantuan</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8166,7 +8166,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Communities</source>
-        <translation type="unfinished">Communities</translation>
+        <translation type="unfinished">Komuniti</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8209,12 +8209,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/startdialog/updatenotice.cpp" line="+60"/>
         <source>Update</source>
-        <translation type="unfinished">Update</translation>
+        <translation type="unfinished">Kemas kini</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Dismiss</source>
-        <translation type="unfinished">Dismiss</translation>
+        <translation type="unfinished">Ketepikan</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8224,7 +8224,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+14"/>
         <source>A new version of Drawpile is available!</source>
-        <translation type="unfinished">A new version of Drawpile is available!</translation>
+        <translation type="unfinished">Sebuah versi baru apl tersedia</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8280,7 +8280,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+13"/>
         <source>Search</source>
-        <translation type="unfinished">Search</translation>
+        <translation type="unfinished">Carian</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -8325,7 +8325,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+2"/>
         <location line="+224"/>
         <source>New Tag</source>
-        <translation type="unfinished">New Tag</translation>
+        <translation type="unfinished">Tag Baharu</translation>
     </message>
     <message>
         <location line="-223"/>
@@ -8336,7 +8336,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+1"/>
         <location line="+251"/>
         <source>Delete Tag</source>
-        <translation type="unfinished">Delete Tag</translation>
+        <translation type="unfinished">Padam tag?</translation>
     </message>
     <message>
         <location line="-249"/>
@@ -8393,12 +8393,12 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+79"/>
         <location line="+14"/>
         <source>Tag name:</source>
-        <translation type="unfinished">Tag name:</translation>
+        <translation type="unfinished">Nama penanda</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Edit Tag</source>
-        <translation type="unfinished">Edit Tag</translation>
+        <translation type="unfinished">Sunting Tag</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8426,23 +8426,23 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../docks/colorpalette.cpp" line="+186"/>
         <source>New</source>
-        <translation type="unfinished">New</translation>
+        <translation type="unfinished">Baharu</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Duplicate</source>
-        <translation type="unfinished">Duplicate</translation>
+        <translation type="unfinished">Pendua</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+113"/>
         <source>Delete</source>
-        <translation type="unfinished">Delete</translation>
+        <translation type="unfinished">Padam</translation>
     </message>
     <message>
         <location line="-111"/>
         <source>Rename</source>
-        <translation type="unfinished">Rename</translation>
+        <translation type="unfinished">Namakan semula</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8452,7 +8452,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Export...</source>
-        <translation type="unfinished">Export...</translation>
+        <translation type="unfinished">&amp;Eksport...</translation>
     </message>
     <message>
         <location line="-51"/>
@@ -8474,7 +8474,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="-46"/>
         <location line="+46"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation type="unfinished">Nama</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -8489,12 +8489,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+0"/>
         <source>All files (*)</source>
-        <translation type="unfinished">All files (*)</translation>
+        <translation type="unfinished">Semua Fail (*)</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Export palette</source>
-        <translation type="unfinished">Export palette</translation>
+        <translation type="unfinished">Eksport palet</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8504,7 +8504,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+6"/>
         <source>Error</source>
-        <translation type="unfinished">Error</translation>
+        <translation type="unfinished">Ralat</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8621,7 +8621,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Operators</source>
-        <translation type="unfinished">Operators</translation>
+        <translation type="unfinished">Operator</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8631,7 +8631,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Registered</source>
-        <translation type="unfinished">Registered</translation>
+        <translation type="unfinished">Daftar</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8649,12 +8649,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-276"/>
         <source>Layers</source>
-        <translation type="unfinished">Layers</translation>
+        <translation type="unfinished">Lapisan</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opacity: </translation>
+        <translation type="unfinished">Kelegapan: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8664,7 +8664,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+218"/>
         <source>Duplicate Layer Group</source>
-        <translation type="unfinished">Duplicate Layer Group</translation>
+        <translation type="unfinished">Duplikasi Lapisan</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8674,28 +8674,28 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Layer Group Properties…</source>
-        <translation type="unfinished">Layer Group Properties…</translation>
+        <translation type="unfinished">Sifat Lapisan</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Layer Group</source>
-        <translation type="unfinished">Delete Layer Group</translation>
+        <translation type="unfinished">Padam Lapisan</translation>
     </message>
     <message>
         <location line="+174"/>
         <location line="+42"/>
         <source>Layer</source>
-        <translation type="unfinished">Layer</translation>
+        <translation type="unfinished">Lapisan</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Group</source>
-        <translation type="unfinished">Group</translation>
+        <translation type="unfinished">Kumpul</translation>
     </message>
     <message>
         <location line="+142"/>
         <source>Delete Layer?</source>
-        <translation type="unfinished">Delete Layer?</translation>
+        <translation type="unfinished">Padam Lapisan</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8731,12 +8731,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+10"/>
         <source>Frames: </source>
-        <translation type="unfinished">Frames: </translation>
+        <translation type="unfinished">Bidang </translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Wrap</source>
-        <translation type="unfinished">Wrap</translation>
+        <translation type="unfinished">Lilit</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8756,7 +8756,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+42"/>
         <source>Opacity: %1%</source>
-        <translation type="unfinished">Opacity: %1%</translation>
+        <translation type="unfinished">Kelegapan:</translation>
     </message>
 </context>
 <context>
@@ -8787,7 +8787,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished">Close</translation>
+        <translation type="unfinished">Tutup</translation>
     </message>
 </context>
 <context>
@@ -8795,7 +8795,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+13"/>
         <source>Tool</source>
-        <translation type="unfinished">Tool</translation>
+        <translation type="unfinished">Alat</translation>
     </message>
 </context>
 <context>
@@ -8849,23 +8849,23 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Merge</source>
-        <translation type="unfinished">Merge</translation>
+        <translation type="unfinished">Bergabung</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Delete</source>
-        <translation type="unfinished">Delete</translation>
+        <translation type="unfinished">Padam</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Left</source>
-        <translation type="unfinished">Left</translation>
+        <translation type="unfinished">Kiri</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+20"/>
         <source>Center</source>
-        <translation type="unfinished">Center</translation>
+        <translation type="unfinished">Tengah</translation>
     </message>
     <message>
         <location line="-17"/>
@@ -8875,7 +8875,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Right</source>
-        <translation type="unfinished">Right</translation>
+        <translation type="unfinished">Kanan</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -8893,7 +8893,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="+129"/>
         <source>Brush Settings</source>
-        <translation type="unfinished">Brush Settings</translation>
+        <translation type="unfinished">Seting Edit Berus</translation>
     </message>
     <message>
         <location line="+48"/>
@@ -8961,7 +8961,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+8"/>
         <source>Size: </source>
-        <translation type="unfinished">Size: </translation>
+        <translation type="unfinished">Saiz: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -8987,12 +8987,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+40"/>
         <source>Nearest</source>
-        <translation type="unfinished">Nearest</translation>
+        <translation type="unfinished">Terdekat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Bilinear</source>
-        <translation type="unfinished">Bilinear</translation>
+        <translation type="unfinished">bilinear</translation>
     </message>
 </context>
 <context>
@@ -9000,7 +9000,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../toolwidgets/zoomsettings.cpp" line="+21"/>
         <source>Normal Size</source>
-        <translation type="unfinished">Normal Size</translation>
+        <translation type="unfinished">Saiz Biasa</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9013,7 +9013,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../utils/recents.cpp" line="+393"/>
         <source>More…</source>
-        <translation type="unfinished">More…</translation>
+        <translation type="unfinished">More</translation>
     </message>
 </context>
 <context>
@@ -9064,7 +9064,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../scene/canvasview.cpp" line="+194"/>
         <source>Reconnect</source>
-        <translation type="unfinished">Reconnect</translation>
+        <translation type="unfinished">Sambung semula</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -9079,7 +9079,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>Save As…</source>
-        <translation type="unfinished">Save As…</translation>
+        <translation type="unfinished">Simpan…</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -9114,7 +9114,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Layer is hidden</source>
-        <translation type="unfinished">Layer is hidden</translation>
+        <translation type="unfinished">Lapisan Disembunyikan</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9154,7 +9154,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Rotation: %1°</source>
-        <translation type="unfinished">Rotation: %1°</translation>
+        <translation type="unfinished">Putaran:</translation>
     </message>
 </context>
 <context>
@@ -9162,12 +9162,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../chat/chatbox.cpp" line="+45"/>
         <source>Invite</source>
-        <translation type="unfinished">Invite</translation>
+        <translation type="unfinished">Ajak</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session</source>
-        <translation type="unfinished">Session</translation>
+        <translation type="unfinished">Sesi</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9190,7 +9190,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+71"/>
         <source>Mute notifications</source>
-        <translation type="unfinished">Mute notifications</translation>
+        <translation type="unfinished">Bisukan pemberitahuan</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9307,7 +9307,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="-623"/>
         <source>Clear</source>
-        <translation type="unfinished">Clear</translation>
+        <translation type="unfinished">Kosongkan</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9338,7 +9338,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../widgets/colorbutton.cpp" line="+42"/>
         <source>Select a color</source>
-        <translation type="unfinished">Select a color</translation>
+        <translation type="unfinished">Warna dipilih:</translation>
     </message>
 </context>
 <context>
@@ -9346,7 +9346,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../widgets/curvewidget.cpp" line="+110"/>
         <source>Copy</source>
-        <translation type="unfinished">Copy</translation>
+        <translation type="unfinished">Salin</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9356,7 +9356,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Paste</source>
-        <translation type="unfinished">Paste</translation>
+        <translation type="unfinished">Tampal</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9366,7 +9366,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Presets…</source>
-        <translation type="unfinished">Presets…</translation>
+        <translation type="unfinished">Pratetap</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9376,7 +9376,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+85"/>
         <source>Curve copied to clipboard.</source>
-        <translation type="unfinished">Curve copied to clipboard.</translation>
+        <translation type="unfinished">Pautan disalin ke papan keratan</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -9412,7 +9412,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../widgets/netstatus.cpp" line="+58"/>
         <source>Copy address to clipboard</source>
-        <translation type="unfinished">Copy address to clipboard</translation>
+        <translation type="unfinished">Salin ke papan keratan</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9457,12 +9457,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+167"/>
         <source>not connected</source>
-        <translation type="unfinished">not connected</translation>
+        <translation type="unfinished">Tidak Disambungkan</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Connecting...</source>
-        <translation type="unfinished">Connecting...</translation>
+        <translation type="unfinished">Menyambung...</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9472,7 +9472,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Connected</source>
-        <translation type="unfinished">Connected</translation>
+        <translation type="unfinished">Tersambung</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9502,7 +9502,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished">Don&apos;t show this again</translation>
+        <translation type="unfinished">Jangan tunjuk untuk selama-lamanya</translation>
     </message>
 </context>
 <context>
@@ -9515,7 +9515,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Dismiss</source>
-        <translation type="unfinished">Dismiss</translation>
+        <translation type="unfinished">Ketepikan</translation>
     </message>
 </context>
 <context>
@@ -9523,7 +9523,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="+41"/>
         <source>Add</source>
-        <translation type="unfinished">Add</translation>
+        <translation type="unfinished">Tambah</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9533,7 +9533,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished">Remove</translation>
+        <translation type="unfinished">Buang</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9557,22 +9557,22 @@ Hex: %4</translation>
     <message>
         <location filename="../widgets/presetselector.cpp" line="+28"/>
         <source>Presets</source>
-        <translation type="unfinished">Presets</translation>
+        <translation type="unfinished">Pratetap</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Load</source>
-        <translation type="unfinished">Load</translation>
+        <translation type="unfinished">Beban</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished">Save</translation>
+        <translation type="unfinished">Simpan</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Delete</source>
-        <translation type="unfinished">Delete</translation>
+        <translation type="unfinished">Buang</translation>
     </message>
 </context>
 <context>
@@ -9590,7 +9590,7 @@ Hex: %4</translation>
     <message>
         <location line="+59"/>
         <source>Remove</source>
-        <translation type="unfinished">Remove</translation>
+        <translation type="unfinished">Buang</translation>
     </message>
 </context>
 <context>
@@ -9638,7 +9638,7 @@ Hex: %4</translation>
     <message>
         <location line="+6"/>
         <source>Toggle visibility</source>
-        <translation type="unfinished">Toggle visibility</translation>
+        <translation type="unfinished">Tunjuk/sembunyikan kata laluan</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9657,7 +9657,7 @@ or via Animation ▸ New Track.</translation>
     <message>
         <location line="+558"/>
         <source>Track</source>
-        <translation type="unfinished">Track</translation>
+        <translation type="unfinished">Jejak</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -9687,7 +9687,7 @@ or via Animation ▸ New Track.</translation>
     <message>
         <location line="+0"/>
         <source>Frames Per Second (FPS)</source>
-        <translation type="unfinished">Frames Per Second (FPS)</translation>
+        <translation type="unfinished">Bidang per saat:</translation>
     </message>
     <message>
         <location line="+330"/>
@@ -9705,7 +9705,7 @@ or via Animation ▸ New Track.</translation>
     <message>
         <location filename="../chat/useritemdelegate.cpp" line="+167"/>
         <source>Operator</source>
-        <translation type="unfinished">Operator</translation>
+        <translation type="unfinished">Pengendali</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9715,7 +9715,7 @@ or via Animation ▸ New Track.</translation>
     <message>
         <location line="-138"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished">&amp;Operator</translation>
+        <translation type="unfinished">Pengendali</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9725,22 +9725,22 @@ or via Animation ▸ New Track.</translation>
     <message>
         <location line="+3"/>
         <source>&amp;Lock</source>
-        <translation type="unfinished">&amp;Lock</translation>
+        <translation type="unfinished">Kunci</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Mute</source>
-        <translation type="unfinished">&amp;Mute</translation>
+        <translation type="unfinished">Mute</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished">&amp;Undo</translation>
+        <translation type="unfinished">Buat A&amp;sal</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished">&amp;Redo</translation>
+        <translation type="unfinished">Buat S&amp;emula</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9760,7 +9760,7 @@ or via Animation ▸ New Track.</translation>
     <message>
         <location line="+2"/>
         <source>Show User &amp;Information</source>
-        <translation type="unfinished">Show User &amp;Information</translation>
+        <translation type="unfinished">Papar maklumat PHP</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9780,7 +9780,7 @@ or via Animation ▸ New Track.</translation>
     <message>
         <location line="+5"/>
         <source>Registered</source>
-        <translation type="unfinished">Registered</translation>
+        <translation type="unfinished">Daftar</translation>
     </message>
 </context>
 <context>
@@ -9793,7 +9793,7 @@ or via Animation ▸ New Track.</translation>
     <message>
         <location line="+40"/>
         <source>Zoom</source>
-        <translation type="unfinished">Zoom</translation>
+        <translation type="unfinished">Zum</translation>
     </message>
 </context>
 </TS>
