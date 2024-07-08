@@ -8764,7 +8764,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../docks/onionskins.cpp" line="+136"/>
         <source>Frames: </source>
-        <translation type="unfinished">Frames: </translation>
+        <translation type="unfinished">Кадри: </translation>
     </message>
     <message>
         <location line="-10"/>
