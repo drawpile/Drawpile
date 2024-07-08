@@ -579,7 +579,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ativo</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1495,7 +1495,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ativo</translation>
     </message>
 </context>
 <context>
