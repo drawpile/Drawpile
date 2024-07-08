@@ -9756,7 +9756,7 @@ ya da Animasyon ▸ Yeni Track seçeneğini kullanın.</translation>
     <message>
         <location line="+4"/>
         <source>&amp;Private Message</source>
-        <translation type="unfinished">&amp;Private Message</translation>
+        <translation type="unfinished">Özel Mesaj</translation>
     </message>
     <message>
         <location line="+2"/>
