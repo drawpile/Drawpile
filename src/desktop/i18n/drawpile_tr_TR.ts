@@ -8675,7 +8675,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Layer Group Properties…</source>
-        <translation type="unfinished">Layer Group Properties…</translation>
+        <translation type="unfinished">Katman Özellikleri</translation>
     </message>
     <message>
         <location line="+1"/>
