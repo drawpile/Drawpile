@@ -101,7 +101,7 @@
     <message>
         <location line="+20"/>
         <source>Square pixel brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Square pixel brush</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -212,7 +212,7 @@
     <message>
         <location line="+10"/>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Description:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -859,7 +859,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+9"/>
         <source>&lt;strong&gt;Note:&lt;/strong&gt; changing the session password will cause the link to stop working! If someone else changes the password, you have to reconnect for this dialog to update.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;strong&gt;Note:&lt;/strong&gt; changing the session password will cause the link to stop working! If someone else changes the password, you have to reconnect for this dialog to update.</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -1251,7 +1251,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="-25"/>
         <source>You are still connected to a drawing session.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">You are still connected to a drawing session.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1566,7 +1566,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+2"/>
         <source>Primary screen:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Primary screen:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2160,7 +2160,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rename Track</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2334,7 +2334,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+71"/>
         <source>Canvas locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Canvas locked</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2430,7 +2430,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location filename="../docks/layerlistdock.cpp" line="-3"/>
         <location filename="../mainwindow.cpp" line="+408"/>
         <source>Layer Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Layer Properties…</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+126"/>
@@ -4038,7 +4038,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+12"/>
         <source>Stabilizer: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stabilizer: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -4105,7 +4105,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+10"/>
         <location line="+298"/>
         <source>Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hardness</translation>
     </message>
     <message>
         <location line="-268"/>
@@ -4842,7 +4842,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Angular Offset Mirrored: Direction</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angular Offset Mirrored: Direction</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4891,7 +4891,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Unknown Setting</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Unknown Setting</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -5793,7 +5793,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>%1 (deleted)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (deleted)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6161,7 +6161,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Error saving bans to &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error saving bans to &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -6181,7 +6181,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+68"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Operators</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7052,7 +7052,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="-50"/>
         <location line="+52"/>
         <source>Do nothing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Do nothing</translation>
     </message>
     <message>
         <location line="-98"/>
@@ -7110,7 +7110,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>Announce with Zeroconf</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Announce with Zeroconf</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -7461,7 +7461,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Enter password:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enter password:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -7802,7 +7802,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+12"/>
         <source>Changes to kinetic scrolling apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Changes to kinetic scrolling apply after you restart Drawpile.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -8034,7 +8034,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Generates a random password.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Generates a random password.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8079,7 +8079,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+12"/>
         <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -8599,7 +8599,7 @@ Values above 0.5 may not be noticeable.</translation>
         <source>H</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Hue&quot; H of HSV.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">H</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9737,7 +9737,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Undo</translation>
     </message>
     <message>
         <location line="+2"/>
