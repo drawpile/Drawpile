@@ -49,7 +49,7 @@
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">अज्ञात त्रुटि।</translation>
     </message>
 </context>
 <context>
@@ -57,12 +57,12 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+94"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">शॉर्टकट</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">कार्य</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -107,22 +107,22 @@
     <message>
         <location line="+12"/>
         <source>Unset</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">अव्यवस्थित</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Left Click</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">बायाँ-क्लिक</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right Click</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">दायां बटन-क्लिक</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">मध्य-क्लिक</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -132,7 +132,7 @@
     <message>
         <location line="+2"/>
         <source>Button %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">बटन 1</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -152,7 +152,7 @@
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">रंग चुनें</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -202,7 +202,7 @@
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">उल्टी</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -263,27 +263,27 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Conflict</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">कार्य</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">शॉर्टकट</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">वैकल्पिक</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">डिफ़ॉल्ट</translation>
     </message>
 </context>
 <context>
@@ -291,7 +291,7 @@
     <message>
         <location filename="../document.cpp" line="+715"/>
         <source>Unknown format.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">अज्ञात फार्मेट</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -301,7 +301,7 @@
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">फाइल खोलने में त्रुटि</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -311,7 +311,7 @@
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">अज्ञात त्रुटि।</translation>
     </message>
 </context>
 <context>
@@ -446,7 +446,7 @@
     <message>
         <location line="+6"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">सभी फ़ाइल (*)</translation>
     </message>
 </context>
 <context>
@@ -462,7 +462,7 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-103"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">बदलाव</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -472,12 +472,12 @@
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ctrl</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">मेटा (आत्म निर्देशात्मक)</translation>
     </message>
 </context>
 <context>
@@ -500,14 +500,14 @@
     <message>
         <location line="+370"/>
         <source>(untitled)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;बेनामी&gt;</translation>
     </message>
     <message numerus="yes">
         <location line="-274"/>
         <source>%n users</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n उपयोगकर्ता`</numerusform>
+            <numerusform>%n उपयोगकर्ता`</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -534,7 +534,7 @@
     <message>
         <location line="+18"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">संगत</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -559,47 +559,47 @@
     <message>
         <location line="+67"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">अनुकूलता</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">शीर्षक</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">सर्वर</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">उपयोगकर्ताओं</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">सक्रिय</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">मालिक</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Age</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">आयु</translation>
     </message>
     <message>
         <location line="+171"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">बन्द है</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">पासवर्ड से सुरक्षित</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -612,7 +612,7 @@
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+40"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">सामान्य</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -622,27 +622,27 @@
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">पीछे</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Multiply</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">गुणा</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">स्क्रीन</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ओवरले</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Divide</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">विभाजक</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -672,12 +672,12 @@
     <message>
         <location line="+5"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">जोड़ें</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">मिटाय</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -712,22 +712,22 @@
     <message>
         <location line="+5"/>
         <source>Hue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">रंगत</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">संतृप्ति</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Luminosity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">चमक</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">रंग</translation>
     </message>
 </context>
 <context>
@@ -735,7 +735,7 @@
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="+600"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">तयशुदा</translation>
     </message>
 </context>
 <context>
@@ -743,12 +743,12 @@
     <message>
         <location line="-103"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">सभी</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">टैग नहीं किए गए</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -763,7 +763,7 @@
     <message>
         <location line="+171"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">तयशुदा</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -789,7 +789,7 @@
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">अवर्गीकृत</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -880,17 +880,17 @@
     <message>
         <location filename="../canvas/userlist.cpp" line="+64"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Moderator</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ऑपरेटर</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">विश्वस्त</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -900,32 +900,32 @@
     <message>
         <location line="+5"/>
         <source>Online</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ऑनलाइन</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ऑफ़लाइन</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">उपयोगकर्ता</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Type</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">स्थिति</translation>
     </message>
     <message>
         <location line="+182"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">सर्वर</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -947,27 +947,27 @@
     <message>
         <location filename="../net/announcementlist.cpp" line="+31"/>
         <source>Private</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">निजी</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">सार्वजनिक</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">सर्वर</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Room code</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">उपस्थालिक संख्या :</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">मोड</translation>
     </message>
 </context>
 <context>
@@ -975,27 +975,27 @@
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Moderator</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ऑपरेटर</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">विश्वस्त</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">उपयोगकर्ता</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">भूमिकाएँ</translation>
     </message>
 </context>
 <context>
@@ -1004,18 +1004,18 @@
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID</translation>
     </message>
     <message>
         <location line="-13"/>
         <location line="+15"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">उपयोगकर्ता</translation>
     </message>
     <message>
         <location line="-13"/>
         <source>IP address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">IP पते</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1089,7 +1089,7 @@
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">वियोजीत</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1105,7 +1105,7 @@
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">सर्वर गड़बड़</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1303,7 +1303,7 @@
     <message>
         <location line="+52"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">नया संस्करण</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1349,7 +1349,7 @@
     <message>
         <location line="+58"/>
         <source>Cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">कैन्सेल्ड</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1359,7 +1359,7 @@
     <message>
         <location line="+15"/>
         <source>Invalid username!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">खराब प्रयोक्ता नाम!</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1369,7 +1369,7 @@
     <message>
         <location line="+2"/>
         <source>Username already taken!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">उपयोगकर्ता नाम पहले से ही लिया गया है</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1422,7 +1422,7 @@
     <message>
         <location filename="../net/loginsessions.cpp" line="+48"/>
         <source>(untitled)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;बेनामी&gt;</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -1442,7 +1442,7 @@
     <message>
         <location line="+4"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">असंगत संस्करण</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1480,22 +1480,22 @@
     <message>
         <location line="+57"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">शीर्षक</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Started by</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">द्वारा शुरू किया गया</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">उपयोगकर्ताओं</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">सक्रिय</translation>
     </message>
 </context>
 <context>
@@ -1537,7 +1537,7 @@
         <location filename="../utils/news.cpp" line="+280"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">अपडेटस के लिए जांच हो रही है…</translation>
     </message>
     <message>
         <location line="-23"/>
@@ -1552,7 +1552,7 @@
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">नेटवर्क त्रुटि %s</translation>
     </message>
     <message>
         <location line="+12"/>
