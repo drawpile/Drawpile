@@ -24,7 +24,7 @@
     <message>
         <location line="+2"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nepodporovaný formát</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -49,7 +49,7 @@
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Neznámá chyba.</translation>
     </message>
 </context>
 <context>
@@ -67,19 +67,19 @@
     <message>
         <location line="+2"/>
         <source>Modifiers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Modifikátory</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>%1</source>
         <extracomment>Example: &quot;Pan Canvas&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%1 (%2)</source>
         <extracomment>Example: &quot;Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (%2)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -96,7 +96,7 @@
     <message>
         <location line="+48"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kolečko myši</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -107,22 +107,22 @@
     <message>
         <location line="+12"/>
         <source>Unset</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nenastaveno</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Left Click</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Levý klik myši</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right Click</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Klepnutí pravým tlačítkem myši</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Střední klik</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -132,7 +132,7 @@
     <message>
         <location line="+2"/>
         <source>Button %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tlačítko 1</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -152,7 +152,7 @@
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vybrat barvu</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -192,7 +192,7 @@
     <message>
         <location line="+2"/>
         <source>Unknown Action %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Neznámá činnost</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -202,7 +202,7 @@
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Invertované</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -263,7 +263,7 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Konflikt</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -278,7 +278,7 @@
     <message>
         <location line="+1"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sudé</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -291,7 +291,7 @@
     <message>
         <location filename="../document.cpp" line="+715"/>
         <source>Unknown format.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Neznámý formát</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -301,7 +301,7 @@
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chyba při otevírání souboru</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -311,7 +311,7 @@
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Neznámá chyba.</translation>
     </message>
 </context>
 <context>
@@ -454,7 +454,7 @@
     <message>
         <location filename="../drawdance/canvasstate.cpp" line="+45"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vrstva &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -462,22 +462,22 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-103"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Shift</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ctrl</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Meta</translation>
     </message>
 </context>
 <context>
@@ -490,17 +490,17 @@
     <message>
         <location line="-380"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1d %2h %3m</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1h %2m</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1m</translation>
     </message>
     <message numerus="yes">
         <location line="+94"/>
@@ -515,9 +515,9 @@
         <location line="+2"/>
         <source>%n users</source>
         <translation type="unfinished">
+            <numerusform>%n uživatelů</numerusform>
             <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n uživatelů</numerusform>
         </translation>
     </message>
     <message>
@@ -537,7 +537,7 @@
     <message>
         <location line="+18"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kompatibilní</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -557,12 +557,12 @@
     <message>
         <location line="+1"/>
         <source>unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Neznámá verze</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kompatibilita</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -582,7 +582,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktivní</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -597,12 +597,12 @@
     <message>
         <location line="+171"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">zavřené</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ochrana heslem</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -635,12 +635,12 @@
     <message>
         <location line="+5"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Obrazovka</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Překrytí</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -690,12 +690,12 @@
     <message>
         <location line="+5"/>
         <source>Hard Light</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Studené světlo</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Soft Light</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Měkké světlo</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -725,7 +725,7 @@
     <message>
         <location line="+5"/>
         <source>Luminosity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Svítivost</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -746,12 +746,12 @@
     <message>
         <location line="-103"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vše</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bez štítku</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -792,7 +792,7 @@
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bez kategorie</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -875,7 +875,7 @@
     <message>
         <location filename="../canvas/paintengine.cpp" line="+169"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vrstva &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -883,32 +883,32 @@
     <message>
         <location filename="../canvas/userlist.cpp" line="+64"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Moderátor</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Operátor</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Důvěryhodné</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Registrováno</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Online</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Online</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Offline</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -918,12 +918,12 @@
     <message>
         <location line="+2"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Typ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Status</translation>
     </message>
     <message>
         <location line="+182"/>
@@ -950,12 +950,12 @@
     <message>
         <location filename="../net/announcementlist.cpp" line="+31"/>
         <source>Private</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Soukromé</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Veřejné</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -965,12 +965,12 @@
     <message>
         <location line="+1"/>
         <source>Room code</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kód místnosti:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mód</translation>
     </message>
 </context>
 <context>
@@ -978,17 +978,17 @@
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Moderátor</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Operátor</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Důvěryhodné</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -998,7 +998,7 @@
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Role</translation>
     </message>
 </context>
 <context>
@@ -1007,7 +1007,7 @@
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -1062,7 +1062,7 @@
     <message>
         <location line="-392"/>
         <source>You have been kicked.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Byl jste vykázán</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1092,12 +1092,12 @@
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odpojeno</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odpojeno, %s</translation>
     </message>
     <message>
         <location line="+324"/>
@@ -1108,7 +1108,7 @@
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chyba serveru</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1306,12 +1306,12 @@
     <message>
         <location line="+52"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nová verze</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Neznámá verze</translation>
     </message>
     <message>
         <location line="-42"/>
@@ -1445,7 +1445,7 @@
     <message>
         <location line="+4"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nekompatibilní verze</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1499,7 +1499,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktivní</translation>
     </message>
 </context>
 <context>
@@ -1541,7 +1541,7 @@
         <location filename="../utils/news.cpp" line="+280"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kontrola aktualizací…</translation>
     </message>
     <message>
         <location line="-23"/>
@@ -1556,7 +1556,7 @@
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chyba sítě: %1$s</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1586,7 +1586,7 @@
     <message>
         <location line="+8"/>
         <source>No news available.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nejsou k dispozici žádné aktuality</translation>
     </message>
 </context>
 </TS>
