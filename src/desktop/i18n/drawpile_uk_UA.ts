@@ -6944,7 +6944,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Color scheme:</source>
-        <translation type="unfinished">Color scheme:</translation>
+        <translation type="unfinished">Схема кольорів</translation>
     </message>
     <message>
         <location line="+9"/>
