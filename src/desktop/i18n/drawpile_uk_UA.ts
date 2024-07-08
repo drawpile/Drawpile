@@ -1930,12 +1930,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Open Debug Dump...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Open Debug Dump...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Statistics…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Statistics…</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2156,7 +2156,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+16"/>
         <source>Hold Shift to Arrange</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hold Shift to Arrange</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -3753,7 +3753,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../bundled/QtColorWidgets/gradient_list_model.cpp" line="+231"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (%2 colors)</translation>
     </message>
 </context>
 <context>
@@ -4165,7 +4165,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+17"/>
         <location line="+34"/>
         <source>Apply to All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Apply to All</translation>
     </message>
     <message>
         <location line="-49"/>
@@ -4220,7 +4220,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+59"/>
         <source>The radius of the brush.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">The radius of the brush.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4261,7 +4261,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+12"/>
         <source>Pressure</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pressure</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4368,7 +4368,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>Base Brush Radius</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Base Brush Radius</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4808,7 +4808,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Smudge transparency</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Smudge transparency</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5856,7 +5856,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+20"/>
         <source>Paint.NET-esque</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Paint.NET-esque</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -6164,7 +6164,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+12"/>
         <source>Session Ban Error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Session Ban Error</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -6333,7 +6333,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Plain</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Plain</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -6448,7 +6448,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/startdialog.cpp" line="+70"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Start</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -6859,7 +6859,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Canvas view:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Canvas view:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7408,7 +7408,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Disallow uncensoring of layers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Disallow uncensoring of layers</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8562,7 +8562,7 @@ Values above 0.5 may not be noticeable.</translation>
         <source>S</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Saturation&quot; S of HSL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">S</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9162,7 +9162,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1762"/>
         <source>Zoom: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zoom: %1%</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9640,7 +9640,7 @@ Hex: %4</source>
     <message>
         <location line="+6"/>
         <source>Toggle visibility</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Toggle visibility</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9687,7 +9687,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+0"/>
         <source>Frames Per Second (FPS)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Frames Per Second (FPS)</translation>
     </message>
     <message>
         <location line="+330"/>
