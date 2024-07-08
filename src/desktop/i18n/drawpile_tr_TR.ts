@@ -234,7 +234,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+75"/>
         <source>Label:</source>
-        <translation type="unfinished">Label:</translation>
+        <translation type="unfinished">Etiket:</translation>
     </message>
 </context>
 <context>
