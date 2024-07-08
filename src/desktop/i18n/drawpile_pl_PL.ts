@@ -1023,7 +1023,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="+7"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rename</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1424,7 +1424,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+1"/>
         <source>Enter operator password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enter operator password</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -1613,7 +1613,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+2"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Close</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1656,7 +1656,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+14"/>
         <source>&amp;Import</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Import</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2205,7 +2205,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Create Layer on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Create Layer on Next Key Frame</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2309,7 +2309,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+379"/>
         <source>Hosting on this computer is not available</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hosting on this computer is not available</translation>
     </message>
     <message>
         <location line="+66"/>
@@ -3267,7 +3267,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+14"/>
         <source>Max users:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Max users:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3485,7 +3485,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../ui/userinfodialog.ui" line="+14"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dialog</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4838,7 +4838,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Angular Offset: Ascension</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angular Offset: Ascension</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4965,7 +4965,7 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <location line="+2"/>
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Same as above, but the radius actually drawn is used, which can change dynamically</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4988,7 +4988,8 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <source>How slow the input fine speed is following the real speed
 0.0 change immediately as your speed changes (not recommended, but try it)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">How slow the input fine speed is following the real speed
+0.0 change immediately as your speed changes (not recommended, but try it)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5461,7 +5462,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rotate Canvas</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5502,7 +5503,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Constrain and Center Tool</translation>
     </message>
     <message>
         <location line="+98"/>
@@ -5946,7 +5947,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+249"/>
         <source>Remove Account</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Remove Account</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6068,7 +6069,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="+32"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Playback</translation>
     </message>
     <message>
         <location line="+142"/>
@@ -6557,7 +6558,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+0"/>
         <source>Change application settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Change application settings</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -7947,7 +7948,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Show sessions that are listed on multiple servers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Show sessions that are listed on multiple servers</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -8278,7 +8279,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layouts&quot;&gt;Layout&lt;/a&gt; for the application.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layouts&quot;&gt;Layout&lt;/a&gt; for the application.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8788,7 +8789,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+42"/>
         <source>Opacity: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opacity: %1%</translation>
     </message>
 </context>
 <context>
@@ -8917,7 +8918,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+8"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bottom</translation>
     </message>
 </context>
 <context>
@@ -9121,7 +9122,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Canvas is locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Canvas is locked</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9521,7 +9522,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile&apos;s help page for workarounds.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile&apos;s help page for workarounds.</translation>
     </message>
     <message>
         <location line="+5"/>
