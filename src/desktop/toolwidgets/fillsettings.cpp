@@ -136,21 +136,7 @@ void FillSettings::setCompatibilityMode(bool compatibilityMode)
 
 void FillSettings::pushSettings()
 {
-	FloodFill *tool =
-		static_cast<FloodFill *>(controller()->getTool(Tool::FLOODFILL));
-	tool->setTolerance(
-		m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()));
-	bool shrink = m_expandGroup->checkedId() != 0;
-	tool->setExpansion(m_ui->expand->value() * (shrink ? -1 : 1));
-	tool->setFeatherRadius(m_ui->feather->value());
-	int size = m_ui->size->value();
-	tool->setSize(isSizeUnlimited(size) ? -1 : size);
-	tool->setOpacity(m_ui->opacity->value() / 100.0);
-	tool->setGap(m_ui->gap->value());
-	tool->setSource(FloodFill::Source(m_sourceGroup->checkedId()));
-
 	int area = m_areaGroup->checkedId();
-	tool->setArea(FloodFill::Area(area));
 	bool floodOptionsEnabled = area != int(FloodFill::Area::Selection);
 	m_ui->size->setEnabled(floodOptionsEnabled && !m_haveSelection);
 	m_ui->tolerance->setEnabled(floodOptionsEnabled);
@@ -168,12 +154,22 @@ void FillSettings::pushSettings()
 	m_ui->sourceFillSource->setVisible(haveFillSource);
 
 	int blendMode = m_ui->blendModeCombo->currentData().toInt();
-	tool->setBlendMode(blendMode);
 	if(canvas::blendmode::isValidEraseMode(DP_BlendMode(blendMode))) {
 		m_previousEraseMode = blendMode;
 	} else {
 		m_previousMode = blendMode;
 	}
+
+	FloodFill *tool =
+		static_cast<FloodFill *>(controller()->getTool(Tool::FLOODFILL));
+	bool shrink = m_expandGroup->checkedId() != 0;
+	int size = m_ui->size->value();
+	tool->setParameters(
+		m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()),
+		m_ui->expand->value() * (shrink ? -1 : 1), m_ui->feather->value(),
+		isSizeUnlimited(size) ? -1 : size, m_ui->opacity->value() / 100.0,
+		m_ui->gap->value(), FloodFill::Source(m_sourceGroup->checkedId()),
+		blendMode, FloodFill::Area(area));
 
 	m_ui->expand->setPrefix(shrink ? tr("Shrink: ") : tr("Expand: "));
 

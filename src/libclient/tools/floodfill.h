@@ -39,23 +39,16 @@ public:
 	void setForegroundColor(const QColor &color) override;
 	ToolState toolState() const override;
 
-	void setTolerance(qreal tolerance) { m_tolerance = tolerance; }
-	void setExpansion(int expansion) { m_expansion = expansion; }
-	void setFeatherRadius(int featherRadius)
-	{
-		m_featherRadius = featherRadius;
-	}
-	void setSize(int size) { m_size = size; }
-	void setOpacity(qreal opacity);
-	void setGap(int gap) { m_gap = gap; }
-	void setSource(Source source) { m_source = source; }
-	void setBlendMode(int blendMode);
-	void setArea(Area area) { m_area = area; }
+	void setParameters(
+		qreal tolerance, int expansion, int featherRadius, int size,
+		qreal opacity, int gap, Source source, int blendMode, Area area);
 
 private:
 	class Task;
 	friend Task;
 
+	void fillAt(const QPointF &point);
+	void repeatFill();
 	void floodFillFinished(Task *task);
 
 	bool havePending() const { return !m_pendingImage.isNull(); }
@@ -76,7 +69,9 @@ private:
 	int m_blendMode;
 	Area m_area;
 	bool m_running;
+	bool m_repeat;
 	QAtomicInt m_cancel;
+	QPointF m_lastPoint;
 	QImage m_pendingImage;
 	QPoint m_pendingPos;
 	Area m_pendingArea;

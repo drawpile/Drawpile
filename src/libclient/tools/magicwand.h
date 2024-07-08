@@ -22,12 +22,14 @@ public:
 	void dispose() override;
 	ToolState toolState() const override;
 
-	void updatePendingToolNotice();
+	void updateParameters();
 
 private:
 	class Task;
 	friend Task;
 
+	void fillAt(const QPointF &point, bool constrain, bool center);
+	void repeatFill();
 	void floodFillFinished(Task *task);
 
 	bool havePending() const { return !m_pendingImage.isNull(); }
@@ -39,7 +41,12 @@ private:
 
 	int m_op = -1;
 	bool m_running = false;
+	bool m_repeat = false;
 	QAtomicInt m_cancel;
+	QPointF m_lastPoint;
+	bool m_lastConstrain = false;
+	bool m_lastCenter = false;
+	ToolController::SelectionParams m_pendingParams;
 	QImage m_pendingImage;
 	QPoint m_pendingPos;
 };

@@ -92,42 +92,12 @@ void MagicWandTool::begin(const BeginParams &params)
 {
 	if(params.right) {
 		cancelMultipart();
-	} else if(havePending()) {
-		flushPending();
 	} else if(!m_running) {
-		m_running = true;
-		m_cancel = false;
-
-		const ToolController::SelectionParams &selectionParams =
-			m_owner.selectionParams();
-		m_op = SelectionTool::resolveOp(
-			params.constrain, params.center, selectionParams.defaultOp);
-		int activeLayerId = m_owner.activeLayer();
-		int layerId;
-		switch(selectionParams.source) {
-		case int(ToolController::SelectionSource::Merged):
-			layerId = 0;
-			break;
-		case int(ToolController::SelectionSource::MergedWithoutBackground):
-			layerId = -1;
-			break;
-		default:
-			layerId = activeLayerId;
-			break;
+		if(havePending()) {
+			flushPending();
+		} else {
+			fillAt(params.point, params.constrain, params.center);
 		}
-
-		setHandlesRightClick(true);
-		emit m_owner.toolNoticeRequested(
-			QCoreApplication::translate("MagicWandSettings", "Selecting…"));
-
-		canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
-		m_owner.executeAsync(new Task(
-			this, m_cancel, paintEngine->viewCanvasState(), params.point,
-			selectionParams.size, selectionParams.tolerance, layerId,
-			selectionParams.gap, selectionParams.expansion,
-			selectionParams.featherRadius, selectionParams.continuous,
-			activeLayerId, paintEngine->viewMode(), paintEngine->viewLayer(),
-			paintEngine->viewFrame()));
 	}
 }
 
@@ -161,6 +131,7 @@ void MagicWandTool::cancelMultipart()
 
 void MagicWandTool::dispose()
 {
+	m_repeat = false;
 	if(m_running) {
 		m_cancel = true;
 	}
@@ -171,10 +142,83 @@ ToolState MagicWandTool::toolState() const
 	return havePending() ? ToolState::AwaitingConfirmation : ToolState::Normal;
 }
 
-void MagicWandTool::updatePendingToolNotice()
+void MagicWandTool::updateParameters()
 {
 	if(havePending()) {
-		updateToolNotice();
+		const ToolController::SelectionParams &selectionParams =
+			m_owner.selectionParams();
+		bool needsUpdate = selectionParams.opacity != m_pendingParams.opacity;
+		bool needsRefill =
+			selectionParams.size != m_pendingParams.size ||
+			selectionParams.tolerance != m_pendingParams.tolerance ||
+			selectionParams.expansion != m_pendingParams.expansion ||
+			selectionParams.featherRadius != m_pendingParams.featherRadius ||
+			selectionParams.gap != m_pendingParams.gap ||
+			selectionParams.source != m_pendingParams.source ||
+			selectionParams.continuous != m_pendingParams.continuous;
+		m_op = SelectionTool::resolveOp(
+			m_lastConstrain, m_lastCenter, selectionParams.defaultOp);
+		m_pendingParams = selectionParams;
+		if(needsRefill) {
+			repeatFill();
+		} else if(needsUpdate) {
+			updateToolNotice();
+		}
+	}
+}
+
+void MagicWandTool::fillAt(const QPointF &point, bool constrain, bool center)
+{
+	m_repeat = false;
+	canvas::CanvasModel *canvas = m_owner.model();
+	if(canvas && !m_running) {
+		m_lastPoint = point;
+		m_lastConstrain = constrain;
+		m_lastCenter = center;
+		m_running = true;
+		m_cancel = false;
+
+		const ToolController::SelectionParams &selectionParams =
+			m_owner.selectionParams();
+		m_pendingParams = selectionParams;
+		m_op = SelectionTool::resolveOp(
+			constrain, center, selectionParams.defaultOp);
+		int activeLayerId = m_owner.activeLayer();
+		int layerId;
+		switch(selectionParams.source) {
+		case int(ToolController::SelectionSource::Merged):
+			layerId = 0;
+			break;
+		case int(ToolController::SelectionSource::MergedWithoutBackground):
+			layerId = -1;
+			break;
+		default:
+			layerId = activeLayerId;
+			break;
+		}
+
+		setHandlesRightClick(true);
+		emit m_owner.toolNoticeRequested(
+			QCoreApplication::translate("MagicWandSettings", "Selecting…"));
+
+		canvas::PaintEngine *paintEngine = canvas->paintEngine();
+		m_owner.executeAsync(new Task(
+			this, m_cancel, paintEngine->viewCanvasState(), point,
+			selectionParams.size, selectionParams.tolerance, layerId,
+			selectionParams.gap, selectionParams.expansion,
+			selectionParams.featherRadius, selectionParams.continuous,
+			activeLayerId, paintEngine->viewMode(), paintEngine->viewLayer(),
+			paintEngine->viewFrame()));
+	}
+}
+
+void MagicWandTool::repeatFill()
+{
+	if(m_running) {
+		m_repeat = true;
+		m_cancel = true;
+	} else if(havePending()) {
+		fillAt(m_lastPoint, m_lastConstrain, m_lastCenter);
 	}
 }
 
@@ -197,6 +241,9 @@ void MagicWandTool::floodFillFinished(Task *task)
 	updateToolNotice();
 	setHandlesRightClick(havePending());
 	m_owner.refreshToolState();
+	if(m_repeat) {
+		fillAt(m_lastPoint, m_lastConstrain, m_lastCenter);
+	}
 }
 
 void MagicWandTool::updateToolNotice()

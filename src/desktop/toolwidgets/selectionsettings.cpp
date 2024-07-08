@@ -150,7 +150,7 @@ void SelectionSettings::pushSettings()
 			   : QCoreApplication::translate("FillSettings", "Expand: "));
 	if(ctrl->activeTool() == Tool::MAGICWAND) {
 		static_cast<MagicWandTool *>(ctrl->getTool(Tool::MAGICWAND))
-			->updatePendingToolNotice();
+			->updateParameters();
 	}
 }
 
@@ -239,6 +239,7 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	m_sizeSlider->setPrefix(
 		QCoreApplication::translate("FillSettings", "Size Limit: "));
 	m_sizeSlider->setSuffix(QCoreApplication::translate("FillSettings", "px"));
+	m_sizeSlider->setBlockUpdateSignalOnDrag(true);
 	connect(
 		m_sizeSlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&SelectionSettings::pushSettings);
@@ -253,6 +254,7 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 		QCoreApplication::translate("FillSettings", "Opacity: "));
 	m_opacitySlider->setSuffix(
 		QCoreApplication::translate("FillSettings", "%"));
+	m_opacitySlider->setBlockUpdateSignalOnDrag(true);
 	connect(
 		m_opacitySlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		this, &SelectionSettings::pushSettings);

@@ -50,6 +50,9 @@
      <property name="value">
       <number>100</number>
      </property>
+     <property name="blockUpdateSignalOnDrag">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item row="12" column="0">
@@ -66,6 +69,9 @@
      </property>
      <property name="maximum">
       <number>254</number>
+     </property>
+     <property name="blockUpdateSignalOnDrag">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -298,6 +304,9 @@
      <property name="singleStep">
       <number>1</number>
      </property>
+     <property name="blockUpdateSignalOnDrag">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item row="8" column="0" colspan="2">
@@ -311,6 +320,9 @@
      <property name="maximum">
       <number>40</number>
      </property>
+     <property name="blockUpdateSignalOnDrag">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item row="9" column="0" colspan="2">
@@ -323,6 +335,9 @@
      </property>
      <property name="maximum">
       <number>32</number>
+     </property>
+     <property name="blockUpdateSignalOnDrag">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -341,6 +356,9 @@
        </property>
        <property name="maximum">
         <number>100</number>
+       </property>
+       <property name="blockUpdateSignalOnDrag">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

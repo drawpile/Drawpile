@@ -113,6 +113,7 @@ FloodFill::FloodFill(ToolController &owner)
 	, m_blendMode(DP_BLEND_MODE_NORMAL)
 	, m_area(Area::Continuous)
 	, m_running{false}
+	, m_repeat(false)
 	, m_cancel{false}
 {
 }
@@ -121,45 +122,12 @@ void FloodFill::begin(const BeginParams &params)
 {
 	if(params.right) {
 		cancelMultipart();
-	} else if(havePending()) {
-		flushPending();
 	} else if(!m_running) {
-		canvas::CanvasModel *canvas = m_owner.model();
-		QColor fillColor = m_blendMode == DP_BLEND_MODE_ERASE
-							   ? Qt::black
-							   : m_owner.foregroundColor();
-
-		int layerId;
-		switch(m_source) {
-		case Source::Merged:
-			layerId = 0;
-			break;
-		case Source::MergedWithoutBackground:
-			layerId = -1;
-			break;
-		case Source::FillSourceLayer:
-			layerId = canvas->layerlist()->fillSourceLayerId();
-			if(layerId > 0) {
-				break;
-			}
-			Q_FALLTHROUGH();
-		default:
-			layerId = m_owner.activeLayer();
-			break;
+		if(havePending()) {
+			flushPending();
+		} else {
+			fillAt(params.point);
 		}
-
-		m_running = true;
-		m_cancel = false;
-		canvas::PaintEngine *paintEngine = canvas->paintEngine();
-		setHandlesRightClick(true);
-		emit m_owner.toolNoticeRequested(
-			QCoreApplication::translate("FillSettings", "Filling…"));
-		m_owner.executeAsync(new Task{
-			this, m_cancel, paintEngine->viewCanvasState(),
-			canvas->localUserId(), params.point, fillColor, m_tolerance,
-			layerId, m_size, m_gap, m_expansion, m_featherRadius, m_area,
-			paintEngine->viewMode(), paintEngine->viewLayer(),
-			paintEngine->viewFrame()});
 	}
 }
 
@@ -193,6 +161,7 @@ void FloodFill::cancelMultipart()
 
 void FloodFill::dispose()
 {
+	m_repeat = false;
 	if(m_running) {
 		m_cancel = true;
 	}
@@ -215,19 +184,87 @@ ToolState FloodFill::toolState() const
 	return havePending() ? ToolState::AwaitingConfirmation : ToolState::Normal;
 }
 
-void FloodFill::setOpacity(qreal opacity)
+void FloodFill::setParameters(
+	qreal tolerance, int expansion, int featherRadius, int size, qreal opacity,
+	int gap, Source source, int blendMode, Area area)
 {
-	if(opacity != m_opacity) {
+	bool needsUpdate = opacity != m_opacity || blendMode != m_blendMode;
+	bool needsRefill = tolerance != m_tolerance || expansion != m_expansion ||
+					   featherRadius != m_featherRadius || size != m_size ||
+					   gap != m_gap || source != m_source || area != m_area;
+
+	if(needsUpdate) {
 		m_opacity = opacity;
-		updatePendingPreview();
+		m_blendMode = blendMode;
+		if(!needsRefill) {
+			updatePendingPreview();
+		}
+	}
+
+	if(needsRefill) {
+		m_tolerance = tolerance;
+		m_expansion = expansion;
+		m_featherRadius = featherRadius;
+		m_size = size;
+		m_gap = gap;
+		m_source = source;
+		m_area = area;
+		repeatFill();
 	}
 }
 
-void FloodFill::setBlendMode(int blendMode)
+void FloodFill::fillAt(const QPointF &point)
 {
-	if(blendMode != m_blendMode) {
-		m_blendMode = blendMode;
-		updatePendingPreview();
+	m_repeat = false;
+	canvas::CanvasModel *canvas = m_owner.model();
+	if(canvas && !m_running) {
+		m_lastPoint = point;
+
+		QColor fillColor = m_blendMode == DP_BLEND_MODE_ERASE
+							   ? Qt::black
+							   : m_owner.foregroundColor();
+
+		int layerId;
+		switch(m_source) {
+		case Source::Merged:
+			layerId = 0;
+			break;
+		case Source::MergedWithoutBackground:
+			layerId = -1;
+			break;
+		case Source::FillSourceLayer:
+			layerId = canvas->layerlist()->fillSourceLayerId();
+			if(layerId > 0) {
+				break;
+			}
+			Q_FALLTHROUGH();
+		default:
+			layerId = m_owner.activeLayer();
+			break;
+		}
+
+		m_running = true;
+		m_cancel = false;
+		canvas::PaintEngine *paintEngine = canvas->paintEngine();
+		setHandlesRightClick(true);
+		emit m_owner.toolNoticeRequested(
+			QCoreApplication::translate("FillSettings", "Filling…"));
+		m_owner.executeAsync(new Task(
+			this, m_cancel, paintEngine->viewCanvasState(),
+			canvas->localUserId(), point, fillColor, m_tolerance, layerId,
+			m_size, m_gap, m_expansion, m_featherRadius, m_area,
+			paintEngine->viewMode(), paintEngine->viewLayer(),
+			paintEngine->viewFrame()));
+	}
+}
+
+void FloodFill::repeatFill()
+{
+	if(m_running) {
+		m_repeat = true;
+		m_cancel = true;
+	} else if(havePending()) {
+		fillAt(m_lastPoint);
 	}
 }
 
@@ -251,6 +288,9 @@ void FloodFill::floodFillFinished(Task *task)
 	previewPending();
 	setHandlesRightClick(havePending());
 	m_owner.refreshToolState();
+	if(m_repeat) {
+		fillAt(m_lastPoint);
+	}
 }
 
 void FloodFill::updatePendingPreview()
