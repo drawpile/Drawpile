@@ -494,12 +494,12 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+7"/>
         <source>History Offset:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">History Offset:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Local Fork Fallbehind:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Local Fork Fallbehind:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1033,7 +1033,7 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</translation>
     </message>
 </context>
 <context>
@@ -1519,7 +1519,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+4"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pic&amp;k From Screen</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1690,7 +1690,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+41"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">New Layer Group</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1993,7 +1993,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+98"/>
         <source>Lock Docks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lock Docks</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2310,12 +2310,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Next Key Frame</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Previous Key Frame</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3276,7 +3276,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+7"/>
         <source>Allow joining from the web browser</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Allow joining from the web browser</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -5018,7 +5018,10 @@ Para velocidades muy lentas, ocurre lo opuesto.</translation>
  1.0 standard deviation is one basic radius away
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Add a random offset to the position where each dab is drawn
+ 0.0 disabled
+ 1.0 standard deviation is one basic radius away
+&lt;0.0 negative values produce no jitter</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5036,7 +5039,7 @@ Para velocidades muy lentas, ocurre lo opuesto.</translation>
         <location line="+2"/>
         <source>How slow the offset goes back to zero when the cursor stops moving</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">How slow the offset goes back to zero when the cursor stops moving</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5292,7 +5295,9 @@ Una escala de 0 hará que la cuadricula sea de 256x256 pixeles.</translation>
 The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Changes the scale that the GridMap brush input operates on - affects X axis only.
+The range is 0-5x.
+This allows you to stretch or compress the GridMap pattern.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5300,7 +5305,9 @@ This allows you to stretch or compress the GridMap pattern.</source>
 The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Changes the scale that the GridMap brush input operates on - affects Y axis only.
+The range is 0-5x.
+This allows you to stretch or compress the GridMap pattern.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5308,7 +5315,9 @@ This allows you to stretch or compress the GridMap pattern.</source>
 Useful to correct for high-definition/large brushes with lots of dabs.
 The longer the smudge length the more a color will spread and will also boost performance dramatically, as the canvas is sampled less often</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Logarithmic multiplier for the &quot;Smudge length&quot; value.
+Useful to correct for high-definition/large brushes with lots of dabs.
+The longer the smudge length the more a color will spread and will also boost performance dramatically, as the canvas is sampled less often</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5316,7 +5325,9 @@ The longer the smudge length the more a color will spread and will also boost pe
 You can control which bucket to use to improve variability and realism of the brush.
 Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">There are 256 buckets that each can hold a color picked up from the canvas.
+You can control which bucket to use to improve variability and realism of the brush.
+Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5326,7 +5337,11 @@ Especially useful with the &quot;Custom input&quot; setting to correlate buckets
 0.0 will have no effect.
 Negative values do the reverse</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Control how much transparency is picked up and smudged, similar to lock alpha.
+1.0 will not move any transparency.
+0.5 will move only 50% transparency and above.
+0.0 will have no effect.
+Negative values do the reverse</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5392,7 +5407,7 @@ Negative values do the reverse</source>
         <location line="+2"/>
         <source>Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5400,7 +5415,9 @@ Negative values do the reverse</source>
 0.05 = 5 levels, 0.2 = 20 levels, etc.
 Values above 0.5 may not be noticeable.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Number of posterization levels (divided by 100).
+0.05 = 5 levels, 0.2 = 20 levels, etc.
+Values above 0.5 may not be noticeable.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6848,22 +6865,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+61"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Interpolate when view is zoomed or rotated</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas view:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Canvas view:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Prevent jitter at certain zoom and rotation levels</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Prevent jitter at certain zoom and rotation levels</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enabling these options may impact performance on some systems.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -6966,18 +6983,18 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Switch to eraser slot</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erase with current brush</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser action:</source>
         <extracomment>Eraser refers to the eraser tip of a tablet pen.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eraser action:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7821,17 +7838,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Enable high-DPI scaling (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enable high-DPI scaling (experimental)</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Override system scale factor (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Override system scale factor (experimental)</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Scale factor: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Scale factor: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7841,17 +7858,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+29"/>
         <source>%1px</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1px</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1pt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1pt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Changes to scaling and font size apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Changes to scaling and font size apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</translation>
     </message>
 </context>
 <context>
@@ -7904,12 +7921,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Inactive</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Inactive</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that have zero actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Show sessions that have zero actively drawing users</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8665,22 +8682,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+218"/>
         <source>Duplicate Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Duplicate Layer Group</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Merge Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Merge Layer Group</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Layer Group Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Layer Group Properties…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Delete Layer Group</translation>
     </message>
     <message>
         <location line="+216"/>
@@ -8778,12 +8795,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/titlewidget.cpp" line="+36"/>
         <source>Docked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Docked</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dockable by Dragging</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dockable by Dragging</translation>
     </message>
     <message>
         <location line="+5"/>
