@@ -5856,7 +5856,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+19"/>
         <source>Horizontal</source>
-        <translation type="unfinished">Horizontal</translation>
+        <translation type="unfinished">Горизонтально</translation>
     </message>
     <message>
         <location line="+18"/>
