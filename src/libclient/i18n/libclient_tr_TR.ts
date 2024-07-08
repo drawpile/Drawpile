@@ -576,7 +576,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Etkin</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1001,7 +1001,7 @@
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kimlik</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -1056,7 +1056,7 @@
     <message>
         <location line="-392"/>
         <source>You have been kicked.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dışarı atıldınız</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1086,7 +1086,7 @@
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bağlantı Kesildi.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1102,7 +1102,7 @@
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sunucu hatası</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1175,7 +1175,7 @@
         <location line="+4"/>
         <source>Session terminated by moderator (%1): %2</source>
         <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Oturum moderatör tarafından sonlandırıldı (%1).</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1491,7 +1491,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Etkin</translation>
     </message>
 </context>
 <context>
