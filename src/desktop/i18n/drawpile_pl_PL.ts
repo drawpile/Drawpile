@@ -773,7 +773,7 @@ to 64x64 pixels.</translation>
     <message>
         <location filename="../ui/flipbook.ui" line="+14"/>
         <source>Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Flipbook</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -1414,7 +1414,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+9"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">There is still unsent data! Please wait until transmission completes!</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -1972,7 +1972,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+9"/>
         <source>&amp;Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Zoom</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -2631,7 +2631,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zoom</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3182,7 +3182,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+14"/>
         <source>Autoreset threshold:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Autoreset threshold:</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -3197,7 +3197,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+3"/>
         <source> MB</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> MB</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -3437,7 +3437,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../ui/textsettings.ui" line="+75"/>
         <source>Horizontal alignment</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Horizontal alignment</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -3670,7 +3670,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+12"/>
         <source>Revert changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Revert changes to the current palette</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4233,7 +4233,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+4"/>
         <source>Blending of colors on the layer being drawn on.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Blending of colors on the layer being drawn on.</translation>
     </message>
     <message>
         <location line="+172"/>
@@ -5067,7 +5067,7 @@ For very slow speed the opposite happens.</translation>
         <location line="+6"/>
         <source>Color value (brightness, intensity)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Color value (brightness, intensity)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5528,7 +5528,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+7"/>
         <source>Unknown type %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Unknown type %1.</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -6384,7 +6384,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Error saving roles to &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error saving roles to &apos;%1&apos;: %2</translation>
     </message>
 </context>
 <context>
@@ -7423,7 +7423,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined. Connected sessions that change their title or NSFM flag will automatically disconnect.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">NSFM sessions will be hidden from server listings and cannot be joined. Connected sessions that change their title or NSFM flag will automatically disconnect.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7875,7 +7875,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>%1pt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1pt</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7903,7 +7903,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Closed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Closed</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8394,9 +8394,9 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+11"/>
         <source>%n brush(es) imported.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n brush(es) imported.</numerusform>
+            <numerusform>%n brush(es) imported.</numerusform>
+            <numerusform>%n brush(es) imported.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -8764,7 +8764,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+10"/>
         <source>Frames: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Frames: </translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8854,7 +8854,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>KisTablet Wintab input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">KisTablet Wintab input</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9112,7 +9112,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>Save As…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Save As…</translation>
     </message>
     <message>
         <location line="+60"/>
