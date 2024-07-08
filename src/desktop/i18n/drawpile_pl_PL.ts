@@ -1047,7 +1047,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="-191"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Password</translation>
     </message>
     <message>
         <location line="-36"/>
@@ -1892,7 +1892,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Fit Page &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fit Page &amp;Width</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1932,7 +1932,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Show User &amp;Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Show User &amp;Pointers</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3840,9 +3840,9 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+28"/>
         <source> frame(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform> frame</numerusform>
+            <numerusform> frames</numerusform>
+            <numerusform> frames</numerusform>
         </translation>
     </message>
     <message>
@@ -4007,7 +4007,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+12"/>
         <source>Spacing: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Spacing: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4279,7 +4279,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>Random</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Random</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4303,7 +4303,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>Ascension</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ascension</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5851,7 +5851,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+19"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Horizontal</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -6174,7 +6174,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="-465"/>
         <source>Session Ban Export</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Session Ban Export</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6939,7 +6939,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Color scheme:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Color scheme:</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -7393,7 +7393,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Unrestricted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Unrestricted</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7444,7 +7444,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="-23"/>
         <source>Hide settings when locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hide settings when locked</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -7584,7 +7584,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+34"/>
         <source>Search actions…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Search actions…</translation>
     </message>
     <message>
         <location line="+73"/>
@@ -8728,7 +8728,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+142"/>
         <source>Delete Layer?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Delete Layer?</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8741,7 +8741,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../docks/navigator.cpp" line="+354"/>
         <source>Navigator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Navigator</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -9012,7 +9012,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Merged Image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Merged Image</translation>
     </message>
 </context>
 <context>
@@ -9089,7 +9089,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Press the Set button to assign a shortcut.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Press the Set button to assign a shortcut.</translation>
     </message>
 </context>
 <context>
@@ -9558,7 +9558,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Remove</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9675,7 +9675,9 @@ Hex: %4</translation>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">There&apos;s no tracks yet.
+Add one using the ＋ button above
+or via Animation ▸ New Track.</translation>
     </message>
     <message>
         <location line="+558"/>
