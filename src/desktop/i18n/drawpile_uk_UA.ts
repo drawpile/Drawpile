@@ -5407,7 +5407,7 @@ Negative values do the reverse</translation>
         <location line="+2"/>
         <source>Logarithmic multiplier for X, Y, and Angular Offset settings.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Logarithmic multiplier for X, Y, and Angular Offset settings.</translation>
+        <translation type="unfinished">Логаритмічний коефіцієнт для налаштувань зміщень X, Y і кутових зміщень.</translation>
     </message>
     <message>
         <location line="+2"/>
