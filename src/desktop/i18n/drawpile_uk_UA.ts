@@ -2131,7 +2131,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+2"/>
         <source>Primary screen:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Primary screen:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2288,7 +2288,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Layer Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Layer Properties…</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+2"/>
@@ -2388,7 +2388,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rename Track</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4040,7 +4040,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+12"/>
         <source>Stabilizer: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stabilizer: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -4107,7 +4107,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+10"/>
         <location line="+298"/>
         <source>Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hardness</translation>
     </message>
     <message>
         <location line="-268"/>
@@ -4428,7 +4428,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">This is a user defined input. Look at the &apos;custom input&apos; setting for details.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4688,7 +4688,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Smudge length</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Smudge length</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4893,7 +4893,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Unknown Setting</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Unknown Setting</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -5795,7 +5795,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>%1 (deleted)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (deleted)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6163,7 +6163,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Error saving bans to &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error saving bans to &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -6381,7 +6381,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Undo Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Undo Limit: </translation>
     </message>
     <message>
         <location line="+10"/>
@@ -6429,7 +6429,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Servers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Servers</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7054,7 +7054,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="-50"/>
         <location line="+52"/>
         <source>Do nothing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Do nothing</translation>
     </message>
     <message>
         <location line="-98"/>
@@ -7463,7 +7463,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Enter password:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enter password:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -7716,7 +7716,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>HSL (Hue–Saturation–Lightness)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">HSL (Hue–Saturation–Lightness)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7804,7 +7804,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+12"/>
         <source>Changes to kinetic scrolling apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Changes to kinetic scrolling apply after you restart Drawpile.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -8036,7 +8036,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Generates a random password.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Generates a random password.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8081,7 +8081,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+12"/>
         <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -8278,7 +8278,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Next time, you&apos;ll see news and updates on this page.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Next time, you&apos;ll see news and updates on this page.</translation>
     </message>
 </context>
 <context>
@@ -8601,7 +8601,7 @@ Values above 0.5 may not be noticeable.</translation>
         <source>H</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Hue&quot; H of HSV.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">H</translation>
     </message>
     <message>
         <location line="+2"/>
