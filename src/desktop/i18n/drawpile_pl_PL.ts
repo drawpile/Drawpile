@@ -121,7 +121,7 @@
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lock alpha (recolor mode)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -397,7 +397,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+7"/>
         <source>Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alpha</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -839,7 +839,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+28"/>
         <source>Copy Invite Link</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Copy Invite Link</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -975,7 +975,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="+10"/>
         <source>Blending Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Blending Mode:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -995,7 +995,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="+23"/>
         <source>Collaboration:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Collaboration:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1112,7 +1112,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="+3"/>
         <source>Log in a different way</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Log in a different way</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -1323,7 +1323,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+68"/>
         <source>Saving animation...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Saving animation...</translation>
     </message>
     <message>
         <location line="+54"/>
@@ -1359,7 +1359,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Unknown error.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1419,7 +1419,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+37"/>
         <source>Become Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Become Operator</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1807,7 +1807,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+90"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Edit</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -3292,7 +3292,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+11"/>
         <source>Permissions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Permissions</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3718,7 +3718,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+1"/>
         <location line="+13"/>
         <source>Open Palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Open Palette</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3992,7 +3992,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+14"/>
         <source>Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eraser Mode</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6919,7 +6919,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Krita Dark</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Krita Dark</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7039,7 +7039,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Qt6 Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Qt6 Wintab</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7388,7 +7388,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+12"/>
         <source>Filter mode:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Filter mode:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8844,7 +8844,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../tabletinput.cpp" line="+186"/>
         <source>Qt tablet input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Qt tablet input</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9205,7 +9205,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+6"/>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chat</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9322,7 +9322,15 @@ Values above 0.5 may not be noticeable.</translation>
 /me &lt;text&gt; - send action-type message
 /roll &lt;dice&gt; - roll dice, e.g. 1d6 for a six-sided die</source>
         <extracomment>Don&apos;t translate the commands, only their descriptions!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Available client commands:
+/help - show this message
+/clear - clear chat window
+/! &lt;text&gt; - make an announcement (Operators only)
+/alert &lt;text&gt; - send a high priority alert (Operators only)
+/pin &lt;text&gt; - pin a message to the top of the chat box (Operators only)
+/unpin - remove pinned message (Operators only)
+/me &lt;text&gt; - send action-type message
+/roll &lt;dice&gt; - roll dice, e.g. 1d6 for a six-sided die</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9722,7 +9730,7 @@ or via Animation ▸ New Track.</translation>
     <message>
         <location line="+13"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Set Key Frame to Current Layer</translation>
     </message>
 </context>
 <context>
