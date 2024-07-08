@@ -495,7 +495,7 @@
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1g %2p</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -674,12 +674,12 @@
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Xóa</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color Erase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Màu xóa</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1061,22 +1061,22 @@
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bạn đã bị đá bởi %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Xảy ra lỗi máy chủ!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Xảy ra lỗi máy chủ!</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Máy chủ đang tắt!</translation>
     </message>
     <message>
         <location line="+3"/>
