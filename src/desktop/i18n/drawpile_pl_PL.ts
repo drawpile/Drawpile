@@ -297,7 +297,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="-100"/>
         <source>SHA1 fingerprint:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">SHA1 fingerprint:</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -1288,7 +1288,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+135"/>
         <source>Saving...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Saving...</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1608,7 +1608,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Open...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Open...</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2551,7 +2551,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Ellipse</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Ellipse</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2816,7 +2816,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+4"/>
         <source>Focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Focus canvas</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -2844,7 +2844,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+40"/>
         <source>Latency:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Latency:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3759,7 +3759,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../bundled/QtColorWidgets/swatch.cpp" line="+846"/>
         <source>Clear Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Clear Color</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -4543,7 +4543,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Dabs per basic radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dabs per basic radius</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5038,7 +5038,7 @@ For very slow speed the opposite happens.</translation>
         <location line="+2"/>
         <source>Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5184,7 +5184,7 @@ For very slow speed the opposite happens.</translation>
         <location line="+2"/>
         <source>How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5904,7 +5904,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+7"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -6493,7 +6493,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Share your canvas with others</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Share your canvas with others</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7424,7 +7424,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+11"/>
         <location line="+28"/>
         <source>Lock</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lock</translation>
     </message>
     <message>
         <location line="-23"/>
@@ -7955,7 +7955,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+6"/>
         <source>Copy session URL</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Copy session URL</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9512,7 +9512,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Don&apos;t show this again</translation>
     </message>
 </context>
 <context>
@@ -9720,7 +9720,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="-138"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Operator</translation>
     </message>
     <message>
         <location line="+1"/>
