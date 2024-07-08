@@ -5533,7 +5533,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+7"/>
         <source>Unknown type %1.</source>
-        <translation type="unfinished">Unknown type %1.</translation>
+        <translation type="unfinished">Невідомий тип</translation>
     </message>
     <message>
         <location line="+41"/>
