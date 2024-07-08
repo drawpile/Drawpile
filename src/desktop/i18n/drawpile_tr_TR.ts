@@ -9716,7 +9716,7 @@ ya da Animasyon ▸ Yeni Track seçeneğini kullanın.</translation>
     <message>
         <location line="-138"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished">&amp;Operator</translation>
+        <translation type="unfinished">Operatör</translation>
     </message>
     <message>
         <location line="+1"/>
