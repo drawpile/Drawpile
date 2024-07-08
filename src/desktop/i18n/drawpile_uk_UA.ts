@@ -7393,7 +7393,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+12"/>
         <source>Filter mode:</source>
-        <translation type="unfinished">Filter mode:</translation>
+        <translation type="unfinished">Режим фільтрації</translation>
     </message>
     <message>
         <location line="+1"/>
