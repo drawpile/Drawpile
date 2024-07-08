@@ -9746,7 +9746,7 @@ ya da Animasyon ▸ Yeni Track seçeneğini kullanın.</translation>
     <message>
         <location line="+4"/>
         <source>&amp;Kick</source>
-        <translation type="unfinished">&amp;Kick</translation>
+        <translation type="unfinished">At</translation>
     </message>
     <message>
         <location line="+2"/>
