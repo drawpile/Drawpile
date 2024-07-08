@@ -7908,7 +7908,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Closed</source>
-        <translation type="unfinished">Closed</translation>
+        <translation type="unfinished">Зачинено</translation>
     </message>
     <message>
         <location line="+1"/>
