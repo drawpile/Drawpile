@@ -8680,7 +8680,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Delete Layer Group</source>
-        <translation type="unfinished">Delete Layer Group</translation>
+        <translation type="unfinished">Grubu Sil</translation>
     </message>
     <message>
         <location line="+174"/>
