@@ -798,7 +798,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+17"/>
         <source>Frame:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Frame:</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -1507,7 +1507,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+13"/>
         <source>Set Artificial Lag</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Set Artificial Lag</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1586,7 +1586,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+4"/>
         <source>Vertical Tabs on Sides</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vertical Tabs on Sides</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -2240,7 +2240,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+12"/>
         <source>&amp;Animation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Animation</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2801,7 +2801,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+20"/>
         <source>Swatch Color %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Swatch Color %1</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -3583,7 +3583,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+72"/>
         <source>Export Options</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Export Options</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -3642,7 +3642,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+74"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (%2 colors)</translation>
     </message>
 </context>
 <context>
@@ -4408,7 +4408,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4747,7 +4747,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Elliptical dab: angle</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Elliptical dab: angle</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5815,7 +5815,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Delete</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -5972,7 +5972,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+530"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enter the username and password for your account on this server. This is not your drawpile.net account!</translation>
     </message>
     <message>
         <location line="-614"/>
@@ -7167,7 +7167,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>If all operators in a session set connection quality to Poor, auto-reset will not work and the server will stop processing updates until the session is manually reset.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">If all operators in a session set connection quality to Poor, auto-reset will not work and the server will stop processing updates until the session is manually reset.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7829,7 +7829,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Miscellaneous:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Miscellaneous:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8278,7 +8278,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</translation>
     </message>
     <message>
         <location line="+4"/>
