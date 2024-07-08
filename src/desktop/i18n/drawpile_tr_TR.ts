@@ -7834,7 +7834,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Scale factor: </source>
-        <translation type="unfinished">Scale factor: </translation>
+        <translation type="unfinished">Ölçek Değişkeni </translation>
     </message>
     <message>
         <location line="+1"/>
