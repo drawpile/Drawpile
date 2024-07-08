@@ -268,7 +268,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+3"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Inverted</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2110,7 +2110,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Copy Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Copy Key Frame</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2384,7 +2384,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Export Session &amp;Template...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Export Session &amp;Template...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2854,7 +2854,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+14"/>
         <source>Tile Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tile Memory:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -3368,7 +3368,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+10"/>
         <source>Selection Move &amp; Resize:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Selection Move &amp; Resize:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3665,7 +3665,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+38"/>
         <source>Delete the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Delete the current palette</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -3680,7 +3680,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+25"/>
         <source>Add a color to the palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Add a color to the palette</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4151,7 +4151,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+11"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maximum Velocity: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4178,7 +4178,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4583,7 +4583,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Fine speed gamma</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fine speed gamma</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4783,7 +4783,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>GridMap Scale</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">GridMap Scale</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4956,7 +4956,7 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <location line="+2"/>
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5397,7 +5397,7 @@ Negative values do the reverse</translation>
         <location line="+2"/>
         <source>Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5860,7 +5860,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+18"/>
         <source>Mink</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mink</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -6477,7 +6477,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Connect to a drawing session directly</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Connect to a drawing session directly</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6813,7 +6813,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="-103"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Language:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6848,7 +6848,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Canvas snapshots:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Canvas snapshots:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7122,7 +7122,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+10"/>
         <source>Host on port %1 if available</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Host on port %1 if available</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7309,7 +7309,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+12"/>
         <source>Disconnected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Disconnected</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -8296,7 +8296,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+13"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Search</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -8955,7 +8955,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Makes the stabilizer a brush setting, like in MyPaint, rather than an independent setting, like in Krita.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Makes the stabilizer a brush setting, like in MyPaint, rather than an independent setting, like in Krita.</translation>
     </message>
     <message>
         <location line="+172"/>
@@ -9674,7 +9674,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+57"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rename Track</translation>
     </message>
     <message>
         <location line="+0"/>
