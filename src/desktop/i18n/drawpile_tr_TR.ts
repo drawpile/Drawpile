@@ -8737,7 +8737,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Wrap</source>
-        <translation type="unfinished">Wrap</translation>
+        <translation type="unfinished">Sar</translation>
     </message>
     <message>
         <location line="+7"/>
