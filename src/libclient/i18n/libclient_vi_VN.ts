@@ -24,7 +24,7 @@
     <message>
         <location line="+2"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Định dạng không được hỗ trợ</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -49,7 +49,7 @@
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lỗi không xác định.</translation>
     </message>
 </context>
 <context>
@@ -67,7 +67,7 @@
     <message>
         <location line="+2"/>
         <source>Modifiers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Từ bổ nghĩa</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -79,7 +79,7 @@
         <location line="+3"/>
         <source>%1 (%2)</source>
         <extracomment>Example: &quot;Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (%2)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -107,22 +107,22 @@
     <message>
         <location line="+12"/>
         <source>Unset</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bỏ thiết đặt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Left Click</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Click chuột trái</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right Click</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nhắp chuột phải</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nhấn chuột giữa</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -152,7 +152,7 @@
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chọn màu</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -202,7 +202,7 @@
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Đảo ngược</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -263,7 +263,7 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">xung đột</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -278,7 +278,7 @@
     <message>
         <location line="+1"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Thay thế</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -291,7 +291,7 @@
     <message>
         <location filename="../document.cpp" line="+715"/>
         <source>Unknown format.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Đuôi tập tin không xác định</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -301,7 +301,7 @@
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lỗi khi mở tập tin</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -311,7 +311,7 @@
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lỗi không xác định.</translation>
     </message>
 </context>
 <context>
@@ -363,7 +363,7 @@
     <message>
         <location line="+2"/>
         <source>Visibility: Parent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">:ref:`VisibilityNotifier2D &lt;class_VisibilityNotifier2D&gt;` (tên là ``Visibility``)</translation>
     </message>
 </context>
 <context>
@@ -462,22 +462,22 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-103"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Shift</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ctrl</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Siêu dữ liệu</translation>
     </message>
 </context>
 <context>
@@ -500,7 +500,7 @@
     <message>
         <location line="+5"/>
         <source>%1m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1phút</translation>
     </message>
     <message numerus="yes">
         <location line="+94"/>
@@ -513,7 +513,7 @@
         <location line="+2"/>
         <source>%n users</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
+            <numerusform>%n người dùng</numerusform>
         </translation>
     </message>
     <message>
@@ -551,12 +551,12 @@
     <message>
         <location line="+1"/>
         <source>unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Phiên bản chưa biết</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Khả năng tương thích</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -576,7 +576,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hoạt động</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -591,12 +591,12 @@
     <message>
         <location line="+171"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">đã đóng</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Đã được bảo vệ bằng mật khẩu</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -629,12 +629,12 @@
     <message>
         <location line="+5"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Màn hình</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lớp phủ</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -719,7 +719,7 @@
     <message>
         <location line="+5"/>
         <source>Luminosity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Độ tỏa sáng</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -740,12 +740,12 @@
     <message>
         <location line="-103"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tất cả</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Đã gỡ thẻ</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -786,7 +786,7 @@
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chưa được phân loại</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -897,12 +897,12 @@
     <message>
         <location line="+5"/>
         <source>Online</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trực tuyến</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ngoại tuyến</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -912,12 +912,12 @@
     <message>
         <location line="+2"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kiểu</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trạng thái</translation>
     </message>
     <message>
         <location line="+182"/>
@@ -992,7 +992,7 @@
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vai trò</translation>
     </message>
 </context>
 <context>
@@ -1001,7 +1001,7 @@
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -1086,12 +1086,12 @@
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Đã ngắt kết nối</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ngắt kết nối %1</translation>
     </message>
     <message>
         <location line="+324"/>
@@ -1102,7 +1102,7 @@
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lỗi máy chủ</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1300,12 +1300,12 @@
     <message>
         <location line="+52"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Phiên bản mới</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Phiên bản chưa biết</translation>
     </message>
     <message>
         <location line="-42"/>
@@ -1439,7 +1439,7 @@
     <message>
         <location line="+4"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Phiên bản không tương thích</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1491,7 +1491,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hoạt động</translation>
     </message>
 </context>
 <context>
@@ -1533,7 +1533,7 @@
         <location filename="../utils/news.cpp" line="+280"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Đang kiểm tra cập nhật…</translation>
     </message>
     <message>
         <location line="-23"/>
@@ -1548,7 +1548,7 @@
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lỗi mạng %s</translation>
     </message>
     <message>
         <location line="+12"/>
