@@ -3994,7 +3994,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+14"/>
         <source>Eraser Mode</source>
-        <translation type="unfinished">Eraser Mode</translation>
+        <translation type="unfinished">Режим гумки</translation>
     </message>
     <message>
         <location line="+9"/>
