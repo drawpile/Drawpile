@@ -1542,7 +1542,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+4"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pic&amp;k From Screen</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1673,7 +1673,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+41"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">New Layer Group</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2530,12 +2530,12 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+3"/>
         <source>Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Next Key Frame</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Previous Key Frame</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3270,7 +3270,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+14"/>
         <source>Allow joining from the web browser</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Allow joining from the web browser</translation>
     </message>
     <message>
         <location line="+166"/>
@@ -6869,22 +6869,22 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+61"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Interpolate when view is zoomed or rotated</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas view:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Canvas view:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Prevent jitter at certain zoom and rotation levels</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Prevent jitter at certain zoom and rotation levels</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enabling these options may impact performance on some systems.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -6987,18 +6987,18 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+9"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Switch to eraser slot</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erase with current brush</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser action:</source>
         <extracomment>Eraser refers to the eraser tip of a tablet pen.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eraser action:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7842,17 +7842,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+12"/>
         <source>Enable high-DPI scaling (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enable high-DPI scaling (experimental)</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Override system scale factor (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Override system scale factor (experimental)</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Scale factor: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Scale factor: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7862,17 +7862,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+29"/>
         <source>%1px</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1px</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1pt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1pt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Changes to scaling and font size apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Changes to scaling and font size apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</translation>
     </message>
 </context>
 <context>
@@ -7925,12 +7925,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+6"/>
         <source>Inactive</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Inactive</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that have zero actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Show sessions that have zero actively drawing users</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8686,22 +8686,22 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+218"/>
         <source>Duplicate Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Duplicate Layer Group</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Merge Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Merge Layer Group</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Layer Group Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Layer Group Properties…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Delete Layer Group</translation>
     </message>
     <message>
         <location line="+174"/>
