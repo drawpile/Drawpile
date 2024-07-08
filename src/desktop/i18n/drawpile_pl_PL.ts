@@ -914,7 +914,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="+175"/>
         <source>&amp;Select All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Select All</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1273,7 +1273,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Save</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1440,7 +1440,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="-1781"/>
         <source>Could not connect to server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Could not connect to server</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1922,7 +1922,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Flip</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Flip</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2100,7 +2100,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Set Blank Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Set Blank Key Frame</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2764,7 +2764,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Log file doesn&apos;t exist, do you need to enable logging in the preferences?</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -3217,7 +3217,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+7"/>
         <source>Don&apos;t terminate session when the last user leaves</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Don&apos;t terminate session when the last user leaves</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4146,7 +4146,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Distance dynamics</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4832,7 +4832,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Angular Offset: Direction</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angular Offset: Direction</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5280,7 +5280,9 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
 Logarithmic (same scale as brush radius).
 A scale of 0 will make the grid 256x256 pixels.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Changes the overall scale that the GridMap brush input operates on.
+Logarithmic (same scale as brush radius).
+A scale of 0 will make the grid 256x256 pixels.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5716,7 +5718,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+6"/>
         <source>Affected Area</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Affected Area</translation>
     </message>
     <message>
         <location line="+236"/>
@@ -6333,7 +6335,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Since you are a moderator, you can export bans encrypted or plain. Encrypted bans can only be imported on this server. Which format do you want to export?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Since you are a moderator, you can export bans encrypted or plain. Encrypted bans can only be imported on this server. Which format do you want to export?</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7023,7 +7025,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+2"/>
         <source>Qt6 Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8810,7 +8812,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Close</translation>
     </message>
 </context>
 <context>
@@ -8872,7 +8874,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Merge</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Merge</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8888,7 +8890,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+3"/>
         <location line="+20"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Center</translation>
     </message>
     <message>
         <location line="-17"/>
@@ -9069,7 +9071,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Hold down the desired key combination and click into the field above. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hold down the desired key combination and click into the field above. Hit Escape to cancel.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9185,7 +9187,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../chat/chatbox.cpp" line="+45"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Invite</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9763,7 +9765,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+2"/>
         <source>Kick &amp;&amp; Ba&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kick &amp;&amp; Ba&amp;n</translation>
     </message>
     <message>
         <location line="+4"/>
