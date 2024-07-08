@@ -7070,7 +7070,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Pan canvas</source>
-        <translation type="unfinished">Pan canvas</translation>
+        <translation type="unfinished">Tuvali Kaydır</translation>
     </message>
     <message>
         <location line="+9"/>
