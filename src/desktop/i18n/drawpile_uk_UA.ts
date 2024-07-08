@@ -1945,7 +1945,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Toggle Recolor Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Toggle Recolor Mode</translation>
     </message>
     <message>
         <location line="+234"/>
@@ -3999,7 +3999,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+9"/>
         <source>Pick Initial Color from Layer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pick Initial Color from Layer</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4646,7 +4646,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Save color</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Save color</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5124,7 +5124,10 @@ For very slow speed the opposite happens.</translation>
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Change the color saturation using the HSV color model. HSV changes are applied before HSL.
+-1.0 more grayish
+ 0.0 disable
+ 1.0 more saturated</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5419,7 +5422,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Mouse Button</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mouse Button</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5798,7 +5801,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+138"/>
         <source>Undelete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Undelete</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6056,7 +6059,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+17"/>
         <source>Index building failed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Index building failed.</translation>
     </message>
     <message>
         <location line="+163"/>
@@ -6758,9 +6761,9 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Really remove %n canvas shortcut?</numerusform>
+            <numerusform>Really remove %n canvas shortcuts?</numerusform>
+            <numerusform>Really remove %n canvas shortcuts?</numerusform>
         </translation>
     </message>
     <message>
@@ -6771,7 +6774,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Restore Canvas Shortcut Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Restore Canvas Shortcut Defaults</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7360,7 +7363,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Keywords:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Keywords:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7510,7 +7513,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Remove list servers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Remove list servers</translation>
     </message>
     <message numerus="yes">
         <location line="-54"/>
@@ -7659,7 +7662,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Triangle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Triangle</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7996,7 +7999,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Canvas background color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Canvas background color</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8318,7 +8321,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="-334"/>
         <source>Brush Tags</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brush Tags</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9074,7 +9077,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../scene/canvasview.cpp" line="+194"/>
         <source>Reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Reconnect</translation>
     </message>
     <message>
         <location line="+21"/>
