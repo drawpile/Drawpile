@@ -9726,7 +9726,7 @@ ya da Animasyon ▸ Yeni Track seçeneğini kullanın.</translation>
     <message>
         <location line="+3"/>
         <source>&amp;Lock</source>
-        <translation type="unfinished">&amp;Lock</translation>
+        <translation type="unfinished">Ki&amp;litle</translation>
     </message>
     <message>
         <location line="+1"/>
