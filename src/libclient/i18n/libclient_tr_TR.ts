@@ -992,7 +992,7 @@
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Roller</translation>
     </message>
 </context>
 <context>
@@ -1061,22 +1061,22 @@
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 tarafından kovuldunuz</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bir sunucu hatası oluştu!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bir sunucu hatası oluştu!</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sunucu kapanıyor!</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1091,7 +1091,7 @@
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bağlantı kesildi: %1</translation>
     </message>
     <message>
         <location line="+324"/>
@@ -1142,7 +1142,7 @@
     <message>
         <location line="+26"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 adlı kullanıcın operatör statüsü %2 adlı kullanıcı tarafından geri çekildi.</translation>
     </message>
     <message>
         <location line="+4"/>
