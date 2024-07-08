@@ -2378,7 +2378,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Track Onion Skin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Track Onion Skin</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2856,7 +2856,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+14"/>
         <source>Tile Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tile Memory:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -3507,7 +3507,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+17"/>
         <source>Tablet Input:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tablet Input:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3682,7 +3682,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+25"/>
         <source>Add a color to the palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Add a color to the palette</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4153,7 +4153,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+11"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maximum Velocity: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4190,7 +4190,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+23"/>
         <source>Set this curve for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Set this curve for Size, Opacity, Hardness and Smudging at once.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -4444,7 +4444,11 @@ The range is +/-180.0.
 90 means the stroke angle is perpendicular to the angle of the stylus.
 180 means the angle of the stroke is directly opposite the angle of the stylus.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">The difference, in degrees, between the angle the stylus is pointing and the angle of the stroke movement.
+The range is +/-180.0.
+0.0 means the stroke angle corresponds to the angle of the stylus.
+90 means the stroke angle is perpendicular to the angle of the stylus.
+180 means the angle of the stroke is directly opposite the angle of the stylus.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4781,7 +4785,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>GridMap Scale</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">GridMap Scale</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4954,7 +4958,7 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <location line="+2"/>
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5395,7 +5399,7 @@ Negative values do the reverse</translation>
         <location line="+2"/>
         <source>Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5641,7 +5645,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>unknown</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">unknown</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -5788,7 +5792,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/layoutsdialog.cpp" line="+122"/>
         <source>Current (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Current (unsaved)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6417,7 +6421,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Tools</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tools</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7110,7 +7114,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Builtin server:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Builtin server:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7120,7 +7124,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+10"/>
         <source>Host on port %1 if available</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Host on port %1 if available</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7576,7 +7580,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+73"/>
         <source>Restore Shortcut Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Restore Shortcut Defaults</translation>
     </message>
     <message>
         <location line="-4"/>
@@ -8418,7 +8422,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+0"/>
         <source>Edit Tag</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Edit Tag</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8953,7 +8957,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Makes the stabilizer a brush setting, like in MyPaint, rather than an independent setting, like in Krita.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Makes the stabilizer a brush setting, like in MyPaint, rather than an independent setting, like in Krita.</translation>
     </message>
     <message>
         <location line="+172"/>
@@ -9558,7 +9562,10 @@ Values above 0.5 may not be noticeable.</translation>
 Green: %2
 Blue: %3
 Hex: %4</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Red: %1
+Green: %2
+Blue: %3
+Hex: %4</translation>
     </message>
 </context>
 <context>
@@ -9737,7 +9744,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+1"/>
         <source>&amp;Mute</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Mute</translation>
     </message>
     <message>
         <location line="+4"/>
