@@ -49,7 +49,7 @@
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ข้อผิดพลาดที่ไม่ทราบสาเหตุ</translation>
     </message>
 </context>
 <context>
@@ -57,12 +57,12 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+94"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ทางลัด</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">การดำเนินการ</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -152,7 +152,7 @@
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">เลือกสี</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -202,7 +202,7 @@
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">แบบสลับ</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -268,12 +268,12 @@
     <message>
         <location line="+56"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">การดำเนินการ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ทางลัด</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -283,7 +283,7 @@
     <message>
         <location line="+1"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ค่าเริ่มต้น</translation>
     </message>
 </context>
 <context>
@@ -311,7 +311,7 @@
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ข้อผิดพลาดที่ไม่ทราบสาเหตุ</translation>
     </message>
 </context>
 <context>
@@ -446,7 +446,7 @@
     <message>
         <location line="+6"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ทุกไฟล์ (*)</translation>
     </message>
 </context>
 <context>
@@ -571,7 +571,7 @@
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ผู้ใช้</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -609,7 +609,7 @@
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+40"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ปกติ</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -619,7 +619,7 @@
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ข้างหลัง</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -669,12 +669,12 @@
     <message>
         <location line="+5"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">เพิ่ม</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ลบ</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -709,12 +709,12 @@
     <message>
         <location line="+5"/>
         <source>Hue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">แม่สี</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ความอิ่มตัวของสี</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -732,7 +732,7 @@
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="+600"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ค่าเริ่มต้น</translation>
     </message>
 </context>
 <context>
@@ -760,7 +760,7 @@
     <message>
         <location line="+171"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ค่าเริ่มต้น</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -877,17 +877,17 @@
     <message>
         <location filename="../canvas/userlist.cpp" line="+64"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ผู้ควบคุม</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ผู้ควบคุม</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">เชื่อถือได้</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -907,17 +907,17 @@
     <message>
         <location line="+34"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ผู้ใช้</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ชนิด</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">สถานะ</translation>
     </message>
     <message>
         <location line="+182"/>
@@ -949,7 +949,7 @@
     <message>
         <location line="+0"/>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">สาธารณะ</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -972,27 +972,27 @@
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ผู้ควบคุม</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ผู้ควบคุม</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">เชื่อถือได้</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ผู้ใช้</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">บทบาท</translation>
     </message>
 </context>
 <context>
@@ -1007,7 +1007,7 @@
         <location line="-13"/>
         <location line="+15"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ผู้ใช้</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -1486,7 +1486,7 @@
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ผู้ใช้</translation>
     </message>
     <message>
         <location line="+1"/>
