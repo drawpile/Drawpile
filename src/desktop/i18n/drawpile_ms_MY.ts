@@ -1302,7 +1302,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+5"/>
         <source>Compatibility Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Compatibility Mode</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -1516,7 +1516,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Simulate a disconnect after this many seconds:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Simulate a disconnect after this many seconds:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1736,7 +1736,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Brush Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Brush Settings</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1802,7 +1802,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+22"/>
         <source>&amp;Expand Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Expand Canvas</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1842,7 +1842,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Move Canvas Left</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Move Canvas Left</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1982,7 +1982,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Layer View</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Layer View</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2007,7 +2007,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+9"/>
         <source>Layer View Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Layer View Mode</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2180,7 +2180,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Track Above</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Track Above</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2706,7 +2706,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+20"/>
         <source>Drawing tools</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Drawing tools</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -2922,7 +2922,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+82"/>
         <source>Frame:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Frame:</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -3368,7 +3368,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+11"/>
         <source>Bans</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bans</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -3411,7 +3411,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+11"/>
         <source>Public listing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Public listing</translation>
     </message>
 </context>
 <context>
@@ -4066,7 +4066,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Minimum Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Minimum Opacity: </translation>
     </message>
     <message>
         <location line="+10"/>
@@ -4186,7 +4186,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+11"/>
         <source>No brush dynamics.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">No brush dynamics.</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4231,7 +4231,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Unknown stabilization mode.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Unknown stabilization mode.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -4312,7 +4312,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+2"/>
         <source>Declination/Tilt X</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Declination/Tilt X</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4361,7 +4361,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+8"/>
         <source>The pressure reported by the tablet. Usually between 0.0 and 1.0, but it may get larger when a pressure gain is used. If you use the mouse, it will be 0.5 when a button is pressed and 0.0 otherwise.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">The pressure reported by the tablet. Usually between 0.0 and 1.0, but it may get larger when a pressure gain is used. If you use the mouse, it will be 0.5 when a button is pressed and 0.0 otherwise.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4724,7 +4724,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Direction filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Direction filter</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4796,7 +4796,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Offset X</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Offset X</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4850,7 +4850,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Posterize</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Posterize</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5478,7 +5478,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>Save Curve</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Save Curve</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6139,7 +6139,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>disabled by moderator</source>
         <extracomment>&quot;Idle timeout: disabled by moderator&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">disabled by moderator</translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
@@ -6711,7 +6711,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>%1 (%2) / %3 (%4)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (%2) / %3 (%4)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7020,7 +7020,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Updates:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Updates:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7230,7 +7230,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Your username always counts as a mention. You can add additional trigger words or phrases that you want to count as well, such as other nicknames. One word or phrase per line, case doesn&apos;t matter.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Your username always counts as a mention. You can add additional trigger words or phrases that you want to count as well, such as other nicknames. One word or phrase per line, case doesn&apos;t matter.</translation>
     </message>
     <message>
         <location line="-81"/>
@@ -7764,7 +7764,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>To add the public Drawpile server, &lt;a href=&quot;#&quot;&gt;click here&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">To add the public Drawpile server, &lt;a href=&quot;#&quot;&gt;click here&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -8021,7 +8021,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/join.cpp" line="+25"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt;, &lt;strong&gt;IP address&lt;/strong&gt; or &lt;strong&gt;room code&lt;/strong&gt;:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt;, &lt;strong&gt;IP address&lt;/strong&gt; or &lt;strong&gt;room code&lt;/strong&gt;:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8254,7 +8254,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>%1x%1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1x%1</translation>
     </message>
     <message>
         <location line="+93"/>
@@ -8836,7 +8836,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+172"/>
         <source>This session is hosted with Drawpile 2.1, MyPaint brushes are unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">This session is hosted with Drawpile 2.1, MyPaint brushes are unavailable.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9595,7 +9595,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trusted</translation>
     </message>
     <message>
         <location line="-138"/>
