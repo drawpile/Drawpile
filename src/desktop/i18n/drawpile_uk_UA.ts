@@ -445,7 +445,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Next Reset</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Next Reset</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1965,7 +1965,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-2892"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2919,7 +2919,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+3"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%</translation>
     </message>
     <message>
         <location line="+79"/>
@@ -3078,7 +3078,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+11"/>
         <location line="+3"/>
         <source>Flip Horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Flip Horizontally</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -3111,7 +3111,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+7"/>
         <source>Distort</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Distort</translation>
     </message>
 </context>
 <context>
@@ -3610,7 +3610,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+16"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Choose</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -3657,7 +3657,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+12"/>
         <source>Create a new palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Create a new palette</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4045,7 +4045,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Smoothing: </translation>
     </message>
     <message>
         <location line="+31"/>
@@ -4536,7 +4536,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Pixel feather</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pixel feather</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5183,7 +5183,7 @@ For very slow speed the opposite happens.</translation>
         <location line="+2"/>
         <source>How far you have to move until the stroke input reaches 1.0. This value is logarithmic (negative values will not invert the process).</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">How far you have to move until the stroke input reaches 1.0. This value is logarithmic (negative values will not invert the process).</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5500,7 +5500,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+8"/>
         <source>Keys to hold down to make rectangle, line or selection tools behave differently. Constrain means to e.g. keep the aspect ratio, center means to e.g. center shapes around the origin.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Keys to hold down to make rectangle, line or selection tools behave differently. Constrain means to e.g. keep the aspect ratio, center means to e.g. center shapes around the origin.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -5547,7 +5547,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+3"/>
         <location line="+71"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rename</translation>
     </message>
     <message>
         <location line="-68"/>
@@ -5940,7 +5940,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="-99"/>
         <source>Server Rules for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Server Rules for %1</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -5955,7 +5955,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</translation>
     </message>
     <message>
         <location line="+530"/>
@@ -6254,9 +6254,9 @@ Values above 0.5 may not be noticeable.</translation>
         <source>%n second(s)</source>
         <extracomment>Idle timeout seconds. May be joined with hours and minutes.</extracomment>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n second</numerusform>
+            <numerusform>%n seconds</numerusform>
+            <numerusform>%n seconds</numerusform>
         </translation>
     </message>
     <message>
@@ -6402,7 +6402,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Input</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6665,7 +6665,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Disabled</translation>
     </message>
 </context>
 <context>
@@ -7484,7 +7484,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Remove known hosts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Remove known hosts</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8971,7 +8971,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+8"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Size: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -9119,7 +9119,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Layer is censored</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Layer is censored</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9304,7 +9304,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+15"/>
         <source>Unknown command: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Unknown command: %1</translation>
     </message>
     <message>
         <location line="-623"/>
@@ -9358,7 +9358,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Paste</translation>
     </message>
     <message>
         <location line="+3"/>
