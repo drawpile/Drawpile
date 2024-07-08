@@ -434,7 +434,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+10"/>
         <source>Previous Reset</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Previous Reset</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -787,7 +787,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+53"/>
         <source>Rewind</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rewind</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -1551,7 +1551,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Tablet Input:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tablet Input:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1635,7 +1635,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+45"/>
         <location filename="../widgets/macmenu.cpp" line="-12"/>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;File</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1716,7 +1716,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Resi&amp;ze Canvas...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Resi&amp;ze Canvas...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2277,7 +2277,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+396"/>
         <source>Wheel</source>
         <extracomment>&quot;Wheel&quot; refers to the color wheel.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Wheel</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2445,7 +2445,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Leave this drawing session</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Leave this drawing session</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2986,7 +2986,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Bezier Curve</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bezier Curve</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3419,7 +3419,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/tablettest.ui" line="+14"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tablet Tester</translation>
     </message>
 </context>
 <context>
@@ -4844,7 +4844,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Offsets Multiplier</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Offsets Multiplier</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5572,7 +5572,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>canvas background</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">canvas background</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6273,7 +6273,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/sessionundodepthlimitdialog.cpp" line="+21"/>
         <source>Change Session Undo Depth Limit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Change Session Undo Depth Limit</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -6321,7 +6321,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Notifications</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Notifications</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6379,7 +6379,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Browse publicly listed drawing sessions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Browse publicly listed drawing sessions</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6491,7 +6491,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Create</translation>
     </message>
 </context>
 <context>
@@ -6721,7 +6721,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Write debugging log to file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Write debugging log to file</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7324,7 +7324,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Parental controls are currently locked.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Parental controls are currently locked.</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -7523,7 +7523,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Crosshair</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Crosshair</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8195,7 +8195,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <location line="+302"/>
         <source>Overwrite Brush Preset</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Overwrite Brush Preset</translation>
     </message>
     <message>
         <location line="-301"/>
@@ -8272,7 +8272,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+14"/>
         <source>%n tag(s) imported: %1</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
+            <numerusform>%n tag imported: %1</numerusform>
         </translation>
     </message>
     <message>
@@ -8397,7 +8397,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>GIMP palette (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">GIMP palette (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8504,7 +8504,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/layeraclmenu.cpp" line="+24"/>
         <source>Lock this layer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lock this layer</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8662,7 +8662,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/timeline.cpp" line="+19"/>
         <source>Timeline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Timeline</translation>
     </message>
     <message>
         <location line="+181"/>
@@ -9418,7 +9418,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Modify</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Modify</translation>
     </message>
     <message>
         <location line="+1"/>
