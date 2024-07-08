@@ -450,7 +450,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+13"/>
         <source>Position: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Position: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -1970,7 +1970,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+5"/>
         <source>Ambiguous Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ambiguous Shortcut</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2318,7 +2318,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Change Frame Rate (FPS)...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Change Frame Rate (FPS)...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2468,7 +2468,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+5"/>
         <source>Create Group on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Create Group on Key Frame</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3735,7 +3735,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../bundled/QtColorWidgets/gradient_editor.cpp" line="+336"/>
         <source>Add Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Add Color</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -3943,7 +3943,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+0"/>
         <source>Core brush settings.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Core brush settings.</translation>
     </message>
     <message>
         <location line="+105"/>
@@ -4814,7 +4814,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Offset Y</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Offset Y</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4844,7 +4844,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Angular Offset Mirrored: Direction</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angular Offset Mirrored: Direction</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5148,7 +5148,10 @@ For very slow speed the opposite happens.</translation>
 0.5 change the smudge color steadily towards the canvas color
 1.0 never change the smudge color</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">This controls how fast the smudge color becomes the color you are painting on.
+0.0 immediately update the smudge color (requires more CPU cycles because of the frequent color checks)
+0.5 change the smudge color steadily towards the canvas color
+1.0 never change the smudge color</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5203,7 +5206,8 @@ For very slow speed the opposite happens.</translation>
         <source>Set the custom input to this value. If it is slowed down, move it towards this value (see below). The idea is that you make this input depend on a mixture of pressure/speed/whatever, and then make other settings depend on this &apos;custom input&apos; instead of repeating this combination everywhere you need it.
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Set the custom input to this value. If it is slowed down, move it towards this value (see below). The idea is that you make this input depend on a mixture of pressure/speed/whatever, and then make other settings depend on this &apos;custom input&apos; instead of repeating this combination everywhere you need it.
+If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5953,7 +5957,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+72"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enter the name you want to use. See %1 for more information about this server.</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -6129,9 +6133,9 @@ Values above 0.5 may not be noticeable.</translation>
         <location filename="../dialogs/sessionsettings.cpp" line="+340"/>
         <source>Imported %n session ban(s).</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Imported %n session ban.</numerusform>
+            <numerusform>Imported %n session bans.</numerusform>
+            <numerusform>Imported %n session bans.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -6947,7 +6951,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+9"/>
         <source>Global pressure curve:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Global pressure curve:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -7108,7 +7112,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>Announce with Zeroconf</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Announce with Zeroconf</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -8082,7 +8086,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+11"/>
         <source>Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -8672,7 +8676,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%</translation>
     </message>
     <message>
         <location line="+218"/>
@@ -9371,7 +9375,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Presets…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Presets…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9409,7 +9413,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+16"/>
         <source>Input Maximum: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Input Maximum: </translation>
     </message>
 </context>
 <context>
@@ -9620,7 +9624,7 @@ Hex: %4</source>
     <message>
         <location line="+7"/>
         <source>Key frame on %1 (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Key frame on %1 (duplicate)</translation>
     </message>
     <message>
         <location line="+1"/>
