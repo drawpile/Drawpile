@@ -7398,7 +7398,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Unrestricted</source>
-        <translation type="unfinished">Unrestricted</translation>
+        <translation type="unfinished">Необмежений</translation>
     </message>
     <message>
         <location line="+1"/>
