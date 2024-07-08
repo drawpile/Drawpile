@@ -2103,7 +2103,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+15"/>
         <location line="+956"/>
         <source>Record Debug Dumps</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Record Debug Dumps</translation>
     </message>
     <message>
         <location line="-955"/>
@@ -2216,7 +2216,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Clear Local Background</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Clear Local Background</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2333,7 +2333,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Cut Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cut Key Frame</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2443,7 +2443,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Create Group on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Create Group on Previous Key Frame</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3387,7 +3387,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="-10"/>
         <source>Timeline:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Timeline:</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -6318,7 +6318,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+15"/>
         <source>Choose Ban Export Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Choose Ban Export Type</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6989,7 +6989,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+7"/>
         <location filename="../mainwindow.cpp" line="-877"/>
         <source>KisTablet Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">KisTablet Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7602,7 +7602,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="-61"/>
         <source>Share one color across all brush slots</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Share one color across all brush slots</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7888,7 +7888,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Show sessions that don&apos;t let new users join</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Show sessions that don&apos;t let new users join</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7960,7 +7960,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Copy server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Copy server</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7970,7 +7970,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+87"/>
         <source>Nothing here yet!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nothing here yet!</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8326,7 +8326,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Icon Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Icon Size</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8536,7 +8536,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location filename="../docks/colorsliders.cpp" line="+118"/>
         <source>R</source>
         <extracomment>The &quot;Red&quot; R of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">R</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -8583,7 +8583,7 @@ Values above 0.5 may not be noticeable.</translation>
         <source>C</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Chroma&quot; C of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">C</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9386,7 +9386,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+12"/>
         <source>Curve pasted from clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Curve pasted from clipboard.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9692,7 +9692,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+330"/>
         <source>Set Key Frame to %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Set Key Frame to %1</translation>
     </message>
     <message>
         <location line="+13"/>
