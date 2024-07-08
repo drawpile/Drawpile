@@ -202,7 +202,7 @@
     <message>
         <location filename="../ui/brushpresetproperties.ui" line="+17"/>
         <source>Brush Preset Properties</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brush Preset Properties</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2000,7 +2000,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+10"/>
         <source>Error closing profile.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error closing profile.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2463,7 +2463,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+17"/>
         <source>Create Layer on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Create Layer on Key Frame</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3527,7 +3527,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+7"/>
         <source>dp:x.y.z</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">dp:x.y.z</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -3948,7 +3948,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+105"/>
         <source>Brush Type:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brush Type:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4210,7 +4210,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+11"/>
         <source>Not available in Indirect/Wash mode.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Not available in Indirect/Wash mode.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -4225,7 +4225,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+3"/>
         <source>Opaqueness of the brush, 0% is transparent, 100% fully opaque.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opaqueness of the brush, 0% is transparent, 100% fully opaque.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5432,7 +5432,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Constraint Key</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Constraint Key</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6653,7 +6653,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pan Canvas</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7702,7 +7702,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+6"/>
         <source>Color space:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Color space:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8153,7 +8153,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="+31"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Help</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8421,7 +8421,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+18"/>
         <source>New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">New Brush</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -8906,17 +8906,17 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="+129"/>
         <source>Brush Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brush Settings</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Time-Based Stabilizer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Time-Based Stabilizer</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Average Smoothing</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8926,7 +8926,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Simply averages inputs to get a smoother result. Faster than the time-based stabilizer, but not as smooth.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Simply averages inputs to get a smoother result. Faster than the time-based stabilizer, but not as smooth.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -9203,7 +9203,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+71"/>
         <source>Mute notifications</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mute notifications</translation>
     </message>
     <message>
         <location line="+1"/>
