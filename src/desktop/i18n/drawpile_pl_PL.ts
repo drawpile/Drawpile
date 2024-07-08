@@ -116,7 +116,7 @@
     <message>
         <location line="+39"/>
         <source>Pick initial color from layer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pick initial color from layer</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1767,7 +1767,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+8"/>
         <source>Expand &amp;Up</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Expand &amp;Up</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2150,7 +2150,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Track Onion Skin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Track Onion Skin</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3312,7 +3312,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+7"/>
         <source>General Layer Editing:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">General Layer Editing:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3442,7 +3442,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+13"/>
         <source>Vertical alignment</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vertical alignment</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -3505,7 +3505,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+17"/>
         <source>Tablet Input:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tablet Input:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -4188,7 +4188,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+23"/>
         <source>Set this curve for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Set this curve for Size, Opacity, Hardness and Smudging at once.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -4442,7 +4442,11 @@ The range is +/-180.0.
 90 means the stroke angle is perpendicular to the angle of the stylus.
 180 means the angle of the stroke is directly opposite the angle of the stylus.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">The difference, in degrees, between the angle the stylus is pointing and the angle of the stroke movement.
+The range is +/-180.0.
+0.0 means the stroke angle corresponds to the angle of the stylus.
+90 means the stroke angle is perpendicular to the angle of the stylus.
+180 means the angle of the stroke is directly opposite the angle of the stylus.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5536,7 +5540,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/certificateview.cpp" line="+25"/>
         <source>SSL Certificate for %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">SSL Certificate for %1</translation>
     </message>
 </context>
 <context>
@@ -5639,7 +5643,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>unknown</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">unknown</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -5786,7 +5790,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/layoutsdialog.cpp" line="+122"/>
         <source>Current (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Current (unsaved)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6415,12 +6419,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Tools</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tools</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Network</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Network</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7108,7 +7112,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Builtin server:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Builtin server:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7574,7 +7578,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+73"/>
         <source>Restore Shortcut Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Restore Shortcut Defaults</translation>
     </message>
     <message>
         <location line="-4"/>
@@ -7950,7 +7954,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="-90"/>
         <source>Join</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Join</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8416,7 +8420,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+0"/>
         <source>Edit Tag</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Edit Tag</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9556,7 +9560,10 @@ Values above 0.5 may not be noticeable.</translation>
 Green: %2
 Blue: %3
 Hex: %4</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Red: %1
+Green: %2
+Blue: %3
+Hex: %4</translation>
     </message>
 </context>
 <context>
@@ -9735,7 +9742,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+1"/>
         <source>&amp;Mute</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Mute</translation>
     </message>
     <message>
         <location line="+4"/>
