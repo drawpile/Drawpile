@@ -121,7 +121,7 @@
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lock alpha (recolor mode)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -746,7 +746,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+56"/>
         <source>Tolerance: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tolerance: </translation>
     </message>
     <message>
         <location line="-7"/>
@@ -1632,7 +1632,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+0"/>
         <source>Show all layers normally</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Show all layers normally</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1995,7 +1995,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Unknown error.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2020,7 +2020,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+113"/>
         <source>Hosting on this computer is not available</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hosting on this computer is not available</translation>
     </message>
     <message>
         <location line="+66"/>
@@ -2166,7 +2166,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+63"/>
         <source>&amp;Import</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Import</translation>
     </message>
     <message>
         <location line="+49"/>
@@ -2211,7 +2211,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Set Local Background...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Set Local Background...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2266,7 +2266,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Fit Page &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fit Page &amp;Width</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2282,7 +2282,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location filename="../docks/layerlistdock.cpp" line="-6"/>
         <location filename="../mainwindow.cpp" line="+33"/>
         <source>Merge Layer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Merge Layer</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2313,7 +2313,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+17"/>
         <source>Change Frame Count...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Change Frame Count...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2423,7 +2423,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Create Layer on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Create Layer on Next Key Frame</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3090,13 +3090,13 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+27"/>
         <location line="+3"/>
         <source>Shrink to View</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Shrink to View</translation>
     </message>
     <message>
         <location line="+27"/>
         <location line="+3"/>
         <source>Reset Transform</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Reset Transform</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -3487,7 +3487,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../ui/userinfodialog.ui" line="+14"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dialog</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -3672,7 +3672,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+12"/>
         <source>Revert changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Revert changes to the current palette</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -3720,7 +3720,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+1"/>
         <location line="+13"/>
         <source>Open Palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Open Palette</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3842,9 +3842,9 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+28"/>
         <source> frame(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform> frame</numerusform>
+            <numerusform> frames</numerusform>
+            <numerusform> frames</numerusform>
         </translation>
     </message>
     <message>
@@ -3933,7 +3933,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+85"/>
         <source>Brush Editor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brush Editor</translation>
     </message>
     <message>
         <location line="+48"/>
@@ -3974,7 +3974,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+23"/>
         <location line="+14"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Blend Mode:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -3994,7 +3994,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+14"/>
         <source>Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eraser Mode</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -4009,7 +4009,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+12"/>
         <source>Spacing: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Spacing: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4061,7 +4061,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="-1"/>
         <source>Minimum Size: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Minimum Size: </translation>
     </message>
     <message>
         <location line="+10"/>
@@ -4080,7 +4080,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="-152"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opacity: </translation>
     </message>
     <message>
         <location line="+17"/>
@@ -4112,12 +4112,12 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="-268"/>
         <source>Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Smudging: </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Color Pickup: 1/</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -4235,7 +4235,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+4"/>
         <source>Blending of colors on the layer being drawn on.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Blending of colors on the layer being drawn on.</translation>
     </message>
     <message>
         <location line="+172"/>
@@ -4281,7 +4281,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>Random</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Random</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4305,7 +4305,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>Ascension</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ascension</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4337,7 +4337,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>Declination/Tilt Y</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Declination/Tilt Y</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4840,7 +4840,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Angular Offset: Ascension</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angular Offset: Ascension</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4935,7 +4935,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
  0.7 means 2 pixels
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Basic brush radius (logarithmic)
+ 0.7 means 2 pixels
+ 3.0 means 20 pixels</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4965,7 +4967,7 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <location line="+2"/>
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Same as above, but the radius actually drawn is used, which can change dynamically</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4988,7 +4990,8 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <source>How slow the input fine speed is following the real speed
 0.0 change immediately as your speed changes (not recommended, but try it)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">How slow the input fine speed is following the real speed
+0.0 change immediately as your speed changes (not recommended, but try it)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5066,7 +5069,7 @@ For very slow speed the opposite happens.</translation>
         <location line="+6"/>
         <source>Color value (brightness, intensity)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Color value (brightness, intensity)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5241,7 +5244,10 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  45.0 45 degrees, turned clockwise
  180.0 horizontal again</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angle by which elliptical dabs are tilted
+ 0.0 horizontal dabs
+ 45.0 45 degrees, turned clockwise
+ 180.0 horizontal again</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5401,7 +5407,7 @@ Negative values do the reverse</translation>
         <location line="+2"/>
         <source>Logarithmic multiplier for X, Y, and Angular Offset settings.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Logarithmic multiplier for X, Y, and Angular Offset settings.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5461,7 +5467,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rotate Canvas</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5502,7 +5508,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Constrain and Center Tool</translation>
     </message>
     <message>
         <location line="+98"/>
@@ -5527,7 +5533,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+7"/>
         <source>Unknown type %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Unknown type %1.</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -5620,7 +5626,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Smooth</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5850,7 +5856,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+19"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Horizontal</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -5946,7 +5952,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+249"/>
         <source>Remove Account</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Remove Account</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6173,7 +6179,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="-465"/>
         <source>Session Ban Export</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Session Ban Export</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6370,9 +6376,9 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+9"/>
         <source>%n role(s) imported.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n role imported.</numerusform>
+            <numerusform>%n roles imported.</numerusform>
+            <numerusform>%n roles imported.</numerusform>
         </translation>
     </message>
     <message>
@@ -6383,7 +6389,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Error saving roles to &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Error saving roles to &apos;%1&apos;: %2</translation>
     </message>
 </context>
 <context>
@@ -6557,7 +6563,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+0"/>
         <source>Change application settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Change application settings</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -6736,12 +6742,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+107"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Checking…</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Not found. %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Not found. %1</translation>
     </message>
 </context>
 <context>
@@ -6759,7 +6765,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+9"/>
         <source>Add canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Add canvas shortcut…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6908,7 +6914,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+0"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dark</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6918,7 +6924,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Krita Dark</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Krita Dark</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6938,7 +6944,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Color scheme:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Color scheme:</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6956,7 +6962,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/input.cpp" line="+51"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Input</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7020,7 +7026,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>KisTablet Wintab Relative</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">KisTablet Wintab Relative</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7038,7 +7044,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Qt6 Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Qt6 Wintab</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7387,12 +7393,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+12"/>
         <source>Filter mode:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Filter mode:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Unrestricted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Unrestricted</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7422,7 +7428,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined. Connected sessions that change their title or NSFM flag will automatically disconnect.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">NSFM sessions will be hidden from server listings and cannot be joined. Connected sessions that change their title or NSFM flag will automatically disconnect.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7443,7 +7449,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="-23"/>
         <source>Hide settings when locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hide settings when locked</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -7547,9 +7553,9 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+55"/>
         <source>Really remove %n list server(s)?</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Really remove %n list server?</numerusform>
+            <numerusform>Really remove %n list servers?</numerusform>
+            <numerusform>Really remove %n list servers?</numerusform>
         </translation>
     </message>
     <message>
@@ -7583,7 +7589,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+34"/>
         <source>Search actions…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Search actions…</translation>
     </message>
     <message>
         <location line="+73"/>
@@ -7794,7 +7800,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>On right-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">On right-click drag</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7869,12 +7875,12 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+29"/>
         <source>%1px</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1px</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1pt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1pt</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7902,7 +7908,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Closed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Closed</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7937,7 +7943,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Show sessions that have zero actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Show sessions that have zero actively drawing users</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7947,7 +7953,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Show sessions that are listed on multiple servers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Show sessions that are listed on multiple servers</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -8278,7 +8284,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layouts&quot;&gt;Layout&lt;/a&gt; for the application.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layouts&quot;&gt;Layout&lt;/a&gt; for the application.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8393,9 +8399,9 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+11"/>
         <source>%n brush(es) imported.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n brush(es) imported.</numerusform>
+            <numerusform>%n brush(es) imported.</numerusform>
+            <numerusform>%n brush(es) imported.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -8727,7 +8733,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+142"/>
         <source>Delete Layer?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Delete Layer?</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8758,7 +8764,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../docks/onionskins.cpp" line="+136"/>
         <source>Frames: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Frames: </translation>
     </message>
     <message>
         <location line="-10"/>
@@ -8788,7 +8794,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+42"/>
         <source>Opacity: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opacity: %1%</translation>
     </message>
 </context>
 <context>
@@ -8843,7 +8849,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../tabletinput.cpp" line="+186"/>
         <source>Qt tablet input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Qt tablet input</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8853,7 +8859,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>KisTablet Wintab input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">KisTablet Wintab input</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9011,7 +9017,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Merged Image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Merged Image</translation>
     </message>
 </context>
 <context>
@@ -9088,7 +9094,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Press the Set button to assign a shortcut.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Press the Set button to assign a shortcut.</translation>
     </message>
 </context>
 <context>
@@ -9111,7 +9117,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>Save As…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Save As…</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -9121,7 +9127,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Canvas is locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Canvas is locked</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9321,7 +9327,15 @@ Values above 0.5 may not be noticeable.</translation>
 /me &lt;text&gt; - send action-type message
 /roll &lt;dice&gt; - roll dice, e.g. 1d6 for a six-sided die</source>
         <extracomment>Don&apos;t translate the commands, only their descriptions!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Available client commands:
+/help - show this message
+/clear - clear chat window
+/! &lt;text&gt; - make an announcement (Operators only)
+/alert &lt;text&gt; - send a high priority alert (Operators only)
+/pin &lt;text&gt; - pin a message to the top of the chat box (Operators only)
+/unpin - remove pinned message (Operators only)
+/me &lt;text&gt; - send action-type message
+/roll &lt;dice&gt; - roll dice, e.g. 1d6 for a six-sided die</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9341,7 +9355,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+9"/>
         <source>Detach</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Detach</translation>
     </message>
     <message>
         <location line="-2"/>
@@ -9609,7 +9623,7 @@ Hex: %4</translation>
     <message>
         <location line="+26"/>
         <source>No recent hosts.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">No recent hosts.</translation>
     </message>
     <message>
         <location line="+59"/>
@@ -9674,7 +9688,9 @@ Hex: %4</translation>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">There&apos;s no tracks yet.
+Add one using the ＋ button above
+or via Animation ▸ New Track.</translation>
     </message>
     <message>
         <location line="+558"/>
@@ -9719,7 +9735,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+13"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Set Key Frame to Current Layer</translation>
     </message>
 </context>
 <context>
