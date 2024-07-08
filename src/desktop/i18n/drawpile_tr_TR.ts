@@ -9721,7 +9721,7 @@ ya da Animasyon ▸ Yeni Track seçeneğini kullanın.</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished">&amp;Trusted</translation>
+        <translation type="unfinished">Güvenilirler</translation>
     </message>
     <message>
         <location line="+3"/>
