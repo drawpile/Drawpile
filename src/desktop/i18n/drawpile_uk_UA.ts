@@ -915,7 +915,7 @@ Subrange: [%3, %4]</translation>
     <message>
         <location line="+175"/>
         <source>&amp;Select All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Select All</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2328,7 +2328,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Set Blank Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Set Blank Key Frame</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2706,7 +2706,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Log file doesn&apos;t exist, do you need to enable logging in the preferences?</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -4834,7 +4834,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Angular Offset: Direction</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angular Offset: Direction</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5021,7 +5021,10 @@ For very slow speed the opposite happens.</translation>
  1.0 standard deviation is one basic radius away
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Add a random offset to the position where each dab is drawn
+ 0.0 disabled
+ 1.0 standard deviation is one basic radius away
+&lt;0.0 negative values produce no jitter</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5282,7 +5285,9 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
 Logarithmic (same scale as brush radius).
 A scale of 0 will make the grid 256x256 pixels.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Changes the overall scale that the GridMap brush input operates on.
+Logarithmic (same scale as brush radius).
+A scale of 0 will make the grid 256x256 pixels.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5718,7 +5723,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+6"/>
         <source>Affected Area</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Affected Area</translation>
     </message>
     <message>
         <location line="+236"/>
@@ -6335,7 +6340,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Since you are a moderator, you can export bans encrypted or plain. Encrypted bans can only be imported on this server. Which format do you want to export?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Since you are a moderator, you can export bans encrypted or plain. Encrypted bans can only be imported on this server. Which format do you want to export?</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -6693,7 +6698,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">MP4 Video</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6781,7 +6786,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>Restore defaults…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Restore defaults…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7025,7 +7030,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+2"/>
         <source>Qt6 Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7515,7 +7520,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+16"/>
         <source>Add list servers…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Add list servers…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7599,7 +7604,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/tools.cpp" line="+161"/>
         <source>Toggle between previous and current tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Toggle between previous and current tool</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8170,7 +8175,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s help pages in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Open Drawpile&apos;s help pages in your browser</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8890,7 +8895,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+3"/>
         <location line="+20"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Center</translation>
     </message>
     <message>
         <location line="-17"/>
@@ -9071,7 +9076,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Hold down the desired key combination and click into the field above. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hold down the desired key combination and click into the field above. Hit Escape to cancel.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9187,7 +9192,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../chat/chatbox.cpp" line="+45"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Invite</translation>
     </message>
     <message>
         <location line="+6"/>
