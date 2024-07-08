@@ -1697,7 +1697,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (erase mode)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Freehand brush tool (erase mode)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2226,7 +2226,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+150"/>
         <source>Canvas Background</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Canvas Background</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -2393,7 +2393,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Delete Track</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Delete Track</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3580,7 +3580,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+14"/>
         <source>Format:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Format:</translation>
     </message>
     <message>
         <location line="+72"/>
@@ -3894,7 +3894,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+162"/>
         <source>Brush Export</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brush Export</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
@@ -4664,7 +4664,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Change color satur. (HSL)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Change color satur. (HSL)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5049,7 +5049,7 @@ For very slow speed the opposite happens.</translation>
         <location line="+2"/>
         <source>Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -5685,7 +5685,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+23"/>
         <location line="+6"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Type</translation>
     </message>
     <message>
         <location line="-6"/>
@@ -5765,7 +5765,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+7"/>
         <source>Filter Layers:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Filter Layers:</translation>
     </message>
 </context>
 <context>
@@ -6328,7 +6328,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Encrypted</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6458,7 +6458,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+0"/>
         <source>News and updates</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">News and updates</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6834,7 +6834,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+29"/>
         <source>Keep %1 canvas snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Keep %1 canvas snapshots</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7085,7 +7085,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Touch gestures:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Touch gestures:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7173,7 +7173,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+6"/>
         <source>Receive delay:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Receive delay:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7622,7 +7622,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Enable brush outline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enable brush outline</translation>
     </message>
     <message>
         <location line="+25"/>
