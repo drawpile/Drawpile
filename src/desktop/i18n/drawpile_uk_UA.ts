@@ -4305,7 +4305,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>Ascension</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished">Ascension</translation>
+        <translation type="unfinished">Напрямок нахилу</translation>
     </message>
     <message>
         <location line="+3"/>
