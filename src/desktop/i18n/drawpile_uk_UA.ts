@@ -4281,7 +4281,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>Random</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished">Random</translation>
+        <translation type="unfinished">У довільному порядку</translation>
     </message>
     <message>
         <location line="+2"/>
