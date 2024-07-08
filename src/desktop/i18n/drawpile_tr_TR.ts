@@ -9731,7 +9731,7 @@ ya da Animasyon ▸ Yeni Track seçeneğini kullanın.</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Mute</source>
-        <translation type="unfinished">&amp;Mute</translation>
+        <translation type="unfinished">&amp;Sustur</translation>
     </message>
     <message>
         <location line="+4"/>
