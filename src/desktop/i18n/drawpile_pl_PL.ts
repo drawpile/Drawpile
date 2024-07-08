@@ -1293,7 +1293,7 @@ Simplify the canvas and reset manually before space runs out.</translation>
     <message>
         <location line="+16"/>
         <source>Couldn&apos;t save image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Couldn&apos;t save image</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1736,7 +1736,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Set Local Background...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Set Local Background...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2616,7 +2616,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+0"/>
         <source>Select area for copying</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Select area for copying</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2727,7 +2727,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tablet Tester</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3621,7 +3621,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.cpp" line="+79"/>
         <source>Pick</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pick</translation>
     </message>
 </context>
 <context>
@@ -3972,7 +3972,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+23"/>
         <location line="+14"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Blend Mode:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4078,7 +4078,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="-152"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opacity: </translation>
     </message>
     <message>
         <location line="+17"/>
@@ -4110,7 +4110,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="-268"/>
         <source>Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Smudging: </translation>
     </message>
     <message>
         <location line="+12"/>
@@ -5242,7 +5242,10 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  45.0 45 degrees, turned clockwise
  180.0 horizontal again</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angle by which elliptical dabs are tilted
+ 0.0 horizontal dabs
+ 45.0 45 degrees, turned clockwise
+ 180.0 horizontal again</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5402,7 +5405,7 @@ Negative values do the reverse</translation>
         <location line="+2"/>
         <source>Logarithmic multiplier for X, Y, and Angular Offset settings.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Logarithmic multiplier for X, Y, and Angular Offset settings.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6209,7 +6212,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+0"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Registered</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7870,7 +7873,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+29"/>
         <source>%1px</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1px</translation>
     </message>
     <message>
         <location line="+1"/>
