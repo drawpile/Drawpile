@@ -62,7 +62,7 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enter a list server URL:</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -874,7 +874,7 @@ to 64x64 pixels.</translation>
     <message>
         <location line="+32"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Get externally visible IP address</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -892,7 +892,7 @@ to 64x64 pixels.</translation>
     <message>
         <location filename="../widgets/kis_curve_widget.cpp" line="+46"/>
         <source>Remove point</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Remove point</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2379,7 +2379,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Import &amp;Brushes...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Import &amp;Brushes...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3021,7 +3021,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+6"/>
         <source>Selection (Rectangular)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Selection (Rectangular)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3282,7 +3282,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+7"/>
         <source>No guest logins</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">No guest logins</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3873,7 +3873,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+5"/>
         <source>Picture is too small</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Picture is too small</translation>
     </message>
 </context>
 <context>
@@ -5019,7 +5019,10 @@ For very slow speed the opposite happens.</translation>
  1.0 standard deviation is one basic radius away
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Add a random offset to the position where each dab is drawn
+ 0.0 disabled
+ 1.0 standard deviation is one basic radius away
+&lt;0.0 negative values produce no jitter</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5320,7 +5323,9 @@ The longer the smudge length the more a color will spread and will also boost pe
 You can control which bucket to use to improve variability and realism of the brush.
 Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">There are 256 buckets that each can hold a color picked up from the canvas.
+You can control which bucket to use to improve variability and realism of the brush.
+Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5772,7 +5777,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+6"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Title:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6693,7 +6698,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">MP4 Video</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6781,7 +6786,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>Restore defaults…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Restore defaults…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7051,7 +7056,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gestures</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7524,7 +7529,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+16"/>
         <source>Add list servers…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Add list servers…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7599,7 +7604,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/tools.cpp" line="+161"/>
         <source>Toggle between previous and current tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Toggle between previous and current tool</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7609,7 +7614,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Double-tap Alt key to focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Double-tap Alt key to focus canvas</translation>
     </message>
     <message>
         <location line="-61"/>
@@ -7719,7 +7724,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>HSV (Hue–Saturation–Value)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">HSV (Hue–Saturation–Value)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8170,7 +8175,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s help pages in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Open Drawpile&apos;s help pages in your browser</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9682,7 +9687,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+0"/>
         <source>Track Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Track Name</translation>
     </message>
     <message>
         <location line="+36"/>
