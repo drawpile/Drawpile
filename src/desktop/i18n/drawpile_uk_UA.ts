@@ -5244,10 +5244,10 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  45.0 45 degrees, turned clockwise
  180.0 horizontal again</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Angle by which elliptical dabs are tilted
- 0.0 horizontal dabs
- 45.0 45 degrees, turned clockwise
- 180.0 horizontal again</translation>
+        <translation type="unfinished">Визначає нахил великої півосі еліптичних мазків
+ 0,0 — горизонтальні мазки
+ 45,0 — мазки, нахилені на 45 градусів за годинниковою стрілкою
+ 180,0 — знову горизонтальні мазки</translation>
     </message>
     <message>
         <location line="+2"/>
