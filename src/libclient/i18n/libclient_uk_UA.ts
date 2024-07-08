@@ -122,7 +122,7 @@
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Клацання середньою</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -132,7 +132,7 @@
     <message>
         <location line="+2"/>
         <source>Button %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кнопка %1</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -167,7 +167,7 @@
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Крок:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -263,7 +263,7 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Конфлікт</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -278,7 +278,7 @@
     <message>
         <location line="+1"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Почережний елемент</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -291,7 +291,7 @@
     <message>
         <location filename="../document.cpp" line="+715"/>
         <source>Unknown format.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Невідомий формат</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -301,7 +301,7 @@
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Помилка під час відкриття файла</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -454,7 +454,7 @@
     <message>
         <location filename="../drawdance/canvasstate.cpp" line="+45"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Шар &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -462,22 +462,22 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-103"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Зрушення</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сtrl</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Метаопис</translation>
     </message>
 </context>
 <context>
@@ -490,17 +490,17 @@
     <message>
         <location line="-380"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1д %2г %3хв</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1г %2хв</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1хв</translation>
     </message>
     <message numerus="yes">
         <location line="+94"/>
@@ -517,7 +517,7 @@
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n користувачів</numerusform>
         </translation>
     </message>
     <message>
@@ -537,7 +537,7 @@
     <message>
         <location line="+18"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сумісні</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -557,12 +557,12 @@
     <message>
         <location line="+1"/>
         <source>unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Невідома версія</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сумісність</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -582,7 +582,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Активний</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -597,12 +597,12 @@
     <message>
         <location line="+171"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">закрито</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Пароль захищено</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -635,12 +635,12 @@
     <message>
         <location line="+5"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Екран</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Оверлей</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -690,12 +690,12 @@
     <message>
         <location line="+5"/>
         <source>Hard Light</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Жорстке світло</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Soft Light</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">М&apos;яке світло</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -705,7 +705,7 @@
     <message>
         <location line="+5"/>
         <source>Linear Light</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Лінійне освітлення</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -725,7 +725,7 @@
     <message>
         <location line="+5"/>
         <source>Luminosity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Світність</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -746,12 +746,12 @@
     <message>
         <location line="-103"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Усе</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Без тегів</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -792,7 +792,7 @@
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Некатегоризовано</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -875,7 +875,7 @@
     <message>
         <location filename="../canvas/paintengine.cpp" line="+169"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Шар &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -942,7 +942,7 @@
         <location filename="../import/animationimporter.cpp" line="+48"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Кадр %1</translation>
     </message>
 </context>
 <context>
@@ -998,7 +998,7 @@
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ролі</translation>
     </message>
 </context>
 <context>
@@ -1007,7 +1007,7 @@
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -1092,12 +1092,12 @@
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Відключено</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Відʼєднано, %s</translation>
     </message>
     <message>
         <location line="+324"/>
@@ -1108,7 +1108,7 @@
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Помилка серверу</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1306,12 +1306,12 @@
     <message>
         <location line="+52"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Нова версія</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Невідома версія</translation>
     </message>
     <message>
         <location line="-42"/>
@@ -1445,7 +1445,7 @@
     <message>
         <location line="+4"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Несумісна версія</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1499,7 +1499,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Активний</translation>
     </message>
 </context>
 <context>
@@ -1541,7 +1541,7 @@
         <location filename="../utils/news.cpp" line="+280"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Перевірка оновлень…</translation>
     </message>
     <message>
         <location line="-23"/>
@@ -1556,7 +1556,7 @@
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Помилка мережі: %1$s</translation>
     </message>
     <message>
         <location line="+12"/>
