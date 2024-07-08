@@ -9761,7 +9761,7 @@ ya da Animasyon ▸ Yeni Track seçeneğini kullanın.</translation>
     <message>
         <location line="+2"/>
         <source>Show User &amp;Information</source>
-        <translation type="unfinished">Show User &amp;Information</translation>
+        <translation type="unfinished">Kullanıcı Bilgilerini Göster</translation>
     </message>
     <message>
         <location line="+2"/>
