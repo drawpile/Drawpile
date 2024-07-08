@@ -1692,7 +1692,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+361"/>
         <source>Freehand (erase mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Freehand (erase mode, click to reset)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2066,7 +2066,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-1000"/>
         <source>Stop Profile</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stop Profile</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2373,7 +2373,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+1"/>
         <source>Track Visible</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Track Visible</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3605,7 +3605,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+14"/>
         <source>Path to ffmpeg:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Path to ffmpeg:</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -3820,7 +3820,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+5"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Choose</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -4075,7 +4075,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+57"/>
         <location line="+68"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Input</translation>
     </message>
     <message>
         <location line="-152"/>
@@ -4148,7 +4148,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Distance dynamics</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4287,7 +4287,7 @@ Are you sure youwant to start recording debug dumps?</translation>
         <location line="+2"/>
         <source>Stroke</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stroke</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4568,7 +4568,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Radius by random</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Radius by random</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5051,7 +5051,7 @@ For very slow speed the opposite happens.</translation>
         <location line="+2"/>
         <source>Similar as above but at brushdab level (ignoring how much time has passed if brushdabs do not depend on time)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Similar as above but at brushdab level (ignoring how much time has passed if brushdabs do not depend on time)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5244,7 +5244,7 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
         <location line="+2"/>
         <source>A low value will make the direction input adapt more quickly, a high value will make it smoother</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">A low value will make the direction input adapt more quickly, a high value will make it smoother</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5429,7 +5429,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location filename="../dialogs/canvasshortcutsdialog.cpp" line="+24"/>
         <source>Key Combination</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Key Combination</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5713,7 +5713,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+0"/>
         <source>State</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">State</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6020,7 +6020,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>This username doesn&apos;t belong an account on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">This username doesn&apos;t belong an account on %1.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -6161,7 +6161,7 @@ Values above 0.5 may not be noticeable.</translation>
         <location line="+477"/>
         <location line="+9"/>
         <source>Session Ban Import</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Session Ban Import</translation>
     </message>
     <message>
         <location line="-465"/>
@@ -6896,7 +6896,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Light</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -9378,7 +9378,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>Pastes a copied curve from the clipboard, overwriting what is there currently.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pastes a copied curve from the clipboard, overwriting what is there currently.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9765,7 +9765,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+2"/>
         <source>Kick &amp;&amp; Ba&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kick &amp;&amp; Ba&amp;n</translation>
     </message>
     <message>
         <location line="+4"/>
