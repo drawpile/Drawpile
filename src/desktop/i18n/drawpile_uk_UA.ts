@@ -4080,7 +4080,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="-152"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opacity: </translation>
+        <translation type="unfinished">Непрозорість: </translation>
     </message>
     <message>
         <location line="+17"/>
