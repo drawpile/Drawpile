@@ -5069,7 +5069,7 @@ For very slow speed the opposite happens.</translation>
         <location line="+6"/>
         <source>Color value (brightness, intensity)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Color value (brightness, intensity)</translation>
+        <translation type="unfinished">Значення кольору (яскравість, інтенсивність)</translation>
     </message>
     <message>
         <location line="+2"/>
