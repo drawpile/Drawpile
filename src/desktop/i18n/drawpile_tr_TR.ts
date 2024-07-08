@@ -8665,7 +8665,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+218"/>
         <source>Duplicate Layer Group</source>
-        <translation type="unfinished">Duplicate Layer Group</translation>
+        <translation type="unfinished">Katmanı Çoğalt</translation>
     </message>
     <message>
         <location line="+1"/>
