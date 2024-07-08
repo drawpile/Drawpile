@@ -234,7 +234,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+75"/>
         <source>Label:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Label:</translation>
     </message>
 </context>
 <context>
@@ -826,7 +826,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mark whole tiles</translation>
     </message>
 </context>
 <context>
@@ -2422,7 +2422,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+3"/>
         <source>&amp;Stamp Selection</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Stamp Selection</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-3"/>
@@ -6854,7 +6854,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+61"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Interpolate when view is zoomed or rotated</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6962,7 +6962,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Compensate jagged curves</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Compensate jagged curves</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7070,7 +7070,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Pan canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pan canvas</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -7253,12 +7253,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Bounce dock</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bounce dock</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Bounce Drawpile&apos;s icon in the dock when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bounce Drawpile&apos;s icon in the dock when this event occurs.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7268,7 +7268,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Mark Drawpile&apos;s window as requiring attention. How exactly this looks depends on your system.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mark Drawpile&apos;s window as requiring attention. How exactly this looks depends on your system.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7328,12 +7328,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Additional triggers go here, one per line.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Additional triggers go here, one per line.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your username always counts as a mention. You can add additional trigger words or phrases that you want to count as well, such as other nicknames. One word or phrase per line, case doesn&apos;t matter.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Your username always counts as a mention. You can add additional trigger words or phrases that you want to count as well, such as other nicknames. One word or phrase per line, case doesn&apos;t matter.</translation>
     </message>
     <message>
         <location line="-81"/>
@@ -7824,17 +7824,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Enable high-DPI scaling (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enable high-DPI scaling (experimental)</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Override system scale factor (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Override system scale factor (experimental)</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Scale factor: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Scale factor: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7854,7 +7854,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Changes to scaling and font size apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Changes to scaling and font size apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</translation>
     </message>
 </context>
 <context>
@@ -7912,7 +7912,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Show sessions that have zero actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Show sessions that have zero actively drawing users</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8021,12 +8021,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Generate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Generate</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Generates a random password.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Generates a random password.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8061,22 +8061,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-146"/>
         <source>A session title is required.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">A session title is required.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session title. If you want to join a session using an invite link, &lt;a href=&quot;#&quot;&gt;click here to go to the Join page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Invalid session title. If you want to join a session using an invite link, &lt;a href=&quot;#&quot;&gt;click here to go to the Join page&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -8157,12 +8157,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Tablet Setup</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tablet Setup</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s tablet setup and troubleshooting help page</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Open Drawpile&apos;s tablet setup and troubleshooting help page</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8187,12 +8187,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">libera.chat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Join the #drawpile chatroom on libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Join the #drawpile chatroom on libera.chat</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8235,12 +8235,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The download page for Drawpile %1 could not be opened, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">The download page for Drawpile %1 could not be opened, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</translation>
     </message>
 </context>
 <context>
@@ -8665,22 +8665,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+218"/>
         <source>Duplicate Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Duplicate Layer Group</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Merge Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Merge Layer Group</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Layer Group Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Layer Group Properties…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Delete Layer Group</translation>
     </message>
     <message>
         <location line="+174"/>
@@ -8737,7 +8737,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Wrap</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Wrap</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8944,7 +8944,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>This session is hosted with Drawpile 2.1, Indirect/Wash Mode with opacity dynamics is unavailable. &lt;a href=&quot;#inc&quot;&gt;Click here to switch to Direct/Build-Up Mode&lt;/a&gt; or &lt;a href=&quot;#opa&quot;&gt;here to disable opacity dynamics&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">This session is hosted with Drawpile 2.1, Indirect/Wash Mode with opacity dynamics is unavailable. &lt;a href=&quot;#inc&quot;&gt;Click here to switch to Direct/Build-Up Mode&lt;/a&gt; or &lt;a href=&quot;#opa&quot;&gt;here to disable opacity dynamics&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="-5"/>
@@ -9716,22 +9716,22 @@ ya da Animasyon ▸ Yeni Track seçeneğini kullanın.</translation>
     <message>
         <location line="-138"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Operator</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Trusted</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Lock</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Lock</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Mute</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Mute</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9746,27 +9746,27 @@ ya da Animasyon ▸ Yeni Track seçeneğini kullanın.</translation>
     <message>
         <location line="+4"/>
         <source>&amp;Kick</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Kick</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Kick &amp;&amp; Ba&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kick &amp;&amp; Ba&amp;n</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Private Message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Private Message</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show User &amp;Information</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Show User &amp;Information</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Take Current &amp;Brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Take Current &amp;Brush</translation>
     </message>
     <message>
         <location line="+107"/>
