@@ -1950,7 +1950,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+234"/>
         <source>Focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Focus canvas</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -2045,7 +2045,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Change the session&apos;s undo limit, current limit is %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Change the session&apos;s undo limit, current limit is %1.</translation>
     </message>
     <message>
         <location line="+659"/>
@@ -2899,7 +2899,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+17"/>
         <source>Skip Backward</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Skip Backward</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -3761,7 +3761,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location filename="../bundled/QtColorWidgets/swatch.cpp" line="+846"/>
         <source>Clear Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Clear Color</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -3802,7 +3802,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+11"/>
         <source>Checking %1...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Checking %1...</translation>
     </message>
 </context>
 <context>
@@ -4490,7 +4490,10 @@ For the Radius setting, using a value of -4.15 makes the brush size roughly cons
 +90 when twisted clockwise 90 degrees
 -90 when twisted counterclockwise 90 degrees</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Barrel rotation of stylus.
+0 when not twisted
++90 when twisted clockwise 90 degrees
+-90 when twisted counterclockwise 90 degrees</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4542,7 +4545,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Dabs per basic radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dabs per basic radius</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4784,7 +4787,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>GridMap Scale X</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">GridMap Scale X</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5037,7 +5040,7 @@ For very slow speed the opposite happens.</translation>
         <location line="+2"/>
         <source>Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5183,7 +5186,7 @@ For very slow speed the opposite happens.</translation>
         <location line="+2"/>
         <source>How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5850,7 +5853,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+20"/>
         <source>MediBang-esque</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">MediBang-esque</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -5903,7 +5906,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+7"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -6492,7 +6495,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Share your canvas with others</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Share your canvas with others</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6716,7 +6719,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+5"/>
         <source>Choose ffmpeg path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Choose ffmpeg path</translation>
     </message>
     <message>
         <location line="+107"/>
@@ -7691,7 +7694,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+7"/>
         <source>Direction:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Direction:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7754,7 +7757,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+1"/>
         <source>Small screen (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Small screen (experimental)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7954,7 +7957,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+6"/>
         <source>Copy session URL</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Copy session URL</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8671,7 +8674,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+44"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opacity: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9719,7 +9722,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="-138"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Operator</translation>
     </message>
     <message>
         <location line="+1"/>
