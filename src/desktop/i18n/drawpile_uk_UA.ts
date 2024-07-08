@@ -2737,7 +2737,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+20"/>
         <source>Swatch Color %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Swatch Color %1</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -4475,7 +4475,8 @@ The brush size should be considerably smaller than the grid scale for best resul
         <source>The Y coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the Y axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">The Y coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the Y axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
+The brush size should be considerably smaller than the grid scale for best results.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4749,7 +4750,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Elliptical dab: angle</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Elliptical dab: angle</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4894,7 +4895,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Pigment</source>
         <comment>mypaintsetting</comment>
         <extracomment>The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pigment</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5345,7 +5346,7 @@ Negative values do the reverse</translation>
         <location line="+2"/>
         <source>Moves the dabs left or right based on canvas coordinates.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Moves the dabs left or right based on canvas coordinates.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5890,7 +5891,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+147"/>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Accept</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -5900,7 +5901,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+20"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7169,7 +7170,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>If all operators in a session set connection quality to Poor, auto-reset will not work and the server will stop processing updates until the session is manually reset.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">If all operators in a session set connection quality to Poor, auto-reset will not work and the server will stop processing updates until the session is manually reset.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7231,7 +7232,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+0"/>
         <source>What triggered this notification</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">What triggered this notification</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7246,7 +7247,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+2"/>
         <source>Popup</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Popup</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7351,7 +7352,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="-81"/>
         <source>User joined</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">User joined</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7585,7 +7586,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="-4"/>
         <source>Restore defaults…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Restore defaults…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8379,7 +8380,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+93"/>
         <source>Brush Import</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Brush Import</translation>
     </message>
     <message numerus="yes">
         <location line="+11"/>
@@ -9060,7 +9061,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+4"/>
         <source>Click the desired mouse button into the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Click the desired mouse button into the field above, optionally while holding down keys. Hit Escape to cancel.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9244,7 +9245,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+150"/>
         <source>/!: only operators are allowed to send shouts.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">/!: only operators are allowed to send shouts.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9274,7 +9275,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+9"/>
         <source>/pin: only operators are allowed to pin.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">/pin: only operators are allowed to pin.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9284,7 +9285,7 @@ Values above 0.5 may not be noticeable.</translation>
     <message>
         <location line="+3"/>
         <source>/pin: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">/pin: no text given.</translation>
     </message>
     <message>
         <location line="+11"/>
