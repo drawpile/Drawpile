@@ -4009,7 +4009,7 @@ Are you sure youwant to start recording debug dumps?</translation>
     <message>
         <location line="+12"/>
         <source>Spacing: </source>
-        <translation type="unfinished">Spacing: </translation>
+        <translation type="unfinished">Відстань: </translation>
     </message>
     <message>
         <location line="+1"/>
