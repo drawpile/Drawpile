@@ -8235,7 +8235,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished">The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</translation>
+        <translation type="unfinished">Drawpile %1 indirme sayfası web tarayıcınızda açılmış olmalı. Eğer açılmadıysa, &lt;em&gt;drawpile.net&lt;/em&gt; adresini manuel olarak ziyaret ediniz.</translation>
     </message>
     <message>
         <location line="+6"/>
