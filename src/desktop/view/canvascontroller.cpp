@@ -163,9 +163,14 @@ void CanvasController::setZoomAt(qreal zoom, const QPointF &point)
 	}
 }
 
-void CanvasController::resetZoom()
+void CanvasController::resetZoomCenter()
 {
 	setZoom(1.0);
+}
+
+void CanvasController::resetZoomCursor()
+{
+	setZoomAt(1.0, cursorPosOrCenter());
 }
 
 void CanvasController::zoomTo(const QRect &rect, int steps)
@@ -187,14 +192,24 @@ void CanvasController::zoomToFit()
 	setZoomToFit(Qt::Horizontal | Qt::Vertical);
 }
 
-void CanvasController::zoomIn()
+void CanvasController::zoomInCenter()
 {
 	zoomSteps(1);
 }
 
-void CanvasController::zoomOut()
+void CanvasController::zoomInCursor()
+{
+	zoomStepsAt(1, cursorPosOrCenter());
+}
+
+void CanvasController::zoomOutCenter()
 {
 	zoomSteps(-1);
+}
+
+void CanvasController::zoomOutCursor()
+{
+	zoomStepsAt(-1, cursorPosOrCenter());
 }
 
 void CanvasController::zoomToFitWidth()
@@ -2318,6 +2333,12 @@ void CanvasController::translateByViewTransformOffset(
 		prev.translate(tx, ty);
 		cur.translate(tx, ty);
 	}
+}
+
+QPointF CanvasController::cursorPosOrCenter() const
+{
+	return mapPointToCanvasF(
+		m_scene->isCursorOnCanvas() ? m_scene->cursorPos() : viewCenterF());
 }
 
 QString CanvasController::getZoomNoticeText() const

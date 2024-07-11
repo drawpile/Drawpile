@@ -204,10 +204,23 @@ void SceneWrapper::connectActions(const Actions &actions)
 	connect(
 		actions.movedown, &QAction::triggered, m_view,
 		&CanvasView::scrollStepDown);
-	connect(actions.zoomin, &QAction::triggered, m_view, &CanvasView::zoomin);
-	connect(actions.zoomout, &QAction::triggered, m_view, &CanvasView::zoomout);
 	connect(
-		actions.zoomorig, &QAction::triggered, m_view, &CanvasView::resetZoom);
+		actions.zoomin, &QAction::triggered, m_view, &CanvasView::zoominCursor);
+	connect(
+		actions.zoomincenter, &QAction::triggered, m_view,
+		&CanvasView::zoominCenter);
+	connect(
+		actions.zoomout, &QAction::triggered, m_view,
+		&CanvasView::zoomoutCursor);
+	connect(
+		actions.zoomoutcenter, &QAction::triggered, m_view,
+		&CanvasView::zoomoutCenter);
+	connect(
+		actions.zoomorig, &QAction::triggered, m_view,
+		&CanvasView::resetZoomCursor);
+	connect(
+		actions.zoomorigcenter, &QAction::triggered, m_view,
+		&CanvasView::resetZoomCenter);
 	connect(
 		actions.zoomfit, &QAction::triggered, m_view, &CanvasView::zoomToFit);
 	connect(
@@ -423,7 +436,7 @@ void SceneWrapper::connectToolSettings(docks::ToolSettings *toolSettings)
 	tools::ZoomSettings *zoomSettings = toolSettings->zoomSettings();
 	connect(
 		zoomSettings, &tools::ZoomSettings::resetZoom, m_view,
-		&CanvasView::resetZoom);
+		&CanvasView::resetZoomCenter);
 	connect(
 		zoomSettings, &tools::ZoomSettings::fitToWindow, m_view,
 		&CanvasView::zoomToFit);

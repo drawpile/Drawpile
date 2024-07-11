@@ -4171,8 +4171,11 @@ void MainWindow::setupActions()
 	QAction *moveup = makeAction("moveup", tr("Move Canvas Up")).noDefaultShortcut().autoRepeat();
 	QAction *movedown = makeAction("movedown", tr("Move Canvas Down")).noDefaultShortcut().autoRepeat();
 	QAction *zoomin = makeAction("zoomin", tr("Zoom &In")).icon("zoom-in").shortcut(QKeySequence::ZoomIn).autoRepeat();
+	QAction *zoomincenter = makeAction("zoomincenter", tr("Zoom In On Center")).noDefaultShortcut().autoRepeat();
 	QAction *zoomout = makeAction("zoomout", tr("Zoom &Out")).icon("zoom-out").shortcut(QKeySequence::ZoomOut).autoRepeat();
-	QAction *zoomorig = makeAction("zoomone", tr("&Normal Size")).icon("zoom-original").shortcut(QKeySequence("ctrl+0"));
+	QAction *zoomoutcenter = makeAction("zoomoutcenter", tr("Zoom Out From Center")).noDefaultShortcut().autoRepeat();
+	QAction *zoomorig = makeAction("zoomone", tr("&Reset Zoom")).icon("zoom-original").shortcut(QKeySequence("ctrl+0"));
+	QAction *zoomorigcenter = makeAction("zoomonecenter", tr("Reset Zoom At Center")).noDefaultShortcut();
 	QAction *zoomfit = makeAction("zoomfit", tr("&Fit Page")).icon("zoom-select").noDefaultShortcut();
 	QAction *zoomfitwidth = makeAction("zoomfitwidth", tr("Fit Page &Width")).icon("zoom-fit-width").noDefaultShortcut();
 	QAction *zoomfitheight = makeAction("zoomfitheight", tr("Fit Page &Height")).icon("zoom-fit-height").noDefaultShortcut();
@@ -4262,13 +4265,15 @@ void MainWindow::setupActions()
 		[this](bool showSelectionMask) {
 			m_canvasView->setShowSelectionMask(showSelectionMask);
 		});
-	// clang-format off
 
 	m_canvasView->connectActions(
-		{moveleft, moveright, moveup, movedown, zoomin, zoomout, zoomorig,
-		 zoomfit, zoomfitwidth, zoomfitheight, rotateorig, rotatecw, rotateccw,
-		 viewflip, viewmirror, showgrid, showusermarkers, showusernames,
-		 showuserlayers, showuseravatars, evadeusercursors});
+		{moveleft,		moveright,		moveup,			 movedown,
+		 zoomin,		zoomincenter,	zoomout,		 zoomoutcenter,
+		 zoomorig,		zoomorigcenter, zoomfit,		 zoomfitwidth,
+		 zoomfitheight, rotateorig,		rotatecw,		 rotateccw,
+		 viewflip,		viewmirror,		showgrid,		 showusermarkers,
+		 showusernames, showuserlayers, showuseravatars, evadeusercursors});
+	// clang-format off
 
 #ifdef SINGLE_MAIN_WINDOW
 	connect(fittoscreen, &QAction::triggered, this, &MainWindow::refitWindow);

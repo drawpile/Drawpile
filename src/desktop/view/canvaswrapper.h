@@ -53,8 +53,11 @@ public:
 		QAction *moveup;
 		QAction *movedown;
 		QAction *zoomin;
+		QAction *zoomincenter;
 		QAction *zoomout;
+		QAction *zoomoutcenter;
 		QAction *zoomorig;
+		QAction *zoomorigcenter;
 		QAction *zoomfit;
 		QAction *zoomfitwidth;
 		QAction *zoomfitheight;

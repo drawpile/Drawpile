@@ -193,13 +193,22 @@ void ViewWrapper::connectActions(const Actions &actions)
 		&CanvasView::scrollStepDown);
 	connect(
 		actions.zoomin, &QAction::triggered, m_controller,
-		&CanvasController::zoomIn);
+		&CanvasController::zoomInCursor);
+	connect(
+		actions.zoomincenter, &QAction::triggered, m_controller,
+		&CanvasController::zoomInCenter);
 	connect(
 		actions.zoomout, &QAction::triggered, m_controller,
-		&CanvasController::zoomOut);
+		&CanvasController::zoomOutCursor);
+	connect(
+		actions.zoomoutcenter, &QAction::triggered, m_controller,
+		&CanvasController::zoomOutCenter);
 	connect(
 		actions.zoomorig, &QAction::triggered, m_controller,
-		&CanvasController::resetZoom);
+		&CanvasController::resetZoomCursor);
+	connect(
+		actions.zoomorigcenter, &QAction::triggered, m_controller,
+		&CanvasController::resetZoomCenter);
 	connect(
 		actions.zoomfit, &QAction::triggered, m_controller,
 		&CanvasController::zoomToFit);
@@ -418,7 +427,7 @@ void ViewWrapper::connectToolSettings(docks::ToolSettings *toolSettings)
 	tools::ZoomSettings *zoomSettings = toolSettings->zoomSettings();
 	connect(
 		zoomSettings, &tools::ZoomSettings::resetZoom, m_controller,
-		&CanvasController::resetZoom);
+		&CanvasController::resetZoomCenter);
 	connect(
 		zoomSettings, &tools::ZoomSettings::fitToWindow, m_controller,
 		&CanvasController::zoomToFit);

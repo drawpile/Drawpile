@@ -75,19 +75,25 @@ public:
 	void scrollByF(qreal x, qreal y);
 	void setZoom(qreal zoom);
 	void setZoomAt(qreal zoom, const QPointF &pos);
-	void resetZoom();
+	void resetZoomCenter();
+	void resetZoomCursor();
 	void zoomTo(const QRect &rect, int steps);
 	void zoomToFit();
 	void zoomToFitHeight();
 	void zoomToFitWidth();
-	void zoomIn();
-	void zoomOut();
+	void zoomInCenter();
+	void zoomInCursor();
+	void zoomOutCenter();
+	void zoomOutCursor();
 	void zoomSteps(int steps);
 	void zoomStepsAt(int steps, const QPointF &point);
 	void setRotation(qreal degrees);
 	void resetRotation();
+	void resetRotationCursor();
 	void rotateStepClockwise();
+	void rotateStepClockwiseCursor();
 	void rotateStepCounterClockwise();
+	void rotateStepCounterClockwiseCursor();
 	void setFlip(bool flip);
 	void setMirror(bool mirror);
 
@@ -312,6 +318,7 @@ private:
 	QPointF viewToCanvasOffset() const;
 	QPointF viewTransformOffset() const;
 	void translateByViewTransformOffset(QTransform &prev, QTransform &cur);
+	QPointF cursorPosOrCenter() const;
 
 	QString getZoomNoticeText() const;
 	QString getRotationNoticeText() const;

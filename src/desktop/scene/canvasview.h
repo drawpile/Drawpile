@@ -177,7 +177,8 @@ public slots:
 	//! Set the zoom factor in percents, centered on the given point
 	void setZoomAt(qreal zoom, const QPointF &point);
 
-	void resetZoom();
+	void resetZoomCenter();
+	void resetZoomCursor();
 
 	//! Set the rotation angle in degrees
 	void setRotation(qreal angle);
@@ -205,11 +206,10 @@ public slots:
 	void zoomSteps(int steps);
 	void zoomStepsAt(int steps, const QPointF &point);
 
-	//! Increase zoom factor
-	void zoomin();
-
-	//! Decrease zoom factor
-	void zoomout();
+	void zoominCenter();
+	void zoominCursor();
+	void zoomoutCenter();
+	void zoomoutCursor();
 
 	//! Zoom the view it's filled by the given rectangle
 	//! If the rectangle is very small, or steps are negative, just zoom by that

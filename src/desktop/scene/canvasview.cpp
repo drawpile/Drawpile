@@ -397,14 +397,32 @@ void CanvasView::scrollStepDown()
 	scrollBy(0, verticalScrollBar()->singleStep());
 }
 
-void CanvasView::zoomin()
+void CanvasView::zoominCenter()
 {
 	zoomStepsAt(1, mapToCanvas(rect().center()));
 }
 
-void CanvasView::zoomout()
+void CanvasView::zoominCursor()
+{
+	if(m_scene && m_scene->isCursorOnCanvas()) {
+		zoomStepsAt(1, mapToCanvas(mapFromScene(m_scene->cursorPos())));
+	} else {
+		zoominCenter();
+	}
+}
+
+void CanvasView::zoomoutCenter()
 {
 	zoomStepsAt(-1, mapToCanvas(rect().center()));
+}
+
+void CanvasView::zoomoutCursor()
+{
+	if(m_scene && m_scene->isCursorOnCanvas()) {
+		zoomStepsAt(-1, mapToCanvas(mapFromScene(m_scene->cursorPos())));
+	} else {
+		zoomoutCenter();
+	}
 }
 
 void CanvasView::zoomTo(const QRect &rect, int steps)
@@ -477,9 +495,18 @@ void CanvasView::setZoom(qreal zoom)
 	setZoomAt(zoom, mapToCanvas(rect().center()));
 }
 
-void CanvasView::resetZoom()
+void CanvasView::resetZoomCenter()
 {
 	setZoom(1.0);
+}
+
+void CanvasView::resetZoomCursor()
+{
+	if(m_scene && m_scene->isCursorOnCanvas()) {
+		setZoomAt(1.0, mapToCanvas(mapFromScene(m_scene->cursorPos())));
+	} else {
+		resetZoomCenter();
+	}
 }
 
 void CanvasView::setZoomAt(qreal zoom, const QPointF &point)

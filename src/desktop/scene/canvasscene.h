@@ -103,7 +103,9 @@ public:
 	void setOutlineSquare(bool square);
 	void setOutlineWidth(qreal width);
 	void setOutlineVisibleInMode(bool visibleInMode);
+	bool isCursorOnCanvas() const { return m_cursorOnCanvas; }
 	void setCursorOnCanvas(bool onCanvas);
+	const QPointF &cursorPos() const { return m_cursorPos; }
 	void setCursorPos(const QPointF &pos);
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 	void setCursor(const QCursor &cursor);

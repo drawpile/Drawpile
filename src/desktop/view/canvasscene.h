@@ -79,7 +79,9 @@ public:
 	void setMaskPreview(const QPoint &pos, const QImage &mask);
 	void setPathPreview(const QPainterPath &path);
 
+	bool isCursorOnCanvas() const { return m_cursorOnCanvas; }
 	void setCursorOnCanvas(bool cursorOnCanvas);
+	const QPointF &cursorPos() const { return m_cursorPos; }
 	void setCursorPos(const QPointF &cursorPos);
 	void setOutline(
 		bool visibleInMode, const QPointF &pos, qreal rotation,
