@@ -420,7 +420,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../tools/magicwand.cpp" line="+202"/>
         <source>Selecting…</source>
-        <translation>選択中</translation>
+        <translation>選択中…</translation>
     </message>
     <message>
         <location line="+52"/>
