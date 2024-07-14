@@ -144,9 +144,10 @@ public:
 	Update readUpdateAvailable(const Version &forVersion, bool includeBeta)
 	{
 		StateDatabase::Query qry = m_state.query();
-		if(qry.exec("select server, major, minor, beta, date, url\n"
-					"from updates\n"
-					"order by server, major, minor, beta desc")) {
+		if(qry.exec(
+			   "select server, major, minor, beta, date, url\n"
+			   "from updates\n"
+			   "order by server desc, major desc, minor desc, beta desc")) {
 			while(qry.next()) {
 				Version candidate = {
 					qry.value(0).toInt(), qry.value(1).toInt(),
