@@ -316,7 +316,7 @@
     <message>
         <location line="+438"/>
         <source>Error saving image</source>
-        <translation type="unfinished"></translation>
+        <translation>画像保存時のエラー</translation>
     </message>
 </context>
 <context>
@@ -358,40 +358,43 @@
     <message>
         <location filename="../tools/floodfill.cpp" line="+251"/>
         <source>Filling…</source>
-        <translation type="unfinished"></translation>
+        <translation>塗りつぶし中…</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>No layer selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーが未選択です。</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーグループ %1 を塗りつぶしできません。
+代わりに通常のレイヤーを選択してください。</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Continuous fill</source>
-        <translation type="unfinished"></translation>
+        <translation>連続塗りつぶし</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Similar color fill</source>
-        <translation type="unfinished"></translation>
+        <translation>近似色塗りつぶし</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Selection fill</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲の塗りつぶし</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1, %2 by %3 pixels.
 %4 at %5% opacity on %6.
 Click to apply, undo to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1, %3 ピクセルの %2。
+%4 で %5% 透明度 で %6。
+クリックすると適用し、元に戻すとキャンセルします。</translation>
     </message>
 </context>
 <context>
@@ -417,13 +420,14 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../tools/magicwand.cpp" line="+202"/>
         <source>Selecting…</source>
-        <translation type="unfinished"></translation>
+        <translation>選択中…</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>%1 by %2 pixels, %3% opacity.
 Click to apply, undo to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 %2 ピクセル、 %3% 透明度。
+クリックすると適用され、元に戻すとキャンセルされます。</translation>
     </message>
 </context>
 <context>
@@ -651,12 +655,12 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+177"/>
         <source>incompatible</source>
-        <translation type="unfinished"></translation>
+        <translation>非対応</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>joining from web not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>ウェブからの参加を許可しない</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -799,7 +803,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+15"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>不明</translation>
     </message>
 </context>
 <context>
@@ -1011,7 +1015,7 @@ Click to apply, undo to cancel.</source>
         <location filename="../import/animationimporter.cpp" line="+30"/>
         <source>Frame %1</source>
         <extracomment>Title for imported animation layers.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>フレーム %1</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -1200,7 +1204,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+4"/>
         <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションのスペースが不足しています！描画を続行するには、管理者はリセットを行い、より小さいサイズに下げる必要があります。これは、[セッション] &gt; [リセット] から行うことができます。</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1390,17 +1394,17 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="-789"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
-        <translation type="unfinished"></translation>
+        <translation>固定された証明書を持つホストではセキュア モードが有効になっていません！</translation>
     </message>
     <message>
         <location line="+524"/>
         <source>Unknown version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>不明なバージョン %1</translation>
     </message>
     <message>
         <location line="+247"/>
         <source>Pinned certificate has changed!</source>
-        <translation type="unfinished"></translation>
+        <translation>固定された証明書が変更されました！</translation>
     </message>
     <message>
         <location line="+64"/>
@@ -1503,12 +1507,12 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+3"/>
         <source>Closed (not allowed to join from the web browser)</source>
-        <translation type="unfinished"></translation>
+        <translation>クローズド（ウェブブラウザからの参加不可）</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (not allowed to join via WebSocket)</source>
-        <translation type="unfinished"></translation>
+        <translation>クローズド(WebSocket 経由での参加は不許可)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1566,43 +1570,43 @@ Click to apply, undo to cancel.</source>
         <location line="+42"/>
         <source>It is full or closed.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>満員かクローズドです。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It requires an account.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>アカウントが必要です。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>It does not allow joining via web browser.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ウェブブラウザからの参加は許可されていません。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>It does not allow joining via WebSockets.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>WebSocket 経由の参加は許可されていません。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>It is hosted with a newer version of Drawpile, you have to update. If there is no update available, it may be hosted with a development version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>新しいバージョンの Drawpile でホストされているため、更新する必要があります。利用可能なアップデートがない場合は、Drawpile の開発バージョンでホストされている可能性があります。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>It is hosted with an old, incompatible version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>互換性のない古いバージョンの Drawpile でホストされています。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is hosted with an incompatible protocol.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>互換性のないプロトコルでホストされています。</translation>
     </message>
 </context>
 <context>
@@ -1643,17 +1647,17 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../tools/transform.cpp" line="+347"/>
         <source>You don&apos;t have permission to transform selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲を変形する権限がありません。</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>No canvas present.</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスが存在しません。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Nothing selected that could be transformed.</source>
-        <translation type="unfinished"></translation>
+        <translation>変形できるものが選択されていません。</translation>
     </message>
 </context>
 <context>
@@ -1715,22 +1719,22 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../wasmsupport.cpp" line="+109"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
-        <translation type="unfinished"></translation>
+        <translation>web.drawpile.net の公式クライアントを使用していません。ほとんどのサーバーは他の場所からの接続を許可しません。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The session address does not look like a valid WebSocket URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>セッション アドレスは有効な WebSocket URL ではないようです。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You&apos;re trying to connect to an IP address instead of a proper domain name. This usually doesn&apos;t work unless you&apos;ve configured your browser to allow this first.</source>
-        <translation type="unfinished"></translation>
+        <translation>適切なドメイン名ではなく IP アドレスに接続しようとしています。これは通常、最初にこれを許可するようにブラウザを設定しない限り機能しません。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The server may not support joining via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>このサーバーはウェブブラウザーからの参加をサポートしていない可能性があります。</translation>
     </message>
 </context>
 </TS>
