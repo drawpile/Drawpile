@@ -460,47 +460,54 @@ QVector<News::Article> News::parseNews(const QJsonDocument &doc)
 
 QVector<News::Update> News::parseUpdates(const QJsonDocument &doc)
 {
-	QJsonValue input = doc["updates"];
-	if(!input.isArray()) {
-		qCWarning(lcDpNews, "Updates element is not an array");
-		return {};
-	}
-
 	QVector<Update> updates;
-	for(QJsonValue value : input.toArray()) {
-		QString versionString = value["version"].toString();
-		Version version = Version::parse(versionString);
-		if(!version.isValid()) {
-			qCWarning(
-				lcDpNews, "Invalid update version '%s'",
-				qUtf8Printable(versionString));
-			continue; // No fallback for an invalid version.
-		}
-
-		QString urlString = value["url"].toString();
-		QUrl url{urlString};
-		if(!url.isValid()) {
-			qCWarning(
-				lcDpNews, "Invalid update url '%s'", qUtf8Printable(urlString));
-			url = FALLBACK_UPDATE_URL;
-		}
-
-		QString dateString = value["date"].toString();
-		QDate date = Private::dateFromString(dateString);
-		if(!date.isValid()) {
-			qCWarning(
-				lcDpNews, "Invalid update date '%s'",
-				qUtf8Printable(dateString));
-			// Keep going, we'll use 0000-00-00 as a date.
-		}
-
-		updates.append({version, date, url});
-	}
-
+	parseUpdatesFrom(updates, doc, QStringLiteral("updates"));
+	parseUpdatesFrom(updates, doc, QStringLiteral("devupdates"));
 	if(updates.isEmpty()) {
 		qCWarning(lcDpNews, "No updates in response");
 	}
 	return updates;
+}
+
+void News::parseUpdatesFrom(
+	QVector<Update> &updates, const QJsonDocument &doc, const QString &key)
+{
+	QJsonValue input = doc[key];
+	if(input.isArray()) {
+		for(QJsonValue value : input.toArray()) {
+			QString versionString = value["version"].toString();
+			Version version = Version::parse(versionString);
+			if(!version.isValid()) {
+				qCWarning(
+					lcDpNews, "Invalid update version '%s'",
+					qUtf8Printable(versionString));
+				continue; // No fallback for an invalid version.
+			}
+
+			QString urlString = value["url"].toString();
+			QUrl url{urlString};
+			if(!url.isValid()) {
+				qCWarning(
+					lcDpNews, "Invalid update url '%s'",
+					qUtf8Printable(urlString));
+				url = FALLBACK_UPDATE_URL;
+			}
+
+			QString dateString = value["date"].toString();
+			QDate date = Private::dateFromString(dateString);
+			if(!date.isValid()) {
+				qCWarning(
+					lcDpNews, "Invalid update date '%s'",
+					qUtf8Printable(dateString));
+				// Keep going, we'll use 0000-00-00 as a date.
+			}
+
+			updates.append({version, date, url});
+		}
+	} else {
+		qCWarning(
+			lcDpNews, "Element '%s' is not an array", qUtf8Printable(key));
+	}
 }
 
 void News::checkUpdateAvailable()

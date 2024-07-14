@@ -76,6 +76,8 @@ private:
 	void fetchFinished(QDate date, QNetworkReply *reply, bool showErrorAsNews);
 	QVector<Article> parseNews(const QJsonDocument &doc);
 	QVector<Update> parseUpdates(const QJsonDocument &doc);
+	void parseUpdatesFrom(
+		QVector<Update> &updates, const QJsonDocument &doc, const QString &key);
 	void checkUpdateAvailable();
 
 	void showMessageAsNews(const QString &message);
