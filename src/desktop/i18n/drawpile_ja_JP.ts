@@ -514,12 +514,12 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/filetypedialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished">名前:</translation>
+        <translation>名前:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished">種類:</translation>
+        <translation>種類:</translation>
     </message>
 </context>
 <context>
@@ -629,72 +629,72 @@ to 64x64 pixels.</source>
     <message>
         <location line="-253"/>
         <source>Add Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>アバターの追加</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Import Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションフレームのインポート</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation type="unfinished"></translation>
+        <translation>フレームイメージ</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Import Animation from Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーからアニメーションをインポート</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー化された画像</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシのインポート</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Error opening temporary file for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 の一時ファイルを開くときにエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Open Image</source>
-        <translation type="unfinished">画像を開く</translation>
+        <translation>画像を開く</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Set Brush Preset Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシプリセットのサムネイルを設定</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Paste File</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルを貼り付け</translation>
     </message>
     <message>
         <location line="+167"/>
         <source>Export Frames in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>フレームをZIPファイルでエクスポート</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBM動画をエクスポート</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションWEBPファイルをエクスポート</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -784,64 +784,64 @@ to 64x64 pixels.</source>
         <location line="+7"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-145"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-2"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>透明度: </translation>
     </message>
     <message>
         <location line="+44"/>
         <location line="+3"/>
         <source>Fill continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>連続領域の塗りつぶし</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill all similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>近似色をすべて塗りつぶす</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill entire selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲全体を塗りつぶす</translation>
     </message>
     <message>
         <location line="+69"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+101"/>
         <source>Merged image</source>
-        <translation type="unfinished"></translation>
+        <translation>画像を統合</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+13"/>
         <source>Merged without background</source>
-        <translation type="unfinished"></translation>
+        <translation>背景を除いた統合</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+15"/>
         <source>Current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のレイヤー</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill source layer</source>
-        <translation type="unfinished"></translation>
+        <translation>参照元レイヤーを塗りつぶす</translation>
     </message>
     <message>
         <location line="+35"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-143"/>
         <source>Size Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>サイズ制限: </translation>
     </message>
     <message>
         <location line="+38"/>
@@ -854,19 +854,19 @@ to 64x64 pixels.</source>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-40"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>拡大</translation>
     </message>
     <message>
         <location line="+20"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+10"/>
         <source>Shrink</source>
-        <translation type="unfinished"></translation>
+        <translation>縮小</translation>
     </message>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-153"/>
         <source>Shrink: </source>
-        <translation type="unfinished"></translation>
+        <translation>縮小: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -876,7 +876,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+309"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>サイズ制限: 無制限</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="-342"/>
@@ -1200,7 +1200,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished">NSFM</translation>
+        <translation>NSFM</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -1594,57 +1594,57 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+347"/>
         <source>Stay Time</source>
-        <translation type="unfinished"></translation>
+        <translation>滞在時間</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>1 Second</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 秒</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>10 Seconds</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>10 秒</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Minute</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 分</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Hour</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 時間</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Forever</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>無期限</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Clear Fill Source</source>
-        <translation type="unfinished"></translation>
+        <translation>塗りつぶし参照元をクリア</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Toggle Layer Check State</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーチェック状態の切り替え(&amp;T)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Check All</source>
-        <translation type="unfinished"></translation>
+        <translation>すべてチェック(&amp;C)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Uncheck All</source>
-        <translation type="unfinished"></translation>
+        <translation>チェックをすべて外す(&amp;U)</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -1729,7 +1729,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-394"/>
         <source>Mirror</source>
-        <translation>左右反転</translation>
+        <translation>ミラー</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1764,87 +1764,87 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+66"/>
         <source>&amp;Select</source>
-        <translation type="unfinished"></translation>
+        <translation>選択(&amp;S)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select rectangular area</source>
-        <translation type="unfinished"></translation>
+        <translation>長方形領域の選択</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Lasso Select</source>
-        <translation type="unfinished"></translation>
+        <translation>なげなわ選択(&amp;L)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select a free-form area</source>
-        <translation type="unfinished"></translation>
+        <translation>自由形状領域の選択</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Magic Wand Select</source>
-        <translation type="unfinished"></translation>
+        <translation>自動選択(&amp;M)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select areas with similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>近似色領域を選択</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Transform Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>変形ツール(&amp;T)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Transform selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲の変形</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>パン</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Pan canvas view</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバス表示のパン</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>System Information…</source>
-        <translation type="unfinished"></translation>
+        <translation>システム情報…</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Choose the current foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の前景色を選択</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Choose the current background color</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の背景色を選択</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Swap current foreground and background color with each other</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の前景色と背景色を入れ替え</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set foreground color to black and background color to white</source>
-        <translation type="unfinished"></translation>
+        <translation>前景色を黒、背景色を白に設定</translation>
     </message>
     <message>
         <location line="+148"/>
         <source>Could not write log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ログファイルに書き込めません: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Could not read log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ログ ファイルを読み込めません: %1</translation>
     </message>
     <message>
         <location line="+72"/>
@@ -1889,17 +1889,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+707"/>
         <source>Image saving failed</source>
-        <translation type="unfinished"></translation>
+        <translation>画像の保存に失敗</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Download Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>ダウンロード完了</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Download complete, click on &quot;Save&quot; to save your file.</source>
-        <translation type="unfinished"></translation>
+        <translation>ダウンロード完了、「保存」をクリックしてファイルを保存します。</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -1939,7 +1939,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+22"/>
         <source>Error downloading profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロファイルのダウンロード中にエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1954,7 +1954,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+22"/>
         <source>Error downloading tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>タブレット イベント ログのダウンロード中にエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1969,22 +1969,22 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+424"/>
         <source>Disconnected</source>
-        <translation type="unfinished">切断しました</translation>
+        <translation>切断しました</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;ve been disconnected from the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>サーバーから切断されました。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Connection Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>接続失敗</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Could not establish a connection to the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>サーバーへの接続を確立できませんでした。</translation>
     </message>
     <message>
         <location line="+200"/>
@@ -1999,7 +1999,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+31"/>
         <source>Error</source>
-        <translation type="unfinished">エラー</translation>
+        <translation>エラー</translation>
     </message>
     <message>
         <location line="+667"/>
@@ -2009,7 +2009,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+48"/>
         <source>Altering selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲を変更しています…</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -2110,27 +2110,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+16"/>
         <source>&amp;Download Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>画像のダウンロード(&amp;D)…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Download Selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲のダウンロード…</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Export &amp;Animation…</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションのエクスポート(&amp;A)…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Import Animation &amp;Frames…</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションとフレームのインポート(&amp;F)…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Import Animation from &amp;Layers…</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーからアニメーションをインポート(&amp;L)…</translation>
     </message>
     <message>
         <location line="+98"/>
@@ -2180,27 +2180,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+15"/>
         <source>Zoom In On Center</source>
-        <translation type="unfinished"></translation>
+        <translation>中心からズーム</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Out From Center</source>
-        <translation type="unfinished"></translation>
+        <translation>中心からズームアウト</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>ズームのリセット(&amp;R)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset Zoom At Center</source>
-        <translation type="unfinished"></translation>
+        <translation>中心からのズームをリセット</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Hide From Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>カーソルから隠す</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2215,22 +2215,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Show &amp;Rulers</source>
-        <translation type="unfinished"></translation>
+        <translation>ルーラーの表示(&amp;R)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation>選択とマスクを表示(&amp;M)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Toggle selection display between a mask and an outline</source>
-        <translation type="unfinished"></translation>
+        <translation>マスクとアウトラインの間で選択表示を切り替え</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&amp;Fit to Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>画面に合わせる(&amp;F)</translation>
     </message>
     <message>
         <location line="+80"/>
@@ -2281,22 +2281,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+22"/>
         <source>Create Layers on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のキーフレームにレイヤーを作成</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>次のキーフレームにレイヤーを作成</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>前のキーフレームにレイヤーを作成</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Create Layers on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームにレイヤーを作成</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -2799,78 +2799,78 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+52"/>
         <source>&amp;Invert Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲の反転(&amp;I)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select Layer &amp;Bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー境界を選択(&amp;B)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Layer to Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーから選択範囲(&amp;L)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Expand/Shrink/Feather Selection</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>拡大/縮小/ぼかし選択(&amp;E)</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>&amp;Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>変形(&amp;T)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Transform the selection, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲を変形し、後でツールを元に戻します</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Transform Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation>選択とマスクの変形(&amp;M)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation>選択とマスク自体のみを変換し、その後ツールを元に戻します</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Mirror Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>ミラー変形(&amp;M)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Flip Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>反転変形(&amp;F)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Rotate Transform Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>時計回りに回転変形(&amp;R)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Rotate Transform &amp;Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>反時計回りに回転変形(&amp;C)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Shrink Transform to &amp;Fit View</source>
-        <translation type="unfinished"></translation>
+        <translation>ビューに合わせて縮小変形(&amp;F)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Stamp Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>スタンプ変形(&amp;S)</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Selectio&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation>選択(&amp;n)</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -3433,17 +3433,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Selection (Magic Wand)</source>
-        <translation type="unfinished"></translation>
+        <translation>選択(自動選択)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Transform</source>
-        <translation type="unfinished">変形:</translation>
+        <translation>変形</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>パン</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3466,7 +3466,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+50"/>
         <source>You must be an operator to reset the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションをリセットするには管理者である必要があります。</translation>
     </message>
 </context>
 <context>
@@ -3647,12 +3647,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+211"/>
         <source>Add listing</source>
-        <translation type="unfinished"></translation>
+        <translation>リストを追加</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove selected listing</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したリストを削除</translation>
     </message>
     <message>
         <location line="-232"/>
@@ -4177,107 +4177,107 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../dialogs/animationexportdialog.cpp" line="+27"/>
         <source>Export Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションのエクスポート</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Output</source>
-        <translation type="unfinished">出力</translation>
+        <translation>出力</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Frames as PNGs</source>
-        <translation type="unfinished"></translation>
+        <translation>PNGとしたフレーム</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frames as PNGs in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>ZIP形式にしたPNGフレーム</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションGIF</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションWEBP</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>MP4 Video</source>
-        <translation type="unfinished">MP4動画</translation>
+        <translation>MP4動画</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBM動画</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Format:</source>
-        <translation type="unfinished">動画形式:</translation>
+        <translation>動画形式:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loops:</source>
-        <translation type="unfinished"></translation>
+        <translation>ループ:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Input</source>
-        <translation type="unfinished">入力</translation>
+        <translation>入力</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>フレーム範囲:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source> FPS</source>
-        <translation type="unfinished"> FPS</translation>
+        <translation> FPS</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">フレームレート:</translation>
+        <translation>フレームレート:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Crop X:</source>
-        <translation type="unfinished"></translation>
+        <translation>切り出し X:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Crop Y:</source>
-        <translation type="unfinished"></translation>
+        <translation>切り出し Y:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Reset</source>
-        <translation type="unfinished">リセット</translation>
+        <translation>リセット</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Reset inputs to the whole canvas and timeline</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバス全体とタイムラインへの入力をリセット</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Set from Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>フリップブックから設定</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set inputs to what is being previewed in the flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>入力をフリップブックでプレビューされているものに設定</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Export</source>
-        <translation type="unfinished">エクスポート</translation>
+        <translation>エクスポート</translation>
     </message>
 </context>
 <context>
@@ -4290,67 +4290,67 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+18"/>
         <source>Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>フレーム</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Import a series of images as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation>一連の画像をタイムライン フレームとしてインポートします。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Importing animation frames is not supported in the web browser version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーション フレームのインポートは、Drawpile のウェブブラウザ バージョンではサポートされていません。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Canvas Background:</source>
-        <translation type="unfinished">キャンバスの背景色:</translation>
+        <translation>キャンバスの背景色:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Add</source>
-        <translation type="unfinished">追加</translation>
+        <translation>追加</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Remove</source>
-        <translation type="unfinished">削除</translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Sort</source>
-        <translation type="unfinished"></translation>
+        <translation>並び替え</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Numeric Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>数値の昇順</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Numeric Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>数値の降順</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alphabetic Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファベットの昇順</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alphabetic Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファベットの降順</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Layers</source>
-        <translation type="unfinished">レイヤー</translation>
+        <translation>レイヤー</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import the layers of an ORA or PSD file as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation>ORA または PSD ファイルのレイヤーをタイムライン フレームとしてインポートします。</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4371,7 +4371,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+9"/>
         <source> FPS</source>
-        <translation type="unfinished"> FPS</translation>
+        <translation> FPS</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5377,19 +5377,19 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Angular Offset Mirrored: Direction</source>
         <comment>mypaintsetting</comment>
-        <translation>反転した角度オフセット: 方向</translation>
+        <translation>角度オフセットの反映: 方向</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset Mirrored: Ascension</source>
         <comment>mypaintsetting</comment>
-        <translation>反転した角度オフセット: 上昇</translation>
+        <translation>角度オフセットの反映: 上昇</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset Mirrored: View</source>
         <comment>mypaintsetting</comment>
-        <translation>反転した角度オフセット: 表示</translation>
+        <translation>角度オフセットの反映: 表示</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6224,7 +6224,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>selection %1 of user %2</source>
-        <translation type="unfinished"></translation>
+        <translation>ユーザー %2 の選択範囲 %1</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6318,12 +6318,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/layerproperties.cpp" line="+52"/>
         <source>New Layer Group</source>
-        <translation type="unfinished">新しいレイヤーグループ</translation>
+        <translation>新しいレイヤーグループ</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>New Layer</source>
-        <translation type="unfinished">新しいレイヤー</translation>
+        <translation>新規レイヤー</translation>
     </message>
     <message>
         <location line="+101"/>
@@ -6482,17 +6482,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+198"/>
         <source>You can&apos;t join this session because:</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションに参加できない理由:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown reason.</source>
-        <translation type="unfinished"></translation>
+        <translation>不明な理由です。</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Can&apos;t join session</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションに参加できない</translation>
     </message>
     <message>
         <location line="+63"/>
@@ -6657,12 +6657,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+71"/>
         <source>Error opening file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルを開くときにエラーが発生: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error opening file: %1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル開くときにエラーが発生: %1(%2)</translation>
     </message>
     <message>
         <location line="-3"/>
@@ -6699,45 +6699,45 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/selectionalterdialog.cpp" line="+27"/>
         <location line="+41"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-30"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>拡大</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Shrink</source>
-        <translation type="unfinished"></translation>
+        <translation>縮小</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Feather: </source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished">ぼかし: </translation>
+        <translation>ぼかし: </translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Shrink: </source>
-        <translation type="unfinished"></translation>
+        <translation>縮小: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shrink and feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスの端からの縮小とぼかし</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand: </source>
-        <translation type="unfinished">領域拡大: </translation>
+        <translation>拡大: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスの端からのぼかし</translation>
     </message>
 </context>
 <context>
@@ -6772,7 +6772,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Error saving bans: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>BANを保存中にエラー: %1</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -6952,12 +6952,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-9"/>
         <source>File does not contain a valid role export.</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルには有効なロールのエクスポートが含まれていません。</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Error saving roles: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ロールを保存中にエラー: %1</translation>
     </message>
     <message numerus="yes">
         <location line="-33"/>
@@ -7203,12 +7203,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/systeminfodialog.cpp" line="+26"/>
         <source>System Information</source>
-        <translation type="unfinished"></translation>
+        <translation>システム情報</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Copy</source>
-        <translation type="unfinished">コピー</translation>
+        <translation>コピー</translation>
     </message>
 </context>
 <context>
@@ -7449,42 +7449,42 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+11"/>
         <source>Qt Graphics View</source>
         <extracomment>One of the canvas renderer options. &quot;Qt&quot; is a software framework.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Qtグラフィック表示</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hardware (experimental)</source>
         <extracomment>One of the canvas renderer options. Hardware meaning it uses the GPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ハードウェア(実験的)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Software (experimental)</source>
         <extracomment>One of the canvas renderer options. Software meaning it uses the CPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ソフトウェア(実験的)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Default</source>
         <extracomment>One of the canvas renderer options.</extracomment>
-        <translation type="unfinished">デフォルト</translation>
+        <translation>デフォルト</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Renderer:</source>
-        <translation type="unfinished"></translation>
+        <translation>レンダラー:</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Unknown</source>
         <comment>CanvasImplementation</comment>
         <extracomment>Refers to an unknown canvas renderer, should never happen.</extracomment>
-        <translation type="unfinished">不明</translation>
+        <translation>不明</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Current renderer: %1. Changes apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のレンダラー: %1。変更は Drawpile を再起動した後に適用されます。</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -7710,12 +7710,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+38"/>
         <source>Global smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>グローバルスムージング: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Apply global smoothing to mouse</source>
-        <translation type="unfinished"></translation>
+        <translation>マウスにグローバル スムージングを適用</translation>
     </message>
     <message>
         <location line="+59"/>
@@ -8185,25 +8185,25 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+60"/>
         <source>Pin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>固定</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+81"/>
         <source>Pin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>選択した証明書を固定</translation>
     </message>
     <message>
         <location line="-64"/>
         <source>Unpin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>固定解除</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+64"/>
         <source>Unpin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>選択した証明書を固定解除</translation>
     </message>
     <message>
         <location line="-34"/>
@@ -8213,7 +8213,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Import certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>証明書のインポート</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -8289,7 +8289,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+29"/>
         <source>Same as brush cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシカーソルと同じ</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8384,22 +8384,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+73"/>
         <source>Eraser</source>
-        <translation type="unfinished">消しゴム</translation>
+        <translation>消しゴム</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Brush cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシカーソル:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Eraser cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>消しゴムカーソル:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Alpha lock cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>透明度保護カーソル:</translation>
     </message>
 </context>
 <context>
@@ -8427,7 +8427,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>ダイナミック</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8483,37 +8483,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-55"/>
         <source>Small screen</source>
-        <translation type="unfinished"></translation>
+        <translation>小さい画面</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>First checker color</source>
-        <translation type="unfinished"></translation>
+        <translation>１番目のチェッカーカラー</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Second checker color</source>
-        <translation type="unfinished"></translation>
+        <translation>２番目のチェッカーカラー</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Colors behind canvas:</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスの裏の色:</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Zoom, rotate, mirror and flip notices</source>
-        <translation type="unfinished"></translation>
+        <translation>ズーム、回転、ミラー、反転の通知</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>On-canvas notices:</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバス上の通知:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fill and magic wand confirmation</source>
-        <translation type="unfinished"></translation>
+        <translation>塗りつぶしと自動選択の確認</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8528,7 +8528,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Prompt when creating layers</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー作成時の質問</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8538,7 +8538,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Scaling:</source>
-        <translation type="unfinished"></translation>
+        <translation>スケーリング:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8563,22 +8563,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Font size:</source>
-        <translation type="unfinished"></translation>
+        <translation>フォントサイズ:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Vertical sync:</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直同期:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enabled</source>
-        <translation type="unfinished">有効</translation>
+        <translation>有効</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>System</source>
-        <translation type="unfinished">システム</translation>
+        <translation>システム</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -8593,7 +8593,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Changes apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>変更は Drawpile を再起動した後に適用されます。現在の倍率は %1%、フォント サイズは %2 です。</translation>
     </message>
 </context>
 <context>
@@ -8773,7 +8773,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>The built-in server is not available in the browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>内蔵サーバーはブラウザでは使用できません。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8861,7 +8861,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/join.cpp" line="+26"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt; or &lt;strong&gt;IP address&lt;/strong&gt;:</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;セッション URL&lt;/strong&gt;、&lt;strong&gt;ホスト名&lt;/strong&gt;、または&lt;strong&gt;IP アドレス&lt;/strong&gt;を入力します。</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8975,12 +8975,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/welcome.cpp" line="+50"/>
         <source>Standalone Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>スタンドアローンモード</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You are running the web browser version of Drawpile in standalone mode. It will &lt;strong&gt;not&lt;/strong&gt; automatically save what you draw, so save often!</source>
-        <translation type="unfinished"></translation>
+        <translation>ウェブブラウザ版の Drawpile をスタンドアローン モードで実行しています。描いたものは自動的に保存&lt;strong&gt;されない&lt;/strong&gt;ので、定期的に保存してください！</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -9422,22 +9422,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Check Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーグループのチェック</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーグループのチェックを外す</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Check Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーのチェック</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーのチェックを外す</translation>
     </message>
     <message>
         <location line="+999"/>
@@ -9731,22 +9731,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/fillsettings.cpp" line="+174"/>
         <source>Shrink: </source>
-        <translation type="unfinished"></translation>
+        <translation>縮小: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Expand: </source>
-        <translation type="unfinished">領域拡大: </translation>
+        <translation>拡大: </translation>
     </message>
     <message>
         <location line="+138"/>
         <source>Size Limit: Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>サイズ制限: 選択範囲</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>サイズ制限: 無制限</translation>
     </message>
 </context>
 <context>
@@ -9754,42 +9754,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-272"/>
         <source>Replace selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲の置き換え</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Add to selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲に追加</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Intersect with selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲との重なり</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove from selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲から取り除く</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Anti-aliasing</source>
-        <translation type="unfinished"></translation>
+        <translation>アンチエイリアス</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smoothe out selection edges</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲の端を滑らかにする</translation>
     </message>
     <message>
         <location line="+192"/>
         <source>Select continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>連続領域を選択</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Select similar color</source>
-        <translation type="unfinished"></translation>
+        <translation>近似色を選択</translation>
     </message>
 </context>
 <context>
@@ -9797,119 +9797,119 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/transformsettings.cpp" line="+139"/>
         <source>Fast</source>
-        <translation type="unfinished"></translation>
+        <translation>高速</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Quick preview not taking into account layering, opacity or anything else</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー、不透明度などを考慮しないクイック プレビュー</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Accurate</source>
-        <translation type="unfinished"></translation>
+        <translation>正確</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preview the transform exactly how will look when applied</source>
-        <translation type="unfinished"></translation>
+        <translation>変形を適用したときにどのように見えるかを正確にプレビューする</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Too many layers selected for accurate preview, only fast preview is available.</source>
-        <translation type="unfinished"></translation>
+        <translation>「正確」でプレビューするには選択したレイヤーが多すぎます。使用できるのは「高速」プレビューのみです。</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Preview:</source>
-        <translation type="unfinished"></translation>
+        <translation>プレビュー:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Nearest</source>
-        <translation type="unfinished">周辺</translation>
+        <translation>周辺</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Nearest-neighbor interpolation, no smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>最近傍補間、スムージングなし</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Bilinear</source>
-        <translation type="unfinished">バイリニア</translation>
+        <translation>バイリニア</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smoothed interpolation</source>
-        <translation type="unfinished"></translation>
+        <translation>平滑化補間</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Sampling:</source>
         <extracomment>Refers to the transform interpolation, but &quot;interpolation&quot; is uncomfortably long in English, it causes a lot of blank space and the tool settings to get wider. Try to take that into account if possible.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>サンプリング:</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Scale</source>
-        <translation type="unfinished">拡大・縮小</translation>
+        <translation>拡大・縮小</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shows scaling handles on corners and edges</source>
-        <translation type="unfinished"></translation>
+        <translation>角と端に拡大・縮小ハンドルを表示</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Distort</source>
-        <translation type="unfinished">ゆがみ</translation>
+        <translation>ゆがみ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shows distortion handles on corners and edges</source>
-        <translation type="unfinished"></translation>
+        <translation>角と端に歪みハンドルを表示</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Handles:</source>
         <extracomment>Refers to the handles on the corners and edges of a transform. Which are either arrows to scale the transformation or squares to distort it.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ハンドル:</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Mode:</source>
-        <translation type="unfinished">モード:</translation>
+        <translation>モード:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>透明度: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>適用</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply the transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>変形を適用</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation>キャンセル</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cancel the transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>変形をキャンセル</translation>
     </message>
 </context>
 <context>
@@ -9938,7 +9938,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../view/canvasscene.cpp" line="+487"/>
         <source>Restoring canvas…</source>
-        <translation type="unfinished">キャンバスを復元中…</translation>
+        <translation>キャンバスを復元中…</translation>
     </message>
 </context>
 <context>
@@ -9946,7 +9946,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../view/canvasview.cpp" line="+134"/>
         <source>Save As…</source>
-        <translation type="unfinished">名前を付けて保存…</translation>
+        <translation>名前を付けて保存…</translation>
     </message>
 </context>
 <context>
@@ -9954,52 +9954,52 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../view/lock.cpp" line="+29"/>
         <source>Out of space, use Session &gt; Reset to fix this</source>
-        <translation type="unfinished"></translation>
+        <translation>スペースが不足しているため、[セッション] &gt; [リセット] を使用してこれを修正してください</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Reset in progress</source>
-        <translation type="unfinished">リセット進行中</translation>
+        <translation>リセット進行中</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas is locked</source>
-        <translation type="unfinished">キャンバスがロックされています</translation>
+        <translation>キャンバスがロックされています</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>User is locked</source>
-        <translation type="unfinished">ユーザーがロックされています</translation>
+        <translation>ユーザーがロックされています</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Layer is a group</source>
-        <translation type="unfinished">レイヤーはグループです</translation>
+        <translation>レイヤーはグループです</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is locked</source>
-        <translation type="unfinished">レイヤーはロックされています</translation>
+        <translation>レイヤーはロックされています</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is censored</source>
-        <translation type="unfinished">レイヤーはセンシティブ設定です</translation>
+        <translation>レイヤーはセンシティブ設定です</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is hidden</source>
-        <translation type="unfinished">レイヤーは非表示です</translation>
+        <translation>レイヤーは非表示です</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is not visible in this frame</source>
-        <translation type="unfinished">このフレームではレイヤーは表示されません</translation>
+        <translation>このフレームではレイヤーは表示されません</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Tool is locked</source>
-        <translation type="unfinished">ツールはロックされています</translation>
+        <translation>ツールはロックされています</translation>
     </message>
 </context>
 <context>
@@ -10086,13 +10086,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+18"/>
         <location filename="../view/canvascontroller.cpp" line="+19"/>
         <source>Horizontal mirror: ON</source>
-        <translation>左右反転：ON</translation>
+        <translation>水平ミラー：ON</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../view/canvascontroller.cpp" line="+2"/>
         <source>Horizontal mirror: OFF</source>
-        <translation>左右反転：OFF</translation>
+        <translation>水平ミラー：OFF</translation>
     </message>
     <message>
         <location line="+1858"/>
@@ -10110,13 +10110,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+30"/>
         <location filename="../view/canvascontroller.cpp" line="+34"/>
         <source>Downloading…</source>
-        <translation type="unfinished"></translation>
+        <translation>ダウンロード中…</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../view/canvascontroller.cpp" line="+3"/>
         <source>Saving…</source>
-        <translation type="unfinished"></translation>
+        <translation>保存中…</translation>
     </message>
 </context>
 <context>
@@ -10356,22 +10356,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/dualcolorbutton.cpp" line="+31"/>
         <source>Set foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>前景色を設定</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Set background color</source>
-        <translation type="unfinished"></translation>
+        <translation>背景色を設定</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Reset colors to black and white</source>
-        <translation type="unfinished"></translation>
+        <translation>カラーを白黒にリセット</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Swap foreground and background color</source>
-        <translation type="unfinished"></translation>
+        <translation>前景色と背景色を入れ替え</translation>
     </message>
 </context>
 <context>
@@ -10427,27 +10427,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+80"/>
         <source>Self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>自己署名証明書</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Known self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>既知の自己署名証明</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Pinned self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>固定された自己署名証明書</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Valid certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>有効な証明書</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Pinned valid certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>固定された有効な証明書</translation>
     </message>
     <message>
         <location line="+167"/>
