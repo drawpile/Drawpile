@@ -86,6 +86,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Allow shrinking fills and magic wand selections. Thanks Meru for suggesting.
  * Feature: New dialog Selection > Expand/Shrink/Feather Selection that alters selections accordingly. Thanks MorrowShore for suggesting.
  * Feature: Zooming with keyboard shortcuts now zooms in on the cursor when it's pointing at the canvas. If you don't like this, there's new shortcuts that always zoom on the center, which you can bind in the preferences. Thanks Chryssabliss for suggesting.
+ * Feature: Make header and footer buttons on docks stretch further if there's empty space, making them easier to hit. Thanks MorrowShore for suggesting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

@@ -132,7 +132,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 		brushSettingsDialogButton, &widgets::GroupedToolButton::clicked, this,
 		&BrushSettings::brushSettingsDialogRequested);
 
-	brushSlotWidgetLayout->addStretch();
+	brushSlotWidgetLayout->addStretch(1);
 
 	for(int i = 0; i < BRUSH_COUNT; ++i) {
 		d->brushSlotButton[i] = new widgets::GroupedToolButton(
@@ -140,7 +140,9 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 		d->brushSlotButton[i]->setCheckable(true);
 		d->brushSlotButton[i]->setAutoExclusive(true);
 		d->brushSlotButton[i]->setText(QString::number(i + 1));
-		brushSlotWidgetLayout->addWidget(d->brushSlotButton[i]);
+		d->brushSlotButton[i]->setSizePolicy(
+			QSizePolicy::Expanding, QSizePolicy::Preferred);
+		brushSlotWidgetLayout->addWidget(d->brushSlotButton[i], 1);
 
 		connect(
 			d->brushSlotButton[i], &QToolButton::clicked, this, [this, i]() {
@@ -148,7 +150,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 			});
 	}
 
-	brushSlotWidgetLayout->addStretch();
+	brushSlotWidgetLayout->addStretch(1);
 
 	d->brushSlotButton[0]->setGroupPosition(
 		widgets::GroupedToolButton::GroupLeft);

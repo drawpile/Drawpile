@@ -198,12 +198,12 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 
 static void addLayerButton(
 	QWidget *root, QHBoxLayout *layout, QAction *action,
-	widgets::GroupedToolButton::GroupPosition position)
+	widgets::GroupedToolButton::GroupPosition position, int stretch)
 {
 	widgets::GroupedToolButton *button =
 		new widgets::GroupedToolButton{position, root};
 	button->setDefaultAction(action);
-	layout->addWidget(button);
+	layout->addWidget(button, stretch);
 }
 
 void LayerList::setLayerEditActions(const Actions &actions)
@@ -219,22 +219,23 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	layout->setSpacing(0);
 	layout->setContentsMargins(titleBarWidget()->layout()->contentsMargins());
 	addLayerButton(
-		root, layout, m_actions.addLayer,
-		widgets::GroupedToolButton::GroupLeft);
+		root, layout, m_actions.addLayer, widgets::GroupedToolButton::GroupLeft,
+		3);
 	addLayerButton(
 		root, layout, m_actions.addGroup,
-		widgets::GroupedToolButton::GroupCenter);
+		widgets::GroupedToolButton::GroupCenter, 2);
 	addLayerButton(
 		root, layout, m_actions.duplicate,
-		widgets::GroupedToolButton::GroupCenter);
+		widgets::GroupedToolButton::GroupCenter, 2);
 	addLayerButton(
-		root, layout, m_actions.merge, widgets::GroupedToolButton::GroupCenter);
+		root, layout, m_actions.merge, widgets::GroupedToolButton::GroupCenter,
+		2);
 	addLayerButton(
 		root, layout, m_actions.properties,
-		widgets::GroupedToolButton::GroupRight);
-	layout->addStretch();
+		widgets::GroupedToolButton::GroupRight, 2);
+	layout->addStretch(3);
 	addLayerButton(
-		root, layout, m_actions.del, widgets::GroupedToolButton::NotGrouped);
+		root, layout, m_actions.del, widgets::GroupedToolButton::NotGrouped, 2);
 	root->layout()->addItem(layout);
 
 	// Add the actions to the context menu

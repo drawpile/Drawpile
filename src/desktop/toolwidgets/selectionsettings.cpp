@@ -162,7 +162,7 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	QHBoxLayout *headerLayout = new QHBoxLayout(m_headerWidget);
 	headerLayout->setContentsMargins(0, 0, 0, 0);
 	headerLayout->setSpacing(0);
-	headerLayout->addStretch();
+	headerLayout->addStretch(1);
 
 	widgets::GroupedToolButton *replaceButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
@@ -171,7 +171,7 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	replaceButton->setToolTip(replaceButton->statusTip());
 	replaceButton->setCheckable(true);
 	replaceButton->setChecked(true);
-	headerLayout->addWidget(replaceButton);
+	headerLayout->addWidget(replaceButton, 1);
 	m_headerGroup->addButton(replaceButton, DP_MSG_SELECTION_PUT_OP_REPLACE);
 
 	widgets::GroupedToolButton *uniteButton =
@@ -180,7 +180,7 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	uniteButton->setStatusTip(tr("Add to selection"));
 	uniteButton->setToolTip(uniteButton->statusTip());
 	uniteButton->setCheckable(true);
-	headerLayout->addWidget(uniteButton);
+	headerLayout->addWidget(uniteButton, 1);
 	m_headerGroup->addButton(uniteButton, DP_MSG_SELECTION_PUT_OP_UNITE);
 
 	widgets::GroupedToolButton *intersectButton =
@@ -189,7 +189,7 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	intersectButton->setStatusTip(tr("Intersect with selection"));
 	intersectButton->setToolTip(intersectButton->statusTip());
 	intersectButton->setCheckable(true);
-	headerLayout->addWidget(intersectButton);
+	headerLayout->addWidget(intersectButton, 1);
 	m_headerGroup->addButton(
 		intersectButton, DP_MSG_SELECTION_PUT_OP_INTERSECT);
 
@@ -199,10 +199,10 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	m_excludeButton->setStatusTip(tr("Remove from selection"));
 	m_excludeButton->setToolTip(m_excludeButton->statusTip());
 	m_excludeButton->setCheckable(true);
-	headerLayout->addWidget(m_excludeButton);
+	headerLayout->addWidget(m_excludeButton, 1);
 	m_headerGroup->addButton(m_excludeButton, DP_MSG_SELECTION_PUT_OP_EXCLUDE);
 
-	headerLayout->addStretch();
+	headerLayout->addStretch(1);
 
 	connect(
 		m_headerGroup,

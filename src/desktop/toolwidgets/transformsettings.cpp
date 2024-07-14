@@ -106,29 +106,29 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 	QHBoxLayout *headerLayout = new QHBoxLayout(m_headerWidget);
 	headerLayout->setContentsMargins(0, 0, 0, 0);
 	headerLayout->setSpacing(0);
-	headerLayout->addStretch();
+	headerLayout->addStretch(1);
 
 	m_mirrorButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
-	headerLayout->addWidget(m_mirrorButton);
+	headerLayout->addWidget(m_mirrorButton, 1);
 
 	m_flipButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
-	headerLayout->addWidget(m_flipButton);
+	headerLayout->addWidget(m_flipButton, 1);
 
 	m_rotateCwButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
-	headerLayout->addWidget(m_rotateCwButton);
+	headerLayout->addWidget(m_rotateCwButton, 1);
 
 	m_rotateCcwButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
-	headerLayout->addWidget(m_rotateCcwButton);
+	headerLayout->addWidget(m_rotateCcwButton, 1);
 
 	m_shrinkToViewButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
-	headerLayout->addWidget(m_shrinkToViewButton);
+	headerLayout->addWidget(m_shrinkToViewButton, 1);
 
-	headerLayout->addStretch();
+	headerLayout->addStretch(1);
 
 	QWidget *widget = new QWidget(parent);
 	QFormLayout *layout = new QFormLayout(widget);

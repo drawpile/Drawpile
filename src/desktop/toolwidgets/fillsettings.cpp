@@ -53,6 +53,7 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	m_ui->size->setExponentRatio(3.0);
 	utils::setWidgetRetainSizeWhenHidden(m_ui->sourceDummyCombo, true);
 	m_ui->sourceDummyCombo->hide();
+	utils::setWidgetRetainSizeWhenHidden(m_ui->sourceFillSource, true);
 
 	m_expandGroup = new QButtonGroup(this);
 	m_expandGroup->addButton(m_ui->expandButton, 0);
