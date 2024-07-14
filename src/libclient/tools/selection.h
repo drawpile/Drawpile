@@ -51,7 +51,7 @@ protected:
 	virtual net::MessageList endSelection(uint8_t contextId) = 0;
 
 private:
-	void endSelection(bool click);
+	void endSelection(bool click, bool onlyMask);
 	net::MessageList endDeselection(uint8_t contextId);
 	bool isInsideSelection(const QPointF &point) const;
 

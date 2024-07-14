@@ -234,7 +234,7 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 
 	connect(
 		d->ctrl, &tools::ToolController::transformRequested, this,
-		&ToolSettings::startTransformMoveActiveLayer, Qt::QueuedConnection);
+		&ToolSettings::startTransformMove, Qt::QueuedConnection);
 	connect(
 		d->ctrl, &tools::ToolController::toolSwitchRequested, this,
 		&ToolSettings::setToolTemporary);

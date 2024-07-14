@@ -35,14 +35,14 @@ void SelectionTool::motion(const MotionParams &params)
 	}
 }
 
-void SelectionTool::end(const EndParams &)
+void SelectionTool::end(const EndParams &params)
 {
-	endSelection(true);
+	endSelection(true, params.center);
 }
 
 void SelectionTool::finishMultipart()
 {
-	endSelection(false);
+	endSelection(false, false);
 }
 
 void SelectionTool::cancelMultipart()
@@ -102,14 +102,14 @@ void SelectionTool::removeSelectionPreview() const
 	updateSelectionPreview(QPainterPath());
 }
 
-void SelectionTool::endSelection(bool click)
+void SelectionTool::endSelection(bool click, bool onlyMask)
 {
 	m_clickDetector.end();
 	if(m_op != -1) {
 		bool isClick = click && m_clickDetector.isClick();
 		if(isClick && isInsideSelection(startPoint())) {
 			cancelSelection();
-			emit m_owner.transformRequested();
+			emit m_owner.transformRequested(onlyMask);
 		} else {
 			net::Client *client = m_owner.client();
 			uint8_t contextId = client->myId();

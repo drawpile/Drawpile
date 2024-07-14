@@ -226,7 +226,7 @@ signals:
 	void zoomRequested(const QRect &rect, int steps);
 	void maskPreviewRequested(const QPoint &pos, const QImage &mask);
 	void pathPreviewRequested(const QPainterPath &path);
-	void transformRequested();
+	void transformRequested(bool maskOnly);
 	void toolSwitchRequested(tools::Tool::Type tool);
 	void showMessageRequested(const QString &message);
 	void toolNoticeRequested(const QString &text);
