@@ -97,7 +97,9 @@ function(target_add_translations target prefix)
 
 	if(UPDATE_TRANSLATIONS)
 		_create_translation(qm_files "${CMAKE_CURRENT_SOURCE_DIR}/.." ${ts_files}
-			OPTIONS -no-obsolete -locations relative
+			OPTIONS -no-obsolete -locations relative -extensions
+			# Default extensions without .js, those are not Qt-related files.
+			java,jui,ui,c,c++,cc,cpp,cxx,ch,h,h++,hh,hpp,hxx,qs,qml,qrc
 		)
 	else()
 		_add_translation(qm_files ${ts_files})
