@@ -4,7 +4,7 @@
 <context>
     <name>AvatarListModel</name>
     <message>
-        <location filename="../utils/avatarlistmodel.cpp" line="+113"/>
+        <location filename="../utils/avatarlistmodel.cpp" line="+114"/>
         <source>No avatar</source>
         <translation>无头像</translation>
     </message>
@@ -17,7 +17,7 @@
 <context>
     <name>CanvasSaverRunnable</name>
     <message>
-        <location filename="../export/canvassaverrunnable.cpp" line="+35"/>
+        <location filename="../export/canvassaverrunnable.cpp" line="+41"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation>糟糕的争论, 这可能是Drawpile的一个bug.</translation>
     </message>
@@ -213,7 +213,7 @@
 <context>
     <name>CertificateStoreModel</name>
     <message>
-        <location filename="../utils/certificatestoremodel.cpp" line="+24"/>
+        <location filename="../utils/certificatestoremodel.cpp" line="+25"/>
         <source>&apos;%1&apos; does not contain any valid host certificates.</source>
         <translation>&apos;%1&apos; 不包含任何有效的服务器证书.</translation>
     </message>
@@ -233,7 +233,7 @@
         <translation>&apos;%1&apos; 包含一个有多个服务器名的证书, 目前不支持.</translation>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="+140"/>
         <source>Could not read certificate from &apos;%1&apos;.</source>
         <translation>无法从&apos;%1&apos;读取证书.</translation>
     </message>
@@ -289,7 +289,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+715"/>
+        <location filename="../document.cpp" line="+757"/>
         <source>Unknown format.</source>
         <translation>未知格式.</translation>
     </message>
@@ -312,6 +312,11 @@
         <location line="+3"/>
         <source>Unknown error.</source>
         <translation>未知错误.</translation>
+    </message>
+    <message>
+        <location line="+438"/>
+        <source>Error saving image</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -349,6 +354,47 @@
     </message>
 </context>
 <context>
+    <name>FillSettings</name>
+    <message>
+        <location filename="../tools/floodfill.cpp" line="+251"/>
+        <source>Filling…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+61"/>
+        <source>No layer selected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Can&apos;t fill layer group %1.
+Select a regular layer instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Continuous fill</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Similar color fill</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Selection fill</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>%1, %2 by %3 pixels.
+%4 at %5% opacity on %6.
+Click to apply, undo to cancel.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>KeyFrameLayerModel</name>
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
@@ -364,6 +410,20 @@
         <location line="+2"/>
         <source>Visibility: Parent</source>
         <translation>可见性: 限制</translation>
+    </message>
+</context>
+<context>
+    <name>MagicWandSettings</name>
+    <message>
+        <location filename="../tools/magicwand.cpp" line="+202"/>
+        <source>Selecting…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+52"/>
+        <source>%1 by %2 pixels, %3% opacity.
+Click to apply, undo to cancel.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -452,7 +512,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../drawdance/canvasstate.cpp" line="+45"/>
+        <location filename="../drawdance/canvasstate.cpp" line="+47"/>
         <source>Layer %1</source>
         <translation>图层 %1</translation>
     </message>
@@ -483,12 +543,12 @@
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+451"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+529"/>
         <source>(untitled)</source>
         <translation>(未命名)</translation>
     </message>
     <message>
-        <location line="-380"/>
+        <location line="-454"/>
         <source>%1d%2h%3m</source>
         <translation>%1d%2h%3m</translation>
     </message>
@@ -498,19 +558,19 @@
         <translation>%1h%2m</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>%1m</source>
         <translation>%1m</translation>
     </message>
     <message numerus="yes">
-        <location line="+94"/>
+        <location line="+106"/>
         <source>%1/%n users</source>
         <translation>
             <numerusform>%1/%n 用户</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location line="+2"/>
+        <location line="+3"/>
         <source>%n users</source>
         <translation>
             <numerusform>%n 用户</numerusform>
@@ -529,7 +589,7 @@
         </translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+20"/>
         <source>Compatible</source>
         <translation>兼容的</translation>
     </message>
@@ -539,7 +599,7 @@
         <translation>需要兼容模式 (%1)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Requires newer client (%1)</source>
         <translation>需要新的客户端版本 (%1)</translation>
     </message>
@@ -549,47 +609,57 @@
         <translation>不兼容 (%1)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>unknown version</source>
         <translation>未知版本</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+113"/>
         <source>Compatibility</source>
         <translation>兼容性</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <source>Title</source>
         <translation>标题</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Server</source>
         <translation>服务器</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Users</source>
         <translation>用户</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Active</source>
         <translation>活跃</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Owner</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Age</source>
         <translation>存在时长</translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+177"/>
+        <source>incompatible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>joining from web not allowed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>closed</source>
         <translation>已关闭的</translation>
     </message>
@@ -726,11 +796,16 @@
         <source>Color</source>
         <translation>颜色</translation>
     </message>
+    <message>
+        <location line="+15"/>
+        <source>Unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+600"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+612"/>
         <source>Default</source>
         <translation>Default</translation>
     </message>
@@ -867,7 +942,7 @@
 <context>
     <name>canvas::PaintEngine</name>
     <message>
-        <location filename="../canvas/paintengine.cpp" line="+169"/>
+        <location filename="../canvas/paintengine.cpp" line="+203"/>
         <source>Layer %1</source>
         <translation>图层 %1</translation>
     </message>
@@ -933,38 +1008,16 @@
 <context>
     <name>impex::AnimationImporter</name>
     <message>
-        <location filename="../import/animationimporter.cpp" line="+48"/>
+        <location filename="../import/animationimporter.cpp" line="+30"/>
+        <source>Frame %1</source>
+        <extracomment>Title for imported animation layers.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
         <translation>帧数 %1</translation>
-    </message>
-</context>
-<context>
-    <name>net::AnnouncementListModel</name>
-    <message>
-        <location filename="../net/announcementlist.cpp" line="+31"/>
-        <source>Private</source>
-        <translation>私密</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Public</source>
-        <translation>公开</translation>
-    </message>
-    <message>
-        <location line="+24"/>
-        <source>Server</source>
-        <translation>服务器</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Room code</source>
-        <translation>房间代码</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Mode</source>
-        <translation>模式</translation>
     </message>
 </context>
 <context>
@@ -1029,7 +1082,7 @@
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+440"/>
+        <location filename="../net/client.cpp" line="+492"/>
         <source>%1 banned by %2.</source>
         <translation>%1已被%2禁止IP.</translation>
     </message>
@@ -1054,7 +1107,7 @@
         <translation>%1的房间管理员身份已被服务器移除.</translation>
     </message>
     <message>
-        <location line="-392"/>
+        <location line="-439"/>
         <source>You have been kicked.</source>
         <translation>你已被踢除.</translation>
     </message>
@@ -1094,7 +1147,7 @@
         <translation>断开连接: %1</translation>
     </message>
     <message>
-        <location line="+324"/>
+        <location line="+371"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>只有服务器管理员可以导出普通的被禁的用户.</translation>
@@ -1143,6 +1196,11 @@
         <location line="+26"/>
         <source>Operator status revoked from %1 by %2.</source>
         <translation>%1的房间管理员身份已被%2移除.</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1201,38 +1259,33 @@
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+105"/>
-        <location line="+458"/>
+        <location filename="../net/login.cpp" line="+120"/>
+        <location line="+529"/>
         <source>Invalid state</source>
         <translation>无效状态</translation>
     </message>
     <message>
-        <location line="-416"/>
+        <location line="-481"/>
         <location line="+8"/>
-        <location line="+128"/>
-        <location line="+318"/>
-        <location line="+165"/>
+        <location line="+129"/>
+        <location line="+379"/>
+        <location line="+176"/>
         <location line="+47"/>
         <source>Incompatible server</source>
         <translation>服务器不兼容</translation>
     </message>
     <message>
-        <location line="-651"/>
+        <location line="-724"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>服务器不支持当前的Drawpile版本！</translation>
     </message>
     <message>
-        <location line="+105"/>
-        <source>Secure mode not enabled on a trusted host!</source>
-        <translation>安全模式没有在信任的主机上启动!</translation>
-    </message>
-    <message>
-        <location line="+781"/>
+        <location line="+973"/>
         <source>Username already taken!</source>
         <translation>用户名已被使用!</translation>
     </message>
     <message>
-        <location line="-673"/>
+        <location line="-759"/>
         <source>This server does not allow guest logins</source>
         <translation>此服务器不支持非注册用户登录</translation>
     </message>
@@ -1248,7 +1301,7 @@
         <translation>认证服务器错误: %1</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+130"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
         <translation>服务器配置错误：ext-auth URL无效</translation>
     </message>
@@ -1258,17 +1311,12 @@
         <translation>不支持ext-auth的URL方案</translation>
     </message>
     <message>
-        <location line="+173"/>
+        <location line="+188"/>
         <source>New version</source>
         <translation>新版本</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>Unknown version</source>
-        <translation>未知版本</translation>
-    </message>
-    <message>
-        <location line="-42"/>
+        <location line="-45"/>
         <source>Session not yet started!</source>
         <translation>房间还未创建!</translation>
     </message>
@@ -1278,18 +1326,13 @@
         <translation>已被控制面板屏蔽</translation>
     </message>
     <message>
-        <location line="+267"/>
+        <location line="+285"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>服务器 %1 证书无效</translation>
     </message>
     <message>
-        <location line="-18"/>
-        <source>Certificate of a trusted server has changed!</source>
-        <translation>信任的服务器证书已更改!</translation>
-    </message>
-    <message>
-        <location line="+94"/>
+        <location line="+82"/>
         <source>Server is full!</source>
         <translation>服务器已满!</translation>
     </message>
@@ -1324,17 +1367,17 @@
         <translation>此服务器只允许通过直接链接加入房间.</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+31"/>
         <source>Client failed to serialize command</source>
         <translation>客户端序列化命令失败</translation>
     </message>
     <message>
-        <location line="-80"/>
+        <location line="-83"/>
         <source>Cancelled</source>
         <translation>已取消</translation>
     </message>
     <message>
-        <location line="-769"/>
+        <location line="-856"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation>此服务器不提供登录方式来加入房间!</translation>
     </message>
@@ -1349,7 +1392,12 @@
         <translation>服务器期望在不支持的socket上使用 STARTTLS.</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+5"/>
+        <source>Secure mode not enabled on a host with pinned certificate!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+71"/>
         <source>Session lookup failed</source>
         <translation>房间查找失败</translation>
     </message>
@@ -1364,7 +1412,7 @@
         <translation>意外的ext-auth响应: %1</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+86"/>
         <source>Invalid ident intent response.</source>
         <translation>无效标识意图响应.</translation>
     </message>
@@ -1374,27 +1422,38 @@
         <translation>服务器报告了两个不同的外部认证 URLs</translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+113"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation>在预期只有一个房间的情况下出现了多个房间</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+40"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
         <translation>不同Drawpile版本（%1）的房间正在进行中!</translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+32"/>
+        <source>Unknown version %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+149"/>
+        <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation>此类socket不支持 TLS</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+55"/>
         <source>Unable to set TLS error ignore state</source>
         <translation>无法设置 TLS 错误忽略状态</translation>
     </message>
     <message>
-        <location line="+106"/>
+        <location line="+35"/>
+        <source>Pinned certificate has changed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+78"/>
         <source>Session not found!</source>
         <translation>未找到房间!</translation>
     </message>
@@ -1442,7 +1501,17 @@
         <translation>不兼容的版本</translation>
     </message>
     <message>
+        <location line="+3"/>
+        <source>Closed (not allowed to join from the web browser)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+2"/>
+        <source>Closed (not allowed to join via WebSocket)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Closed (guest logins blocked)</source>
         <translation>已关闭 (禁止非注册用户加入)</translation>
     </message>
@@ -1462,7 +1531,7 @@
         <translation>未成年人勿入</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Unknown number of actively drawing users</source>
         <translation>未知活跃用户数量</translation>
     </message>
@@ -1474,30 +1543,72 @@
         </translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+68"/>
         <source>Title</source>
         <translation>标题</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Started by</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Users</source>
         <translation>用户</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Active</source>
         <translation>活跃</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>It is full or closed.</source>
+        <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>It requires an account.</source>
+        <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>It does not allow joining via web browser.</source>
+        <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>It does not allow joining via WebSockets.</source>
+        <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>It is hosted with a newer version of Drawpile, you have to update. If there is no update available, it may be hosted with a development version of Drawpile.</source>
+        <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>It is hosted with an old, incompatible version of Drawpile.</source>
+        <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>It is hosted with an incompatible protocol.</source>
+        <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+99"/>
+        <location filename="../net/server.cpp" line="+200"/>
         <source>Network read error</source>
         <translation>网络读取错误</translation>
     </message>
@@ -1522,15 +1633,33 @@
         <translation>网络连接超时</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+75"/>
         <source>Received invalid data</source>
         <translation>接收数据无效</translation>
     </message>
 </context>
 <context>
+    <name>tools::TransformSettings</name>
+    <message>
+        <location filename="../tools/transform.cpp" line="+347"/>
+        <source>You don&apos;t have permission to transform selections.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>No canvas present.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Nothing selected that could be transformed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>utils::News</name>
     <message>
-        <location filename="../utils/news.cpp" line="+280"/>
+        <location filename="../utils/news.cpp" line="+286"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
         <translation>检查更新…</translation>
@@ -1579,6 +1708,29 @@
         <location line="+8"/>
         <source>No news available.</source>
         <translation>暂无新闻.</translation>
+    </message>
+</context>
+<context>
+    <name>wasmsupport</name>
+    <message>
+        <location filename="../wasmsupport.cpp" line="+109"/>
+        <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>The session address does not look like a valid WebSocket URL.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>You&apos;re trying to connect to an IP address instead of a proper domain name. This usually doesn&apos;t work unless you&apos;ve configured your browser to allow this first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>The server may not support joining via web browser.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

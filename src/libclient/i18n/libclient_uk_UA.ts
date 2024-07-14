@@ -4,7 +4,7 @@
 <context>
     <name>AvatarListModel</name>
     <message>
-        <location filename="../utils/avatarlistmodel.cpp" line="+113"/>
+        <location filename="../utils/avatarlistmodel.cpp" line="+114"/>
         <source>No avatar</source>
         <translation>Немає аватару</translation>
     </message>
@@ -17,7 +17,7 @@
 <context>
     <name>CanvasSaverRunnable</name>
     <message>
-        <location filename="../export/canvassaverrunnable.cpp" line="+35"/>
+        <location filename="../export/canvassaverrunnable.cpp" line="+41"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -213,7 +213,7 @@
 <context>
     <name>CertificateStoreModel</name>
     <message>
-        <location filename="../utils/certificatestoremodel.cpp" line="+24"/>
+        <location filename="../utils/certificatestoremodel.cpp" line="+25"/>
         <source>&apos;%1&apos; does not contain any valid host certificates.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -233,7 +233,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="+140"/>
         <source>Could not read certificate from &apos;%1&apos;.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -289,7 +289,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+715"/>
+        <location filename="../document.cpp" line="+757"/>
         <source>Unknown format.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -311,6 +311,11 @@
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
+        <translation type="unfinished">Невідома помилка.</translation>
+    </message>
+    <message>
+        <location line="+438"/>
+        <source>Error saving image</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -349,6 +354,47 @@
     </message>
 </context>
 <context>
+    <name>FillSettings</name>
+    <message>
+        <location filename="../tools/floodfill.cpp" line="+251"/>
+        <source>Filling…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+61"/>
+        <source>No layer selected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Can&apos;t fill layer group %1.
+Select a regular layer instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Continuous fill</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Similar color fill</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Selection fill</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>%1, %2 by %3 pixels.
+%4 at %5% opacity on %6.
+Click to apply, undo to cancel.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>KeyFrameLayerModel</name>
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
@@ -363,6 +409,20 @@
     <message>
         <location line="+2"/>
         <source>Visibility: Parent</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MagicWandSettings</name>
+    <message>
+        <location filename="../tools/magicwand.cpp" line="+202"/>
+        <source>Selecting…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+52"/>
+        <source>%1 by %2 pixels, %3% opacity.
+Click to apply, undo to cancel.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -452,7 +512,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../drawdance/canvasstate.cpp" line="+45"/>
+        <location filename="../drawdance/canvasstate.cpp" line="+47"/>
         <source>Layer %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -483,12 +543,12 @@
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+451"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+529"/>
         <source>(untitled)</source>
         <translation>(без назви)</translation>
     </message>
     <message>
-        <location line="-380"/>
+        <location line="-454"/>
         <source>%1d%2h%3m</source>
         <translation type="unfinished"></translation>
     </message>
@@ -498,12 +558,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>%1m</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location line="+94"/>
+        <location line="+106"/>
         <source>%1/%n users</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -512,7 +572,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location line="+2"/>
+        <location line="+3"/>
         <source>%n users</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -535,7 +595,7 @@
         </translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+20"/>
         <source>Compatible</source>
         <translation type="unfinished"></translation>
     </message>
@@ -545,7 +605,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Requires newer client (%1)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -555,47 +615,57 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>unknown version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+113"/>
         <source>Compatibility</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <source>Title</source>
         <translation>Заголовок</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Server</source>
         <translation>Сервер</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Users</source>
         <translation>Користувачі</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Active</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Owner</source>
         <translation>Власник</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Age</source>
         <translation>Вік</translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+177"/>
+        <source>incompatible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>joining from web not allowed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>closed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -732,11 +802,16 @@
         <source>Color</source>
         <translation type="unfinished">Колір</translation>
     </message>
+    <message>
+        <location line="+15"/>
+        <source>Unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+600"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+612"/>
         <source>Default</source>
         <translation type="unfinished">Типове</translation>
     </message>
@@ -873,7 +948,7 @@
 <context>
     <name>canvas::PaintEngine</name>
     <message>
-        <location filename="../canvas/paintengine.cpp" line="+169"/>
+        <location filename="../canvas/paintengine.cpp" line="+203"/>
         <source>Layer %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -939,38 +1014,16 @@
 <context>
     <name>impex::AnimationImporter</name>
     <message>
-        <location filename="../import/animationimporter.cpp" line="+48"/>
+        <location filename="../import/animationimporter.cpp" line="+30"/>
+        <source>Frame %1</source>
+        <extracomment>Title for imported animation layers.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
         <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>net::AnnouncementListModel</name>
-    <message>
-        <location filename="../net/announcementlist.cpp" line="+31"/>
-        <source>Private</source>
-        <translation type="unfinished">Закритий</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Public</source>
-        <translation type="unfinished">Відкритий</translation>
-    </message>
-    <message>
-        <location line="+24"/>
-        <source>Server</source>
-        <translation type="unfinished">Сервер</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Room code</source>
-        <translation type="unfinished">Код кімнати</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Mode</source>
-        <translation type="unfinished">Режим</translation>
     </message>
 </context>
 <context>
@@ -1035,7 +1088,7 @@
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+440"/>
+        <location filename="../net/client.cpp" line="+492"/>
         <source>%1 banned by %2.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1060,7 +1113,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-392"/>
+        <location line="-439"/>
         <source>You have been kicked.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1100,7 +1153,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+324"/>
+        <location line="+371"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation type="unfinished"></translation>
@@ -1148,6 +1201,11 @@
     <message>
         <location line="+26"/>
         <source>Operator status revoked from %1 by %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1207,23 +1265,23 @@
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+105"/>
-        <location line="+458"/>
+        <location filename="../net/login.cpp" line="+120"/>
+        <location line="+529"/>
         <source>Invalid state</source>
         <translation type="unfinished">Некоректний стан</translation>
     </message>
     <message>
-        <location line="-416"/>
+        <location line="-481"/>
         <location line="+8"/>
-        <location line="+128"/>
-        <location line="+318"/>
-        <location line="+165"/>
+        <location line="+129"/>
+        <location line="+379"/>
+        <location line="+176"/>
         <location line="+47"/>
         <source>Incompatible server</source>
         <translation type="unfinished">Несумісний сервер</translation>
     </message>
     <message>
-        <location line="-651"/>
+        <location line="-724"/>
         <source>Server is for a different Drawpile version!</source>
         <translation type="unfinished">На сервері встановлено іншу версію Drawpile!</translation>
     </message>
@@ -1243,12 +1301,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Secure mode not enabled on a trusted host!</source>
-        <translation type="unfinished">На довіреному вузлі не увімкнено безпечний режим!</translation>
-    </message>
-    <message>
-        <location line="+70"/>
+        <location line="+76"/>
         <source>Session lookup failed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1279,7 +1332,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+86"/>
         <source>Invalid ident intent response.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1299,22 +1352,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+113"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+66"/>
         <source>New version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>Unknown version</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-42"/>
+        <location line="-45"/>
         <source>Session not yet started!</source>
         <translation type="unfinished">Сеанс ще не запущено!</translation>
     </message>
@@ -1329,28 +1377,39 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+181"/>
+        <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+55"/>
         <source>Unable to set TLS error ignore state</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+32"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation type="unfinished">Некоректний сертифікат SSL для вузла %1</translation>
     </message>
     <message>
-        <location line="-18"/>
-        <source>Certificate of a trusted server has changed!</source>
-        <translation type="unfinished">Сертифікат довіреного сервера змінено!</translation>
+        <location line="-789"/>
+        <source>Secure mode not enabled on a host with pinned certificate!</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+58"/>
+        <location line="+524"/>
+        <source>Unknown version %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+247"/>
+        <source>Pinned certificate has changed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+64"/>
         <source>Cancelled</source>
         <translation type="unfinished">Скасовано</translation>
     </message>
@@ -1415,7 +1474,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+31"/>
         <source>Client failed to serialize command</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1448,7 +1507,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+3"/>
+        <source>Closed (not allowed to join from the web browser)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+2"/>
+        <source>Closed (not allowed to join via WebSocket)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Closed (guest logins blocked)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1468,7 +1537,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Unknown number of actively drawing users</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1482,30 +1551,72 @@
         </translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+68"/>
         <source>Title</source>
         <translation type="unfinished">Заголовок</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Started by</source>
         <translation type="unfinished">Розпочато</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Users</source>
         <translation type="unfinished">Користувачі</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Active</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>It is full or closed.</source>
+        <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>It requires an account.</source>
+        <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>It does not allow joining via web browser.</source>
+        <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>It does not allow joining via WebSockets.</source>
+        <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>It is hosted with a newer version of Drawpile, you have to update. If there is no update available, it may be hosted with a development version of Drawpile.</source>
+        <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>It is hosted with an old, incompatible version of Drawpile.</source>
+        <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>It is hosted with an incompatible protocol.</source>
+        <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+99"/>
+        <location filename="../net/server.cpp" line="+200"/>
         <source>Network read error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1530,15 +1641,33 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+75"/>
         <source>Received invalid data</source>
         <translation type="unfinished">Отримано некоректні дані</translation>
     </message>
 </context>
 <context>
+    <name>tools::TransformSettings</name>
+    <message>
+        <location filename="../tools/transform.cpp" line="+347"/>
+        <source>You don&apos;t have permission to transform selections.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>No canvas present.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Nothing selected that could be transformed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>utils::News</name>
     <message>
-        <location filename="../utils/news.cpp" line="+280"/>
+        <location filename="../utils/news.cpp" line="+286"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
         <translation type="unfinished"></translation>
@@ -1586,6 +1715,29 @@
     <message>
         <location line="+8"/>
         <source>No news available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>wasmsupport</name>
+    <message>
+        <location filename="../wasmsupport.cpp" line="+109"/>
+        <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>The session address does not look like a valid WebSocket URL.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>You&apos;re trying to connect to an IP address instead of a proper domain name. This usually doesn&apos;t work unless you&apos;ve configured your browser to allow this first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>The server may not support joining via web browser.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
