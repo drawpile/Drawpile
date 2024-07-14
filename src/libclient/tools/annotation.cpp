@@ -209,7 +209,7 @@ void Annotation::motion(const MotionParams &params)
  * If we have a selected annotation, adjust its shape.
  * Otherwise, create a new annotation.
  */
-void Annotation::end()
+void Annotation::end(const EndParams &)
 {
 	if(m_selectedId == 0)
 		return;

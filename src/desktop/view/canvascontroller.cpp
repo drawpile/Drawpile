@@ -1627,7 +1627,11 @@ void CanvasController::penReleaseEvent(
 		 m_penState == PenState::MouseDown)) {
 
 		if(!m_locked && m_penMode == PenMode::Normal) {
-			emit penUp();
+			CanvasShortcuts::ConstraintMatch constraintMatch =
+				m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
+			emit penUp(
+				constraintMatch.toolConstraint1(),
+				constraintMatch.toolConstraint2());
 		}
 		m_penState = PenState::Up;
 

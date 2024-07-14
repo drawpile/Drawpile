@@ -28,7 +28,7 @@ void ColorPicker::motion(const MotionParams &params)
 	}
 }
 
-void ColorPicker::end()
+void ColorPicker::end(const EndParams &)
 {
 	m_picking = false;
 }

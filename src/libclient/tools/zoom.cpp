@@ -28,7 +28,7 @@ void ZoomTool::motion(const MotionParams &params)
 	updatePreview();
 }
 
-void ZoomTool::end()
+void ZoomTool::end(const EndParams &)
 {
 	removePreview();
 	if(m_zooming) {

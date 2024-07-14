@@ -31,7 +31,7 @@ void PanTool::motion(const MotionParams &params)
 	}
 }
 
-void PanTool::end()
+void PanTool::end(const EndParams &)
 {
 	if(m_panning) {
 		setCursor(Qt::OpenHandCursor);

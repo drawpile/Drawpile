@@ -35,32 +35,14 @@ void SelectionTool::motion(const MotionParams &params)
 	}
 }
 
-void SelectionTool::end()
+void SelectionTool::end(const EndParams &)
 {
-	m_clickDetector.end();
-	if(m_op != -1) {
-		bool isClick = m_clickDetector.isClick();
-		if(isClick && isInsideSelection(startPoint())) {
-			cancelSelection();
-			emit m_owner.transformRequested();
-		} else {
-			net::Client *client = m_owner.client();
-			uint8_t contextId = client->myId();
-			net::MessageList msgs = m_op != defaultOp() || !isClick
-										? endSelection(contextId)
-										: endDeselection(contextId);
-			if(!msgs.isEmpty()) {
-				msgs.prepend(net::makeUndoPointMessage(contextId));
-				client->sendMessages(msgs.size(), msgs.constData());
-			}
-		}
-		m_op = -1;
-	}
+	endSelection(true);
 }
 
 void SelectionTool::finishMultipart()
 {
-	end();
+	endSelection(false);
 }
 
 void SelectionTool::cancelMultipart()
@@ -118,6 +100,29 @@ void SelectionTool::updateSelectionPreview(const QPainterPath &path) const
 void SelectionTool::removeSelectionPreview() const
 {
 	updateSelectionPreview(QPainterPath());
+}
+
+void SelectionTool::endSelection(bool click)
+{
+	m_clickDetector.end();
+	if(m_op != -1) {
+		bool isClick = click && m_clickDetector.isClick();
+		if(isClick && isInsideSelection(startPoint())) {
+			cancelSelection();
+			emit m_owner.transformRequested();
+		} else {
+			net::Client *client = m_owner.client();
+			uint8_t contextId = client->myId();
+			net::MessageList msgs = m_op != defaultOp() || !isClick
+										? endSelection(contextId)
+										: endDeselection(contextId);
+			if(!msgs.isEmpty()) {
+				msgs.prepend(net::makeUndoPointMessage(contextId));
+				client->sendMessages(msgs.size(), msgs.constData());
+			}
+		}
+		m_op = -1;
+	}
 }
 
 net::MessageList SelectionTool::endDeselection(uint8_t contextId)

@@ -24,7 +24,7 @@ public:
 
 	void begin(const BeginParams &params) final override;
 	void motion(const MotionParams &params) final override;
-	void end() override;
+	void end(const EndParams &params) override;
 
 	void finishMultipart() override final;
 	void cancelMultipart() override final;
@@ -51,6 +51,7 @@ protected:
 	virtual net::MessageList endSelection(uint8_t contextId) = 0;
 
 private:
+	void endSelection(bool click);
 	net::MessageList endDeselection(uint8_t contextId);
 	bool isInsideSelection(const QPointF &point) const;
 

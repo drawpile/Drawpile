@@ -181,7 +181,7 @@ void Document::onSessionResetted()
 	// Cancel any possibly active local drawing process.
 	// This prevents jumping lines across the canvas if it shifts.
 	m_toolctrl->cancelMultipartDrawing();
-	m_toolctrl->endDrawing();
+	m_toolctrl->endDrawing(false, false);
 
 	emit sessionResetState(m_canvas->paintEngine()->viewCanvasState());
 

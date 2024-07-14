@@ -1028,13 +1028,6 @@ void CanvasView::onPenMove(
 	}
 }
 
-void CanvasView::onPenUp()
-{
-	if(!m_locked && m_penmode == PenMode::Normal) {
-		emit penUp();
-	}
-}
-
 void CanvasView::penPressEvent(
 	QEvent *event, long long timeMsec, const QPointF &pos, qreal pressure,
 	qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button,
@@ -1285,7 +1278,13 @@ void CanvasView::penReleaseEvent(
 		m_pendown == TABLETDOWN ||
 		((button == Qt::LeftButton || button == Qt::RightButton) &&
 		 m_pendown == MOUSEDOWN)) {
-		onPenUp();
+		if(!m_locked && m_penmode == PenMode::Normal) {
+			CanvasShortcuts::ConstraintMatch constraintMatch =
+				m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
+			emit penUp(
+				constraintMatch.toolConstraint1(),
+				constraintMatch.toolConstraint2());
+		}
 		m_pendown = NOTDOWN;
 
 		m_hoveringOverHud = m_scene->checkHover(mapToScene(pos.toPoint())) !=

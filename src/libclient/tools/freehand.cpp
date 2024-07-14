@@ -66,7 +66,7 @@ void Freehand::motion(const MotionParams &params)
 	m_brushEngine.sendMessagesTo(m_owner.client());
 }
 
-void Freehand::end()
+void Freehand::end(const EndParams &)
 {
 	if(m_drawing) {
 		m_drawing = false;

@@ -106,7 +106,7 @@ void MagicWandTool::motion(const MotionParams &params)
 	Q_UNUSED(params);
 }
 
-void MagicWandTool::end() {}
+void MagicWandTool::end(const EndParams &) {}
 
 bool MagicWandTool::isMultipart() const
 {

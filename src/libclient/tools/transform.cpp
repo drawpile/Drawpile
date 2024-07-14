@@ -59,7 +59,7 @@ void TransformTool::hover(const HoverParams &params)
 	}
 }
 
-void TransformTool::end()
+void TransformTool::end(const EndParams &)
 {
 	m_clickDetector.end();
 	canvas::TransformModel *transform = getActiveTransformModel();

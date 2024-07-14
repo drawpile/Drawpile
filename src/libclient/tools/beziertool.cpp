@@ -81,7 +81,7 @@ void BezierTool::hover(const HoverParams &params)
 	}
 }
 
-void BezierTool::end()
+void BezierTool::end(const EndParams &)
 {
 	const int s = m_points.size();
 

@@ -186,7 +186,7 @@ public slots:
 		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip);
 
 	//! End a stroke
-	void endDrawing();
+	void endDrawing(bool constrain, bool center);
 
 	/**
 	 * @brief Undo the latest part of a multipart drawing

@@ -16,7 +16,7 @@ public:
 
 	void begin(const BeginParams &params) override;
 	void motion(const MotionParams &params) override;
-	void end() override;
+	void end(const EndParams &params) override;
 
 	void cancelMultipart() override;
 
@@ -24,6 +24,7 @@ public:
 
 private:
 	void inspect(const QPointF &point, bool clobber) const;
+	void endInspecting();
 
 	bool m_inspecting = false;
 	bool m_showTiles = false;

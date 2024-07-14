@@ -27,18 +27,14 @@ void Inspector::motion(const MotionParams &params)
 	}
 }
 
-void Inspector::end()
+void Inspector::end(const EndParams &)
 {
-	m_inspecting = false;
-	canvas::CanvasModel *canvas = m_owner.model();
-	if(canvas) {
-		canvas->stopInspectingCanvas();
-	}
+	endInspecting();
 }
 
 void Inspector::cancelMultipart()
 {
-	end();
+	endInspecting();
 }
 
 void Inspector::inspect(const QPointF &point, bool clobber) const
@@ -46,6 +42,15 @@ void Inspector::inspect(const QPointF &point, bool clobber) const
 	canvas::CanvasModel *canvas = m_owner.model();
 	if(canvas) {
 		canvas->inspectCanvas(point.x(), point.y(), clobber, m_showTiles);
+	}
+}
+
+void Inspector::endInspecting()
+{
+	m_inspecting = false;
+	canvas::CanvasModel *canvas = m_owner.model();
+	if(canvas) {
+		canvas->stopInspectingCanvas();
 	}
 }
 

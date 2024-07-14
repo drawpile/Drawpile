@@ -144,7 +144,7 @@ signals:
 		const QPointF &viewPos);
 	void penHover(
 		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip);
-	void penUp();
+	void penUp(bool constrain, bool center);
 	void quickAdjust(qreal value);
 	void coordinatesChanged(const QPointF &coordinates);
 
@@ -326,7 +326,6 @@ private:
 	void onPenMove(
 		const canvas::Point &p, bool right, bool constrain1, bool constrain2,
 		const QPointF &viewPos);
-	void onPenUp();
 
 	void flushTouchDrawBuffer();
 

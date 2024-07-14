@@ -18,7 +18,7 @@ public:
 
 	void begin(const BeginParams &params) override;
 	void motion(const MotionParams &params) override;
-	void end() override;
+	void end(const EndParams &params) override;
 
 private:
 	void updatePreview() const;

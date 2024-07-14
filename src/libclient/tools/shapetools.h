@@ -24,7 +24,7 @@ public:
 
 	void begin(const BeginParams &params) final override;
 	void motion(const MotionParams &params) override;
-	void end() final override;
+	void end(const EndParams &params) final override;
 
 	void cancelMultipart() final override;
 	bool usesBrushColor() const final override { return true; }

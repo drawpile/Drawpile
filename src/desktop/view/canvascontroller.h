@@ -184,7 +184,7 @@ signals:
 		const QPointF &viewPos);
 	void penHover(
 		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip);
-	void penUp();
+	void penUp(bool constrain, bool center);
 	void coordinatesChanged(const QPointF &coordinates);
 	void quickAdjust(qreal value);
 	void cursorChanged(const QCursor &cursor);

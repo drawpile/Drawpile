@@ -73,6 +73,11 @@ public:
 		bool flip;
 	};
 
+	struct EndParams {
+		bool constrain;
+		bool center;
+	};
+
 	Tool(
 		ToolController &owner, Type type, const QCursor &cursor,
 		bool allowColorPick, bool allowToolAdjust, bool allowRightClick,
@@ -106,7 +111,7 @@ public:
 	virtual void begin(const BeginParams &params) = 0;
 	virtual void motion(const MotionParams &params) = 0;
 	virtual void hover(const HoverParams &params) { Q_UNUSED(params); }
-	virtual void end() = 0;
+	virtual void end(const EndParams &params) = 0;
 
 	//! Finish and commit a multipart stroke
 	virtual void finishMultipart() {}

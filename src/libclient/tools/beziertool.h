@@ -18,7 +18,7 @@ public:
 	void begin(const BeginParams &params) override;
 	void motion(const MotionParams &params) override;
 	void hover(const HoverParams &params) override;
-	void end() override;
+	void end(const EndParams &params) override;
 	void finishMultipart() override;
 	void cancelMultipart() override;
 	void undoMultipart() override;

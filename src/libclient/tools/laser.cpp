@@ -45,7 +45,7 @@ void LaserPointer::motion(const MotionParams &params)
 	}
 }
 
-void LaserPointer::end()
+void LaserPointer::end(const EndParams &)
 {
 	if(m_drawing) {
 		m_drawing = false;

@@ -136,7 +136,7 @@ void FloodFill::motion(const MotionParams &params)
 	Q_UNUSED(params);
 }
 
-void FloodFill::end() {}
+void FloodFill::end(const EndParams &) {}
 
 bool FloodFill::isMultipart() const
 {

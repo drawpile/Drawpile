@@ -99,7 +99,7 @@ void ShapeTool::cancelMultipart()
 	m_drawing = false;
 }
 
-void ShapeTool::end()
+void ShapeTool::end(const EndParams &)
 {
 	if(!m_drawing)
 		return;

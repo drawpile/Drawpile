@@ -16,7 +16,7 @@ public:
 
 	void begin(const BeginParams &params) override;
 	void motion(const MotionParams &params) override;
-	void end() override;
+	void end(const EndParams &params) override;
 
 	//! Pick from the current active layer only?
 	void setPickFromCurrentLayer(bool p) { m_pickFromCurrentLayer = p; }

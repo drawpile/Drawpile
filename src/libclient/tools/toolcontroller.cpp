@@ -119,7 +119,7 @@ TransformTool *ToolController::transformTool()
 void ToolController::setActiveTool(Tool::Type tool)
 {
 	if(activeTool() != tool) {
-		endDrawing();
+		endDrawing(false, false);
 		if(m_activeTool->isMultipart()) {
 			m_activeTool->finishMultipart();
 		}
@@ -465,13 +465,13 @@ void ToolController::hoverDrawing(
 	}
 }
 
-void ToolController::endDrawing()
+void ToolController::endDrawing(bool constrain, bool center)
 {
 	Q_ASSERT(m_activeTool);
 	if(m_model) {
 		if(m_drawing) {
 			m_drawing = false;
-			m_activeTool->end();
+			m_activeTool->end(Tool::EndParams{constrain, center});
 		}
 		m_model->paintEngine()->setLocalDrawingInProgress(false);
 	}
