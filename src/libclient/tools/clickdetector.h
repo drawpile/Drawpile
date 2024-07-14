@@ -3,8 +3,10 @@
 #define LIBCLIENT_TOOLS_CLICKDETECTOR_H
 #include "libclient/tools/devicetype.h"
 #include <QDeadlineTimer>
+#include <QGuiApplication>
 #include <QLineF>
 #include <QPointF>
+#include <QStyleHints>
 
 namespace tools {
 
@@ -29,7 +31,7 @@ public:
 		if(!m_timer.hasExpired() &&
 		   QLineF(m_startViewPos, m_endViewPos).length() <= m_clickDistance) {
 			++m_clicks;
-			m_timer.setRemainingTime(CLICK_TIME);
+			m_timer.setRemainingTime(getDoubleClickTime());
 		} else {
 			clear();
 		}
@@ -47,17 +49,32 @@ public:
 private:
 	static constexpr int CLICK_TIME = 150;
 
+	static int getDoubleClickTime()
+	{
+		return qMax(
+			CLICK_TIME,
+			QGuiApplication::styleHints()->mouseDoubleClickInterval());
+	}
+
 	qreal getClickDistance(DeviceType deviceType)
 	{
+		int distance;
 		switch(deviceType) {
 		case DeviceType::Mouse:
-			return 2.0;
+			distance = 2;
+			break;
 		case DeviceType::Tablet:
 		case DeviceType::Touch:
-			return 20.0;
+			distance = 20;
+			break;
+		default:
+			qWarning("Unknown device type %d", int(deviceType));
+			distance = 0;
+			break;
 		}
-		qWarning("Unknown device type %d", int(deviceType));
-		return 0.0;
+		return qreal(qMax(
+			distance,
+			QGuiApplication::styleHints()->mouseDoubleClickDistance()));
 	}
 
 	QDeadlineTimer m_timer;
