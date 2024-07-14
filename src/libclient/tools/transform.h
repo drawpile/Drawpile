@@ -73,6 +73,8 @@ public:
 private:
 	static constexpr int MAX_QUAD_STACK_DEPTH = 250;
 
+	Mode effectiveMode() const;
+
 	bool isTransformActive() const;
 	canvas::TransformModel *getActiveTransformModel() const;
 	canvas::TransformModel *tryBeginMove(bool firstClick, bool onlyMask);
@@ -196,6 +198,7 @@ private:
 	QVector<TransformQuad> m_quadStack;
 	int m_quadStackTop = -1;
 	Mode m_mode = Mode::Scale;
+	bool m_invertMode = false;
 	bool m_canTransform = true;
 	bool m_swapDiagonal = false;
 	bool m_firstClick = false;

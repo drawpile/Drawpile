@@ -25,15 +25,14 @@ void TransformTool::begin(const BeginParams &params)
 	m_angle = params.angle;
 	m_zoom = params.zoom;
 	m_swapDiagonal = params.mirror != params.flip;
-	if(!params.right) {
-		canvas::TransformModel *transform = getActiveTransformModel();
-		if(!transform) {
-			transform = tryBeginMove(true, false);
-		}
-		updateHoverHandle(transform, params.point);
-		if(transform) {
-			startDrag(transform, params.point);
-		}
+	m_invertMode = params.right;
+	canvas::TransformModel *transform = getActiveTransformModel();
+	if(!transform) {
+		transform = tryBeginMove(true, false);
+	}
+	updateHoverHandle(transform, params.point);
+	if(transform) {
+		startDrag(transform, params.point);
 	}
 }
 
@@ -98,6 +97,7 @@ void TransformTool::end()
 
 		m_firstClick = false;
 		m_dragHandle = Handle::None;
+		m_invertMode = false;
 		emitStateChange(transform, m_hoverHandle);
 
 		if(finish) {
@@ -319,6 +319,15 @@ void TransformTool::stamp()
 	}
 }
 
+TransformTool::Mode TransformTool::effectiveMode() const
+{
+	if(m_invertMode) {
+		return m_mode == Mode::Scale ? Mode::Distort : Mode::Scale;
+	} else {
+		return m_mode;
+	}
+}
+
 bool TransformTool::isTransformActive() const
 {
 	canvas::CanvasModel *canvas = m_owner.model();
@@ -448,14 +457,15 @@ QCursor TransformTool::getHandleCursor(
 	if(handle == Handle::None) {
 		return Qt::PointingHandCursor;
 	} else {
-		switch(m_mode) {
+		Mode mode = effectiveMode();
+		switch(mode) {
 		case Mode::Scale:
 			return getTransformHandleCursor(transform, handle);
 		case Mode::Distort:
 			return getDistortHandleCursor(transform, handle);
 		default:
 			qWarning(
-				"TransformTool::getHandleCursor: unknown mode %d", int(m_mode));
+				"TransformTool::getHandleCursor: unknown mode %d", int(mode));
 			return Qt::ArrowCursor;
 		}
 	}
@@ -586,7 +596,8 @@ void TransformTool::continueDrag(
 	canvas::TransformModel *transform, const QPointF &point, bool constrain,
 	bool center)
 {
-	switch(m_mode) {
+	Mode mode = effectiveMode();
+	switch(mode) {
 	case Mode::Scale:
 		continueDragTransform(transform, point, constrain, center);
 		break;
@@ -594,7 +605,7 @@ void TransformTool::continueDrag(
 		continueDragDistort(transform, point, constrain);
 		break;
 	default:
-		qWarning("TransformTool::continueDrag: unknown mode %d", int(m_mode));
+		qWarning("TransformTool::continueDrag: unknown mode %d", int(mode));
 		break;
 	}
 }
