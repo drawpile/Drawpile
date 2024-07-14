@@ -514,12 +514,12 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/filetypedialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished">الاسم:</translation>
+        <translation>الاسم:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished">النوع:</translation>
+        <translation>النوع:</translation>
     </message>
 </context>
 <context>
