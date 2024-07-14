@@ -72,8 +72,10 @@ bool News::Version::isNewerThan(const Version &other) const
 			if(minor > other.minor) {
 				return true;
 			} else if(minor == other.minor) {
-				if(beta > other.beta) {
-					return true;
+				if(beta == 0) {
+					return other.beta != 0;
+				} else {
+					return other.beta != 0 && beta > other.beta;
 				}
 			}
 		}
