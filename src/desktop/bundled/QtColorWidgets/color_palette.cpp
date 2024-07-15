@@ -266,7 +266,11 @@ bool ColorPalette::save()
     }
 
     QFile file(filename);
-    if ( !file.open(QFile::Text|QFile::WriteOnly) )
+    QIODevice::OpenMode mode = QFile::Text|QFile::WriteOnly;
+#ifdef Q_OS_ANDROID
+    mode |= QFile::Truncate;
+#endif
+    if ( !file.open(mode) )
         return false;
 
     QTextStream stream(&file);
