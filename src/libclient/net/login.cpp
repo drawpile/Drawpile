@@ -23,6 +23,7 @@
 #include <QStringList>
 #include <QUrlQuery>
 #include <QUuid>
+#include <dpcommon/platform_qt.h>
 #include <utility>
 #ifdef __EMSCRIPTEN__
 #	include "libclient/wasmsupport.h"
@@ -1033,7 +1034,7 @@ void saveCert(const QFileInfo &file, const QSslCertificate &cert)
 
 	QFile certOut(filename);
 
-	if(certOut.open(QFile::WriteOnly))
+	if(certOut.open(DP_QT_WRITE_FLAGS))
 		certOut.write(cert.toPem());
 	else
 		qCWarning(lcDpLogin) << "Couldn't open" << filename << "for writing!";

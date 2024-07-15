@@ -3,7 +3,7 @@
 #include "libclient/utils/certificatestoremodel.h"
 #include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/paths.h"
-
+#include <dpcommon/platform_qt.h>
 #include <QDir>
 #include <QFile>
 #include <QIcon>
@@ -198,7 +198,7 @@ bool CertificateStoreModel::submit()
 
 			if (cert.pending == Pending::Copy) {
 				auto file = QFile(to);
-				if (!file.open(QFile::WriteOnly)) {
+				if (!file.open(DP_QT_WRITE_FLAGS)) {
 					m_lastError = tr("Could not open '%1' for writing: %2.")
 						.arg(file.fileName())
 						.arg(file.errorString());

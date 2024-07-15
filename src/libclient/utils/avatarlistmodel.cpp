@@ -4,7 +4,7 @@
 #include "libclient/utils/identicon.h"
 #include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/paths.h"
-
+#include <dpcommon/platform_qt.h>
 #include <QDir>
 #include <QBuffer>
 #include <QCryptographicHash>
@@ -169,7 +169,7 @@ void AvatarListModel::commit()
 
 			const QString filename = QString::fromUtf8(hash.result().toHex() + ".png");
 			QFile f { dir.filePath(filename) };
-			if(!f.open(QFile::WriteOnly)) {
+			if(!f.open(DP_QT_WRITE_FLAGS)) {
 				qWarning("Couldn't open %s", qUtf8Printable(filename));
 				continue;
 			}

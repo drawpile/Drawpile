@@ -22,6 +22,7 @@
 #include <QStringListModel>
 #include <QTemporaryFile>
 #include <QTimer>
+#include <dpcommon/platform_qt.h>
 
 namespace dialogs {
 
@@ -538,7 +539,7 @@ void SessionSettingsDialog::permissionPresetSaving(const QString &presetFile)
 
 	// Save
 	QFile f(presetFile);
-	if(!f.open(QFile::WriteOnly)) {
+	if(!f.open(DP_QT_WRITE_FLAGS)) {
 		qWarning("%s: could not open file", qPrintable(presetFile));
 		return;
 	}

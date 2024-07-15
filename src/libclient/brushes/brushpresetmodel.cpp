@@ -7,7 +7,7 @@
 #include "libshared/util/paths.h"
 #include "libshared/util/qtcompat.h"
 #include "libclient/drawdance/ziparchive.h"
-
+#include <dpcommon/platform_qt.h>
 #include <QBuffer>
 #include <QDebug>
 #include <QDirIterator>
@@ -1263,7 +1263,7 @@ QByteArray BrushPresetModel::toPng(const QPixmap &pixmap)
 {
 	QByteArray bytes;
 	QBuffer buffer(&bytes);
-	buffer.open(QIODevice::WriteOnly);
+	buffer.open(DP_QT_WRITE_FLAGS);
 	pixmap.save(&buffer, "PNG");
 	buffer.close();
 	return bytes;

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libshared/util/filename.h"
-
+#include <dpcommon/platform_qt.h>
 #include <QtTest/QtTest>
 #include <QTemporaryDir>
 #include <QDir>
@@ -38,7 +38,7 @@ private:
 	bool touch(const QString &path)
 	{
 		QFile f { path };
-		if(!f.open(QIODevice::WriteOnly))
+		if(!f.open(DP_QT_WRITE_FLAGS))
 			return false;
 		f.close();
 		return true;

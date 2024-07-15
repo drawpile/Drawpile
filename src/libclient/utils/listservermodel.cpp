@@ -4,7 +4,7 @@
 #include "libclient/utils/listservermodel.h"
 #include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/paths.h"
-
+#include <dpcommon/platform_qt.h>
 #include <QImage>
 #include <QBuffer>
 #include <QCryptographicHash>
@@ -152,7 +152,7 @@ QIcon ListServerModel::setFavicon(const QString &url, const QImage &icon)
 	// Serialize icon in PNG format
 	QByteArray data;
 	QBuffer buffer(&data);
-	buffer.open(QIODevice::WriteOnly);
+	buffer.open(DP_QT_WRITE_FLAGS);
 	scaledIcon.save(&buffer, "PNG");
 
 	// Generate file name
@@ -174,7 +174,7 @@ QIcon ListServerModel::setFavicon(const QString &url, const QImage &icon)
 		if(!saved) {
 			saved = true;
 			QFile f(utils::paths::writablePath("favicons/", s.iconName));
-			if(!f.open(QIODevice::WriteOnly)) {
+			if(!f.open(DP_QT_WRITE_FLAGS)) {
 				qWarning() << "Unable to open" << f.fileName() << f.errorString();
 			} else {
 				f.write(data);

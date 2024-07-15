@@ -29,6 +29,7 @@ extern "C" {
 #include <dpcommon/input.h>
 #include <dpcommon/output.h>
 }
+#include <dpcommon/platform_qt.h>
 #include <QIODevice>
 #include <QImage>
 
@@ -75,7 +76,7 @@ class DP_OutputDevice : public QIODevice {
   public:
     explicit DP_OutputDevice(DP_Output *output) : QIODevice{}, m_output{output}
     {
-        open(QIODevice::WriteOnly);
+        open(DP_QT_WRITE_FLAGS);
     }
 
   protected:

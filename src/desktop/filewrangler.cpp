@@ -18,6 +18,7 @@
 #include <QTemporaryDir>
 #include <QTemporaryFile>
 #include <QThreadPool>
+#include <dpcommon/platform_qt.h>
 #if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
 #	include "desktop/dialogs/filetypedialog.h"
 #endif
@@ -890,7 +891,7 @@ bool FileWrangler::saveBytesContent(
 		return true;
 	} else {
 		QFile file(path);
-		bool ok = file.open(QFile::WriteOnly) &&
+		bool ok = file.open(DP_QT_WRITE_FLAGS) &&
 				  file.write(bytes) == bytes.size() && file.flush();
 		if(!ok && outError) {
 			*outError = file.errorString();

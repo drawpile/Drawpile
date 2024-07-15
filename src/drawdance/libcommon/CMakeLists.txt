@@ -78,6 +78,7 @@ if(FILE_IO_IMPL STREQUAL "QT")
         dpcommon/input_qt.h
         dpcommon/output_qt.cpp
         dpcommon/output_qt.h
+        dpcommon/platform_qt.h
     )
     target_link_libraries(dpcommon PUBLIC "Qt${QT_VERSION_MAJOR}::Core")
 

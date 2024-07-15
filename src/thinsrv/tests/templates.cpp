@@ -9,6 +9,7 @@
 #include <QFile>
 #include <QTemporaryDir>
 #include <QtTest/QtTest>
+#include <dpcommon/platform_qt.h>
 
 using namespace server;
 
@@ -75,7 +76,7 @@ private:
 	bool touch(const QString &path)
 	{
 		QFile f{path};
-		if(!f.open(QIODevice::WriteOnly))
+		if(!f.open(DP_QT_WRITE_FLAGS))
 			return false;
 		f.close();
 		return true;

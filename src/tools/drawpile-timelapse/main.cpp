@@ -4,6 +4,7 @@
 #include <QSaveFile>
 #include <QStandardPaths>
 #include <QString>
+#include <dpcommon/platform_qt.h>
 
 extern "C" int drawpile_timelapse_main(const char *default_logo_path);
 
@@ -29,7 +30,7 @@ static QString writeDefaultLogo()
 		QByteArray bytes = in.readAll();
 		in.close();
 
-		if(!out.open(QIODevice::WriteOnly)) {
+		if(!out.open(DP_QT_WRITE_FLAGS)) {
 			qWarning(
 				"Error opening '%s': %s", qUtf8Printable(out.fileName()),
 				qUtf8Printable(out.errorString()));

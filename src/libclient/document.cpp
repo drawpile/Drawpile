@@ -25,6 +25,7 @@
 #include <QThreadPool>
 #include <QTimer>
 #include <QtEndian>
+#include <dpcommon/platform_qt.h>
 #include <parson.h>
 #ifndef HAVE_CLIPBOARD_EMULATION
 #	include <QClipboard>
@@ -1197,7 +1198,7 @@ void Document::downloadSelection(const QString &fileName)
 	QFileInfo fileInfo(fileName);
 	QByteArray bytes;
 	QBuffer buffer(&bytes);
-	buffer.open(QIODevice::WriteOnly);
+	buffer.open(DP_QT_WRITE_FLAGS);
 	bool ok = selectionToImage().save(
 		&buffer, qUtf8Printable(fileInfo.completeSuffix()));
 	buffer.close();

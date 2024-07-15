@@ -2,7 +2,7 @@
 
 #include "libshared/util/networkaccess.h"
 #include "libshared/util/qtcompat.h"
-
+#include <dpcommon/platform_qt.h>
 #include <QNetworkReply>
 #include <QMutexLocker>
 #include <QHash>
@@ -127,7 +127,7 @@ void FileDownload::onReadyRead()
 	Q_ASSERT(m_file);
 
 	if(!m_file->isOpen()) {
-		if(!m_file->open(m_file->inherits("QSaveFile") ? QIODevice::WriteOnly : QIODevice::ReadWrite)) {
+		if(!m_file->open(m_file->inherits("QSaveFile") ? DP_QT_WRITE_FLAGS : QIODevice::ReadWrite)) {
 			m_errorMessage = m_file->errorString();
 			m_reply->abort();
 			return;

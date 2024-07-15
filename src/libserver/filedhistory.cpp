@@ -16,6 +16,7 @@ extern "C" {
 #include <QSet>
 #include <QTimerEvent>
 #include <QVarLengthArray>
+#include <dpcommon/platform_qt.h>
 
 namespace server {
 
@@ -127,7 +128,7 @@ bool FiledHistory::create()
 		return false;
 	}
 
-	if(!m_journal->open(QFile::WriteOnly)) {
+	if(!m_journal->open(DP_QT_WRITE_FLAGS)) {
 		qWarning() << m_journal->fileName() << m_journal->errorString();
 		return false;
 	}

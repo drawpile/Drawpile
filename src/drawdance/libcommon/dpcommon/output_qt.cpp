@@ -2,7 +2,7 @@ extern "C" {
 #include "output_qt.h"
 #include "output.h"
 }
-
+#include "platform_qt.h"
 #include <QFile>
 #include <QSaveFile>
 #ifdef DP_QT_IO_KARCHIVE
@@ -138,7 +138,7 @@ extern "C" DP_Output *DP_qfile_output_new_from_path(const char *path,
                                                     DP_OutputQtNewFn new_fn)
 {
     QFile *file = new QFile{QString::fromUtf8(path)};
-    if (file->open(QIODevice::WriteOnly)) {
+    if (file->open(DP_QT_WRITE_FLAGS)) {
         return DP_qfile_output_new(file, true, new_fn);
     }
     else {
@@ -214,7 +214,7 @@ extern "C" DP_Output *DP_qsavefile_output_new_from_path(const char *path,
 {
     QSaveFile *sf = new QSaveFile{QString::fromUtf8(path)};
     sf->setDirectWriteFallback(true);
-    if (sf->open(QIODevice::WriteOnly)) {
+    if (sf->open(DP_QT_WRITE_FLAGS)) {
         return new_fn(qsavefile_output_init, sf, sizeof(DP_QFileOutputState));
     }
     else {
@@ -301,7 +301,7 @@ DP_karchive_gzip_output_new_from_path(const char *path, DP_OutputQtNewFn new_fn)
 {
     KCompressionDevice *dev = new KCompressionDevice{QString::fromUtf8(path),
                                                      KCompressionDevice::GZip};
-    if (dev->open(QIODevice::WriteOnly)) {
+    if (dev->open(DP_QT_WRITE_FLAGS)) {
         return new_fn(kcompressiondevice_output_init, dev,
                       sizeof(DP_KCompressionDeviceOutputState));
     }
