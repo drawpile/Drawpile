@@ -110,23 +110,23 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 
 	m_mirrorButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
-	headerLayout->addWidget(m_mirrorButton, 1);
+	headerLayout->addWidget(m_mirrorButton, 3);
 
 	m_flipButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
-	headerLayout->addWidget(m_flipButton, 1);
+	headerLayout->addWidget(m_flipButton, 3);
 
 	m_rotateCwButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
-	headerLayout->addWidget(m_rotateCwButton, 1);
+	headerLayout->addWidget(m_rotateCwButton, 3);
 
 	m_rotateCcwButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
-	headerLayout->addWidget(m_rotateCcwButton, 1);
+	headerLayout->addWidget(m_rotateCcwButton, 3);
 
 	m_shrinkToViewButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
-	headerLayout->addWidget(m_shrinkToViewButton, 1);
+	headerLayout->addWidget(m_shrinkToViewButton, 3);
 
 	headerLayout->addStretch(1);
 
