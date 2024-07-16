@@ -24,7 +24,7 @@
     <message>
         <location line="+2"/>
         <source>Unsupported format.</source>
-        <translation>Ustøttet format</translation>
+        <translation>Ustøttet format.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -34,7 +34,7 @@
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kunne ikke åpne filen for skriving.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -44,12 +44,12 @@
     <message>
         <location line="+3"/>
         <source>Internal error during saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>Intern feil under lagring.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukjent feil.</translation>
     </message>
 </context>
 <context>
@@ -57,17 +57,17 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+94"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Snarvei</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Handling</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Modifiers</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifikatorer</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -96,73 +96,73 @@
     <message>
         <location line="+48"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Mus Hjul</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>+</source>
         <extracomment>Joins shortcut components, probably doesn&apos;t need to be translated.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>+</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Unset</source>
-        <translation type="unfinished"></translation>
+        <translation>Usatt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Left Click</source>
-        <translation type="unfinished"></translation>
+        <translation>Venstre Klikk</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right Click</source>
-        <translation type="unfinished"></translation>
+        <translation>Høyre Klikk</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation type="unfinished"></translation>
+        <translation>Midtklikk</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Unknown Button 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukjent Knapp 0x%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Button %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Knapp %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Panorer Lerret</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Roter Lerret</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom Lerret</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Plukk Farge</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Plukk Lag</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Endre Børste Størrelse</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -202,7 +202,7 @@
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>Invertert</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -255,7 +255,7 @@
     <message>
         <location line="+16"/>
         <source>Could not delete &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunne ikke slette &apos;%1&apos;: %2.</translation>
     </message>
 </context>
 <context>
@@ -263,27 +263,27 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation>Konflikt</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Handling</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Snarvei</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternativ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation>Standard</translation>
     </message>
 </context>
 <context>
@@ -291,7 +291,7 @@
     <message>
         <location filename="../document.cpp" line="+715"/>
         <source>Unknown format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukjent format.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -301,7 +301,7 @@
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Feil ved åpning av fil.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -353,17 +353,17 @@
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
         <source>Visibility: Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Synlighet: Skjult</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Revealed</source>
-        <translation type="unfinished"></translation>
+        <translation>Synlighet: Uskjult</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Parent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Synlighet: Forelder</translation>
     </message>
 </context>
 <context>
@@ -371,32 +371,32 @@
     <message>
         <location filename="../utils/images.cpp" line="+84"/>
         <source>Images (%1)</source>
-        <translation type="unfinished">Obrázky (%1)</translation>
+        <translation>Bilder (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>GIF (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>GIF (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Binary Recordings (%1)</source>
-        <translation type="unfinished">Binární záznamy (%1)</translation>
+        <translation>Binært Opptak (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Text Recordings (%1)</source>
-        <translation type="unfinished">Textové záznamy (%1)</translation>
+        <translation>Tekst Opptak (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Recordings (%1)</source>
-        <translation type="unfinished">Záznamy (%1)</translation>
+        <translation>Opptak (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Performance Profile (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ytelsesprofil (%1)</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -411,22 +411,22 @@
     <message>
         <location line="+8"/>
         <source>MP4 Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 Video (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>WebM Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>WebM Video (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Text File (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tekst Fil (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brush Pack (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Børste Pakke (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -436,17 +436,17 @@
     <message>
         <location line="+4"/>
         <source>Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Roller (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished">Všechny podporované soubory (%1)</translation>
+        <translation>Alle Støttede Filer(%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>All Files (*)</source>
-        <translation type="unfinished">Všechny soubory (*)</translation>
+        <translation>Alle Filer (*)</translation>
     </message>
 </context>
 <context>
@@ -454,7 +454,7 @@
     <message>
         <location filename="../drawdance/canvasstate.cpp" line="+45"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Lag %1</translation>
     </message>
 </context>
 <context>
@@ -462,17 +462,17 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-103"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation>Shift</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -485,43 +485,43 @@
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="+451"/>
         <source>(untitled)</source>
-        <translation type="unfinished">(Bez názvu)</translation>
+        <translation>(uten navn)</translation>
     </message>
     <message>
         <location line="-380"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1d%2h%3m</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1h%2m</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1m</translation>
     </message>
     <message numerus="yes">
         <location line="+94"/>
         <source>%1/%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1/%n bruker</numerusform>
+            <numerusform>%1/%n brukere</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n bruker</numerusform>
+            <numerusform>%n brukere</numerusform>
         </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ukjent antall aktivt tegnende brukere</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
@@ -534,7 +534,7 @@
     <message>
         <location line="+18"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation>Kompatibel</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -544,27 +544,27 @@
     <message>
         <location line="+2"/>
         <source>Requires newer client (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Krever nyere klient (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Incompatible (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukompatibel (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>ukjent versjon</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Kompatibilitet</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Title</source>
-        <translation type="unfinished">Název</translation>
+        <translation>Tittel</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -574,37 +574,37 @@
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished">Uživatelé</translation>
+        <translation>Brukere</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiv</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Owner</source>
-        <translation type="unfinished">Vlastník</translation>
+        <translation>Eier</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Age</source>
-        <translation type="unfinished">Věk</translation>
+        <translation>Alder</translation>
     </message>
     <message>
         <location line="+171"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation>lukket</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation>passord-beskyttet</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM</translation>
     </message>
 </context>
 <context>
@@ -612,97 +612,97 @@
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+40"/>
         <source>Normal</source>
-        <translation type="unfinished">Normální</translation>
+        <translation>Normal</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recolor</source>
-        <translation type="unfinished">Přebarvit</translation>
+        <translation>Omfarge</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished">Pod</translation>
+        <translation>Bak</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Multiply</source>
-        <translation type="unfinished">Násobit</translation>
+        <translation>Multipliser</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Skjerm</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>Overlegg</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Divide</source>
-        <translation type="unfinished">Dělit</translation>
+        <translation>Del</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Burn</source>
-        <translation type="unfinished">Vypálit</translation>
+        <translation>Brenn</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dodge</source>
-        <translation type="unfinished">Pozměnit světlost</translation>
+        <translation type="unfinished">Dukk</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Darken</source>
-        <translation type="unfinished">Ztmavit</translation>
+        <translation>Mørkne</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Lighten</source>
-        <translation type="unfinished">Zesvětlit</translation>
+        <translation>Lysere</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Subtract</source>
-        <translation type="unfinished">Odečíst</translation>
+        <translation>Substraher</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Add</source>
-        <translation type="unfinished">Přidat</translation>
+        <translation>Legg til</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished">Vymazat</translation>
+        <translation>Fjern</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color Erase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Farge Fjerning</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hard Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Hardt Lys</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Soft Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Mykt Lys</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Linear Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>Lineær Brenn</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Linear Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Lineær Lys</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -712,22 +712,22 @@
     <message>
         <location line="+5"/>
         <source>Hue</source>
-        <translation type="unfinished">Barevný odstín</translation>
+        <translation>Tone</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Saturation</source>
-        <translation type="unfinished">Sytost</translation>
+        <translation>Metning</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Luminosity</source>
-        <translation type="unfinished"></translation>
+        <translation>Lysstyrke</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color</source>
-        <translation type="unfinished">Barva</translation>
+        <translation>Farge</translation>
     </message>
 </context>
 <context>
@@ -735,7 +735,7 @@
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="+600"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation>Standard</translation>
     </message>
 </context>
 <context>
@@ -743,7 +743,7 @@
     <message>
         <location line="-103"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -763,7 +763,7 @@
     <message>
         <location line="+171"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation>Standard</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -773,13 +773,13 @@
     <message>
         <location line="+1"/>
         <source>Converted from %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konvertert fra %1.</translation>
     </message>
     <message>
         <location line="+19"/>
         <location line="+211"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan ikke åpne &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="-181"/>
@@ -789,7 +789,7 @@
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukategorisert %1</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -829,7 +829,7 @@
     <message>
         <location line="+50"/>
         <source>No brushes exported</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingen børster eksportert</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -872,7 +872,7 @@
     <message>
         <location filename="../canvas/paintengine.cpp" line="+169"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Lag %1</translation>
     </message>
 </context>
 <context>
@@ -880,47 +880,47 @@
     <message>
         <location filename="../canvas/userlist.cpp" line="+64"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation>Moderator</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Klarert</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>Registrert</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Online</source>
-        <translation type="unfinished"></translation>
+        <translation>Online</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation>Offline</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>User</source>
-        <translation type="unfinished">Uživatel</translation>
+        <translation>Bruker</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Status</translation>
     </message>
     <message>
         <location line="+182"/>
@@ -930,7 +930,7 @@
     <message>
         <location line="+7"/>
         <source>User #%1</source>
-        <translation type="unfinished">Uživatel #%1</translation>
+        <translation>Bruker #%1</translation>
     </message>
 </context>
 <context>
@@ -947,12 +947,12 @@
     <message>
         <location filename="../net/announcementlist.cpp" line="+31"/>
         <source>Private</source>
-        <translation type="unfinished"></translation>
+        <translation>Privat</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation>Offentlig</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -962,12 +962,12 @@
     <message>
         <location line="+1"/>
         <source>Room code</source>
-        <translation type="unfinished"></translation>
+        <translation>Rom kode</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modus</translation>
     </message>
 </context>
 <context>
@@ -975,27 +975,27 @@
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation>Moderator</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Klarert</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation type="unfinished">Uživatel</translation>
+        <translation>Bruker</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Roller</translation>
     </message>
 </context>
 <context>
@@ -1004,29 +1004,29 @@
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location line="-13"/>
         <location line="+15"/>
         <source>User</source>
-        <translation type="unfinished">Uživatel</translation>
+        <translation>Bruker</translation>
     </message>
     <message>
         <location line="-13"/>
         <source>IP address</source>
-        <translation type="unfinished">Adresa IP</translation>
+        <translation>IP addresse</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Client info</source>
-        <translation type="unfinished"></translation>
+        <translation>Klient info</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+11"/>
         <source>Banned by</source>
-        <translation type="unfinished">Zakázáno</translation>
+        <translation>Bannlyst av</translation>
     </message>
 </context>
 <context>
@@ -1034,12 +1034,12 @@
     <message>
         <location filename="../net/client.cpp" line="+440"/>
         <source>%1 banned by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 bannlyst av %2.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 kicked by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 sparket av %2.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1059,42 +1059,42 @@
     <message>
         <location line="-392"/>
         <source>You have been kicked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Du har blitt sparket.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Du har blitt sparket av %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>Det oppstod en serverfeil.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Det oppstod en serverfeil: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation>Serveren stenges.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The session has been shut down: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Økten stenges: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Frakoblet.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Frakoblet: %1</translation>
     </message>
     <message>
         <location line="+324"/>
@@ -1105,7 +1105,7 @@
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Serverfeil.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1207,7 +1207,7 @@
         <location filename="../net/login.cpp" line="+105"/>
         <location line="+458"/>
         <source>Invalid state</source>
-        <translation type="unfinished">Neplatný stav</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-416"/>
@@ -1217,12 +1217,12 @@
         <location line="+165"/>
         <location line="+47"/>
         <source>Incompatible server</source>
-        <translation type="unfinished">Neslučitelný server</translation>
+        <translation>Ukompatibel server</translation>
     </message>
     <message>
         <location line="-651"/>
         <source>Server is for a different Drawpile version!</source>
-        <translation type="unfinished">Server je pro jinou verzi programu Drawpile!</translation>
+        <translation>Serveren er for en annen Drawpile versjon!</translation>
     </message>
     <message>
         <location line="+84"/>
@@ -1242,22 +1242,22 @@
     <message>
         <location line="+5"/>
         <source>Secure mode not enabled on a trusted host!</source>
-        <translation type="unfinished">Bezpečný režim nepovolen na důvěryhodném serveru!</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+70"/>
         <source>Session lookup failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Økt oppsøk feilet</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>This server does not allow guest logins</source>
-        <translation type="unfinished">Tento server nedovoluje přihlášení hostů</translation>
+        <translation>Denne serveren tillater ikke gjestepålogging</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
-        <translation type="unfinished">Pro přihlášení jako &quot;%1&quot; je potřeba heslo</translation>
+        <translation>Passord kreves for å logge in som &quot;%1&quot;</translation>
     </message>
     <message>
         <location line="+74"/>
@@ -1268,7 +1268,7 @@
     <message>
         <location line="+19"/>
         <source>Group membership needed</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruppe medlemskap kreves</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1298,27 +1298,27 @@
     <message>
         <location line="+112"/>
         <source>Got multiple sessions when only one was expected</source>
-        <translation type="unfinished"></translation>
+        <translation>Fikk flere økter når bare en var forventet</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation>Ny versjon</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukjent versjon</translation>
     </message>
     <message>
         <location line="-42"/>
         <source>Session not yet started!</source>
-        <translation type="unfinished">Sezení ještě nespuštěno!</translation>
+        <translation>Øktken er ikke startet ennå!</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Blocked by parental controls</source>
-        <translation type="unfinished">Zablokováno rodičovskou kontrolou</translation>
+        <translation>Blokkert av foreldrekontroll</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -1339,77 +1339,77 @@
         <location line="+31"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
-        <translation type="unfinished">Neplatné osvědčení SSL pro server %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-18"/>
         <source>Certificate of a trusted server has changed!</source>
-        <translation type="unfinished">Osvědčení důvěryhodného serveru se změnilo!</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+58"/>
         <source>Cancelled</source>
-        <translation type="unfinished">Zřušeno</translation>
+        <translation>Kansellert</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Session not found!</source>
-        <translation type="unfinished">Sezení nenalezeno!</translation>
+        <translation>Økt ikke funnet!</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Invalid username!</source>
-        <translation type="unfinished">Neplatné uživatelské jméno!</translation>
+        <translation>Ugyldig brukernavn!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This username has been locked</source>
-        <translation type="unfinished">Toto uživatelské jméno bylo zamknuto</translation>
+        <translation>Dette brukernavnet har blitt låst</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Username already taken!</source>
-        <translation type="unfinished">Uživatelské jméno již obsazeno!</translation>
+        <translation>Brukernavn allerede i bruk!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session is closed!</source>
-        <translation type="unfinished">Sezení je zavřeno!</translation>
+        <translation>Økten er stengt!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server is full!</source>
-        <translation type="unfinished">Server je plný!</translation>
+        <translation>Serveren er full!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hosting not authorized</source>
-        <translation type="unfinished">Hostování neschváleno</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation type="unfinished">Bylo vám zakázáno toto sezení!</translation>
+        <translation>Du har blitt bannlyst fra denne økten!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session alias is reserved!</source>
-        <translation type="unfinished">Přezdívka sezení je vyhrazena!</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
-        <translation type="unfinished"></translation>
+        <translation>Dette betyr vanligvis at din Drawpile-versjon er for gammel. Trenger du å oppdatere?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Finner ikke økten, den kan ha avsluttet eller invitasjonslenken er endret</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server only allows joining sessions through a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation>Denne serveren tillater kun å bli med i økter via en direkte lenke.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -1422,47 +1422,47 @@
     <message>
         <location filename="../net/loginsessions.cpp" line="+48"/>
         <source>(untitled)</source>
-        <translation type="unfinished">(Bez názvu)</translation>
+        <translation>(uten navn)</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>%1 (incompatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (ukompatibel)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.1 (compatibility mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.1 (kompatibilitetsmodus)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (fully compatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 (fullt kompatibelt)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukompatibel versjon</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (guest logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>Stengt (gjesteinlogging blokkert)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (new logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>Stengt (nye inlogginger blokkert)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session password required</source>
-        <translation type="unfinished"></translation>
+        <translation>Økt passord kreves</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ikke egnet for mindreårige (NSFM)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1480,22 +1480,22 @@
     <message>
         <location line="+57"/>
         <source>Title</source>
-        <translation type="unfinished">Název</translation>
+        <translation>Tittel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Started by</source>
-        <translation type="unfinished">Zahájeno</translation>
+        <translation>Startet av</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished">Uživatelé</translation>
+        <translation>Brukere</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiv</translation>
     </message>
 </context>
 <context>
@@ -1503,32 +1503,32 @@
     <message>
         <location filename="../net/server.cpp" line="+99"/>
         <source>Network read error</source>
-        <translation type="unfinished"></translation>
+        <translation>Nettverkslesefeil</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network read error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nettverkslesefeil: %1</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Network write error</source>
-        <translation type="unfinished"></translation>
+        <translation>Nettverk skrivefeil</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network write error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nettverk skrivefeil: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Network connection timed out</source>
-        <translation type="unfinished"></translation>
+        <translation>Nettverkstilkoblingen ble tidsavbrutt</translation>
     </message>
     <message>
         <location line="+54"/>
         <source>Received invalid data</source>
-        <translation type="unfinished">Přijata neplatná data</translation>
+        <translation>Mottatt ugyldig data</translation>
     </message>
 </context>
 <context>
@@ -1537,52 +1537,52 @@
         <location filename="../utils/news.cpp" line="+280"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ser etter oppdateringer…</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Automatisk oppdateringskontroll er deaktivert, &lt;a href=&quot;#autoupdate&quot;&gt;klikk her for å aktivere den&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Om du ikke vil ha automatisk kontroller, &lt;a href=&quot;#checkupdates&quot;&gt;klikk her for å kontrollere manuelt&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nettverk feil: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Couldn&apos;t make sense of the fetched data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunne ikke forstå de hentede dataene.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Couldn&apos;t make sense of fetched updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunne ikke forstå hentede oppdateringer.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunne ikke large oppdateringer.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Couldn&apos;t make sense of fetched news.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunne ikke forstå av hentede nyheter.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save news.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunne ikke large nyheter.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>No news available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingen nyheter tilgjengelig.</translation>
     </message>
 </context>
 </TS>
