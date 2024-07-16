@@ -24,7 +24,7 @@
     <message>
         <location line="+2"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustøttet format</translation>
     </message>
     <message>
         <location line="+2"/>
