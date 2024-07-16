@@ -130,7 +130,11 @@ Combines a set of translation files into bundles.
 function(bundle_translations out_files)
 	cmake_parse_arguments(PARSE_ARGV 1 ARG "" "NAME;OUTPUT_LOCATION" "QT;TARGETS")
 
-	find_program(lconvert NAMES "lconvert-qt${QT_VERSION_MAJOR}" "lconvert" REQUIRED)
+	find_program(
+		lconvert
+		NAMES "lconvert-qt${QT_VERSION_MAJOR}" "lconvert"
+		PATHS "/usr/lib/qt{QT_VERSION_MAJOR}/bin"
+		REQUIRED)
 
 	if(NOT ARG_NAME)
 		message(FATAL_ERROR "Missing required NAME for translation bundle")
