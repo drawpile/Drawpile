@@ -6,7 +6,7 @@
     <message>
         <location filename="../utils/avatarlistmodel.cpp" line="+113"/>
         <source>No avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingen avatar</translation>
     </message>
     <message>
         <location line="+19"/>
