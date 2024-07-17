@@ -109,10 +109,15 @@ typedef struct DP_AffectedIndirectAreas {
 // collected bounds are used as the area for that message and the indirect area
 // is cleared. Other messages don't affect the state of the indirect areas.
 DP_AffectedArea DP_affected_area_make(DP_Message *msg,
-                                      DP_AffectedIndirectAreas *aia);
+                                      DP_AffectedIndirectAreas *aia_or_null);
 
 bool DP_affected_area_concurrent_with(const DP_AffectedArea *aa,
                                       const DP_AffectedArea *other);
+
+// Check if the affected area is inside the given crop area. Only the pixel
+// domain is checked against this area, others are always considered in bounds.
+bool DP_affected_area_in_bounds(const DP_AffectedArea *aa, int x, int y,
+                                int width, int height);
 
 void DP_affected_indirect_areas_clear(DP_AffectedIndirectAreas *aia);
 

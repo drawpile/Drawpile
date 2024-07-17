@@ -36,6 +36,7 @@ pub const DP_LOAD_FLAG_NONE: u32 = 0;
 pub const DP_LOAD_FLAG_SINGLE_THREAD: u32 = 1;
 pub const DP_PREVIEW_BASE_SUBLAYER_ID: i32 = -100;
 pub const DP_PREVIEW_TRANSFORM_COUNT: u32 = 16;
+pub const DP_PAINT_ENGINE_FILTER_MESSAGE_FLAG_NO_TIME: u32 = 1;
 pub const DP_ACL_ALL_LOCKED_BIT: u32 = 128;
 pub const DP_ACL_STATE_FILTERED_BIT: u32 = 1;
 pub const DP_ACL_STATE_CHANGE_USERS_BIT: u32 = 2;
@@ -4219,13 +4220,22 @@ fn bindgen_test_layout_DP_AffectedIndirectAreas() {
 extern "C" {
     pub fn DP_affected_area_make(
         msg: *mut DP_Message,
-        aia: *mut DP_AffectedIndirectAreas,
+        aia_or_null: *mut DP_AffectedIndirectAreas,
     ) -> DP_AffectedArea;
 }
 extern "C" {
     pub fn DP_affected_area_concurrent_with(
         aa: *const DP_AffectedArea,
         other: *const DP_AffectedArea,
+    ) -> bool;
+}
+extern "C" {
+    pub fn DP_affected_area_in_bounds(
+        aa: *const DP_AffectedArea,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+        width: ::std::os::raw::c_int,
+        height: ::std::os::raw::c_int,
     ) -> bool;
 }
 extern "C" {
@@ -6657,6 +6667,12 @@ pub type DP_PaintEngineCursorMovedFn = ::std::option::Option<
         y: ::std::os::raw::c_int,
     ),
 >;
+pub type DP_PaintEngineFilterMessageFn = ::std::option::Option<
+    unsafe extern "C" fn(
+        user: *mut ::std::os::raw::c_void,
+        msg: *mut DP_Message,
+    ) -> ::std::os::raw::c_uint,
+>;
 pub type DP_PaintEnginePushMessageFn = ::std::option::Option<
     unsafe extern "C" fn(user: *mut ::std::os::raw::c_void, msg: *mut DP_Message),
 >;
@@ -6830,6 +6846,7 @@ extern "C" {
     pub fn DP_paint_engine_playback_play(
         pe: *mut DP_PaintEngine,
         msecs: ::std::os::raw::c_longlong,
+        filter_message_or_null: DP_PaintEngineFilterMessageFn,
         push_message: DP_PaintEnginePushMessageFn,
         user: *mut ::std::os::raw::c_void,
     ) -> DP_PlayerResult;

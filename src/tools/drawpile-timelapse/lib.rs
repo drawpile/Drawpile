@@ -7,7 +7,7 @@ use drawdance::{
 };
 use regex::Regex;
 use std::{
-    collections::VecDeque,
+    collections::{HashMap, VecDeque},
     env::consts::EXE_SUFFIX,
     ffi::{c_char, c_int, CStr, OsStr},
     fmt::Display,
@@ -47,6 +47,125 @@ impl FromStr for Dimensions {
         Err(format!(
             "Invalid dimensions '{s}', must be given as WIDTHxHEIGHT"
         ))
+    }
+}
+
+#[derive(Copy, Clone, Debug)]
+pub struct CropArea {
+    x: usize,
+    y: usize,
+    width: usize,
+    height: usize,
+}
+
+impl CropArea {
+    fn to_tuple(&self) -> (usize, usize, usize, usize) {
+        (self.x, self.y, self.width, self.height)
+    }
+}
+
+impl Display for CropArea {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}:{}:{}:{}", self.x, self.y, self.width, self.height)
+    }
+}
+
+impl FromStr for CropArea {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut it = s.splitn(4, ':');
+        let x: i64 = it.next().unwrap_or_default().parse().unwrap_or(-1);
+        let y: i64 = it.next().unwrap_or_default().parse().unwrap_or(-1);
+        let width: i64 = it.next().unwrap_or_default().parse().unwrap_or(-1);
+        let height: i64 = it.next().unwrap_or_default().parse().unwrap_or(-1);
+        if x >= 0 && y >= 0 && width > 0 && height > 0 {
+            Ok(Self {
+                x: x as usize,
+                y: y as usize,
+                width: width as usize,
+                height: height as usize,
+            })
+        } else {
+            Err(format!(
+                "Invalid crop area '{s}', must be given as X:Y:WIDTH:HEIGHT"
+            ))
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct Crop {
+    default_area: CropArea,
+    additional_areas: HashMap<(usize, usize), CropArea>,
+}
+
+impl Crop {
+    fn get_area(&self, width: usize, height: usize) -> &CropArea {
+        self.additional_areas
+            .get(&(width, height))
+            .unwrap_or(&self.default_area)
+    }
+
+    fn to_arg(&self) -> String {
+        let mut s = String::new();
+        use std::fmt::Write;
+        write!(s, "{}", self).unwrap();
+        s
+    }
+
+    fn parse_additional_crop(s: &str) -> Result<((usize, usize), CropArea), String> {
+        if let Some((a, b)) = s.split_once('=') {
+            Ok((Self::parse_crop_key(a)?, CropArea::from_str(b)?))
+        } else {
+            Err(format!(
+                "Invalid additional crop '{s}', must be given as \
+                    CANVAS_WIDTH:CANVAS_HEIGHT=X:Y:WIDTH:HEIGHT"
+            ))
+        }
+    }
+
+    fn parse_crop_key(s: &str) -> Result<(usize, usize), String> {
+        if let Some((a, b)) = s.split_once(':') {
+            let width: usize = a.parse().unwrap_or(0);
+            let height: usize = b.parse().unwrap_or(0);
+            if width > 0 && height > 0 {
+                return Ok((width, height));
+            }
+        }
+        Err(format!(
+            "Invalid additional crop key '{s}', must be given as \
+                CANVAS_WIDTH:CANVAS_HEIGHT"
+        ))
+    }
+}
+
+impl Display for Crop {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.default_area.fmt(f)?;
+        for ((w, h), area) in &self.additional_areas {
+            write!(f, ",{}:{}=", w, h)?;
+            area.fmt(f)?;
+        }
+        Ok(())
+    }
+}
+
+impl FromStr for Crop {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut it = s.split(',');
+        let default_area = CropArea::from_str(it.next().unwrap_or_default())?;
+        let mut additional_areas = HashMap::<(usize, usize), CropArea>::new();
+        for ss in it {
+            let (k, v) = Self::parse_additional_crop(ss)?;
+            additional_areas.insert(k, v);
+        }
+        Ok(Self {
+            default_area,
+            additional_areas,
+        })
     }
 }
 
@@ -216,6 +335,11 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
         optional -A,--acl
         /// Show censored layers instead of rendering them as censor squares.
         optional -U,--uncensor
+        /// Area(s) to crop. Must provide a string of the form
+        /// "X:Y:WIDTH:HEIGHT", followed by a comma-separated list of additional
+        /// croppings depending on resolution of the form
+        /// "CANVAS_WIDTH:CANVAS_HEIGHT=X:Y:WIDTH:HEIGHT".
+        optional -x,--crop crop: Crop
         /// Input recording file(s).
         repeated input: String
     };
@@ -362,6 +486,9 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
         eprintln!("linger time:\n    {} sec", linger_time);
         eprintln!("filter acls:\n    {}", !acl_override);
         eprintln!("reveal censored layers:\n    {}", reveal_censored);
+        if let Some(crop) = flags.crop {
+            eprintln!("crop:\n    {}", crop.to_arg());
+        }
         if let Some(command) = opt_command {
             eprintln!(
                 "ffmpeg command line:\n    {} {}",
@@ -397,6 +524,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
             dimensions.height,
             flash,
             linger_time,
+            &flags.crop,
         )
     } else if flags.out == "-" {
         timelapse(
@@ -410,6 +538,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
             dimensions.height,
             flash,
             linger_time,
+            &flags.crop,
         )
     } else {
         make_timelapse_raw(
@@ -423,6 +552,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
             dimensions.height,
             flash,
             linger_time,
+            &flags.crop,
         )
     };
 
@@ -446,6 +576,7 @@ fn make_timelapse_command(
     height: usize,
     flash: Option<u32>,
     linger_time: f64,
+    crop: &Option<Crop>,
 ) -> Result<()> {
     let mut child = match command.spawn() {
         Ok(c) => c,
@@ -472,6 +603,7 @@ fn make_timelapse_command(
         height,
         flash,
         linger_time,
+        crop,
     )?;
     drop(pipe);
     let status = child.wait()?;
@@ -493,6 +625,7 @@ fn make_timelapse_raw(
     height: usize,
     flash: Option<u32>,
     linger_time: f64,
+    crop: &Option<Crop>,
 ) -> Result<()> {
     let mut f = File::create(path)?;
     timelapse(
@@ -506,6 +639,7 @@ fn make_timelapse_raw(
         height,
         flash,
         linger_time,
+        crop,
     )?;
     Ok(())
 }
@@ -540,6 +674,7 @@ fn timelapse(
     height: usize,
     flash: Option<u32>,
     linger_time: f64,
+    crop: &Option<Crop>,
 ) -> Result<()> {
     let mut ctx = TimelapseContext {
         writer,
@@ -555,6 +690,7 @@ fn timelapse(
             interval,
             width,
             height,
+            crop,
         )?;
     }
 
@@ -583,6 +719,7 @@ fn timelapse_recording(
     interval: i64,
     width: usize,
     height: usize,
+    crop: &Option<Crop>,
 ) -> Result<()> {
     let mut player = make_player(input_path).and_then(Player::check_compatible)?;
     player.set_acl_override(acl_override);
@@ -592,16 +729,18 @@ fn timelapse_recording(
     pe.begin_playback()?;
 
     let mut initial = true;
+    let mut last_area: Option<CropArea> = None;
     loop {
         let pos = if initial {
             pe.skip_playback(1)
         } else {
-            pe.play_playback(interval)
+            pe.play_playback_timelapse(interval, last_area.map(|a| a.to_tuple()))
         }?;
 
         pe.render();
-        match pe.to_scaled_image(width, height, true) {
-            Ok(img) => {
+        match to_image(&mut pe, width, height, crop) {
+            Ok((img, area)) => {
+                last_area = area;
                 ctx.push(img)?;
                 initial = false;
             }
@@ -611,6 +750,23 @@ fn timelapse_recording(
         if pos == -1 {
             return Ok(());
         }
+    }
+}
+
+fn to_image(
+    pe: &mut PaintEngine,
+    width: usize,
+    height: usize,
+    crop: &Option<Crop>,
+) -> Result<(Image, Option<CropArea>)> {
+    if let Some(ref c) = crop {
+        let area = c.get_area(pe.render_width(), pe.render_height());
+        Ok((
+            pe.to_scaled_image_crop(width, height, true, area.x, area.y, area.width, area.height)?,
+            Some(*area),
+        ))
+    } else {
+        Ok((pe.to_scaled_image(width, height, true)?, None))
     }
 }
 

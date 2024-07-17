@@ -251,7 +251,7 @@ static DP_AffectedArea take_indirect_area(DP_AffectedIndirectAreas *aia,
 }
 
 DP_AffectedArea DP_affected_area_make(DP_Message *msg,
-                                      DP_AffectedIndirectAreas *aia)
+                                      DP_AffectedIndirectAreas *aia_or_null)
 {
     DP_MessageType type = DP_message_type(msg);
     switch (type) {
@@ -322,8 +322,9 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
                 ? DP_rect_make(0, y, INT_MAX, INT_MAX - y)
                 : DP_rect_make(DP_msg_put_tile_col(mpt) * DP_TILE_SIZE, y,
                                DP_TILE_SIZE, DP_TILE_SIZE);
-        if (sublayer_id != 0) {
-            return update_indirect_area(aia, sublayer_id, layer_id, bounds);
+        if (aia_or_null && sublayer_id != 0) {
+            return update_indirect_area(aia_or_null, sublayer_id, layer_id,
+                                        bounds);
         }
         else {
             return make_pixels(layer_id, bounds);
@@ -333,8 +334,8 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         DP_MsgDrawDabsClassic *mddc = DP_msg_draw_dabs_classic_cast(msg);
         int layer_id = DP_msg_draw_dabs_classic_layer(mddc);
         DP_Rect bounds = classic_dabs_bounds(mddc);
-        if (DP_msg_draw_dabs_classic_indirect(mddc)) {
-            return update_indirect_area(aia, DP_message_context_id(msg),
+        if (aia_or_null && DP_msg_draw_dabs_classic_indirect(mddc)) {
+            return update_indirect_area(aia_or_null, DP_message_context_id(msg),
                                         layer_id, bounds);
         }
         else {
@@ -346,8 +347,8 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
         int layer_id = DP_msg_draw_dabs_pixel_layer(mddp);
         DP_Rect bounds = pixel_dabs_bounds(mddp);
-        if (DP_msg_draw_dabs_pixel_indirect(mddp)) {
-            return update_indirect_area(aia, DP_message_context_id(msg),
+        if (aia_or_null && DP_msg_draw_dabs_pixel_indirect(mddp)) {
+            return update_indirect_area(aia_or_null, DP_message_context_id(msg),
                                         layer_id, bounds);
         }
         else {
@@ -364,8 +365,9 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         DP_ASSERT(context_id < DP_AFFECTED_INDIRECT_AREAS_COUNT);
         // Context id 0 is only used when drawing locally, where there won't be
         // any conflicts, and when merging all sublayers after a disconnect.
-        return context_id == 0 ? make_everything()
-                               : take_indirect_area(aia, context_id);
+        return context_id == 0 || !aia_or_null
+                 ? make_everything()
+                 : take_indirect_area(aia_or_null, context_id);
     }
     case DP_MSG_FILL_RECT: {
         DP_MsgFillRect *mfr = DP_msg_fill_rect_cast(msg);
@@ -530,6 +532,16 @@ bool DP_affected_area_concurrent_with(const DP_AffectedArea *a,
             // Affecting different pixels on the same layer is concurrent.
             || (a_domain == DP_AFFECTED_DOMAIN_PIXELS
                 && !DP_rect_intersects(a->bounds, b->bounds)));
+}
+
+bool DP_affected_area_in_bounds(const DP_AffectedArea *aa, int x, int y,
+                                int width, int height)
+{
+    DP_ASSERT(aa);
+    DP_ASSERT(width >= 0);
+    DP_ASSERT(height >= 0);
+    return aa->domain != DP_AFFECTED_DOMAIN_PIXELS
+        || DP_rect_intersects(DP_rect_make(x, y, width, height), aa->bounds);
 }
 
 void DP_affected_indirect_areas_clear(DP_AffectedIndirectAreas *aia)

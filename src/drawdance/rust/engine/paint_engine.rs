@@ -2,17 +2,19 @@ use super::{AclState, DrawContext, Image, Player};
 use crate::{
     dp_error_anyhow, msg::Message, DP_AnnotationList, DP_CanvasState, DP_DocumentMetadata,
     DP_LayerPropsList, DP_Message, DP_PaintEngine, DP_Pixel8, DP_PlayerResult, DP_Rect,
-    DP_SelectionSet, DP_Timeline, DP_canvas_state_decref, DP_paint_engine_free_join,
-    DP_paint_engine_handle_inc, DP_paint_engine_new_inc, DP_paint_engine_playback_begin,
-    DP_paint_engine_playback_play, DP_paint_engine_playback_skip_by, DP_paint_engine_playback_step,
+    DP_SelectionSet, DP_Timeline, DP_affected_area_in_bounds, DP_affected_area_make,
+    DP_canvas_state_decref, DP_message_type, DP_paint_engine_free_join, DP_paint_engine_handle_inc,
+    DP_paint_engine_new_inc, DP_paint_engine_playback_begin, DP_paint_engine_playback_play,
+    DP_paint_engine_playback_skip_by, DP_paint_engine_playback_step,
     DP_paint_engine_render_everything, DP_paint_engine_reveal_censored_set, DP_paint_engine_tick,
-    DP_paint_engine_view_canvas_state_inc, DP_save, DP_PLAYER_RECORDING_END, DP_PLAYER_SUCCESS,
+    DP_paint_engine_view_canvas_state_inc, DP_save, DP_MSG_INTERVAL,
+    DP_PAINT_ENGINE_FILTER_MESSAGE_FLAG_NO_TIME, DP_PLAYER_RECORDING_END, DP_PLAYER_SUCCESS,
     DP_SAVE_IMAGE_ORA, DP_SAVE_RESULT_SUCCESS, DP_TILE_SIZE,
 };
 use anyhow::Result;
 use std::{
     ffi::{c_int, c_longlong, c_uint, c_void, CString},
-    ptr,
+    ptr::{self, null_mut},
     sync::{
         mpsc::{sync_channel, Receiver, SyncSender},
         Barrier,
@@ -31,6 +33,13 @@ pub struct PaintEngine {
     render_height: usize,
     render_image: Vec<u32>,
     playback_channel: (SyncSender<c_longlong>, Receiver<c_longlong>),
+}
+
+pub type PlaybackCrop = (usize, usize, usize, usize);
+
+struct PlaybackParams {
+    messages: Vec<Message>,
+    crop: Option<PlaybackCrop>,
 }
 
 impl PaintEngine {
@@ -168,13 +177,13 @@ impl PaintEngine {
     }
 
     pub fn step_playback(&mut self, steps: i64) -> Result<i64> {
-        self.playback(|paint_engine, user| unsafe {
+        self.playback(None, |paint_engine, user| unsafe {
             DP_paint_engine_playback_step(paint_engine, steps, Some(Self::on_push_message), user)
         })
     }
 
     pub fn skip_playback(&mut self, steps: i64) -> Result<i64> {
-        self.playback(|paint_engine, user| unsafe {
+        self.playback(None, |paint_engine, user| unsafe {
             DP_paint_engine_playback_skip_by(
                 paint_engine,
                 ptr::null_mut(),
@@ -186,20 +195,33 @@ impl PaintEngine {
         })
     }
 
-    pub fn play_playback(&mut self, msecs: i64) -> Result<i64> {
-        self.playback(|paint_engine, user| unsafe {
-            DP_paint_engine_playback_play(paint_engine, msecs, Some(Self::on_push_message), user)
+    pub fn play_playback_timelapse(
+        &mut self,
+        msecs: i64,
+        crop: Option<PlaybackCrop>,
+    ) -> Result<i64> {
+        self.playback(crop, |paint_engine, user| unsafe {
+            DP_paint_engine_playback_play(
+                paint_engine,
+                msecs,
+                Some(Self::on_filter_timelapse_message),
+                Some(Self::on_push_message),
+                user,
+            )
         })
     }
 
-    fn playback<F>(&mut self, func: F) -> Result<i64>
+    fn playback<F>(&mut self, crop: Option<PlaybackCrop>, func: F) -> Result<i64>
     where
         F: FnOnce(*mut DP_PaintEngine, *mut c_void) -> DP_PlayerResult,
     {
-        let mut messages: Vec<Message> = Vec::new();
-        let user: *mut Vec<Message> = &mut messages;
+        let mut params = PlaybackParams {
+            messages: Vec::new(),
+            crop,
+        };
+        let user: *mut PlaybackParams = &mut params;
         Self::check_player_result(func(self.paint_engine, user.cast()))?;
-        self.handle(false, true, &mut messages);
+        self.handle(false, true, &mut params.messages);
         Ok(self.playback_channel.1.recv().unwrap())
     }
 
@@ -225,9 +247,35 @@ impl PaintEngine {
         }
     }
 
+    extern "C" fn on_filter_timelapse_message(user: *mut c_void, msg: *mut DP_Message) -> c_uint {
+        let msg_type = unsafe { DP_message_type(msg) };
+        if msg_type == DP_MSG_INTERVAL {
+            // Don't delay timelapse from dead air.
+            DP_PAINT_ENGINE_FILTER_MESSAGE_FLAG_NO_TIME
+        } else {
+            let params = unsafe { user.cast::<PlaybackParams>().as_mut().unwrap_unchecked() };
+            if let Some((x, y, width, height)) = params.crop {
+                let aa = unsafe { DP_affected_area_make(msg, null_mut()) };
+                if unsafe {
+                    DP_affected_area_in_bounds(
+                        &aa,
+                        x as c_int,
+                        y as c_int,
+                        width as c_int,
+                        height as c_int,
+                    )
+                } {
+                    // Don't delay timelapses from stuff happening outside of the cropped area.
+                    return DP_PAINT_ENGINE_FILTER_MESSAGE_FLAG_NO_TIME;
+                }
+            };
+            0
+        }
+    }
+
     extern "C" fn on_push_message(user: *mut c_void, msg: *mut DP_Message) {
-        let messages = unsafe { user.cast::<Vec<Message>>().as_mut().unwrap_unchecked() };
-        messages.push(Message::new_noinc(msg));
+        let params = unsafe { user.cast::<PlaybackParams>().as_mut().unwrap_unchecked() };
+        params.messages.push(Message::new_noinc(msg));
     }
 
     extern "C" fn on_acls_changed(_user: *mut c_void, _acl_change_flags: c_int) {}
@@ -325,6 +373,30 @@ impl PaintEngine {
             self.render_width,
             self.render_height,
             &self.render_image,
+            width,
+            height,
+            expand,
+            &mut self.main_dc,
+        )
+    }
+
+    pub fn to_scaled_image_crop(
+        &mut self,
+        width: usize,
+        height: usize,
+        expand: bool,
+        crop_x: usize,
+        crop_y: usize,
+        crop_width: usize,
+        crop_height: usize,
+    ) -> Result<Image> {
+        let img = self
+            .to_image()?
+            .cropped(crop_x, crop_y, crop_width, crop_height)?;
+        Image::new_from_pixels_scaled(
+            img.width(),
+            img.height(),
+            img.pixels(),
             width,
             height,
             expand,

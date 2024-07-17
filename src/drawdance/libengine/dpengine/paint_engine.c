@@ -1131,6 +1131,7 @@ static long long guess_message_msecs(DP_Message *msg, DP_MessageType type,
 
 static DP_PlayerResult
 skip_playback_forward(DP_PaintEngine *pe, long long steps, int what,
+                      DP_PaintEngineFilterMessageFn filter_message_or_null,
                       DP_PaintEnginePushMessageFn push_message, void *user)
 {
     DP_ASSERT(steps >= 0);
@@ -1159,12 +1160,20 @@ skip_playback_forward(DP_PaintEngine *pe, long long steps, int what,
         DP_Message *msg;
         DP_PlayerResult result = DP_player_step(player, &msg);
         if (result == DP_PLAYER_SUCCESS) {
+            bool should_time = true;
+            if (filter_message_or_null) {
+                unsigned int flags = filter_message_or_null(user, msg);
+                if (flags & DP_PAINT_ENGINE_FILTER_MESSAGE_FLAG_NO_TIME) {
+                    should_time = false;
+                }
+            }
+
             DP_MessageType type = DP_message_type(msg);
             if (type == DP_MSG_INTERVAL) {
                 if (what == PLAYBACK_STEP_MESSAGES) {
                     ++done;
                 }
-                else if (what == PLAYBACK_STEP_MSECS) {
+                else if (what == PLAYBACK_STEP_MSECS && should_time) {
                     DP_MsgInterval *mi = DP_message_internal(msg);
                     // Really no point in delaying playback for ages, it just
                     // makes the user wonder if there's something broken.
@@ -1178,7 +1187,7 @@ skip_playback_forward(DP_PaintEngine *pe, long long steps, int what,
                         && type == DP_MSG_UNDO_POINT)) {
                     ++done;
                 }
-                else if (what == PLAYBACK_STEP_MSECS) {
+                else if (what == PLAYBACK_STEP_MSECS && should_time) {
                     if (pe->playback.next_has_time) {
                         done += guess_message_msecs(
                             msg, type, &pe->playback.next_has_time);
@@ -1227,7 +1236,7 @@ DP_paint_engine_playback_step(DP_PaintEngine *pe, long long steps,
     DP_ASSERT(pe);
     DP_ASSERT(steps >= 0);
     DP_ASSERT(push_message);
-    return skip_playback_forward(pe, steps, PLAYBACK_STEP_MESSAGES,
+    return skip_playback_forward(pe, steps, PLAYBACK_STEP_MESSAGES, NULL,
                                  push_message, user);
 }
 
@@ -1305,7 +1314,7 @@ jump_playback_to(DP_PaintEngine *pe, DP_DrawContext *dc, long long to,
         long long steps = target_position - player_position;
         DP_debug("Already inside snapshot, stepping forward by %lld", steps);
         DP_PlayerResult result = skip_playback_forward(
-            pe, steps, PLAYBACK_STEP_MESSAGES, push_message, user);
+            pe, steps, PLAYBACK_STEP_MESSAGES, NULL, push_message, user);
         // If skipping playback forward doesn't work, e.g. because we're
         // in an input error state, punt to reloading the snapshot.
         if (result == DP_PLAYER_SUCCESS) {
@@ -1347,7 +1356,7 @@ jump_playback_to(DP_PaintEngine *pe, DP_DrawContext *dc, long long to,
     DP_player_index_entry_snapshot_free(snapshot);
     return skip_playback_forward(
         pe, exact ? target_position - entry.message_index : 0,
-        PLAYBACK_STEP_MESSAGES, push_message, user);
+        PLAYBACK_STEP_MESSAGES, NULL, push_message, user);
 }
 
 DP_PlayerResult DP_paint_engine_playback_skip_by(
@@ -1360,7 +1369,7 @@ DP_PlayerResult DP_paint_engine_playback_skip_by(
                                 push_message, user);
     }
     else {
-        return skip_playback_forward(pe, steps, PLAYBACK_STEP_UNDO_POINTS,
+        return skip_playback_forward(pe, steps, PLAYBACK_STEP_UNDO_POINTS, NULL,
                                      push_message, user);
     }
 }
@@ -1393,14 +1402,14 @@ DP_PlayerResult DP_paint_engine_playback_begin(DP_PaintEngine *pe)
     }
 }
 
-DP_PlayerResult
-DP_paint_engine_playback_play(DP_PaintEngine *pe, long long msecs,
-                              DP_PaintEnginePushMessageFn push_message,
-                              void *user)
+DP_PlayerResult DP_paint_engine_playback_play(
+    DP_PaintEngine *pe, long long msecs,
+    DP_PaintEngineFilterMessageFn filter_message_or_null,
+    DP_PaintEnginePushMessageFn push_message, void *user)
 {
     DP_ASSERT(pe);
-    return skip_playback_forward(pe, msecs, PLAYBACK_STEP_MSECS, push_message,
-                                 user);
+    return skip_playback_forward(pe, msecs, PLAYBACK_STEP_MSECS,
+                                 filter_message_or_null, push_message, user);
 }
 
 bool DP_paint_engine_playback_index_build(

@@ -72,11 +72,7 @@ impl Image {
         if width == scale_width && height == scale_height {
             let img = unsafe { DP_image_new(width as i32, height as i32) };
             unsafe {
-                copy_nonoverlapping(
-                    pixels.as_ptr(),
-                    DP_image_pixels(img).cast(),
-                    width * height,
-                )
+                copy_nonoverlapping(pixels.as_ptr(), DP_image_pixels(img).cast(), width * height)
             }
             return Ok(Image { image: img });
         }
@@ -147,6 +143,32 @@ impl Image {
 
     pub fn height(&self) -> usize {
         unsafe { DP_image_height(self.image) as usize }
+    }
+
+    pub fn pixels(&self) -> &[u32] {
+        unsafe {
+            slice::from_raw_parts(
+                DP_image_pixels(self.image).cast(),
+                self.width() * self.height(),
+            )
+        }
+    }
+
+    pub fn cropped(&self, x: usize, y: usize, width: usize, height: usize) -> Result<Image> {
+        let subimg = unsafe {
+            DP_image_new_subimage(
+                self.image,
+                c_int::try_from(x)?,
+                c_int::try_from(y)?,
+                c_int::try_from(width)?,
+                c_int::try_from(height)?,
+            )
+        };
+        if subimg.is_null() {
+            Err(dp_error_anyhow())
+        } else {
+            Ok(Image { image: subimg })
+        }
     }
 
     pub fn dump(&self, writer: &mut dyn io::Write) -> io::Result<()> {

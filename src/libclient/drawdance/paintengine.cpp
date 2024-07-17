@@ -288,7 +288,7 @@ DP_PlayerResult
 PaintEngine::playPlayback(long long msecs, net::MessageList &outMsgs)
 {
 	return DP_paint_engine_playback_play(
-		m_data, msecs, PaintEngine::pushMessage, &outMsgs);
+		m_data, msecs, nullptr, PaintEngine::pushMessage, &outMsgs);
 }
 
 namespace {
