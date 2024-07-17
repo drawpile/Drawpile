@@ -150,7 +150,7 @@ void UserInterface::initMiscellaneous(
 	form->addRow(tr("On-canvas notices:"), showTransformNotices);
 
 	QCheckBox *showFillNotices =
-		new QCheckBox(tr("Fill and magic wand confirmation"));
+		new QCheckBox(tr("Fill and magic wand details"));
 	settings.bindShowFillNotices(showFillNotices);
 	form->addRow(nullptr, showFillNotices);
 
