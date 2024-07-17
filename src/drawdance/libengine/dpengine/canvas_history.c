@@ -391,11 +391,11 @@ static bool fork_entry_concurrent_with(void *element, void *user)
     }
 }
 
-static bool fork_entries_concurrent_with(DP_CanvasHistory *ch, DP_Message *msg)
+static bool fork_entries_concurrent_with(DP_CanvasHistory *ch,
+                                         DP_AffectedArea *aa)
 {
     DP_ASSERT(ch);
-    DP_ASSERT(msg);
-    DP_AffectedArea aa = DP_affected_area_make(msg, &ch->aia);
+    DP_ASSERT(aa);
     return DP_queue_all(&ch->fork.queue, sizeof(DP_ForkEntry),
                         fork_entry_concurrent_with, &aa);
 }
@@ -1411,6 +1411,7 @@ static DP_ForkAction reconcile_remote_command(DP_CanvasHistory *ch,
     }
     else {
         maybe_append_to_history_inc(ch, msg, out_index);
+        DP_AffectedArea aa = DP_affected_area_make(msg, &ch->aia);
         if (++ch->fork.fallbehind >= MAX_FALLBEHIND) {
             DP_warn("Rollback at %d: fork fallbehind %d >= max fallbehind %d",
                     ch->offset + ch->used, ch->fork.fallbehind, MAX_FALLBEHIND);
@@ -1418,7 +1419,7 @@ static DP_ForkAction reconcile_remote_command(DP_CanvasHistory *ch,
             clear_fork_entries(ch);
             return DP_FORK_ACTION_ROLLBACK;
         }
-        else if (fork_entries_concurrent_with(ch, msg)) {
+        else if (fork_entries_concurrent_with(ch, &aa)) {
             return DP_FORK_ACTION_CONCURRENT;
         }
         else {
