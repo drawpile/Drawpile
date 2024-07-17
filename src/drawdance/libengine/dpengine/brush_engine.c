@@ -134,6 +134,8 @@ struct DP_BrushEngine {
             float last_pressure;
             float last_velocity;
             float last_distance;
+            bool last_left;
+            bool last_up;
             int32_t dab_x;
             int32_t dab_y;
             uint32_t dab_color;
@@ -388,16 +390,44 @@ static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
 
 static void add_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
                          float y, float pressure, float velocity,
-                         float distance)
+                         float distance, bool left, bool up)
 {
     uint16_t dab_size =
         DP_classic_brush_soft_dab_size_at(cb, pressure, velocity, distance);
     uint8_t dab_opacity =
         DP_classic_brush_dab_opacity_at(cb, pressure, velocity, distance);
-    // Disregard infinitesimal or fully opaque dabs. 26 is a radius of 0.1.
+    // Disregard infinitesimal or fully transparent dabs. 26 is a radius of 0.1.
     if (dab_size >= 26 && dab_opacity > 0) {
-        int32_t dab_x = DP_float_to_int32(x * 4.0f);
-        int32_t dab_y = DP_float_to_int32(y * 4.0f);
+        // The brush mask rendering has some unsightly discontinuities between
+        // fractions of a radius and the next full step, causing an unsightly
+        // jagged look between them. We can't fix the brush rendering directly
+        // because that would break compatibility, so instead we fudge the
+        // positioning to compensate.
+        float rrem = fmodf(dab_size / 256.0f, 1.0f);
+        if (rrem < 0.00001f) {
+            rrem = 1.0f;
+        }
+
+        float full_fudge = -0.72f;
+        float half_fudge = -0.36f;
+        float fudge_x, fudge_y;
+        if (left && up) {
+            fudge_x = fudge_y = rrem * full_fudge;
+        }
+        else if (!left && up) {
+            fudge_x = rrem * half_fudge;
+            fudge_y = rrem * full_fudge;
+        }
+        else if (!left && !up) {
+            fudge_x = rrem * full_fudge;
+            fudge_y = rrem * half_fudge;
+        }
+        else {
+            fudge_x = fudge_y = rrem * half_fudge;
+        }
+
+        int32_t dab_x = DP_float_to_int32((x + fudge_x) * 4.0f);
+        int32_t dab_y = DP_float_to_int32((y + fudge_y) * 4.0f);
         uint32_t dab_color = combine_upixel_float(be->classic.smudge_color);
 
         int used = be->dabs.used;
@@ -1145,7 +1175,7 @@ static void first_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
                            float y, float pressure)
 {
     be->classic.soft_length = 0.0f;
-    add_dab_soft(be, cb, x, y, pressure, 0.0f, 0.0f);
+    add_dab_soft(be, cb, x, y, pressure, 0.0f, 0.0f, false, false);
 }
 
 static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb,
@@ -1157,6 +1187,25 @@ static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb,
     float diff_x = x - last_x;
     float diff_y = y - last_y;
     float dist = hypotf(diff_x, diff_y);
+
+    bool left;
+    if (x == last_x) {
+        left = be->classic.last_left;
+    }
+    else {
+        left = x < last_x;
+        be->classic.last_left = left;
+    }
+
+    bool up;
+    if (y == last_y) {
+        up = be->classic.last_up;
+    }
+    else {
+        up = y < last_y;
+        be->classic.last_up = up;
+    }
+
     if (dist >= 0.001f) {
         float dx = diff_x / dist;
         float dy = diff_y / dist;
@@ -1188,7 +1237,7 @@ static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb,
 
             update_classic_smudge(be, cb, lc, dab_x, dab_y, dab_p, dab_v,
                                   dab_d);
-            add_dab_soft(be, cb, dab_x, dab_y, dab_p, dab_v, dab_d);
+            add_dab_soft(be, cb, dab_x, dab_y, dab_p, dab_v, dab_d, left, up);
 
             dab_x += dx * spacing;
             dab_y += dy * spacing;
@@ -1218,6 +1267,8 @@ static void stroke_to_classic(
     else {
         be->classic.last_velocity = 0.0f;
         be->classic.last_distance = 0.0f;
+        be->classic.last_left = false;
+        be->classic.last_up = false;
         be->stroke.in_progress = true;
         bool colorpick = cb->colorpick
                       && DP_classic_brush_blend_mode(cb) != DP_BLEND_MODE_ERASE
