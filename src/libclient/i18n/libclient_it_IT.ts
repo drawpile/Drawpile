@@ -316,7 +316,7 @@
     <message>
         <location line="+438"/>
         <source>Error saving image</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore durante il salvataggio dell&apos;immagine</translation>
     </message>
 </context>
 <context>
@@ -358,12 +358,12 @@
     <message>
         <location filename="../tools/floodfill.cpp" line="+251"/>
         <source>Filling…</source>
-        <translation type="unfinished"></translation>
+        <translation>Riempimento…</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>No layer selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun livello selezionato.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -374,17 +374,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+14"/>
         <source>Continuous fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Riempimento continuo</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Similar color fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Colore di riempimento simile</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Selection fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Riempimento della selezione</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -654,12 +654,12 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+177"/>
         <source>incompatible</source>
-        <translation type="unfinished"></translation>
+        <translation>incompatibile</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>joining from web not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>la partecipazione dal Web non è consentita</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -802,7 +802,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+15"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Sconosciuto</translation>
     </message>
 </context>
 <context>
@@ -1203,7 +1203,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+4"/>
         <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lo spazio per la sessione è esaurito! Per continuare a disegnare, un operatore deve reimpostarlo per ridurlo a dimensioni più piccole. Questo può essere fatto tramite Sessione&gt; Reset.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1393,17 +1393,17 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="-789"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
-        <translation type="unfinished"></translation>
+        <translation>Modalità sicura non abilitata su un host con certificato bloccato!</translation>
     </message>
     <message>
         <location line="+524"/>
         <source>Unknown version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Versione sconosciuta %1</translation>
     </message>
     <message>
         <location line="+247"/>
         <source>Pinned certificate has changed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Il certificato bloccato è cambiato!</translation>
     </message>
     <message>
         <location line="+64"/>
@@ -1506,12 +1506,12 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+3"/>
         <source>Closed (not allowed to join from the web browser)</source>
-        <translation type="unfinished"></translation>
+        <translation>Chiuso (non è consentito partecipare dal browser web)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (not allowed to join via WebSocket)</source>
-        <translation type="unfinished"></translation>
+        <translation>Chiuso (non è consentito l&apos;accesso tramite WebSocket)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1570,43 +1570,43 @@ Click to apply, undo to cancel.</source>
         <location line="+42"/>
         <source>It is full or closed.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>È pieno o chiuso.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It requires an account.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Richiede un account.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>It does not allow joining via web browser.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Non consente l&apos;accesso tramite browser web.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>It does not allow joining via WebSockets.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Non consente l&apos;accesso tramite WebSocket.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>It is hosted with a newer version of Drawpile, you have to update. If there is no update available, it may be hosted with a development version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>È ospitato con una versione più recente di Drawpile, devi aggiornare. Se non è disponibile alcun aggiornamento, potrebbe essere ospitato con una versione di sviluppo di Drawpile.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>It is hosted with an old, incompatible version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>È ospitato con una versione vecchia e incompatibile di Drawpile.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is hosted with an incompatible protocol.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>È ospitato con un protocollo incompatibile.</translation>
     </message>
 </context>
 <context>
@@ -1647,17 +1647,17 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../tools/transform.cpp" line="+347"/>
         <source>You don&apos;t have permission to transform selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non hai l&apos;autorizzazione per trasformare le selezioni.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>No canvas present.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessuna tela presente.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Nothing selected that could be transformed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Niente di selezionato che potrebbe essere trasformato.</translation>
     </message>
 </context>
 <context>
@@ -1719,22 +1719,22 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../wasmsupport.cpp" line="+109"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non stai utilizzando il client ufficiale su web.drawpile.net. La maggior parte dei server non consente connessioni da altri luoghi.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The session address does not look like a valid WebSocket URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;indirizzo della sessione non sembra un URL WebSocket valido.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You&apos;re trying to connect to an IP address instead of a proper domain name. This usually doesn&apos;t work unless you&apos;ve configured your browser to allow this first.</source>
-        <translation type="unfinished"></translation>
+        <translation>Stai tentando di connetterti a un indirizzo IP anziché a un nome di dominio corretto. Questo di solito non funziona a meno che tu non abbia prima configurato il tuo browser per consentirlo.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The server may not support joining via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il server potrebbe non supportare la partecipazione tramite browser web.</translation>
     </message>
 </context>
 </TS>
