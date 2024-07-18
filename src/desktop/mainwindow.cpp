@@ -4180,11 +4180,11 @@ void MainWindow::setupActions()
 	QAction *zoomfitwidth = makeAction("zoomfitwidth", tr("Fit Page &Width")).icon("zoom-fit-width").noDefaultShortcut();
 	QAction *zoomfitheight = makeAction("zoomfitheight", tr("Fit Page &Height")).icon("zoom-fit-height").noDefaultShortcut();
 	QAction *rotateorig = makeAction("rotatezero", tr("&Reset Rotation")).icon("transform-rotate").shortcut(QKeySequence("ctrl+r"));
-	QAction *rotatecw = makeAction("rotatecw", tr("Rotate Canvas Clockwise")).shortcut(QKeySequence("shift+.")).icon("object-rotate-right").autoRepeat();
-	QAction *rotateccw = makeAction("rotateccw", tr("Rotate Canvas Counterclockwise")).shortcut(QKeySequence("shift+,")).icon("object-rotate-left").autoRepeat();
+	QAction *rotatecw = makeAction("rotatecw", tr("Rotate Canvas Clockwise")).shortcut(QKeySequence("shift+.")).icon("drawpile_rotate_right").autoRepeat();
+	QAction *rotateccw = makeAction("rotateccw", tr("Rotate Canvas Counterclockwise")).shortcut(QKeySequence("shift+,")).icon("drawpile_rotate_left").autoRepeat();
 
-	QAction *viewmirror = makeAction("viewmirror", tr("Mirror")).icon("object-flip-horizontal").shortcut("V").checkable();
-	QAction *viewflip = makeAction("viewflip", tr("Flip")).icon("object-flip-vertical").shortcut("C").checkable();
+	QAction *viewmirror = makeAction("viewmirror", tr("Mirror")).icon("drawpile_mirror").shortcut("V").checkable();
+	QAction *viewflip = makeAction("viewflip", tr("Flip")).icon("drawpile_flip").shortcut("C").checkable();
 
 	QAction *showannotations = makeAction("showannotations", tr("Show &Annotations")).noDefaultShortcut().checked().remembered();
 	QAction *showusermarkers = makeAction("showusermarkers", tr("Show User &Pointers")).noDefaultShortcut().checked().remembered();
@@ -4481,19 +4481,19 @@ void MainWindow::setupActions()
 						  "back tools afterwards"));
 	QAction *transformmirror =
 		makeAction("transformmirror", tr("&Mirror Transform"))
-			.icon("object-flip-horizontal")
+			.icon("drawpile_mirror")
 			.noDefaultShortcut();
 	QAction *transformflip = makeAction("transformflip", tr("&Flip Transform"))
-								 .icon("object-flip-vertical")
+								 .icon("drawpile_flip")
 								 .noDefaultShortcut();
 	QAction *transformrotatecw =
 		makeAction("transformrotatecw", tr("&Rotate Transform Clockwise"))
-			.icon("object-rotate-right")
+			.icon("drawpile_rotate_right")
 			.noDefaultShortcut();
 	QAction *transformrotateccw =
 		makeAction(
 			"transformrotateccw", tr("Rotate Transform &Counter-Clockwise"))
-			.icon("object-rotate-left")
+			.icon("drawpile_rotate_left")
 			.noDefaultShortcut();
 	QAction *transformshrinktoview =
 		makeAction(
