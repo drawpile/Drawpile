@@ -2053,7 +2053,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+1"/>
         <source>System Information…</source>
-        <translation>Informações do sistema</translation>
+        <translation>Informações do sistema…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2083,22 +2083,22 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+1"/>
         <source>Choose the current foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar a cor primária atual</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Choose the current background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar a cor de fundo atual</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Swap current foreground and background color with each other</source>
-        <translation type="unfinished"></translation>
+        <translation>Trocar a posição das cores primária e de fundo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set foreground color to black and background color to white</source>
-        <translation type="unfinished"></translation>
+        <translation>Definir a cor primária como preto e a cor de fundo como branco</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2108,12 +2108,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+145"/>
         <source>Could not write log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível escrever o arquivo de log: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Could not read log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível ler o arquivo de log: %1</translation>
     </message>
     <message>
         <location line="+72"/>
@@ -2138,27 +2138,27 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="-2411"/>
         <source>Image saving failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Falha ao salvar a imagem</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Download Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Download Completo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Download complete, click on &quot;Save&quot; to save your file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Download completo, clique em &quot;Salvar&quot; para salvar seu arquivo.</translation>
     </message>
     <message>
         <location line="+288"/>
         <source>Error downloading profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao baixar o perfil.</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Error downloading tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao baixar o log de eventos da mesa digitalizadora.</translation>
     </message>
     <message>
         <location line="+88"/>
@@ -2183,17 +2183,17 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+1"/>
         <source>You&apos;ve been disconnected from the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Você perdeu a conexão ao servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Connection Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Falha na conexão</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Could not establish a connection to the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível estabelecer uma conexão ao servidor.</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -2228,7 +2228,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+48"/>
         <source>Altering selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Alterando a seleção…</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -2339,7 +2339,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+1"/>
         <source>Download Selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Baixar Seleção…</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2424,12 +2424,12 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+2"/>
         <source>Zoom In On Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Aumentar Ampliação No Centro</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Out From Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Reduzir Ampliação No Centro</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2439,7 +2439,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+1"/>
         <source>Reset Zoom At Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Restaurar Ampliação No Centro</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2494,7 +2494,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+1"/>
         <source>Toggle selection display between a mask and an outline</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar visualização da seleção entre máscara e linha</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -2950,12 +2950,12 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+3"/>
         <source>Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Próximo Quadro-Chave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadro-Chave Anterior</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2970,17 +2970,17 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+2"/>
         <source>Create Layers on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Criar Camadas no Quadro-Chave Atual</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Criar Camadas no Próximo Quadro-Chave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Criar Camadas no Quadro-Chave Anterior</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2990,7 +2990,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+18"/>
         <source>Create Layers on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Criar Camadas no Quadro-Chave</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -3437,7 +3437,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+3"/>
         <source>Selection (Magic Wand)</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleção (Varinha Mágica)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3447,7 +3447,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+3"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrastar</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3470,7 +3470,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+50"/>
         <source>You must be an operator to reset the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Você deve ter o papel de Operador para resetar a sessão.</translation>
     </message>
 </context>
 <context>
@@ -3642,7 +3642,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+14"/>
         <source>Allow joining from the web browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Permitir entrada pelo navegador da web</translation>
     </message>
     <message>
         <location line="+166"/>
@@ -3664,12 +3664,12 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+72"/>
         <source>Add listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Adicionar listagem</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove selected listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover listagem selecionada</translation>
     </message>
     <message>
         <location line="-453"/>
@@ -4182,7 +4182,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location filename="../dialogs/animationexportdialog.cpp" line="+27"/>
         <source>Export Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Animação</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -4192,22 +4192,22 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+4"/>
         <source>Frames as PNGs</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadros como PNGs</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frames as PNGs in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadros como PNGs em ZIP</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>GIF Animado</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBP Animado</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4217,7 +4217,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+1"/>
         <source>WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Vídeo WEBM</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4227,7 +4227,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+2"/>
         <source>Loops:</source>
-        <translation type="unfinished"></translation>
+        <translation>Loops:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4237,12 +4237,12 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+3"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Intervalo de Quadros:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source> FPS</source>
-        <translation type="unfinished"></translation>
+        <translation> QPS</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4252,12 +4252,12 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+3"/>
         <source>Crop X:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cortar X:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Crop Y:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cortar Y:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4295,17 +4295,17 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+18"/>
         <source>Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadros</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Import a series of images as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar uma série de imagens como quadros na linha do tempo.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Importing animation frames is not supported in the web browser version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar quadros de animação não é uma ação suportada na versão web do Drawpile.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4325,27 +4325,27 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+6"/>
         <source>Sort</source>
-        <translation type="unfinished"></translation>
+        <translation>Organizar</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Numeric Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Numérico Crescente</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Numeric Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Numérico Decrescente</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alphabetic Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Alfabético Crescente</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alphabetic Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Alfabético Decrescente</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4355,7 +4355,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+4"/>
         <source>Import the layers of an ORA or PSD file as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar as camadas de um arquivo ORA ou PSD como quadros na linha do tempo.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4376,7 +4376,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+9"/>
         <source> FPS</source>
-        <translation type="unfinished"></translation>
+        <translation> QPS</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6232,7 +6232,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>selection %1 of user %2</source>
-        <translation type="unfinished"></translation>
+        <translation>seleção %1 de usuário %2</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6326,7 +6326,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../dialogs/layerproperties.cpp" line="+52"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Novo Grupo de Camadas</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6490,7 +6490,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+198"/>
         <source>You can&apos;t join this session because:</source>
-        <translation type="unfinished"></translation>
+        <translation>Você não pode entrar nessa sessão porque:</translation>
     </message>
     <message>
         <location line="+3"/>
