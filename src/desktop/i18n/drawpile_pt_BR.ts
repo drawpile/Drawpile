@@ -6495,7 +6495,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+3"/>
         <source>Unknown reason.</source>
-        <translation type="unfinished"></translation>
+        <translation>Motivo desconhecido.</translation>
     </message>
     <message>
         <location line="+9"/>
