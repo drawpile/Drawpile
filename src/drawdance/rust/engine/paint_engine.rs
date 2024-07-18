@@ -7,7 +7,7 @@ use crate::{
     DP_paint_engine_new_inc, DP_paint_engine_playback_begin, DP_paint_engine_playback_play,
     DP_paint_engine_playback_skip_by, DP_paint_engine_playback_step,
     DP_paint_engine_render_everything, DP_paint_engine_reveal_censored_set, DP_paint_engine_tick,
-    DP_paint_engine_view_canvas_state_inc, DP_save, DP_MSG_INTERVAL,
+    DP_paint_engine_view_canvas_state_inc, DP_save, DP_MSG_INTERVAL, DP_MSG_UNDO,
     DP_PAINT_ENGINE_FILTER_MESSAGE_FLAG_NO_TIME, DP_PLAYER_RECORDING_END, DP_PLAYER_SUCCESS,
     DP_SAVE_IMAGE_ORA, DP_SAVE_RESULT_SUCCESS, DP_TILE_SIZE,
 };
@@ -249,8 +249,8 @@ impl PaintEngine {
 
     extern "C" fn on_filter_timelapse_message(user: *mut c_void, msg: *mut DP_Message) -> c_uint {
         let msg_type = unsafe { DP_message_type(msg) };
-        if msg_type == DP_MSG_INTERVAL {
-            // Don't delay timelapse from dead air.
+        if msg_type == DP_MSG_INTERVAL || msg_type == DP_MSG_UNDO {
+            // Don't delay timelapse from dead air or undo/redo.
             DP_PAINT_ENGINE_FILTER_MESSAGE_FLAG_NO_TIME
         } else {
             let params = unsafe { user.cast::<PlaybackParams>().as_mut().unwrap_unchecked() };
