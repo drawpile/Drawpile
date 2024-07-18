@@ -1998,7 +1998,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+10"/>
         <source>&amp;Select</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Selecionar</translation>
     </message>
     <message>
         <location line="+0"/>
