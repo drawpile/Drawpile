@@ -844,7 +844,7 @@ para 64x64 pixels.</translation>
         <location line="+35"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-143"/>
         <source>Size Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>Limite de Tamanho </translation>
     </message>
     <message>
         <location line="+38"/>
