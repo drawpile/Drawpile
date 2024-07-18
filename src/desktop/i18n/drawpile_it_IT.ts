@@ -629,12 +629,12 @@ in 64x64 pixel.</translation>
     <message>
         <location line="-253"/>
         <source>Add Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi Avatar</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Import Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa fotogrammi di animazione</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -649,7 +649,7 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+10"/>
         <source>Import Animation from Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa animazione da livelli</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -659,12 +659,12 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa pennelli</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Error opening temporary file for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore durante l&apos;apertura del file temporaneo per %1.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -674,27 +674,27 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+7"/>
         <source>Set Brush Preset Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta la miniatura preimpostata del pennello</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Paste File</source>
-        <translation type="unfinished"></translation>
+        <translation>Incolla file</translation>
     </message>
     <message>
         <location line="+167"/>
         <source>Export Frames in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta fotogrammi in ZIP</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta video WEBM</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta WEBP animato</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -841,7 +841,7 @@ in 64x64 pixel.</translation>
         <location line="+35"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-143"/>
         <source>Size Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>Limite di dimensione: </translation>
     </message>
     <message>
         <location line="+38"/>
@@ -854,7 +854,7 @@ in 64x64 pixel.</translation>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-40"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>Espandi</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -2191,7 +2191,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+1"/>
         <source>System Information…</source>
-        <translation type="unfinished"></translation>
+        <translation>Informazioni sul sistema…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2291,17 +2291,17 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+190"/>
         <source>Image saving failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvataggio dell&apos;immagine non riuscito</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Download Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Download completato</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Download complete, click on &quot;Save&quot; to save your file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Download completato, clicca su &quot;Salva&quot; per salvare il file.</translation>
     </message>
     <message>
         <location line="+260"/>
@@ -2321,7 +2321,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+22"/>
         <source>Error downloading profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore durante il download del profilo.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2366,17 +2366,17 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+1"/>
         <source>You&apos;ve been disconnected from the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sei stato disconnesso dal server.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Connection Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Connessione non riuscita</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Could not establish a connection to the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile stabilire una connessione al server.</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -4178,7 +4178,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location filename="../dialogs/animationexportdialog.cpp" line="+27"/>
         <source>Export Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta animazione</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -4213,7 +4213,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+1"/>
         <source>WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Video WEBM</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4321,7 +4321,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+6"/>
         <source>Sort</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordina</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6661,12 +6661,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+71"/>
         <source>Error opening file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore durante l&apos;apertura del file: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error opening file: %1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore durante l&apos;apertura del file: %1 (%2)</translation>
     </message>
     <message>
         <location line="-3"/>
@@ -6708,7 +6708,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="-30"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>Espandi</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -7214,7 +7214,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/systeminfodialog.cpp" line="+26"/>
         <source>System Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Informazioni di sistema</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -7467,13 +7467,13 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+2"/>
         <source>Hardware (experimental)</source>
         <extracomment>One of the canvas renderer options. Hardware meaning it uses the GPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Hardware (sperimentale)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Software (experimental)</source>
         <extracomment>One of the canvas renderer options. Software meaning it uses the CPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Software (sperimentale)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8228,7 +8228,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+11"/>
         <source>Import certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa certificati</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -8442,7 +8442,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinamico</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8578,7 +8578,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+18"/>
         <source>Font size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dimensione del font:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -8876,7 +8876,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/startdialog/join.cpp" line="+26"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt; or &lt;strong&gt;IP address&lt;/strong&gt;:</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci un &lt;strong&gt;URL di sessione&lt;/strong&gt;, un &lt;strong&gt;nome host&lt;/strong&gt; o un &lt;strong&gt;indirizzo IP&lt;/strong&gt;:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8990,12 +8990,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/startdialog/welcome.cpp" line="+50"/>
         <source>Standalone Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modalità standalone</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You are running the web browser version of Drawpile in standalone mode. It will &lt;strong&gt;not&lt;/strong&gt; automatically save what you draw, so save often!</source>
-        <translation type="unfinished"></translation>
+        <translation>Stai eseguendo la versione del browser web di Drawpile in modalità standalone. &lt;strong&gt;Non&lt;/strong&gt; salverà automaticamente ciò che disegni, quindi salva spesso!</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -9764,7 +9764,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite di dimensione: illimitato</translation>
     </message>
 </context>
 <context>
@@ -9772,27 +9772,27 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-272"/>
         <source>Replace selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Sostituisci la selezione</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Add to selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi alla selezione</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Intersect with selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Intersecare con la selezione</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove from selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi dalla selezione</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Anti-aliasing</source>
-        <translation type="unfinished"></translation>
+        <translation>Anti-aliasing</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9840,7 +9840,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+14"/>
         <source>Preview:</source>
-        <translation type="unfinished"></translation>
+        <translation>Anteprima:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -9912,22 +9912,22 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+9"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Applica</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply the transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>Applicare la trasformazione</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cancel the transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>Annulla la trasformazione</translation>
     </message>
 </context>
 <context>
@@ -9972,7 +9972,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../view/lock.cpp" line="+29"/>
         <source>Out of space, use Session &gt; Reset to fix this</source>
-        <translation type="unfinished"></translation>
+        <translation>Spazio esaurito, usa Sessione &gt; Ripristina per risolvere questo problema</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10128,13 +10128,13 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+30"/>
         <location filename="../view/canvascontroller.cpp" line="+34"/>
         <source>Downloading…</source>
-        <translation type="unfinished"></translation>
+        <translation>Download in corso…</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../view/canvascontroller.cpp" line="+3"/>
         <source>Saving…</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvataggio in corso…</translation>
     </message>
 </context>
 <context>
@@ -10374,22 +10374,22 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../widgets/dualcolorbutton.cpp" line="+31"/>
         <source>Set foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta il colore di primo piano</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Set background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta il colore di sfondo</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Reset colors to black and white</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta i colori su bianco e nero</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Swap foreground and background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Scambia il colore di primo piano e di sfondo</translation>
     </message>
 </context>
 <context>
@@ -10445,12 +10445,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+80"/>
         <source>Self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Certificato autofirmato</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Known self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Certificato autofirmato conosciuto</translation>
     </message>
     <message>
         <location line="+5"/>
