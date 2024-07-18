@@ -2053,7 +2053,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+1"/>
         <source>System Information…</source>
-        <translation type="unfinished"></translation>
+        <translation>Informações do sistema</translation>
     </message>
     <message>
         <location line="+3"/>
