@@ -844,7 +844,7 @@ para 64x64 pixels.</translation>
         <location line="+35"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-143"/>
         <source>Size Limit: </source>
-        <translation>Limite de Tamanho </translation>
+        <translation>Limite de Tamanho: </translation>
     </message>
     <message>
         <location line="+38"/>
@@ -857,19 +857,19 @@ para 64x64 pixels.</translation>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-40"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir</translation>
     </message>
     <message>
         <location line="+20"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+10"/>
         <source>Shrink</source>
-        <translation type="unfinished"></translation>
+        <translation>Reduzir</translation>
     </message>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-153"/>
         <source>Shrink: </source>
-        <translation type="unfinished"></translation>
+        <translation>Reduzir: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -879,7 +879,7 @@ para 64x64 pixels.</translation>
     <message>
         <location line="+309"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite de Tamanho: Ilimitado</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="-342"/>
@@ -1692,37 +1692,37 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+334"/>
         <source>Stay Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo de permanência</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>1 Second</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Segundo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>10 Seconds</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>10 Segundos</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Minute</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Minuto</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Hour</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Hora</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Forever</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>Para sempre</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -1852,7 +1852,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+71"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Novo Grupo de Camadas</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1913,7 +1913,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+4"/>
         <source>Transform the selection, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformar a seleção, depois retornar ferramentas</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1923,7 +1923,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformar somente a máscara de seleção, depois retornar ferramentas</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2003,7 +2003,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+0"/>
         <source>Select rectangular area</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar área retangular</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2013,7 +2013,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+0"/>
         <source>Select a free-form area</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar uma área livre</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2023,7 +2023,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+0"/>
         <source>Select areas with similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar áreas com cores semelhantes</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2033,17 +2033,17 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+0"/>
         <source>Transform selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformar seleção</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrastar</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Pan canvas view</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrastar visualização da tela</translation>
     </message>
     <message>
         <location line="+27"/>
