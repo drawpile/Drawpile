@@ -1187,10 +1187,13 @@ skip_playback_forward(DP_PaintEngine *pe, long long steps, int what,
                         && type == DP_MSG_UNDO_POINT)) {
                     ++done;
                 }
-                else if (what == PLAYBACK_STEP_MSECS && should_time) {
+                else if (what == PLAYBACK_STEP_MSECS) {
                     if (pe->playback.next_has_time) {
-                        done += guess_message_msecs(
+                        long long msecs = guess_message_msecs(
                             msg, type, &pe->playback.next_has_time);
+                        if (should_time) {
+                            done += msecs;
+                        }
                     }
                     else {
                         pe->playback.next_has_time = true;
