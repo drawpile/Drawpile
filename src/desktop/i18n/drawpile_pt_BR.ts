@@ -1666,7 +1666,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+3"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Pegar Da Tela</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1887,12 +1887,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+266"/>
         <source>&amp;Invert Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Inverter Seleção</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select Layer &amp;Bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Selectionar &amp;Limites da Camada</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1908,7 +1908,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+11"/>
         <source>&amp;Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Transformar</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1918,7 +1918,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+2"/>
         <source>Transform Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformar &amp;Máscara de Seleção</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1928,12 +1928,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+3"/>
         <source>&amp;Mirror Transform</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Transformação de Espelhamento &amp;Horizontal</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Flip Transform</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Transformação de Espelhamento &amp;Vertical</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6500,7 +6500,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+9"/>
         <source>Can&apos;t join session</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível entrar na sessão</translation>
     </message>
     <message>
         <location line="+63"/>
@@ -6665,12 +6665,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+71"/>
         <source>Error opening file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao abrir arquvo: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error opening file: %1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao abrir arquivo: %1 (%2)</translation>
     </message>
     <message>
         <location line="-3"/>
@@ -6712,12 +6712,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="-30"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Shrink</source>
-        <translation type="unfinished"></translation>
+        <translation>Reduzir</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -6728,7 +6728,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+48"/>
         <source>Shrink: </source>
-        <translation type="unfinished"></translation>
+        <translation>Reduzir: </translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6782,7 +6782,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+1"/>
         <source>Error saving bans: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao salvar banimentos: %1</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -6965,12 +6965,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="-9"/>
         <source>File does not contain a valid role export.</source>
-        <translation type="unfinished"></translation>
+        <translation>Arquivo não contem uma exportação de papeis válida.</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Error saving roles: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao salvar papeis: %1</translation>
     </message>
     <message numerus="yes">
         <location line="-33"/>
@@ -7218,7 +7218,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../dialogs/systeminfodialog.cpp" line="+26"/>
         <source>System Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Imformações do Sistema</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -7465,19 +7465,19 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+11"/>
         <source>Qt Graphics View</source>
         <extracomment>One of the canvas renderer options. &quot;Qt&quot; is a software framework.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Visualização de Gráficos Qt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hardware (experimental)</source>
         <extracomment>One of the canvas renderer options. Hardware meaning it uses the GPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Hardware (experimental)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Software (experimental)</source>
         <extracomment>One of the canvas renderer options. Software meaning it uses the CPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Software (experimental)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7488,7 +7488,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+10"/>
         <source>Renderer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Renderizador:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -7500,7 +7500,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+4"/>
         <source>Current renderer: %1. Changes apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Renderizador atual: %1. Mudanças só terão efeito após reiniciar o Drawpile.</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -7525,7 +7525,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+106"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolar quando a visualização é ampliada ou girada</translation>
     </message>
     <message>
         <location line="+5"/>
