@@ -122,7 +122,7 @@ struct ToolSettings::Private {
 		pages[tools::Tool::TRANSFORM] = {
 			QSharedPointer<tools::ToolSettings>(
 				new tools::TransformSettings(ctrl)),
-			"transform", QIcon::fromTheme("transform-move"),
+			"transform", QIcon::fromTheme("drawpile_transform"),
 			QApplication::tr("Transform")};
 		pages[tools::Tool::PAN] = {
 			QSharedPointer<tools::ToolSettings>(new tools::PanSettings(ctrl)),

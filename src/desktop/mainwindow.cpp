@@ -4471,7 +4471,7 @@ void MainWindow::setupActions()
 	QAction *starttransform =
 		makeAction("starttransform", tr("&Transform"))
 			.shortcut("T")
-			.icon("transform-move")
+			.icon("drawpile_transform")
 			.statusTip(
 				tr("Transform the selection, switch back tools afterwards"));
 	QAction *starttransformmask =
@@ -4760,7 +4760,7 @@ void MainWindow::setupActions()
 	QAction *selectiontool = makeAction("toolselectrect", tr("&Select")).icon("select-rectangular").statusTip(tr("Select rectangular area")).shortcut("S").checkable();
 	QAction *lassotool = makeAction("toolselectpolygon", tr("&Lasso Select")).icon("edit-select-lasso").statusTip(tr("Select a free-form area")).shortcut("D").checkable();
 	QAction *magicwandtool = makeAction("toolselectmagicwand", tr("&Magic Wand Select")).icon("drawpile_magicwand").statusTip(tr("Select areas with similar colors")).shortcut("W").checkable();
-	QAction *transformtool = makeAction("tooltransform", tr("&Transform Tool")).icon("transform-move").statusTip(tr("Transform selection")).noDefaultShortcut().checkable();
+	QAction *transformtool = makeAction("tooltransform", tr("&Transform Tool")).icon("drawpile_transform").statusTip(tr("Transform selection")).noDefaultShortcut().checkable();
 	QAction *pantool = makeAction("toolpan", tr("Pan")).icon("hand").statusTip(tr("Pan canvas view")).shortcut("P").checkable();
 	QAction *zoomtool = makeAction("toolzoom", tr("Zoom")).icon("edit-find").statusTip(tr("Zoom the canvas view")).shortcut("Z").checkable();
 	QAction *inspectortool = makeAction("toolinspector", tr("Inspector")).icon("help-whatsthis").statusTip(tr("Find out who did it")).shortcut("Ctrl+I").checkable();
