@@ -680,6 +680,7 @@ static DP_SaveResult save_ora(DP_CanvasState *cs, const char *path,
     DP_ZipWriter *zw = DP_zip_writer_new(path);
     if (!zw) {
         DP_warn("Save '%s': %s", path, DP_error());
+        return DP_SAVE_RESULT_OPEN_ERROR;
     }
 
     bool base_ok = ora_store_mimetype(zw) && DP_zip_writer_add_dir(zw, "data")
