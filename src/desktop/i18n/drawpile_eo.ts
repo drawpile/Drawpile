@@ -113,7 +113,7 @@
     <message>
         <location line="+14"/>
         <source>Eraser mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrapguma reĝimo</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -315,12 +315,12 @@ to 64x64 pixels.</source>
         <location line="+14"/>
         <location line="+50"/>
         <source>Common name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordinara nomo:</translation>
     </message>
     <message>
         <location line="-43"/>
         <source>Serial number:</source>
-        <translation type="unfinished"></translation>
+        <translation>Numero:</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -416,7 +416,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Jump</source>
-        <translation type="unfinished"></translation>
+        <translation>Salti</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -551,7 +551,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+8"/>
         <source>Import Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Enporti rolojn</translation>
     </message>
     <message>
         <location line="+120"/>
@@ -1100,12 +1100,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+10"/>
         <source>Visibility:</source>
-        <translation type="unfinished"></translation>
+        <translation>Videblo:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Visible to you</source>
-        <translation type="unfinished"></translation>
+        <translation>Videbla al vi</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1120,7 +1120,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Default for new users</source>
-        <translation type="unfinished"></translation>
+        <translation>Implicita por novaj uzantoj</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1133,7 +1133,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/layoutsdialog.ui" line="+14"/>
         <source>Layouts</source>
-        <translation type="unfinished"></translation>
+        <translation>Aranĝoj</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1172,7 +1172,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-36"/>
         <source>Remember my password</source>
-        <translation type="unfinished"></translation>
+        <translation>Memori mian pasvorton</translation>
     </message>
     <message>
         <location line="-24"/>
@@ -1182,7 +1182,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+158"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtri</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1217,7 +1217,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+36"/>
         <source>Log in with server account</source>
-        <translation type="unfinished"></translation>
+        <translation>Saluti per servila konto</translation>
     </message>
     <message>
         <location line="+90"/>
@@ -1227,7 +1227,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+3"/>
         <source>Edit and log in</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifi kaj saluti</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -1237,7 +1237,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+3"/>
         <source>Log in a different way</source>
-        <translation type="unfinished"></translation>
+        <translation>Saluti alimaniere</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -1252,12 +1252,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+24"/>
         <source>Forget this account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Forgesi ĉi tiun konton.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Forget this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Forgesi ĉi tiun konton</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1363,13 +1363,13 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>Ripari</translation>
     </message>
     <message>
         <location line="+178"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
-        <translation type="unfinished"></translation>
+        <translation>Forlasi Drawpile</translation>
     </message>
     <message>
         <location line="-27"/>
@@ -1379,7 +1379,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+6"/>
         <source>Exit anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>Forlasi malgraŭ tio</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1406,7 +1406,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+303"/>
         <source>Opening file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Malfermante dosieron…</translation>
     </message>
     <message>
         <location line="+169"/>
@@ -1426,12 +1426,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Image saved</source>
-        <translation type="unfinished"></translation>
+        <translation>Bildo konserviĝis</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Download Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Elŝuto finiĝis</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1471,18 +1471,18 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Spekti</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Stop Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>Ĉesigi registradon</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+1796"/>
         <source>Record...</source>
-        <translation type="unfinished"></translation>
+        <translation>Registri…</translation>
     </message>
     <message>
         <location line="-1754"/>
@@ -1497,7 +1497,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nekonata eraro.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1537,12 +1537,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+19"/>
         <source>Invalid address</source>
-        <translation type="unfinished"></translation>
+        <translation>Nevalida adreso</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Host Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Gastiga seanco</translation>
     </message>
     <message>
         <location line="+93"/>
@@ -1577,13 +1577,13 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+61"/>
         <source>Terminate session</source>
-        <translation type="unfinished"></translation>
+        <translation>Fini seancon</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+2222"/>
         <source>Terminate</source>
-        <translation type="unfinished"></translation>
+        <translation>Fini</translation>
     </message>
     <message>
         <location line="-2080"/>
@@ -1731,7 +1731,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Lock Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Ŝlosi dokojn</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1741,7 +1741,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Hide Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaŝi dokojn</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1768,7 +1768,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>&amp;Download Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Elŝuti bildon…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1783,7 +1783,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Save &amp;As...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Konservi kiel…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1808,13 +1808,13 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Start...</source>
-        <translation type="unfinished"></translation>
+        <translation>Komenci…</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Forlasi</translation>
     </message>
     <message>
         <location line="+63"/>
@@ -2032,7 +2032,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+34"/>
         <source>Select &amp;All</source>
-        <translation type="unfinished"></translation>
+        <translation>Elekti Ĉ&amp;ion</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2227,7 +2227,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Mirror</source>
-        <translation type="unfinished"></translation>
+        <translation>Speguligi</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2247,17 +2247,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Show Names</source>
-        <translation type="unfinished"></translation>
+        <translation>Montri nomojn</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Montri tavolojn</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Avatars</source>
-        <translation type="unfinished"></translation>
+        <translation>Montri avatarojn</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2292,7 +2292,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Normal View</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordinara vido</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2302,7 +2302,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Layer View</source>
-        <translation type="unfinished"></translation>
+        <translation>Tavola vido</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2337,12 +2337,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+50"/>
         <source>New Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Nova tavolo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Nova tavolaro</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="+354"/>
@@ -2354,13 +2354,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Merge Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunigi tavolon</translation>
     </message>
     <message>
         <location line="+6"/>
         <location filename="../mainwindow.cpp" line="+2"/>
         <source>Delete Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Forviŝi tavolon</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+1"/>
@@ -10648,12 +10648,12 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Private Message</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Privata mesaĝo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show User &amp;Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Montri &amp;informojn pri uzanto</translation>
     </message>
     <message>
         <location line="+2"/>
