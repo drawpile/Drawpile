@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/export/canvassaverrunnable.h"
-#include "libclient/canvas/paintengine.h"
 #include "libclient/drawdance/annotation.h"
 #include "libclient/drawdance/global.h"
 #include "libclient/utils/annotations.h"
+#include <QPainter>
+#include <QRandomGenerator>
 #include <QTemporaryDir>
+#ifdef Q_OS_ANDROID
+#	include <QDateTime>
+#	include <QDir>
+#	include <QFile>
+#endif
 
 CanvasSaverRunnable::CanvasSaverRunnable(
 	const drawdance::CanvasState &canvasState, DP_SaveImageType type,
@@ -12,7 +18,7 @@ CanvasSaverRunnable::CanvasSaverRunnable(
 	: QObject(parent)
 	, m_canvasState(canvasState)
 	, m_type(type)
-	, m_path(path.toUtf8())
+	, m_path(path)
 	, m_tempDir(tempDir)
 {
 }
@@ -24,10 +30,36 @@ CanvasSaverRunnable::~CanvasSaverRunnable()
 
 void CanvasSaverRunnable::run()
 {
-	const char *path = m_path.constData();
+#ifdef Q_OS_ANDROID
+	// Android doesn't support QSaveFile and KArchive doesn't support the
+	// Truncate mode required on Android to not leave potential garbage at the
+	// end of the file written to, so we have to jigger this stuff ourselves.
+	QString tempPath =
+		QDir::temp().filePath(QStringLiteral("save_%1_%2")
+								  .arg(QDateTime::currentMSecsSinceEpoch())
+								  .arg(QRandomGenerator::global()->generate()));
+	QByteArray pathBytes = tempPath.toUtf8();
+#else
+	QByteArray pathBytes = m_path.toUtf8();
+#endif
+
+	const char *path = pathBytes.constData();
 	drawdance::DrawContext dc = drawdance::DrawContextPool::acquire();
 	DP_SaveResult result = DP_save(
 		m_canvasState.get(), dc.get(), m_type, path, bakeAnnotation, this);
+
+#ifdef Q_OS_ANDROID
+	QFile tempFile(tempPath);
+	if(result == DP_SAVE_RESULT_SUCCESS) {
+		result = copyToTargetFile(tempFile);
+	}
+	if(!tempFile.remove()) {
+		qWarning(
+			"Error removing temporary file '%s': %s", path,
+			qUtf8Printable(tempFile.errorString()));
+	}
+#endif
+
 	emit saveComplete(saveResultToErrorString(result));
 }
 
@@ -69,3 +101,70 @@ bool CanvasSaverRunnable::bakeAnnotation(
 		annotation.text(), annotation.valign());
 	return true;
 }
+
+#ifdef Q_OS_ANDROID
+DP_SaveResult CanvasSaverRunnable::copyToTargetFile(QFile &tempFile) const
+{
+	if(!tempFile.open(QIODevice::ReadOnly)) {
+		DP_error_set(
+			"Error opening temp file '%s': %s",
+			qUtf8Printable(tempFile.fileName()),
+			qUtf8Printable(tempFile.errorString()));
+		return DP_SAVE_RESULT_OPEN_ERROR;
+	}
+
+	QFile targetFile(m_path);
+	if(!targetFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+		DP_error_set(
+			"Error opening target file '%s': %s",
+			qUtf8Printable(targetFile.fileName()),
+			qUtf8Printable(targetFile.errorString()));
+		tempFile.close();
+		return DP_SAVE_RESULT_OPEN_ERROR;
+	}
+
+	QByteArray buffer;
+	buffer.resize(BUFSIZ);
+	while(true) {
+		qint64 read = tempFile.read(buffer.data(), BUFSIZ);
+		if(read < 0) {
+			DP_error_set(
+				"Error reading from temporary file '%s': %s",
+				qUtf8Printable(tempFile.fileName()),
+				qUtf8Printable(tempFile.errorString()));
+			tempFile.close();
+			return DP_SAVE_RESULT_WRITE_ERROR;
+		} else if(read > 0) {
+			qint64 written = targetFile.write(buffer, read);
+			if(written < 0) {
+				DP_error_set(
+					"Error writing %lld byte(s) to target file '%s': %s",
+					static_cast<long long>(read),
+					qUtf8Printable(targetFile.fileName()),
+					qUtf8Printable(targetFile.errorString()));
+				tempFile.close();
+				return DP_SAVE_RESULT_WRITE_ERROR;
+			} else if(written != read) {
+				DP_error_set(
+					"Tried to write %lld byte(s) to target file '%s', but only "
+					"wrote %lld",
+					static_cast<long long>(read), qUtf8Printable(m_path),
+					static_cast<long long>(written));
+				tempFile.close();
+				return DP_SAVE_RESULT_WRITE_ERROR;
+			}
+		} else {
+			tempFile.close();
+			if(targetFile.flush()) {
+				return DP_SAVE_RESULT_SUCCESS;
+			} else {
+				DP_error_set(
+					"Error flushing target file '%s': %s",
+					qUtf8Printable(targetFile.fileName()),
+					qUtf8Printable(targetFile.errorString()));
+				return DP_SAVE_RESULT_WRITE_ERROR;
+			}
+		}
+	}
+}
+#endif

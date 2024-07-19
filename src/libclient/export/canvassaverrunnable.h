@@ -9,6 +9,7 @@ extern "C" {
 #include <QObject>
 #include <QRunnable>
 
+class QFile;
 class QTemporaryDir;
 
 /**
@@ -39,9 +40,13 @@ private:
 	static bool
 	bakeAnnotation(void *user, DP_Annotation *a, unsigned char *out);
 
+#ifdef Q_OS_ANDROID
+	DP_SaveResult copyToTargetFile(QFile &tempFile) const;
+#endif
+
 	drawdance::CanvasState m_canvasState;
 	DP_SaveImageType m_type;
-	QByteArray m_path;
+	QString m_path;
 	QTemporaryDir *m_tempDir;
 };
 
