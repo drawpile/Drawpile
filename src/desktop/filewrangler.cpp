@@ -1071,13 +1071,8 @@ void FileWrangler::showOpenFileContentDialog(
 
 	std::function<void(const QString &)> fileSelected =
 		[=](const QString &fileName) {
-			QByteArray fileContent;
 			if(!fileName.isNull()) {
 				updateLastPath(type, fileName);
-				QFile selectedFile(fileName);
-				if(selectedFile.open(QIODevice::ReadOnly)) {
-					fileContent = selectedFile.readAll();
-				}
 				fileOpenCompleted(fileName);
 			}
 		};
