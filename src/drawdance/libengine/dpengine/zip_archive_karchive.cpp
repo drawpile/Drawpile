@@ -19,7 +19,6 @@ extern "C" {
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 }
-#include <dpcommon/platform_qt.h>
 #include <KZip>
 
 
@@ -84,7 +83,7 @@ extern "C" void DP_zip_reader_file_free(DP_ZipReaderFile *zrf)
 extern "C" DP_ZipWriter *DP_zip_writer_new(const char *path)
 {
     KZip *kz = new KZip{path};
-    if (kz->open(DP_QT_WRITE_FLAGS)) {
+    if (kz->open(QIODevice::WriteOnly)) {
         return reinterpret_cast<DP_ZipWriter *>(kz);
     }
     else {
