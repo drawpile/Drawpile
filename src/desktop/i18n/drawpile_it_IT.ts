@@ -514,12 +514,12 @@ in 64x64 pixel.</translation>
     <message>
         <location filename="../ui/filetypedialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished">Nome:</translation>
+        <translation>Nome:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished">Tipo:</translation>
+        <translation>Tipo:</translation>
     </message>
 </context>
 <context>
@@ -639,7 +639,7 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+2"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -654,7 +654,7 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Immagini a più livelli</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -808,28 +808,28 @@ in 64x64 pixel.</translation>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill entire selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Riempi l&apos;intera selezione</translation>
     </message>
     <message>
         <location line="+69"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+101"/>
         <source>Merged image</source>
-        <translation type="unfinished"></translation>
+        <translation>Immagine unita</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+13"/>
         <source>Merged without background</source>
-        <translation type="unfinished"></translation>
+        <translation>Unito senza sfondo</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+15"/>
         <source>Current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Livello corrente</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -876,7 +876,7 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+309"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite di dimensione: illimitato</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="-342"/>
@@ -1669,37 +1669,37 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+159"/>
         <source>Zoom In On Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom avanti al centro</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Out From Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom indietro dal centro</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reimposta zoom</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset Zoom At Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Ripristina zoom al centro</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Hide From Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Nascondi dal cursore</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show &amp;Rulers</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra &amp;righelli</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra selezione &amp;maschera</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1720,31 +1720,31 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <location line="+4"/>
         <source>1 Second</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Secondo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>10 Seconds</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>10 Secondi</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Minute</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Minuto</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Hour</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Ora</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Forever</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>Per sempre</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -1759,12 +1759,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+3"/>
         <source>&amp;Check All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Controlla tutto</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Uncheck All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Deseleziona tutto</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -2136,12 +2136,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+66"/>
         <source>&amp;Select</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Seleziona</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select rectangular area</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona area rettangolare</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2161,17 +2161,17 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+0"/>
         <source>Select areas with similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona aree con colori simili</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Transform Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Strumento &amp;Trasforma</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Transform selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Trasforma selezione</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2226,32 +2226,32 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+1"/>
         <source>Choose the current foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>Scegli il colore di primo piano corrente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Choose the current background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Scegli il colore di sfondo corrente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Swap current foreground and background color with each other</source>
-        <translation type="unfinished"></translation>
+        <translation>Scambia tra loro il colore attuale di primo piano e quello di sfondo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set foreground color to black and background color to white</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta il colore di primo piano su nero e il colore di sfondo su bianco</translation>
     </message>
     <message>
         <location line="+148"/>
         <source>Could not write log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile scrivere il file di registro: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Could not read log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile leggere il file di registro: %1</translation>
     </message>
     <message>
         <location line="+80"/>
@@ -2336,7 +2336,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+22"/>
         <source>Error downloading tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore durante il download del registro eventi del tablet.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2522,27 +2522,27 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+16"/>
         <source>&amp;Download Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Scarica immagine…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Download Selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Scarica selezione…</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Export &amp;Animation…</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta &amp;Animazione…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Import Animation &amp;Frames…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa Frame di &amp;animazione…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Import Animation from &amp;Layers…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa animazione da &amp;livelli…</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2694,7 +2694,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+35"/>
         <source>&amp;Invert Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Inverti selezione</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9956,7 +9956,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../view/canvasscene.cpp" line="+487"/>
         <source>Restoring canvas…</source>
-        <translation type="unfinished">Recupero della tela…</translation>
+        <translation>Recupero della tela…</translation>
     </message>
 </context>
 <context>
@@ -9982,42 +9982,42 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+4"/>
         <source>Canvas is locked</source>
-        <translation type="unfinished">La Tela è bloccata</translation>
+        <translation>La Tela è bloccata</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>User is locked</source>
-        <translation type="unfinished">L&apos;Utente è bloccato</translation>
+        <translation>L&apos;Utente è bloccato</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Layer is a group</source>
-        <translation type="unfinished">Il Livello è un gruppo</translation>
+        <translation>Il Livello è un gruppo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is locked</source>
-        <translation type="unfinished">Il Livello è bloccato</translation>
+        <translation>Il Livello è bloccato</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is censored</source>
-        <translation type="unfinished">Il Livello è censurato</translation>
+        <translation>Il Livello è censurato</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is hidden</source>
-        <translation type="unfinished">Il Livello è nascosto</translation>
+        <translation>Il Livello è nascosto</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is not visible in this frame</source>
-        <translation type="unfinished">Il Livello non è visibile in questo frame</translation>
+        <translation>Il Livello non è visibile in questo frame</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Tool is locked</source>
-        <translation type="unfinished">Lo Strumento è bloccato</translation>
+        <translation>Lo Strumento è bloccato</translation>
     </message>
 </context>
 <context>
@@ -10460,12 +10460,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+11"/>
         <source>Valid certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Certificato valido</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Pinned valid certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Certificato valido appuntato</translation>
     </message>
     <message>
         <location line="+167"/>
