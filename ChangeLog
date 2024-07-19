@@ -90,6 +90,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Properly truncate files when writing them on Android to avoid corruption from leftover junk at the end.
  * Feature: Allow cropping in the drawpile-timelapse command-line tool using -x/--crop.
  * Fix: Compensate for discontinuity in the classic soft brush radius to make the transition look less bumpy. Thanks BulletPepper for reporting.
+ * Feature: Make color sliders dock smaller by showing only one set of sliders at a time and add an input field for a hex color name. Thanks Kawaxte and MorrowShore for suggesting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

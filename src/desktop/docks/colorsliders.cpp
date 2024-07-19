@@ -1,14 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/docks/colorsliders.h"
 #include "desktop/docks/colorpalette.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/main.h"
+#include "desktop/widgets/groupedtoolbutton.h"
+#include <QButtonGroup>
 #include <QGridLayout>
+#include <QHBoxLayout>
 #include <QLabel>
+#include <QLineEdit>
 #include <QScopedValueRollback>
 #include <QSpinBox>
+#include <QStackedWidget>
+#include <QVBoxLayout>
+#include <QtColorWidgets/color_line_edit.hpp>
+#include <QtColorWidgets/color_names.hpp>
 #include <QtColorWidgets/color_utils.hpp>
 #include <QtColorWidgets/hue_slider.hpp>
 #include <QtColorWidgets/swatch.hpp>
@@ -18,6 +25,8 @@ namespace docks {
 struct ColorSliderDock::Private {
 	QColor lastColor = Qt::black;
 	color_widgets::Swatch *lastUsedSwatch = nullptr;
+
+	QStackedWidget *stack = nullptr;
 
 	QLabel *hueLabel = nullptr;
 	color_widgets::HueSlider *hue = nullptr;
@@ -35,6 +44,10 @@ struct ColorSliderDock::Private {
 	QSpinBox *redbox = nullptr;
 	QSpinBox *greenbox = nullptr;
 	QSpinBox *bluebox = nullptr;
+
+	widgets::GroupedToolButton *hsvButton = nullptr;
+	QButtonGroup *group = nullptr;
+	color_widgets::ColorLineEdit *lineEdit = nullptr;
 
 	color_widgets::ColorWheel::ColorSpaceEnum colorSpace =
 		color_widgets::ColorWheel::ColorHSV;
@@ -68,86 +81,111 @@ ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
 
 	// Create main UI widget
 	QWidget *w = new QWidget;
-	auto *layout = new QGridLayout;
-	w->setLayout(layout);
+	QVBoxLayout *layout = new QVBoxLayout(w);
 
-	int row = 0;
+	d->stack = new QStackedWidget;
+	d->stack->setContentsMargins(0, 0, 0, 0);
+	layout->addWidget(d->stack);
 
-	d->hueLabel = new QLabel{w};
-	d->hue = new color_widgets::HueSlider(w);
+	QWidget *hsvWidget = new QWidget;
+	QGridLayout *hsvGrid = new QGridLayout(hsvWidget);
+	hsvGrid->setContentsMargins(0, 0, 0, 0);
+	hsvGrid->setSpacing(3);
+	d->stack->addWidget(hsvWidget);
+
+	d->hueLabel = new QLabel;
+	d->hue = new color_widgets::HueSlider;
 	d->hue->setMaximum(359);
-	d->huebox = new QSpinBox(w);
+	d->huebox = new QSpinBox;
 	d->huebox->setMaximum(359);
 	d->hue->setMaximumHeight(d->huebox->height());
-	layout->addWidget(d->hueLabel, row, 0);
-	layout->addWidget(d->hue, row, 1);
-	layout->addWidget(d->huebox, row, 2);
+	hsvGrid->addWidget(d->hueLabel, 0, 0);
+	hsvGrid->addWidget(d->hue, 0, 1);
+	hsvGrid->addWidget(d->huebox, 0, 2);
 
-	++row;
-
-	d->saturationLabel = new QLabel{w};
-	d->saturation = new color_widgets::GradientSlider(w);
+	d->saturationLabel = new QLabel;
+	d->saturation = new color_widgets::GradientSlider;
 	d->saturation->setMaximum(255);
-	d->saturationbox = new QSpinBox(w);
+	d->saturationbox = new QSpinBox;
 	d->saturationbox->setMaximum(255);
 	d->saturation->setMaximumHeight(d->saturationbox->height());
-	layout->addWidget(d->saturationLabel, row, 0);
-	layout->addWidget(d->saturation, row, 1);
-	layout->addWidget(d->saturationbox, row, 2);
+	hsvGrid->addWidget(d->saturationLabel, 1, 0);
+	hsvGrid->addWidget(d->saturation, 1, 1);
+	hsvGrid->addWidget(d->saturationbox, 1, 2);
 
-	++row;
-
-	d->valueLabel = new QLabel{w};
-	d->value = new color_widgets::GradientSlider(w);
+	d->valueLabel = new QLabel;
+	d->value = new color_widgets::GradientSlider;
 	d->value->setMaximum(255);
-	d->valuebox = new QSpinBox(w);
+	d->valuebox = new QSpinBox;
 	d->valuebox->setMaximum(255);
 	d->value->setMaximumHeight(d->valuebox->height());
-	layout->addWidget(d->valueLabel, row, 0);
-	layout->addWidget(d->value, row, 1);
-	layout->addWidget(d->valuebox, row, 2);
+	hsvGrid->addWidget(d->valueLabel, 2, 0);
+	hsvGrid->addWidget(d->value, 2, 1);
+	hsvGrid->addWidget(d->valuebox, 2, 2);
 
-	++row;
+	QWidget *rgbWidget = new QWidget;
+	QGridLayout *rgbGrid = new QGridLayout(rgbWidget);
+	rgbGrid->setContentsMargins(0, 0, 0, 0);
+	rgbGrid->setSpacing(3);
+	d->stack->addWidget(rgbWidget);
 
-	d->red = new color_widgets::GradientSlider(w);
+	d->red = new color_widgets::GradientSlider;
 	d->red->setMaximum(255);
-	d->redbox = new QSpinBox(w);
+	d->redbox = new QSpinBox;
 	d->redbox->setMaximum(255);
 	d->red->setMaximumHeight(d->redbox->height());
 	//: The "Red" R of RGB.
-	layout->addWidget(new QLabel{tr("R"), w}, row, 0);
-	layout->addWidget(d->red, row, 1);
-	layout->addWidget(d->redbox, row, 2);
+	rgbGrid->addWidget(new QLabel(tr("R")), 0, 0);
+	rgbGrid->addWidget(d->red, 0, 1);
+	rgbGrid->addWidget(d->redbox, 0, 2);
 
-	++row;
-
-	d->green = new color_widgets::GradientSlider(w);
+	d->green = new color_widgets::GradientSlider;
 	d->green->setMaximum(255);
-	d->greenbox = new QSpinBox(w);
+	d->greenbox = new QSpinBox;
 	d->greenbox->setMaximum(255);
 	d->green->setMaximumHeight(d->greenbox->height());
 	//: The "Green" G of RGB.
-	layout->addWidget(new QLabel{tr("G"), w}, row, 0);
-	layout->addWidget(d->green, row, 1);
-	layout->addWidget(d->greenbox, row, 2);
+	rgbGrid->addWidget(new QLabel(tr("G")), 1, 0);
+	rgbGrid->addWidget(d->green, 1, 1);
+	rgbGrid->addWidget(d->greenbox, 1, 2);
 
-	++row;
-
-	d->blue = new color_widgets::GradientSlider(w);
+	d->blue = new color_widgets::GradientSlider;
 	d->blue->setMaximum(255);
-	d->bluebox = new QSpinBox(w);
+	d->bluebox = new QSpinBox;
 	d->bluebox->setMaximum(255);
 	d->blue->setMaximumHeight(d->bluebox->height());
 	//: The "Blue" B of RGB.
-	layout->addWidget(new QLabel{tr("B"), w}, row, 0);
-	layout->addWidget(d->blue, row, 1);
-	layout->addWidget(d->bluebox, row, 2);
+	rgbGrid->addWidget(new QLabel(tr("B")), 2, 0);
+	rgbGrid->addWidget(d->blue, 2, 1);
+	rgbGrid->addWidget(d->bluebox, 2, 2);
 
-	++row;
+	QHBoxLayout *buttonsLayout = new QHBoxLayout;
+	buttonsLayout->setContentsMargins(0, 0, 0, 0);
+	buttonsLayout->setSpacing(0);
+	layout->addLayout(buttonsLayout);
 
-	layout->setSpacing(3);
-	layout->setRowStretch(row, 1);
+	d->hsvButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
+	d->hsvButton->setCheckable(true);
+	d->hsvButton->setChecked(true);
+	buttonsLayout->addWidget(d->hsvButton);
 
+	widgets::GroupedToolButton *rgbButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+	rgbButton->setCheckable(true);
+	rgbButton->setText(tr("RGB"));
+	buttonsLayout->addWidget(rgbButton);
+
+	d->group = new QButtonGroup(w);
+	d->group->addButton(d->hsvButton, 0);
+	d->group->addButton(rgbButton, 1);
+
+	buttonsLayout->addSpacing(3);
+
+	d->lineEdit = new color_widgets::ColorLineEdit;
+	buttonsLayout->addWidget(d->lineEdit);
+
+	layout->addStretch(1);
 	setWidget(w);
 
 	connect(
@@ -197,8 +235,19 @@ ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
 		d->bluebox, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&ColorSliderDock::updateFromRgbSpinbox);
 
+	connect(
+		d->group, &QButtonGroup::idClicked, this, &ColorSliderDock::setMode);
+
+	connect(
+		d->lineEdit, &color_widgets::ColorLineEdit::colorEdited, this,
+		&ColorSliderDock::setColor);
+	connect(
+		d->lineEdit, &color_widgets::ColorLineEdit::colorEditingFinished, this,
+		&ColorSliderDock::updateFromLineEditFinished);
+
 	dpApp().settings().bindColorWheelSpace(
 		this, &ColorSliderDock::setColorSpace);
+	dpApp().settings().bindColorSlidersMode(this, &ColorSliderDock::setMode);
 }
 
 ColorSliderDock::~ColorSliderDock()
@@ -264,6 +313,16 @@ void ColorSliderDock::updateFromHsvSpinbox()
 	}
 }
 
+void ColorSliderDock::updateFromLineEditFinished(const QColor &color)
+{
+	if(!d->updating) {
+		updateColor(color, false, false);
+		// Force the line edit to be in #RRGGBB format, since it may not be.
+		d->lineEdit->setText(
+			color_widgets::stringFromColor(color, d->lineEdit->showAlpha()));
+	}
+}
+
 void ColorSliderDock::setColorSpace(
 	color_widgets::ColorWheel::ColorSpaceEnum colorSpace)
 {
@@ -276,6 +335,8 @@ void ColorSliderDock::setColorSpace(
 		d->saturationLabel->setText(tr("S", "HSL"));
 		//: The "Lightness" L HSL.
 		d->valueLabel->setText(tr("L", "HSL"));
+		//: Color space HSL (hue, saturation, lightness)
+		d->hsvButton->setText(tr("HSL"));
 		break;
 	case color_widgets::ColorWheel::ColorLCH:
 		d->colorSpace = color_widgets::ColorWheel::ColorLCH;
@@ -285,6 +346,8 @@ void ColorSliderDock::setColorSpace(
 		d->saturationLabel->setText(tr("C", "HCL"));
 		//: The "Luma" L of HCL.
 		d->valueLabel->setText(tr("L", "HCL"));
+		//: Color space HCL (hue, chroma, lightness)
+		d->hsvButton->setText(tr("HCL"));
 		break;
 	default:
 		d->colorSpace = color_widgets::ColorWheel::ColorHSV;
@@ -294,11 +357,25 @@ void ColorSliderDock::setColorSpace(
 		d->saturationLabel->setText(tr("S", "HSV"));
 		//: The "Value" V of HSV.
 		d->valueLabel->setText(tr("V", "HSV"));
+		//: Color space HSV (hue, chroma, value)
+		d->hsvButton->setText(tr("HSV"));
 		break;
 	}
 	QScopedValueRollback<bool> guard{d->updating, true};
 	updateSaturationSlider(d->lastColor, false);
 	updateValueSlider(d->lastColor, false);
+}
+
+void ColorSliderDock::setMode(int mode)
+{
+	if(mode == 0 || mode == 1) {
+		QSignalBlocker blocker(d->group);
+		d->group->button(mode)->setChecked(true);
+		d->stack->setCurrentIndex(mode);
+		dpApp().settings().setColorSlidersMode(mode);
+	} else {
+		qWarning("Unknown color slider mode %d", mode);
+	}
 }
 
 void ColorSliderDock::updateColor(
@@ -328,6 +405,8 @@ void ColorSliderDock::updateColor(
 	d->blue->setLastColor(QColor(color.red(), color.green(), 255));
 	d->blue->setValue(color.blue());
 	d->bluebox->setValue(color.blue());
+
+	d->lineEdit->setColor(color);
 
 	if(selected) {
 		emit colorSelected(color);
