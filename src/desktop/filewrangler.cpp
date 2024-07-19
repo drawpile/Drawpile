@@ -1062,6 +1062,15 @@ void FileWrangler::showOpenFileContentDialog(
 				fileOpenCompleted(fileName, fileContent);
 			}
 		});
+#elif defined(Q_OS_ANDROID)
+	// QFileDialog to open files just doesn't work in Android, it doesn't emit
+	// the signals it's supposed to and trying to read selected files crashes.
+	QString fileName = QFileDialog::getOpenFileName(
+		parentWidget(), title, getLastPath(type), nameFilter);
+	if(!fileName.isEmpty()) {
+		updateLastPath(type, fileName);
+		fileOpenCompleted(fileName);
+	}
 #else
 	QFileDialog *dialog =
 		new QFileDialog(parentWidget(), title, getLastPath(type), nameFilter);
