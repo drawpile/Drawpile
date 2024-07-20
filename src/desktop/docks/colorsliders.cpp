@@ -240,7 +240,7 @@ ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
 
 	connect(
 		d->lineEdit, &color_widgets::ColorLineEdit::colorEdited, this,
-		&ColorSliderDock::setColor);
+		&ColorSliderDock::updateFromLineEdit);
 	connect(
 		d->lineEdit, &color_widgets::ColorLineEdit::colorEditingFinished, this,
 		&ColorSliderDock::updateFromLineEditFinished);
@@ -313,10 +313,17 @@ void ColorSliderDock::updateFromHsvSpinbox()
 	}
 }
 
+void ColorSliderDock::updateFromLineEdit(const QColor &color)
+{
+	if(!d->updating) {
+		updateColor(color, false, true);
+	}
+}
+
 void ColorSliderDock::updateFromLineEditFinished(const QColor &color)
 {
 	if(!d->updating) {
-		updateColor(color, false, false);
+		updateColor(color, false, true);
 		// Force the line edit to be in #RRGGBB format, since it may not be.
 		d->lineEdit->setText(
 			color_widgets::stringFromColor(color, d->lineEdit->showAlpha()));

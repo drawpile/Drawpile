@@ -27,6 +27,7 @@ private slots:
 	void updateFromRgbSpinbox();
 	void updateFromHsvSliders();
 	void updateFromHsvSpinbox();
+	void updateFromLineEdit(const QColor &color);
 	void updateFromLineEditFinished(const QColor &color);
 	void setColorSpace(color_widgets::ColorWheel::ColorSpaceEnum colorSpace);
 	void setMode(int mode);
