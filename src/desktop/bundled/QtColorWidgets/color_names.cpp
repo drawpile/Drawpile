@@ -7,9 +7,10 @@
 #include "QtColorWidgets/color_names.hpp"
 #include <QRegularExpression>
 
-static QRegularExpression regex_qcolor (QStringLiteral("^(?:(?:#[[:xdigit:]]{3})|(?:#[[:xdigit:]]{6})|(?:[[:alpha:]]+))$"));
+static QRegularExpression regex_hex_rgb (QStringLiteral("^#?(?:[[:xdigit:]]{3}|[[:xdigit:]]{6})$"));
+static QRegularExpression regex_qcolor (QStringLiteral("^[[:alpha:]]+$"));
 static QRegularExpression regex_func_rgb (QStringLiteral(R"(^rgb\s*\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*\)$)"));
-static QRegularExpression regex_hex_rgba (QStringLiteral("^#[[:xdigit:]]{8}$"));
+static QRegularExpression regex_hex_rgba (QStringLiteral("^#?([[:xdigit:]]{2})([[:xdigit:]]{2})([[:xdigit:]]{2})([[:xdigit:]]{2})$"));
 static QRegularExpression regex_func_rgba (QStringLiteral(R"(^rgba?\s*\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*\)$)"));
 
 namespace color_widgets {
@@ -26,6 +27,15 @@ QColor colorFromString(const QString& string, bool alpha)
 {
     QString xs = string.trimmed();
     QRegularExpressionMatch match;
+
+    match = regex_hex_rgb.match(xs);
+    if ( match.hasMatch() )
+    {
+        if ( xs.startsWith('#') )
+            return QColor(xs);
+        else
+            return QColor(QStringLiteral("#") + xs);
+    }
 
     match = regex_qcolor.match(xs);
     if ( match.hasMatch() )
@@ -49,10 +59,10 @@ QColor colorFromString(const QString& string, bool alpha)
         if ( match.hasMatch() )
         {
             return QColor(
-                xs.mid(1,2).toInt(nullptr,16),
-                xs.mid(3,2).toInt(nullptr,16),
-                xs.mid(5,2).toInt(nullptr,16),
-                xs.mid(7,2).toInt(nullptr,16)
+                match.captured(1).toInt(nullptr,16),
+                match.captured(2).toInt(nullptr,16),
+                match.captured(3).toInt(nullptr,16),
+                match.captured(4).toInt(nullptr,16)
             );
         }
 
