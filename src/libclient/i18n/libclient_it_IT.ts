@@ -369,7 +369,8 @@
         <location line="+12"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile riempire il gruppo di livelli %1.
+Seleziona invece un livello normale.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -391,7 +392,9 @@ Select a regular layer instead.</source>
         <source>%1, %2 by %3 pixels.
 %4 at %5% opacity on %6.
 Click to apply, undo to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1, %2 per %3 pixel.
+%4 con %5% di opacità su %6.
+Fare clic per applicare, indietro per annullare.</translation>
     </message>
 </context>
 <context>
@@ -417,13 +420,14 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../tools/magicwand.cpp" line="+202"/>
         <source>Selecting…</source>
-        <translation type="unfinished"></translation>
+        <translation>Selezione…</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>%1 by %2 pixels, %3% opacity.
 Click to apply, undo to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 per %2 pixel, %3% di opacità.
+Fare clic per applicare, indietro per annullare.</translation>
     </message>
 </context>
 <context>
@@ -1014,7 +1018,7 @@ Click to apply, undo to cancel.</source>
         <location filename="../import/animationimporter.cpp" line="+30"/>
         <source>Frame %1</source>
         <extracomment>Title for imported animation layers.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Frame %1</translation>
     </message>
     <message>
         <location line="+19"/>
