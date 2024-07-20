@@ -669,7 +669,7 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+12"/>
         <source>Open Image</source>
-        <translation type="unfinished">Apri immagine</translation>
+        <translation>Apri immagine</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -784,25 +784,25 @@ in 64x64 pixel.</translation>
         <location line="+7"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-145"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-2"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opacità: </translation>
+        <translation>Opacità: </translation>
     </message>
     <message>
         <location line="+44"/>
         <location line="+3"/>
         <source>Fill continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>Riempi l&apos;area continua</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill all similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Riempi tutti i colori simili</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -835,7 +835,7 @@ in 64x64 pixel.</translation>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill source layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Riempi il livello sorgente</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -1190,7 +1190,7 @@ Sottogamma: [%3, %4]</translation>
     <message>
         <location line="+13"/>
         <source>NSFM</source>
-        <translation type="unfinished">NSFM</translation>
+        <translation>NSFM</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -1704,12 +1704,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+1"/>
         <source>Toggle selection display between a mask and an outline</source>
-        <translation type="unfinished"></translation>
+        <translation>Alterna la visualizzazione della selezione tra una maschera e un contorno</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&amp;Fit to Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Adatta allo schermo</translation>
     </message>
     <message>
         <location line="+140"/>
@@ -1749,7 +1749,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+40"/>
         <source>Clear Fill Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancella sorgente di riempimento</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2151,12 +2151,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+0"/>
         <source>Select a free-form area</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona un&apos;area a forma libera</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Magic Wand Select</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Seleziona bacchetta magica</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2176,12 +2176,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+1"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Panoramica</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Pan canvas view</source>
-        <translation type="unfinished"></translation>
+        <translation>Visualizzazione panoramica della tela</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -8404,12 +8404,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+9"/>
         <source>Brush cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cursore pennello:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Eraser cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cursore gomma:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8528,7 +8528,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+3"/>
         <source>Fill and magic wand confirmation</source>
-        <translation type="unfinished"></translation>
+        <translation>Riempimento e conferma con la bacchetta magica</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8553,7 +8553,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+9"/>
         <source>Scaling:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ridimensionamento:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8583,7 +8583,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+11"/>
         <source>Vertical sync:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sincronizzazione verticale:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8608,7 +8608,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+3"/>
         <source>Changes apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le modifiche si applicano dopo il riavvio di Drawpile. Il fattore di scala corrente è %1%, la dimensione del carattere è %2.</translation>
     </message>
 </context>
 <context>
@@ -8788,7 +8788,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+3"/>
         <source>The built-in server is not available in the browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il server integrato non è disponibile nel browser.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9815,27 +9815,27 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../toolwidgets/transformsettings.cpp" line="+139"/>
         <source>Fast</source>
-        <translation type="unfinished"></translation>
+        <translation>Veloce</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Quick preview not taking into account layering, opacity or anything else</source>
-        <translation type="unfinished"></translation>
+        <translation>Anteprima rapida che non tiene conto della stratificazione, dell&apos;opacità o di qualsiasi altra cosa</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Accurate</source>
-        <translation type="unfinished"></translation>
+        <translation>Accurato</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preview the transform exactly how will look when applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Visualizza in anteprima la trasformazione esattamente come apparirà una volta applicata</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Too many layers selected for accurate preview, only fast preview is available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Troppi livelli selezionati per un&apos;anteprima accurata, è disponibile solo l&apos;anteprima rapida.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -9850,7 +9850,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Nearest-neighbor interpolation, no smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolazione del più vicino, senza livellamento</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -9866,7 +9866,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+13"/>
         <source>Sampling:</source>
         <extracomment>Refers to the transform interpolation, but &quot;interpolation&quot; is uncomfortably long in English, it causes a lot of blank space and the tool settings to get wider. Try to take that into account if possible.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Campionamento:</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -9876,7 +9876,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Shows scaling handles on corners and edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra le maniglie di ridimensionamento sugli angoli e sui bordi</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -9886,13 +9886,13 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Shows distortion handles on corners and edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra le maniglie di distorsione sugli angoli e sui bordi</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Handles:</source>
         <extracomment>Refers to the handles on the corners and edges of a transform. Which are either arrows to scale the transformation or squares to distort it.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Maniglie:</translation>
     </message>
     <message>
         <location line="+18"/>
