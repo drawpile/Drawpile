@@ -644,7 +644,7 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Frame immagini</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -861,12 +861,12 @@ in 64x64 pixel.</translation>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+10"/>
         <source>Shrink</source>
-        <translation type="unfinished"></translation>
+        <translation>Dividi</translation>
     </message>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-153"/>
         <source>Shrink: </source>
-        <translation type="unfinished"></translation>
+        <translation>Dividere: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1714,7 +1714,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+140"/>
         <source>Stay Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo rimanente</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1754,7 +1754,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+6"/>
         <source>&amp;Toggle Layer Check State</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Attiva lo stato di controllo del livello</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2076,22 +2076,22 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+6"/>
         <source>Create Layers on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea livelli sul frame chiave corrente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea livelli sul frame chiave successivo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea livelli sul frame chiave precedente</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Create Layers on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea livelli sul frame chiave</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -2146,7 +2146,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+1"/>
         <source>&amp;Lasso Select</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Seleziona Lasso</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2361,7 +2361,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+234"/>
         <source>Disconnected</source>
-        <translation type="unfinished">Disconnesso</translation>
+        <translation>Disconnesso</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2401,7 +2401,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+31"/>
         <source>Error</source>
-        <translation type="unfinished">Errore</translation>
+        <translation>Errore</translation>
     </message>
     <message>
         <location line="+667"/>
@@ -2411,7 +2411,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+48"/>
         <source>Altering selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Alterazione della selezione…</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -2699,18 +2699,18 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+4"/>
         <source>Select Layer &amp;Bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona Livello &amp;Limiti</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Layer to Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Livello da selezionare</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Expand/Shrink/Feather Selection</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Espandi/Riduci/Selezione sfumatura</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2730,17 +2730,17 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Trasforma solo la maschera di selezione stessa, poi ripristina gli strumenti</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Mirror Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Trasformazione a specchio</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Flip Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Capovolgi trasformazione</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2755,17 +2755,17 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+5"/>
         <source>Shrink Transform to &amp;Fit View</source>
-        <translation type="unfinished"></translation>
+        <translation>Dividi la trasformazione in &amp;Adatta vista</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Stamp Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Trasforma timbro</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Selectio&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation>Selezione</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -3439,12 +3439,12 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+5"/>
         <source>Transform</source>
-        <translation type="unfinished">Trasformazione</translation>
+        <translation>Trasformazione</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Panoramica</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3467,7 +3467,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+50"/>
         <source>You must be an operator to reset the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Devi essere un operatore per reimpostare la sessione.</translation>
     </message>
 </context>
 <context>
@@ -3690,12 +3690,12 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+72"/>
         <source>Add listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi inserzione</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove selected listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi l&apos;inserzione selezionata</translation>
     </message>
     <message>
         <location line="-330"/>
@@ -4183,7 +4183,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+10"/>
         <source>Output</source>
-        <translation type="unfinished">Output</translation>
+        <translation>Output</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -4208,7 +4208,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+1"/>
         <source>MP4 Video</source>
-        <translation type="unfinished">Video MP4</translation>
+        <translation>Video MP4</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4218,32 +4218,32 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+12"/>
         <source>Format:</source>
-        <translation type="unfinished">Formato:</translation>
+        <translation>Formato:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loops:</source>
-        <translation type="unfinished"></translation>
+        <translation>Loop:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Input</source>
-        <translation type="unfinished">Input</translation>
+        <translation>Input</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Intervallo Frame:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source> FPS</source>
-        <translation type="unfinished"> FPS</translation>
+        <translation> FPS</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Framerate:</translation>
+        <translation>Velocità dei frame:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4263,22 +4263,22 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+2"/>
         <source>Reset inputs to the whole canvas and timeline</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta gli input sull&apos;intera tela e sulla timeline</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Set from Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostato da Flipbook</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set inputs to what is being previewed in the flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta gli input su ciò che viene visualizzato in anteprima nel flipbook</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Export</source>
-        <translation type="unfinished">Esporta</translation>
+        <translation>Esporta</translation>
     </message>
 </context>
 <context>
@@ -4296,27 +4296,27 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+3"/>
         <source>Import a series of images as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa una serie di immagini come frame della timeline.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Importing animation frames is not supported in the web browser version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;importazione di frame di animazione non è supportata nella versione del browser Web di Drawpile.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Canvas Background:</source>
-        <translation type="unfinished">Sfondo della Tela:</translation>
+        <translation>Sfondo della Tela:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Add</source>
-        <translation type="unfinished">Aggiungi</translation>
+        <translation>Aggiungi</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Remove</source>
-        <translation type="unfinished">Rimuovi</translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4346,12 +4346,12 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+7"/>
         <source>Layers</source>
-        <translation type="unfinished">Livelli</translation>
+        <translation>Livelli</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import the layers of an ORA or PSD file as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa i livelli di un file ORA o PSD come frame della timeline.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4372,7 +4372,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+9"/>
         <source> FPS</source>
-        <translation type="unfinished"> FPS</translation>
+        <translation> FPS</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6228,7 +6228,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>selection %1 of user %2</source>
-        <translation type="unfinished"></translation>
+        <translation>selezione %1 dell&apos;utente %2</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6322,12 +6322,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/layerproperties.cpp" line="+52"/>
         <source>New Layer Group</source>
-        <translation type="unfinished">Nuovo Gruppo di Livelli</translation>
+        <translation>Nuovo Gruppo di Livelli</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>New Layer</source>
-        <translation type="unfinished">Nuovo Livello</translation>
+        <translation>Nuovo Livello</translation>
     </message>
     <message>
         <location line="+101"/>
@@ -6703,7 +6703,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location filename="../dialogs/selectionalterdialog.cpp" line="+27"/>
         <location line="+41"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-30"/>
@@ -6713,35 +6713,35 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+9"/>
         <source>Shrink</source>
-        <translation type="unfinished"></translation>
+        <translation>Dividi</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Feather: </source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished">Sfuma: </translation>
+        <translation>Sfumatura: </translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Shrink: </source>
-        <translation type="unfinished"></translation>
+        <translation>Dividere: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shrink and feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Dividi e sfuma dal bordo della tela</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand: </source>
-        <translation type="unfinished">Espansione: </translation>
+        <translation>Espansione: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sfuma dal bordo della tela</translation>
     </message>
 </context>
 <context>
@@ -6778,7 +6778,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Error saving bans: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore nel salvataggio dei ban: %1</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -6961,12 +6961,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="-9"/>
         <source>File does not contain a valid role export.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il file non contiene un&apos;esportazione di ruolo valida.</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Error saving roles: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore durante il salvataggio dei ruoli: %1</translation>
     </message>
     <message numerus="yes">
         <location line="-33"/>
@@ -7219,7 +7219,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+15"/>
         <source>Copy</source>
-        <translation type="unfinished">Copia</translation>
+        <translation>Copia</translation>
     </message>
 </context>
 <context>
@@ -7461,7 +7461,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+11"/>
         <source>Qt Graphics View</source>
         <extracomment>One of the canvas renderer options. &quot;Qt&quot; is a software framework.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Vista grafica Qt</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7479,24 +7479,24 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+3"/>
         <source>Default</source>
         <extracomment>One of the canvas renderer options.</extracomment>
-        <translation type="unfinished">Predefinito</translation>
+        <translation>Predefinito</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Renderer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rendering:</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Unknown</source>
         <comment>CanvasImplementation</comment>
         <extracomment>Refers to an unknown canvas renderer, should never happen.</extracomment>
-        <translation type="unfinished">Sconosciuto</translation>
+        <translation>Sconosciuto</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Current renderer: %1. Changes apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Renderizzatore corrente: %1. Le modifiche si applicano dopo il riavvio di Drawpile.</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -7722,12 +7722,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+38"/>
         <source>Global smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Smussatura globale: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Apply global smoothing to mouse</source>
-        <translation type="unfinished"></translation>
+        <translation>Applicare lo smussamento globale al mouse</translation>
     </message>
     <message>
         <location line="+59"/>
@@ -8200,25 +8200,25 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+60"/>
         <source>Pin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Blocca</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+81"/>
         <source>Pin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Blocca certificati selezionati</translation>
     </message>
     <message>
         <location line="-64"/>
         <source>Unpin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sblocca</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+64"/>
         <source>Unpin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Sblocca certificati selezionati</translation>
     </message>
     <message>
         <location line="-34"/>
@@ -8304,7 +8304,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+29"/>
         <source>Same as brush cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Uguale al cursore pennello</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8399,7 +8399,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+73"/>
         <source>Eraser</source>
-        <translation type="unfinished">Gomma</translation>
+        <translation>Gomma</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -8414,7 +8414,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Alpha lock cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Blocco alpha del cursore:</translation>
     </message>
 </context>
 <context>
@@ -8503,12 +8503,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+56"/>
         <source>First checker color</source>
-        <translation type="unfinished"></translation>
+        <translation>Primo controllo di colore</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Second checker color</source>
-        <translation type="unfinished"></translation>
+        <translation>Secondo controllo di colore</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -8543,7 +8543,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Prompt when creating layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Richiedi quando crei livelli</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8588,12 +8588,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Enabled</source>
-        <translation type="unfinished">Abilitato</translation>
+        <translation>Abilitato</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>System</source>
-        <translation type="unfinished">Sistema</translation>
+        <translation>Sistema</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -9440,22 +9440,22 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+3"/>
         <source>Check Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona gruppo di livelli</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Deseleziona Gruppo di livelli</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Check Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona livello</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Deseleziona Livello</translation>
     </message>
     <message>
         <location line="+999"/>
@@ -9749,17 +9749,17 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../toolwidgets/fillsettings.cpp" line="+174"/>
         <source>Shrink: </source>
-        <translation type="unfinished"></translation>
+        <translation>Dividere: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Expand: </source>
-        <translation type="unfinished">Espansione: </translation>
+        <translation>Espansione: </translation>
     </message>
     <message>
         <location line="+138"/>
         <source>Size Limit: Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite dimensione: Selezione</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9797,17 +9797,17 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Smoothe out selection edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Smussare i bordi della selezione</translation>
     </message>
     <message>
         <location line="+192"/>
         <source>Select continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona un&apos;area continua</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Select similar color</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona un colore simile</translation>
     </message>
 </context>
 <context>
@@ -9845,7 +9845,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+14"/>
         <source>Nearest</source>
-        <translation type="unfinished">Più Vicino</translation>
+        <translation>Più Vicino</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9855,12 +9855,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+7"/>
         <source>Bilinear</source>
-        <translation type="unfinished">Bilineare</translation>
+        <translation>Bilineare</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smoothed interpolation</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolazione smussata</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -9871,7 +9871,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+16"/>
         <source>Scale</source>
-        <translation type="unfinished">Scala</translation>
+        <translation>Scala</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9881,7 +9881,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+8"/>
         <source>Distort</source>
-        <translation type="unfinished">Distorsione</translation>
+        <translation>Distorsione</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9897,17 +9897,17 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+18"/>
         <source>Mode:</source>
-        <translation type="unfinished">Modalità:</translation>
+        <translation>Modalità:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opacità: </translation>
+        <translation>Opacità: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -9964,7 +9964,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../view/canvasview.cpp" line="+134"/>
         <source>Save As…</source>
-        <translation type="unfinished">Salva come…</translation>
+        <translation>Salva come…</translation>
     </message>
 </context>
 <context>
@@ -9977,7 +9977,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+4"/>
         <source>Reset in progress</source>
-        <translation type="unfinished">Reset in corso</translation>
+        <translation>Reset in corso</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10455,7 +10455,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+5"/>
         <source>Pinned self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Certificato autofirmato bloccato</translation>
     </message>
     <message>
         <location line="+11"/>
