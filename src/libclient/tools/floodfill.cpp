@@ -115,6 +115,7 @@ FloodFill::FloodFill(ToolController &owner)
 	, m_running{false}
 	, m_repeat(false)
 	, m_cancel{false}
+	, m_lastActiveLayerId(0)
 {
 }
 
@@ -126,7 +127,7 @@ void FloodFill::begin(const BeginParams &params)
 		if(havePending()) {
 			flushPending();
 		} else {
-			fillAt(params.point);
+			fillAt(params.point, m_owner.activeLayer());
 		}
 	}
 }
@@ -213,12 +214,19 @@ void FloodFill::setParameters(
 	}
 }
 
-void FloodFill::fillAt(const QPointF &point)
+int FloodFill::lastActiveLayerId() const
+{
+	return m_lastActiveLayerId > 0 ? m_lastActiveLayerId
+								   : m_owner.activeLayer();
+}
+
+void FloodFill::fillAt(const QPointF &point, int activeLayerId)
 {
 	m_repeat = false;
 	canvas::CanvasModel *canvas = m_owner.model();
 	if(canvas && !m_running) {
 		m_lastPoint = point;
+		m_lastActiveLayerId = activeLayerId;
 
 		QColor fillColor = m_blendMode == DP_BLEND_MODE_ERASE
 							   ? Qt::black
@@ -239,7 +247,7 @@ void FloodFill::fillAt(const QPointF &point)
 			}
 			Q_FALLTHROUGH();
 		default:
-			layerId = m_owner.activeLayer();
+			layerId = activeLayerId;
 			break;
 		}
 
@@ -264,7 +272,7 @@ void FloodFill::repeatFill()
 		m_repeat = true;
 		m_cancel = true;
 	} else if(havePending()) {
-		fillAt(m_lastPoint);
+		fillAt(m_lastPoint, lastActiveLayerId());
 	}
 }
 
@@ -289,7 +297,7 @@ void FloodFill::floodFillFinished(Task *task)
 	setHandlesRightClick(havePending());
 	m_owner.refreshToolState();
 	if(m_repeat) {
-		fillAt(m_lastPoint);
+		fillAt(m_lastPoint, lastActiveLayerId());
 	}
 }
 

@@ -47,7 +47,9 @@ private:
 	class Task;
 	friend Task;
 
-	void fillAt(const QPointF &point);
+	int lastActiveLayerId() const;
+
+	void fillAt(const QPointF &point, int activeLayerId);
 	void repeatFill();
 	void floodFillFinished(Task *task);
 
@@ -72,6 +74,7 @@ private:
 	bool m_repeat;
 	QAtomicInt m_cancel;
 	QPointF m_lastPoint;
+	int m_lastActiveLayerId;
 	QImage m_pendingImage;
 	QPoint m_pendingPos;
 	Area m_pendingArea;
