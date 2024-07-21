@@ -1314,16 +1314,16 @@ bool MainWindow::event(QEvent *event)
 		m_viewStatusBar->showMessage(
 			static_cast<QStatusTipEvent *>(event)->tip());
 		return true;
-	case QEvent::KeyRelease:
+	case QEvent::KeyRelease: {
 		// Monitor key-up events to switch back from temporary tools/tool slots.
 		// A short tap of the tool switch shortcut switches the tool permanently
 		// as usual, but when holding it down, the tool is activated just
 		// temporarily. The previous tool be switched back automatically when
 		// the shortcut key is released. Note: for simplicity, we only support
 		// tools with single key shortcuts.
-		if(m_toolChangeTime.elapsed() > 250) {
-			const QKeyEvent *e = static_cast<const QKeyEvent *>(event);
-			if(!e->isAutoRepeat()) {
+		const QKeyEvent *e = static_cast<const QKeyEvent *>(event);
+		if(!e->isAutoRepeat()) {
+			if(m_toolChangeTime.elapsed() > 250) {
 				if(m_tempToolSwitchShortcut->isShortcutSent() &&
 				   e->modifiers() == Qt::NoModifier) {
 					// Return from temporary tool change
@@ -1346,11 +1346,11 @@ bool MainWindow::event(QEvent *event)
 						}
 					}
 				}
-
-				m_tempToolSwitchShortcut->reset();
 			}
+			m_tempToolSwitchShortcut->reset();
 		}
 		break;
+	}
 	case QEvent::ShortcutOverride: {
 		// QLineEdit doesn't seem to override the Return key shortcut,
 		// so we have to do it ourself.
