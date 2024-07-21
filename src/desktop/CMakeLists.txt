@@ -843,9 +843,11 @@ elseif(EMSCRIPTEN)
 	)
 
 	set(build_time_assets_dir "${CMAKE_CURRENT_BINARY_DIR}/wasm/assets")
+	find_program(PYTHON_COMMAND python3 python REQUIRED)
 	add_custom_command(
 		OUTPUT "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets.bundle"
 		COMMAND
+			"${PYTHON_COMMAND}"
 			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/generate-assets-bundle.py"
 			"${CMAKE_CURRENT_BINARY_DIR}/wasm/assets"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets.bundle"
