@@ -1306,37 +1306,43 @@ void MainWindow::closeEvent(QCloseEvent *event)
 #endif
 }
 
+// clang-format on
 bool MainWindow::event(QEvent *event)
 {
-	switch (event->type()) {
+	switch(event->type()) {
 	case QEvent::StatusTip:
-		m_viewStatusBar->showMessage(static_cast<QStatusTipEvent*>(event)->tip());
+		m_viewStatusBar->showMessage(
+			static_cast<QStatusTipEvent *>(event)->tip());
 		return true;
 	case QEvent::KeyRelease:
 		// Monitor key-up events to switch back from temporary tools/tool slots.
-		// A short tap of the tool switch shortcut switches the tool permanently as usual,
-		// but when holding it down, the tool is activated just temporarily. The
-		// previous tool be switched back automatically when the shortcut key is released.
-		// Note: for simplicity, we only support tools with single key shortcuts.
-		if (m_toolChangeTime.elapsed() > 250) {
-			const QKeyEvent *e = static_cast<const QKeyEvent*>(event);
+		// A short tap of the tool switch shortcut switches the tool permanently
+		// as usual, but when holding it down, the tool is activated just
+		// temporarily. The previous tool be switched back automatically when
+		// the shortcut key is released. Note: for simplicity, we only support
+		// tools with single key shortcuts.
+		if(m_toolChangeTime.elapsed() > 250) {
+			const QKeyEvent *e = static_cast<const QKeyEvent *>(event);
 			if(!e->isAutoRepeat()) {
-				if(m_tempToolSwitchShortcut->isShortcutSent() && e->modifiers() == Qt::NoModifier) {
-						// Return from temporary tool change
-						for(const QAction *act : m_drawingtools->actions()) {
-							const QKeySequence &seq = act->shortcut();
-							if(seq.count()==1 && compat::keyPressed(*e) == seq[0]) {
-								m_dockToolSettings->setPreviousTool();
-								break;
-							}
+				if(m_tempToolSwitchShortcut->isShortcutSent() &&
+				   e->modifiers() == Qt::NoModifier) {
+					// Return from temporary tool change
+					for(const QAction *act : m_drawingtools->actions()) {
+						const QKeySequence &seq = act->shortcut();
+						if(seq.count() == 1 &&
+						   compat::keyPressed(*e) == seq[0]) {
+							m_dockToolSettings->setPreviousTool();
+							break;
 						}
+					}
 
-						// Return from temporary tool slot change
-						for(const QAction *act : m_brushSlots->actions()) {
-							const QKeySequence &seq = act->shortcut();
-							if(seq.count()==1 && compat::keyPressed(*e) == seq[0]) {
-								m_dockToolSettings->setPreviousTool();
-								break;
+					// Return from temporary tool slot change
+					for(const QAction *act : m_brushSlots->actions()) {
+						const QKeySequence &seq = act->shortcut();
+						if(seq.count() == 1 &&
+						   compat::keyPressed(*e) == seq[0]) {
+							m_dockToolSettings->setPreviousTool();
+							break;
 						}
 					}
 				}
@@ -1346,18 +1352,18 @@ bool MainWindow::event(QEvent *event)
 		}
 		break;
 	case QEvent::ShortcutOverride: {
-			// QLineEdit doesn't seem to override the Return key shortcut,
-			// so we have to do it ourself.
-			const QKeyEvent *e = static_cast<QKeyEvent*>(event);
-			if(e->key() == Qt::Key_Return) {
-				QWidget *focus = QApplication::focusWidget();
-				if(focus && focus->inherits("QLineEdit")) {
-					event->accept();
-					return true;
-				}
+		// QLineEdit doesn't seem to override the Return key shortcut,
+		// so we have to do it ourself.
+		const QKeyEvent *e = static_cast<QKeyEvent *>(event);
+		if(e->key() == Qt::Key_Return) {
+			QWidget *focus = QApplication::focusWidget();
+			if(focus && focus->inherits("QLineEdit")) {
+				event->accept();
+				return true;
 			}
 		}
-	break;
+		break;
+	}
 	case QEvent::Move:
 	case QEvent::Resize:
 	case QEvent::WindowStateChange:
@@ -1379,6 +1385,7 @@ bool MainWindow::event(QEvent *event)
 
 	return QMainWindow::event(event);
 }
+// clang-format off
 
 dialogs::StartDialog *MainWindow::showStartDialog()
 {
