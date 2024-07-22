@@ -162,12 +162,14 @@ static const int BLEND_MODES = sizeof(BLEND_MODE)/sizeof(BlendModeInfo);
 
 QString translatedName(int mode)
 {
+	const char *key =  QT_TRANSLATE_NOOP("blendmode", "Unknown");
 	for(const BlendModeInfo &info : BLEND_MODE) {
 		if(int(info.id) == mode) {
-			return info.name;
+			key = info.name;
+			break;
 		}
 	}
-	return QT_TRANSLATE_NOOP("blendmode", "Unknown");
+	return QCoreApplication::translate("blendmode", key);
 }
 
 QString svgName(DP_BlendMode mode)
