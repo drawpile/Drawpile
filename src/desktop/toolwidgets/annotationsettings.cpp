@@ -412,6 +412,8 @@ void AnnotationSettings::setSelectionId(uint16_t id)
 			setUiEnabled(false);
 	}
 	m_noupdate = false;
+
+	emit selectionIdChanged(m_selectionId);
 }
 
 void AnnotationSettings::setFocusAt(int cursorPos)

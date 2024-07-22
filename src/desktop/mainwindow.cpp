@@ -400,9 +400,6 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_sessionSettings, &dialogs::SessionSettingsDialog::requestUpdateAuthList, m_doc->client(), &net::Client::requestUpdateAuthList);
 
 	// Tool controller <-> UI connections
-	connect(
-		m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged,
-		this, &MainWindow::updateSelectTransformActions);
 	connect(m_doc->toolCtrl(), &tools::ToolController::colorUsed, m_dockToolSettings, &docks::ToolSettings::addLastUsedColor);
 	connect(m_doc->toolCtrl(), &tools::ToolController::actionCancelled, m_dockToolSettings->colorPickerSettings(), &tools::ColorPickerSettings::cancelPickFromScreen);
 	connect(
@@ -418,6 +415,10 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	m_dockLayers->setFrame(m_dockTimeline->currentFrame());
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged,
 			m_dockToolSettings->annotationSettings(), &tools::AnnotationSettings::setSelectionId);
+	connect(
+		m_dockToolSettings->annotationSettings(),
+		&tools::AnnotationSettings::selectionIdChanged, this,
+		&MainWindow::updateSelectTransformActions);
 	connect(
 		m_dockLayers, &docks::LayerList::layerSelected, m_chatbox,
 		&widgets::ChatBox::setCurrentLayer);

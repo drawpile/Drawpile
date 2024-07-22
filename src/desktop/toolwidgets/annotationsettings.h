@@ -54,6 +54,9 @@ public slots:
 	//! Focus the content editing box
 	void setFocus();
 
+signals:
+	void selectionIdChanged(int id);
+
 private slots:
 	void changeAlignment(const QAction *action);
 	void toggleBold(bool bold);
