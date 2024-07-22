@@ -514,6 +514,7 @@ Navigator::Navigator(QWidget *parent)
 	m_view->addAction(realtimeUpdateAction);
 
 	m_view->setContextMenuPolicy(Qt::ActionsContextMenu);
+	m_view->setMinimumHeight(32);
 
 	auto &settings = dpApp().settings();
 	settings.bindNavigatorShowCursors(showCursorsAction);

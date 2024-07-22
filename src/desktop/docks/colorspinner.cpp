@@ -38,6 +38,7 @@ ColorSpinnerDock::ColorSpinnerDock(const QString& title, QWidget *parent)
 
 	// Create main widget
 	d->colorwheel = new color_widgets::ColorWheel(this);
+	d->colorwheel->setMinimumSize(64, 64);
 	setWidget(d->colorwheel);
 
 	connect(d->colorwheel, &color_widgets::ColorWheel::colorSelected, this, &ColorSpinnerDock::colorSelected);

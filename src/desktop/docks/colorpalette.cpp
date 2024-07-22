@@ -175,6 +175,7 @@ ColorPaletteDock::ColorPaletteDock(const QString &title, QWidget *parent)
 	choiceLayout->addWidget(menuButton);
 
 	d->paletteWidget = new widgets::PaletteWidget{this};
+	d->paletteWidget->setMinimumHeight(20);
 	layout->addWidget(d->paletteWidget, 1);
 	connect(
 		d->paletteWidget, &widgets::PaletteWidget::colorSelected, this,
