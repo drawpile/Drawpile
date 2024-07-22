@@ -27,7 +27,7 @@ static const ToolProperties::Value<bool> antialias{
 static const ToolProperties::RangedValue<int> expand{
 	QStringLiteral("expand"), 0, 0, 100},
 	featherRadius{QStringLiteral("featherRadius"), 0, 0, 40},
-	size{QStringLiteral("size"), 500, 10, 5000},
+	size{QStringLiteral("size"), 5000, 10, 5000},
 	opacity{QStringLiteral("opacity"), 100, 1, 100},
 	gap{QStringLiteral("gap"), 0, 0, 32},
 	source{QStringLiteral("source"), 2, 0, 2},
