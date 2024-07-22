@@ -237,7 +237,11 @@ ToolProperties FillSettings::saveToolSettings()
 	cfg.setValue(props::opacity, m_ui->opacity->value());
 	cfg.setValue(props::gap, m_ui->gap->value());
 	cfg.setValue(props::blendMode, m_ui->blendModeCombo->currentData().toInt());
-	cfg.setValue(props::source, m_sourceGroup->checkedId());
+	int source = m_sourceGroup->checkedId();
+	cfg.setValue(
+		props::source, source == int(FloodFill::Source::FillSourceLayer)
+						   ? int(FloodFill::Source::CurrentLayer)
+						   : source);
 	cfg.setValue(props::area, m_areaGroup->checkedId());
 	return cfg;
 }
