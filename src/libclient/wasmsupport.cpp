@@ -103,7 +103,7 @@ static QString guessFailedConnectionReason(const QUrl &url)
 {
 	// clang-format off
 	bool isOnWebDrawpileNet =
-		EM_ASM_INT(window.location.host === "web.drawpile.net" ? 1 : 0);
+		EM_ASM_INT({ return window.location.host === "web.drawpile.net"; });
 	// clang-format on
 	if(!isOnWebDrawpileNet) {
 		return QCoreApplication::translate(
