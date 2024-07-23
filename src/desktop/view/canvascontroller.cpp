@@ -504,19 +504,22 @@ void CanvasController::handleTabletMove(QTabletEvent *event)
 		qreal xTilt = event->xTilt();
 		qreal yTilt = event->yTilt();
 		Qt::KeyboardModifiers modifiers = getTabletModifiers(event);
+		Qt::MouseButtons buttons = event->buttons();
 		DP_EVENT_LOG(
 			"tablet_move spontaneous=%d x=%f y=%f pressure=%f xtilt=%f "
 			"ytilt=%f rotation=%f buttons=0x%x modifiers=0x%x penstate=%d "
 			"touching=%d effectivemodifiers=0x%u",
 			int(event->spontaneous()), posf.x(), posf.y(), pressure, xTilt,
-			yTilt, rotation, unsigned(event->buttons()),
-			unsigned(event->modifiers()), int(m_penState), int(m_touching),
-			unsigned(modifiers));
+			yTilt, rotation, unsigned(buttons), unsigned(event->modifiers()),
+			int(m_penState), int(m_touching), unsigned(modifiers));
 
 		// Under Windows Ink, some tablets report bogus zero-pressure inputs.
 		// We accept them so that they don't result in synthesized mouse events,
-		// but don't actually act on them.
-		if(m_penState == PenState::Up || pressure != 0.0) {
+		// but don't actually act on them. Getting zero-pressure inputs for
+		// buttons other than the left button (i.e. the actual pen) is expected
+		// though, so we do handle those.
+		if(m_penState == PenState::Up || pressure != 0.0 ||
+		   buttons != Qt::LeftButton) {
 			penMoveEvent(
 				QDateTime::currentMSecsSinceEpoch(), posf,
 				qBound(0.0, pressure, 1.0), xTilt, yTilt, rotation, modifiers);

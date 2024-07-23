@@ -2078,6 +2078,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		QTabletEvent *tabev = static_cast<QTabletEvent *>(event);
 		const auto tabPos = compat::tabPosF(*tabev);
 		Qt::KeyboardModifiers modifiers = getTabletModifiers(tabev);
+		Qt::MouseButtons buttons = tabev->buttons();
 		DP_EVENT_LOG(
 			"tablet_move spontaneous=%d x=%f y=%f pressure=%f xtilt=%d "
 			"ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d "
@@ -2085,7 +2086,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 			tabev->spontaneous(), tabPos.x(), tabPos.y(), tabev->pressure(),
 			compat::cast_6<int>(tabev->xTilt()),
 			compat::cast_6<int>(tabev->yTilt()),
-			qDegreesToRadians(tabev->rotation()), unsigned(tabev->buttons()),
+			qDegreesToRadians(tabev->rotation()), unsigned(buttons),
 			unsigned(tabev->modifiers()), m_pendown, m_touching,
 			unsigned(modifiers));
 
@@ -2094,7 +2095,10 @@ bool CanvasView::viewportEvent(QEvent *event)
 		}
 
 		// Under Windows Ink, some tablets report bogus zero-pressure inputs.
-		if(!m_pendown || tabev->pressure() != 0.0) {
+		// Buttons other than the left button (the pen tip) are expected to have
+		// zero pressure, so we do handle those.
+		if(!m_pendown || tabev->pressure() != 0.0 ||
+		   buttons != Qt::LeftButton) {
 			updateCursorPos(tabPos.toPoint());
 			penMoveEvent(
 				QDateTime::currentMSecsSinceEpoch(), compat::tabPosF(*tabev),
