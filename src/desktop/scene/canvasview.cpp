@@ -1109,7 +1109,8 @@ void CanvasView::penPressEvent(
 		m_dragDiscreteRotation = 0.0;
 		resetCursor();
 	} else if(
-		(button == Qt::LeftButton || button == Qt::RightButton) &&
+		(button == Qt::LeftButton || button == Qt::RightButton ||
+		 penmode != PenMode::Normal) &&
 		m_dragmode == ViewDragMode::None) {
 		m_pendown = deviceType == int(tools::DeviceType::Tablet) ? TABLETDOWN
 																 : MOUSEDOWN;

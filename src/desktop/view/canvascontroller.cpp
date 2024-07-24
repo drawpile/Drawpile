@@ -1551,7 +1551,8 @@ void CanvasController::penPressEvent(
 			resetCursor();
 
 		} else if(
-			(button == Qt::LeftButton || button == Qt::RightButton) &&
+			(button == Qt::LeftButton || button == Qt::RightButton ||
+			 penMode != PenMode::Normal) &&
 			m_dragMode == ViewDragMode::None) {
 			m_penState = deviceType == int(tools::DeviceType::Tablet)
 							 ? PenState::TabletDown
