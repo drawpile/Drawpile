@@ -209,8 +209,9 @@ endif()
 set(URL https://download.qt.io/archive/qt/@version_major@/@version@/submodules/@name@-everywhere-${URL_LICENSE}src-@version@.tar.xz)
 
 if(OPENSSL)
+	string(REGEX REPLACE "[a-z]+$" "" openssl_prefix "${OPENSSL}")
 	build_dependency(openssl ${OPENSSL} ${BUILD_TYPE}
-		URL "https://www.openssl.org/source/openssl-@version@.tar.gz"
+		URL "https://www.openssl.org/source/old/${openssl_prefix}/openssl-@version@.tar.gz"
 		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "openssl-@version@"
 		VERSIONS
