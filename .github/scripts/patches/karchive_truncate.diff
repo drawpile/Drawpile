@@ -1,0 +1,16 @@
+Description: KArchive doesn't support adding truncate to its set of modes.
+However, this is required on Android, since opening files for writing doesn't
+truncate them without this flag, it instead starts writing from the beginning of
+the file, potentially leaving garbage at the end.
+
+--- a/src/kcompressiondevice.cpp
++++ b/src/kcompressiondevice.cpp
+@@ -254,7 +254,7 @@
+     }
+     d->bNeedHeader = !d->bSkipHeaders;
+     d->filter->setFilterFlags(d->bSkipHeaders ? KFilterBase::NoHeaders : KFilterBase::WithHeaders);
+-    if (!d->filter->init(mode)) {
++    if (!d->filter->init(mode & ~QIODevice::Truncate)) {
+         return false;
+     }
+     d->result = KFilterBase::Ok;

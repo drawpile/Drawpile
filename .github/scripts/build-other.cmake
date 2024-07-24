@@ -206,5 +206,8 @@ if(KARCHIVE AND NOT BUILD_WITH_QT6)
 					-DCMAKE_DISABLE_FIND_PACKAGE_PkgConfig=on
 					${kf_extra_cmake_flags}
 					${extra_cmake_flags}
+		PATCHES
+			ALL
+				patches/karchive_truncate.diff
 	)
 endif()
