@@ -689,7 +689,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати як WebM відео</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -829,7 +829,7 @@ to 64x64 pixels.</source>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+15"/>
         <source>Current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Поточний шар:</translation>
     </message>
     <message>
         <location line="+17"/>
