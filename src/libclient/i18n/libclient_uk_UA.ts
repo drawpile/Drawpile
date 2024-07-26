@@ -1051,7 +1051,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Ролі</translation>
     </message>
 </context>
 <context>
@@ -1060,7 +1060,7 @@ Click to apply, undo to cancel.</source>
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -1359,7 +1359,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+66"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation>Нова версія</translation>
     </message>
     <message>
         <location line="-45"/>
@@ -1670,7 +1670,7 @@ Click to apply, undo to cancel.</source>
         <location filename="../utils/news.cpp" line="+286"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірка оновлень…</translation>
     </message>
     <message>
         <location line="-23"/>
