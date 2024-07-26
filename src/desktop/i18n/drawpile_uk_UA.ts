@@ -1693,7 +1693,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Show &amp;Rulers</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати лінійки</translation>
     </message>
     <message>
         <location line="+3"/>
