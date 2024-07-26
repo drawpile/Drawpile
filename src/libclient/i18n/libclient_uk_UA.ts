@@ -291,7 +291,7 @@
     <message>
         <location filename="../document.cpp" line="+757"/>
         <source>Unknown format.</source>
-        <translation>Невідомий формат</translation>
+        <translation>Невідомий формат.</translation>
     </message>
     <message>
         <location line="+3"/>
