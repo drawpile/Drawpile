@@ -437,7 +437,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+13"/>
         <source>Position: </source>
-        <translation>Позиція: </translation>
+        <translation>Положення: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -629,7 +629,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="-253"/>
         <source>Add Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати аватар…</translation>
     </message>
     <message>
         <location line="+14"/>
