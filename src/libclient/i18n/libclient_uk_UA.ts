@@ -34,7 +34,7 @@
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка запису у файл.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -122,12 +122,12 @@
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation type="unfinished"></translation>
+        <translation>Коліщатко</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Unknown Button 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Невідома кнопка 0x%1</translation>
     </message>
     <message>
         <location line="+2"/>
