@@ -345,9 +345,6 @@ double treatLevel3(const QString &expr, bool & noProblem)
         return treatFuncs(expr, noProblem);
     }
 
-    noProblem = false;
-    return 0.0;
-
 }
 
 /*!
