@@ -1023,7 +1023,7 @@ Click to apply, undo to cancel.</source>
         <location line="+19"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
-        <translation>Кадр %1</translation>
+        <translation>Кадри %1</translation>
     </message>
 </context>
 <context>
@@ -1120,7 +1120,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вас вигнав %1.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1145,12 +1145,12 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Відʼєднано.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Відʼєднано: %1</translation>
     </message>
     <message>
         <location line="+371"/>
@@ -1401,7 +1401,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+524"/>
         <source>Unknown version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Невідома версія %1</translation>
     </message>
     <message>
         <location line="+247"/>
