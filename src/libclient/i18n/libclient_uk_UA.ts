@@ -301,7 +301,7 @@
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation>Помилка під час відкриття файла</translation>
+        <translation>Помилка відкриття файла.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -358,7 +358,7 @@
     <message>
         <location filename="../tools/floodfill.cpp" line="+251"/>
         <source>Filling…</source>
-        <translation type="unfinished"></translation>
+        <translation>Заповнюємо…</translation>
     </message>
     <message>
         <location line="+61"/>
@@ -417,7 +417,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../tools/magicwand.cpp" line="+202"/>
         <source>Selecting…</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначаємо…</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -574,10 +574,10 @@ Click to apply, undo to cancel.</source>
     <message numerus="yes">
         <location line="+3"/>
         <source>%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n користувач</numerusform>
+            <numerusform>%n користувачі</numerusform>
+            <numerusform>%n користувачів</numerusform>
         </translation>
     </message>
     <message>
@@ -672,7 +672,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation>Захищено паролем</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -917,7 +917,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+8"/>
         <source>Error writing &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося записати &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+12"/>
