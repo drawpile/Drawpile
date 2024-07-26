@@ -19,7 +19,7 @@
     <message>
         <location filename="../export/canvassaverrunnable.cpp" line="+41"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Недійсні аргументи, можливо це баг Drawpile.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -29,7 +29,7 @@
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося об&apos;єднати полотно в одне зображення.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1685,7 +1685,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation>Помилка мережі: %1$s</translation>
+        <translation>Помилка мережі: %1</translation>
     </message>
     <message>
         <location line="+12"/>
