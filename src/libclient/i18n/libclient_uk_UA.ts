@@ -1504,7 +1504,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+4"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation>Несумісна версія</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1685,7 +1685,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка мережі: %1$s</translation>
     </message>
     <message>
         <location line="+12"/>
