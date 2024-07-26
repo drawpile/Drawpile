@@ -639,7 +639,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+2"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -679,7 +679,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+5"/>
         <source>Paste File</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставити файл</translation>
     </message>
     <message>
         <location line="+167"/>
