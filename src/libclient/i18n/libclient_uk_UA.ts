@@ -301,7 +301,7 @@
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка під час відкриття файла</translation>
     </message>
     <message>
         <location line="+3"/>
