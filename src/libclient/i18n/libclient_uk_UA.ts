@@ -132,7 +132,7 @@
     <message>
         <location line="+2"/>
         <source>Button %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Кнопка %1</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -291,7 +291,7 @@
     <message>
         <location filename="../document.cpp" line="+757"/>
         <source>Unknown format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невідомий формат</translation>
     </message>
     <message>
         <location line="+3"/>
