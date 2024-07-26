@@ -363,7 +363,7 @@
     <message>
         <location line="+61"/>
         <source>No layer selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Жоден шар не вибраний.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -522,7 +522,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-103"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation>Shift</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -560,7 +560,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+4"/>
         <source>%1m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1хв</translation>
     </message>
     <message numerus="yes">
         <location line="+106"/>
@@ -597,7 +597,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+20"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation>Сумісний</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -622,7 +622,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+113"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Сумісність</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -642,7 +642,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>Активний</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -705,7 +705,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+5"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Екран</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -805,7 +805,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+15"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Невідомо</translation>
     </message>
 </context>
 <context>
