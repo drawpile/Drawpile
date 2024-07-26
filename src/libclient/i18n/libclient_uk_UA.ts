@@ -384,7 +384,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>Selection fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Заповнення позначеного</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -514,7 +514,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../drawdance/canvasstate.cpp" line="+47"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Шар &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -550,12 +550,12 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="-454"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1д %2г %3хв</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1г %2хв</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -617,7 +617,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+2"/>
         <source>unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>Невідома версія</translation>
     </message>
     <message>
         <location line="+113"/>
@@ -826,7 +826,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation type="unfinished"></translation>
+        <translation>Без тегів</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -950,7 +950,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../canvas/paintengine.cpp" line="+203"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Шар &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -1017,13 +1017,13 @@ Click to apply, undo to cancel.</source>
         <location filename="../import/animationimporter.cpp" line="+30"/>
         <source>Frame %1</source>
         <extracomment>Title for imported animation layers.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Кадр %1</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Кадр %1</translation>
     </message>
 </context>
 <context>
