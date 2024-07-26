@@ -829,7 +829,7 @@ to 64x64 pixels.</source>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+15"/>
         <source>Current layer</source>
-        <translation>Поточний шар:</translation>
+        <translation>Поточний шар</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -1188,7 +1188,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+13"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM</translation>
     </message>
     <message>
         <location line="+35"/>
