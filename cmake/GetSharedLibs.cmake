@@ -155,6 +155,22 @@ function(_get_non_qt_shared_libs out_var)
 	endforeach()
 
 	list(REMOVE_DUPLICATES libs)
+
+	if(WIN32)
+		foreach(lib IN LISTS libs)
+			if(lib MATCHES "\\.[dD][lL][lL]$")
+				string(REGEX REPLACE "\\.[dD][lL][lL]$" ".pdb" pdb "${lib}")
+				if(EXISTS pdb)
+					list(APPEND libs ${pdb})
+				else()
+					message(WARNING "PDB not found: '${pdb}'")
+				endif()
+			else()
+				message(WARNING "Lib is not a DLL: '${lib}'")
+			endif()
+		endforeach()
+	endif()
+
 	set(${out_var} ${libs} PARENT_SCOPE)
 endfunction()
 
