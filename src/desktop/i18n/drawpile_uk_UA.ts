@@ -629,12 +629,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="-253"/>
         <source>Add Avatar</source>
-        <translation>Додати аватар…</translation>
+        <translation>Додати аватар</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Import Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпортувати кадри анімації</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -649,7 +649,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+10"/>
         <source>Import Animation from Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпортувати анімацію з шарів</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -664,7 +664,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+38"/>
         <source>Error opening temporary file for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка відкриття тимчасового файлу для %1.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -684,7 +684,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+167"/>
         <source>Export Frames in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати кадри як ZIP</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -694,7 +694,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Export Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати як анімоване WEBP</translation>
     </message>
     <message>
         <location line="+43"/>
