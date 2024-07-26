@@ -2159,7 +2159,7 @@ QTransform CanvasController::calculateCanvasTransformFrom(
 	bool flip) const
 {
 	QTransform matrix;
-	matrix.translate(-pos.x(), -pos.y());
+	matrix.translate(-std::round(pos.x()), -std::round(pos.y()));
 	qreal scale = actualZoomFor(zoom);
 	matrix.scale(scale, scale);
 	mirrorFlip(matrix, mirror, flip);
