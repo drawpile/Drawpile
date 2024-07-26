@@ -1678,7 +1678,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation>Скинути масштаб</translation>
+        <translation>&amp;Скинути масштаб</translation>
     </message>
     <message>
         <location line="+1"/>
