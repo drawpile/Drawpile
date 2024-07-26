@@ -4,6 +4,12 @@ description: >
   adding them to the environment PATH.
 
 inputs:
+  build_type:
+    description: >
+      Build type, roughly equivalent to CMAKE_BUILD_TYPE. One of Debug,
+      DebugNoAsan, RelWithDebInfo, Release.
+    default: Release
+    type: string
   cache_key:
     description: >
       A cache key fragment that will be used to generate a complete cache key
@@ -86,7 +92,7 @@ runs:
         pre_build: ${{ inputs.qt_pre_build }}
         build: >
           cmake
-          -DBUILD_TYPE=Release
+          -DBUILD_TYPE=${{ inputs.build_type }}
           "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/${{ inputs.path }}/qt"
           "-DQT_VERSION=${{ inputs.qt }}"
           "-DTARGET_ARCH=${{ inputs.target_arch }}"
@@ -101,7 +107,7 @@ runs:
         pre_build: ${{ inputs.other_pre_build }}
         build: >
           cmake
-          -DBUILD_TYPE=Release
+          -DBUILD_TYPE=${{ inputs.build_type }}
           "-DZLIB=${{ inputs.zlib }}"
           "-DLIBMICROHTTPD=${{ inputs.libmicrohttpd }}"
           "-DLIBSODIUM=${{ inputs.libsodium }}"

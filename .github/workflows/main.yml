@@ -14,6 +14,7 @@ env:
   CARGO_TERM_COLOR: always
   CMAKE_COLOR_DIAGNOSTICS: ON
   CLICOLOR_FORCE: 1
+  workflow_build_type: Release
 
 jobs:
   test:
@@ -60,7 +61,7 @@ jobs:
             packager: >-
               EXTRA_QT_PLUGINS="svg;"
               VERSION="${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '$(git describe)' }}"
-              cmake --install build --config Release
+              cmake --install build --config "$workflow_build_type"
             # The runner has multiple clang versions installed and CMake/Qt gets
             # confused about which one to pick for some reason, so this also
             # sets Clang_ROOT during the Qt build
@@ -92,7 +93,7 @@ jobs:
             qt: 5.15.14
             arch: arm64
             sccache_triplet: x86_64-unknown-linux-musl
-            packager: cmake --install build --config Release --prefix .
+            packager: cmake --install build --config "$workflow_build_type" --prefix .
             cross_qt_args: >-
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
               "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
@@ -145,7 +146,7 @@ jobs:
             qt: 5.15.14
             arch: arm32
             sccache_triplet: x86_64-unknown-linux-musl
-            packager: cmake --install build --config Release --prefix .
+            packager: cmake --install build --config "$workflow_build_type" --prefix .
             cross_qt_args: >-
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
               "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
@@ -199,7 +200,7 @@ jobs:
             arch: x86_64
             build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
             sccache_triplet: x86_64-apple-darwin
-            packager: cpack --verbose --config build/CPackConfig.cmake -C Release
+            packager: cpack --verbose --config build/CPackConfig.cmake -C "$workflow_build_type"
 
           - os: macos-14
             cross_os: ''
@@ -208,7 +209,7 @@ jobs:
             arch: arm64
             build_flags: -DBUILD_PACKAGE_SUFFIX=arm64 -G Ninja
             sccache_triplet: aarch64-apple-darwin
-            packager: cpack --verbose --config build/CPackConfig.cmake -C Release
+            packager: cpack --verbose --config build/CPackConfig.cmake -C "$workflow_build_type"
 
           - os: windows-latest
             cross_os: ''
@@ -228,7 +229,7 @@ jobs:
             # them
             packager: >
               cp .github/deps/other/bin/qt*.dll .github/deps/qt/bin &&
-              cpack --verbose --config build/CPackConfig.cmake -C Release
+              cpack --verbose --config build/CPackConfig.cmake -C $env:workflow_build_type
 
           - os: windows-latest
             cross_os: ''
@@ -248,7 +249,7 @@ jobs:
             # them
             packager: >
               cp .github/deps/other/bin/qt*.dll .github/deps/qt/bin &&
-              cpack --verbose --config build/CPackConfig.cmake -C Release
+              cpack --verbose --config build/CPackConfig.cmake -C $env:workflow_build_type
 
           - os: windows-latest
             qt: 5.15.14
@@ -266,7 +267,7 @@ jobs:
             # them
             packager: >
               cp .github/deps/other/bin/qt*.dll .github/deps/qt/bin &&
-              cpack --verbose --config build/CPackConfig.cmake -C Release
+              cpack --verbose --config build/CPackConfig.cmake -C $env:workflow_build_type
 
 
     steps:
@@ -315,7 +316,8 @@ jobs:
         uses: ./.github/actions/build-deps
         id: deps
         with:
-          cache_key: ${{ runner.os }}-${{ matrix.arch }}
+          build_type: ${{ env.workflow_build_type }}
+          cache_key: ${{ env.workflow_build_type != 'Release' && format('{0}-', env.workflow_build_type) || '' }}${{ runner.os }}-${{ matrix.arch }}
           path: .github/deps
           target_arch: "${{ matrix.arch }}"
           qt: ${{ matrix.qt }}
@@ -329,7 +331,8 @@ jobs:
         uses: ./.github/actions/build-deps
         id: cross-deps
         with:
-          cache_key: ${{ runner.os }}+${{ matrix.cross_os }}-${{ matrix.arch }}
+          build_type: ${{ env.workflow_build_type }}
+          cache_key: ${{ env.workflow_build_type != 'Release' && format('{0}-', env.workflow_build_type) || '' }}${{ runner.os }}+${{ matrix.cross_os }}-${{ matrix.arch }}
           path: .github/cross-deps
           target_arch: "${{ matrix.arch }}"
           qt: ${{ matrix.qt }}
@@ -344,7 +347,7 @@ jobs:
         id: sccache
         with:
           triplet: ${{ matrix.sccache_triplet }}
-          cache_key: ${{ runner.os }}${{ matrix.component }}-${{ matrix.arch }}${{ matrix.cross_os && format('+{0}', matrix.cross_os) }}-${{ matrix.qt }}
+          cache_key: ${{ env.workflow_build_type != 'Release' && format('{0}-', env.workflow_build_type) || '' }}${{ runner.os }}${{ matrix.component }}-${{ matrix.arch }}${{ matrix.cross_os && format('+{0}', matrix.cross_os) }}-${{ matrix.qt }}
 
       - name: Cache gradle
         uses: actions/cache@v4
@@ -373,7 +376,7 @@ jobs:
       - name: Generate project
         run: >
           cmake -S . -B build --log-level=VERBOSE
-          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_BUILD_TYPE=${{ env.workflow_build_type }}
           -DCMAKE_C_COMPILER_LAUNCHER=sccache
           -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
           -DCMAKE_OBJC_COMPILER_LAUNCHER=sccache
@@ -415,7 +418,7 @@ jobs:
         if: matrix.cross_os == 'Android' && matrix.packager
 
       - name: Build project
-        run: cmake --build build --parallel $(nproc || sysctl -n hw.ncpu || echo 2) --config Release
+        run: cmake --build build --parallel $(nproc || sysctl -n hw.ncpu || echo 2) --config ${{ env.workflow_build_type }}
         env:
           RUSTC_WRAPPER: sccache
           SCCACHE_CACHE_SIZE: 200M
@@ -426,7 +429,7 @@ jobs:
           WINDOWS_PFX_TIMESTAMP_URL: 'http://timestamp.digicert.com'
 
       - name: Run C++ tests
-        run: ctest -C Release --output-on-failure
+        run: ctest -C ${{ env.workflow_build_type }} --output-on-failure
         working-directory: build
         if: '!matrix.cross_os'
 
