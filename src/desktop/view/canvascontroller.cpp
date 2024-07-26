@@ -123,7 +123,8 @@ void CanvasController::scrollTo(const QPointF &point)
 	updateCanvasTransform([&] {
 		QTransform matrix = calculateCanvasTransformFrom(
 			QPointF(), m_zoom, m_rotation, m_mirror, m_flip);
-		m_pos = matrix.map(point);
+		m_pos = matrix.map(
+			point - viewTransformOffset() / (m_zoom > 0.0 ? m_zoom : 1.0));
 	});
 }
 
