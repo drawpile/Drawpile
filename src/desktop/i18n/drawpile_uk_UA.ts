@@ -108,7 +108,7 @@
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Заблокувати прозоре (режим перефарбування)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -156,7 +156,7 @@
     <message>
         <location line="+30"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished"></translation>
+        <translation>Підбір кольору: 1/</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -189,7 +189,7 @@
     <message>
         <location filename="../ui/brushpresetproperties.ui" line="+17"/>
         <source>Brush Preset Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Властивості шаблону пензля</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -412,12 +412,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+16"/>
         <source>Play/Pause</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Пуск/Пауза</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Jump</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Перестрибнути</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -437,7 +437,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+13"/>
         <source>Position: </source>
-        <translation type="unfinished"></translation>
+        <translation>Позиція: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2060,8 +2060,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+9"/>
         <location filename="../mainwindow.cpp" line="+3"/>
         <source>Delete Layer</source>
-        <translation>Вилучити шар\n
-вилучення шару</translation>
+        <translation>Вилучити шар</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+203"/>
@@ -4383,15 +4382,15 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+88"/>
         <source> frame(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform> кадр</numerusform>
+            <numerusform> кадри</numerusform>
+            <numerusform> кадрів</numerusform>
         </translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Animation Import Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка імпортування анімації</translation>
     </message>
 </context>
 <context>
@@ -4429,29 +4428,29 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+164"/>
         <source>Brush Export</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Експорт пензлів</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <source>%n brush(es) exported.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>експортовано %n пензель.</numerusform>
+            <numerusform>експортовано %n пензлі.</numerusform>
+            <numerusform>експортовано %n пензлів.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Brush export failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося експортувати пензлі.</translation>
     </message>
     <message numerus="yes">
         <location line="+7"/>
         <source>%n error(s) encountered.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Виникла %n помилка.</numerusform>
+            <numerusform>Виникло %n помилки.</numerusform>
+            <numerusform>Виникло %n помилок.</numerusform>
         </translation>
     </message>
 </context>
@@ -4460,7 +4459,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+85"/>
         <source>Brush Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактор пензля</translation>
     </message>
     <message>
         <location line="+48"/>
