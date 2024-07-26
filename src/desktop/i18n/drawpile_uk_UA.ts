@@ -888,7 +888,7 @@ to 64x64 pixels.</source>
         <location line="-7"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+176"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим:</translation>
     </message>
 </context>
 <context>
@@ -911,7 +911,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+53"/>
         <source>Rewind</source>
-        <translation type="unfinished"></translation>
+        <translation>Відмотати назад</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -926,7 +926,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+20"/>
         <source>Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Діапазон</translation>
     </message>
     <message>
         <location line="+41"/>
