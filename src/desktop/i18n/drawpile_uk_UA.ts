@@ -931,7 +931,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+41"/>
         <source>Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Швидкість: </translation>
     </message>
     <message>
         <location line="+29"/>
@@ -1678,7 +1678,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути масштаб</translation>
     </message>
     <message>
         <location line="+1"/>
