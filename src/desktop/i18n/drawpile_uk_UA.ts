@@ -138,7 +138,7 @@
     <message>
         <location line="+16"/>
         <source>Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>Жорсткість: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -151,7 +151,7 @@
     <message>
         <location line="-16"/>
         <source>Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>Розмазування: </translation>
     </message>
     <message>
         <location line="+30"/>
@@ -176,7 +176,7 @@
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Згладжування: </translation>
     </message>
     <message>
         <location line="-206"/>
@@ -402,7 +402,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+6"/>
         <source> ms</source>
-        <translation type="unfinished"></translation>
+        <translation> ms</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4501,7 +4501,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+23"/>
         <location line="+14"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим змішування:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4572,7 +4572,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Згладжування: </translation>
     </message>
     <message>
         <location line="+31"/>
