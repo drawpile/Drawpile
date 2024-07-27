@@ -3582,29 +3582,39 @@ void MainWindow::changeUndoDepthLimit()
 		}
 	}
 }
-// clang-format off
 
 void MainWindow::updateDevToolsActions()
 {
 	QAction *tabletEventLogAction = getAction("tableteventlog");
-	tabletEventLogAction->setText(drawdance::EventLog::isOpen() ? tr("Stop Tablet Event Log") : tr("Tablet Event Log..."));
+	tabletEventLogAction->setText(
+		drawdance::EventLog::isOpen() ? tr("Stop Tablet Event Log")
+									  : tr("Tablet Event Log..."));
 
 	QAction *profileAction = getAction("profile");
-	profileAction->setText(drawdance::Perf::isOpen() ? tr("Stop Profile") : tr("Profile..."));
+	profileAction->setText(
+		drawdance::Perf::isOpen() ? tr("Stop Profile") : tr("Profile..."));
 
-	QAction *artificialLagAction = getAction("artificiallag");
 	net::Client *client = m_doc->client();
-	artificialLagAction->setEnabled(client->isConnected());
-	int artificialLagMs = client->artificialLagMs();
-	artificialLagAction->setText(
-		tr("Set Artificial Lag... (currently %1 ms)").arg(artificialLagMs));
+	bool connected = client->isConnected();
 
-	QAction *artificialDisconnectAction = getAction("artificialdisconnect");
-	artificialDisconnectAction->setEnabled(client->isConnected());
+	QAction *artificialLagAction =
+		searchAction(QStringLiteral("artificiallag"));
+	if(artificialLagAction) {
+		artificialLagAction->setEnabled(connected);
+		int artificialLagMs = client->artificialLagMs();
+		artificialLagAction->setText(
+			tr("Set Artificial Lag... (currently %1 ms)").arg(artificialLagMs));
+	}
+
+	QAction *artificialDisconnectAction = searchAction("artificialdisconnect");
+	if(artificialDisconnectAction) {
+		artificialDisconnectAction->setEnabled(connected);
+	}
 
 	QAction *debugDumpAction = getAction("debugdump");
 	debugDumpAction->setChecked(m_doc->wantCanvasHistoryDump());
 }
+// clang-format off
 
 void MainWindow::setArtificialLag()
 {
@@ -3656,6 +3666,26 @@ void MainWindow::openDebugDump()
 	FileWrangler(this).openDebugDump(
 		std::bind(&MainWindow::openPath, this, _1, _2));
 }
+
+// clang-format on
+void MainWindow::causeCrash()
+{
+	QMessageBox *box = utils::makeQuestion(
+		this, tr("Cause Crash"),
+		tr("Do you really want to crash Drawpile? This will terminate the "
+		   "program and you will lose any unsaved data!"));
+	connect(box, &QMessageBox::finished, this, [this](int result) {
+		if(result == QMessageBox::Yes) {
+			QObject *nonexistent = findChild<QObject *>(
+				QStringLiteral("nonexistent"), Qt::FindDirectChildrenOnly);
+			nonexistent->setObjectName(QStringLiteral("stillnonexistent"));
+			nonexistent->setProperty("nonexistent", true);
+			nonexistent->deleteLater();
+		}
+	});
+	box->show();
+}
+// clang-format off
 
 
 void MainWindow::about()
@@ -3721,11 +3751,19 @@ ActionBuilder MainWindow::makeAction(const char *name, const QString& text)
 
 QAction *MainWindow::getAction(const QString &name)
 {
-	QAction *a = findChild<QAction*>(name, Qt::FindDirectChildrenOnly);
-	if(!a)
-		qFatal("%s: no such action", qPrintable(name));
-	Q_ASSERT(a);
-	return a;
+	QAction *action = searchAction(name);
+	Q_ASSERT(action);
+	if(action) {
+		return action;
+	} else {
+		qFatal("%s: no such action", qUtf8Printable(name));
+		std::abort();
+	}
+}
+
+QAction *MainWindow::searchAction(const QString &name)
+{
+	return findChild<QAction*>(name, Qt::FindDirectChildrenOnly);
 }
 
 /**
@@ -4806,16 +4844,12 @@ void MainWindow::setupActions()
 	QAction *systeminfo = makeAction("systeminfo", tr("System Information…")).noDefaultShortcut();
 	QAction *tableteventlog = makeAction("tableteventlog", tr("Tablet Event Log...")).noDefaultShortcut();
 	QAction *profile = makeAction("profile", tr("Profile...")).noDefaultShortcut();
-	QAction *artificialLag = makeAction("artificiallag", tr("Set Artificial Lag...")).noDefaultShortcut();
-	QAction *artificialDisconnect = makeAction("artificialdisconnect", tr("Artifical Disconnect...")).noDefaultShortcut();
 	QAction *debugDump = makeAction("debugdump", tr("Record Debug Dumps")).checkable().noDefaultShortcut();
 	QAction *openDebugDump = makeAction("opendebugdump", tr("Open Debug Dump...")).noDefaultShortcut();
 	QAction *showNetStats = makeAction("shownetstats", tr("Statistics…")).noDefaultShortcut();
 	devtoolsmenu->addAction(systeminfo);
 	devtoolsmenu->addAction(tableteventlog);
 	devtoolsmenu->addAction(profile);
-	devtoolsmenu->addAction(artificialLag);
-	devtoolsmenu->addAction(artificialDisconnect);
 	devtoolsmenu->addAction(debugDump);
 	devtoolsmenu->addAction(openDebugDump);
 	devtoolsmenu->addAction(showNetStats);
@@ -4823,11 +4857,33 @@ void MainWindow::setupActions()
 	connect(systeminfo, &QAction::triggered, this, &MainWindow::showSystemInfo);
 	connect(tableteventlog, &QAction::triggered, this, &MainWindow::toggleTabletEventLog);
 	connect(profile, &QAction::triggered, this, &MainWindow::toggleProfile);
-	connect(artificialLag, &QAction::triggered, this, &MainWindow::setArtificialLag);
-	connect(artificialDisconnect, &QAction::triggered, this, &MainWindow::setArtificialDisconnect);
 	connect(debugDump, &QAction::triggered, this, &MainWindow::toggleDebugDump);
 	connect(openDebugDump, &QAction::triggered, this, &MainWindow::openDebugDump);
 	connect(showNetStats, &QAction::triggered, m_netstatus, &widgets::NetStatus::showNetStats);
+
+	// clang-format on
+	if(DrawpileApp::isEnvTrue("DRAWPILE_DEV_MODE")) {
+		QAction *artificialLag =
+			makeAction("artificiallag", tr("Set Artificial Lag..."))
+				.noDefaultShortcut();
+		QAction *artificialDisconnect =
+			makeAction("artificialdisconnect", tr("Artifical Disconnect..."))
+				.noDefaultShortcut();
+		QAction *causeCrash =
+			makeAction("causecrash", tr("Cause Crash…")).noDefaultShortcut();
+		devtoolsmenu->addSeparator();
+		devtoolsmenu->addAction(artificialLag);
+		devtoolsmenu->addAction(artificialDisconnect);
+		devtoolsmenu->addAction(causeCrash);
+		connect(
+			artificialLag, &QAction::triggered, this,
+			&MainWindow::setArtificialLag);
+		connect(
+			artificialDisconnect, &QAction::triggered, this,
+			&MainWindow::setArtificialDisconnect);
+		connect(causeCrash, &QAction::triggered, this, &MainWindow::causeCrash);
+	}
+	// clang-format off
 
 	QAction *currentEraseMode = makeAction("currenterasemode", tr("Toggle Eraser Mode")).shortcut("Ctrl+E");
 	QAction *currentRecolorMode = makeAction("currentrecolormode", tr("Toggle Recolor Mode")).shortcut("Shift+E");

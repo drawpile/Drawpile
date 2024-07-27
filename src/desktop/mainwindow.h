@@ -244,6 +244,7 @@ private slots:
 	void setArtificialDisconnect();
 	void toggleDebugDump();
 	void openDebugDump();
+	void causeCrash();
 
 	void toolChanged(tools::Tool::Type tool);
 	void updateFreehandToolButton(int brushMode);
@@ -301,6 +302,7 @@ private:
 
 	ActionBuilder makeAction(const char *name, const QString &text = QString{});
 	QAction *getAction(const QString &name);
+	QAction *searchAction(const QString &name);
 
 	//! Add a new entry to recent files list
 	void addRecentFile(const QString &file);

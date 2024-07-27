@@ -70,6 +70,10 @@ public:
 	// or the browser can't run stuff in new processes.
 	bool runInNewProcess(const QStringList &args);
 
+	// Checks if the given environment variable is set, non-empty and not set to
+	// an integer value that evalues to zero.
+	static bool isEnvTrue(const char *key);
+
 signals:
 #ifndef __EMSCRIPTEN__
 	void tabletProximityChanged(bool enter, bool eraser);

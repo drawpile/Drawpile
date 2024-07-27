@@ -428,14 +428,9 @@ bool DrawpileApp::runInNewProcess(const QStringList &args)
 {
 #ifdef HAVE_RUN_IN_NEW_PROCESS
 	// Escape hatch for testing and unexpected environments.
-	QByteArray singleProcess = qgetenv("DRAWPILE_SINGLE_PROCESS").trimmed();
-	if(!singleProcess.isEmpty()) {
-		bool ok;
-		int i = singleProcess.toInt(&ok);
-		if(!ok || i != 0) {
-			qDebug("runInNewProcess: DRAWPILE_SINGLE_PROCESS is set");
-			return false;
-		}
+	if(isEnvTrue("DRAWPILE_SINGLE_PROCESS")) {
+		qDebug("runInNewProcess: DRAWPILE_SINGLE_PROCESS is set");
+		return false;
 	}
 
 	QString path = QCoreApplication::applicationFilePath();
@@ -494,6 +489,19 @@ bool DrawpileApp::runInNewProcess(const QStringList &args)
 	Q_UNUSED(args);
 	return false;
 #endif
+}
+
+bool DrawpileApp::isEnvTrue(const char *key)
+{
+	QByteArray value = qgetenv(key).trimmed();
+	if(!value.isEmpty()) {
+		bool ok;
+		int i = value.toInt(&ok);
+		if(!ok || i != 0) {
+			return true;
+		}
+	}
+	return false;
 }
 
 MainWindow *
