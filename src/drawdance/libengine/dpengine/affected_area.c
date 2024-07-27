@@ -20,6 +20,7 @@
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
 #include "affected_area.h"
+#include "brush.h"
 #include "canvas_state.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
@@ -356,9 +357,18 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         }
     }
     case DP_MSG_DRAW_DABS_MYPAINT: {
-        DP_MsgDrawDabsMyPaint *mddmp = DP_msg_draw_dabs_mypaint_cast(msg);
-        return make_pixels(DP_msg_draw_dabs_mypaint_layer(mddmp),
-                           mypaint_dabs_bounds(mddmp));
+        DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
+        int layer_id = DP_msg_draw_dabs_mypaint_layer(mddmp);
+        DP_Rect bounds = mypaint_dabs_bounds(mddmp);
+        if (aia_or_null
+            && DP_mypaint_brush_mode_indirect(
+                DP_msg_draw_dabs_mypaint_mode(mddmp))) {
+            return update_indirect_area(aia_or_null, DP_message_context_id(msg),
+                                        layer_id, bounds);
+        }
+        else {
+            return make_pixels(layer_id, bounds);
+        }
     }
     case DP_MSG_PEN_UP: {
         unsigned int context_id = DP_message_context_id(msg);
