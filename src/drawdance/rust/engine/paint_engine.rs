@@ -256,7 +256,7 @@ impl PaintEngine {
             let params = unsafe { user.cast::<PlaybackParams>().as_mut().unwrap_unchecked() };
             if let Some((x, y, width, height)) = params.crop {
                 let aa = unsafe { DP_affected_area_make(msg, null_mut()) };
-                if unsafe {
+                if !unsafe {
                     DP_affected_area_in_bounds(
                         &aa,
                         x as c_int,
