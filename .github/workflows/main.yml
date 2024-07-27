@@ -14,7 +14,6 @@ env:
   CARGO_TERM_COLOR: always
   CMAKE_COLOR_DIAGNOSTICS: ON
   CLICOLOR_FORCE: 1
-  workflow_build_type: Release
 
 jobs:
   test:
@@ -51,6 +50,8 @@ jobs:
             arch: x86_64
             sccache_triplet: x86_64-unknown-linux-musl
             build_flags: -DINITSYS=systemd -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
+            build_type: Release
+            collect_symbols: false
             # This causes the AppImage to be generated, instead of just creating
             # the portable tree, because there seems to be no way to separate
             # these steps with linuxdeploy
@@ -61,7 +62,7 @@ jobs:
             packager: >-
               EXTRA_QT_PLUGINS="svg;"
               VERSION="${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '$(git describe)' }}"
-              cmake --install build --config "$workflow_build_type"
+              cmake --install build --config Release
             # The runner has multiple clang versions installed and CMake/Qt gets
             # confused about which one to pick for some reason, so this also
             # sets Clang_ROOT during the Qt build
@@ -93,7 +94,9 @@ jobs:
             qt: 5.15.14
             arch: arm64
             sccache_triplet: x86_64-unknown-linux-musl
-            packager: cmake --install build --config "$workflow_build_type" --prefix .
+            build_type: Release
+            collect_symbols: false
+            packager: cmake --install build --config Release --prefix .
             cross_qt_args: >-
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
               "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
@@ -146,7 +149,9 @@ jobs:
             qt: 5.15.14
             arch: arm32
             sccache_triplet: x86_64-unknown-linux-musl
-            packager: cmake --install build --config "$workflow_build_type" --prefix .
+            build_type: Release
+            collect_symbols: false
+            packager: cmake --install build --config Release --prefix .
             cross_qt_args: >-
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
               "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
@@ -199,8 +204,10 @@ jobs:
             qt: 6.7.2
             arch: x86_64
             build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
+            build_type: Release
+            collect_symbols: false
             sccache_triplet: x86_64-apple-darwin
-            packager: cpack --verbose --config build/CPackConfig.cmake -C "$workflow_build_type"
+            packager: cpack --verbose --config build/CPackConfig.cmake -C Release
 
           - os: macos-14
             cross_os: ''
@@ -208,8 +215,10 @@ jobs:
             qt: 6.7.2
             arch: arm64
             build_flags: -DBUILD_PACKAGE_SUFFIX=arm64 -G Ninja
+            build_type: Release
+            collect_symbols: false
             sccache_triplet: aarch64-apple-darwin
-            packager: cpack --verbose --config build/CPackConfig.cmake -C "$workflow_build_type"
+            packager: cpack --verbose --config build/CPackConfig.cmake -C Release
 
           - os: windows-latest
             cross_os: ''
@@ -218,6 +227,8 @@ jobs:
             arch: x86_64
             sccache_triplet: x86_64-pc-windows-msvc
             build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
+            build_type: RelWithDebInfo
+            collect_symbols: true
             qt_pre_build: >
               choco install gperf jom winflexbison3 &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
@@ -229,7 +240,7 @@ jobs:
             # them
             packager: >
               cp .github/deps/other/bin/qt*.dll .github/deps/qt/bin &&
-              cpack --verbose --config build/CPackConfig.cmake -C $env:workflow_build_type
+              cpack --verbose --config build/CPackConfig.cmake -C RelWithDebInfo
 
           - os: windows-latest
             cross_os: ''
@@ -238,6 +249,8 @@ jobs:
             arch: x86_64
             sccache_triplet: x86_64-pc-windows-msvc
             build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
+            build_type: RelWithDebInfo
+            collect_symbols: false
             qt_pre_build: >
               choco install gperf jom winflexbison3 &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
@@ -249,13 +262,15 @@ jobs:
             # them
             packager: >
               cp .github/deps/other/bin/qt*.dll .github/deps/qt/bin &&
-              cpack --verbose --config build/CPackConfig.cmake -C $env:workflow_build_type
+              cpack --verbose --config build/CPackConfig.cmake -C RelWithDebInfo
 
           - os: windows-latest
             qt: 5.15.14
             arch: x86
             sccache_triplet: x86_64-pc-windows-msvc
             build_flags: -DCARGO_TRIPLE=i686-pc-windows-msvc -DBUILD_PACKAGE_SUFFIX=x86 -G Ninja
+            build_type: RelWithDebInfo
+            collect_symbols: false
             qt_pre_build: >
               choco install gperf jom winflexbison3 &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
@@ -267,7 +282,7 @@ jobs:
             # them
             packager: >
               cp .github/deps/other/bin/qt*.dll .github/deps/qt/bin &&
-              cpack --verbose --config build/CPackConfig.cmake -C $env:workflow_build_type
+              cpack --verbose --config build/CPackConfig.cmake -C RelWithDebInfo
 
 
     steps:
@@ -316,8 +331,8 @@ jobs:
         uses: ./.github/actions/build-deps
         id: deps
         with:
-          build_type: ${{ env.workflow_build_type }}
-          cache_key: ${{ env.workflow_build_type != 'Release' && format('{0}-', env.workflow_build_type) || '' }}${{ runner.os }}-${{ matrix.arch }}
+          build_type: ${{ matrix.build_type }}
+          cache_key: ${{ matrix.build_type != 'Release' && format('{0}-', matrix.build_type) || '' }}${{ runner.os }}-${{ matrix.arch }}
           path: .github/deps
           target_arch: "${{ matrix.arch }}"
           qt: ${{ matrix.qt }}
@@ -331,8 +346,8 @@ jobs:
         uses: ./.github/actions/build-deps
         id: cross-deps
         with:
-          build_type: ${{ env.workflow_build_type }}
-          cache_key: ${{ env.workflow_build_type != 'Release' && format('{0}-', env.workflow_build_type) || '' }}${{ runner.os }}+${{ matrix.cross_os }}-${{ matrix.arch }}
+          build_type: ${{ matrix.build_type }}
+          cache_key: ${{ matrix.build_type != 'Release' && format('{0}-', matrix.build_type) || '' }}${{ runner.os }}+${{ matrix.cross_os }}-${{ matrix.arch }}
           path: .github/cross-deps
           target_arch: "${{ matrix.arch }}"
           qt: ${{ matrix.qt }}
@@ -347,7 +362,7 @@ jobs:
         id: sccache
         with:
           triplet: ${{ matrix.sccache_triplet }}
-          cache_key: ${{ env.workflow_build_type != 'Release' && format('{0}-', env.workflow_build_type) || '' }}${{ runner.os }}${{ matrix.component }}-${{ matrix.arch }}${{ matrix.cross_os && format('+{0}', matrix.cross_os) }}-${{ matrix.qt }}
+          cache_key: ${{ matrix.build_type != 'Release' && format('{0}-', matrix.build_type) || '' }}${{ runner.os }}${{ matrix.component }}-${{ matrix.arch }}${{ matrix.cross_os && format('+{0}', matrix.cross_os) }}-${{ matrix.qt }}
 
       - name: Cache gradle
         uses: actions/cache@v4
@@ -376,7 +391,7 @@ jobs:
       - name: Generate project
         run: >
           cmake -S . -B build --log-level=VERBOSE
-          -DCMAKE_BUILD_TYPE=${{ env.workflow_build_type }}
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           -DCMAKE_C_COMPILER_LAUNCHER=sccache
           -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
           -DCMAKE_OBJC_COMPILER_LAUNCHER=sccache
@@ -418,7 +433,7 @@ jobs:
         if: matrix.cross_os == 'Android' && matrix.packager
 
       - name: Build project
-        run: cmake --build build --parallel $(nproc || sysctl -n hw.ncpu || echo 2) --config ${{ env.workflow_build_type }}
+        run: cmake --build build --parallel $(nproc || sysctl -n hw.ncpu || echo 2) --config ${{ matrix.build_type }}
         env:
           RUSTC_WRAPPER: sccache
           SCCACHE_CACHE_SIZE: 200M
@@ -429,7 +444,7 @@ jobs:
           WINDOWS_PFX_TIMESTAMP_URL: 'http://timestamp.digicert.com'
 
       - name: Run C++ tests
-        run: ctest -C ${{ env.workflow_build_type }} --output-on-failure
+        run: ctest -C ${{ matrix.build_type }} --output-on-failure
         working-directory: build
         if: '!matrix.cross_os'
 
@@ -439,6 +454,13 @@ jobs:
           WINDOWS_PFX_PASS: ${{ secrets.WINDOWS_CERTIFICATE_PASS }}
           WINDOWS_PFX_TIMESTAMP_URL: 'http://timestamp.digicert.com'
         if: matrix.packager
+
+      - name: Bundle PDBs
+        run: >
+          cmake "-DEXE_SEARCH_PATHS=build"
+          "-DDLL_SEARCH_PATHS=${{ matrix.cross_os && steps.cross-deps.outputs.path || steps.deps.outputs.path }}"
+          -P .github/scripts/bundle-pdbs.cmake
+        if: runner.os == 'Windows' && matrix.collect_symbols
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -451,6 +473,7 @@ jobs:
             Drawpile-*.dmg
             Drawpile-*.msi
             Drawpile-*.zip
+            DrawpileSymbols-*.zip
 
       - name: Upload error logs and artefacts
         uses: actions/upload-artifact@v4
@@ -532,6 +555,7 @@ jobs:
             'Drawpile-macOS-arm64-Qt6.7.2;Drawpile-*.dmg;macOS Disk Image for Apple Silicon' \
             'Drawpile-Windows-x86_64-Qt5.15.14;Drawpile-*.msi;Windows Installer 64bit' \
             'Drawpile-Windows-x86_64-Qt5.15.14;Drawpile-*.zip;Windows Portable ZIP 64bit' \
+            'Drawpile-Windows-x86_64-Qt5.15.14;DrawpileSymbols-*.zip;Debug Symbols for Windows 64bit - does not include Drawpile' \
             'Drawpile-Tools-Windows-x86_64-Qt5.15.14;Drawpile-*.zip;Windows Server and Tools Portable ZIP 64bit - does not include Drawpile' \
             'Drawpile-Android-arm32-Qt5.15.14;Drawpile-*.apk;Android APK 32bit - do not use, you want 64bit' \
             'Drawpile-Windows-x86-Qt5.15.14;Drawpile-*.msi;Windows Installer 32bit - do not use, you want 64bit' \
