@@ -32,6 +32,10 @@ public:
 
 	QString idAlias() const override { return m_alias; }
 	QString founderName() const override { return m_founder; }
+	void setFounderName(const QString &founder) override
+	{
+		m_founder = founder;
+	}
 	protocol::ProtocolVersion protocolVersion() const override
 	{
 		return m_version;

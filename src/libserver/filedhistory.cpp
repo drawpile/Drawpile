@@ -223,10 +223,7 @@ bool FiledHistory::load()
 				qWarning() << id() << "alias set twice.";
 
 		} else if(cmd == "FOUNDER") {
-			if(m_founder.isEmpty())
-				m_founder = QString::fromUtf8(params);
-			else
-				qWarning() << id() << "founder set twice.";
+			m_founder = QString::fromUtf8(params);
 
 		} else if(cmd == "PASSWORD") {
 			if(params.isEmpty() || passwordhash::isValidHash(params))
@@ -518,6 +515,15 @@ void FiledHistory::closeBlock()
 	m_blocks << Block{
 		b.endOffset, b.startIndex + b.count, 0, b.endOffset,
 		net::MessageList()};
+}
+
+void FiledHistory::setFounderName(const QString &founder)
+{
+	if(m_founder != founder) {
+		m_founder = founder;
+		m_journal->write(QString("FOUNDER %1\n").arg(m_founder).toUtf8());
+		m_journal->flush();
+	}
 }
 
 void FiledHistory::setPasswordHash(const QByteArray &password)

@@ -586,6 +586,11 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 									 "no password is set"));
 	}
 
+	if(changedByModeratorOrAdmin && conf.contains(QStringLiteral("founder"))) {
+		m_history->setFounderName(conf[QStringLiteral("founder")].toString());
+		changes << "changed founder";
+	}
+
 	if(!changes.isEmpty()) {
 		sendUpdatedSessionProperties();
 		QString logmsg = changes.join(", ");

@@ -51,6 +51,7 @@ public:
 
 	//! Get the name of the user who started the session
 	virtual QString founderName() const = 0;
+	virtual void setFounderName(const QString &founder) = 0;
 
 	//! Get the full protocol version of the session
 	virtual protocol::ProtocolVersion protocolVersion() const = 0;

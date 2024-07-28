@@ -70,6 +70,7 @@ public:
 	uint autoResetThreshold() const override { return m_autoResetThreshold; }
 	Flags flags() const override { return m_flags; }
 
+	void setFounderName(const QString &founder) override;
 	void setPasswordHash(const QByteArray &password) override;
 	void setOpwordHash(const QByteArray &opword) override;
 	void setMaxUsers(int max) override;

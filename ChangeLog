@@ -94,6 +94,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Don't switch tools while typing into text fields in some situations. Thanks leopardheart982 for reporting.
  * Fix: Give color wheel, color palette and navigator docks a minimum size so that they can't be shrunken into nonexistence. Thanks vipperz for reporting.
  * Fix: Don't remove layer censors when resetting sessions hosted on the builtin server. Thanks O_O for reporting.
+ * Server Feature: Allow changing session founder names through the admin API.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.
