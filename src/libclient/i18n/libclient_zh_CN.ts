@@ -316,7 +316,7 @@
     <message>
         <location line="+438"/>
         <source>Error saving image</source>
-        <translation type="unfinished"></translation>
+        <translation>保存图片时出现错误</translation>
     </message>
 </context>
 <context>
@@ -358,40 +358,43 @@
     <message>
         <location filename="../tools/floodfill.cpp" line="+251"/>
         <source>Filling…</source>
-        <translation type="unfinished"></translation>
+        <translation>填充…</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>No layer selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>未选择图层.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法填充图层组 %1.
+请选择一个常规图层.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Continuous fill</source>
-        <translation type="unfinished"></translation>
+        <translation>连续区域填充</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Similar color fill</source>
-        <translation type="unfinished"></translation>
+        <translation>相似颜色填充</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Selection fill</source>
-        <translation type="unfinished"></translation>
+        <translation>选区填充</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1, %2 by %3 pixels.
 %4 at %5% opacity on %6.
 Click to apply, undo to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1, %2 乘以 %3 像素.
+%4 以 %5% 的不透明度显示在 %6.
+点击应用, 撤销取消.</translation>
     </message>
 </context>
 <context>
@@ -417,13 +420,14 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../tools/magicwand.cpp" line="+202"/>
         <source>Selecting…</source>
-        <translation type="unfinished"></translation>
+        <translation>选择…</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>%1 by %2 pixels, %3% opacity.
 Click to apply, undo to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 乘以 %2 像素, %3% 不透明度.
+点击应用, 撤销取消.</translation>
     </message>
 </context>
 <context>
@@ -651,12 +655,12 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+177"/>
         <source>incompatible</source>
-        <translation type="unfinished"></translation>
+        <translation>不兼容的</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>joining from web not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>不允许通过网页加入</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -679,7 +683,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+40"/>
         <source>Normal</source>
-        <translation>普通</translation>
+        <translation>正常</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -799,7 +803,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+15"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>未知的</translation>
     </message>
 </context>
 <context>
@@ -1011,7 +1015,7 @@ Click to apply, undo to cancel.</source>
         <location filename="../import/animationimporter.cpp" line="+30"/>
         <source>Frame %1</source>
         <extracomment>Title for imported animation layers.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>帧 %1</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -1084,27 +1088,27 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../net/client.cpp" line="+492"/>
         <source>%1 banned by %2.</source>
-        <translation>%1已被%2禁止IP.</translation>
+        <translation>%1 已被 %2 禁止IP.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 kicked by %2.</source>
-        <translation>%1已被%2踢除.</translation>
+        <translation>%1 已被 %2 踢除.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 made operator by the server.</source>
-        <translation>%1被服务器赋予了房间管理员身份.</translation>
+        <translation>%1 被服务器赋予了房间管理员身份.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 made operator by %2.</source>
-        <translation>%1被%2赋予了房间管理员身份.</translation>
+        <translation>%1 被 %2 赋予了房间管理员身份.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Operator status revoked from %1 by the server.</source>
-        <translation>%1的房间管理员身份已被服务器移除.</translation>
+        <translation>%1 的房间管理员身份已被服务器移除.</translation>
     </message>
     <message>
         <location line="-439"/>
@@ -1114,7 +1118,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation>你已被%1踢除.</translation>
+        <translation>你已被 %1 踢除.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1195,12 +1199,12 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+26"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation>%1的房间管理员身份已被%2移除.</translation>
+        <translation>%1 的房间管理员身份已被 %2 移除.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>房间缓存空间不足! 要想继续绘制, 房间管理员必须将房间重置到一个较小的大小. 这可以通过菜单中的 房间&gt;重置... 来完成.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1238,22 +1242,22 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+8"/>
         <source>%1 trusted by the server.</source>
-        <translation>%1被服务器赋予了信任用户身份.</translation>
+        <translation>%1 被服务器赋予了信任用户身份.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 trusted by %2.</source>
-        <translation>%1被%2赋予了信任用户身份.</translation>
+        <translation>%1 被 %2 赋予了信任用户身份.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 untrusted by the server.</source>
-        <translation>%1的信任用户身份已被服务器移除.</translation>
+        <translation>%1 的信任用户身份已被服务器移除.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
-        <translation>%1的信任用户身份已被%2移除.</translation>
+        <translation>%1 的信任用户身份已被 %2 移除.</translation>
     </message>
 </context>
 <context>
@@ -1394,7 +1398,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+5"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
-        <translation type="unfinished"></translation>
+        <translation>未在有固定证书的服务器上启用安全模式!</translation>
     </message>
     <message>
         <location line="+71"/>
@@ -1434,7 +1438,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+32"/>
         <source>Unknown version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>未知版本 %1</translation>
     </message>
     <message>
         <location line="+149"/>
@@ -1450,7 +1454,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+35"/>
         <source>Pinned certificate has changed!</source>
-        <translation type="unfinished"></translation>
+        <translation>固定证书已更改!</translation>
     </message>
     <message>
         <location line="+78"/>
@@ -1503,12 +1507,12 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+3"/>
         <source>Closed (not allowed to join from the web browser)</source>
-        <translation type="unfinished"></translation>
+        <translation>已关闭 (不允许通过网页浏览器加入)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (not allowed to join via WebSocket)</source>
-        <translation type="unfinished"></translation>
+        <translation>已关闭 (不允许通过 WebSocket 加入)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1528,7 +1532,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+5"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation>未成年人勿入</translation>
+        <translation>不适于未成年人的</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1566,43 +1570,43 @@ Click to apply, undo to cancel.</source>
         <location line="+42"/>
         <source>It is full or closed.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>房间已满人或者已关闭.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It requires an account.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>房间需要账号加入.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>It does not allow joining via web browser.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>房间不允许通过网页浏览器加入.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>It does not allow joining via WebSockets.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>房间不允许通过 WebSockets 加入.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>It is hosted with a newer version of Drawpile, you have to update. If there is no update available, it may be hosted with a development version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>房间是由一个较新的 Drawpile 版本创建的, 因此你必须更新. 如果没有可用的更新, 则可能是由一个开发中的 Drawpile 版本创建的.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>It is hosted with an old, incompatible version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>房间是由一个旧的不兼容的 Drawpile 版本创建的.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is hosted with an incompatible protocol.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>房间是由一个不兼容的协议创建的.</translation>
     </message>
 </context>
 <context>
@@ -1643,17 +1647,17 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../tools/transform.cpp" line="+347"/>
         <source>You don&apos;t have permission to transform selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>你没有权限变换选区.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>No canvas present.</source>
-        <translation type="unfinished"></translation>
+        <translation>无画布.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Nothing selected that could be transformed.</source>
-        <translation type="unfinished"></translation>
+        <translation>未选中有东西可以被变换.</translation>
     </message>
 </context>
 <context>
@@ -1715,22 +1719,22 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../wasmsupport.cpp" line="+109"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
-        <translation type="unfinished"></translation>
+        <translation>你使用的不是 web.drawpile.net 上的官方客户端. 大多数服务器不允许从其他地方连接.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The session address does not look like a valid WebSocket URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>房间地址看起来不像一个有效的 WebSocket URL.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You&apos;re trying to connect to an IP address instead of a proper domain name. This usually doesn&apos;t work unless you&apos;ve configured your browser to allow this first.</source>
-        <translation type="unfinished"></translation>
+        <translation>你正在尝试连接一个IP地址, 而不是一个正确的域名. 这通常是行不通的, 除非你先将浏览器配置为允许这样做.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The server may not support joining via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>服务器可能不支持通过网页浏览器加入.</translation>
     </message>
 </context>
 </TS>
