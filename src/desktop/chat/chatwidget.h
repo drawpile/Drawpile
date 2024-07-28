@@ -54,7 +54,7 @@ public slots:
 		const QString &message);
 
 	//! Display a system message
-	void systemMessage(const QString &message, bool isAlert = false);
+	void receiveSystemMessage(const QString &message, int type);
 
 	//! Set the message pinned to the top of the chat box
 	void setPinnedMessage(const QString &message);
@@ -107,6 +107,8 @@ private:
 #else
 	static constexpr bool ALLOW_DETACH = true;
 #endif
+
+	void systemMessage(const QString &message);
 
 	void setMentionUsername(const QString &username);
 	bool isMention(const QString &message);

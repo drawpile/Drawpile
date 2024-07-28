@@ -253,7 +253,8 @@ signals:
 		bool anyMessageReceived);
 	void youWereKicked(const QString &kickedBy);
 
-	void serverMessage(const QString &message, bool isAlert);
+	void serverMessage(const QString &message, int type);
+	void serverPreparingReset(bool preparing);
 	void serverLog(const QString &message);
 
 	void bytesReceived(int);

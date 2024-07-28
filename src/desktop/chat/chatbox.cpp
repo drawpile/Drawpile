@@ -104,7 +104,7 @@ ChatBox::ChatBox(Document *doc, bool smallScreenMode, QWidget *parent)
 		&ChatWidget::setPreserveMode);
 	connect(
 		doc->client(), &net::Client::serverMessage, m_chatWidget,
-		&ChatWidget::systemMessage);
+		&ChatWidget::receiveSystemMessage);
 
 	connect(
 		m_userItemDelegate, &widgets::UserItemDelegate::opCommand,

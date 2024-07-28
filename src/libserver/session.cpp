@@ -137,9 +137,10 @@ void Session::switchState(State newstate)
 			if(!m_history->reset(resetImage)) {
 				// This shouldn't normally happen, as the size limit should be
 				// caught while still uploading the reset.
-				keyMessageAll(
-					"Session reset failed!", true,
-					net::ServerReply::KEY_RESET_FAILED);
+				directToAll(net::ServerReply::makeKeyAlertReset(
+					QStringLiteral("Session reset failed!"),
+					QStringLiteral("failed"),
+					net::ServerReply::KEY_RESET_FAILED));
 				success = false;
 
 			} else {
@@ -168,9 +169,9 @@ void Session::switchState(State newstate)
 
 		m_resetstream.clear();
 		m_resetstreamsize = 0;
-		keyMessageAll(
-			"Preparing for session reset!", true,
-			net::ServerReply::KEY_RESET_PREPARE);
+		directToAll(net::ServerReply::makeKeyAlertReset(
+			QStringLiteral("Preparing for session reset!"),
+			QStringLiteral("prepare"), net::ServerReply::KEY_RESET_PREPARE));
 	}
 
 	m_state = newstate;
@@ -334,8 +335,9 @@ void Session::abortReset()
 	m_resetstream.clear();
 	m_resetstreamsize = 0;
 	switchState(State::Running);
-	keyMessageAll(
-		"Session reset cancelled.", true, net::ServerReply::KEY_RESET_CANCEL);
+	directToAll(net::ServerReply::makeKeyAlertReset(
+		QStringLiteral("Session reset cancelled."), QStringLiteral("cancel"),
+		net::ServerReply::KEY_RESET_CANCEL));
 }
 
 Client *Session::getClientById(uint8_t id)

@@ -442,6 +442,9 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(
 		m_doc, &Document::sessionOutOfSpaceChanged, this,
 		&MainWindow::updateLockWidget);
+	connect(
+		m_doc, &Document::preparingResetChanged, this,
+		&MainWindow::updateLockWidget);
 
 	connect(m_doc->client(), SIGNAL(bytesReceived(int)), m_netstatus, SLOT(bytesReceived(int)));
 	connect(m_doc->client(), &net::Client::bytesSent, m_netstatus, &widgets::NetStatus::bytesSent);
@@ -2727,6 +2730,9 @@ void MainWindow::updateLockWidget()
 	if(m_dockToolSettings->currentToolAffectsCanvas()) {
 		if(sessionLocked) {
 			reasons.setFlag(Reason::Canvas);
+			if(m_doc->isPreparingReset()) {
+				reasons.setFlag(Reason::Reset);
+			}
 		}
 		if(aclState && aclState->isLocked(aclState->localUserId())) {
 			reasons.setFlag(Reason::User);

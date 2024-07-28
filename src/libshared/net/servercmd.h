@@ -8,6 +8,8 @@
 
 namespace net {
 
+enum class ServerMessageType { Message, Alert, ResetNotice };
+
 /**
  * @brief A command sent to the server using the (Control) Command message
  */
@@ -124,6 +126,10 @@ struct ServerReply {
 
 	static net::Message makeKeyAlert(
 		const QString &message, const QString &key,
+		const QJsonObject &params = {});
+
+	static net::Message makeKeyAlertReset(
+		const QString &message, const QString &reset, const QString &key,
 		const QJsonObject &params = {});
 
 	// They key is used for correlation in thin sessions, where caughtup

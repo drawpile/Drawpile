@@ -240,6 +240,21 @@ net::Message ServerReply::makeKeyAlert(
 	return make(data);
 }
 
+net::Message ServerReply::makeKeyAlertReset(
+	const QString &message, const QString &reset, const QString &key,
+	const QJsonObject &params)
+{
+	QJsonObject data = {
+		{QStringLiteral("type"), QStringLiteral("alert")},
+		{QStringLiteral("message"), message},
+		{QStringLiteral("reset"), reset},
+		{QStringLiteral("T"), key}};
+	if(!params.isEmpty()) {
+		data[QStringLiteral("P")] = params;
+	}
+	return make(data);
+}
+
 net::Message ServerReply::makeCatchup(int count, int key)
 {
 	QJsonObject data{

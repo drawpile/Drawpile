@@ -63,6 +63,7 @@ Document::Document(
 	, m_baseResetThreshold(0)
 	, m_sessionIdleTimeLimit(0)
 	, m_sessionOutOfSpace(false)
+	, m_preparingReset(false)
 {
 	// Initialize
 	m_client = new net::Client(this, this);
@@ -99,6 +100,9 @@ Document::Document(
 	connect(
 		m_client, &net::Client::serverDisconnected, this,
 		&Document::serverDisconnected);
+	connect(
+		m_client, &net::Client::serverPreparingReset, this,
+		&Document::setPreparingReset);
 
 	connect(
 		m_client, &net::Client::needSnapshot, this, &Document::snapshotNeeded);
@@ -174,6 +178,7 @@ void Document::onSessionResetted()
 {
 	Q_ASSERT(m_canvas);
 	setSessionOutOfSpace(false);
+	setPreparingReset(false);
 	if(!m_canvas) {
 		qWarning("sessionResetted: no canvas!");
 		return;
@@ -303,6 +308,15 @@ void Document::onServerDisconnect()
 	setSessionOpword(false);
 	setSessionOutOfSpace(false);
 	emit compatibilityModeChanged(false);
+	setPreparingReset(false);
+}
+
+void Document::setPreparingReset(bool preparing)
+{
+	if(preparing != m_preparingReset) {
+		m_preparingReset = preparing;
+		emit preparingResetChanged(preparing);
+	}
 }
 
 void Document::onSessionConfChanged(const QJsonObject &config)

@@ -9,6 +9,7 @@
 #include "libclient/net/message.h"
 #include "libclient/utils/funstuff.h"
 #include "libclient/utils/html.h"
+#include "libshared/net/servercmd.h"
 #include <QDateTime>
 #include <QIcon>
 #include <QLabel>
@@ -704,17 +705,33 @@ void ChatWidget::setPinnedMessage(const QString &message)
 	}
 }
 
-void ChatWidget::systemMessage(const QString &message, bool alert)
+void ChatWidget::systemMessage(const QString &message)
+{
+	receiveSystemMessage(message, int(net::ServerMessageType::Message));
+}
+
+void ChatWidget::receiveSystemMessage(const QString &message, int type)
 {
 	const bool wasAtEnd = d->isAtEnd();
 	const QString safetext =
 		htmlutils::linkify(htmlutils::emojify(message.toHtmlEscaped()));
-	if(alert) {
+	bool alert;
+	switch(type) {
+	case int(net::ServerMessageType::Alert):
+		alert = true;
 		d->publicChat().appendMessageCompact(
 			0, QString(), safetext, false, true);
 		emit expandRequested();
-	} else {
+		break;
+	case int(net::ServerMessageType::ResetNotice):
+		alert = false;
+		d->publicChat().appendMessageCompact(
+			0, QString(), safetext, true, false);
+		break;
+	default:
+		alert = false;
 		d->publicChat().appendNotification(safetext);
+		break;
 	}
 
 	notification::Event event =

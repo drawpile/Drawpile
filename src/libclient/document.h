@@ -185,6 +185,7 @@ public:
 	}
 
 	bool isSessionOutOfSpace() const { return m_sessionOutOfSpace; }
+	bool isPreparingReset() const { return m_preparingReset; }
 
 	void setRecordOnConnect(const QString &filename)
 	{
@@ -231,6 +232,7 @@ signals:
 	void baseResetThresholdChanged(double threshold);
 	void autoResetTooLarge(int maxSize);
 	void sessionOutOfSpaceChanged(bool outOfSpace);
+	void preparingResetChanged(bool preparingReset);
 	void sessionResetState(const drawdance::CanvasState &canvasState);
 
 	void catchupProgress(int percent);
@@ -290,6 +292,7 @@ private slots:
 		bool join, bool compatibilityMode, const QString &joinPassword,
 		const QString &authId);
 	void onServerDisconnect();
+	void setPreparingReset(bool preparing);
 	void onSessionResetted();
 	void onSessionOutOfSpace();
 
@@ -387,6 +390,7 @@ private:
 	int m_sessionIdleTimeLimit;
 
 	bool m_sessionOutOfSpace;
+	bool m_preparingReset;
 
 #ifdef HAVE_CLIPBOARD_EMULATION
 	static QMimeData clipboardData;

@@ -99,7 +99,7 @@ void Client::connectToServer(
 				}
 				break;
 			}
-			emit serverMessage(chat, true);
+			emit serverMessage(chat, int(ServerMessageType::Alert));
 		});
 
 	if(loginhandler->mode() == LoginHandler::Mode::HostRemote)
@@ -379,12 +379,21 @@ void Client::handleServerReply(const ServerReply &msg, int handledMessageIndex)
 		qWarning("got login message while in session!");
 		break;
 	case ServerReply::ReplyType::Message:
-	case ServerReply::ReplyType::Alert:
 	case ServerReply::ReplyType::Error:
 	case ServerReply::ReplyType::Result:
 		emit serverMessage(
-			translateMessage(reply), msg.type == ServerReply::ReplyType::Alert);
+			translateMessage(reply), int(ServerMessageType::Message));
 		break;
+	case ServerReply::ReplyType::Alert: {
+		bool preparing = reply[QStringLiteral("reset")].toString() ==
+						 QStringLiteral("prepare");
+		emit serverPreparingReset(preparing);
+		emit serverMessage(
+			translateMessage(reply),
+			int(preparing ? ServerMessageType::ResetNotice
+						  : ServerMessageType::Alert));
+		break;
+	}
 	case ServerReply::ReplyType::Log: {
 		QString time =
 			QDateTime::fromString(reply["timestamp"].toString(), Qt::ISODate)
