@@ -1,0 +1,16 @@
+Description: Trying to build ffmpeg on Windows dies with some weird cmd syntax
+error. I've tried to make it use bash instead, since that's apparently what
+it wants to use, but no luck. This is a random workaround I found at
+https://trac.ffmpeg.org/ticket/9360 that seems to work okay.
+
+--- a/configure
++++ b/configure
+@@ -5018,7 +5018,7 @@
+         else
+             _ident=$($_cc --version 2>/dev/null | head -n1 | tr -d '\r')
+         fi
+-        _DEPCMD='$(DEP$(1)) $(DEP$(1)FLAGS) $($(1)DEP_FLAGS) $< 2>&1 | awk '\''/including/ { sub(/^.*file: */, ""); gsub(/\\/, "/"); if (!match($$0, / /)) print "$@:", $$0 }'\'' > $(@:.o=.d)'
++        _DEPCMD='$(DEP$(1)) $(DEP$(1)FLAGS) $($(1)DEP_FLAGS) $< 2>&1 | grep "^Note:.*file:" | sed -e "s^.*file: *^$@: ^" | tr \\\\ / > $(@:.o=.d)'
+         _DEPFLAGS='$(CPPFLAGS) $(CFLAGS) -showIncludes -Zs'
+         _cflags_speed="-O2"
+         _cflags_size="-O1"

@@ -34,6 +34,13 @@ inputs:
     description: Additional arguments to the Qt build script
     type: string
 
+  ffmpeg_pre_build:
+    description: Command to run before building ffmpeg dependencies
+    type: string
+  ffmpeg_args:
+    description: Additional arguments to the ffmpeg dependencies build script
+    type: string
+
   other_pre_build:
     description: Command to run before building other dependencies
     type: string
@@ -44,6 +51,14 @@ inputs:
   qt:
     description: Version of Qt to build
     required: true
+    type: string
+  libx264:
+    description: Commit of libx264 to build
+    default: '31e19f92f00c7003fa115047ce50978bc98c3a0d'
+    type: string
+  ffmpeg:
+    description: Version of ffmpeg to build
+    default: '7.0.1'
     type: string
   libmicrohttpd:
     description: Version of libmicrohttpd to build
@@ -79,7 +94,7 @@ outputs:
     description: >
       A semicolon-separated list of all generated dependency trees suitable for
       use with `CMAKE_PREFIX_PATH`
-    value: ${{ github.workspace }}/${{ inputs.path }}/qt;${{ github.workspace }}/${{ inputs.path }}/other
+    value: ${{ github.workspace }}/${{ inputs.path }}/qt;${{ github.workspace }}/${{ inputs.path }}/ffmpeg;${{ github.workspace }}/${{ inputs.path }}/other
 
 runs:
   using: composite
@@ -98,6 +113,23 @@ runs:
           "-DTARGET_ARCH=${{ inputs.target_arch }}"
           ${{ inputs.qt_args }}
           -P .github/scripts/build-qt.cmake
+
+    - uses: ./.github/actions/build-and-cache
+      with:
+        name: ffmpeg dependencies
+        cache_key: ffmpeg-${{ inputs.cache_key }}-${{ inputs.libx264 }}-${{ inputs.ffmpeg }}
+        path: ${{ inputs.path }}/ffmpeg
+        pre_build: ${{ inputs.ffmpeg_pre_build }}
+        build: >
+          cmake
+          -DBUILD_TYPE=${{ inputs.build_type }}
+          "-DLIBX264=${{ inputs.libx264 }}"
+          "-DFFMPEG=${{ inputs.ffmpeg }}"
+          "-DCMAKE_PREFIX_PATH=${{ github.workspace }}/${{ inputs.path }}/qt"
+          "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/${{ inputs.path }}/ffmpeg"
+          "-DTARGET_ARCH=${{ inputs.target_arch }}"
+          ${{ inputs.ffmpeg_args }}
+          -P .github/scripts/build-ffmpeg.cmake
 
     - uses: ./.github/actions/build-and-cache
       with:

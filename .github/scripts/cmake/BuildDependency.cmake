@@ -139,7 +139,9 @@ endfunction()
 
 function(_build_automake build_type target_bits source_dir)
 	set(configure "${source_dir}/configure")
-	cmake_parse_arguments(PARSE_ARGV 2 ARG "ASSIGN_PREFIX;BROKEN_INSTALL;NEEDS_VC_WIN_TARGET" "INSTALL_TARGET" "MAKE_FLAGS")
+	cmake_parse_arguments(
+		PARSE_ARGV 2 ARG "ASSIGN_HOST;ASSIGN_PREFIX;BROKEN_INSTALL;FFMPEG_QUIRKS;NEEDS_VC_WIN_TARGET;WIN32_CC_CL"
+		"INSTALL_TARGET;PKG_CONFIG_PATH;WIN32_CONFIGURE_COMMAND;WIN32_MAKE_COMMAND" "MAKE_FLAGS")
 	_parse_flags("${build_type}" "${source_dir}" configure configure_flags env ${ARG_UNPARSED_ARGUMENTS})
 
 	if(NPROCS EQUAL 0 OR WIN32)
@@ -156,18 +158,40 @@ function(_build_automake build_type target_bits source_dir)
 
 	# https://developer.android.com/ndk/guides/other_build_systems#autoconf
 	if(CMAKE_ANDROID_NDK)
-		get_android_env(android_env abi "${CMAKE_ANDROID_NDK}" "${CMAKE_ANDROID_ARCH_ABI}" "${ANDROID_PLATFORM}")
+		get_android_env(
+			android_env android_ffmpeg_flags abi "${CMAKE_ANDROID_NDK}"
+			"${CMAKE_ANDROID_ARCH_ABI}" "${ANDROID_PLATFORM}")
 		list(APPEND env ${android_env})
-		list(APPEND configure_flags --host "${abi}")
+		# ffmpeg's build system looks like autoconf, but isn't actually
+		if(ARG_FFMPEG_QUIRKS)
+			list(APPEND configure_flags ${android_ffmpeg_flags})
+			list(APPEND env "AS_FLAGS=--target=${abi}")
+		else()
+			if(ARG_ASSIGN_HOST)
+				list(APPEND configure_flags "--host=${abi}")
+			else()
+				list(APPEND configure_flags --host "${abi}")
+			endif()
+		endif()
 	endif()
+
+	if(ARG_PKG_CONFIG_PATH)
+		# pkg-config chokes on backslashes in PKG_CONFIG_PATH, so convert those
+		# to forward slashes. TO_CMAKE_PATH does that, despite its odd name.
+		file(TO_CMAKE_PATH "${ARG_PKG_CONFIG_PATH}" pkg_config_path)
+		list(APPEND env "PKG_CONFIG_PATH=${pkg_config_path}")
+	endif()
+
+	# pkg-config also chokes on backslashes in the prefix.
+	file(TO_CMAKE_PATH "${CMAKE_INSTALL_PREFIX}" prefix)
 
 	# OpenSSL has a terrible configurator that only accepts `--prefix=foo` and
 	# does not bail out when it receives a bogus argument, so if you send
 	# `--prefix foo` it will just install to its default prefix!
 	if(ARG_ASSIGN_PREFIX)
-		set(prefix "--prefix=${CMAKE_INSTALL_PREFIX}")
+		set(prefix "--prefix=${prefix}")
 	else()
-		set(prefix "--prefix" "${CMAKE_INSTALL_PREFIX}")
+		set(prefix "--prefix" "${prefix}")
 	endif()
 
 	# OpenSSL somehow manages to find the 64bit compiler even when everything is
@@ -189,13 +213,26 @@ function(_build_automake build_type target_bits source_dir)
 		set(install install)
 	endif()
 
-	# On Windows, the only usable thing here is OpenSSL's pseudo-automake Perl
-	# script. Shebangs don't work on Windows, so we have to run it explicitly.
+	# Windows needs special care because shebangs don't work there and it has
+	# both GNU Make, which regular autoconf uses, and Microsoft's nmake, which
+	# OpenSSL uses. They are mutually incompatible of course.
 	if(WIN32)
-		set(make "nmake")
+		if(ARG_WIN32_CC_CL)
+			list(APPEND env "CC=cl")
+		endif()
+		if(ARG_WIN32_CONFIGURE_COMMAND)
+			set(winconfigure "${ARG_WIN32_CONFIGURE_COMMAND}")
+		else()
+			set(winconfigure "bash")
+		endif()
+		if(ARG_WIN32_MAKE_COMMAND)
+			set(make "${ARG_WIN32_MAKE_COMMAND}")
+		else()
+			set(make "make")
+		endif()
 		execute_process(
 			COMMAND "${CMAKE_COMMAND}" -E env ${env}
-				perl "${configure}" ${prefix} ${configure_flags}
+				"${winconfigure}" "${configure}" ${prefix} ${configure_flags}
 			COMMAND_ECHO STDOUT
 			WORKING_DIRECTORY "${source_dir}"
 			COMMAND_ERROR_IS_FATAL ANY
@@ -333,7 +370,7 @@ function(_build_cmake build_type target_bits source_dir)
 	endif()
 endfunction()
 
-function(get_android_env _out_env _out_triplet ndk abi platform)
+function(get_android_env _out_env _out_ffmpeg_flags _out_triplet ndk abi platform)
 	if(abi STREQUAL "armeabi-v7a")
 		set(triplet armv7a-linux-androideabi)
 	elseif(abi STREQUAL "arm64-v8a")
@@ -366,6 +403,18 @@ function(get_android_env _out_env _out_triplet ndk abi platform)
 		"LD=${toolchain}/bin/ld"
 		"RANLIB=${toolchain}/bin/llvm-ranlib"
 		"STRIP=${toolchain}/bin/llvm-strip"
+		PARENT_SCOPE
+	)
+	set(${_out_ffmpeg_flags}
+		"--ar=${toolchain}/bin/llvm-ar"
+		"--cc=${cc}"
+		"--cxx=${cc}++"
+		"--nm=${toolchain}/bin/llvm-nm"
+		"--ranlib=${toolchain}/bin/llvm-ranlib"
+		"--strip=${toolchain}/bin/llvm-strip"
+		"--extra-cflags=-DANDROID_NDK -fPIC -DANDROID -D__ANDROID__"
+		"--extra-ldflags=-lc -lm -ldl -llog -landroid -Wl,--hash-style=both -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libunwind.a"
+		"--sysroot=${CMAKE_SYSROOT}"
 		PARENT_SCOPE
 	)
 	set(${_out_triplet} ${triplet} PARENT_SCOPE)
