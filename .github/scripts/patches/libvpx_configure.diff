@@ -1,0 +1,114 @@
+Description: libvpx tries to run some shell scripts directly on Windows, which
+in our CI just triggers the brilliant WSL shim binaries that do nothing but
+moan about WSL not being installed. We have a working bash in our PATH though,
+so we just run them with that instead.
+
+It also inexplicably builds both debug and release versions on Windows with no
+way to turn it off, so we remove the debug configuration since that's a
+complete waste of time.
+
+It also uses pkg-config's Libs.private attribute, which ffmpeg doesn't
+understand, so we replace that with the regular Libs version.
+
+--- a/build/make/gen_msvs_vcxproj.sh
++++ b/build/make/gen_msvs_vcxproj.sh
+@@ -90,7 +90,7 @@
+                     open_tag CustomBuild \
+                         Include="$f"
+                     for plat in "${platforms[@]}"; do
+-                        for cfg in Debug Release; do
++                        for cfg in Release; do
+                             tag_content Message "Assembling %(Filename)%(Extension)" \
+                                 Condition="'\$(Configuration)|\$(Platform)'=='$cfg|$plat'"
+                             tag_content Command "$(eval echo \$asm_${cfg}_cmdline) -o \$(IntDir)$objf" \
+@@ -295,7 +295,7 @@
+     open_tag ItemGroup \
+         Label="ProjectConfigurations"
+     for plat in "${platforms[@]}"; do
+-        for config in Debug Release; do
++        for config in Release; do
+             open_tag ProjectConfiguration \
+                 Include="$config|$plat"
+             tag_content Configuration $config
+@@ -338,7 +338,7 @@
+         Project="\$(VCTargetsPath)\\Microsoft.Cpp.Default.props"
+ 
+     for plat in "${platforms[@]}"; do
+-        for config in Release Debug; do
++        for config in Release; do
+             open_tag PropertyGroup \
+                 Condition="'\$(Configuration)|\$(Platform)'=='$config|$plat'" \
+                 Label="Configuration"
+@@ -389,7 +389,7 @@
+ 
+     for plat in "${platforms[@]}"; do
+         plat_no_ws=`echo $plat | sed 's/[^A-Za-z0-9_]/_/g'`
+-        for config in Debug Release; do
++        for config in Release; do
+             open_tag PropertyGroup \
+                 Condition="'\$(Configuration)|\$(Platform)'=='$config|$plat'"
+             tag_content OutDir "\$(SolutionDir)$plat_no_ws\\\$(Configuration)\\"
+@@ -407,7 +407,7 @@
+     done
+ 
+     for plat in "${platforms[@]}"; do
+-        for config in Debug Release; do
++        for config in Release; do
+             open_tag ItemDefinitionGroup \
+                 Condition="'\$(Configuration)|\$(Platform)'=='$config|$plat'"
+             if [ "$name" == "vpx" ]; then
+--- a/configure
++++ b/configure
+@@ -749,7 +749,7 @@
+              enable_feature solution
+              vs_version=${tgt_cc##vs}
+              VCPROJ_SFX=vcxproj
+-             gen_vcproj_cmd=${source_path}/build/make/gen_msvs_vcxproj.sh
++             gen_vcproj_cmd="bash ${source_path}/build/make/gen_msvs_vcxproj.sh"
+              enabled werror && gen_vcproj_cmd="${gen_vcproj_cmd} --enable-werror"
+              all_targets="${all_targets} solution"
+              INLINE="__inline"
+--- a/libs.mk
++++ b/libs.mk
+@@ -153,7 +153,6 @@
+ INSTALL_MAPS += src/%     $(SRC_PATH_BARE)/%
+ ifeq ($(CONFIG_MSVS),yes)
+ INSTALL_MAPS += $(foreach p,$(VS_PLATFORMS),$(LIBSUBDIR)/$(p)/%  $(p)/Release/%)
+-INSTALL_MAPS += $(foreach p,$(VS_PLATFORMS),$(LIBSUBDIR)/$(p)/%  $(p)/Debug/%)
+ endif
+ 
+ CODEC_SRCS-yes += build/make/version.sh
+@@ -227,7 +226,7 @@
+ 
+ vpx.def: $(call enabled,CODEC_EXPORTS)
+ 	@echo "    [CREATE] $@"
+-	$(qexec)$(SRC_PATH_BARE)/build/make/gen_msvs_def.sh\
++	$(qexec)bash $(SRC_PATH_BARE)/build/make/gen_msvs_def.sh\
+             --name=vpx\
+             --out=$@ $^
+ CLEAN-OBJS += vpx.def
+@@ -401,11 +400,10 @@
+ 	$(qexec)echo 'Version: $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)' >> $@
+ 	$(qexec)echo 'Requires:' >> $@
+ 	$(qexec)echo 'Conflicts:' >> $@
+-	$(qexec)echo 'Libs: -L$${libdir} -lvpx -lm' >> $@
+ ifeq ($(HAVE_PTHREAD_H),yes)
+-	$(qexec)echo 'Libs.private: -lm -lpthread' >> $@
++	$(qexec)echo 'Libs: -L$${libdir} -lvpx -lm -lpthread' >> $@
+ else
+-	$(qexec)echo 'Libs.private: -lm' >> $@
++	$(qexec)echo 'Libs: -L$${libdir} -lvpx -lm' >> $@
+ endif
+ 	$(qexec)echo 'Cflags: -I$${includedir}' >> $@
+ INSTALL-LIBS-yes += $(LIBSUBDIR)/pkgconfig/vpx.pc
+--- a/solution.mk
++++ b/solution.mk
+@@ -15,7 +15,7 @@
+ 
+ vpx.sln: $(wildcard *.$(VCPROJ_SFX))
+ 	@echo "    [CREATE] $@"
+-	$(SRC_PATH_BARE)/build/make/gen_msvs_sln.sh \
++	bash $(SRC_PATH_BARE)/build/make/gen_msvs_sln.sh \
+             $(if $(filter vpx.$(VCPROJ_SFX),$^),$(VPX_RDEPS)) \
+             --dep=test_libvpx:gtest \
+             --ver=$(CONFIG_VS_VERSION)\

@@ -86,7 +86,7 @@ jobs:
             ffmpeg_pre_build: >
               sudo apt-get update &&
               sudo apt-get install --no-install-recommends
-              nasm
+              nasm yasm
             other_pre_build: >
               sudo apt-get update &&
               sudo apt-get install --no-install-recommends
@@ -257,6 +257,8 @@ jobs:
               choco install gperf jom winflexbison3 &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\bison.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_bison.exe
+            ffmpeg_pre_build: >
+              choco install yasm
             # Copying files is a disgusting hack because windeployqt does not
             # search PATH to find DLLs and it gets confused by QtKeychain having
             # a Qt prefix and thinks it is part of Qt and tries to process it
@@ -279,6 +281,8 @@ jobs:
               choco install gperf jom winflexbison3 &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\bison.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_bison.exe
+            ffmpeg_pre_build: >
+              choco install yasm
             # Copying files is a disgusting hack because windeployqt does not
             # search PATH to find DLLs and it gets confused by QtKeychain having
             # a Qt prefix and thinks it is part of Qt and tries to process it
@@ -299,6 +303,8 @@ jobs:
               choco install gperf jom winflexbison3 &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\bison.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_bison.exe
+            ffmpeg_pre_build: >
+              choco install yasm
             # Copying files is a disgusting hack because windeployqt does not
             # search PATH to find DLLs and it gets confused by QtKeychain having
             # a Qt prefix and thinks it is part of Qt and tries to process it
@@ -337,6 +343,11 @@ jobs:
         with:
           platform: win${{ matrix.arch == 'x86_64' && '64' || '32' }}
         if: runner.os == 'Windows'
+
+      - name: Install YASM for building libvpx in macOS
+        run: |
+          brew install yasm
+        if: runner.os == 'macOS'
 
       - name: Install pkg-config for building and linking to ffmpeg in Windows
         run: |

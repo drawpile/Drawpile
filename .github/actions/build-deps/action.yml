@@ -56,6 +56,10 @@ inputs:
     description: Commit of libx264 to build
     default: '31e19f92f00c7003fa115047ce50978bc98c3a0d'
     type: string
+  libvpx:
+    description: Version of libvpx to build
+    default: '1.14.1'
+    type: string
   ffmpeg:
     description: Version of ffmpeg to build
     default: '7.0.1'
@@ -117,13 +121,14 @@ runs:
     - uses: ./.github/actions/build-and-cache
       with:
         name: ffmpeg dependencies
-        cache_key: ffmpeg-${{ inputs.cache_key }}-${{ inputs.libx264 }}-${{ inputs.ffmpeg }}
+        cache_key: ffmpeg-${{ inputs.cache_key }}-${{ inputs.libx264 }}-${{ inputs.libvpx }}-${{ inputs.ffmpeg }}
         path: ${{ inputs.path }}/ffmpeg
         pre_build: ${{ inputs.ffmpeg_pre_build }}
         build: >
           cmake
           -DBUILD_TYPE=${{ inputs.build_type }}
           "-DLIBX264=${{ inputs.libx264 }}"
+          "-DLIBVPX=${{ inputs.libvpx }}"
           "-DFFMPEG=${{ inputs.ffmpeg }}"
           "-DCMAKE_PREFIX_PATH=${{ github.workspace }}/${{ inputs.path }}/qt"
           "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/${{ inputs.path }}/ffmpeg"

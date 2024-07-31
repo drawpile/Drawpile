@@ -140,8 +140,8 @@ endfunction()
 function(_build_automake build_type target_bits source_dir)
 	set(configure "${source_dir}/configure")
 	cmake_parse_arguments(
-		PARSE_ARGV 2 ARG "ASSIGN_HOST;ASSIGN_PREFIX;BROKEN_INSTALL;FFMPEG_QUIRKS;NEEDS_VC_WIN_TARGET;WIN32_CC_CL"
-		"INSTALL_TARGET;PKG_CONFIG_PATH;WIN32_CONFIGURE_COMMAND;WIN32_MAKE_COMMAND" "MAKE_FLAGS")
+		PARSE_ARGV 2 ARG "ASSIGN_HOST;ASSIGN_PREFIX;BROKEN_INSTALL;NEEDS_VC_WIN_TARGET;WIN32_CC_CL"
+		"INSTALL_TARGET;PKG_CONFIG_PATH;QUIRKS;WIN32_CONFIGURE_COMMAND;WIN32_MAKE_COMMAND" "MAKE_FLAGS")
 	_parse_flags("${build_type}" "${source_dir}" configure configure_flags env ${ARG_UNPARSED_ARGUMENTS})
 
 	if(NPROCS EQUAL 0 OR WIN32)
@@ -162,10 +162,18 @@ function(_build_automake build_type target_bits source_dir)
 			android_env android_ffmpeg_flags abi "${CMAKE_ANDROID_NDK}"
 			"${CMAKE_ANDROID_ARCH_ABI}" "${ANDROID_PLATFORM}")
 		list(APPEND env ${android_env})
-		# ffmpeg's build system looks like autoconf, but isn't actually
-		if(ARG_FFMPEG_QUIRKS)
-			list(APPEND configure_flags ${android_ffmpeg_flags})
-			list(APPEND env "AS_FLAGS=--target=${abi}")
+		if(ARG_QUIRKS)
+			if(ARG_QUIRKS STREQUAL ffmpeg)
+				# ffmpeg's build system looks like autoconf, but isn't actually
+				list(APPEND configure_flags ${android_ffmpeg_flags})
+				list(APPEND env "AS_FLAGS=--target=${abi}")
+			elseif(ARG_QUIRKS STREQUAL libvpx)
+				# Dito for libvpx, but a different kind of weird. We don't need
+				# to pass anything extra, it's alread taken care of by
+				# specifying a target platform in the caller.
+			else()
+				message(FATAL_ERROR "Unknown QUIRKS: '${ARG_QUIRKS}'")
+			endif()
 		else()
 			if(ARG_ASSIGN_HOST)
 				list(APPEND configure_flags "--host=${abi}")

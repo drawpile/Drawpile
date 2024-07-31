@@ -35,6 +35,9 @@ find({wanted => sub { push @paths, $_ if -f && /\.pc\z/ }, no_chdir => 1}, @ARGV
 for my $path (@paths) {
     print "Fixing $path\n";
     my $content = slurp($path);
+    # Fix broken stuff that ffmpeg puts into the pc file.
     $content =~ s/^Libs:\s*(.+?)\s*$/fix_libs($1)/gme;
+    # Fix broken stuff *we* put into the pc file because ffmpeg is broken.
+    $content =~ s/^Cflags:\s*-MD\b\s*/CFlags: /g;
     spew($path, $content);
 }
