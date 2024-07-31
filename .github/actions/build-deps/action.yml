@@ -60,6 +60,10 @@ inputs:
     description: Version of libvpx to build
     default: '1.14.1'
     type: string
+  libwebp:
+    description: Version of libwebp to build
+    default: '1.4.0'
+    type: string
   ffmpeg:
     description: Version of ffmpeg to build
     default: '7.0.1'
@@ -121,7 +125,7 @@ runs:
     - uses: ./.github/actions/build-and-cache
       with:
         name: ffmpeg dependencies
-        cache_key: ffmpeg-${{ inputs.cache_key }}-${{ inputs.libx264 }}-${{ inputs.libvpx }}-${{ inputs.ffmpeg }}
+        cache_key: ffmpeg-${{ inputs.cache_key }}-${{ inputs.libx264 }}-${{ inputs.libvpx }}-${{ inputs.libwebp }}-${{ inputs.ffmpeg }}
         path: ${{ inputs.path }}/ffmpeg
         pre_build: ${{ inputs.ffmpeg_pre_build }}
         build: >
@@ -129,6 +133,7 @@ runs:
           -DBUILD_TYPE=${{ inputs.build_type }}
           "-DLIBX264=${{ inputs.libx264 }}"
           "-DLIBVPX=${{ inputs.libvpx }}"
+          "-DLIBWEBP=${{ inputs.libwebp }}"
           "-DFFMPEG=${{ inputs.ffmpeg }}"
           "-DCMAKE_PREFIX_PATH=${{ github.workspace }}/${{ inputs.path }}/qt"
           "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/${{ inputs.path }}/ffmpeg"

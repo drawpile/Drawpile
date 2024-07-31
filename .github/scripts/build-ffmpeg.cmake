@@ -10,6 +10,8 @@ set(LIBX264 "31e19f92f00c7003fa115047ce50978bc98c3a0d" CACHE STRING
 	"The commit of libx264 to build")
 set(LIBVPX "1.14.1" CACHE STRING
 	"The version of libvpx to build")
+set(LIBWEBP "1.4.0" CACHE STRING
+	"The version of libwebp to build")
 set(FFMPEG "7.0.1" CACHE STRING
 	"The version of ffmpeg to build")
 option(KEEP_ARCHIVES "Keep downloaded archives instead of deleting them" OFF)
@@ -19,6 +21,46 @@ set(TARGET_ARCH "x86_64" CACHE STRING
 	"Target architecture (x86, x86_64, arm32, arm64)")
 
 include(BuildDependency)
+
+if(LIBWEBP)
+	set(libwebp_cmake_args
+		-DBUILD_SHARED_LIBS=OFF
+		-DWEBP_BUILD_ANIM_UTILS=OFF
+		-DWEBP_BUILD_CWEBP=OFF
+		-DWEBP_BUILD_DWEBP=OFF
+		-DWEBP_BUILD_GIF2WEBP=OFF
+		-DWEBP_BUILD_IMG2WEBP=OFF
+		-DWEBP_BUILD_VWEBP=OFF
+		-DWEBP_BUILD_WEBPINFO=OFF
+		-DWEBP_BUILD_LIBWEBPMUX=ON
+		-DWEBP_BUILD_WEBPMUX=OFF
+		-DWEBP_BUILD_EXTRAS=OFF
+		-DWEBP_BUILD_WEBP_JS=OFF
+		-DWEBP_NEAR_LOSSLESS=ON
+	)
+
+	# libwebp will happily pass a gcc-style warning parameter to MSVC.
+	if(WIN32)
+		list(APPEND libwebp_cmake_args -DWEBP_ENABLE_WUNUSED_RESULT=OFF)
+	else()
+		list(APPEND libwebp_cmake_args -DWEBP_ENABLE_WUNUSED_RESULT=ON)
+	endif()
+
+	build_dependency(libwebp ${LIBWEBP} ${BUILD_TYPE}
+		URL https://github.com/webmproject/libwebp/archive/refs/tags/v@version@.tar.gz
+		TARGET_ARCH "${TARGET_ARCH}"
+		VERSIONS
+			1.4.0
+			SHA384=64e06cfd52d1c9142d3849506d414fb2cfd067dcd05b45b6ad7bd386c35722f90a0108746e99dccff629cad2d889e6ed
+		ALL_PLATFORMS
+			CMAKE
+				ALL
+					${libwebp_cmake_args}
+		PATCHES
+			ALL
+				patches/libwebp_pc.diff
+	)
+endif()
 
 if(LIBVPX)
 	set(libvpx_configure_args
@@ -179,6 +221,7 @@ if(FFMPEG)
 		--disable-zlib
 		--enable-libx264
 		--enable-libvpx
+		--enable-libwebp
 		--disable-encoders
 		--disable-decoders
 		--disable-muxers
@@ -192,8 +235,11 @@ if(FFMPEG)
 		--disable-filters
 		--enable-encoder=libx264
 		--enable-encoder=libvpx_vp8
+		--enable-encoder=libwebp
+		--enable-encoder=libwebp_anim
 		--enable-muxer=mp4
 		--enable-muxer=webm
+		--enable-muxer=webp
 	)
 
 	if(ANDROID)
