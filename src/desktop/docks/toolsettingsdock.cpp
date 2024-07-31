@@ -168,7 +168,7 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	tools::BrushSettings *bs = brushSettings();
 	connect(
 		bs, &tools::BrushSettings::colorChanged, this,
-		&ToolSettings::setForegroundColor);
+		&ToolSettings::setForegroundColor, Qt::QueuedConnection);
 	connect(
 		bs, &tools::BrushSettings::pixelSizeChanged, this, [this](int size) {
 			if(hasBrushCursor(d->currentTool)) {
@@ -582,8 +582,10 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 
 	d->currentTool = tool;
 	ts->setActiveTool(tool);
+	emit toolChanged(d->currentTool);
 
 	ts->setForeground(d->foregroundColor);
+	emit foregroundColorChanged(d->foregroundColor);
 	ts->pushSettings();
 
 	d->widgetStack->setCurrentWidget(ts->getUi());
@@ -599,7 +601,10 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 		titleWidget->setKeepButtonSpace(ts->keepTitleBarButtonSpace());
 	}
 
-	triggerUpdate();
+	emit sizeChanged(ts->getSize());
+	emit subpixelModeChanged(
+		ts->getSubpixelMode(), ts->isSquare(), ts->requiresOutline());
+	brushSettings()->triggerUpdate();
 }
 
 void ToolSettings::triggerUpdate()
