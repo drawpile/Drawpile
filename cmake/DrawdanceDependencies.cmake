@@ -2,35 +2,37 @@
 
 dp_find_package(ZLIB MODULE REQUIRED)
 
-find_package(PkgConfig QUIET)
-if(PKGCONFIG_FOUND)
-    pkg_check_modules(LIBAV IMPORTED_TARGET GLOBAL
-        libavcodec
-        libavformat
-        libavutil
-        libswscale
-    )
-    if(TARGET PkgConfig::LIBAV)
-        include(CMakePrintHelpers)
-        cmake_print_properties(TARGETS PkgConfig::LIBAV PROPERTIES
-            INTERFACE_COMPILE_DEFINITIONS
-            INTERFACE_COMPILE_FEATURES
-            INTERFACE_COMPILE_OPTIONS
-            INTERFACE_INCLUDE_DIRECTORIES
-            INTERFACE_LINK_DEPENDS
-            INTERFACE_LINK_DIRECTORIES
-            INTERFACE_LINK_LIBRARIES
-            INTERFACE_LINK_LIBRARIES_DIRECT
-            INTERFACE_LINK_LIBRARIES_DIRECT_EXCLUDE
-            INTERFACE_LINK_OPTIONS
-            INTERFACE_SYSTEM_INCLUDE_DIRECTORIES
+if(NOT EMSCRIPTEN)
+    find_package(PkgConfig QUIET)
+    if(PKGCONFIG_FOUND)
+        pkg_check_modules(LIBAV IMPORTED_TARGET GLOBAL
+            libavcodec
+            libavformat
+            libavutil
+            libswscale
         )
-        add_library(LIBAV::LIBAV ALIAS PkgConfig::LIBAV)
+        if(TARGET PkgConfig::LIBAV)
+            include(CMakePrintHelpers)
+            cmake_print_properties(TARGETS PkgConfig::LIBAV PROPERTIES
+                INTERFACE_COMPILE_DEFINITIONS
+                INTERFACE_COMPILE_FEATURES
+                INTERFACE_COMPILE_OPTIONS
+                INTERFACE_INCLUDE_DIRECTORIES
+                INTERFACE_LINK_DEPENDS
+                INTERFACE_LINK_DIRECTORIES
+                INTERFACE_LINK_LIBRARIES
+                INTERFACE_LINK_LIBRARIES_DIRECT
+                INTERFACE_LINK_LIBRARIES_DIRECT_EXCLUDE
+                INTERFACE_LINK_OPTIONS
+                INTERFACE_SYSTEM_INCLUDE_DIRECTORIES
+            )
+            add_library(LIBAV::LIBAV ALIAS PkgConfig::LIBAV)
+        endif()
+    else()
+        message(WARNING "PkgConfig NOT FOUND")
     endif()
-else()
-    message(WARNING "PkgConfig NOT FOUND")
+    add_feature_info("Video export via libav" "TARGET LIBAV::LIBAV" "")
 endif()
-add_feature_info("Video export via libav" "TARGET LIBAV::LIBAV" "")
 
 if(IMAGE_IMPL STREQUAL "LIBS")
     dp_find_package(PNG REQUIRED)
