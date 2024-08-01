@@ -6,6 +6,7 @@ QT_VERSION_MINOR=7
 QT_VERSION_PATCH=2
 QT_VERSION="$QT_VERSION_MAJOR.$QT_VERSION_MINOR.$QT_VERSION_PATCH"
 LIBZIP_VERSION='1.10.1'
+LIBWEBP_VERSION='1.4.0'
 
 SCRIPT_DIR="$(readlink -f "$(dirname "$0")")"
 if [[ -z "$SCRIPT_DIR" ]]; then
@@ -83,6 +84,33 @@ rm "libzip-$LIBZIP_VERSION.tar.xz"
     -G Ninja
 cmake --build "libzip-$LIBZIP_VERSION-build"
 cmake --install "libzip-$LIBZIP_VERSION-build"
+
+wget -O "libwebp-$LIBWEBP_VERSION.tar.gz" "https://github.com/webmproject/libwebp/archive/refs/tags/v$LIBWEBP_VERSION.tar.gz"
+tar xf "libwebp-$LIBWEBP_VERSION.tar.gz"
+rm "libwebp-$LIBWEBP_VERSION.tar.gz"
+"$SCRIPT_DIR/$build_dir/emprefix/bin/qt-cmake" \
+    "-DCMAKE_BUILD_TYPE=$cmake_build_type" \
+    -DWEBP_BUILD_ANIM_UTILS=OFF \
+    -DWEBP_BUILD_CWEBP=OFF \
+    -DWEBP_BUILD_DWEBP=OFF \
+    -DWEBP_BUILD_GIF2WEBP=OFF \
+    -DWEBP_BUILD_IMG2WEBP=OFF \
+    -DWEBP_BUILD_VWEBP=OFF \
+    -DWEBP_BUILD_WEBPINFO=OFF \
+    -DWEBP_BUILD_LIBWEBPMUX=ON \
+    -DWEBP_BUILD_WEBPMUX=OFF \
+    -DWEBP_BUILD_EXTRAS=OFF \
+    -DWEBP_BUILD_WEBP_JS=OFF \
+    -DWEBP_NEAR_LOSSLESS=ON \
+    -DWEBP_ENABLE_WUNUSED_RESULT=ON \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_C_FLAGS=-pthread \
+    -DCMAKE_INSTALL_PREFIX="$EMPREFIX_DIR" \
+    -S "libwebp-$LIBWEBP_VERSION" \
+    -B "libwebp-$LIBWEBP_VERSION-build" \
+    -G Ninja
+cmake --build "libwebp-$LIBWEBP_VERSION-build"
+cmake --install "libwebp-$LIBWEBP_VERSION-build"
 
 set +xe
 

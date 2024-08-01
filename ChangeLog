@@ -96,6 +96,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Don't remove layer censors when resetting sessions hosted on the builtin server. Thanks O_O for reporting.
  * Server Feature: Allow changing session founder names through the admin API.
  * Feature: Don't pop open chat for session auto-resets, just show a note in the corner of the canvas. Needs both client and server to be updated.
+ * Feature: Support reading and writing WEBP files.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

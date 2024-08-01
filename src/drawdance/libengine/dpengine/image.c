@@ -24,6 +24,7 @@
 #include "image_jpeg.h"
 #include "image_png.h"
 #include "image_transform.h"
+#include "image_webp.h"
 #include "paint.h"
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
@@ -70,6 +71,14 @@ static bool guess_jpeg(const unsigned char *buf, size_t size)
         && ((buf[3] >= 0xe0 && buf[3] <= 0xef) || buf[3] == 0xdb);
 }
 
+static bool guess_webp(const unsigned char *buf, size_t size)
+{
+    unsigned char riff_sig[] = {0x52, 0x49, 0x46, 0x46};
+    unsigned char webp_sig[] = {0x57, 0x45, 0x42, 0x50};
+    return size >= 12 && memcmp(buf, riff_sig, sizeof(riff_sig)) == 0
+        && memcmp(buf + 8, webp_sig, sizeof(webp_sig)) == 0;
+}
+
 DP_ImageFileType DP_image_guess(const unsigned char *buf, size_t size)
 {
     if (guess_png(buf, size)) {
@@ -78,6 +87,9 @@ DP_ImageFileType DP_image_guess(const unsigned char *buf, size_t size)
     else if (guess_jpeg(buf, size)) {
         return DP_IMAGE_FILE_TYPE_JPEG;
     }
+    else if (guess_webp(buf, size)) {
+        return DP_IMAGE_FILE_TYPE_WEBP;
+    }
     else {
         return DP_IMAGE_FILE_TYPE_UNKNOWN;
     }
@@ -85,7 +97,7 @@ DP_ImageFileType DP_image_guess(const unsigned char *buf, size_t size)
 
 static DP_Image *read_image_guess(DP_Input *input, DP_ImageFileType *out_type)
 {
-    unsigned char buf[8];
+    unsigned char buf[12];
     bool error;
     size_t read = DP_input_read(input, buf, sizeof(buf), &error);
     if (error) {
@@ -102,6 +114,9 @@ static DP_Image *read_image_guess(DP_Input *input, DP_ImageFileType *out_type)
         break;
     case DP_IMAGE_FILE_TYPE_JPEG:
         read_fn = DP_image_jpeg_read;
+        break;
+    case DP_IMAGE_FILE_TYPE_WEBP:
+        read_fn = DP_image_webp_read;
         break;
     default:
         DP_error_set("Could not guess image format");
@@ -128,6 +143,9 @@ DP_Image *DP_image_new_from_file(DP_Input *input, DP_ImageFileType type,
     case DP_IMAGE_FILE_TYPE_JPEG:
         assign_type(out_type, DP_IMAGE_FILE_TYPE_JPEG);
         return DP_image_jpeg_read(input);
+    case DP_IMAGE_FILE_TYPE_WEBP:
+        assign_type(out_type, DP_IMAGE_FILE_TYPE_WEBP);
+        return DP_image_webp_read(input);
     default:
         assign_type(out_type, DP_IMAGE_FILE_TYPE_UNKNOWN);
         DP_error_set("Unknown image file type %d", (int)type);
@@ -581,6 +599,12 @@ DP_Image *DP_image_read_jpeg(DP_Input *input)
     return DP_image_jpeg_read(input);
 }
 
+DP_Image *DP_image_read_webp(DP_Input *input)
+{
+    DP_ASSERT(input);
+    return DP_image_webp_read(input);
+}
+
 bool DP_image_write_png(DP_Image *img, DP_Output *output)
 {
     DP_ASSERT(img);
@@ -594,5 +618,13 @@ bool DP_image_write_jpeg(DP_Image *img, DP_Output *output)
     DP_ASSERT(img);
     DP_ASSERT(output);
     return DP_image_jpeg_write(output, DP_image_width(img),
+                               DP_image_height(img), DP_image_pixels(img));
+}
+
+bool DP_image_write_webp(DP_Image *img, DP_Output *output)
+{
+    DP_ASSERT(img);
+    DP_ASSERT(output);
+    return DP_image_webp_write(output, DP_image_width(img),
                                DP_image_height(img), DP_image_pixels(img));
 }

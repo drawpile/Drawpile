@@ -65,10 +65,15 @@ const DP_LoadFormat *DP_load_supported_formats(void)
     static const char *ora_ext[] = {"ora", NULL};
     static const char *png_ext[] = {"png", NULL};
     static const char *jpeg_ext[] = {"jpg", "jpeg", NULL};
+    static const char *webp_ext[] = {"webp", NULL};
     static const char *psd_ext[] = {"psd", NULL};
     static const DP_LoadFormat formats[] = {
-        {"OpenRaster", ora_ext},         {"PNG", png_ext}, {"JPEG", jpeg_ext},
-        {"Photoshop Document", psd_ext}, {NULL, NULL},
+        {"OpenRaster", ora_ext},
+        {"PNG", png_ext},
+        {"JPEG", jpeg_ext},
+        {"WEBP", webp_ext},
+        {"Photoshop Document", psd_ext},
+        {NULL, NULL},
     };
     return formats;
 }
@@ -1239,6 +1244,8 @@ DP_SaveImageType DP_load_guess(const unsigned char *buf, size_t size)
         return DP_SAVE_IMAGE_PNG;
     case DP_IMAGE_FILE_TYPE_JPEG:
         return DP_SAVE_IMAGE_JPEG;
+    case DP_IMAGE_FILE_TYPE_WEBP:
+        return DP_SAVE_IMAGE_WEBP;
     default:
         return DP_SAVE_IMAGE_UNKNOWN;
     }
@@ -1303,7 +1310,7 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
         return NULL;
     }
 
-    unsigned char buf[8];
+    unsigned char buf[12];
     bool error;
     size_t read = DP_input_read(input, buf, sizeof(buf), &error);
     if (error) {
@@ -1340,6 +1347,9 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
                                flat_image_layer_title, out_result);
     case DP_SAVE_IMAGE_JPEG:
         return load_flat_image(dc, input, DP_IMAGE_FILE_TYPE_JPEG,
+                               flat_image_layer_title, out_result);
+    case DP_SAVE_IMAGE_WEBP:
+        return load_flat_image(dc, input, DP_IMAGE_FILE_TYPE_WEBP,
                                flat_image_layer_title, out_result);
     default:
         assign_load_result(out_result, DP_LOAD_RESULT_INTERNAL_ERROR);

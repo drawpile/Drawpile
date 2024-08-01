@@ -14,6 +14,7 @@ set -xe
     "-DCMAKE_BUILD_TYPE=$cmake_build_type" \
     "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=$cmake_interprocedural_optimization" \
     "-DCMAKE_INSTALL_PREFIX=${DP_INSTALL_PREFIX:-"$installem_dir"}" \
+    "-DCMAKE_PREFIX_PATH=$SCRIPT_DIR/$build_dir/emprefix" \
     -DBUILTINSERVER=OFF \
     -DCLANG_TIDY=OFF \
     -DTESTS=OFF \

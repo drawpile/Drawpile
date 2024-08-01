@@ -39,6 +39,8 @@ elseif(IMAGE_IMPL STREQUAL "QT")
     dp_find_package("Qt${QT_VERSION_MAJOR}" COMPONENTS Gui REQUIRED)
 endif()
 
+dp_find_package(dpwebp REQUIRED)
+
 if(NOT WIN32)
     dp_find_package(Threads REQUIRED)
 endif()

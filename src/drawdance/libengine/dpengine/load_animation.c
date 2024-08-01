@@ -355,7 +355,7 @@ DP_CanvasState *DP_load_animation_layers(
         return NULL;
     }
 
-    unsigned char buf[8];
+    unsigned char buf[12];
     bool error;
     size_t read = DP_input_read(input, buf, sizeof(buf), &error);
     if (error) {

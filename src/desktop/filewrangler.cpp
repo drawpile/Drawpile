@@ -547,6 +547,9 @@ bool FileWrangler::confirmFlatten(
 	case DP_SAVE_IMAGE_PNG:
 		format = QStringLiteral("PNG");
 		break;
+	case DP_SAVE_IMAGE_WEBP:
+		format = QStringLiteral("WEBP");
+		break;
 	case DP_SAVE_IMAGE_JPEG:
 		format = QStringLiteral("JPEG");
 		break;

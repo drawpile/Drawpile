@@ -34,6 +34,7 @@ typedef enum DP_ImageFileType {
     DP_IMAGE_FILE_TYPE_GUESS,
     DP_IMAGE_FILE_TYPE_PNG,
     DP_IMAGE_FILE_TYPE_JPEG,
+    DP_IMAGE_FILE_TYPE_WEBP,
     DP_IMAGE_FILE_TYPE_UNKNOWN = DP_IMAGE_FILE_TYPE_GUESS,
 } DP_ImageFileType;
 
@@ -109,9 +110,11 @@ DP_UPixelFloat DP_image_sample_color_at_with(int width, int height,
 
 DP_Image *DP_image_read_png(DP_Input *input);
 DP_Image *DP_image_read_jpeg(DP_Input *input);
+DP_Image *DP_image_read_jpeg(DP_Input *input);
 
 bool DP_image_write_png(DP_Image *img, DP_Output *output) DP_MUST_CHECK;
 bool DP_image_write_jpeg(DP_Image *img, DP_Output *output) DP_MUST_CHECK;
+bool DP_image_write_webp(DP_Image *img, DP_Output *output) DP_MUST_CHECK;
 
 
 #endif

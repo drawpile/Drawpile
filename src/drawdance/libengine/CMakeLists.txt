@@ -19,6 +19,7 @@ dp_target_sources(dpengine
     dpengine/flood_fill.c
     dpengine/image.c
     dpengine/image_transform.c
+    dpengine/image_webp.c
     dpengine/key_frame.c
     dpengine/layer_content.c
     dpengine/layer_group.c
@@ -71,6 +72,7 @@ dp_target_sources(dpengine
     dpengine/image_jpeg.h
     dpengine/image_png.h
     dpengine/image_transform.h
+    dpengine/image_webp.h
     dpengine/key_frame.h
     dpengine/layer_content.h
     dpengine/layer_group.h
@@ -107,8 +109,8 @@ dp_target_sources(dpengine
 
 target_include_directories(dpengine PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 target_link_libraries(dpengine PUBLIC
-    mypaint uthash qgrayraster jo_gifx parson dpmsg dpcommon ZLIB::ZLIB
-    psd_sdk "Qt${QT_VERSION_MAJOR}::Core" "Qt${QT_VERSION_MAJOR}::Xml"
+    mypaint uthash qgrayraster jo_gifx parson dpmsg dpcommon dpwebp::dpwebp
+    ZLIB::ZLIB psd_sdk "Qt${QT_VERSION_MAJOR}::Core" "Qt${QT_VERSION_MAJOR}::Xml"
 )
 
 if(ZIP_IMPL STREQUAL "LIBZIP")

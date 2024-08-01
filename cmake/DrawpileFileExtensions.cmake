@@ -47,6 +47,13 @@ set(SUPPORTED_FILE_TYPES
 		EXT jpg jpeg
 
 	TYPE
+		NAME WEBP image
+		GROUP FLAT_IMAGE
+		MIME image/webp
+		UTI org.webmproject.webp
+		EXT webp
+
+	TYPE
 		NAME Photoshop document
 		GROUP LAYERED_IMAGE
 		MIME image/vnd.adobe.photoshop

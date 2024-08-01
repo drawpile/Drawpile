@@ -61,10 +61,15 @@ const DP_SaveFormat *DP_save_supported_formats(void)
     static const char *ora_ext[] = {"ora", NULL};
     static const char *png_ext[] = {"png", NULL};
     static const char *jpeg_ext[] = {"jpg", "jpeg", NULL};
+    static const char *webp_ext[] = {"webp", NULL};
     static const char *psd_ext[] = {"psd", NULL};
     static const DP_SaveFormat formats[] = {
-        {"OpenRaster", ora_ext},         {"PNG", png_ext}, {"JPEG", jpeg_ext},
-        {"Photoshop Document", psd_ext}, {NULL, NULL},
+        {"OpenRaster", ora_ext},
+        {"PNG", png_ext},
+        {"JPEG", jpeg_ext},
+        {"WEBP", webp_ext},
+        {"Photoshop Document", psd_ext},
+        {NULL, NULL},
     };
     return formats;
 }
@@ -96,6 +101,9 @@ DP_SaveImageType DP_save_image_type_guess(const char *path)
     }
     else if (DP_str_equal_lowercase(ext, "psd")) {
         return DP_SAVE_IMAGE_PSD;
+    }
+    else if (DP_str_equal_lowercase(ext, "webp")) {
+        return DP_SAVE_IMAGE_WEBP;
     }
     else {
         DP_error_set("Unknown image format in '%s'", path);
@@ -738,6 +746,18 @@ static DP_SaveResult save_jpeg(DP_Image *img, DP_Output *output)
     }
 }
 
+static DP_SaveResult save_webp(DP_Image *img, DP_Output *output)
+{
+    bool ok = DP_image_write_webp(img, output);
+    if (ok) {
+        return DP_SAVE_RESULT_SUCCESS;
+    }
+    else {
+        DP_warn("Save WEBP: %s", DP_error());
+        return DP_SAVE_RESULT_WRITE_ERROR;
+    }
+}
+
 static void blend_annotation(DP_Pixel8 *restrict dst, DP_Rect dst_rect,
                              const DP_Pixel8 *restrict src, DP_Rect src_rect)
 {
@@ -824,6 +844,10 @@ static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
                                bake_annotation, user);
     case DP_SAVE_IMAGE_JPEG:
         return save_flat_image(cs, dc, NULL, path, save_jpeg,
+                               DP_view_mode_filter_make_default(),
+                               bake_annotation, user);
+    case DP_SAVE_IMAGE_WEBP:
+        return save_flat_image(cs, dc, NULL, path, save_webp,
                                DP_view_mode_filter_make_default(),
                                bake_annotation, user);
     case DP_SAVE_IMAGE_PSD:
