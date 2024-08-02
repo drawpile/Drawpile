@@ -97,6 +97,7 @@ Unreleased Version 2.2.2-pre
  * Server Feature: Allow changing session founder names through the admin API.
  * Feature: Don't pop open chat for session auto-resets, just show a note in the corner of the canvas. Needs both client and server to be updated.
  * Feature: Support reading and writing WEBP files.
+ * Feature: Enable high-DPI scaling by default on all platforms except Android. Can be disabled in the user interface preferences if needed.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

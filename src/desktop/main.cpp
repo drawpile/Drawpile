@@ -927,11 +927,14 @@ static int applyRenderSettingsFrom(const QString &path)
 	QSettings cfg(path, QSettings::IniFormat);
 
 #ifndef HAVE_QT_COMPAT_DEFAULT_HIGHDPI_SCALING
-	QString enabledKey = QStringLiteral("enabled");
-	if(cfg.contains(enabledKey)) {
-		bool enabled = cfg.value(enabledKey).toBool();
-		QApplication::setAttribute(Qt::AA_EnableHighDpiScaling, enabled);
-	}
+#	ifdef Q_OS_ANDROID
+	bool highDpiScalingDefault = false;
+#	else
+	bool highDpiScalingDefault = true;
+#	endif
+	QApplication::setAttribute(
+		Qt::AA_EnableHighDpiScaling,
+		cfg.value(QStringLiteral("enabled"), highDpiScalingDefault).toBool());
 #endif
 
 	if(qgetenv("QT_SCALE_FACTOR").isEmpty()) {
