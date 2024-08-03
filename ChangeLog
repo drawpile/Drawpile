@@ -99,6 +99,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Support reading and writing WEBP files.
  * Feature: Enable high-DPI scaling by default on all platforms except Android. Can be disabled in the user interface preferences if needed.
  * Fix: Default kinetic scrolling on Android to touch instead of left click, since the latter conflicts with stuff like dragging layers.
+ * Fix: Allow importing role lists larger than 100 entries, since public sessions have those. Thanks kale for reporting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

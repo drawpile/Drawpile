@@ -5,7 +5,6 @@
 #include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/document.h"
-#include "libclient/net/announcementlist.h"
 #include "libclient/net/banlistmodel.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include "libclient/utils/listservermodel.h"
@@ -25,6 +24,32 @@
 #include <dpcommon/platform_qt.h>
 
 namespace dialogs {
+
+class SessionSettingsDialog::AuthListImport {
+public:
+	AuthListImport(const QJsonArray &list)
+		: m_count(list.size())
+	{
+		constexpr compat::sizetype CHUNK_SIZE = 100;
+		if(m_count > 0) {
+			m_lists.resize(m_count / CHUNK_SIZE + 1);
+			for(compat::sizetype i = 0; i < m_count; ++i) {
+				m_lists[i / CHUNK_SIZE].append(list[i]);
+			}
+		}
+	}
+
+	bool isEmpty() const { return m_lists.isEmpty(); }
+	QJsonArray takeFirst() { return m_lists.takeFirst(); }
+	compat::sizetype count() const { return m_count; }
+	void markAsDone() { m_done = true; }
+	bool isDone() const { return m_done; }
+
+private:
+	QVector<QJsonArray> m_lists;
+	const compat::sizetype m_count;
+	bool m_done = false;
+};
 
 SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	: QDialog(parent)
@@ -260,6 +285,13 @@ void SessionSettingsDialog::showEvent(QShowEvent *event)
 {
 	QDialog::showEvent(event);
 	reloadSettings();
+}
+
+void SessionSettingsDialog::closeEvent(QCloseEvent *event)
+{
+	if(!isEnabled()) {
+		event->ignore();
+	}
 }
 
 void SessionSettingsDialog::reloadSettings()
@@ -934,12 +966,7 @@ void SessionSettingsDialog::importAuthList()
 				return;
 			}
 
-			compat::sizetype count = list.size();
-			if(count != 0) {
-				emit requestUpdateAuthList(list);
-			}
-			utils::showInformation(
-				this, tr("Role Import"), tr("%n role(s) imported.", "", count));
+			importAuthListChunked(list);
 		});
 }
 
@@ -1015,6 +1042,36 @@ bool SessionSettingsDialog::readAuthListImport(
 	}
 
 	return true;
+}
+
+void SessionSettingsDialog::importAuthListChunked(const QJsonArray &list)
+{
+	setEnabled(false);
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	AuthListImport *import = new AuthListImport(list);
+	QTimer *timer = new QTimer(this);
+	timer->setInterval(2000);
+	timer->setSingleShot(false);
+	connect(timer, &QTimer::timeout, this, [this, import, timer]() {
+		if(!import->isDone()) {
+			if(import->isEmpty()) {
+				import->markAsDone();
+				timer->stop();
+				timer->deleteLater();
+				utils::showInformation(
+					this, tr("Role Import"),
+					tr("%n role(s) imported.", "", import->count()));
+			} else {
+				emit requestUpdateAuthList(import->takeFirst());
+			}
+		}
+	});
+	connect(timer, &QTimer::destroyed, this, [import, this]() {
+		delete import;
+		setEnabled(true);
+		QApplication::restoreOverrideCursor();
+	});
+	timer->start();
 }
 
 QModelIndex SessionSettingsDialog::getSelectedAuthListEntry()

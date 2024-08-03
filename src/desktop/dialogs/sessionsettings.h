@@ -98,8 +98,11 @@ private slots:
 
 protected:
 	void showEvent(QShowEvent *event) override;
+	void closeEvent(QCloseEvent *event) override;
 
 private:
+	class AuthListImport;
+
 	static const QByteArray authExportPrefix;
 
 	void initPermissionComboBoxes();
@@ -109,6 +112,7 @@ private:
 	bool checkBanImport(const QString &bans, QString &outErrorMessage) const;
 	bool
 	readAuthListImport(const QByteArray &content, QJsonArray &outList) const;
+	void importAuthListChunked(const QJsonArray &list);
 	QModelIndex getSelectedAuthListEntry();
 	void authListChangeParam(const QString &key, bool value);
 
