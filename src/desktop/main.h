@@ -57,6 +57,10 @@ public:
 
 	int canvasImplementation() const { return m_canvasImplementation; }
 	static int getCanvasImplementationFor(int canvasImplementation);
+	bool isCanvasImplementationFromSettings() const
+	{
+		return m_canvasImplementationFromSettings;
+	}
 
 	// Returns a pair of (pixel size, physical size) of the primary screen.
 	static QPair<QSize, QSizeF> screenResolution();
@@ -89,6 +93,7 @@ private:
 	desktop::settings::Settings m_settings;
 	notification::Notifications *m_notifications;
 	int m_canvasImplementation;
+	bool m_canvasImplementationFromSettings = false;
 	utils::StateDatabase *m_state = nullptr;
 	utils::Recents *m_recents = nullptr;
 	QString m_originalSystemStyle;

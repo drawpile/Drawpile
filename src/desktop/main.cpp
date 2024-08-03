@@ -349,6 +349,7 @@ void DrawpileApp::initCanvasImplementation(const QString &arg)
 			qWarning("Unknown --renderer '%s'", qUtf8Printable(arg));
 		}
 		canvasImplementation = m_settings.renderCanvas();
+		m_canvasImplementationFromSettings = true;
 	}
 	m_canvasImplementation = getCanvasImplementationFor(canvasImplementation);
 }

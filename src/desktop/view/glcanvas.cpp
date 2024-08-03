@@ -981,6 +981,32 @@ void GlCanvas::initializeGL()
 	}
 	d->initialized = true;
 
+#ifndef __EMSCRIPTEN__
+	// Calling OpenGL functions can crash if the driver is sufficiently bad.
+	// Set it to the default renderer temporarily so the user doesn't get stuck.
+	desktop::settings::Settings *settings = nullptr;
+	int originalRenderCanvas = -1;
+	if(dpApp().isCanvasImplementationFromSettings()) {
+		constexpr int DEFAULT_RENDER_CANVAS =
+			int(libclient::settings::CanvasImplementation::Default);
+		settings = &dpApp().settings();
+		originalRenderCanvas = settings->renderCanvas();
+		if(originalRenderCanvas == DEFAULT_RENDER_CANVAS) {
+			qCWarning(
+				lcDpGlCanvas,
+				"Canvas implementation is already set to the default %d",
+				DEFAULT_RENDER_CANVAS);
+		} else {
+			qCDebug(
+				lcDpGlCanvas,
+				"Reverting canvas implementation from %d to default %d",
+				originalRenderCanvas, DEFAULT_RENDER_CANVAS);
+			settings->setRenderCanvas(DEFAULT_RENDER_CANVAS);
+			settings->trySubmit();
+		}
+	}
+#endif
+
 	QOpenGLContext *context = QOpenGLContext::currentContext();
 	QOpenGLFunctions *f = context->functions();
 
@@ -1081,6 +1107,15 @@ void GlCanvas::initializeGL()
 	}
 
 	d->dirty = Private::Dirty();
+
+#ifndef __EMSCRIPTEN__
+	if(settings && originalRenderCanvas >= 0) {
+		qCDebug(
+			lcDpGlCanvas, "Restoring canvas implementation to %d",
+			originalRenderCanvas);
+		settings->setRenderCanvas(originalRenderCanvas);
+	}
+#endif
 }
 
 void GlCanvas::paintGL()
