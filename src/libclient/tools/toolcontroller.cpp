@@ -116,14 +116,18 @@ TransformTool *ToolController::transformTool()
 	return static_cast<TransformTool *>(m_toolbox[Tool::TRANSFORM]);
 }
 
+void ToolController::finishActiveTool()
+{
+	endDrawing(false, false);
+	if(m_activeTool->isMultipart()) {
+		m_activeTool->finishMultipart();
+	}
+}
+
 void ToolController::setActiveTool(Tool::Type tool)
 {
 	if(activeTool() != tool) {
-		endDrawing(false, false);
-		if(m_activeTool->isMultipart()) {
-			m_activeTool->finishMultipart();
-		}
-
+		finishActiveTool();
 		m_activeTool = getTool(tool);
 		emit toolCapabilitiesChanged(
 			activeToolAllowColorPick(), activeToolAllowToolAdjust(),

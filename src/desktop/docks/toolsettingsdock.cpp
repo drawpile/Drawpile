@@ -168,7 +168,7 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	tools::BrushSettings *bs = brushSettings();
 	connect(
 		bs, &tools::BrushSettings::colorChanged, this,
-		&ToolSettings::setForegroundColor, Qt::QueuedConnection);
+		&ToolSettings::setForegroundColor);
 	connect(
 		bs, &tools::BrushSettings::pixelSizeChanged, this, [this](int size) {
 			if(hasBrushCursor(d->currentTool)) {
@@ -580,6 +580,9 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 		return;
 	}
 
+	if(tool != d->currentTool) {
+		d->ctrl->finishActiveTool();
+	}
 	d->currentTool = tool;
 	ts->setActiveTool(tool);
 	emit toolChanged(d->currentTool);

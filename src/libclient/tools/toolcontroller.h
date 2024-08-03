@@ -71,6 +71,7 @@ public:
 	explicit ToolController(net::Client *client, QObject *parent = nullptr);
 	~ToolController() override;
 
+	void finishActiveTool();
 	void setActiveTool(Tool::Type tool);
 	Tool::Type activeTool() const;
 
