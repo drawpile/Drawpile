@@ -122,7 +122,7 @@
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation type="unfinished"></translation>
+        <translation>СКМ</translation>
     </message>
     <message>
         <location line="+16"/>
