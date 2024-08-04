@@ -22,6 +22,115 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.2.2-beta.2" type="development" date="2024-08-04">
+      <url>https://drawpile.net/news/release-2.2.2-beta.2/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Feature: Allow choosing a different cursor for erase and alpha locked brushes. Thanks Hipofiz and Rylan for suggesting.</li>
+          <li>Server Fix: Properly sever connections on read, write and timeout errors.</li>
+          <li>Fix: Load annotations from ORA files saved by Drawpile 2.1 properly. Thanks RyanMolyneux for reporting.</li>
+          <li>Feature: Ignore inputs with invalid pressure during strokes. Thanks Lunalatte for reporting.</li>
+          <li>Server Fix: Handle sessions running out of space better, they should no longer end up in an unrecoverable state. The messages in chat are also now translatable, more informative and don't get spammed for every command. Thanks Bluestrings and Charmandrigo for reporting.</li>
+          <li>Feature: Lock canvas when the session is out of space, showing an appropriate message in the corner, rather than letting you continue drawing. The server needs to be updated for this to be available.</li>
+          <li>Server Fix: Make catchup not take pointlessly long when the session is out of space.</li>
+          <li>Feature: Add a message to the reset dialog that you need to be an operator to reset the session, since it's not too clear why the button is disabled otherwise.</li>
+          <li>Feature: Make fill source selection a set of buttons for merged image, merged without background and layer, using the dropdown only for the latter thereof. The checked button will be remembered. Thanks Blozzom, Bluestrings and Meru for suggesting.</li>
+          <li>Feature: Default redo to both Ctrl+Y and Ctrl+Shift+Z on Windows, Linux and the browser. Thanks Crow for suggesting.</li>
+          <li>Fix: Brighten up transparency checkerboard to be a bit easier on the eyes. Thanks Crow for suggesting.</li>
+          <li>Server Feature: Allow registered users to replace themselves when rejoining a session, rather than telling them that their own name is in use. Avoids having to wait for their old self to time out if their internet flakes. Thanks Crow for suggesting.</li>
+          <li>Fix: Don't fail server compilation when turning off webadmin or WebSockets. Thanks leegean for reporting.</li>
+          <li>Fix: Save and load annotation vertical alignment to and from ORA files.</li>
+          <li>Fix: Put a transparent background behind flat images, rather than using white. Thanks lungy for reporting.</li>
+          <li>Fix: Make pasting images from Drawpile into other applications retain transparency on Windows. This is really a bug in those other programs, they pick the wrong format by default, but whatever. Thanks lungy for reporting.</li>
+          <li>Feature: Allow configuring the transparency checkerboard colors in the user interface preferences. Thanks lungy for suggesting.</li>
+          <li>Fix: Don't reselect and scroll back to default layer after interacting with the layer list by picking a layer or toggling visibility. Thanks MachKerman and Ben for reporting.</li>
+          <li>Fix: Load PNGs even when they have corrupt checksums. Thanks xxxx for reporting.</li>
+          <li>Feature: Allow copying multiple entries from the event log. Thanks Bluestrings for reporting.</li>
+          <li>Feature: Allow toggling vertical sync in the user interface preferences. Default is off, because it can cause input lag.</li>
+          <li>Feature: Web browser support for the client.</li>
+          <li>Feature: New hardware and software canvas renderers. The hardware renderer is much faster than the old one, especially in the browser. Uses Direct3D on Windows, WebGL in the browser and OpenGL on all other platforms. The software renderer is slightly faster than the old one, useful for cursed hardware or drivers that cause input lag or visual glitches. This is an experimental feature and can be enabled in the General preferences under Renderer.</li>
+          <li>Feature: Add system information dialog under Tools &gt; Developer Tools &gt; System Information.</li>
+          <li>Feature: Hide user pointers when they get close to your cursor. Can be toggled under View &gt; User Pointers &gt; Hide From Cursor. Thanks Crowley for suggesting.</li>
+          <li>Feature: Allow filling non-continuous areas. Thanks Ben for suggesting.</li>
+          <li>Fix: Make rotation via View &gt; Rotation &gt; Rotate Canvas (Counter-)Clockwise work properly when it's mirrored or flipped. Thanks Ragged for reporting.</li>
+          <li>Feature: Allow disabling the zoom, rotation, mirror and flip on-canvas notices in the User Interface preferences. Thanks Partack for suggesting.</li>
+          <li>Feature: Allow configuring user pointer stay time through View → User Pointers → Stay Time. Thanks johannesCmayer for suggesting.</li>
+          <li>Feature: Allow prompting for layer properties when creating a layer. Can be turned on in the User Interface preferences. Thanks Ben for suggesting.</li>
+          <li>Fix: Focus existing layer properties dialog if one exists for the layer that properties are requested for.</li>
+          <li>Feature: Name layers after the username of the creator by default.</li>
+          <li>Fix: Don't use bilinear interpolation when selection is only moved, rotated by a multiple of 90 degrees, flipped or mirrored, to avoid unnecessary blurring. Thanks lungy for reporting.</li>
+          <li>Feature: Don't require restarting the application when changing kinetic scrolling settings.</li>
+          <li>Fix: Change default canvas size to 2000x2000, because 800x600 is a bit outdated. Thanks MorrowShore for for contributing.</li>
+          <li>Feature: Don't require restarting the application to switch between desktop and small screen mode. There's also a "dynamic" option now, which will change the mode based on the size of the window, enabled by default on Android and in the browser.</li>
+          <li>Feature: Pan or "hand" tool. Lets you move the canvas around by clicking. Thanks DeeJii for suggesting.</li>
+          <li>Fix: Don't move view position when pressing side buttons in small screen mode.</li>
+          <li>Feature: Show a proper explanation when you can't join a session.</li>
+          <li>Fix: Make autosave interval actually be in minutes, not in seconds because that's ridiculous. Thanks D'mitri for reporting.</li>
+          <li>Feature: Add -U/--uncensor parameter to drawpile-timelapse to allow revealing censored layers.</li>
+          <li>Fix: Reduce contrast on censor tile stripes to make them less annoying to look at.</li>
+          <li>Server Feature: When you pass an option that's not compiled in, the error message will not inform you of that fact, rather than just saying you passed an unknown option with no further information.</li>
+          <li>Feature: On Windows and Linux, new windows now open in a separate process, since that's more efficient and resilient. Can be disabled by setting the DRAWPILE_SINGLE_PROCESS environment variable. Thanks Bluestrings for suggesting.</li>
+          <li>Fix: The main window should now properly restore to its previous position even when that's on a secondary screen. Thanks Moe for reporting.</li>
+          <li>Removed Feature: Roomcodes. They are a vestige from a time where Drawpile only had a single, central listing server. Nowadays nobody uses these anymore, invite links are the replacement.</li>
+          <li>Feature: Disable global smoothing for mouse drawing by default, since that really only make sense for tablets and touch. Can be toggled in the input preferences. Thanks nililfin for suggesting.</li>
+          <li>Feature: Always show drawing tools toolbar in small screen mode. Thanks Blozzom for suggesting.</li>
+          <li>Fix: Increase contrast on depressed buttons in dark themes. This is a patch to Qt. Thanks MorrowShore for reporting.</li>
+          <li>Fix: Switch out the icon for the extension buttons on squashed menus and toolbars so that they're actually visible in dark themes. This is a patch to Qt.</li>
+          <li>Feature: Make canvas zoom slider use the same increments as the mouse wheel and zoom in/out actions, since stepping by 1% is not useful. Thanks zheida for suggesting.</li>
+          <li>Fix: Work around a crash on Linux that happens when hosting with busted versions of Qt 6.6+. Thanks Vanska for reporting.</li>
+          <li>Fix: Allow tabbing the main window on macOS again, for some reason Qt disabled it. This is a patch to Qt. Thanks mira for reporting.</li>
+          <li>Feature: Pixel ruler, available under View &gt; Show Rulers. Thanks fluttershydev for contributing.</li>
+          <li>Fix: Ignore mouse clicks caused by briefly touching the canvas on some devices on Windows. Thanks sfin for reporting.</li>
+          <li>Feature: Translate links copied out of the browser version of Drawpile into something that can be joined when they are pasted into the join page.</li>
+          <li>Feature: Better small-screen mode handling. The toggle items now no longer overlap, dialogs get maximized if appropriate, the start and settings dialogs get arranged horizontally.</li>
+          <li>Feature: Rework selections and transforms entirely. They're now distinct operations. Selections participate in the undo stack.</li>
+          <li>Feature: Allow toggling between accurate and fast transform previews. The former is the current kind of preview that actually gets previewed on the layer, the latter is like in Drawpile 2.1, where it's just a vector image drawn on top of everything.</li>
+          <li>Feature: Allow picking blend modes and opacity when pasting, stamping and transforming. Thanks blurymind for suggesting.</li>
+          <li>Feature: Show layouts action in dock menus. Thanks Elisa for suggesting.</li>
+          <li>Fix: Set TCP_NODELAY on sockets to reduce unnecessary latency.</li>
+          <li>Feature: Build option -DPROXY_STYLE=ON to fix the bad contrast in dark themes when not building a patched version of Qt yourself.</li>
+          <li>Fix: Disable the image memory limit when using Qt 6, because that breaks the loading large files. Thanks LiterallyMe for reporting.</li>
+          <li>Feature: Indicate fill source in layer list.</li>
+          <li>Fix: Make canvas lock and layers not lock tools that don't actually act on them.</li>
+          <li>Feature: Allow transforming multiple layers at once.</li>
+          <li>Feature: Make creating a key frame layer copy the layer structure of the closest frame if that's assigned to a layer group. Thanks Ausjamcian for suggesting.</li>
+          <li>Fix: Don't overwrite last file on save after resetting the canvas to an external image. Thanks Bluestrings for reporting.</li>
+          <li>Fix: Ignore bogus mouse clicks emitted by some tablets after briefly tapping the pen on them. Thanks Ausjamcian for reporting.</li>
+          <li>Fix: Make the window fit itself to the screen harder in the browser and on Android. There's also an option under View -&gt; Fit to Screen now to manually force it to do so. Thanks Sidca for reporting and Meru for testing.</li>
+          <li>Feature: Allow importing animation frames from multiple files and as layers from PSD files, to be found under File -&gt; Import. Thanks Meru, BulletPepper, Ben and RubberRoss for suggesting.</li>
+          <li>Feature: Extend animation export to be a dialog where you pick the format. You can now export frames to a ZIP, allowing Android and the browser to save a series of frames as well. Exporting to MP4 and WEBM videos as well as animated WEBP is also implemented via ffmpeg's libraries.</li>
+          <li>Feature: Magic wand select tool. Basically a fill tool, but for selections. Thanks ChristianJohnsten for suggesting.</li>
+          <li>Fix: Properly remember NSFM setting in host dialog. Thanks Bluestrings and cupcake for reporting.</li>
+          <li>Fix: Properly check NSFM setting in host dialog based on title if that is configured in the parental controls preferences. Thanks Bluestrings for reporting.</li>
+          <li>Fix: Behind blend mode now does opacity math correctly. Thanks Blozzom for reporting.</li>
+          <li>Fix: Allow cancelling fill tool with right-click even when that's bound to something else. Thanks SadColor for reporting.</li>
+          <li>Feature: The fill tool now previews fills instead of doing them immediately, allowing cancelling and changing layers before applying it. You can also pick more blend modes, change the opacity and fill the entire selection with it now.</li>
+          <li>Fix: Make layer picking work properly in frame mode, it picked the bottom-most instead of the top-most one.</li>
+          <li>Feature: Add View &gt; Show Selection Mask, which lets you view selections as a solid mask instead of an outline. This lets you see opacity properly.</li>
+          <li>Removed Feature: Zeroconf support, an obscure LAN-only discovery thing that wasn't working anymore anyway.</li>
+          <li>Fix: Make the fill tool not feather along canvas edge. Thanks Meru for reporting.</li>
+          <li>Server Feature: Allow specifying idleOverride and allowWeb in session templates. Thanks MorrowShore for suggesting.</li>
+          <li>Feature: Allow shrinking fills and magic wand selections. Thanks Meru for suggesting.</li>
+          <li>Feature: New dialog Selection &gt; Expand/Shrink/Feather Selection that alters selections accordingly. Thanks MorrowShore for suggesting.</li>
+          <li>Feature: Zooming with keyboard shortcuts now zooms in on the cursor when it's pointing at the canvas. If you don't like this, there's new shortcuts that always zoom on the center, which you can bind in the preferences. Thanks Chryssabliss for suggesting.</li>
+          <li>Feature: Make header and footer buttons on docks stretch further if there's empty space, making them easier to hit. Thanks MorrowShore for suggesting.</li>
+          <li>Fix: Properly truncate files when writing them on Android to avoid corruption from leftover junk at the end.</li>
+          <li>Feature: Allow cropping in the drawpile-timelapse command-line tool using -x/--crop.</li>
+          <li>Fix: Compensate for discontinuity in the classic soft brush radius to make the transition look less bumpy. Thanks BulletPepper for reporting.</li>
+          <li>Feature: Make color sliders dock smaller by showing only one set of sliders at a time and add an input field for a hex color name. Thanks Kawaxte and MorrowShore for suggesting.</li>
+          <li>Fix: Don't switch tools while typing into text fields in some situations. Thanks leopardheart982 for reporting.</li>
+          <li>Fix: Give color wheel, color palette and navigator docks a minimum size so that they can't be shrunken into nonexistence. Thanks vipperz for reporting.</li>
+          <li>Fix: Don't remove layer censors when resetting sessions hosted on the builtin server. Thanks O_O for reporting.</li>
+          <li>Server Feature: Allow changing session founder names through the admin API.</li>
+          <li>Feature: Don't pop open chat for session auto-resets, just show a note in the corner of the canvas. Needs both client and server to be updated.</li>
+          <li>Feature: Support reading and writing WEBP files.</li>
+          <li>Feature: Enable high-DPI scaling by default on all platforms except Android. Can be disabled in the user interface preferences if needed.</li>
+          <li>Fix: Default kinetic scrolling on Android to touch instead of left click, since the latter conflicts with stuff like dragging layers.</li>
+          <li>Fix: Allow importing role lists larger than 100 entries, since public sessions have those. Thanks kale for reporting.</li>
+        </ul>
+      </description>
+    </release>
     <release version="2.2.1" type="stable" date="2024-02-18">
       <url>https://drawpile.net/news/release-2.2.1/</url>
       <description>
