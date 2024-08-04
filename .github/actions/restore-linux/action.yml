@@ -32,8 +32,8 @@ runs:
         mkdir .github/linuxdeploy-bin &&
         pushd .github/linuxdeploy-bin >/dev/null &&
         curl -L --remote-name-all
-        https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-        https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+        https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20240109-1/linuxdeploy-x86_64.AppImage
+        https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/1-alpha-20240109-1/linuxdeploy-plugin-qt-x86_64.AppImage
         https://github.com/linuxdeploy/linuxdeploy-plugin-gstreamer/raw/12e0e983f9e01f4e450ef2534cfec10e8aab2539/linuxdeploy-plugin-gstreamer.sh &&
         chmod u+x linuxdeploy-x86_64.AppImage linuxdeploy-plugin-qt-x86_64.AppImage linuxdeploy-plugin-gstreamer.sh &&
         popd >/dev/null
