@@ -130,6 +130,48 @@
           <li>Fix: Allow importing role lists larger than 100 entries, since public sessions have those. Thanks kale for reporting.</li>
         </ul>
       </description>
+      <artifacts>
+        <artifact type="binary" platform="x86_64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.2/Drawpile-2.2.2-beta.2-x86_64.msi</location>
+          <checksum type="sha256">32a475400768e072cecfa81cd90cf2cfaf271b63eb22a8e4f32b0cd0e160ff68</checksum>
+          <size type="download">23330816</size>
+        </artifact>
+        <artifact type="binary" platform="i386-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.2/Drawpile-2.2.2-beta.2-x86.msi</location>
+          <checksum type="sha256">f7420f1c5c89ee09a80809538a6038b5d5b07b601420659edc45d1f8b4f8422d</checksum>
+          <size type="download">19898368</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.2/Drawpile-2.2.2-beta.2-x86_64.dmg</location>
+          <checksum type="sha256">46c7e572e9fce657d8b3ec5cf8be8bbb564c9751d8e524aadc654b0a1f398dac</checksum>
+          <size type="download">28342153</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.2/Drawpile-2.2.2-beta.2-arm64.dmg</location>
+          <checksum type="sha256">2d35b6b7b987c236511dedb388ae1d29824eea755d3352901d3e0b04d6e7f955</checksum>
+          <size type="download">26154739</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.2/Drawpile-2.2.2-beta.2-x86_64.AppImage</location>
+          <checksum type="sha256">e286d682f257ff9b77cdfe6da77e289b30a46309bf534772a25ad4280913c76c</checksum>
+          <size type="download">49820864</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.2/Drawpile-2.2.2-beta.2-arm64-v8a.apk</location>
+          <checksum type="sha256">5cc3a6b2faec976cf4ce1c227e98c78d652308ff96d63e55107a99c88cb449a9</checksum>
+          <size type="download">22034264</size>
+        </artifact>
+        <artifact type="binary" platform="arm-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.2/Drawpile-2.2.2-beta.2-armeabi-v7a.apk</location>
+          <checksum type="sha256">95d6dd8a03662180757028d7a39b52907fb20ee14552f3138b82fc764dd7dbb2</checksum>
+          <size type="download">18548692</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.2-beta.2.tar.gz</location>
+          <checksum type="sha256">c51c953e3a19b169bf71b6cf3df38de2afb98adfc1fa931b7f14324fc3501b08</checksum>
+          <size type="download">6025022</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.2.1" type="stable" date="2024-02-18">
       <url>https://drawpile.net/news/release-2.2.1/</url>
