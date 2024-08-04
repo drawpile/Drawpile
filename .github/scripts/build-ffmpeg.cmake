@@ -165,6 +165,29 @@ if(LIBVPX)
 endif()
 
 if(LIBX264)
+	set(x264_configure_args
+		--enable-static
+		--enable-pic
+		--disable-lavf
+		--disable-swscale
+		--disable-avs
+		--disable-ffms
+		--disable-gpac
+		--disable-lsmash
+		--disable-bashcompletion
+		--disable-cli
+		--enable-strip
+	)
+
+	# Configure only checks if *linkage* of functions works, but not if they're
+	# actually present in any headers. This causes weird compile errors about
+	# fseeko and ftello not being present on 32 bit Android. The code appears
+	# to work fine though, so either this doesn't matter or we don't hit that
+	# code. So we just disable the error and carry on.
+	if(ANDROID AND TARGET_ARCH STREQUAL "arm32")
+		list(APPEND x264_configure_args "--extra-cflags=-Wno-error=implicit-function-declaration")
+	endif()
+
 	build_dependency(x264 ${LIBX264} ${BUILD_TYPE}
 		URL https://code.videolan.org/videolan/x264/-/archive/@version@/x264-@version@.tar.gz
 		TARGET_ARCH "${TARGET_ARCH}"
@@ -174,18 +197,7 @@ if(LIBX264)
 		ALL_PLATFORMS
 			AUTOMAKE
 				ASSIGN_HOST ASSIGN_PREFIX WIN32_CC_CL
-				ALL
-					--enable-static
-					--enable-pic
-					--disable-lavf
-					--disable-swscale
-					--disable-avs
-					--disable-ffms
-					--disable-gpac
-					--disable-lsmash
-					--disable-bashcompletion
-					--disable-cli
-					--enable-strip
+				ALL ${x264_configure_args}
 	)
 endif()
 
