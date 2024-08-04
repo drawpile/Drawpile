@@ -58,7 +58,7 @@ runs:
         libxkbcommon-x11-0 libdrm-amdgpu1 libdrm-common libdrm-nouveau2
         libdrm-radeon1 libdrm2 libgbm1 libgl1-mesa-dri libglapi-mesa
         libglx-mesa0 libts0 libgtk-3-bin librsvg2-common gir1.2-gtk-3.0
-        wayland-protocols libfontconfig1
+        wayland-protocols libfontconfig1 libsqlite3-dev
         libpulse0 libasound2 libcups2
         libsecret-1-0 gir1.2-secret-1
         libfuse2 appstream
