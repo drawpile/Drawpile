@@ -30,13 +30,31 @@
 // On Windows, we use QueryPerformanceCounter. On Darwin and old Android libc,
 // we use gettimeofday. On normal systems, we use the standard timespec_get.
 #if defined(_WIN32)
+#    define DP_PERF_TIMER_SOURCE "QueryPerformanceCounter"
 #    include <windows.h>
-#elif defined(__APPLE__) || (defined(__ANDROID__) && __ANDROID_API__ < 29)
-#    include <errno.h>
-#    include <string.h>
-#    include <sys/time.h>
+#elif defined(__EMSCRIPTEN__)
+#    define DP_PERF_TIMER_SOURCE "emscripten_get_now"
+#    include <emscripten.h>
 #else
-#    include "time.h"
+#    include <unistd.h>
+#    if defined(_POSIX_TIMERS) && _POSIX_TIMERS > 0 \
+        && defined(_POSIX_MONOTONIC_CLOCK)
+#        define DP_PERF_TIMER_SOURCE "clock_gettime"
+#        define DP_PERF_GET_TIME_CLOCK_MONOTONIC
+#        include <errno.h>
+#        include <string.h>
+#        include <time.h>
+#    elif defined(__APPLE__) || (defined(__ANDROID__) && __ANDROID_API__ < 29)
+#        define DP_PERF_TIMER_SOURCE "gettimeofday"
+#        define DP_PERF_GET_TIME_GETTIMEOFDAY
+#        include <errno.h>
+#        include <string.h>
+#        include <sys/time.h>
+#    else
+#        define DP_PERF_TIMER_SOURCE "timespec_get"
+#        define DP_PERF_GET_TIME_TIMESPEC_GET
+#        include <time.h>
+#    endif
 #endif
 
 
@@ -102,6 +120,7 @@ bool DP_perf_open(DP_Output *output)
 
     return DP_OUTPUT_PRINT_LITERAL(
         output, "# Drawdance performance recording v" DP_PERF_VERSION "\n"
+                "# Timed using " DP_PERF_TIMER_SOURCE "\n"
                 "# <thread_id> <start_seconds>.<start_nanoseconds> "
                 "<end_seconds>.<end_nanoseconds> <diff_nanoseconds> <category> "
                 "<details...>\n");
@@ -172,7 +191,19 @@ unsigned long long DP_perf_time(void)
 
     return DP_llong_to_ullong(ticks.QuadPart) * NS_IN_S
          / DP_llong_to_ullong(freq.QuadPart);
-#elif defined(__APPLE__) || (defined(__ANDROID__) && __ANDROID_API__ < 29)
+#elif defined(__EMSCRIPTEN__)
+    return DP_double_to_ullong(emscripten_get_now() * 1000000.0);
+#elif defined(DP_PERF_GET_TIME_CLOCK_MONOTONIC)
+    struct timespec ts;
+    if (clock_gettime(CLOCK_MONOTONIC, &ts) == 0) {
+        return (unsigned long long)ts.tv_sec * NS_IN_S
+             + DP_long_to_ullong(ts.tv_nsec);
+    }
+    else {
+        DP_warn("Could not get perf time: %s", strerror(errno));
+        return 0;
+    }
+#elif defined(DP_PERF_GET_TIME_GETTIMEOFDAY)
     struct timeval tv;
     if (gettimeofday(&tv, NULL) == 0) {
         return (unsigned long long)tv.tv_sec * NS_IN_S
@@ -182,7 +213,7 @@ unsigned long long DP_perf_time(void)
         DP_warn("Could not get perf time: %s", strerror(errno));
         return 0;
     }
-#else
+#elif defined(DP_PERF_GET_TIME_TIMESPEC_GET)
     struct timespec ts;
     if (timespec_get(&ts, TIME_UTC) != 0) {
         return (unsigned long long)ts.tv_sec * NS_IN_S
@@ -192,6 +223,8 @@ unsigned long long DP_perf_time(void)
         DP_warn("Could not get perf time");
         return 0;
     }
+#else
+#    error "No implementation for DP_perf_time"
 #endif
 }
 

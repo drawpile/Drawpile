@@ -1,4 +1,5 @@
 Unreleased Version 2.2.2-pre
+ * Fix: Use more accurate timers for performance profiles if the platform supports it.
 
 2024-08-04 Version 2.2.2-beta.2
  * Feature: Allow choosing a different cursor for erase and alpha locked brushes. Thanks Hipofiz and Rylan for suggesting.
