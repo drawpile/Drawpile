@@ -613,6 +613,7 @@ DP_canvas_history_compare_and_get(DP_CanvasHistory *ch, DP_CanvasState *prev,
                                   DP_UserCursorBuffer *out_user_cursors)
 {
     DP_ASSERT(ch);
+    DP_PERF_BEGIN(fn, "compare_and_get");
     DP_Mutex *mutex = ch->mutex;
     DP_MUTEX_MUST_LOCK(mutex);
     DP_CanvasState *next = ch->current_state;
@@ -627,6 +628,7 @@ DP_canvas_history_compare_and_get(DP_CanvasHistory *ch, DP_CanvasState *prev,
         }
     }
     DP_MUTEX_MUST_UNLOCK(mutex);
+    DP_PERF_END(fn);
     return cs;
 }
 
