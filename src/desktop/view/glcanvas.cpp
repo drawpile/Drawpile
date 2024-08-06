@@ -4,10 +4,13 @@
 #include "desktop/view/canvascontroller.h"
 #include "desktop/view/canvasscene.h"
 #include "libclient/canvas/tilecache.h"
+#include "libclient/drawdance/perf.h"
 #include <QMetaEnum>
 #include <QOpenGLFunctions>
 #include <QPaintEvent>
 #include <QPainter>
+
+#define DP_PERF_CONTEXT "glcanvas"
 
 Q_LOGGING_CATEGORY(lcDpGlCanvas, "net.drawpile.view.canvas.gl", QtWarningMsg)
 
@@ -752,6 +755,7 @@ void main()
 	void
 	renderCanvasDirtyTextures(QOpenGLFunctions *f, canvas::TileCache &tileCache)
 	{
+		DP_PERF_SCOPE("paint_gl:canvas_dirty:textures");
 		qCDebug(lcDpGlCanvas, "renderCanvasDirtyTexture");
 		setUpCanvasShader(f);
 		updateCanvasTextureFilter(f);
@@ -773,6 +777,7 @@ void main()
 
 	void renderCanvasDirty(QOpenGLFunctions *f)
 	{
+		DP_PERF_SCOPE("paint_gl:canvas_dirty");
 		// The loop is necessary because the canvas size may change
 		// again while we're refreshing the tile cache visible area.
 		while(true) {
@@ -796,6 +801,7 @@ void main()
 
 	void renderCanvasClean(QOpenGLFunctions *f)
 	{
+		DP_PERF_SCOPE("paint_gl:canvas_clean");
 		setUpCanvasShader(f);
 		updateCanvasTextureFilter(f);
 		int textureCount = canvasTextures.size();
@@ -823,6 +829,7 @@ void main()
 
 	void renderOutline(QOpenGLFunctions *f, qreal dpr)
 	{
+		DP_PERF_SCOPE("paint_gl:outline");
 		// Called after renderCanvas, assumes vertex attribute 0 is enabled.
 		f->glEnable(GL_BLEND);
 		f->glBlendFuncSeparate(GL_ONE, GL_SRC_COLOR, GL_ONE, GL_ONE);
@@ -860,6 +867,12 @@ void main()
 		f->glDisable(GL_BLEND);
 		f->glBlendFunc(GL_ONE, GL_ZERO);
 		f->glBlendEquation(GL_FUNC_ADD);
+	}
+
+	void renderScene(QPainter &painter)
+	{
+		DP_PERF_SCOPE("paint_gl:scene");
+		controller->scene()->render(&painter);
 	}
 
 	CanvasController *controller;
@@ -1122,6 +1135,7 @@ void GlCanvas::paintGL()
 {
 	qCDebug(lcDpGlCanvas, "paintGL");
 	if(!d->viewSize.isEmpty()) {
+		DP_PERF_SCOPE("paint_gl");
 		QPainter painter(this);
 		painter.beginNativePainting();
 
@@ -1144,7 +1158,8 @@ void GlCanvas::paintGL()
 		}
 
 		painter.endNativePainting();
-		d->controller->scene()->render(&painter);
+
+		d->renderScene(painter);
 	}
 }
 
