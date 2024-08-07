@@ -2,6 +2,7 @@
 #include "libclient/net/sessionlistingmodel.h"
 #include "libclient/net/loginsessions.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
+#include "libshared/util/qtcompat.h"
 #include <QFont>
 #include <QIcon>
 #include <QPalette>
@@ -501,10 +502,14 @@ void SessionListingModel::setList(
 			}
 
 			emit dataChanged(createIndex(i, 0), createIndex(i, 0));
-			emit dataChanged(
-				createIndex(0, 0, quintptr(i + 1)),
-				createIndex(
-					sessions.size() - 1, ColumnCount - 1, quintptr(i + 1)));
+
+			compat::sizetype changedSize = qMin(oldSize, sessions.size());
+			if(changedSize > 0) {
+				emit dataChanged(
+					createIndex(0, 0, quintptr(i + 1)),
+					createIndex(
+						changedSize - 1, ColumnCount - 1, quintptr(i + 1)));
+			}
 			return;
 		}
 	}
