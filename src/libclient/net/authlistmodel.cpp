@@ -102,13 +102,19 @@ void AuthListModel::update(const QJsonArray &auth)
 						   old.trusted != e.trusted;
 			if(changed) {
 				old = e;
-				QModelIndex idx = index(i, 0);
-				dataChanged(idx, idx);
+				if(m_isOperator) {
+					QModelIndex idx = index(i, 0);
+					dataChanged(idx, idx);
+				}
 			}
 		} else {
-			beginInsertRows(QModelIndex(), count, count);
+			if(m_isOperator) {
+				beginInsertRows(QModelIndex(), count, count);
+			}
 			m_list.append(e);
-			endInsertRows();
+			if(m_isOperator) {
+				endInsertRows();
+			}
 		}
 	}
 
@@ -117,13 +123,19 @@ void AuthListModel::update(const QJsonArray &auth)
 		if(authIds.contains(m_list.at(i).authId)) {
 			++i;
 		} else {
-			beginRemoveRows(QModelIndex(), i, i);
+			if(m_isOperator) {
+				beginRemoveRows(QModelIndex(), i, i);
+			}
 			m_list.removeAt(i);
-			endRemoveRows();
+			if(m_isOperator) {
+				endRemoveRows();
+			}
 		}
 	}
 
-	emit updateApplied();
+	if(m_isOperator) {
+		emit updateApplied();
+	}
 }
 
 void AuthListModel::clear()

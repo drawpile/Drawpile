@@ -1,5 +1,6 @@
 Unreleased Version 2.2.2-pre
  * Fix: Use more accurate timers for performance profiles if the platform supports it.
+ * Fix: Don't try to update the roles list before becoming an operator, which could lead to a crash. Thanks Bluestrings for reporting.
 
 2024-08-04 Version 2.2.2-beta.2
  * Feature: Allow choosing a different cursor for erase and alpha locked brushes. Thanks Hipofiz and Rylan for suggesting.
