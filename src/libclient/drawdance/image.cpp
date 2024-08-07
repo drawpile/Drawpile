@@ -66,7 +66,7 @@ QColor sampleColorAt(
 
 QImage transformImage(
 	const QImage &source, const QPolygon &dstQuad, int interpolation,
-	QPoint *outOffset)
+	bool checkBounds, QPoint *outOffset)
 {
 	if(source.isNull()) {
 		DP_error_set("Source image is null");
@@ -80,7 +80,8 @@ QImage transformImage(
 		DP_Image *img = DP_image_transform_pixels(
 			source.width(), source.height(),
 			reinterpret_cast<const DP_Pixel8 *>(source.constBits()),
-			drawContext.get(), &quad, interpolation, &offsetX, &offsetY);
+			drawContext.get(), &quad, interpolation, checkBounds, &offsetX,
+			&offsetY);
 		if(img && outOffset) {
 			outOffset->setX(offsetX);
 			outOffset->setY(offsetY);

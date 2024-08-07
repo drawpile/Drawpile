@@ -108,6 +108,7 @@ impl Image {
                 dc.as_ptr(),
                 &dst_quad,
                 DP_MSG_TRANSFORM_REGION_MODE_BILINEAR as i32,
+                false,
                 ptr::null_mut(),
                 ptr::null_mut(),
             )

@@ -20,6 +20,7 @@ pub const DP_DRAW_CONTEXT_TRANSFORM_BUFFER_SIZE: u32 = 204;
 pub const DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE: u32 = 8192;
 pub const DP_DRAW_CONTEXT_RASTER_POOL_MAX_SIZE: u32 = 1048576;
 pub const DP_DRAW_CONTEXT_ID_COUNT: u32 = 256;
+pub const DP_IMAGE_TRANSFORM_MAX_AREA: u32 = 35000000;
 pub const DP_KEY_FRAME_LAYER_HIDDEN: u32 = 1;
 pub const DP_KEY_FRAME_LAYER_REVEALED: u32 = 2;
 pub const DP_AFFECTED_INDIRECT_AREAS_COUNT: u32 = 256;
@@ -2313,6 +2314,7 @@ extern "C" {
 pub const DP_IMAGE_FILE_TYPE_GUESS: DP_ImageFileType = 0;
 pub const DP_IMAGE_FILE_TYPE_PNG: DP_ImageFileType = 1;
 pub const DP_IMAGE_FILE_TYPE_JPEG: DP_ImageFileType = 2;
+pub const DP_IMAGE_FILE_TYPE_WEBP: DP_ImageFileType = 3;
 pub const DP_IMAGE_FILE_TYPE_UNKNOWN: DP_ImageFileType = 0;
 pub type DP_ImageFileType = ::std::os::raw::c_uint;
 pub type DP_ImageGetPixelFn = ::std::option::Option<
@@ -2406,6 +2408,7 @@ extern "C" {
         dc: *mut DP_DrawContext,
         dst_quad: *const DP_Quad,
         interpolation: ::std::os::raw::c_int,
+        check_bounds: bool,
         out_offset_x: *mut ::std::os::raw::c_int,
         out_offset_y: *mut ::std::os::raw::c_int,
     ) -> *mut DP_Image;
@@ -2457,6 +2460,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_image_write_jpeg(img: *mut DP_Image, output: *mut DP_Output) -> bool;
+}
+extern "C" {
+    pub fn DP_image_write_webp(img: *mut DP_Image, output: *mut DP_Output) -> bool;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -5972,6 +5978,7 @@ pub const DP_SAVE_IMAGE_ORA: DP_SaveImageType = 1;
 pub const DP_SAVE_IMAGE_PNG: DP_SaveImageType = 2;
 pub const DP_SAVE_IMAGE_JPEG: DP_SaveImageType = 3;
 pub const DP_SAVE_IMAGE_PSD: DP_SaveImageType = 4;
+pub const DP_SAVE_IMAGE_WEBP: DP_SaveImageType = 5;
 pub type DP_SaveImageType = ::std::os::raw::c_uint;
 pub const DP_SAVE_RESULT_SUCCESS: DP_SaveResult = 0;
 pub const DP_SAVE_RESULT_BAD_ARGUMENTS: DP_SaveResult = 1;

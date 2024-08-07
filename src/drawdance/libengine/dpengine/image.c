@@ -380,8 +380,8 @@ DP_Image *DP_image_new_subimage(DP_Image *img, int x, int y, int width,
 DP_Image *DP_image_transform_pixels(int src_width, int src_height,
                                     const DP_Pixel8 *src_pixels,
                                     DP_DrawContext *dc, const DP_Quad *dst_quad,
-                                    int interpolation, int *out_offset_x,
-                                    int *out_offset_y)
+                                    int interpolation, bool check_bounds,
+                                    int *out_offset_x, int *out_offset_y)
 {
     DP_ASSERT(src_pixels);
     DP_ASSERT(dst_quad);
@@ -405,8 +405,9 @@ DP_Image *DP_image_transform_pixels(int src_width, int src_height,
     int dst_height = DP_rect_height(dst_bounds);
     // Weird distortions can cause the transform to be way oversized. It's not
     // going to fit into a message anyway, so we refuse to work with it.
-    long long max_area = 35000000LL; // A bit larger than 8K, that's plenty.
-    if (DP_int_to_llong(dst_width) * DP_int_to_llong(dst_height) > max_area) {
+    if (check_bounds
+        && DP_int_to_llong(dst_width) * DP_int_to_llong(dst_height)
+               > DP_IMAGE_TRANSFORM_MAX_AREA) {
         DP_error_set("Image transform size out of bounds");
         return NULL;
     }
@@ -433,9 +434,9 @@ DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
 {
     DP_ASSERT(img);
     DP_ASSERT(dst_quad);
-    return DP_image_transform_pixels(DP_image_width(img), DP_image_height(img),
-                                     DP_image_pixels(img), dc, dst_quad,
-                                     interpolation, out_offset_x, out_offset_y);
+    return DP_image_transform_pixels(
+        DP_image_width(img), DP_image_height(img), DP_image_pixels(img), dc,
+        dst_quad, interpolation, true, out_offset_x, out_offset_y);
 }
 
 static void thumbnail_scale(int width, int height, int max_width,

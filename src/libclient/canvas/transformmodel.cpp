@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
+#include <dpengine/image.h>
 #include <dpengine/layer_props.h>
 #include <dpengine/preview.h>
 #include <dpmsg/blend_mode.h>
@@ -7,11 +8,15 @@ extern "C" {
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/selectionmodel.h"
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/drawdance/image.h"
 #include <QPainter>
 
 namespace canvas {
+
+static constexpr int SELECTION_IDS =
+	(CanvasModel::MAIN_SELECTION_ID << 8) | CanvasModel::MAIN_SELECTION_ID;
 
 TransformModel::TransformModel(CanvasModel *canvas)
 	: QObject(canvas)
@@ -233,8 +238,6 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 {
 	Q_ASSERT(m_active);
 	Q_ASSERT(!m_pasted || m_stamped);
-	constexpr int SELECTION_IDS =
-		(CanvasModel::MAIN_SELECTION_ID << 8) | CanvasModel::MAIN_SELECTION_ID;
 	bool identity = TransformQuad(m_srcBounds) == m_dstQuad;
 	int singleLayerSourceId =
 		compatibilityMode ? 0 : getSingleLayerMoveId(layerId);
@@ -250,6 +253,9 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 		bool alterSelection = !moveContents || !m_stamped;
 		bool moveSelection = alterSelection && !m_deselectOnApply;
 		bool needsMask = moveContents && !m_mask.isNull();
+		bool sizeOutOfBounds = isDstQuadBoundingRectAreaSizeOutOfBounds();
+		bool adjustsImage =
+			m_blendMode != int(DP_BLEND_MODE_NORMAL) || m_opacity < 1.0;
 		QVector<net::Message> msgs;
 		msgs.reserve(1 + (moveContents ? 1 : 0) + (alterSelection ? 1 : 0));
 
@@ -295,7 +301,7 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 						applyMoveRect(
 							msgs, contextId, layerId, singleLayerSourceId, srcX,
 							srcY, dstTopLeftX, dstTopLeftY, srcW, srcH,
-							needsMask ? m_mask : QImage());
+							needsMask ? m_mask : QImage(), adjustsImage);
 					}
 				} else {
 					for(int layerIdToMove : m_layerIds) {
@@ -303,7 +309,8 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 							applyMoveRect(
 								msgs, contextId, layerIdToMove, layerIdToMove,
 								srcX, srcY, dstTopLeftX, dstTopLeftY, srcW,
-								srcH, needsMask ? m_mask : QImage());
+								srcH, needsMask ? m_mask : QImage(),
+								adjustsImage);
 						}
 					}
 				}
@@ -316,12 +323,11 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 			int dstBottomLeftX = qRound(m_dstQuad.bottomLeft().x());
 			int dstBottomLeftY = qRound(m_dstQuad.bottomLeft().y());
 			if(moveSelection && !identity) {
-				msgs.append(net::makeTransformRegionMessage(
-					contextId, SELECTION_IDS, 0, srcX, srcY, srcW, srcH,
-					dstTopLeftX, dstTopLeftY, dstTopRightX, dstTopRightY,
-					dstBottomRightX, dstBottomRightY, dstBottomLeftX,
-					dstBottomLeftY, getEffectiveInterpolation(interpolation),
-					QImage()));
+				applyTransformRegionSelection(
+					msgs, contextId, srcX, srcY, srcW, srcH, dstTopLeftX,
+					dstTopLeftY, dstTopRightX, dstTopRightY, dstBottomRightX,
+					dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
+					getEffectiveInterpolation(interpolation), sizeOutOfBounds);
 			}
 			if(moveContents) {
 				if(singleLayerSourceId > 0) {
@@ -332,7 +338,8 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 							dstTopRightX, dstTopRightY, dstBottomRightX,
 							dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
 							getEffectiveInterpolation(interpolation),
-							needsMask ? m_mask : QImage());
+							needsMask ? m_mask : QImage(),
+							sizeOutOfBounds || adjustsImage);
 					}
 				} else {
 					for(int layerIdToMove : m_layerIds) {
@@ -344,7 +351,8 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 								dstBottomRightX, dstBottomRightY,
 								dstBottomLeftX, dstBottomLeftY,
 								getEffectiveInterpolation(interpolation),
-								needsMask ? m_mask : QImage());
+								needsMask ? m_mask : QImage(),
+								sizeOutOfBounds || adjustsImage);
 						}
 					}
 				}
@@ -385,9 +393,9 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 void TransformModel::applyMoveRect(
 	QVector<net::Message> &msgs, unsigned int contextId, int layerId,
 	int sourceId, int srcX, int srcY, int dstTopLeftX, int dstTopLeftY,
-	int srcW, int srcH, const QImage &mask) const
+	int srcW, int srcH, const QImage &mask, bool needsCutAndPaste) const
 {
-	if(needsCutAndPaste()) {
+	if(needsCutAndPaste) {
 		QImage img = getLayerImageWithMask(sourceId, mask);
 		if(img.isNull()) {
 			qWarning("applyMoveRect: image from layer %d is null", layerId);
@@ -410,14 +418,14 @@ void TransformModel::applyTransformRegion(
 	int sourceId, int srcX, int srcY, int srcW, int srcH, int dstTopLeftX,
 	int dstTopLeftY, int dstTopRightX, int dstTopRightY, int dstBottomRightX,
 	int dstBottomRightY, int dstBottomLeftX, int dstBottomLeftY,
-	int interpolation, const QImage &mask) const
+	int interpolation, const QImage &mask, bool needsCutAndPaste) const
 {
-	if(needsCutAndPaste()) {
+	if(needsCutAndPaste) {
 		QPoint offset;
 		QImage img = drawdance::transformImage(
 			getLayerImageWithMask(sourceId, mask),
 			m_dstQuad.polygon().toPolygon(),
-			getEffectiveInterpolation(interpolation), &offset);
+			getEffectiveInterpolation(interpolation), false, &offset);
 		if(img.isNull()) {
 			qWarning(
 				"TransformModel::applyTransformRegion: could not transform "
@@ -439,9 +447,52 @@ void TransformModel::applyTransformRegion(
 	}
 }
 
-bool TransformModel::needsCutAndPaste() const
+void TransformModel::applyTransformRegionSelection(
+	QVector<net::Message> &msgs, unsigned int contextId, int srcX, int srcY,
+	int srcW, int srcH, int dstTopLeftX, int dstTopLeftY, int dstTopRightX,
+	int dstTopRightY, int dstBottomRightX, int dstBottomRightY,
+	int dstBottomLeftX, int dstBottomLeftY, int interpolation,
+	bool sizeOutOfBounds) const
 {
-	return m_blendMode != int(DP_BLEND_MODE_NORMAL) || m_opacity < 1.0;
+	if(sizeOutOfBounds) {
+		canvas::SelectionModel *selection = m_canvas->selection();
+		if(selection->isValid()) {
+			QPoint offset;
+			QImage img = drawdance::transformImage(
+				selection->mask(), m_dstQuad.polygon().toPolygon(),
+				getEffectiveInterpolation(interpolation), false, &offset);
+			if(img.isNull()) {
+				qWarning(
+					"TransformModel::applyTransformRegionSelection: could not "
+					"transform image: %s",
+					DP_error());
+			} else {
+				net::makeSelectionPutMessages(
+					msgs, contextId, CanvasModel::MAIN_SELECTION_ID,
+					DP_MSG_SELECTION_PUT_OP_REPLACE, offset.x(), offset.y(),
+					img.width(), img.height(),
+					isImageOpaque(img) ? QImage() : img);
+			}
+		} else {
+			qWarning("TransformModel::applyTransformRegionSelection: no valid "
+					 "selection");
+		}
+	} else {
+		msgs.append(net::makeTransformRegionMessage(
+			contextId, SELECTION_IDS, 0, srcX, srcY, srcW, srcH, dstTopLeftX,
+			dstTopLeftY, dstTopRightX, dstTopRightY, dstBottomRightX,
+			dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
+			getEffectiveInterpolation(interpolation), QImage()));
+	}
+}
+
+bool TransformModel::isDstQuadBoundingRectAreaSizeOutOfBounds() const
+{
+	QRect rect = m_dstQuad.boundingRect().toAlignedRect();
+	// Some extra padding to make sure we're not hitting some edge case.
+	long long width = rect.width() + 2LL;
+	long long height = rect.height() + 2LL;
+	return width * height > DP_IMAGE_TRANSFORM_MAX_AREA;
 }
 
 void TransformModel::applyCut(
@@ -467,7 +518,7 @@ QVector<net::Message> TransformModel::applyFloating(
 	QPoint offset;
 	QImage transformedImage = drawdance::transformImage(
 		m_floatingImage, m_dstQuad.polygon().toPolygon(),
-		getEffectiveInterpolation(interpolation), &offset);
+		getEffectiveInterpolation(interpolation), false, &offset);
 	if(transformedImage.isNull()) {
 		qWarning(
 			"TransformModel::applyFloating: could not transform image: %s",
@@ -623,6 +674,19 @@ bool TransformModel::isImageBlank(const QImage &img)
 	size_t size = size_t(img.width()) * size_t(img.height());
 	for(size_t i = 0; i < size; ++i) {
 		if(pixels[i] != 0) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool TransformModel::isImageOpaque(const QImage &img)
+{
+	const uint32_t *pixels =
+		reinterpret_cast<const uint32_t *>(img.constBits());
+	size_t size = size_t(img.width()) * size_t(img.height());
+	for(size_t i = 0; i < size; ++i) {
+		if(qAlpha(pixels[i]) < 255) {
 			return false;
 		}
 	}

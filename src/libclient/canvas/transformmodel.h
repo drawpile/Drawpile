@@ -70,16 +70,24 @@ private:
 	void applyMoveRect(
 		QVector<net::Message> &msgs, unsigned int contextId, int layerId,
 		int sourceId, int srcX, int srcY, int dstTopLeftX, int dstTopLeftY,
-		int srcW, int srcH, const QImage &mask) const;
+		int srcW, int srcH, const QImage &mask, bool needsCutAndPaste) const;
 
 	void applyTransformRegion(
 		QVector<net::Message> &msgs, unsigned int contextId, int layerId,
 		int sourceId, int srcX, int srcY, int srcW, int srcH, int dstTopLeftX,
 		int dstTopLeftY, int dstTopRightX, int dstTopRightY,
 		int dstBottomRightX, int dstBottomRightY, int dstBottomLeftX,
-		int dstBottomLeftY, int interpolation, const QImage &mask) const;
+		int dstBottomLeftY, int interpolation, const QImage &mask,
+		bool needsCutAndPaste) const;
 
-	bool needsCutAndPaste() const;
+	void applyTransformRegionSelection(
+		QVector<net::Message> &msgs, unsigned int contextId, int srcX, int srcY,
+		int srcW, int srcH, int dstTopLeftX, int dstTopLeftY, int dstTopRightX,
+		int dstTopRightY, int dstBottomRightX, int dstBottomRightY,
+		int dstBottomLeftX, int dstBottomLeftY, int interpolation,
+		bool sizeOutOfBounds) const;
+
+	bool isDstQuadBoundingRectAreaSizeOutOfBounds() const;
 
 	void applyCut(
 		QVector<net::Message> &msgs, unsigned int contextId, int sourceId,
@@ -100,6 +108,7 @@ private:
 	static void applyMaskToImage(QImage &img, const QImage &mask);
 	void applyOpacityToImage(QImage &img) const;
 	static bool isImageBlank(const QImage &img);
+	static bool isImageOpaque(const QImage &img);
 
 	static bool isMaskRelevant(const QImage &mask);
 	bool moveIsOnlyTranslated() const;

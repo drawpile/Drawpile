@@ -18,7 +18,7 @@ QColor sampleColorAt(
 
 QImage transformImage(
 	const QImage &source, const QPolygon &dstQuad, int interpolation,
-	QPoint *outOffset = nullptr);
+	bool checkBounds, QPoint *outOffset = nullptr);
 
 }
 

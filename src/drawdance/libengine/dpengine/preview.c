@@ -420,9 +420,9 @@ static bool preview_transform_prepare_image(DP_PreviewTransform *pvtf,
     void *user = pvtf->pixels.user;
     const DP_Pixel8 *pixels = get_pixels(user);
     pvtf->pixels.get = NULL;
-    DP_Image *img = DP_image_transform_pixels(pvtf->width, pvtf->height, pixels,
-                                              dc, &pvtf->dst_quad,
-                                              pvtf->interpolation, NULL, NULL);
+    DP_Image *img = DP_image_transform_pixels(
+        pvtf->width, pvtf->height, pixels, dc, &pvtf->dst_quad,
+        pvtf->interpolation, false, NULL, NULL);
     pvtf->pixels.dispose(user);
     pvtf->pixels.dispose = NULL;
 
