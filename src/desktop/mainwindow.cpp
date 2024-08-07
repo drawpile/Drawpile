@@ -76,6 +76,7 @@
 #include "libclient/utils/customshortcutmodel.h"
 #include "libclient/utils/images.h"
 #include "libclient/utils/logging.h"
+#include "libclient/utils/scopedoverridecursor.h"
 #include "libclient/utils/selectionalteration.h"
 #include "libclient/utils/shortcutdetector.h"
 #include "libshared/util/networkaccess.h"

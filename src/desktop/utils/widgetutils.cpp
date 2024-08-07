@@ -27,21 +27,6 @@
 
 namespace utils {
 
-ScopedOverrideCursor::ScopedOverrideCursor()
-	: ScopedOverrideCursor(QCursor(Qt::WaitCursor))
-{
-}
-
-ScopedOverrideCursor::ScopedOverrideCursor(const QCursor &cursor)
-{
-	QApplication::setOverrideCursor(cursor);
-}
-
-ScopedOverrideCursor::~ScopedOverrideCursor()
-{
-	QApplication::restoreOverrideCursor();
-}
-
 ScopedUpdateDisabler::ScopedUpdateDisabler(QWidget *widget)
 	: m_widget{widget}
 	, m_wasEnabled{widget && widget->updatesEnabled()}

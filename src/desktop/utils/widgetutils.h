@@ -22,13 +22,6 @@ class QWidget;
 
 namespace utils {
 
-class ScopedOverrideCursor {
-public:
-	ScopedOverrideCursor(); // Uses Qt::WaitCursor.
-	ScopedOverrideCursor(const QCursor &cursor);
-	~ScopedOverrideCursor();
-};
-
 class ScopedUpdateDisabler {
 public:
 	ScopedUpdateDisabler(QWidget *widget);

@@ -11,6 +11,7 @@ extern "C" {
 #include "libclient/canvas/selectionmodel.h"
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/drawdance/image.h"
+#include "libclient/utils/scopedoverridecursor.h"
 #include <QPainter>
 
 namespace canvas {
@@ -166,6 +167,7 @@ QVector<net::Message> TransformModel::applyActiveTransform(
 	bool stamp, bool *outMovedSelection)
 {
 	if(m_active && m_dstQuadValid) {
+		utils::ScopedOverrideCursor waitCursor;
 		if(m_pasted) {
 			return applyFloating(
 				contextId, layerId, interpolation, compatibilityMode, stamp,
