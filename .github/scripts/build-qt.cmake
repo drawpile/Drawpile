@@ -251,7 +251,7 @@ if(BASE)
 				DEBUG
 					${BASE_DEBUG_FLAGS} ${BASE_DEBUG_INFO_FLAGS}
 				RELWITHDEBINFO
-					-release -force-asserts -force-debug-info
+					-release -force-debug-info
 					${BASE_DEBUG_INFO_FLAGS} ${BASE_RELEASE_FLAGS}
 				RELEASE
 					-release ${BASE_RELEASE_FLAGS}
