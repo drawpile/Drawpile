@@ -48,9 +48,6 @@ DP_Image *DP_image_new(int width, int height);
 
 DP_ImageFileType DP_image_guess(const unsigned char *buf, size_t size);
 
-DP_Image *DP_image_new_from_file(DP_Input *input, DP_ImageFileType type,
-                                 DP_ImageFileType *out_type);
-
 DP_Image *DP_image_new_from_compressed(int width, int height,
                                        const unsigned char *in, size_t in_size);
 
@@ -108,15 +105,6 @@ DP_UPixelFloat DP_image_sample_color_at_with(int width, int height,
                                              int x, int y, int diameter,
                                              bool opaque,
                                              int *in_out_last_diameter);
-
-
-DP_Image *DP_image_read_png(DP_Input *input);
-DP_Image *DP_image_read_jpeg(DP_Input *input);
-DP_Image *DP_image_read_jpeg(DP_Input *input);
-
-bool DP_image_write_png(DP_Image *img, DP_Output *output) DP_MUST_CHECK;
-bool DP_image_write_jpeg(DP_Image *img, DP_Output *output) DP_MUST_CHECK;
-bool DP_image_write_webp(DP_Image *img, DP_Output *output) DP_MUST_CHECK;
 
 
 #endif

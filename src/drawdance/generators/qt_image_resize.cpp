@@ -21,7 +21,7 @@
  */
 #include <cstdio>
 #include <QImage>
-#include "../libengine/test/resize_image.h"
+#include "../libimpex/test/resize_image.h"
 
 static QImage generate_base_image()
 {

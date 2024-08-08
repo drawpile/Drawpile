@@ -2,8 +2,8 @@
 #ifndef DRAWPILE_DOCUMENT_H
 #define DRAWPILE_DOCUMENT_H
 extern "C" {
-#include <dpengine/load.h>
-#include <dpengine/save.h>
+#include <dpengine/load_enums.h>
+#include <dpengine/save_enums.h>
 #include <dpmsg/acl.h>
 #include <dpmsg/blend_mode.h>
 }
@@ -13,7 +13,6 @@ extern "C" {
 #include "libclient/net/banlistmodel.h"
 #include "libclient/net/client.h"
 #include "libclient/net/message.h"
-#include "libshared/util/qtcompat.h"
 #include <QObject>
 #include <QStringListModel>
 #ifdef Q_OS_ANDROID

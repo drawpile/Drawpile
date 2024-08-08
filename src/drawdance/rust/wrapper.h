@@ -13,10 +13,12 @@
 #include <dpengine/layer_props_list.h>
 #include <dpengine/paint_engine.h>
 #include <dpengine/player.h>
-#include <dpengine/save.h>
 #include <dpengine/tile.h>
 #include <dpengine/timeline.h>
 #include <dpengine/track.h>
+#include <dpimpex/image_impex.h>
+#include <dpimpex/paint_engine_playback.h>
+#include <dpimpex/save.h>
 #include <dpmsg/acl.h>
 #include <dpmsg/blend_mode.h>
 #include <dpmsg/message.h>

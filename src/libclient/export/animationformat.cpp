@@ -3,7 +3,7 @@
 #include <QtGlobal>
 #ifdef DP_LIBAV
 extern "C" {
-#	include <dpengine/save_video.h>
+#	include <dpimpex/save_video.h>
 }
 #endif
 

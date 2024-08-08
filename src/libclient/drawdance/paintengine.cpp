@@ -2,6 +2,7 @@
 extern "C" {
 #include <dpcommon/output.h>
 #include <dpengine/tile.h>
+#include <dpimpex/paint_engine_playback.h>
 }
 #include "libclient/drawdance/aclstate.h"
 #include "libclient/drawdance/image.h"

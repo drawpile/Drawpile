@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
 #include <dpcommon/geom.h>
-#include <dpengine/save.h>
+#include <dpimpex/save.h>
 #ifdef DP_LIBAV
-#	include <dpengine/save_video.h>
+#	include <dpimpex/save_video.h>
 #endif
 }
 #include "libclient/export/animationformat.h"

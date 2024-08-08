@@ -2,7 +2,7 @@
 #ifndef DESKTOP_MAINWINDOW_H
 #define DESKTOP_MAINWINDOW_H
 extern "C" {
-#include <dpengine/load.h>
+#include <dpengine/load_enums.h>
 }
 #include "desktop/dialogs/flipbook.h"
 #include "libclient/canvas/acl.h"

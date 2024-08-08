@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 extern "C" {
-#include <dpengine/zip_archive.h>
+#include <dpimpex/zip_archive.h>
 }
 
 #include "libclient/drawdance/ziparchive.h"

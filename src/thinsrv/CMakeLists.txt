@@ -39,7 +39,7 @@ target_link_libraries(${srvlib} PUBLIC
 	cmake-config
 	dpshared
 	dpserver
-	drawdance
+	drawdance_server
 	${QT_PACKAGE_NAME}::Core
 	${QT_PACKAGE_NAME}::Network
 	${QT_PACKAGE_NAME}::Sql

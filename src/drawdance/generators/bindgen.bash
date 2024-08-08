@@ -26,4 +26,5 @@ bindgen \
     -I../bundled \
     -I../libcommon \
     -I../libmsg \
-    -I../libengine
+    -I../libengine \
+    -I../libimpex

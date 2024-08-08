@@ -3,7 +3,8 @@
 #define DRAWDANCE_CANVASSTATE_H
 extern "C" {
 #include <dpengine/flood_fill.h>
-#include <dpengine/load.h>
+#include <dpengine/load_enums.h>
+#include <dpengine/save_enums.h>
 }
 #include "libclient/drawdance/annotationlist.h"
 #include "libclient/drawdance/documentmetadata.h"

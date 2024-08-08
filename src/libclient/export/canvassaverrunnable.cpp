@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "libclient/export/canvassaverrunnable.h"
+extern "C" {
+#include <dpimpex/save.h>
+}
 #include "libclient/drawdance/annotation.h"
 #include "libclient/drawdance/global.h"
+#include "libclient/export/canvassaverrunnable.h"
 #include "libclient/utils/annotations.h"
 #include <QPainter>
 #include <QRandomGenerator>

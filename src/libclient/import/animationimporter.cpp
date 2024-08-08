@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
-#include <dpengine/load_animation.h>
+#include <dpimpex/load_animation.h>
 }
 #include "libclient/drawdance/global.h"
 #include "libclient/import/animationimporter.h"

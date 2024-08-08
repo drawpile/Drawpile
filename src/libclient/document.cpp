@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "libclient/document.h"
+extern "C" {
+#include <dpimpex/load.h>
+}
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/selectionmodel.h"
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/canvas/userlist.h"
+#include "libclient/document.h"
 #include "libclient/export/canvassaverrunnable.h"
 #include "libclient/settings.h"
 #include "libclient/tools/selection.h"

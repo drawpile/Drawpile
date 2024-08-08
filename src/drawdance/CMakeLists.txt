@@ -20,6 +20,13 @@ add_subdirectory(libcommon)
 add_subdirectory(libmsg)
 add_subdirectory(libengine)
 
-add_library(drawdance INTERFACE)
-set(drawdance_libraries dpengine dpmsg dpcommon cmake-config)
-target_link_libraries(drawdance INTERFACE dpengine dpmsg dpcommon cmake-config)
+add_library(drawdance_server INTERFACE)
+target_link_libraries(
+    drawdance_server INTERFACE dpengine dpmsg dpcommon cmake-config)
+
+if(CLIENT OR TOOLS)
+    add_subdirectory(libimpex)
+    add_library(drawdance_client INTERFACE)
+    target_link_libraries(
+        drawdance_client INTERFACE dpimpex dpengine dpmsg dpcommon cmake-config)
+endif()

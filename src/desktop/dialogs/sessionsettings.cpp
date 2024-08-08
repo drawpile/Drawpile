@@ -8,6 +8,7 @@
 #include "libclient/net/banlistmodel.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include "libclient/utils/listservermodel.h"
+#include "libshared/util/qtcompat.h"
 #include "ui_sessionsettings.h"
 #include <QDebug>
 #include <QFile>

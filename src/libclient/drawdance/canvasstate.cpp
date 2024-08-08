@@ -12,6 +12,7 @@ extern "C" {
 #include <dpengine/layer_routes.h>
 #include <dpengine/snapshots.h>
 #include <dpengine/view_mode.h>
+#include <dpimpex/load.h>
 }
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/drawdance/canvasstate.h"

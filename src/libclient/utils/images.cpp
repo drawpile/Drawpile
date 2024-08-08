@@ -4,8 +4,8 @@
 #include "cmake-config/config.h"
 
 extern "C" {
-#include <dpengine/load.h>
-#include <dpengine/save.h>
+#include <dpimpex/load.h>
+#include <dpimpex/save.h>
 }
 
 #include <QSize>

@@ -36,71 +36,73 @@ target_include_directories(
 add_library(uthash INTERFACE)
 target_include_directories(uthash SYSTEM INTERFACE "uthash")
 
-add_library(jo_gifx OBJECT jo_gifx/jo_gifx.h jo_gifx/jo_gifx.c)
-target_include_directories(
-    jo_gifx SYSTEM PUBLIC ${CMAKE_CURRENT_LIST_DIR}/jo_gifx)
+if(CLIENT OR TOOLS)
+    add_library(jo_gifx OBJECT jo_gifx/jo_gifx.h jo_gifx/jo_gifx.c)
+    target_include_directories(
+        jo_gifx SYSTEM PUBLIC ${CMAKE_CURRENT_LIST_DIR}/jo_gifx)
 
-set(psd_sdk_sources
-  psd_sdk/Psd.h
-  psd_sdk/PsdAllocator.cpp
-  psd_sdk/PsdAllocator.h
-  psd_sdk/PsdAssert.h
-  psd_sdk/PsdBitUtil.h
-  psd_sdk/PsdBitUtil.inl
-  psd_sdk/PsdBlendMode.cpp
-  psd_sdk/PsdBlendMode.h
-  psd_sdk/PsdChannel.h
-  psd_sdk/PsdColorMode.cpp
-  psd_sdk/PsdColorMode.h
-  psd_sdk/PsdCompilerMacros.h
-  psd_sdk/PsdCompressionType.h
-  psd_sdk/PsdDecompressRle.cpp
-  psd_sdk/PsdDecompressRle.h
-  psd_sdk/PsdDocument.h
-  psd_sdk/PsdEndianConversion.h
-  psd_sdk/PsdEndianConversion.inl
-  psd_sdk/PsdFile.cpp
-  psd_sdk/PsdFile.h
-  psd_sdk/PsdFixedSizeString.cpp
-  psd_sdk/PsdFixedSizeString.h
-  psd_sdk/PsdKey.h
-  psd_sdk/PsdLayer.h
-  psd_sdk/PsdLayerMask.h
-  psd_sdk/PsdLayerMaskSection.h
-  psd_sdk/PsdLayerType.h
-  psd_sdk/PsdLog.h
-  psd_sdk/PsdMallocAllocator.cpp
-  psd_sdk/PsdMallocAllocator.h
-  psd_sdk/PsdMemoryUtil.h
-  psd_sdk/PsdMemoryUtil.inl
-  psd_sdk/PsdNamespace.h
-  psd_sdk/PsdParseDocument.cpp
-  psd_sdk/PsdParseDocument.h
-  psd_sdk/PsdParseLayerMaskSection.cpp
-  psd_sdk/PsdParseLayerMaskSection.h
-  psd_sdk/PsdPch.cpp
-  psd_sdk/PsdPch.h
-  psd_sdk/PsdPlatform.h
-  psd_sdk/PsdSection.h
-  psd_sdk/PsdSyncFileReader.cpp
-  psd_sdk/PsdSyncFileReader.h
-  psd_sdk/PsdSyncFileUtil.h
-  psd_sdk/PsdSyncFileUtil.inl
-  psd_sdk/PsdTypes.h
-  psd_sdk/PsdUnionCast.h
-  psd_sdk/PsdUnionCast.inl
-  psd_sdk/PsdVectorMask.h
-  psd_sdk/Psdinttypes.h
-  psd_sdk/Psdispod.h
-  psd_sdk/Psdisunsigned.h
-  psd_sdk/Psdminiz.c
-  psd_sdk/Psdminiz.h
-  psd_sdk/Psdstdint.h
-)
+    set(psd_sdk_sources
+    psd_sdk/Psd.h
+    psd_sdk/PsdAllocator.cpp
+    psd_sdk/PsdAllocator.h
+    psd_sdk/PsdAssert.h
+    psd_sdk/PsdBitUtil.h
+    psd_sdk/PsdBitUtil.inl
+    psd_sdk/PsdBlendMode.cpp
+    psd_sdk/PsdBlendMode.h
+    psd_sdk/PsdChannel.h
+    psd_sdk/PsdColorMode.cpp
+    psd_sdk/PsdColorMode.h
+    psd_sdk/PsdCompilerMacros.h
+    psd_sdk/PsdCompressionType.h
+    psd_sdk/PsdDecompressRle.cpp
+    psd_sdk/PsdDecompressRle.h
+    psd_sdk/PsdDocument.h
+    psd_sdk/PsdEndianConversion.h
+    psd_sdk/PsdEndianConversion.inl
+    psd_sdk/PsdFile.cpp
+    psd_sdk/PsdFile.h
+    psd_sdk/PsdFixedSizeString.cpp
+    psd_sdk/PsdFixedSizeString.h
+    psd_sdk/PsdKey.h
+    psd_sdk/PsdLayer.h
+    psd_sdk/PsdLayerMask.h
+    psd_sdk/PsdLayerMaskSection.h
+    psd_sdk/PsdLayerType.h
+    psd_sdk/PsdLog.h
+    psd_sdk/PsdMallocAllocator.cpp
+    psd_sdk/PsdMallocAllocator.h
+    psd_sdk/PsdMemoryUtil.h
+    psd_sdk/PsdMemoryUtil.inl
+    psd_sdk/PsdNamespace.h
+    psd_sdk/PsdParseDocument.cpp
+    psd_sdk/PsdParseDocument.h
+    psd_sdk/PsdParseLayerMaskSection.cpp
+    psd_sdk/PsdParseLayerMaskSection.h
+    psd_sdk/PsdPch.cpp
+    psd_sdk/PsdPch.h
+    psd_sdk/PsdPlatform.h
+    psd_sdk/PsdSection.h
+    psd_sdk/PsdSyncFileReader.cpp
+    psd_sdk/PsdSyncFileReader.h
+    psd_sdk/PsdSyncFileUtil.h
+    psd_sdk/PsdSyncFileUtil.inl
+    psd_sdk/PsdTypes.h
+    psd_sdk/PsdUnionCast.h
+    psd_sdk/PsdUnionCast.inl
+    psd_sdk/PsdVectorMask.h
+    psd_sdk/Psdinttypes.h
+    psd_sdk/Psdispod.h
+    psd_sdk/Psdisunsigned.h
+    psd_sdk/Psdminiz.c
+    psd_sdk/Psdminiz.h
+    psd_sdk/Psdstdint.h
+    )
 
-add_library(psd_sdk STATIC ${psd_sdk_sources})
-target_include_directories(
-    psd_sdk SYSTEM PUBLIC ${CMAKE_CURRENT_LIST_DIR}/psd_sdk)
+    add_library(psd_sdk STATIC ${psd_sdk_sources})
+    target_include_directories(
+        psd_sdk SYSTEM PUBLIC ${CMAKE_CURRENT_LIST_DIR}/psd_sdk)
+endif()
 
 # The project root adds compiler warnings and tidy to all targets, but
 # third-party code does not follow the same code hygiene rules, so turn those

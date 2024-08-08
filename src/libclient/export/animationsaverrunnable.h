@@ -2,7 +2,7 @@
 #ifndef LIBCLIENT_EXPORT_ANIMATIONSAVERRUNNABLE_H
 #define LIBCLIENT_EXPORT_ANIMATIONSAVERRUNNABLE_H
 extern "C" {
-#include <dpengine/save.h>
+#include <dpengine/save_enums.h>
 }
 #include "libclient/drawdance/canvasstate.h"
 #include <QObject>

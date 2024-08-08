@@ -3,7 +3,7 @@
 #include <dpcommon/conversions.h>
 #include <dpcommon/output.h>
 #include <dpengine/pixels.h>
-#include <dptest_engine.h>
+#include <dptest.h>
 
 
 // "Oracle" versions of conversion functions that go via floating point. The

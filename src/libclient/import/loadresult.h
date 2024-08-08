@@ -1,7 +1,7 @@
 #ifndef LIBCLIENT_IMPORT_LOADMESSAGE_H
 #define LIBCLIENT_IMPORT_LOADMESSAGE_H
 extern "C" {
-#include <dpengine/load.h>
+#include <dpengine/load_enums.h>
 }
 #include <QString>
 

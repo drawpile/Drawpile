@@ -408,7 +408,7 @@ target_link_libraries(drawpile PRIVATE
 	cmake-config
 	dpshared
 	dpclient
-	drawdance
+	drawdance_client
 	${QT_PACKAGE_NAME}::Core
 	${QT_PACKAGE_NAME}::Gui
 	${QT_PACKAGE_NAME}::OpenGL

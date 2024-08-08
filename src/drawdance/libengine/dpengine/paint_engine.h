@@ -86,6 +86,15 @@ typedef void (*DP_PaintEnginePushMessageFn)(void *user, DP_Message *msg);
 
 typedef struct DP_PaintEngine DP_PaintEngine;
 
+typedef struct DP_PaintEnginePlayback {
+    DP_Player *player;
+    long long msecs;
+    bool next_has_time;
+    DP_PaintEnginePlaybackFn fn;
+    DP_PaintEngineDumpPlaybackFn dump_fn;
+    void *user;
+} DP_PaintEnginePlayback;
+
 DP_PaintEngine *DP_paint_engine_new_inc(
     DP_DrawContext *paint_dc, DP_DrawContext *main_dc,
     DP_DrawContext *preview_dc, DP_AclState *acls, DP_CanvasState *cs_or_null,
@@ -154,60 +163,7 @@ bool DP_paint_engine_recorder_stop(DP_PaintEngine *pe);
 
 bool DP_paint_engine_recorder_is_recording(DP_PaintEngine *pe);
 
-DP_PlayerResult
-DP_paint_engine_playback_step(DP_PaintEngine *pe, long long steps,
-                              DP_PaintEnginePushMessageFn push_message,
-                              void *user);
-
-DP_PlayerResult DP_paint_engine_playback_skip_by(
-    DP_PaintEngine *pe, DP_DrawContext *dc, long long steps, bool by_snapshots,
-    DP_PaintEnginePushMessageFn push_message, void *user);
-
-DP_PlayerResult DP_paint_engine_playback_jump_to(
-    DP_PaintEngine *pe, DP_DrawContext *dc, long long position,
-    DP_PaintEnginePushMessageFn push_message, void *user);
-
-DP_PlayerResult DP_paint_engine_playback_begin(DP_PaintEngine *pe);
-
-DP_PlayerResult DP_paint_engine_playback_play(
-    DP_PaintEngine *pe, long long msecs,
-    DP_PaintEngineFilterMessageFn filter_message_or_null,
-    DP_PaintEnginePushMessageFn push_message, void *user);
-
-bool DP_paint_engine_playback_index_build(
-    DP_PaintEngine *pe, DP_DrawContext *dc,
-    DP_PlayerIndexShouldSnapshotFn should_snapshot_fn,
-    DP_PlayerIndexProgressFn progress_fn, void *user);
-
-bool DP_paint_engine_playback_index_load(DP_PaintEngine *pe);
-
-unsigned int DP_paint_engine_playback_index_message_count(DP_PaintEngine *pe);
-
-size_t DP_paint_engine_playback_index_entry_count(DP_PaintEngine *pe);
-
-DP_Image *DP_paint_engine_playback_index_thumbnail_at(DP_PaintEngine *pe,
-                                                      size_t index,
-                                                      bool *out_error);
-
-DP_PlayerResult DP_paint_engine_playback_dump_step(
-    DP_PaintEngine *pe, DP_PaintEnginePushMessageFn push_message, void *user);
-
-DP_PlayerResult DP_paint_engine_playback_dump_jump_previous_reset(
-    DP_PaintEngine *pe, DP_PaintEnginePushMessageFn push_message, void *user);
-
-DP_PlayerResult DP_paint_engine_playback_dump_jump_next_reset(
-    DP_PaintEngine *pe, DP_PaintEnginePushMessageFn push_message, void *user);
-
-DP_PlayerResult
-DP_paint_engine_playback_dump_jump(DP_PaintEngine *pe, long long position,
-                                   DP_PaintEnginePushMessageFn push_message,
-                                   void *user);
-
-bool DP_paint_engine_playback_flush(DP_PaintEngine *pe,
-                                    DP_PaintEnginePushMessageFn push_message,
-                                    void *user);
-
-bool DP_paint_engine_playback_close(DP_PaintEngine *pe);
+DP_PaintEnginePlayback *DP_paint_engine_playback(DP_PaintEngine *pe);
 
 // Returns the number of drawing commands actually pushed to the paint engine.
 int DP_paint_engine_handle_inc(DP_PaintEngine *pe, bool local,

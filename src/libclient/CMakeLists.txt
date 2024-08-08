@@ -274,7 +274,7 @@ target_link_libraries(dpclient
 		cmake-config
 	PUBLIC
 		dpshared
-		drawdance
+		drawdance_client
 		${QT_PACKAGE_NAME}::Core
 		${QT_PACKAGE_NAME}::Network
 		${QT_PACKAGE_NAME}::Gui
