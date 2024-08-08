@@ -1,9 +1,9 @@
 FROM alpine:3.19 as common
-RUN apk add --no-cache karchive5 libbz2 libmicrohttpd libsodium libwebp qt5-qtbase qt5-qtbase-sqlite qt5-qtwebsockets
+RUN apk add --no-cache libbz2 libmicrohttpd libsodium qt5-qtbase qt5-qtbase-sqlite qt5-qtwebsockets
 
 ## Build container
 FROM common as builder
-RUN apk add cargo cmake g++ karchive5-dev libmicrohttpd-dev libsodium-dev libwebp-dev qt5-qtbase-dev qt5-qtwebsockets-dev samurai
+RUN apk add cargo cmake g++ libmicrohttpd-dev libsodium-dev qt5-qtbase-dev qt5-qtwebsockets-dev samurai
 
 ARG version=main
 RUN mkdir -p /build \
