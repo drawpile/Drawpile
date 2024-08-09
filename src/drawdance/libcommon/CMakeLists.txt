@@ -82,7 +82,7 @@ if(FILE_IO_IMPL STREQUAL "QT")
     )
     target_link_libraries(dpcommon PUBLIC "Qt${QT_VERSION_MAJOR}::Core")
 
-    if(ZIP_IMPL STREQUAL "KARCHIVE")
+    if(CLIENT OR TOOLS AND ZIP_IMPL STREQUAL "KARCHIVE")
         target_compile_definitions(dpcommon PUBLIC DP_QT_IO_KARCHIVE)
         target_link_libraries(dpcommon PUBLIC "KF${QT_VERSION_MAJOR}::Archive")
     endif()
