@@ -74,6 +74,7 @@ DP_CanvasState *DP_load_animation_frames(
             child_tll = DP_transient_layer_list_new_init(path_count);
             child_tlpl = DP_transient_layer_props_list_new_init(path_count);
             tt = DP_transient_track_new_init(path_count);
+            DP_transient_track_id_set(tt, BASE_LAYER_ID);
             set_track_title(tt, 0);
         }
 

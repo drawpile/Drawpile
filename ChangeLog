@@ -3,6 +3,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Don't try to update the roles list before becoming an operator, which could lead to a crash. Thanks Bluestrings for reporting.
  * Fix: Don't update sessions that were just added to the session browser, since that can lead to a crash because of what is probably a bug in Qt's filtering and sorting. Thanks Bluestrings for reporting.
  * Feature: Turn too large transforms into cut and paste operations instead of cancelling them outright.
+ * Fix: Make frame import not create a track with an invalid ID that messes up the UI. Thanks BulletPepper and greendyno for reporting.
 
 2024-08-04 Version 2.2.2-beta.2
  * Feature: Allow choosing a different cursor for erase and alpha locked brushes. Thanks Hipofiz and Rylan for suggesting.
