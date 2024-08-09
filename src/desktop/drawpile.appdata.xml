@@ -34,6 +34,48 @@
           <li>Fix: Make frame import not create a track with an invalid ID that messes up the UI. Thanks BulletPepper and greendyno for reporting.</li>
         </ul>
       </description>
+      <artifacts>
+        <artifact type="binary" platform="x86_64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.3/Drawpile-2.2.2-beta.3-x86_64.msi</location>
+          <checksum type="sha256">82a1893f1e4475ef7b3674e5c4c261c26c64e99b649f330ea8eb2286342c3273</checksum>
+          <size type="download">22810624</size>
+        </artifact>
+        <artifact type="binary" platform="i386-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.3/Drawpile-2.2.2-beta.3-x86.msi</location>
+          <checksum type="sha256">5bfe11c08dbc5d9b411ffe94a80351f6835c1a174febab3a442861997ba00b40</checksum>
+          <size type="download">19550208</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.3/Drawpile-2.2.2-beta.3-x86_64.dmg</location>
+          <checksum type="sha256">f79327ebc102ca17f536aacee0e0dc3a129df4ec9c2f91096a24a0967c96db7c</checksum>
+          <size type="download">28350525</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.3/Drawpile-2.2.2-beta.3-arm64.dmg</location>
+          <checksum type="sha256">a161834d7dd28e1edebee1c490c3dd02bb82a55167ac192150387e6aa347b4b0</checksum>
+          <size type="download">26163747</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.3/Drawpile-2.2.2-beta.3-x86_64.AppImage</location>
+          <checksum type="sha256">e8666ad73105bc1c0e2c55781f448db53fe585988061c528bb525d480320a228</checksum>
+          <size type="download">49181888</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.3/Drawpile-2.2.2-beta.3-arm64-v8a.apk</location>
+          <checksum type="sha256">d003b012337ab365741cb1b0f7cb03e13261459908514c44ae0127857d292eff</checksum>
+          <size type="download">22034264</size>
+        </artifact>
+        <artifact type="binary" platform="arm-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.3/Drawpile-2.2.2-beta.3-armeabi-v7a.apk</location>
+          <checksum type="sha256">294bf63d932b9290a3197a736c7c1e9057ff17fa2396359c002c6f69240a53fe</checksum>
+          <size type="download">18552788</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.2-beta.3.tar.gz</location>
+          <checksum type="sha256">5dfe7bfc21e334c5be9e6383428f2aa5281e31f072b3138891a8a55bbc1845ac</checksum>
+          <size type="download">6025831</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.2.2-beta.2" type="development" date="2024-08-04">
       <url>https://drawpile.net/news/release-2.2.2-beta.2/</url>
