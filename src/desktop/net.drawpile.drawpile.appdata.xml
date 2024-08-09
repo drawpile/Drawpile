@@ -22,6 +22,19 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.2.2-beta.3" type="development" date="2024-08-09">
+      <url>https://drawpile.net/news/release-2.2.2-beta.3/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fix: Use more accurate timers for performance profiles if the platform supports it.</li>
+          <li>Fix: Don't try to update the roles list before becoming an operator, which could lead to a crash. Thanks Bluestrings for reporting.</li>
+          <li>Fix: Don't update sessions that were just added to the session browser, since that can lead to a crash because of what is probably a bug in Qt's filtering and sorting. Thanks Bluestrings for reporting.</li>
+          <li>Feature: Turn too large transforms into cut and paste operations instead of cancelling them outright.</li>
+          <li>Fix: Make frame import not create a track with an invalid ID that messes up the UI. Thanks BulletPepper and greendyno for reporting.</li>
+        </ul>
+      </description>
+    </release>
     <release version="2.2.2-beta.2" type="development" date="2024-08-04">
       <url>https://drawpile.net/news/release-2.2.2-beta.2/</url>
       <description>
