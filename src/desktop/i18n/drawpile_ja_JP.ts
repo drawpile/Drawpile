@@ -1729,7 +1729,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-394"/>
         <source>Mirror</source>
-        <translation>ミラー</translation>
+        <translation>左右反転</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2840,12 +2840,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>&amp;Mirror Transform</source>
-        <translation>ミラー変形(&amp;M)</translation>
+        <translation>左右反転変形(&amp;M)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Flip Transform</source>
-        <translation>反転変形(&amp;F)</translation>
+        <translation>上下反転変形(&amp;F)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8427,7 +8427,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Dynamic</source>
-        <translation>ダイナミック</translation>
+        <translation>大きい画面</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8503,7 +8503,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+33"/>
         <source>Zoom, rotate, mirror and flip notices</source>
-        <translation>ズーム、回転、ミラー、反転の通知</translation>
+        <translation>ズーム、回転、左右反転、上下反転の通知</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10086,13 +10086,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+18"/>
         <location filename="../view/canvascontroller.cpp" line="+19"/>
         <source>Horizontal mirror: ON</source>
-        <translation>水平ミラー：ON</translation>
+        <translation>左右反転：ON</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../view/canvascontroller.cpp" line="+2"/>
         <source>Horizontal mirror: OFF</source>
-        <translation>水平ミラー：OFF</translation>
+        <translation>左右反転：OFF</translation>
     </message>
     <message>
         <location line="+1858"/>
