@@ -6,6 +6,7 @@
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/export/animationformat.h"
+#include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
 #include <QFormLayout>
@@ -21,7 +22,8 @@
 
 namespace dialogs {
 
-AnimationExportDialog::AnimationExportDialog(QWidget *parent)
+AnimationExportDialog::AnimationExportDialog(
+	int scalePercent, bool scaleSmooth, QWidget *parent)
 	: QDialog(parent)
 {
 	setWindowTitle(tr("Export Animation"));
@@ -61,6 +63,22 @@ AnimationExportDialog::AnimationExportDialog(QWidget *parent)
 	m_loopsSpinner = new QSpinBox;
 	m_loopsSpinner->setRange(1, 99);
 	outputForm->addRow(m_loopsLabel, m_loopsSpinner);
+
+	m_scaleSpinner = new QSpinBox;
+	m_scaleSpinner->setRange(1, 1000);
+	m_scaleSpinner->setValue(scalePercent);
+	m_scaleSpinner->setSuffix(tr("%"));
+
+	m_scaleSmoothBox = new QCheckBox(tr("Smooth"));
+	m_scaleSmoothBox->setChecked(scaleSmooth);
+
+	QHBoxLayout *scaleLayout = new QHBoxLayout;
+	scaleLayout->addWidget(m_scaleSpinner);
+	scaleLayout->addWidget(m_scaleSmoothBox);
+	outputForm->addRow(tr("Scaling:"), scaleLayout);
+
+	m_scaleLabel = new QLabel;
+	outputForm->addRow(m_scaleLabel);
 
 	QWidget *inputWidget = new QWidget;
 	QFormLayout *inputForm = new QFormLayout(inputWidget);
@@ -129,6 +147,9 @@ AnimationExportDialog::AnimationExportDialog(QWidget *parent)
 		m_formatCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, &AnimationExportDialog::updateOutputUi);
 	connect(
+		m_scaleSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&AnimationExportDialog::updateScalingUi);
+	connect(
 		m_startSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateEndRange);
 	connect(
@@ -138,14 +159,26 @@ AnimationExportDialog::AnimationExportDialog(QWidget *parent)
 		m_x1Spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateX2Range);
 	connect(
+		m_x1Spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&AnimationExportDialog::updateScalingUi);
+	connect(
 		m_x2Spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateX1Range);
+	connect(
+		m_x2Spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&AnimationExportDialog::updateScalingUi);
 	connect(
 		m_y1Spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateY2Range);
 	connect(
+		m_y1Spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&AnimationExportDialog::updateScalingUi);
+	connect(
 		m_y2Spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&AnimationExportDialog::updateY1Range);
+	connect(
+		m_y2Spinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&AnimationExportDialog::updateScalingUi);
 	connect(
 		m_inputResetButton, &QPushButton::clicked, this,
 		&AnimationExportDialog::resetInputs);
@@ -163,6 +196,7 @@ AnimationExportDialog::AnimationExportDialog(QWidget *parent)
 		&AnimationExportDialog::requestExport, Qt::DirectConnection);
 
 	updateOutputUi();
+	updateScalingUi();
 }
 
 void AnimationExportDialog::setCanvas(canvas::CanvasModel *canvas)
@@ -201,6 +235,13 @@ void AnimationExportDialog::setFlipbookState(
 	}
 }
 
+QSize AnimationExportDialog::getScaledSizeFor(
+	int scalePercent, const QRect &rect)
+{
+	QSize size = rect.size() * (scalePercent / 100.0);
+	return QSize(qMax(size.width(), 1), qMax(size.height(), 1));
+}
+
 #ifndef __EMSCRIPTEN__
 void AnimationExportDialog::accept()
 {
@@ -218,6 +259,15 @@ void AnimationExportDialog::updateOutputUi()
 					 format == int(AnimationFormat::Webm);
 	m_loopsLabel->setVisible(showLoops);
 	m_loopsSpinner->setVisible(showLoops);
+}
+
+void AnimationExportDialog::updateScalingUi()
+{
+	int scalePercent = m_scaleSpinner->value();
+	QSize size = getScaledSizeFor(scalePercent, getCropRect());
+	m_scaleLabel->setText(tr("Output resolution will be %1x%2 pixels.")
+							  .arg(size.width())
+							  .arg(size.height()));
 }
 
 #ifndef __EMSCRIPTEN__
@@ -340,6 +390,7 @@ void AnimationExportDialog::setCanvasSize(const QSize &size)
 	}
 	m_canvasWidth = size.width();
 	m_canvasHeight = size.height();
+	updateScalingUi();
 }
 
 void AnimationExportDialog::setCanvasFrameCount(int frameCount)
@@ -376,10 +427,15 @@ void AnimationExportDialog::requestExport()
 		m_path,
 #endif
 		format, m_loopsSpinner->value(), m_startSpinner->value() - 1,
-		m_endSpinner->value() - 1, m_framerateSpinner->value(),
-		QRect(
-			QPoint(m_x1Spinner->value(), m_y1Spinner->value()),
-			QPoint(m_x2Spinner->value(), m_y2Spinner->value())));
+		m_endSpinner->value() - 1, m_framerateSpinner->value(), getCropRect(),
+		m_scaleSpinner->value(), m_scaleSmoothBox->isChecked());
+}
+
+QRect AnimationExportDialog::getCropRect() const
+{
+	return QRect(
+		QPoint(m_x1Spinner->value(), m_y1Spinner->value()),
+		QPoint(m_x2Spinner->value(), m_y2Spinner->value()));
 }
 
 }

@@ -880,8 +880,12 @@ static const char *get_path_separator(const char *path)
 
 struct DP_SaveFrameContext {
     DP_CanvasState *cs;
+    DP_DrawContext *dc;
     DP_ViewModeBuffer *vmbs;
     DP_Rect *crop;
+    int width;
+    int height;
+    int interpolation;
     int frame_count;
     const char *path;
     const char *separator;
@@ -908,17 +912,53 @@ static void set_error_result(struct DP_SaveFrameContext *c,
     }
 }
 
+static DP_Image *generate_frame_image(DP_CanvasState *cs, DP_DrawContext *dc,
+                                      DP_Rect *crop, int width, int height,
+                                      int interpolation, DP_ViewModeBuffer *vmb,
+                                      int frame_index, DP_Mutex *mutex_or_null)
+{
+    DP_ViewModeFilter vmf =
+        DP_view_mode_filter_make_frame_render(vmb, cs, frame_index);
+    DP_Image *img = DP_canvas_state_to_flat_image(
+        cs, DP_FLAT_IMAGE_RENDER_FLAGS, crop, &vmf);
+    if (!img) {
+        DP_warn("Flatten frame %d: %s", frame_index, DP_error());
+        return NULL;
+    }
+
+    int input_width = DP_image_width(img);
+    int input_height = DP_image_height(img);
+    if (input_width == width && input_height == height) {
+        return img;
+    }
+    else {
+        if (mutex_or_null) {
+            DP_MUTEX_MUST_LOCK(mutex_or_null);
+        }
+        DP_Image *scaled_img =
+            DP_image_scale(img, dc, width, height, interpolation);
+        if (mutex_or_null) {
+            DP_MUTEX_MUST_UNLOCK(mutex_or_null);
+        }
+        DP_image_free(img);
+        if (scaled_img) {
+            return scaled_img;
+        }
+        else {
+            DP_warn("Scale frame %d: %s", frame_index, DP_error());
+            return NULL;
+        }
+    }
+}
+
 static unsigned char *generate_frame_png(struct DP_SaveFrameContext *c,
                                          DP_ViewModeBuffer *vmb,
                                          int frame_index, size_t *out_size)
 {
-    DP_CanvasState *cs = c->cs;
-    DP_ViewModeFilter vmf =
-        DP_view_mode_filter_make_frame_render(vmb, cs, frame_index);
-    DP_Image *img = DP_canvas_state_to_flat_image(
-        cs, DP_FLAT_IMAGE_RENDER_FLAGS, c->crop, &vmf);
+    DP_Image *img =
+        generate_frame_image(c->cs, c->dc, c->crop, c->width, c->height,
+                             c->interpolation, vmb, frame_index, c->mutex);
     if (!img) {
-        DP_warn("Flatten frame %d: %s", frame_index, DP_error());
         set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
         return NULL;
     }
@@ -975,13 +1015,35 @@ static void write_frame_to_zip(struct DP_SaveFrameContext *c, int frame_index,
 static char *save_frame(struct DP_SaveFrameContext *c, DP_ViewModeBuffer *vmb,
                         int frame_index)
 {
-    DP_CanvasState *cs = c->cs;
+    DP_Image *img =
+        generate_frame_image(c->cs, c->dc, c->crop, c->width, c->height,
+                             c->interpolation, vmb, frame_index, c->mutex);
+    if (!img) {
+        set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
+        return NULL;
+    }
+
     char *path = format_frame_path(c, frame_index);
-    DP_SaveResult result = save_flat_image(
-        cs, NULL, c->crop, path, save_png,
-        DP_view_mode_filter_make_frame_render(vmb, cs, frame_index), NULL,
-        NULL);
-    set_error_result(c, result);
+    DP_Output *output = DP_file_output_new_from_path(path);
+    if (!output) {
+        DP_free(path);
+        set_error_result(c, DP_SAVE_RESULT_OPEN_ERROR);
+        return NULL;
+    }
+
+    if (!DP_image_write_png(img, output)) {
+        DP_output_free_discard(output);
+        DP_free(path);
+        set_error_result(c, DP_SAVE_RESULT_WRITE_ERROR);
+        return NULL;
+    }
+
+    if (!DP_output_free(output)) {
+        DP_free(path);
+        set_error_result(c, DP_SAVE_RESULT_WRITE_ERROR);
+        return NULL;
+    }
+
     return path;
 }
 
@@ -1054,24 +1116,27 @@ static void save_frame_job(void *element, int thread_index)
             // Render and save the first frame given.
             char *path = save_frame(c, vmb, first_frame);
             report_progress(c);
-            // Subsequent frames are the same, so just copy the files.
-            int count = params->count;
-            for (int i = 1; i < count; ++i) {
-                if (DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
-                    copy_frame(c, path, params->frames[i]);
-                    report_progress(c);
+            if (path) {
+                // Subsequent frames are the same, so just copy the files.
+                int count = params->count;
+                for (int i = 1; i < count; ++i) {
+                    if (DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
+                        copy_frame(c, path, params->frames[i]);
+                        report_progress(c);
+                    }
                 }
+                DP_free(path);
             }
-            DP_free(path);
         }
     }
     DP_free(params);
 }
 
 static DP_SaveResult
-save_animation_frames(DP_CanvasState *cs, const char *path,
+save_animation_frames(DP_CanvasState *cs, DP_DrawContext *dc, const char *path,
                       DP_SaveAnimationProgressFn progress_fn, void *user,
-                      DP_Rect *crop, int start, int end_inclusive, bool zip)
+                      DP_Rect *crop, int width, int height, int interpolation,
+                      int start, int end_inclusive, bool zip)
 {
     if (end_inclusive < start) {
         return DP_SAVE_RESULT_SUCCESS;
@@ -1088,16 +1153,10 @@ save_animation_frames(DP_CanvasState *cs, const char *path,
         zw = NULL;
     }
 
-    DP_Mutex *mutex;
-    if (progress_fn) {
-        mutex = DP_mutex_new();
-        if (!mutex) {
-            DP_zip_writer_free_abort(zw);
-            return DP_SAVE_RESULT_INTERNAL_ERROR;
-        }
-    }
-    else {
-        mutex = NULL;
+    DP_Mutex *mutex = DP_mutex_new();
+    if (!mutex) {
+        DP_zip_writer_free_abort(zw);
+        return DP_SAVE_RESULT_INTERNAL_ERROR;
     }
 
     int frame_count = count_frames(start, end_inclusive);
@@ -1113,8 +1172,12 @@ save_animation_frames(DP_CanvasState *cs, const char *path,
     int thread_count = DP_worker_thread_count(worker);
     struct DP_SaveFrameContext c = {
         cs,
+        dc,
         DP_malloc(sizeof(*c.vmbs) * DP_int_to_size(thread_count)),
         crop,
+        width,
+        height,
+        interpolation,
         frame_count,
         path,
         get_path_separator(path),
@@ -1186,13 +1249,14 @@ save_animation_frames(DP_CanvasState *cs, const char *path,
     return result;
 }
 
-DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, const char *path,
-                                       DP_Rect *crop, int start,
-                                       int end_inclusive,
+DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, DP_DrawContext *dc,
+                                       const char *path, DP_Rect *crop,
+                                       int width, int height, int interpolation,
+                                       int start, int end_inclusive,
                                        DP_SaveAnimationProgressFn progress_fn,
                                        void *user)
 {
-    if (cs && path) {
+    if (cs && path && width > 0 && height > 0) {
         int frame_count = DP_canvas_state_frame_count(cs);
         if (start < 0) {
             start = 0;
@@ -1204,7 +1268,8 @@ DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, const char *path,
         DP_PERF_BEGIN_DETAIL(fn, "animation_frames", "frame_count=%d,path=%s",
                              count_frames(start, end_inclusive), path);
         DP_SaveResult result = save_animation_frames(
-            cs, path, progress_fn, user, crop, start, end_inclusive, false);
+            cs, dc, path, progress_fn, user, crop, width, height, interpolation,
+            start, end_inclusive, false);
         DP_PERF_END(fn);
         return result;
     }
@@ -1213,12 +1278,14 @@ DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, const char *path,
     }
 }
 
-DP_SaveResult DP_save_animation_zip(DP_CanvasState *cs, const char *path,
-                                    DP_Rect *crop, int start, int end_inclusive,
+DP_SaveResult DP_save_animation_zip(DP_CanvasState *cs, DP_DrawContext *dc,
+                                    const char *path, DP_Rect *crop, int width,
+                                    int height, int interpolation, int start,
+                                    int end_inclusive,
                                     DP_SaveAnimationProgressFn progress_fn,
                                     void *user)
 {
-    if (cs && path) {
+    if (cs && path && width > 0 && height > 0) {
         int frame_count = DP_canvas_state_frame_count(cs);
         if (start < 0) {
             start = 0;
@@ -1230,7 +1297,8 @@ DP_SaveResult DP_save_animation_zip(DP_CanvasState *cs, const char *path,
         DP_PERF_BEGIN_DETAIL(fn, "animation_zip", "frame_count=%d,path=%s",
                              count_frames(start, end_inclusive), path);
         DP_SaveResult result = save_animation_frames(
-            cs, path, progress_fn, user, crop, start, end_inclusive, true);
+            cs, dc, path, progress_fn, user, crop, width, height, interpolation,
+            start, end_inclusive, true);
         DP_PERF_END(fn);
         return result;
     }
@@ -1239,33 +1307,6 @@ DP_SaveResult DP_save_animation_zip(DP_CanvasState *cs, const char *path,
     }
 }
 
-
-static bool get_gif_dimensions(DP_CanvasState *cs, DP_Rect *crop,
-                               int *out_width, int *out_height)
-{
-    DP_Rect rect = DP_rect_make(0, 0, DP_canvas_state_width(cs),
-                                DP_canvas_state_height(cs));
-    if (!DP_rect_valid(rect)) {
-        return false;
-    }
-
-    if (crop) {
-        rect = DP_rect_intersection(rect, *crop);
-        if (!DP_rect_valid(rect)) {
-            return false;
-        }
-    }
-
-    int width = DP_rect_width(rect);
-    int height = DP_rect_height(rect);
-    if (width < 1 || height < 1 || width > UINT16_MAX || height > UINT16_MAX) {
-        return false;
-    }
-
-    *out_width = width;
-    *out_height = height;
-    return true;
-}
 
 static bool write_gif(void *user, const void *buffer, size_t size)
 {
@@ -1298,16 +1339,12 @@ static bool report_gif_progress(DP_SaveAnimationProgressFn progress_fn,
     return !progress_fn || progress_fn(user, part / total);
 }
 
-static DP_SaveResult save_animation_gif(DP_CanvasState *cs, const char *path,
-                                        DP_SaveAnimationProgressFn progress_fn,
-                                        void *user, DP_Rect *crop, int start,
-                                        int end_inclusive, int framerate)
+static DP_SaveResult
+save_animation_gif(DP_CanvasState *cs, DP_DrawContext *dc, const char *path,
+                   DP_SaveAnimationProgressFn progress_fn, void *user,
+                   DP_Rect *crop, int width, int height, int interpolation,
+                   int start, int end_inclusive, int framerate)
 {
-    int width, height;
-    if (!get_gif_dimensions(cs, crop, &width, &height)) {
-        return DP_SAVE_RESULT_WRITE_ERROR;
-    }
-
     DP_Output *output = DP_file_output_new_from_path(path);
     if (!output) {
         return DP_SAVE_RESULT_OPEN_ERROR;
@@ -1337,10 +1374,8 @@ static DP_SaveResult save_animation_gif(DP_CanvasState *cs, const char *path,
             ++instances;
         }
 
-        DP_ViewModeFilter vmf =
-            DP_view_mode_filter_make_frame_render(&vmb, cs, i);
-        DP_Image *img = DP_canvas_state_to_flat_image(
-            cs, DP_FLAT_IMAGE_RENDER_FLAGS, crop, &vmf);
+        DP_Image *img = generate_frame_image(cs, dc, crop, width, height,
+                                             interpolation, &vmb, i, NULL);
         double delay = centiseconds_per_frame * DP_int_to_double(instances);
         double delay_floored = floor(delay + delay_frac);
         delay_frac = delay - delay_floored;
@@ -1374,13 +1409,15 @@ static DP_SaveResult save_animation_gif(DP_CanvasState *cs, const char *path,
     return DP_SAVE_RESULT_SUCCESS;
 }
 
-DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, const char *path,
-                                    DP_Rect *crop, int start, int end_inclusive,
-                                    int framerate,
+DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, DP_DrawContext *dc,
+                                    const char *path, DP_Rect *crop, int width,
+                                    int height, int interpolation, int start,
+                                    int end_inclusive, int framerate,
                                     DP_SaveAnimationProgressFn progress_fn,
                                     void *user)
 {
-    if (cs && path) {
+    if (cs && path && width > 0 && height > 0 && width <= UINT16_MAX
+        && height <= UINT16_MAX) {
         int frame_count = DP_canvas_state_frame_count(cs);
         if (start < 0) {
             start = 0;
@@ -1395,7 +1432,8 @@ DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, const char *path,
         DP_PERF_BEGIN_DETAIL(fn, "animation_gif", "frame_count=%d,path=%s",
                              count_frames(start, end_inclusive), path);
         DP_SaveResult result = save_animation_gif(
-            cs, path, progress_fn, user, crop, start, end_inclusive, framerate);
+            cs, dc, path, progress_fn, user, crop, width, height, interpolation,
+            start, end_inclusive, framerate);
         DP_PERF_END(fn);
         return result;
     }

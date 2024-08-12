@@ -6,6 +6,7 @@ extern "C" {
 #	include <dpimpex/save_video.h>
 #endif
 }
+#include "libclient/drawdance/global.h"
 #include "libclient/export/animationformat.h"
 #include "libclient/export/animationsaverrunnable.h"
 #include "libclient/export/canvassaverrunnable.h"
@@ -18,19 +19,23 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 #ifndef __EMSCRIPTEN__
 	const QString &path,
 #endif
-	int format, int loops, int start, int end, int framerate, const QRect &crop,
+	int format, int width, int height, int loops, int start, int end,
+	int framerate, const QRect &crop, bool scaleSmooth,
 	const drawdance::CanvasState &canvasState, QObject *parent)
 	: QObject(parent)
 #ifndef __EMSCRIPTEN__
 	, m_path(path)
 #endif
 	, m_format(format)
+	, m_width(width)
+	, m_height(height)
 	, m_loops(loops)
 	, m_start(start)
 	, m_end(end)
 	, m_framerate(framerate)
 	, m_crop(crop)
 	, m_canvasState(canvasState)
+	, m_scaleSmooth(scaleSmooth)
 	, m_cancelled(false)
 {
 }
@@ -59,22 +64,37 @@ void AnimationSaverRunnable::run()
 	DP_SaveResult result;
 	switch(m_format) {
 #if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
-	case int(AnimationFormat::Frames):
+	case int(AnimationFormat::Frames): {
+		drawdance::DrawContext dc = drawdance::DrawContextPool::acquire();
 		result = DP_save_animation_frames(
-			m_canvasState.get(), pathBytes.constData(), pr, m_start, m_end,
-			&onProgress, this);
+			m_canvasState.get(), dc.get(), pathBytes.constData(), pr, m_width,
+			m_height,
+			m_scaleSmooth ? DP_MSG_TRANSFORM_REGION_MODE_BILINEAR
+						  : DP_MSG_TRANSFORM_REGION_MODE_NEAREST,
+			m_start, m_end, &onProgress, this);
 		break;
+	}
 #endif
-	case int(AnimationFormat::Zip):
+	case int(AnimationFormat::Zip): {
+		drawdance::DrawContext dc = drawdance::DrawContextPool::acquire();
 		result = DP_save_animation_zip(
-			m_canvasState.get(), pathBytes.constData(), pr, m_start, m_end,
-			&onProgress, this);
+			m_canvasState.get(), dc.get(), pathBytes.constData(), pr, m_width,
+			m_height,
+			m_scaleSmooth ? DP_MSG_TRANSFORM_REGION_MODE_BILINEAR
+						  : DP_MSG_TRANSFORM_REGION_MODE_NEAREST,
+			m_start, m_end, &onProgress, this);
 		break;
-	case int(AnimationFormat::Gif):
+	}
+	case int(AnimationFormat::Gif): {
+		drawdance::DrawContext dc = drawdance::DrawContextPool::acquire();
 		result = DP_save_animation_gif(
-			m_canvasState.get(), pathBytes.constData(), pr, m_start, m_end,
-			m_framerate, &onProgress, this);
+			m_canvasState.get(), dc.get(), pathBytes.constData(), pr, m_width,
+			m_height,
+			m_scaleSmooth ? DP_MSG_TRANSFORM_REGION_MODE_BILINEAR
+						  : DP_MSG_TRANSFORM_REGION_MODE_NEAREST,
+			m_start, m_end, m_framerate, &onProgress, this);
 		break;
+	}
 #ifdef DP_LIBAV
 	case int(AnimationFormat::Webp):
 	case int(AnimationFormat::Mp4):
@@ -83,7 +103,11 @@ void AnimationSaverRunnable::run()
 			m_canvasState.get(),
 			pr,
 			pathBytes.constData(),
+			m_scaleSmooth ? DP_SAVE_VIDEO_FLAGS_SCALE_SMOOTH
+						  : DP_SAVE_VIDEO_FLAGS_NONE,
 			formatToSaveVideoFormat(),
+			m_width,
+			m_height,
 			m_start,
 			m_end,
 			m_framerate,

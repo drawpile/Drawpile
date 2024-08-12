@@ -298,7 +298,7 @@ private:
 		const QString &path,
 #endif
 		int format, int loops, int start, int end, int framerate,
-		const QRect &crop);
+		const QRect &crop, int scalePercent, bool scaleSmooth);
 
 	ActionBuilder makeAction(const char *name, const QString &text = QString{});
 	QAction *getAction(const QString &name);
@@ -404,6 +404,8 @@ private:
 	dialogs::SessionSettingsDialog *m_sessionSettings;
 	dialogs::ServerLogDialog *m_serverLogDialog;
 	dialogs::Flipbook::State m_flipbookState;
+	int m_animationExportScalePercent = 100;
+	bool m_animationExportScaleSmooth = true;
 
 #ifndef __EMSCRIPTEN__
 	QMenu *m_recentMenu;

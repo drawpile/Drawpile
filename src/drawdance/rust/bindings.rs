@@ -2424,6 +2424,15 @@ extern "C" {
     ) -> bool;
 }
 extern "C" {
+    pub fn DP_image_scale(
+        img: *mut DP_Image,
+        dc: *mut DP_DrawContext,
+        width: ::std::os::raw::c_int,
+        height: ::std::os::raw::c_int,
+        interpolation: ::std::os::raw::c_int,
+    ) -> *mut DP_Image;
+}
+extern "C" {
     pub fn DP_image_same_pixel(img: *mut DP_Image, out_pixel: *mut DP_Pixel8) -> bool;
 }
 extern "C" {
@@ -7946,8 +7955,12 @@ pub type DP_SaveAnimationProgressFn = ::std::option::Option<
 extern "C" {
     pub fn DP_save_animation_frames(
         cs: *mut DP_CanvasState,
+        dc: *mut DP_DrawContext,
         path: *const ::std::os::raw::c_char,
         crop: *mut DP_Rect,
+        width: ::std::os::raw::c_int,
+        height: ::std::os::raw::c_int,
+        interpolation: ::std::os::raw::c_int,
         start: ::std::os::raw::c_int,
         end_inclusive: ::std::os::raw::c_int,
         progress_fn: DP_SaveAnimationProgressFn,
@@ -7957,8 +7970,12 @@ extern "C" {
 extern "C" {
     pub fn DP_save_animation_zip(
         cs: *mut DP_CanvasState,
+        dc: *mut DP_DrawContext,
         path: *const ::std::os::raw::c_char,
         crop: *mut DP_Rect,
+        width: ::std::os::raw::c_int,
+        height: ::std::os::raw::c_int,
+        interpolation: ::std::os::raw::c_int,
         start: ::std::os::raw::c_int,
         end_inclusive: ::std::os::raw::c_int,
         progress_fn: DP_SaveAnimationProgressFn,
@@ -7968,8 +7985,12 @@ extern "C" {
 extern "C" {
     pub fn DP_save_animation_gif(
         cs: *mut DP_CanvasState,
+        dc: *mut DP_DrawContext,
         path: *const ::std::os::raw::c_char,
         crop: *mut DP_Rect,
+        width: ::std::os::raw::c_int,
+        height: ::std::os::raw::c_int,
+        interpolation: ::std::os::raw::c_int,
         start: ::std::os::raw::c_int,
         end_inclusive: ::std::os::raw::c_int,
         framerate: ::std::os::raw::c_int,

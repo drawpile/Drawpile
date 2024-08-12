@@ -1927,7 +1927,8 @@ void MainWindow::showAnimationExportDialog(bool fromFlipbook)
 		dlg->activateWindow();
 		dlg->raise();
 	} else {
-		dlg = new dialogs::AnimationExportDialog(this);
+		dlg = new dialogs::AnimationExportDialog(
+			m_animationExportScalePercent, m_animationExportScaleSmooth, this);
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
 		dlg->setObjectName(objectName);
 		dlg->setCanvas(m_doc->canvas());
@@ -1958,19 +1959,33 @@ void MainWindow::exportAnimation(
 #ifndef __EMSCRIPTEN__
 	const QString &path,
 #endif
-	int format, int loops, int start, int end, int framerate, const QRect &crop)
+	int format, int loops, int start, int end, int framerate, const QRect &crop,
+	int scalePercent, bool scaleSmooth)
 {
+	m_animationExportScalePercent = scalePercent;
+	m_animationExportScaleSmooth = scaleSmooth;
+
 	QProgressDialog *progressDialog = new QProgressDialog(
 		tr("Saving animation..."), tr("Cancel"), 0, 100, this);
 	progressDialog->setMinimumDuration(500);
 	progressDialog->setValue(0);
 
+	drawdance::CanvasState canvasState =
+		m_doc->canvas()->paintEngine()->viewCanvasState();
+	QRect canvasRect = QRect(QPoint(0, 0), canvasState.size());
+	QRect effectiveCrop = crop & canvasRect;
+	if(effectiveCrop.isEmpty()) {
+		effectiveCrop = canvasRect;
+	}
+	QSize size = dialogs::AnimationExportDialog::getScaledSizeFor(
+		scalePercent, effectiveCrop);
+
 	AnimationSaverRunnable *saver = new AnimationSaverRunnable(
 #ifndef __EMSCRIPTEN__
 		path,
 #endif
-		format, loops, start, end, framerate, crop,
-		m_doc->canvas()->paintEngine()->viewCanvasState(), this);
+		format, size.width(), size.height(), loops, start, end, framerate,
+		effectiveCrop, scaleSmooth, canvasState, this);
 	saver->setAutoDelete(true);
 
 	connect(

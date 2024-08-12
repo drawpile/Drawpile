@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QHash>
 
+class KisSliderSpinBox;
+class QCheckBox;
 class QComboBox;
 class QDialogButtonBox;
 class QLabel;
@@ -20,13 +22,16 @@ namespace dialogs {
 class AnimationExportDialog final : public QDialog {
 	Q_OBJECT
 public:
-	explicit AnimationExportDialog(QWidget *parent = nullptr);
+	explicit AnimationExportDialog(
+		int scalePercent, bool scaleSmooth, QWidget *parent = nullptr);
 
 	void setCanvas(canvas::CanvasModel *canvas);
 
 	void setFlipbookState(
 		int start, int end, double speedPercent, const QRectF &crop,
 		bool apply);
+
+	static QSize getScaledSizeFor(int scalePercent, const QRect &rect);
 
 public slots:
 #ifndef __EMSCRIPTEN__
@@ -39,10 +44,11 @@ signals:
 		const QString &path,
 #endif
 		int format, int loops, int start, int end, int framerate,
-		const QRect &crop);
+		const QRect &crop, int scalePercent, bool scaleSmooth);
 
 private:
 	void updateOutputUi();
+	void updateScalingUi();
 #ifndef __EMSCRIPTEN__
 	QString choosePath();
 #endif
@@ -62,11 +68,16 @@ private:
 
 	void requestExport();
 
+	QRect getCropRect() const;
+
 #ifndef __EMSCRIPTEN__
 	QString m_path;
 #endif
 	QComboBox *m_formatCombo;
 	QLabel *m_loopsLabel;
+	QSpinBox *m_scaleSpinner;
+	QCheckBox *m_scaleSmoothBox;
+	QLabel *m_scaleLabel;
 	QSpinBox *m_loopsSpinner;
 	QSpinBox *m_startSpinner;
 	QSpinBox *m_endSpinner;

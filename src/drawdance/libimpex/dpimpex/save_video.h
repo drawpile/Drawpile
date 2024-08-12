@@ -8,6 +8,9 @@ typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Rect DP_Rect;
 
+#define DP_SAVE_VIDEO_FLAGS_NONE 0x0u
+#define DP_SAVE_VIDEO_FLAGS_SCALE_SMOOTH 0x1u
+
 typedef enum DP_SaveVideoFormat {
     DP_SAVE_VIDEO_FORMAT_MP4,
     DP_SAVE_VIDEO_FORMAT_WEBM,
@@ -18,7 +21,10 @@ typedef struct DP_SaveVideoParams {
     DP_CanvasState *cs;
     const DP_Rect *area;
     const char *path;
+    unsigned int flags;
     int format;
+    int width;
+    int height;
     int start;
     int end_inclusive;
     int framerate;

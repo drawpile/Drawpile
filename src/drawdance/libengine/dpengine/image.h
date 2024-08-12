@@ -97,6 +97,9 @@ DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
 bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
                         int max_height, DP_Image **out_thumb) DP_MUST_CHECK;
 
+DP_Image *DP_image_scale(DP_Image *img, DP_DrawContext *dc, int width,
+                         int height, int interpolation);
+
 bool DP_image_same_pixel(DP_Image *img, DP_Pixel8 *out_pixel);
 
 DP_UPixelFloat DP_image_sample_color_at_with(int width, int height,

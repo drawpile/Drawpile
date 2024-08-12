@@ -19,9 +19,9 @@ public:
 #ifndef __EMSCRIPTEN__
 		const QString &path,
 #endif
-		int format, int loops, int start, int end, int framerate,
-		const QRect &crop, const drawdance::CanvasState &canvasState,
-		QObject *parent = nullptr);
+		int format, int width, int height, int loops, int start, int end,
+		int framerate, const QRect &crop, bool scaleSmooth,
+		const drawdance::CanvasState &canvasState, QObject *parent = nullptr);
 
 	void run() override;
 
@@ -50,12 +50,15 @@ private:
 	const QString m_path;
 #endif
 	const int m_format;
+	const int m_width;
+	const int m_height;
 	const int m_loops;
 	const int m_start;
 	const int m_end;
 	const int m_framerate;
 	const QRect m_crop;
 	const drawdance::CanvasState m_canvasState;
+	const bool m_scaleSmooth;
 	bool m_cancelled;
 };
 

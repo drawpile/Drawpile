@@ -87,14 +87,32 @@ static int get_format_loops(int format, int loops)
     }
 }
 
-static int get_format_dimension(int format, int dimension)
+static int get_format_dimension(int format, int target_dimension,
+                                int input_dimension)
 {
+    int dimension = target_dimension > 0 ? target_dimension : input_dimension;
     switch (format) {
     case DP_SAVE_VIDEO_FORMAT_MP4:
         // H264 dimensions must be divisible by 2.
         return dimension + dimension % 2;
     default:
         return dimension;
+    }
+}
+
+static int get_scaling_flags(unsigned int flags, int input_width,
+                             int input_height, int output_width,
+                             int output_height)
+{
+    // Only scale smoothly if it was requested and the difference is notable. A
+    // 1 pixel difference may be due to get_format_dimensions padding for H264.
+    if ((flags & DP_SAVE_VIDEO_FLAGS_SCALE_SMOOTH)
+        && abs(input_width - output_width) > 1
+        && abs(input_height - output_height) > 1) {
+        return SWS_BILINEAR;
+    }
+    else {
+        return 0;
     }
 }
 
@@ -301,7 +319,8 @@ DP_SaveResult DP_save_animation_video(DP_SaveVideoParams params)
     const char *format_name;
     enum AVCodecID codec_id;
     bool params_ok =
-        params.cs && params.path && params.path[0]
+        params.cs && params.path && params.path[0] && params.width > 0
+        && params.height > 0
         && DP_rect_valid(crop = get_crop(params.cs, params.area))
         && (format_name = get_format_name(params.format))
         && (codec_id = get_format_codec_id(params.format)) != AV_CODEC_ID_NONE;
@@ -355,8 +374,10 @@ DP_SaveResult DP_save_animation_video(DP_SaveVideoParams params)
 
     int input_width = DP_rect_width(crop);
     int input_height = DP_rect_height(crop);
-    int output_width = get_format_dimension(params.format, input_width);
-    int output_height = get_format_dimension(params.format, input_height);
+    int output_width =
+        get_format_dimension(params.format, params.width, input_width);
+    int output_height =
+        get_format_dimension(params.format, params.height, input_height);
     codec_context->width = output_width;
     codec_context->height = output_height;
     codec_context->pix_fmt = get_format_pix_fmt(params.format);
@@ -467,9 +488,12 @@ DP_SaveResult DP_save_animation_video(DP_SaveVideoParams params)
         goto cleanup;
     }
 
-    sws_context =
-        sws_getContext(input_width, input_height, AV_PIX_FMT_BGRA, output_width,
-                       output_height, frame->format, 0, NULL, NULL, NULL);
+    sws_context = sws_getContext(input_width, input_height, AV_PIX_FMT_BGRA,
+                                 output_width, output_height, frame->format,
+                                 get_scaling_flags(params.flags, input_width,
+                                                   input_height, output_width,
+                                                   output_height),
+                                 NULL, NULL, NULL);
     if (!sws_context) {
         DP_error_set("Failed to allocate scaling context");
         result = DP_SAVE_RESULT_INTERNAL_ERROR;

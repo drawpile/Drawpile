@@ -424,6 +424,34 @@ bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
     }
 }
 
+DP_Image *DP_image_scale(DP_Image *img, DP_DrawContext *dc, int width,
+                         int height, int interpolation)
+{
+    DP_ASSERT(img);
+    DP_ASSERT(dc);
+    if (width > 0 && height > 0) {
+        int src_width = DP_image_width(img);
+        int src_height = DP_image_height(img);
+        DP_Transform tf = DP_transform_scale(
+            DP_transform_identity(),
+            DP_int_to_double(width) / DP_int_to_double(src_width),
+            DP_int_to_double(height) / DP_int_to_double(src_height));
+        DP_Image *result = DP_image_new(width, height);
+        if (DP_image_transform_draw(src_width, src_height, DP_image_pixels(img),
+                                    dc, result, tf, interpolation)) {
+            return result;
+        }
+        else {
+            DP_image_free(result);
+            return NULL;
+        }
+    }
+    else {
+        DP_error_set("Can't scale to zero dimensions");
+        return NULL;
+    }
+}
+
 bool DP_image_same_pixel(DP_Image *img, DP_Pixel8 *out_pixel)
 {
     DP_Pixel8 *pixels = DP_image_pixels(img);
