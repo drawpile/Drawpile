@@ -18,7 +18,9 @@ class SelectionItem final : public BaseObject {
 public:
 	enum { Type = SelectionType };
 
-	SelectionItem(bool ignored, bool showMask, QGraphicsItem *parent = nullptr);
+	SelectionItem(
+		bool ignored, bool showMask, qreal zoom,
+		QGraphicsItem *parent = nullptr);
 
 	int type() const override { return Type; }
 
@@ -30,6 +32,7 @@ public:
 
 	void setIgnored(bool ignored);
 	void setShowMask(bool showMask);
+	void setZoom(qreal zoom);
 
 	void animationStep(qreal dt);
 
@@ -50,6 +53,7 @@ private:
 	QRect m_bounds;
 	QPainterPath m_path;
 	QImage m_mask;
+	qreal m_zoom;
 	qreal m_marchingAnts = 0.0;
 	qreal m_maskOpacity = 0.0;
 	qreal m_transparentDelay = 0.0;

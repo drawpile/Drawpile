@@ -3,25 +3,36 @@
 #include <QMarginsF>
 #include <QPaintEngine>
 #include <QPainter>
+#include <cmath>
 
 namespace drawingboard {
 
 PathPreviewItem::PathPreviewItem(
-	const QPainterPath &path, QGraphicsItem *parent)
+	const QPainterPath &path, qreal zoom, QGraphicsItem *parent)
 	: BaseItem(parent)
 	, m_path(path)
+	, m_zoom(zoom)
 {
 }
 
 QRectF PathPreviewItem::boundingRect() const
 {
-	return m_path.boundingRect().marginsAdded(QMarginsF(1.0, 1.0, 1.0, 1.0));
+	qreal m = m_zoom > 0.0 ? std::ceil(1.0 / m_zoom) : 1.0;
+	return m_path.boundingRect().marginsAdded(QMarginsF(m, m, m, m));
 }
 
 void PathPreviewItem::setPath(const QPainterPath &path)
 {
 	refreshGeometry();
 	m_path = path;
+}
+
+void PathPreviewItem::setZoom(qreal zoom)
+{
+	if(zoom != m_zoom) {
+		refreshGeometry();
+		m_zoom = zoom;
+	}
 }
 
 void PathPreviewItem::paint(

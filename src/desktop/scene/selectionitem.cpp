@@ -1,14 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/scene/selectionitem.h"
 #include "libclient/utils/selectionoutlinegenerator.h"
+#include <QMarginsF>
 #include <QPainter>
 #include <QThreadPool>
 #include <cmath>
 
 namespace drawingboard {
 
-SelectionItem::SelectionItem(bool ignored, bool showMask, QGraphicsItem *parent)
+SelectionItem::SelectionItem(
+	bool ignored, bool showMask, qreal zoom, QGraphicsItem *parent)
 	: BaseObject(parent)
+	, m_zoom(zoom)
 	, m_ignored(ignored)
 	, m_showMask(showMask)
 {
@@ -29,6 +32,7 @@ void SelectionItem::setModel(const QRect &bounds, const QImage &mask)
 	m_maskOpacity = 0.0;
 	m_haveTemporaryMask = true;
 	updateBoundingRectFromBounds();
+	setPos(m_bounds.topLeft());
 	if(m_bounds.isEmpty()) {
 		qWarning("Selection mask is empty");
 	} else if(canShowOutline()) {
@@ -66,6 +70,14 @@ void SelectionItem::setShowMask(bool showMask)
 	if(m_showMask != showMask) {
 		m_showMask = showMask;
 		refresh();
+	}
+}
+
+void SelectionItem::setZoom(qreal zoom)
+{
+	if(zoom != m_zoom) {
+		m_zoom = zoom;
+		updateBoundingRectFromBounds();
 	}
 }
 
@@ -173,8 +185,9 @@ void SelectionItem::setOutline(
 void SelectionItem::updateBoundingRectFromBounds()
 {
 	refreshGeometry();
-	m_boundingRect = QRectF(QPointF(0.0, 0.0), QSizeF(m_bounds.size()));
-	setPos(m_bounds.topLeft());
+	qreal m = m_zoom > 0.0 ? std::ceil(1.0 / m_zoom) : 1.0;
+	m_boundingRect = QRectF(QPointF(0.0, 0.0), QSizeF(m_bounds.size()))
+						 .marginsAdded(QMarginsF(m, m, m, m));
 }
 
 }

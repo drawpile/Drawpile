@@ -149,6 +149,12 @@ void CanvasScene::setZoom(qreal zoom)
 {
 	if(zoom != m_zoom) {
 		m_zoom = zoom;
+		if(m_pathPreview) {
+			m_pathPreview->setZoom(zoom);
+		}
+		if(m_selection) {
+			m_selection->setZoom(zoom);
+		}
 		if(m_transform) {
 			m_transform->setZoom(zoom);
 		}
@@ -441,7 +447,7 @@ void CanvasScene::setSelection(
 	if(valid) {
 		if(!m_selection) {
 			m_selection = new SelectionItem(
-				m_selectionIgnored, m_showSelectionMask, m_group);
+				m_selectionIgnored, m_showSelectionMask, m_zoom, m_group);
 			m_selection->setUpdateSceneOnRefresh(true);
 		}
 		m_selection->setModel(bounds, mask);
@@ -779,7 +785,7 @@ void CanvasScene::setPathPreview(const QPainterPath &path)
 	} else if(m_pathPreview) {
 		m_pathPreview->setPath(path);
 	} else {
-		m_pathPreview = new PathPreviewItem(path, m_group);
+		m_pathPreview = new PathPreviewItem(path, m_zoom, m_group);
 	}
 }
 

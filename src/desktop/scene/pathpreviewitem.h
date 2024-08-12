@@ -10,13 +10,15 @@ class PathPreviewItem final : public BaseItem {
 public:
 	enum { Type = PathPreviewType };
 
-	PathPreviewItem(const QPainterPath &path, QGraphicsItem *parent = nullptr);
+	PathPreviewItem(
+		const QPainterPath &path, qreal zoom, QGraphicsItem *parent = nullptr);
 
 	QRectF boundingRect() const override;
 
 	int type() const override { return Type; }
 
 	void setPath(const QPainterPath &path);
+	void setZoom(qreal zoom);
 
 protected:
 	void paint(
@@ -25,6 +27,7 @@ protected:
 
 private:
 	QPainterPath m_path;
+	qreal m_zoom;
 };
 
 }
