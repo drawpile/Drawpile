@@ -9,6 +9,7 @@
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/utils/avatarlistmodel.h"
 #include "libclient/utils/avatarlistmodeldelegate.h"
+#include "libshared/net/proxy.h"
 #include <QCheckBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
@@ -137,6 +138,14 @@ void Network::initNetwork(
 	settings.bindServerTimeout(timeout);
 	form->addRow(
 		tr("Network timeout:"), utils::encapsulate(tr("%1 seconds"), timeout));
+
+#ifndef __EMSCRIPTEN__
+	auto *proxy = utils::addRadioGroup(
+		form, tr("Network proxy:"), true,
+		{{tr("System"), int(net::ProxyMode::Default)},
+		 {tr("Disabled"), int(net::ProxyMode::Disabled)}});
+	settings.bindNetworkProxyMode(proxy);
+#endif
 
 	auto *messageQueueDrainRate = new KisSliderSpinBox;
 	messageQueueDrainRate->setRange(

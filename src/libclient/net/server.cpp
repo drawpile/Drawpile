@@ -15,20 +15,21 @@
 
 namespace net {
 
-Server *Server::make(const QUrl &url, int timeoutSecs, Client *client)
+Server *Server::make(
+	const QUrl &url, int timeoutSecs, int proxyMode, Client *client)
 {
 #if defined(HAVE_WEBSOCKETS) && defined(HAVE_TCPSOCKETS)
 	if(url.scheme().startsWith(QStringLiteral("ws"), Qt::CaseInsensitive)) {
-		return new WebSocketServer(timeoutSecs, client);
+		return new WebSocketServer(timeoutSecs, proxyMode, client);
 	} else {
-		return new TcpServer(timeoutSecs, client);
+		return new TcpServer(timeoutSecs, proxyMode, client);
 	}
 #elif defined(HAVE_TCPSOCKETS)
 	Q_UNUSED(url);
-	return new TcpServer(timeoutSecs, client);
+	return new TcpServer(timeoutSecs, proxyMode, client);
 #elif defined(HAVE_WEBSOCKETS)
 	Q_UNUSED(url);
-	return new WebSocketServer(timeoutSecs, client);
+	return new WebSocketServer(timeoutSecs, proxyMode, client);
 #else
 #	error "No socket implementation compiled in."
 #endif

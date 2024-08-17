@@ -12,7 +12,8 @@ class WebSocketMessageQueue;
 class WebSocketServer final : public Server {
 	Q_OBJECT
 public:
-	explicit WebSocketServer(int timeoutSecs, Client *client);
+	explicit WebSocketServer(
+		int timeoutSecs, int proxyMode, Client *client);
 
 	bool isWebSocket() const override;
 

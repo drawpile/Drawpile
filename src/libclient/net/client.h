@@ -51,8 +51,9 @@ public:
 	 * @brief Connect to a remote server
 	 * @param loginhandler the login handler to use
 	 */
-	void
-	connectToServer(int timeoutSecs, LoginHandler *loginhandler, bool builtin);
+	void connectToServer(
+		int timeoutSecs, int proxyMode, LoginHandler *loginhandler,
+		bool builtin);
 
 	/**
 	 * @brief Disconnect from the remote server

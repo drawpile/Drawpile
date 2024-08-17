@@ -31,7 +31,8 @@ public:
 		TRUSTED_HOST // A host we have explicitly marked as trusted
 	};
 
-	static Server *make(const QUrl &url, int timeoutSecs, Client *client);
+	static Server *
+	make(const QUrl &url, int timeoutSecs, int proxyMode, Client *client);
 
 	static QString addSchemeToUserSuppliedAddress(const QString &remoteAddress);
 	static QUrl fixUpAddress(const QUrl &originalUrl, bool join);

@@ -6,7 +6,9 @@
 #include "libserver/client.h"
 #include "libserver/inmemoryconfig.h"
 #include "libserver/loginhandler.h"
+#include "libshared/net/proxy.h"
 #include <QJsonArray>
+#include <QNetworkProxy>
 #include <QTcpServer>
 
 namespace server {
@@ -60,12 +62,15 @@ std::tuple<Session *, QString> BuiltinServer::createSession(
 }
 
 bool BuiltinServer::start(
-	quint16 preferredPort, int clientTimeout, bool privateUserList,
-	QString *outErrorMessage)
+	quint16 preferredPort, int clientTimeout, int proxyMode,
+	bool privateUserList, QString *outErrorMessage)
 {
 	Q_ASSERT(!m_server);
 
 	m_server = new QTcpServer{this};
+	if(net::shouldDisableProxy(proxyMode, m_server->proxy(), false, true)) {
+		m_server->setProxy(QNetworkProxy::NoProxy);
+	}
 	connect(
 		m_server, &QTcpServer::newConnection, this, &BuiltinServer::newClient);
 

@@ -26,12 +26,12 @@ Client::Client(CommandHandler *commandHandler, QObject *parent)
 }
 
 void Client::connectToServer(
-	int timeoutSecs, LoginHandler *loginhandler, bool builtin)
+	int timeoutSecs, int proxyMode, LoginHandler *loginhandler, bool builtin)
 {
 	Q_ASSERT(!isConnected());
 	m_builtin = builtin;
 
-	m_server = Server::make(loginhandler->url(), timeoutSecs, this);
+	m_server = Server::make(loginhandler->url(), timeoutSecs, proxyMode, this);
 	m_server->setSmoothDrainRate(m_smoothDrainRate);
 
 #ifdef Q_OS_ANDROID

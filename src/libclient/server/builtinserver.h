@@ -50,8 +50,8 @@ public:
 		const QString &founder) override;
 
 	bool start(
-		quint16 preferredPort, int clientTimeout, bool privateUserList,
-		QString *outErrorMessage = nullptr);
+		quint16 preferredPort, int clientTimeout, int proxyMode,
+		bool privateUserList, QString *outErrorMessage = nullptr);
 
 public slots:
 	void stop();

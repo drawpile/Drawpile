@@ -13,6 +13,8 @@ target_sources(dpshared PRIVATE
 	net/messagequeue.h
 	net/protover.cpp
 	net/protover.h
+	net/proxy.cpp
+	net/proxy.h
 	net/servercmd.cpp
 	net/servercmd.h
 	util/database.cpp

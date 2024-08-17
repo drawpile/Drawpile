@@ -2,18 +2,23 @@
 #include "libclient/net/tcpserver.h"
 #include "cmake-config/config.h"
 #include "libclient/net/login.h"
+#include "libshared/net/proxy.h"
 #include "libshared/net/tcpmessagequeue.h"
 #include "libshared/util/qtcompat.h"
 #include <QDebug>
+#include <QNetworkProxy>
 #include <QSslConfiguration>
 #include <QSslSocket>
 
 namespace net {
 
-TcpServer::TcpServer(int timeoutSecs, Client *client)
+TcpServer::TcpServer(int timeoutSecs, int proxyMode, Client *client)
 	: Server(client)
 {
 	m_socket = new QSslSocket(this);
+	if(shouldDisableProxy(proxyMode, m_socket->proxy(), false, false)) {
+		m_socket->setProxy(QNetworkProxy::NoProxy);
+	}
 	m_socket->setSocketOption(QAbstractSocket::LowDelayOption, true);
 
 	QSslConfiguration sslconf = m_socket->sslConfiguration();

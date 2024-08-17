@@ -2,6 +2,10 @@
 #include "libclient/net/websocketserver.h"
 #include "libshared/net/websocketmessagequeue.h"
 #include <QWebSocket>
+#ifndef __EMSCRIPTEN__
+#	include "libshared/net/proxy.h"
+#	include <QNetworkProxy>
+#endif
 
 namespace {
 #ifdef HAVE_WEBSOCKETS
@@ -16,10 +20,17 @@ const auto WebSocketError =
 
 namespace net {
 
-WebSocketServer::WebSocketServer(int timeoutSecs, Client *client)
+WebSocketServer::WebSocketServer(int timeoutSecs, int proxyMode, Client *client)
 	: Server(client)
 {
 	m_socket = new QWebSocket(QString(), QWebSocketProtocol::Version13, this);
+#ifdef __EMSCRIPTEN__
+	Q_UNUSED(proxyMode);
+#else
+	if(shouldDisableProxy(proxyMode, m_socket->proxy(), true, false)) {
+		m_socket->setProxy(QNetworkProxy::NoProxy);
+	}
+#endif
 
 	m_msgqueue = new WebSocketMessageQueue(m_socket, true, this);
 	m_msgqueue->setIdleTimeout(timeoutSecs * 1000);

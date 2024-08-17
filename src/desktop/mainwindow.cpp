@@ -2272,6 +2272,7 @@ void MainWindow::hostSession(
 		return;
 	}
 
+	// clang-format on
 	// Start server if hosting locally
 	const desktop::settings::Settings &settings = dpApp().settings();
 	if(!useremote) {
@@ -2283,7 +2284,8 @@ void MainWindow::hostSession(
 		QString errorMessage;
 		bool serverStarted = server->start(
 			settings.serverPort(), settings.serverTimeout(),
-			settings.serverPrivateUserList(), &errorMessage);
+			settings.networkProxyMode(), settings.serverPrivateUserList(),
+			&errorMessage);
 		if(!serverStarted) {
 			QMessageBox::warning(this, tr("Host Session"), errorMessage);
 			delete server;
@@ -2303,6 +2305,7 @@ void MainWindow::hostSession(
 		return;
 #endif
 	}
+	// clang-format off
 
 	// Connect to server
 	net::LoginHandler *login = new net::LoginHandler(
@@ -2326,7 +2329,8 @@ void MainWindow::hostSession(
 		shouldShowDialogMaximized());
 
 	m_doc->client()->connectToServer(
-		settings.serverTimeout(), login, !useremote);
+		settings.serverTimeout(), settings.networkProxyMode(), login,
+		!useremote);
 }
 
 void MainWindow::invite()
@@ -2551,7 +2555,9 @@ void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 
 	dlg->show();
 	m_doc->setRecordOnConnect(autoRecordFile);
-	m_doc->client()->connectToServer(dpApp().settings().serverTimeout(), login, false);
+	const desktop::settings::Settings &settings = dpApp().settings();
+	m_doc->client()->connectToServer(
+		settings.serverTimeout(), settings.networkProxyMode(), login, false);
 }
 
 /**
