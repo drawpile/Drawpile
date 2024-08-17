@@ -15,11 +15,12 @@ public:
 private:
 	QString getSystemInfo() const;
 	static QString getCompileFeatures();
-	static QString boolToString(bool b);
+	static QString boolToEnabledDisabled(bool b);
+	static QString boolToYesNo(bool b);
 
-    void copyToClipboard();
+	void copyToClipboard();
 
-    QTextEdit *m_textEdit;
+	QTextEdit *m_textEdit;
 };
 
 }

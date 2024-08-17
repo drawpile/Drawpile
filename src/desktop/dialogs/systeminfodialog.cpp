@@ -10,6 +10,7 @@
 #include <QFont>
 #include <QLibraryInfo>
 #include <QMetaEnum>
+#include <QNetworkProxy>
 #include <QPushButton>
 #include <QScreen>
 #include <QStringList>
@@ -96,7 +97,7 @@ QString SystemInfoDialog::getSystemInfo() const
 	info += QStringLiteral("Device pixel ratio: %1\n").arg(devicePixelRatioF());
 	QSettings *scalingSettings = settings.scalingSettings();
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	QString highDpiScaling = QStringLiteral("%1").arg(boolToString(
+	QString highDpiScaling = QStringLiteral("%1").arg(boolToEnabledDisabled(
 		scalingSettings->value(QStringLiteral("enabled")).toBool()));
 #else
 	QString highDpiScaling = QStringLiteral("always enabled");
@@ -152,38 +153,38 @@ QString SystemInfoDialog::getSystemInfo() const
 				QMetaEnum::fromType<libclient::settings::CanvasImplementation>()
 					.valueToKey(dpApp().canvasImplementation()));
 	info += QStringLiteral("Render smoothing: %1\n")
-				.arg(boolToString(settings.renderSmooth()));
+				.arg(boolToYesNo(settings.renderSmooth()));
 	info += QStringLiteral("Pixel jitter prevention: %1\n")
-				.arg(boolToString(settings.renderUpdateFull()));
+				.arg(boolToYesNo(settings.renderUpdateFull()));
 	for(const QString &s : view::GlCanvas::getSystemInfo()) {
 		info += QStringLiteral("%1\n").arg(s);
 	}
 	info += QStringLiteral("\n");
 
 	info += QStringLiteral("Tablet events: %1\n")
-				.arg(boolToString(settings.tabletEvents()));
+				.arg(boolToYesNo(settings.tabletEvents()));
 	info += QStringLiteral("Tablet driver: %1\n").arg(tabletinput::current());
 	info +=
 		QStringLiteral("Eraser action: %1\n")
 			.arg(QMetaEnum::fromType<tabletinput::EraserAction>().valueToKey(
 				settings.tabletEraserAction()));
 	info += QStringLiteral("Compensate jagged curves: %1\n")
-				.arg(boolToString(settings.interpolateInputs()));
+				.arg(boolToYesNo(settings.interpolateInputs()));
 	info += QStringLiteral("Smoothe mouse and touch drawing: %1\n")
-				.arg(boolToString(settings.mouseSmoothing()));
+				.arg(boolToYesNo(settings.mouseSmoothing()));
 	info += QStringLiteral("Global smoothing: %1\n").arg(settings.smoothing());
 	info += QStringLiteral("Global pressure curve: \"%1\"\n")
 				.arg(settings.globalPressureCurve());
 	info += QStringLiteral("One-finger draw: %1\n")
-				.arg(boolToString(settings.oneFingerDraw()));
+				.arg(boolToYesNo(settings.oneFingerDraw()));
 	info += QStringLiteral("One-finger scroll: %1\n")
-				.arg(boolToString(settings.oneFingerScroll()));
+				.arg(boolToYesNo(settings.oneFingerScroll()));
 	info += QStringLiteral("Two-finger zoom: %1\n")
-				.arg(boolToString(settings.twoFingerZoom()));
+				.arg(boolToYesNo(settings.twoFingerZoom()));
 	info += QStringLiteral("Two-finger rotate: %1\n")
-				.arg(boolToString(settings.twoFingerRotate()));
+				.arg(boolToYesNo(settings.twoFingerRotate()));
 	info += QStringLiteral("Touch gestures: %1\n")
-				.arg(boolToString(settings.touchGestures()));
+				.arg(boolToYesNo(settings.touchGestures()));
 	info += QStringLiteral("\n");
 
 	int screenNumber = 1;
@@ -225,6 +226,62 @@ QString SystemInfoDialog::getSystemInfo() const
 		info += QStringLiteral("\n");
 		++screenNumber;
 	}
+
+	QNetworkProxy proxy = QNetworkProxy::applicationProxy();
+	QNetworkProxy::ProxyType proxyType = proxy.type();
+	QString proxyTypeName = QStringLiteral("Unknown");
+	switch(proxyType) {
+	case QNetworkProxy::ProxyType::DefaultProxy:
+		proxyTypeName = QStringLiteral("DefaultProxy");
+		break;
+	case QNetworkProxy::ProxyType::Socks5Proxy:
+		proxyTypeName = QStringLiteral("Socks5Proxy");
+		break;
+	case QNetworkProxy::ProxyType::NoProxy:
+		proxyTypeName = QStringLiteral("NoProxy");
+		break;
+	case QNetworkProxy::ProxyType::HttpProxy:
+		proxyTypeName = QStringLiteral("HttpProxy");
+		break;
+	case QNetworkProxy::ProxyType::HttpCachingProxy:
+		proxyTypeName = QStringLiteral("HttpCachingProxy");
+		break;
+	case QNetworkProxy::ProxyType::FtpCachingProxy:
+		proxyTypeName = QStringLiteral("FtpCachingCachingProxy");
+		break;
+	}
+	info += QStringLiteral("Network proxy type: %1 (%2)\n")
+				.arg(int(proxyType))
+				.arg(proxyTypeName);
+	info += QStringLiteral("Hostname: \"%1\"\n").arg(proxy.hostName());
+	info += QStringLiteral("Port: %2\n").arg(proxy.port());
+	info += QStringLiteral("Username: %1\n")
+				.arg(boolToYesNo(!proxy.user().isEmpty()));
+	info += QStringLiteral("Password: %1\n")
+				.arg(boolToYesNo(!proxy.password().isEmpty()));
+	QNetworkProxy::Capabilities proxyCapabilities = proxy.capabilities();
+	info += QStringLiteral("TunnelingCapability: %1\n")
+				.arg(boolToYesNo(proxyCapabilities.testFlag(
+					QNetworkProxy::TunnelingCapability)));
+	info += QStringLiteral("ListeningCapability: %1\n")
+				.arg(boolToYesNo(proxyCapabilities.testFlag(
+					QNetworkProxy::ListeningCapability)));
+	info += QStringLiteral("UdpTunnelingCapability: %1\n")
+				.arg(boolToYesNo(proxyCapabilities.testFlag(
+					QNetworkProxy::UdpTunnelingCapability)));
+	info += QStringLiteral("CachingCapability: %1\n")
+				.arg(boolToYesNo(proxyCapabilities.testFlag(
+					QNetworkProxy::CachingCapability)));
+	info += QStringLiteral("HostNameLookupCapability: %1\n")
+				.arg(boolToYesNo(proxyCapabilities.testFlag(
+					QNetworkProxy::HostNameLookupCapability)));
+	info += QStringLiteral("SctpTunnelingCapability: %1\n")
+				.arg(boolToYesNo(proxyCapabilities.testFlag(
+					QNetworkProxy::SctpTunnelingCapability)));
+	info += QStringLiteral("SctpListeningCapability: %1\n")
+				.arg(boolToYesNo(proxyCapabilities.testFlag(
+					QNetworkProxy::SctpListeningCapability)));
+	info += QStringLiteral("\n");
 
 	info += "END OF SYSTEM INFORMATION";
 	return info;
@@ -284,9 +341,14 @@ QString SystemInfoDialog::getCompileFeatures()
 	return features.join(QStringLiteral(", "));
 }
 
-QString SystemInfoDialog::boolToString(bool b)
+QString SystemInfoDialog::boolToEnabledDisabled(bool b)
 {
 	return b ? QStringLiteral("enabled") : QStringLiteral("disabled");
+}
+
+QString SystemInfoDialog::boolToYesNo(bool b)
+{
+	return b ? QStringLiteral("yes") : QStringLiteral("no");
 }
 
 void SystemInfoDialog::copyToClipboard()
