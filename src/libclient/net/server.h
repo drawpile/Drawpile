@@ -158,6 +158,8 @@ private:
 	void loginSuccess();
 	void loginFailure(const QString &message, const QString &errorcode);
 
+	QString socketErrorStringWithCode() const;
+
 	Client *const m_client;
 	net::MessageList m_receiveBuffer;
 	LoginHandler *m_loginstate = nullptr;

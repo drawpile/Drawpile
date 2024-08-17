@@ -5,6 +5,7 @@
 #include "libshared/net/servercmd.h"
 #include "libshared/util/whatismyip.h"
 #include <QDebug>
+#include <QMetaEnum>
 #include <QUrlQuery>
 #ifdef HAVE_TCPSOCKETS
 #	include "libclient/net/tcpserver.h"
@@ -15,8 +16,8 @@
 
 namespace net {
 
-Server *Server::make(
-	const QUrl &url, int timeoutSecs, int proxyMode, Client *client)
+Server *
+Server::make(const QUrl &url, int timeoutSecs, int proxyMode, Client *client)
 {
 #if defined(HAVE_WEBSOCKETS) && defined(HAVE_TCPSOCKETS)
 	if(url.scheme().startsWith(QStringLiteral("ws"), Qt::CaseInsensitive)) {
@@ -177,11 +178,27 @@ void Server::handleSocketStateChange(QAbstractSocket::SocketState state)
 
 void Server::handleSocketError()
 {
-	QString errorString = socketErrorString();
+	QString errorString = socketErrorStringWithCode();
 	qWarning() << "Socket error:" << errorString;
-	if(socketError() != QAbstractSocket::RemoteHostClosedError) {
+	QAbstractSocket::SocketError errorCode = socketError();
+	if(errorCode != QAbstractSocket::RemoteHostClosedError) {
 		if(m_error.isEmpty()) {
-			m_error = socketErrorString();
+			m_error = errorString;
+			switch(errorCode) {
+			case QAbstractSocket::ProxyAuthenticationRequiredError:
+			case QAbstractSocket::ProxyConnectionRefusedError:
+			case QAbstractSocket::ProxyConnectionClosedError:
+			case QAbstractSocket::ProxyConnectionTimeoutError:
+			case QAbstractSocket::ProxyNotFoundError:
+			case QAbstractSocket::ProxyProtocolError:
+				m_error += QStringLiteral("\n\n") +
+						   tr("If you don't intend to use a proxy, you can "
+							  "disable the network proxy in Drawpile's "
+							  "preferences under the Network tab.");
+				break;
+			default:
+				break;
+			}
 		}
 
 		if(isConnected()) {
@@ -194,7 +211,7 @@ void Server::handleSocketError()
 
 void Server::handleReadError()
 {
-	QString errorString = socketErrorString();
+	QString errorString = socketErrorStringWithCode();
 	qWarning() << "Socket read error:" << errorString;
 	if(m_error.isEmpty()) {
 		if(errorString.isEmpty()) {
@@ -207,7 +224,7 @@ void Server::handleReadError()
 
 void Server::handleWriteError()
 {
-	QString errorString = socketErrorString();
+	QString errorString = socketErrorStringWithCode();
 	qWarning() << "Socket write error:" << errorString;
 	if(m_error.isEmpty()) {
 		if(errorString.isEmpty()) {
@@ -335,6 +352,25 @@ void Server::loginFailure(const QString &message, const QString &errorcode)
 	m_errorcode = errorcode;
 	m_localDisconnect = errorcode == "CANCELLED";
 	disconnectFromHost();
+}
+
+QString Server::socketErrorStringWithCode() const
+{
+	int errorCode = int(socketError());
+	QString errorString = socketErrorString();
+	if(errorString.isEmpty()) {
+		const char *errorCodeKey =
+			QMetaEnum::fromType<QAbstractSocket::SocketError>().key(errorCode);
+		QString errorCodeString = errorCodeKey ? QString::fromUtf8(errorCodeKey)
+											   : QStringLiteral("Invalid");
+		//: This is a network socket error message. %1 is an error code number,
+		//: %2 is the English name for the error code.
+		return tr("Socket error %1: %2").arg(errorCode).arg(errorCodeString);
+	} else {
+		//: This is a network socket error message. %1 is the error message, %2
+		//: is an error code number.
+		return tr("%1 (error %2)").arg(errorString).arg(errorCode);
+	}
 }
 
 }
