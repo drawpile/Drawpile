@@ -426,8 +426,8 @@ static void add_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
             fudge_x = fudge_y = rrem * half_fudge;
         }
 
-        int32_t dab_x = DP_float_to_int32((x + fudge_x) * 4.0f);
-        int32_t dab_y = DP_float_to_int32((y + fudge_y) * 4.0f);
+        int32_t dab_x = DP_float_to_int32((x + fudge_x) * 4.0f) + (int32_t)3;
+        int32_t dab_y = DP_float_to_int32((y + fudge_y) * 4.0f) + (int32_t)2;
         uint32_t dab_color = combine_upixel_float(be->classic.smudge_color);
 
         int used = be->dabs.used;
