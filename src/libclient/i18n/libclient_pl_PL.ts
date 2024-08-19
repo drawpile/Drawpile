@@ -6,12 +6,12 @@
     <message>
         <location filename="../utils/avatarlistmodel.cpp" line="+113"/>
         <source>No avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Brak awatara</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Add avatar…</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj awatar…</translation>
     </message>
 </context>
 <context>
@@ -19,37 +19,37 @@
     <message>
         <location filename="../export/canvassaverrunnable.cpp" line="+35"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Złe argumenty, prawdopodobnie jest to bug w Drawpile.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Niewspierany format.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można połączyć warstw w płaski obraz.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można otworzyć pliku do zapisu.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save operation failed, but the file might have been partially written.</source>
-        <translation type="unfinished"></translation>
+        <translation>Operacja zapisu nie powiodła się, lecz plik mógł zostać częściowo zapisany.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Internal error during saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd wewnętrzny podczas zapisu.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieznany błąd.</translation>
     </message>
 </context>
 <context>
@@ -57,17 +57,17 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+94"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrót</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Akcja</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Modifiers</source>
-        <translation type="unfinished"></translation>
+        <translation>Modyfikatory</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -96,7 +96,7 @@
     <message>
         <location line="+48"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Kółko myszy</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -107,27 +107,27 @@
     <message>
         <location line="+12"/>
         <source>Unset</source>
-        <translation type="unfinished"></translation>
+        <translation>Odznacz</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Left Click</source>
-        <translation type="unfinished"></translation>
+        <translation>Kliknięcie lewym przyciskiem</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right Click</source>
-        <translation type="unfinished"></translation>
+        <translation>Kliknięcie prawym przyciskiem</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation type="unfinished"></translation>
+        <translation>Kliknięcie środkowym przyciskiem</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Unknown Button 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieznany klawisz 0x%1</translation>
     </message>
     <message>
         <location line="+2"/>
