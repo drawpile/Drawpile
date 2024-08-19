@@ -391,17 +391,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Green</source>
-        <translation type="unfinished"></translation>
+        <translation>Zielony</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Alfa</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation>Czerwony</translation>
     </message>
 </context>
 <context>
@@ -414,7 +414,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+6"/>
         <source> ms</source>
-        <translation type="unfinished"></translation>
+        <translation> ms</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -424,12 +424,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+16"/>
         <source>Play/Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Odtwórz/Wstrzymaj</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Jump</source>
-        <translation type="unfinished"></translation>
+        <translation>Przejdź</translation>
     </message>
     <message>
         <location line="+10"/>
