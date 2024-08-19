@@ -449,7 +449,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+13"/>
         <source>Position: </source>
-        <translation type="unfinished"></translation>
+        <translation>Pozycja: </translation>
     </message>
     <message>
         <location line="+11"/>
