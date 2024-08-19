@@ -419,7 +419,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+3"/>
         <source>Playback Delay: </source>
-        <translation type="unfinished"></translation>
+        <translation>Opóźnienie odtwarzania: </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -434,17 +434,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="+10"/>
         <source>Previous Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Poprzedni reset</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Single Step</source>
-        <translation type="unfinished"></translation>
+        <translation>Pojedynczy krok</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Next Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Następny reset</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -454,12 +454,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+11"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Status</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>History Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmiar historii:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -468,7 +468,7 @@ to 64x64 pixels.</source>
         <location line="+21"/>
         <location line="+14"/>
         <source>0</source>
-        <translation type="unfinished"></translation>
+        <translation>0</translation>
     </message>
     <message>
         <location line="-56"/>
@@ -478,7 +478,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -493,7 +493,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>History Offset:</source>
-        <translation type="unfinished"></translation>
+        <translation>Przesunięcie historii:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -503,17 +503,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="+15"/>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>Historia</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Hide Entries Without State</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukryj wpisy bez stanu</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Hide Gone Entries</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukryj utracone wpisy</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -526,27 +526,27 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../filewrangler.cpp" line="+25"/>
         <source>Certificates (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Certyfikaty (%1)</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Import</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Open ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz ORA</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>OpenRaster Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Obraz OpenRaster</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -556,150 +556,150 @@ to 64x64 pixels.</source>
     <message>
         <location line="+8"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz zrzut debugowania</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Brush Pack</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuj pakiet pędzli</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Import banów sesji</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Import ról</translation>
     </message>
     <message>
         <location line="+44"/>
         <location line="+185"/>
         <source>Save Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz obraz</translation>
     </message>
     <message>
         <location line="-185"/>
         <source>Export Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj obraz</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Save Pre-Reset Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz obraz sprzed resetu</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Save Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz zaznaczenie</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Record Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Nagraj sesję</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Session Template</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz szablon sesji</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj animowany GIF</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Performance Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil wydajności</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tablet Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Dziennik zdarzeń tabletu</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Plik dziennika zdarzeń</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Export MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj wideo MP4</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export WebM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj wideo WebM</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Custom FFmpeg Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj niestandardowe wideo FFmpeg</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz klatki animacji</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Save Image Series</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz serię obrazów</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj pędzle</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj bany sesji</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj role</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Format PSD nie obsługuje adnotacji, osi czasu animacji i niektórych trybów mieszania. Jeśli chcesz, aby te elementy zostały zachowane poprawnie, musisz zapisać plik ORA.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybrany format zapisze scalony obraz. Jeśli chcesz zachować warstwy, adnotacje i oś czasu animacji, musisz zapisać plik ORA.</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Save as Selected Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz jako wybrany format</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save as %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz jako %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save as ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz jako ORA</translation>
     </message>
     <message>
         <location line="+52"/>
         <location line="+5"/>
         <source>Untitled</source>
-        <translation type="unfinished"></translation>
+        <translation>Bez tytułu</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Bez tytułu%1</translation>
     </message>
 </context>
 <context>
@@ -707,23 +707,23 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/fillsettings.ui" line="+45"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Zwykły</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished"></translation>
+        <translation>Z tyłu</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Wymazywanie</translation>
     </message>
     <message>
         <location line="+24"/>
         <location line="+13"/>
         <source> px</source>
-        <translation type="unfinished"></translation>
+        <translation> piks</translation>
     </message>
     <message>
         <location line="-10"/>
@@ -733,33 +733,33 @@ to 64x64 pixels.</source>
     <message>
         <location line="+13"/>
         <source>Expand: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rozszerz: </translation>
     </message>
     <message>
         <location line="+23"/>
         <location line="+43"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>piks</translation>
     </message>
     <message>
         <location line="-40"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmiar: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Source:</source>
-        <translation type="unfinished"></translation>
+        <translation>Źródło:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tryb:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tolerance: </source>
-        <translation type="unfinished"></translation>
+        <translation>Tolerancja: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -777,42 +777,42 @@ to 64x64 pixels.</source>
     <message>
         <location line="+28"/>
         <source>Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyzeruj przybliżenie</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Odśwież</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Rewind</source>
-        <translation type="unfinished"></translation>
+        <translation>Przewijanie do tyłu</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Odtwarzanie</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Frame:</source>
-        <translation type="unfinished"></translation>
+        <translation>Klatka:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Zakres</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Prędkość: </translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksport</translation>
     </message>
 </context>
 <context>
@@ -833,7 +833,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/invitedialog.ui" line="+14"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaproś</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -843,12 +843,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+35"/>
         <source>Web link</source>
-        <translation type="unfinished"></translation>
+        <translation>Link do strony internetowej</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Direct link</source>
-        <translation type="unfinished"></translation>
+        <translation>Bezpośredni link</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -891,12 +891,12 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../widgets/kis_curve_widget.cpp" line="+46"/>
         <source>Remove point</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń punkt</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Przywróć</translation>
     </message>
 </context>
 <context>
@@ -929,7 +929,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/lasersettings.ui" line="+17"/>
         <source>Color:</source>
-        <translation type="unfinished"></translation>
+        <translation>Barwa:</translation>
     </message>
     <message>
         <location line="+87"/>
@@ -939,12 +939,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>s</source>
-        <translation type="unfinished"></translation>
+        <translation>s</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trail: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ślad: </translation>
     </message>
 </context>
 <context>
@@ -967,7 +967,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -992,7 +992,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+23"/>
         <source>Collaboration:</source>
-        <translation type="unfinished"></translation>
+        <translation>Współpraca:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1002,7 +1002,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Created by:</source>
-        <translation type="unfinished"></translation>
+        <translation>Utworzona przez:</translation>
     </message>
 </context>
 <context>
