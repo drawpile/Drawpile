@@ -156,7 +156,7 @@
     <message>
         <location line="+16"/>
         <source>Hardness: </source>
-        <translation>Twardość </translation>
+        <translation>Twardość: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -189,12 +189,12 @@
     <message>
         <location line="+22"/>
         <source>Stabilizer: </source>
-        <translation type="unfinished"></translation>
+        <translation>Stabilizator: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Wygładzanie: </translation>
     </message>
 </context>
 <context>
@@ -217,7 +217,7 @@
     <message>
         <location line="+10"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished"></translation>
+        <translation>Miniatura:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -267,7 +267,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+3"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>Odwrócony</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -291,7 +291,7 @@ to 64x64 pixels.</source>
         <location line="+6"/>
         <location line="+107"/>
         <source>Organization:</source>
-        <translation type="unfinished"></translation>
+        <translation>Organizacja:</translation>
     </message>
     <message>
         <location line="-100"/>
@@ -317,7 +317,7 @@ to 64x64 pixels.</source>
         <location line="+14"/>
         <location line="+14"/>
         <source>Organization unit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Jednostka organizacyjna:</translation>
     </message>
     <message>
         <location line="-7"/>
@@ -328,17 +328,17 @@ to 64x64 pixels.</source>
         <location line="+14"/>
         <location line="+50"/>
         <source>Common name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwa powszechna:</translation>
     </message>
     <message>
         <location line="-43"/>
         <source>Serial number:</source>
-        <translation type="unfinished"></translation>
+        <translation>Numer seryjny:</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Issued to</source>
-        <translation type="unfinished"></translation>
+        <translation>Wydano dla</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -353,7 +353,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+41"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Szczegóły</translation>
     </message>
 </context>
 <context>
