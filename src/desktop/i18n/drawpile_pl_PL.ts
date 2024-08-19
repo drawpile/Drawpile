@@ -29,17 +29,17 @@
     <message>
         <location filename="../ui/abusereport.ui" line="+14"/>
         <source>Report Abuse</source>
-        <translation type="unfinished"></translation>
+        <translation>Zgłoś nadużycie</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesja</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Reason:</source>
-        <translation type="unfinished"></translation>
+        <translation>Powód:</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -88,7 +88,7 @@
     <message>
         <location filename="../ui/avatarimport.ui" line="+14"/>
         <source>Crop Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Przytnij awatar</translation>
     </message>
 </context>
 <context>
@@ -141,22 +141,22 @@
     <message>
         <location line="+3"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmiar: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Radius: </source>
-        <translation type="unfinished"></translation>
+        <translation>Promień: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Przeźroczystość: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>Twardość </translation>
     </message>
     <message>
         <location line="+13"/>
