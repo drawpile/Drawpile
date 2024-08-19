@@ -102,7 +102,7 @@
         <location line="+4"/>
         <source>+</source>
         <extracomment>Joins shortcut components, probably doesn&apos;t need to be translated.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>+</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -132,7 +132,7 @@
     <message>
         <location line="+2"/>
         <source>Button %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Przycisk %1</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -202,7 +202,7 @@
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>Odwrócone</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -263,17 +263,17 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation>Konflikt</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Akcja</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrót</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -283,7 +283,7 @@
     <message>
         <location line="+1"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Domyślne</translation>
     </message>
 </context>
 <context>
@@ -291,7 +291,7 @@
     <message>
         <location filename="../document.cpp" line="+715"/>
         <source>Unknown format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieznany format.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -301,7 +301,7 @@
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd przy otwieraniu pliku.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -311,7 +311,7 @@
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieznany błąd.</translation>
     </message>
 </context>
 <context>
@@ -371,7 +371,7 @@
     <message>
         <location filename="../utils/images.cpp" line="+84"/>
         <source>Images (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Obrazy %1</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -441,12 +441,12 @@
     <message>
         <location line="+5"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Wszystkie wspierane pliki (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Wszystkie pliki (*)</translation>
     </message>
 </context>
 <context>
@@ -454,7 +454,7 @@
     <message>
         <location filename="../drawdance/canvasstate.cpp" line="+45"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Warstwa %1</translation>
     </message>
 </context>
 <context>
@@ -500,15 +500,15 @@
     <message>
         <location line="+370"/>
         <source>(untitled)</source>
-        <translation type="unfinished"></translation>
+        <translation>(bez tytułu)</translation>
     </message>
     <message numerus="yes">
         <location line="-274"/>
         <source>%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n użytkownik</numerusform>
+            <numerusform>%n użytkowników</numerusform>
+            <numerusform>%n użytkowników</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -537,7 +537,7 @@
     <message>
         <location line="+18"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation>Kompatybilne</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -557,52 +557,52 @@
     <message>
         <location line="+1"/>
         <source>unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>nieznana wersja</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Kompatybilność</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Tytuł</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Serwer</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation>Użytkownicy</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktywni</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation>Właściciel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Age</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiek</translation>
     </message>
     <message>
         <location line="+171"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation>zamknięty</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation>zabezpieczone hasłem</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -615,42 +615,42 @@
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+40"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Zwykły</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recolor</source>
-        <translation type="unfinished"></translation>
+        <translation>Koloryzacja</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished"></translation>
+        <translation>Z tyłu</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Multiply</source>
-        <translation type="unfinished"></translation>
+        <translation>Mnożenie</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekran</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>Nakładanie</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Divide</source>
-        <translation type="unfinished"></translation>
+        <translation>Dzielenie</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>Wypalanie</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -660,27 +660,27 @@
     <message>
         <location line="+5"/>
         <source>Darken</source>
-        <translation type="unfinished"></translation>
+        <translation>Ściemnianie</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Lighten</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozjaśnianie</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Subtract</source>
-        <translation type="unfinished"></translation>
+        <translation>Odejmowanie</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodawanie</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Wymazywanie</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -690,12 +690,12 @@
     <message>
         <location line="+5"/>
         <source>Hard Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Twarde światło</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Soft Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Miękkie światło</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -705,7 +705,7 @@
     <message>
         <location line="+5"/>
         <source>Linear Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Liniowe światło</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -715,22 +715,22 @@
     <message>
         <location line="+5"/>
         <source>Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Odcień</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Nasycenie</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Luminosity</source>
-        <translation type="unfinished"></translation>
+        <translation>Światłość</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolor</translation>
     </message>
 </context>
 <context>
@@ -738,7 +738,7 @@
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="+600"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Domyślne</translation>
     </message>
 </context>
 <context>
@@ -842,7 +842,7 @@
     <message>
         <location line="+8"/>
         <source>Error writing &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd zapisu &apos;%1&apos;:&apos;%2&apos;</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -875,7 +875,7 @@
     <message>
         <location filename="../canvas/paintengine.cpp" line="+169"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Warstwa %1</translation>
     </message>
 </context>
 <context>
@@ -883,32 +883,32 @@
     <message>
         <location filename="../canvas/userlist.cpp" line="+64"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation>Moderator</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaufany</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>Zarejestrowany</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Online</source>
-        <translation type="unfinished"></translation>
+        <translation>Online</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation>Offline</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -928,7 +928,7 @@
     <message>
         <location line="+182"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Serwer</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -978,7 +978,7 @@
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation>Moderator</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1082,7 +1082,7 @@
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation>Trwa zamykanie serwera.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1092,12 +1092,12 @@
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozłączono.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozłączono:%1</translation>
     </message>
     <message>
         <location line="+324"/>
@@ -1108,7 +1108,7 @@
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd serwera.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1210,7 +1210,7 @@
         <location filename="../net/login.cpp" line="+105"/>
         <location line="+458"/>
         <source>Invalid state</source>
-        <translation type="unfinished"></translation>
+        <translation>Niewłaściwy stan</translation>
     </message>
     <message>
         <location line="-416"/>
@@ -1220,7 +1220,7 @@
         <location line="+165"/>
         <location line="+47"/>
         <source>Incompatible server</source>
-        <translation type="unfinished"></translation>
+        <translation>Niezgodny serwer</translation>
     </message>
     <message>
         <location line="-651"/>
@@ -1306,12 +1306,12 @@
     <message>
         <location line="+52"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation>Nowa wersja</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieznana wersja</translation>
     </message>
     <message>
         <location line="-42"/>
@@ -1352,12 +1352,12 @@
     <message>
         <location line="+58"/>
         <source>Cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Anulowane</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Session not found!</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie znaleziono sesji!</translation>
     </message>
     <message>
         <location line="+15"/>
