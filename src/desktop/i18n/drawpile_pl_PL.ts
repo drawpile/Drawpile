@@ -34,7 +34,7 @@
     <message>
         <location line="+6"/>
         <source>Session:</source>
-        <translation>Sesja</translation>
+        <translation>Sesja:</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -126,7 +126,7 @@
     <message>
         <location line="+14"/>
         <source>Eraser mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Tryb wymazywania</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -136,7 +136,7 @@
     <message>
         <location line="+24"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>piks</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -246,7 +246,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+9"/>
         <source>Type</source>
-        <translation>Rodzaj</translation>
+        <translation>Typ</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -267,7 +267,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+3"/>
         <source>Inverted</source>
-        <translation>Odwrócony</translation>
+        <translation>Odwrócone</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -301,7 +301,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+23"/>
         <source>Issued by</source>
-        <translation>Wydany przez</translation>
+        <translation>Wystawca</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -328,7 +328,7 @@ to 64x64 pixels.</source>
         <location line="+14"/>
         <location line="+50"/>
         <source>Common name:</source>
-        <translation>Nazwa powszechna:</translation>
+        <translation>Nazwa pospolita:</translation>
     </message>
     <message>
         <location line="-43"/>
@@ -343,7 +343,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+53"/>
         <source>Validity period</source>
-        <translation type="unfinished"></translation>
+        <translation>Okres ważności</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -361,7 +361,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.ui" line="+14"/>
         <source>Select Color</source>
-        <translation>Wybierz kolor</translation>
+        <translation>Wybór koloru</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -371,22 +371,22 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Hue</source>
-        <translation>Barwa</translation>
+        <translation>Odcień</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Hex</source>
-        <translation type="unfinished"></translation>
+        <translation>Szesnastkowy</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Niebieski</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Wartość</translation>
     </message>
     <message>
         <location line="+7"/>
