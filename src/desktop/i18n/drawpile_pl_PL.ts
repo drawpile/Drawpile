@@ -9704,7 +9704,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+11"/>
         <source>Bot</source>
-        <translation type="unfinished"></translation>
+        <translation>Bot</translation>
     </message>
     <message>
         <location line="+5"/>
