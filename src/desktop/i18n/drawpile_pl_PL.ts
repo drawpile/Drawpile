@@ -44,12 +44,12 @@
     <message>
         <location line="+28"/>
         <source>Entire session</source>
-        <translation type="unfinished"></translation>
+        <translation>Cała sesja</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Offender:</source>
-        <translation type="unfinished"></translation>
+        <translation>Naruszyciel:</translation>
     </message>
 </context>
 <context>
@@ -62,12 +62,12 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wprowadź adres URL serwera listy:</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Niektóre serwery list można znaleźć pod adresem &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -111,27 +111,27 @@
     <message>
         <location line="+20"/>
         <source>MyPaint Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pędzel MyPaint</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Pick initial color from layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz początkowy kolor z warstwy</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zablokuj alfa (tryb rekoloryzacji)</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Eraser mode</source>
-        <translation>Tryb wymazywania</translation>
+        <translation>Tryb gumki</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Direct drawing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Tryb rysowania bezpośredniego</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -164,22 +164,22 @@
         <location line="+14"/>
         <location line="+33"/>
         <source>Pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Wykrywanie nacisku</translation>
     </message>
     <message>
         <location line="-16"/>
         <source>Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmazywanie: </translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished"></translation>
+        <translation>Pobieranie koloru: 1/</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Spacing: </source>
-        <translation>Rozstaw: </translation>
+        <translation>Odstęp: </translation>
     </message>
     <message>
         <location line="+19"/>
@@ -228,7 +228,8 @@
         <location line="+11"/>
         <source>Will be resized
 to 64x64 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmiar zostanie zmieniony
+do 64x64 pikseli.</translation>
     </message>
     <message>
         <location line="+75"/>
@@ -241,7 +242,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/canvasshortcutsdialog.ui" line="+14"/>
         <source>Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrót płótna</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -262,7 +263,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="-26"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Odwraca kierunki wejścia. Na przykład, przewijanie w górę spowoduje oddalenie zamiast przybliżenia.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -272,12 +273,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamienia kierunki poziome i pionowe. Na przykład zmianę rozmiaru pędzla przez przesuwanie kursora w górę i w dół zamiast przesuwania w lewo i w prawo.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamień osie</translation>
     </message>
 </context>
 <context>
@@ -296,7 +297,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="-100"/>
         <source>SHA1 fingerprint:</source>
-        <translation type="unfinished"></translation>
+        <translation>Odcisk SHA1:</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -306,12 +307,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Expires on:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wygasa:</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>MD5 fingerprint:</source>
-        <translation type="unfinished"></translation>
+        <translation>Odcisk MD5:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -322,7 +323,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="-7"/>
         <source>Issued on:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wydano:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -409,7 +410,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/dumpplayback.ui" line="+14"/>
         <source>Play Debug Dump</source>
-        <translation type="unfinished"></translation>
+        <translation>Odtwórz zrzut debugowania</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -728,12 +729,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="-10"/>
         <source>Feather: </source>
-        <translation type="unfinished"></translation>
+        <translation>Zanikanie: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Expand: </source>
-        <translation>Rozszerz: </translation>
+        <translation>Rozszerzenie: </translation>
     </message>
     <message>
         <location line="+23"/>
@@ -772,7 +773,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/flipbook.ui" line="+14"/>
         <source>Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Kineograf</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -820,12 +821,12 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/inspectorsettings.ui" line="+17"/>
         <source>Last edited by:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ostatnio zmodyfikowany przez:</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaznacz całe kafelki</translation>
     </message>
 </context>
 <context>
@@ -838,7 +839,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+28"/>
         <source>Copy Invite Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Skopiuj link zaproszenia</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -853,37 +854,37 @@ to 64x64 pixels.</source>
     <message>
         <location line="+10"/>
         <source>Include password</source>
-        <translation type="unfinished"></translation>
+        <translation>Dołącz hasło</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>&lt;strong&gt;Note:&lt;/strong&gt; changing the session password will cause the link to stop working! If someone else changes the password, you have to reconnect for this dialog to update.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Uwaga:&lt;/strong&gt; zmiana hasła sesji spowoduje, że link przestanie działać! Jeśli ktoś inny zmieni hasło, musisz połączyć się ponownie, aby ten komunikat został zaktualizowany.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Prowadzisz sesję lokalnie. Jeśli inni nie mogą dołączyć do Twojej sesji, zajrzyj na &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt; - stronę pomocy dotyczącą hostingu&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Prowadzisz sesję lokalnie, więc Drawpile musi znaleźć Twój zewnętrznie widoczny adres IP, aby dać Ci link do zaproszenia. Aby uzyskać więcej informacji, sprawdź &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt; - stronę pomocy dotyczącą hostingu&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Uzyskaj widoczny zewnętrznie adres IP</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Show this dialog when hosting a session</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż to okno dialogowe podczas prowadzenia sesji</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>You can find this dialog again under &lt;i&gt;Session ▸ Invite…&lt;/i&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>To okno dialogowe można znaleźć ponownie w sekcji &lt;i&gt;Sesja ▸ Zaproś. . .&lt;/i&gt;</translation>
     </message>
 </context>
 <context>
@@ -906,7 +907,9 @@ to 64x64 pixels.</source>
         <source>Toggle between full range and subrange.
 Full range: [%1, %2]
 Subrange: [%3, %4]</source>
-        <translation type="unfinished"></translation>
+        <translation>Przełączanie między pełnym zakresem i podzakresem.
+Pełny zakres: [%1, %2]
+Podzakres: [%3, %4]</translation>
     </message>
     <message>
         <location line="+175"/>
@@ -916,12 +919,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+10"/>
         <source>&amp;Step up</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Krok w górę</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Step &amp;down</source>
-        <translation type="unfinished"></translation>
+        <translation>Krok &amp;w dół</translation>
     </message>
 </context>
 <context>
@@ -934,7 +937,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+87"/>
         <source>Track hovering pointer</source>
-        <translation type="unfinished"></translation>
+        <translation>Śledź unoszący się wskaźnik</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -972,7 +975,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+10"/>
         <source>Blending Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tryb mieszania:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -982,12 +985,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Visible to you</source>
-        <translation type="unfinished"></translation>
+        <translation>Widoczne dla ciebie</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Censor content</source>
-        <translation type="unfinished"></translation>
+        <translation>Cenzurowanie treści</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -997,7 +1000,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Default for new users</source>
-        <translation type="unfinished"></translation>
+        <translation>Domyślna dla nowych użytkowników</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1010,27 +1013,27 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/layoutsdialog.ui" line="+14"/>
         <source>Layouts</source>
-        <translation type="unfinished"></translation>
+        <translation>Układ</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień nazwę</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation>Doki Drawpile można dowolnie układać i łączyć, przytrzymując Shift i przeciągając je na górę. Tutaj można zapisywać i przywracać ulubione układy. Upewnij się, że układ pasuje do rozdzielczości, w przeciwnym razie niektóre elementy sterujące mogą zostać zepchnięte poza ekran.</translation>
     </message>
 </context>
 <context>
@@ -1039,132 +1042,132 @@ Subrange: [%3, %4]</source>
         <location filename="../ui/logindialog.ui" line="+103"/>
         <location line="+234"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieprawidłowe hasło.</translation>
     </message>
     <message>
         <location line="-191"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Hasło</translation>
     </message>
     <message>
         <location line="-36"/>
         <source>Remember my password</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapamiętaj moje hasło</translation>
     </message>
     <message>
         <location line="-24"/>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwa użytkownika</translation>
     </message>
     <message>
         <location line="+158"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtr</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>This session is password-protected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta sesja jest zabezpieczona hasłem.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hasło:</translation>
     </message>
     <message>
         <location line="+183"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Ta sesja sygnalizuje, że jej zawartość&lt;em&gt; nie jest odpowiednia dla nieletnich &lt;/em&gt;(NSFM)&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Musisz mieć ukończone 18 lat i być dopuszczonym do korzystania z treści dla dorosłych, aby kontynuować.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Czy na pewno chcesz dołączyć do tej sesji?&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Show this warning again next time</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż to ostrzeżenie ponownie następnym razem</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>Continue without account</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontynuuj bez konta</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Log in with server account</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaloguj się przy użyciu konta serwera</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Continue with this account, but change the avatar, username or password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontynuuj z tym kontem, ale zmień awatar, nazwę użytkownika lub hasło.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Edit and log in</source>
-        <translation type="unfinished"></translation>
+        <translation>Edytuj i zaloguj się</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Don&apos;t use any of these accounts.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie korzystaj z żadnego z tych kont.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in a different way</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaloguj się w inny sposób</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Log in with the selected account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaloguj się za pomocą wybranego konta.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in with this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaloguj się za pomocą tego konta</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Forget this account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapomnij to konto.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Forget this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapomnij to konto</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Don&apos;t ask again unless the rules change</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie pytaj ponownie, chyba że zasady ulegną zmianie</translation>
     </message>
     <message>
         <location line="-578"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż sesje nieodpowiednie dla nieletnich (NSFM)</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wprowadź &lt;b&gt;hasło sesji&lt;/b&gt;, &lt;i&gt;nie&lt;/i&gt;hasło twojego konta.</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Catching up...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ładowanie...</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>View old</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż stary</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>View new</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż nowy</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Replace pinned certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamień przypięty certyfikat</translation>
     </message>
 </context>
 <context>
@@ -1172,31 +1175,31 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../widgets/macmenu.cpp" line="+66"/>
         <source>Minimize</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimalizuj</translation>
     </message>
     <message numerus="yes">
         <location line="+129"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Posiadasz %n obraz z niezapisanymi zmianami. Czy chcesz przejrzeć te zmiany przed zamknięciem?</numerusform>
+            <numerusform>Posiadasz %n obrazy z niezapisanymi zmianami. Czy chcesz przejrzeć te zmiany przed zamknięciem?</numerusform>
+            <numerusform>Posiadasz %n obrazów z niezapisanymi zmianami. Czy chcesz przejrzeć te zmiany przed zamknięciem?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>If you don&apos;t review your documents, all changes will be lost</source>
-        <translation type="unfinished"></translation>
+        <translation>Jeśli nie przejrzysz swoich dokumentów, wszystkie zmiany zostaną utracone</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Review changes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Przegląd zmian...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discard changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Odrzuć zmiany</translation>
     </message>
 </context>
 <context>
@@ -1204,327 +1207,328 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../mainwindow.cpp" line="+291"/>
         <source>Server out of space</source>
-        <translation type="unfinished"></translation>
+        <translation>Brak miejsca na serwerze</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
-        <translation type="unfinished"></translation>
+        <translation>Na serwerze kończy się miejsce na historię, a sesja jest zbyt duża, aby mogła zostać automatycznie zresetowana! (Limit wynosi %1 MB)
+Uprość płótno i zresetuj ręcznie, zanim skończy się miejsce.</translation>
     </message>
     <message>
         <location line="+269"/>
         <source>🙋 %1 joined!</source>
-        <translation type="unfinished"></translation>
+        <translation>🙋%1 dołącza!</translation>
     </message>
     <message>
         <location line="+92"/>
         <location line="+1466"/>
         <source>Untitled</source>
-        <translation type="unfinished"></translation>
+        <translation>Bez tytułu</translation>
     </message>
     <message>
         <location line="-1088"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Skrót &apos;%1&apos; jest niejednoznaczny, pokrywa się z:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Ambiguous Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Niejednoznaczny skrót</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>Napraw</translation>
     </message>
     <message>
         <location line="+156"/>
         <location line="+26"/>
         <source>Exit Drawpile</source>
-        <translation type="unfinished"></translation>
+        <translation>Opuść Drawpile</translation>
     </message>
     <message>
         <location line="-25"/>
         <source>You are still connected to a drawing session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Jesteś wciąż połączony z sesją rysowania.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Exit anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyjdź mimo wszystko</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+27"/>
         <location line="+573"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Anuluj</translation>
     </message>
     <message>
         <location line="-580"/>
         <source>There are unsaved changes. Save them before exiting?</source>
-        <translation type="unfinished"></translation>
+        <translation>Istnieją niezapisane zmiany. Zapisać je przed wyjściem?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discard</source>
-        <translation type="unfinished"></translation>
+        <translation>Odrzuć</translation>
     </message>
     <message>
         <location line="+271"/>
         <source>Opening file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwieranie pliku…</translation>
     </message>
     <message>
         <location line="+135"/>
         <source>Saving...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisywanie...</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Couldn&apos;t save image</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można zapisać obrazu</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Image saved</source>
-        <translation type="unfinished"></translation>
+        <translation>Obraz zapisany</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta sesja była hostowana ze starszej wersji Drawpile, niektóre nowsze funkcje nie będą dostępne. Inne wersje Drawpile mogą wyświetlać inne wyniki, reset sesji może spowodować nieoczekiwane zmiany.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Compatibility Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Tryb zgodności</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Session template saved</source>
-        <translation type="unfinished"></translation>
+        <translation>Szablon sesji zapisany</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export session template</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można wyeksportować szablonu sesji</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Saving animation...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisywanie animacji...</translation>
     </message>
     <message>
         <location line="+54"/>
         <source>Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Pauza</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Odtwarzanie</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Stop Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>Zatrzymaj nagrywanie</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+1573"/>
         <source>Record...</source>
-        <translation type="unfinished"></translation>
+        <translation>Nagraj...</translation>
     </message>
     <message>
         <location line="-1548"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Niewspierany format.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Couldn&apos;t start recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można rozpocząć nagrywania.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieznany błąd.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error closing profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd przy zamykaniu profilu.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error opening profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd przy otwieraniu profilu.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error closing tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd przy zamykaniu dziennika zdarzeń tabletu.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Error opening tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd przy otwieraniu dziennika zdarzeń tabletu.</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>No canvas to host! Create one or open a file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Brak płótna do udostępnienia! Utwórz je lub otwórz plik.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Invalid address</source>
-        <translation type="unfinished"></translation>
+        <translation>Niewłaściwy adres</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Host Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozpocznij sesję</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Really leave the session?</source>
-        <translation type="unfinished"></translation>
+        <translation>Czy na pewno opuścić sesję?</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Leave</source>
-        <translation type="unfinished"></translation>
+        <translation>Opuść</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stay</source>
-        <translation type="unfinished"></translation>
+        <translation>Pozostań</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
-        <translation type="unfinished"></translation>
+        <translation>Pozostały jeszcze niewysłane dane! Poczekaj na zakończenie transmisji!</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Become Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Zostań operatorem</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enter operator password</source>
-        <translation type="unfinished"></translation>
+        <translation>Wprowadź hasło operatora</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Terminate session</source>
-        <translation type="unfinished"></translation>
+        <translation>Przerwij sesję</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+1868"/>
         <source>Terminate</source>
-        <translation type="unfinished"></translation>
+        <translation>Przerwij</translation>
     </message>
     <message>
         <location line="-1781"/>
         <source>Could not connect to server</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można połączyć się z serwerem</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Would you like to join the session instead?</source>
-        <translation type="unfinished"></translation>
+        <translation>Czy chciałbyś zamiast tego dołączyć do sesji?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Join</source>
-        <translation type="unfinished"></translation>
+        <translation>Dołącz</translation>
     </message>
     <message>
         <location line="+117"/>
         <source>Session blocked by parental controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesja zablokowana przez kontrolę rodzicielską</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Undo Limit... (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Limit cofnięć... (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change the session&apos;s undo limit, current limit is %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień limit cofnięć dla sesji, aktualny limit to %1.</translation>
     </message>
     <message>
         <location line="+423"/>
         <source>The image could not be loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można załadować obrazu</translation>
     </message>
     <message>
         <location line="+236"/>
         <source>User #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Użytkownik #%1</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Stop Tablet Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Zatrzymaj dziennik zdarzeń tabletu</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+1003"/>
         <source>Tablet Event Log...</source>
-        <translation type="unfinished"></translation>
+        <translation>Dziennik zdarzeń tabletu...</translation>
     </message>
     <message>
         <location line="-1000"/>
         <source>Stop Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Zatrzymaj profil</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+1001"/>
         <source>Profile...</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil...</translation>
     </message>
     <message>
         <location line="-994"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw sztuczne opóźnienie... (obecnie %1 ms)</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set Artificial Lag</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw sztuczne opóźnienie</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Artificial lag in milliseconds (0 to disable):</source>
-        <translation type="unfinished"></translation>
+        <translation>Sztuczne opóźnienie w milisekundach (0 aby wyłączyć):</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Artificial Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Sztuczne rozłączenie</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Simulate a disconnect after this many seconds:</source>
-        <translation type="unfinished"></translation>
+        <translation>Symuluj rozłączenie po tylu sekundach:</translation>
     </message>
     <message>
         <location line="+15"/>
         <location line="+956"/>
         <source>Record Debug Dumps</source>
-        <translation type="unfinished"></translation>
+        <translation>Nagrywanie zrzutów debugowania</translation>
     </message>
     <message>
         <location line="-955"/>
@@ -1533,22 +1537,26 @@ Simplify the canvas and reset manually before space runs out.</source>
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
 
 Are you sure youwant to start recording debug dumps?</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrzuty debugowania rejestrują lokalne i zdalne polecenia rysowania. Mogą być używane do rozwiązywania problemów sieciowych, ale poza tym niewiele więcej. Jeśli chcesz wykonać regularne nagranie, użyj Plik &gt; Nagraj... zamiast tego.
+
+Nagrywanie zrzutu debugowania rozpocznie się przy następnym zresetowaniu płótna, a pliki zostaną zapisane w %1
+
+Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>About Drawpile</source>
-        <translation type="unfinished"></translation>
+        <translation>O Drawpile</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A collaborative drawing program.</source>
-        <translation type="unfinished"></translation>
+        <translation>Program do zespołowego rysowania.</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Settings File:</source>
-        <translation type="unfinished"></translation>
+        <translation>Plik ustawień:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1563,92 +1571,92 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>%1x%2px² (%3x%4mm²)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%2px² (%3x%4mm²)</translation>
     </message>
     <message>
         <location line="+89"/>
         <source>Toggle Dock %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Przełącz dok %1</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lock Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Zablokuj doki</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Vertical Tabs on Sides</source>
-        <translation type="unfinished"></translation>
+        <translation>Pionowe karty po bokach</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Hide Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukryj doki</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Hold Shift to Arrange</source>
-        <translation type="unfinished"></translation>
+        <translation>Przytrzymaj Shift, aby ułożyć</translation>
     </message>
     <message>
         <location line="+9"/>
         <location filename="../widgets/macmenu.cpp" line="-169"/>
         <source>&amp;New</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nowy</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Otwórz...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamknij</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zapisz</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save &amp;As...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz &amp;jako...</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Autosave</source>
-        <translation type="unfinished"></translation>
+        <translation>Autozapis</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Start...</source>
-        <translation type="unfinished"></translation>
+        <translation>Start...</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wyjdź</translation>
     </message>
     <message>
         <location line="+45"/>
         <location filename="../widgets/macmenu.cpp" line="-12"/>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Plik</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Open &amp;Recent</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz &amp;ostatnie</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>&amp;Import</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Importuj</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1658,47 +1666,47 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+14"/>
         <source>File Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Narzędzia plików</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Cofnij</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Powtórz</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy selected area to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiuj zaznaczony obszar do schowka</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiuj wybrany obszar z wyłączeniem tła do schowka</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy selected area of the current layer to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiuj wybrany obszar bieżącej warstwy do schowka</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cut selected area of the current layer to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Wytnij wybrany obszar bieżącej warstwy do schowka</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wklej</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Paste in View Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Wklej na środku widoku</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1708,48 +1716,48 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Paste &amp;From File...</source>
-        <translation type="unfinished"></translation>
+        <translation>Wklej &amp;z pliku...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Empty Annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń puste adnotacje</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Resi&amp;ze Canvas...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień wielkość &amp;płótna...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Session Background...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw tło sesji...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Local Background...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw tło lokalne...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Clear Local Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyczyść tło lokalne</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Brush Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ustawienia pędzla</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Prefere&amp;nces</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustawie&amp;nia</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Select &amp;All</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaznacz &amp;wszystko</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3398,7 +3406,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+72"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3482,12 +3490,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+8"/>
         <source>Qt Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wersja Qt:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Application Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wersja programu:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -9701,7 +9709,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+5"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>Zarejestrowane</translation>
     </message>
 </context>
 <context>
