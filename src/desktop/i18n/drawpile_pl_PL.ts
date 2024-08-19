@@ -179,12 +179,12 @@
     <message>
         <location line="+16"/>
         <source>Spacing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rozstaw: </translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Gain: </source>
-        <translation type="unfinished"></translation>
+        <translation>Wzmocnienie: </translation>
     </message>
     <message>
         <location line="+22"/>
@@ -301,7 +301,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+23"/>
         <source>Issued by</source>
-        <translation type="unfinished"></translation>
+        <translation>Wydany przez</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -348,7 +348,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+13"/>
         <source>Fingerprints</source>
-        <translation type="unfinished"></translation>
+        <translation>Odciski palców</translation>
     </message>
     <message>
         <location line="+41"/>
