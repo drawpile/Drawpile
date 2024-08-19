@@ -551,7 +551,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+6"/>
         <source>Paste Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Wklej obraz</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -911,7 +911,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+175"/>
         <source>&amp;Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zaznacz wszystko</translation>
     </message>
     <message>
         <location line="+10"/>
