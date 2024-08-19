@@ -952,17 +952,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/layerproperties.ui" line="+17"/>
         <source>Layer Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Właściwości warstwy</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwa:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Opacity:</source>
-        <translation type="unfinished"></translation>
+        <translation>Przeźroczystość:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -977,7 +977,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+10"/>
         <source>Visibility:</source>
-        <translation type="unfinished"></translation>
+        <translation>Widoczność:</translation>
     </message>
     <message>
         <location line="+7"/>
