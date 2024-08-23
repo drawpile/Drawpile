@@ -295,6 +295,11 @@ bool ColorWheel::alignTop() const
     return p->align_top;
 }
 
+bool ColorWheel::keepWheelRatio() const
+{
+    return p->keep_wheel_ratio;
+}
+
 
 void ColorWheel::setColorSpace(color_widgets::ColorWheel::ColorSpaceEnum space)
 {
@@ -368,6 +373,16 @@ void ColorWheel::setAlignTop(bool top)
         p->align_top = top;
         update();
         Q_EMIT alignTopChanged(top);
+    }
+}
+
+void ColorWheel::setKeepWheelRatio(bool keep)
+{
+    if ( keep != p->keep_wheel_ratio )
+    {
+        p->keep_wheel_ratio = keep;
+        update();
+        Q_EMIT keepWheelRatioChanged(keep);
     }
 }
 

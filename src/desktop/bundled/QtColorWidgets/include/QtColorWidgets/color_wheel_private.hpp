@@ -45,6 +45,7 @@ public:
     int max_size = 128;
     bool mirrored_selector = false;
     bool align_top = false;
+    bool keep_wheel_ratio = true;
     qreal device_pixel_ratio = 1.0;
 
     Private(ColorWheel *widget)
@@ -71,7 +72,9 @@ public:
     /// Calculate inner wheel radius from idget center
     qreal inner_radius() const
     {
-        return outer_radius()-wheel_width;
+        qreal outer = outer_radius();
+        qreal ww = wheel_width;
+        return outer-(keep_wheel_ratio ? ww * qSqrt(outer) / 12.0 : ww);
     }
 
     /// Calculate the edge length of the inner square

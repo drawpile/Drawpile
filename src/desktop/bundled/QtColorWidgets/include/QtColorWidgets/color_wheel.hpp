@@ -34,6 +34,7 @@ class QCP_EXPORT ColorWheel : public QWidget
     Q_PROPERTY(ColorSpaceEnum colorSpace READ colorSpace WRITE setColorSpace NOTIFY colorSpaceChanged DESIGNABLE true )
     Q_PROPERTY(bool mirroredSelector READ mirroredSelector WRITE setMirroredSelector NOTIFY mirroredSelectorChanged DESIGNABLE true )
     Q_PROPERTY(bool alignTop READ alignTop WRITE setAlignTop NOTIFY alignTop DESIGNABLE false )
+    Q_PROPERTY(bool keepWheelRatio READ keepWheelRatio WRITE setKeepWheelRatio NOTIFY keepWheelRatioChanged DESIGNABLE false )
 
 public:
     enum ShapeEnum
@@ -76,10 +77,10 @@ public:
     /// Get current value in the range [0-1]
     qreal value() const;
 
-    /// Get the width in pixels of the outer wheel
+    /// Get the base width in pixels of the outer wheel
     unsigned int wheelWidth() const;
 
-    /// Set the width in pixels of the outer wheel
+    /// Set the base width in pixels of the outer wheel
     void setWheelWidth(unsigned int w);
 
     /// Shape of the internal selector
@@ -96,6 +97,9 @@ public:
 
     /// Whether the color wheel is aligned to the top or the center
     bool alignTop() const;
+
+    /// Whether the outer wheel scales with the size of the widget or not
+    bool keepWheelRatio() const;
 
 public Q_SLOTS:
 
@@ -132,6 +136,9 @@ public Q_SLOTS:
     /// Sets whether the wheel should be aligned to the top or the center
     void setAlignTop(bool top);
 
+    /// Whether to retain the wheel's width ratio as the widget scales or not
+    void setKeepWheelRatio(bool keep);
+
 Q_SIGNALS:
     /**
      * Emitted when the user selects a color or setColor is called
@@ -154,6 +161,8 @@ Q_SIGNALS:
     void mirroredSelectorChanged(bool mirrored);
 
     void alignTopChanged(bool top);
+
+    void keepWheelRatioChanged(bool keep);
 
     /**
      * Emitted when the user releases from dragging
