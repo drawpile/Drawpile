@@ -5137,7 +5137,9 @@ void MainWindow::setupActions()
 		act->installEventFilter(m_tempToolSwitchShortcut);
 
 	// Other shortcuts
-	QAction *finishStrokeShortcut = makeAction("finishstroke", tr("Finish action")).shortcut(Qt::Key_Return);
+	QAction *finishStrokeShortcut =
+		makeAction("finishstroke", tr("Finish action"))
+			.shortcut(Qt::Key_Return, Qt::Key_Enter);
 	connect(finishStrokeShortcut, &QAction::triggered,
 			m_doc->toolCtrl(), &tools::ToolController::finishMultipartDrawing);
 
