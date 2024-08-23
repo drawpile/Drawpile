@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef COLORSPINNERDOCK_H
-#define COLORSPINNERDOCK_H
-
+#ifndef DESKTOP_DOCKS_COLORSPINNER_H
+#define DESKTOP_DOCKS_COLORSPINNER_H
 #include "desktop/docks/dockbase.h"
 
 namespace color_widgets {
-	class ColorPalette;
+class ColorPalette;
 }
 
 namespace docks {
@@ -14,15 +12,15 @@ namespace docks {
 class ColorSpinnerDock final : public DockBase {
 	Q_OBJECT
 public:
-	ColorSpinnerDock(const QString& title, QWidget *parent);
+	ColorSpinnerDock(const QString &title, QWidget *parent);
 	~ColorSpinnerDock() override;
 
 public slots:
-	void setColor(const QColor& color);
+	void setColor(const QColor &color);
 	void setLastUsedColors(const color_widgets::ColorPalette &pal);
 
 signals:
-	void colorSelected(const QColor& color);
+	void colorSelected(const QColor &color);
 
 private:
 	struct Private;
@@ -32,4 +30,3 @@ private:
 }
 
 #endif
-
