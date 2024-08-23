@@ -46,6 +46,9 @@ public:
     bool mirrored_selector = false;
     bool align_top = false;
     bool keep_wheel_ratio = true;
+    bool preview_outer = false;
+    bool preview_inner = false;
+    QColor comparison_color;
     qreal device_pixel_ratio = 1.0;
 
     Private(ColorWheel *widget)
@@ -232,24 +235,40 @@ public:
         QPainter painter(&hue_ring);
         painter.setRenderHint(QPainter::Antialiasing);
         painter.setCompositionMode(QPainter::CompositionMode_Source);
-
-
-        const int hue_stops = 24;
-        QConicalGradient gradient_hue(0, 0, 0);
-        if ( gradient_hue.stops().size() < hue_stops )
-        {
-            for ( double a = 0; a < 1.0; a+=1.0/(hue_stops-1) )
-            {
-                gradient_hue.setColorAt(a,rainbow_from_hue(a));
-            }
-            gradient_hue.setColorAt(1,rainbow_from_hue(0));
-        }
-
         painter.translate(outer,outer);
-
         painter.setPen(Qt::NoPen);
-        painter.setBrush(QBrush(gradient_hue));
-        painter.drawEllipse(QPointF(0,0),outer,outer);
+
+        if (preview_outer && mouse_status == DragSquare)
+        {
+            if ( comparison_color.isValid() )
+            {
+                painter.save();
+                painter.setClipRect(QRect(-outer,-outer,outer*2,outer));
+            }
+            painter.setBrush(w->color());
+            painter.drawEllipse(QPointF(0,0),outer,outer);
+            if ( comparison_color.isValid() )
+            {
+                painter.setClipRect(QRect(-outer,0,outer*2,outer));
+                painter.setBrush(comparison_color);
+                painter.drawEllipse(QPointF(0,0),outer,outer);
+                painter.restore();
+            }
+        }
+        else {
+            const int hue_stops = 24;
+            QConicalGradient gradient_hue(0, 0, 0);
+            if ( gradient_hue.stops().size() < hue_stops )
+            {
+                for ( double a = 0; a < 1.0; a+=1.0/(hue_stops-1) )
+                {
+                    gradient_hue.setColorAt(a,rainbow_from_hue(a));
+                }
+                gradient_hue.setColorAt(1,rainbow_from_hue(0));
+            }
+            painter.setBrush(QBrush(gradient_hue));
+            painter.drawEllipse(QPointF(0,0),outer,outer);
+        }
 
         painter.setBrush(Qt::transparent);//palette().background());
         qreal inner = inner_radius() * device_pixel_ratio;
