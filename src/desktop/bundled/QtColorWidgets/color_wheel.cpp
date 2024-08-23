@@ -89,7 +89,12 @@ void ColorWheel::paintEvent(QPaintEvent * )
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.translate(geometry().width()/2,geometry().height()/2);
+
+    int width = geometry().width();
+    int height = geometry().height();
+    int x = width / 2;
+    int y = height > width && p->align_top ? x : height / 2;
+    painter.translate(x, y);
 
     // hue wheel
     if(p->hue_ring.isNull())
@@ -285,6 +290,11 @@ bool ColorWheel::mirroredSelector() const
     return p->mirrored_selector;
 }
 
+bool ColorWheel::alignTop() const
+{
+    return p->align_top;
+}
+
 
 void ColorWheel::setColorSpace(color_widgets::ColorWheel::ColorSpaceEnum space)
 {
@@ -348,6 +358,16 @@ void ColorWheel::setMirroredSelector(bool mirrored)
         p->mirrored_selector = mirrored;
         update();
         Q_EMIT mirroredSelectorChanged(mirrored);
+    }
+}
+
+void ColorWheel::setAlignTop(bool top)
+{
+    if ( top != p->align_top )
+    {
+        p->align_top = top;
+        update();
+        Q_EMIT alignTopChanged(top);
     }
 }
 

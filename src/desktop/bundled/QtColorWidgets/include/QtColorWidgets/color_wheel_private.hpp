@@ -44,6 +44,7 @@ public:
     QColor (*rainbow_from_hue)(qreal);
     int max_size = 128;
     bool mirrored_selector = false;
+    bool align_top = false;
     qreal device_pixel_ratio = 1.0;
 
     Private(ColorWheel *widget)
@@ -94,7 +95,11 @@ public:
     /// return line from center to given point
     QLineF line_to_point(const QPoint &p) const
     {
-        return QLineF (w->geometry().width()/2, w->geometry().height()/2, p.x(), p.y());
+        int width = w->geometry().width();
+        int height = w->geometry().height();
+        int x1 = width / 2;
+        int y1 = height > width && align_top ? x1 : height / 2;
+        return QLineF (x1, y1, p.x(), p.y());
     }
 
     /**
