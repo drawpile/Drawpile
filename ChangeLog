@@ -4,6 +4,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Allow disabling the application proxy in the network preferences and automatically detect bad proxy configurations that can't actually make connections. Thanks FishEggsThe for reporting.
  * Fix: Improve socket error messages, listing the error code and adding extra information on what to do if a proxy error occurs. Thanks FishEggsThe for reporting.
  * Fix: Center soft brushes on the cursor better, they got offset to the top-left from correcting for size discontinuity before. Thanks Meiren for reporting.
+ * Fix: Don't mess up gridmap settings when opening brush settings dialog and initially changing a value in it. Thanks Blozzom for reporting.
 
 2024-08-09 Version 2.2.2-beta.3
  * Fix: Use more accurate timers for performance profiles if the platform supports it.

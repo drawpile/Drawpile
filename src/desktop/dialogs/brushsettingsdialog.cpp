@@ -14,6 +14,7 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QPushButton>
+#include <QScopedValueRollback>
 #include <QScrollArea>
 #include <QSignalBlocker>
 #include <QSpacerItem>
@@ -74,8 +75,9 @@ struct BrushSettingsDialog::Private {
 	int mypaintPageIndexes[MYPAINT_BRUSH_SETTINGS_COUNT];
 	DP_BrushShape lastShape;
 	brushes::ActiveBrush brush;
-	bool useBrushSampleCount;
 	int globalSmoothing;
+	bool useBrushSampleCount;
+	bool updating = false;
 };
 
 BrushSettingsDialog::BrushSettingsDialog(QWidget *parent)
@@ -121,6 +123,7 @@ void BrushSettingsDialog::setGlobalSmoothing(int smoothing)
 void BrushSettingsDialog::updateUiFromActiveBrush(
 	const brushes::ActiveBrush &brush)
 {
+	QScopedValueRollback<bool> rollback(d->updating, true);
 	QSignalBlocker blocker{this};
 	d->brush = brush;
 
@@ -250,7 +253,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 		int(DP_BRUSH_SHAPE_MYPAINT));
 	connect(
 		d->brushTypeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		[this](int index) {
+		makeBrushChangeCallbackArg<int>([this](int index) {
 			int brushType = d->brushTypeCombo->itemData(index).toInt();
 			switch(brushType) {
 			case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND:
@@ -267,7 +270,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 				break;
 			}
 			emitChange();
-		});
+		}));
 
 	d->brushModeLabel = new QLabel{tr("Blend Mode:"), widget};
 	d->brushModeCombo = new QComboBox{widget};
@@ -277,11 +280,11 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	}
 	connect(
 		d->brushModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		[this](int index) {
+		makeBrushChangeCallbackArg<int>([this](int index) {
 			d->brush.classic().brush_mode =
 				DP_BlendMode(d->brushModeCombo->itemData(index).toInt());
 			emitChange();
-		});
+		}));
 
 	d->eraseModeLabel = new QLabel{tr("Blend Mode:"), widget};
 	d->eraseModeCombo = new QComboBox{widget};
@@ -291,11 +294,11 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	}
 	connect(
 		d->eraseModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		[this](int index) {
+		makeBrushChangeCallbackArg<int>([this](int index) {
 			d->brush.classic().erase_mode =
 				DP_BlendMode(d->eraseModeCombo->itemData(index).toInt());
 			emitChange();
-		});
+		}));
 
 	d->paintModeLabel = new QLabel{tr("Paint Mode:"), widget};
 	d->paintModeCombo = new QComboBox{widget};
@@ -304,7 +307,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->paintModeCombo->addItem(tr("Wash/Indirect"), false);
 	connect(
 		d->paintModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		[this](int index) {
+		makeBrushChangeCallbackArg<int>([this](int index) {
 			if(d->brush.activeType() == brushes::ActiveBrush::CLASSIC) {
 				d->brush.classic().incremental =
 					d->paintModeCombo->itemData(index).toBool();
@@ -313,30 +316,36 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 					d->paintModeCombo->itemData(index).toBool();
 			}
 			emitChange();
-		});
+		}));
 
 	d->eraseModeBox = new QCheckBox{tr("Eraser Mode"), widget};
 	layout->addRow(d->eraseModeBox);
-	connect(d->eraseModeBox, &QCheckBox::stateChanged, [this](int state) {
-		d->brush.classic().erase = state != Qt::Unchecked;
-		d->brush.myPaint().brush().erase = state != Qt::Unchecked;
-		emitChange();
-	});
+	connect(
+		d->eraseModeBox, &QCheckBox::stateChanged,
+		makeBrushChangeCallbackArg<int>([this](int state) {
+			d->brush.classic().erase = state != Qt::Unchecked;
+			d->brush.myPaint().brush().erase = state != Qt::Unchecked;
+			emitChange();
+		}));
 
 	d->colorPickBox =
 		new QCheckBox{tr("Pick Initial Color from Layer"), widget};
 	layout->addRow(d->colorPickBox);
-	connect(d->colorPickBox, &QCheckBox::stateChanged, [this](int state) {
-		d->brush.classic().colorpick = state != Qt::Unchecked;
-		emitChange();
-	});
+	connect(
+		d->colorPickBox, &QCheckBox::stateChanged,
+		makeBrushChangeCallbackArg<int>([this](int state) {
+			d->brush.classic().colorpick = state != Qt::Unchecked;
+			emitChange();
+		}));
 
 	d->lockAlphaBox = new QCheckBox{tr("Lock Alpha (Recolor Mode)"), widget};
 	layout->addRow(d->lockAlphaBox);
-	connect(d->lockAlphaBox, &QCheckBox::stateChanged, [this](int state) {
-		d->brush.myPaint().brush().lock_alpha = state != Qt::Unchecked;
-		emitChange();
-	});
+	connect(
+		d->lockAlphaBox, &QCheckBox::stateChanged,
+		makeBrushChangeCallbackArg<int>([this](int state) {
+			d->brush.myPaint().brush().lock_alpha = state != Qt::Unchecked;
+			emitChange();
+		}));
 
 	d->spacingSpinner = new KisSliderSpinBox{widget};
 	layout->addRow(d->spacingSpinner);
@@ -347,10 +356,10 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->spacingSpinner->setSuffix(tr("%"));
 	connect(
 		d->spacingSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
-		[this](int value) {
+		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().spacing = value / 100.0;
 			emitChange();
-		});
+		}));
 
 	d->stabilizationModeCombo = new QComboBox{widget};
 	layout->addRow(tr("Stabilization Mode:"), d->stabilizationModeCombo);
@@ -360,11 +369,12 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 		tr("Average Smoothing"), int(brushes::Smoothing));
 	connect(
 		d->stabilizationModeCombo,
-		QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int index) {
+		QOverload<int>::of(&QComboBox::currentIndexChanged),
+		makeBrushChangeCallbackArg<int>([this](int index) {
 			d->brush.setStabilizationMode(brushes::StabilizationMode(
 				d->stabilizationModeCombo->itemData(index).toInt()));
 			emitChange();
-		});
+		}));
 
 	d->stabilizerSpinner = new KisSliderSpinBox{widget};
 	layout->addRow(d->stabilizerSpinner);
@@ -374,10 +384,10 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->stabilizerSpinner->setExponentRatio(3.0);
 	connect(
 		d->stabilizerSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
-		[this](int value) {
+		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.setStabilizerSampleCount(value);
 			emitChange();
-		});
+		}));
 
 	d->smoothingSpinner = new KisSliderSpinBox{widget};
 	layout->addRow(d->smoothingSpinner);
@@ -386,10 +396,10 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->smoothingSpinner->setSingleStep(1);
 	connect(
 		d->smoothingSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
-		[this](int value) {
+		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.setSmoothing(value - d->globalSmoothing);
 			emitChange();
-		});
+		}));
 
 	d->stabilizerExplanationLabel = new QLabel{widget};
 	layout->addRow(d->stabilizerExplanationLabel);
@@ -417,10 +427,10 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 	d->classicSizeSpinner->setSuffix(tr("px"));
 	connect(
 		d->classicSizeSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
-		[this](int value) {
+		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().size.max = value;
 			emitChange();
-		});
+		}));
 
 	d->classicSizeDynamics = buildClassicDynamics(
 		layout, &brushes::ClassicBrush::setSizeDynamicType,
@@ -434,10 +444,10 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 	d->classicSizeMinSpinner->setSuffix(tr("px"));
 	connect(
 		d->classicSizeMinSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
-		[this](int value) {
+		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().size.min = value;
 			emitChange();
-		});
+		}));
 
 	d->classicSizeCurve =
 		new widgets::CurveWidget{tr("Input"), tr("Size"), false, widget};
@@ -445,10 +455,11 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 	buildClassicApplyToAllButton(d->classicSizeCurve);
 	connect(
 		d->classicSizeCurve, &widgets::CurveWidget::curveChanged,
-		[this](const KisCubicCurve &curve) {
-			d->brush.classic().setSizeCurve(curve);
-			emitChange();
-		});
+		makeBrushChangeCallbackArg<const KisCubicCurve &>(
+			[this](const KisCubicCurve &curve) {
+				d->brush.classic().setSizeCurve(curve);
+				emitChange();
+			}));
 
 	layout->addSpacerItem(
 		new QSpacerItem{0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding});
@@ -474,10 +485,10 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 	d->classicOpacitySpinner->setSuffix(tr("%"));
 	connect(
 		d->classicOpacitySpinner, QOverload<int>::of(&QSpinBox::valueChanged),
-		[this](int value) {
+		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().opacity.max = value / 100.0;
 			emitChange();
-		});
+		}));
 
 	d->classicOpacityDynamics = buildClassicDynamics(
 		layout, &brushes::ClassicBrush::setOpacityDynamicType,
@@ -491,10 +502,11 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 	d->classicOpacityMinSpinner->setSuffix(tr("%"));
 	connect(
 		d->classicOpacityMinSpinner,
-		QOverload<int>::of(&QSpinBox::valueChanged), [this](int value) {
+		QOverload<int>::of(&QSpinBox::valueChanged),
+		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().opacity.min = value / 100.0;
 			emitChange();
-		});
+		}));
 
 	d->classicOpacityCurve =
 		new widgets::CurveWidget{tr("Input"), tr("Opacity"), false, widget};
@@ -502,10 +514,11 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 	buildClassicApplyToAllButton(d->classicOpacityCurve);
 	connect(
 		d->classicOpacityCurve, &widgets::CurveWidget::curveChanged,
-		[this](const KisCubicCurve &curve) {
-			d->brush.classic().setOpacityCurve(curve);
-			emitChange();
-		});
+		makeBrushChangeCallbackArg<const KisCubicCurve &>(
+			[this](const KisCubicCurve &curve) {
+				d->brush.classic().setOpacityCurve(curve);
+				emitChange();
+			}));
 
 	layout->addSpacerItem(
 		new QSpacerItem{0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding});
@@ -531,10 +544,10 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 	d->classicHardnessSpinner->setSuffix(tr("%"));
 	connect(
 		d->classicHardnessSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
-		[this](int value) {
+		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().hardness.max = value / 100.0;
 			emitChange();
-		});
+		}));
 
 	d->classicHardnessDynamics = buildClassicDynamics(
 		layout, &brushes::ClassicBrush::setHardnessDynamicType,
@@ -548,10 +561,11 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 	d->classicHardnessMinSpinner->setSuffix(tr("%"));
 	connect(
 		d->classicHardnessMinSpinner,
-		QOverload<int>::of(&QSpinBox::valueChanged), [this](int value) {
+		QOverload<int>::of(&QSpinBox::valueChanged),
+		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().hardness.min = value / 100.0;
 			emitChange();
-		});
+		}));
 
 	d->classicHardnessCurve =
 		new widgets::CurveWidget{tr("Input"), tr("Hardness"), false, widget};
@@ -559,10 +573,11 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 	buildClassicApplyToAllButton(d->classicHardnessCurve);
 	connect(
 		d->classicHardnessCurve, &widgets::CurveWidget::curveChanged,
-		[this](const KisCubicCurve &curve) {
-			d->brush.classic().setHardnessCurve(curve);
-			emitChange();
-		});
+		makeBrushChangeCallbackArg<const KisCubicCurve &>(
+			[this](const KisCubicCurve &curve) {
+				d->brush.classic().setHardnessCurve(curve);
+				emitChange();
+			}));
 
 	layout->addSpacerItem(
 		new QSpacerItem{0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding});
@@ -588,10 +603,10 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	d->classicSmudgingSpinner->setSuffix(tr("%"));
 	connect(
 		d->classicSmudgingSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
-		[this](int value) {
+		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().smudge.max = value / 100.0;
 			emitChange();
-		});
+		}));
 
 	d->classicColorPickupSpinner = new KisSliderSpinBox{widget};
 	layout->addWidget(d->classicColorPickupSpinner);
@@ -599,10 +614,11 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	d->classicColorPickupSpinner->setPrefix(tr("Color Pickup: 1/"));
 	connect(
 		d->classicColorPickupSpinner,
-		QOverload<int>::of(&QSpinBox::valueChanged), [this](int value) {
+		QOverload<int>::of(&QSpinBox::valueChanged),
+		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().resmudge = value;
 			emitChange();
-		});
+		}));
 
 	d->classicSmudgeDynamics = buildClassicDynamics(
 		layout, &brushes::ClassicBrush::setSmudgeDynamicType,
@@ -616,10 +632,11 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	d->classicSmudgingMinSpinner->setSuffix(tr("%"));
 	connect(
 		d->classicSmudgingMinSpinner,
-		QOverload<int>::of(&QSpinBox::valueChanged), [this](int value) {
+		QOverload<int>::of(&QSpinBox::valueChanged),
+		makeBrushChangeCallbackArg<int>([this](int value) {
 			d->brush.classic().smudge.min = value / 100.0;
 			emitChange();
-		});
+		}));
 
 	d->classicSmudgingCurve =
 		new widgets::CurveWidget{tr("Input"), tr("Smudging"), false, widget};
@@ -627,10 +644,11 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	buildClassicApplyToAllButton(d->classicSmudgingCurve);
 	connect(
 		d->classicSmudgingCurve, &widgets::CurveWidget::curveChanged,
-		[this](const KisCubicCurve &curve) {
-			d->brush.classic().setSmudgeCurve(curve);
-			emitChange();
-		});
+		makeBrushChangeCallbackArg<const KisCubicCurve &>(
+			[this](const KisCubicCurve &curve) {
+				d->brush.classic().setSmudgeCurve(curve);
+				emitChange();
+			}));
 
 	layout->addSpacerItem(
 		new QSpacerItem{0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding});
@@ -654,21 +672,21 @@ BrushSettingsDialog::Dynamics BrushSettingsDialog ::buildClassicDynamics(
 		tr("Distance dynamics"), int(DP_CLASSIC_BRUSH_DYNAMIC_DISTANCE));
 	connect(
 		typeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		[this, typeCombo, setType](int index) {
+		makeBrushChangeCallbackArg<int>([this, typeCombo, setType](int index) {
 			int type = typeCombo->itemData(index).toInt();
 			(d->brush.classic().*setType)(DP_ClassicBrushDynamicType(type));
 			emitChange();
-		});
+		}));
 
 	KisSliderSpinBox *velocitySlider = new KisSliderSpinBox;
 	velocitySlider->setRange(1, 1000);
 	velocitySlider->setPrefix(tr("Maximum Velocity: "));
 	connect(
 		velocitySlider, QOverload<int>::of(&QSpinBox::valueChanged),
-		[=](int value) {
+		makeBrushChangeCallbackArg<int>([=](int value) {
 			(d->brush.classic().*setVelocity)(float(value) / 100.0f);
 			emitChange();
-		});
+		}));
 
 	KisSliderSpinBox *distanceSlider = new KisSliderSpinBox;
 	distanceSlider->setRange(1, 10000);
@@ -676,44 +694,48 @@ BrushSettingsDialog::Dynamics BrushSettingsDialog ::buildClassicDynamics(
 	distanceSlider->setPrefix(tr("Maximum Distance: "));
 	connect(
 		distanceSlider, QOverload<int>::of(&QSpinBox::valueChanged),
-		[=](int value) {
+		makeBrushChangeCallbackArg<int>([=](int value) {
 			(d->brush.classic().*setDistance)(float(value));
 			emitChange();
-		});
+		}));
 
 	QPushButton *applyVelocityToAllButton =
 		new QPushButton(QIcon::fromTheme("fill-color"), tr("Apply to All"));
 	applyVelocityToAllButton->setToolTip(
 		tr("Set the maximum velocity for Size, Opacity, Hardness and Smudging "
 		   "at once."));
-	connect(applyVelocityToAllButton, &QPushButton::clicked, [=]() {
-		brushes::ClassicBrush &b = d->brush.classic();
-		float maxVelocity = float(velocitySlider->value()) / 100.0f;
-		b.setSizeMaxVelocity(maxVelocity);
-		b.setOpacityMaxVelocity(maxVelocity);
-		b.setHardnessMaxVelocity(maxVelocity);
-		b.setSmudgeMaxVelocity(maxVelocity);
-		emitChange();
-		ToolMessage::showText(
-			tr("Maximum velocity set for all settings in this brush."));
-	});
+	connect(
+		applyVelocityToAllButton, &QPushButton::clicked,
+		makeBrushChangeCallback([=]() {
+			brushes::ClassicBrush &b = d->brush.classic();
+			float maxVelocity = float(velocitySlider->value()) / 100.0f;
+			b.setSizeMaxVelocity(maxVelocity);
+			b.setOpacityMaxVelocity(maxVelocity);
+			b.setHardnessMaxVelocity(maxVelocity);
+			b.setSmudgeMaxVelocity(maxVelocity);
+			emitChange();
+			ToolMessage::showText(
+				tr("Maximum velocity set for all settings in this brush."));
+		}));
 
 	QPushButton *applyDistanceToAllButton =
 		new QPushButton(QIcon::fromTheme("fill-color"), tr("Apply to All"));
 	applyDistanceToAllButton->setToolTip(
 		tr("Set the maximum distance for Size, Opacity, Hardness and Smudging "
 		   "at once."));
-	connect(applyDistanceToAllButton, &QPushButton::clicked, [=]() {
-		brushes::ClassicBrush &b = d->brush.classic();
-		float maxDistance = float(distanceSlider->value());
-		b.setSizeMaxDistance(maxDistance);
-		b.setOpacityMaxDistance(maxDistance);
-		b.setHardnessMaxDistance(maxDistance);
-		b.setSmudgeMaxDistance(maxDistance);
-		emitChange();
-		ToolMessage::showText(
-			tr("Maximum distance set for all settings in this brush."));
-	});
+	connect(
+		applyDistanceToAllButton, &QPushButton::clicked,
+		makeBrushChangeCallback([=]() {
+			brushes::ClassicBrush &b = d->brush.classic();
+			float maxDistance = float(distanceSlider->value());
+			b.setSizeMaxDistance(maxDistance);
+			b.setOpacityMaxDistance(maxDistance);
+			b.setHardnessMaxDistance(maxDistance);
+			b.setSmudgeMaxDistance(maxDistance);
+			emitChange();
+			ToolMessage::showText(
+				tr("Maximum distance set for all settings in this brush."));
+		}));
 
 	QGridLayout *grid = new QGridLayout;
 	grid->setColumnStretch(0, 1);
@@ -737,10 +759,12 @@ void BrushSettingsDialog::buildClassicApplyToAllButton(
 	applyToAllButton->setToolTip(
 		tr("Set this curve for Size, Opacity, Hardness and Smudging at once."));
 	curve->addButton(applyToAllButton);
-	connect(applyToAllButton, &QPushButton::clicked, [=]() {
-		applyCurveToAllClassicSettings(curve->curve());
-		ToolMessage::showText(tr("Curve set for all settings in this brush."));
-	});
+	connect(
+		applyToAllButton, &QPushButton::clicked, makeBrushChangeCallback([=]() {
+			applyCurveToAllClassicSettings(curve->curve());
+			ToolMessage::showText(
+				tr("Curve set for all settings in this brush."));
+		}));
 }
 
 QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
@@ -765,10 +789,10 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 	connect(
 		page.baseValueSpinner,
 		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged),
-		[=](double value) {
+		makeBrushChangeCallbackArg<double>([=](double value) {
 			d->brush.myPaint().settings().mappings[setting].base_value = value;
 			emitChange();
-		});
+		}));
 
 	if(settingInfo->constant) {
 		page.constantLabel = new QLabel{tr("No brush dynamics."), widget};
@@ -808,7 +832,7 @@ widgets::MyPaintInput *BrushSettingsDialog::buildMyPaintInputUi(
 	d->myPaintPages[setting].inputs[input] = inputWidget;
 	connect(
 		inputWidget, &widgets::MyPaintInput::controlPointsChanged,
-		[this, setting, input]() {
+		makeBrushChangeCallback([this, setting, input]() {
 			widgets::MyPaintInput *otherWidget =
 				d->myPaintPages[setting].inputs[input];
 			brushes::MyPaintBrush &mypaint = d->brush.myPaint();
@@ -816,7 +840,7 @@ widgets::MyPaintInput *BrushSettingsDialog::buildMyPaintInputUi(
 			mypaint.settings().mappings[setting].inputs[input] =
 				otherWidget->controlPoints();
 			emitChange();
-		});
+		}));
 	return inputWidget;
 }
 
@@ -1054,6 +1078,12 @@ void BrushSettingsDialog::updateStabilizerExplanationText()
 void BrushSettingsDialog::emitChange()
 {
 	emit brushSettingsChanged(d->brush);
+}
+
+
+bool BrushSettingsDialog::isUpdating() const
+{
+	return d->updating;
 }
 
 

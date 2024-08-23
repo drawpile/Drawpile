@@ -75,6 +75,29 @@ private:
 	void updateStabilizerExplanationText();
 	void emitChange();
 
+	std::function<void()>
+	makeBrushChangeCallback(const std::function<void()> &fn)
+	{
+		return [this, fn]() {
+			if(!isUpdating()) {
+				fn();
+			}
+		};
+	}
+
+	template <typename T>
+	std::function<void(T)>
+	makeBrushChangeCallbackArg(const std::function<void(T)> &fn)
+	{
+		return [this, fn](T value) {
+			if(!isUpdating()) {
+				fn(value);
+			}
+		};
+	}
+
+	bool isUpdating() const;
+
 	static void setComboBoxIndexByData(QComboBox *combo, int data);
 	static bool shouldIncludeMyPaintSetting(int setting);
 	static bool disableIndirectMyPaintSetting(int setting);
