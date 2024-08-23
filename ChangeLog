@@ -6,6 +6,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Center soft brushes on the cursor better, they got offset to the top-left from correcting for size discontinuity before. Thanks Meiren for reporting.
  * Fix: Don't mess up gridmap settings when opening brush settings dialog and initially changing a value in it. Thanks Blozzom for reporting.
  * Fix: Default "confirm action" to both the regular enter key as well as the one on the numpad. Thanks MachKerman for reporting.
+ * Feature: Add settings button to color wheel, sliders and palette at the top-left of the dock. For the wheel, this allows changing the settings here now instead of having to go into the preferences. For the sliders, you can now toggle the color space here and decide whether to show all sliders and the hex input. For the palette, this just moves the menu button that used to be in the row below. Thanks MachKerman for suggesting.
 
 2024-08-09 Version 2.2.2-beta.3
  * Fix: Use more accurate timers for performance profiles if the platform supports it.

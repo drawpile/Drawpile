@@ -70,6 +70,8 @@ SETTING(canvasShortcuts           , CanvasShortcuts           , "settings/canvas
 #ifdef Q_OS_ANDROID
 SETTING(captureVolumeRocker       , CaptureVolumeRocker       , "settings/android/capturevolumerocker"  , true)
 #endif
+SETTING(colorSlidersShowAll       , ColorSlidersShowAll       , "settings/colorsliders/showall"         , false)
+SETTING(colorSlidersShowInput     , ColorSlidersShowInput     , "settings/colorsliders/showinput"       , true)
 SETTING(colorSlidersMode          , ColorSlidersMode          , "settings/colorsliders/mode"            , 0)
 SETTING(colorWheelAngle           , ColorWheelAngle           , "settings/colorwheel/rotate"            , color_widgets::ColorWheel::AngleEnum::AngleRotating)
 SETTING(colorWheelMirror          , ColorWheelMirror          , "settings/colorwheel/mirror"            , true)

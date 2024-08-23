@@ -25,7 +25,7 @@ protected:
 
 private:
 	void
-	initColorWheel(desktop::settings::Settings &settings, QVBoxLayout *layout);
+	initColorSpace(desktop::settings::Settings &settings, QFormLayout *form);
 
 	void
 	initGeneralTools(desktop::settings::Settings &settings, QFormLayout *form);

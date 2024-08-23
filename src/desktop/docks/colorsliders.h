@@ -31,6 +31,7 @@ private slots:
 	void updateFromLineEditFinished(const QColor &color);
 	void setColorSpace(color_widgets::ColorWheel::ColorSpaceEnum colorSpace);
 	void setMode(int mode);
+	void updateWidgetVisibilities();
 
 signals:
 	void colorSelected(const QColor &color);

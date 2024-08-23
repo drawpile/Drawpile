@@ -4,12 +4,16 @@
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/main.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
+#include <QAction>
+#include <QActionGroup>
 #include <QButtonGroup>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMenu>
 #include <QScopedValueRollback>
 #include <QSpinBox>
 #include <QStackedWidget>
@@ -23,10 +27,18 @@
 namespace docks {
 
 struct ColorSliderDock::Private {
+	widgets::GroupedToolButton *menuButton = nullptr;
+	QAction *colorSpaceHsvAction = nullptr;
+	QAction *colorSpaceHslAction = nullptr;
+	QAction *colorSpaceHclAction = nullptr;
+	QAction *showAllSlidersAction = nullptr;
+	QAction *showInputAction = nullptr;
+
 	QColor lastColor = Qt::black;
 	color_widgets::Swatch *lastUsedSwatch = nullptr;
 
-	QStackedWidget *stack = nullptr;
+	QWidget *hsvWidget = nullptr;
+	QWidget *rgbWidget = nullptr;
 
 	QLabel *hueLabel = nullptr;
 	color_widgets::HueSlider *hue = nullptr;
@@ -46,6 +58,7 @@ struct ColorSliderDock::Private {
 	QSpinBox *bluebox = nullptr;
 
 	widgets::GroupedToolButton *hsvButton = nullptr;
+	widgets::GroupedToolButton *rgbButton = nullptr;
 	QButtonGroup *group = nullptr;
 	color_widgets::ColorLineEdit *lineEdit = nullptr;
 
@@ -60,8 +73,58 @@ ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
 	, d(new Private)
 {
 	// Create title bar widget
-	auto *titlebar = new TitleWidget(this);
+	TitleWidget *titlebar = new TitleWidget(this);
 	setTitleBarWidget(titlebar);
+
+	QMenu *menu = new QMenu(this);
+	QMenu *colorSpaceMenu = menu->addMenu(tr("Color space"));
+	QActionGroup *colorSpaceGroup = new QActionGroup(this);
+
+	d->colorSpaceHsvAction = colorSpaceMenu->addAction(tr("HSV"));
+	d->colorSpaceHsvAction->setCheckable(true);
+	colorSpaceGroup->addAction(d->colorSpaceHsvAction);
+	connect(
+		d->colorSpaceHsvAction, &QAction::toggled, this, [this](bool toggled) {
+			if(toggled && !d->updating) {
+				dpApp().settings().setColorWheelSpace(
+					color_widgets::ColorWheel::ColorHSV);
+			}
+		});
+
+	d->colorSpaceHslAction = colorSpaceMenu->addAction(tr("HSL"));
+	d->colorSpaceHslAction->setCheckable(true);
+	colorSpaceGroup->addAction(d->colorSpaceHslAction);
+	connect(
+		d->colorSpaceHslAction, &QAction::toggled, this, [this](bool toggled) {
+			if(toggled && !d->updating) {
+				dpApp().settings().setColorWheelSpace(
+					color_widgets::ColorWheel::ColorHSL);
+			}
+		});
+
+	d->colorSpaceHclAction = colorSpaceMenu->addAction(tr("HCL"));
+	d->colorSpaceHclAction->setCheckable(true);
+	colorSpaceGroup->addAction(d->colorSpaceHclAction);
+	connect(
+		d->colorSpaceHclAction, &QAction::toggled, this, [this](bool toggled) {
+			if(toggled && !d->updating) {
+				dpApp().settings().setColorWheelSpace(
+					color_widgets::ColorWheel::ColorLCH);
+			}
+		});
+
+	desktop::settings::Settings &settings = dpApp().settings();
+
+	d->showAllSlidersAction = menu->addAction(tr("Show all sliders at once"));
+	d->showAllSlidersAction->setCheckable(true);
+
+	d->showInputAction = menu->addAction(tr("Show hex input"));
+	d->showInputAction->setCheckable(true);
+
+	d->menuButton = new widgets::GroupedToolButton(this);
+	d->menuButton->setIcon(QIcon::fromTheme("application-menu"));
+	d->menuButton->setPopupMode(QToolButton::InstantPopup);
+	d->menuButton->setMenu(menu);
 
 	d->lastUsedSwatch = new color_widgets::Swatch(titlebar);
 	d->lastUsedSwatch->setForcedRows(1);
@@ -71,9 +134,10 @@ ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
 	d->lastUsedSwatch->setBorder(Qt::NoPen);
 	d->lastUsedSwatch->setMinimumHeight(24);
 
-	titlebar->addSpace(24);
+	titlebar->addCustomWidget(d->menuButton);
+	titlebar->addSpace(4);
 	titlebar->addCustomWidget(d->lastUsedSwatch, true);
-	titlebar->addSpace(24);
+	titlebar->addSpace(4);
 
 	connect(
 		d->lastUsedSwatch, &color_widgets::Swatch::colorSelected, this,
@@ -82,16 +146,14 @@ ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
 	// Create main UI widget
 	QWidget *w = new QWidget;
 	QVBoxLayout *layout = new QVBoxLayout(w);
+	layout->setSpacing(3);
 
-	d->stack = new QStackedWidget;
-	d->stack->setContentsMargins(0, 0, 0, 0);
-	layout->addWidget(d->stack);
-
-	QWidget *hsvWidget = new QWidget;
-	QGridLayout *hsvGrid = new QGridLayout(hsvWidget);
+	d->hsvWidget = new QWidget;
+	QGridLayout *hsvGrid = new QGridLayout(d->hsvWidget);
 	hsvGrid->setContentsMargins(0, 0, 0, 0);
 	hsvGrid->setSpacing(3);
-	d->stack->addWidget(hsvWidget);
+	d->hsvWidget->hide();
+	layout->addWidget(d->hsvWidget);
 
 	d->hueLabel = new QLabel;
 	d->hue = new color_widgets::HueSlider;
@@ -123,11 +185,12 @@ ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
 	hsvGrid->addWidget(d->value, 2, 1);
 	hsvGrid->addWidget(d->valuebox, 2, 2);
 
-	QWidget *rgbWidget = new QWidget;
-	QGridLayout *rgbGrid = new QGridLayout(rgbWidget);
+	d->rgbWidget = new QWidget;
+	QGridLayout *rgbGrid = new QGridLayout(d->rgbWidget);
 	rgbGrid->setContentsMargins(0, 0, 0, 0);
 	rgbGrid->setSpacing(3);
-	d->stack->addWidget(rgbWidget);
+	d->rgbWidget->hide();
+	layout->addWidget(d->rgbWidget);
 
 	d->red = new color_widgets::GradientSlider;
 	d->red->setMaximum(255);
@@ -168,21 +231,24 @@ ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
 	d->hsvButton->setCheckable(true);
 	d->hsvButton->setChecked(true);
+	d->hsvButton->hide();
 	buttonsLayout->addWidget(d->hsvButton);
 
-	widgets::GroupedToolButton *rgbButton =
+	d->rgbButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
-	rgbButton->setCheckable(true);
-	rgbButton->setText(tr("RGB"));
-	buttonsLayout->addWidget(rgbButton);
+	d->rgbButton->setCheckable(true);
+	d->rgbButton->setText(tr("RGB"));
+	d->rgbButton->hide();
+	buttonsLayout->addWidget(d->rgbButton);
 
 	d->group = new QButtonGroup(w);
 	d->group->addButton(d->hsvButton, 0);
-	d->group->addButton(rgbButton, 1);
+	d->group->addButton(d->rgbButton, 1);
 
 	buttonsLayout->addSpacing(3);
 
 	d->lineEdit = new color_widgets::ColorLineEdit;
+	d->lineEdit->hide();
 	buttonsLayout->addWidget(d->lineEdit);
 
 	layout->addStretch(1);
@@ -245,9 +311,18 @@ ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
 		d->lineEdit, &color_widgets::ColorLineEdit::colorEditingFinished, this,
 		&ColorSliderDock::updateFromLineEditFinished);
 
-	dpApp().settings().bindColorWheelSpace(
-		this, &ColorSliderDock::setColorSpace);
-	dpApp().settings().bindColorSlidersMode(this, &ColorSliderDock::setMode);
+	settings.bindColorSlidersShowAll(d->showAllSlidersAction);
+	settings.bindColorSlidersShowInput(d->showInputAction);
+	settings.bindColorWheelSpace(this, &ColorSliderDock::setColorSpace);
+	settings.bindColorSlidersMode(this, &ColorSliderDock::setMode);
+	updateWidgetVisibilities();
+
+	connect(
+		d->showAllSlidersAction, &QAction::toggled, this,
+		&ColorSliderDock::updateWidgetVisibilities);
+	connect(
+		d->showInputAction, &QAction::toggled, this,
+		&ColorSliderDock::updateWidgetVisibilities);
 }
 
 ColorSliderDock::~ColorSliderDock()
@@ -333,8 +408,10 @@ void ColorSliderDock::updateFromLineEditFinished(const QColor &color)
 void ColorSliderDock::setColorSpace(
 	color_widgets::ColorWheel::ColorSpaceEnum colorSpace)
 {
+	QScopedValueRollback<bool> guard(d->updating, true);
 	switch(colorSpace) {
 	case color_widgets::ColorWheel::ColorHSL:
+		d->colorSpaceHslAction->setChecked(true);
 		d->colorSpace = color_widgets::ColorWheel::ColorHSL;
 		//: The "Hue" H of HSL.
 		d->hueLabel->setText(tr("H", "HSL"));
@@ -346,6 +423,7 @@ void ColorSliderDock::setColorSpace(
 		d->hsvButton->setText(tr("HSL"));
 		break;
 	case color_widgets::ColorWheel::ColorLCH:
+		d->colorSpaceHclAction->setChecked(true);
 		d->colorSpace = color_widgets::ColorWheel::ColorLCH;
 		//: The "Hue" H of HCL.
 		d->hueLabel->setText(tr("H", "HCL"));
@@ -357,6 +435,7 @@ void ColorSliderDock::setColorSpace(
 		d->hsvButton->setText(tr("HCL"));
 		break;
 	default:
+		d->colorSpaceHsvAction->setChecked(true);
 		d->colorSpace = color_widgets::ColorWheel::ColorHSV;
 		//: The "Hue" H of HSV.
 		d->hueLabel->setText(tr("H", "HSV"));
@@ -368,7 +447,6 @@ void ColorSliderDock::setColorSpace(
 		d->hsvButton->setText(tr("HSV"));
 		break;
 	}
-	QScopedValueRollback<bool> guard{d->updating, true};
 	updateSaturationSlider(d->lastColor, false);
 	updateValueSlider(d->lastColor, false);
 }
@@ -378,11 +456,27 @@ void ColorSliderDock::setMode(int mode)
 	if(mode == 0 || mode == 1) {
 		QSignalBlocker blocker(d->group);
 		d->group->button(mode)->setChecked(true);
-		d->stack->setCurrentIndex(mode);
 		dpApp().settings().setColorSlidersMode(mode);
+		updateWidgetVisibilities();
 	} else {
 		qWarning("Unknown color slider mode %d", mode);
 	}
+}
+
+void ColorSliderDock::updateWidgetVisibilities()
+{
+	utils::ScopedUpdateDisabler disabler(this);
+	d->hsvWidget->hide();
+	d->rgbWidget->hide();
+	d->hsvButton->hide();
+	d->rgbButton->hide();
+	d->lineEdit->hide();
+	bool allSliders = d->showAllSlidersAction->isChecked();
+	d->hsvWidget->setVisible(allSliders || d->group->checkedId() == 0);
+	d->rgbWidget->setVisible(allSliders || d->group->checkedId() == 1);
+	d->hsvButton->setVisible(!allSliders);
+	d->rgbButton->setVisible(!allSliders);
+	d->lineEdit->setVisible(d->showInputAction->isChecked());
 }
 
 void ColorSliderDock::updateColor(

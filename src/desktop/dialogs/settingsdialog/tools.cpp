@@ -39,41 +39,12 @@ void Tools::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
 	utils::addFormSeparator(layout);
 	initGeneralTools(settings, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
-	initColorWheel(settings, layout);
+	initColorSpace(settings, utils::addFormSection(layout));
 }
 
-void Tools::initColorWheel(
-	desktop::settings::Settings &settings, QVBoxLayout *layout)
+void Tools::initColorSpace(
+	desktop::settings::Settings &settings, QFormLayout *form)
 {
-	QHBoxLayout *section = new QHBoxLayout;
-	layout->addLayout(section);
-
-	QFormLayout *form = utils::addFormSection(section);
-
-	auto *shape = utils::addRadioGroup(
-		form, tr("Shape:"), true,
-		{{tr("Triangle"), color_widgets::ColorWheel::ShapeEnum::ShapeTriangle},
-		 {tr("Square"), color_widgets::ColorWheel::ShapeEnum::ShapeSquare}});
-	settings.bindColorWheelShape(shape);
-
-	utils::addFormSpacer(form);
-
-	auto *angle = utils::addRadioGroup(
-		form, tr("Angle:"), true,
-		{{tr("Fixed"), color_widgets::ColorWheel::AngleEnum::AngleFixed},
-		 {tr("Rotating"),
-		  color_widgets::ColorWheel::AngleEnum::AngleRotating}});
-	settings.bindColorWheelAngle(angle);
-
-	utils::addFormSpacer(form);
-
-	auto *mirror = utils::addRadioGroup(
-		form, tr("Direction:"), true,
-		{{tr("Ascending"), true}, {tr("Descending"), false}});
-	settings.bindColorWheelMirror(mirror);
-
-	utils::addFormSpacer(form);
-
 	auto *space = utils::addRadioGroup(
 		form, tr("Color space:"), false,
 		{{tr("HSV (Hue–Saturation–Value)"),
@@ -83,18 +54,6 @@ void Tools::initColorWheel(
 		 {tr("HCL (Hue–Chroma–Luminance)"),
 		  color_widgets::ColorWheel::ColorSpaceEnum::ColorLCH}});
 	settings.bindColorWheelSpace(space);
-
-	auto *preview = new color_widgets::ColorWheel;
-	preview->setMinimumWidth(150);
-	settings.bindColorWheelShape(
-		preview, &color_widgets::ColorWheel::setSelectorShape);
-	settings.bindColorWheelAngle(
-		preview, &color_widgets::ColorWheel::setRotatingSelector);
-	settings.bindColorWheelMirror(
-		preview, &color_widgets::ColorWheel::setMirroredSelector);
-	settings.bindColorWheelSpace(
-		preview, &color_widgets::ColorWheel::setColorSpace);
-	section->addWidget(preview);
 }
 
 void Tools::initGeneralTools(

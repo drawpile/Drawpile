@@ -20,7 +20,7 @@ TitleWidget::TitleWidget(QDockWidget *parent) : QWidget(parent)
 
 	m_layout = new QHBoxLayout;
 	m_layout->setSpacing(0);
-	m_layout->setContentsMargins(6, 2, 1, 2);
+	m_layout->setContentsMargins(2, 2, 1, 2);
 	setLayout(m_layout);
 
 	m_button = new widgets::GroupedToolButton{

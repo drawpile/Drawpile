@@ -2,6 +2,7 @@
 #ifndef DESKTOP_DOCKS_COLORSPINNER_H
 #define DESKTOP_DOCKS_COLORSPINNER_H
 #include "desktop/docks/dockbase.h"
+#include <QtColorWidgets/color_wheel.hpp>
 
 namespace color_widgets {
 class ColorPalette;
@@ -18,6 +19,10 @@ public:
 public slots:
 	void setColor(const QColor &color);
 	void setLastUsedColors(const color_widgets::ColorPalette &pal);
+	void setShape(color_widgets::ColorWheel::ShapeEnum shape);
+	void setAngle(color_widgets::ColorWheel::AngleEnum angle);
+	void setColorSpace(color_widgets::ColorWheel::ColorSpaceEnum colorSpace);
+	void setMirror(bool mirror);
 
 signals:
 	void colorSelected(const QColor &color);

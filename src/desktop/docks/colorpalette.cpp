@@ -112,6 +112,28 @@ ColorPaletteDock::ColorPaletteDock(const QString &title, QWidget *parent)
 	TitleWidget *titlebar = new TitleWidget(this);
 	setTitleBarWidget(titlebar);
 
+	widgets::GroupedToolButton *menuButton = new widgets::GroupedToolButton;
+	menuButton->setIcon(QIcon::fromTheme("application-menu"));
+
+	QMenu *paletteMenu = new QMenu(this);
+	paletteMenu->addAction(
+		tr("New palette"), this, &ColorPaletteDock::addPalette);
+	paletteMenu->addAction(
+		tr("Duplicate palette"), this, &ColorPaletteDock::copyPalette);
+	paletteMenu->addAction(
+		tr("Delete palette"), this, &ColorPaletteDock::deletePalette);
+	paletteMenu->addAction(
+		tr("Rename palette"), this, &ColorPaletteDock::renamePalette);
+#ifndef __EMSCRIPTEN__
+	paletteMenu->addSeparator();
+	paletteMenu->addAction(
+		tr("Import palette…"), this, &ColorPaletteDock::importPalette);
+	paletteMenu->addAction(
+		tr("Export palette…"), this, &ColorPaletteDock::exportPalette);
+#endif
+	menuButton->setMenu(paletteMenu);
+	menuButton->setPopupMode(QToolButton::InstantPopup);
+
 	d->lastUsedSwatch = new color_widgets::Swatch(titlebar);
 	d->lastUsedSwatch->setForcedRows(1);
 	d->lastUsedSwatch->setForcedColumns(
@@ -120,9 +142,10 @@ ColorPaletteDock::ColorPaletteDock(const QString &title, QWidget *parent)
 	d->lastUsedSwatch->setBorder(Qt::NoPen);
 	d->lastUsedSwatch->setMinimumHeight(24);
 
-	titlebar->addSpace(24);
+	titlebar->addCustomWidget(menuButton);
+	titlebar->addSpace(4);
 	titlebar->addCustomWidget(d->lastUsedSwatch, true);
-	titlebar->addSpace(24);
+	titlebar->addSpace(4);
 
 	connect(
 		d->lastUsedSwatch, &color_widgets::Swatch::colorSelected, this,
@@ -136,7 +159,7 @@ ColorPaletteDock::ColorPaletteDock(const QString &title, QWidget *parent)
 	setWidget(widget);
 
 	QHBoxLayout *choiceLayout = new QHBoxLayout;
-	choiceLayout->setContentsMargins(0, 0, 0, 0);
+	choiceLayout->setContentsMargins(2, 0, 0, 0);
 	choiceLayout->setSpacing(0);
 	layout->addLayout(choiceLayout);
 
@@ -170,10 +193,6 @@ ColorPaletteDock::ColorPaletteDock(const QString &title, QWidget *parent)
 
 	choiceLayout->addSpacing(4);
 
-	widgets::GroupedToolButton *menuButton = new widgets::GroupedToolButton;
-	menuButton->setIcon(QIcon::fromTheme("application-menu"));
-	choiceLayout->addWidget(menuButton);
-
 	d->paletteWidget = new widgets::PaletteWidget{this};
 	d->paletteWidget->setMinimumHeight(20);
 	layout->addWidget(d->paletteWidget, 1);
@@ -183,24 +202,6 @@ ColorPaletteDock::ColorPaletteDock(const QString &title, QWidget *parent)
 	connect(
 		d->paletteWidget, &widgets::PaletteWidget::columnsChanged, this,
 		&ColorPaletteDock::updateColumnButtons);
-
-	QMenu *paletteMenu = new QMenu(this);
-	paletteMenu->addAction(tr("New"), this, &ColorPaletteDock::addPalette);
-	paletteMenu->addAction(
-		tr("Duplicate"), this, &ColorPaletteDock::copyPalette);
-	paletteMenu->addAction(
-		tr("Delete"), this, &ColorPaletteDock::deletePalette);
-	paletteMenu->addAction(
-		tr("Rename"), this, &ColorPaletteDock::renamePalette);
-#ifndef __EMSCRIPTEN__
-	paletteMenu->addSeparator();
-	paletteMenu->addAction(
-		tr("Import..."), this, &ColorPaletteDock::importPalette);
-	paletteMenu->addAction(
-		tr("Export..."), this, &ColorPaletteDock::exportPalette);
-#endif
-	menuButton->setMenu(paletteMenu);
-	menuButton->setPopupMode(QToolButton::InstantPopup);
 
 	connect(
 		d->paletteChoiceBox,
