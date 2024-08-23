@@ -9,6 +9,7 @@
 #include <QActionGroup>
 #include <QMenu>
 #include <QScopedValueRollback>
+#include <QVBoxLayout>
 #include <QtColorWidgets/swatch.hpp>
 
 namespace docks {
@@ -24,6 +25,8 @@ struct ColorSpinnerDock::Private {
 	QAction *colorSpaceHclAction = nullptr;
 	QAction *directionAscendingAction = nullptr;
 	QAction *directionDescendingAction = nullptr;
+	QAction *alignTopAction = nullptr;
+	QAction *alignCenterAction = nullptr;
 	color_widgets::Swatch *lastUsedSwatch = nullptr;
 	color_widgets::ColorWheel *colorwheel = nullptr;
 	bool updating = false;
@@ -149,6 +152,28 @@ ColorSpinnerDock::ColorSpinnerDock(const QString &title, QWidget *parent)
 			}
 		});
 
+	QMenu *alignMenu = menu->addMenu(tr("Alignment"));
+	QActionGroup *alignGroup = new QActionGroup(this);
+
+	d->alignTopAction = alignMenu->addAction(tr("Top"));
+	d->alignTopAction->setCheckable(true);
+	alignGroup->addAction(d->alignTopAction);
+	connect(d->alignTopAction, &QAction::toggled, this, [this](bool toggled) {
+		if(toggled && !d->updating) {
+			dpApp().settings().setColorWheelAlign(int(Qt::AlignTop));
+		}
+	});
+
+	d->alignCenterAction = alignMenu->addAction(tr("Center"));
+	d->alignCenterAction->setCheckable(true);
+	alignGroup->addAction(d->alignCenterAction);
+	connect(
+		d->alignCenterAction, &QAction::toggled, this, [this](bool toggled) {
+			if(toggled && !d->updating) {
+				dpApp().settings().setColorWheelAlign(int(Qt::AlignCenter));
+			}
+		});
+
 	d->menuButton = new widgets::GroupedToolButton(this);
 	d->menuButton->setIcon(QIcon::fromTheme("application-menu"));
 	d->menuButton->setPopupMode(QToolButton::InstantPopup);
@@ -171,10 +196,18 @@ ColorSpinnerDock::ColorSpinnerDock(const QString &title, QWidget *parent)
 		d->lastUsedSwatch, &color_widgets::Swatch::colorSelected, this,
 		&ColorSpinnerDock::colorSelected);
 
-	// Create main widget
-	d->colorwheel = new color_widgets::ColorWheel(this);
+	QWidget *widget = new QWidget(this);
+	widget->setContentsMargins(0, 0, 0, 0);
+
+	QVBoxLayout *layout = new QVBoxLayout(widget);
+	layout->setContentsMargins(4, 4, 4, 4);
+	layout->setSpacing(0);
+
+	d->colorwheel = new color_widgets::ColorWheel;
 	d->colorwheel->setMinimumSize(64, 64);
-	setWidget(d->colorwheel);
+	layout->addWidget(d->colorwheel);
+
+	setWidget(widget);
 
 	connect(
 		d->colorwheel, &color_widgets::ColorWheel::colorSelected, this,
@@ -185,6 +218,7 @@ ColorSpinnerDock::ColorSpinnerDock(const QString &title, QWidget *parent)
 	settings.bindColorWheelAngle(this, &ColorSpinnerDock::setAngle);
 	settings.bindColorWheelSpace(this, &ColorSpinnerDock::setColorSpace);
 	settings.bindColorWheelMirror(this, &ColorSpinnerDock::setMirror);
+	settings.bindColorWheelAlign(this, &ColorSpinnerDock::setAlign);
 }
 
 ColorSpinnerDock::~ColorSpinnerDock()
@@ -268,6 +302,18 @@ void ColorSpinnerDock::setMirror(bool mirror)
 	} else {
 		d->directionDescendingAction->setChecked(true);
 		d->colorwheel->setMirroredSelector(false);
+	}
+}
+
+void ColorSpinnerDock::setAlign(int align)
+{
+	QScopedValueRollback<bool> guard(d->updating, true);
+	if(align & int(Qt::AlignTop)) {
+		d->alignTopAction->setChecked(true);
+		d->colorwheel->setAlignTop(true);
+	} else {
+		d->alignCenterAction->setChecked(true);
+		d->colorwheel->setAlignTop(false);
 	}
 }
 

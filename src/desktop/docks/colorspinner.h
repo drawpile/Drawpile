@@ -23,6 +23,7 @@ public slots:
 	void setAngle(color_widgets::ColorWheel::AngleEnum angle);
 	void setColorSpace(color_widgets::ColorWheel::ColorSpaceEnum colorSpace);
 	void setMirror(bool mirror);
+	void setAlign(int align);
 
 signals:
 	void colorSelected(const QColor &color);

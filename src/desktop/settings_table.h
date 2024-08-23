@@ -74,6 +74,7 @@ SETTING(colorSlidersShowAll       , ColorSlidersShowAll       , "settings/colors
 SETTING(colorSlidersShowInput     , ColorSlidersShowInput     , "settings/colorsliders/showinput"       , true)
 SETTING(colorSlidersMode          , ColorSlidersMode          , "settings/colorsliders/mode"            , 0)
 SETTING(colorWheelAngle           , ColorWheelAngle           , "settings/colorwheel/rotate"            , color_widgets::ColorWheel::AngleEnum::AngleRotating)
+SETTING(colorWheelAlign           , ColorWheelAlign           , "settings/colorwheel/align"             , int(Qt::AlignVCenter))
 SETTING(colorWheelMirror          , ColorWheelMirror          , "settings/colorwheel/mirror"            , true)
 SETTING(colorWheelShape           , ColorWheelShape           , "settings/colorwheel/shape"             , color_widgets::ColorWheel::ShapeEnum::ShapeTriangle)
 SETTING(colorWheelSpace           , ColorWheelSpace           , "settings/colorwheel/space"             , color_widgets::ColorWheel::ColorSpaceEnum::ColorHSV)

@@ -153,7 +153,7 @@ Q_SIGNALS:
 
     void mirroredSelectorChanged(bool mirrored);
 
-    void alignTopChanged(bool alignTop);
+    void alignTopChanged(bool top);
 
     /**
      * Emitted when the user releases from dragging
