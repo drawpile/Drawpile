@@ -235,40 +235,24 @@ public:
         QPainter painter(&hue_ring);
         painter.setRenderHint(QPainter::Antialiasing);
         painter.setCompositionMode(QPainter::CompositionMode_Source);
-        painter.translate(outer,outer);
-        painter.setPen(Qt::NoPen);
 
-        if (preview_outer && mouse_status == DragSquare)
+
+        const int hue_stops = 24;
+        QConicalGradient gradient_hue(0, 0, 0);
+        if ( gradient_hue.stops().size() < hue_stops )
         {
-            if ( comparison_color.isValid() )
+            for ( double a = 0; a < 1.0; a+=1.0/(hue_stops-1) )
             {
-                painter.save();
-                painter.setClipRect(QRect(-outer,-outer,outer*2,outer));
+                gradient_hue.setColorAt(a,rainbow_from_hue(a));
             }
-            painter.setBrush(w->color());
-            painter.drawEllipse(QPointF(0,0),outer,outer);
-            if ( comparison_color.isValid() )
-            {
-                painter.setClipRect(QRect(-outer,0,outer*2,outer));
-                painter.setBrush(comparison_color);
-                painter.drawEllipse(QPointF(0,0),outer,outer);
-                painter.restore();
-            }
+            gradient_hue.setColorAt(1,rainbow_from_hue(0));
         }
-        else {
-            const int hue_stops = 24;
-            QConicalGradient gradient_hue(0, 0, 0);
-            if ( gradient_hue.stops().size() < hue_stops )
-            {
-                for ( double a = 0; a < 1.0; a+=1.0/(hue_stops-1) )
-                {
-                    gradient_hue.setColorAt(a,rainbow_from_hue(a));
-                }
-                gradient_hue.setColorAt(1,rainbow_from_hue(0));
-            }
-            painter.setBrush(QBrush(gradient_hue));
-            painter.drawEllipse(QPointF(0,0),outer,outer);
-        }
+
+        painter.translate(outer,outer);
+
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(QBrush(gradient_hue));
+        painter.drawEllipse(QPointF(0,0),outer,outer);
 
         painter.setBrush(Qt::transparent);//palette().background());
         qreal inner = inner_radius() * device_pixel_ratio;

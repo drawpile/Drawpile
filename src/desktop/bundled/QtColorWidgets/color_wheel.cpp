@@ -95,14 +95,26 @@ void ColorWheel::paintEvent(QPaintEvent * )
     int x = width / 2;
     int y = height > width && p->align_top ? x : height / 2;
     painter.translate(x, y);
+    painter.setPen(Qt::NoPen);
 
+    bool outer_selector = !p->preview_outer || p->mouse_status != DragSquare;
     bool inner_selector = !p->preview_inner || p->mouse_status != DragCircle;
 
     qreal outer = p->outer_radius();
     QRect hue_ring_bounds(-outer, -outer, outer * 2.0, outer * 2.0);
-    if ( !inner_selector )
+    if ( !outer_selector || !inner_selector )
     {
-        QRect inner_preview_bounds = hue_ring_bounds.marginsRemoved(QMargins(1,1,1,1));
+        QRect inner_preview_bounds;
+        if ( outer_selector )
+        {
+            qreal inner = p->inner_radius() + 1.0;
+            inner_preview_bounds = QRect(-inner, -inner, inner * 2.0, inner * 2.0);
+        }
+        else
+        {
+            inner_preview_bounds = hue_ring_bounds;
+        }
+
         if ( p->comparison_color.isValid() )
         {
             painter.save();
@@ -119,15 +131,17 @@ void ColorWheel::paintEvent(QPaintEvent * )
         }
     }
 
-    // hue wheel
-    if(p->hue_ring.isNull())
-        p->render_ring();
+    if ( outer_selector )
+    {
+        // hue wheel
+        if(p->hue_ring.isNull())
+            p->render_ring();
 
-    painter.drawPixmap(hue_ring_bounds, p->hue_ring);
+        painter.drawPixmap(hue_ring_bounds, p->hue_ring);
 
-    // hue selector
-    if ( !p->preview_outer || p->mouse_status != DragSquare )
+        // hue selector
         p->draw_ring_editor(p->hue, painter, Qt::black);
+    }
 
     // lum-sat square
     if ( inner_selector )
@@ -229,9 +243,6 @@ void ColorWheel::mouseMoveEvent(QMouseEvent *ev)
             if ( slice_h > 0 )
                 p->sat = qBound(0.0, (pt.y()-ymin)/slice_h, 1.0);
         }
-
-        if ( p->preview_outer )
-            p->hue_ring = QPixmap();
 
         Q_EMIT colorSelected(color());
         Q_EMIT colorChanged(color());
@@ -456,12 +467,8 @@ void ColorWheel::setComparisonColor(QColor color)
     if ( color != p->comparison_color )
     {
         p->comparison_color = color;
-        if ( p->preview_outer && p->mouse_status == DragSquare )
-        {
-            p->hue_ring = QPixmap();
-            update();
-        }
-        else if ( p->preview_inner && p->mouse_status == DragCircle )
+        if ( ( p->preview_outer && p->mouse_status == DragSquare ) ||
+             ( p->preview_inner && p->mouse_status == DragCircle ))
         {
             update();
         }
