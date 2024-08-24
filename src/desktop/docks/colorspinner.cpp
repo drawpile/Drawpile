@@ -241,12 +241,11 @@ void ColorSpinnerDock::setColor(const QColor &color)
 	d->lastUsedSwatch->setSelected(
 		findPaletteColor(d->lastUsedSwatch->palette(), color));
 
-	if(!d->colorwheel->comparisonColor().isValid()) {
-		d->colorwheel->setComparisonColor(color);
-	}
-
 	if(d->colorwheel->color() != color) {
 		d->colorwheel->setColor(color);
+		d->colorwheel->setComparisonColor(color);
+	} else if(!d->colorwheel->comparisonColor().isValid()) {
+		d->colorwheel->setComparisonColor(color);
 	}
 }
 
