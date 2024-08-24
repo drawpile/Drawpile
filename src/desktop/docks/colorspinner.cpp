@@ -16,8 +16,10 @@ namespace docks {
 
 struct ColorSpinnerDock::Private {
 	widgets::GroupedToolButton *menuButton = nullptr;
-	QAction *shapeTriangleAction = nullptr;
-	QAction *shapeSquareAction = nullptr;
+	QAction *shapeRotatingTriangleAction = nullptr;
+	QAction *shapeRotatingSquareAction = nullptr;
+	QAction *shapeFixedTriangleAction = nullptr;
+	QAction *shapeFixedSquareAction = nullptr;
 	QAction *angleFixedAction = nullptr;
 	QAction *angleRotatingAction = nullptr;
 	QAction *colorSpaceHsvAction = nullptr;
@@ -46,49 +48,64 @@ ColorSpinnerDock::ColorSpinnerDock(const QString &title, QWidget *parent)
 	QMenu *shapeMenu = menu->addMenu(tr("Shape"));
 	QActionGroup *shapeGroup = new QActionGroup(this);
 
-	d->shapeTriangleAction = shapeMenu->addAction(tr("Triangle"));
-	d->shapeTriangleAction->setCheckable(true);
-	shapeGroup->addAction(d->shapeTriangleAction);
+	d->shapeRotatingTriangleAction =
+		shapeMenu->addAction(tr("Rotating triangle"));
+	d->shapeRotatingTriangleAction->setCheckable(true);
+	shapeGroup->addAction(d->shapeRotatingTriangleAction);
 	connect(
-		d->shapeTriangleAction, &QAction::toggled, this, [this](bool toggled) {
+		d->shapeRotatingTriangleAction, &QAction::toggled, this,
+		[this](bool toggled) {
 			if(toggled && !d->updating) {
-				dpApp().settings().setColorWheelShape(
+				desktop::settings::Settings &settings = dpApp().settings();
+				settings.setColorWheelShape(
 					color_widgets::ColorWheel::ShapeTriangle);
-			}
-		});
-
-	d->shapeSquareAction = shapeMenu->addAction(tr("Square"));
-	d->shapeSquareAction->setCheckable(true);
-	shapeGroup->addAction(d->shapeSquareAction);
-	connect(
-		d->shapeSquareAction, &QAction::toggled, this, [this](bool toggled) {
-			if(toggled && !d->updating) {
-				dpApp().settings().setColorWheelShape(
-					color_widgets::ColorWheel::ShapeSquare);
-			}
-		});
-
-	QMenu *angleMenu = menu->addMenu(tr("Angle"));
-	QActionGroup *angleGroup = new QActionGroup(this);
-
-	d->angleFixedAction = angleMenu->addAction(tr("Fixed"));
-	d->angleFixedAction->setCheckable(true);
-	angleGroup->addAction(d->angleFixedAction);
-	connect(d->angleFixedAction, &QAction::toggled, this, [this](bool toggled) {
-		if(toggled && !d->updating) {
-			dpApp().settings().setColorWheelAngle(
-				color_widgets::ColorWheel::AngleFixed);
-		}
-	});
-
-	d->angleRotatingAction = angleMenu->addAction(tr("Rotating"));
-	d->angleRotatingAction->setCheckable(true);
-	angleGroup->addAction(d->angleRotatingAction);
-	connect(
-		d->angleRotatingAction, &QAction::toggled, this, [this](bool toggled) {
-			if(toggled && !d->updating) {
-				dpApp().settings().setColorWheelAngle(
+				settings.setColorWheelAngle(
 					color_widgets::ColorWheel::AngleRotating);
+			}
+		});
+
+	d->shapeRotatingSquareAction = shapeMenu->addAction(tr("Rotating square"));
+	d->shapeRotatingSquareAction->setCheckable(true);
+	shapeGroup->addAction(d->shapeRotatingSquareAction);
+	connect(
+		d->shapeRotatingSquareAction, &QAction::toggled, this,
+		[this](bool toggled) {
+			if(toggled && !d->updating) {
+				desktop::settings::Settings &settings = dpApp().settings();
+				settings.setColorWheelShape(
+					color_widgets::ColorWheel::ShapeSquare);
+				settings.setColorWheelAngle(
+					color_widgets::ColorWheel::AngleRotating);
+			}
+		});
+
+	d->shapeFixedTriangleAction = shapeMenu->addAction(tr("Fixed triangle"));
+	d->shapeFixedTriangleAction->setCheckable(true);
+	shapeGroup->addAction(d->shapeFixedTriangleAction);
+	connect(
+		d->shapeFixedTriangleAction, &QAction::toggled, this,
+		[this](bool toggled) {
+			if(toggled && !d->updating) {
+				desktop::settings::Settings &settings = dpApp().settings();
+				settings.setColorWheelShape(
+					color_widgets::ColorWheel::ShapeTriangle);
+				settings.setColorWheelAngle(
+					color_widgets::ColorWheel::AngleFixed);
+			}
+		});
+
+	d->shapeFixedSquareAction = shapeMenu->addAction(tr("Fixed square"));
+	d->shapeFixedSquareAction->setCheckable(true);
+	shapeGroup->addAction(d->shapeFixedSquareAction);
+	connect(
+		d->shapeFixedSquareAction, &QAction::toggled, this,
+		[this](bool toggled) {
+			if(toggled && !d->updating) {
+				desktop::settings::Settings &settings = dpApp().settings();
+				settings.setColorWheelShape(
+					color_widgets::ColorWheel::ShapeSquare);
+				settings.setColorWheelAngle(
+					color_widgets::ColorWheel::AngleFixed);
 			}
 		});
 
@@ -261,32 +278,16 @@ void ColorSpinnerDock::setLastUsedColors(const color_widgets::ColorPalette &pal)
 void ColorSpinnerDock::setShape(color_widgets::ColorWheel::ShapeEnum shape)
 {
 	QScopedValueRollback<bool> guard(d->updating, true);
-	switch(shape) {
-	case color_widgets::ColorWheel::ShapeSquare:
-		d->shapeSquareAction->setChecked(true);
-		d->colorwheel->setSelectorShape(color_widgets::ColorWheel::ShapeSquare);
-		break;
-	default:
-		d->shapeTriangleAction->setChecked(true);
-		d->colorwheel->setSelectorShape(
-			color_widgets::ColorWheel::ShapeTriangle);
-		break;
-	}
+	d->colorwheel->setSelectorShape(shape);
+	updateShapeAction();
 }
 
 void ColorSpinnerDock::setAngle(color_widgets::ColorWheel::AngleEnum angle)
 {
 	QScopedValueRollback<bool> guard(d->updating, true);
-	switch(angle) {
-	case color_widgets::ColorWheel::AngleFixed:
-		d->angleFixedAction->setChecked(true);
-		d->colorwheel->setRotatingSelector(false);
-		break;
-	default:
-		d->angleRotatingAction->setChecked(true);
-		d->colorwheel->setRotatingSelector(true);
-		break;
-	}
+	d->colorwheel->setRotatingSelector(
+		angle != color_widgets::ColorWheel::AngleFixed);
+	updateShapeAction();
 }
 
 void ColorSpinnerDock::setColorSpace(
@@ -340,6 +341,23 @@ void ColorSpinnerDock::setPreview(int preview)
 	d->previewAction->setChecked(enabled);
 	d->colorwheel->setPreviewOuter(enabled);
 	d->colorwheel->setPreviewInner(enabled);
+}
+
+void ColorSpinnerDock::updateShapeAction()
+{
+	QAction *action;
+	bool rotating = d->colorwheel->rotatingSelector();
+	switch(d->colorwheel->selectorShape()) {
+	case color_widgets::ColorWheel::ShapeSquare:
+		action =
+			rotating ? d->shapeRotatingSquareAction : d->shapeFixedSquareAction;
+		break;
+	default:
+		action = rotating ? d->shapeRotatingTriangleAction
+						  : d->shapeFixedTriangleAction;
+		break;
+	}
+	action->setChecked(true);
 }
 
 }

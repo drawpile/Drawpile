@@ -30,6 +30,8 @@ signals:
 	void colorSelected(const QColor &color);
 
 private:
+	void updateShapeAction();
+
 	struct Private;
 	Private *d;
 };
