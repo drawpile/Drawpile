@@ -323,9 +323,9 @@ bool ColorWheel::alignTop() const
     return p->align_top;
 }
 
-bool ColorWheel::keepWheelRatio() const
+qreal ColorWheel::wheelRatio() const
 {
-    return p->keep_wheel_ratio;
+    return p->wheel_ratio;
 }
 
 bool ColorWheel::previewOuter() const
@@ -419,13 +419,13 @@ void ColorWheel::setAlignTop(bool top)
     }
 }
 
-void ColorWheel::setKeepWheelRatio(bool keep)
+void ColorWheel::setWheelRatio(qreal ratio)
 {
-    if ( keep != p->keep_wheel_ratio )
+    if ( ratio != p->wheel_ratio )
     {
-        p->keep_wheel_ratio = keep;
+        p->wheel_ratio = ratio;
         update();
-        Q_EMIT keepWheelRatioChanged(keep);
+        Q_EMIT wheelRatioChanged(ratio);
     }
 }
 

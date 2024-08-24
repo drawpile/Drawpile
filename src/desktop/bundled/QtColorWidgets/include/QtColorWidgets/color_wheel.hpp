@@ -34,12 +34,14 @@ class QCP_EXPORT ColorWheel : public QWidget
     Q_PROPERTY(ColorSpaceEnum colorSpace READ colorSpace WRITE setColorSpace NOTIFY colorSpaceChanged DESIGNABLE true )
     Q_PROPERTY(bool mirroredSelector READ mirroredSelector WRITE setMirroredSelector NOTIFY mirroredSelectorChanged DESIGNABLE true )
     Q_PROPERTY(bool alignTop READ alignTop WRITE setAlignTop NOTIFY alignTop DESIGNABLE false )
-    Q_PROPERTY(bool keepWheelRatio READ keepWheelRatio WRITE setKeepWheelRatio NOTIFY keepWheelRatioChanged DESIGNABLE false )
+    Q_PROPERTY(qreal wheelRatio READ wheelRatio WRITE setWheelRatio NOTIFY wheelRatioChanged DESIGNABLE false )
     Q_PROPERTY(bool previewOuter READ previewOuter WRITE setPreviewOuter NOTIFY previewOuterChanged DESIGNABLE false )
     Q_PROPERTY(bool previewInner READ previewInner WRITE setPreviewInner NOTIFY previewInnerChanged DESIGNABLE false )
     Q_PROPERTY(QColor comparisonColor READ comparisonColor WRITE setComparisonColor NOTIFY comparisonColorChanged DESIGNABLE false )
 
 public:
+    Q_CONSTEXPR static qreal WHEEL_RATIO_DEFAULT = 0.1;
+
     enum ShapeEnum
     {
         ShapeTriangle,  ///< A triangle
@@ -101,8 +103,8 @@ public:
     /// Whether the color wheel is aligned to the top or the center
     bool alignTop() const;
 
-    /// Whether the outer wheel scales with the size of the widget or not
-    bool keepWheelRatio() const;
+    /// Ratio that the wheel width scales with the widget size, <= 0 means disabled
+    qreal wheelRatio() const;
 
     /// Whether to preview the color on the outer ring when picking on the inner selector
     bool previewOuter() const;
@@ -148,8 +150,8 @@ public Q_SLOTS:
     /// Sets whether the wheel should be aligned to the top or the center
     void setAlignTop(bool top);
 
-    /// Whether to retain the wheel's width ratio as the widget scales or not
-    void setKeepWheelRatio(bool keep);
+    /// Ratio for the wheel width scaling with widget size, <= 0 disables
+    void setWheelRatio(qreal ratio);
 
     /// Whether to preview the color on the outer ring when picking on the inner selector
     void setPreviewOuter(bool preview);
@@ -183,7 +185,7 @@ Q_SIGNALS:
 
     void alignTopChanged(bool top);
 
-    void keepWheelRatioChanged(bool keep);
+    void wheelRatioChanged(qreal ratio);
 
     void previewOuterChanged(bool preview);
 

@@ -45,7 +45,7 @@ public:
     int max_size = 128;
     bool mirrored_selector = false;
     bool align_top = false;
-    bool keep_wheel_ratio = true;
+    qreal wheel_ratio = WHEEL_RATIO_DEFAULT;
     bool preview_outer = false;
     bool preview_inner = false;
     QColor comparison_color;
@@ -77,7 +77,7 @@ public:
     {
         qreal outer = outer_radius();
         qreal ww = wheel_width;
-        return outer-(keep_wheel_ratio ? ww * qSqrt(outer) / 12.0 : ww);
+        return outer-(wheel_ratio > 0.0 ? ww * qSqrt(outer) * wheel_ratio : ww);
     }
 
     /// Calculate the edge length of the inner square
