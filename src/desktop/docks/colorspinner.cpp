@@ -27,6 +27,7 @@ struct ColorSpinnerDock::Private {
 	QAction *directionDescendingAction = nullptr;
 	QAction *alignTopAction = nullptr;
 	QAction *alignCenterAction = nullptr;
+	QAction *previewAction = nullptr;
 	color_widgets::Swatch *lastUsedSwatch = nullptr;
 	color_widgets::ColorWheel *colorwheel = nullptr;
 	bool updating = false;
@@ -174,6 +175,14 @@ ColorSpinnerDock::ColorSpinnerDock(const QString &title, QWidget *parent)
 			}
 		});
 
+	d->previewAction = menu->addAction(tr("Preview selected color"));
+	d->previewAction->setCheckable(true);
+	connect(d->previewAction, &QAction::toggled, this, [this](bool toggled) {
+		if(!d->updating) {
+			dpApp().settings().setColorWheelPreview(toggled ? 1 : 0);
+		}
+	});
+
 	d->menuButton = new widgets::GroupedToolButton(this);
 	d->menuButton->setIcon(QIcon::fromTheme("application-menu"));
 	d->menuButton->setPopupMode(QToolButton::InstantPopup);
@@ -219,6 +228,7 @@ ColorSpinnerDock::ColorSpinnerDock(const QString &title, QWidget *parent)
 	settings.bindColorWheelSpace(this, &ColorSpinnerDock::setColorSpace);
 	settings.bindColorWheelMirror(this, &ColorSpinnerDock::setMirror);
 	settings.bindColorWheelAlign(this, &ColorSpinnerDock::setAlign);
+	settings.bindColorWheelPreview(this, &ColorSpinnerDock::setPreview);
 }
 
 ColorSpinnerDock::~ColorSpinnerDock()
@@ -231,8 +241,13 @@ void ColorSpinnerDock::setColor(const QColor &color)
 	d->lastUsedSwatch->setSelected(
 		findPaletteColor(d->lastUsedSwatch->palette(), color));
 
-	if(d->colorwheel->color() != color)
+	if(!d->colorwheel->comparisonColor().isValid()) {
+		d->colorwheel->setComparisonColor(color);
+	}
+
+	if(d->colorwheel->color() != color) {
 		d->colorwheel->setColor(color);
+	}
 }
 
 void ColorSpinnerDock::setLastUsedColors(const color_widgets::ColorPalette &pal)
@@ -240,6 +255,8 @@ void ColorSpinnerDock::setLastUsedColors(const color_widgets::ColorPalette &pal)
 	d->lastUsedSwatch->setPalette(pal);
 	d->lastUsedSwatch->setSelected(
 		findPaletteColor(d->lastUsedSwatch->palette(), d->colorwheel->color()));
+	d->colorwheel->setComparisonColor(
+		pal.count() == 0 ? d->colorwheel->color() : pal.colorAt(0));
 }
 
 void ColorSpinnerDock::setShape(color_widgets::ColorWheel::ShapeEnum shape)
@@ -315,6 +332,15 @@ void ColorSpinnerDock::setAlign(int align)
 		d->alignCenterAction->setChecked(true);
 		d->colorwheel->setAlignTop(false);
 	}
+}
+
+void ColorSpinnerDock::setPreview(int preview)
+{
+	QScopedValueRollback<bool> guard(d->updating, true);
+	bool enabled = preview != 0;
+	d->previewAction->setChecked(enabled);
+	d->colorwheel->setPreviewOuter(enabled);
+	d->colorwheel->setPreviewInner(enabled);
 }
 
 }

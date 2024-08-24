@@ -24,6 +24,7 @@ public slots:
 	void setColorSpace(color_widgets::ColorWheel::ColorSpaceEnum colorSpace);
 	void setMirror(bool mirror);
 	void setAlign(int align);
+	void setPreview(int preview);
 
 signals:
 	void colorSelected(const QColor &color);
