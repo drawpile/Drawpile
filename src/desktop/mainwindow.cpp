@@ -4244,7 +4244,12 @@ void MainWindow::setupActions()
 	QAction *moveright = makeAction("moveright", tr("Move Canvas Right")).noDefaultShortcut().autoRepeat();
 	QAction *moveup = makeAction("moveup", tr("Move Canvas Up")).noDefaultShortcut().autoRepeat();
 	QAction *movedown = makeAction("movedown", tr("Move Canvas Down")).noDefaultShortcut().autoRepeat();
-	QAction *zoomin = makeAction("zoomin", tr("Zoom &In")).icon("zoom-in").shortcut(QKeySequence::ZoomIn).autoRepeat();
+#ifdef Q_OS_MAC
+#	define ZOOM_IN_SHORTCUT QKeySequence::ZoomIn
+#else
+#	define ZOOM_IN_SHORTCUT QKeySequence("Ctrl++"), QKeySequence("Ctrl+=")
+#endif
+	QAction *zoomin = makeAction("zoomin", tr("Zoom &In")).icon("zoom-in").shortcut(ZOOM_IN_SHORTCUT).autoRepeat();
 	QAction *zoomincenter = makeAction("zoomincenter", tr("Zoom In On Center")).noDefaultShortcut().autoRepeat();
 	QAction *zoomout = makeAction("zoomout", tr("Zoom &Out")).icon("zoom-out").shortcut(QKeySequence::ZoomOut).autoRepeat();
 	QAction *zoomoutcenter = makeAction("zoomoutcenter", tr("Zoom Out From Center")).noDefaultShortcut().autoRepeat();
