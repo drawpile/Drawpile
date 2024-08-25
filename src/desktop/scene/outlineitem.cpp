@@ -92,10 +92,11 @@ void OutlineItem::updateVisibility()
 	bool visible = m_actuallyVisible;
 #endif
 	setVisible(visible);
-	QRectF outerBounds = visible ? m_bounds.marginsAdded(QMarginsF(
-									   m_outlineWidth, m_outlineWidth,
-									   m_outlineWidth, m_outlineWidth))
-								 : QRectF();
+	QRectF outerBounds;
+	if(visible) {
+		qreal m = m_outlineWidth + 1.0;
+		outerBounds = m_bounds.marginsAdded(QMarginsF(m, m, m, m));
+	}
 	if(outerBounds != m_outerBounds) {
 		refreshGeometry();
 		m_outerBounds = outerBounds;

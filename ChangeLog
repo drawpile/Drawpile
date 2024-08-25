@@ -11,6 +11,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Scale outer color wheel ring with the size of the widget. Thanks MorrowShore for reporting.
  * Feature: Preview selected color on the color wheel. Can be toggled in the dock's menu. Thanks MorrowShore for suggesting.
  * Fix: Allow pressing the numpad enter key to apply an action and Ctrl+Equal in addition to Ctrl+Plus to zoom in. Thanks MachKerman and Sinamer for reporting.
+ * Fix: Prevent artifacts around brush cursor when the canvas is rotated in software renderer mode. Thanks Sinamer for reporting.
 
 2024-08-09 Version 2.2.2-beta.3
  * Fix: Use more accurate timers for performance profiles if the platform supports it.
