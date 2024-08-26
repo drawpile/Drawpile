@@ -855,12 +855,14 @@ DP_flood_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
 
     if (layer_id == 0) {
         c.lc = merge_image(cs, view_mode, active_layer_id, active_frame_index,
-                           DP_FLAT_IMAGE_RENDER_FLAGS);
+                           DP_FLAT_IMAGE_RENDER_FLAGS
+                               & ~DP_FLAT_IMAGE_INCLUDE_SUBLAYERS);
     }
     else if (layer_id == -1) {
         c.lc = merge_image(cs, view_mode, active_layer_id, active_frame_index,
                            DP_FLAT_IMAGE_RENDER_FLAGS
-                               & ~DP_FLAT_IMAGE_INCLUDE_BACKGROUND);
+                               & ~(DP_FLAT_IMAGE_INCLUDE_BACKGROUND
+                                   | DP_FLAT_IMAGE_INCLUDE_SUBLAYERS));
     }
     else {
         DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
