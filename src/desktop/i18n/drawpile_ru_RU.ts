@@ -11,12 +11,12 @@
     <message>
         <location line="+51"/>
         <source>Move Up</source>
-        <translation>Переместить выше</translation>
+        <translation>Переместиться выше</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Down</source>
-        <translation>Переместить ниже</translation>
+        <translation>Переместиться ниже</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -221,7 +221,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+75"/>
         <source>Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>Метка:</translation>
     </message>
 </context>
 <context>
@@ -397,7 +397,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/dumpplayback.ui" line="+14"/>
         <source>Play Debug Dump</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизвести дамп отладки</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -412,7 +412,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+16"/>
         <source>Play/Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Начать/Пауза</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -422,17 +422,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="+10"/>
         <source>Previous Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Предыдущий сброс</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Single Step</source>
-        <translation type="unfinished"></translation>
+        <translation>Один шаг</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Next Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Следующий сброс</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -447,7 +447,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+6"/>
         <source>History Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер истории:</translation>
     </message>
     <message>
         <location line="+7"/>
