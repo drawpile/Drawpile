@@ -1283,7 +1283,7 @@ void Document::emitStreamResetProgress()
 	case StreamResetState::Streaming: {
 		qreal total = m_streamResetImageOriginalCount;
 		qreal sent = total - m_streamResetImage.size();
-		emit streamResetProgress(qBound(0, qRound(total / sent * 100.0), 100));
+		emit streamResetProgress(qBound(0, qRound(sent / total * 100.0), 100));
 		break;
 	}
 	}
