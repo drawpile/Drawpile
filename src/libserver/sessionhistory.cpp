@@ -90,6 +90,7 @@ bool SessionHistory::addMessage(const net::Message &msg)
 	size_t bytes = msg.length();
 	if(hasRegularSpaceFor(bytes)) {
 		addMessageInternal(msg, bytes);
+		emit newMessagesAvailable();
 		return true;
 	} else {
 		return false;
@@ -101,6 +102,7 @@ bool SessionHistory::addEmergencyMessage(const net::Message &msg)
 	uint bytes = uint(msg.length());
 	if(hasEmergencySpaceFor(bytes)) {
 		addMessageInternal(msg, bytes);
+		emit newMessagesAvailable();
 		return true;
 	} else {
 		return false;
@@ -112,7 +114,6 @@ void SessionHistory::addMessageInternal(const net::Message &msg, size_t bytes)
 	m_sizeInBytes += bytes;
 	++m_lastIndex;
 	historyAdd(msg);
-	emit newMessagesAvailable();
 }
 
 bool SessionHistory::reset(const net::MessageList &newHistory)
@@ -143,11 +144,17 @@ StreamResetStartResult SessionHistory::startStreamedReset(
 		return StreamResetStartResult::AlreadyActive;
 	}
 
-	if(!addMessage(net::makeSoftResetMessage(0)) ||
-	   !addMessage(
-		   net::ServerReply::makeStreamedResetStart(ctxId, correlator))) {
+	net::Message softResetMsg = net::makeSoftResetMessage(0);
+	net::Message resetStartMsg =
+		net::ServerReply::makeStreamedResetStart(ctxId, correlator);
+	size_t softResetBytes = softResetMsg.length();
+	size_t resetStartBytes = resetStartMsg.length();
+	if(!hasRegularSpaceFor(softResetBytes + resetStartBytes)) {
 		return StreamResetStartResult::OutOfSpace;
 	}
+
+	addMessageInternal(softResetMsg, softResetBytes);
+	addMessageInternal(resetStartMsg, resetStartBytes);
 
 	StreamResetStartResult result = openResetStream(serverSideStateMessages);
 	if(result == StreamResetStartResult::Ok) {
@@ -158,6 +165,7 @@ StreamResetStartResult SessionHistory::startStreamedReset(
 		m_resetStreamMessageCount = 0;
 	}
 
+	emit newMessagesAvailable();
 	return result;
 }
 
