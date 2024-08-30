@@ -324,12 +324,19 @@ void Client::handleMessages(int count, net::Message *msgs)
 		m_catchupTimer->stop();
 	}
 
+	int handled = 0;
 	for(int i = 0; i < count; ++i) {
 		net::Message &msg = msgs[i];
 		switch(msg.type()) {
-		case DP_MSG_SERVER_COMMAND:
+		case DP_MSG_SERVER_COMMAND: {
+			int handleCount = i - handled;
+			if(handleCount > 0) {
+				m_commandHandler->handleCommands(handleCount, msgs + handled);
+			}
+			handled = i;
 			handleServerReply(ServerReply::fromMessage(msg), i);
 			break;
+		}
 		case DP_MSG_DATA:
 			handleData(msg);
 			break;
@@ -344,7 +351,11 @@ void Client::handleMessages(int count, net::Message *msgs)
 			break;
 		}
 	}
-	m_commandHandler->handleCommands(count, msgs);
+
+	int handleCount = count - handled;
+	if(handleCount > 0) {
+		m_commandHandler->handleCommands(handleCount, msgs + handled);
+	}
 
 	// The server can send a "catchup" message when there is a significant
 	// number of messages queued. During login, we can show a progress bar and
