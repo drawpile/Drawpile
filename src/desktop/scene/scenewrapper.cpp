@@ -158,6 +158,13 @@ void SceneWrapper::setCatchupProgress(int percent, bool force)
 	}
 }
 
+void SceneWrapper::setStreamResetProgress(int percent)
+{
+	if(m_scene) {
+		m_scene->setStreamResetProgress(percent);
+	}
+}
+
 void SceneWrapper::setSaveInProgress(bool saveInProgress)
 {
 	m_view->setSaveInProgress(saveInProgress);

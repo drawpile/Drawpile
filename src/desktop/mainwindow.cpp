@@ -373,8 +373,15 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		m_dockToolSettings, &docks::ToolSettings::resetColors);
 
 	// Network client <-> UI connections
-	connect(m_doc, &Document::catchupProgress, this, &MainWindow::updateCatchupProgress);
-	connect(m_doc, &Document::catchupProgress, m_netstatus, &widgets::NetStatus::setCatchupProgress);
+	connect(
+		m_doc, &Document::catchupProgress, this,
+		&MainWindow::updateCatchupProgress);
+	connect(
+		m_doc, &Document::catchupProgress, m_netstatus,
+		&widgets::NetStatus::setCatchupProgress);
+	connect(
+		m_doc, &Document::streamResetProgress, this,
+		&MainWindow::updateStreamResetProgress);
 
 	connect(
 		m_doc->client(), &net::Client::serverStatusUpdate, m_viewStatusBar,
@@ -1855,6 +1862,11 @@ void MainWindow::updateCatchupProgress(int percent)
 	m_canvasView->setCatchupProgress(percent, false);
 }
 
+void MainWindow::updateStreamResetProgress(int percent)
+{
+	m_canvasView->setStreamResetProgress(percent);
+}
+
 void MainWindow::savePreResetImageAs()
 {
 	if(m_preResetCanvasState.isNull()) {
@@ -2392,7 +2404,7 @@ void MainWindow::leave()
 		}
 	});
 
-	if(m_doc->client()->uploadQueueBytes() > 0) {
+	if(m_doc->client()->uploadQueueBytes() > 0 || m_doc->isStreamingReset()) {
 		leavebox->setIcon(QMessageBox::Warning);
 		leavebox->setInformativeText(tr("There is still unsent data! Please wait until transmission completes!"));
 	}

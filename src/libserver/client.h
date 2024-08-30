@@ -32,8 +32,16 @@ struct BanResult;
  */
 class Client : public QObject {
 	Q_OBJECT
-
 public:
+	enum class ResetFlag {
+		None = 0,
+		Awaiting = 1 << 0,
+		Queried = 1 << 1,
+		Responded = 1 << 2,
+		Streaming = 1 << 3,
+	};
+	Q_DECLARE_FLAGS(ResetFlags, ResetFlag)
+
 	~Client() override;
 
 	//! Get the user's IP address
@@ -275,13 +283,9 @@ public:
 	void setHoldLocked(bool lock);
 	bool isHoldLocked() const;
 
-	/**
-	 * @brief Block all messages sent to this user
-	 *
-	 * This state is set when a fresh reset is imminent and we don't want to
-	 * send any messages to the client before that happens.
-	 */
-	void setAwaitingReset(bool awaiting);
+	void setResetFlags(ResetFlags resetFlags);
+	ResetFlags resetFlags() const;
+
 	bool isAwaitingReset() const;
 
 	/**
@@ -340,6 +344,8 @@ private:
 	struct Private;
 	Private *d;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Client::ResetFlags)
 
 }
 

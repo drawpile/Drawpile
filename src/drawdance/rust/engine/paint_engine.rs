@@ -88,6 +88,8 @@ impl PaintEngine {
                 Some(Self::on_playback),
                 None,
                 user.cast(),
+                None,
+                ptr::null_mut(),
             )
         };
         pe

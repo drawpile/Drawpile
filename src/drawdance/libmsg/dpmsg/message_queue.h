@@ -25,6 +25,7 @@
 
 typedef struct DP_Message DP_Message;
 typedef struct DP_Queue DP_Queue;
+typedef struct DP_Vector DP_Vector;
 
 
 void DP_message_queue_init(DP_Queue *queue, size_t initial_capacity);
@@ -38,6 +39,17 @@ DP_Message *DP_message_queue_push_inc(DP_Queue *queue, DP_Message *msg);
 DP_Message *DP_message_queue_peek(DP_Queue *queue);
 
 DP_Message *DP_message_queue_shift(DP_Queue *queue);
+
+
+void DP_message_vector_init(DP_Vector *vec, size_t initial_capacity);
+
+void DP_message_vector_dispose(DP_Vector *vec);
+
+DP_Message *DP_message_vector_push_noinc(DP_Vector *vec, DP_Message *msg);
+
+DP_Message *DP_message_vector_push_inc(DP_Vector *vec, DP_Message *msg);
+
+DP_Message *DP_message_vector_at(DP_Vector *vec, size_t index);
 
 
 #endif

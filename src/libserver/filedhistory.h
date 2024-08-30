@@ -3,6 +3,7 @@
 #define DP_SERVER_FILEDHISTORY_H
 #include "libserver/sessionhistory.h"
 #include "libshared/net/protover.h"
+#include "libshared/util/qtcompat.h"
 #include <QDir>
 #include <QVector>
 
@@ -67,7 +68,7 @@ public:
 	QByteArray opwordHash() const override { return m_opword; }
 	int maxUsers() const override { return m_maxUsers; }
 	QString title() const override { return m_title; }
-	uint autoResetThreshold() const override { return m_autoResetThreshold; }
+	size_t autoResetThreshold() const override { return m_autoResetThreshold; }
 	Flags flags() const override { return m_flags; }
 
 	void setFounderName(const QString &founder) override;
@@ -76,13 +77,14 @@ public:
 	void setMaxUsers(int max) override;
 	void setTitle(const QString &title) override;
 	void setFlags(Flags f) override;
-	void setAutoResetThreshold(uint limit) override;
+	void setAutoResetThreshold(size_t limit) override;
 	int nextCatchupKey() override;
 	void joinUser(uint8_t id, const QString &name) override;
 
 	void terminate() override;
-	void cleanupBatches(int before) override;
-	std::tuple<net::MessageList, int> getBatch(int after) const override;
+	void cleanupBatches(long long before) override;
+	std::tuple<net::MessageList, long long>
+	getBatch(long long after) const override;
 
 	void addAnnouncement(const QString &) override;
 	void removeAnnouncement(const QString &url) override;
@@ -104,9 +106,63 @@ protected:
 		const QString &bannedBy) override;
 	void historyRemoveBan(int id) override;
 
+	StreamResetStartResult
+	openResetStream(const net::MessageList &serverSideStateMessages) override;
+	StreamResetAddResult
+	addResetStreamMessage(const net::Message &msg) override;
+	StreamResetPrepareResult prepareResetStream() override;
+	bool resolveResetStream(
+		long long newFirstIndex, long long &outMessageCount,
+		size_t &outSizeInBytes, QString &outError) override;
+	void discardResetStream() override;
+
 	void timerEvent(QTimerEvent *event) override;
 
 private:
+	struct Block {
+		qint64 startOffset;
+		long long startIndex;
+		long long count;
+		qint64 endOffset;
+		net::MessageList messages;
+
+		Block(qint64 offset, long long index)
+			: startOffset(offset)
+			, startIndex(index)
+			, count(0LL)
+			, endOffset(offset)
+		{
+		}
+	};
+
+	class BlockCache {
+	public:
+		const Block &lastBlock() const { return m_blocks.last(); }
+		Block &findBlock(long long after);
+
+		void addBlock(qint64 offset, long long index);
+		void addToLastBlock(const net::Message &msg, size_t len);
+		void incrementLastBlock(size_t len);
+		void closeLastBlock();
+
+		void cleanup(long long before);
+
+		long long totalMessageCount() const;
+
+		compat::sizetype size() const { return m_blocks.size(); }
+		void clear() { m_blocks.clear(); }
+		bool isEmpty() const { return m_blocks.isEmpty(); }
+
+		void replaceWithResetStream(
+			BlockCache &streamCache, compat::sizetype blockIndex,
+			long long newFirstIndex);
+
+	private:
+		void incrementBlock(Block &b, size_t len);
+
+		QVector<Block> m_blocks;
+	};
+
 	FiledHistory(
 		const QDir &dir, QFile *journal, const QString &id,
 		const QString &alias, const protocol::ProtocolVersion &version,
@@ -114,20 +170,22 @@ private:
 	FiledHistory(
 		const QDir &dir, QFile *journal, const QString &id, QObject *parent);
 
-	struct Block {
-		qint64 startOffset;
-		int startIndex;
-		int count;
-		qint64 endOffset;
-		net::MessageList messages;
-	};
-
-	void discardWriterOnError(const QString &context, const QString &filename);
-
 	bool create();
 	bool load();
 	bool scanBlocks();
 	bool initRecording();
+	bool openRecording(
+		const QString &fileName, bool stream, QFile **outRecording,
+		DP_BinaryReader **outReader, DP_BinaryWriter **outWriter);
+
+	void writeFileEntryToJournal(const QString &fileName);
+	void writeStringToJournal(const QString &s);
+	void writeBytesToJournal(const QByteArray &bytes);
+	void flushRecording();
+	void flushJournal();
+	void removeOrArchive(QFile *recording) const;
+
+	bool copyForkMessagesToResetStream(QString &outError);
 
 	QDir m_dir;
 	QFile *m_journal;
@@ -143,14 +201,24 @@ private:
 	QByteArray m_password;
 	QByteArray m_opword;
 	int m_maxUsers;
-	uint m_autoResetThreshold;
+	size_t m_autoResetThreshold;
 	Flags m_flags;
 	int m_nextCatchupKey;
 	QStringList m_announcements;
 
-	mutable QVector<Block> m_blocks;
+	mutable BlockCache m_blockCache;
 	int m_fileCount;
 	bool m_archive;
+
+	QString m_resetStreamFileName;
+	QFile *m_resetStreamRecording = nullptr;
+	DP_BinaryReader *m_resetStreamReader = nullptr;
+	DP_BinaryWriter *m_resetStreamWriter = nullptr;
+	int m_resetStreamFileCount = -1;
+	qint64 m_resetStreamForkPos;
+	qint64 m_resetStreamHeaderPos;
+	compat::sizetype m_resetStreamBlockIndex;
+	BlockCache m_resetStreamBlockCache;
 };
 
 }

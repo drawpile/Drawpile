@@ -55,6 +55,10 @@ typedef struct DP_LayerContent DP_TransientLayerContent;
 typedef void (*DP_PaintEnginePlaybackFn)(void *user, long long position);
 typedef void (*DP_PaintEngineDumpPlaybackFn)(void *user, long long position,
                                              DP_CanvasHistorySnapshot *chs);
+// Takes ownership of the canvas state and must decrement the ref when done.
+typedef void (*DP_PaintEngineStreamResetStartFn)(void *user, DP_CanvasState *cs,
+                                                 size_t correlator_length,
+                                                 const char *correlator);
 typedef void (*DP_PaintEngineAclsChangedFn)(void *user, int acl_change_flags);
 typedef void (*DP_PaintEngineLaserTrailFn)(void *user, unsigned int context_id,
                                            int persistence, uint32_t color);
@@ -106,7 +110,9 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     bool want_canvas_history_dump, const char *canvas_history_dump_dir,
     DP_RecorderGetTimeMsFn get_time_ms_fn, void *get_time_ms_user,
     DP_Player *player_or_null, DP_PaintEnginePlaybackFn playback_fn,
-    DP_PaintEngineDumpPlaybackFn dump_playback_fn, void *playback_user);
+    DP_PaintEngineDumpPlaybackFn dump_playback_fn, void *playback_user,
+    DP_PaintEngineStreamResetStartFn stream_reset_start_fn,
+    void *stream_reset_user);
 
 void DP_paint_engine_free_join(DP_PaintEngine *pe);
 

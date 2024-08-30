@@ -127,7 +127,16 @@ void Session::switchState(State newstate)
 		m_initUser = -1;
 		bool success = true;
 
-		if(m_state == State::Reset && !m_resetstream.isEmpty()) {
+		if(m_state == State::Initialization) {
+			m_history->resetAutoResetThresholdBase();
+			log(Log()
+					.about(Log::Level::Info, Log::Topic::Status)
+					.message(QStringLiteral("Session initialized with size %1")
+								 .arg(QLocale::c().formattedDataSize(
+									 m_history->sizeInBytes()))));
+			onSessionInitialized();
+
+		} else if(m_state == State::Reset && !m_resetstream.isEmpty()) {
 			// Reset buffer uploaded. Now perform the reset before returning to
 			// normal running state.
 
@@ -175,6 +184,7 @@ void Session::switchState(State newstate)
 	}
 
 	m_state = newstate;
+	onStateChanged();
 }
 
 void Session::assignId(Client *user)
@@ -307,11 +317,7 @@ void Session::removeUser(Client *user)
 	disconnect(user, nullptr, this, nullptr);
 	disconnect(m_history, nullptr, user, nullptr);
 
-	if(user->id() == m_initUser && m_state == State::Reset) {
-		// Whoops, the resetter left before the job was done!
-		// We simply cancel the reset in that case and go on
-		abortReset();
-	}
+	onClientLeave(user);
 
 	if(!isGhost) {
 		addToHistory(net::makeLeaveMessage(user->id()));
@@ -327,6 +333,15 @@ void Session::removeUser(Client *user)
 	}
 
 	emit sessionAttributeChanged(this);
+}
+
+void Session::onClientLeave(Client *client)
+{
+	if(client->id() == m_initUser && m_state == State::Reset) {
+		// Whoops, the resetter left before the job was done!
+		// We simply cancel the reset in that case and go on
+		abortReset();
+	}
 }
 
 void Session::abortReset()
@@ -617,14 +632,17 @@ QVector<uint8_t> Session::updateOwnership(
 		const bool op = ids.contains(c->id()) || c->isModerator();
 		if(op != c->isOperator()) {
 			needsUpdate = true;
-			if(!op && c->id() == m_initUser && m_state == State::Reset) {
-				// OP status removed mid-reset! The user probably has at least
-				// part of the reset image still queued for upload, which will
-				// messs up the session once we're out of reset mode. Kicking
-				// the client is the easiest workaround.
-				// TODO for 3.0: send a cancel command to the client and ignore
-				// all further input until ack is received.
-				kickResetter = c;
+			if(!op) {
+				onClientDeop(c);
+				if(c->id() == m_initUser && m_state == State::Reset) {
+					// OP status removed mid-reset! The user probably has at
+					// least part of the reset image still queued for upload,
+					// which will messs up the session once we're out of reset
+					// mode. Kicking the client is the easiest workaround.
+					// TODO for 3.0: send a cancel command to the client and
+					// ignore all further input until ack is received.
+					kickResetter = c;
+				}
 			}
 
 			c->setOperator(op);
@@ -1009,6 +1027,9 @@ void Session::handleClientMessage(Client &client, const net::Message &msg)
 				msg.contextId(), updateTrustedUsers(ids, client.username())));
 		return;
 	}
+	case DP_MSG_RESET_STREAM:
+		onResetStream(client, msg);
+		return;
 	default:
 		break;
 	}

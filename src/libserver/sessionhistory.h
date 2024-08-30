@@ -9,6 +9,8 @@
 #include <QObject>
 #include <tuple>
 
+struct DP_ResetStreamConsumer;
+
 namespace protocol {
 class ProtocolVersion;
 }
@@ -16,6 +18,47 @@ class ProtocolVersion;
 namespace server {
 
 class Client;
+
+enum class StreamResetStartResult {
+	Ok,
+	Unsupported,
+	InvalidSessionState,
+	InvalidCorrelator,
+	InvalidUser,
+	AlreadyActive,
+	OutOfSpace,
+	WriteError,
+};
+
+enum class StreamResetAddResult {
+	Ok,
+	Unsupported,
+	InvalidUser,
+	NotActive,
+	BadType,
+	DisallowedType,
+	OutOfSpace,
+	WriteError,
+	ConsumerError,
+};
+
+enum class StreamResetAbortResult {
+	Ok,
+	Unsupported,
+	InvalidUser,
+	NotActive,
+};
+
+enum class StreamResetPrepareResult {
+	Ok,
+	Unsupported,
+	InvalidUser,
+	InvalidMessageCount,
+	NotActive,
+	OutOfSpace,
+	WriteError,
+	ConsumerError,
+};
 
 /**
  * @brief Abstract base class for session history implementations
@@ -119,17 +162,20 @@ public:
 	virtual void joinUser(uint8_t id, const QString &name);
 
 	//! Set the history size threshold for requesting autoreset
-	virtual void setAutoResetThreshold(uint limit) = 0;
+	virtual void setAutoResetThreshold(size_t limit) = 0;
 
 	//! Get the history autoreset request threshold
-	virtual uint autoResetThreshold() const = 0;
+	virtual size_t autoResetThreshold() const = 0;
 
 	//! Get the final autoreset threshold that includes the reset image base
 	//! size
-	uint effectiveAutoResetThreshold() const;
+	size_t effectiveAutoResetThreshold() const;
 
 	//! Get the reset image base size
-	uint autoResetThresholdBase() const { return m_autoResetBaseSize; }
+	size_t autoResetThresholdBase() const { return m_autoResetBaseSize; }
+
+	//! Set the autoreset threshold base to the current size in bytes
+	void resetAutoResetThresholdBase();
 
 	virtual int nextCatchupKey() = 0;
 
@@ -165,6 +211,70 @@ public:
 	bool reset(const net::MessageList &newHistory);
 
 	/**
+	 * @brief Start streaming in a history reset
+	 *
+	 * This will store reset messages in a separate buffer, but keep the session
+	 * running as normal. Once the entire reset snapshot has been received, that
+	 * snapshot is taken as the new base, all other messages received meanwhile
+	 * will be appended to it and the history switched over to that new state.
+	 *
+	 * This will add a stream-reset-start command message with the given context
+	 * id and correlator to the history, which the resetting client will use as
+	 * a marker as to where to start generating the reset image from.
+	 *
+	 * @return Result code, ::Ok means the stream was started, anything else is
+	 * an error and means it wasn't.
+	 */
+	StreamResetStartResult startStreamedReset(
+		uint8_t ctxId, const QString &correlator,
+		const net::MessageList &serverSideStateMessages);
+
+	StreamResetAddResult
+	addStreamResetMessage(uint8_t ctxId, const net::Message &msg);
+
+	/**
+	 * @brief Cancel a streaming history reset in progress
+	 *
+	 * @param ctxId Only cancel if the streaming context id matches this value.
+	 * A negative value means no check is done.
+	 *
+	 * @return Result code, ::Ok means the stream was aborted, anything else is
+	 * an error and means it wasn't.
+	 */
+	StreamResetAbortResult abortStreamedReset(int ctxId = -1);
+
+	/**
+	 * @brief Prepare a streaming history reset to replace the current history
+	 *
+	 * This puts the reset into a pending state, to be resolved when all clients
+	 * are sufficiently caught up to not be inside the old state anymore.
+	 *
+	 * @param ctxId User performing the reset. Mismatch between this and the
+	 * actual user will return failure, but keep the stream going.
+	 * @param expectedMessageCount The expected amount of messages in the
+	 * streamed reset image. Mismatch fails the reset.
+	 *
+	 * @return Result code, ::Ok means the reset was executed successfully,
+	 * anything else is an error and means it wasn't.
+	 */
+	StreamResetPrepareResult
+	prepareStreamedReset(uint8_t ctxId, int expectedMessageCount);
+
+	bool resolveStreamedReset(long long &outOffset, QString &outError);
+
+	/**
+	 * @brief Get the number of messages in the current or last streamed reset
+	 */
+	int resetStreamMessageCount() const { return m_resetStreamMessageCount; }
+
+	bool isResetStreamPending() const
+	{
+		return m_resetStreamState == ResetStreamState::Prepared;
+	}
+
+	long long resetStreamStartIndex() const { return m_resetStreamStartIndex; }
+
+	/**
 	 * @brief Get a batch of messages
 	 *
 	 * This returns a {batch, lastIndex} tuple.
@@ -174,7 +284,8 @@ public:
 	 * The second element of the tuple is the index of the last message
 	 * in the batch, or lastIndex() if there were no more available messages
 	 */
-	virtual std::tuple<net::MessageList, int> getBatch(int after) const = 0;
+	virtual std::tuple<net::MessageList, long long>
+	getBatch(long long after) const = 0;
 
 	/**
 	 * @brief Mark messages before the given index as unneeded (for now)
@@ -182,7 +293,7 @@ public:
 	 * This is used to inform caching history storage backends which messages
 	 * have been sent to all connected users and can thus be freed.
 	 */
-	virtual void cleanupBatches(int before) = 0;
+	virtual void cleanupBatches(long long before) = 0;
 
 	/**
 	 * @brief End this session and delete any associated files (if any)
@@ -198,14 +309,14 @@ public:
 	 *
 	 * @param limit maximum size in bytes or 0 for no limit
 	 */
-	void setSizeLimit(uint limit) { m_sizeLimit = limit; }
+	void setSizeLimit(size_t limit) { m_sizeLimit = limit; }
 
 	/**
 	 * @brief Get the session size limit
 	 *
 	 * If zero, the size is not limited.
 	 */
-	uint sizeLimit() const { return m_sizeLimit; }
+	size_t sizeLimit() const { return m_sizeLimit; }
 
 	/**
 	 * @brief Get the size of the history in bytes
@@ -213,11 +324,14 @@ public:
 	 * Note: this is the serialized size, not the size of the in-memory
 	 * representation.
 	 */
-	uint sizeInBytes() const { return m_sizeInBytes; }
+	size_t sizeInBytes() const { return m_sizeInBytes; }
 
-	bool hasRegularSpaceFor(uint bytes) const { return hasSpaceFor(bytes, 0); }
+	bool hasRegularSpaceFor(size_t bytes) const
+	{
+		return hasSpaceFor(bytes, 0);
+	}
 
-	bool hasEmergencySpaceFor(uint bytes) const
+	bool hasEmergencySpaceFor(size_t bytes) const
 	{
 		return hasSpaceFor(bytes, 1024u * 1024u); // 1MiB of emergency space.
 	}
@@ -228,12 +342,12 @@ public:
 	 * The index numbers grow monotonically during the session and are
 	 * not reset even when the history itself is reset.
 	 */
-	int firstIndex() const { return m_firstIndex; }
+	long long firstIndex() const { return m_firstIndex; }
 
 	/**
 	 * @brief Get the index number of the last message in history
 	 */
-	int lastIndex() const { return m_lastIndex; }
+	long long lastIndex() const { return m_lastIndex; }
 
 	/**
 	 * @brief Get the list of in-session IP bans
@@ -353,25 +467,49 @@ protected:
 		const QString &extAuthId, const QString &sid,
 		const QString &bannedBy) = 0;
 	virtual void historyRemoveBan(int id) = 0;
-	void historyLoaded(uint size, int messageCount);
+	void historyLoaded(size_t size, int messageCount);
+
+	virtual StreamResetStartResult
+	openResetStream(const net::MessageList &serverSideStateMessages) = 0;
+	virtual StreamResetAddResult
+	addResetStreamMessage(const net::Message &msg) = 0;
+	virtual StreamResetPrepareResult prepareResetStream() = 0;
+	virtual bool resolveResetStream(
+		long long newFirstIndex, long long &outMessageCount,
+		size_t &outSizeInBytes, QString &outError) = 0;
+	virtual void discardResetStream() = 0;
 
 	int incrementNextCatchupKey(int &nextCatchupKey);
 
 	SessionBanList m_banlist;
 
 private:
-	bool hasSpaceFor(uint bytes, uint extra) const;
-	void addMessageInternal(const net::Message &msg, uint bytes);
+	enum class ResetStreamState { None, Streaming, Prepared };
+
+	bool hasSpaceFor(size_t bytes, size_t extra) const;
+	void addMessageInternal(const net::Message &msg, size_t bytes);
+
+	void abortActiveStreamedReset();
+	static bool receiveResetStreamMessageCallback(void *user, DP_Message *msg);
+	bool receiveResetStreamMessage(const net::Message &msg);
 
 	QString m_id;
 	IdQueue m_idqueue;
 	QDateTime m_startTime;
 
-	uint m_sizeInBytes;
-	uint m_sizeLimit;
-	uint m_autoResetBaseSize;
-	int m_firstIndex;
-	int m_lastIndex;
+	size_t m_sizeInBytes;
+	size_t m_sizeLimit;
+	size_t m_autoResetBaseSize;
+	long long m_firstIndex;
+	long long m_lastIndex;
+
+	ResetStreamState m_resetStreamState = ResetStreamState::None;
+	uint8_t m_resetStreamCtxId = 0;
+	size_t m_resetStreamSize = 0;
+	long long m_resetStreamStartIndex = 0;
+	int m_resetStreamMessageCount = 0;
+	DP_ResetStreamConsumer *m_resetStreamConsumer = nullptr;
+	StreamResetAddResult m_resetStreamAddError;
 
 	QSet<QString> m_authOps;
 	QSet<QString> m_authTrusted;

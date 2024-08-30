@@ -124,13 +124,6 @@ void Network::initNetwork(
 		form, tr("Connection quality:"), true,
 		{{tr("Good"), 1}, {tr("Poor"), 0}});
 	settings.bindServerAutoReset(autoReset);
-	auto *autoResetNote = utils::formNote(
-		tr("If all operators in a session set connection quality to Poor, "
-		   "auto-reset will not work and the server will stop processing "
-		   "updates until the session is manually reset."),
-		QSizePolicy::Label, QIcon::fromTheme("dialog-warning"));
-	form->addRow(nullptr, autoResetNote);
-	settings.bindServerAutoReset(autoResetNote, &QWidget::setHidden);
 
 	auto *timeout = new QSpinBox(this);
 	timeout->setAlignment(Qt::AlignLeft);

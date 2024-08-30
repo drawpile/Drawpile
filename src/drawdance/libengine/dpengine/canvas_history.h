@@ -113,6 +113,9 @@ void DP_canvas_history_soft_reset(DP_CanvasHistory *ch, DP_DrawContext *dc,
                                   unsigned int context_id,
                                   DP_CanvasHistorySoftResetFn fn, void *user);
 
+DP_CanvasState *DP_canvas_history_stream_start_state_inc(DP_CanvasHistory *ch,
+                                                     DP_DrawContext *dc);
+
 int DP_canvas_history_undo_depth_limit(DP_CanvasHistory *ch);
 
 void DP_canvas_history_undo_depth_limit_set(DP_CanvasHistory *ch,

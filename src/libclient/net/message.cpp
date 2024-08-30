@@ -97,6 +97,14 @@ Message makeInternalResetMessage(uint8_t contextId)
 	return Message::noinc(DP_msg_internal_reset_new(contextId));
 }
 
+Message makeInternalStreamResetStartMessage(
+	uint8_t contextId, const QString &correlator)
+{
+	QByteArray bytes = correlator.toUtf8();
+	return Message::noinc(DP_msg_internal_stream_reset_start_new(
+		contextId, bytes.size(), bytes.constData()));
+}
+
 Message makeInternalSnapshotMessage(uint8_t contextId)
 {
 	return Message::noinc(DP_msg_internal_snapshot_new(contextId));
@@ -311,11 +319,6 @@ Message
 makeSetMetadataIntMessage(uint8_t contextId, uint8_t field, int32_t value)
 {
 	return Message::noinc(DP_msg_set_metadata_int_new(contextId, field, value));
-}
-
-Message makeSoftResetMessage(uint8_t contextId)
-{
-	return Message::noinc(DP_msg_soft_reset_new(contextId));
 }
 
 Message makeTrackCreateMessage(

@@ -30,13 +30,15 @@ bool BuiltinSession::supportsAutoReset() const
 	return false;
 }
 
-void BuiltinSession::readyToAutoReset(int ctxId)
+void BuiltinSession::readyToAutoReset(
+	const AutoResetResponseParams &params, const QString &payload)
 {
+	Q_UNUSED(payload);
 	log(Log()
 			.about(Log::Level::Warn, Log::Topic::RuleBreak)
 			.message(QStringLiteral(
 						 "User %1 sent ready-to-autoreset to builtin server!")
-						 .arg(ctxId)));
+						 .arg(params.ctxId)));
 }
 
 void BuiltinSession::doInternalReset(const drawdance::CanvasState &canvasState)
@@ -65,11 +67,33 @@ void BuiltinSession::doInternalReset(const drawdance::CanvasState &canvasState)
 	net::Message catchup = net::ServerReply::makeCatchup(msgs.size(), 1);
 	net::Message caughtup = net::ServerReply::makeCaughtUp(1);
 	for(Client *c : awaitingClients) {
-		c->setAwaitingReset(false);
+		c->setResetFlags(Client::ResetFlag::None);
 		c->sendDirectMessage(catchup);
 		c->sendDirectMessages(msgs);
 		c->sendDirectMessage(caughtup);
 	}
+}
+
+StreamResetStartResult
+BuiltinSession::handleStreamResetStart(int ctxId, const QString &correlator)
+{
+	Q_UNUSED(ctxId);
+	Q_UNUSED(correlator);
+	return StreamResetStartResult::Unsupported;
+}
+
+StreamResetAbortResult BuiltinSession::handleStreamResetAbort(int ctxId)
+{
+	Q_UNUSED(ctxId);
+	return StreamResetAbortResult::Unsupported;
+}
+
+StreamResetPrepareResult
+BuiltinSession::handleStreamResetFinish(int ctxId, int expectedMessageCount)
+{
+	Q_UNUSED(ctxId);
+	Q_UNUSED(expectedMessageCount);
+	return StreamResetPrepareResult::Unsupported;
 }
 
 void BuiltinSession::addToHistory(const net::Message &msg)
@@ -123,6 +147,11 @@ void BuiltinSession::addToHistory(const net::Message &msg)
 	}
 }
 
+void BuiltinSession::onSessionInitialized()
+{
+	// Nothing to do.
+}
+
 void BuiltinSession::onSessionReset()
 {
 	auto [msgs, lastBatchIndex] = history()->getBatch(-1);
@@ -152,13 +181,34 @@ void BuiltinSession::onClientJoin(Client *client, bool host)
 	} else {
 		// The new client has to wait until the soft reset point is processed.
 		// The paint engine will call us back once it has done so.
-		client->setAwaitingReset(true);
+		client->setResetFlags(Client::ResetFlag::Awaiting);
 		if(!m_softResetRequested) {
 			directToAll(net::makeSoftResetMessage(
 				m_paintEngine->aclState().localUserId()));
 			m_softResetRequested = true;
 		}
 	}
+}
+
+void BuiltinSession::onClientDeop(Client *client)
+{
+	Q_UNUSED(client);
+	// Nothing to do.
+}
+
+void BuiltinSession::onResetStream(Client &client, const net::Message &msg)
+{
+	Q_UNUSED(msg);
+	log(Log()
+			.about(Log::Level::Warn, Log::Topic::RuleBreak)
+			.message(QStringLiteral("Client %1 sent reset stream message, but "
+									"this is a builtin server")
+						 .arg(client.id())));
+}
+
+void BuiltinSession::onStateChanged()
+{
+	// Nothing to do.
 }
 
 void BuiltinSession::internalReset(const drawdance::CanvasState &canvasState)

@@ -12,6 +12,7 @@
 #include "desktop/scene/transformitem.h"
 #include "desktop/scene/usermarkeritem.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/view/canvasscene.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
@@ -41,6 +42,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	, m_lockNotice(nullptr)
 	, m_toolNotice(nullptr)
 	, m_catchup(nullptr)
+	, m_streamResetNotice(nullptr)
 	, m_showAnnotationBorders(false)
 	, m_showAnnotations(true)
 	, m_showUserMarkers(true)
@@ -188,6 +190,9 @@ void CanvasScene::setSceneBounds(const QRectF &sceneBounds)
 	if(m_catchup) {
 		setCatchupPosition();
 	}
+	if(m_streamResetNotice) {
+		setStreamResetNoticePosition();
+	}
 	for(ToggleItem *ti : m_toggleItems) {
 		ti->updateSceneBounds(sceneBounds);
 	}
@@ -304,6 +309,30 @@ void CanvasScene::setCatchupProgress(int percent)
 	}
 	m_catchup->setCatchupProgress(percent);
 	setCatchupPosition();
+}
+
+void CanvasScene::setStreamResetProgress(int percent)
+{
+	if(percent > 100) {
+		if(m_streamResetNotice) {
+			m_streamResetNotice->setText(
+				view::CanvasScene::getStreamResetProgressText(percent));
+			if(m_streamResetNotice->persist() < 0.0) {
+				m_streamResetNotice->setPersist(NOTICE_PERSIST);
+			}
+		}
+	} else {
+		if(m_streamResetNotice) {
+			m_streamResetNotice->setText(
+				view::CanvasScene::getStreamResetProgressText(percent));
+			m_streamResetNotice->setPersist(-1.0);
+		} else {
+			m_streamResetNotice = new NoticeItem(
+				view::CanvasScene::getStreamResetProgressText(percent));
+			addItem(m_streamResetNotice);
+		}
+		setStreamResetNoticePosition();
+	}
 }
 
 void CanvasScene::onUserJoined(int id, const QString &name)
@@ -534,6 +563,11 @@ void CanvasScene::advanceAnimations()
 		delete m_catchup;
 		m_catchup = nullptr;
 	}
+
+	if(m_streamResetNotice && !m_streamResetNotice->animationStep(STEP)) {
+		delete m_streamResetNotice;
+		m_streamResetNotice = nullptr;
+	}
 }
 
 void CanvasScene::laserTrail(int userId, int persistence, const QColor &color)
@@ -741,6 +775,18 @@ void CanvasScene::setCatchupPosition()
 		QPointF(
 			catchupBounds.width() + NOTICE_OFFSET,
 			catchupBounds.height() + NOTICE_OFFSET));
+}
+
+void CanvasScene::setStreamResetNoticePosition()
+{
+	qreal catchupOffset =
+		m_catchup ? m_catchup->boundingRect().height() + NOTICE_OFFSET : 0.0;
+	QRectF streamResetNoticeBounds = m_streamResetNotice->boundingRect();
+	m_streamResetNotice->updatePosition(
+		sceneRect().bottomRight() -
+		QPointF(
+			streamResetNoticeBounds.width() + NOTICE_OFFSET,
+			streamResetNoticeBounds.height() + NOTICE_OFFSET + catchupOffset));
 }
 
 void CanvasScene::setShowOwnUserMarker(bool showOwnUserMarker)

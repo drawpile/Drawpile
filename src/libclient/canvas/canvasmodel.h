@@ -67,7 +67,8 @@ public:
 	net::MessageList generateSnapshot(
 		bool includePinnedMessage, unsigned int aclIncludeFlags) const;
 
-	void amendSnapshotMetadata(
+	// Returns the number of messages prepended, the rest are appended.
+	int amendSnapshotMetadata(
 		net::MessageList &snapshot, bool includePinnedMessage,
 		unsigned int aclIncludeFlags) const;
 

@@ -53,6 +53,7 @@ bool DP_message_type_server_meta(DP_MessageType type)
     case DP_MSG_TRUSTED_USERS:
     case DP_MSG_SOFT_RESET:
     case DP_MSG_PRIVATE_CHAT:
+    case DP_MSG_RESET_STREAM:
         return true;
     default:
         return false;
@@ -159,6 +160,8 @@ const char *DP_message_type_name(DP_MessageType type)
         return "softreset";
     case DP_MSG_PRIVATE_CHAT:
         return "privatechat";
+    case DP_MSG_RESET_STREAM:
+        return "resetstream";
     case DP_MSG_INTERVAL:
         return "interval";
     case DP_MSG_LASER_TRAIL:
@@ -301,6 +304,8 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_SOFT_RESET";
     case DP_MSG_PRIVATE_CHAT:
         return "DP_MSG_PRIVATE_CHAT";
+    case DP_MSG_RESET_STREAM:
+        return "DP_MSG_RESET_STREAM";
     case DP_MSG_INTERVAL:
         return "DP_MSG_INTERVAL";
     case DP_MSG_LASER_TRAIL:
@@ -456,6 +461,9 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     }
     else if (DP_str_equal(type_name, "privatechat")) {
         return DP_MSG_PRIVATE_CHAT;
+    }
+    else if (DP_str_equal(type_name, "resetstream")) {
+        return DP_MSG_RESET_STREAM;
     }
     else if (DP_str_equal(type_name, "interval")) {
         return DP_MSG_INTERVAL;
@@ -664,6 +672,8 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
             return DP_msg_soft_reset_deserialize(context_id, buf, length);
         case DP_MSG_PRIVATE_CHAT:
             return DP_msg_private_chat_deserialize(context_id, buf, length);
+        case DP_MSG_RESET_STREAM:
+            return DP_msg_reset_stream_deserialize(context_id, buf, length);
         case DP_MSG_INTERVAL:
             return DP_msg_interval_deserialize(context_id, buf, length);
         case DP_MSG_LASER_TRAIL:
@@ -832,6 +842,8 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return DP_msg_soft_reset_parse(context_id, reader);
     case DP_MSG_PRIVATE_CHAT:
         return DP_msg_private_chat_parse(context_id, reader);
+    case DP_MSG_RESET_STREAM:
+        return DP_msg_reset_stream_parse(context_id, reader);
     case DP_MSG_INTERVAL:
         return DP_msg_interval_parse(context_id, reader);
     case DP_MSG_LASER_TRAIL:
@@ -2181,6 +2193,118 @@ const char *DP_msg_private_chat_message(const DP_MsgPrivateChat *mpc,
 size_t DP_msg_private_chat_message_len(const DP_MsgPrivateChat *mpc)
 {
     return mpc->message_len;
+}
+
+
+/* DP_MSG_RESET_STREAM */
+
+struct DP_MsgResetStream {
+    uint16_t data_size;
+    unsigned char data[];
+};
+
+static size_t msg_reset_stream_payload_length(DP_Message *msg)
+{
+    DP_MsgResetStream *mrs = DP_message_internal(msg);
+    return mrs->data_size;
+}
+
+static size_t msg_reset_stream_serialize_payload(DP_Message *msg,
+                                                 unsigned char *data)
+{
+    DP_MsgResetStream *mrs = DP_message_internal(msg);
+    size_t written = 0;
+    written += write_bytes(mrs->data, mrs->data_size, data + written);
+    DP_ASSERT(written == msg_reset_stream_payload_length(msg));
+    return written;
+}
+
+static bool msg_reset_stream_write_payload_text(DP_Message *msg,
+                                                DP_TextWriter *writer)
+{
+    DP_MsgResetStream *mrs = DP_message_internal(msg);
+    return DP_text_writer_write_base64(writer, "data", mrs->data,
+                                       mrs->data_size);
+}
+
+static bool msg_reset_stream_equals(DP_Message *DP_RESTRICT msg,
+                                    DP_Message *DP_RESTRICT other)
+{
+    DP_MsgResetStream *a = DP_message_internal(msg);
+    DP_MsgResetStream *b = DP_message_internal(other);
+    return a->data_size == b->data_size
+        && memcmp(a->data, b->data, DP_uint16_to_size(a->data_size)) == 0;
+}
+
+static const DP_MessageMethods msg_reset_stream_methods = {
+    msg_reset_stream_payload_length,
+    msg_reset_stream_serialize_payload,
+    msg_reset_stream_write_payload_text,
+    msg_reset_stream_equals,
+};
+
+DP_Message *DP_msg_reset_stream_new(unsigned int context_id,
+                                    void (*set_data)(size_t, unsigned char *,
+                                                     void *),
+                                    size_t data_size, void *data_user)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_RESET_STREAM, context_id, &msg_reset_stream_methods,
+        DP_FLEX_SIZEOF(DP_MsgResetStream, data, data_size));
+    DP_MsgResetStream *mrs = DP_message_internal(msg);
+    mrs->data_size = DP_size_to_uint16(data_size);
+    if (set_data) {
+        set_data(mrs->data_size, mrs->data, data_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_reset_stream_deserialize(unsigned int context_id,
+                                            const unsigned char *buffer,
+                                            size_t length)
+{
+    if (length > 65535) {
+        DP_error_set("Wrong length for resetstream message; "
+                     "expected between 0 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    size_t data_bytes = length - read;
+    uint16_t data_size = DP_size_to_uint16(data_bytes);
+    void *data_user = (void *)(buffer + read);
+    return DP_msg_reset_stream_new(context_id, read_bytes, data_size,
+                                   data_user);
+}
+
+DP_Message *DP_msg_reset_stream_parse(unsigned int context_id,
+                                      DP_TextReader *reader)
+{
+    size_t data_size;
+    DP_TextReaderParseParams data_params =
+        DP_text_reader_get_base64_string(reader, "data", &data_size);
+    return DP_msg_reset_stream_new(context_id, DP_text_reader_parse_base64,
+                                   data_size, &data_params);
+}
+
+DP_MsgResetStream *DP_msg_reset_stream_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_RESET_STREAM);
+}
+
+const unsigned char *DP_msg_reset_stream_data(const DP_MsgResetStream *mrs,
+                                              size_t *out_size)
+{
+    DP_ASSERT(mrs);
+    if (out_size) {
+        *out_size = mrs->data_size;
+    }
+    return mrs->data;
+}
+
+size_t DP_msg_reset_stream_data_size(const DP_MsgResetStream *mrs)
+{
+    return mrs->data_size;
 }
 
 

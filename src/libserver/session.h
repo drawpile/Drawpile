@@ -5,7 +5,6 @@
 #include "libserver/jsonapi.h"
 #include "libserver/sessionhistory.h"
 #include "libshared/net/message.h"
-#include "libshared/net/protover.h"
 #include <QDateTime>
 #include <QElapsedTimer>
 #include <QHash>
@@ -39,6 +38,9 @@ public:
 	//! State of the session
 	enum class State { Initialization, Running, Reset, Shutdown };
 
+	enum class ResetCapability { GzipStream = 1 << 0 };
+	Q_DECLARE_FLAGS(ResetCapabilities, ResetCapability)
+
 	//! Information about a user who has since logged out
 	struct PastClient {
 		int id;
@@ -47,6 +49,14 @@ public:
 		QHostAddress peerAddress;
 		QString sid;
 		bool isBannable;
+	};
+
+	struct AutoResetResponseParams {
+		int ctxId;
+		ResetCapabilities capabilities;
+		int osQuality;
+		qreal netQuality;
+		qreal averagePing;
 	};
 
 	~Session() override;
@@ -269,10 +279,19 @@ public:
 
 	// Resetting related functions, called via opcommands
 	void resetSession(int resetter);
-	virtual void readyToAutoReset(int ctxId) = 0;
+	virtual void readyToAutoReset(
+		const AutoResetResponseParams &params, const QString &payload) = 0;
 	void handleInitBegin(int ctxId);
 	void handleInitComplete(int ctxId);
 	void handleInitCancel(int ctxId);
+
+	virtual StreamResetStartResult
+	handleStreamResetStart(int ctxId, const QString &correlator) = 0;
+
+	virtual StreamResetAbortResult handleStreamResetAbort(int ctxId) = 0;
+
+	virtual StreamResetPrepareResult
+	handleStreamResetFinish(int ctxId, int expectedMessageCount) = 0;
 
 	/**
 	 * @brief Grant or revoke OP status of a user
@@ -391,16 +410,30 @@ protected:
 	//! Add a message to the session history
 	virtual void addToHistory(const net::Message &msg) = 0;
 
+	//! Session history was just initialized after hosting
+	virtual void onSessionInitialized() = 0;
+
 	//! Session history was just reset
 	virtual void onSessionReset() = 0;
 
 	//! A regular (non-hosting) client just joined
 	virtual void onClientJoin(Client *client, bool host) = 0;
 
+	//! A client just left, clean up reset states and similar
+	virtual void onClientLeave(Client *client);
+
+	//! Client has just been deopped, cancel streamed resets and such
+	virtual void onClientDeop(Client *client) = 0;
+
+	//! A streamed reset message was received
+	virtual void onResetStream(Client &client, const net::Message &msg) = 0;
+
 	//! This message was just added to session history
 	void addedToHistory(const net::Message &msg);
 
 	void switchState(State newstate);
+
+	virtual void onStateChanged() = 0;
 
 	//! Get the user join, SessionOwner, etc. messages that should be prepended
 	//! to a reset image
@@ -482,6 +515,8 @@ private:
 namespace diagnostic_marker_private {
 class [[maybe_unused]] AbstractSessionMarker : Session {};
 }
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Session::ResetCapabilities)
 
 }
 

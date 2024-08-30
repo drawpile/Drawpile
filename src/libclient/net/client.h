@@ -261,7 +261,11 @@ signals:
 	void bytesReceived(int);
 	void bytesSent(int);
 	void lagMeasured(qint64);
-	void autoresetRequested(int maxSize, bool query);
+	void autoresetQueried(int maxSize, const QString &payload);
+	void autoresetRequested(
+		int maxSize, const QString &correlator, const QString &stream);
+	void streamResetStarted(const QString &correlator);
+	void streamResetProgressed(bool cancel);
 	void serverStatusUpdate(int historySize);
 
 	void userInfoRequested(int userId);

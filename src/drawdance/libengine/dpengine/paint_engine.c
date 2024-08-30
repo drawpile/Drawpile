@@ -153,6 +153,10 @@ struct DP_PaintEngine {
         void *get_time_ms_user;
     } record;
     DP_PaintEnginePlayback playback;
+    struct {
+        DP_PaintEngineStreamResetStartFn start_fn;
+        void *user;
+    } stream_reset;
 };
 
 
@@ -339,6 +343,24 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
             DP_warn("Error clearing local fork: %s", DP_error());
         }
         break;
+    case DP_MSG_INTERNAL_TYPE_STREAM_RESET_START: {
+        DP_PaintEngineStreamResetStartFn stream_reset_start_fn =
+            pe->stream_reset.start_fn;
+        if (stream_reset_start_fn) {
+            size_t correlator_length;
+            const char *correlator =
+                DP_msg_internal_stream_reset_start_correlator(
+                    mi, &correlator_length);
+            stream_reset_start_fn(
+                pe->stream_reset.user,
+                DP_canvas_history_stream_start_state_inc(pe->ch, dc),
+                correlator_length, correlator);
+        }
+        else {
+            DP_warn("No stream reset start callback set");
+        }
+        break;
+    }
     default:
         DP_warn("Unhandled internal message type %d", (int)type);
         break;
@@ -663,7 +685,9 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     bool want_canvas_history_dump, const char *canvas_history_dump_dir,
     DP_RecorderGetTimeMsFn get_time_ms_fn, void *get_time_ms_user,
     DP_Player *player_or_null, DP_PaintEnginePlaybackFn playback_fn,
-    DP_PaintEngineDumpPlaybackFn dump_playback_fn, void *playback_user)
+    DP_PaintEngineDumpPlaybackFn dump_playback_fn, void *playback_user,
+    DP_PaintEngineStreamResetStartFn stream_reset_start_fn,
+    void *stream_reset_user)
 {
     DP_PaintEngine *pe = DP_malloc(sizeof(*pe));
 
@@ -731,6 +755,8 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->playback.fn = playback_fn;
     pe->playback.dump_fn = dump_playback_fn;
     pe->playback.user = playback_user;
+    pe->stream_reset.start_fn = stream_reset_start_fn;
+    pe->stream_reset.user = stream_reset_user;
     return pe;
 }
 

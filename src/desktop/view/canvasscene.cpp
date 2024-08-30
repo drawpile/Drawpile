@@ -497,6 +497,35 @@ void CanvasScene::setCatchupProgress(int percent)
 	setCatchupPosition();
 }
 
+void CanvasScene::setStreamResetProgress(int percent)
+{
+	if(percent > 100) {
+		if(m_streamResetNotice) {
+			m_streamResetNotice->setText(getStreamResetProgressText(percent));
+			if(m_streamResetNotice->persist() < 0.0) {
+				m_streamResetNotice->setPersist(NOTICE_PERSIST);
+			}
+		}
+	} else {
+		if(m_streamResetNotice) {
+			m_streamResetNotice->setText(getStreamResetProgressText(percent));
+			m_streamResetNotice->setPersist(-1.0);
+		} else {
+			m_streamResetNotice =
+				new NoticeItem(getStreamResetProgressText(percent));
+			addSceneItem(m_streamResetNotice);
+		}
+		setStreamResetNoticePosition();
+	}
+}
+
+QString CanvasScene::getStreamResetProgressText(int percent)
+{
+	return percent < 0
+			   ? tr("Compressing canvas…")
+			   : tr("Uploading canvas %1%").arg(qBound(0, percent, 100));
+}
+
 int CanvasScene::checkHover(const QPointF &scenePos, bool *outWasHovering)
 {
 	ToggleItem::Action action = ToggleItem::Action::None;
@@ -538,6 +567,9 @@ void CanvasScene::onSceneRectChanged()
 	}
 	if(m_catchup) {
 		setCatchupPosition();
+	}
+	if(m_streamResetNotice) {
+		setStreamResetNoticePosition();
 	}
 	setTogglePositions();
 }
@@ -773,6 +805,18 @@ void CanvasScene::setCatchupPosition()
 			catchupBounds.height() + NOTICE_OFFSET));
 }
 
+void CanvasScene::setStreamResetNoticePosition()
+{
+	qreal catchupOffset =
+		m_catchup ? m_catchup->boundingRect().height() + NOTICE_OFFSET : 0.0;
+	QRectF streamResetNoticeBounds = m_streamResetNotice->boundingRect();
+	m_streamResetNotice->updatePosition(
+		sceneRect().bottomRight() -
+		QPointF(
+			streamResetNoticeBounds.width() + NOTICE_OFFSET,
+			streamResetNoticeBounds.height() + NOTICE_OFFSET + catchupOffset));
+}
+
 void CanvasScene::setTogglePositions()
 {
 	for(ToggleItem *ti : m_toggleItems) {
@@ -812,6 +856,11 @@ void CanvasScene::advanceAnimations()
 	if(m_catchup && !m_catchup->animationStep(dt)) {
 		delete m_catchup;
 		m_catchup = nullptr;
+	}
+
+	if(m_streamResetNotice && !m_streamResetNotice->animationStep(dt)) {
+		delete m_streamResetNotice;
+		m_streamResetNotice = nullptr;
 	}
 
 	m_animationElapsedTimer.restart();

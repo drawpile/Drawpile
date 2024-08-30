@@ -155,9 +155,9 @@ struct Client::Private {
 	bool isAuthenticated = false;
 	bool isMuted = false;
 	bool isHoldLocked = false;
-	bool isAwaitingReset = false;
 	bool isBanTriggered = false;
 	bool isGhost = false;
+	ResetFlags resetFlags = ResetFlag::None;
 	BanResult ban = BanResult::notBanned();
 
 	Private(ClientSocket *socket_, ServerLog *logger_)
@@ -661,14 +661,14 @@ QHostAddress Client::peerAddress() const
 
 void Client::sendDirectMessage(const net::Message &msg)
 {
-	if(!d->isAwaitingReset || msg.isControl()) {
+	if(!isAwaitingReset() || msg.isControl()) {
 		d->msgqueue->send(msg);
 	}
 }
 
 void Client::sendDirectMessages(const net::MessageList &msgs)
 {
-	if(d->isAwaitingReset) {
+	if(isAwaitingReset()) {
 		for(const net::Message &msg : msgs) {
 			if(msg.isControl()) {
 				d->msgqueue->send(msg);
@@ -819,14 +819,20 @@ bool Client::isHoldLocked() const
 	return d->isHoldLocked;
 }
 
-void Client::setAwaitingReset(bool awaiting)
+void Client::setResetFlags(ResetFlags resetFlags)
 {
-	d->isAwaitingReset = awaiting;
+	d->resetFlags = resetFlags;
+}
+
+Client::ResetFlags Client::resetFlags() const
+{
+	return d->resetFlags;
 }
 
 bool Client::isAwaitingReset() const
 {
-	return d->isAwaitingReset;
+	return d->resetFlags.testFlag(ResetFlag::Awaiting) &&
+		   !d->resetFlags.testFlag(ResetFlag::Streaming);
 }
 
 bool Client::isWebSocket() const

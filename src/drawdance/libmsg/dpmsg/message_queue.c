@@ -23,6 +23,7 @@
 #include "message.h"
 #include <dpcommon/common.h>
 #include <dpcommon/queue.h>
+#include <dpcommon/vector.h>
 
 
 #define ELEMENT_SIZE sizeof(DP_Message *)
@@ -78,4 +79,41 @@ DP_Message *DP_message_queue_shift(DP_Queue *queue)
     else {
         return NULL;
     }
+}
+
+
+void DP_message_vector_init(DP_Vector *vec, size_t initial_capacity)
+{
+    DP_ASSERT(vec);
+    DP_vector_init(vec, initial_capacity, ELEMENT_SIZE);
+}
+
+void DP_message_vector_dispose(DP_Vector *vec)
+{
+    DP_ASSERT(vec);
+    DP_vector_clear_dispose(vec, ELEMENT_SIZE, dispose_message);
+}
+
+DP_Message *DP_message_vector_push_noinc(DP_Vector *vec, DP_Message *msg)
+{
+    DP_ASSERT(vec);
+    DP_ASSERT(msg);
+    DP_Message **pp = DP_vector_push(vec, ELEMENT_SIZE);
+    *pp = msg;
+    return msg;
+}
+
+DP_Message *DP_message_vector_push_inc(DP_Vector *vec, DP_Message *msg)
+{
+    DP_ASSERT(vec);
+    DP_ASSERT(msg);
+    return DP_message_vector_push_noinc(vec, DP_message_incref(msg));
+}
+
+DP_Message *DP_message_vector_at(DP_Vector *vec, size_t index)
+{
+    DP_ASSERT(vec);
+    DP_ASSERT(index < vec->used);
+    DP_Message **pp = DP_vector_at(vec, ELEMENT_SIZE, index);
+    return *pp;
 }

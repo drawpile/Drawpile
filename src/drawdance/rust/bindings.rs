@@ -100,6 +100,9 @@ pub const DP_MSG_SOFT_RESET_STATIC_LENGTH: u32 = 0;
 pub const DP_MSG_PRIVATE_CHAT_STATIC_LENGTH: u32 = 2;
 pub const DP_MSG_PRIVATE_CHAT_MESSAGE_MIN_LEN: u32 = 0;
 pub const DP_MSG_PRIVATE_CHAT_MESSAGE_MAX_LEN: u32 = 65533;
+pub const DP_MSG_RESET_STREAM_STATIC_LENGTH: u32 = 0;
+pub const DP_MSG_RESET_STREAM_DATA_MIN_SIZE: u32 = 0;
+pub const DP_MSG_RESET_STREAM_DATA_MAX_SIZE: u32 = 65535;
 pub const DP_MSG_INTERVAL_STATIC_LENGTH: u32 = 2;
 pub const DP_MSG_LASER_TRAIL_STATIC_LENGTH: u32 = 5;
 pub const DP_MSG_MOVE_POINTER_STATIC_LENGTH: u32 = 8;
@@ -4925,6 +4928,12 @@ extern "C" {
     );
 }
 extern "C" {
+    pub fn DP_canvas_history_stream_start_state_inc(
+        ch: *mut DP_CanvasHistory,
+        dc: *mut DP_DrawContext,
+    ) -> *mut DP_CanvasState;
+}
+extern "C" {
     pub fn DP_canvas_history_undo_depth_limit(ch: *mut DP_CanvasHistory) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -6397,6 +6406,14 @@ pub type DP_PaintEngineDumpPlaybackFn = ::std::option::Option<
         chs: *mut DP_CanvasHistorySnapshot,
     ),
 >;
+pub type DP_PaintEngineStreamResetStartFn = ::std::option::Option<
+    unsafe extern "C" fn(
+        user: *mut ::std::os::raw::c_void,
+        cs: *mut DP_CanvasState,
+        correlator_length: usize,
+        correlator: *const ::std::os::raw::c_char,
+    ),
+>;
 pub type DP_PaintEngineAclsChangedFn = ::std::option::Option<
     unsafe extern "C" fn(
         user: *mut ::std::os::raw::c_void,
@@ -6589,6 +6606,8 @@ extern "C" {
         playback_fn: DP_PaintEnginePlaybackFn,
         dump_playback_fn: DP_PaintEngineDumpPlaybackFn,
         playback_user: *mut ::std::os::raw::c_void,
+        stream_reset_start_fn: DP_PaintEngineStreamResetStartFn,
+        stream_reset_user: *mut ::std::os::raw::c_void,
     ) -> *mut DP_PaintEngine;
 }
 extern "C" {
@@ -8480,6 +8499,7 @@ pub const DP_MSG_CHAT: DP_MessageType = 35;
 pub const DP_MSG_TRUSTED_USERS: DP_MessageType = 36;
 pub const DP_MSG_SOFT_RESET: DP_MessageType = 37;
 pub const DP_MSG_PRIVATE_CHAT: DP_MessageType = 38;
+pub const DP_MSG_RESET_STREAM: DP_MessageType = 39;
 pub const DP_MSG_INTERVAL: DP_MessageType = 64;
 pub const DP_MSG_LASER_TRAIL: DP_MessageType = 65;
 pub const DP_MSG_MOVE_POINTER: DP_MessageType = 66;
@@ -8998,6 +9018,50 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_msg_private_chat_message_len(mpc: *const DP_MsgPrivateChat) -> usize;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_MsgResetStream {
+    _unused: [u8; 0],
+}
+extern "C" {
+    pub fn DP_msg_reset_stream_new(
+        context_id: ::std::os::raw::c_uint,
+        set_data: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: usize,
+                arg2: *mut ::std::os::raw::c_uchar,
+                arg3: *mut ::std::os::raw::c_void,
+            ),
+        >,
+        data_size: usize,
+        data_user: *mut ::std::os::raw::c_void,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_reset_stream_deserialize(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_reset_stream_parse(
+        context_id: ::std::os::raw::c_uint,
+        reader: *mut DP_TextReader,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_reset_stream_cast(msg: *mut DP_Message) -> *mut DP_MsgResetStream;
+}
+extern "C" {
+    pub fn DP_msg_reset_stream_data(
+        mrs: *const DP_MsgResetStream,
+        out_size: *mut usize,
+    ) -> *const ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn DP_msg_reset_stream_data_size(mrs: *const DP_MsgResetStream) -> usize;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

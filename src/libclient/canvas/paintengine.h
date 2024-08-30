@@ -268,6 +268,8 @@ signals:
 	void playbackAt(long long pos);
 	void
 	dumpPlaybackAt(long long pos, const drawdance::CanvasHistorySnapshot &chs);
+	void streamResetStarted(
+		const drawdance::CanvasState &cs, const QString &correlator);
 	void caughtUpTo(int progress);
 	void resetLockSet(bool locked);
 	void recorderStateChanged(bool started);
@@ -297,6 +299,9 @@ private:
 	static void onPlayback(void *user, long long position);
 	static void onDumpPlayback(
 		void *user, long long position, DP_CanvasHistorySnapshot *chs);
+	static void onStreamResetStart(
+		void *user, DP_CanvasState *cs, size_t correlatorLength,
+		const char *correlator);
 	static void onAclsChanged(void *user, int aclChangeFlags);
 	static void onLaserTrail(
 		void *user, unsigned int contextId, int persistence, uint32_t color);

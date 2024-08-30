@@ -25,9 +25,11 @@ public:
 	 * The returned index in the index of the last history message that
 	 * is (or was) in the client's upload queue.
 	 */
-	int historyPosition() const { return m_historyPosition; }
+	long long historyPosition() const { return m_historyPosition; }
 
-	void setHistoryPosition(int pos) { m_historyPosition = pos; }
+	void setHistoryPosition(long long pos) { m_historyPosition = pos; }
+
+	void addToHistoryPosition(long long offset) { m_historyPosition += offset; }
 
 signals:
 	void thinServerClientDestroyed(ThinServerClient *thisClient);
@@ -38,7 +40,7 @@ public slots:
 private:
 	void connectSendNextHistoryBatch();
 
-	int m_historyPosition;
+	long long m_historyPosition;
 };
 
 }

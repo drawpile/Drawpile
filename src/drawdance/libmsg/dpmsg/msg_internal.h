@@ -38,6 +38,7 @@ typedef enum DP_MsgInternalType {
     DP_MSG_INTERNAL_TYPE_DUMP_COMMAND,
     DP_MSG_INTERNAL_TYPE_LOCAL_FORK_CLEAR,
     DP_MSG_INTERNAL_TYPE_FLUSH,
+    DP_MSG_INTERNAL_TYPE_STREAM_RESET_START,
     DP_MSG_INTERNAL_TYPE_COUNT,
 } DP_MsgInternalType;
 
@@ -74,6 +75,10 @@ DP_Message *DP_msg_internal_local_fork_clear_new(unsigned int context_id);
 
 DP_Message *DP_msg_internal_flush_new(unsigned int context_id);
 
+DP_Message *DP_msg_internal_stream_reset_start_new(unsigned int context_id,
+                                                   size_t correlator_length,
+                                                   const char *correlator);
+
 DP_MsgInternal *DP_msg_internal_cast(DP_Message *msg);
 
 
@@ -95,6 +100,9 @@ int DP_msg_internal_dump_command_type(DP_MsgInternal *mi);
 
 DP_Message **DP_msg_internal_dump_command_messages(DP_MsgInternal *mi,
                                                    int *out_count);
+
+const char *DP_msg_internal_stream_reset_start_correlator(DP_MsgInternal *mi,
+                                                          size_t *out_length);
 
 
 #endif

@@ -147,6 +147,8 @@ public slots:
 
 	void setCatchupProgress(int percent);
 
+	void setStreamResetProgress(int percent);
+
 signals:
 	//! Canvas size has just changed
 	void canvasResized(int xoffset, int yoffset, const QSize &oldSize);
@@ -180,6 +182,7 @@ private:
 	void setLockNoticePosition();
 	void setToolNoticePosition(bool initial);
 	void setCatchupPosition();
+	void setStreamResetNoticePosition();
 
 	//! The actual canvas model
 	canvas::CanvasModel *m_model;
@@ -206,6 +209,7 @@ private:
 	NoticeItem *m_lockNotice;
 	NoticeItem *m_toolNotice;
 	CatchupItem *m_catchup;
+	NoticeItem *m_streamResetNotice;
 	QVector<ToggleItem *> m_toggleItems;
 
 	OutlineItem *m_outlineItem;

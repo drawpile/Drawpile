@@ -18,6 +18,7 @@ public:
 
 	bool setText(const QString &text);
 
+	qreal persist() const { return m_persist; }
 	bool setPersist(qreal seconds);
 
 	bool setOpacity(qreal opacity);

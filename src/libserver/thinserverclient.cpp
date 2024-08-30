@@ -8,7 +8,7 @@ namespace server {
 ThinServerClient::ThinServerClient(
 	QTcpSocket *socket, ServerLog *logger, QObject *parent)
 	: Client(socket, logger, false, parent)
-	, m_historyPosition(-1)
+	, m_historyPosition(-1LL)
 {
 	connectSendNextHistoryBatch();
 }
@@ -18,7 +18,7 @@ ThinServerClient::ThinServerClient(
 	QWebSocket *socket, const QHostAddress &ip, ServerLog *logger,
 	QObject *parent)
 	: Client(socket, ip, logger, false, parent)
-	, m_historyPosition(-1)
+	, m_historyPosition(-1LL)
 {
 	connectSendNextHistoryBatch();
 }
@@ -31,21 +31,25 @@ ThinServerClient::~ThinServerClient()
 
 void ThinServerClient::sendNextHistoryBatch()
 {
+	ThinSession *s = static_cast<ThinSession *>(session());
+	net::MessageQueue *mq = messageQueue();
 	// Only enqueue messages for uploading when upload queue is empty
 	// and session is in a normal running state.
 	// (We'll get another messagesAvailable signal when ready)
-	if(session() == nullptr || messageQueue()->isUploading() ||
-	   session()->state() != Session::State::Running)
-		return;
+	if(s && !mq->isUploading() && s->state() == Session::State::Running) {
+		// There may be a streamed reset pending, waiting for clients to catch
+		// up far enough. If the streamed reset is applies, it will change the
+		// history position of all clients, so don't touch it before this point!
+		s->resolvePendingStreamedReset();
 
-	net::MessageList batch;
-	int batchLast;
-	std::tie(batch, batchLast) =
-		session()->history()->getBatch(m_historyPosition);
-	m_historyPosition = batchLast;
-	messageQueue()->sendMultiple(batch.size(), batch.constData());
+		net::MessageList batch;
+		long long batchLast;
+		std::tie(batch, batchLast) = s->history()->getBatch(m_historyPosition);
+		m_historyPosition = batchLast;
+		mq->sendMultiple(batch.size(), batch.constData());
 
-	static_cast<ThinSession *>(session())->cleanupHistoryCache();
+		s->cleanupHistoryCache();
+	}
 }
 
 void ThinServerClient::connectSendNextHistoryBatch()

@@ -41,7 +41,7 @@ bool NoticeItem::setPersist(qreal seconds)
 	bool changed =
 		seconds != m_persist && (seconds < FADEOUT || m_persist < FADEOUT);
 	m_persist = seconds;
-	setOpacity(qBound(0.0, m_persist / FADEOUT, 1.0));
+	setOpacity(m_persist < 0.0 ? 1.0 : qBound(0.0, m_persist / FADEOUT, 1.0));
 	if(changed) {
 		refresh();
 	}

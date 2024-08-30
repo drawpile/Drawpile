@@ -16,6 +16,7 @@ extern "C" {
 #include "libclient/drawdance/viewmode.h"
 #include "libclient/net/message.h"
 #include "libclient/settings.h"
+#include "libshared/util/qtcompat.h"
 #include <QPainter>
 #include <QSet>
 #include <QTimer>
@@ -61,7 +62,8 @@ PaintEngine::PaintEngine(
 		  m_useTileCache ? PaintEngine::onRenderResizeTileCache
 						 : PaintEngine::onRenderResizePixmap,
 		  this, ON_SOFT_RESET_FN, this, PaintEngine::onPlayback,
-		  PaintEngine::onDumpPlayback, this)
+		  PaintEngine::onDumpPlayback, this, PaintEngine::onStreamResetStart,
+		  this)
 	, m_fps{fps}
 	, m_timerId{0}
 	, m_cache{}
@@ -128,7 +130,8 @@ void PaintEngine::reset(
 		m_useTileCache ? PaintEngine::onRenderResizeTileCache
 					   : PaintEngine::onRenderResizePixmap,
 		this, ON_SOFT_RESET_FN, this, PaintEngine::onPlayback,
-		PaintEngine::onDumpPlayback, this, canvasState, player);
+		PaintEngine::onDumpPlayback, this, PaintEngine::onStreamResetStart,
+		this, canvasState, player);
 	DP_mutex_lock(m_cacheMutex);
 	if(m_useTileCache) {
 		m_tileCache.clear();
@@ -814,6 +817,18 @@ void PaintEngine::onDumpPlayback(
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	emit pe->dumpPlaybackAt(
 		position, drawdance::CanvasHistorySnapshot::inc(chs));
+}
+
+void PaintEngine::onStreamResetStart(
+	void *user, DP_CanvasState *cs, size_t correlatorLength,
+	const char *correlator)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->streamResetStarted(
+		drawdance::CanvasState::noinc(cs),
+		correlator ? QString::fromUtf8(QByteArray::fromRawData(
+						 correlator, compat::sizetype(correlatorLength)))
+				   : QString());
 }
 
 void PaintEngine::onAclsChanged(void *user, int aclChangeFlags)

@@ -168,6 +168,14 @@ PrivateChat:
         - oflags u8
         - message utf8
 
+ResetStream:
+    id: 39
+    comment: |
+             Streamed chunk of session reset messages. The client and server
+             will negotiate support and compression algorithm.
+    fields:
+        - data bytes
+
 
 # Meta messages (opaque)
 

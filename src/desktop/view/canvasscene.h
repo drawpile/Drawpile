@@ -109,6 +109,8 @@ public:
 
 	bool hasCatchup() const;
 	void setCatchupProgress(int percent);
+	void setStreamResetProgress(int percent);
+	static QString getStreamResetProgressText(int percent);
 
 	int checkHover(const QPointF &scenePos, bool *outWasHovering = nullptr);
 	void removeHover();
@@ -140,6 +142,7 @@ private:
 	void setLockNoticePosition();
 	void setToolNoticePosition(bool initial);
 	void setCatchupPosition();
+	void setStreamResetNoticePosition();
 	void setTogglePositions();
 
 	void advanceAnimations();
@@ -183,6 +186,7 @@ private:
 	NoticeItem *m_toolNotice = nullptr;
 
 	CatchupItem *m_catchup = nullptr;
+	NoticeItem *m_streamResetNotice = nullptr;
 
 	QVector<ToggleItem *> m_toggleItems;
 

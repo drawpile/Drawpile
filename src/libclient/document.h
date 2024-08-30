@@ -14,6 +14,7 @@ extern "C" {
 #include "libclient/net/client.h"
 #include "libclient/net/message.h"
 #include <QObject>
+#include <QQueue>
 #include <QStringListModel>
 #ifdef Q_OS_ANDROID
 #	include <QMimeData>
@@ -90,6 +91,8 @@ class Document final : public QObject, public net::Client::CommandHandler {
 
 	Q_OBJECT
 public:
+	enum class StreamResetState { None, Generating, Streaming };
+
 	explicit Document(
 		int canvasImplementation, libclient::settings::Settings &settings,
 		QObject *parent = nullptr);
@@ -186,6 +189,11 @@ public:
 	bool isSessionOutOfSpace() const { return m_sessionOutOfSpace; }
 	bool isPreparingReset() const { return m_preparingReset; }
 
+	bool isStreamingReset() const
+	{
+		return m_streamResetState != StreamResetState::None;
+	}
+
 	void setRecordOnConnect(const QString &filename)
 	{
 		m_recordOnConnect = filename;
@@ -235,6 +243,7 @@ signals:
 	void sessionResetState(const drawdance::CanvasState &canvasState);
 
 	void catchupProgress(int percent);
+	void streamResetProgress(int percent);
 
 	void canvasSaveStarted();
 	void canvasSaved(const QString &errorMessage);
@@ -245,6 +254,9 @@ signals:
 	void templateExported(const QString &errorMessage);
 
 	void justInTimeSnapshotGenerated();
+	void buildStreamResetImageFinished(
+		const net::MessageList &image, int messageCount,
+		const QString &correlator);
 
 public slots:
 	// Convenience slots
@@ -295,8 +307,15 @@ private slots:
 	void onSessionResetted();
 	void onSessionOutOfSpace();
 
+	void onLagMeasured(qint64 msec);
 	void onSessionConfChanged(const QJsonObject &config);
-	void onAutoresetRequested(int maxSize, bool query);
+	void onAutoresetQueried(int maxSize, const QString &payload);
+	void onAutoresetRequested(
+		int maxSize, const QString &correlator, const QString &stream);
+	void onStreamResetStarted(const QString &correlator);
+	void onStreamResetProgressed(bool cancel);
+	void buildStreamResetImage(
+		const drawdance::CanvasState &canvasState, const QString &correlator);
 	void onMoveLayerRequested(
 		int sourceId, int targetId, bool intoGroup, bool below);
 
@@ -339,8 +358,21 @@ private:
 
 	void autosave();
 
+	bool shouldRespondToAutoReset() const;
 	void generateJustInTimeSnapshot();
 	void sendResetSnapshot();
+
+	net::MessageList generateStreamSnapshot(
+		const drawdance::CanvasState &canvasState,
+		const net::MessageList &metadata, int prepended,
+		int &outMessageCount) const;
+
+	void startSendingStreamResetSnapshot(
+		const net::MessageList &image, int messageCount,
+		const QString &correlator);
+	void sendNextStreamResetMessage();
+	void setStreamResetState(StreamResetState state, int messageCount = 0);
+	void emitStreamResetProgress();
 
 	QString m_currentPath;
 	DP_SaveImageType m_currentType = DP_SAVE_IMAGE_UNKNOWN;
@@ -348,7 +380,9 @@ private:
 
 	const int m_canvasImplementation;
 	net::MessageList m_resetstate;
+	net::MessageList m_streamResetImage;
 	net::MessageList m_messageBuffer;
+	QQueue<qint64> m_pingHistory;
 
 	canvas::CanvasModel *m_canvas;
 	tools::ToolController *m_toolctrl;
@@ -361,6 +395,7 @@ private:
 
 	QString m_originalRecordingFilename;
 	QString m_recordOnConnect;
+	QString m_autoResetCorrelator;
 
 	bool m_dirty;
 	bool m_autosave;
@@ -387,6 +422,9 @@ private:
 	int m_sessionResetThreshold;
 	int m_baseResetThreshold;
 	int m_sessionIdleTimeLimit;
+	int m_streamResetMessageCount = 0;
+	int m_streamResetImageOriginalCount = 0;
+	StreamResetState m_streamResetState = StreamResetState::None;
 
 	bool m_sessionOutOfSpace;
 	bool m_preparingReset;

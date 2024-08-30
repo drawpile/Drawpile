@@ -147,6 +147,11 @@ void ViewWrapper::setCatchupProgress(int percent, bool force)
 	}
 }
 
+void ViewWrapper::setStreamResetProgress(int percent)
+{
+	m_scene->setStreamResetProgress(percent);
+}
+
 void ViewWrapper::setSaveInProgress(bool saveInProgress)
 {
 	m_controller->setSaveInProgress(saveInProgress);

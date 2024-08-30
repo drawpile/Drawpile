@@ -18,14 +18,15 @@ public:
 		const protocol::ProtocolVersion &version, const QString &founder,
 		QObject *parent = nullptr);
 
-	std::tuple<net::MessageList, int> getBatch(int after) const override;
+	std::tuple<net::MessageList, long long>
+	getBatch(long long after) const override;
 
 	void terminate() override
 	{
 		// nothing to do
 	}
 
-	void cleanupBatches(int) override
+	void cleanupBatches(long long) override
 	{
 		// no caching, nothing to do
 	}
@@ -53,14 +54,14 @@ public:
 	void setTitle(const QString &title) override { m_title = title; }
 	Flags flags() const override { return m_flags; }
 	void setFlags(Flags f) override { m_flags = f; }
-	void setAutoResetThreshold(uint limit) override
+	void setAutoResetThreshold(size_t limit) override
 	{
 		if(sizeLimit() == 0)
 			m_autoReset = limit;
 		else
-			m_autoReset = qMin(uint(sizeLimit() * 0.9), limit);
+			m_autoReset = qMin(size_t(sizeLimit() * 0.9), limit);
 	}
-	uint autoResetThreshold() const override { return m_autoReset; }
+	size_t autoResetThreshold() const override { return m_autoReset; }
 	int nextCatchupKey() override;
 
 	void addAnnouncement(const QString &url) override
@@ -84,9 +85,17 @@ protected:
 		const QString &, const QString &) override
 	{ /* not persistent */
 	}
-	void historyRemoveBan(int) override
-	{ /* not persistent */
-	}
+	void historyRemoveBan(int) override { /* not persistent */ }
+
+	StreamResetStartResult
+	openResetStream(const net::MessageList &serverSideStateMessages) override;
+	StreamResetAddResult
+	addResetStreamMessage(const net::Message &msg) override;
+	StreamResetPrepareResult prepareResetStream() override;
+	bool resolveResetStream(
+		long long newFirstIndex, long long &outMessageCount,
+		size_t &outSizeInBytes, QString &outError) override;
+	void discardResetStream() override;
 
 private:
 	net::MessageList m_history;
@@ -98,9 +107,11 @@ private:
 	QByteArray m_password;
 	QByteArray m_opword;
 	int m_maxUsers;
-	uint m_autoReset;
+	size_t m_autoReset;
 	Flags m_flags;
 	int m_nextCatchupKey;
+	int m_resetStreamIndex = -1;
+	net::MessageList m_resetStream;
 };
 
 }

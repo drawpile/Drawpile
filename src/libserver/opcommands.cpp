@@ -108,8 +108,39 @@ CmdResult readyToAutoReset(
 	Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
 	Q_UNUSED(args);
-	Q_UNUSED(kwargs);
-	client->session()->readyToAutoReset(client->id());
+
+	Session::ResetCapabilities capabilities;
+	for(const QJsonValue &capability :
+		kwargs[QStringLiteral("capabilities")].toArray()) {
+		if(capability == QStringLiteral("gzip1")) {
+			capabilities.setFlag(Session::ResetCapability::GzipStream);
+		}
+	}
+
+	qreal averagePing = 0.0;
+	QJsonArray pingValues = kwargs[QStringLiteral("pings")].toArray();
+	if(!pingValues.isEmpty()) {
+		qreal totalPing = 0.0;
+		qreal pingCount = 0.0;
+		for(const QJsonValue &pingValue : pingValues) {
+			qreal ping = pingValue.toDouble();
+			if(ping > 0.0) {
+				totalPing += ping;
+				pingCount += 1.0;
+			}
+		}
+		if(pingCount > 0.0) {
+			averagePing = totalPing / pingCount;
+		}
+	}
+
+	client->session()->readyToAutoReset(
+		Session::AutoResetResponseParams{
+			client->id(), capabilities,
+			net::ServerCommand::rateAutoresetOs(
+				kwargs[QStringLiteral("os")].toString()),
+			kwargs[QStringLiteral("net")].toDouble(), averagePing},
+		kwargs[QStringLiteral("payload")].toString());
 	return CmdResult::ok();
 }
 
@@ -711,6 +742,100 @@ authList(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 	return CmdResult::ok();
 }
 
+CmdResult streamResetStart(
+	Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(kwargs);
+	if(args.size() != 1) {
+		return CmdResult::err(QStringLiteral(
+			"Stream reset start expected one argument: correlator"));
+	}
+
+	Session *session = client->session();
+	StreamResetStartResult result =
+		session->handleStreamResetStart(client->id(), args[0].toString());
+	switch(result) {
+	case StreamResetStartResult::Ok:
+		return CmdResult::ok();
+	case StreamResetStartResult::Unsupported:
+		return CmdResult::err(QStringLiteral("not supported by this session"));
+	case StreamResetStartResult::InvalidSessionState:
+		return CmdResult::err(QStringLiteral("invalid session state"));
+	case StreamResetStartResult::InvalidCorrelator:
+		return CmdResult::err(QStringLiteral("invalid correlator"));
+	case StreamResetStartResult::InvalidUser:
+		return CmdResult::err(QStringLiteral("invalid user"));
+	case StreamResetStartResult::AlreadyActive:
+		return CmdResult::err(QStringLiteral("already started"));
+	case StreamResetStartResult::OutOfSpace:
+		return CmdResult::err(QStringLiteral("out of space"));
+	case StreamResetStartResult::WriteError:
+		return CmdResult::err(QStringLiteral("write error"));
+	}
+	return CmdResult::err(QStringLiteral("unknown error %d").arg(int(result)));
+}
+
+CmdResult streamResetAbort(
+	Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(kwargs);
+	if(args.size() != 0) {
+		return CmdResult::err(
+			QStringLiteral("Stream reset abort expected no arguments"));
+	}
+
+	Session *session = client->session();
+	StreamResetAbortResult result =
+		session->handleStreamResetAbort(client->id());
+	switch(result) {
+	case StreamResetAbortResult::Ok:
+		return CmdResult::ok();
+	case StreamResetAbortResult::Unsupported:
+		return CmdResult::err(QStringLiteral("not supported by this session"));
+	case StreamResetAbortResult::InvalidUser:
+		return CmdResult::err(QStringLiteral("invalid user"));
+	case StreamResetAbortResult::NotActive:
+		return CmdResult::err(QStringLiteral("no stream reset active"));
+	}
+	return CmdResult::err(QStringLiteral("unknown error %d").arg(int(result)));
+}
+
+CmdResult streamResetFinish(
+	Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(kwargs);
+	if(args.size() != 1) {
+		return CmdResult::err(QStringLiteral(
+			"Stream reset finish expected one argument: message count"));
+	}
+
+	Session *session = client->session();
+	StreamResetPrepareResult result =
+		session->handleStreamResetFinish(client->id(), args[0].toInt());
+	switch(result) {
+	case server::StreamResetPrepareResult::Ok:
+		return CmdResult::ok();
+	case server::StreamResetPrepareResult::Unsupported:
+		return CmdResult::err(QStringLiteral("not supported by this session"));
+	case StreamResetPrepareResult::InvalidUser:
+		return CmdResult::err(QStringLiteral("invalid user"));
+	case StreamResetPrepareResult::InvalidMessageCount:
+		return CmdResult::err(QStringLiteral("invalid message count"));
+	case server::StreamResetPrepareResult::NotActive:
+		return CmdResult::err(QStringLiteral("no stream reset active"));
+	case StreamResetPrepareResult::OutOfSpace:
+		return CmdResult::err(QStringLiteral("reset image too large"));
+		break;
+	case StreamResetPrepareResult::WriteError:
+		return CmdResult::err(QStringLiteral("write error"));
+		break;
+	case StreamResetPrepareResult::ConsumerError:
+		return CmdResult::err(QStringLiteral("stream consumer error"));
+		break;
+	}
+	return CmdResult::err(QStringLiteral("unknown error %d").arg(int(result)));
+}
+
 SrvCommandSet::SrvCommandSet()
 {
 	commands << SrvCommand("ready-to-autoreset", readyToAutoReset)
@@ -729,7 +854,10 @@ SrvCommandSet::SrvCommandSet()
 			 << SrvCommand("report", reportAbuse, SrvCommand::NONOP)
 			 << SrvCommand("export-bans", exportBans)
 			 << SrvCommand("import-bans", importBans)
-			 << SrvCommand("auth-list", authList);
+			 << SrvCommand("auth-list", authList)
+			 << SrvCommand("stream-reset-start", streamResetStart)
+			 << SrvCommand("stream-reset-abort", streamResetAbort)
+			 << SrvCommand("stream-reset-finish", streamResetFinish);
 }
 
 } // end of anonymous namespace

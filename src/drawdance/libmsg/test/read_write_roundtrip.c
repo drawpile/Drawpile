@@ -22,10 +22,13 @@
 #include <dpcommon/binary.h>
 #include <dpcommon/input.h>
 #include <dpcommon/output.h>
+#include <dpcommon/vector.h>
 #include <dpmsg/binary_reader.h>
 #include <dpmsg/binary_writer.h>
 #include <dpmsg/blend_mode.h>
 #include <dpmsg/message.h>
+#include <dpmsg/message_queue.h>
+#include <dpmsg/reset_stream.h>
 #include <dpmsg/text_reader.h>
 #include <dpmsg/text_writer.h>
 #include <dptest.h>
@@ -806,71 +809,72 @@ static DP_Message *generate_undo(void)
 
 typedef DP_Message *(*GenerateFn)(void);
 
+static GenerateFn generate_fns[] = {
+    generate_server_command,
+    generate_disconnect,
+    generate_ping,
+    generate_join,
+    generate_leave,
+    generate_session_owner,
+    generate_trusted_users,
+    generate_soft_reset,
+    generate_private_chat,
+    generate_interval,
+    generate_laser_trail,
+    generate_move_pointer,
+    generate_marker,
+    generate_user_acl,
+    generate_layer_acl,
+    generate_feature_access_levels,
+    generate_default_layer,
+    generate_filtered,
+    generate_undo_depth,
+    generate_data,
+    generate_local_change,
+    generate_undo_point,
+    generate_canvas_resize,
+    generate_layer_create,
+    generate_layer_attributes,
+    generate_layer_retitle,
+    generate_layer_order,
+    generate_layer_delete,
+    generate_layer_visibility,
+    generate_put_image,
+    generate_fill_rect,
+    generate_pen_up,
+    generate_annotation_create,
+    generate_annotation_reshape,
+    generate_annotation_edit,
+    generate_annotation_delete,
+    generate_move_region,
+    generate_put_tile,
+    generate_canvas_background,
+    generate_draw_dabs_classic,
+    generate_draw_dabs_pixel,
+    generate_draw_dabs_pixel_square,
+    generate_draw_dabs_mypaint,
+    generate_move_rect,
+    generate_set_metadata_int,
+    generate_layer_tree_create,
+    generate_layer_tree_move,
+    generate_layer_tree_delete,
+    generate_transform_region,
+    generate_track_create,
+    generate_track_retitle,
+    generate_track_delete,
+    generate_track_order,
+    generate_key_frame_set,
+    generate_key_frame_retitle,
+    generate_key_frame_layer_attributes,
+    generate_key_frame_delete,
+    generate_undo,
+};
+
 static void write_messages(TEST_PARAMS, DP_BinaryWriter *bw, DP_TextWriter *tw)
 {
-    GenerateFn fns[] = {
-        generate_server_command,
-        generate_disconnect,
-        generate_ping,
-        generate_join,
-        generate_leave,
-        generate_session_owner,
-        generate_trusted_users,
-        generate_soft_reset,
-        generate_private_chat,
-        generate_interval,
-        generate_laser_trail,
-        generate_move_pointer,
-        generate_marker,
-        generate_user_acl,
-        generate_layer_acl,
-        generate_feature_access_levels,
-        generate_default_layer,
-        generate_filtered,
-        generate_undo_depth,
-        generate_data,
-        generate_local_change,
-        generate_undo_point,
-        generate_canvas_resize,
-        generate_layer_create,
-        generate_layer_attributes,
-        generate_layer_retitle,
-        generate_layer_order,
-        generate_layer_delete,
-        generate_layer_visibility,
-        generate_put_image,
-        generate_fill_rect,
-        generate_pen_up,
-        generate_annotation_create,
-        generate_annotation_reshape,
-        generate_annotation_edit,
-        generate_annotation_delete,
-        generate_move_region,
-        generate_put_tile,
-        generate_canvas_background,
-        generate_draw_dabs_classic,
-        generate_draw_dabs_pixel,
-        generate_draw_dabs_pixel_square,
-        generate_draw_dabs_mypaint,
-        generate_move_rect,
-        generate_set_metadata_int,
-        generate_layer_tree_create,
-        generate_layer_tree_move,
-        generate_layer_tree_delete,
-        generate_transform_region,
-        generate_track_create,
-        generate_track_retitle,
-        generate_track_delete,
-        generate_track_order,
-        generate_key_frame_set,
-        generate_key_frame_retitle,
-        generate_key_frame_layer_attributes,
-        generate_key_frame_delete,
-        generate_undo,
-    };
-    int count = DP_ARRAY_LENGTH(fns);
+    int count = DP_ARRAY_LENGTH(generate_fns);
     for (int i = 0; i < count; ++i) {
-        DP_Message *msg = fns[i]();
+        DP_Message *msg = generate_fns[i]();
         write_message_binary(TEST_ARGS, msg, bw);
         write_message_text(TEST_ARGS, msg, tw);
         DP_message_decref(msg);
@@ -1025,9 +1029,112 @@ static void read_write_roundtrip(TEST_PARAMS)
 }
 
 
+static bool push_consumer_message(void *user, DP_Message *msg)
+{
+    DP_Vector *out_msgs = user;
+    DP_message_vector_push_noinc(out_msgs, msg);
+    return true;
+}
+
+static void free_stream_messages(int count, DP_Message **msgs)
+{
+    for (int i = 0; i < count; ++i) {
+        DP_message_decref(msgs[i]);
+    }
+    DP_free(msgs);
+}
+
+static void reset_stream_roundtrip(TEST_PARAMS)
+{
+    size_t count = (size_t)1 + (size_t)random_uint32() % (size_t)1000;
+    NOTE("Testing round-trip with %zu message(s)", count);
+
+    DP_Vector in_msgs;
+    DP_message_vector_init(&in_msgs, count);
+    for (size_t i = 0; i < count; ++i) {
+        DP_Message *msg = generate_fns[DP_uint32_to_size(random_uint32())
+                                       % DP_ARRAY_LENGTH(generate_fns)]();
+        DP_message_vector_push_noinc(&in_msgs, msg);
+    }
+
+    DP_ResetStreamProducer *rsp = DP_reset_stream_producer_new();
+    if (!NOT_NULL_OK(rsp, "producer created")) {
+        DP_message_vector_dispose(&in_msgs);
+        return;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        if (!OK(DP_reset_stream_producer_push(
+                    rsp, DP_message_vector_at(&in_msgs, i)),
+                "push producer message %zu", i)) {
+            DP_reset_stream_producer_free_discard(rsp);
+            DP_message_vector_dispose(&in_msgs);
+            return;
+        }
+    }
+
+    int stream_count;
+    DP_Message **stream_msgs =
+        DP_reset_stream_producer_free_finish(rsp, &stream_count);
+    if (!OK(stream_msgs, "producer finished")
+        || !OK(stream_count > 0, "stream message count %d", stream_count)) {
+        DP_message_vector_dispose(&in_msgs);
+        return;
+    }
+
+    DP_Vector out_msgs;
+    DP_message_vector_init(&out_msgs, count);
+
+    DP_ResetStreamConsumer *rsc =
+        DP_reset_stream_consumer_new(push_consumer_message, &out_msgs, true);
+    if (!NOT_NULL_OK(rsc, "consumer created")) {
+        DP_message_vector_dispose(&out_msgs);
+        free_stream_messages(stream_count, stream_msgs);
+        DP_message_vector_dispose(&in_msgs);
+        return;
+    }
+
+    for (int i = 0; i < stream_count; ++i) {
+        DP_Message *msg = stream_msgs[i];
+        if (INT_EQ_OK(DP_message_type(msg), DP_MSG_RESET_STREAM,
+                      "stream message %d is reset stream", i)) {
+            size_t size;
+            const unsigned char *data =
+                DP_msg_reset_stream_data(DP_message_internal(msg), &size);
+            if (OK(data && size != 0, "stream message %d has data", i)) {
+                if (!OK(DP_reset_stream_consumer_push(rsc, data, size),
+                        "push consumer message %d", i)) {
+                    DP_reset_stream_consumer_free_discard(rsc);
+                    DP_message_vector_dispose(&out_msgs);
+                    free_stream_messages(stream_count, stream_msgs);
+                    DP_message_vector_dispose(&in_msgs);
+                    return;
+                }
+            }
+        }
+    }
+
+    free_stream_messages(stream_count, stream_msgs);
+    if (OK(DP_reset_stream_consumer_free_finish(rsc), "free consumer")) {
+        if (UINT_EQ_OK(out_msgs.used, in_msgs.used, "message counts match")) {
+            for (size_t i = 0; i < in_msgs.used; ++i) {
+                DP_Message *in_msg = DP_message_vector_at(&in_msgs, i);
+                DP_Message *out_msg = DP_message_vector_at(&in_msgs, i);
+                OK(DP_message_equals(out_msg, in_msg), "message %zu is equal",
+                   i);
+            }
+        }
+    }
+
+    DP_message_vector_dispose(&out_msgs);
+    DP_message_vector_dispose(&in_msgs);
+}
+
+
 static void register_tests(REGISTER_PARAMS)
 {
     REGISTER_TEST(read_write_roundtrip);
+    REGISTER_TEST(reset_stream_roundtrip);
 }
 
 int main(int argc, char **argv)

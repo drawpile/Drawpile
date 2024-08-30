@@ -312,14 +312,16 @@ net::MessageList CanvasModel::generateSnapshot(
 	return snapshot;
 }
 
-void CanvasModel::amendSnapshotMetadata(
+int CanvasModel::amendSnapshotMetadata(
 	net::MessageList &snapshot, bool includePinnedMessage,
 	unsigned int aclIncludeFlags) const
 {
+	int prepended = 1;
 	snapshot.prepend(
 		net::makeUndoDepthMessage(0, m_paintengine->undoDepthLimit()));
 
 	if(includePinnedMessage && !m_pinnedMessage.isEmpty()) {
+		++prepended;
 		snapshot.prepend(net::makeChatMessage(
 			m_localUserId, 0, DP_MSG_CHAT_OFLAGS_PIN, m_pinnedMessage));
 	}
@@ -331,6 +333,8 @@ void CanvasModel::amendSnapshotMetadata(
 
 	m_paintengine->aclState().toResetImage(
 		snapshot, m_localUserId, aclIncludeFlags);
+
+	return prepended;
 }
 
 void CanvasModel::pickLayer(int x, int y)

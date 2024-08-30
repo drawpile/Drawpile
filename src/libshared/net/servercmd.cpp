@@ -40,6 +40,41 @@ net::Message ServerCommand::makeUnannounce(const QString &url)
 	return make("unlist-session", QJsonArray() << url);
 }
 
+QString ServerCommand::autoresetOs()
+{
+#if defined(__EMSCRIPTEN__)
+	return QStringLiteral("emscripten");
+#elif defined(Q_OS_ANDROID)
+	return QStringLiteral("android");
+#elif defined(Q_OS_IOS)
+	return QStringLiteral("ios");
+#elif defined(Q_OS_WIN)
+	return QStringLiteral("windows");
+#elif defined(Q_OS_MACOS)
+	return QStringLiteral("macos");
+#elif defined(Q_OS_LINUX)
+	return QStringLiteral("linux");
+#elif defined(Q_OS_UNIX)
+	return QStringLiteral("unix");
+#else
+	return QStringLiteral("unknown");
+#endif
+}
+
+int ServerCommand::rateAutoresetOs(const QString &os)
+{
+	if(os == QStringLiteral("emscripten") || os == QStringLiteral("android") ||
+	   os == QStringLiteral("ios")) {
+		return -1; // Bad candidates. Memory limits and they fall asleep easily.
+	} else if(
+		os == QStringLiteral("windows") || os == QStringLiteral("macos") ||
+		os == QStringLiteral("linux") || os == QStringLiteral("unix")) {
+		return 1; // Good candidates. Desktop operating systems.
+	} else {
+		return 0; // Unknown OS or client didn't specify.
+	}
+}
+
 net::Message ServerCommand::toMessage() const
 {
 	QJsonObject data{{QStringLiteral("cmd"), cmd}};
@@ -145,6 +180,10 @@ ServerReply ServerReply::fromJson(const QJsonDocument &doc)
 		r.type = ServerReply::ReplyType::BanImpEx;
 	} else if(typestr == QStringLiteral("outofspace")) {
 		r.type = ServerReply::ReplyType::OutOfSpace;
+	} else if(typestr == QStringLiteral("sstart")) {
+		r.type = ServerReply::ReplyType::StreamStart;
+	} else if(typestr == QStringLiteral("sprogress")) {
+		r.type = ServerReply::ReplyType::StreamProgress;
 	} else {
 		r.type = ServerReply::ReplyType::Unknown;
 	}
@@ -345,12 +384,50 @@ ServerReply::makeReset(const QString &message, const QString &state)
 		 {QStringLiteral("state"), state}});
 }
 
-net::Message ServerReply::makeResetRequest(int maxSize, bool query)
+net::Message ServerReply::makeResetQuery(int maxSize, const QString &payload)
 {
 	return make(
 		{{QStringLiteral("type"), QStringLiteral("autoreset")},
 		 {QStringLiteral("maxSize"), maxSize},
-		 {QStringLiteral("query"), query}});
+		 {QStringLiteral("query"), true},
+		 {QStringLiteral("payload"), payload}});
+}
+
+net::Message ServerReply::makeResetRequest(int maxSize)
+{
+	return make(
+		{{QStringLiteral("type"), QStringLiteral("autoreset")},
+		 {QStringLiteral("maxSize"), maxSize},
+		 {QStringLiteral("query"), false}});
+}
+
+net::Message ServerReply::makeStreamedResetRequest(
+	int maxSize, const QString &correlator, const QString &stream)
+{
+	return make(
+		{{QStringLiteral("type"), QStringLiteral("autoreset")},
+		 {QStringLiteral("maxSize"), maxSize},
+		 {QStringLiteral("query"), false},
+		 {QStringLiteral("correlator"), correlator},
+		 {QStringLiteral("stream"), stream}});
+}
+
+net::Message ServerReply::makeStreamedResetStart(
+	uint8_t contextId, const QString &correlator)
+{
+	QJsonObject data = {
+		{QStringLiteral("type"), QStringLiteral("sstart")},
+		{QStringLiteral("correlator"), correlator}};
+	return net::makeServerCommandMessage(contextId, QJsonDocument{data});
+}
+
+net::Message
+ServerReply::makeStreamedResetProgress(uint8_t contextId, bool cancel)
+{
+	QJsonObject data = {
+		{QStringLiteral("type"), QStringLiteral("sprogress")},
+		{QStringLiteral("cancel"), cancel}};
+	return net::makeServerCommandMessage(contextId, QJsonDocument{data});
 }
 
 net::Message ServerReply::makeResultHostLookup(const QString &message)

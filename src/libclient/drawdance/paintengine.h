@@ -38,6 +38,8 @@ public:
 		DP_CanvasHistorySoftResetFn softResetFn, void *softResetUser,
 		DP_PaintEnginePlaybackFn playbackFn,
 		DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
+		DP_PaintEngineStreamResetStartFn streamResetStartFn,
+		void *streamResetUser,
 		const CanvasState &canvasState = CanvasState::null());
 
 	~PaintEngine();
@@ -57,6 +59,8 @@ public:
 		DP_CanvasHistorySoftResetFn softResetFn, void *softResetUser,
 		DP_PaintEnginePlaybackFn playbackFn,
 		DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
+		DP_PaintEngineStreamResetStartFn streamResetStartFn,
+		void *streamResetUser,
 		const CanvasState &canvasState = CanvasState::null(),
 		DP_Player *player = nullptr);
 

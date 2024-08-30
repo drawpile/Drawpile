@@ -41,6 +41,12 @@ struct ServerCommand {
 
 	//! Request the server to remove an announcement at the listing server
 	static net::Message makeUnannounce(const QString &url);
+
+	//! Returns the operating for use in an autoreset response
+	static QString autoresetOs();
+
+	//! Rates the quality of the given autoreset OS, higher is better
+	static int rateAutoresetOs(const QString &os);
 };
 
 /**
@@ -92,6 +98,8 @@ struct ServerReply {
 		CaughtUp,		  // previous catchup is complete
 		BanImpEx,		  // session ban import/export
 		OutOfSpace,		  // session is out of space, block local drawing
+		StreamStart,	  // streamed session reset start marker
+		StreamProgress,	  // streamed session reset progress control message
 	} type;
 	QString message;
 	QJsonObject reply;
@@ -159,7 +167,14 @@ struct ServerReply {
 
 	static net::Message makeReset(const QString &message, const QString &state);
 
-	static net::Message makeResetRequest(int maxSize, bool query);
+	static net::Message makeResetQuery(int maxSize, const QString &payload);
+	static net::Message makeResetRequest(int maxSize);
+	static net::Message makeStreamedResetRequest(
+		int maxSize, const QString &correlator, const QString &stream);
+	static net::Message
+	makeStreamedResetStart(uint8_t contextId, const QString &correlator);
+	static net::Message
+	makeStreamedResetProgress(uint8_t contextId, bool cancel);
 
 	static net::Message makeResultHostLookup(const QString &message);
 

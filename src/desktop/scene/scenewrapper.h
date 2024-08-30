@@ -50,6 +50,7 @@ public:
 	void setShowSelectionMask(bool showSelectionMask) override;
 
 	void setCatchupProgress(int percent, bool force) override;
+	void setStreamResetProgress(int percent) override;
 	void setSaveInProgress(bool saveInProgress) override;
 
 	void showDisconnectedWarning(

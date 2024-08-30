@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
+#include <dpengine/snapshots.h>
 #include <dpimpex/load.h>
+#include <dpmsg/reset_stream.h>
 }
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
@@ -110,8 +112,13 @@ Document::Document(
 	connect(
 		m_client, &net::Client::needSnapshot, this, &Document::snapshotNeeded);
 	connect(
+		m_client, &net::Client::lagMeasured, this, &Document::onLagMeasured);
+	connect(
 		m_client, &net::Client::sessionConfChange, this,
 		&Document::onSessionConfChanged);
+	connect(
+		m_client, &net::Client::autoresetQueried, this,
+		&Document::onAutoresetQueried);
 	connect(
 		m_client, &net::Client::autoresetRequested, this,
 		&Document::onAutoresetRequested);
@@ -122,12 +129,21 @@ Document::Document(
 		m_client, &net::Client::sessionResetted, this,
 		&Document::onSessionResetted);
 	connect(
+		m_client, &net::Client::streamResetStarted, this,
+		&Document::onStreamResetStarted);
+	connect(
+		m_client, &net::Client::streamResetProgressed, this,
+		&Document::onStreamResetProgressed);
+	connect(
 		m_client, &net::Client::sessionOutOfSpace, this,
 		&Document::onSessionOutOfSpace);
 
 	connect(
 		this, &Document::justInTimeSnapshotGenerated, this,
 		&Document::sendResetSnapshot, Qt::QueuedConnection);
+	connect(
+		this, &Document::buildStreamResetImageFinished, this,
+		&Document::startSendingStreamResetSnapshot, Qt::QueuedConnection);
 }
 
 void Document::initCanvas()
@@ -160,6 +176,9 @@ void Document::initCanvas()
 		m_canvas, &canvas::CanvasModel::recorderStateChanged, this,
 		&Document::recorderStateChanged);
 
+	connect(
+		m_canvas->paintEngine(), &canvas::PaintEngine::streamResetStarted, this,
+		&Document::buildStreamResetImage, Qt::QueuedConnection);
 	connect(
 		m_client, &net::Client::catchupProgress, m_canvas->paintEngine(),
 		&canvas::PaintEngine::enqueueCatchupProgress);
@@ -312,6 +331,9 @@ void Document::onServerDisconnect()
 	setSessionOutOfSpace(false);
 	emit compatibilityModeChanged(false);
 	setPreparingReset(false);
+	m_autoResetCorrelator = QString();
+	setStreamResetState(StreamResetState::None);
+	m_pingHistory.clear();
 }
 
 void Document::setPreparingReset(bool preparing)
@@ -319,6 +341,16 @@ void Document::setPreparingReset(bool preparing)
 	if(preparing != m_preparingReset) {
 		m_preparingReset = preparing;
 		emit preparingResetChanged(preparing);
+	}
+}
+
+void Document::onLagMeasured(qint64 msec)
+{
+	if(m_client->isConnected()) {
+		while(m_pingHistory.size() >= 64) {
+			m_pingHistory.dequeue();
+		}
+		m_pingHistory.enqueue(qMax(qint64(1), msec));
 	}
 }
 
@@ -406,42 +438,142 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	}
 }
 
-void Document::onAutoresetRequested(int maxSize, bool query)
+void Document::onAutoresetQueried(int maxSize, const QString &payload)
 {
 	Q_ASSERT(m_canvas);
-
-	qInfo("Server requested autoreset (query=%d)", query);
-
-	if(!m_client->isFullyCaughtUp()) {
-		qInfo("Ignoring autoreset request because we're not fully caught up "
-			  "yet.");
-		return;
-	}
-
+	qDebug("Server queried autoreset");
 	m_sessionHistoryMaxSize = maxSize;
+	m_autoResetCorrelator.clear();
 
-	if(m_settings.serverAutoReset()) {
-		if(query) {
-			// This is just a query: send back an affirmative response
+	if(shouldRespondToAutoReset()) {
+		// Users can self-indicate in their network preferences that their
+		// connection sucks and they don't want to be considered for autoresets.
+		// This used to entirely disable autoresets, but of course that can
+		// instead get you into a situation where the session runs out of space
+		// or just takes forever to catch up to. The current behavior is for it
+		// to communicate a low network quality to the server if it understands
+		// that or just put in a big delay in responding to the autoreset
+		// request, which should result in us not getting picked over others.
+		bool serverAutoReset = m_settings.serverAutoReset();
+		// Presence of a payload indicates that the server supports extended
+		// autoreset capabilities introduced in Drawpile 2.2.2.
+		if(!payload.isEmpty()) {
+			QJsonArray pings;
+			for(qint64 ping : m_pingHistory) {
+				pings.append(qreal(ping) / 1000.0);
+			}
+			QJsonObject kwargs = {
+				{QStringLiteral("payload"), payload},
+				{QStringLiteral("capabilities"),
+				 QJsonArray({QStringLiteral("gzip1")})},
+				{QStringLiteral("os"), net::ServerCommand::autoresetOs()},
+				{QStringLiteral("net"), serverAutoReset ? 0.0 : 100.0},
+				{QStringLiteral("pings"), pings},
+			};
+			m_client->sendMessage(net::ServerCommand::make(
+				QStringLiteral("ready-to-autoreset"), {}, kwargs));
+		} else if(serverAutoReset) {
 			m_client->sendMessage(
-				net::ServerCommand::make("ready-to-autoreset"));
-
+				net::ServerCommand::make(QStringLiteral("ready-to-autoreset")));
 		} else {
-			// Autoreset on request
-			// TODO: There seems to be a race condition in the server where it
-			// will fail to actually send this command out to the clients if the
-			// subsequent server command comes in too fast.
-			sendLockSession(true);
+			QTimer::singleShot(10000, Qt::VeryCoarseTimer, this, [this] {
+				if(m_client->isConnected()) {
+					m_client->sendMessage(net::ServerCommand::make(
+						QStringLiteral("ready-to-autoreset")));
+				}
+			});
+		}
+	}
+}
 
+void Document::onAutoresetRequested(
+	int maxSize, const QString &correlator, const QString &stream)
+{
+	Q_ASSERT(m_canvas);
+	qDebug("Server requested autoreset");
+	m_sessionHistoryMaxSize = maxSize;
+	m_autoResetCorrelator = correlator;
+
+	if(shouldRespondToAutoReset()) {
+		if(stream == QStringLiteral("gzip1")) {
+			// Streamed autoreset. Keep going as normal, send reset messages in
+			// the background so the server can swap out its state on the fly.
+			qDebug("Send stream-reset-start");
+			m_client->sendMessage(net::ServerCommand::make(
+				QStringLiteral("stream-reset-start"), {m_autoResetCorrelator}));
+		} else {
+			// Interrupting autoreset. Stop everything and send a reset image.
+			// TODO: There seems to be a race condition in the server where
+			// it will fail to actually send this command out to the clients
+			// if the subsequent server command comes in too fast.
+			sendLockSession(true);
 			m_client->sendMessage(net::makeChatMessage(
 				m_client->myId(), DP_MSG_CHAT_TFLAGS_BYPASS,
 				DP_MSG_CHAT_OFLAGS_ACTION,
 				QStringLiteral("beginning session autoreset...")));
-
 			sendResetSession();
 		}
+	}
+}
+
+void Document::onStreamResetStarted(const QString &correlator)
+{
+	if(m_canvas && !correlator.isEmpty() &&
+	   m_autoResetCorrelator == correlator) {
+		net::Message msg =
+			net::makeInternalStreamResetStartMessage(0, correlator);
+		m_canvas->handleCommands(1, &msg);
+	}
+}
+
+void Document::onStreamResetProgressed(bool cancel)
+{
+	switch(m_streamResetState) {
+	case StreamResetState::Streaming:
+		if(cancel) {
+			qWarning("Stream reset cancelled while streaming it");
+			setStreamResetState(StreamResetState::None);
+		} else {
+			sendNextStreamResetMessage();
+		}
+		break;
+	case StreamResetState::Generating:
+		if(cancel) {
+			qWarning("Stream reset cancelled while generating the reset image");
+			setStreamResetState(StreamResetState::None);
+		} else {
+			qWarning("Stream reset progress requested, but we're still "
+					 "generating the reset image");
+		}
+		break;
+	default:
+		qWarning(
+			"Stream reset %s requested, but none is active",
+			cancel ? "cancel" : "progress");
+		setStreamResetState(StreamResetState::None);
+	}
+}
+
+void Document::buildStreamResetImage(
+	const drawdance::CanvasState &canvasState, const QString &correlator)
+{
+	if(correlator == m_autoResetCorrelator) {
+		setStreamResetState(StreamResetState::Generating);
+		qDebug("Building stream reset image");
+		net::MessageList metadata;
+		int prepended = m_canvas->amendSnapshotMetadata(
+			metadata, true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS);
+		utils::FunctionRunnable *runnable = new utils::FunctionRunnable(
+			[this, canvasState, correlator, metadata, prepended]() {
+				int messageCount;
+				net::MessageList image = generateStreamSnapshot(
+					canvasState, metadata, prepended, messageCount);
+				emit buildStreamResetImageFinished(
+					image, messageCount, correlator);
+			});
+		QThreadPool::globalInstance()->start(runnable);
 	} else {
-		qInfo("Ignoring autoreset request as configured.");
+		qWarning("Stream reset start triggered, but correlator does not match");
 	}
 }
 
@@ -963,6 +1095,16 @@ void Document::snapshotNeeded()
 	}
 }
 
+bool Document::shouldRespondToAutoReset() const
+{
+	if(!m_client->isFullyCaughtUp()) {
+		qInfo("Ignoring autoreset request because we're not caught up yet");
+		return false;
+	} else {
+		return true;
+	}
+}
+
 void Document::generateJustInTimeSnapshot()
 {
 	qInfo("Generating a just-in-time snapshot for session reset...");
@@ -995,6 +1137,156 @@ void Document::sendResetSnapshot()
 		m_client->sendResetMessage(net::ServerCommand::make("init-complete"));
 	}
 	m_resetstate.clear();
+}
+
+namespace {
+struct ResetStreamImageContext {
+	DP_ResetStreamProducer *rsp;
+	int count;
+	bool ok;
+
+	static void push(void *user, DP_Message *msg)
+	{
+		ResetStreamImageContext *ctx =
+			static_cast<ResetStreamImageContext *>(user);
+		if(ctx->ok) {
+			if(DP_reset_stream_producer_push(ctx->rsp, msg)) {
+				++ctx->count;
+			} else {
+				qWarning("Reset stream: %s", DP_error());
+				ctx->ok = false;
+			}
+		}
+		DP_message_decref(msg);
+	}
+};
+}
+
+net::MessageList Document::generateStreamSnapshot(
+	const drawdance::CanvasState &canvasState, const net::MessageList &metadata,
+	int prepended, int &outMessageCount) const
+{
+	DP_ResetStreamProducer *rsp = DP_reset_stream_producer_new();
+	if(!rsp) {
+		qWarning("Error initializing reset stream producer: %s", DP_error());
+		return {};
+	}
+
+	for(int i = 0; i < prepended; ++i) {
+		if(!DP_reset_stream_producer_push(rsp, metadata[i].get())) {
+			qWarning("Reset stream: %s", DP_error());
+			DP_reset_stream_producer_free_discard(rsp);
+			return {};
+		}
+	}
+
+	ResetStreamImageContext ctx = {rsp, 0, true};
+	DP_reset_image_build(
+		canvasState.get(), 0, ResetStreamImageContext::push, &ctx);
+	if(!ctx.ok) {
+		DP_reset_stream_producer_free_discard(rsp);
+		return {};
+	}
+
+	int metadataCount = metadata.size();
+	for(int i = prepended; i < metadataCount; ++i) {
+		if(!DP_reset_stream_producer_push(rsp, metadata[i].get())) {
+			qWarning("Reset stream: %s", DP_error());
+			DP_reset_stream_producer_free_discard(rsp);
+			return {};
+		}
+	}
+
+	if(m_sessionHistoryMaxSize > 0 && DP_reset_stream_producer_image_size(rsp) >
+										  size_t(m_sessionHistoryMaxSize)) {
+		qWarning("Reset stream: oversized reset image");
+		DP_reset_stream_producer_free_discard(rsp);
+		return {};
+	}
+
+	int count;
+	DP_Message **msgs = DP_reset_stream_producer_free_finish(rsp, &count);
+	if(!msgs) {
+		qWarning("Reset stream: %s", DP_error());
+		return {};
+	}
+
+	net::MessageList image;
+	image.reserve(count);
+	for(int i = 0; i < count; ++i) {
+		image.append(net::Message::noinc(msgs[i]));
+	}
+	DP_free(msgs);
+
+	outMessageCount = metadataCount + ctx.count;
+	return image;
+}
+
+void Document::startSendingStreamResetSnapshot(
+	const net::MessageList &image, int messageCount, const QString &correlator)
+{
+	if(m_streamResetState == StreamResetState::Generating &&
+	   m_autoResetCorrelator == correlator) {
+		if(messageCount > 0 && !image.isEmpty()) {
+			qDebug("Start sending stream reset image");
+			m_streamResetImage = image;
+			m_streamResetImageOriginalCount = image.size();
+			setStreamResetState(StreamResetState::Streaming, messageCount);
+			sendNextStreamResetMessage();
+		} else {
+			qDebug("Abort sending stream reset image");
+			m_streamResetImage.clear();
+			m_streamResetImageOriginalCount = 0;
+			setStreamResetState(StreamResetState::None);
+			m_client->sendMessage(
+				net::ServerCommand::make(QStringLiteral("stream-reset-abort")));
+		}
+	} else {
+		qWarning("Streamed reset image generated, but not ready to stream");
+	}
+}
+
+void Document::sendNextStreamResetMessage()
+{
+	if(m_streamResetState == StreamResetState::Streaming) {
+		if(m_streamResetImage.isEmpty()) {
+			qDebug("Send stream-reset-finish");
+			m_client->sendMessage(net::ServerCommand::make(
+				QStringLiteral("stream-reset-finish"),
+				{m_streamResetMessageCount}));
+			setStreamResetState(StreamResetState::None);
+		} else {
+			m_client->sendMessage(m_streamResetImage.takeFirst());
+			emitStreamResetProgress();
+		}
+	} else {
+		setStreamResetState(StreamResetState::None);
+	}
+}
+
+void Document::setStreamResetState(StreamResetState state, int messageCount)
+{
+	m_streamResetState = state;
+	m_streamResetMessageCount = messageCount;
+	emitStreamResetProgress();
+}
+
+void Document::emitStreamResetProgress()
+{
+	switch(m_streamResetState) {
+	case StreamResetState::None:
+		emit streamResetProgress(101);
+		break;
+	case StreamResetState::Generating:
+		emit streamResetProgress(-1);
+		break;
+	case StreamResetState::Streaming: {
+		qreal total = m_streamResetImageOriginalCount;
+		qreal sent = total - m_streamResetImage.size();
+		emit streamResetProgress(qBound(0, qRound(total / sent * 100.0), 100));
+		break;
+	}
+	}
 }
 
 void Document::undo()

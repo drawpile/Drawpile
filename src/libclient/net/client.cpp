@@ -413,10 +413,19 @@ void Client::handleServerReply(const ServerReply &msg, int handledMessageIndex)
 	case ServerReply::ReplyType::SizeLimitWarning:
 		// No longer used since 2.1.0. Replaced by RESETREQUEST
 		break;
-	case ServerReply::ReplyType::ResetRequest:
-		emit autoresetRequested(
-			reply["maxSize"].toInt(), reply["query"].toBool());
+	case ServerReply::ReplyType::ResetRequest: {
+		int maxSize = reply[QStringLiteral("maxSize")].toInt();
+		if(reply[QStringLiteral("query")].toBool()) {
+			emit autoresetQueried(
+				maxSize, reply[QStringLiteral("payload")].toString());
+		} else {
+			emit autoresetRequested(
+				reply[QStringLiteral("maxSize")].toInt(),
+				reply[QStringLiteral("correlator")].toString(),
+				reply[QStringLiteral("stream")].toString());
+		}
 		break;
+	}
 	case ServerReply::ReplyType::Status:
 		emit serverStatusUpdate(reply["size"].toInt());
 		break;
@@ -462,6 +471,12 @@ void Client::handleServerReply(const ServerReply &msg, int handledMessageIndex)
 		break;
 	case ServerReply::ReplyType::OutOfSpace:
 		emit sessionOutOfSpace();
+		break;
+	case ServerReply::ReplyType::StreamStart:
+		emit streamResetStarted(reply[QStringLiteral("correlator")].toString());
+		break;
+	case ServerReply::ReplyType::StreamProgress:
+		emit streamResetProgressed(reply[QStringLiteral("cancel")].toBool());
 		break;
 	}
 }

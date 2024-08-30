@@ -58,6 +58,8 @@ FiledHistory::FiledHistory(
 
 FiledHistory::~FiledHistory()
 {
+	DP_binary_writer_free(m_resetStreamWriter);
+	DP_binary_reader_free(m_resetStreamReader);
 	DP_binary_writer_free(m_writer);
 	DP_binary_reader_free(m_reader);
 }
@@ -136,56 +138,157 @@ bool FiledHistory::create()
 	if(!initRecording())
 		return false;
 
-	if(!m_alias.isEmpty())
-		m_journal->write(QString("ALIAS %1\n").arg(m_alias).toUtf8());
-	m_journal->write(QString("FOUNDER %1\n").arg(m_founder).toUtf8());
-	m_journal->flush();
+	if(m_alias.isEmpty()) {
+		writeStringToJournal(QStringLiteral("FOUNDER %1\n").arg(m_founder));
+	} else {
+		writeStringToJournal(
+			QStringLiteral("ALIAS %1\nFOUNDER %2\n").arg(m_alias, m_founder));
+	}
 
 	return true;
 }
 
 bool FiledHistory::initRecording()
 {
-	Q_ASSERT(m_blocks.isEmpty());
-
-	const QString filename =
-		uniqueRecordingFilename(m_dir, id(), ++m_fileCount);
-
-	m_recording = new QFile(m_dir.absoluteFilePath(filename), this);
-	if(!m_recording->open(QFile::ReadWrite)) {
-		qWarning() << filename << m_recording->errorString();
-		return false;
-	}
-
+	Q_ASSERT(m_blockCache.isEmpty());
 	Q_ASSERT(!m_reader);
-	m_reader = DP_binary_reader_new(
-		DP_qfile_input_new(m_recording, false, DP_input_new),
-		DP_BINARY_READER_FLAG_NO_LENGTH | DP_BINARY_READER_FLAG_NO_HEADER);
 	Q_ASSERT(!m_writer);
-	m_writer = DP_binary_writer_new(
-		DP_qfile_output_new(m_recording, false, DP_output_new));
-
-	JSON_Value *header_value = json_value_init_object();
-	JSON_Object *header_object = json_value_get_object(header_value);
-	json_object_set_string( // the hosting client's protocol version
-		header_object, "version", qUtf8Printable(m_version.asString()));
-	bool ok = DP_binary_writer_write_header(m_writer, header_object);
-	json_value_free(header_value);
-	if(!ok) {
-		qWarning() << filename << DP_error();
+	QString fileName = uniqueRecordingFilename(m_dir, id(), ++m_fileCount);
+	if(!openRecording(fileName, false, &m_recording, &m_reader, &m_writer)) {
 		return false;
 	}
 
-	m_recording->flush();
-
-	m_journal->write(QString("FILE %1\n").arg(filename).toUtf8());
-	m_journal->flush();
-
-	m_blocks << Block{
-		m_recording->pos(), firstIndex(), 0, m_recording->pos(),
-		net::MessageList()};
-
+	writeFileEntryToJournal(fileName);
+	m_blockCache.addBlock(m_recording->pos(), firstIndex());
 	return true;
+}
+
+bool FiledHistory::openRecording(
+	const QString &fileName, bool stream, QFile **outRecording,
+	DP_BinaryReader **outReader, DP_BinaryWriter **outWriter)
+{
+	QFile *recording = new QFile(m_dir.absoluteFilePath(fileName), this);
+	if(!recording->open(QFile::ReadWrite)) {
+		qWarning(
+			"Error opening '%s': %s", qUtf8Printable(fileName),
+			qUtf8Printable(recording->errorString()));
+		recording->remove();
+		delete recording;
+		return false;
+	}
+
+	DP_BinaryReader *reader = DP_binary_reader_new(
+		DP_qfile_input_new(recording, false, DP_input_new),
+		DP_BINARY_READER_FLAG_NO_LENGTH | DP_BINARY_READER_FLAG_NO_HEADER);
+	DP_BinaryWriter *writer = DP_binary_writer_new(
+		DP_qfile_output_new(recording, false, DP_output_new));
+
+	JSON_Value *headerValue = json_value_init_object();
+	JSON_Object *headerObject = json_value_get_object(headerValue);
+	json_object_set_string( // the hosting client's protocol version
+		headerObject, "version", qUtf8Printable(m_version.asString()));
+	if(stream) {
+		json_object_set_number(
+			headerObject, "streamfork", double(m_resetStreamForkPos));
+	}
+	bool ok = DP_binary_writer_write_header(writer, headerObject);
+	if(!ok) {
+		qWarning(
+			"Error writing header to '%s': %s", qUtf8Printable(fileName),
+			DP_error());
+	}
+	json_value_free(headerValue);
+
+	if(ok) {
+		if(!recording->flush()) {
+			qWarning(
+				"Error flushing recording to '%s': %s",
+				qUtf8Printable(fileName),
+				qUtf8Printable(recording->errorString()));
+			ok = false;
+		}
+	}
+
+	if(ok) {
+		*outRecording = recording;
+		*outReader = reader;
+		*outWriter = writer;
+		return true;
+	} else {
+		DP_binary_writer_free(writer);
+		DP_binary_reader_free(reader);
+		recording->remove();
+		delete recording;
+		return false;
+	}
+}
+
+void FiledHistory::writeFileEntryToJournal(const QString &fileName)
+{
+	writeStringToJournal(QStringLiteral("FILE %1\n").arg(fileName));
+}
+
+void FiledHistory::writeStringToJournal(const QString &s)
+{
+	writeBytesToJournal(s.toUtf8());
+}
+
+void FiledHistory::writeBytesToJournal(const QByteArray &bytes)
+{
+	if(m_journal) {
+		qint64 written = m_journal->write(bytes);
+		if(written == bytes.size()) {
+			flushJournal();
+		} else if(written < 0) {
+			qWarning(
+				"Error writing to journal: %s",
+				qUtf8Printable(m_journal->errorString()));
+		} else {
+			qWarning(
+				"Tried to write %zu byte(s) to journal, but wrote %zu",
+				size_t(bytes.size()), size_t(written));
+		}
+	}
+}
+
+void FiledHistory::flushRecording()
+{
+	if(m_recording) {
+		if(!m_recording->flush()) {
+			qWarning(
+				"Error flushing recording: %s",
+				qUtf8Printable(m_recording->errorString()));
+		}
+	}
+}
+
+void FiledHistory::flushJournal()
+{
+	if(m_journal) {
+		if(!m_journal->flush()) {
+			qWarning(
+				"Error flushing journal: %s",
+				qUtf8Printable(m_journal->errorString()));
+		}
+	}
+}
+
+void FiledHistory::removeOrArchive(QFile *f) const
+{
+	if(f) {
+		if(m_archive) {
+			QString fileName = f->fileName();
+			if(!f->rename(fileName + QStringLiteral(".archived"))) {
+				qWarning(
+					"Error archiving '%s': %s", qUtf8Printable(fileName),
+					qUtf8Printable(f->errorString()));
+			}
+		} else if(!f->remove()) {
+			qWarning(
+				"Error removing '%s': %s", qUtf8Printable(f->fileName()),
+				qUtf8Printable(f->errorString()));
+		}
+	}
 }
 
 bool FiledHistory::load()
@@ -214,7 +317,7 @@ bool FiledHistory::load()
 		if(cmd == "FILE") {
 			recordingFile = QString::fromUtf8(params);
 			++m_fileCount;
-			m_blocks.clear();
+			m_blockCache.clear();
 
 		} else if(cmd == "ALIAS") {
 			if(m_alias.isEmpty())
@@ -237,7 +340,7 @@ bool FiledHistory::load()
 			m_maxUsers = qBound(1, params.toInt(), 254);
 
 		} else if(cmd == "AUTORESET") {
-			m_autoResetThreshold = params.toUInt();
+			m_autoResetThreshold = params.toULong();
 
 		} else if(cmd == "TITLE") {
 			m_title = params;
@@ -409,9 +512,8 @@ bool FiledHistory::load()
 		return false;
 	}
 
-	historyLoaded(
-		m_blocks.last().endOffset - startOffset,
-		m_blocks.last().startIndex + m_blocks.last().count);
+	const Block &b = m_blockCache.lastBlock();
+	historyLoaded(b.endOffset - startOffset, b.startIndex + b.count);
 
 	// If a loaded session is empty, the server expects the first joining client
 	// to supply the initial content, while the client is expecting to join
@@ -426,37 +528,29 @@ bool FiledHistory::load()
 
 bool FiledHistory::scanBlocks()
 {
-	Q_ASSERT(m_blocks.isEmpty());
+	Q_ASSERT(m_blockCache.isEmpty());
 	// Note: m_recording should be at the start of the recording
 
-	m_blocks << Block{
-		m_recording->pos(), firstIndex(), 0, m_recording->pos(),
-		net::MessageList()};
+	m_blockCache.addBlock(m_recording->pos(), firstIndex());
 
 	QSet<uint8_t> users;
 
 	do {
-		Block &b = m_blocks.last();
 		uint8_t msgType, ctxId;
 		int msglen = DP_binary_reader_skip_message(m_reader, &msgType, &ctxId);
 		if(msglen < 0) {
 			// Truncated message encountered.
 			// Rewind back to the end of the previous message
-			qWarning() << m_recording->fileName() << "Recording truncated at"
-					   << int(b.endOffset);
-			m_recording->seek(b.endOffset);
+			qint64 offset = m_blockCache.lastBlock().endOffset;
+			qWarning(
+				"Recording '%s' truncated at %lld",
+				qUtf8Printable(m_recording->fileName()),
+				static_cast<long long>(offset));
+			m_recording->seek(offset);
 			break;
 		}
-		++m_blocks.last().count;
-
-		b.endOffset += msglen;
-		Q_ASSERT(b.endOffset == m_recording->pos());
-
-		if(b.endOffset - b.startOffset >= MAX_BLOCK_SIZE) {
-			m_blocks << Block{
-				b.endOffset, b.startIndex + b.count, 0, b.endOffset,
-				net::MessageList()};
-		}
+		m_blockCache.incrementLastBlock(msglen);
+		Q_ASSERT(m_blockCache.lastBlock().endOffset == m_recording->pos());
 
 		switch(msgType) {
 		case DP_MSG_JOIN:
@@ -472,8 +566,7 @@ bool FiledHistory::scanBlocks()
 	// There should be no users at the end of the recording.
 	for(const uint8_t user : users) {
 		net::Message msg = net::makeLeaveMessage(user);
-		m_blocks.last().count++;
-		m_blocks.last().endOffset += qint64(msg.length());
+		m_blockCache.incrementLastBlock(msg.length());
 		if(DP_binary_writer_write_message(m_writer, msg.get()) == 0) {
 			return false;
 		}
@@ -484,45 +577,30 @@ bool FiledHistory::scanBlocks()
 
 void FiledHistory::terminate()
 {
+	discardResetStream();
 	DP_binary_reader_free(m_reader);
 	m_reader = nullptr;
 	DP_binary_writer_free(m_writer);
 	m_writer = nullptr;
 	m_recording->close();
 	m_journal->close();
-
-	if(m_archive) {
-		m_journal->rename(m_journal->fileName() + ".archived");
-		m_recording->rename(m_recording->fileName() + ".archived");
-	} else {
-		m_recording->remove();
-		m_journal->remove();
-	}
+	removeOrArchive(m_journal);
+	removeOrArchive(m_recording);
 }
 
 void FiledHistory::closeBlock()
 {
 	// Flush the output files just to be safe
-	m_recording->flush();
-	m_journal->flush();
-
-	// Check if anything needs to be done
-	Block &b = m_blocks.last();
-	if(b.count == 0)
-		return;
-
-	// Mark last block as closed and start a new one
-	m_blocks << Block{
-		b.endOffset, b.startIndex + b.count, 0, b.endOffset,
-		net::MessageList()};
+	flushRecording();
+	flushJournal();
+	m_blockCache.closeLastBlock();
 }
 
 void FiledHistory::setFounderName(const QString &founder)
 {
 	if(m_founder != founder) {
 		m_founder = founder;
-		m_journal->write(QString("FOUNDER %1\n").arg(m_founder).toUtf8());
-		m_journal->flush();
+		writeStringToJournal(QStringLiteral("FOUNDER %1\n").arg(m_founder));
 	}
 }
 
@@ -530,24 +608,17 @@ void FiledHistory::setPasswordHash(const QByteArray &password)
 {
 	if(m_password != password) {
 		m_password = password;
-
-		m_journal->write("PASSWORD ");
-		if(!m_password.isEmpty())
-			m_journal->write(m_password);
-		m_journal->write("\n");
-		m_journal->flush();
+		writeBytesToJournal(
+			QByteArrayLiteral("PASSWORD ") + m_password +
+			QByteArrayLiteral("\n"));
 	}
 }
 
 void FiledHistory::setOpwordHash(const QByteArray &opword)
 {
 	m_opword = opword;
-
-	m_journal->write("OPWORD ");
-	if(!m_opword.isEmpty())
-		m_journal->write(m_opword);
-	m_journal->write("\n");
-	m_journal->flush();
+	writeBytesToJournal(
+		QByteArrayLiteral("OPWORD ") + m_opword + QByteArrayLiteral("\n"));
 }
 
 void FiledHistory::setMaxUsers(int max)
@@ -555,27 +626,24 @@ void FiledHistory::setMaxUsers(int max)
 	const int newMax = qBound(1, max, 254);
 	if(newMax != m_maxUsers) {
 		m_maxUsers = newMax;
-		m_journal->write(QString("MAXUSERS %1\n").arg(newMax).toUtf8());
-		m_journal->flush();
+		writeStringToJournal(QStringLiteral("MAXUSERS %1\n").arg(newMax));
 	}
 }
 
-void FiledHistory::setAutoResetThreshold(uint limit)
+void FiledHistory::setAutoResetThreshold(size_t limit)
 {
-	const uint newLimit =
-		sizeLimit() == 0 ? limit : qMin(uint(sizeLimit() * 0.9), limit);
+	const size_t newLimit =
+		sizeLimit() == 0 ? limit : qMin(size_t(sizeLimit() * 0.9), limit);
 	if(newLimit != m_autoResetThreshold) {
 		m_autoResetThreshold = newLimit;
-		m_journal->write(QString("AUTORESET %1\n").arg(newLimit).toUtf8());
-		m_journal->flush();
+		writeStringToJournal(QStringLiteral("AUTORESET %1\n").arg(newLimit));
 	}
 }
 
 int FiledHistory::nextCatchupKey()
 {
 	int result = incrementNextCatchupKey(m_nextCatchupKey);
-	m_journal->write(QString("CATCHUP %1\n").arg(m_nextCatchupKey).toUtf8());
-	m_journal->flush();
+	writeStringToJournal(QStringLiteral("CATCHUP %1\n").arg(m_nextCatchupKey));
 	return result;
 }
 
@@ -583,8 +651,7 @@ void FiledHistory::setTitle(const QString &title)
 {
 	if(title != m_title) {
 		m_title = title;
-		m_journal->write(QString("TITLE %1\n").arg(title).toUtf8());
-		m_journal->flush();
+		writeStringToJournal(QStringLiteral("TITLE %1\n").arg(title));
 	}
 }
 
@@ -614,41 +681,33 @@ void FiledHistory::setFlags(Flags f)
 		if(f.testFlag(AllowWeb)) {
 			fstr.append(QStringLiteral("allowweb"));
 		}
-		m_journal->write(
-			QStringLiteral("FLAGS %1\n").arg(fstr.join(' ')).toUtf8());
-		m_journal->flush();
+		writeStringToJournal(QStringLiteral("FLAGS %1\n").arg(fstr.join(' ')));
 	}
 }
 
 void FiledHistory::joinUser(uint8_t id, const QString &name)
 {
 	SessionHistory::joinUser(id, name);
-	m_journal->write(
-		"USER " + QByteArray::number(int(id)) + " " +
-		name.toUtf8().toPercentEncoding(QByteArray(), " ") + "\n");
-	m_journal->flush();
+	writeBytesToJournal(
+		QByteArrayLiteral("USER ") + QByteArray::number(int(id)) +
+		QByteArrayLiteral(" ") +
+		name.toUtf8().toPercentEncoding(QByteArray(), QByteArrayLiteral(" ")) +
+		QByteArrayLiteral("\n"));
 }
 
-std::tuple<net::MessageList, int> FiledHistory::getBatch(int after) const
+std::tuple<net::MessageList, long long>
+FiledHistory::getBatch(long long after) const
 {
-	// Find the block that contains the index *after*
-	int i = m_blocks.size() - 1;
-	for(; i > 0; --i) {
-		const Block &b = m_blocks.at(i - 1);
-		if(b.startIndex + b.count - 1 <= after)
-			break;
-	}
-
-	Block &b = m_blocks[i];
-	int idxOffset = qMax(0, after - b.startIndex + 1);
+	Block &b = m_blockCache.findBlock(after);
+	long long idxOffset = qMax(0LL, after - b.startIndex + 1LL);
 	if(idxOffset >= b.count) {
-		return std::make_tuple(net::MessageList(), b.startIndex + b.count - 1);
+		return std::make_tuple(
+			net::MessageList(), b.startIndex + b.count - 1LL);
 	}
 
 	if(b.messages.isEmpty() && b.count > 0) {
 		// Load the block worth of messages to memory if not already loaded
 		const qint64 prevPos = m_recording->pos();
-		qDebug() << m_recording->fileName() << "loading block" << i;
 		m_recording->seek(b.startOffset);
 		for(int m = 0; m < b.count; ++m) {
 			DP_Message *msg;
@@ -666,24 +725,13 @@ std::tuple<net::MessageList, int> FiledHistory::getBatch(int after) const
 	}
 	Q_ASSERT(b.messages.size() == b.count);
 	return std::make_tuple(
-		b.messages.mid(idxOffset), b.startIndex + b.count - 1);
+		b.messages.mid(idxOffset), b.startIndex + b.count - 1LL);
 }
 
 void FiledHistory::historyAdd(const net::Message &msg)
 {
 	size_t len = DP_binary_writer_write_message(m_writer, msg.get());
-
-	Block &b = m_blocks.last();
-	b.count++;
-	b.endOffset += len;
-
-	// Add message to cache, if already active (if cache is empty, it will be
-	// loaded from disk when needed)
-	if(!b.messages.isEmpty())
-		b.messages.append(msg);
-
-	if(b.endOffset - b.startOffset > MAX_BLOCK_SIZE)
-		closeBlock();
+	m_blockCache.addToLastBlock(msg, len);
 }
 
 void FiledHistory::historyReset(const net::MessageList &newHistory)
@@ -696,15 +744,10 @@ void FiledHistory::historyReset(const net::MessageList &newHistory)
 	m_reader = nullptr;
 	DP_binary_writer_free(m_writer);
 	m_writer = nullptr;
-	m_blocks.clear();
+	m_blockCache.clear();
 	initRecording();
 
-	// Remove old recording after the new one has been created so
-	// that the new file will not have the same name.
-	if(m_archive)
-		oldRecording->rename(oldRecording->fileName() + ".archived");
-	else
-		oldRecording->remove();
+	removeOrArchive(oldRecording);
 	delete oldRecording;
 
 	for(const net::Message &msg : newHistory) {
@@ -712,53 +755,231 @@ void FiledHistory::historyReset(const net::MessageList &newHistory)
 	}
 }
 
-void FiledHistory::cleanupBatches(int before)
+void FiledHistory::cleanupBatches(long long before)
 {
-	for(Block &b : m_blocks) {
-		if(b.startIndex + b.count >= before)
-			break;
-		if(!b.messages.isEmpty()) {
-			qDebug() << "releasing history block cache from" << b.startIndex
-					 << "to" << b.startIndex + b.count - 1;
-			b.messages = net::MessageList();
-		}
-	}
+	m_blockCache.cleanup(before);
 }
 
 void FiledHistory::historyAddBan(
 	int id, const QString &username, const QHostAddress &ip,
 	const QString &extAuthId, const QString &sid, const QString &bannedBy)
 {
-	const QByteArray include = " ";
-	QByteArray entry =
-		"BAN " + QByteArray::number(id) + " " +
-		username.toUtf8().toPercentEncoding(QByteArray(), include) + " " +
-		ip.toString().toUtf8() + " " +
-		extAuthId.toUtf8().toPercentEncoding(QByteArray(), include) + " " +
-		bannedBy.toUtf8().toPercentEncoding(QByteArray(), include) + " " +
-		sid.toUtf8().toPercentEncoding(QByteArray(), include) + "\n";
-	m_journal->write(entry);
-	m_journal->flush();
+	const QByteArray space = QByteArrayLiteral(" ");
+	writeBytesToJournal(
+		QByteArrayLiteral("BAN ") + QByteArray::number(id) + space +
+		username.toUtf8().toPercentEncoding(QByteArray(), space) + space +
+		ip.toString().toUtf8() + space +
+		extAuthId.toUtf8().toPercentEncoding(QByteArray(), space) + space +
+		bannedBy.toUtf8().toPercentEncoding(QByteArray(), space) + space +
+		sid.toUtf8().toPercentEncoding(QByteArray(), space) +
+		QByteArrayLiteral("\n"));
 }
 
 void FiledHistory::historyRemoveBan(int id)
 {
-	m_journal->write(QByteArray("UNBAN ") + QByteArray::number(id) + "\n");
-	m_journal->flush();
+	writeBytesToJournal(
+		QByteArrayLiteral("UNBAN ") + QByteArray::number(id) +
+		QByteArrayLiteral("\n"));
+}
+
+StreamResetStartResult
+FiledHistory::openResetStream(const net::MessageList &serverSideStateMessages)
+{
+	Q_ASSERT(!m_resetStreamRecording);
+	Q_ASSERT(!m_resetStreamReader);
+	Q_ASSERT(!m_resetStreamWriter);
+
+	m_resetStreamFileCount = ++m_fileCount;
+	m_resetStreamFileName =
+		uniqueRecordingFilename(m_dir, id(), m_resetStreamFileCount);
+	m_resetStreamForkPos = m_recording->pos();
+	if(!openRecording(
+		   m_resetStreamFileName, true, &m_resetStreamRecording,
+		   &m_resetStreamReader, &m_resetStreamWriter)) {
+		return StreamResetStartResult::WriteError;
+	}
+
+	m_resetStreamHeaderPos = m_resetStreamRecording->pos();
+	m_blockCache.closeLastBlock();
+	m_resetStreamBlockIndex = m_blockCache.size() - 1;
+	m_resetStreamBlockCache.clear();
+	m_resetStreamBlockCache.addBlock(m_resetStreamHeaderPos, 0LL);
+
+	for(const net::Message &msg : serverSideStateMessages) {
+		StreamResetAddResult addResult = addResetStreamMessage(msg);
+		if(addResult != StreamResetAddResult::Ok) {
+			discardResetStream();
+			return addResult == StreamResetAddResult::OutOfSpace
+					   ? StreamResetStartResult::OutOfSpace
+					   : StreamResetStartResult::WriteError;
+		}
+	}
+
+	return StreamResetStartResult::Ok;
+}
+
+StreamResetAddResult
+FiledHistory::addResetStreamMessage(const net::Message &msg)
+{
+	Q_ASSERT(m_resetStreamWriter);
+	size_t len = DP_binary_writer_write_message(m_resetStreamWriter, msg.get());
+	if(len > 0) {
+		m_resetStreamBlockCache.incrementLastBlock(len);
+		return StreamResetAddResult::Ok;
+	} else {
+		return StreamResetAddResult::WriteError;
+	}
+}
+
+StreamResetPrepareResult FiledHistory::prepareResetStream()
+{
+	Q_ASSERT(m_resetStreamRecording);
+	if(m_resetStreamRecording->flush()) {
+		return StreamResetPrepareResult::Ok;
+	} else {
+		qWarning(
+			"Error flushing stream recording: %s",
+			qUtf8Printable(m_resetStreamRecording->errorString()));
+		return StreamResetPrepareResult::WriteError;
+	}
+}
+
+bool FiledHistory::resolveResetStream(
+	long long newFirstIndex, long long &outMessageCount, size_t &outSizeInBytes,
+	QString &outError)
+{
+	Q_ASSERT(m_resetStreamRecording);
+
+	qint64 prevPos = m_recording->pos();
+	Q_ASSERT(prevPos >= m_resetStreamForkPos);
+
+	size_t sizeLimitInBytes = sizeLimit();
+	if(sizeLimitInBytes != 0) {
+		size_t sizeInBytes =
+			(prevPos - m_resetStreamForkPos) +
+			(m_resetStreamRecording->pos() - m_resetStreamHeaderPos);
+		if(sizeInBytes > sizeLimitInBytes) {
+			outError = QStringLiteral("total size %1 exceeds limit %2")
+						   .arg(sizeInBytes)
+						   .arg(sizeLimitInBytes);
+			return false;
+		}
+	}
+
+	if(!copyForkMessagesToResetStream(outError)) {
+		if(!m_recording->seek(prevPos)) {
+			qWarning(
+				"Error seeking back recording: %s",
+				qUtf8Printable(m_recording->errorString()));
+		}
+		discardResetStream();
+		return false;
+	}
+
+	writeFileEntryToJournal(m_resetStreamFileName);
+
+	DP_binary_reader_free(m_reader);
+	m_reader = m_resetStreamReader;
+	m_resetStreamReader = nullptr;
+
+	DP_binary_writer_free(m_writer);
+	m_writer = m_resetStreamWriter;
+	m_resetStreamWriter = nullptr;
+
+	removeOrArchive(m_recording);
+	delete m_recording;
+	m_recording = m_resetStreamRecording;
+	m_resetStreamRecording = nullptr;
+
+	m_blockCache.replaceWithResetStream(
+		m_resetStreamBlockCache, m_resetStreamBlockIndex, newFirstIndex);
+
+	outMessageCount = m_blockCache.totalMessageCount();
+	outSizeInBytes = m_recording->pos() - m_resetStreamHeaderPos;
+	return true;
+}
+
+bool FiledHistory::copyForkMessagesToResetStream(QString &outError)
+{
+	if(!m_recording->seek(m_resetStreamForkPos)) {
+		outError = QStringLiteral("Error seeking recording to stream start: %1")
+					   .arg(m_recording->errorString());
+		return false;
+	}
+
+	QByteArray buffer;
+	buffer.resize(BUFSIZ);
+	while(true) {
+		qint64 read = m_recording->read(buffer.data(), buffer.size());
+		if(read > 0) {
+			qint64 written =
+				m_resetStreamRecording->write(buffer.constData(), read);
+			if(written < 0) {
+				outError =
+					QStringLiteral("Error writing to stream recording: %1")
+						.arg(m_resetStreamRecording->errorString());
+				return false;
+			} else if(written != read) {
+				outError =
+					QStringLiteral("Tried to write %1 byte(s), but wrote %2")
+						.arg(read)
+						.arg(written);
+				return false;
+			}
+		} else if(read == 0) {
+			break;
+		} else {
+			outError = QStringLiteral("Error reading from recording: %1")
+						   .arg(m_recording->errorString());
+			return false;
+		}
+	}
+
+	if(!m_resetStreamRecording->flush()) {
+		outError = QStringLiteral("Error flushing stream recording: %1")
+					   .arg(m_resetStreamRecording->errorString());
+		return false;
+	}
+
+	return true;
+}
+
+void FiledHistory::discardResetStream()
+{
+	if(m_resetStreamFileCount == m_fileCount) {
+		--m_fileCount;
+	}
+	m_resetStreamFileCount = -1;
+	m_resetStreamBlockCache.clear();
+
+	if(m_resetStreamRecording) {
+		DP_ASSERT(m_resetStreamWriter);
+		DP_binary_writer_free(m_resetStreamWriter);
+		m_resetStreamWriter = nullptr;
+
+		DP_ASSERT(m_resetStreamReader);
+		DP_binary_reader_free(m_resetStreamReader);
+		m_resetStreamReader = nullptr;
+
+		m_resetStreamRecording->remove();
+		delete m_resetStreamRecording;
+		m_resetStreamRecording = nullptr;
+	} else {
+		DP_ASSERT(!m_resetStreamWriter);
+		DP_ASSERT(!m_resetStreamReader);
+	}
 }
 
 void FiledHistory::timerEvent(QTimerEvent *)
 {
-	if(m_recording)
-		m_recording->flush();
+	flushRecording();
 }
 
 void FiledHistory::addAnnouncement(const QString &url)
 {
 	if(!m_announcements.contains(url)) {
 		m_announcements << url;
-		m_journal->write(QString("ANNOUNCE %1\n").arg(url).toUtf8());
-		m_journal->flush();
+		writeStringToJournal(QStringLiteral("ANNOUNCE %1\n").arg(url));
 	}
 }
 
@@ -766,8 +987,7 @@ void FiledHistory::removeAnnouncement(const QString &url)
 {
 	if(m_announcements.contains(url)) {
 		m_announcements.removeAll(url);
-		m_journal->write(QString("UNANNOUNCE %1\n").arg(url).toUtf8());
-		m_journal->flush();
+		writeStringToJournal(QStringLiteral("UNANNOUNCE %1\n").arg(url));
 	}
 }
 
@@ -775,11 +995,9 @@ void FiledHistory::setAuthenticatedOperator(const QString &authId, bool op)
 {
 	bool currentlyOp = isOperator(authId);
 	if(op && !currentlyOp) {
-		m_journal->write("OP " + authId.toUtf8() + "\n");
-		m_journal->flush();
+		writeStringToJournal(QStringLiteral("OP %1\n").arg(authId));
 	} else if(!op && currentlyOp) {
-		m_journal->write("DEOP " + authId.toUtf8() + "\n");
-		m_journal->flush();
+		writeStringToJournal(QStringLiteral("DEOP %1\n").arg(authId));
 	}
 	SessionHistory::setAuthenticatedOperator(authId, op);
 }
@@ -788,11 +1006,9 @@ void FiledHistory::setAuthenticatedTrust(const QString &authId, bool trusted)
 {
 	bool currentlyTrusted = isTrusted(authId);
 	if(trusted && !currentlyTrusted) {
-		m_journal->write("TRUST " + authId.toUtf8() + "\n");
-		m_journal->flush();
+		writeStringToJournal(QStringLiteral("TRUST %1\n").arg(authId));
 	} else if(!trusted && currentlyTrusted) {
-		m_journal->write("UNTRUST " + authId.toUtf8() + "\n");
-		m_journal->flush();
+		writeStringToJournal(QStringLiteral("UNTRUST %1\n").arg(authId));
 	}
 	SessionHistory::setAuthenticatedTrust(authId, trusted);
 }
@@ -802,12 +1018,121 @@ void FiledHistory::setAuthenticatedUsername(
 {
 	const QString *currentUsername = authenticatedUsernameFor(authId);
 	if(!currentUsername || *currentUsername != username) {
-		m_journal->write(
-			"AUTHNAME " + authId.toUtf8().toPercentEncoding() + " " +
-			username.toUtf8().toPercentEncoding() + "\n");
-		m_journal->flush();
+		writeBytesToJournal(
+			QByteArrayLiteral("AUTHNAME ") +
+			authId.toUtf8().toPercentEncoding() + QByteArrayLiteral(" ") +
+			username.toUtf8().toPercentEncoding() + QByteArrayLiteral("\n"));
 	}
 	SessionHistory::setAuthenticatedUsername(authId, username);
+}
+
+
+FiledHistory::Block &FiledHistory::BlockCache::findBlock(long long after)
+{
+	int i = m_blocks.size() - 1;
+	for(; i > 0; --i) {
+		const Block &b = m_blocks.at(i - 1);
+		if(b.startIndex + b.count - 1LL <= after) {
+			break;
+		}
+	}
+	return m_blocks[i];
+}
+
+void FiledHistory::BlockCache::addBlock(qint64 offset, long long index)
+{
+	m_blocks.append(Block(offset, index));
+}
+
+void FiledHistory::BlockCache::addToLastBlock(
+	const net::Message &msg, size_t len)
+{
+	Block &b = m_blocks.last();
+	// Add message to cache, if already active (if cache is empty, it will be
+	// loaded from disk when needed)
+	if(!b.messages.isEmpty()) {
+		b.messages.append(msg);
+	}
+	incrementBlock(b, len);
+}
+
+void FiledHistory::BlockCache::incrementLastBlock(size_t len)
+{
+	Block &b = m_blocks.last();
+	Q_ASSERT(b.messages.isEmpty());
+	incrementBlock(b, len);
+}
+
+void FiledHistory::BlockCache::closeLastBlock()
+{
+	// Check if anything needs to be done
+	Block &b = m_blocks.last();
+	if(b.count != 0) {
+		// Mark last block as closed and start a new one
+		m_blocks.append(Block(b.endOffset, b.startIndex + b.count));
+	}
+}
+
+void FiledHistory::BlockCache::cleanup(long long before)
+{
+	for(Block &b : m_blocks) {
+		if(b.startIndex + b.count >= before) {
+			break;
+		} else if(!b.messages.isEmpty()) {
+			qDebug(
+				"Releasing history block cache from %lld to %lld", b.startIndex,
+				b.startIndex + b.count - 1LL);
+			b.messages = net::MessageList();
+		}
+	}
+}
+
+long long FiledHistory::BlockCache::totalMessageCount() const
+{
+	compat::sizetype count = m_blocks.size();
+	if(count > 0) {
+		const Block &b = m_blocks[count - 1];
+		return b.startIndex + b.count - m_blocks[0].startIndex;
+	} else {
+		return 0LL;
+	}
+}
+
+void FiledHistory::BlockCache::replaceWithResetStream(
+	BlockCache &streamCache, compat::sizetype blockIndex,
+	long long newFirstIndex)
+{
+	// Reindex blocks in the stream reset image based on the new first index.
+	long long nextStartIndex = newFirstIndex;
+	for(Block &b : streamCache.m_blocks) {
+		b.startIndex = nextStartIndex;
+		nextStartIndex = b.startIndex + b.count;
+	}
+
+	// Move forked blocks over to the new stream cache.
+	compat::sizetype count = m_blocks.size();
+	for(compat::sizetype i = blockIndex; i < count; ++i) {
+		Block b = m_blocks[i];
+		b.startIndex = nextStartIndex;
+		nextStartIndex = b.startIndex + b.count;
+		qint64 offsetSize = b.endOffset - b.startOffset;
+		b.startOffset = streamCache.m_blocks.last().endOffset;
+		b.endOffset = b.startOffset + offsetSize;
+		streamCache.m_blocks.append(b);
+	}
+
+	// Replace ourselves.
+	m_blocks.clear();
+	m_blocks.swap(streamCache.m_blocks);
+}
+
+void FiledHistory::BlockCache::incrementBlock(Block &b, size_t len)
+{
+	++b.count;
+	b.endOffset += len;
+	if(b.endOffset - b.startOffset > MAX_BLOCK_SIZE) {
+		m_blocks.append(Block(b.endOffset, b.startIndex + b.count));
+	}
 }
 
 }

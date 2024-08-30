@@ -111,6 +111,7 @@ public:
 	virtual void setShowSelectionMask(bool showSelectionMask) = 0;
 
 	virtual void setCatchupProgress(int percent, bool force) = 0;
+	virtual void setStreamResetProgress(int percent) = 0;
 	virtual void setSaveInProgress(bool saveInProgress) = 0;
 
 	virtual void

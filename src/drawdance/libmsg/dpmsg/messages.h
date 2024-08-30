@@ -54,6 +54,7 @@ typedef enum DP_MessageType {
     DP_MSG_TRUSTED_USERS = 36,
     DP_MSG_SOFT_RESET = 37,
     DP_MSG_PRIVATE_CHAT = 38,
+    DP_MSG_RESET_STREAM = 39,
     DP_MSG_INTERVAL = 64,
     DP_MSG_LASER_TRAIL = 65,
     DP_MSG_MOVE_POINTER = 66,
@@ -565,6 +566,40 @@ const char *DP_msg_private_chat_message(const DP_MsgPrivateChat *mpc,
                                         size_t *out_len);
 
 size_t DP_msg_private_chat_message_len(const DP_MsgPrivateChat *mpc);
+
+
+/*
+ * DP_MSG_RESET_STREAM
+ *
+ * Streamed chunk of session reset messages. The client and server
+ * will negotiate support and compression algorithm.
+ */
+
+#define DP_MSG_RESET_STREAM_STATIC_LENGTH 0
+
+#define DP_MSG_RESET_STREAM_DATA_MIN_SIZE 0
+#define DP_MSG_RESET_STREAM_DATA_MAX_SIZE 65535
+
+typedef struct DP_MsgResetStream DP_MsgResetStream;
+
+DP_Message *DP_msg_reset_stream_new(unsigned int context_id,
+                                    void (*set_data)(size_t, unsigned char *,
+                                                     void *),
+                                    size_t data_size, void *data_user);
+
+DP_Message *DP_msg_reset_stream_deserialize(unsigned int context_id,
+                                            const unsigned char *buffer,
+                                            size_t length);
+
+DP_Message *DP_msg_reset_stream_parse(unsigned int context_id,
+                                      DP_TextReader *reader);
+
+DP_MsgResetStream *DP_msg_reset_stream_cast(DP_Message *msg);
+
+const unsigned char *DP_msg_reset_stream_data(const DP_MsgResetStream *mrs,
+                                              size_t *out_size);
+
+size_t DP_msg_reset_stream_data_size(const DP_MsgResetStream *mrs);
 
 
 /*

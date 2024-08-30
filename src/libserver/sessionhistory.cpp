@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "libserver/sessionhistory.h"
+extern "C" {
+#include <dpmsg/reset_stream.h>
+}
 #include "libserver/client.h"
+#include "libserver/sessionhistory.h"
+#include "libshared/net/servercmd.h"
 
 namespace server {
 
@@ -16,7 +20,7 @@ SessionHistory::SessionHistory(const QString &id, QObject *parent)
 {
 }
 
-bool SessionHistory::hasSpaceFor(uint bytes, uint extra) const
+bool SessionHistory::hasSpaceFor(size_t bytes, size_t extra) const
 {
 	return m_sizeLimit <= 0 || m_sizeInBytes + bytes <= m_sizeLimit + extra;
 }
@@ -73,7 +77,7 @@ void SessionHistory::joinUser(uint8_t id, const QString &name)
 	idQueue().setIdForName(id, name);
 }
 
-void SessionHistory::historyLoaded(uint size, int messageCount)
+void SessionHistory::historyLoaded(size_t size, int messageCount)
 {
 	Q_ASSERT(m_lastIndex == -1);
 	m_sizeInBytes = size;
@@ -83,7 +87,7 @@ void SessionHistory::historyLoaded(uint size, int messageCount)
 
 bool SessionHistory::addMessage(const net::Message &msg)
 {
-	uint bytes = uint(msg.length());
+	size_t bytes = msg.length();
 	if(hasRegularSpaceFor(bytes)) {
 		addMessageInternal(msg, bytes);
 		return true;
@@ -103,7 +107,7 @@ bool SessionHistory::addEmergencyMessage(const net::Message &msg)
 	}
 }
 
-void SessionHistory::addMessageInternal(const net::Message &msg, uint bytes)
+void SessionHistory::addMessageInternal(const net::Message &msg, size_t bytes)
 {
 	m_sizeInBytes += bytes;
 	++m_lastIndex;
@@ -113,34 +117,233 @@ void SessionHistory::addMessageInternal(const net::Message &msg, uint bytes)
 
 bool SessionHistory::reset(const net::MessageList &newHistory)
 {
-	uint newSize = 0;
+	size_t newSize = 0;
 	for(const net::Message &msg : newHistory) {
-		newSize += uint(msg.length());
+		newSize += msg.length();
 	}
 	if(m_sizeLimit > 0 && newSize > m_sizeLimit) {
 		return false;
 	}
 
+	abortStreamedReset();
 	m_sizeInBytes = newSize;
-	m_firstIndex = m_lastIndex + 1;
+	m_firstIndex = m_lastIndex + 1LL;
 	m_lastIndex += newHistory.size();
-	m_autoResetBaseSize = newSize;
+	resetAutoResetThresholdBase();
 	historyReset(newHistory);
 	emit newMessagesAvailable();
 	return true;
 }
 
-uint SessionHistory::effectiveAutoResetThreshold() const
+StreamResetStartResult SessionHistory::startStreamedReset(
+	uint8_t ctxId, const QString &correlator,
+	const net::MessageList &serverSideStateMessages)
 {
-	uint t = autoResetThreshold();
+	if(m_resetStreamState != ResetStreamState::None) {
+		return StreamResetStartResult::AlreadyActive;
+	}
+
+	if(!addMessage(net::makeSoftResetMessage(0)) ||
+	   !addMessage(
+		   net::ServerReply::makeStreamedResetStart(ctxId, correlator))) {
+		return StreamResetStartResult::OutOfSpace;
+	}
+
+	StreamResetStartResult result = openResetStream(serverSideStateMessages);
+	if(result == StreamResetStartResult::Ok) {
+		m_resetStreamState = ResetStreamState::Streaming;
+		m_resetStreamCtxId = ctxId;
+		m_resetStreamSize = 0;
+		m_resetStreamStartIndex = m_lastIndex + 1LL;
+		m_resetStreamMessageCount = 0;
+	}
+
+	return result;
+}
+
+bool SessionHistory::receiveResetStreamMessageCallback(
+	void *user, DP_Message *msg)
+{
+	return static_cast<SessionHistory *>(user)->receiveResetStreamMessage(
+		net::Message::noinc(msg));
+}
+
+bool SessionHistory::receiveResetStreamMessage(const net::Message &msg)
+{
+	if(msg.isControl() || (msg.isServerMeta() && msg.type() != DP_MSG_CHAT)) {
+		m_resetStreamAddError = StreamResetAddResult::DisallowedType;
+		return false;
+	}
+
+	size_t newSize = m_resetStreamSize + msg.length();
+	if(m_sizeLimit > 0 && newSize > m_sizeLimit) {
+		m_resetStreamAddError = StreamResetAddResult::OutOfSpace;
+		return false;
+	}
+	m_resetStreamSize = newSize;
+
+	StreamResetAddResult result = addResetStreamMessage(msg);
+	if(result == StreamResetAddResult::Ok) {
+		++m_resetStreamMessageCount;
+		return true;
+	} else {
+		m_resetStreamAddError = result;
+		return false;
+	}
+}
+
+StreamResetAddResult
+SessionHistory::addStreamResetMessage(uint8_t ctxId, const net::Message &msg)
+{
+	if(m_resetStreamState != ResetStreamState::Streaming) {
+		return StreamResetAddResult::NotActive;
+	}
+
+	if(m_resetStreamCtxId != ctxId) {
+		return StreamResetAddResult::InvalidUser;
+	}
+
+	if(msg.type() != DP_MSG_RESET_STREAM) {
+		return StreamResetAddResult::BadType;
+	}
+
+	size_t size;
+	const unsigned char *data =
+		DP_msg_reset_stream_data(msg.toResetStream(), &size);
+	if(size != 0) {
+		if(!m_resetStreamConsumer) {
+			m_resetStreamConsumer = DP_reset_stream_consumer_new(
+				&receiveResetStreamMessageCallback, this, false);
+			if(!m_resetStreamConsumer) {
+				abortActiveStreamedReset();
+				return StreamResetAddResult::ConsumerError;
+			}
+		}
+
+		m_resetStreamAddError = StreamResetAddResult::ConsumerError;
+		if(!DP_reset_stream_consumer_push(m_resetStreamConsumer, data, size)) {
+			Q_ASSERT(m_resetStreamAddError != StreamResetAddResult::Ok);
+			return m_resetStreamAddError;
+		}
+	}
+	return StreamResetAddResult::Ok;
+}
+
+StreamResetAbortResult SessionHistory::abortStreamedReset(int ctxId)
+{
+	if(m_resetStreamState == ResetStreamState::Streaming) {
+		if(ctxId < 0 || ctxId == m_resetStreamCtxId) {
+			abortActiveStreamedReset();
+			return StreamResetAbortResult::Ok;
+		} else {
+			return StreamResetAbortResult::InvalidUser;
+		}
+	} else {
+		return StreamResetAbortResult::NotActive;
+	}
+}
+
+StreamResetPrepareResult
+SessionHistory::prepareStreamedReset(uint8_t ctxId, int expectedMessageCount)
+{
+	if(m_resetStreamState != ResetStreamState::Streaming) {
+		return StreamResetPrepareResult::NotActive;
+	}
+
+	if(m_resetStreamCtxId != ctxId) {
+		return StreamResetPrepareResult::InvalidUser;
+	}
+
+	m_resetStreamAddError = StreamResetAddResult::ConsumerError;
+	bool freeOk = DP_reset_stream_consumer_free_finish(m_resetStreamConsumer);
+	m_resetStreamConsumer = nullptr;
+	if(!freeOk) {
+		switch(m_resetStreamAddError) {
+		case StreamResetAddResult::OutOfSpace:
+			return StreamResetPrepareResult::OutOfSpace;
+		default:
+			return StreamResetPrepareResult::ConsumerError;
+		}
+	}
+
+	if(m_resetStreamMessageCount != expectedMessageCount ||
+	   expectedMessageCount == 0) {
+		abortActiveStreamedReset();
+		return StreamResetPrepareResult::InvalidMessageCount;
+	}
+
+	switch(addResetStreamMessage(net::ServerReply::makeCaughtUp(0))) {
+	case StreamResetAddResult::Ok:
+		break;
+	case StreamResetAddResult::OutOfSpace:
+		return StreamResetPrepareResult::OutOfSpace;
+	default:
+		return StreamResetPrepareResult::ConsumerError;
+	}
+
+	StreamResetPrepareResult result = prepareResetStream();
+	if(result == StreamResetPrepareResult::Ok) {
+		m_resetStreamState = ResetStreamState::Prepared;
+	} else {
+		m_resetStreamState = ResetStreamState::None;
+	}
+
+	m_resetStreamCtxId = 0;
+	return result;
+}
+
+bool SessionHistory::resolveStreamedReset(
+	long long &outOffset, QString &outError)
+{
+	if(m_resetStreamState != ResetStreamState::Prepared) {
+		outError = QStringLiteral("reset stream is not prepared");
+		return false;
+	}
+
+	long long newFirstIndex = m_lastIndex + 1LL;
+	long long messageCount;
+	size_t sizeInBytes;
+	bool ok =
+		resolveResetStream(newFirstIndex, messageCount, sizeInBytes, outError);
+	m_resetStreamState = ResetStreamState::None;
+	m_resetStreamCtxId = 0;
+	if(!ok) {
+		return false;
+	}
+
+	m_sizeInBytes = sizeInBytes;
+	m_firstIndex = newFirstIndex;
+	m_lastIndex += messageCount;
+	m_autoResetBaseSize = m_resetStreamSize;
+	outOffset = messageCount;
+	return true;
+}
+
+void SessionHistory::abortActiveStreamedReset()
+{
+	discardResetStream();
+	m_resetStreamState = ResetStreamState::None;
+	m_resetStreamCtxId = 0;
+	DP_reset_stream_consumer_free_discard(m_resetStreamConsumer);
+	m_resetStreamConsumer = nullptr;
+}
+
+size_t SessionHistory::effectiveAutoResetThreshold() const
+{
+	size_t t = autoResetThreshold();
 	// Zero means autoreset is not enabled
 	if(t > 0) {
 		t += m_autoResetBaseSize;
 		if(m_sizeLimit > 0) {
-			t = qMin(t, uint(m_sizeLimit * 0.9));
+			t = qMin(t, size_t(m_sizeLimit * 0.9));
 		}
 	}
 	return t;
+}
+
+void SessionHistory::resetAutoResetThresholdBase()
+{
+	m_autoResetBaseSize = m_sizeInBytes;
 }
 
 void SessionHistory::setAuthenticatedOperator(const QString &authId, bool op)

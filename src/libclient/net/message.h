@@ -52,6 +52,9 @@ Message makeInternalCleanupMessage(uint8_t contextId);
 
 Message makeInternalResetMessage(uint8_t contextId);
 
+Message makeInternalStreamResetStartMessage(
+	uint8_t contextId, const QString &correlator);
+
 Message makeInternalSnapshotMessage(uint8_t contextId);
 
 Message makeKeyFrameSetMessage(
@@ -129,8 +132,6 @@ Message makeSelectionPutMessage(
 
 Message
 makeSetMetadataIntMessage(uint8_t contextId, uint8_t field, int32_t value);
-
-Message makeSoftResetMessage(uint8_t contextId);
 
 Message makeTrackCreateMessage(
 	uint8_t contextId, uint16_t id, uint16_t insertId, uint16_t sourceId,

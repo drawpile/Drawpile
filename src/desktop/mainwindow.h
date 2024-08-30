@@ -194,6 +194,7 @@ private slots:
 
 	void showResetNoticeDialog(const drawdance::CanvasState &canvasState);
 	void updateCatchupProgress(int percent);
+	void updateStreamResetProgress(int percent);
 	void showCompatibilityModeWarning();
 
 	void onOperatorModeChange(bool op);

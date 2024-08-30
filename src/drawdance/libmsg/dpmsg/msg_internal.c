@@ -67,6 +67,12 @@ typedef struct DP_MsgInternalDumpCommand {
     DP_Message *messages[];
 } DP_MsgInternalDumpCommand;
 
+typedef struct DP_MsgInternalStreamResetStart {
+    DP_MsgInternal parent;
+    size_t correlator_length;
+    char correlator[];
+} DP_MsgInternalStreamResetStart;
+
 static size_t payload_length(DP_UNUSED DP_Message *msg)
 {
     DP_warn("DP_MsgInternal: payload_length called on internal message");
@@ -221,6 +227,24 @@ DP_Message *DP_msg_internal_flush_new(unsigned int context_id)
                             sizeof(DP_MsgInternal));
 }
 
+DP_Message *DP_msg_internal_stream_reset_start_new(unsigned int context_id,
+                                                   size_t correlator_length,
+                                                   const char *correlator)
+{
+    DP_ASSERT(correlator || correlator_length == 0);
+    DP_Message *msg =
+        msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_STREAM_RESET_START,
+                         DP_FLEX_SIZEOF(DP_MsgInternalStreamResetStart,
+                                        correlator, correlator_length + 1));
+    DP_MsgInternalStreamResetStart *misrs = DP_message_internal(msg);
+    misrs->correlator_length = correlator_length;
+    if (correlator_length != 0) {
+        memcpy(misrs->correlator, correlator, correlator_length);
+    }
+    misrs->correlator[correlator_length] = '\0';
+    return msg;
+}
+
 
 DP_MsgInternal *DP_msg_internal_cast(DP_Message *msg)
 {
@@ -293,4 +317,17 @@ DP_Message **DP_msg_internal_dump_command_messages(DP_MsgInternal *mi,
         *out_count = midc->count;
     }
     return midc->messages;
+}
+
+const char *DP_msg_internal_stream_reset_start_correlator(DP_MsgInternal *mi,
+                                                          size_t *out_length)
+{
+    DP_ASSERT(mi);
+    DP_ASSERT(mi->type == DP_MSG_INTERNAL_TYPE_STREAM_RESET_START);
+    DP_MsgInternalStreamResetStart *misrs =
+        (DP_MsgInternalStreamResetStart *)mi;
+    if (out_length) {
+        *out_length = misrs->correlator_length;
+    }
+    return misrs->correlator;
 }

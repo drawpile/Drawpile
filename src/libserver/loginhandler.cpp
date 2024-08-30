@@ -6,6 +6,7 @@
 #include "libserver/serverlog.h"
 #include "libserver/session.h"
 #include "libserver/sessions.h"
+#include "libshared/net/protover.h"
 #include "libshared/net/servercmd.h"
 #include "libshared/util/authtoken.h"
 #include "libshared/util/networkaccess.h"

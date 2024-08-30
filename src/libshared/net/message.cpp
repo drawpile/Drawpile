@@ -127,6 +127,12 @@ bool Message::isInCommandRange() const
 	return type() >= 128;
 }
 
+bool Message::isAllowedInResetImage() const
+{
+	DP_MessageType t = type();
+	return int(t) >= 64 || t == DP_MSG_CHAT;
+}
+
 Message Message::asEmergencyMessage() const
 {
 	switch(type()) {
@@ -256,6 +262,12 @@ DP_MsgPutImage *Message::toPutImage() const
 {
 	Q_ASSERT(type() == DP_MSG_PUT_IMAGE);
 	return static_cast<DP_MsgPutImage *>(DP_message_internal(m_data));
+}
+
+DP_MsgResetStream *Message::toResetStream() const
+{
+	Q_ASSERT(type() == DP_MSG_RESET_STREAM);
+	return static_cast<DP_MsgResetStream *>(DP_message_internal(m_data));
 }
 
 DP_MsgServerCommand *Message::toServerCommand() const
@@ -414,6 +426,11 @@ makeSessionOwnerMessage(uint8_t contextId, const QVector<uint8_t> &users)
 	return Message::noinc(DP_msg_session_owner_new(
 		contextId, Message::setUint8s, users.count(),
 		const_cast<uint8_t *>(users.constData())));
+}
+
+Message makeSoftResetMessage(uint8_t contextId)
+{
+	return Message::noinc(DP_msg_soft_reset_new(contextId));
 }
 
 Message

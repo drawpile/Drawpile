@@ -29,17 +29,30 @@ public:
 	BuiltinSession &operator=(BuiltinSession &&) = delete;
 
 	bool supportsAutoReset() const override;
-	void readyToAutoReset(int ctxId) override;
+	void readyToAutoReset(
+		const AutoResetResponseParams &params, const QString &payload) override;
 
 	void doInternalReset(const drawdance::CanvasState &canvasState);
 
+	StreamResetStartResult
+	handleStreamResetStart(int ctxId, const QString &correlator) override;
+
+	StreamResetAbortResult handleStreamResetAbort(int ctxId) override;
+
+	StreamResetPrepareResult
+	handleStreamResetFinish(int ctxId, int expectedMessageCount) override;
+
 protected:
 	void addToHistory(const net::Message &msg) override;
+	void onSessionInitialized() override;
 	void onSessionReset() override;
 	void onClientJoin(Client *client, bool host) override;
+	void onClientDeop(Client *client) override;
+	void onResetStream(Client &client, const net::Message &msg) override;
+	void onStateChanged() override;
 
 private:
-    void internalReset(const drawdance::CanvasState &canvasState);
+	void internalReset(const drawdance::CanvasState &canvasState);
 
 	canvas::PaintEngine *m_paintEngine;
 	drawdance::AclState m_acls;
@@ -47,7 +60,7 @@ private:
 	size_t m_resetImageSize = 0;
 	QString m_pinnedMessage;
 	int m_defaultLayer = 0;
-    bool m_softResetRequested = false;
+	bool m_softResetRequested = false;
 };
 }
 

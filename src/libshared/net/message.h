@@ -48,6 +48,7 @@ public:
 	bool isControl() const;
 	bool isServerMeta() const;
 	bool isInCommandRange() const;
+	bool isAllowedInResetImage() const;
 
 	// Returns user joins without the avatar; leaves and session owners as-is.
 	// Any other message type results in a null message, since they're not
@@ -76,6 +77,7 @@ public:
 	DP_MsgLayerTreeCreate *toLayerTreeCreate() const;
 	DP_MsgPrivateChat *toPrivateChat() const;
 	DP_MsgPutImage *toPutImage() const;
+	DP_MsgResetStream *toResetStream() const;
 	DP_MsgServerCommand *toServerCommand() const;
 	DP_MsgSessionOwner *toSessionOwner() const;
 	DP_MsgTrustedUsers *toTrustedUsers() const;
@@ -121,6 +123,8 @@ Message makeServerCommandMessage(uint8_t contextId, const QJsonDocument &msg);
 
 Message
 makeSessionOwnerMessage(uint8_t contextId, const QVector<uint8_t> &users);
+
+Message makeSoftResetMessage(uint8_t contextId);
 
 Message
 makeTrustedUsersMessage(uint8_t contextId, const QVector<uint8_t> &users);

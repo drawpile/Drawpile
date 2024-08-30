@@ -12,6 +12,7 @@ dp_target_sources(dpmsg
     dpmsg/message_queue.c
     dpmsg/msg_internal.c
     dpmsg/protover.c
+    dpmsg/reset_stream.c
     dpmsg/text_reader.c
     dpmsg/text_writer.c
     dpmsg/acl.h
@@ -25,6 +26,7 @@ dp_target_sources(dpmsg
     dpmsg/message_queue.h
     dpmsg/msg_internal.h
     dpmsg/protover.h
+    dpmsg/reset_stream.h
     dpmsg/text_reader.h
     dpmsg/text_writer.h
 )
