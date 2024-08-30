@@ -439,6 +439,8 @@ protected:
 	//! to a reset image
 	net::MessageList serverSideStateMessages() const;
 
+	void sendUpdatedSessionProperties();
+
 private:
 	// If someone sent a drawing command in the last 5 minutes, they are active.
 	static constexpr qint64 ACTIVE_THRESHOLD_MS = 5 * 60 * 1000;
@@ -483,7 +485,6 @@ private:
 	void stopRecording();
 	void abortReset();
 
-	void sendUpdatedSessionProperties();
 	void ensureOperatorExists();
 
 	JsonApiResult callListingsJsonApi(

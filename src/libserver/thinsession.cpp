@@ -448,6 +448,7 @@ void ThinSession::resolvePendingStreamedReset()
 			}
 			clearAutoReset();
 			sendStatusUpdate();
+			sendUpdatedSessionProperties();
 		} else {
 			log(Log()
 					.about(Log::Level::Warn, Log::Topic::Status)
