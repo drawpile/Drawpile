@@ -130,7 +130,7 @@ Document::Document(
 		&Document::onSessionResetted);
 	connect(
 		m_client, &net::Client::streamResetStarted, this,
-		&Document::onStreamResetStarted);
+		&Document::onStreamResetStarted, Qt::DirectConnection);
 	connect(
 		m_client, &net::Client::streamResetProgressed, this,
 		&Document::onStreamResetProgressed);
