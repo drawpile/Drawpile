@@ -896,23 +896,17 @@ void DP_canvas_history_soft_reset(DP_CanvasHistory *ch, DP_DrawContext *dc,
     }
 }
 
-DP_CanvasState *DP_canvas_history_stream_start_state_inc(DP_CanvasHistory *ch,
-                                                         DP_DrawContext *dc)
+DP_CanvasState *DP_canvas_history_stream_start_state_inc(DP_CanvasHistory *ch)
 {
     DP_ASSERT(ch);
-    bool have_fork = have_local_fork(ch);
-    if (have_fork) {
-        search_and_replay_from(ch, dc, ch->fork.start - ch->offset, false);
+    int used = ch->used;
+    for (int i = 0; i < used; ++i) {
+        DP_CanvasState *cs = ch->entries->state;
+        if (cs) {
+            return DP_canvas_state_incref(cs);
+        }
     }
-
-    DP_CanvasState *cs = DP_canvas_state_incref(ch->current_state);
-
-    if (have_fork) {
-        finish_replay(ch, replay_fork_dec(ch, DP_canvas_state_incref(cs), dc),
-                      dc);
-    }
-
-    return cs;
+    DP_UNREACHABLE();
 }
 
 int DP_canvas_history_undo_depth_limit(DP_CanvasHistory *ch)

@@ -353,7 +353,7 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
                     mi, &correlator_length);
             stream_reset_start_fn(
                 pe->stream_reset.user,
-                DP_canvas_history_stream_start_state_inc(pe->ch, dc),
+                DP_canvas_history_stream_start_state_inc(pe->ch),
                 correlator_length, correlator);
         }
         else {
