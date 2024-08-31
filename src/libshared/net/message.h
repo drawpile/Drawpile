@@ -4,6 +4,7 @@
 extern "C" {
 #include <dpmsg/message.h>
 }
+#include <QMetaType>
 #include <QVector>
 
 class QByteArray;
@@ -130,5 +131,7 @@ Message
 makeTrustedUsersMessage(uint8_t contextId, const QVector<uint8_t> &users);
 
 }
+
+Q_DECLARE_METATYPE(net::Message)
 
 #endif

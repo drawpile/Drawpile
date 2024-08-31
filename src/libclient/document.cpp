@@ -1223,7 +1223,8 @@ net::MessageList Document::generateStreamSnapshot(
 }
 
 void Document::startSendingStreamResetSnapshot(
-	const net::MessageList &image, int messageCount, const QString &correlator)
+	const QVector<net::Message> &image, int messageCount,
+	const QString &correlator)
 {
 	if(m_streamResetState == StreamResetState::Generating &&
 	   m_autoResetCorrelator == correlator) {
