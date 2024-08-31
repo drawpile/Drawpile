@@ -782,8 +782,8 @@ void CanvasScene::setStreamResetNoticePosition()
 	qreal catchupOffset =
 		m_catchup ? m_catchup->boundingRect().height() + NOTICE_OFFSET : 0.0;
 	QRectF streamResetNoticeBounds = m_streamResetNotice->boundingRect();
-	m_streamResetNotice->updatePosition(
-		sceneRect().bottomRight() -
+	m_streamResetNotice->setPos(
+		m_sceneBounds.bottomRight() -
 		QPointF(
 			streamResetNoticeBounds.width() + NOTICE_OFFSET,
 			streamResetNoticeBounds.height() + NOTICE_OFFSET + catchupOffset));
