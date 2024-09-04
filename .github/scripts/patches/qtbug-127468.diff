@@ -1,0 +1,53 @@
+From 27321bb7fae0f82cf069cea74438278d4706feb7 Mon Sep 17 00:00:00 2001
+From: Ville Voutilainen <ville.voutilainen@qt.io>
+Date: Sun, 18 Aug 2024 01:59:29 +0300
+Subject: [PATCH] Fix an evaluated use of std::declval in qjnitypes.h
+
+While other compilers don't seem to have trouble with this, the latest
+NDK (27) compiler does. That compiler diagnoses the empty-pack case, even though in that case there is no actual use of declval, as the pack-expanded expression contains no use of declval.
+For other compilers, that may work for functions that have no arguments, but will not work for any function that does have arguments; in that case, the attempt to use declval will always be ill-formed, and there will be an attempt to use declval.
+
+The fix is straightforward; we have a Ret(*)(Args...), its return type
+is simply Ret. So use a simple trait instead of the result of a call.
+
+Task-number: QTBUG-127468
+Change-Id: I0dc9e1201914ab94acc2940870be7c6d8cb16c12
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+(cherry picked from commit 236c6ec6f4c777d0534539f1c293cfc74006a6eb)
+Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
+(cherry picked from commit 1079d210d19cc05275228a17c318e5bdbcdeff6c)
+---
+
+diff --git a/src/corelib/kernel/qjnitypes.h b/src/corelib/kernel/qjnitypes.h
+index 4317f75..5e07547 100644
+--- a/src/corelib/kernel/qjnitypes.h
++++ b/src/corelib/kernel/qjnitypes.h
+@@ -123,12 +123,14 @@
+     return makeTupleFromArgsHelper<Args...>(args);
+ }
+ 
+-// Get the return type of a function point
+-template <typename Ret, typename ...Args>
+-auto nativeFunctionReturnType(Ret(*function)(Args...))
++template <typename>
++struct NativeFunctionReturnType {};
++
++template<typename Ret, typename... Args>
++struct NativeFunctionReturnType<Ret(Args...)>
+ {
+-    return function(std::declval<Args>()...);
+-}
++  using type = Ret;
++};
+ 
+ } // namespace Detail
+ } // namespace QtJniMethods
+@@ -139,7 +141,7 @@
+ // the actual function with. This then takes care of implicit conversions,
+ // e.g. a jobject becomes a QJniObject.
+ #define Q_DECLARE_JNI_NATIVE_METHOD_HELPER(Method)                              \
+-static decltype(QtJniMethods::Detail::nativeFunctionReturnType(Method))         \
++static QtJniMethods::Detail::NativeFunctionReturnType<decltype(Method)>::type   \
+ va_##Method(JNIEnv *env, jclass thiz, ...)                                      \
+ {                                                                               \
+     va_list args;                                                               \

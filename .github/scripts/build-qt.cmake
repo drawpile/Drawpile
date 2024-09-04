@@ -277,6 +277,7 @@ if(BASE)
 				patches/webgl_is_hard.diff
 				patches/fusioncontrast-qt6.diff
 				patches/macostabs-qt6.diff
+				patches/qtbug-127468.diff
 	)
 endif()
 
