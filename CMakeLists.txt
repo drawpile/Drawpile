@@ -299,6 +299,11 @@ endif()
 
 include(DrawpilePackaging)
 
+if(ANDROID)
+    add_feature_info("Android minimumum SDK version (ANDROID_MIN_SDK_VERSION)" ON ${ANDROID_MIN_SDK_VERSION})
+    add_feature_info("Android target SDK version (ANDROID_TARGET_SDK_VERSION)" ON ${ANDROID_TARGET_SDK_VERSION})
+endif()
+
 feature_summary(WHAT PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLED_FEATURES)
 
 if(CMAKE_CONFIGURATION_TYPES)
