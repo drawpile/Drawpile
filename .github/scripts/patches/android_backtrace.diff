@@ -1,0 +1,16 @@
+Description: Qt tries to link against the `backtrace` symbol unconditionally,
+which causes link errors on startup when running it on older versions of
+Android that we want to support. We'll just live without whatever this is for.
+
+--- a/src/corelib/global/qlogging.cpp
++++ b/src/corelib/global/qlogging.cpp
+@@ -106,7 +106,7 @@
+ #    if __UCLIBC_HAS_BACKTRACE__
+ #      define QLOGGING_HAVE_BACKTRACE
+ #    endif
+-#  elif defined(Q_OS_ANDROID) && __ANDROID_API__ < 33
++#  elif defined(Q_OS_ANDROID)
+     // Android lacked backtrace logging until API level 33.
+ #  elif (defined(__GLIBC__) && defined(__GLIBCXX__)) || (__has_include(<cxxabi.h>) && __has_include(<execinfo.h>))
+ #    define QLOGGING_HAVE_BACKTRACE
+
