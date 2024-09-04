@@ -111,6 +111,11 @@ if(NOT ANDROID AND LIBMICROHTTPD)
 endif()
 
 if(LIBSODIUM)
+	unset(libsodium_configure_args)
+	if(ANDROID)
+		list(APPEND libsodium_configure_args ac_cv_func_memset_explicit=no)
+	endif()
+
 	build_dependency(libsodium ${LIBSODIUM} ${BUILD_TYPE}
 		URL https://download.libsodium.org/libsodium/releases/libsodium-@version@.tar.gz
 		TARGET_ARCH "${TARGET_ARCH}"
@@ -126,7 +131,9 @@ if(LIBSODIUM)
 				DEBUG_STATIC StaticDebug
 				TARGET_ARCH "${TARGET_ARCH}"
 				INCLUDES src/libsodium/include/sodium.h src/libsodium/include/sodium
-		UNIX AUTOMAKE
+		UNIX
+			AUTOMAKE
+				ALL ${libsodium_configure_args}
 	)
 endif()
 
