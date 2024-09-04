@@ -82,7 +82,7 @@ if(WIN32 AND ZLIB)
 	)
 endif()
 
-if(LIBMICROHTTPD)
+if(NOT ANDROID AND LIBMICROHTTPD)
 	if(USE_ASAN)
 		set(extra_debug_flags --enable-sanitizers=address)
 	endif()
