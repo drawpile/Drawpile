@@ -140,6 +140,11 @@ if(CLIENT OR SERVER)
 	# Finding Qt needs to come first, otherwise automoc gets confused about
 	# being unable to generate a MOC for the cmake-config directory below.
 	find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Core Network)
+	# This alters how some Android properties are handled in ways that don't
+	# matter to us, so we just set this policy so that we don't get a warning.
+	if(ANDROID AND QT_VERSION VERSION_GREATER_EQUAL 6.6.0)
+		qt_policy(SET QTP0002 NEW)
+	endif()
 endif()
 
 # This must be included *after* drawdance is added to make sure that we do not
