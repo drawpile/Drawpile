@@ -298,12 +298,22 @@ if(FFMPEG)
 				patches/ffmpeg_configure.diff
 	)
 
-	# The pkg-config files generated on Windows contain garbage we have to fix.
-	if(WIN32)
+	# The pkg-config files generated on Windows and Android contain garbage
+	# that we need to fix.
+	if(ANDROID)
+		set(fix_pkg_config_files_system android)
+	elseif(WIN32)
+		set(fix_pkg_config_files_system win32)
+	else()
+		unset(fix_pkg_config_files_system)
+	endif()
+
+	if(fix_pkg_config_files_system)
 		execute_process(
 			COMMAND
 				perl
-				"${CMAKE_CURRENT_LIST_DIR}/fix-win32-ffmpeg-pkg-config-files.pl"
+				"${CMAKE_CURRENT_LIST_DIR}/fix-ffmpeg-pkg-config-files.pl"
+				"${fix_pkg_config_files_system}"
 				"${CMAKE_INSTALL_PREFIX}/lib/pkgconfig"
 			COMMAND_ECHO STDOUT
 			COMMAND_ERROR_IS_FATAL ANY
