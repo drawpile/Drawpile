@@ -104,26 +104,26 @@ jobs:
             cross_qt_args: >-
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
               "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
-              "-DANDROID_HOST_PATH=$GITHUB_WORKSPACE/.github/deps/qt"
+              "-DANDROID_PLATFORM=$ANDROID_PLATFORM"
               -DANDROID_ABI=arm64-v8a
             cross_ffmpeg_args: >-
-              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake"
+              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_TOOLCHAIN_FILE"
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
               "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
-              -DANDROID_PLATFORM=android-23
+              "-DANDROID_PLATFORM=$ANDROID_PLATFORM"
               -DANDROID_ABI=arm64-v8a
             cross_other_args: >-
-              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake"
+              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_TOOLCHAIN_FILE"
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
               "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
-              -DANDROID_PLATFORM=android-23
+              "-DANDROID_PLATFORM=$ANDROID_PLATFORM"
               -DANDROID_ABI=arm64-v8a
             build_flags: >-
-              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake"
-              -DANDROID_PLATFORM=android-23
+              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_TOOLCHAIN_FILE"
+              "-DANDROID_PLATFORM=$ANDROID_PLATFORM"
+              "-DANDROID_TARGET_SDK_VERSION=$ANDROID_TARGET_SDK_VERSION"
+              "-DANDROID_SDK_BUILD_TOOLS_REVISION=$ANDROID_BUILD_TOOLS_VERSION"
               -DANDROID_ABI=arm64-v8a
-              -DANDROID_SDK_PLATFORM=android-31
-              -DANDROID_SDK_BUILD_TOOLS_REVISION=34.0.0
               -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=on
               -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=BOTH
               -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH
@@ -169,26 +169,26 @@ jobs:
             cross_qt_args: >-
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
               "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
-              "-DANDROID_HOST_PATH=$GITHUB_WORKSPACE/.github/deps/qt"
+              "-DANDROID_PLATFORM=$ANDROID_PLATFORM"
               -DANDROID_ABI=armeabi-v7a
             cross_ffmpeg_args: >-
-              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake"
+              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_TOOLCHAIN_FILE"
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
               "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
-              -DANDROID_PLATFORM=android-23
+              "-DANDROID_PLATFORM=$ANDROID_PLATFORM"
               -DANDROID_ABI=armeabi-v7a
             cross_other_args: >-
-              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake"
+              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_TOOLCHAIN_FILE"
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
               "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
-              -DANDROID_PLATFORM=android-23
+              "-DANDROID_PLATFORM=$ANDROID_PLATFORM"
               -DANDROID_ABI=armeabi-v7a
             build_flags: >-
-              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake"
-              -DANDROID_PLATFORM=android-23
+              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_TOOLCHAIN_FILE"
+              "-DANDROID_PLATFORM=$ANDROID_PLATFORM"
+              "-DANDROID_TARGET_SDK_VERSION=$ANDROID_TARGET_SDK_VERSION"
+              "-DANDROID_SDK_BUILD_TOOLS_REVISION=$ANDROID_BUILD_TOOLS_VERSION"
               -DANDROID_ABI=armeabi-v7a
-              -DANDROID_SDK_PLATFORM=android-31
-              -DANDROID_SDK_BUILD_TOOLS_REVISION=34.0.0
               -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=on
               -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=BOTH
               -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH
@@ -360,12 +360,55 @@ jobs:
           msbuild-architecture: x${{ matrix.arch == 'x86_64' && '64' || '32' }}
         if: runner.os == 'Windows'
 
-      - name: Work around QTBUG-112465
+      - name: Set Android environment variables
         run: |
-          # Moving directories is faster than deleting everything inside them
-          mv ${ANDROID_SDK_ROOT}/platforms/{android-*-*,..}
-          ls "${ANDROID_SDK_ROOT}/platforms"
-        shell: bash
+          build_tools_version=34.0.0-rc3
+          ndk_version=27.0.12077973
+          target_sdk_version=34
+          ndk_root="$ANDROID_SDK_ROOT/ndk/$ndk_version"
+          ndk_toolchain_file="$ndk_root/build/cmake/android.toolchain.cmake"
+          platform="android-$target_sdk_version"
+          echo "ANDROID_BUILD_TOOLS_VERSION=$build_tools_version" >> "$GITHUB_ENV"
+          echo "ANDROID_NDK_VERSION=$ndk_version" >> "$GITHUB_ENV"
+          echo "ANDROID_NDK_ROOT=$ndk_root" >> "$GITHUB_ENV"
+          echo "ANDROID_NDK_TOOLCHAIN_FILE=$ndk_toolchain_file" >> "$GITHUB_ENV"
+          echo "ANDROID_PLATFORM=$platform" >> "$GITHUB_ENV"
+          echo "ANDROID_TARGET_SDK_VERSION=$target_sdk_version" >> "$GITHUB_ENV"
+        if: matrix.cross_os == 'Android'
+
+      # Qt's build toolage really likes to auto-detect Android package
+      # versions, despite all attempts to specify them explicitly. So we
+      # uninstall all the packages we don't need to avoid that happening.
+      - name: Install correct Android SDK packages, remove wrong ones
+        run: |
+          sdkmanager="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          packages_to_uninstall="$("$sdkmanager" --list_installed 2>&1 | perl -nae 'print "$F[0]\n" if $F[0] =~ /^(build-tools|ndk|platforms);/ && $F[0] ne "build-tools;$ENV{ANDROID_BUILD_TOOLS_VERSION}" && $F[0] ne "ndk;$ENV{ANDROID_NDK_VERSION}" && $F[0] ne "platforms;$ENV{ANDROID_PLATFORM}"')"
+          echo
+          echo "Packages to uninstall:"
+          echo "$packages_to_uninstall" | perl -pe 's/^/ * /'
+          echo
+          if [ -n "$packages_to_uninstall" ]; then
+            echo "$packages_to_uninstall" | xargs "$sdkmanager" --uninstall
+          fi
+          set -x
+          yes | "$sdkmanager" "build-tools;$ANDROID_BUILD_TOOLS_VERSION" "ndk;$ANDROID_NDK_VERSION" "platforms;$ANDROID_PLATFORM"
+        if: matrix.cross_os == 'Android'
+
+      # This check is here to make sure the Java version doesn't change from
+      # under us. Both 11 and 17 should be okay for android-34. Lower and
+      # higher versions are known broken. Anything in-between is not LTS.
+      - name: Check Java version
+        run: |
+          java_version_output="$(java -version 2>&1)"
+          echo "$java_version_output"
+          java_version="$(echo "$java_version_output" | perl -0777 -ne '/version\s+"([0-9]+)\./ && print $1')"
+          expected_java_version='11'
+          if [ "$java_version" = "$expected_java_version" ]; then
+            echo "Java version $java_version matches expected version $expected_java_version"
+          else
+            echo "Java version $java_version does NOT match expected version $expected_java_version" 1>&2
+            exit 1
+          fi
         if: matrix.cross_os == 'Android'
 
       - name: Configure Linux system dependencies
