@@ -315,27 +315,27 @@ function(_build_cmake build_type target_bits source_dir)
 				"-DCMAKE_OBJCXX_FLAGS_INIT=-fno-omit-frame-pointer -fsanitize=address"
 			)
 		endif()
-	endif()
 
-	if(CMAKE_TOOLCHAIN_FILE)
-		list(APPEND default_flags
-			"-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}"
-			"-DANDROID_ABI=${ANDROID_ABI}"
-			"-DANDROID_PLATFORM=${ANDROID_PLATFORM}"
-			"-DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=on"
-		)
-	elseif(CMAKE_ANDROID_NDK)
-		list(APPEND default_flags
-			"-DCMAKE_TOOLCHAIN_FILE=${CMAKE_ANDROID_NDK}/build/cmake/android.toolchain.cmake"
-			"-DCMAKE_ANDROID_NDK=${CMAKE_ANDROID_NDK}"
-			"-DCMAKE_ANDROID_ARCH_ABI=${CMAKE_ANDROID_ARCH_ABI}"
-			"-DANDROID_PLATFORM=${ANDROID_PLATFORM}"
-			"-DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=on"
-		)
-	endif()
+		if(CMAKE_TOOLCHAIN_FILE)
+			list(APPEND default_flags
+				"-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}"
+				"-DANDROID_ABI=${ANDROID_ABI}"
+				"-DANDROID_PLATFORM=${ANDROID_PLATFORM}"
+				"-DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=on"
+			)
+		elseif(CMAKE_ANDROID_NDK)
+			list(APPEND default_flags
+				"-DCMAKE_TOOLCHAIN_FILE=${CMAKE_ANDROID_NDK}/build/cmake/android.toolchain.cmake"
+				"-DCMAKE_ANDROID_NDK=${CMAKE_ANDROID_NDK}"
+				"-DCMAKE_ANDROID_ARCH_ABI=${CMAKE_ANDROID_ARCH_ABI}"
+				"-DANDROID_PLATFORM=${ANDROID_PLATFORM}"
+				"-DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=on"
+			)
+		endif()
 
-	if(ANDROID_SDK_ROOT)
-		list(APPEND default_flags "-DANDROID_SDK=${ANDROID_SDK_ROOT}")
+		if(ANDROID_SDK_ROOT)
+			list(APPEND default_flags "-DANDROID_SDK=${ANDROID_SDK_ROOT}")
+		endif()
 	endif()
 
 	if(CMAKE_ARG_NO_DEFAULT_FLAGS OR CMAKE_ARG_NO_DEFAULT_BUILD_TYPE)
