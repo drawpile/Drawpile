@@ -1,8 +1,8 @@
 #[[ This module sets the variables required to generate a Qt5 Android build. #]]
 
 # The defaults in Qt5 are outdated, so make them match the current NDK
-set(ANDROID_MIN_SDK_VERSION ${NDK_MIN_PLATFORM_LEVEL})
-set(ANDROID_TARGET_SDK_VERSION ${NDK_MAX_PLATFORM_LEVEL})
+set(ANDROID_MIN_SDK_VERSION ${NDK_MIN_PLATFORM_LEVEL} CACHE STRING "Android minimum SDK version")
+set(ANDROID_TARGET_SDK_VERSION ${NDK_MAX_PLATFORM_LEVEL} CACHE STRING "Android target SDK version")
 
 # If ANDROID_SDK is not defined Qt will default it to being one level up from
 # NDK, but actually it is two levels up by default due to versioning and this
