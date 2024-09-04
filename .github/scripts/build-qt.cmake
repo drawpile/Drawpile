@@ -138,9 +138,11 @@ if(EMSCRIPTEN)
 	set(BASE_RELEASE_FLAGS -feature-optimize_full)
 else()
 	set(BASE_DEBUG_INFO_FLAGS -separate-debug-info)
+	# Qt6 has various issues with link-time optimization. On Linux, rcc fails to
+	# build with a weird error about not finding qt_version_tag.
 	# https://bugreports.qt.io/browse/QTBUG-72846 regressed in Qt6 due to
 	# https://gitlab.kitware.com/cmake/cmake/-/issues/23864
-	if(NOT APPLE OR QT_VERSION VERSION_LESS 6)
+	if(QT_VERSION VERSION_LESS 6)
 		list(APPEND BASE_FLAGS -ltcg)
 	endif()
 endif()
