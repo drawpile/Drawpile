@@ -1,0 +1,30 @@
+Description: Qt6 tries to allow setting the build tools revision via
+QT_ANDROID_SDK_BUILD_TOOLS_REVISION, but fails to actually return it from this
+function that's supposed to determine the version to use. This leads to it
+generating an invalid gradle.properties file with a blank entry for the build
+tools version. This patch fixes that function to actually return the version
+properly.
+
+--- a/src/corelib/Qt6AndroidMacros.cmake
++++ b/src/corelib/Qt6AndroidMacros.cmake
+@@ -5,7 +5,9 @@
+
+ # Locate newest Android sdk build tools revision
+ function(_qt_internal_android_get_sdk_build_tools_revision out_var)
+-    if (NOT QT_ANDROID_SDK_BUILD_TOOLS_REVISION)
++    if (QT_ANDROID_SDK_BUILD_TOOLS_REVISION)
++        set(${out_var} "${QT_ANDROID_SDK_BUILD_TOOLS_REVISION}" PARENT_SCOPE)
++    else()
+         file(GLOB android_build_tools
+             LIST_DIRECTORIES true
+             RELATIVE "${ANDROID_SDK_ROOT}/build-tools"
+@@ -17,8 +19,8 @@
+         list(SORT android_build_tools)
+         list(REVERSE android_build_tools)
+         list(GET android_build_tools 0 android_build_tools_latest)
++        set(${out_var} "${android_build_tools_latest}" PARENT_SCOPE)
+     endif()
+-    set(${out_var} "${android_build_tools_latest}" PARENT_SCOPE)
+ endfunction()
+
+ # The function appends to the 'out_var' a 'json_property' that contains the 'tool' path. If 'tool'

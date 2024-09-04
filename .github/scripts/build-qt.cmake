@@ -278,6 +278,7 @@ if(BASE)
 				patches/fusioncontrast-qt6.diff
 				patches/macostabs-qt6.diff
 				patches/qtbug-127468.diff
+				patches/qt6androidmacros_build_tools_revision.diff
 	)
 endif()
 
