@@ -720,9 +720,8 @@ elseif(ANDROID)
 		)
 		set(ANDROID_QT_NAMESPACE org.qtproject.qt)
 		file(READ AndroidManifest.xml.qt6 ANDROID_EXTRA_METADATA)
-		qt_android_generate_deployment_settings(drawpile)
-		qt_android_add_apk_target(drawpile)
-		add_custom_command(TARGET drawpile_make_apk POST_BUILD
+		cmake_language(DEFER CALL add_custom_command
+			TARGET drawpile_make_apk POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E copy_if_different
 				"android-build/drawpile.apk"
 				"${output_apk}"
