@@ -49,6 +49,7 @@ public:
 		QAction *merge = nullptr;
 		QAction *properties = nullptr;
 		QAction *del = nullptr;
+		QAction *toggleVisibility = nullptr;
 		QAction *setFillSource = nullptr;
 		QAction *clearFillSource = nullptr;
 		QAction *keyFrameSetLayer = nullptr;
@@ -117,6 +118,7 @@ private slots:
 	void showContextMenu(const QPoint &pos);
 	void censorSelected(bool censor);
 	void disableAutoselectAny();
+	void toggleLayerVisibility();
 	void setLayerVisibility(int layerId, bool visible);
 	void
 	changeLayerAcl(bool lock, DP_AccessTier tier, QVector<uint8_t> exclusive);

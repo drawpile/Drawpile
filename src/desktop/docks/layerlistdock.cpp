@@ -245,6 +245,7 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	m_contextMenu->addAction(m_actions.merge);
 	m_contextMenu->addAction(m_actions.del);
 	m_contextMenu->addAction(m_actions.properties);
+	m_contextMenu->addAction(m_actions.toggleVisibility);
 	m_contextMenu->addSeparator();
 	m_contextMenu->addAction(m_actions.setFillSource);
 	m_contextMenu->addAction(m_actions.clearFillSource);
@@ -289,6 +290,9 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	connect(
 		m_actions.properties, &QAction::triggered, this,
 		&LayerList::showPropertiesOfSelected);
+	connect(
+		m_actions.toggleVisibility, &QAction::triggered, this,
+		&LayerList::toggleLayerVisibility);
 	connect(
 		m_actions.del, &QAction::triggered, this, &LayerList::deleteSelected);
 	connect(
@@ -347,6 +351,8 @@ void LayerList::updateActionLabels()
 		setActionLabel(m_actions.properties, tr("Layer Group Properties…"));
 		setActionLabel(m_actions.del, tr("Delete Layer Group"));
 		setActionLabel(
+			m_actions.toggleVisibility, tr("Toggle Layer Group &Visibility"));
+		setActionLabel(
 			m_actions.layerCheckToggle,
 			check ? tr("Check Layer Group") : tr("Uncheck Layer Group"));
 	} else {
@@ -362,6 +368,10 @@ void LayerList::updateActionLabels()
 		setActionLabel(
 			m_actions.del,
 			QCoreApplication::translate("MainWindow", "Delete Layer"));
+		setActionLabel(
+			m_actions.toggleVisibility,
+			QCoreApplication::translate(
+				"MainWindow", "Toggle Layer &Visibility"));
 		setActionLabel(
 			m_actions.layerCheckToggle,
 			check ? tr("Check Layer") : tr("Uncheck Layer"));
@@ -407,6 +417,7 @@ void LayerList::updateLockedControls()
 		m_actions.duplicate->setEnabled(enabled);
 		m_actions.del->setEnabled(enabled);
 		m_actions.merge->setEnabled(enabled && canMergeCurrent());
+		m_actions.toggleVisibility->setEnabled(enabled);
 		m_actions.setFillSource->setEnabled(m_selectedId != 0);
 	}
 
@@ -514,6 +525,16 @@ void LayerList::disableAutoselectAny()
 {
 	if(m_canvas) {
 		m_canvas->layerlist()->setAutoselectAny(false);
+	}
+}
+
+void LayerList::toggleLayerVisibility()
+{
+	QModelIndex index = currentSelection();
+	if(index.isValid()) {
+		canvas::LayerListItem layer =
+			index.data().value<canvas::LayerListItem>();
+		setLayerVisibility(layer.id, layer.hidden);
 	}
 }
 
