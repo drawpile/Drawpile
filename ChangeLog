@@ -15,6 +15,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Don't consider the flood fill's own preview when filling the merged image. Thanks Meru for reporting.
  * Server Feature: Streamed autoresets that don't interrupt the session to bring it down to a smaller size, instead the compressed state is built up in the background and replaced on the fly.
  * Fix: Make joining through a direct link not put the desktop client into single-session mode. Thanks Bluestrings for reporting.
+ * Fix: Work around Huion tablets emitting mouse clicks every few pen presses and causing full-pressure strokes to be started. Thanks Blozzom, DT and and Dumb Dog Disease for reporting.
 
 2024-08-09 Version 2.2.2-beta.3
  * Fix: Use more accurate timers for performance profiles if the platform supports it.

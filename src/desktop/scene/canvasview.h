@@ -231,7 +231,7 @@ public slots:
 	void setAlphaLockCursorStyle(int style);
 	void setBrushOutlineWidth(qreal outlineWidth);
 	void setBrushBlendMode(int brushBlendMode);
-	void setTabletPressTimerDelay(int tabletPressTimerDelay);
+	void setTabletEventTimerDelay(int tabletEventTimerDelay);
 
 	void setShowTransformNotices(bool showTransformNotices);
 #ifdef __EMSCRIPTEN__
@@ -267,6 +267,13 @@ private:
 	static constexpr qreal ROTATION_STEP_SIZE = 15.0;
 
 	enum class NotificationBarState { None, Reconnect, Reset };
+
+	void startTabletEventTimer()
+	{
+		if(m_tabletEventTimerDelay > 0) {
+			m_tabletEventTimer.setRemainingTime(m_tabletEventTimerDelay);
+		}
+	}
 
 	// unified mouse/stylus event handlers
 	void penPressEvent(
@@ -375,8 +382,8 @@ private:
 	bool m_toolHandlesRightClick;
 	bool m_fractionalTool;
 	PenMode m_penmode;
-	QDeadlineTimer m_tabletPressTimer;
-	int m_tabletPressTimerDelay;
+	QDeadlineTimer m_tabletEventTimer;
+	int m_tabletEventTimerDelay;
 
 	//! Is the view being dragged
 	ViewDragMode m_dragmode;

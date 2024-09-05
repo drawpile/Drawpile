@@ -215,7 +215,14 @@ private:
 	void setOutlineWidth(qreal outlineWidth);
 	void setCanvasShortcuts(QVariantMap canvasShortcuts);
 	void setShowTransformNotices(bool showTransformNotices);
-	void setTabletPressTimerDelay(int tabletPressTimerDelay);
+	void setTabletEventTimerDelay(int tabletEventTimerDelay);
+
+	void startTabletEventTimer()
+	{
+		if(m_tabletEventTimerDelay > 0) {
+			m_tabletEventTimer.setRemainingTime(m_tabletEventTimerDelay);
+		}
+	}
 
 	void penMoveEvent(
 		long long timeMsec, const QPointF &posf, qreal pressure, qreal xtilt,
@@ -390,8 +397,8 @@ private:
 	QSet<Qt::Key> m_keysDown;
 	PenMode m_penMode = PenMode::Normal;
 	PenState m_penState = PenState::Up;
-	QDeadlineTimer m_tabletPressTimer;
-	int m_tabletPressTimerDelay = 0;
+	QDeadlineTimer m_tabletEventTimer;
+	int m_tabletEventTimerDelay = 0;
 
 	bool m_enableTouchScroll = true;
 	bool m_enableTouchDraw = false;
