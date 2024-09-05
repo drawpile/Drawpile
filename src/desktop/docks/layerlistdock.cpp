@@ -417,6 +417,7 @@ void LayerList::updateLockedControls()
 		m_actions.duplicate->setEnabled(enabled);
 		m_actions.del->setEnabled(enabled);
 		m_actions.merge->setEnabled(enabled && canMergeCurrent());
+		m_actions.properties->setEnabled(enabled);
 		m_actions.toggleVisibility->setEnabled(enabled);
 		m_actions.setFillSource->setEnabled(m_selectedId != 0);
 	}
