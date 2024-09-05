@@ -1020,8 +1020,8 @@ static void startApplication(DrawpileApp *app)
 		if(looksLikeSessionUrl) {
 			app->joinUrl(
 				QUrl(arg), startupOptions.autoRecordPath,
-				startupOptions.singleSession,
-				startupOptions.restoreWindowPosition);
+				startupOptions.restoreWindowPosition,
+				startupOptions.singleSession);
 		} else {
 			app->openPath(arg, startupOptions.restoreWindowPosition);
 		}
