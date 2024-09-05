@@ -8,6 +8,8 @@ CMakeUserPresets.json
 /*build*/
 **/target/
 /*install*/
+/pkg/android/*build*/
+/pkg/emscripten/*build*/
 
 *.swp
 
