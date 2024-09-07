@@ -1,16 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef DP_BRUSHPRESETMODEL_H
-#define DP_BRUSHPRESETMODEL_H
-
+#ifndef LIBCLIENT_BRUSHES_BRUSHPRESETMODEL_H
+#define LIBCLIENT_BRUSHES_BRUSHPRESETMODEL_H
 #include <QAbstractItemModel>
 
 class QFile;
 class QFileInfo;
 
 namespace drawdance {
-	class ZipReader;
-	class ZipWriter;
+class ZipReader;
+class ZipWriter;
 }
 
 namespace brushes {
@@ -60,6 +58,7 @@ class BrushPresetModel;
 class BrushPresetTagModel final : public QAbstractItemModel {
 	Q_OBJECT
 	friend class BrushPresetModel;
+
 public:
 	explicit BrushPresetTagModel(QObject *parent = nullptr);
 	~BrushPresetTagModel() override;
@@ -70,16 +69,19 @@ public:
 	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
 	QModelIndex parent(const QModelIndex &index) const override;
-	QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
+	QModelIndex index(
+		int row, int column = 0,
+		const QModelIndex &parent = QModelIndex()) const override;
 
-	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+	QVariant
+	data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
 	static bool isExportableRow(int row);
 
 	Tag getTagAt(int row) const;
 	int getTagRowById(int tagId) const;
 
-	int newTag(const QString& name);
+	int newTag(const QString &name);
 	int editTag(int tagId, const QString &name);
 	void deleteTag(int tagId);
 
@@ -107,13 +109,13 @@ private:
 	void convertOldPresets();
 
 	static QVector<ImportBrushGroup> readOrderConf(
-		BrushImportResult &result, const QString &file, const drawdance::ZipReader &zr);
+		BrushImportResult &result, const QString &file,
+		const drawdance::ZipReader &zr);
 
-	static int addOrderConfGroup(
-		QVector<ImportBrushGroup> &groups, const QString &name);
+	static int
+	addOrderConfGroup(QVector<ImportBrushGroup> &groups, const QString &name);
 
-	static void addOrderConfBrush(
-		QStringList &brushes, const QString &brush);
+	static void addOrderConfBrush(QStringList &brushes, const QString &brush);
 
 	void readImportBrushes(
 		BrushImportResult &result, const drawdance::ZipReader &zr,
@@ -158,12 +160,18 @@ public:
 	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
 	QModelIndex parent(const QModelIndex &index) const override;
-	QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
+	QModelIndex index(
+		int row, int column = 0,
+		const QModelIndex &parent = QModelIndex()) const override;
 	QModelIndex indexForTagId(int tagId, int row) const;
 
-	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+	QVariant
+	data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-	int getIdFromIndex(const QModelIndex &index) { return index.isValid() ? index.internalId() : 0; }
+	int getIdFromIndex(const QModelIndex &index)
+	{
+		return index.isValid() ? index.internalId() : 0;
+	}
 
 	void setTagIdToFilter(int tagId);
 
@@ -172,11 +180,14 @@ public:
 
 	PresetMetadata getPresetMetadata(int presetId);
 
-	int newPreset(const QString &type, const QString &name, const QString description,
+	int newPreset(
+		const QString &type, const QString &name, const QString description,
 		const QPixmap &thumbnail, const QByteArray &data);
 	int duplicatePreset(int presetId);
-	bool updatePresetData(int presetId, const QString &type, const QByteArray &data);
-	bool updatePresetMetadata(int presetId, const QString &name, const QString &description,
+	bool
+	updatePresetData(int presetId, const QString &type, const QByteArray &data);
+	bool updatePresetMetadata(
+		int presetId, const QString &name, const QString &description,
 		const QPixmap &thumbnail);
 	bool deletePreset(int presetId);
 

@@ -1,27 +1,26 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libclient/brushes/brushpresetmodel.h"
 #include "libclient/brushes/brush.h"
+#include "libclient/drawdance/ziparchive.h"
 #include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/database.h"
 #include "libshared/util/paths.h"
 #include "libshared/util/qtcompat.h"
-#include "libclient/drawdance/ziparchive.h"
-#include <dpcommon/platform_qt.h>
 #include <QBuffer>
 #include <QDebug>
 #include <QDirIterator>
 #include <QIcon>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QRecursiveMutex>
 #include <QMutexLocker>
 #include <QPixmap>
+#include <QRecursiveMutex>
 #include <QRegularExpression>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QVector>
+#include <dpcommon/platform_qt.h>
 
 namespace brushes {
 
@@ -48,9 +47,9 @@ class BrushPresetTagModel::Private {
 public:
 	Private()
 		: m_db{utils::db::sqlite(
-			QStringLiteral("drawpile_brush_preset_connection"),
-			QStringLiteral("brush presets"), QStringLiteral("brushes.db"),
-			QStringLiteral("initialbrushpresets.db"))}
+			  QStringLiteral("drawpile_brush_preset_connection"),
+			  QStringLiteral("brush presets"), QStringLiteral("brushes.db"),
+			  QStringLiteral("initialbrushpresets.db"))}
 	{
 		initDb();
 	}
@@ -82,7 +81,9 @@ public:
 	int readTagIdAtIndex(int index)
 	{
 		QMutexLocker locker{&m_mutex};
-		return readInt("select id from tag order by LOWER(name) limit 1 offset ?", {index});
+		return readInt(
+			"select id from tag order by LOWER(name) limit 1 offset ?",
+			{index});
 	}
 
 	Tag readTagAtIndex(int index)
@@ -107,10 +108,10 @@ public:
 	int readTagIndexById(int id)
 	{
 		QMutexLocker locker{&m_mutex};
-		QString sql = QStringLiteral(
-			"select n - 1 from (\n"
-			"	select row_number() over(order by LOWER(name)) as n, id from tag)\n"
-			"where id = ?");
+		QString sql = QStringLiteral("select n - 1 from (\n"
+									 "	select row_number() over(order by "
+									 "LOWER(name)) as n, id from tag)\n"
+									 "where id = ?");
 		return readInt(sql, {id}, -1);
 	}
 
@@ -138,7 +139,8 @@ public:
 		}
 	}
 
-	int createPreset(const QString &type, const QString &name, const QString &description,
+	int createPreset(
+		const QString &type, const QString &name, const QString &description,
 		const QByteArray &thumbnail, const QByteArray &data)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
@@ -161,7 +163,8 @@ public:
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
 			"insert into preset (type, name, description, thumbnail, data)\n"
-			"	select type, name, description, thumbnail, data from preset where id = ?");
+			"	select type, name, description, thumbnail, data from preset "
+			"where id = ?");
 		if(exec(query, sql, {id})) {
 			return query.lastInsertId().toInt();
 		} else {
@@ -187,37 +190,40 @@ public:
 	int readPresetCountByTagId(int tagId)
 	{
 		QMutexLocker locker{&m_mutex};
-		QString sql = QStringLiteral(
-			"select count(*) from preset p\n"
-			"	join preset_tag pt on pt.preset_id = p.id\n"
-			"	where pt.tag_id = ?");
+		QString sql =
+			QStringLiteral("select count(*) from preset p\n"
+						   "	join preset_tag pt on pt.preset_id = p.id\n"
+						   "	where pt.tag_id = ?");
 		return readInt(sql, {tagId});
 	}
 
 	int readPresetIdAtIndexAll(int index)
 	{
 		QMutexLocker locker{&m_mutex};
-		return readInt("select id from preset order by LOWER(name) limit 1 offset ?", {index});
+		return readInt(
+			"select id from preset order by LOWER(name) limit 1 offset ?",
+			{index});
 	}
 
 	int readPresetIdAtIndexByUntagged(int index)
 	{
 		QMutexLocker locker{&m_mutex};
-		QString sql = QStringLiteral(
-			"select p.id from preset p\n"
-			"	where not exists(select 1 from preset_tag pt where pt.preset_id = p.id)\n"
-			"	order by LOWER(p.name) limit 1 offset ?");
+		QString sql =
+			QStringLiteral("select p.id from preset p\n"
+						   "	where not exists(select 1 from preset_tag pt "
+						   "where pt.preset_id = p.id)\n"
+						   "	order by LOWER(p.name) limit 1 offset ?");
 		return readInt(sql, {index});
 	}
 
 	int readPresetIdAtIndexByTagId(int index, int tagId)
 	{
 		QMutexLocker locker{&m_mutex};
-		QString sql = QStringLiteral(
-			"select p.id from preset p\n"
-			"	join preset_tag pt on pt.preset_id = p.id\n"
-			"	where pt.tag_id = ?"
-			"	order by LOWER(p.name) limit 1 offset ?");
+		QString sql =
+			QStringLiteral("select p.id from preset p\n"
+						   "	join preset_tag pt on pt.preset_id = p.id\n"
+						   "	where pt.tag_id = ?"
+						   "	order by LOWER(p.name) limit 1 offset ?");
 		return readInt(sql, {tagId, index});
 	}
 
@@ -246,7 +252,8 @@ public:
 		QString sql = QStringLiteral(
 			"select id, name, description, thumbnail from preset where id = ?");
 		if(exec(query, sql, {id}) && query.next()) {
-			return PresetMetadata{query.value(0).toInt(), query.value(1).toString(),
+			return PresetMetadata{
+				query.value(0).toInt(), query.value(1).toString(),
 				query.value(2).toString(), query.value(3).toByteArray()};
 		} else {
 			return PresetMetadata{0, QString(), QString(), QByteArray()};
@@ -258,21 +265,24 @@ public:
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
-		if(exec(query, "update preset set type = ?, data = ? where id = ?", {type, data, id})) {
+		if(exec(
+			   query, "update preset set type = ?, data = ? where id = ?",
+			   {type, data, id})) {
 			return query.numRowsAffected() == 1;
 		} else {
 			return false;
 		}
 	}
 
-	bool updatePresetMetadata(int id, const QString &name, const QString &description,
+	bool updatePresetMetadata(
+		int id, const QString &name, const QString &description,
 		const QByteArray &thumbnail)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
-		QString sql = QStringLiteral(
-			"update preset set name = ?, description = ?, thumbnail = ? where id = ?");
+		QString sql = QStringLiteral("update preset set name = ?, description "
+									 "= ?, thumbnail = ? where id = ?");
 		if(exec(query, sql, {name, description, thumbnail, id})) {
 			return query.numRowsAffected() == 1;
 		} else {
@@ -303,8 +313,9 @@ public:
 			"	order by t.id");
 		if(exec(query, sql, {presetId})) {
 			while(query.next()) {
-				tagAssignments.append(TagAssignment{query.value(0).toInt(),
-					query.value(1).toString(), query.value(2).toBool()});
+				tagAssignments.append(TagAssignment{
+					query.value(0).toInt(), query.value(1).toString(),
+					query.value(2).toBool()});
 			}
 		}
 		return tagAssignments;
@@ -350,9 +361,9 @@ public:
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
-		QString sql = QStringLiteral(
-			"insert into state (key, value) values (?, ?)\n"
-			"	on conflict (key) do update set value = ?");
+		QString sql =
+			QStringLiteral("insert into state (key, value) values (?, ?)\n"
+						   "	on conflict (key) do update set value = ?");
 		return exec(query, sql, {key, value, value});
 	}
 
@@ -360,7 +371,8 @@ public:
 	{
 		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
-		if(exec(query, "select value from state where key = ?", {key}) && query.next()) {
+		if(exec(query, "select value from state where key = ?", {key}) &&
+		   query.next()) {
 			return query.value(0);
 		} else {
 			return QVariant();
@@ -371,7 +383,9 @@ private:
 	QRecursiveMutex m_mutex;
 	QSqlDatabase m_db;
 
-	int readInt(const QString &sql,const QList<QVariant> &params = {}, int defaultValue = 0)
+	int readInt(
+		const QString &sql, const QList<QVariant> &params = {},
+		int defaultValue = 0)
 	{
 		QSqlQuery query(m_db);
 		if(exec(query, sql, params) && query.next()) {
@@ -391,7 +405,8 @@ private:
 		}
 	}
 
-	QByteArray readByteArray(const QByteArray &sql, const QList<QVariant> &params = {})
+	QByteArray
+	readByteArray(const QByteArray &sql, const QList<QVariant> &params = {})
 	{
 		QSqlQuery query(m_db);
 		if(exec(query, sql, params) && query.next()) {
@@ -401,7 +416,9 @@ private:
 		}
 	}
 
-	static bool exec(QSqlQuery &query, const QString &sql, const QList<QVariant> &params = {})
+	static bool exec(
+		QSqlQuery &query, const QString &sql,
+		const QList<QVariant> &params = {})
 	{
 		return utils::db::exec(query, sql, params);
 	}
@@ -410,35 +427,35 @@ private:
 	{
 		QSqlQuery query(m_db);
 		exec(query, "pragma foreign_keys = on");
-		exec(query,
-			"create table if not exists state (\n"
-			"	key text primary key not null,\n"
-			"	value)");
-		exec(query,
-			"create table if not exists preset (\n"
-			"	id integer primary key not null,\n"
-			"	type text not null,\n"
-			"	name text not null,\n"
-			"	description text not null,\n"
-			"	thumbnail blob,\n"
-			"	data blob not null)");
-		exec(query,
-			"create table if not exists tag (\n"
-			"	id integer primary key not null,\n"
-			"	name text not null)\n");
-		exec(query,
-			"create table if not exists preset_tag (\n"
-			"	preset_id integer not null\n"
-			"		references preset (id) on delete cascade,\n"
-			"	tag_id integer not null\n"
-			"		references tag (id) on delete cascade,\n"
-			"	primary key (preset_id, tag_id))");
-		exec(query,
-			"create index if not exists preset_name_idx\n"
-			"	ON preset(LOWER(name))");
-		exec(query,
-			"create index if not exists tag_name_idx\n"
-			"	ON tag(LOWER(name))");
+		exec(
+			query, "create table if not exists state (\n"
+				   "	key text primary key not null,\n"
+				   "	value)");
+		exec(
+			query, "create table if not exists preset (\n"
+				   "	id integer primary key not null,\n"
+				   "	type text not null,\n"
+				   "	name text not null,\n"
+				   "	description text not null,\n"
+				   "	thumbnail blob,\n"
+				   "	data blob not null)");
+		exec(
+			query, "create table if not exists tag (\n"
+				   "	id integer primary key not null,\n"
+				   "	name text not null)\n");
+		exec(
+			query, "create table if not exists preset_tag (\n"
+				   "	preset_id integer not null\n"
+				   "		references preset (id) on delete cascade,\n"
+				   "	tag_id integer not null\n"
+				   "		references tag (id) on delete cascade,\n"
+				   "	primary key (preset_id, tag_id))");
+		exec(
+			query, "create index if not exists preset_name_idx\n"
+				   "	ON preset(LOWER(name))");
+		exec(
+			query, "create index if not exists tag_name_idx\n"
+				   "	ON tag(LOWER(name))");
 	}
 };
 
@@ -448,10 +465,12 @@ BrushPresetTagModel::BrushPresetTagModel(QObject *parent)
 	, m_presetModel(new BrushPresetModel(this))
 {
 	maybeConvertOldPresets();
-	connect(this, &QAbstractItemModel::modelAboutToBeReset,
-		m_presetModel, &BrushPresetModel::tagsAboutToBeReset);
-	connect(this, &QAbstractItemModel::modelReset,
-		m_presetModel, &BrushPresetModel::tagsReset);
+	connect(
+		this, &QAbstractItemModel::modelAboutToBeReset, m_presetModel,
+		&BrushPresetModel::tagsAboutToBeReset);
+	connect(
+		this, &QAbstractItemModel::modelReset, m_presetModel,
+		&BrushPresetModel::tagsReset);
 }
 
 BrushPresetTagModel::~BrushPresetTagModel()
@@ -474,7 +493,8 @@ QModelIndex BrushPresetTagModel::parent(const QModelIndex &) const
 	return QModelIndex();
 }
 
-QModelIndex BrushPresetTagModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex
+BrushPresetTagModel::index(int row, int column, const QModelIndex &parent) const
 {
 	if(parent.isValid()) {
 		return QModelIndex();
@@ -566,7 +586,7 @@ QVariant BrushPresetTagModel::getState(const QString &key) const
 	return d->readState(key);
 }
 
-int BrushPresetTagModel::newTag(const QString& name)
+int BrushPresetTagModel::newTag(const QString &name)
 {
 	beginResetModel();
 	int tagId = d->createTag(name);
@@ -597,7 +617,7 @@ bool BrushPresetTagModel::isBuiltInTag(int row)
 void BrushPresetTagModel::maybeConvertOldPresets()
 {
 	if(!d->readState("classic_presets_loaded").toBool() &&
-			d->createOrUpdateState("classic_presets_loaded", true)) {
+	   d->createOrUpdateState("classic_presets_loaded", true)) {
 		convertOldPresets();
 	}
 }
@@ -609,16 +629,19 @@ static OldMetadata loadOldMetadata(QFile &metadataFile)
 	QString line;
 
 	// The first folder is always the "Default" folder
-	metadata << QPair<QString, QStringList> { BrushPresetModel::tr("Default"), QStringList() };
+	metadata << QPair<QString, QStringList>{
+		BrushPresetModel::tr("Default"), QStringList()};
 
-	while(!(line=in.readLine()).isNull()) {
-		// # is reserved for comments for now, but might be used for extra metadata fields later
+	while(!(line = in.readLine()).isNull()) {
+		// # is reserved for comments for now, but might be used for extra
+		// metadata fields later
 		if(line.isEmpty() || line.at(0) == '#')
 			continue;
 
-		// Lines starting with \ start new folders. Nested folders are not supported currently.
+		// Lines starting with \ start new folders. Nested folders are not
+		// supported currently.
 		if(line.at(0) == '\\') {
-			metadata << QPair<QString, QStringList> { line.mid(1), QStringList() };
+			metadata << QPair<QString, QStringList>{line.mid(1), QStringList()};
 			continue;
 		}
 
@@ -635,29 +658,28 @@ void BrushPresetTagModel::convertOldPresets()
 	QMap<QString, OldBrushPreset> brushes;
 
 	QDirIterator entries{
-		brushDir,
-		QStringList() << "*.dpbrush",
-		QDir::Files | QDir::Readable,
-		QDirIterator::Subdirectories
-	};
+		brushDir, QStringList() << "*.dpbrush", QDir::Files | QDir::Readable,
+		QDirIterator::Subdirectories};
 
 	while(entries.hasNext()) {
 		QFile f{entries.next()};
 		QString filename = entries.filePath().mid(brushDir.length());
 
 		if(!f.open(QFile::ReadOnly)) {
-			qWarning() << "Couldn't open" << filename << "due to:" << f.errorString();
+			qWarning() << "Couldn't open" << filename
+					   << "due to:" << f.errorString();
 			continue;
 		}
 
 		QJsonParseError err;
 		QJsonDocument doc = QJsonDocument::fromJson(f.readAll(), &err);
 		if(doc.isNull()) {
-			qWarning() << "Couldn't parse" << filename << "due to:" << err.errorString();
+			qWarning() << "Couldn't parse" << filename
+					   << "due to:" << err.errorString();
 			continue;
 		}
 
-		brushes[filename] = OldBrushPreset {
+		brushes[filename] = OldBrushPreset{
 			ClassicBrush::fromJson(doc.object()),
 			filename,
 		};
@@ -674,9 +696,9 @@ void BrushPresetTagModel::convertOldPresets()
 	// Apply ordering
 	QVector<OldPresetFolder> folders;
 
-	for(const QPair<QString, QStringList>  &metaFolder : metadata) {
-		folders << OldPresetFolder { metaFolder.first, QVector<OldBrushPreset>() };
-		OldPresetFolder& folder = folders.last();
+	for(const QPair<QString, QStringList> &metaFolder : metadata) {
+		folders << OldPresetFolder{metaFolder.first, QVector<OldBrushPreset>()};
+		OldPresetFolder &folder = folders.last();
 
 		for(const QString &filename : metaFolder.second) {
 			const OldBrushPreset b = brushes.take(filename);
@@ -688,10 +710,11 @@ void BrushPresetTagModel::convertOldPresets()
 
 	// Add any remaining unsorted presets to a default folder
 	if(folders.isEmpty()) {
-		folders.push_front(OldPresetFolder { tr("Default"), QVector<OldBrushPreset>() });
+		folders.push_front(
+			OldPresetFolder{tr("Default"), QVector<OldBrushPreset>()});
 	}
 
-	OldPresetFolder& defaultFolder = folders.first();
+	OldPresetFolder &defaultFolder = folders.first();
 
 	QMapIterator<QString, OldBrushPreset> i{brushes};
 	while(i.hasNext()) {
@@ -702,15 +725,17 @@ void BrushPresetTagModel::convertOldPresets()
 		ActiveBrush brush(ActiveBrush::CLASSIC);
 		int brushCount = 0;
 
-		for (const OldPresetFolder &folder : folders) {
+		for(const OldPresetFolder &folder : folders) {
 			int tagId = newTag(folder.title);
 			for(const OldBrushPreset &preset : folder.presets) {
 				++brushCount;
 				QString name = tr("Classic Brush %1").arg(brushCount);
-				QString description = tr("Converted from %1.").arg(preset.filename);
+				QString description =
+					tr("Converted from %1.").arg(preset.filename);
 				brush.setClassic(preset.brush);
-				int presetId = m_presetModel->newPreset(brush.presetType(), name,
-					description, brush.presetThumbnail(), brush.presetData());
+				int presetId = m_presetModel->newPreset(
+					brush.presetType(), name, description,
+					brush.presetThumbnail(), brush.presetData());
 				if(tagId > 0 && presetId > 0) {
 					m_presetModel->changeTagAssignment(presetId, tagId, true);
 				}
@@ -747,7 +772,8 @@ BrushImportResult BrushPresetTagModel::importBrushPack(const QString &file)
 
 QVector<BrushPresetTagModel::ImportBrushGroup>
 BrushPresetTagModel::readOrderConf(
-	BrushImportResult &result, const QString &file, const drawdance::ZipReader &zr)
+	BrushImportResult &result, const QString &file,
+	const drawdance::ZipReader &zr)
 {
 	static QRegularExpression newlineRe{"[\r\n]+"};
 	static QRegularExpression groupRe{"^Group:\\s*(.+)$"};
@@ -756,7 +782,8 @@ BrushPresetTagModel::readOrderConf(
 		zr.readFile(QStringLiteral("order.conf"));
 	if(orderFile.isNull()) {
 		qWarning("Error reading order.conf from zip: %s", DP_error());
-		result.errors.append(tr("Invalid brush pack: order.conf not found inside"));
+		result.errors.append(
+			tr("Invalid brush pack: order.conf not found inside"));
 		return {};
 	}
 
@@ -784,7 +811,8 @@ BrushPresetTagModel::readOrderConf(
 	if(haveBrush) {
 		return groups;
 	} else {
-		result.errors.append(tr("Invalid brush pack: order.conf contains no brushes"));
+		result.errors.append(
+			tr("Invalid brush pack: order.conf contains no brushes"));
 		return {};
 	}
 }
@@ -817,8 +845,7 @@ void BrushPresetTagModel::readImportBrushes(
 	QString tagName = groupName;
 	if(d->readTagCountByName(groupName) != 0) {
 		for(int i = 1; i < 100; ++i) {
-			QString candidate =
-				QStringLiteral("%1 (%2)").arg(groupName).arg(i);
+			QString candidate = QStringLiteral("%1 (%2)").arg(groupName).arg(i);
 			if(d->readTagCountByName(candidate) == 0) {
 				tagName = candidate;
 				break;
@@ -833,8 +860,7 @@ void BrushPresetTagModel::readImportBrushes(
 		ActiveBrush brush;
 		QString description;
 		QPixmap thumbnail;
-		if(readImportBrush(
-			   result, zr, prefix, brush, description, thumbnail)) {
+		if(readImportBrush(result, zr, prefix, brush, description, thumbnail)) {
 			if(tagId == -1) {
 				tagId = d->createTag(tagName);
 				if(tagId < 1) {
@@ -864,7 +890,9 @@ void BrushPresetTagModel::readImportBrushes(
 
 			if(!d->createPresetTag(presetId, tagId)) {
 				result.errors.append(
-					tr("Could not assign brush '%1' to tag '%2'.").arg(name).arg(tagName));
+					tr("Could not assign brush '%1' to tag '%2'.")
+						.arg(name)
+						.arg(tagName));
 			}
 		}
 	}
@@ -889,23 +917,24 @@ bool BrushPresetTagModel::readImportBrush(
 	QJsonParseError error;
 	QJsonDocument json = QJsonDocument::fromJson(mybFile.readBytes(), &error);
 	if(error.error != QJsonParseError::NoError) {
-		result.errors.append(tr("Brush file '%1' does not contain valid JSON: %1")
-							 .arg(qUtf8Printable(mybPath))
-							 .arg(qUtf8Printable(error.errorString())));
+		result.errors.append(
+			tr("Brush file '%1' does not contain valid JSON: %1")
+				.arg(qUtf8Printable(mybPath))
+				.arg(qUtf8Printable(error.errorString())));
 		return false;
 	}
 
 	QJsonObject object = json.object();
 	if(!outBrush.fromExportJson(object)) {
 		result.errors.append(tr("Can't load brush from brush file '%1'")
-							 .arg(qUtf8Printable(mybPath)));
+								 .arg(qUtf8Printable(mybPath)));
 		return false;
 	}
 
 	outDescription = object["notes"].toString();
-	if (outDescription.isNull()) {
+	if(outDescription.isNull()) {
 		outDescription = object["description"].toString();
-		if (outDescription.isNull()) {
+		if(outDescription.isNull()) {
 			outDescription = "";
 		}
 	}
@@ -920,9 +949,11 @@ bool BrushPresetTagModel::readImportBrush(
 		outThumbnail = outBrush.presetThumbnail();
 	}
 
-	if(outThumbnail.width() != THUMBNAIL_SIZE || outThumbnail.height() != THUMBNAIL_SIZE) {
-		outThumbnail = outThumbnail.scaled(THUMBNAIL_SIZE, THUMBNAIL_SIZE,
-			Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	if(outThumbnail.width() != THUMBNAIL_SIZE ||
+	   outThumbnail.height() != THUMBNAIL_SIZE) {
+		outThumbnail = outThumbnail.scaled(
+			THUMBNAIL_SIZE, THUMBNAIL_SIZE, Qt::IgnoreAspectRatio,
+			Qt::SmoothTransformation);
 	}
 
 	return true;
@@ -972,7 +1003,9 @@ void BrushPresetTagModel::exportTag(
 {
 	QString tagPath = makeExportSafe(tag.name);
 	if(!zw.addDir(tagPath)) {
-		qWarning("Error creating tag directory '%s': %s", qUtf8Printable(tagPath), DP_error());
+		qWarning(
+			"Error creating tag directory '%s': %s", qUtf8Printable(tagPath),
+			DP_error());
 		result.errors.append(tr("Can't export tag '%1'").arg(tag.name));
 		return;
 	}
@@ -1011,15 +1044,20 @@ void BrushPresetTagModel::exportPreset(
 
 	QString dataPath = QStringLiteral("%1.myb").arg(presetPath);
 	if(!zw.addFile(dataPath, exportData)) {
-		qWarning("Error exporting preset '%s': %s", qUtf8Printable(dataPath), DP_error());
+		qWarning(
+			"Error exporting preset '%s': %s", qUtf8Printable(dataPath),
+			DP_error());
 		result.errors.append(tr("Can't export preset '%1'").arg(preset.name));
 		return;
 	}
 
 	QString thumbnailPath = QStringLiteral("%1_prev.png").arg(presetPath);
 	if(!zw.addFile(thumbnailPath, preset.thumbnail)) {
-		qWarning("Error exporting preset thumbnail '%s': %s", qUtf8Printable(thumbnailPath), DP_error());
-		result.errors.append(tr("Can't export preset thumbnail '%1'").arg(preset.name));
+		qWarning(
+			"Error exporting preset thumbnail '%s': %s",
+			qUtf8Printable(thumbnailPath), DP_error());
+		result.errors.append(
+			tr("Can't export preset thumbnail '%1'").arg(preset.name));
 		return;
 	}
 
@@ -1027,8 +1065,8 @@ void BrushPresetTagModel::exportPreset(
 	++result.exportedBrushCount;
 }
 
-QString BrushPresetTagModel::getExportName(
-	int presetId, const QString presetName)
+QString
+BrushPresetTagModel::getExportName(int presetId, const QString presetName)
 {
 	static QRegularExpression baseNameRe{"(?:[0-9]+-)?([^/\\\\]+)$"};
 	QRegularExpressionMatch match = baseNameRe.match(presetName);
@@ -1052,7 +1090,8 @@ BrushPresetModel::BrushPresetModel(BrushPresetTagModel *tagModel)
 	: QAbstractItemModel(tagModel)
 	, d(tagModel->d)
 	, m_tagIdToFilter(-1)
-{}
+{
+}
 
 BrushPresetModel::~BrushPresetModel() {}
 
@@ -1087,7 +1126,8 @@ QModelIndex BrushPresetModel::parent(const QModelIndex &) const
 	return QModelIndex();
 }
 
-QModelIndex BrushPresetModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex
+BrushPresetModel::index(int row, int column, const QModelIndex &parent) const
 {
 	if(parent.isValid() || column != 0) {
 		return QModelIndex();
@@ -1126,7 +1166,8 @@ QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
 		return d->readPresetNameById(index.internalId());
 	case ThumbnailRole: {
 		QPixmap pixmap;
-		if(pixmap.loadFromData(d->readPresetThumbnailById(index.internalId()))) {
+		if(pixmap.loadFromData(
+			   d->readPresetThumbnailById(index.internalId()))) {
 			return pixmap;
 		} else {
 			return QPixmap();
@@ -1136,7 +1177,8 @@ QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
 		return iconSize();
 	case BrushRole: {
 		QByteArray data = d->readPresetDataById(index.internalId());
-		ActiveBrush brush = ActiveBrush::fromJson(QJsonDocument::fromJson(data).object());
+		ActiveBrush brush =
+			ActiveBrush::fromJson(QJsonDocument::fromJson(data).object());
 		return QVariant::fromValue(brush);
 	}
 	case IdRole:
@@ -1164,24 +1206,27 @@ PresetMetadata BrushPresetModel::getPresetMetadata(int presetId)
 	return d->readPresetMetadataById(presetId);
 }
 
-bool BrushPresetModel::changeTagAssignment(int presetId, int tagId, bool assigned)
+bool BrushPresetModel::changeTagAssignment(
+	int presetId, int tagId, bool assigned)
 {
 	beginResetModel();
 	bool ok;
 	if(assigned) {
 		ok = d->createPresetTag(presetId, tagId);
 	} else {
-		ok =  d->deletePresetTag(presetId, tagId);
+		ok = d->deletePresetTag(presetId, tagId);
 	}
 	endResetModel();
 	return ok;
 }
 
-int BrushPresetModel::newPreset(const QString &type, const QString &name, const QString description,
+int BrushPresetModel::newPreset(
+	const QString &type, const QString &name, const QString description,
 	const QPixmap &thumbnail, const QByteArray &data)
 {
 	beginResetModel();
-	int presetId = d->createPreset(type, name, description, toPng(thumbnail), data);
+	int presetId =
+		d->createPreset(type, name, description, toPng(thumbnail), data);
 	endResetModel();
 	return presetId;
 }
@@ -1197,16 +1242,19 @@ int BrushPresetModel::duplicatePreset(int presetId)
 	return presetId;
 }
 
-bool BrushPresetModel::updatePresetData(int presetId, const QString &type, const QByteArray &data)
+bool BrushPresetModel::updatePresetData(
+	int presetId, const QString &type, const QByteArray &data)
 {
 	return d->updatePresetData(presetId, type, data);
 }
 
-bool BrushPresetModel::updatePresetMetadata(int presetId, const QString &name,
-	const QString &description, const QPixmap &thumbnail)
+bool BrushPresetModel::updatePresetMetadata(
+	int presetId, const QString &name, const QString &description,
+	const QPixmap &thumbnail)
 {
 	beginResetModel();
-	bool ok = d->updatePresetMetadata(presetId, name, description, toPng(thumbnail));
+	bool ok =
+		d->updatePresetMetadata(presetId, name, description, toPng(thumbnail));
 	endResetModel();
 	return ok;
 }
@@ -1250,7 +1298,8 @@ void BrushPresetModel::tagsReset()
 
 QPixmap BrushPresetModel::loadBrushPreview(const QFileInfo &fileInfo)
 {
-	QString file = fileInfo.path() + QDir::separator() + fileInfo.completeBaseName() + "_prev.png";
+	QString file = fileInfo.path() + QDir::separator() +
+				   fileInfo.completeBaseName() + "_prev.png";
 	QPixmap pixmap;
 	if(pixmap.load(file)) {
 		return pixmap;
