@@ -348,7 +348,7 @@ public:
 	 * @param full - include detailed information (for admin use)
 	 * @return
 	 */
-	QJsonObject getDescription(bool full = false) const;
+	virtual QJsonObject getDescription(bool full = false) const;
 
 	QJsonObject getExportBanList() const;
 
@@ -490,6 +490,8 @@ private:
 	JsonApiResult callListingsJsonApi(
 		JsonApiMethod method, const QStringList &path,
 		const QJsonObject &request);
+
+	QJsonObject getUserDescription(const Client *user) const;
 
 	SessionHistory *m_history;
 	ServerConfig *m_config;

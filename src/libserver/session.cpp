@@ -1556,14 +1556,14 @@ QJsonObject Session::getDescription(bool full) const
 		// Full descriptions includes detailed info for server admins.
 		o["maxSize"] = int(m_history->sizeLimit());
 		o["resetThreshold"] = int(m_history->autoResetThreshold());
+		o[QStringLiteral("effectiveResetThreshold")] =
+			int(m_history->effectiveAutoResetThreshold());
 		o["deputies"] = m_history->hasFlag(SessionHistory::Deputies);
 		o["hasOpword"] = !m_history->opwordHash().isEmpty();
 
 		QJsonArray users;
 		for(const Client *user : m_clients) {
-			QJsonObject u = user->description(false);
-			u["online"] = true;
-			users << u;
+			users.append(getUserDescription(user));
 		}
 		for(auto u = m_pastClients.constBegin(); u != m_pastClients.constEnd();
 			++u) {
@@ -1588,6 +1588,31 @@ QJsonObject Session::getDescription(bool full) const
 	}
 
 	return o;
+}
+
+QJsonObject Session::getUserDescription(const Client *user) const
+{
+	QJsonObject u = user->description(false);
+	u[QStringLiteral("online")] = true;
+	u[QStringLiteral("holdLocked")] = user->isHoldLocked();
+
+	Client::ResetFlags resetFlags = user->resetFlags();
+	QJsonArray f;
+	if(resetFlags.testFlag(Client::ResetFlag::Awaiting)) {
+		f.append(QStringLiteral("awaiting"));
+	}
+	if(resetFlags.testFlag(Client::ResetFlag::Queried)) {
+		f.append(QStringLiteral("queried"));
+	}
+	if(resetFlags.testFlag(Client::ResetFlag::Responded)) {
+		f.append(QStringLiteral("responded"));
+	}
+	if(resetFlags.testFlag(Client::ResetFlag::Streaming)) {
+		f.append(QStringLiteral("streaming"));
+	}
+	u[QStringLiteral("resetFlags")] = f;
+
+	return u;
 }
 
 QJsonObject Session::getExportBanList() const

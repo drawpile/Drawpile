@@ -94,6 +94,61 @@ void ThinSession::cleanupHistoryCache()
 	history()->cleanupBatches(minIdx);
 }
 
+QJsonObject ThinSession::getDescription(bool full) const
+{
+	QJsonObject o = Session::getDescription(full);
+	if(full) {
+		QString sessionState;
+		switch(state()) {
+		case State::Initialization:
+			sessionState = QStringLiteral("initialization");
+			break;
+		case State::Running:
+			sessionState = QStringLiteral("running");
+			break;
+		case State::Reset:
+			sessionState = QStringLiteral("reset");
+			break;
+		case State::Shutdown:
+			sessionState = QStringLiteral("shutdown");
+			break;
+		}
+
+		QString autoresetRequestStatus;
+		switch(m_autoResetRequestStatus) {
+		case AutoResetState::NotSent:
+			autoresetRequestStatus = QStringLiteral("not sent");
+			break;
+		case AutoResetState::Queried:
+			autoresetRequestStatus = QStringLiteral("queried");
+			break;
+		case AutoResetState::QueriedWaiting:
+			autoresetRequestStatus = QStringLiteral("queried waiting");
+			break;
+		case AutoResetState::Requested:
+			autoresetRequestStatus = QStringLiteral("requested");
+			break;
+		}
+
+		const SessionHistory *hist = history();
+		QJsonObject a = QJsonObject({
+			{QStringLiteral("delay"), m_autoResetDelay.remainingTime()},
+			{QStringLiteral("historyFirstIndex"), double(hist->firstIndex())},
+			{QStringLiteral("historyLastIndex"), double(hist->lastIndex())},
+			{QStringLiteral("requestStatus"), autoresetRequestStatus},
+			{QStringLiteral("sessionState"), sessionState},
+			{QStringLiteral("stream"), hist->getStreamedResetDescription()},
+		});
+
+		if(m_autoResetTimer->isActive()) {
+			a[QStringLiteral("timer")] = m_autoResetTimer->remainingTime();
+		}
+
+		o[QStringLiteral("autoreset")] = a;
+	}
+	return o;
+}
+
 void ThinSession::readyToAutoReset(
 	const AutoResetResponseParams &params, const QString &payload)
 {

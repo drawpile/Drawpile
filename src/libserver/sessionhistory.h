@@ -6,6 +6,7 @@
 #include "libshared/net/message.h"
 #include "libshared/util/passwordhash.h"
 #include <QDateTime>
+#include <QJsonValue>
 #include <QObject>
 #include <tuple>
 
@@ -445,6 +446,8 @@ public:
 	{
 		return m_authUsernames;
 	}
+
+	QJsonValue getStreamedResetDescription() const;
 
 signals:
 	/**

@@ -36,6 +36,8 @@ public:
 
 	bool supportsAutoReset() const override { return true; }
 
+	QJsonObject getDescription(bool full = false) const override;
+
 protected:
 	void addToHistory(const net::Message &msg) override;
 	void onSessionInitialized() override;

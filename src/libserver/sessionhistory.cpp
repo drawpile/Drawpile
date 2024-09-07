@@ -5,6 +5,7 @@ extern "C" {
 #include "libserver/client.h"
 #include "libserver/sessionhistory.h"
 #include "libshared/net/servercmd.h"
+#include <QJsonObject>
 
 namespace server {
 
@@ -386,6 +387,29 @@ const QString *SessionHistory::authenticatedUsernameFor(const QString &authId)
 {
 	QHash<QString, QString>::const_iterator it = m_authUsernames.find(authId);
 	return it == m_authUsernames.constEnd() ? nullptr : &it.value();
+}
+
+QJsonValue SessionHistory::getStreamedResetDescription() const
+{
+	QString state;
+	switch(m_resetStreamState) {
+	case ResetStreamState::None:
+		return QJsonValue();
+	case ResetStreamState::Streaming:
+		state = QStringLiteral("streaming");
+		break;
+	case ResetStreamState::Prepared:
+		state = QStringLiteral("prepared");
+		break;
+	}
+	return QJsonObject({
+		{QStringLiteral("state"), state},
+		{QStringLiteral("ctxId"), m_resetStreamCtxId},
+		{QStringLiteral("size"), double(m_resetStreamSize)},
+		{QStringLiteral("startIndex"), double(m_resetStreamStartIndex)},
+		{QStringLiteral("messageCount"), m_resetStreamMessageCount},
+		{QStringLiteral("haveConsumer"), m_resetStreamConsumer != nullptr},
+	});
 }
 
 int SessionHistory::incrementNextCatchupKey(int &nextCatchupKey)
