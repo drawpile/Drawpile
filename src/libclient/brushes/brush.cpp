@@ -670,7 +670,12 @@ QJsonObject MyPaintBrush::mappingToJson() const
 			const DP_MyPaintMapping &mapping = m_settings->mappings[i];
 
 			QJsonObject inputs;
+			QJsonObject ranges;
 			for(int j = 0; j < MYPAINT_BRUSH_INPUTS_COUNT; ++j) {
+				MyPaintBrushInput inputId = static_cast<MyPaintBrushInput>(j);
+				QString inputKey =
+					QString::fromUtf8(mypaint_brush_input_info(inputId)->cname);
+
 				const DP_MyPaintControlPoints &cps = mapping.inputs[j];
 				if(cps.n) {
 					QJsonArray points;
@@ -680,17 +685,33 @@ QJsonObject MyPaintBrush::mappingToJson() const
 							cps.yvalues[k],
 						});
 					}
-					MyPaintBrushInput inputId =
-						static_cast<MyPaintBrushInput>(j);
-					inputs[mypaint_brush_input_info(inputId)->cname] = points;
+					inputs[inputKey] = points;
+				}
+
+				QHash<QPair<int, int>, MyPaintCurve>::const_iterator it =
+					m_curves.find({i, j});
+				if(it != m_curves.constEnd() && it->visible) {
+					ranges[inputKey] = QJsonObject({
+						{QStringLiteral("xmax"), it->xMax},
+						{QStringLiteral("xmin"), it->xMin},
+						{QStringLiteral("ymax"), it->yMax},
+						{QStringLiteral("ymin"), it->yMin},
+					});
 				}
 			}
 
-			MyPaintBrushSetting settingId = static_cast<MyPaintBrushSetting>(i);
-			o[mypaint_brush_setting_info(settingId)->cname] = QJsonObject{
-				{"base_value", mapping.base_value},
-				{"inputs", inputs},
+			QJsonObject jsonSettings = QJsonObject{
+				{QStringLiteral("base_value"), mapping.base_value},
+				{QStringLiteral("inputs"), inputs},
 			};
+			if(!ranges.isEmpty()) {
+				jsonSettings[QStringLiteral("drawpile_ranges")] = ranges;
+			}
+
+			MyPaintBrushSetting settingId = static_cast<MyPaintBrushSetting>(i);
+			QString settingKey =
+				QString::fromUtf8(mypaint_brush_setting_info(settingId)->cname);
+			o[settingKey] = jsonSettings;
 		}
 	}
 	return o;
@@ -721,24 +742,29 @@ bool MyPaintBrush::loadJsonMapping(
 {
 	bool foundSetting = false;
 
-	if(o["base_value"].isDouble()) {
+	QJsonValue baseValue = o[QStringLiteral("base_value")];
+	if(baseValue.isDouble()) {
 		settings().mappings[settingId].base_value =
-			qBound(min, float(o["base_value"].toDouble()), max);
+			qBound(min, float(baseValue.toDouble()), max);
 		foundSetting = true;
 	} else {
 		qWarning("Bad MyPaint 'base_value' in %s", qPrintable(mappingKey));
 	}
 
-	if(!o["inputs"].isObject()) {
+	QJsonValue inputs = o[QStringLiteral("inputs")];
+	if(!inputs.isObject()) {
 		qWarning("Bad MyPaint 'inputs' in %s", qPrintable(mappingKey));
-	} else if(loadJsonInputs(settingId, o["inputs"].toObject())) {
+	} else if(loadJsonInputs(
+				  settingId, inputs.toObject(),
+				  o[QStringLiteral("drawpile_ranges")].toObject())) {
 		foundSetting = true;
 	}
 
 	return foundSetting;
 }
 
-bool MyPaintBrush::loadJsonInputs(int settingId, const QJsonObject &o)
+bool MyPaintBrush::loadJsonInputs(
+	int settingId, const QJsonObject &o, const QJsonObject &ranges)
 {
 	bool foundSetting = false;
 
@@ -762,12 +788,121 @@ bool MyPaintBrush::loadJsonInputs(int settingId, const QJsonObject &o)
 				cps.xvalues[i] = point.at(0).toDouble();
 				cps.yvalues[i] = point.at(1).toDouble();
 			}
+
+			loadJsonRanges(settingId, inputId, inputKey, cps, ranges);
 		} else {
 			settings().mappings[settingId].inputs[inputId].n = 0;
 		}
 	}
 
 	return foundSetting;
+}
+
+void MyPaintBrush::loadJsonRanges(
+	int settingId, int inputId, const QString &inputKey,
+	const DP_MyPaintControlPoints &cps, const QJsonObject &ranges)
+{
+	if(MyPaintCurve::isNullControlPoints(cps)) {
+		return;
+	}
+
+	QJsonValue range = ranges[inputKey];
+	if(!range.isObject()) {
+		return;
+	}
+
+	QJsonValue xMax = range[QStringLiteral("xmax")];
+	QJsonValue xMin = range[QStringLiteral("xmin")];
+	QJsonValue yMax = range[QStringLiteral("ymax")];
+	QJsonValue yMin = range[QStringLiteral("ymin")];
+	if(xMax.isDouble() || xMin.isDouble() || yMax.isDouble() ||
+	   yMin.isDouble()) {
+		MyPaintCurve curve = MyPaintCurve::fromControlPoints(
+			cps, xMax.toDouble(std::numeric_limits<double>::lowest()),
+			xMin.toDouble(std::numeric_limits<double>::max()),
+			yMax.toDouble(std::numeric_limits<double>::lowest()),
+			yMin.toDouble(std::numeric_limits<double>::max()));
+		m_curves.insert({settingId, inputId}, curve);
+	}
+}
+
+MyPaintCurve MyPaintCurve::fromControlPoints(
+	const DP_MyPaintControlPoints &cps, double xMax, double xMin, double yMax,
+	double yMin)
+{
+	brushes::MyPaintCurve curve;
+	curve.visible = !isNullControlPoints(cps);
+	if(curve.visible) {
+		curve.xMax = curve.xMin = cps.xvalues[0];
+		curve.yMax = curve.yMin = cps.yvalues[0];
+		for(int i = 1; i < cps.n; ++i) {
+			double x = cps.xvalues[i];
+			if(x > curve.xMax) {
+				curve.xMax = x;
+			}
+			if(x < curve.xMin) {
+				curve.xMin = x;
+			}
+			double y = cps.yvalues[i];
+			if(y > curve.yMax) {
+				curve.yMax = y;
+			}
+			if(y < curve.yMin) {
+				curve.yMin = y;
+			}
+		}
+
+		if(xMax > curve.xMax) {
+			curve.xMax = xMax;
+		}
+		if(xMin < curve.xMin) {
+			curve.xMin = xMin;
+		}
+		if(yMax > curve.yMax) {
+			curve.yMax = yMax;
+		}
+		if(yMin < curve.yMin) {
+			curve.yMin = yMin;
+		}
+
+		double yAbs = qMax(qAbs(curve.yMin), qAbs(curve.yMax));
+		curve.yMin = -yAbs;
+		curve.yMax = yAbs;
+
+		QList<QPointF> points;
+		for(int i = 0; i < cps.n; ++i) {
+			points.append(curve.controlPointToCurve(
+				QPointF(cps.xvalues[i], cps.yvalues[i])));
+		}
+		curve.curve.setPoints(points);
+	}
+
+	return curve;
+}
+
+bool MyPaintCurve::isNullControlPoints(const DP_MyPaintControlPoints &cps)
+{
+	if(cps.n >= 2) {
+		for(int i = 0; i < cps.n; ++i) {
+			if(cps.yvalues[i] != 0.0) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+QPointF MyPaintCurve::controlPointToCurve(const QPointF &point)
+{
+	double x = translateCoordinate(point.x(), xMin, xMax, 0.0, 1.0);
+	double y = translateCoordinate(point.y(), yMin, yMax, 0.0, 1.0);
+	return QPointF{qBound(0.0, x, 1.0), qBound(0.0, y, 1.0)};
+}
+
+double MyPaintCurve::translateCoordinate(
+	double srcValue, double srcMin, double srcMax, double dstMin, double dstMax)
+{
+	return (dstMax - dstMin) / (srcMax - srcMin) * (srcValue - srcMin) + dstMin;
 }
 
 

@@ -44,15 +44,6 @@ private:
 
 	QPointF curveToControlPoint(const QPointF &point) const;
 
-	static QPointF controlPointToCurve(
-		const brushes::MyPaintCurve &curve, const QPointF &point);
-
-	static double translateCoordinate(
-		double srcValue, double srcMin, double srcMax, double dstMin,
-		double dstMax);
-
-	static bool isNullControlPoints(const DP_MyPaintControlPoints &cps);
-
 	void setCurveVisible(bool visible);
 	void updateRanges();
 

@@ -185,6 +185,21 @@ struct MyPaintCurve final {
 	KisCubicCurve curve;
 
 	bool isValid() const { return xMin <= xMax && yMin <= yMax; }
+
+	static MyPaintCurve fromControlPoints(
+		const DP_MyPaintControlPoints &cps,
+		double xMax = std::numeric_limits<double>::lowest(),
+		double xMin = std::numeric_limits<double>::max(),
+		double yMax = std::numeric_limits<double>::lowest(),
+		double yMin = std::numeric_limits<double>::max());
+
+	static bool isNullControlPoints(const DP_MyPaintControlPoints &cps);
+
+	QPointF controlPointToCurve(const QPointF &point);
+
+	static double translateCoordinate(
+		double srcValue, double srcMin, double srcMax, double dstMin,
+		double dstMax);
 };
 
 class MyPaintBrush final {
@@ -249,7 +264,11 @@ private:
 	bool loadJsonMapping(
 		const QString &mappingKey, int settingId, float min, float max,
 		const QJsonObject &o);
-	bool loadJsonInputs(int settingId, const QJsonObject &o);
+	bool loadJsonInputs(
+		int settingId, const QJsonObject &o, const QJsonObject &ranges);
+	void loadJsonRanges(
+		int settingId, int inputId, const QString &inputKey,
+		const DP_MyPaintControlPoints &cps, const QJsonObject &ranges);
 };
 
 class ActiveBrush final {

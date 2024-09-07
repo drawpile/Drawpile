@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/widgets/mypaintinput.h"
-#include "libclient/brushes/brush.h"
 #include "desktop/widgets/curvewidget.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "libclient/brushes/brush.h"
 #include <QCheckBox>
 #include <QLabel>
 #include <QSpacerItem>
 #include <QVBoxLayout>
-#include <QtMath>
 #include <QtGlobal>
+#include <QtMath>
 
 namespace widgets {
 
@@ -78,48 +78,14 @@ DP_MyPaintControlPoints MyPaintInput::controlPoints() const
 
 void MyPaintInput::setControlPoints(const DP_MyPaintControlPoints &cps)
 {
-	bool haveCurve = !isNullControlPoints(cps);
-
-	brushes::MyPaintCurve curve;
-	curve.visible = haveCurve;
-	if(haveCurve) {
-		curve.xMax = curve.xMin = cps.xvalues[0];
-		curve.yMax = curve.yMin = cps.yvalues[0];
-		for(int i = 1; i < cps.n; ++i) {
-			double x = cps.xvalues[i];
-			if(x > curve.xMax) {
-				curve.xMax = x;
-			}
-			if(x < curve.xMin) {
-				curve.xMin = x;
-			}
-			double y = cps.yvalues[i];
-			if(y > curve.yMax) {
-				curve.yMax = y;
-			}
-			if(y < curve.yMin) {
-				curve.yMin = y;
-			}
-		}
-
-		double yAbs = qMax(qAbs(curve.yMin), qAbs(curve.yMax));
-		curve.yMin = -yAbs;
-		curve.yMax = yAbs;
-
-		QList<QPointF> points;
-		for(int i = 0; i < cps.n; ++i) {
-			points.append(controlPointToCurve(
-				curve, QPointF{cps.xvalues[i], cps.yvalues[i]}));
-		}
-		curve.curve.setPoints(points);
-	} else {
+	brushes::MyPaintCurve curve = brushes::MyPaintCurve::fromControlPoints(cps);
+	if(!curve.visible) {
 		curve.xMax = m_xSoftMax;
 		curve.xMin = m_xSoftMin;
 		curve.yMax = m_ySoftMax;
 		curve.yMin = m_ySoftMin;
 		curve.curve.setPoints({{0.0, 0.25}, {1.0, 0.75}});
 	}
-
 	setMyPaintCurve(curve);
 }
 
@@ -237,36 +203,12 @@ KisCubicCurve MyPaintInput::defaultCurve()
 
 QPointF MyPaintInput::curveToControlPoint(const QPointF &point) const
 {
-	double x = translateCoordinate(point.x(), 0.0, 1.0, m_xMin, m_xMax);
-	double y = translateCoordinate(point.y(), 0.0, 1.0, m_yMin, m_yMax);
+	double x = brushes::MyPaintCurve::translateCoordinate(
+		point.x(), 0.0, 1.0, m_xMin, m_xMax);
+	double y = brushes::MyPaintCurve::translateCoordinate(
+		point.y(), 0.0, 1.0, m_yMin, m_yMax);
 	return QPointF{
 		qBound(m_xHardMin, x, m_xHardMax), qBound(m_yHardMin, y, m_yHardMax)};
-}
-
-QPointF MyPaintInput::controlPointToCurve(
-	const brushes::MyPaintCurve &curve, const QPointF &point)
-{
-	double x = translateCoordinate(point.x(), curve.xMin, curve.xMax, 0.0, 1.0);
-	double y = translateCoordinate(point.y(), curve.yMin, curve.yMax, 0.0, 1.0);
-	return QPointF{qBound(0.0, x, 1.0), qBound(0.0, y, 1.0)};
-}
-
-double MyPaintInput::translateCoordinate(
-	double srcValue, double srcMin, double srcMax, double dstMin, double dstMax)
-{
-	return (dstMax - dstMin) / (srcMax - srcMin) * (srcValue - srcMin) + dstMin;
-}
-
-bool MyPaintInput::isNullControlPoints(const DP_MyPaintControlPoints &cps)
-{
-	if(cps.n >= 2) {
-		for(int i = 0; i < cps.n; ++i) {
-			if(cps.yvalues[i] != 0.0) {
-				return false;
-			}
-		}
-	}
-	return true;
 }
 
 void MyPaintInput::setCurveVisible(bool visible)
