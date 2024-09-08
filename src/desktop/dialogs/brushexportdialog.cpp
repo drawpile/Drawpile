@@ -178,7 +178,7 @@ void BrushExportDialog::buildTreePresets(QTreeWidgetItem *tagItem, int tagId)
 			Qt::ItemNeverHasChildren);
 		presetItem->setCheckState(0, Qt::Unchecked);
 		presetItem->setText(
-			0, index.data(brushes::BrushPresetModel::TitleRole).toString());
+			0, index.data(brushes::BrushPresetModel::EffectiveTitleRole).toString());
 		presetItem->setData(
 			0, Qt::UserRole, m_presetModel->getIdFromIndex(index));
 		tagItem->addChild(presetItem);

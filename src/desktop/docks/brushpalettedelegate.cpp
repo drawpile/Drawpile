@@ -1,5 +1,6 @@
 #include "desktop/docks/brushpalettedelegate.h"
 #include "libclient/brushes/brushpresetmodel.h"
+#include <QIcon>
 #include <QPainter>
 
 namespace docks {
@@ -25,8 +26,9 @@ void BrushPaletteDelegate::paint(
 		if(it == m_cache.constEnd()) {
 			m_lock.unlock();
 			m_lock.lockForWrite();
-			pixmap = index.data(brushes::BrushPresetModel::ThumbnailRole)
-						 .value<QPixmap>();
+			pixmap =
+				index.data(brushes::BrushPresetModel::EffectiveThumbnailRole)
+					.value<QPixmap>();
 			if(!pixmap.isNull()) {
 				pixmap = pixmap.scaled(
 					index.data(Qt::SizeHintRole).toSize() * dpr,
@@ -48,6 +50,16 @@ void BrushPaletteDelegate::paint(
 			}
 			painter->drawPixmap(rect, pixmap);
 		}
+
+		if(index.data(brushes::BrushPresetModel::HasChangesRole).toBool()) {
+			int minDimension = qMin(rect.width(), rect.height());
+			int editDimension = qMax(minDimension / 4, qMin(8, minDimension));
+			int editOffset = editDimension / 8;
+			QSize editSize(editDimension, editDimension);
+			QRect editRect = QRect(
+				QPoint(rect.x() + editOffset, rect.y() + editOffset), editSize);
+			painter->drawPixmap(editRect, getEditIcon(editSize));
+		}
 	}
 }
 
@@ -64,6 +76,15 @@ void BrushPaletteDelegate::clearCache()
 	m_lock.lockForWrite();
 	m_cache.clear();
 	m_lock.unlock();
+}
+
+const QPixmap &BrushPaletteDelegate::getEditIcon(const QSize &size) const
+{
+	if(m_editIcon.size() != size) {
+		m_editIcon = QIcon::fromTheme(QStringLiteral("drawpile_presetchanged"))
+						 .pixmap(size);
+	}
+	return m_editIcon;
 }
 
 }

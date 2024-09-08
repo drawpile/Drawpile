@@ -20,10 +20,22 @@ public:
 	explicit BrushSettingsDialog(QWidget *parent = nullptr);
 	~BrushSettingsDialog() override;
 
+	void showPresetPage();
+	void showGeneralPage();
+
 signals:
+	void presetNameChanged(const QString &presetName);
+	void presetDescriptionChanged(const QString &presetDescription);
+	void presetThumbnailChanged(const QPixmap &presetThumbnail);
 	void brushSettingsChanged(const brushes::ActiveBrush &brush);
+	void newBrushRequested();
+	void overwriteBrushRequested();
 
 public slots:
+	void setPresetAttached(bool presetAttached);
+	void setPresetName(const QString &presetName);
+	void setPresetDescription(const QString &presetDescription);
+	void setPresetThumbnail(const QPixmap &presetThumbnail);
 	void setForceEraseMode(bool forceEraseMode);
 	void setStabilizerUseBrushSampleCount(bool useBrushSampleCount);
 	void setGlobalSmoothing(int smoothing);
@@ -45,6 +57,7 @@ private:
 	Private *d;
 
 	void buildDialogUi();
+	QWidget *buildPresetPageUi();
 	QWidget *buildGeneralPageUi();
 	QWidget *buildClassicSizePageUi();
 	QWidget *buildClassicOpacityPageUi();
@@ -107,6 +120,11 @@ private:
 	static QString getMyPaintInputDescription(int input);
 	static QString getMyPaintSettingTitle(int setting);
 	static QString getMyPaintSettingDescription(int setting);
+
+	void choosePresetThumbnailFile();
+	void showPresetThumbnail(const QPixmap &thumbnail);
+	void renderPresetThumbnail();
+	QPixmap applyPresetThumbnailLabel(const QString &label);
 };
 
 }

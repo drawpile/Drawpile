@@ -35,6 +35,8 @@ class ClassicBrush final : public DP_ClassicBrush {
 public:
 	ClassicBrush();
 
+	bool equalPreset(const ClassicBrush &other, bool inEraserSlot) const;
+
 	const KisCubicCurve &sizeCurve() const { return m_sizeCurve; }
 	void setSizeCurve(const KisCubicCurve &sizeCurve);
 
@@ -213,6 +215,8 @@ public:
 	MyPaintBrush &operator=(MyPaintBrush &&other);
 	MyPaintBrush &operator=(const MyPaintBrush &other);
 
+	bool equalPreset(const MyPaintBrush &other, bool inEraserSlot) const;
+
 	DP_MyPaintBrush &brush() { return m_brush; }
 	const DP_MyPaintBrush &constBrush() const { return m_brush; }
 
@@ -282,6 +286,8 @@ public:
 	ActiveBrush(ActiveBrush &&other) = default;
 	ActiveBrush &operator=(const ActiveBrush &other) = default;
 
+	bool equalPreset(const ActiveBrush &other, bool inEraserSlot) const;
+
 	ActiveType activeType() const { return m_activeType; }
 	void setActiveType(ActiveType activeType) { m_activeType = activeType; }
 
@@ -296,6 +302,8 @@ public:
 	void setMyPaint(const MyPaintBrush &myPaint) { m_myPaint = myPaint; }
 
 	bool isEraser() const;
+	void setEraser(bool erase);
+
 	bool isEraserOverride() const { return m_eraserOverride; }
 	void setEraserOverride(bool eraserOverride)
 	{

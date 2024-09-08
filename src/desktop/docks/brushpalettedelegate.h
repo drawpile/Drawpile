@@ -25,8 +25,11 @@ public slots:
 	void clearCache();
 
 private:
+	const QPixmap &getEditIcon(const QSize &size) const;
+
 	mutable QHash<QPair<int, qreal>, QPixmap> m_cache;
 	mutable QReadWriteLock m_lock;
+	mutable QPixmap m_editIcon;
 };
 
 }

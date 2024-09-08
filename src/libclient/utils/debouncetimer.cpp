@@ -23,10 +23,17 @@ void DebounceTimer::setInt(int value)
 	restartTimer();
 }
 
+void DebounceTimer::stopTimer()
+{
+	if(m_timerId != 0) {
+		killTimer(m_timerId);
+		m_timerId = 0;
+	}
+}
+
 void DebounceTimer::timerEvent(QTimerEvent *)
 {
-	killTimer(m_timerId);
-	m_timerId = 0;
+	stopTimer();
 	switch(m_type) {
 	case Type::None:
 		emit noneChanged();
@@ -40,8 +47,6 @@ void DebounceTimer::timerEvent(QTimerEvent *)
 
 void DebounceTimer::restartTimer()
 {
-	if(m_timerId != 0) {
-		killTimer(m_timerId);
-	}
+	stopTimer();
 	m_timerId = startTimer(m_delayMs);
 }

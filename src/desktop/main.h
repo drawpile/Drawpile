@@ -14,6 +14,10 @@ class QSoundEffect;
 class QCommandLineOption;
 class QCommandLineParser;
 
+namespace brushes {
+class BrushPresetTagModel;
+}
+
 namespace utils {
 class Recents;
 class StateDatabase;
@@ -32,6 +36,7 @@ public:
 	void initTheme();
 	void initCanvasImplementation(const QString &arg);
 	void initInterface();
+	void initBrushPresets();
 
 	void openPath(const QString &path, bool restoreWindowPosition);
 	void joinUrl(
@@ -54,6 +59,8 @@ public:
 
 	const utils::Recents &recents() const { return *m_recents; }
 	utils::Recents &recents() { return *m_recents; }
+
+	brushes::BrushPresetTagModel *brushPresets() { return m_brushPresets; }
 
 	int canvasImplementation() const { return m_canvasImplementation; }
 	static int getCanvasImplementationFor(int canvasImplementation);
@@ -96,6 +103,7 @@ private:
 	bool m_canvasImplementationFromSettings = false;
 	utils::StateDatabase *m_state = nullptr;
 	utils::Recents *m_recents = nullptr;
+	brushes::BrushPresetTagModel *m_brushPresets = nullptr;
 	QString m_originalSystemStyle;
 	QPalette m_originalSystemPalette;
 #ifdef Q_OS_WIN

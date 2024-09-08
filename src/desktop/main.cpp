@@ -9,6 +9,7 @@
 #include "desktop/utils/globalkeyeventfilter.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/recents.h"
+#include "libclient/brushes/brushpresetmodel.h"
 #include "libclient/drawdance/global.h"
 #include "libclient/utils/colorscheme.h"
 #include "libclient/utils/logging.h"
@@ -394,6 +395,12 @@ int DrawpileApp::getCanvasImplementationFor(int canvasImplementation)
 		return int(CanvasImplementation::GraphicsView);
 #endif
 	}
+}
+
+void DrawpileApp::initBrushPresets()
+{
+	Q_ASSERT(!m_brushPresets);
+	m_brushPresets = new brushes::BrushPresetTagModel(this);
 }
 
 QPair<QSize, QSizeF> DrawpileApp::screenResolution()
@@ -866,6 +873,7 @@ static StartupOptions initApp(DrawpileApp &app)
 	}
 
 	initTranslations(app, locale);
+	app.initBrushPresets();
 
 	StartupOptions startupOptions;
 	startupOptions.files = parser.positionalArguments();

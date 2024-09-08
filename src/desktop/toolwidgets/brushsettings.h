@@ -2,13 +2,10 @@
 #ifndef DESKTOP_TOOLWIDGETS_BRUSHSETTINGS_H
 #define DESKTOP_TOOLWIDGETS_BRUSHSETTINGS_H
 #include "desktop/toolwidgets/toolsettings.h"
+#include "libclient/brushes/brushpresetmodel.h"
 
 class QAction;
 class QSpinBox;
-
-namespace brushes {
-class ActiveBrush;
-}
 
 namespace tools {
 
@@ -24,6 +21,9 @@ public:
 
 	BrushSettings(ToolController *ctrl, QObject *parent = nullptr);
 	~BrushSettings() override;
+
+	void setActions(QAction *reloadPreset);
+	void connectBrushPresets(brushes::BrushPresetModel *brushPresets);
 
 	QString toolType() const override { return QStringLiteral("brush"); }
 
@@ -49,13 +49,22 @@ public:
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;
 
-	void setCurrentBrush(brushes::ActiveBrush brush);
+	void setCurrentBrushDetached(const brushes::ActiveBrush &brush);
+	void setCurrentBrushPreset(const brushes::Preset &p);
+	void changeCurrentBrush(const brushes::ActiveBrush &brush);
 	brushes::ActiveBrush currentBrush() const;
+	int currentPresetId() const;
+	const QString &currentPresetName() const;
+	const QString &currentPresetDescription() const;
+	const QPixmap &currentPresetThumbnail() const;
 
 	int currentBrushSlot() const;
 	bool isCurrentEraserSlot() const;
 
 	void setShareBrushSlotColor(bool sameColor);
+
+	bool brushPresetsAttach() const;
+	void setBrushPresetsAttach(bool brushPresetsAttach);
 
 	QWidget *getHeaderWidget() override;
 
@@ -72,22 +81,30 @@ public slots:
 	void toggleEraserMode() override;
 	void toggleRecolorMode() override;
 	void setEraserMode(bool erase);
-	void reloadPreset();
+	void resetPreset();
+
+	void changeCurrentPresetName(const QString &name);
+	void changeCurrentPresetDescription(const QString &description);
+	void changeCurrentPresetThumbnail(const QPixmap &thumbnail);
 
 signals:
+	void presetIdChanged(int presetId);
 	void colorChanged(const QColor &color);
 	void eraseModeChanged(bool erase);
 	void subpixelModeChanged(bool subpixel, bool square);
 	void blendModeChanged(int blendMode);
 	void brushModeChanged(int brushMode); // See enum BrushMode above.
 	void pixelSizeChanged(int size);
-	void brushSettingsDialogRequested();
+	void newBrushRequested();
+	void editBrushRequested();
+	void overwriteBrushRequested();
+	void deleteBrushRequested();
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private slots:
-	void changeBrushType();
+	void changeBrushType(const QAction *action);
 	void changeSizeSetting(int size);
 	void changeRadiusLogarithmicSetting(int radiusLogarithmic);
 	void selectBlendMode(int);
@@ -95,10 +112,24 @@ private slots:
 	void updateFromUiWith(bool updateShared);
 	void updateStabilizationSettingVisibility();
 	void quickAdjustOn(QSpinBox *box, qreal adjustment);
+	void handlePresetChanged(
+		int presetId, const QString &name, const QString &description,
+		const QPixmap &thumbnail, const brushes::ActiveBrush &brush);
+	void handlePresetRemoved(int presetId);
+	void detachCurrentSlot();
 
 private:
+	enum class BrushType { PixelRound, PixelSquare, SoftRound, MyPaint };
 	enum class Lock { None, MyPaintPermission, MyPaintCompat, IndirectCompat };
 
+	void changePresetBrush(const brushes::ActiveBrush &brush);
+	void updateChangesInBrushPresets();
+
+	brushes::ActiveBrush
+	changeCurrentBrushInternal(const brushes::ActiveBrush &brush);
+	brushes::ActiveBrush changeBrushInSlot(brushes::ActiveBrush brush, int i);
+
+	void updateMenuActions();
 	void updateUi();
 
 	Lock getLock();
@@ -109,6 +140,7 @@ private:
 	void emitBrushModeChanged();
 	static double radiusLogarithmicToPixelSize(int radiusLogarithmic);
 
+	static int getDefaultPresetIdForSlot(int i);
 	static QByteArray getDefaultBrushForSlot(int i);
 
 	struct Private;

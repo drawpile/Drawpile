@@ -59,10 +59,18 @@ void Tools::initColorSpace(
 void Tools::initGeneralTools(
 	desktop::settings::Settings &settings, QFormLayout *form)
 {
+	QCheckBox *presetsAttach = new QCheckBox(tr("Attach selected brushes"));
+	presetsAttach->setToolTip(
+		tr("When enabled, changes in a brush slot will be saved to the brush "
+		   "itself automatically. When disabled, the brush itself only changes "
+		   "when you save it explicitly."));
+	settings.bindBrushPresetsAttach(presetsAttach);
+	form->addRow(tr("Brushes:"), presetsAttach);
+
 	auto *shareColor =
 		new QCheckBox(tr("Share one color across all brush slots"));
 	settings.bindShareBrushSlotColor(shareColor);
-	form->addRow(tr("Brushes:"), shareColor);
+	form->addRow(nullptr, shareColor);
 
 	auto *outlineSize = new QDoubleSpinBox;
 	settings.bindBrushOutlineWidth(outlineSize);

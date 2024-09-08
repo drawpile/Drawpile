@@ -57,6 +57,15 @@ ClassicBrush::ClassicBrush()
 	updateCurve(m_smudgeCurve, smudge.curve);
 }
 
+bool ClassicBrush::equalPreset(
+	const ClassicBrush &other, bool inEraserSlot) const
+{
+	return DP_classic_brush_equal_preset(this, &other, inEraserSlot) &&
+		   stabilizationMode == other.stabilizationMode &&
+		   stabilizerSampleCount == other.stabilizerSampleCount &&
+		   smoothing == other.smoothing;
+}
+
 void ClassicBrush::setSizeCurve(const KisCubicCurve &sizeCurve)
 {
 	m_sizeCurve = sizeCurve;
@@ -482,6 +491,18 @@ MyPaintBrush &MyPaintBrush::operator=(const MyPaintBrush &other)
 	m_smoothing = other.m_smoothing;
 	m_curves = other.m_curves;
 	return *this;
+}
+
+bool MyPaintBrush::equalPreset(
+	const MyPaintBrush &other, bool inEraserSlot) const
+{
+	return DP_mypaint_brush_equal_preset(
+			   &m_brush, &other.m_brush, inEraserSlot) &&
+		   DP_mypaint_settings_equal_preset(
+			   &constSettings(), &other.constSettings()) &&
+		   m_stabilizationMode == other.m_stabilizationMode &&
+		   m_stabilizerSampleCount == other.m_stabilizerSampleCount &&
+		   m_smoothing == other.m_smoothing;
 }
 
 DP_MyPaintSettings &MyPaintBrush::settings()
@@ -913,6 +934,14 @@ ActiveBrush::ActiveBrush(ActiveType activeType)
 {
 }
 
+bool ActiveBrush::equalPreset(const ActiveBrush &other, bool inEraserSlot) const
+{
+	return m_activeType == other.m_activeType &&
+		   (m_activeType == CLASSIC
+				? m_classic.equalPreset(other.m_classic, inEraserSlot)
+				: m_myPaint.equalPreset(other.m_myPaint, inEraserSlot));
+}
+
 DP_BrushShape ActiveBrush::shape() const
 {
 	return m_activeType == CLASSIC ? m_classic.shape : DP_BRUSH_SHAPE_MYPAINT;
@@ -922,6 +951,15 @@ bool ActiveBrush::isEraser() const
 {
 	return m_activeType == CLASSIC ? m_classic.erase
 								   : m_myPaint.constBrush().erase;
+}
+
+void ActiveBrush::setEraser(bool erase)
+{
+	if(m_activeType == CLASSIC) {
+		m_classic.erase = erase;
+	} else {
+		m_myPaint.brush().erase = erase;
+	}
 }
 
 DP_UPixelFloat ActiveBrush::color() const

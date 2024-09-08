@@ -147,7 +147,6 @@ public slots:
 	void importAnimationLayers();
 	void showFlipbook();
 
-	void showBrushSettingsDialog();
 	dialogs::SettingsDialog *showSettings();
 	void reportAbuse();
 	void tryToGainOp();
@@ -235,6 +234,8 @@ private slots:
 
 	void showLayoutsDialog();
 	void showUserInfoDialog(int userId);
+	void showBrushSettingsDialogBrush();
+	void showBrushSettingsDialogPreset();
 
 	void showAlterSelectionDialog();
 	void alterSelection(int expand, int feather, bool fromEdge);
@@ -291,6 +292,8 @@ private:
 	void setStartDialogActions(dialogs::StartDialog *dlg);
 	void closeStartDialog(dialogs::StartDialog *dlg, bool join);
 	QWidget *getStartDialogOrThis();
+
+	void showBrushSettingsDialog(bool openOnPresetPage);
 
 	void importAnimation(int source);
 	void showAnimationExportDialog(bool fromFlipbook);

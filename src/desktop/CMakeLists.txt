@@ -87,8 +87,6 @@ target_sources(drawpile PRIVATE
 	dialogs/avatarimport.h
 	dialogs/brushexportdialog.cpp
 	dialogs/brushexportdialog.h
-	dialogs/brushpresetproperties.cpp
-	dialogs/brushpresetproperties.h
 	dialogs/brushsettingsdialog_gen.cpp
 	dialogs/brushsettingsdialog.cpp
 	dialogs/brushsettingsdialog.h
@@ -274,7 +272,6 @@ target_sources(drawpile PRIVATE
 	ui/addserverdialog.ui
 	ui/avatarimport.ui
 	ui/brushdock.ui
-	ui/brushpresetproperties.ui
 	ui/canvasshortcutsdialog.ui
 	ui/certificateview.ui
 	ui/dumpplayback.ui

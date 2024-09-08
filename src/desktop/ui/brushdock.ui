@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>325</width>
-    <height>368</height>
+    <height>370</height>
    </rect>
   </property>
   <layout class="QVBoxLayout">
@@ -51,104 +51,21 @@
    <item>
     <layout class="QHBoxLayout">
      <item>
-      <widget class="QWidget" name="brushTypeContainer" native="true">
-       <layout class="QHBoxLayout">
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="widgets::GroupedToolButton" name="hardedgeMode">
-          <property name="toolTip">
-           <string>Pixel brush</string>
-          </property>
-          <property name="icon">
-           <iconset theme="drawpile_pixelround">
-            <normaloff>theme:drawpile_pixelround.svg</normaloff>theme:drawpile_pixelround.svg</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-          <property name="groupPosition">
-           <enum>widgets::GroupedToolButton::GroupLeft</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="widgets::GroupedToolButton" name="squareMode">
-          <property name="toolTip">
-           <string>Square pixel brush</string>
-          </property>
-          <property name="icon">
-           <iconset theme="drawpile_square">
-            <normaloff>theme:drawpile_square.svg</normaloff>theme:drawpile_square.svg</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-          <property name="groupPosition">
-           <enum>widgets::GroupedToolButton::GroupCenter</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="widgets::GroupedToolButton" name="softedgeMode">
-          <property name="toolTip">
-           <string>Brush</string>
-          </property>
-          <property name="icon">
-           <iconset theme="drawpile_round">
-            <normaloff>theme:drawpile_round.svg</normaloff>theme:drawpile_round.svg</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-          <property name="groupPosition">
-           <enum>widgets::GroupedToolButton::GroupCenter</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="widgets::GroupedToolButton" name="mypaintMode">
-          <property name="toolTip">
-           <string>MyPaint Brush</string>
-          </property>
-          <property name="icon">
-           <iconset theme="draw-brush">
-            <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-          <property name="groupPosition">
-           <enum>widgets::GroupedToolButton::GroupRight</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
+      <widget class="widgets::GroupedToolButton" name="reloadButton">
+       <property name="icon">
+        <iconset theme="view-refresh">
+         <normaloff>theme:view-refresh.svg</normaloff>theme:view-refresh.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="widgets::GroupedToolButton" name="brushTypeButton">
+       <property name="toolTip">
+        <string>Brush type</string>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
+       </property>
       </widget>
      </item>
      <item>
@@ -454,9 +371,6 @@
      </item>
      <item row="9" column="1">
       <widget class="widgets::GroupedToolButton" name="stabilizerButton">
-       <property name="popupMode">
-        <enum>QToolButton::InstantPopup</enum>
-       </property>
        <property name="icon">
         <iconset theme="application-menu">
          <normaloff>theme:application-menu.svg</normaloff>theme:application-menu.svg</iconset>
@@ -515,24 +429,28 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>hardedgeMode</tabstop>
-  <tabstop>squareMode</tabstop>
-  <tabstop>softedgeMode</tabstop>
-  <tabstop>mypaintMode</tabstop>
+  <tabstop>reloadButton</tabstop>
+  <tabstop>brushTypeButton</tabstop>
   <tabstop>blendmode</tabstop>
   <tabstop>modeColorpick</tabstop>
   <tabstop>modeLockAlpha</tabstop>
   <tabstop>modeEraser</tabstop>
   <tabstop>modeIncremental</tabstop>
   <tabstop>brushsizeBox</tabstop>
+  <tabstop>pressureSize</tabstop>
   <tabstop>radiusLogarithmicBox</tabstop>
   <tabstop>opacityBox</tabstop>
+  <tabstop>pressureOpacity</tabstop>
   <tabstop>hardnessBox</tabstop>
+  <tabstop>pressureHardness</tabstop>
   <tabstop>smudgingBox</tabstop>
+  <tabstop>pressureSmudging</tabstop>
   <tabstop>colorpickupBox</tabstop>
   <tabstop>brushspacingBox</tabstop>
   <tabstop>gainBox</tabstop>
   <tabstop>stabilizerBox</tabstop>
+  <tabstop>smoothingBox</tabstop>
+  <tabstop>stabilizerButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -112,6 +112,10 @@ typedef struct DP_MyPaintBrush {
 } DP_MyPaintBrush;
 
 
+bool DP_classic_brush_equal_preset(const DP_ClassicBrush *a,
+                                   const DP_ClassicBrush *b,
+                                   bool in_eraser_slot);
+
 float DP_classic_brush_spacing_at(const DP_ClassicBrush *cb, float pressure,
                                   float velocity, float distance);
 
@@ -146,6 +150,13 @@ uint8_t DP_classic_brush_dab_hardness_at(const DP_ClassicBrush *cb,
                                          float pressure, float velocity,
                                          float distance);
 
+
+bool DP_mypaint_settings_equal_preset(const DP_MyPaintSettings *a,
+                                      const DP_MyPaintSettings *b);
+
+bool DP_mypaint_brush_equal_preset(const DP_MyPaintBrush *a,
+                                   const DP_MyPaintBrush *b,
+                                   bool in_eraser_slot);
 
 void DP_mypaint_brush_mode_extract(uint8_t mode, int *out_blend_mode,
                                    bool *out_indirect,

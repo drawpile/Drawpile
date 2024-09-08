@@ -3,11 +3,11 @@ extern "C" {
 #include <dpengine/brush.h>
 #include <dpmsg/blend_mode.h>
 }
-#include "desktop/main.h"
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/brushes/brush.h"
 #include "libclient/canvas/blendmodes.h"
+#include "libclient/settings.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
 #include "ui_brushdock.h"
@@ -22,22 +22,133 @@ extern "C" {
 #include <QPointer>
 #include <QStandardItemModel>
 #include <mypaint-brush-settings.h>
-#include <optional>
 
 namespace tools {
 
-static const int BRUSH_COUNT = 6; // Last is the dedicated eraser slot
-static const int ERASER_SLOT = 5; // Index of the dedicated erser slot
+namespace {
+static constexpr int BRUSH_COUNT = 6; // Last is the dedicated eraser slot
+static constexpr int ERASER_SLOT = 5; // Index of the dedicated eraser slot
+
+struct Preset : brushes::Preset {
+	bool valid = false;
+	bool attached = false;
+	bool reattach = false;
+	bool overwrite = false;
+
+	static Preset makeDetached(
+		const brushes::ActiveBrush &originalBrush, bool reattach = false,
+		int id = 0)
+	{
+		Preset preset = {{}, true, false, reattach, false};
+		preset.id = id;
+		preset.originalBrush = originalBrush;
+		return preset;
+	}
+
+	static Preset makeAttached(const brushes::Preset p)
+	{
+		Preset preset = {p, true, true, false, false};
+		preset.changedBrush = {};
+		return preset;
+	}
+
+	bool isAttached() const { return valid && attached; }
+	int effectiveId() const { return isAttached() ? id : 0; }
+
+	bool changeName(const QString &name)
+	{
+		if(isAttached()) {
+			if(name == originalName) {
+				if(changedName.has_value()) {
+					changedName = {};
+					return true;
+				}
+			} else {
+				if(!changedName.has_value() || name != changedName.value()) {
+					changedName = name;
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	bool changeDescription(const QString &description)
+	{
+		if(isAttached()) {
+			if(description == originalDescription) {
+				if(changedDescription.has_value()) {
+					changedDescription = {};
+					return true;
+				}
+			} else {
+				if(!changedDescription.has_value() ||
+				   description != changedDescription.value()) {
+					changedDescription = description;
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	bool changeThumbnail(const QPixmap &thumbnail)
+	{
+		if(isAttached()) {
+			qint64 cacheKey = thumbnail.cacheKey();
+			if(cacheKey == originalThumbnail.cacheKey()) {
+				if(changedThumbnail.has_value()) {
+					changedThumbnail = {};
+					return true;
+				}
+			} else {
+				if(!changedThumbnail.has_value() ||
+				   cacheKey != changedThumbnail->cacheKey()) {
+					changedThumbnail = thumbnail;
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	void changeBrush(const brushes::ActiveBrush &brush, bool inEraserSlot)
+	{
+		if(isAttached()) {
+			if(originalBrush.equalPreset(brush, inEraserSlot)) {
+				changedBrush = {};
+			} else {
+				changedBrush = brush;
+			}
+		}
+	}
+};
+}
 
 struct BrushSettings::Private {
 	Ui_BrushDock ui;
+	brushes::BrushPresetModel *brushPresets = nullptr;
 
 	QStandardItemModel *blendModes, *eraseModes;
 
 	brushes::ActiveBrush brushSlots[BRUSH_COUNT];
-	std::optional<brushes::ActiveBrush> lastPresets[BRUSH_COUNT];
+	Preset presets[BRUSH_COUNT];
 	widgets::GroupedToolButton *brushSlotButton[BRUSH_COUNT];
 	QWidget *brushSlotWidget = nullptr;
+
+	QAction *editBrushAction;
+	QAction *resetBrushAction;
+	QAction *newBrushAction;
+	QAction *overwriteBrushAction;
+	QAction *deleteBrushAction;
+	QAction *detachBrushAction;
+
+	BrushType brushType = BrushType::PixelRound;
+	QActionGroup *brushTypeGroup;
+	QAction *brushTypePixelRoundAction;
+	QAction *brushTypePixelSquareAction;
+	QAction *brushTypeSoftRoundAction;
+	QAction *brushTypeMyPaintAction;
 
 	QActionGroup *stabilizationModeGroup;
 	QAction *stabilizerAction;
@@ -57,6 +168,7 @@ struct BrushSettings::Private {
 	int globalSmoothing;
 
 	bool shareBrushSlotColor = false;
+	bool presetsAttach = true;
 	bool updateInProgress = false;
 	bool myPaintAllowed = true;
 	bool compatibilityMode = false;
@@ -65,6 +177,12 @@ struct BrushSettings::Private {
 	{
 		Q_ASSERT(current >= 0 && current < BRUSH_COUNT);
 		return brushSlots[current];
+	}
+
+	inline Preset &currentPreset()
+	{
+		Q_ASSERT(current >= 0 && current < BRUSH_COUNT);
+		return presets[current];
 	}
 
 	inline bool currentIsMyPaint()
@@ -113,6 +231,51 @@ BrushSettings::~BrushSettings()
 	delete d;
 }
 
+void BrushSettings::setActions(QAction *reloadPreset)
+{
+	d->ui.reloadButton->setDefaultAction(reloadPreset);
+}
+
+void BrushSettings::connectBrushPresets(brushes::BrushPresetModel *brushPresets)
+{
+	d->brushPresets = brushPresets;
+
+	for(int i = 0; i < BRUSH_COUNT; ++i) {
+		Preset &preset = d->presets[i];
+		if(preset.valid && preset.id != 0) {
+			std::optional<brushes::Preset> opt =
+				brushPresets->searchPresetBrushData(preset.id);
+			preset.attached = opt.has_value();
+			if(preset.attached) {
+				preset.originalName = opt->originalName;
+				preset.originalDescription = opt->originalDescription;
+				preset.originalThumbnail = opt->originalThumbnail;
+				preset.originalBrush = opt->originalBrush;
+				preset.changedName = opt->changedName;
+				preset.changedDescription = opt->changedDescription;
+				preset.changedThumbnail = opt->changedThumbnail;
+			}
+			if(preset.overwrite) {
+				changeBrushInSlot(preset.originalBrush, i);
+				preset.overwrite = false;
+			}
+			if(preset.attached) {
+				preset.changeBrush(d->brushSlots[i], i == ERASER_SLOT);
+			}
+		}
+	}
+	updateMenuActions();
+
+	connect(
+		brushPresets, &brushes::BrushPresetModel::presetChanged, this,
+		&BrushSettings::handlePresetChanged);
+	connect(
+		brushPresets, &brushes::BrushPresetModel::presetRemoved, this,
+		&BrushSettings::handlePresetRemoved);
+
+	emit presetIdChanged(d->currentPreset().effectiveId());
+}
+
 QWidget *BrushSettings::createUiWidget(QWidget *parent)
 {
 	d->brushSlotWidget = new QWidget(parent);
@@ -122,15 +285,54 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 
 	d->brushSlotWidget->setLayout(brushSlotWidgetLayout);
 
-	widgets::GroupedToolButton *brushSettingsDialogButton =
-		new widgets::GroupedToolButton(
-			widgets::GroupedToolButton::NotGrouped, d->brushSlotWidget);
-	brushSlotWidgetLayout->addWidget(brushSettingsDialogButton);
-	brushSettingsDialogButton->setIcon(QIcon::fromTheme("configure"));
-	brushSettingsDialogButton->setToolTip(tr("Brush Settings"));
+	widgets::GroupedToolButton *menuButton = new widgets::GroupedToolButton(
+		widgets::GroupedToolButton::NotGrouped, d->brushSlotWidget);
+	brushSlotWidgetLayout->addWidget(menuButton);
+	menuButton->setIcon(QIcon::fromTheme("application-menu"));
+	menuButton->setPopupMode(QToolButton::InstantPopup);
+
+	QMenu *menu = new QMenu(menuButton);
+	menuButton->setMenu(menu);
+
+	d->editBrushAction =
+		menu->addAction(QIcon::fromTheme("configure"), tr("&Edit Brush…"));
 	connect(
-		brushSettingsDialogButton, &widgets::GroupedToolButton::clicked, this,
-		&BrushSettings::brushSettingsDialogRequested);
+		d->editBrushAction, &QAction::triggered, this,
+		&BrushSettings::editBrushRequested);
+
+	d->resetBrushAction =
+		menu->addAction(QIcon::fromTheme("view-refresh"), tr("&Reset Brush"));
+	connect(
+		d->resetBrushAction, &QAction::triggered, this,
+		&BrushSettings::resetPreset);
+
+	menu->addSeparator();
+
+	d->newBrushAction =
+		menu->addAction(QIcon::fromTheme("list-add"), tr("&New Brush…"));
+	connect(
+		d->newBrushAction, &QAction::triggered, this,
+		&BrushSettings::newBrushRequested);
+
+	d->overwriteBrushAction = menu->addAction(
+		QIcon::fromTheme("document-save"), tr("&Overwrite Brush"));
+	connect(
+		d->overwriteBrushAction, &QAction::triggered, this,
+		&BrushSettings::overwriteBrushRequested);
+
+	d->deleteBrushAction =
+		menu->addAction(QIcon::fromTheme("trash-empty"), tr("&Delete Brush"));
+	connect(
+		d->deleteBrushAction, &QAction::triggered, this,
+		&BrushSettings::deleteBrushRequested);
+
+	menu->addSeparator();
+
+	d->detachBrushAction = menu->addAction(
+		QIcon::fromTheme("network-disconnect"), tr("De&tach Brush"));
+	connect(
+		d->detachBrushAction, &QAction::triggered, this,
+		&BrushSettings::detachCurrentSlot);
 
 	brushSlotWidgetLayout->addStretch(1);
 
@@ -174,6 +376,30 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->ui.brushspacingBox->setExponentRatio(3.0);
 	d->ui.stabilizerBox->setExponentRatio(3.0);
 
+	QMenu *brushTypeMenu = new QMenu(d->ui.brushTypeButton);
+	d->brushTypeGroup = new QActionGroup(brushTypeMenu);
+	d->brushTypePixelRoundAction = brushTypeMenu->addAction(
+		QIcon::fromTheme("drawpile_pixelround"),
+		QCoreApplication::translate(
+			"dialogs::BrushSettingsDialog", "Round Pixel Brush"));
+	d->brushTypePixelSquareAction = brushTypeMenu->addAction(
+		QIcon::fromTheme("drawpile_square"),
+		QCoreApplication::translate(
+			"dialogs::BrushSettingsDialog", "Square Pixel Brush"));
+	d->brushTypeSoftRoundAction = brushTypeMenu->addAction(
+		QIcon::fromTheme("drawpile_round"),
+		QCoreApplication::translate(
+			"dialogs::BrushSettingsDialog", "Soft Round Brush"));
+	d->brushTypeMyPaintAction = brushTypeMenu->addAction(
+		QIcon::fromTheme("drawpile_mypaint"),
+		QCoreApplication::translate(
+			"dialogs::BrushSettingsDialog", "MyPaint Brush"));
+	d->brushTypeGroup->addAction(d->brushTypePixelRoundAction);
+	d->brushTypeGroup->addAction(d->brushTypePixelSquareAction);
+	d->brushTypeGroup->addAction(d->brushTypeSoftRoundAction);
+	d->brushTypeGroup->addAction(d->brushTypeMyPaintAction);
+	d->ui.brushTypeButton->setMenu(brushTypeMenu);
+
 	QMenu *stabilizerMenu = new QMenu{d->ui.stabilizerButton};
 	d->stabilizationModeGroup = new QActionGroup{stabilizerMenu};
 	d->stabilizerAction =
@@ -202,12 +428,10 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->useBrushSampleCountAction->setCheckable(true);
 	d->ui.stabilizerButton->setMenu(stabilizerMenu);
 
-	// Outside communication
 	connect(
-		d->ui.preview, SIGNAL(requestColorChange()), parent,
-		SLOT(changeForegroundColor()));
+		d->ui.preview, &widgets::BrushPreview::requestEditor, this,
+		&BrushSettings::editBrushRequested);
 
-	// Internal updates
 	connect(
 		d->ui.brushsizeBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&BrushSettings::changeSizeSetting);
@@ -223,16 +447,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 		&BrushSettings::setEraserMode);
 
 	connect(
-		d->ui.hardedgeMode, &QToolButton::clicked, this,
-		&BrushSettings::changeBrushType);
-	connect(
-		d->ui.squareMode, &QToolButton::clicked, this,
-		&BrushSettings::changeBrushType);
-	connect(
-		d->ui.softedgeMode, &QToolButton::clicked, this,
-		&BrushSettings::changeBrushType);
-	connect(
-		d->ui.mypaintMode, &QToolButton::clicked, this,
+		brushTypeMenu, &QMenu::triggered, this,
 		&BrushSettings::changeBrushType);
 
 	connect(
@@ -403,38 +618,151 @@ void BrushSettings::setShareBrushSlotColor(bool sameColor)
 	}
 }
 
-void BrushSettings::setCurrentBrush(brushes::ActiveBrush brush)
+bool BrushSettings::brushPresetsAttach() const
 {
-	brush.setQColor(d->currentBrush().qColor());
+	return d->presetsAttach;
+}
 
-	brushes::ActiveBrush &currentBrush = d->currentBrush();
+void BrushSettings::setBrushPresetsAttach(bool brushPresetsAttach)
+{
+	if(brushPresetsAttach && !d->presetsAttach) {
+		d->presetsAttach = true;
+		for(int i = 0; i < BRUSH_COUNT; ++i) {
+			Preset &preset = d->presets[i];
+			if(preset.valid && preset.reattach && preset.id != 0) {
+				std::optional<brushes::Preset> opt =
+					d->brushPresets->searchPresetBrushData(preset.id);
+				preset.attached = opt.has_value();
+				if(preset.attached) {
+					preset.originalName = opt->originalName;
+					preset.originalDescription = opt->originalDescription;
+					preset.originalThumbnail = opt->originalThumbnail;
+					preset.originalBrush = opt->originalBrush;
+				}
+				preset.changeBrush(d->brushSlots[i], i == ERASER_SLOT);
+				if(d->current == i) {
+					emit presetIdChanged(preset.effectiveId());
+					if(preset.attached) {
+						d->ui.preview->setPreset(
+							preset.effectiveThumbnail(), preset.hasChanges());
+						updateChangesInBrushPresets();
+					}
+				}
+			} else if(d->current == i) {
+				emit presetIdChanged(0);
+			}
+			preset.reattach = false;
+		}
+		updateMenuActions();
+	} else if(!brushPresetsAttach && d->presetsAttach) {
+		d->presetsAttach = false;
+		for(int i = 0; i < BRUSH_COUNT; ++i) {
+			Preset &preset = d->presets[i];
+			if(preset.isAttached()) {
+				preset.attached = false;
+				preset.reattach = true;
+				if(d->current == i) {
+					d->ui.preview->clearPreset();
+				}
+			} else {
+				preset.reattach = false;
+			}
+		}
+		updateMenuActions();
+	}
+}
+
+void BrushSettings::setCurrentBrushDetached(const brushes::ActiveBrush &brush)
+{
+	brushes::Preset p;
+	p.originalBrush = brush;
+	setCurrentBrushPreset(p);
+}
+
+void BrushSettings::setCurrentBrushPreset(const brushes::Preset &p)
+{
+	brushes::ActiveBrush brush = changeCurrentBrushInternal(p.effectiveBrush());
+	Preset &preset = d->currentPreset();
+	if(p.id <= 0) {
+		preset = Preset::makeDetached(brush);
+		emit presetIdChanged(0);
+	} else if(d->presetsAttach) {
+		preset = Preset::makeAttached(p);
+		preset.changeBrush(brush, isCurrentEraserSlot());
+		emit presetIdChanged(p.id);
+	} else {
+		preset = Preset::makeDetached(p.originalBrush, true, p.id);
+	}
+	updateMenuActions();
+	updateUi();
+	updateChangesInBrushPresets();
+}
+
+void BrushSettings::changeCurrentBrush(const brushes::ActiveBrush &brush)
+{
+	changePresetBrush(changeCurrentBrushInternal(brush));
+	updateUi();
+}
+
+brushes::ActiveBrush
+BrushSettings::changeCurrentBrushInternal(const brushes::ActiveBrush &brush)
+{
+	return changeBrushInSlot(brush, d->current);
+}
+
+brushes::ActiveBrush
+BrushSettings::changeBrushInSlot(brushes::ActiveBrush brush, int i)
+{
+	Q_ASSERT(i >= 0 && i < BRUSH_COUNT);
+	brushes::ActiveBrush &slot = d->brushSlots[i];
+	brush.setQColor(slot.qColor());
+
 	brushes::ActiveBrush::ActiveType activeType = brush.activeType();
 	switch(activeType) {
 	case brushes::ActiveBrush::CLASSIC:
-		if(d->current == ERASER_SLOT) {
+		if(i == ERASER_SLOT) {
 			brush.classic().erase = true;
 		}
-		currentBrush.setClassic(brush.classic());
+		slot.setClassic(brush.classic());
 		break;
 	case brushes::ActiveBrush::MYPAINT:
-		if(d->current == ERASER_SLOT) {
+		if(i == ERASER_SLOT) {
 			brush.myPaint().brush().erase = true;
 		}
-		currentBrush.setMyPaint(brush.myPaint());
+		slot.setMyPaint(brush.myPaint());
 		break;
 	default:
 		qWarning("Invalid brush type %d", static_cast<int>(brush.activeType()));
-		return;
+		return brush;
 	}
 
-	currentBrush.setActiveType(activeType);
-	d->lastPresets[d->current] = brush;
-	updateUi();
+	slot.setActiveType(activeType);
+	return brush;
 }
 
 brushes::ActiveBrush BrushSettings::currentBrush() const
 {
 	return d->currentBrush();
+}
+
+int BrushSettings::currentPresetId() const
+{
+	return d->currentPreset().effectiveId();
+}
+
+const QString &BrushSettings::currentPresetName() const
+{
+	return d->currentPreset().effectiveName();
+}
+
+const QString &BrushSettings::currentPresetDescription() const
+{
+	return d->currentPreset().effectiveDescription();
+}
+
+const QPixmap &BrushSettings::currentPresetThumbnail() const
+{
+	return d->currentPreset().effectiveThumbnail();
 }
 
 int BrushSettings::currentBrushSlot() const
@@ -453,13 +781,20 @@ void BrushSettings::selectBrushSlot(int i)
 	d->brushSlotButton[i]->setChecked(true);
 	d->current = i;
 
-	if(!d->shareBrushSlotColor)
+	if(!d->shareBrushSlotColor) {
 		emit colorChanged(d->currentBrush().qColor());
+	}
 
 	updateUi();
 
-	if((previousSlot == ERASER_SLOT) != (i == ERASER_SLOT))
-		emit eraseModeChanged(i == ERASER_SLOT);
+	bool inEraserSlot = i == ERASER_SLOT;
+	if((previousSlot == ERASER_SLOT) != inEraserSlot) {
+		emit eraseModeChanged(inEraserSlot);
+	}
+
+	const Preset &preset = d->currentPreset();
+	emit presetIdChanged(preset.effectiveId());
+	updateChangesInBrushPresets();
 }
 
 void BrushSettings::toggleEraserMode()
@@ -496,11 +831,47 @@ void BrushSettings::toggleRecolorMode()
 	}
 }
 
-void BrushSettings::reloadPreset()
+void BrushSettings::resetPreset()
 {
-	const std::optional<brushes::ActiveBrush> &opt = d->lastPresets[d->current];
-	if(opt.has_value()) {
-		setCurrentBrush(opt.value());
+	Preset &preset = d->currentPreset();
+	if(preset.valid) {
+		if(preset.attached) {
+			preset.changedName = {};
+			preset.changedDescription = {};
+			preset.changedThumbnail = {};
+			preset.changedBrush = {};
+			setCurrentBrushPreset(preset);
+		} else {
+			setCurrentBrushDetached(preset.originalBrush);
+		}
+	}
+}
+
+void BrushSettings::changeCurrentPresetName(const QString &name)
+{
+	Preset &preset = d->currentPreset();
+	if(preset.changeName(name)) {
+		d->ui.preview->setPresetChanged(preset.hasChanges());
+		updateChangesInBrushPresets();
+	}
+}
+
+void BrushSettings::changeCurrentPresetDescription(const QString &description)
+{
+	Preset &preset = d->currentPreset();
+	if(preset.changeDescription(description)) {
+		d->ui.preview->setPresetChanged(preset.hasChanges());
+		updateChangesInBrushPresets();
+	}
+}
+
+void BrushSettings::changeCurrentPresetThumbnail(const QPixmap &thumbnail)
+{
+	Preset &preset = d->currentPreset();
+	if(preset.changeThumbnail(thumbnail)) {
+		d->ui.preview->setPresetThumbnail(thumbnail);
+		d->ui.preview->setPresetChanged(preset.hasChanges());
+		updateChangesInBrushPresets();
 	}
 }
 
@@ -549,8 +920,12 @@ void BrushSettings::swapWithSlot(int i)
 	Q_ASSERT(i < ERASER_SLOT);
 	if(i != d->current && !isCurrentEraserSlot()) {
 		std::swap(d->brushSlots[d->current], d->brushSlots[i]);
-		std::swap(d->lastPresets[d->current], d->lastPresets[i]);
+		std::swap(d->presets[d->current], d->presets[i]);
 		updateUi();
+
+		const Preset &preset = d->currentPreset();
+		changePresetBrush(d->currentBrush());
+		emit presetIdChanged(preset.effectiveId());
 	}
 }
 
@@ -567,8 +942,19 @@ bool BrushSettings::isCurrentEraserSlot() const
 	return d->current == ERASER_SLOT;
 }
 
-void BrushSettings::changeBrushType()
+void BrushSettings::changeBrushType(const QAction *action)
 {
+	if(action == d->brushTypePixelRoundAction) {
+		d->brushType = BrushType::PixelRound;
+	} else if(action == d->brushTypePixelSquareAction) {
+		d->brushType = BrushType::PixelSquare;
+	} else if(action == d->brushTypeSoftRoundAction) {
+		d->brushType = BrushType::SoftRound;
+	} else if(action == d->brushTypeMyPaintAction) {
+		d->brushType = BrushType::MyPaint;
+	} else {
+		qWarning("Unknown brush type selected");
+	}
 	updateFromUiWith(false);
 	updateUi();
 }
@@ -600,6 +986,16 @@ void BrushSettings::selectBlendMode(int modeIndex)
 		classic.brush_mode = mode;
 	}
 	updateUi();
+}
+
+void BrushSettings::updateMenuActions()
+{
+	const Preset &preset = d->currentPreset();
+	bool attached = preset.isAttached();
+	d->resetBrushAction->setEnabled(preset.valid);
+	d->overwriteBrushAction->setEnabled(attached);
+	d->deleteBrushAction->setEnabled(attached);
+	d->detachBrushAction->setEnabled(attached);
 }
 
 static void setSliderFromMyPaintSetting(
@@ -647,17 +1043,23 @@ void BrushSettings::updateUi()
 		mypaintmode || classic.shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
 
 	if(mypaintmode) {
-		d->ui.mypaintMode->setChecked(true);
+		d->brushType = BrushType::MyPaint;
+		d->ui.brushTypeButton->setIcon(d->brushTypeMyPaintAction->icon());
 	} else {
 		switch(classic.shape) {
 		case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND:
-			d->ui.hardedgeMode->setChecked(true);
+			d->brushType = BrushType::PixelRound;
+			d->ui.brushTypeButton->setIcon(
+				d->brushTypePixelRoundAction->icon());
 			break;
 		case DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE:
-			d->ui.squareMode->setChecked(true);
+			d->brushType = BrushType::PixelSquare;
+			d->ui.brushTypeButton->setIcon(
+				d->brushTypePixelSquareAction->icon());
 			break;
 		default:
-			d->ui.softedgeMode->setChecked(true);
+			d->brushType = BrushType::SoftRound;
+			d->ui.brushTypeButton->setIcon(d->brushTypeSoftRoundAction->icon());
 			break;
 		}
 	}
@@ -754,6 +1156,15 @@ void BrushSettings::updateUi()
 
 	d->updateInProgress = false;
 	d->ui.preview->setBrush(d->currentBrush());
+
+	const Preset &preset = d->currentPreset();
+	if(preset.isAttached()) {
+		d->ui.preview->setPreset(
+			preset.effectiveThumbnail(), preset.hasChanges());
+	} else {
+		d->ui.preview->clearPreset();
+	}
+
 	pushSettings();
 }
 
@@ -770,7 +1181,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	d->finishStrokes = d->finishStrokesAction->isChecked();
 	d->useBrushSampleCount = d->useBrushSampleCountAction->isChecked();
 
-	bool mypaintmode = d->ui.mypaintMode->isChecked();
+	bool mypaintmode = d->brushType == BrushType::MyPaint;
 	d->currentBrush().setActiveType(
 		mypaintmode ? brushes::ActiveBrush::MYPAINT
 					: brushes::ActiveBrush::CLASSIC);
@@ -781,12 +1192,17 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	brushes::ClassicBrush &classic = brush.classic();
 	brushes::MyPaintBrush &myPaint = brush.myPaint();
 
-	if(d->ui.hardedgeMode->isChecked())
+	switch(d->brushType) {
+	case BrushType::PixelRound:
 		classic.shape = DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND;
-	else if(d->ui.squareMode->isChecked())
+		break;
+	case BrushType::PixelSquare:
 		classic.shape = DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE;
-	else
+		break;
+	default:
 		classic.shape = DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
+		break;
+	}
 
 	classic.size.max = d->ui.brushsizeBox->value();
 	classic.size_dynamic.type = d->ui.pressureSize->isChecked()
@@ -870,6 +1286,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 
 	d->ui.preview->setBrush(brush);
 
+	changePresetBrush(brush);
 	pushSettings();
 
 	adjustSettingVisibilities(
@@ -877,6 +1294,28 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 		mypaintmode);
 	emitBlendModeChanged();
 	emitBrushModeChanged();
+}
+
+void BrushSettings::changePresetBrush(const brushes::ActiveBrush &brush)
+{
+	Preset &preset = d->currentPreset();
+	bool inEraserSlot = isCurrentEraserSlot();
+	preset.changeBrush(brush, inEraserSlot);
+	if(preset.isAttached()) {
+		d->ui.preview->setPresetChanged(preset.hasChanges());
+	}
+	updateChangesInBrushPresets();
+}
+
+void BrushSettings::updateChangesInBrushPresets()
+{
+	const Preset &preset = d->currentPreset();
+	if(d->brushPresets && preset.isAttached()) {
+		d->brushPresets->changePreset(
+			preset.id, preset.changedName, preset.changedDescription,
+			preset.changedThumbnail, preset.changedBrush,
+			isCurrentEraserSlot());
+	}
 }
 
 void BrushSettings::updateStabilizationSettingVisibility()
@@ -1002,13 +1441,15 @@ ToolProperties BrushSettings::saveToolSettings()
 				QStringLiteral("brush%1").arg(i), QByteArray()},
 			d->brushSlots[i].toJson(true));
 
-		const std::optional<brushes::ActiveBrush> &opt = d->lastPresets[i];
-		if(opt.has_value()) {
-			cfg.setValue(
-				ToolProperties::Value<QByteArray>{
-					QStringLiteral("last%1").arg(i), QByteArray()},
-				opt.value().toJson());
-		}
+		const Preset &preset = d->presets[i];
+		cfg.setValue(
+			ToolProperties::Value<QByteArray>{
+				QStringLiteral("last%1").arg(i), QByteArray()},
+			preset.valid ? preset.originalBrush.toJson() : QByteArray());
+		cfg.setValue(
+			ToolProperties::Value<int>{QStringLiteral("preset%1").arg(i), 0},
+			preset.valid && (preset.attached || preset.reattach) ? preset.id
+																 : 0);
 	}
 
 	return cfg;
@@ -1019,11 +1460,14 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 
 	for(int i = 0; i < BRUSH_COUNT; ++i) {
 		brushes::ActiveBrush &brush = d->brushSlots[i];
+		Preset &preset = d->presets[i];
+
+		QByteArray brushData = cfg.value(ToolProperties::Value<QByteArray>{
+			QStringLiteral("brush%1").arg(i), QByteArray()});
 
 		const QJsonObject o =
-			QJsonDocument::fromJson(cfg.value(ToolProperties::Value<QByteArray>{
-										QStringLiteral("brush%1").arg(i),
-										getDefaultBrushForSlot(i)}))
+			QJsonDocument::fromJson(
+				brushData.isEmpty() ? getDefaultBrushForSlot(i) : brushData)
 				.object();
 		brush = brushes::ActiveBrush::fromJson(o, true);
 
@@ -1033,7 +1477,14 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 										getDefaultBrushForSlot(i)}))
 				.object();
 		if(!lo.isEmpty()) {
-			d->lastPresets[i] = brushes::ActiveBrush::fromJson(lo);
+			preset = Preset::makeDetached(brushes::ActiveBrush::fromJson(lo));
+		}
+
+		preset.id = cfg.value(
+			ToolProperties::Value<int>{QStringLiteral("preset%1").arg(i), 0});
+		if(brushData.isEmpty() && preset.id == 0) {
+			preset.id = getDefaultPresetIdForSlot(i);
+			preset.overwrite = true;
 		}
 
 		if(!d->shareBrushSlotColor)
@@ -1139,6 +1590,61 @@ void BrushSettings::quickAdjustOn(QSpinBox *box, qreal adjustment)
 	}
 }
 
+void BrushSettings::handlePresetChanged(
+	int presetId, const QString &name, const QString &description,
+	const QPixmap &thumbnail, const brushes::ActiveBrush &brush)
+{
+	for(int i = 0; i < BRUSH_COUNT; ++i) {
+		Preset &preset = d->presets[i];
+		if(preset.isAttached() && preset.id == presetId) {
+			preset.originalName = name;
+			preset.originalDescription = description;
+			preset.originalThumbnail = thumbnail;
+			preset.originalBrush = brush;
+			if(preset.changedName.has_value()) {
+				preset.changeName(preset.changedName.value());
+			}
+			if(preset.changedDescription.has_value()) {
+				preset.changeDescription(preset.changedDescription.value());
+			}
+			if(preset.changedThumbnail.has_value()) {
+				preset.changeThumbnail(preset.changedThumbnail.value());
+			}
+			preset.changeBrush(d->brushSlots[i], i == ERASER_SLOT);
+			if(i == d->current) {
+				d->ui.preview->setPreset(thumbnail, preset.hasChanges());
+			}
+		}
+	}
+}
+
+void BrushSettings::handlePresetRemoved(int presetId)
+{
+	for(int i = 0; i < BRUSH_COUNT; ++i) {
+		Preset &preset = d->presets[i];
+		if(preset.valid && preset.id == presetId) {
+			preset.id = 0;
+			preset.attached = false;
+			preset.reattach = false;
+			if(i == d->current) {
+				d->ui.preview->clearPreset();
+				updateMenuActions();
+			}
+		}
+	}
+}
+
+void BrushSettings::detachCurrentSlot()
+{
+	Preset &preset = d->currentPreset();
+	if(preset.isAttached()) {
+		preset.attached = false;
+		d->ui.preview->clearPreset();
+		updateMenuActions();
+		emit presetIdChanged(0);
+	}
+}
+
 int BrushSettings::getSize() const
 {
 	if(d->currentIsMyPaint()) {
@@ -1221,6 +1727,27 @@ void BrushSettings::triggerUpdate()
 double BrushSettings::radiusLogarithmicToPixelSize(int radiusLogarithmic)
 {
 	return std::exp(radiusLogarithmic / 100.0 - 2.0) * 2.0;
+}
+
+int BrushSettings::getDefaultPresetIdForSlot(int i)
+{
+	switch(i) {
+	case 0:
+		return 198; // Drawpile Sketch
+	case 1:
+		return 201; // Drawpile Pixel 1
+	case 2:
+		return 137; // MyPaint Ramon Sketch 1
+	case 3:
+		return 5; // MyPaint Classic Knife
+	case 4:
+		return 51; // MyPaint Deevad Thin Glazing
+	case ERASER_SLOT:
+		return 200; // Drawpile Paint 2
+	default:
+		qWarning("Unknown slot for default preset %d", i);
+		return 0;
+	}
 }
 
 QByteArray BrushSettings::getDefaultBrushForSlot(int i)

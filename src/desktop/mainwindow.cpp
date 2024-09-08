@@ -332,9 +332,6 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	m_canvasView->connectViewStatusBar(m_viewStatusBar);
 	m_canvasView->connectToolSettings(m_dockToolSettings);
 
-	connect(m_dockToolSettings->brushSettings(), &tools::BrushSettings::brushSettingsDialogRequested,
-		this, &MainWindow::showBrushSettingsDialog);
-
 	connect(m_dockLayers, &docks::LayerList::layerSelected, this, &MainWindow::updateLockWidget);
 	connect(m_dockLayers, &docks::LayerList::activeLayerVisibilityChanged, this, &MainWindow::updateLockWidget);
 
@@ -430,6 +427,13 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(
 		m_dockLayers, &docks::LayerList::layerSelected, m_chatbox,
 		&widgets::ChatBox::setCurrentLayer);
+	connect(
+		m_dockToolSettings->brushSettings(),
+		&tools::BrushSettings::editBrushRequested, this,
+		&MainWindow::showBrushSettingsDialogBrush);
+	connect(
+		m_dockBrushPalette, &docks::BrushPalette::editBrushRequested, this,
+		&MainWindow::showBrushSettingsDialogPreset);
 
 	// Network status changes
 	connect(m_doc, &Document::serverConnected, this, &MainWindow::onServerConnected);
@@ -873,7 +877,12 @@ void MainWindow::readSettings(bool windowpos)
 #endif
 	});
 
-	settings.bindShareBrushSlotColor(m_dockToolSettings->brushSettings(), &tools::BrushSettings::setShareBrushSlotColor);
+	// clang-format on
+	tools::BrushSettings *brushSettings = m_dockToolSettings->brushSettings();
+	settings.bindShareBrushSlotColor(
+		brushSettings, &tools::BrushSettings::setShareBrushSlotColor);
+	settings.bindBrushPresetsAttach(
+		brushSettings, &tools::BrushSettings::setBrushPresetsAttach);
 
 	// Restore previously used window size and position
 	resize(settings.lastWindowSize());
@@ -898,6 +907,7 @@ void MainWindow::readSettings(bool windowpos)
 	connect(m_splitter, &QSplitter::splitterMoved, this, [=] {
 		m_saveSplitterDebounce.start();
 	});
+	// clang-format off
 
 	// Restore remembered actions
 	m_actionsConfig = settings.lastWindowActions();
@@ -1191,6 +1201,7 @@ void MainWindow::sendCurrentBrush(int userId, const QString &correlator)
 		client->myId(), userId, QJsonDocument{info}));
 }
 
+// clang-format on
 void MainWindow::receiveCurrentBrush(int userId, const QJsonObject &info)
 {
 	bool wasRequested = m_brushRequestUserId == userId &&
@@ -1205,7 +1216,8 @@ void MainWindow::receiveCurrentBrush(int userId, const QJsonObject &info)
 		QJsonValue v = info[QStringLiteral("brush")];
 		if(v.isObject()) {
 			tools::BrushSettings *bs = m_dockToolSettings->brushSettings();
-			bs->setCurrentBrush(brushes::ActiveBrush::fromJson(v.toObject()));
+			bs->setCurrentBrushDetached(
+				brushes::ActiveBrush::fromJson(v.toObject()));
 		}
 	}
 }
@@ -1228,6 +1240,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 	QMainWindow::resizeEvent(event);
 	updateInterfaceMode();
 }
+// clang-format off
 
 /**
  * Confirm exit. A confirmation dialog is popped up if there are unsaved
@@ -2205,32 +2218,95 @@ void MainWindow::toggleTabletEventLog()
 	}
 }
 
-void MainWindow::showBrushSettingsDialog()
+// clang-format on
+void MainWindow::showBrushSettingsDialogBrush()
 {
-	dialogs::BrushSettingsDialog *dlg = findChild<dialogs::BrushSettingsDialog *>(
-		"brushsettingsdialog", Qt::FindDirectChildrenOnly);
+	showBrushSettingsDialog(false);
+}
+
+void MainWindow::showBrushSettingsDialogPreset()
+{
+	showBrushSettingsDialog(true);
+}
+
+void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
+{
+	dialogs::BrushSettingsDialog *dlg =
+		findChild<dialogs::BrushSettingsDialog *>(
+			"brushsettingsdialog", Qt::FindDirectChildrenOnly);
 	if(!dlg) {
-		dlg = new dialogs::BrushSettingsDialog{this};
+		dlg = new dialogs::BrushSettingsDialog(this);
 		dlg->setObjectName("brushsettingsdialog");
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
 
-		tools::BrushSettings *brushSettings = m_dockToolSettings->brushSettings();
-		connect(dlg, &dialogs::BrushSettingsDialog::brushSettingsChanged,
-			brushSettings, &tools::BrushSettings::setCurrentBrush);
-		connect(brushSettings, &tools::BrushSettings::eraseModeChanged, dlg,
+		tools::BrushSettings *brushSettings =
+			m_dockToolSettings->brushSettings();
+		std::function<void(int)> updatePreset = [brushSettings,
+												 dlg](int presetId) {
+			bool attached = presetId > 0;
+			dlg->setPresetAttached(attached);
+			if(attached) {
+				QSignalBlocker blocker(dlg);
+				dlg->setPresetName(brushSettings->currentPresetName());
+				dlg->setPresetDescription(
+					brushSettings->currentPresetDescription());
+				dlg->setPresetThumbnail(
+					brushSettings->currentPresetThumbnail());
+			}
+		};
+		connect(
+			brushSettings, &tools::BrushSettings::presetIdChanged, dlg,
+			updatePreset);
+		connect(
+			dlg, &dialogs::BrushSettingsDialog::presetNameChanged,
+			brushSettings, &tools::BrushSettings::changeCurrentPresetName);
+		connect(
+			dlg, &dialogs::BrushSettingsDialog::presetDescriptionChanged,
+			brushSettings,
+			&tools::BrushSettings::changeCurrentPresetDescription);
+		connect(
+			dlg, &dialogs::BrushSettingsDialog::presetThumbnailChanged,
+			brushSettings, &tools::BrushSettings::changeCurrentPresetThumbnail);
+		connect(
+			dlg, &dialogs::BrushSettingsDialog::brushSettingsChanged,
+			brushSettings, &tools::BrushSettings::changeCurrentBrush);
+		connect(
+			brushSettings, &tools::BrushSettings::eraseModeChanged, dlg,
 			&dialogs::BrushSettingsDialog::setForceEraseMode);
+		updatePreset(brushSettings->currentPresetId());
 		dlg->setForceEraseMode(brushSettings->isCurrentEraserSlot());
 
 		tools::ToolController *toolCtrl = m_doc->toolCtrl();
-		connect(toolCtrl, &tools::ToolController::activeBrushChanged, dlg,
+		connect(
+			toolCtrl, &tools::ToolController::activeBrushChanged, dlg,
 			&dialogs::BrushSettingsDialog::updateUiFromActiveBrush);
-		connect(toolCtrl, &tools::ToolController::stabilizerUseBrushSampleCountChanged,
-			dlg, &dialogs::BrushSettingsDialog::setStabilizerUseBrushSampleCount);
-		connect(toolCtrl, &tools::ToolController::globalSmoothingChanged, dlg,
+		connect(
+			toolCtrl,
+			&tools::ToolController::stabilizerUseBrushSampleCountChanged, dlg,
+			&dialogs::BrushSettingsDialog::setStabilizerUseBrushSampleCount);
+		connect(
+			toolCtrl, &tools::ToolController::globalSmoothingChanged, dlg,
 			&dialogs::BrushSettingsDialog::setGlobalSmoothing);
 		dlg->updateUiFromActiveBrush(toolCtrl->activeBrush());
-		dlg->setStabilizerUseBrushSampleCount(toolCtrl->stabilizerUseBrushSampleCount());
+		dlg->setStabilizerUseBrushSampleCount(
+			toolCtrl->stabilizerUseBrushSampleCount());
 		dlg->setGlobalSmoothing(toolCtrl->globalSmoothing());
+
+		connect(
+			dlg, &dialogs::BrushSettingsDialog::newBrushRequested,
+			m_dockBrushPalette, &docks::BrushPalette::newPreset);
+		connect(
+			dlg, &dialogs::BrushSettingsDialog::overwriteBrushRequested,
+			m_dockBrushPalette,
+			std::bind(
+				&docks::BrushPalette::overwriteCurrentPreset,
+				m_dockBrushPalette, dlg));
+
+		if(openOnPresetPage) {
+			dlg->showPresetPage();
+		} else {
+			dlg->showGeneralPage();
+		}
 	}
 
 	utils::showWindow(dlg, shouldShowDialogMaximized());
@@ -2284,7 +2360,6 @@ void MainWindow::hostSession(
 		return;
 	}
 
-	// clang-format on
 	// Start server if hosting locally
 	const desktop::settings::Settings &settings = dpApp().settings();
 	if(!useremote) {
@@ -4163,7 +4238,7 @@ void MainWindow::setupActions()
 	connect(canvasBackground, &QAction::triggered, this, &MainWindow::changeCanvasBackground);
 	connect(setLocalBackground, &QAction::triggered, this, &MainWindow::changeLocalCanvasBackground);
 	connect(clearLocalBackground, &QAction::triggered, this, &MainWindow::clearLocalCanvasBackground);
-	connect(brushSettings, &QAction::triggered, this, &MainWindow::showBrushSettingsDialog);
+	connect(brushSettings, &QAction::triggered, this, &MainWindow::showBrushSettingsDialogBrush);
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 #ifdef Q_OS_WIN32
 	for(QAction *driver : drivers) {
@@ -4934,7 +5009,7 @@ void MainWindow::setupActions()
 	QAction *resetcolors = makeAction("resetcolors", widgets::DualColorButton::resetText()).statusTip(tr("Set foreground color to black and background color to white")).noDefaultShortcut();
 	QAction *smallerbrush = makeAction("ensmallenbrush", tr("&Decrease Brush Size")).shortcut(Qt::Key_BracketLeft).autoRepeat();
 	QAction *biggerbrush = makeAction("embiggenbrush", tr("&Increase Brush Size")).shortcut(Qt::Key_BracketRight).autoRepeat();
-	QAction *reloadPreset = makeAction("reloadpreset", tr("&Reload Last Brush Preset")).shortcut("Shift+P");
+	QAction *reloadPreset = makeAction("reloadpreset", tr("&Reset Brush")).icon("view-refresh").shortcut("Shift+P");
 
 	smallerbrush->setAutoRepeat(true);
 	biggerbrush->setAutoRepeat(true);
@@ -4948,7 +5023,7 @@ void MainWindow::setupActions()
 
 	connect(smallerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->stepAdjustCurrent1(false); });
 	connect(biggerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->stepAdjustCurrent1(true); });
-	connect(reloadPreset, &QAction::triggered, m_dockToolSettings->brushSettings(), &tools::BrushSettings::reloadPreset);
+	connect(reloadPreset, &QAction::triggered, m_dockToolSettings->brushSettings(), &tools::BrushSettings::resetPreset);
 
 	toolshortcuts->addAction(currentEraseMode);
 	toolshortcuts->addAction(currentRecolorMode);
@@ -4991,6 +5066,8 @@ void MainWindow::setupActions()
 			m_toolBarDraw->addAction(dt);
 		}
 	}
+
+	m_dockToolSettings->brushSettings()->setActions(reloadPreset);
 
 	m_smallScreenSpacer = new QWidget;
 	m_smallScreenSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);

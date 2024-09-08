@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/brushsettingsdialog.h"
+#include "desktop/filewrangler.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/curvewidget.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
@@ -9,10 +10,15 @@
 #include <QComboBox>
 #include <QDialogButtonBox>
 #include <QFormLayout>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QHBoxLayout>
 #include <QIcon>
 #include <QLabel>
+#include <QLineEdit>
 #include <QListWidget>
+#include <QPixmap>
+#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QScopedValueRollback>
 #include <QScrollArea>
@@ -32,8 +38,19 @@ struct BrushSettingsDialog::Private {
 		QLabel *indirectLabel;
 	};
 
+	QPushButton *newBrushButton;
+	QPushButton *overwriteBrushButton;
 	QListWidget *categoryWidget;
 	QStackedWidget *stackedWidget;
+	QWidget *presetAttachedWidget;
+	QWidget *presetDetachedWidget;
+	QPushButton *presetThumbnailButton;
+	QGraphicsView *presetThumbnailView;
+	QPixmap presetThumbnail;
+	QPixmap scaledPresetThumbnail;
+	QLineEdit *presetLabelEdit;
+	QLineEdit *presetNameEdit;
+	QPlainTextEdit *presetDescriptionEdit;
 	QComboBox *brushTypeCombo;
 	QLabel *brushModeLabel;
 	QComboBox *brushModeCombo;
@@ -67,6 +84,7 @@ struct BrushSettingsDialog::Private {
 	KisSliderSpinBox *classicSmudgingMinSpinner;
 	widgets::CurveWidget *classicSmudgingCurve;
 	MyPaintPage myPaintPages[MYPAINT_BRUSH_SETTINGS_COUNT];
+	int presetPageIndex;
 	int generalPageIndex;
 	int classicSizePageIndex;
 	int classicOpacityPageIndex;
@@ -77,6 +95,7 @@ struct BrushSettingsDialog::Private {
 	brushes::ActiveBrush brush;
 	int globalSmoothing;
 	bool useBrushSampleCount;
+	bool presetAttached = true;
 	bool updating = false;
 };
 
@@ -96,6 +115,61 @@ BrushSettingsDialog::~BrushSettingsDialog()
 	delete d;
 }
 
+
+void BrushSettingsDialog::showPresetPage()
+{
+	d->categoryWidget->setCurrentRow(0);
+	d->stackedWidget->setCurrentIndex(d->presetPageIndex);
+}
+
+void BrushSettingsDialog::showGeneralPage()
+{
+	d->categoryWidget->setCurrentRow(1);
+	d->stackedWidget->setCurrentIndex(d->generalPageIndex);
+}
+
+
+void BrushSettingsDialog::setPresetAttached(bool presetAttached)
+{
+	utils::ScopedUpdateDisabler disabler(this);
+	if(presetAttached && !d->presetAttached) {
+		d->presetDetachedWidget->hide();
+		d->presetAttachedWidget->show();
+	} else if(!presetAttached && d->presetAttached) {
+		d->presetAttachedWidget->hide();
+		d->presetDetachedWidget->show();
+	}
+	d->presetAttached = presetAttached;
+	d->presetAttachedWidget->setEnabled(presetAttached);
+	d->overwriteBrushButton->setEnabled(presetAttached);
+}
+
+void BrushSettingsDialog::setPresetName(const QString &presetName)
+{
+	if(presetName != d->presetNameEdit->text()) {
+		QSignalBlocker blocker(d->presetNameEdit);
+		d->presetNameEdit->setText(presetName);
+		emit presetNameChanged(presetName);
+	}
+}
+
+void BrushSettingsDialog::setPresetDescription(const QString &presetDescription)
+{
+	if(presetDescription != d->presetDescriptionEdit->toPlainText()) {
+		QSignalBlocker blocker(d->presetDescriptionEdit);
+		d->presetDescriptionEdit->setPlainText(presetDescription);
+		emit presetDescriptionChanged(presetDescription);
+	}
+}
+
+void BrushSettingsDialog::setPresetThumbnail(const QPixmap &presetThumbnail)
+{
+	if(presetThumbnail.cacheKey() != d->presetThumbnail.cacheKey()) {
+		QSignalBlocker blocker(d->presetLabelEdit);
+		d->presetLabelEdit->clear();
+		showPresetThumbnail(presetThumbnail);
+	}
+}
 
 void BrushSettingsDialog::setForceEraseMode(bool forceEraseMode)
 {
@@ -129,9 +203,12 @@ void BrushSettingsDialog::updateUiFromActiveBrush(
 
 	DP_BrushShape shape = brush.shape();
 	bool shapeChanged = shape != d->lastShape;
+	int prevStackIndex = d->stackedWidget->currentIndex();
 	if(shapeChanged) {
 		d->lastShape = shape;
 		d->categoryWidget->clear();
+		addCategory(
+			tr("Brush"), tr("Brush metadata settings."), d->presetPageIndex);
 		addCategory(
 			tr("General"), tr("Core brush settings."), d->generalPageIndex);
 		setComboBoxIndexByData(d->brushTypeCombo, int(shape));
@@ -157,8 +234,11 @@ void BrushSettingsDialog::updateUiFromActiveBrush(
 	}
 
 	if(shapeChanged) {
-		d->categoryWidget->setCurrentRow(0);
-		d->stackedWidget->setCurrentIndex(d->generalPageIndex);
+		if(prevStackIndex == d->presetPageIndex) {
+			showPresetPage();
+		} else {
+			showGeneralPage();
+		}
 	}
 
 	brushes::StabilizationMode stabilizationMode = brush.stabilizationMode();
@@ -188,9 +268,26 @@ void BrushSettingsDialog::buildDialogUi()
 	QHBoxLayout *splitLayout = new QHBoxLayout;
 	dialogLayout->addLayout(splitLayout);
 
+	QHBoxLayout *buttonLayout = new QHBoxLayout;
+	dialogLayout->addLayout(buttonLayout);
+
+	d->newBrushButton = new QPushButton(
+		QIcon::fromTheme("list-add"), tr("Save as New Brush"), this);
+	buttonLayout->addWidget(d->newBrushButton);
+	connect(
+		d->newBrushButton, &QPushButton::clicked, this,
+		&BrushSettingsDialog::newBrushRequested);
+
+	d->overwriteBrushButton = new QPushButton(
+		QIcon::fromTheme("document-save"), tr("Overwrite Brush"), this);
+	buttonLayout->addWidget(d->overwriteBrushButton);
+	connect(
+		d->overwriteBrushButton, &QPushButton::clicked, this,
+		&BrushSettingsDialog::overwriteBrushRequested);
+
 	QDialogButtonBox *buttonBox =
 		new QDialogButtonBox{QDialogButtonBox::Close, this};
-	dialogLayout->addWidget(buttonBox);
+	buttonLayout->addWidget(buttonBox);
 	connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
 	connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
@@ -209,6 +306,7 @@ void BrushSettingsDialog::buildDialogUi()
 	d->stackedWidget->setSizePolicy(
 		QSizePolicy::Expanding, QSizePolicy::Expanding);
 
+	d->presetPageIndex = d->stackedWidget->addWidget(buildPresetPageUi());
 	d->generalPageIndex = d->stackedWidget->addWidget(buildGeneralPageUi());
 	d->classicSizePageIndex =
 		d->stackedWidget->addWidget(buildClassicSizePageUi());
@@ -224,6 +322,91 @@ void BrushSettingsDialog::buildDialogUi()
 				? d->stackedWidget->addWidget(buildMyPaintPageUi(setting))
 				: -1;
 	}
+}
+
+QWidget *BrushSettingsDialog::buildPresetPageUi()
+{
+	QScrollArea *scroll = new QScrollArea(this);
+	QWidget *widget = new QWidget;
+	scroll->setWidget(widget);
+	scroll->setWidgetResizable(true);
+	utils::bindKineticScrolling(scroll);
+
+	QVBoxLayout *layout = new QVBoxLayout;
+	widget->setLayout(layout);
+
+	d->presetAttachedWidget = new QWidget;
+	d->presetAttachedWidget->setContentsMargins(0, 0, 0, 0);
+	layout->addWidget(d->presetAttachedWidget);
+
+	QFormLayout *attachedLayout = new QFormLayout;
+	attachedLayout->setContentsMargins(0, 0, 0, 0);
+	d->presetAttachedWidget->setLayout(attachedLayout);
+
+	QGridLayout *thumbnailLayout = new QGridLayout;
+
+	d->presetThumbnailView = new QGraphicsView;
+	d->presetThumbnailView->setFixedSize(64, 64);
+	d->presetThumbnailView->setFrameShape(QFrame::NoFrame);
+	d->presetThumbnailView->setFrameShadow(QFrame::Plain);
+	d->presetThumbnailView->setLineWidth(0);
+	thumbnailLayout->addWidget(d->presetThumbnailView, 0, 0, 2, 1);
+
+	QGraphicsScene *scene = new QGraphicsScene(d->presetThumbnailView);
+	d->presetThumbnailView->setScene(scene);
+
+	d->presetThumbnailButton =
+		new QPushButton(QIcon::fromTheme("document-open"), tr("Choose File…"));
+	thumbnailLayout->addWidget(d->presetThumbnailButton, 0, 1);
+	connect(
+		d->presetThumbnailButton, &QPushButton::clicked, this,
+		&BrushSettingsDialog::choosePresetThumbnailFile);
+
+	QLabel *presetThumbnailLabel =
+		new QLabel(tr("Will be resized to 64x64 pixels."));
+	presetThumbnailLabel->setAlignment(Qt::AlignCenter);
+	presetThumbnailLabel->setWordWrap(true);
+	thumbnailLayout->addWidget(presetThumbnailLabel, 1, 1);
+
+	attachedLayout->addRow(tr("Thumbnail:"), thumbnailLayout);
+
+	d->presetLabelEdit = new QLineEdit;
+	attachedLayout->addRow(tr("Add Label:"), d->presetLabelEdit);
+	connect(
+		d->presetLabelEdit, &QLineEdit::textChanged, this,
+		&BrushSettingsDialog::renderPresetThumbnail);
+
+	utils::addFormSpacer(attachedLayout);
+
+	d->presetNameEdit = new QLineEdit;
+	attachedLayout->addRow(tr("Name:"), d->presetNameEdit);
+	connect(
+		d->presetNameEdit, &QLineEdit::textChanged, this,
+		&BrushSettingsDialog::presetNameChanged);
+
+	d->presetDescriptionEdit = new QPlainTextEdit;
+	attachedLayout->addRow(tr("Description:"), d->presetDescriptionEdit);
+	connect(
+		d->presetDescriptionEdit, &QPlainTextEdit::textChanged, this, [this]() {
+			emit presetDescriptionChanged(
+				d->presetDescriptionEdit->toPlainText());
+		});
+
+	d->presetDetachedWidget = new QWidget;
+	d->presetDetachedWidget->setContentsMargins(0, 0, 0, 0);
+	d->presetDetachedWidget->hide();
+	layout->addWidget(d->presetDetachedWidget);
+
+	QVBoxLayout *detachedLayout = new QVBoxLayout;
+	detachedLayout->setContentsMargins(0, 0, 0, 0);
+	d->presetDetachedWidget->setLayout(detachedLayout);
+
+	QLabel *detachedLabel = new QLabel(tr("Brush is not attached."));
+	detachedLabel->setWordWrap(true);
+	detachedLayout->addWidget(detachedLabel);
+	detachedLayout->addStretch();
+
+	return scroll;
 }
 
 QWidget *BrushSettingsDialog::buildGeneralPageUi()
@@ -249,7 +432,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 		QIcon::fromTheme("drawpile_round"), tr("Soft Round Brush"),
 		int(DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND));
 	d->brushTypeCombo->addItem(
-		QIcon::fromTheme("draw-brush"), tr("MyPaint Brush"),
+		QIcon::fromTheme("drawpile_mypaint"), tr("MyPaint Brush"),
 		int(DP_BRUSH_SHAPE_MYPAINT));
 	connect(
 		d->brushTypeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -1154,6 +1337,58 @@ bool BrushSettingsDialog::disableIndirectMyPaintInputs(int setting)
 	default:
 		return false;
 	}
+}
+
+void BrushSettingsDialog::choosePresetThumbnailFile()
+{
+	FileWrangler::ImageOpenFn imageOpenCompleted = [this](QImage &img) {
+		QPixmap pixmap;
+		if(!img.isNull() && pixmap.convertFromImage(img)) {
+			showPresetThumbnail(pixmap);
+		}
+	};
+	FileWrangler(this).openBrushThumbnail(imageOpenCompleted);
+}
+
+void BrushSettingsDialog::showPresetThumbnail(const QPixmap &thumbnail)
+{
+	d->presetThumbnail = thumbnail;
+	d->scaledPresetThumbnail =
+		thumbnail.size() == QSize(64, 64)
+			? thumbnail
+			: thumbnail.scaled(
+				  64, 64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	renderPresetThumbnail();
+}
+
+void BrushSettingsDialog::renderPresetThumbnail()
+{
+	QGraphicsScene *scene = d->presetThumbnailView->scene();
+	scene->clear();
+	scene->setSceneRect(QRect(0, 0, 64, 64));
+	QString label = d->presetLabelEdit->text();
+	if(label.trimmed().isEmpty()) {
+		scene->addPixmap(d->scaledPresetThumbnail);
+		emit presetThumbnailChanged(d->scaledPresetThumbnail);
+	} else {
+		QPixmap thumbnail = applyPresetThumbnailLabel(label);
+		scene->addPixmap(thumbnail);
+		emit presetThumbnailChanged(thumbnail);
+	}
+}
+
+QPixmap BrushSettingsDialog::applyPresetThumbnailLabel(const QString &label)
+{
+	QPixmap thumbnail = d->scaledPresetThumbnail;
+	QPainter painter(&thumbnail);
+	qreal h = thumbnail.height();
+	qreal y = h * 3.0 / 4.0;
+	QRectF rect(0, y, thumbnail.width(), h - y);
+	painter.fillRect(rect, palette().window());
+	painter.setPen(palette().windowText().color());
+	painter.drawText(
+		rect, label, QTextOption(Qt::AlignHCenter | Qt::AlignBaseline));
+	return thumbnail;
 }
 
 }

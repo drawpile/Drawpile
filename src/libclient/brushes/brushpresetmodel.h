@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef LIBCLIENT_BRUSHES_BRUSHPRESETMODEL_H
 #define LIBCLIENT_BRUSHES_BRUSHPRESETMODEL_H
+#include "libclient/brushes/brush.h"
 #include <QAbstractItemModel>
 #include <QJsonValue>
+#include <QPixmap>
+#include <optional>
 
 class QFile;
 class QFileInfo;
@@ -28,6 +31,46 @@ struct TagAssignment {
 	int id;
 	QString name;
 	bool assigned;
+};
+
+struct Preset {
+	int id = 0;
+	QString originalName;
+	QString originalDescription;
+	QPixmap originalThumbnail;
+	ActiveBrush originalBrush;
+	std::optional<QString> changedName;
+	std::optional<QString> changedDescription;
+	std::optional<QPixmap> changedThumbnail;
+	std::optional<ActiveBrush> changedBrush;
+
+	const QString &effectiveName() const
+	{
+		return changedName.has_value() ? changedName.value() : originalName;
+	}
+
+	const QString &effectiveDescription() const
+	{
+		return changedDescription.has_value() ? changedDescription.value()
+											  : originalDescription;
+	}
+
+	const QPixmap &effectiveThumbnail() const
+	{
+		return changedThumbnail.has_value() ? changedThumbnail.value()
+											: originalThumbnail;
+	}
+
+	const ActiveBrush &effectiveBrush() const
+	{
+		return changedBrush.has_value() ? changedBrush.value() : originalBrush;
+	}
+
+	bool hasChanges() const
+	{
+		return changedName.has_value() || changedDescription.has_value() ||
+			   changedThumbnail.has_value() || changedBrush.has_value();
+	}
 };
 
 struct PresetMetadata {
@@ -108,11 +151,8 @@ private:
 		QVector<QPointF> inputPoints;
 	};
 
-	class Private;
-	Private *d;
-	BrushPresetModel *m_presetModel;
-
 	static bool isBuiltInTag(int row);
+	bool isTagRowInBounds(int row) const;
 
 	void maybeConvertOldPresets();
 	void convertOldPresets();
@@ -159,6 +199,10 @@ private:
 	static QString getExportName(int presetId, const QString presetName);
 
 	static QString makeExportSafe(const QString &t);
+
+	class Private;
+	Private *d;
+	BrushPresetModel *m_presetModel;
 };
 
 class BrushPresetModel final : public QAbstractItemModel {
@@ -168,14 +212,17 @@ class BrushPresetModel final : public QAbstractItemModel {
 public:
 	enum Roles {
 		FilterRole = Qt::UserRole + 1,
-		BrushRole,
-		TitleRole,
 		IdRole,
-		ThumbnailRole,
+		EffectiveTitleRole,
+		EffectiveThumbnailRole,
+		EffectiveDescriptionRole,
+		HasChangesRole,
+		PresetRole,
 	};
 
 	explicit BrushPresetModel(BrushPresetTagModel *tagModel);
-	~BrushPresetModel() override;
+
+	bool isPresetRowInBounds(int row) const;
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 	int rowCountForTagId(int tagId) const;
@@ -185,33 +232,40 @@ public:
 	QModelIndex index(
 		int row, int column = 0,
 		const QModelIndex &parent = QModelIndex()) const override;
+	QModelIndex cachedIndexForId(int presetId);
 	QModelIndex indexForTagId(int tagId, int row) const;
 
 	QVariant
 	data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-	int getIdFromIndex(const QModelIndex &index)
-	{
-		return index.isValid() ? index.internalId() : 0;
-	}
+	int getIdFromIndex(const QModelIndex &index);
 
 	void setTagIdToFilter(int tagId);
 
 	QList<TagAssignment> getTagAssignments(int presetId);
 	bool changeTagAssignment(int presetId, int tagId, bool assigned);
 
-	PresetMetadata getPresetMetadata(int presetId);
+	std::optional<Preset> searchPresetBrushData(int presetId);
 
-	int newPreset(
-		const QString &type, const QString &name, const QString description,
-		const QPixmap &thumbnail, const QByteArray &data);
-	int duplicatePreset(int presetId);
-	bool
-	updatePresetData(int presetId, const QString &type, const QByteArray &data);
-	bool updatePresetMetadata(
+	std::optional<Preset> newPreset(
+		const QString &name, const QString description,
+		const QPixmap &thumbnail, const ActiveBrush &brush);
+
+	bool updatePreset(
 		int presetId, const QString &name, const QString &description,
-		const QPixmap &thumbnail);
+		const QPixmap &thumbnail, const ActiveBrush &brush);
+
 	bool deletePreset(int presetId);
+
+	void changePreset(
+		int presetId, const std::optional<QString> &name = {},
+		const std::optional<QString> &description = {},
+		const std::optional<QPixmap> &thumbnail = {},
+		const std::optional<ActiveBrush> &brush = {},
+		bool inEraserSlot = false);
+	void writePresetChanges();
+
+	int countNames(const QString &name) const;
 
 	QSize iconSize() const;
 	int iconDimension() const;
@@ -221,14 +275,21 @@ public slots:
 	void tagsAboutToBeReset();
 	void tagsReset();
 
-private:
-	BrushPresetTagModel::Private *d;
-	int m_tagIdToFilter;
+signals:
+	void presetChanged(
+		int presetId, const QString &name, const QString &description,
+		const QPixmap &thumbnail, const ActiveBrush &brush);
+	void presetRemoved(int presetId);
 
+private:
 	static QPixmap loadBrushPreview(const QFileInfo &fileInfo);
 	static QByteArray toPng(const QPixmap &pixmap);
+
+	BrushPresetTagModel::Private *d;
 };
 
 }
+
+Q_DECLARE_METATYPE(brushes::Preset)
 
 #endif

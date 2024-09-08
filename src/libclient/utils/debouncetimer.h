@@ -13,6 +13,8 @@ public:
 	void setNone();
 	void setInt(int value);
 
+	void stopTimer();
+
 signals:
 	void noneChanged();
 	void intChanged(int value);

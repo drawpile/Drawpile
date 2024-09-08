@@ -22,7 +22,65 @@
 #include "brush.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <mypaint-brush-settings.h>
 #include <helpers.h> // CLAMP
+
+
+static bool preset_equal_classic_brush_curve(const DP_ClassicBrushCurve *a,
+                                             const DP_ClassicBrushCurve *b)
+{
+    for (int i = 0; i < DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT; ++i) {
+        if (a->values[i] != b->values[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static bool preset_equal_classic_brush_range(const DP_ClassicBrushRange *a,
+                                             const DP_ClassicBrushRange *b)
+{
+    return a->min == b->min && a->max == b->max
+        && preset_equal_classic_brush_curve(&a->curve, &b->curve);
+}
+
+static bool preset_equal_classic_brush_dynamic(const DP_ClassicBrushDynamic *a,
+                                               const DP_ClassicBrushDynamic *b)
+{
+    return a->type == b->type && a->max_velocity == b->max_velocity
+        && a->max_distance == b->max_distance;
+}
+
+static bool preset_equal_classic_brush(const DP_ClassicBrush *a,
+                                       const DP_ClassicBrush *b,
+                                       bool in_eraser_slot)
+{
+    return preset_equal_classic_brush_range(&a->size, &b->size)
+        && preset_equal_classic_brush_range(&a->hardness, &b->hardness)
+        && preset_equal_classic_brush_range(&a->opacity, &b->opacity)
+        && preset_equal_classic_brush_range(&a->smudge, &b->smudge)
+        && a->spacing == b->spacing && a->resmudge == b->resmudge
+        && a->shape == b->shape && a->brush_mode == b->brush_mode
+        && a->erase_mode == b->erase_mode
+        && (in_eraser_slot || a->erase == b->erase)
+        && a->incremental == b->incremental && a->colorpick == b->colorpick
+        && preset_equal_classic_brush_dynamic(&a->size_dynamic,
+                                              &b->size_dynamic)
+        && preset_equal_classic_brush_dynamic(&a->hardness_dynamic,
+                                              &b->hardness_dynamic)
+        && preset_equal_classic_brush_dynamic(&a->opacity_dynamic,
+                                              &b->opacity_dynamic)
+        && preset_equal_classic_brush_dynamic(&a->smudge_dynamic,
+                                              &b->smudge_dynamic);
+}
+
+bool DP_classic_brush_equal_preset(const DP_ClassicBrush *a,
+                                   const DP_ClassicBrush *b,
+                                   bool in_eraser_slot)
+{
+    return a == b
+        || (a && b && preset_equal_classic_brush(a, b, in_eraser_slot));
+}
 
 
 static float lerp_range(const DP_ClassicBrushRange *cbr, float input)
@@ -169,6 +227,72 @@ uint8_t DP_classic_brush_dab_hardness_at(const DP_ClassicBrush *cb,
         DP_classic_brush_hardness_at(cb, pressure, velocity, distance) * 255.0f
         + 0.5f;
     return DP_float_to_uint8(CLAMP(value, 0, UINT8_MAX));
+}
+
+
+static bool preset_equal_mypaint_inputs(const DP_MyPaintControlPoints *a,
+                                        const DP_MyPaintControlPoints *b)
+{
+    for (int input_id = 0; input_id < MYPAINT_BRUSH_INPUTS_COUNT; ++input_id) {
+        int n = a->n;
+        if (n != b->n) {
+            return false;
+        }
+        for (int i = 0; i < n; ++i) {
+            if (a->xvalues[i] != b->xvalues[i]
+                || a->yvalues[i] != b->yvalues[i]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+static bool preset_equal_mypaint_mapping(int setting_id,
+                                         const DP_MyPaintMapping *a,
+                                         const DP_MyPaintMapping *b)
+{
+    return a->base_value == b->base_value
+        && (mypaint_brush_setting_info((MyPaintBrushSetting)setting_id)
+                ->constant
+            || preset_equal_mypaint_inputs(a->inputs, b->inputs));
+}
+
+static bool preset_equal_mypaint_settings(const DP_MyPaintSettings *a,
+                                          const DP_MyPaintSettings *b)
+{
+    for (int setting_id = 0; setting_id < MYPAINT_BRUSH_SETTINGS_COUNT;
+         ++setting_id) {
+        if (!preset_equal_mypaint_mapping(setting_id, &a->mappings[setting_id],
+                                          &b->mappings[setting_id])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool DP_mypaint_settings_equal_preset(const DP_MyPaintSettings *a,
+                                      const DP_MyPaintSettings *b)
+{
+    return a == b || (a && b && preset_equal_mypaint_settings(a, b));
+}
+
+
+static bool preset_equal_mypaint_brush(const DP_MyPaintBrush *a,
+                                       const DP_MyPaintBrush *b,
+                                       bool in_eraser_slot)
+{
+    return a->lock_alpha == b->lock_alpha
+        && (in_eraser_slot || a->erase == b->erase)
+        && a->incremental == b->incremental;
+}
+
+bool DP_mypaint_brush_equal_preset(const DP_MyPaintBrush *a,
+                                   const DP_MyPaintBrush *b,
+                                   bool in_eraser_slot)
+{
+    return a == b
+        || (a && b && preset_equal_mypaint_brush(a, b, in_eraser_slot));
 }
 
 
