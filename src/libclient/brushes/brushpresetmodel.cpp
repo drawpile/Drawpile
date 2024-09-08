@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QDirIterator>
 #include <QIcon>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMutexLocker>
@@ -20,6 +21,7 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QVector>
+#include <cctype>
 #include <dpcommon/platform_qt.h>
 
 namespace brushes {
@@ -751,7 +753,7 @@ BrushImportResult BrushPresetTagModel::importBrushPack(const QString &file)
 	drawdance::ZipReader zr{file};
 	if(zr.isNull()) {
 		qWarning("Error opening '%s': %s", qUtf8Printable(file), DP_error());
-		result.errors.append(tr("Can't open '%1'.").arg(qUtf8Printable(file)));
+		result.errors.append(tr("Can't open '%1'.").arg(file));
 		return result;
 	}
 
@@ -770,12 +772,15 @@ BrushImportResult BrushPresetTagModel::importBrushPack(const QString &file)
 	return result;
 }
 
+namespace {
+static QRegularExpression newlineRe{"[\r\n]+"};
+}
+
 QVector<BrushPresetTagModel::ImportBrushGroup>
 BrushPresetTagModel::readOrderConf(
 	BrushImportResult &result, const QString &file,
 	const drawdance::ZipReader &zr)
 {
-	static QRegularExpression newlineRe{"[\r\n]+"};
 	static QRegularExpression groupRe{"^Group:\\s*(.+)$"};
 
 	drawdance::ZipReader::File orderFile =
@@ -909,25 +914,33 @@ bool BrushPresetTagModel::readImportBrush(
 		qWarning(
 			"Error reading '%s' from zip: %s", qUtf8Printable(mybPath),
 			DP_error());
-		result.errors.append(
-			tr("Can't read brush file '%1'").arg(qUtf8Printable(mybPath)));
+		result.errors.append(tr("Can't read brush file '%1'").arg(mybPath));
 		return false;
 	}
 
-	QJsonParseError error;
-	QJsonDocument json = QJsonDocument::fromJson(mybFile.readBytes(), &error);
-	if(error.error != QJsonParseError::NoError) {
+	QByteArray mybBytes = mybFile.readBytes();
+	QJsonValue value;
+	switch(guessImportBrushType(mybBytes)) {
+	case ImportBrushType::Json:
+		value = readImportBrushJson(result, mybPath, mybBytes);
+		break;
+	case ImportBrushType::Old:
+		value = readImportBrushOld(result, mybPath, mybBytes);
+		break;
+	default:
 		result.errors.append(
-			tr("Brush file '%1' does not contain valid JSON: %1")
-				.arg(qUtf8Printable(mybPath))
-				.arg(qUtf8Printable(error.errorString())));
+			tr("Unknown brush format in file '%1'").arg(mybPath));
 		return false;
 	}
 
-	QJsonObject object = json.object();
+	if(!value.isObject()) {
+		return false;
+	}
+
+	QJsonObject object = value.toObject();
 	if(!outBrush.fromExportJson(object)) {
-		result.errors.append(tr("Can't load brush from brush file '%1'")
-								 .arg(qUtf8Printable(mybPath)));
+		result.errors.append(
+			tr("Can't load brush from brush file '%1'").arg(mybPath));
 		return false;
 	}
 
@@ -959,6 +972,236 @@ bool BrushPresetTagModel::readImportBrush(
 	return true;
 }
 
+BrushPresetTagModel::ImportBrushType
+BrushPresetTagModel::guessImportBrushType(const QByteArray &mybBytes)
+{
+	for(char c : mybBytes) {
+		if(c == '{') {
+			return ImportBrushType::Json;
+		} else if(c == '#') {
+			return ImportBrushType::Old;
+		} else if(!std::isspace(c)) {
+			break;
+		}
+	}
+	return ImportBrushType::Unknown;
+}
+
+QJsonValue BrushPresetTagModel::readImportBrushJson(
+	BrushImportResult &result, const QString &mybPath,
+	const QByteArray &mybBytes)
+{
+	QJsonParseError error;
+	QJsonDocument json = QJsonDocument::fromJson(mybBytes, &error);
+	if(error.error != QJsonParseError::NoError) {
+		result.errors.append(
+			tr("Brush file '%1' does not contain valid JSON: %1")
+				.arg(mybPath)
+				.arg(error.errorString()));
+		return QJsonValue();
+	} else if(!json.isObject()) {
+		result.errors.append(
+			tr("Brush file '%1' does not contain a JSON object").arg(mybPath));
+		return QJsonValue();
+	} else {
+		return json.object();
+	}
+}
+
+// SPDX-SnippetBegin
+// SPDX-License-Identifier: GPL-2.0-or-later
+// SDPX—SnippetName: old format parsing from MyPaint
+QJsonValue BrushPresetTagModel::readImportBrushOld(
+	BrushImportResult &result, const QString &mybPath,
+	const QByteArray &mybBytes)
+{
+	QVector<QPair<QString, QString>> rawSettings;
+	int version = 1;
+	for(const QString &rawLine :
+		QString::fromUtf8(mybBytes).split(newlineRe, compat::SkipEmptyParts)) {
+		QString line = rawLine.trimmed();
+		if(line.isEmpty() || line.startsWith(QChar('#'))) {
+			continue;
+		}
+
+		int spaceIndex = line.indexOf(QChar(' '));
+		if(spaceIndex <= 0) {
+			continue;
+		}
+
+		QString rawCname = line.left(spaceIndex);
+		QString rawValue = line.mid(spaceIndex + 1);
+		if(rawCname == QStringLiteral("version")) {
+			version = rawValue.toInt();
+			if(version != 1 && version != 2) {
+				result.errors.append(
+					tr("Brush file '%1' has invalid version %d")
+						.arg(mybPath)
+						.arg(version));
+				return QJsonValue();
+			}
+		} else {
+			rawSettings.append({rawCname, rawValue});
+		}
+	}
+
+	QJsonObject settings = {
+		{QStringLiteral("anti_aliasing"),
+		 QJsonObject({
+			 {QStringLiteral("base_value"), 0.0},
+			 {QStringLiteral("inputs"), QJsonObject()},
+		 })},
+	};
+	for(const QPair<QString, QString> &rawSetting : rawSettings) {
+		const QString &rawCname = rawSetting.first;
+		const QString &rawValue = rawSetting.second;
+
+		if(rawCname == QStringLiteral("parent_brush_name") ||
+		   rawCname == QStringLiteral("group") ||
+		   rawCname == QStringLiteral("comment") ||
+		   rawCname == QStringLiteral("notes") ||
+		   rawCname == QStringLiteral("description")) {
+			settings[rawCname] = QUrl::fromPercentEncoding(rawValue.toUtf8());
+		} else if(version <= 1 && rawCname == QStringLiteral("color")) {
+			QStringList rawColor =
+				rawValue.split(QChar(' '), compat::SkipEmptyParts);
+			if(rawColor.size() == 3) {
+				QColor color(
+					qBound(0, rawColor[0].toInt(), 255),
+					qBound(0, rawColor[1].toInt(), 255),
+					qBound(0, rawColor[2].toInt(), 255));
+				if(color.isValid()) {
+					settings[QStringLiteral("color_h")] = QJsonObject(
+						{{QStringLiteral("base_value"), color.hueF()},
+						 {QStringLiteral("inputs"), QJsonObject()}});
+					settings[QStringLiteral("color_s")] = QJsonObject(
+						{{QStringLiteral("base_value"), color.saturationF()},
+						 {QStringLiteral("inputs"), QJsonObject()}});
+					settings[QStringLiteral("color_v")] = QJsonObject(
+						{{QStringLiteral("base_value"), color.valueF()},
+						 {QStringLiteral("inputs"), QJsonObject()}});
+					continue;
+				}
+			}
+			result.errors.append(
+				tr("Brush file '%1' contains invalid 'color' setting")
+					.arg(mybPath));
+		} else if(
+			(version <= 1 && (rawCname == QStringLiteral("change_radius") ||
+							  rawCname == QStringLiteral("painting_time"))) ||
+			(version <= 2 &&
+			 rawCname == QStringLiteral("adapt_color_from_image"))) {
+			result.errors.append(
+				tr("Brush file '%1' contains obsolete '%2' setting")
+					.arg(mybPath));
+		} else {
+			QString cname;
+			double (*scale)(double) = nullptr;
+			if(version <= 1 && rawCname == QStringLiteral("speed")) {
+				cname = QStringLiteral("speed1");
+			} else if(rawCname == QStringLiteral("color_hue")) {
+				cname = QStringLiteral("change_color_h");
+				scale = scaleOldColorHue;
+			} else if(rawCname == QStringLiteral("color_saturation")) {
+				cname = QStringLiteral("change_color_hsv_s");
+				scale = scaleOldColorSaturationOrValue;
+			} else if(rawCname == QStringLiteral("color_value")) {
+				cname = QStringLiteral("change_color_v");
+				scale = scaleOldColorSaturationOrValue;
+			} else if(rawCname == QStringLiteral("speed_slowness")) {
+				cname = QStringLiteral("speed1_slowness");
+			} else if(rawCname == QStringLiteral("change_color_s")) {
+				cname = QStringLiteral("change_color_hsv_s");
+			} else if(rawCname == QStringLiteral("stroke_thresold")) {
+				cname = QStringLiteral("stroke_threshold");
+			} else {
+				cname = rawCname;
+			}
+
+			QStringList parts = rawValue.split(QChar('|'));
+			if(parts.size() >= 1) {
+				double baseValue = parts.takeFirst().toDouble();
+				if(scale) {
+					baseValue = scale(baseValue);
+				}
+
+				QJsonObject inputs;
+				for(const QString &part : parts) {
+					QString trimmedPart = part.trimmed();
+					int partSpaceIndex = trimmedPart.indexOf(QChar(' '));
+					if(partSpaceIndex > 0) {
+						QJsonArray points;
+						if(version <= 1) {
+							static QRegularExpression whitespaceRe(
+								QStringLiteral("\\s"));
+							QStringList rawPoints =
+								trimmedPart.mid(partSpaceIndex + 1)
+									.split(
+										whitespaceRe, compat::SkipEmptyParts);
+							points.append(QJsonArray({0.0, 0.0}));
+							while(rawPoints.size() >= 2) {
+								double x = rawPoints.takeFirst().toDouble();
+								if(x == 0.0) {
+									break;
+								} else {
+									double y = rawPoints.takeFirst().toDouble();
+									points.append(
+										QJsonArray({x, scale ? scale(y) : y}));
+								}
+							}
+						} else {
+							for(const QString &rawPoint :
+								trimmedPart.mid(partSpaceIndex + 1)
+									.split(
+										QStringLiteral(", "),
+										compat::SkipEmptyParts)) {
+								static QRegularExpression pointRe(
+									QStringLiteral("\\A\\s*\\((\\S+)\\s+(\\S+)"
+												   "\\)\\s*\\z"));
+								QRegularExpressionMatch match =
+									pointRe.match(rawPoint);
+								if(match.hasMatch()) {
+									double x = match.captured(1).toDouble();
+									double y = match.captured(2).toDouble();
+									points.append(
+										QJsonArray({x, scale ? scale(y) : y}));
+								} else {
+									qWarning(
+										"Invalid point '%s'",
+										qUtf8Printable(rawPoint));
+								}
+							}
+						}
+
+						inputs[trimmedPart.left(partSpaceIndex)] = points;
+					}
+				}
+
+				settings[cname] = QJsonObject{
+					{QStringLiteral("base_value"), baseValue},
+					{QStringLiteral("inputs"), inputs},
+				};
+			}
+		}
+	}
+
+	return QJsonObject({
+		{QStringLiteral("version"), 3},
+		{QStringLiteral("settings"), settings},
+	});
+}
+
+double BrushPresetTagModel::scaleOldColorHue(double y)
+{
+	return y * 64.0 / 360.0;
+}
+
+double BrushPresetTagModel::scaleOldColorSaturationOrValue(double y)
+{
+	return y * 128.0 / 256.0;
+}
+// SDPX—SnippetEnd
+
 
 BrushExportResult BrushPresetTagModel::exportBrushPack(
 	const QString &file, const QVector<BrushExportTag> &exportTags) const
@@ -968,7 +1211,7 @@ BrushExportResult BrushPresetTagModel::exportBrushPack(
 	drawdance::ZipWriter zw{file};
 	if(zw.isNull()) {
 		qWarning("Error opening '%s': %s", qUtf8Printable(file), DP_error());
-		result.errors.append(tr("Can't open '%1'.").arg(qUtf8Printable(file)));
+		result.errors.append(tr("Can't open '%1'.").arg(file));
 		return result;
 	}
 

@@ -2,6 +2,7 @@
 #ifndef LIBCLIENT_BRUSHES_BRUSHPRESETMODEL_H
 #define LIBCLIENT_BRUSHES_BRUSHPRESETMODEL_H
 #include <QAbstractItemModel>
+#include <QJsonValue>
 
 class QFile;
 class QFileInfo;
@@ -94,9 +95,17 @@ public:
 		const QString &file, const QVector<BrushExportTag> &exportTags) const;
 
 private:
+	enum class ImportBrushType { Unknown, Json, Old };
+
 	struct ImportBrushGroup {
 		QString name;
 		QStringList brushes;
+	};
+
+	struct ImportOldValue {
+		QString cname;
+		double baseValue;
+		QVector<QPointF> inputPoints;
 	};
 
 	class Private;
@@ -125,6 +134,19 @@ private:
 		BrushImportResult &result, const drawdance::ZipReader &zr,
 		const QString &prefix, ActiveBrush &outBrush, QString &outDescription,
 		QPixmap &outThumbnail);
+
+	static ImportBrushType guessImportBrushType(const QByteArray &mybBytes);
+
+	static QJsonValue readImportBrushJson(
+		BrushImportResult &result, const QString &mybPath,
+		const QByteArray &mybBytes);
+
+	static QJsonValue readImportBrushOld(
+		BrushImportResult &result, const QString &mybPath,
+		const QByteArray &mybBytes);
+
+	static double scaleOldColorHue(double y);
+	static double scaleOldColorSaturationOrValue(double y);
 
 	void exportTag(
 		BrushExportResult &result, QStringList &order, drawdance::ZipWriter &zw,
