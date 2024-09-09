@@ -16,7 +16,6 @@ HEADERS += collection.h \
 	../groupedtoolbutton.h groupedtoolbutton_plugin.h \
 	../filmstrip.h filmstrip_plugin.h \
 	../resizerwidget.h resizer_plugin.h \
-	../brushpreview.h brushpreview_plugin.h \
 	../tablettest.h tablettester_plugin.h \
 	../spinner.h spinner_plugin.h \
 	../presetselector.h presetselector_plugin.h \
@@ -27,7 +26,6 @@ SOURCES += collection.cpp \
 	../groupedtoolbutton.cpp groupedtoolbutton_plugin.cpp \
 	../filmstrip.cpp filmstrip_plugin.cpp \
 	../resizerwidget.cpp resizer_plugin.cpp \
-	../brushpreview.cpp brushpreview_plugin.cpp \
 	../tablettest.cpp tablettester_plugin.cpp \
 	../spinner.cpp spinner_plugin.cpp \
 	../presetselector.cpp presetselector_plugin.cpp \
