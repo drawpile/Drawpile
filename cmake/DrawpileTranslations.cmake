@@ -133,7 +133,7 @@ function(bundle_translations out_files)
 	find_program(
 		lconvert
 		NAMES "lconvert-qt${QT_VERSION_MAJOR}" "lconvert"
-		PATHS "/usr/lib/qt{QT_VERSION_MAJOR}/bin"
+		PATHS "/usr/lib/qt${QT_VERSION_MAJOR}/bin"
 		REQUIRED)
 
 	if(NOT ARG_NAME)
