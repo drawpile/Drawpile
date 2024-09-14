@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef CUSTOMSHORTCUTMODEL_H
-#define CUSTOMSHORTCUTMODEL_H
-
+#ifndef LIBCLIENT_UTILS_CUSTOMSHORTCUTMODEL_H
+#define LIBCLIENT_UTILS_CUSTOMSHORTCUTMODEL_H
 #include <QAbstractTableModel>
+#include <QKeySequence>
 #include <QList>
 #include <QMap>
-#include <QKeySequence>
 #include <QSet>
 
 struct CustomShortcut {
@@ -17,11 +15,13 @@ struct CustomShortcut {
 	QKeySequence alternateShortcut;
 	QKeySequence currentShortcut;
 
-	bool operator<(const CustomShortcut &other) const { return title.compare(other.title) < 0; }
+	bool operator<(const CustomShortcut &other) const
+	{
+		return title.compare(other.title) < 0;
+	}
 };
 
-class CustomShortcutModel final : public QAbstractTableModel
-{
+class CustomShortcutModel final : public QAbstractTableModel {
 	Q_OBJECT
 public:
 	enum Column {
@@ -32,22 +32,34 @@ public:
 		ColumnCount
 	};
 
-	explicit CustomShortcutModel(QObject *parent=nullptr);
+	explicit CustomShortcutModel(QObject *parent = nullptr);
 
-	int rowCount(const QModelIndex &parent=QModelIndex()) const override;
-	int columnCount(const QModelIndex &parent=QModelIndex()) const override;
-	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
-	bool setData(const QModelIndex &index, const QVariant &value, int role) override;
-	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const override;
+	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+
+	QVariant
+	data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+	bool
+	setData(const QModelIndex &index, const QVariant &value, int role) override;
+
+	QVariant headerData(
+		int section, Qt::Orientation orientation,
+		int role = Qt::DisplayRole) const override;
+
 	Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-	QVector<CustomShortcut> getShortcutsMatching(const QKeySequence &keySequence);
+	QVector<CustomShortcut>
+	getShortcutsMatching(const QKeySequence &keySequence);
 
 	void loadShortcuts(const QVariantMap &cfg);
 	[[nodiscard]] QVariantMap saveShortcuts();
 
 	static QList<QKeySequence> getDefaultShortcuts(const QString &name);
-	static void registerCustomizableAction(const QString &name, const QString &title, const QKeySequence &defaultShortcut, const QKeySequence &defaultAlternateShortcut);
+	static void registerCustomizableAction(
+		const QString &name, const QString &title,
+		const QKeySequence &defaultShortcut,
+		const QKeySequence &defaultAlternateShortcut);
 
 private:
 	void updateConflictRows();
@@ -58,4 +70,4 @@ private:
 	static QMap<QString, CustomShortcut> m_customizableActions;
 };
 
-#endif // CUSTOMSHORTCUTMODEL_H
+#endif
