@@ -92,6 +92,7 @@ signals:
 #endif
 	void setDockTitleBarsHidden(bool hidden);
 	void focusCanvas();
+	void shortcutsChanged();
 
 protected:
 	bool event(QEvent *e) override;

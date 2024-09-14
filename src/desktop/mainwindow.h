@@ -212,6 +212,7 @@ private slots:
 	void setRecorderStatus(bool on);
 
 	void loadShortcuts(const QVariantMap &shortcuts);
+	void setBrushSlotCount(int count);
 
 	void toggleLayerViewMode();
 	void updateLayerViewMode();

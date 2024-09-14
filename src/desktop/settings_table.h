@@ -65,6 +65,7 @@ SETTING_GETSET_V(
 	&viewCursor::get, &viewCursor::set)
 SETTING(brushOutlineWidth         , BrushOutlineWidth         , "settings/brushoutlinewidth"            , 1.0)
 SETTING(brushPresetsAttach        , BrushPresetsAttach        , "settings/brushpresetsattach"           , true)
+SETTING(brushSlotCount            , BrushSlotCount            , "settings/brushslotcount"               , 5)
 SETTING(canvasViewBackgroundColor , CanvasViewBackgroundColor , "settings/canvasviewbackgroundcolor"    , CANVAS_VIEW_BACKGROUND_COLOR_DEFAULT)
 SETTING(canvasScrollBars          , CanvasScrollBars          , "settings/canvasscrollbars"             , true)
 SETTING(canvasShortcuts           , CanvasShortcuts           , "settings/canvasshortcuts2"             , QVariantMap())

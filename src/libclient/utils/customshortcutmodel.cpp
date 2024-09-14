@@ -4,6 +4,7 @@
 #include <QHash>
 
 QMap<QString, CustomShortcut> CustomShortcutModel::m_customizableActions;
+QSet<QString> CustomShortcutModel::m_disabledActionNames;
 
 CustomShortcutModel::CustomShortcutModel(QObject *parent)
 	: QAbstractTableModel(parent)
@@ -12,7 +13,7 @@ CustomShortcutModel::CustomShortcutModel(QObject *parent)
 
 int CustomShortcutModel::rowCount(const QModelIndex &parent) const
 {
-	return parent.isValid() ? 0 : m_shortcuts.size();
+	return parent.isValid() ? 0 : m_shortcutIndexes.size();
 }
 
 int CustomShortcutModel::columnCount(const QModelIndex &parent) const
@@ -27,12 +28,12 @@ QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
 	}
 
 	int row = index.row();
-	if(row < 0 || row > m_shortcuts.size()) {
+	if(row < 0 || row > m_shortcutIndexes.size()) {
 		return QVariant();
 	}
 
 	if(role == Qt::DisplayRole || role == Qt::EditRole) {
-		const CustomShortcut &cs = m_shortcuts[row];
+		const CustomShortcut &cs = m_loadedShortcuts[m_shortcutIndexes[row]];
 		switch(Column(index.column())) {
 		case Action:
 			return cs.title;
@@ -74,11 +75,11 @@ bool CustomShortcutModel::setData(
 	if(!index.isValid() || role != Qt::EditRole ||
 	   (index.column() != CurrentShortcut &&
 		index.column() != AlternateShortcut) ||
-	   index.row() >= m_shortcuts.size()) {
+	   index.row() >= m_shortcutIndexes.size()) {
 		return false;
 	}
 
-	CustomShortcut &cs = m_shortcuts[index.row()];
+	CustomShortcut &cs = m_loadedShortcuts[m_shortcutIndexes[index.row()]];
 	if(index.column() == CurrentShortcut) {
 		cs.currentShortcut = value.value<QKeySequence>();
 	} else {
@@ -124,10 +125,11 @@ QVector<CustomShortcut>
 CustomShortcutModel::getShortcutsMatching(const QKeySequence &keySequence)
 {
 	QVector<CustomShortcut> matches;
-	for(const CustomShortcut &shortcut : m_shortcuts) {
-		if(shortcut.currentShortcut == keySequence ||
-		   shortcut.alternateShortcut == keySequence) {
-			matches.append(shortcut);
+	for(int index : m_shortcutIndexes) {
+		const CustomShortcut &cs = m_loadedShortcuts[index];
+		if(cs.currentShortcut == keySequence ||
+		   cs.alternateShortcut == keySequence) {
+			matches.append(cs);
 		}
 	}
 	return matches;
@@ -135,8 +137,9 @@ CustomShortcutModel::getShortcutsMatching(const QKeySequence &keySequence)
 
 void CustomShortcutModel::loadShortcuts(const QVariantMap &cfg)
 {
-	QVector<CustomShortcut> actions;
-	actions.reserve(m_customizableActions.size());
+	beginResetModel();
+	m_loadedShortcuts.clear();
+	m_loadedShortcuts.reserve(m_customizableActions.size());
 
 	for(CustomShortcut a : m_customizableActions) {
 		Q_ASSERT(!a.name.isEmpty());
@@ -158,11 +161,10 @@ void CustomShortcutModel::loadShortcuts(const QVariantMap &cfg)
 			a.alternateShortcut = a.defaultAlternateShortcut;
 		}
 
-		actions.append(a);
+		m_loadedShortcuts.append(a);
 	}
 
-	beginResetModel();
-	m_shortcuts = actions;
+	updateShortcuts();
 	updateConflictRows();
 	endResetModel();
 }
@@ -171,7 +173,7 @@ QVariantMap CustomShortcutModel::saveShortcuts()
 {
 	QVariantMap cfg;
 
-	for(const CustomShortcut &cs : m_shortcuts) {
+	for(const CustomShortcut &cs : m_loadedShortcuts) {
 		if(cs.currentShortcut != cs.defaultShortcut ||
 		   !cs.alternateShortcut.isEmpty()) {
 			if(cs.alternateShortcut.isEmpty()) {
@@ -187,6 +189,14 @@ QVariantMap CustomShortcutModel::saveShortcuts()
 	return cfg;
 }
 
+void CustomShortcutModel::updateShortcuts()
+{
+	beginResetModel();
+	updateShortcutsInternal();
+	updateConflictRows();
+	endResetModel();
+}
+
 void CustomShortcutModel::registerCustomizableAction(
 	const QString &name, const QString &title,
 	const QKeySequence &defaultShortcut,
@@ -197,6 +207,18 @@ void CustomShortcutModel::registerCustomizableAction(
 			name, CustomShortcut{
 					  name, title, defaultShortcut, defaultAlternateShortcut,
 					  QKeySequence(), QKeySequence()});
+	}
+}
+
+void CustomShortcutModel::changeDisabledActionNames(
+	const QVector<QPair<QString, bool>> &nameDisabledPairs)
+{
+	for(const QPair<QString, bool> &p : nameDisabledPairs) {
+		if(p.second) {
+			m_disabledActionNames.insert(p.first);
+		} else {
+			m_disabledActionNames.remove(p.first);
+		}
 	}
 }
 
@@ -216,12 +238,26 @@ CustomShortcutModel::getDefaultShortcuts(const QString &name)
 	return defaultShortcuts;
 }
 
+void CustomShortcutModel::updateShortcutsInternal()
+{
+	int count = m_loadedShortcuts.size();
+	m_shortcutIndexes.clear();
+	m_shortcutIndexes.reserve(count - m_disabledActionNames.size());
+	for(int i = 0; i < count; ++i) {
+		const CustomShortcut &cs = m_loadedShortcuts[i];
+		if(!m_disabledActionNames.contains(cs.name)) {
+			m_shortcutIndexes.append(i);
+		}
+	}
+}
+
 void CustomShortcutModel::updateConflictRows()
 {
 	QHash<QKeySequence, QSet<int>> rowsByKeySequence;
-	int rowCount = m_shortcuts.size();
+	int rowCount = m_shortcutIndexes.size();
 	for(int row = 0; row < rowCount; ++row) {
-		const CustomShortcut &shortcut = m_shortcuts[row];
+		const CustomShortcut &shortcut =
+			m_loadedShortcuts[m_shortcutIndexes[row]];
 		if(!shortcut.currentShortcut.isEmpty()) {
 			rowsByKeySequence[shortcut.currentShortcut].insert(row);
 		}

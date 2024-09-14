@@ -2,6 +2,7 @@
 #include "desktop/dialogs/settingsdialog/shortcuts.h"
 #include "desktop/dialogs/settingsdialog/helpers.h"
 #include "desktop/dialogs/settingsdialog/proportionaltableview.h"
+#include "desktop/main.h"
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
@@ -18,9 +19,6 @@
 #include <QStyledItemDelegate>
 #include <QTableView>
 #include <QVBoxLayout>
-#include <algorithm>
-#include <array>
-#include <functional>
 
 namespace dialogs {
 namespace settingsdialog {
@@ -81,6 +79,9 @@ void Shortcuts::initGlobalShortcuts(
 		[=, &settings] {
 			settings.setShortcuts(shortcutsModel->saveShortcuts());
 		});
+	connect(
+		&dpApp(), &DrawpileApp::shortcutsChanged, shortcutsModel,
+		&CustomShortcutModel::updateShortcuts);
 	m_shortcutsTable = ProportionalTableView::make(filter, shortcutsModel);
 	m_shortcutsTable->setColumnStretches({6, 2, 2, 2});
 	utils::bindKineticScrolling(m_shortcutsTable);

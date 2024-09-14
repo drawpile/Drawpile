@@ -17,6 +17,10 @@ namespace tools {
 class BrushSettings final : public ToolSettings {
 	Q_OBJECT
 public:
+	static constexpr int BRUSH_SLOT_COUNT = 9;
+	static constexpr int TOTAL_SLOT_COUNT = BRUSH_SLOT_COUNT + 1;
+	static constexpr int ERASER_SLOT_INDEX = BRUSH_SLOT_COUNT;
+
 	enum BrushMode : int { NormalMode, EraseMode, AlphaLockMode, UnknownMode };
 
 	BrushSettings(ToolController *ctrl, QObject *parent = nullptr);
@@ -60,6 +64,9 @@ public:
 
 	int currentBrushSlot() const;
 	bool isCurrentEraserSlot() const;
+
+	int brushSlotCount() const;
+	void setBrushSlotCount(int count);
 
 	void setShareBrushSlotColor(bool sameColor);
 
@@ -140,6 +147,7 @@ private:
 	void emitBrushModeChanged();
 	static double radiusLogarithmicToPixelSize(int radiusLogarithmic);
 
+	static int translateBrushSlotConfigIndex(int i);
 	static int getDefaultPresetIdForSlot(int i);
 	static QByteArray getDefaultBrushForSlot(int i);
 

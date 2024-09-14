@@ -3,6 +3,7 @@
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/view/cursor.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDoubleSpinBox>
@@ -37,7 +38,9 @@ void Tools::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
 {
 	initKeyboardShortcuts(settings, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
-	initGeneralTools(settings, utils::addFormSection(layout));
+	initSlots(settings, utils::addFormSection(layout));
+	utils::addFormSeparator(layout);
+	initCursors(settings, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
 	initColorSpace(settings, utils::addFormSection(layout));
 }
@@ -56,22 +59,9 @@ void Tools::initColorSpace(
 	settings.bindColorWheelSpace(space);
 }
 
-void Tools::initGeneralTools(
+void Tools::initCursors(
 	desktop::settings::Settings &settings, QFormLayout *form)
 {
-	QCheckBox *presetsAttach = new QCheckBox(tr("Attach selected brushes"));
-	presetsAttach->setToolTip(
-		tr("When enabled, changes in a brush slot will be saved to the brush "
-		   "itself automatically. When disabled, the brush itself only changes "
-		   "when you save it explicitly."));
-	settings.bindBrushPresetsAttach(presetsAttach);
-	form->addRow(tr("Brushes:"), presetsAttach);
-
-	auto *shareColor =
-		new QCheckBox(tr("Share one color across all brush slots"));
-	settings.bindShareBrushSlotColor(shareColor);
-	form->addRow(nullptr, shareColor);
-
 	auto *outlineSize = new QDoubleSpinBox;
 	settings.bindBrushOutlineWidth(outlineSize);
 	outlineSize->setDecimals(1);
@@ -98,7 +88,7 @@ void Tools::initGeneralTools(
 		outlineSize->setEnabled(enabled);
 	});
 
-	form->addRow(nullptr, outlineSizeLayout);
+	form->addRow(tr("Brush outline:"), outlineSizeLayout);
 
 	auto *brushCursor = new QComboBox;
 	auto *eraseCursor = new QComboBox;
@@ -145,6 +135,35 @@ void Tools::initKeyboardShortcuts(
 	auto *focusCanvas = new QCheckBox(tr("Double-tap Alt key to focus canvas"));
 	settings.bindDoubleTapAltToFocusCanvas(focusCanvas);
 	form->addRow(nullptr, focusCanvas);
+}
+
+void Tools::initSlots(desktop::settings::Settings &settings, QFormLayout *form)
+{
+	QCheckBox *presetsAttach = new QCheckBox(tr("Attach selected brushes"));
+	presetsAttach->setToolTip(
+		tr("When enabled, changes in a brush slot will be saved to the brush "
+		   "itself automatically. When disabled, the brush itself only changes "
+		   "when you save it explicitly."));
+	settings.bindBrushPresetsAttach(presetsAttach);
+	form->addRow(tr("Brush slots:"), presetsAttach);
+
+	auto *shareColor =
+		new QCheckBox(tr("Share one color across all brush slots"));
+	settings.bindShareBrushSlotColor(shareColor);
+	form->addRow(nullptr, shareColor);
+
+	KisSliderSpinBox *brushSlotCount = new KisSliderSpinBox;
+	brushSlotCount->setRange(1, 9);
+	settings.bindBrushSlotCount(brushSlotCount);
+	settings.bindBrushSlotCount(brushSlotCount, [brushSlotCount](int count) {
+		QString sep = QStringLiteral("%1");
+		QStringList parts =
+			tr("Show %1 brush slot(s)", nullptr, count).split(sep);
+		brushSlotCount->setPrefix(
+			parts.isEmpty() ? QString() : parts.takeFirst());
+		brushSlotCount->setSuffix(parts.join(sep));
+	});
+	form->addRow(nullptr, brushSlotCount);
 }
 
 } // namespace settingsdialog

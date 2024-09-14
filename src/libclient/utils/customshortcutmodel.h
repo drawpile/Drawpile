@@ -55,19 +55,26 @@ public:
 	void loadShortcuts(const QVariantMap &cfg);
 	[[nodiscard]] QVariantMap saveShortcuts();
 
+	void updateShortcuts();
+
 	static QList<QKeySequence> getDefaultShortcuts(const QString &name);
 	static void registerCustomizableAction(
 		const QString &name, const QString &title,
 		const QKeySequence &defaultShortcut,
 		const QKeySequence &defaultAlternateShortcut);
+	static void changeDisabledActionNames(
+		const QVector<QPair<QString, bool>> &nameDisabledPairs);
 
 private:
+	void updateShortcutsInternal();
 	void updateConflictRows();
 
-	QVector<CustomShortcut> m_shortcuts;
+	QVector<int> m_shortcutIndexes;
+	QVector<CustomShortcut> m_loadedShortcuts;
 	QSet<int> m_conflictRows;
 
 	static QMap<QString, CustomShortcut> m_customizableActions;
+	static QSet<QString> m_disabledActionNames;
 };
 
 #endif

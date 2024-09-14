@@ -28,10 +28,13 @@ private:
 	initColorSpace(desktop::settings::Settings &settings, QFormLayout *form);
 
 	void
-	initGeneralTools(desktop::settings::Settings &settings, QFormLayout *form);
+	initCursors(desktop::settings::Settings &settings, QFormLayout *form);
 
 	void initKeyboardShortcuts(
 		desktop::settings::Settings &settings, QFormLayout *form);
+
+	void
+	initSlots(desktop::settings::Settings &settings, QFormLayout *form);
 };
 
 } // namespace settingsdialog

@@ -800,6 +800,55 @@ void MainWindow::loadShortcuts(const QVariantMap &cfg)
 		int(m_dockToolSettings->brushSettings()->getBrushMode()));
 }
 
+// clang-format on
+void MainWindow::setBrushSlotCount(int count)
+{
+	tools::BrushSettings *brushSettings = m_dockToolSettings->brushSettings();
+	brushSettings->setBrushSlotCount(count);
+	int brushSlotCount = brushSettings->brushSlotCount();
+
+	QVector<QPair<QString, bool>> nameDisabledPairs;
+	nameDisabledPairs.reserve(19);
+
+	for(int i = 0; i < 10; ++i) {
+		QString name = QStringLiteral("quicktoolslot-%1").arg(i);
+		bool enabled = i <= brushSlotCount;
+		nameDisabledPairs.append({name, !enabled});
+
+		QAction *q = findChild<QAction *>(name);
+		if(q) {
+			if(enabled) {
+				addAction(q);
+			} else {
+				removeAction(q);
+			}
+		} else {
+			qWarning("Tool slot action %d not found", i);
+		}
+	}
+
+	for(int i = 0; i < 9; ++i) {
+		QString name = QStringLiteral("swapslot%1").arg(i);
+		bool enabled = i < brushSlotCount;
+		nameDisabledPairs.append({name, !enabled});
+
+		QAction *s = findChild<QAction *>(name);
+		if(s) {
+			if(enabled) {
+				addAction(s);
+			} else {
+				removeAction(s);
+			}
+		} else {
+			qWarning("Swap slot action %d not found", i);
+		}
+	}
+
+	CustomShortcutModel::changeDisabledActionNames(nameDisabledPairs);
+	emit dpApp().shortcutsChanged();
+}
+// clang-format off
+
 void MainWindow::toggleLayerViewMode()
 {
 	if(!m_doc->canvas())
@@ -928,6 +977,7 @@ void MainWindow::readSettings(bool windowpos)
 
 	// Customize shortcuts
 	settings.bindShortcuts(this, &MainWindow::loadShortcuts);
+	settings.bindBrushSlotCount(this, &MainWindow::setBrushSlotCount);
 
 #ifndef __EMSCRIPTEN__
 	// Restore recent files
@@ -5185,21 +5235,23 @@ void MainWindow::setupActions()
 	helpmenu->addAction(versioncheck);
 #endif
 
+	// clang-format on
 	// Brush slot shortcuts
-
 	m_brushSlots = new QActionGroup(this);
-	for(int i=0;i<6;++i) {
-		QAction *q = new QAction(tr("Brush slot #%1").arg(i+1), this);
+	for(int i = 0; i < 10; ++i) {
+		QAction *q = new QAction(tr("Brush slot #%1").arg(i + 1), this);
 		q->setAutoRepeat(false);
-		q->setObjectName(QString("quicktoolslot-%1").arg(i));
-		q->setShortcut(QKeySequence(QString::number(i+1)));
+		q->setObjectName(QStringLiteral("quicktoolslot-%1").arg(i));
+		q->setShortcut(QKeySequence(QString::number((i + 1) % 10)));
 		q->setProperty("toolslotidx", i);
-		CustomShortcutModel::registerCustomizableAction(q->objectName(), q->text(), q->shortcut(), QKeySequence());
+		CustomShortcutModel::registerCustomizableAction(
+			q->objectName(), q->text(), q->shortcut(), QKeySequence());
 		m_brushSlots->addAction(q);
 		addAction(q);
 		// Swapping with the eraser slot doesn't make sense.
-		if(i != 5) {
-			QAction *s = new QAction{tr("Swap With Brush Slot #%1").arg(i +1 ), this};
+		if(i != 9) {
+			QAction *s =
+				new QAction(tr("Swap With Brush Slot #%1").arg(i + 1), this);
 			s->setAutoRepeat(false);
 			s->setObjectName(QStringLiteral("swapslot%1").arg(i));
 			CustomShortcutModel::registerCustomizableAction(
@@ -5214,6 +5266,7 @@ void MainWindow::setupActions()
 		m_dockToolSettings->setToolSlot(a->property("toolslotidx").toInt());
 		m_toolChangeTime.start();
 	});
+	// clang-format off
 
 	// Color swatch shortcuts
 	for(int i = 0; i < docks::ToolSettings::LASTUSED_COLOR_COUNT; ++i) {

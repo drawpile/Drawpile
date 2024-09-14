@@ -26,8 +26,6 @@ extern "C" {
 namespace tools {
 
 namespace {
-static constexpr int BRUSH_COUNT = 6; // Last is the dedicated eraser slot
-static constexpr int ERASER_SLOT = 5; // Index of the dedicated eraser slot
 
 struct Preset : brushes::Preset {
 	bool valid = false;
@@ -123,6 +121,13 @@ struct Preset : brushes::Preset {
 		}
 	}
 };
+
+struct Slot {
+	brushes::ActiveBrush brush;
+	Preset preset;
+	widgets::GroupedToolButton *button;
+};
+
 }
 
 struct BrushSettings::Private {
@@ -131,9 +136,8 @@ struct BrushSettings::Private {
 
 	QStandardItemModel *blendModes, *eraseModes;
 
-	brushes::ActiveBrush brushSlots[BRUSH_COUNT];
-	Preset presets[BRUSH_COUNT];
-	widgets::GroupedToolButton *brushSlotButton[BRUSH_COUNT];
+	Slot brushSlots[BRUSH_SLOT_COUNT];
+	Slot eraserSlot;
 	QWidget *brushSlotWidget = nullptr;
 
 	QAction *editBrushAction;
@@ -156,6 +160,7 @@ struct BrushSettings::Private {
 	QAction *finishStrokesAction;
 	QAction *useBrushSampleCountAction;
 
+	int brushSlotCount = BRUSH_SLOT_COUNT;
 	int current = 0;
 	int previousNonEraser = 0;
 	BrushMode previousBrushMode = UnknownMode;
@@ -173,24 +178,31 @@ struct BrushSettings::Private {
 	bool myPaintAllowed = true;
 	bool compatibilityMode = false;
 
-	inline brushes::ActiveBrush &currentBrush()
+	Slot &slotAt(int i)
 	{
-		Q_ASSERT(current >= 0 && current < BRUSH_COUNT);
-		return brushSlots[current];
+		Q_ASSERT(i >= 0);
+		Q_ASSERT(i < TOTAL_SLOT_COUNT);
+		return i == ERASER_SLOT_INDEX ? eraserSlot : brushSlots[i];
 	}
 
-	inline Preset &currentPreset()
-	{
-		Q_ASSERT(current >= 0 && current < BRUSH_COUNT);
-		return presets[current];
-	}
+	brushes::ActiveBrush &brushAt(int i) { return slotAt(i).brush; }
 
-	inline bool currentIsMyPaint()
+	Preset &presetAt(int i) { return slotAt(i).preset; }
+
+	widgets::GroupedToolButton *buttonAt(int i) { return slotAt(i).button; }
+
+	Slot &currentSlot() { return slotAt(current); }
+
+	brushes::ActiveBrush &currentBrush() { return currentSlot().brush; }
+
+	Preset &currentPreset() { return currentSlot().preset; }
+
+	bool currentIsMyPaint()
 	{
 		return currentBrush().activeType() == brushes::ActiveBrush::MYPAINT;
 	}
 
-	inline brushes::StabilizationMode stabilizationMode()
+	brushes::StabilizationMode stabilizationMode()
 	{
 		if(smoothingAction->isChecked()) {
 			return brushes::Smoothing;
@@ -240,8 +252,8 @@ void BrushSettings::connectBrushPresets(brushes::BrushPresetModel *brushPresets)
 {
 	d->brushPresets = brushPresets;
 
-	for(int i = 0; i < BRUSH_COUNT; ++i) {
-		Preset &preset = d->presets[i];
+	for(int i = 0; i < TOTAL_SLOT_COUNT; ++i) {
+		Preset &preset = d->presetAt(i);
 		if(preset.valid && preset.id != 0) {
 			std::optional<brushes::Preset> opt =
 				brushPresets->searchPresetBrushData(preset.id);
@@ -260,7 +272,7 @@ void BrushSettings::connectBrushPresets(brushes::BrushPresetModel *brushPresets)
 				preset.overwrite = false;
 			}
 			if(preset.attached) {
-				preset.changeBrush(d->brushSlots[i], i == ERASER_SLOT);
+				preset.changeBrush(d->brushAt(i), i == ERASER_SLOT_INDEX);
 			}
 		}
 	}
@@ -336,29 +348,39 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 
 	brushSlotWidgetLayout->addStretch(1);
 
-	for(int i = 0; i < BRUSH_COUNT; ++i) {
-		d->brushSlotButton[i] = new widgets::GroupedToolButton(
-			widgets::GroupedToolButton::GroupCenter, d->brushSlotWidget);
-		d->brushSlotButton[i]->setCheckable(true);
-		d->brushSlotButton[i]->setAutoExclusive(true);
-		d->brushSlotButton[i]->setText(QString::number(i + 1));
-		d->brushSlotButton[i]->setSizePolicy(
-			QSizePolicy::Expanding, QSizePolicy::Preferred);
-		brushSlotWidgetLayout->addWidget(d->brushSlotButton[i], 1);
+	for(int i = 0; i < TOTAL_SLOT_COUNT; ++i) {
+		widgets::GroupedToolButton *button =
+			new widgets::GroupedToolButton(d->brushSlotWidget);
+		button->setCheckable(true);
+		button->setAutoExclusive(true);
+		button->setText(QString::number(i + 1));
+		button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+		brushSlotWidgetLayout->addWidget(button, 1);
 
-		connect(
-			d->brushSlotButton[i], &QToolButton::clicked, this, [this, i]() {
-				selectBrushSlot(i);
-			});
+		switch(i) {
+		case 0:
+			button->setGroupPosition(widgets::GroupedToolButton::GroupLeft);
+			break;
+		case ERASER_SLOT_INDEX:
+			button->setGroupPosition(widgets::GroupedToolButton::GroupRight);
+			button->setIcon(QIcon::fromTheme("draw-eraser"));
+			break;
+		default:
+			button->setGroupPosition(widgets::GroupedToolButton::GroupCenter);
+			// Hide for now so that this doesn't blow the widget width out of
+			// proportion. If appropriate, it'll be reenabled by the first call
+			// to setBrushSlotCount when that setting is loaded.
+			button->setVisible(false);
+			break;
+		}
+
+		connect(button, &QToolButton::clicked, this, [this, i]() {
+			selectBrushSlot(i);
+		});
+		d->slotAt(i).button = button;
 	}
 
 	brushSlotWidgetLayout->addStretch(1);
-
-	d->brushSlotButton[0]->setGroupPosition(
-		widgets::GroupedToolButton::GroupLeft);
-	d->brushSlotButton[BRUSH_COUNT - 1]->setGroupPosition(
-		widgets::GroupedToolButton::GroupRight);
-	d->brushSlotButton[ERASER_SLOT]->setIcon(QIcon::fromTheme("draw-eraser"));
 
 	QWidget *widget = new QWidget(parent);
 	d->ui.setupUi(widget);
@@ -609,12 +631,36 @@ void BrushSettings::setCompatibilityMode(bool compatibilityMode)
 	updateUi();
 }
 
+int BrushSettings::brushSlotCount() const
+{
+	return d->brushSlotCount;
+}
+
+void BrushSettings::setBrushSlotCount(int count)
+{
+	bool wasInEraserSlot = isCurrentEraserSlot();
+	d->brushSlotCount = qBound(1, count, BRUSH_SLOT_COUNT);
+	d->buttonAt(0)->setIcon(
+		d->brushSlotCount == 1 ? QIcon::fromTheme("draw-brush") : QIcon());
+
+	for(int i = 0; i < BRUSH_SLOT_COUNT; ++i) {
+		widgets::GroupedToolButton *button = d->buttonAt(i);
+		bool active = i < d->brushSlotCount;
+		button->setEnabled(active);
+		button->setVisible(active);
+	}
+
+	if(!wasInEraserSlot && d->current >= d->brushSlotCount) {
+		selectBrushSlot(d->brushSlotCount - 1);
+	}
+}
+
 void BrushSettings::setShareBrushSlotColor(bool sameColor)
 {
 	d->shareBrushSlotColor = sameColor;
-	for(int i = 0; i < BRUSH_COUNT; ++i) {
-		d->brushSlotButton[i]->setColorSwatch(
-			sameColor ? QColor() : d->brushSlots[i].qColor());
+	for(int i = 0; i < TOTAL_SLOT_COUNT; ++i) {
+		Slot &slot = d->slotAt(i);
+		slot.button->setColorSwatch(sameColor ? QColor() : slot.brush.qColor());
 	}
 }
 
@@ -627,8 +673,8 @@ void BrushSettings::setBrushPresetsAttach(bool brushPresetsAttach)
 {
 	if(brushPresetsAttach && !d->presetsAttach) {
 		d->presetsAttach = true;
-		for(int i = 0; i < BRUSH_COUNT; ++i) {
-			Preset &preset = d->presets[i];
+		for(int i = 0; i < TOTAL_SLOT_COUNT; ++i) {
+			Preset &preset = d->presetAt(i);
 			if(preset.valid && preset.reattach && preset.id != 0) {
 				std::optional<brushes::Preset> opt =
 					d->brushPresets->searchPresetBrushData(preset.id);
@@ -639,7 +685,7 @@ void BrushSettings::setBrushPresetsAttach(bool brushPresetsAttach)
 					preset.originalThumbnail = opt->originalThumbnail;
 					preset.originalBrush = opt->originalBrush;
 				}
-				preset.changeBrush(d->brushSlots[i], i == ERASER_SLOT);
+				preset.changeBrush(d->brushAt(i), i == ERASER_SLOT_INDEX);
 				if(d->current == i) {
 					emit presetIdChanged(preset.effectiveId());
 					if(preset.attached) {
@@ -656,8 +702,8 @@ void BrushSettings::setBrushPresetsAttach(bool brushPresetsAttach)
 		updateMenuActions();
 	} else if(!brushPresetsAttach && d->presetsAttach) {
 		d->presetsAttach = false;
-		for(int i = 0; i < BRUSH_COUNT; ++i) {
-			Preset &preset = d->presets[i];
+		for(int i = 0; i < TOTAL_SLOT_COUNT; ++i) {
+			Preset &preset = d->presetAt(i);
 			if(preset.isAttached()) {
 				preset.attached = false;
 				preset.reattach = true;
@@ -713,26 +759,25 @@ BrushSettings::changeCurrentBrushInternal(const brushes::ActiveBrush &brush)
 brushes::ActiveBrush
 BrushSettings::changeBrushInSlot(brushes::ActiveBrush brush, int i)
 {
-	Q_ASSERT(i >= 0 && i < BRUSH_COUNT);
-	brushes::ActiveBrush &slot = d->brushSlots[i];
+	brushes::ActiveBrush &slot = d->brushAt(i);
 	brush.setQColor(slot.qColor());
 
 	brushes::ActiveBrush::ActiveType activeType = brush.activeType();
 	switch(activeType) {
 	case brushes::ActiveBrush::CLASSIC:
-		if(i == ERASER_SLOT) {
+		if(i == ERASER_SLOT_INDEX) {
 			brush.classic().erase = true;
 		}
 		slot.setClassic(brush.classic());
 		break;
 	case brushes::ActiveBrush::MYPAINT:
-		if(i == ERASER_SLOT) {
+		if(i == ERASER_SLOT_INDEX) {
 			brush.myPaint().brush().erase = true;
 		}
 		slot.setMyPaint(brush.myPaint());
 		break;
 	default:
-		qWarning("Invalid brush type %d", static_cast<int>(brush.activeType()));
+		qWarning("Invalid brush type %d", int(brush.activeType()));
 		return brush;
 	}
 
@@ -772,13 +817,20 @@ int BrushSettings::currentBrushSlot() const
 
 void BrushSettings::selectBrushSlot(int i)
 {
-	if(i < 0 || i >= BRUSH_COUNT) {
-		qWarning("selectBrushSlot(%d): invalid slot index!", i);
+	if(i < 0 || i >= TOTAL_SLOT_COUNT) {
+		qWarning("Slot index %d out of bounds", i);
 		return;
 	}
-	const int previousSlot = d->current;
 
-	d->brushSlotButton[i]->setChecked(true);
+	if(i == d->brushSlotCount) {
+		i = ERASER_SLOT_INDEX;
+	} else if(i > d->brushSlotCount && i != ERASER_SLOT_INDEX) {
+		qWarning("Slot index %d is not active (max %d)", i, d->brushSlotCount);
+		return;
+	}
+
+	int previousSlot = d->current;
+	d->buttonAt(i)->setChecked(true);
 	d->current = i;
 
 	if(!d->shareBrushSlotColor) {
@@ -787,8 +839,8 @@ void BrushSettings::selectBrushSlot(int i)
 
 	updateUi();
 
-	bool inEraserSlot = i == ERASER_SLOT;
-	if((previousSlot == ERASER_SLOT) != inEraserSlot) {
+	bool inEraserSlot = i == ERASER_SLOT_INDEX;
+	if((previousSlot == ERASER_SLOT_INDEX) != inEraserSlot) {
 		emit eraseModeChanged(inEraserSlot);
 	}
 
@@ -905,11 +957,13 @@ void BrushSettings::selectEraserSlot(bool eraser)
 	if(eraser) {
 		if(!isCurrentEraserSlot()) {
 			d->previousNonEraser = d->current;
-			selectBrushSlot(ERASER_SLOT);
+			selectBrushSlot(ERASER_SLOT_INDEX);
 		}
 	} else {
 		if(isCurrentEraserSlot()) {
-			selectBrushSlot(d->previousNonEraser);
+			selectBrushSlot(
+				d->previousNonEraser < d->brushSlotCount ? d->previousNonEraser
+														 : 0);
 		}
 	}
 }
@@ -917,10 +971,10 @@ void BrushSettings::selectEraserSlot(bool eraser)
 void BrushSettings::swapWithSlot(int i)
 {
 	Q_ASSERT(i >= 0);
-	Q_ASSERT(i < ERASER_SLOT);
+	Q_ASSERT(i < ERASER_SLOT_INDEX);
 	if(i != d->current && !isCurrentEraserSlot()) {
-		std::swap(d->brushSlots[d->current], d->brushSlots[i]);
-		std::swap(d->presets[d->current], d->presets[i]);
+		std::swap(d->brushAt(d->current), d->brushAt(i));
+		std::swap(d->presetAt(d->current), d->presetAt(i));
 		updateUi();
 
 		const Preset &preset = d->currentPreset();
@@ -939,7 +993,7 @@ void BrushSettings::setGlobalSmoothing(int smoothing)
 
 bool BrushSettings::isCurrentEraserSlot() const
 {
-	return d->current == ERASER_SLOT;
+	return d->current == ERASER_SLOT_INDEX;
 }
 
 void BrushSettings::changeBrushType(const QAction *action)
@@ -1070,7 +1124,7 @@ void BrushSettings::updateUi()
 	// Show correct blending mode
 	d->ui.blendmode->setModel(classic.erase ? d->eraseModes : d->blendModes);
 	d->ui.modeEraser->setChecked(brush.isEraser());
-	d->ui.modeEraser->setEnabled(d->current != ERASER_SLOT);
+	d->ui.modeEraser->setEnabled(!isCurrentEraserSlot());
 
 	int mode = DP_classic_brush_blend_mode(&classic);
 	d->ui.modeColorpick->setEnabled(mode != DP_BLEND_MODE_ERASE);
@@ -1410,7 +1464,8 @@ void BrushSettings::pushSettings()
 
 namespace toolprop {
 static const ToolProperties::RangedValue<int>
-	activeSlot = {QStringLiteral("active"), 0, 0, BRUSH_COUNT - 1},
+	activeSlot =
+		{QStringLiteral("active"), 0, 0, BrushSettings::TOTAL_SLOT_COUNT - 1},
 	stabilizationMode{
 		QString("stabilizationmode"), 0, 0,
 		int(brushes::LastStabilizationMode)},
@@ -1420,7 +1475,7 @@ static const ToolProperties::RangedValue<int>
 static const ToolProperties::Value<bool>
 	finishStrokes = {QStringLiteral("finishstrokes"), true},
 	useBrushSampleCount = {QStringLiteral("usebrushsamplecount"), true};
-// dynamic toolprops: brush[0-5] (serialized JSON)
+// Plus some dynamic tool properties for the brush slots.
 }
 
 ToolProperties BrushSettings::saveToolSettings()
@@ -1435,19 +1490,21 @@ ToolProperties BrushSettings::saveToolSettings()
 	cfg.setValue(
 		toolprop::smoothing, d->ui.smoothingBox->value() - d->globalSmoothing);
 
-	for(int i = 0; i < BRUSH_COUNT; ++i) {
+	for(int i = 0; i < TOTAL_SLOT_COUNT; ++i) {
+		int cfgIndex = translateBrushSlotConfigIndex(i);
 		cfg.setValue(
 			ToolProperties::Value<QByteArray>{
-				QStringLiteral("brush%1").arg(i), QByteArray()},
-			d->brushSlots[i].toJson(true));
+				QStringLiteral("brush%1").arg(cfgIndex), QByteArray()},
+			d->brushAt(i).toJson(true));
 
-		const Preset &preset = d->presets[i];
+		const Preset &preset = d->presetAt(i);
 		cfg.setValue(
 			ToolProperties::Value<QByteArray>{
-				QStringLiteral("last%1").arg(i), QByteArray()},
+				QStringLiteral("last%1").arg(cfgIndex), QByteArray()},
 			preset.valid ? preset.originalBrush.toJson() : QByteArray());
 		cfg.setValue(
-			ToolProperties::Value<int>{QStringLiteral("preset%1").arg(i), 0},
+			ToolProperties::Value<int>{
+				QStringLiteral("preset%1").arg(cfgIndex), 0},
 			preset.valid && (preset.attached || preset.reattach) ? preset.id
 																 : 0);
 	}
@@ -1457,13 +1514,13 @@ ToolProperties BrushSettings::saveToolSettings()
 
 void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 {
+	for(int i = 0; i < TOTAL_SLOT_COUNT; ++i) {
+		brushes::ActiveBrush &brush = d->brushAt(i);
+		Preset &preset = d->presetAt(i);
 
-	for(int i = 0; i < BRUSH_COUNT; ++i) {
-		brushes::ActiveBrush &brush = d->brushSlots[i];
-		Preset &preset = d->presets[i];
-
+		int cfgIndex = translateBrushSlotConfigIndex(i);
 		QByteArray brushData = cfg.value(ToolProperties::Value<QByteArray>{
-			QStringLiteral("brush%1").arg(i), QByteArray()});
+			QStringLiteral("brush%1").arg(cfgIndex), QByteArray()});
 
 		const QJsonObject o =
 			QJsonDocument::fromJson(
@@ -1473,30 +1530,31 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 
 		const QJsonObject lo =
 			QJsonDocument::fromJson(cfg.value(ToolProperties::Value<QByteArray>{
-										QStringLiteral("last%1").arg(i),
+										QStringLiteral("last%1").arg(cfgIndex),
 										getDefaultBrushForSlot(i)}))
 				.object();
 		if(!lo.isEmpty()) {
 			preset = Preset::makeDetached(brushes::ActiveBrush::fromJson(lo));
 		}
 
-		preset.id = cfg.value(
-			ToolProperties::Value<int>{QStringLiteral("preset%1").arg(i), 0});
+		preset.id = cfg.value(ToolProperties::Value<int>{
+			QStringLiteral("preset%1").arg(cfgIndex), 0});
 		if(brushData.isEmpty() && preset.id == 0) {
 			preset.id = getDefaultPresetIdForSlot(i);
 			preset.overwrite = true;
 		}
 
-		if(!d->shareBrushSlotColor)
-			d->brushSlotButton[i]->setColorSwatch(brush.qColor());
+		if(!d->shareBrushSlotColor) {
+			d->buttonAt(i)->setColorSwatch(brush.qColor());
+		}
 	}
 
-	brushes::ActiveBrush &eraser = d->brushSlots[ERASER_SLOT];
+	brushes::ActiveBrush &eraser = d->eraserSlot.brush;
 	eraser.classic().erase = true;
 	eraser.myPaint().brush().erase = true;
 
 	selectBrushSlot(cfg.value(toolprop::activeSlot));
-	d->previousNonEraser = d->current != ERASER_SLOT ? d->current : 0;
+	d->previousNonEraser = isCurrentEraserSlot() ? 0 : d->current;
 	d->finishStrokes = cfg.value(toolprop::finishStrokes);
 	d->useBrushSampleCount = cfg.value(toolprop::useBrushSampleCount);
 	if(!d->useBrushSampleCount) {
@@ -1539,13 +1597,14 @@ void BrushSettings::setForeground(const QColor &color)
 {
 	if(color != d->currentBrush().qColor()) {
 		if(d->shareBrushSlotColor) {
-			for(int i = 0; i < BRUSH_COUNT; ++i)
-				d->brushSlots[i].setQColor(color);
+			for(int i = 0; i < TOTAL_SLOT_COUNT; ++i)
+				d->brushAt(i).setQColor(color);
 
 		} else {
-			Q_ASSERT(d->current >= 0 && d->current < BRUSH_COUNT);
-			d->currentBrush().setQColor(color);
-			d->brushSlotButton[d->current]->setColorSwatch(color);
+			Q_ASSERT(d->current >= 0 && d->current < TOTAL_SLOT_COUNT);
+			Slot &slot = d->currentSlot();
+			slot.brush.setQColor(color);
+			slot.button->setColorSwatch(color);
 		}
 
 		d->ui.preview->setBrush(d->currentBrush());
@@ -1594,8 +1653,8 @@ void BrushSettings::handlePresetChanged(
 	int presetId, const QString &name, const QString &description,
 	const QPixmap &thumbnail, const brushes::ActiveBrush &brush)
 {
-	for(int i = 0; i < BRUSH_COUNT; ++i) {
-		Preset &preset = d->presets[i];
+	for(int i = 0; i < TOTAL_SLOT_COUNT; ++i) {
+		Preset &preset = d->presetAt(i);
 		if(preset.isAttached() && preset.id == presetId) {
 			preset.originalName = name;
 			preset.originalDescription = description;
@@ -1610,7 +1669,7 @@ void BrushSettings::handlePresetChanged(
 			if(preset.changedThumbnail.has_value()) {
 				preset.changeThumbnail(preset.changedThumbnail.value());
 			}
-			preset.changeBrush(d->brushSlots[i], i == ERASER_SLOT);
+			preset.changeBrush(d->brushAt(i), i == ERASER_SLOT_INDEX);
 			if(i == d->current) {
 				d->ui.preview->setPreset(thumbnail, preset.hasChanges());
 			}
@@ -1620,8 +1679,8 @@ void BrushSettings::handlePresetChanged(
 
 void BrushSettings::handlePresetRemoved(int presetId)
 {
-	for(int i = 0; i < BRUSH_COUNT; ++i) {
-		Preset &preset = d->presets[i];
+	for(int i = 0; i < TOTAL_SLOT_COUNT; ++i) {
+		Preset &preset = d->presetAt(i);
 		if(preset.valid && preset.id == presetId) {
 			preset.id = 0;
 			preset.attached = false;
@@ -1729,6 +1788,21 @@ double BrushSettings::radiusLogarithmicToPixelSize(int radiusLogarithmic)
 	return std::exp(radiusLogarithmic / 100.0 - 2.0) * 2.0;
 }
 
+int BrushSettings::translateBrushSlotConfigIndex(int i)
+{
+	// There used to be a limit of 5 brush slots, with the eraser at
+	// index 6. To avoid doing settings migrations and retain backward
+	// compatibility, we swap the eraser and slot 6.
+	switch(i) {
+	case 6:
+		return ERASER_SLOT_INDEX;
+	case ERASER_SLOT_INDEX:
+		return 6;
+	default:
+		return i;
+	}
+}
+
 int BrushSettings::getDefaultPresetIdForSlot(int i)
 {
 	switch(i) {
@@ -1742,7 +1816,15 @@ int BrushSettings::getDefaultPresetIdForSlot(int i)
 		return 5; // MyPaint Classic Knife
 	case 4:
 		return 51; // MyPaint Deevad Thin Glazing
-	case ERASER_SLOT:
+	case 5:
+		return 142; // MyPaint Ramon PenBrush
+	case 6:
+		return 172; // MyPaint Tanda Charcoal 03
+	case 7:
+		return 34; // MyPaint Classic Smudge
+	case 8:
+		return 126; // MyPaint Kaerhorn Classic SK
+	case ERASER_SLOT_INDEX:
 		return 200; // Drawpile Paint 2
 	default:
 		qWarning("Unknown slot for default preset %d", i);
@@ -1754,6 +1836,7 @@ QByteArray BrushSettings::getDefaultBrushForSlot(int i)
 {
 	switch(i) {
 	case 0:
+	case 5:
 		return "{\"settings\":{\"blend\":\"svg:src-over\",\"blenderase\":\"svg:"
 			   "dst-out\",\"erase\":false,\"hard\":0.800000011920929,"
 			   "\"hardcurve\":\"0,0;1,1;\",\"opacity\":1,\"opacitycurve\":\"0,"
@@ -1764,6 +1847,7 @@ QByteArray BrushSettings::getDefaultBrushForSlot(int i)
 			   "\"stabilizationmode\":0,\"stabilizer\":0},\"type\":\"dp-"
 			   "classic\",\"version\":1}";
 	case 1:
+	case 6:
 		return "{\"settings\":{\"blend\":\"svg:src-over\",\"blenderase\":\"svg:"
 			   "dst-out\",\"erase\":false,\"hard\":1,\"hardcurve\":\"0,0;1,1;"
 			   "\",\"hardp\":true,\"opacity\":1,\"opacitycurve\":\"0,0;1,1;\","
@@ -1773,6 +1857,7 @@ QByteArray BrushSettings::getDefaultBrushForSlot(int i)
 			   "\"stabilizationmode\":0,\"stabilizer\":100},\"type\":\"dp-"
 			   "classic\",\"version\":1}";
 	case 2:
+	case 7:
 		return "{\"settings\":{\"blend\":\"svg:src-over\",\"blenderase\":\"svg:"
 			   "dst-out\",\"erase\":false,\"hard\":0.699999988079071,"
 			   "\"hardcurve\":\"0,0;1,1;\",\"opacity\":1,\"opacitycurve\":\"0,"
@@ -1782,6 +1867,7 @@ QByteArray BrushSettings::getDefaultBrushForSlot(int i)
 			   "\"stabilizationmode\":0,\"stabilizer\":0},\"type\":\"dp-"
 			   "classic\",\"version\":1}";
 	case 3:
+	case 8:
 		return "{\"settings\":{\"blend\":\"svg:src-over\",\"blenderase\":\"svg:"
 			   "dst-out\",\"erase\":false,\"hard\":0.8999999761581421,"
 			   "\"hardcurve\":\"0,0;1,1;\",\"indirect\":true,\"opacity\":1,"
@@ -1800,7 +1886,7 @@ QByteArray BrushSettings::getDefaultBrushForSlot(int i)
 			   "\"0,0;1,1;\",\"spacing\":0.05000000074505806,"
 			   "\"stabilizationmode\":0,\"stabilizer\":0},\"type\":\"dp-"
 			   "classic\",\"version\":1}";
-	case ERASER_SLOT:
+	case ERASER_SLOT_INDEX:
 		return "{\"settings\":{\"blend\":\"svg:src-over\",\"blenderase\":\"svg:"
 			   "dst-out\",\"erase\":true,\"hard\":0.800000011920929,"
 			   "\"hardcurve\":\"0,0;1,1;\",\"opacity\":1,\"opacitycurve\":\"0,"
