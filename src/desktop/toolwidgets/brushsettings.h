@@ -76,7 +76,6 @@ public:
 	QWidget *getHeaderWidget() override;
 
 	bool isLocked() override;
-	bool keepTitleBarButtonSpace() const override { return true; }
 	void setMyPaintAllowed(bool myPaintAllowed);
 	void setCompatibilityMode(bool compatibilityMode);
 

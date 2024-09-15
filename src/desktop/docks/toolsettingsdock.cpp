@@ -599,11 +599,6 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 		d->headerStack->setCurrentWidget(d->headerLabel);
 	}
 
-	TitleWidget *titleWidget = qobject_cast<TitleWidget *>(titleBarWidget());
-	if(titleWidget) {
-		titleWidget->setKeepButtonSpace(ts->keepTitleBarButtonSpace());
-	}
-
 	emit sizeChanged(ts->getSize());
 	emit subpixelModeChanged(
 		ts->getSubpixelMode(), ts->isSquare(), ts->requiresOutline());

@@ -145,8 +145,6 @@ public:
 	virtual bool affectsLayer() = 0;
 	virtual bool isLocked() { return false; }
 
-	virtual bool keepTitleBarButtonSpace() const { return false; }
-
 public slots:
 	//! Toggle tool eraser mode (if it has one)
 	virtual void toggleEraserMode() {}
