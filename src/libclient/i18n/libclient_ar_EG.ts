@@ -814,7 +814,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+15"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>غير معروف</translation>
     </message>
 </context>
 <context>
