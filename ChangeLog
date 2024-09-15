@@ -22,6 +22,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Allow importing MyPaint brushes in old version formats instead of saying they contain invalid JSON. Thanks bunnie for suggesting.
  * Feature: Attach brushes to slots, showing which brush you selected and remembering changes to them. This attachment can be disabled in the tool preferences.
  * Feature: Allow configuring the number of brush slots in the tool settings, from 1 to 9, in addition to the everpresent eraser slot. Thanks vipperz for suggesting.
+ * Fix: Make palette swatch height not dependent on the width of the palette. Thanks MachKerman for reporting.
 
 2024-08-09 Version 2.2.2-beta.3
  * Fix: Use more accurate timers for performance profiles if the platform supports it.

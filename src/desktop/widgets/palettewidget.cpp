@@ -20,7 +20,7 @@ namespace widgets {
 PaletteWidget::PaletteWidget(QWidget *parent)
 	: QWidget(parent)
 	, m_colorPalette(QVector<QColor>{}, QString{}, 16)
-	, m_swatchsize(13, 8)
+	, m_swatchsize(13, 24)
 	, m_columns(16)
 	, m_spacing(1)
 	, m_leftMargin(0)
@@ -107,7 +107,8 @@ QSize PaletteWidget::calcSwatchSize(int availableWidth) const
 	s.setWidth(qMax(
 		1 + m_spacing * 2,
 		(availableWidth - m_spacing) / m_columns - m_spacing));
-	s.setHeight(qMin(int(s.width() * 0.75 + 0.5), availableWidth / 16));
+	s.setHeight(
+		qMax(24, style()->pixelMetric(QStyle::PM_DialogButtonsButtonHeight)));
 	return s;
 }
 
