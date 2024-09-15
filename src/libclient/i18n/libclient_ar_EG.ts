@@ -316,7 +316,7 @@
     <message>
         <location line="+438"/>
         <source>Error saving image</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في حفظ الصورة</translation>
     </message>
 </context>
 <context>
@@ -358,40 +358,43 @@
     <message>
         <location filename="../tools/floodfill.cpp" line="+251"/>
         <source>Filling…</source>
-        <translation type="unfinished"></translation>
+        <translation>يملأ…</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>No layer selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>لم يتم تحديد أي طبقة.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يمكن تعبئة مجموعة الطبقات %1.
+حدد طبقة عادية بدلاً من ذلك.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Continuous fill</source>
-        <translation type="unfinished"></translation>
+        <translation>تعبئة مستمرة</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Similar color fill</source>
-        <translation type="unfinished"></translation>
+        <translation>ملء لون مماثل</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Selection fill</source>
-        <translation type="unfinished"></translation>
+        <translation>ملء الاختيار</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1, %2 by %3 pixels.
 %4 at %5% opacity on %6.
 Click to apply, undo to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1، %2 × %3 بكسل.
+%4 عند %5% عتامة على %6.
+انقر للتقديم، والتراجع للإلغاء.</translation>
     </message>
 </context>
 <context>
@@ -417,13 +420,14 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../tools/magicwand.cpp" line="+202"/>
         <source>Selecting…</source>
-        <translation type="unfinished"></translation>
+        <translation>بيتم التحديد…</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>%1 by %2 pixels, %3% opacity.
 Click to apply, undo to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 × %2 ب، التعتيم %3%.
+انقر للتقديم، والتراجع للإلغاء.</translation>
     </message>
 </context>
 <context>
@@ -666,12 +670,12 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+177"/>
         <source>incompatible</source>
-        <translation type="unfinished"></translation>
+        <translation>غير متوافق</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>joining from web not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>الانضمام من الويب غير مسموح به</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1026,7 +1030,7 @@ Click to apply, undo to cancel.</source>
         <location filename="../import/animationimporter.cpp" line="+30"/>
         <source>Frame %1</source>
         <extracomment>Title for imported animation layers.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>الإطار %1</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -1215,7 +1219,7 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+4"/>
         <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>الجلسة خارج المساحة! لمواصلة الرسم، يجب على المشغل إعادة ضبطه لتقليص حجمه إلى حجم أصغر. يمكن القيام بذلك عبر الجلسة&gt; &gt;إ ضبط.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1405,17 +1409,17 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="-789"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
-        <translation type="unfinished"></translation>
+        <translation>لم يتم تمكين الوضع الآمن على مضيف بشهادة مثبتة!</translation>
     </message>
     <message>
         <location line="+524"/>
         <source>Unknown version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>إصدار غير معروف %1</translation>
     </message>
     <message>
         <location line="+247"/>
         <source>Pinned certificate has changed!</source>
-        <translation type="unfinished"></translation>
+        <translation>لقد تغيرت الشهادة المثبتة!</translation>
     </message>
     <message>
         <location line="+64"/>
@@ -1518,12 +1522,12 @@ Click to apply, undo to cancel.</source>
     <message>
         <location line="+3"/>
         <source>Closed (not allowed to join from the web browser)</source>
-        <translation type="unfinished"></translation>
+        <translation>مغلق (غير مسموح بالانضمام من متصفح الويب)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (not allowed to join via WebSocket)</source>
-        <translation type="unfinished"></translation>
+        <translation>مغلق (غير مسموح له بالانضمام عبر WebSocket)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1586,43 +1590,43 @@ Click to apply, undo to cancel.</source>
         <location line="+42"/>
         <source>It is full or closed.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>إنه ممتلئ أو مغلق.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It requires an account.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>يتطلب حسابا.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>It does not allow joining via web browser.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>لا يسمح بالانضمام عبر متصفح الويب.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>It does not allow joining via WebSockets.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>لا يسمح بالانضمام عبر WebSockets.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>It is hosted with a newer version of Drawpile, you have to update. If there is no update available, it may be hosted with a development version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>تتم مستضاف مفتوح مع إصدار أحدث من Drawpile، يجب عليك تحديثه. إذا لم يكن هناك تحديث متاح، فقد تتم مستضاف مفتوح مع إصدار تطوير من Drawpile.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>It is hosted with an old, incompatible version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>تتم استضافته مع إصدار قديم وغير متوافق من Drawpile.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is hosted with an incompatible protocol.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>تتم استضافته باستخدام بروتوكول غير متوافق.</translation>
     </message>
 </context>
 <context>
@@ -1663,17 +1667,17 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../tools/transform.cpp" line="+347"/>
         <source>You don&apos;t have permission to transform selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>ليس لديك إذن لتحويل التحديدات.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>No canvas present.</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يوجد لوحه .</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Nothing selected that could be transformed.</source>
-        <translation type="unfinished"></translation>
+        <translation>لم يتم تحديد أي شيء يمكن تحويله.</translation>
     </message>
 </context>
 <context>
@@ -1735,22 +1739,22 @@ Click to apply, undo to cancel.</source>
     <message>
         <location filename="../wasmsupport.cpp" line="+109"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
-        <translation type="unfinished"></translation>
+        <translation>أنت لا تستخدم العميل الرسمي على web.drawpile.net. لا تسمح معظم الخوادم بالاتصالات من مكان آخر.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The session address does not look like a valid WebSocket URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يبدو عنوان الجلسة كعنوان URL صالح لـ WebSocket.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You&apos;re trying to connect to an IP address instead of a proper domain name. This usually doesn&apos;t work unless you&apos;ve configured your browser to allow this first.</source>
-        <translation type="unfinished"></translation>
+        <translation>أنت تحاول الاتصال بعنوان IP بدلاً من اسم المجال الصحيح. لا يعمل هذا عادةً إلا إذا قمت بتكوين متصفحك للسماح بذلك أولاً.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The server may not support joining via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>قد لا يدعم الخادم الانضمام عبر متصفح الويب.</translation>
     </message>
 </context>
 </TS>
