@@ -21,7 +21,7 @@ set(SUPPORTED_LANGS
     # mn_MN # Mongolian
     # ms_MY # Malay
     # nb_NO # Norwegian Bokmal
-    # pl_PL # Polish
+    pl_PL # Polish
     pt_BR # Brazilian Portuguese
     pt_PT # Portuguese Portuguese
     ru_RU # Russian
