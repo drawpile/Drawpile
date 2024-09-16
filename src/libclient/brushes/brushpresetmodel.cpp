@@ -746,7 +746,7 @@ private:
 
 	bool createStateTable(QSqlQuery &query)
 	{
-		return exec("pragma foreign keys = on") &&
+		return exec(query, QStringLiteral("pragma foreign_keys = on")) &&
 			   exec(
 				   query, QStringLiteral("create table if not exists state (\n"
 										 "	key text primary key not null,\n"
