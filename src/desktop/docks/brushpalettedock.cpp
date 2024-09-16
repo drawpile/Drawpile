@@ -323,11 +323,30 @@ void BrushPalette::newPreset()
 		tagId = d->currentTag.isAssignable() ? d->currentTag.id : 0;
 	}
 
-	QRegularExpression trailingParensRe(QStringLiteral("\\([0-9]+)\\s*\\z"));
-	name.replace(trailingParensRe, QString());
-	int existingCount = d->presetModel->countNames(name);
-	if(existingCount > 0) {
-		name.append(QStringLiteral(" (%1)").arg(existingCount + 1));
+	QRegularExpression trailingParensRe(
+		QStringLiteral("\\A(.+?)\\s*\\(([0-9]+)\\)\\s*\\z"),
+		QRegularExpression::DotMatchesEverythingOption);
+	QRegularExpressionMatch match = trailingParensRe.match(name);
+	int suffixNumber;
+	if(match.hasMatch()) {
+		name = match.captured(1);
+		suffixNumber = match.captured(2).toInt();
+	} else {
+		suffixNumber = 0;
+	}
+
+	while(suffixNumber < 50) {
+		QString suffixedName =
+			suffixNumber == 0
+				? name
+				: QStringLiteral("%1 (%2)").arg(name).arg(suffixNumber + 1);
+		int existingCount = d->presetModel->countNames(suffixedName);
+		if(existingCount == 0) {
+			name = suffixedName;
+			break;
+		} else {
+			++suffixNumber;
+		}
 	}
 
 	std::optional<brushes::Preset> opt = d->presetModel->newPreset(
