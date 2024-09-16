@@ -746,10 +746,11 @@ private:
 
 	bool createStateTable(QSqlQuery &query)
 	{
-		return exec(
-			query, QStringLiteral("create table if not exists state (\n"
-								  "	key text primary key not null,\n"
-								  "	value)"));
+		return exec("pragma foreign keys = on") &&
+			   exec(
+				   query, QStringLiteral("create table if not exists state (\n"
+										 "	key text primary key not null,\n"
+										 "	value)"));
 	}
 
 	bool executeMigrations(QSqlQuery &query)
