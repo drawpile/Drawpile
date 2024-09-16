@@ -119,9 +119,9 @@ public:
 		QString sql = QStringLiteral(
 			"select id, name from tag order by LOWER(name) limit 1 offset ?");
 		if(exec(query, sql, {index}) && query.next()) {
-			return Tag{query.value(0).toInt(), query.value(1).toString(), true};
+			return Tag{query.value(0).toInt(), query.value(1).toString()};
 		} else {
-			return Tag{0, "", false};
+			return Tag{0, ""};
 		}
 	}
 
@@ -940,15 +940,15 @@ Tag BrushPresetTagModel::getTagAt(int row) const
 {
 	switch(row) {
 	case ALL_ROW:
-		return Tag{ALL_ID, data(createIndex(row, 0)).toString(), false};
+		return Tag{ALL_ID, data(createIndex(row, 0)).toString()};
 	case UNTAGGED_ROW:
-		return Tag{UNTAGGED_ID, data(createIndex(row, 0)).toString(), false};
+		return Tag{UNTAGGED_ID, data(createIndex(row, 0)).toString()};
 	default:
 		if(isTagRowInBounds(row)) {
 			const CachedTag &ct = d->getCachedTag(row - TAG_OFFSET);
-			return Tag{ct.id, ct.name, true};
+			return Tag{ct.id, ct.name};
 		} else {
-			return Tag{0, QString(), false};
+			return Tag{0, QString()};
 		}
 	}
 }
@@ -1143,10 +1143,7 @@ void BrushPresetTagModel::convertOldPresets()
 					tr("Converted from %1.").arg(preset.filename);
 				brush.setClassic(preset.brush);
 				std::optional<Preset> opt = m_presetModel->newPreset(
-					name, description, brush.presetThumbnail(), brush);
-				if(tagId > 0 && opt.has_value()) {
-					m_presetModel->changeTagAssignment(opt->id, tagId, true);
-				}
+					name, description, brush.presetThumbnail(), brush, tagId);
 			}
 		}
 	}
@@ -1279,7 +1276,7 @@ void BrushPresetTagModel::readImportBrushes(
 						tr("Could not create tag '%1'.").arg(tagName));
 					break;
 				}
-				result.importedTags.append({tagId, tagName, true});
+				result.importedTags.append({tagId, tagName});
 			}
 
 			int slashIndex = prefix.indexOf("/");
@@ -1964,12 +1961,21 @@ bool BrushPresetModel::changeTagAssignment(
 
 std::optional<Preset> BrushPresetModel::newPreset(
 	const QString &name, const QString description, const QPixmap &thumbnail,
-	const ActiveBrush &brush)
+	const ActiveBrush &brush, int tagId, int tagAssignmentSourcePresetId)
 {
 	beginResetModel();
 	int presetId = d->createPreset(
 		name, description, toPng(thumbnail), brush.presetType(),
 		brush.presetData());
+	if(presetId > 0) {
+		if(tagId > 0) {
+			d->createPresetTag(presetId, tagId);
+		}
+		if(tagAssignmentSourcePresetId > 0) {
+			d->createPresetTagsFromPresetId(
+				presetId, tagAssignmentSourcePresetId);
+		}
+	}
 	d->refreshPresetCache();
 	endResetModel();
 	if(presetId > 0) {

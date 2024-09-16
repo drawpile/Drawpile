@@ -24,7 +24,9 @@ class ClassicBrush;
 struct Tag {
 	int id;
 	QString name;
-	bool editable;
+
+	bool isAssignable() const { return id > 0; }
+	bool isEditable() const { return id > 0; }
 };
 
 struct TagAssignment {
@@ -249,7 +251,8 @@ public:
 
 	std::optional<Preset> newPreset(
 		const QString &name, const QString description,
-		const QPixmap &thumbnail, const ActiveBrush &brush);
+		const QPixmap &thumbnail, const ActiveBrush &brush, int tagId,
+		int tagAssignmentSourcePresetId = 0);
 
 	bool updatePreset(
 		int presetId, const QString &name, const QString &description,

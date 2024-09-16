@@ -309,14 +309,18 @@ void BrushPalette::newPreset()
 
 	QString name, description;
 	QPixmap thumbnail;
-	if(d->brushSettings->currentPresetId() > 0) {
+	int tagId;
+	int sourcePresetId = d->brushSettings->currentPresetId();
+	if(sourcePresetId > 0) {
 		name = d->brushSettings->currentPresetName();
 		description = d->brushSettings->currentPresetDescription();
 		thumbnail = d->brushSettings->currentPresetThumbnail();
+		tagId = 0;
 	} else {
 		name = tr("New Brush");
 		description = QStringLiteral("");
 		thumbnail = brush.presetThumbnail();
+		tagId = d->currentTag.isAssignable() ? d->currentTag.id : 0;
 	}
 
 	QRegularExpression trailingParensRe(QStringLiteral("\\([0-9]+)\\s*\\z"));
@@ -326,8 +330,8 @@ void BrushPalette::newPreset()
 		name.append(QStringLiteral(" (%1)").arg(existingCount + 1));
 	}
 
-	std::optional<brushes::Preset> opt =
-		d->presetModel->newPreset(name, description, thumbnail, brush);
+	std::optional<brushes::Preset> opt = d->presetModel->newPreset(
+		name, description, thumbnail, brush, tagId, sourcePresetId);
 	if(opt.has_value()) {
 		int presetId = opt->id;
 		setSelectedPresetId(presetId);
@@ -455,8 +459,8 @@ void BrushPalette::exportBrushes()
 void BrushPalette::tagIndexChanged(int row)
 {
 	d->currentTag = d->tagModel->getTagAt(row);
-	d->editTagAction->setEnabled(d->currentTag.editable);
-	d->deleteTagAction->setEnabled(d->currentTag.editable);
+	d->editTagAction->setEnabled(d->currentTag.isEditable());
+	d->deleteTagAction->setEnabled(d->currentTag.isEditable());
 	d->presetModel->setTagIdToFilter(d->currentTag.id);
 	d->tagModel->setState(SELECTED_TAG_ID_KEY, d->currentTag.id);
 }
@@ -551,7 +555,7 @@ void BrushPalette::newTag()
 
 void BrushPalette::editCurrentTag()
 {
-	if(d->currentTag.editable) {
+	if(d->currentTag.isEditable()) {
 		bool ok;
 		QString name = QInputDialog::getText(
 			this, tr("Edit Tag"), tr("Tag name:"), QLineEdit::Normal,
@@ -567,7 +571,7 @@ void BrushPalette::editCurrentTag()
 
 void BrushPalette::deleteCurrentTag()
 {
-	if(d->currentTag.editable) {
+	if(d->currentTag.isEditable()) {
 		QMessageBox *box = utils::makeQuestion(
 			this, tr("Delete Tag"),
 			tr("Really delete tag '%1'? This will not delete the brushes "
@@ -580,7 +584,7 @@ void BrushPalette::deleteCurrentTag()
 			box, &QMessageBox::finished, this,
 			[this, tagId = d->currentTag.id](int result) {
 				if(result == QMessageBox::Yes && tagId == d->currentTag.id &&
-				   d->currentTag.editable) {
+				   d->currentTag.isEditable()) {
 					d->tagModel->deleteTag(tagId);
 				}
 			});
