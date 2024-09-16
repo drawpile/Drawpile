@@ -845,6 +845,7 @@ void BrushSettings::selectBrushSlot(int i)
 	}
 
 	const Preset &preset = d->currentPreset();
+	updateMenuActions();
 	emit presetIdChanged(preset.effectiveId());
 	updateChangesInBrushPresets();
 }
@@ -979,6 +980,7 @@ void BrushSettings::swapWithSlot(int i)
 
 		const Preset &preset = d->currentPreset();
 		changePresetBrush(d->currentBrush());
+		updateMenuActions();
 		emit presetIdChanged(preset.effectiveId());
 	}
 }
