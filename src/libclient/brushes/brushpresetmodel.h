@@ -251,8 +251,7 @@ public:
 
 	std::optional<Preset> newPreset(
 		const QString &name, const QString description,
-		const QPixmap &thumbnail, const ActiveBrush &brush, int tagId,
-		int tagAssignmentSourcePresetId = 0);
+		const QPixmap &thumbnail, const ActiveBrush &brush, int tagId);
 
 	bool updatePreset(
 		int presetId, const QString &name, const QString &description,
