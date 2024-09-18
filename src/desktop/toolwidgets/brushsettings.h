@@ -65,6 +65,7 @@ public:
 	const QString &currentPresetName() const;
 	const QString &currentPresetDescription() const;
 	const QPixmap &currentPresetThumbnail() const;
+	const QKeySequence &currentPresetShortcut() const;
 
 	int currentBrushSlot() const;
 	bool isCurrentEraserSlot() const;
@@ -97,6 +98,7 @@ public slots:
 	void changeCurrentPresetName(const QString &name);
 	void changeCurrentPresetDescription(const QString &description);
 	void changeCurrentPresetThumbnail(const QPixmap &thumbnail);
+	void changeCurrentPresetShortcut(const QKeySequence &shortcut);
 
 signals:
 	void presetIdChanged(int presetId);
@@ -125,7 +127,8 @@ private slots:
 	void quickAdjustOn(QSpinBox *box, qreal adjustment);
 	void handlePresetChanged(
 		int presetId, const QString &name, const QString &description,
-		const QPixmap &thumbnail, const brushes::ActiveBrush &brush);
+		const QPixmap &thumbnail, const brushes::ActiveBrush &brush,
+		const QKeySequence &shortcut);
 	void handlePresetRemoved(int presetId);
 	void detachCurrentSlot();
 

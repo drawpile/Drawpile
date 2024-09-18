@@ -135,8 +135,6 @@ target_sources(drawpile PRIVATE
 	dialogs/settingsdialog/general.cpp
 	dialogs/settingsdialog/general.h
 	dialogs/settingsdialog/helpers.h
-	dialogs/settingsdialog/input.cpp
-	dialogs/settingsdialog/input.h
 	dialogs/settingsdialog/network.cpp
 	dialogs/settingsdialog/network.h
 	dialogs/settingsdialog/notifications.cpp
@@ -153,6 +151,10 @@ target_sources(drawpile PRIVATE
 	dialogs/settingsdialog/servers.h
 	dialogs/settingsdialog/shortcuts.cpp
 	dialogs/settingsdialog/shortcuts.h
+	dialogs/settingsdialog/tablet.cpp
+	dialogs/settingsdialog/tablet.h
+	dialogs/settingsdialog/touch.cpp
+	dialogs/settingsdialog/touch.h
 	dialogs/settingsdialog/tools.cpp
 	dialogs/settingsdialog/tools.h
 	dialogs/startdialog.cpp

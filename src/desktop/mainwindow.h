@@ -310,6 +310,12 @@ private:
 	QAction *getAction(const QString &name);
 	QAction *searchAction(const QString &name);
 
+	void addBrushShortcut(
+		const QString &name, const QString &text, const QKeySequence &shortcut);
+	void changeBrushShortcut(const QString &name, const QString &text);
+	void removeBrushShortcut(const QString &name);
+	void triggerBrushShortcut(QAction *action);
+
 	//! Add a new entry to recent files list
 	void addRecentFile(const QString &file);
 
@@ -344,6 +350,7 @@ private:
 	void resetDefaultDocks();
 	void resetDefaultToolbars();
 	void setupActions();
+	void setupBrushShortcuts();
 	void updateInterfaceModeActions();
 	void reenableUpdates();
 	void keepCanvasPosition(const std::function<void()> &block);

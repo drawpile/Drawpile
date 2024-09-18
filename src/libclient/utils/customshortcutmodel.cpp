@@ -60,6 +60,15 @@ QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
 		} else {
 			return QVariant();
 		}
+	} else if(role == Qt::TextAlignmentRole) {
+		switch(index.column()) {
+		case int(CurrentShortcut):
+		case int(AlternateShortcut):
+		case int(DefaultShortcut):
+			return Qt::AlignCenter;
+		default:
+			return QVariant();
+		}
 	} else if(role == Qt::ForegroundRole) {
 		if(m_conflictRows.contains(row)) {
 			return QColor(Qt::white);
@@ -72,6 +81,20 @@ QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
 		} else {
 			return QVariant{};
 		}
+	} else if(role == int(FilterRole)) {
+		const CustomShortcut &cs = m_loadedShortcuts[m_shortcutIndexes[row]];
+		QString searchSuffix = cs.searchText.isEmpty()
+								   ? QString()
+								   : QStringLiteral(" (%1)").arg(cs.searchText);
+		return QStringLiteral(
+				   "action:%1%2\nprimaryshortcut:%3\nalternateshortcut:%4\n"
+				   "defaultprimaryshortcut:%5\ndefaultalternateshortcut:%6\n")
+			.arg(
+				cs.title, searchSuffix,
+				cs.currentShortcut.toString(QKeySequence::NativeText),
+				cs.alternateShortcut.toString(QKeySequence::NativeText),
+				cs.defaultShortcut.toString(QKeySequence::NativeText),
+				cs.defaultAlternateShortcut.toString(QKeySequence::NativeText));
 	} else {
 		return QVariant();
 	}
@@ -213,14 +236,16 @@ bool CustomShortcutModel::isCustomizableActionRegistered(const QString &name)
 void CustomShortcutModel::registerCustomizableAction(
 	const QString &name, const QString &title, const QIcon &icon,
 	const QKeySequence &defaultShortcut,
-	const QKeySequence &defaultAlternateShortcut)
+	const QKeySequence &defaultAlternateShortcut, const QString &searchText)
 {
-	if(!m_customizableActions.contains(name)) {
+	if(m_customizableActions.contains(name)) {
+		qWarning(
+			"Attempt to re-register existing shortcut %s",
+			qUtf8Printable(name));
+	} else {
 		m_customizableActions.insert(
-			name,
-			CustomShortcut{
-				name, title, icon, defaultShortcut, defaultAlternateShortcut,
-				QKeySequence(), QKeySequence()});
+			name, {name, title, searchText, icon, defaultShortcut,
+				   defaultAlternateShortcut, QKeySequence(), QKeySequence()});
 	}
 }
 

@@ -17,6 +17,8 @@ public:
 		ColumnCount
 	};
 
+	enum Role { FilterRole = Qt::UserRole + 1 };
+
 	explicit CanvasShortcutsModel(QObject *parent = nullptr);
 
 	void loadShortcuts(const QVariantMap &cfg);

@@ -3,6 +3,7 @@
 #include "desktop/filewrangler.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/curvewidget.h"
+#include "desktop/widgets/keysequenceedit.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/toolmessage.h"
 #include "libclient/canvas/blendmodes.h"
@@ -25,6 +26,7 @@
 #include <QSignalBlocker>
 #include <QSpacerItem>
 #include <QStackedWidget>
+#include <QToolButton>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -51,6 +53,10 @@ struct BrushSettingsDialog::Private {
 	QLineEdit *presetLabelEdit;
 	QLineEdit *presetNameEdit;
 	QPlainTextEdit *presetDescriptionEdit;
+	QLineEdit *presetShortcutLine;
+	QToolButton *presetShortcutButton;
+	widgets::KeySequenceEdit *presetShortcutEdit;
+	QLabel *presetShortcutConflictLabel;
 	QComboBox *brushTypeCombo;
 	QLabel *brushModeLabel;
 	QComboBox *brushModeCombo;
@@ -168,6 +174,19 @@ void BrushSettingsDialog::setPresetThumbnail(const QPixmap &presetThumbnail)
 		QSignalBlocker blocker(d->presetLabelEdit);
 		d->presetLabelEdit->clear();
 		showPresetThumbnail(presetThumbnail);
+	}
+}
+
+void BrushSettingsDialog::setPresetShortcut(const QKeySequence &presetShortcut)
+{
+	if(presetShortcut != d->presetShortcutEdit->keySequence()) {
+		QSignalBlocker blocker(d->presetShortcutEdit);
+		d->presetShortcutLine->setText(
+			presetShortcut.isEmpty()
+				? tr("No shortcut assigned")
+				: presetShortcut.toString(QKeySequence::NativeText));
+		d->presetShortcutEdit->setKeySequence(presetShortcut);
+		emit presetShortcutChanged(presetShortcut);
 	}
 }
 
@@ -342,6 +361,59 @@ QWidget *BrushSettingsDialog::buildPresetPageUi()
 	QFormLayout *attachedLayout = new QFormLayout;
 	attachedLayout->setContentsMargins(0, 0, 0, 0);
 	d->presetAttachedWidget->setLayout(attachedLayout);
+
+	QHBoxLayout *shortcutLayout = new QHBoxLayout;
+	shortcutLayout->setContentsMargins(0, 0, 0, 0);
+	shortcutLayout->setSpacing(0);
+
+	d->presetShortcutLine = new QLineEdit;
+	d->presetShortcutLine->setEnabled(false);
+	shortcutLayout->addWidget(d->presetShortcutLine, 1);
+
+	d->presetShortcutButton = new QToolButton;
+	d->presetShortcutButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+	d->presetShortcutButton->setText(tr("Assign"));
+	shortcutLayout->addWidget(d->presetShortcutButton);
+	connect(d->presetShortcutButton, &QToolButton::clicked, this, [this] {
+		d->presetShortcutLine->hide();
+		d->presetShortcutButton->hide();
+		d->presetShortcutEdit->show();
+		d->presetShortcutEdit->setFocus();
+	});
+
+	d->presetShortcutEdit = new widgets::KeySequenceEdit;
+	d->presetShortcutEdit->hide();
+	shortcutLayout->addWidget(d->presetShortcutEdit);
+	connect(
+		d->presetShortcutEdit, &widgets::KeySequenceEdit::editingFinished, this,
+		[this] {
+			d->presetShortcutEdit->hide();
+			d->presetShortcutLine->show();
+			d->presetShortcutButton->show();
+			d->presetShortcutButton->setFocus();
+			QKeySequence keySequence = d->presetShortcutEdit->keySequence();
+			d->presetShortcutLine->setText(
+				keySequence.toString(QKeySequence::NativeText));
+			emit presetShortcutChanged(keySequence);
+		});
+
+	attachedLayout->addRow(tr("Shortcut:"), shortcutLayout);
+
+	d->presetShortcutConflictLabel = new QLabel;
+	d->presetShortcutConflictLabel->setTextFormat(Qt::RichText);
+	d->presetShortcutConflictLabel->setText(
+		QStringLiteral("%1<a href=\"#\">%2</a>")
+			.arg(
+				//: This is part of the sentence "Conflicting shortcut. Click
+				// here to fix it." The latter part is a clickable link.
+				tr("Conflicting shortcut. ").toHtmlEscaped(),
+				//: This is part of the sentence "Conflicting shortcut. Click
+				// here to fix it." The latter part is a clickable link.
+				tr("Click here to fix it.").toHtmlEscaped()));
+	d->presetShortcutConflictLabel->hide();
+	attachedLayout->addRow(nullptr, d->presetShortcutConflictLabel);
+
+	utils::addFormSpacer(attachedLayout);
 
 	QGridLayout *thumbnailLayout = new QGridLayout;
 

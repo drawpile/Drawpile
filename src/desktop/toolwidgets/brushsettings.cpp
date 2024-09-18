@@ -120,6 +120,25 @@ struct Preset : brushes::Preset {
 			}
 		}
 	}
+
+	bool changeShortcut(const QKeySequence &shortcut)
+	{
+		if(isAttached()) {
+			if(shortcut == originalShortcut) {
+				if(changedShortcut.has_value()) {
+					changedShortcut = {};
+					return true;
+				}
+			} else {
+				if(!changedShortcut.has_value() ||
+				   shortcut != changedShortcut.value()) {
+					changedShortcut = shortcut;
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 };
 
 struct Slot {
@@ -276,9 +295,11 @@ void BrushSettings::connectBrushPresets(brushes::BrushPresetModel *brushPresets)
 				preset.originalDescription = opt->originalDescription;
 				preset.originalThumbnail = opt->originalThumbnail;
 				preset.originalBrush = opt->originalBrush;
+				preset.originalShortcut = opt->originalShortcut;
 				preset.changedName = opt->changedName;
 				preset.changedDescription = opt->changedDescription;
 				preset.changedThumbnail = opt->changedThumbnail;
+				preset.changedShortcut = opt->changedShortcut;
 			}
 			if(preset.overwrite) {
 				changeBrushInSlot(preset.originalBrush, i);
@@ -834,6 +855,11 @@ const QPixmap &BrushSettings::currentPresetThumbnail() const
 	return d->currentPreset().effectiveThumbnail();
 }
 
+const QKeySequence &BrushSettings::currentPresetShortcut() const
+{
+	return d->currentPreset().effectiveShortcut();
+}
+
 int BrushSettings::currentBrushSlot() const
 {
 	return d->current;
@@ -929,6 +955,7 @@ void BrushSettings::resetBrushInSlot(int i)
 			preset.changedDescription = {};
 			preset.changedThumbnail = {};
 			preset.changedBrush = {};
+			preset.changedShortcut = {};
 			setBrushPresetInSlot(preset, i);
 		} else {
 			setBrushDetachedInSlot(preset.originalBrush, i);
@@ -959,6 +986,15 @@ void BrushSettings::changeCurrentPresetThumbnail(const QPixmap &thumbnail)
 	Preset &preset = d->currentPreset();
 	if(preset.changeThumbnail(thumbnail)) {
 		d->ui.preview->setPresetThumbnail(thumbnail);
+		d->ui.preview->setPresetChanged(preset.hasChanges());
+		updateChangesInCurrentBrushPreset();
+	}
+}
+
+void BrushSettings::changeCurrentPresetShortcut(const QKeySequence &shortcut)
+{
+	Preset &preset = d->currentPreset();
+	if(preset.changeShortcut(shortcut)) {
 		d->ui.preview->setPresetChanged(preset.hasChanges());
 		updateChangesInCurrentBrushPreset();
 	}
@@ -1411,7 +1447,7 @@ void BrushSettings::updateChangesInBrushPresetInSlot(int i)
 		d->brushPresets->changePreset(
 			preset.id, preset.changedName, preset.changedDescription,
 			preset.changedThumbnail, preset.changedBrush,
-			i == ERASER_SLOT_INDEX);
+			preset.changedShortcut, i == ERASER_SLOT_INDEX);
 	}
 }
 
@@ -1694,7 +1730,8 @@ void BrushSettings::quickAdjustOn(QSpinBox *box, qreal adjustment)
 
 void BrushSettings::handlePresetChanged(
 	int presetId, const QString &name, const QString &description,
-	const QPixmap &thumbnail, const brushes::ActiveBrush &brush)
+	const QPixmap &thumbnail, const brushes::ActiveBrush &brush,
+	const QKeySequence &shortcut)
 {
 	for(int i = 0; i < TOTAL_SLOT_COUNT; ++i) {
 		Preset &preset = d->presetAt(i);
@@ -1703,6 +1740,7 @@ void BrushSettings::handlePresetChanged(
 			preset.originalDescription = description;
 			preset.originalThumbnail = thumbnail;
 			preset.originalBrush = brush;
+			preset.originalShortcut = shortcut;
 			if(preset.changedName.has_value()) {
 				preset.changeName(preset.changedName.value());
 			}
@@ -1713,6 +1751,9 @@ void BrushSettings::handlePresetChanged(
 				preset.changeThumbnail(preset.changedThumbnail.value());
 			}
 			preset.changeBrush(d->brushAt(i), i == ERASER_SLOT_INDEX);
+			if(preset.changedShortcut.has_value()) {
+				preset.changeShortcut(preset.changedShortcut.value());
+			}
 			if(i == d->current) {
 				d->ui.preview->setPreset(thumbnail, preset.hasChanges());
 			}

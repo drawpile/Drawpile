@@ -4,6 +4,7 @@
 #include <QDialog>
 
 class QButtonGroup;
+class QDialogButtonBox;
 class QStackedWidget;
 
 namespace desktop {
@@ -24,8 +25,8 @@ public:
 	void activateShortcutsPanel();
 
 private:
-	void activatePanel(QWidget *panel);
-	void addPanel(QWidget *panel);
+	void activatePanel(QWidget *panel, QDialogButtonBox *buttons);
+	void addPanel(QWidget *panel, QDialogButtonBox *buttons);
 
 	desktop::settings::Settings &m_settings;
 	QButtonGroup *m_group;

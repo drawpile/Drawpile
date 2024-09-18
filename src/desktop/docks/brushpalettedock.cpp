@@ -315,10 +315,12 @@ void BrushPalette::newPreset()
 
 	QString name, description;
 	QPixmap thumbnail;
+	QKeySequence shortcut;
 	if(d->brushSettings->currentPresetId() > 0) {
 		name = d->brushSettings->currentPresetName();
 		description = d->brushSettings->currentPresetDescription();
 		thumbnail = d->brushSettings->currentPresetThumbnail();
+		shortcut = d->brushSettings->currentPresetShortcut();
 	} else {
 		name = tr("New Brush");
 		description = QStringLiteral("");
@@ -353,8 +355,8 @@ void BrushPalette::newPreset()
 		}
 	}
 
-	std::optional<brushes::Preset> opt =
-		d->presetModel->newPreset(name, description, thumbnail, brush, tagId);
+	std::optional<brushes::Preset> opt = d->presetModel->newPreset(
+		name, description, thumbnail, brush, shortcut, tagId);
 	if(opt.has_value()) {
 		int presetId = opt->id;
 		setSelectedPresetId(presetId);
@@ -399,10 +401,31 @@ void BrushPalette::overwriteCurrentPreset(QWidget *parent)
 				presetId, d->brushSettings->currentPresetName(),
 				d->brushSettings->currentPresetDescription(),
 				d->brushSettings->currentPresetThumbnail(),
-				d->brushSettings->currentBrush());
+				d->brushSettings->currentBrush(),
+				d->brushSettings->currentPresetShortcut());
 		}
 	});
 	box->show();
+}
+
+void BrushPalette::setSelectedPresetIdsFromShortcut(
+	const QKeySequence &shortcut)
+{
+	QVector<int> ids = d->presetModel->getPresetIdsForShortcut(shortcut);
+	int count = ids.size();
+	if(count != 0) {
+		int currentIndex = ids.indexOf(d->selectedPresetId);
+		int i = currentIndex < 0 ? 0 : ((currentIndex + 1) % count);
+		setSelectedPresetId(ids[i]);
+		if(d->brushSettings &&
+		   d->brushSettings->currentPresetId() != d->selectedPresetId) {
+			std::optional<brushes::Preset> opt =
+				d->presetModel->searchPresetBrushData(d->selectedPresetId);
+			if(opt.has_value()) {
+				d->brushSettings->setCurrentBrushPreset(opt.value());
+			}
+		}
+	}
 }
 
 void BrushPalette::resetAllPresets()

@@ -11,6 +11,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QLocale>
 #include <QMutexLocker>
 #include <QRecursiveMutex>
 #include <QRegularExpression>
@@ -19,12 +20,12 @@
 #include <QSqlQuery>
 #include <QTimer>
 #include <QVector>
+#include <algorithm>
 #include <cctype>
 #include <dpcommon/platform_qt.h>
 
 namespace brushes {
 
-static constexpr int THUMBNAIL_SIZE = 64;
 static constexpr int ALL_ROW = 0;
 static constexpr int UNTAGGED_ROW = 1;
 static constexpr int TAG_OFFSET = 2;
@@ -58,7 +59,59 @@ struct PresetChange {
 	std::optional<QString> description;
 	std::optional<QPixmap> thumbnail;
 	std::optional<ActiveBrush> brush;
+	std::optional<QKeySequence> shortcut;
 };
+
+struct PresetShortcutEntry {
+	int id;
+	QString name;
+
+	bool operator==(const PresetShortcutEntry &other) const
+	{
+		return id == other.id && name == other.name;
+	}
+
+	bool operator!=(const PresetShortcutEntry &other) const
+	{
+		return id != other.id || name != other.name;
+	}
+
+	bool operator<(const PresetShortcutEntry &other) const
+	{
+		return name.compare(other.name, Qt::CaseInsensitive) < 1;
+	}
+};
+
+struct PresetShortcut {
+	QVector<PresetShortcutEntry> entries;
+
+	QVector<int> ids() const
+	{
+		QVector<int> v;
+		v.reserve(entries.size());
+		for(const PresetShortcutEntry &entry : entries) {
+			v.append(entry.id);
+		}
+		return v;
+	}
+
+	QStringList names() const
+	{
+		QStringList v;
+		v.reserve(entries.size());
+		for(const PresetShortcutEntry &entry : entries) {
+			v.append(entry.name);
+		}
+		return v;
+	}
+
+	QString text(const QLocale &locale) const
+	{
+		return locale.createSeparatedList(names());
+	}
+};
+
+using PresetShortcutMap = QHash<QKeySequence, PresetShortcut>;
 }
 
 class BrushPresetTagModel::Private {
@@ -81,6 +134,14 @@ public:
 			&m_presetChangeTimer, &QTimer::timeout,
 			std::bind(&Private::writePresetChanges, this));
 	}
+
+	void setPresetModel(BrushPresetModel *presetModel)
+	{
+		Q_ASSERT(!m_presetModel);
+		m_presetModel = presetModel;
+	}
+
+	BrushPresetModel *presetModel() const { return m_presetModel; }
 
 	int createTag(const QString &name)
 	{
@@ -170,15 +231,18 @@ public:
 	int createPreset(
 		const QString &name, const QString &description,
 		const QByteArray &thumbnail, const QString &type,
-		const QByteArray &data)
+		const QByteArray &data, const QString &shortcut)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
-		QString sql = QStringLiteral(
-			"insert into preset (name, description, thumbnail, type, data)\n"
-			"	values (?, ?, ?, ?, ?)");
-		if(exec(query, sql, {name, description, thumbnail, type, data})) {
+		QString sql =
+			QStringLiteral("insert into preset (name, description, thumbnail, "
+						   "type, data, shortcut) values (?, ?, ?, ?, ?, ?)");
+		if(exec(
+			   query, sql,
+			   {nonNullString(name), nonNullString(description), thumbnail,
+				type, data, nonNullString(shortcut)})) {
 			return query.lastInsertId().toInt();
 		} else {
 			return 0;
@@ -288,7 +352,8 @@ public:
 			QStringLiteral(
 				"select changed_name is not null or changed_description is not "
 				"null or changed_thumbnail is not null or changed_data is not "
-				"null as has_changes from preset where id = ?"),
+				"null or changed_shortcut is not null as has_changes "
+				"from preset where id = ?"),
 			{id});
 	}
 
@@ -297,9 +362,9 @@ public:
 		QMutexLocker locker(&m_mutex);
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
-			"select id, name, description, thumbnail, data, changed_name, "
-			"changed_description, changed_thumbnail, changed_data "
-			"from preset where id = ?");
+			"select id, name, description, thumbnail, data, shortcut, "
+			"changed_name, changed_description, changed_thumbnail, "
+			"changed_data, changed_shortcut from preset where id = ?");
 		if(exec(query, sql, {id}) && query.next()) {
 			Preset preset;
 			readPreset(preset, query);
@@ -329,7 +394,7 @@ public:
 	bool updatePreset(
 		int id, const QString &name, const QString &description,
 		const QByteArray &thumbnail, const QString &type,
-		const QByteArray &data)
+		const QByteArray &data, const QString &shortcut)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
 		QMutexLocker locker(&m_mutex);
@@ -338,12 +403,13 @@ public:
 			   query,
 			   QStringLiteral(
 				   "update preset set name = ?, description = ?, "
-				   "thumbnail = ?, type = ?, data = ?, changed_name = null, "
-				   "changed_description = null, changed_thumbnail = null, "
-				   "changed_type = null, changed_data = null where id = ?"),
-			   {name.isNull() ? QStringLiteral("") : name,
-				description.isNull() ? QStringLiteral("") : description,
-				thumbnail, type, data, id})) {
+				   "thumbnail = ?, type = ?, data = ?, shortcut = ?, "
+				   "changed_name = null, changed_description = null, "
+				   "changed_thumbnail = null, changed_type = null, "
+				   "changed_data = null, changed_shortcut = null "
+				   "where id = ?"),
+			   {nonNullString(name), nonNullString(description), thumbnail,
+				type, data, nonNullString(shortcut), id})) {
 			return query.numRowsAffected() == 1;
 		} else {
 			return false;
@@ -481,6 +547,7 @@ public:
 			cp.changedDescription = {};
 			cp.changedThumbnail = {};
 			cp.changedBrush = {};
+			cp.changedShortcut = {};
 		}
 	}
 
@@ -535,8 +602,8 @@ public:
 			QSqlQuery query(m_db);
 			QString sql = QStringLiteral(
 				"update preset set changed_name = ?, changed_description = ?, "
-				"changed_thumbnail = ?, changed_type = ?, changed_data = ? "
-				"where id = ?");
+				"changed_thumbnail = ?, changed_type = ?, changed_data = ?, "
+				"changed_shortcut = ? where id = ?");
 			if(utils::db::prepare(query, sql)) {
 				for(QHash<int, PresetChange>::const_iterator
 						it = m_presetChanges.constBegin(),
@@ -562,11 +629,17 @@ public:
 						query.bindValue(3, QVariant());
 						query.bindValue(4, QVariant());
 					}
-					query.bindValue(5, it.key());
+					query.bindValue(
+						5, it->shortcut.has_value()
+							   ? QVariant(it->shortcut->toString(
+									 QKeySequence::PortableText))
+							   : QVariant());
+					query.bindValue(6, it.key());
 					utils::db::execPrepared(query, sql);
 				}
 			}
 			m_presetChanges.clear();
+			refreshShortcutsInternal();
 		}
 	}
 
@@ -576,7 +649,75 @@ public:
 		m_presetChanges.clear();
 	}
 
+	void initShortcuts() { refreshShortcutsInternal(); }
+
+	void refreshShortcuts()
+	{
+		QMutexLocker locker(&m_mutex);
+		refreshShortcutsInternal();
+	}
+
+	void getShortcutActions(
+		const std::function<void(
+			const QString &, const QString &, const QKeySequence &)> &fn) const
+	{
+		QLocale locale;
+		for(PresetShortcutMap::const_iterator
+				it = m_presetShortcuts.constBegin(),
+				end = m_presetShortcuts.constEnd();
+			it != end; ++it) {
+			const QKeySequence &shortcut = it.key();
+			fn(getActionName(shortcut), it->text(locale), shortcut);
+		}
+	}
+
+	void getShortcutEntries(
+		const std::function<void(int, const QString &, const QKeySequence &)>
+			&fn) const
+	{
+		for(PresetShortcutMap::const_iterator
+				it = m_presetShortcuts.constBegin(),
+				end = m_presetShortcuts.constEnd();
+			it != end; ++it) {
+			const QKeySequence &shortcut = it.key();
+			for(const PresetShortcutEntry &entry : it->entries) {
+				fn(entry.id, entry.name, shortcut);
+			}
+		}
+	}
+
+	QVector<int> getPresetIdsForShortcut(const QKeySequence &shortcut) const
+	{
+		PresetShortcutMap::const_iterator found =
+			m_presetShortcuts.constFind(shortcut);
+		if(found == m_presetShortcuts.constEnd()) {
+			qWarning(
+				"Brush shortcut for %s not found",
+				qUtf8Printable(shortcut.toString(QKeySequence::NativeText)));
+			return {};
+		} else {
+			return found->ids();
+		}
+	}
+
+	bool haveShortcutForPresetId(int presetId)
+	{
+		for(const PresetShortcut &ps : m_presetShortcuts) {
+			for(const PresetShortcutEntry &entry : ps.entries) {
+				if(entry.id == presetId) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 private:
+	static QString nonNullString(const QString &s)
+	{
+		return s.isNull() ? QStringLiteral("") : s;
+	}
+
 	bool createOrUpdateStateInternal(
 		QSqlQuery &query, const QString &key, const QVariant &value)
 	{
@@ -629,9 +770,10 @@ private:
 
 		QString sql = QStringLiteral(
 			"select p.id, p.name, p.description, p.thumbnail, p.data, "
-			"p.changed_name, p.changed_description, p.changed_thumbnail, "
-			"p.changed_data, group_concat(t.tag_id) tags "
-			"from preset p left join preset_tag t on t.preset_id = p.id");
+			"p.shortcut, p.changed_name, p.changed_description, "
+			"p.changed_thumbnail, p.changed_data, p.changed_shortcut, "
+			"group_concat(t.tag_id) tags from preset p "
+			"left join preset_tag t on t.preset_id = p.id");
 		QVariantList params;
 		switch(m_tagIdToFilter) {
 		case ALL_ID:
@@ -685,18 +827,20 @@ private:
 
 		preset.originalBrush =
 			loadBrush(preset.id, query.value(4).toByteArray());
+		preset.originalShortcut = QKeySequence::fromString(
+			query.value(5).toString(), QKeySequence::PortableText);
 
-		QVariant changedName = query.value(5);
+		QVariant changedName = query.value(6);
 		if(!changedName.isNull()) {
 			preset.changedName = changedName.toString();
 		}
 
-		QVariant changedDescription = query.value(6);
+		QVariant changedDescription = query.value(7);
 		if(!changedDescription.isNull()) {
 			preset.changedDescription = changedDescription.toString();
 		}
 
-		QVariant changedThumbnail = query.value(7);
+		QVariant changedThumbnail = query.value(8);
 		if(!changedThumbnail.isNull()) {
 			if(pixmap.loadFromData(changedThumbnail.toByteArray())) {
 				preset.changedThumbnail = pixmap;
@@ -706,11 +850,74 @@ private:
 			}
 		}
 
-		QVariant changedData = query.value(8);
+		QVariant changedData = query.value(9);
 		if(!changedData.isNull()) {
 			preset.changedBrush =
 				loadBrush(preset.id, changedData.toByteArray());
 		}
+
+		QVariant changedShortcut = query.value(10);
+		if(!changedShortcut.isNull()) {
+			preset.changedShortcut = QKeySequence::fromString(
+				changedShortcut.toString(), QKeySequence::PortableText);
+		}
+	}
+
+	static QString getActionName(const QKeySequence &shortcut)
+	{
+		return QStringLiteral("__brushshortcut_%1")
+			.arg(shortcut.toString(QKeySequence::PortableText));
+	}
+
+	void refreshShortcutsInternal()
+	{
+		Q_ASSERT(m_presetModel);
+		PresetShortcutMap newPresetShortcuts;
+
+		QSqlQuery query(m_db);
+		QString sql =
+			QStringLiteral("select coalesce(changed_shortcut, shortcut), id, "
+						   "coalesce(changed_name, name) from preset where "
+						   "coalesce(changed_shortcut, shortcut, '') <> ''");
+		if(exec(query, sql)) {
+			while(query.next()) {
+				QKeySequence shortcut = QKeySequence::fromString(
+					query.value(0).toString(), QKeySequence::PortableText);
+				if(!shortcut.isEmpty()) {
+					newPresetShortcuts[shortcut].entries.append(
+						{query.value(1).toInt(), query.value(2).toString()});
+				}
+			}
+		}
+
+		QLocale locale;
+		for(PresetShortcutMap::iterator it = newPresetShortcuts.begin(),
+										end = newPresetShortcuts.end();
+			it != end; ++it) {
+
+			std::sort(it->entries.begin(), it->entries.end());
+			QString text = locale.createSeparatedList(it->names());
+			const QKeySequence &shortcut = it.key();
+
+			PresetShortcutMap::iterator found =
+				m_presetShortcuts.find(shortcut);
+			if(found == m_presetShortcuts.end()) {
+				emit m_presetModel->shortcutActionAdded(
+					getActionName(shortcut), text, shortcut);
+			} else {
+				if(found->entries != it->entries) {
+					emit m_presetModel->shortcutActionChanged(
+						getActionName(shortcut), text);
+				}
+				m_presetShortcuts.erase(found);
+			}
+		}
+
+		for(QKeySequence &shortcut : m_presetShortcuts.keys()) {
+			emit m_presetModel->shortcutActionRemoved(getActionName(shortcut));
+		}
+
+		m_presetShortcuts.swap(newPresetShortcuts);
 	}
 
 	int readInt(
@@ -807,6 +1014,7 @@ private:
 		QVector<std::function<bool(Private *, QSqlQuery &)>> migrations = {
 			&Private::migrateInitial,
 			&Private::migrateChangedPreset,
+			&Private::migratePresetShortcuts,
 		};
 
 		int originalMigrationVersion = migrationVersionVariant.toInt();
@@ -879,33 +1087,53 @@ private:
 					   "alter table preset add column changed_data blob"));
 	}
 
+	bool migratePresetShortcuts(QSqlQuery &query)
+	{
+		return exec(
+				   query,
+				   QStringLiteral("alter table preset add column "
+								  "shortcut text not null default ''")) &&
+			   exec(
+				   query,
+				   QStringLiteral(
+					   "alter table preset add column changed_shortcut text"));
+	}
+
 	QRecursiveMutex m_mutex;
 	QSqlDatabase m_db;
 	QTimer m_presetChangeTimer;
 	QHash<int, PresetChange> m_presetChanges;
 	QVector<CachedTag> m_tagCache;
 	QVector<CachedPreset> m_presetCache;
-	int m_presetIconSize = THUMBNAIL_SIZE;
+	PresetShortcutMap m_presetShortcuts;
+	BrushPresetModel *m_presetModel = nullptr;
+	int m_presetIconSize = BrushPresetModel::THUMBNAIL_SIZE;
 	int m_tagIdToFilter = -1;
 };
 
 BrushPresetTagModel::BrushPresetTagModel(QObject *parent)
 	: QAbstractItemModel(parent)
 	, d(new Private)
-	, m_presetModel(new BrushPresetModel(this))
 {
+	d->setPresetModel(new BrushPresetModel(this));
 	maybeConvertOldPresets();
+	d->initShortcuts();
 	connect(
-		this, &QAbstractItemModel::modelAboutToBeReset, m_presetModel,
+		this, &QAbstractItemModel::modelAboutToBeReset, d->presetModel(),
 		&BrushPresetModel::tagsAboutToBeReset);
 	connect(
-		this, &QAbstractItemModel::modelReset, m_presetModel,
+		this, &QAbstractItemModel::modelReset, d->presetModel(),
 		&BrushPresetModel::tagsReset);
 }
 
 BrushPresetTagModel::~BrushPresetTagModel()
 {
 	delete d;
+}
+
+BrushPresetModel *BrushPresetTagModel::presetModel()
+{
+	return d->presetModel();
 }
 
 int BrushPresetTagModel::rowCount(const QModelIndex &parent) const
@@ -1186,8 +1414,9 @@ void BrushPresetTagModel::convertOldPresets()
 				QString description =
 					tr("Converted from %1.").arg(preset.filename);
 				brush.setClassic(preset.brush);
-				std::optional<Preset> opt = m_presetModel->newPreset(
-					name, description, brush.presetThumbnail(), brush, tagId);
+				std::optional<Preset> opt = d->presetModel()->newPreset(
+					name, description, brush.presetThumbnail(), brush,
+					QString(), tagId);
 			}
 		}
 	}
@@ -1205,7 +1434,7 @@ BrushImportResult BrushPresetTagModel::importBrushPack(const QString &file)
 	}
 
 	beginResetModel();
-	m_presetModel->beginResetModel();
+	d->presetModel()->beginResetModel();
 
 	QVector<ImportBrushGroup> groups = readOrderConf(result, file, zr);
 	for(const ImportBrushGroup &group : groups) {
@@ -1216,7 +1445,7 @@ BrushImportResult BrushPresetTagModel::importBrushPack(const QString &file)
 
 	d->refreshTagCache();
 	d->refreshPresetCache();
-	m_presetModel->endResetModel();
+	d->presetModel()->endResetModel();
 	endResetModel();
 	return result;
 }
@@ -1334,7 +1563,7 @@ void BrushPresetTagModel::readImportBrushes(
 
 			int presetId = d->createPreset(
 				name, description, BrushPresetModel::toPng(thumbnail),
-				brush.presetType(), brush.presetData());
+				brush.presetType(), brush.presetData(), QString());
 			if(presetId < 1) {
 				result.errors.append(
 					tr("Could not create brush preset '%1'.").arg(name));
@@ -1411,11 +1640,11 @@ bool BrushPresetTagModel::readImportBrush(
 		outThumbnail = outBrush.presetThumbnail();
 	}
 
-	if(outThumbnail.width() != THUMBNAIL_SIZE ||
-	   outThumbnail.height() != THUMBNAIL_SIZE) {
+	if(outThumbnail.width() != BrushPresetModel::THUMBNAIL_SIZE ||
+	   outThumbnail.height() != BrushPresetModel::THUMBNAIL_SIZE) {
 		outThumbnail = outThumbnail.scaled(
-			THUMBNAIL_SIZE, THUMBNAIL_SIZE, Qt::IgnoreAspectRatio,
-			Qt::SmoothTransformation);
+			BrushPresetModel::THUMBNAIL_SIZE, BrushPresetModel::THUMBNAIL_SIZE,
+			Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 	}
 
 	return true;
@@ -1966,6 +2195,21 @@ std::optional<Preset> BrushPresetModel::searchPresetBrushData(int presetId)
 	}
 }
 
+QPixmap BrushPresetModel::searchPresetThumbnail(int presetId)
+{
+	int i = d->getCachedPresetIndexById(presetId);
+	if(i == -1) {
+		QPixmap pixmap;
+		if(pixmap.loadFromData(d->readPresetEffectiveThumbnailById(presetId))) {
+			return pixmap;
+		} else {
+			return QPixmap();
+		}
+	} else {
+		return d->getCachedPreset(i).effectiveThumbnail();
+	}
+}
+
 bool BrushPresetModel::changeTagAssignment(
 	int presetId, int tagId, bool assigned)
 {
@@ -2007,20 +2251,23 @@ bool BrushPresetModel::changeTagAssignment(
 
 std::optional<Preset> BrushPresetModel::newPreset(
 	const QString &name, const QString description, const QPixmap &thumbnail,
-	const ActiveBrush &brush, int tagId)
+	const ActiveBrush &brush, const QKeySequence &shortcut, int tagId)
 {
 	beginResetModel();
 	int presetId = d->createPreset(
 		name, description, toPng(thumbnail), brush.presetType(),
-		brush.presetData());
+		brush.presetData(), shortcut.toString(QKeySequence::PortableText));
 	if(presetId > 0 && tagId > 0) {
 		d->createPresetTag(presetId, tagId);
 	}
 	d->refreshPresetCache();
 	endResetModel();
+	d->refreshShortcuts();
 	if(presetId > 0) {
-		return Preset{presetId, name, description, thumbnail, brush,
-					  {},		{},	  {},		   {}};
+		return Preset{
+			presetId, name, description, thumbnail, brush, QKeySequence(),
+			{},		  {},	{},			 {},		{},
+		};
 	} else {
 		return {};
 	}
@@ -2028,16 +2275,18 @@ std::optional<Preset> BrushPresetModel::newPreset(
 
 bool BrushPresetModel::updatePreset(
 	int presetId, const QString &name, const QString &description,
-	const QPixmap &thumbnail, const ActiveBrush &brush)
+	const QPixmap &thumbnail, const ActiveBrush &brush,
+	const QKeySequence &shortcut)
 {
 	beginResetModel();
 	d->removePresetChange(presetId);
 	bool ok = d->updatePreset(
 		presetId, name, description, toPng(thumbnail), brush.presetType(),
-		brush.presetData());
+		brush.presetData(), shortcut.toString(QKeySequence::PortableText));
 	d->refreshPresetCache();
 	endResetModel();
-	emit presetChanged(presetId, name, description, thumbnail, brush);
+	d->refreshShortcuts();
+	emit presetChanged(presetId, name, description, thumbnail, brush, shortcut);
 	return ok;
 }
 
@@ -2050,6 +2299,7 @@ bool BrushPresetModel::deletePreset(int presetId)
 		d->removeCachedPreset(i);
 		endRemoveRows();
 	}
+	d->refreshShortcuts();
 	emit presetRemoved(presetId);
 	return ok;
 }
@@ -2058,7 +2308,8 @@ void BrushPresetModel::changePreset(
 	int presetId, const std::optional<QString> &name,
 	const std::optional<QString> &description,
 	const std::optional<QPixmap> &thumbnail,
-	const std::optional<ActiveBrush> &brush, bool inEraserSlot)
+	const std::optional<ActiveBrush> &brush,
+	const std::optional<QKeySequence> &shortcut, bool inEraserSlot)
 {
 	int i = d->getCachedPresetIndexById(presetId);
 	if(i != -1) {
@@ -2070,10 +2321,15 @@ void BrushPresetModel::changePreset(
 		if(brush.has_value() && inEraserSlot) {
 			cp.changedBrush->setEraser(cp.originalBrush.isEraser());
 		}
+		cp.changedShortcut = shortcut;
 		QModelIndex idx = index(i);
 		emit dataChanged(idx, idx);
 	}
-	d->enqueuePresetChange(presetId, {name, description, thumbnail, brush});
+	d->enqueuePresetChange(
+		presetId, {name, description, thumbnail, brush, shortcut});
+	if(shortcut.has_value() || d->haveShortcutForPresetId(presetId)) {
+		d->writePresetChanges();
+	}
 }
 
 void BrushPresetModel::resetAllPresetChanges()
@@ -2083,6 +2339,7 @@ void BrushPresetModel::resetAllPresetChanges()
 	d->resetAllPresetChanges();
 	d->resetAllPresetsInCache();
 	endResetModel();
+	d->refreshShortcuts();
 }
 
 void BrushPresetModel::writePresetChanges()
@@ -2093,6 +2350,26 @@ void BrushPresetModel::writePresetChanges()
 int BrushPresetModel::countNames(const QString &name) const
 {
 	return d->readPresetCountByName(name);
+}
+
+void BrushPresetModel::getShortcutActions(
+	const std::function<
+		void(const QString &, const QString &, const QKeySequence &)> &fn) const
+{
+	d->getShortcutActions(fn);
+}
+
+void BrushPresetModel::getShortcutEntries(
+	const std::function<void(int, const QString &, const QKeySequence &)> &fn)
+	const
+{
+	d->getShortcutEntries(fn);
+}
+
+QVector<int>
+BrushPresetModel::getPresetIdsForShortcut(const QKeySequence &shortcut) const
+{
+	return d->getPresetIdsForShortcut(shortcut);
 }
 
 QSize BrushPresetModel::iconSize() const

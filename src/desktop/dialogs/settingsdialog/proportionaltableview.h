@@ -17,7 +17,7 @@ public:
 	using Stretches = std::array<int, 4>;
 
 	static ProportionalTableView *
-	make(QLineEdit *filter, QAbstractItemModel *model);
+	make(QLineEdit *filter, int filterRole, QAbstractItemModel *model);
 
 	ProportionalTableView(QWidget *parent = nullptr);
 

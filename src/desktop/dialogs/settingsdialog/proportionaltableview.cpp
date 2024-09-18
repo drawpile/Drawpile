@@ -39,7 +39,7 @@ void ProportionalTableView::resizeEvent(QResizeEvent *event)
 }
 
 ProportionalTableView *ProportionalTableView::make(
-	QLineEdit *filter, QAbstractItemModel *model)
+	QLineEdit *filter, int filterRole, QAbstractItemModel *model)
 {
 	auto *view = new ProportionalTableView;
 	view->setCornerButtonEnabled(false);
@@ -52,6 +52,7 @@ ProportionalTableView *ProportionalTableView::make(
 	view->setEditTriggers(QAbstractItemView::AllEditTriggers);
 
 	auto *filterModel = new QSortFilterProxyModel(view);
+	filterModel->setFilterRole(filterRole);
 	filterModel->setSourceModel(model);
 	filterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
 	QObject::connect(

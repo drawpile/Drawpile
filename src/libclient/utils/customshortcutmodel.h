@@ -11,6 +11,7 @@
 struct CustomShortcut {
 	QString name;
 	QString title;
+	QString searchText;
 	QIcon icon;
 	QKeySequence defaultShortcut;
 	QKeySequence defaultAlternateShortcut;
@@ -33,6 +34,8 @@ public:
 		DefaultShortcut,
 		ColumnCount
 	};
+
+	enum Role { FilterRole = Qt::UserRole + 1 };
 
 	explicit CustomShortcutModel(QObject *parent = nullptr);
 
@@ -64,7 +67,8 @@ public:
 	static void registerCustomizableAction(
 		const QString &name, const QString &title, const QIcon &icon,
 		const QKeySequence &defaultShortcut,
-		const QKeySequence &defaultAlternateShortcut);
+		const QKeySequence &defaultAlternateShortcut,
+		const QString &searchText = QString());
 	static void
 	setCustomizableActionIcon(const QString &name, const QIcon &icon);
 	static void changeDisabledActionNames(

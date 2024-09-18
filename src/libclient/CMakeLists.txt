@@ -167,6 +167,8 @@ target_sources(dpclient PRIVATE
 	utils/avatarlistmodel.cpp
 	utils/avatarlistmodel.h
 	utils/avatarlistmodeldelegate.h
+	utils/brushshortcutmodel.cpp
+	utils/brushshortcutmodel.h
 	utils/canvasshortcutsmodel.cpp
 	utils/canvasshortcutsmodel.h
 	utils/certificatestoremodel.cpp

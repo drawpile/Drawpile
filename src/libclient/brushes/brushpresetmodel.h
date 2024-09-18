@@ -4,7 +4,9 @@
 #include "libclient/brushes/brush.h"
 #include <QAbstractItemModel>
 #include <QJsonValue>
+#include <QKeySequence>
 #include <QPixmap>
+#include <functional>
 #include <optional>
 
 class QFile;
@@ -41,10 +43,12 @@ struct Preset {
 	QString originalDescription;
 	QPixmap originalThumbnail;
 	ActiveBrush originalBrush;
+	QKeySequence originalShortcut;
 	std::optional<QString> changedName;
 	std::optional<QString> changedDescription;
 	std::optional<QPixmap> changedThumbnail;
 	std::optional<ActiveBrush> changedBrush;
+	std::optional<QKeySequence> changedShortcut;
 
 	const QString &effectiveName() const
 	{
@@ -68,10 +72,17 @@ struct Preset {
 		return changedBrush.has_value() ? changedBrush.value() : originalBrush;
 	}
 
+	const QKeySequence &effectiveShortcut() const
+	{
+		return changedShortcut.has_value() ? changedShortcut.value()
+										   : originalShortcut;
+	}
+
 	bool hasChanges() const
 	{
 		return changedName.has_value() || changedDescription.has_value() ||
-			   changedThumbnail.has_value() || changedBrush.has_value();
+			   changedThumbnail.has_value() || changedBrush.has_value() ||
+			   changedShortcut.has_value();
 	}
 };
 
@@ -109,7 +120,7 @@ public:
 	explicit BrushPresetTagModel(QObject *parent = nullptr);
 	~BrushPresetTagModel() override;
 
-	BrushPresetModel *presetModel() { return m_presetModel; }
+	BrushPresetModel *presetModel();
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -204,7 +215,6 @@ private:
 
 	class Private;
 	Private *d;
-	BrushPresetModel *m_presetModel;
 };
 
 class BrushPresetModel final : public QAbstractItemModel {
@@ -212,6 +222,8 @@ class BrushPresetModel final : public QAbstractItemModel {
 	friend class BrushPresetTagModel;
 
 public:
+	static constexpr int THUMBNAIL_SIZE = 64;
+
 	enum Roles {
 		FilterRole = Qt::UserRole + 1,
 		IdRole,
@@ -248,14 +260,17 @@ public:
 	bool changeTagAssignment(int presetId, int tagId, bool assigned);
 
 	std::optional<Preset> searchPresetBrushData(int presetId);
+	QPixmap searchPresetThumbnail(int presetId);
 
 	std::optional<Preset> newPreset(
 		const QString &name, const QString description,
-		const QPixmap &thumbnail, const ActiveBrush &brush, int tagId);
+		const QPixmap &thumbnail, const ActiveBrush &brush,
+		const QKeySequence &shortcut, int tagId);
 
 	bool updatePreset(
 		int presetId, const QString &name, const QString &description,
-		const QPixmap &thumbnail, const ActiveBrush &brush);
+		const QPixmap &thumbnail, const ActiveBrush &brush,
+		const QKeySequence &shortcut);
 
 	bool deletePreset(int presetId);
 
@@ -264,11 +279,22 @@ public:
 		const std::optional<QString> &description = {},
 		const std::optional<QPixmap> &thumbnail = {},
 		const std::optional<ActiveBrush> &brush = {},
+		const std::optional<QKeySequence> &shortcut = {},
 		bool inEraserSlot = false);
 	void resetAllPresetChanges();
 	void writePresetChanges();
 
 	int countNames(const QString &name) const;
+
+	void getShortcutActions(
+		const std::function<void(
+			const QString &, const QString &, const QKeySequence &)> &fn) const;
+
+	void getShortcutEntries(
+		const std::function<void(int, const QString &, const QKeySequence &)>
+			&fn) const;
+
+	QVector<int> getPresetIdsForShortcut(const QKeySequence &shortcut) const;
 
 	QSize iconSize() const;
 	int iconDimension() const;
@@ -281,8 +307,13 @@ public slots:
 signals:
 	void presetChanged(
 		int presetId, const QString &name, const QString &description,
-		const QPixmap &thumbnail, const ActiveBrush &brush);
+		const QPixmap &thumbnail, const ActiveBrush &brush,
+		const QKeySequence &shortcut);
 	void presetRemoved(int presetId);
+	void shortcutActionAdded(
+		const QString &name, const QString &text, const QKeySequence &shortcut);
+	void shortcutActionChanged(const QString &name, const QString &text);
+	void shortcutActionRemoved(const QString &name);
 
 private:
 	static QPixmap loadBrushPreview(const QFileInfo &fileInfo);

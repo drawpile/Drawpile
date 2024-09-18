@@ -8,6 +8,8 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/keysequenceedit.h"
+#include "libclient/brushes/brushpresetmodel.h"
+#include "libclient/utils/brushshortcutmodel.h"
 #include "libclient/utils/canvasshortcutsmodel.h"
 #include "libclient/utils/customshortcutmodel.h"
 #include "libshared/util/qtcompat.h"
@@ -27,34 +29,7 @@
 namespace dialogs {
 namespace settingsdialog {
 
-Shortcuts::Shortcuts(desktop::settings::Settings &settings, QWidget *parent)
-	: QWidget(parent)
-{
-	QVBoxLayout *layout = new QVBoxLayout(this);
-	QLineEdit *filter = new QLineEdit;
-	filter->setClearButtonEnabled(true);
-	filter->setPlaceholderText(tr("Search actions…"));
-	filter->addAction(
-		QIcon::fromTheme("edit-find"), QLineEdit::LeadingPosition);
-	layout->addWidget(filter);
-
-	m_tabs = new QTabWidget;
-	m_tabs->addTab(
-		initActionShortcuts(settings, filter),
-		QIcon::fromTheme("input-keyboard"), tr("Actions"));
-	m_tabs->addTab(
-		initCanvasShortcuts(settings, filter), QIcon::fromTheme("edit-image"),
-		tr("Canvas"));
-	m_tabs->addTab(
-		initTouchShortcuts(settings), QIcon::fromTheme("hand"), tr("Touch"));
-	layout->addWidget(m_tabs);
-}
-
-void Shortcuts::finishEditing()
-{
-	m_shortcutsTable->setCurrentIndex(QModelIndex{});
-}
-
+namespace {
 class KeySequenceEditFactory final : public QItemEditorCreatorBase {
 public:
 	KeySequenceEditFactory(Shortcuts *shortcuts)
@@ -79,9 +54,54 @@ public:
 private:
 	Shortcuts *m_shortcuts;
 };
+}
+
+Shortcuts::Shortcuts(desktop::settings::Settings &settings, QWidget *parent)
+	: QWidget(parent)
+{
+	QVBoxLayout *layout = new QVBoxLayout(this);
+	m_filterEdit = new QLineEdit;
+	m_filterEdit->setClearButtonEnabled(true);
+	m_filterEdit->setPlaceholderText(tr("Search…"));
+	m_filterEdit->addAction(
+		QIcon::fromTheme("edit-find"), QLineEdit::LeadingPosition);
+	layout->addWidget(m_filterEdit);
+
+	QStyledItemDelegate *keySequenceDelegate = new QStyledItemDelegate(this);
+	m_itemEditorFactory.registerEditor(
+		compat::metaTypeFromName("QKeySequence"),
+		new KeySequenceEditFactory(this));
+	keySequenceDelegate->setItemEditorFactory(&m_itemEditorFactory);
+
+	m_tabs = new QTabWidget;
+	Q_ASSERT(m_tabs->count() == ACTION_TAB);
+	m_tabs->addTab(
+		initActionShortcuts(settings, keySequenceDelegate),
+		QIcon::fromTheme("input-keyboard"), QString());
+	Q_ASSERT(m_tabs->count() == BRUSH_TAB);
+	m_tabs->addTab(
+		initBrushShortcuts(keySequenceDelegate), QIcon::fromTheme("draw-brush"),
+		QString());
+	Q_ASSERT(m_tabs->count() == CANVAS_TAB);
+	m_tabs->addTab(
+		initCanvasShortcuts(settings), QIcon::fromTheme("edit-image"),
+		QString());
+	layout->addWidget(m_tabs);
+
+	connect(
+		m_filterEdit, &QLineEdit::textChanged, this, &Shortcuts::updateTabTexts,
+		Qt::QueuedConnection);
+	updateTabTexts();
+}
+
+void Shortcuts::finishEditing()
+{
+	m_actionsTable->setCurrentIndex(QModelIndex{});
+}
 
 QWidget *Shortcuts::initActionShortcuts(
-	desktop::settings::Settings &settings, QLineEdit *filter)
+	desktop::settings::Settings &settings,
+	QStyledItemDelegate *keySequenceDelegate)
 {
 	QWidget *widget = new QWidget;
 	QVBoxLayout *layout = new QVBoxLayout(widget);
@@ -100,19 +120,15 @@ QWidget *Shortcuts::initActionShortcuts(
 	connect(
 		&dpApp(), &DrawpileApp::shortcutsChanged, shortcutsModel,
 		&CustomShortcutModel::updateShortcuts);
-	m_shortcutsTable = ProportionalTableView::make(filter, shortcutsModel);
-	m_shortcutsTable->setColumnStretches({6, 2, 2, 2});
-	utils::bindKineticScrolling(m_shortcutsTable);
+	m_actionsTable = ProportionalTableView::make(
+		m_filterEdit, int(CustomShortcutModel::FilterRole), shortcutsModel);
+	m_actionsTable->setColumnStretches({6, 2, 2, 2});
+	utils::bindKineticScrolling(m_actionsTable);
 
-	QStyledItemDelegate *keySequenceDelegate = new QStyledItemDelegate(this);
-	m_itemEditorFactory.registerEditor(
-		compat::metaTypeFromName("QKeySequence"),
-		new KeySequenceEditFactory{this});
-	keySequenceDelegate->setItemEditorFactory(&m_itemEditorFactory);
-	m_shortcutsTable->setItemDelegateForColumn(1, keySequenceDelegate);
-	m_shortcutsTable->setItemDelegateForColumn(2, keySequenceDelegate);
+	m_actionsTable->setItemDelegateForColumn(1, keySequenceDelegate);
+	m_actionsTable->setItemDelegateForColumn(2, keySequenceDelegate);
 
-	layout->addWidget(m_shortcutsTable, 1);
+	layout->addWidget(m_actionsTable, 1);
 
 	utils::EncapsulatedLayout *actions = new utils::EncapsulatedLayout;
 	actions->setContentsMargins(0, 0, 0, 0);
@@ -132,6 +148,31 @@ QWidget *Shortcuts::initActionShortcuts(
 	});
 	actions->addWidget(restoreDefaults);
 	layout->addLayout(actions);
+
+	return widget;
+}
+
+QWidget *Shortcuts::initBrushShortcuts(QStyledItemDelegate *keySequenceDelegate)
+{
+	int thumbnailSize = brushes::BrushPresetModel::THUMBNAIL_SIZE;
+	m_brushShortcutsModel = new BrushShortcutModel(
+		dpApp().brushPresets()->presetModel(),
+		QSize(thumbnailSize, thumbnailSize), this);
+
+	QWidget *widget = new QWidget;
+	QVBoxLayout *layout = new QVBoxLayout(widget);
+
+	m_brushesTable = ProportionalTableView::make(
+		m_filterEdit, int(BrushShortcutModel::FilterRole),
+		m_brushShortcutsModel);
+	m_brushesTable->setColumnStretches({6, 2});
+	m_brushesTable->verticalHeader()->setSectionResizeMode(
+		QHeaderView::ResizeToContents);
+	utils::bindKineticScrolling(m_brushesTable);
+
+	m_brushesTable->setItemDelegateForColumn(1, keySequenceDelegate);
+
+	layout->addWidget(m_brushesTable, 1);
 
 	return widget;
 }
@@ -182,8 +223,7 @@ static void execCanvasShortcutDialog(
 	}
 }
 
-QWidget *Shortcuts::initCanvasShortcuts(
-	desktop::settings::Settings &settings, QLineEdit *filter)
+QWidget *Shortcuts::initCanvasShortcuts(desktop::settings::Settings &settings)
 {
 	QWidget *widget = new QWidget;
 	QVBoxLayout *layout = new QVBoxLayout(widget);
@@ -194,37 +234,37 @@ QWidget *Shortcuts::initCanvasShortcuts(
 		settings.setCanvasShortcuts(shortcutsModel->saveShortcuts());
 	});
 
-	ProportionalTableView *shortcuts =
-		ProportionalTableView::make(filter, shortcutsModel);
-	shortcuts->setColumnStretches({6, 3, 3, 0});
-	utils::bindKineticScrolling(shortcuts);
+	m_canvasTable = ProportionalTableView::make(
+		m_filterEdit, int(CanvasShortcutsModel::FilterRole), shortcutsModel);
+	m_canvasTable->setColumnStretches({6, 3, 3, 0});
+	utils::bindKineticScrolling(m_canvasTable);
 	connect(
-		shortcuts, &QAbstractItemView::activated, this,
+		m_canvasTable, &QAbstractItemView::activated, this,
 		[=](const QModelIndex &index) {
 			if(const auto *shortcut = shortcutsModel->shortcutAt(
-				   mapFromView(shortcuts, index).row())) {
+				   mapFromView(m_canvasTable, index).row())) {
 				execCanvasShortcutDialog(
-					shortcuts, shortcut, shortcutsModel, this,
+					m_canvasTable, shortcut, shortcutsModel, this,
 					tr("Edit Canvas Shortcut"), [=](auto newShortcut) {
 						return shortcutsModel->editShortcut(
 							*shortcut, newShortcut);
 					});
 			}
 		});
-	layout->addWidget(shortcuts, 1);
+	layout->addWidget(m_canvasTable, 1);
 
 	utils::EncapsulatedLayout *actions = listActions(
-		shortcuts, tr("Add canvas shortcut…"),
+		m_canvasTable, tr("Add canvas shortcut…"),
 		[=] {
 			execCanvasShortcutDialog(
-				shortcuts, nullptr, shortcutsModel, this,
+				m_canvasTable, nullptr, shortcutsModel, this,
 				tr("New Canvas Shortcut"), [=](auto newShortcut) {
 					return shortcutsModel->addShortcut(newShortcut);
 				});
 		},
 		tr("Remove selected canvas shortcut…"),
 		makeDefaultDeleter(
-			this, shortcuts, tr("Remove canvas shortcut"),
+			this, m_canvasTable, tr("Remove canvas shortcut"),
 			QT_TR_N_NOOP("Really remove %n canvas shortcut(s)?")));
 	actions->addStretch();
 
@@ -245,130 +285,49 @@ QWidget *Shortcuts::initCanvasShortcuts(
 	return widget;
 }
 
-QWidget *Shortcuts::initTouchShortcuts(desktop::settings::Settings &settings)
+void Shortcuts::updateTabTexts()
 {
-	QScrollArea *scroll = new QScrollArea;
-	scroll->setFrameStyle(QScrollArea::NoFrame);
-	scroll->setWidgetResizable(true);
-	utils::bindKineticScrolling(scroll);
-
-	QWidget *widget = new QWidget;
-	QVBoxLayout *layout = new QVBoxLayout(widget);
-	scroll->setWidget(widget);
-
-	QFormLayout *modeForm = utils::addFormSection(layout);
-	QButtonGroup *touchMode = utils::addRadioGroup(
-		modeForm, tr("Touch mode:"), true,
-		{
-			{tr("Touchscreen"), false},
-			{tr("Gestures"), true},
-		});
-	settings.bindTouchGestures(touchMode);
-
-	utils::addFormSeparator(layout);
-	QFormLayout *touchForm = utils::addFormSection(layout);
-
-	QComboBox *oneFingerTouch = new QComboBox;
-	oneFingerTouch->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-	oneFingerTouch->addItem(
-		tr("No action"), int(desktop::settings::OneFingerTouchAction::Nothing));
-	oneFingerTouch->addItem(
-		tr("Draw"), int(desktop::settings::OneFingerTouchAction::Draw));
-	oneFingerTouch->addItem(
-		tr("Pan canvas"), int(desktop::settings::OneFingerTouchAction::Pan));
-	oneFingerTouch->addItem(
-		tr("Guess"), int(desktop::settings::OneFingerTouchAction::Guess));
-	settings.bindOneFingerTouch(oneFingerTouch, Qt::UserRole);
-	touchForm->addRow(tr("One-finger touch:"), oneFingerTouch);
-
-	QComboBox *twoFingerPinch = new QComboBox;
-	twoFingerPinch->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-	twoFingerPinch->addItem(
-		tr("No action"), int(desktop::settings::TwoFingerPinchAction::Nothing));
-	twoFingerPinch->addItem(
-		tr("Zoom"), int(desktop::settings::TwoFingerPinchAction::Zoom));
-	settings.bindTwoFingerPinch(twoFingerPinch, Qt::UserRole);
-	touchForm->addRow(tr("Two-finger pinch:"), twoFingerPinch);
-
-	QComboBox *twoFingerTwist = new QComboBox;
-	twoFingerTwist->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-	twoFingerTwist->addItem(
-		tr("No action"), int(desktop::settings::TwoFingerPinchAction::Nothing));
-	twoFingerTwist->addItem(
-		tr("Rotate canvas"),
-		int(desktop::settings::TwoFingerTwistAction::Rotate));
-	twoFingerTwist->addItem(
-		tr("Free rotate canvas"),
-		int(desktop::settings::TwoFingerTwistAction::RotateNoSnap));
-	twoFingerTwist->addItem(
-		tr("Ratchet rotate canvas"),
-		int(desktop::settings::TwoFingerTwistAction::RotateDiscrete));
-	settings.bindTwoFingerTwist(twoFingerTwist, Qt::UserRole);
-	touchForm->addRow(tr("Two-finger twist:"), twoFingerTwist);
-
-	utils::addFormSeparator(layout);
-	QFormLayout *tapForm = utils::addFormSection(layout);
-
-	QComboBox *oneFingerTap = new QComboBox;
-	QComboBox *twoFingerTap = new QComboBox;
-	QComboBox *threeFingerTap = new QComboBox;
-	QComboBox *fourFingerTap = new QComboBox;
-	for(QComboBox *tap :
-		{oneFingerTap, twoFingerTap, threeFingerTap, fourFingerTap}) {
-		tap->addItem(
-			tr("No action"), int(desktop::settings::TouchTapAction::Nothing));
-		tap->addItem(tr("Undo"), int(desktop::settings::TouchTapAction::Undo));
-		tap->addItem(tr("Redo"), int(desktop::settings::TouchTapAction::Redo));
-		tap->addItem(
-			tr("Hide docks"),
-			int(desktop::settings::TouchTapAction::HideDocks));
-		tap->addItem(
-			tr("Toggle color picker"),
-			int(desktop::settings::TouchTapAction::ColorPicker));
-		tap->addItem(
-			tr("Toggle eraser"),
-			int(desktop::settings::TouchTapAction::Eraser));
-		tap->addItem(
-			tr("Toggle erase mode"),
-			int(desktop::settings::TouchTapAction::EraseMode));
-		tap->addItem(
-			tr("Toggle recolor mode"),
-			int(desktop::settings::TouchTapAction::RecolorMode));
+	if(m_filterEdit->text().isEmpty()) {
+		m_tabs->setTabText(ACTION_TAB, actionTabText());
+		m_tabs->setTabText(BRUSH_TAB, brushTabText());
+		m_tabs->setTabText(CANVAS_TAB, canvasTabText());
+	} else {
+		m_tabs->setTabText(
+			ACTION_TAB,
+			searchResultText(
+				actionTabText(), m_actionsTable->model()->rowCount()));
+		m_tabs->setTabText(
+			BRUSH_TAB,
+			searchResultText(
+				brushTabText(), m_brushesTable->model()->rowCount()));
+		m_tabs->setTabText(
+			CANVAS_TAB,
+			searchResultText(
+				canvasTabText(), m_canvasTable->model()->rowCount()));
 	}
+}
 
-	settings.bindOneFingerTap(oneFingerTap, Qt::UserRole);
-	settings.bindTwoFingerTap(twoFingerTap, Qt::UserRole);
-	settings.bindThreeFingerTap(threeFingerTap, Qt::UserRole);
-	settings.bindFourFingerTap(fourFingerTap, Qt::UserRole);
+QString Shortcuts::actionTabText()
+{
+	return tr("Actions");
+}
 
-	settings.bindTouchGestures(twoFingerTap, &QComboBox::setDisabled);
-	settings.bindTouchGestures(threeFingerTap, &QComboBox::setDisabled);
-	settings.bindTouchGestures(fourFingerTap, &QComboBox::setDisabled);
+QString Shortcuts::brushTabText()
+{
+	return tr("Brushes");
+}
 
-	tapForm->addRow(tr("One-finger tap:"), oneFingerTap);
-	tapForm->addRow(tr("Two-finger tap:"), twoFingerTap);
-	tapForm->addRow(tr("Three-finger tap:"), threeFingerTap);
-	tapForm->addRow(tr("Four-finger tap:"), fourFingerTap);
+QString Shortcuts::canvasTabText()
+{
+	return tr("Canvas");
+}
 
-	utils::addFormSeparator(layout);
-	QFormLayout *tapAndHoldForm = utils::addFormSection(layout);
-
-	QComboBox *oneFingerTapAndHold = new QComboBox;
-	for(QComboBox *tapAndHold : {oneFingerTapAndHold}) {
-		tapAndHold->addItem(
-			tr("No action"),
-			int(desktop::settings::TouchTapAndHoldAction::Nothing));
-		tapAndHold->addItem(
-			tr("Pick color"),
-			int(desktop::settings::TouchTapAndHoldAction::ColorPickMode));
-	}
-
-	settings.bindOneFingerTapAndHold(oneFingerTapAndHold, Qt::UserRole);
-	settings.bindTouchGestures(oneFingerTapAndHold, &QComboBox::setDisabled);
-	tapAndHoldForm->addRow(tr("One-finger tap and hold:"), oneFingerTapAndHold);
-
-	layout->addStretch();
-	return scroll;
+QString Shortcuts::searchResultText(const QString &text, int results)
+{
+	//: This is for showing search feedback in the tabs of the shortcut
+	//: preferences. %1 is the original tab title, like "Actions" or "Brushes",
+	//: %2 is the number of search results in that tab.
+	return tr("%1 (%2)").arg(text).arg(results);
 }
 
 } // namespace settingsdialog

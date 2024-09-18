@@ -44,10 +44,9 @@ int CanvasShortcutsModel::columnCount(const QModelIndex &parent) const
 
 QVariant CanvasShortcutsModel::data(const QModelIndex &index, int role) const
 {
-	if (!index.isValid()
-		|| index.parent().isValid()
-		|| (role != Qt::DisplayRole && role != Qt::ToolTipRole)
-	) {
+	if(!index.isValid() || index.parent().isValid() ||
+	   (role != Qt::DisplayRole && role != Qt::ToolTipRole &&
+		role != int(FilterRole))) {
 		return QVariant();
 	}
 
@@ -56,14 +55,26 @@ QVariant CanvasShortcutsModel::data(const QModelIndex &index, int role) const
 		return QVariant();
 	}
 
-	switch(Column(index.column())) {
-	case Shortcut:
-		return shortcutToString(s->type, s->mods, s->keys, s->button);
-	case Action:
-		return actionToString(*s);
-	case Modifiers:
-		return flagsToString(*s);
-	case ColumnCount: {}
+	switch(role) {
+	case Qt::DisplayRole:
+	case Qt::ToolTipRole:
+		switch(index.column()) {
+		case int(Shortcut):
+			return shortcutToString(s->type, s->mods, s->keys, s->button);
+		case int(Action):
+			return actionToString(*s);
+		case int(Modifiers):
+			return flagsToString(*s);
+		default:
+			return QVariant();
+		}
+	case int(FilterRole):
+		return QStringLiteral("action:%1\nshortcut:%2")
+			.arg(
+				actionToString(*s),
+				shortcutToString(s->type, s->mods, s->keys, s->button));
+	default:
+		break;
 	}
 	return QVariant();
 }

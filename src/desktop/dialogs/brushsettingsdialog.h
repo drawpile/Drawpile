@@ -8,6 +8,7 @@
 
 class KisSliderSpinBox;
 class QComboBox;
+class QKeySequence;
 class QListWidgetItem;
 class QPushButton;
 class QVBoxLayout;
@@ -27,6 +28,7 @@ signals:
 	void presetNameChanged(const QString &presetName);
 	void presetDescriptionChanged(const QString &presetDescription);
 	void presetThumbnailChanged(const QPixmap &presetThumbnail);
+	void presetShortcutChanged(const QKeySequence &presetShortcut);
 	void brushSettingsChanged(const brushes::ActiveBrush &brush);
 	void newBrushRequested();
 	void overwriteBrushRequested();
@@ -36,6 +38,7 @@ public slots:
 	void setPresetName(const QString &presetName);
 	void setPresetDescription(const QString &presetDescription);
 	void setPresetThumbnail(const QPixmap &presetThumbnail);
+	void setPresetShortcut(const QKeySequence &presetShortcut);
 	void setForceEraseMode(bool forceEraseMode);
 	void setStabilizerUseBrushSampleCount(bool useBrushSampleCount);
 	void setGlobalSmoothing(int smoothing);
