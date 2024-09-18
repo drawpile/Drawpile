@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef CANVASSHORTCUTS_H
 #define CANVASSHORTCUTS_H
-
+#include <QKeySequence>
 #include <QSet>
 #include <QVariantMap>
 #include <QVector>
@@ -61,6 +61,8 @@ public:
 
 		bool isValid(bool checkAction = true) const;
 		bool isUnmodifiedClick(Qt::MouseButton inButton) const;
+
+		QSet<QKeySequence> keySequences() const;
 	};
 
 	struct Match {

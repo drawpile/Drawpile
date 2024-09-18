@@ -32,8 +32,40 @@ QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
 		return QVariant();
 	}
 
-	if(role == Qt::DisplayRole || role == Qt::EditRole) {
+	if(role == Qt::DisplayRole || role == Qt::ToolTipRole) {
 		const CustomShortcut &cs = m_loadedShortcuts[m_shortcutIndexes[row]];
+		QString text;
+		switch(Column(index.column())) {
+		case Action:
+			text = cs.title;
+			break;
+		case CurrentShortcut:
+			text = cs.currentShortcut.toString(QKeySequence::NativeText);
+			break;
+		case AlternateShortcut:
+			text = cs.alternateShortcut.toString(QKeySequence::NativeText);
+			break;
+		case DefaultShortcut:
+			text = cs.defaultShortcut.toString(QKeySequence::NativeText);
+			break;
+		default:
+			break;
+		}
+		if(role == Qt::ToolTipRole && m_conflictRows.contains(row)) {
+			if(text.isEmpty()) {
+				//: Tooltip for a keyboard shortcut conflict.
+				return tr("Conflict");
+			} else {
+				//: Tooltip for a keyboard shortcut conflict, %1 is the name or
+				//: key sequence of the shortcut in question.
+				return tr("%1 (conflict)").arg(text);
+			}
+		} else {
+			return text;
+		}
+	} else if(role == Qt::EditRole) {
+		const CustomShortcut &cs = m_loadedShortcuts[m_shortcutIndexes[row]];
+		QString text;
 		switch(Column(index.column())) {
 		case Action:
 			return cs.title;
@@ -46,18 +78,38 @@ QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
 		default:
 			return QVariant();
 		}
-	} else if(role == Qt::ToolTipRole) {
-		if(m_conflictRows.contains(row)) {
-			return tr("Conflict");
-		} else {
+	} else if(role == Qt::DecorationRole) {
+		switch(index.column()) {
+		case int(Action):
+			return m_loadedShortcuts[m_shortcutIndexes[row]].icon;
+		case int(CurrentShortcut): {
+			QHash<int, Conflict>::const_iterator it =
+				m_conflictRows.constFind(row);
+			if(it != m_conflictRows.end() && it->current) {
+				return QIcon::fromTheme("dialog-warning");
+			} else {
+				return QVariant();
+			}
+		}
+		case int(AlternateShortcut): {
+			QHash<int, Conflict>::const_iterator it =
+				m_conflictRows.constFind(row);
+			if(it != m_conflictRows.end() && it->alternate) {
+				return QIcon::fromTheme("dialog-warning");
+			} else {
+				return QVariant();
+			}
+		}
+		default:
 			return QVariant();
 		}
-	} else if(role == Qt::DecorationRole) {
-		if(index.column() == int(Action)) {
-			const CustomShortcut &cs =
-				m_loadedShortcuts[m_shortcutIndexes[row]];
-			return cs.icon;
-		} else {
+	} else if(role == Qt::TextAlignmentRole) {
+		switch(index.column()) {
+		case int(CurrentShortcut):
+		case int(AlternateShortcut):
+		case int(DefaultShortcut):
+			return Qt::AlignCenter;
+		default:
 			return QVariant();
 		}
 	} else if(role == Qt::ForegroundRole) {
@@ -70,8 +122,25 @@ QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
 		if(m_conflictRows.contains(row)) {
 			return QColor(0xdc3545);
 		} else {
-			return QVariant{};
+			return QVariant();
 		}
+	} else if(role == int(FilterRole)) {
+		const CustomShortcut &cs = m_loadedShortcuts[m_shortcutIndexes[row]];
+		QString searchSuffix = cs.searchText.isEmpty()
+								   ? QString()
+								   : QStringLiteral(" (%1)").arg(cs.searchText);
+		QString conflictMarker =
+			m_conflictRows.contains(row) ? QStringLiteral("\n\1") : QString();
+		return QStringLiteral(
+				   "action:%1%2\nprimaryshortcut:%3\nalternateshortcut:%4\n"
+				   "defaultprimaryshortcut:%5\ndefaultalternateshortcut:%6%7")
+			.arg(
+				cs.title, searchSuffix,
+				cs.currentShortcut.toString(QKeySequence::NativeText),
+				cs.alternateShortcut.toString(QKeySequence::NativeText),
+				cs.defaultShortcut.toString(QKeySequence::NativeText),
+				cs.defaultAlternateShortcut.toString(QKeySequence::NativeText),
+				conflictMarker);
 	} else {
 		return QVariant();
 	}
@@ -95,7 +164,7 @@ bool CustomShortcutModel::setData(
 	}
 
 	emit dataChanged(index, index);
-	updateConflictRows();
+	updateConflictRows(true);
 	return true;
 }
 
@@ -172,8 +241,8 @@ void CustomShortcutModel::loadShortcuts(const QVariantMap &cfg)
 		m_loadedShortcuts.append(a);
 	}
 
-	updateShortcuts();
-	updateConflictRows();
+	updateShortcutsInternal();
+	updateConflictRows(false);
 	endResetModel();
 }
 
@@ -201,8 +270,24 @@ void CustomShortcutModel::updateShortcuts()
 {
 	beginResetModel();
 	updateShortcutsInternal();
-	updateConflictRows();
+	updateConflictRows(false);
 	endResetModel();
+}
+
+const CustomShortcut &CustomShortcutModel::shortcutAt(int row) const
+{
+	Q_ASSERT(row >= 0);
+	Q_ASSERT(row < m_shortcutIndexes.size());
+	return m_loadedShortcuts[m_shortcutIndexes[row]];
+}
+
+void CustomShortcutModel::setExternalKeySequences(
+	const QSet<QKeySequence> &externalKeySequences)
+{
+	if(m_externalKeySequences != externalKeySequences) {
+		m_externalKeySequences = externalKeySequences;
+		updateConflictRows(true);
+	}
 }
 
 bool CustomShortcutModel::isCustomizableActionRegistered(const QString &name)
@@ -213,14 +298,16 @@ bool CustomShortcutModel::isCustomizableActionRegistered(const QString &name)
 void CustomShortcutModel::registerCustomizableAction(
 	const QString &name, const QString &title, const QIcon &icon,
 	const QKeySequence &defaultShortcut,
-	const QKeySequence &defaultAlternateShortcut)
+	const QKeySequence &defaultAlternateShortcut, const QString &searchText)
 {
-	if(!m_customizableActions.contains(name)) {
+	if(m_customizableActions.contains(name)) {
+		qWarning(
+			"Attempt to re-register existing shortcut %s",
+			qUtf8Printable(name));
+	} else {
 		m_customizableActions.insert(
-			name,
-			CustomShortcut{
-				name, title, icon, defaultShortcut, defaultAlternateShortcut,
-				QKeySequence(), QKeySequence()});
+			name, {name, title, searchText, icon, defaultShortcut,
+				   defaultAlternateShortcut, QKeySequence(), QKeySequence()});
 	}
 }
 
@@ -275,35 +362,61 @@ void CustomShortcutModel::updateShortcutsInternal()
 	}
 }
 
-void CustomShortcutModel::updateConflictRows()
+void CustomShortcutModel::updateConflictRows(bool emitDataChanges)
 {
-	QHash<QKeySequence, QSet<int>> rowsByKeySequence;
+	QHash<QKeySequence, QHash<int, Conflict>> rowsByKeySequence;
+	for(const QKeySequence &ks : m_externalKeySequences) {
+		rowsByKeySequence[ks].insert(-1, {false, false});
+	}
+
 	int rowCount = m_shortcutIndexes.size();
 	for(int row = 0; row < rowCount; ++row) {
 		const CustomShortcut &shortcut =
 			m_loadedShortcuts[m_shortcutIndexes[row]];
+
 		if(!shortcut.currentShortcut.isEmpty()) {
-			rowsByKeySequence[shortcut.currentShortcut].insert(row);
+			rowsByKeySequence[shortcut.currentShortcut][row].current = true;
 		}
 		if(!shortcut.alternateShortcut.isEmpty()) {
-			rowsByKeySequence[shortcut.alternateShortcut].insert(row);
+			rowsByKeySequence[shortcut.alternateShortcut][row].alternate = true;
 		}
 	}
 
-	QSet<int> conflictRows;
-	for(const QSet<int> &values : rowsByKeySequence.values()) {
+	QHash<int, Conflict> conflictRows;
+	for(const QHash<int, Conflict> &values : rowsByKeySequence.values()) {
 		if(values.size() > 1) {
-			conflictRows.unite(values);
+			for(QHash<int, Conflict>::const_iterator it = values.constBegin(),
+													 end = values.constEnd();
+				it != end; ++it) {
+				conflictRows[it.key()].mergeWith(it.value());
+			}
 		}
 	}
 
-	for(int row : conflictRows + m_conflictRows) {
-		if(!conflictRows.contains(row) || !m_conflictRows.contains(row)) {
-			emit dataChanged(
-				createIndex(row, 0), createIndex(row, ColumnCount - 1),
-				{Qt::ForegroundRole, Qt::BackgroundRole});
+	if(emitDataChanges) {
+		QSet<int> keys;
+		for(const QHash<int, Conflict> &hash : {conflictRows, m_conflictRows}) {
+			for(QHash<int, Conflict>::key_iterator it = hash.keyBegin(),
+												   end = hash.keyEnd();
+				it != end; ++it) {
+				int row = *it;
+				if(row >= 0) {
+					keys.insert(row);
+				}
+			}
+		}
+
+		for(int row : keys) {
+			QHash<int, Conflict>::const_iterator it1, it2;
+			if((it1 = conflictRows.constFind(row)) == conflictRows.constEnd() ||
+			   (it2 = m_conflictRows.constFind(row)) ==
+				   m_conflictRows.constEnd() ||
+			   it1.value() != it2.value()) {
+				emit dataChanged(
+					createIndex(row, 0), createIndex(row, ColumnCount - 1));
+			}
 		}
 	}
 
-	m_conflictRows = conflictRows;
+	m_conflictRows.swap(conflictRows);
 }

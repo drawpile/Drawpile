@@ -1,20 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libclient/canvas/canvasshortcuts.h"
-
 #include <QDebug>
 #include <QWheelEvent>
 
-CanvasShortcuts::CanvasShortcuts()
-	: m_shortcuts{}
-{
-}
+CanvasShortcuts::CanvasShortcuts() {}
 
 CanvasShortcuts CanvasShortcuts::load(const QVariantMap &cfg)
 {
-	const QVector<QVariantMap> shortcuts = shortcutsToList(cfg.value("shortcuts"));
+	const QVector<QVariantMap> shortcuts =
+		shortcutsToList(cfg.value("shortcuts"));
 	CanvasShortcuts cs;
-	if (shortcuts.isEmpty() && !cfg.value("defaultsloaded").toBool()) {
+	if(shortcuts.isEmpty() && !cfg.value("defaultsloaded").toBool()) {
 		cs.loadDefaults();
 	} else {
 		for(const auto &shortcut : shortcuts) {
@@ -204,7 +200,7 @@ void CanvasShortcuts::clear()
 
 QVariantMap CanvasShortcuts::save() const
 {
-	QVariantMap map = { {"defaultsloaded", true} };
+	QVariantMap map = {{"defaultsloaded", true}};
 	QVariantList shortcuts;
 	int count = m_shortcuts.size();
 	for(int i = 0; i < count; ++i) {
@@ -242,8 +238,8 @@ int CanvasShortcuts::addShortcut(const Shortcut &s)
 		m_shortcuts.append(s);
 		return index;
 	} else {
-		qWarning() << "Not adding invalid canvas shortcut"
-			<< s.type << s.mods << s.keys << s.button << s.action << s.flags;
+		qWarning() << "Not adding invalid canvas shortcut" << s.type << s.mods
+				   << s.keys << s.button << s.action << s.flags;
 		return -1;
 	}
 }
@@ -396,6 +392,19 @@ bool CanvasShortcuts::Shortcut::isUnmodifiedClick(
 {
 	return type == MOUSE_BUTTON && button == inButton &&
 		   mods == Qt::NoModifier && keys.isEmpty();
+}
+
+QSet<QKeySequence> CanvasShortcuts::Shortcut::keySequences() const
+{
+	QSet<QKeySequence> set;
+	for(Qt::Key key : keys) {
+		if(mods == Qt::NoModifier) {
+			set.insert(QKeySequence(key));
+		} else {
+			set.insert(QKeySequence(mods | key));
+		}
+	}
+	return set;
 }
 
 int CanvasShortcuts::searchShortcutIndex(const Shortcut &s) const

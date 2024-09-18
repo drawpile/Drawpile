@@ -137,6 +137,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 using desktop::settings::Settings;
 using std::placeholders::_1;
 using std::placeholders::_2;
+using std::placeholders::_3;
 static constexpr int DEBOUNCE_MS = 250;
 
 // clang-format off
@@ -477,6 +478,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	// Restore settings and show the window
 	updateTitle();
 	readSettings(restoreWindowPosition);
+	setupBrushShortcuts();
 
 	// Set status indicators
 	updateLockWidget();
@@ -1107,28 +1109,50 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 	return QMainWindow::eventFilter(object, event);
 }
 
+// clang-format on
 void MainWindow::handleAmbiguousShortcut(QShortcutEvent *shortcutEvent)
 {
-	CustomShortcutModel shortcutsModel;
-	shortcutsModel.loadShortcuts(dpApp().settings().shortcuts());
-
 	const QKeySequence &keySequence = shortcutEvent->key();
-	QVector<CustomShortcut> shortcuts = shortcutsModel.getShortcutsMatching(keySequence);
-	// Shortcuts may conflict with stuff like the main window menu bar. We can
-	// resolve those pseudo.conflicts in the favor of our custom shortcuts.
-	if(shortcuts.size() == 1) {
-		QAction *action = findChild<QAction*>(
-			shortcuts.first().name, Qt::FindDirectChildrenOnly);
-		if(action) {
-			action->trigger();
-			return;
+	QVector<QAction *> actions;
+	QStringList matchingShortcuts;
+
+	{
+		CustomShortcutModel shortcutsModel;
+		shortcutsModel.loadShortcuts(dpApp().settings().shortcuts());
+		for(const CustomShortcut &shortcut :
+			shortcutsModel.getShortcutsMatching(keySequence)) {
+
+			QAction *action =
+				findChild<QAction *>(shortcut.name, Qt::FindDirectChildrenOnly);
+			if(action) {
+				actions.append(action);
+			}
+
+			matchingShortcuts.append(
+				QString("<li>%1</li>").arg(shortcut.title.toHtmlEscaped()));
 		}
 	}
 
-	QStringList matchingShortcuts;
-	for(const CustomShortcut &shortcut : shortcuts) {
-		matchingShortcuts.append(QString("<li>%1</li>").arg(shortcut.title.toHtmlEscaped()));
+	dpApp().brushPresets()->presetModel()->getShortcutActions(
+		[&](const QString &name, const QString &text,
+			const QKeySequence &shortcut) {
+			if(shortcut == keySequence) {
+				QAction *action = searchAction(name);
+				if(action) {
+					actions.append(action);
+					matchingShortcuts.append(
+						QString("<li>%1</li>").arg(text.toHtmlEscaped()));
+				}
+			}
+		});
+
+	// Shortcuts may conflict with stuff like the main window menu bar. We can
+	// resolve those pseudo.conflicts in the favor of our custom shortcuts.
+	if(actions.size() == 1) {
+		actions.first()->trigger();
+		return;
 	}
+
 	matchingShortcuts.sort(Qt::CaseInsensitive);
 
 	QString message =
@@ -1144,9 +1168,10 @@ void MainWindow::handleAmbiguousShortcut(QShortcutEvent *shortcutEvent)
 
 	box.exec();
 	if(box.clickedButton() == fixButton) {
-		showSettings()->activateShortcutsPanel();
+		showSettings()->initiateFixShortcutConflicts();
 	}
 }
+// clang-format off
 
 void MainWindow::saveSplitterState()
 {
@@ -2328,7 +2353,7 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
 		std::function<void(int)> updatePreset = [brushSettings,
 												 dlg](int presetId) {
 			bool attached = presetId > 0;
-			dlg->setPresetAttached(attached);
+			dlg->setPresetAttached(attached, presetId);
 			if(attached) {
 				QSignalBlocker blocker(dlg);
 				dlg->setPresetName(brushSettings->currentPresetName());
@@ -2336,6 +2361,7 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
 					brushSettings->currentPresetDescription());
 				dlg->setPresetThumbnail(
 					brushSettings->currentPresetThumbnail());
+				dlg->setPresetShortcut(brushSettings->currentPresetShortcut());
 			}
 		};
 		connect(
@@ -2385,6 +2411,19 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
 			std::bind(
 				&docks::BrushPalette::overwriteCurrentPreset,
 				m_dockBrushPalette, dlg));
+		connect(
+			dpApp().brushPresets()->presetModel(),
+			&brushes::BrushPresetModel::presetShortcutChanged, dlg,
+			[dlg](int presetId, const QKeySequence &shortcut) {
+				if(dlg->isPresetAttached() && dlg->presetId() == presetId) {
+					dlg->setPresetShortcut(shortcut);
+				}
+			});
+		connect(
+			dlg, &dialogs::BrushSettingsDialog::shortcutChangeRequested, this,
+			[this](int presetId) {
+				showSettings()->initiateBrushShortcutChange(presetId);
+			});
 
 		if(openOnPresetPage) {
 			dlg->showPresetPage();
@@ -2406,8 +2445,52 @@ dialogs::SettingsDialog *MainWindow::showSettings()
 	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog(
 		m_singleSession, m_smallScreenMode, getStartDialogOrThis());
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	connect(
+		dlg, &dialogs::SettingsDialog::tabletTesterRequested, this,
+		std::bind(&MainWindow::showTabletTestDialog, this, dlg));
+	connect(
+		dlg, &dialogs::SettingsDialog::touchTesterRequested, this,
+		std::bind(&MainWindow::showTouchTestDialog, this, dlg));
 	utils::showWindow(dlg, shouldShowDialogMaximized());
 	return dlg;
+}
+
+dialogs::TabletTestDialog *MainWindow::showTabletTestDialog(QWidget *parent)
+{
+	QString name = QStringLiteral("tablettestdialog");
+	dialogs::TabletTestDialog *ttd =
+		parent->findChild<dialogs::TabletTestDialog *>(
+			name, Qt::FindDirectChildrenOnly);
+	if(ttd) {
+		ttd->activateWindow();
+		ttd->raise();
+	} else {
+		ttd = new dialogs::TabletTestDialog(parent);
+		ttd->setWindowModality(Qt::WindowModal);
+		ttd->setAttribute(Qt::WA_DeleteOnClose);
+		ttd->setObjectName(name);
+		utils::showWindow(ttd, shouldShowDialogMaximized());
+	}
+	return ttd;
+}
+
+dialogs::TouchTestDialog *MainWindow::showTouchTestDialog(QWidget *parent)
+{
+	QString name = QStringLiteral("touchtestdialog");
+	dialogs::TouchTestDialog *ttd =
+		parent->findChild<dialogs::TouchTestDialog *>(
+			name, Qt::FindDirectChildrenOnly);
+	if(ttd) {
+		ttd->activateWindow();
+		ttd->raise();
+	} else {
+		ttd = new dialogs::TouchTestDialog(parent);
+		ttd->setWindowModality(Qt::WindowModal);
+		ttd->setAttribute(Qt::WA_DeleteOnClose);
+		ttd->setObjectName(name);
+		utils::showWindow(ttd, shouldShowDialogMaximized());
+	}
+	return ttd;
 }
 
 void MainWindow::host()
@@ -3981,6 +4064,7 @@ ActionBuilder MainWindow::makeAction(const char *name, const QString& text)
 	return ActionBuilder(act);
 }
 
+// clang-format on
 QAction *MainWindow::getAction(const QString &name)
 {
 	QAction *action = searchAction(name);
@@ -3995,8 +4079,51 @@ QAction *MainWindow::getAction(const QString &name)
 
 QAction *MainWindow::searchAction(const QString &name)
 {
-	return findChild<QAction*>(name, Qt::FindDirectChildrenOnly);
+	return findChild<QAction *>(name, Qt::FindDirectChildrenOnly);
 }
+
+void MainWindow::addBrushShortcut(
+	const QString &name, const QString &text, const QKeySequence &shortcut)
+{
+	Q_ASSERT(!searchAction(name));
+	QAction *action = new QAction(text, this);
+	action->setObjectName(name);
+	action->setShortcut(shortcut);
+	addAction(action);
+	connect(
+		action, &QAction::triggered, this,
+		std::bind(&MainWindow::triggerBrushShortcut, this, action));
+	action->installEventFilter(this);
+}
+
+void MainWindow::changeBrushShortcut(const QString &name, const QString &text)
+{
+	QAction *action = searchAction(name);
+	if(action) {
+		action->setText(text);
+	} else {
+		qWarning(
+			"changeBrushShortcut: action '%s' not found", qUtf8Printable(name));
+	}
+}
+
+void MainWindow::removeBrushShortcut(const QString &name)
+{
+	QAction *action = searchAction(name);
+	if(action) {
+		removeAction(action);
+		delete action;
+	} else {
+		qWarning(
+			"removeBrushShortcut: action '%s' not found", qUtf8Printable(name));
+	}
+}
+
+void MainWindow::triggerBrushShortcut(QAction *action)
+{
+	m_dockBrushPalette->setSelectedPresetIdsFromShortcut(action->shortcut());
+}
+// clang-format off
 
 /**
  * @brief Create actions, menus and toolbars
@@ -4414,7 +4541,7 @@ void MainWindow::setupActions()
 	editmenu->addSeparator();
 	editmenu->addAction(brushSettings);
 #ifdef Q_OS_WIN32
-	QMenu *driverMenu = editmenu->addMenu(QIcon::fromTheme("dialog-input-devices"), tr("Tablet Driver"));
+	QMenu *driverMenu = editmenu->addMenu(QIcon::fromTheme("input-tablet"), tr("Tablet Driver"));
 	for(QAction *driver : drivers) {
 		driverMenu->addAction(driver);
 	}
@@ -4466,15 +4593,45 @@ void MainWindow::setupActions()
 	QAction *zoomoutcenter = makeAction("zoomoutcenter", tr("Zoom Out From Center")).noDefaultShortcut().autoRepeat();
 	QAction *zoomorig = makeAction("zoomone", tr("&Reset Zoom")).icon("zoom-original").shortcut(QKeySequence("ctrl+0"));
 	QAction *zoomorigcenter = makeAction("zoomonecenter", tr("Reset Zoom At Center")).noDefaultShortcut();
-	QAction *zoomfit = makeAction("zoomfit", tr("&Fit Page")).icon("zoom-select").noDefaultShortcut();
-	QAction *zoomfitwidth = makeAction("zoomfitwidth", tr("Fit Page &Width")).icon("zoom-fit-width").noDefaultShortcut();
-	QAction *zoomfitheight = makeAction("zoomfitheight", tr("Fit Page &Height")).icon("zoom-fit-height").noDefaultShortcut();
-	QAction *rotateorig = makeAction("rotatezero", tr("&Reset Rotation")).icon("transform-rotate").shortcut(QKeySequence("ctrl+r"));
-	QAction *rotatecw = makeAction("rotatecw", tr("Rotate Canvas Clockwise")).shortcut(QKeySequence("shift+.")).icon("drawpile_rotate_right").autoRepeat();
-	QAction *rotateccw = makeAction("rotateccw", tr("Rotate Canvas Counterclockwise")).shortcut(QKeySequence("shift+,")).icon("drawpile_rotate_left").autoRepeat();
+	// clang-format on
+	QAction *zoomfit = makeAction("zoomfit", tr("&Fit Canvas"))
+						   .icon("zoom-select")
+						   .noDefaultShortcut();
+	QAction *zoomfitwidth = makeAction("zoomfitwidth", tr("Fit Canvas &Width"))
+								.icon("zoom-fit-width")
+								.noDefaultShortcut();
+	QAction *zoomfitheight =
+		makeAction("zoomfitheight", tr("Fit Canvas &Height"))
+			.icon("zoom-fit-height")
+			.noDefaultShortcut();
+	QAction *rotateorig = makeAction("rotatezero", tr("&Reset Canvas Rotation"))
+							  .icon("transform-rotate")
+							  .shortcut(QKeySequence("ctrl+r"));
+	QAction *rotatecw = makeAction("rotatecw", tr("Rotate Canvas Clockwise"))
+							.shortcut(QKeySequence("shift+."))
+							.icon("drawpile_rotate_right")
+							.autoRepeat();
+	QAction *rotateccw =
+		makeAction("rotateccw", tr("Rotate Canvas Counter-Clockwise"))
+			.shortcut(QKeySequence("shift+,"))
+			.icon("drawpile_rotate_left")
+			.autoRepeat();
 
-	QAction *viewmirror = makeAction("viewmirror", tr("Mirror")).icon("drawpile_mirror").shortcut("V").checkable();
-	QAction *viewflip = makeAction("viewflip", tr("Flip")).icon("drawpile_flip").shortcut("C").checkable();
+	QAction *viewmirror =
+		makeAction("viewmirror", tr("Mirror Canvas"))
+			.icon("drawpile_mirror")
+			.statusTip(tr("Mirror the canvas horizontally"))
+			.shortcutWithSearchText(
+				tr("mirror/flip canvas horizontally"), QKeySequence("V"))
+			.checkable();
+	QAction *viewflip =
+		makeAction("viewflip", tr("Flip Canvas"))
+			.icon("drawpile_flip")
+			.statusTip(tr("Flip the canvas upside-down"))
+			.shortcutWithSearchText(
+				tr("mirror/flip canvas vertically"), QKeySequence("C"))
+			.checkable();
+	// clang-format off
 
 	QAction *showannotations = makeAction("showannotations", tr("Show &Annotations")).noDefaultShortcut().checked().remembered();
 	QAction *showusermarkers = makeAction("showusermarkers", tr("Show User &Pointers")).noDefaultShortcut().checked().remembered();
@@ -4724,6 +4881,7 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerCheckAll);
 	layerMenu->addAction(layerUncheckAll);
 
+	// clang-format on
 	//
 	// Select menu
 	//
@@ -4777,10 +4935,14 @@ void MainWindow::setupActions()
 	QAction *transformmirror =
 		makeAction("transformmirror", tr("&Mirror Transform"))
 			.icon("drawpile_mirror")
-			.noDefaultShortcut();
-	QAction *transformflip = makeAction("transformflip", tr("&Flip Transform"))
-								 .icon("drawpile_flip")
-								 .noDefaultShortcut();
+			.statusTip(tr("Mirror the transformed image horizontally"))
+			.noDefaultShortcut(
+				tr("mirror/flip transformed image horizontally"));
+	QAction *transformflip =
+		makeAction("transformflip", tr("&Flip Transform"))
+			.icon("drawpile_flip")
+			.statusTip(tr("Flip the transformed image upside-down"))
+			.noDefaultShortcut(tr("mirror/flip transformed image vertically"));
 	QAction *transformrotatecw =
 		makeAction("transformrotatecw", tr("&Rotate Transform Clockwise"))
 			.icon("drawpile_rotate_right")
@@ -4791,8 +4953,7 @@ void MainWindow::setupActions()
 			.icon("drawpile_rotate_left")
 			.noDefaultShortcut();
 	QAction *transformshrinktoview =
-		makeAction(
-			"transformshrinktoview", tr("Shrink Transform to &Fit View"))
+		makeAction("transformshrinktoview", tr("Shrink Transform to &Fit View"))
 			.icon("zoom-out")
 			.noDefaultShortcut();
 	QAction *stamp =
@@ -4868,6 +5029,7 @@ void MainWindow::setupActions()
 	m_dockToolSettings->transformSettings()->setActions(
 		transformmirror, transformflip, transformrotatecw, transformrotateccw,
 		transformshrinktoview, stamp);
+	// clang-format off
 
 	//
 	// Animation menu
@@ -5229,8 +5391,8 @@ void MainWindow::setupActions()
 	// Help menu
 	//
 	QAction *homepage = makeAction("dphomepage", tr("&Homepage")).statusTip(cmake_config::website()).noDefaultShortcut();
-	QAction *tablettester = makeAction("tablettester", tr("Tablet Tester")).noDefaultShortcut();
-	QAction *touchtester = makeAction("touchtester", tr("Touch Tester")).noDefaultShortcut();
+	QAction *tablettester = makeAction("tablettester", tr("Tablet Tester")).icon("input-tablet").noDefaultShortcut();
+	QAction *touchtester = makeAction("touchtester", tr("Touch Tester")).icon("input-touchscreen").noDefaultShortcut();
 	QAction *showlogfile = makeAction("showlogfile", tr("Log File")).noDefaultShortcut();
 	QAction *about = makeAction("dpabout", tr("&About Drawpile")).menuRole(QAction::AboutRole).noDefaultShortcut();
 	QAction *aboutqt = makeAction("aboutqt", tr("About &Qt")).menuRole(QAction::AboutQtRole).noDefaultShortcut();
@@ -5247,37 +5409,14 @@ void MainWindow::setupActions()
 		versioncheck, &QAction::triggered, this, &MainWindow::checkForUpdates);
 #endif
 
-	connect(tablettester, &QAction::triggered, [this]() {
-		dialogs::TabletTestDialog *ttd=nullptr;
-		// Check if dialog is already open
-		for(QWidget *toplevel : qApp->topLevelWidgets()) {
-			ttd = qobject_cast<dialogs::TabletTestDialog*>(toplevel);
-			if(ttd)
-				break;
-		}
-		if(!ttd) {
-			ttd = new dialogs::TabletTestDialog;
-			ttd->setAttribute(Qt::WA_DeleteOnClose);
-		}
-		utils::showWindow(ttd, shouldShowDialogMaximized());
-		ttd->raise();
-	});
-
-	connect(touchtester, &QAction::triggered, [this] {
-		dialogs::TouchTestDialog *ttd = nullptr;
-		for(QWidget *toplevel : qApp->topLevelWidgets()) {
-			ttd = qobject_cast<dialogs::TouchTestDialog*>(toplevel);
-			if(ttd) {
-				break;
-			}
-		}
-		if(!ttd) {
-			ttd = new dialogs::TouchTestDialog;
-			ttd->setAttribute(Qt::WA_DeleteOnClose);
-		}
-		utils::showWindow(ttd, shouldShowDialogMaximized());
-		ttd->raise();
-	});
+	// clang-format on
+	connect(
+		tablettester, &QAction::triggered, this,
+		std::bind(&MainWindow::showTabletTestDialog, this, this));
+	connect(
+		touchtester, &QAction::triggered, this,
+		std::bind(&MainWindow::showTouchTestDialog, this, this));
+	// clang-format off
 
 	connect(showlogfile, &QAction::triggered, [this] {
 		QString logFilePath = utils::logFilePath();
@@ -5430,6 +5569,24 @@ void MainWindow::setupActions()
 	updateInterfaceModeActions();
 }
 
+// clang-format on
+void MainWindow::setupBrushShortcuts()
+{
+	brushes::BrushPresetModel *brushPresetModel =
+		dpApp().brushPresets()->presetModel();
+	brushPresetModel->getShortcutActions(
+		std::bind(&MainWindow::addBrushShortcut, this, _1, _2, _3));
+	connect(
+		brushPresetModel, &brushes::BrushPresetModel::shortcutActionAdded, this,
+		&MainWindow::addBrushShortcut);
+	connect(
+		brushPresetModel, &brushes::BrushPresetModel::shortcutActionChanged,
+		this, &MainWindow::changeBrushShortcut);
+	connect(
+		brushPresetModel, &brushes::BrushPresetModel::shortcutActionRemoved,
+		this, &MainWindow::removeBrushShortcut);
+}
+
 void MainWindow::updateInterfaceModeActions()
 {
 	m_desktopModeActions->setEnabled(!m_smallScreenMode);
@@ -5462,6 +5619,7 @@ void MainWindow::updateInterfaceModeActions()
 		m_smallScreenEditActions.clear();
 	}
 }
+// clang-format off
 
 void MainWindow::reenableUpdates()
 {

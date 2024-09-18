@@ -405,6 +405,26 @@ void BrushPalette::overwriteCurrentPreset(QWidget *parent)
 	box->show();
 }
 
+void BrushPalette::setSelectedPresetIdsFromShortcut(
+	const QKeySequence &shortcut)
+{
+	QVector<int> ids = d->presetModel->getPresetIdsForShortcut(shortcut);
+	int count = ids.size();
+	if(count != 0) {
+		int currentIndex = ids.indexOf(d->selectedPresetId);
+		int i = currentIndex < 0 ? 0 : ((currentIndex + 1) % count);
+		setSelectedPresetId(ids[i]);
+		if(d->brushSettings &&
+		   d->brushSettings->currentPresetId() != d->selectedPresetId) {
+			std::optional<brushes::Preset> opt =
+				d->presetModel->searchPresetBrushData(d->selectedPresetId);
+			if(opt.has_value()) {
+				d->brushSettings->setCurrentBrushPreset(opt.value());
+			}
+		}
+	}
+}
+
 void BrushPalette::resetAllPresets()
 {
 	d->presetModel->resetAllPresetChanges();

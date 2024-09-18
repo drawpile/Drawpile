@@ -28,7 +28,7 @@ Links::Links(bool vertical, QWidget *parent)
 		{"help-contents", tr("Help"),
 		 tr("Open Drawpile's help pages in your browser"),
 		 QUrl{"https://drawpile.net/help/"}},
-		{"dialog-input-devices", tr("Tablet Setup"),
+		{"input-tablet", tr("Tablet Setup"),
 		 tr("Open Drawpile's tablet setup and troubleshooting help page"),
 		 QUrl{"https://docs.drawpile.net/help/tech/tablet"}},
 		{"user-group-new", tr("Communities"),

@@ -8,6 +8,7 @@
 
 class KisSliderSpinBox;
 class QComboBox;
+class QKeySequence;
 class QListWidgetItem;
 class QPushButton;
 class QVBoxLayout;
@@ -23,6 +24,9 @@ public:
 	void showPresetPage();
 	void showGeneralPage();
 
+	bool isPresetAttached() const;
+	int presetId() const;
+
 signals:
 	void presetNameChanged(const QString &presetName);
 	void presetDescriptionChanged(const QString &presetDescription);
@@ -30,12 +34,14 @@ signals:
 	void brushSettingsChanged(const brushes::ActiveBrush &brush);
 	void newBrushRequested();
 	void overwriteBrushRequested();
+	void shortcutChangeRequested(int presetId);
 
 public slots:
-	void setPresetAttached(bool presetAttached);
+	void setPresetAttached(bool presetAttached, int presetId);
 	void setPresetName(const QString &presetName);
 	void setPresetDescription(const QString &presetDescription);
 	void setPresetThumbnail(const QPixmap &presetThumbnail);
+	void setPresetShortcut(const QKeySequence &presetShortcut);
 	void setForceEraseMode(bool forceEraseMode);
 	void setStabilizerUseBrushSampleCount(bool useBrushSampleCount);
 	void setGlobalSmoothing(int smoothing);
@@ -121,6 +127,7 @@ private:
 	static QString getMyPaintSettingTitle(int setting);
 	static QString getMyPaintSettingDescription(int setting);
 
+	void requestShortcutChange();
 	void choosePresetThumbnailFile();
 	void showPresetThumbnail(const QPixmap &thumbnail);
 	void renderPresetThumbnail();

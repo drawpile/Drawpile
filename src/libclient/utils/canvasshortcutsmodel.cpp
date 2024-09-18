@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/utils/canvasshortcutsmodel.h"
+#include <QColor>
 #include <QCoreApplication>
+#include <QIcon>
 #include <QKeySequence>
 
 CanvasShortcutsModel::CanvasShortcutsModel(QObject *parent)
-	: QAbstractTableModel{parent}
-	, m_canvasShortcuts{}
-	, m_hasChanges{false}
+	: QAbstractTableModel(parent)
 {
 }
 
@@ -14,6 +14,7 @@ void CanvasShortcutsModel::loadShortcuts(const QVariantMap &cfg)
 {
 	beginResetModel();
 	m_canvasShortcuts = CanvasShortcuts::load(cfg);
+	updateConflictRows(false);
 	m_hasChanges = false;
 	endResetModel();
 }
@@ -28,6 +29,7 @@ void CanvasShortcutsModel::restoreDefaults()
 	beginResetModel();
 	m_canvasShortcuts.clear();
 	m_canvasShortcuts.loadDefaults();
+	updateConflictRows(false);
 	m_hasChanges = true;
 	endResetModel();
 }
@@ -44,34 +46,96 @@ int CanvasShortcutsModel::columnCount(const QModelIndex &parent) const
 
 QVariant CanvasShortcutsModel::data(const QModelIndex &index, int role) const
 {
-	if (!index.isValid()
-		|| index.parent().isValid()
-		|| (role != Qt::DisplayRole && role != Qt::ToolTipRole)
-	) {
+	if(!index.isValid() || index.parent().isValid()) {
 		return QVariant();
 	}
 
-	const auto *s = shortcutAt(index.row());
-	if (!s) {
+	int row = index.row();
+	const CanvasShortcuts::Shortcut *s = shortcutAt(row);
+	if(!s) {
 		return QVariant();
 	}
 
-	switch(Column(index.column())) {
-	case Shortcut:
-		return shortcutToString(s->type, s->mods, s->keys, s->button);
-	case Action:
-		return actionToString(*s);
-	case Modifiers:
-		return flagsToString(*s);
-	case ColumnCount: {}
+	switch(role) {
+	case Qt::DisplayRole:
+	case Qt::ToolTipRole: {
+		QString text;
+		switch(index.column()) {
+		case int(Shortcut):
+			text = shortcutToString(s->type, s->mods, s->keys, s->button);
+			break;
+		case int(Action):
+			text = actionToString(*s);
+			break;
+		case int(Modifiers):
+			text = flagsToString(*s);
+			break;
+		default:
+			break;
+		}
+		if(role == Qt::ToolTipRole && m_conflictRows.contains(row)) {
+			if(text.isEmpty()) {
+				//: Tooltip for a keyboard shortcut conflict.
+				return tr("Conflict");
+			} else {
+				//: Tooltip for a keyboard shortcut conflict, %1 is the name or
+				//: key sequence of the shortcut in question.
+				return tr("%1 (conflict)").arg(text);
+			}
+		} else {
+			return text;
+		}
 	}
-	return QVariant();
+	case Qt::DecorationRole:
+		switch(index.column()) {
+		case int(Shortcut):
+			if(m_conflictRows.contains(row)) {
+				return QIcon::fromTheme("dialog-warning");
+			} else {
+				return QVariant();
+			}
+		default:
+			return QVariant();
+		}
+	case Qt::TextAlignmentRole:
+		switch(index.column()) {
+		case int(Shortcut):
+		case int(Modifiers):
+			return Qt::AlignCenter;
+		default:
+			return QVariant();
+		}
+	case Qt::ForegroundRole:
+		if(m_conflictRows.contains(row)) {
+			return QColor(Qt::white);
+		} else {
+			return QVariant();
+		}
+	case Qt::BackgroundRole:
+		if(m_conflictRows.contains(row)) {
+			return QColor(0xdc3545);
+		} else {
+			return QVariant();
+		}
+	case int(FilterRole): {
+		QString conflictMarker =
+			m_conflictRows.contains(row) ? QStringLiteral("\n\1") : QString();
+		return QStringLiteral("action:%1\nshortcut:%2%3")
+			.arg(
+				actionToString(*s),
+				shortcutToString(s->type, s->mods, s->keys, s->button),
+				conflictMarker);
+	}
+	default:
+		return QVariant();
+	}
 }
 
 bool CanvasShortcutsModel::removeRows(
 	int row, int count, const QModelIndex &parent)
 {
-	if (parent.isValid() || count <= 0 || row < 0 || row + count > m_canvasShortcuts.shortcutsCount()) {
+	if(parent.isValid() || count <= 0 || row < 0 ||
+	   row + count > m_canvasShortcuts.shortcutsCount()) {
 		return false;
 	}
 
@@ -79,13 +143,14 @@ bool CanvasShortcutsModel::removeRows(
 	m_canvasShortcuts.removeShortcutAt(row, count);
 	m_hasChanges = true;
 	endRemoveRows();
+	updateConflictRows(true);
 	return true;
 }
 
 QVariant CanvasShortcutsModel::headerData(
 	int section, Qt::Orientation orientation, int role) const
 {
-	if (role != Qt::DisplayRole || orientation != Qt::Horizontal) {
+	if(role != Qt::DisplayRole || orientation != Qt::Horizontal) {
 		return QVariant();
 	}
 
@@ -96,9 +161,10 @@ QVariant CanvasShortcutsModel::headerData(
 		return tr("Action");
 	case Modifiers:
 		return tr("Modifiers");
-	case ColumnCount: {}
+	case ColumnCount:
+		break;
 	}
-	return QVariant{};
+	return QVariant();
 }
 
 Qt::ItemFlags CanvasShortcutsModel::flags(const QModelIndex &) const
@@ -111,14 +177,16 @@ const CanvasShortcuts::Shortcut *CanvasShortcutsModel::shortcutAt(int row) const
 	return m_canvasShortcuts.shortcutAt(row);
 }
 
-QModelIndex CanvasShortcutsModel::addShortcut(const CanvasShortcuts::Shortcut &s)
+QModelIndex
+CanvasShortcutsModel::addShortcut(const CanvasShortcuts::Shortcut &s)
 {
 	if(!s.isValid()) {
 		return QModelIndex();
 	}
 
 	beginResetModel();
-	const auto row = m_canvasShortcuts.addShortcut(s);
+	int row = m_canvasShortcuts.addShortcut(s);
+	updateConflictRows(false);
 	m_hasChanges = true;
 	endResetModel();
 	return createIndex(row, 0);
@@ -132,7 +200,8 @@ QModelIndex CanvasShortcutsModel::editShortcut(
 	}
 
 	beginResetModel();
-	const auto row = m_canvasShortcuts.editShortcut(prev, s);
+	int row = m_canvasShortcuts.editShortcut(prev, s);
+	updateConflictRows(false);
 	m_hasChanges = true;
 	endResetModel();
 	return createIndex(row, 0);
@@ -148,7 +217,7 @@ const CanvasShortcuts::Shortcut *CanvasShortcutsModel::searchConflict(
 QString CanvasShortcutsModel::shortcutTitle(
 	const CanvasShortcuts::Shortcut *s, bool actionAndFlagsOnly)
 {
-	if (!s) {
+	if(!s) {
 		return QString();
 	}
 
@@ -224,9 +293,37 @@ QString CanvasShortcutsModel::shortcutToString(
 	return components.join(tr("+"));
 }
 
-bool CanvasShortcutsModel::hasChanges() const
+void CanvasShortcutsModel::setExternalKeySequences(
+	const QSet<QKeySequence> &externalKeySequences)
 {
-	return m_hasChanges;
+	if(externalKeySequences != m_externalKeySequences) {
+		m_externalKeySequences = externalKeySequences;
+		updateConflictRows(true);
+	}
+}
+
+void CanvasShortcutsModel::updateConflictRows(bool emitDataChanges)
+{
+	QSet<int> conflictRows;
+	int rowCount = m_canvasShortcuts.shortcutsCount();
+	for(int i = 0; i < rowCount; ++i) {
+		const CanvasShortcuts::Shortcut *s = shortcutAt(i);
+		if(s && s->keySequences().intersects(m_externalKeySequences)) {
+			conflictRows.insert(i);
+		}
+	}
+
+	if(emitDataChanges) {
+		for(int row : conflictRows + m_conflictRows) {
+			if(row >= 0 &&
+			   (!conflictRows.contains(row) || !m_conflictRows.contains(row))) {
+				emit dataChanged(
+					createIndex(row, 0), createIndex(row, ColumnCount - 1));
+			}
+		}
+	}
+
+	m_conflictRows.swap(conflictRows);
 }
 
 QString CanvasShortcutsModel::mouseButtonToString(Qt::MouseButton button)

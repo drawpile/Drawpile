@@ -4,6 +4,7 @@
 #include <QDialog>
 
 class QButtonGroup;
+class QDialogButtonBox;
 class QStackedWidget;
 
 namespace desktop {
@@ -14,6 +15,10 @@ class Settings;
 
 namespace dialogs {
 
+namespace settingsdialog {
+class Shortcuts;
+}
+
 class SettingsDialog final : public QDialog {
 	Q_OBJECT
 public:
@@ -21,10 +26,16 @@ public:
 		bool singleSession, bool smallScreenMode, QWidget *parent = nullptr);
 	~SettingsDialog() override;
 
-	void activateShortcutsPanel();
+	void initiateFixShortcutConflicts();
+	void initiateBrushShortcutChange(int presetId);
+
+signals:
+	void tabletTesterRequested();
+	void touchTesterRequested();
 
 private:
-	void activatePanel(QWidget *panel);
+	settingsdialog::Shortcuts *activateShortcutsPanel();
+	void activatePanel(QWidget *panel, QDialogButtonBox *buttons);
 	void addPanel(QWidget *panel);
 
 	desktop::settings::Settings &m_settings;

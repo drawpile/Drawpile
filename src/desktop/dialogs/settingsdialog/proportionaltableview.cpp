@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/settingsdialog/proportionaltableview.h"
-
+#include "desktop/dialogs/settingsdialog/shortcutfilterinput.h"
 #include <QHeaderView>
-#include <QLineEdit>
 #include <QSortFilterProxyModel>
 
 namespace dialogs {
@@ -39,7 +37,8 @@ void ProportionalTableView::resizeEvent(QResizeEvent *event)
 }
 
 ProportionalTableView *ProportionalTableView::make(
-	QLineEdit *filter, QAbstractItemModel *model)
+	ShortcutFilterInput *filter, int filterRole, QAbstractItemModel *model,
+	QSortFilterProxyModel *filterModel, bool connectFilter)
 {
 	auto *view = new ProportionalTableView;
 	view->setCornerButtonEnabled(false);
@@ -51,12 +50,19 @@ ProportionalTableView *ProportionalTableView::make(
 	view->setWordWrap(false);
 	view->setEditTriggers(QAbstractItemView::AllEditTriggers);
 
-	auto *filterModel = new QSortFilterProxyModel(view);
+	if(filterModel) {
+		filterModel->setParent(view);
+	} else {
+		filterModel = new QSortFilterProxyModel(view);
+	}
+	filterModel->setFilterRole(filterRole);
 	filterModel->setSourceModel(model);
 	filterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-	QObject::connect(
-		filter, &QLineEdit::textChanged, filterModel,
-		&QSortFilterProxyModel::setFilterFixedString);
+	if(connectFilter) {
+		QObject::connect(
+			filter, &ShortcutFilterInput::filtered, filterModel,
+			&QSortFilterProxyModel::setFilterFixedString);
+	}
 	view->setModel(filterModel);
 	view->sortByColumn(0, Qt::AscendingOrder);
 

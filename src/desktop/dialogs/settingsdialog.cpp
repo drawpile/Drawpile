@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog.h"
 #include "desktop/dialogs/settingsdialog/general.h"
-#include "desktop/dialogs/settingsdialog/input.h"
 #include "desktop/dialogs/settingsdialog/network.h"
 #include "desktop/dialogs/settingsdialog/notifications.h"
 #include "desktop/dialogs/settingsdialog/parentalcontrols.h"
 #include "desktop/dialogs/settingsdialog/servers.h"
 #include "desktop/dialogs/settingsdialog/shortcuts.h"
+#include "desktop/dialogs/settingsdialog/tablet.h"
 #include "desktop/dialogs/settingsdialog/tools.h"
+#include "desktop/dialogs/settingsdialog/touch.h"
 #include "desktop/dialogs/settingsdialog/userinterface.h"
 #include "desktop/main.h"
 #include "desktop/settings.h"
@@ -16,6 +17,7 @@
 #include <QBoxLayout>
 #include <QButtonGroup>
 #include <QDialogButtonBox>
+#include <QPushButton>
 #include <QScrollArea>
 #include <QStackedWidget>
 #include <QStyle>
@@ -79,6 +81,8 @@ SettingsDialog::SettingsDialog(
 #else
 	bool showServers = true;
 #endif
+	settingsdialog::Tablet *tabletPage;
+	settingsdialog::Touch *touchPage;
 	const std::initializer_list<
 		std::tuple<const char *, QString, QWidget *, bool>>
 		panels = {
@@ -86,8 +90,10 @@ SettingsDialog::SettingsDialog(
 			 new settingsdialog::General(m_settings, this), true},
 			{"window_", tr("User Interface"),
 			 new settingsdialog::UserInterface(m_settings, this), true},
-			{"dialog-input-devices", tr("Input"),
-			 new settingsdialog::Input(m_settings, this), true},
+			{"input-tablet", tr("Tablet"),
+			 (tabletPage = new settingsdialog::Tablet(m_settings, this)), true},
+			{"input-touchscreen", tr("Touch"),
+			 (touchPage = new settingsdialog::Touch(m_settings, this)), true},
 			{"tools", tr("Tools"), new settingsdialog::Tools(m_settings, this),
 			 true},
 			{"network-modem", tr("Network"),
@@ -97,9 +103,7 @@ SettingsDialog::SettingsDialog(
 			{"network-server-database", tr("Servers"),
 			 new settingsdialog::Servers(m_settings, singleSession, this),
 			 showServers},
-			//: This refers to keyboard, canvas and touch shortcuts. That means
-			//: shortcuts don't necessarily involve keys!
-			{"favorite", tr("Shortcuts", "action"),
+			{"input-keyboard", tr("Shortcuts"),
 			 new settingsdialog::Shortcuts(m_settings, this), true},
 			{"flag", tr("Parental Controls"),
 			 new settingsdialog::ParentalControls(m_settings, this), true}};
@@ -157,16 +161,25 @@ SettingsDialog::SettingsDialog(
 		button->setProperty("panel", QVariant::fromValue(panel));
 		connect(
 			button, &QToolButton::toggled, this,
-			[=, panelToActivate = panel](bool checked) {
+			[this, buttons, panelToActivate = panel](bool checked) {
 				if(checked) {
 					setUpdatesEnabled(false);
-					activatePanel(panelToActivate);
+					activatePanel(panelToActivate, buttons);
 					setUpdatesEnabled(true);
 				}
 			});
 		addPanel(panel);
 		first = false;
 	}
+
+	tabletPage->createButtons(buttons);
+	touchPage->createButtons(buttons);
+	connect(
+		tabletPage, &settingsdialog::Tablet::tabletTesterRequested, this,
+		&SettingsDialog::tabletTesterRequested);
+	connect(
+		touchPage, &settingsdialog::Touch::touchTesterRequested, this,
+		&SettingsDialog::touchTesterRequested);
 
 	menuLayout->addStretch();
 
@@ -184,19 +197,56 @@ SettingsDialog::~SettingsDialog()
 	m_settings.scalingSettings()->sync();
 }
 
-void SettingsDialog::activateShortcutsPanel()
+void SettingsDialog::initiateFixShortcutConflicts()
 {
-	for(QAbstractButton *button : m_group->buttons()) {
-		QWidget *panel = button->property("panel").value<QWidget *>();
-		if(qobject_cast<settingsdialog::Shortcuts *>(panel)) {
-			button->click();
-		}
+	settingsdialog::Shortcuts *shortcuts = activateShortcutsPanel();
+	if(shortcuts) {
+		shortcuts->initiateFixShortcutConflicts();
 	}
 }
 
-void SettingsDialog::activatePanel(QWidget *panel)
+void SettingsDialog::initiateBrushShortcutChange(int presetId)
 {
+	settingsdialog::Shortcuts *shortcuts = activateShortcutsPanel();
+	if(shortcuts) {
+		shortcuts->initiateBrushShortcutChange(presetId);
+	}
+}
+
+settingsdialog::Shortcuts *SettingsDialog::activateShortcutsPanel()
+{
+	for(QAbstractButton *button : m_group->buttons()) {
+		QWidget *panel = button->property("panel").value<QWidget *>();
+		settingsdialog::Shortcuts *shortcuts =
+			qobject_cast<settingsdialog::Shortcuts *>(panel);
+		if(shortcuts) {
+			button->click();
+			return shortcuts;
+		}
+	}
+	return nullptr;
+}
+
+void SettingsDialog::activatePanel(QWidget *panel, QDialogButtonBox *buttons)
+{
+	QAbstractButton *closeButton = buttons->button(QDialogButtonBox::Close);
+	for(QAbstractButton *button : buttons->buttons()) {
+		if(button != closeButton) {
+			button->hide();
+		}
+	}
 	m_stack->setCurrentWidget(panel);
+
+	settingsdialog::Tablet *tablet =
+		qobject_cast<settingsdialog::Tablet *>(panel);
+	if(tablet) {
+		tablet->showButtons();
+	}
+
+	settingsdialog::Touch *touch = qobject_cast<settingsdialog::Touch *>(panel);
+	if(touch) {
+		touch->showButtons();
+	}
 }
 
 void SettingsDialog::addPanel(QWidget *panel)

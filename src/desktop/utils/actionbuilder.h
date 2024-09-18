@@ -35,14 +35,14 @@ public:
 		return *this;
 	}
 
-	ActionBuilder &noDefaultShortcut()
+	ActionBuilder &noDefaultShortcut(const QString &searchText = QString())
 	{
 		Q_ASSERT(!m_action->objectName().isEmpty());
 		Q_ASSERT(!CustomShortcutModel::isCustomizableActionRegistered(
 			m_action->objectName()));
 		CustomShortcutModel::registerCustomizableAction(
 			m_action->objectName(), m_action->text().remove('&'),
-			m_action->icon(), QKeySequence(), QKeySequence());
+			m_action->icon(), QKeySequence(), QKeySequence(), searchText);
 		return *this;
 	}
 
@@ -55,13 +55,20 @@ public:
 		const QKeySequence &shortcut,
 		const QKeySequence &alternateShortcut = QKeySequence())
 	{
+		return shortcutWithSearchText(QString(), shortcut, alternateShortcut);
+	}
+
+	ActionBuilder &shortcutWithSearchText(
+		const QString &searchText, const QKeySequence &shortcut,
+		const QKeySequence &alternateShortcut = QKeySequence())
+	{
 		Q_ASSERT(!m_action->objectName().isEmpty());
 		Q_ASSERT(!CustomShortcutModel::isCustomizableActionRegistered(
 			m_action->objectName()));
 		m_action->setShortcut(shortcut);
 		CustomShortcutModel::registerCustomizableAction(
 			m_action->objectName(), m_action->text().remove('&'),
-			m_action->icon(), shortcut, alternateShortcut);
+			m_action->icon(), shortcut, alternateShortcut, searchText);
 		return *this;
 	}
 

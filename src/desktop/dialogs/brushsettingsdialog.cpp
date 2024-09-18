@@ -3,6 +3,7 @@
 #include "desktop/filewrangler.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/curvewidget.h"
+#include "desktop/widgets/keysequenceedit.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/toolmessage.h"
 #include "libclient/canvas/blendmodes.h"
@@ -30,6 +31,33 @@
 
 namespace dialogs {
 
+namespace {
+
+class ShortcutLineEdit : public QLineEdit {
+public:
+	ShortcutLineEdit(QPushButton *button)
+		: QLineEdit()
+		, m_button(button)
+	{
+		setReadOnly(true);
+		setEnabled(false);
+	}
+
+protected:
+	void mousePressEvent(QMouseEvent *event) override
+	{
+		QLineEdit::mousePressEvent(event);
+		if(event->button() == Qt::LeftButton) {
+			m_button->click();
+		}
+	}
+
+private:
+	QPushButton *m_button;
+};
+
+}
+
 struct BrushSettingsDialog::Private {
 	struct MyPaintPage {
 		KisDoubleSliderSpinBox *baseValueSpinner;
@@ -51,6 +79,8 @@ struct BrushSettingsDialog::Private {
 	QLineEdit *presetLabelEdit;
 	QLineEdit *presetNameEdit;
 	QPlainTextEdit *presetDescriptionEdit;
+	ShortcutLineEdit *presetShortcutEdit;
+	QPushButton *presetShortcutButton;
 	QComboBox *brushTypeCombo;
 	QLabel *brushModeLabel;
 	QComboBox *brushModeCombo;
@@ -94,6 +124,7 @@ struct BrushSettingsDialog::Private {
 	DP_BrushShape lastShape;
 	brushes::ActiveBrush brush;
 	int globalSmoothing;
+	int presetId = 0;
 	bool useBrushSampleCount;
 	bool presetAttached = true;
 	bool updating = false;
@@ -129,7 +160,18 @@ void BrushSettingsDialog::showGeneralPage()
 }
 
 
-void BrushSettingsDialog::setPresetAttached(bool presetAttached)
+bool BrushSettingsDialog::isPresetAttached() const
+{
+	return d->presetAttached;
+}
+
+int BrushSettingsDialog::presetId() const
+{
+	return d->presetId;
+}
+
+
+void BrushSettingsDialog::setPresetAttached(bool presetAttached, int presetId)
 {
 	utils::ScopedUpdateDisabler disabler(this);
 	if(presetAttached && !d->presetAttached) {
@@ -139,6 +181,7 @@ void BrushSettingsDialog::setPresetAttached(bool presetAttached)
 		d->presetAttachedWidget->hide();
 		d->presetDetachedWidget->show();
 	}
+	d->presetId = presetId;
 	d->presetAttached = presetAttached;
 	d->presetAttachedWidget->setEnabled(presetAttached);
 	d->overwriteBrushButton->setEnabled(presetAttached);
@@ -169,6 +212,13 @@ void BrushSettingsDialog::setPresetThumbnail(const QPixmap &presetThumbnail)
 		d->presetLabelEdit->clear();
 		showPresetThumbnail(presetThumbnail);
 	}
+}
+
+void BrushSettingsDialog::setPresetShortcut(const QKeySequence &presetShortcut)
+{
+	QString text = presetShortcut.toString(QKeySequence::NativeText);
+	d->presetShortcutEdit->setText(
+		text.isEmpty() ? tr("No shortcut assigned") : text);
 }
 
 void BrushSettingsDialog::setForceEraseMode(bool forceEraseMode)
@@ -342,6 +392,24 @@ QWidget *BrushSettingsDialog::buildPresetPageUi()
 	QFormLayout *attachedLayout = new QFormLayout;
 	attachedLayout->setContentsMargins(0, 0, 0, 0);
 	d->presetAttachedWidget->setLayout(attachedLayout);
+
+	d->presetShortcutButton = new QPushButton(tr("Change…"));
+	connect(
+		d->presetShortcutButton, &QPushButton::clicked, this,
+		&BrushSettingsDialog::requestShortcutChange);
+
+	d->presetShortcutEdit = new ShortcutLineEdit(d->presetShortcutButton);
+	d->presetShortcutEdit->setAlignment(Qt::AlignCenter);
+	d->presetShortcutEdit->setReadOnly(true);
+	d->presetShortcutEdit->setEnabled(false);
+
+	QHBoxLayout *shortcutLayout = new QHBoxLayout;
+	shortcutLayout->setContentsMargins(0, 0, 0, 0);
+	shortcutLayout->addWidget(d->presetShortcutEdit);
+	shortcutLayout->addWidget(d->presetShortcutButton);
+	attachedLayout->addRow(tr("Shortcut:"), shortcutLayout);
+
+	utils::addFormSpacer(attachedLayout);
 
 	QGridLayout *thumbnailLayout = new QGridLayout;
 
@@ -1336,6 +1404,13 @@ bool BrushSettingsDialog::disableIndirectMyPaintInputs(int setting)
 		return true;
 	default:
 		return false;
+	}
+}
+
+void BrushSettingsDialog::requestShortcutChange()
+{
+	if(d->presetAttached) {
+		emit shortcutChangeRequested(d->presetId);
 	}
 }
 

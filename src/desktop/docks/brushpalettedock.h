@@ -3,6 +3,7 @@
 #define DESKTOP_DOCKS_BRUSHPALETTEDOCK_H
 #include "desktop/docks/dockbase.h"
 
+class QKeySequence;
 class QTemporaryFile;
 
 namespace brushes {
@@ -36,6 +37,7 @@ public:
 
 	void newPreset();
 	void overwriteCurrentPreset(QWidget *parent);
+	void setSelectedPresetIdsFromShortcut(const QKeySequence &shortcut);
 
 public slots:
 	void resetAllPresets();
