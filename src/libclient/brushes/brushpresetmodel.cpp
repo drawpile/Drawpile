@@ -403,17 +403,6 @@ public:
 		return exec(query, sql, {presetId, tagId});
 	}
 
-	bool createPresetTagsFromPresetId(int targetPresetId, int sourcePresetId)
-	{
-		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-		QMutexLocker locker{&m_mutex};
-		QSqlQuery query(m_db);
-		QString sql = QStringLiteral(
-			"insert into preset_tag (preset_id, tag_id)\n"
-			"	select ?, tag_id from preset_tag where preset_id = ?");
-		return exec(query, sql, {targetPresetId, sourcePresetId});
-	}
-
 	bool deletePresetTag(int presetId, int tagId)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
@@ -2018,20 +2007,14 @@ bool BrushPresetModel::changeTagAssignment(
 
 std::optional<Preset> BrushPresetModel::newPreset(
 	const QString &name, const QString description, const QPixmap &thumbnail,
-	const ActiveBrush &brush, int tagId, int tagAssignmentSourcePresetId)
+	const ActiveBrush &brush, int tagId)
 {
 	beginResetModel();
 	int presetId = d->createPreset(
 		name, description, toPng(thumbnail), brush.presetType(),
 		brush.presetData());
-	if(presetId > 0) {
-		if(tagId > 0) {
-			d->createPresetTag(presetId, tagId);
-		}
-		if(tagAssignmentSourcePresetId > 0) {
-			d->createPresetTagsFromPresetId(
-				presetId, tagAssignmentSourcePresetId);
-		}
+	if(presetId > 0 && tagId > 0) {
+		d->createPresetTag(presetId, tagId);
 	}
 	d->refreshPresetCache();
 	endResetModel();

@@ -315,19 +315,17 @@ void BrushPalette::newPreset()
 
 	QString name, description;
 	QPixmap thumbnail;
-	int tagId;
-	int sourcePresetId = d->brushSettings->currentPresetId();
-	if(sourcePresetId > 0) {
+	if(d->brushSettings->currentPresetId() > 0) {
 		name = d->brushSettings->currentPresetName();
 		description = d->brushSettings->currentPresetDescription();
 		thumbnail = d->brushSettings->currentPresetThumbnail();
-		tagId = 0;
 	} else {
 		name = tr("New Brush");
 		description = QStringLiteral("");
 		thumbnail = brush.presetThumbnail();
-		tagId = d->currentTag.isAssignable() ? d->currentTag.id : 0;
 	}
+
+	int tagId = d->currentTag.isAssignable() ? d->currentTag.id : 0;
 
 	QRegularExpression trailingParensRe(
 		QStringLiteral("\\A(.+?)\\s*\\(([0-9]+)\\)\\s*\\z"),
@@ -355,8 +353,8 @@ void BrushPalette::newPreset()
 		}
 	}
 
-	std::optional<brushes::Preset> opt = d->presetModel->newPreset(
-		name, description, thumbnail, brush, tagId, sourcePresetId);
+	std::optional<brushes::Preset> opt =
+		d->presetModel->newPreset(name, description, thumbnail, brush, tagId);
 	if(opt.has_value()) {
 		int presetId = opt->id;
 		setSelectedPresetId(presetId);
