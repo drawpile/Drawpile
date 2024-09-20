@@ -576,46 +576,6 @@ import { UAParser } from "ua-parser-js";
     if (typeof SharedArrayBuffer === "function") {
       return true;
     } else {
-      const missing = [];
-      if ("crossOriginIsolated" in window && !window.crossOriginIsolated) {
-        missing.push("cross-origin isolation");
-      }
-      if ("isSecureContext" in window && !window.isSecureContext) {
-        missing.push("a secure context");
-      }
-      const reason =
-        missing.length === 0
-          ? tag("p", [
-              "Looks like your browser doesn't support it. For more " +
-                "information, check out ",
-              tag(
-                "a",
-                {
-                  href: "https://drawpile.net/sharedarraybufferhelp/",
-                  target: "_blank",
-                },
-                ["this help page"],
-              ),
-              ".",
-            ])
-          : tag("p", [
-              "Looks like this is due to a server misconfiguration, " +
-                "tell the owner of " +
-                window.location.hostname +
-                " that they are missing " +
-                missing.join(" and ") +
-                ". For more information, check out ",
-              tag(
-                "a",
-                {
-                  href: "https://drawpile.net/sharedarraybufferhelp/",
-                  target: "_blank",
-                },
-                ["this help page"],
-              ),
-              ".",
-            ]);
-
       const status = document.querySelector("#status");
       status.appendChild(
         tag("p", [
@@ -623,7 +583,23 @@ import { UAParser } from "ua-parser-js";
           " SharedArrayBuffer not available.",
         ]),
       );
-      status.appendChild(reason);
+      status.appendChild(
+        tag("p", [
+          "This is usually because your browser is outdated " +
+            "or you are viewing the page through some kind of " +
+            "embedded browser, like a chat application's, and " +
+            "need to open it properly. For more information, check out ",
+          tag(
+            "a",
+            {
+              href: "https://drawpile.net/sharedarraybufferhelp/",
+              target: "_blank",
+            },
+            ["this help page"],
+          ),
+          ".",
+        ]),
+      );
       return false;
     }
   }
