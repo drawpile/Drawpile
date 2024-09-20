@@ -47,7 +47,7 @@ bool SceneWrapper::isTabletEnabled() const
 
 bool SceneWrapper::isTouchScrollEnabled() const
 {
-	return m_view->isTouchScrollEnabled();
+	return m_view->isTouchPanEnabled();
 }
 
 bool SceneWrapper::isTouchDrawEnabled() const

@@ -99,6 +99,42 @@ namespace newCanvasBackColor {
 	}
 }
 
+namespace oneFingerTouch {
+	QVariant get(const SettingMeta &meta, QSettings &settings)
+	{
+		if (findKey(settings, meta.baseKey, meta.version)) {
+			bool ok;
+			int value = any::get(meta, settings).toInt(&ok);
+			if(ok) {
+				switch(value) {
+				case int(OneFingerTouchAction::Nothing):
+				case int(OneFingerTouchAction::Draw):
+				case int(OneFingerTouchAction::Pan):
+				case int(OneFingerTouchAction::Guess):
+					return value;
+				default:
+					break;
+				}
+			}
+			return int(ONE_FINGER_TOUCH_DEFAULT);
+		}
+
+		std::optional<libclient::settings::FoundKey> touchDrawKey = findKey(
+			settings, "settings/input/touchdraw", SettingMeta::Version::V0);
+		if(touchDrawKey.has_value() && settings.value(touchDrawKey->key).toBool()) {
+			return int(OneFingerTouchAction::Draw);
+		}
+
+		std::optional<libclient::settings::FoundKey> touchScrollKey = findKey(
+			settings, "settings/input/touchscroll", SettingMeta::Version::V0);
+		if(touchScrollKey.has_value() && settings.value(touchScrollKey->key).toBool()) {
+			return int(OneFingerTouchAction::Pan);
+		}
+
+		return int(ONE_FINGER_TOUCH_DEFAULT);
+	}
+}
+
 namespace tabletDriver {
 	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{

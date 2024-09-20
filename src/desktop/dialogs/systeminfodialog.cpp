@@ -175,10 +175,10 @@ QString SystemInfoDialog::getSystemInfo() const
 	info += QStringLiteral("Global smoothing: %1\n").arg(settings.smoothing());
 	info += QStringLiteral("Global pressure curve: \"%1\"\n")
 				.arg(settings.globalPressureCurve());
-	info += QStringLiteral("One-finger draw: %1\n")
-				.arg(boolToYesNo(settings.oneFingerDraw()));
-	info += QStringLiteral("One-finger scroll: %1\n")
-				.arg(boolToYesNo(settings.oneFingerScroll()));
+	info +=
+		QStringLiteral("One-finger touch action: %1\n")
+			.arg(QMetaEnum::fromType<desktop::settings::OneFingerTouchAction>()
+					 .valueToKey(settings.oneFingerTouch()));
 	info += QStringLiteral("Two-finger zoom: %1\n")
 				.arg(boolToYesNo(settings.twoFingerZoom()));
 	info += QStringLiteral("Two-finger rotate: %1\n")

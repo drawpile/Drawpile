@@ -2256,8 +2256,7 @@ void MainWindow::toggleTabletEventLog()
 				const desktop::settings::Settings &settings = dpApp().settings();
 				DP_event_log_write_meta("Tablet enabled: %d", settings.tabletEvents());
 				DP_event_log_write_meta("Tablet eraser action: %d", settings.tabletEraserAction());
-				DP_event_log_write_meta("One-finger draw: %d", settings.oneFingerDraw());
-				DP_event_log_write_meta("One-finger scroll: %d", settings.oneFingerScroll());
+				DP_event_log_write_meta("One-finger touch action: %d", settings.oneFingerTouch());
 				DP_event_log_write_meta("Two-finger rotate: %d", settings.twoFingerRotate());
 				DP_event_log_write_meta("Two-finger zoom: %d", settings.twoFingerZoom());
 				DP_event_log_write_meta("Gestures: %d", settings.touchGestures());

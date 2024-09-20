@@ -28,6 +28,14 @@
 #	endif
 #endif
 
+#ifndef ONE_FINGER_TOUCH_DEFAULT
+#	if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
+#		define ONE_FINGER_TOUCH_DEFAULT desktop::settings::OneFingerTouchAction::Guess
+#	else
+#		define ONE_FINGER_TOUCH_DEFAULT desktop::settings::OneFingerTouchAction::Pan
+#	endif
+#endif
+
 #ifndef OVERRIDE_FONT_SIZE_DEFAULT
 #	if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
 #		define OVERRIDE_FONT_SIZE_DEFAULT true
@@ -171,8 +179,8 @@ SETTING(notifSoundLogin           , NotifSoundLogin           , "notifications/l
 SETTING(notifSoundLogout          , NotifSoundLogout          , "notifications/logout"                  , true)
 SETTING(notifSoundPrivateChat     , NotifSoundPrivateChat     , "notifications/privatechat"             , true)
 SETTING(notifSoundUnlock          , NotifSoundUnlock          , "notifications/unlock"                  , true)
-SETTING(oneFingerDraw             , OneFingerDraw             , "settings/input/touchdraw"              , false)
-SETTING(oneFingerScroll           , OneFingerScroll           , "settings/input/touchscroll"            , true)
+SETTING_GETSET(oneFingerTouch     , OneFingerTouch            , "settings/input/onefinertouch"          , int(ONE_FINGER_TOUCH_DEFAULT)
+	, &oneFingerTouch::get, &any::set)
 SETTING(tabletPressTimerDelay     , TabletPressTimerDelay     , "settings/input/tabletpresstimerdelay"  , 500)
 SETTING(touchGestures             , TouchGestures             , "settings/input/touchgestures"          , false)
 SETTING(onionSkinsFrameCount      , OnionSkinsFrameCount      , "onionskins/framecount"                 , 8)

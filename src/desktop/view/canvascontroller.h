@@ -56,8 +56,9 @@ public:
 
 	bool shouldRenderSmooth() const;
 	bool isTabletEnabled() const { return m_tabletEnabled; }
-	bool isTouchScrollEnabled() const { return m_enableTouchScroll; }
-	bool isTouchDrawEnabled() const { return m_enableTouchDraw; }
+	bool isTouchDrawEnabled() const;
+	bool isTouchPanEnabled() const;
+	bool isTouchDrawOrPanEnabled() const;
 
 	KisCubicCurve pressureCurve() const { return m_pressureCurve; }
 
@@ -207,8 +208,7 @@ private:
 	void setClearColor(const QColor clearColor);
 	void setRenderSmooth(bool renderSmooth);
 	void setTabletEnabled(bool tabletEnabled);
-	void setEnableTouchScroll(bool enableTouchScroll);
-	void setEnableTouchDraw(bool enableTouchDraw);
+	void setOneFingerTouchAction(int oneFingerTouchAction);
 	void setEnableTouchPinch(bool enableTouchPinch);
 	void setEnableTouchTwist(bool enableTouchTwist);
 	void setSerializedPressureCurve(const QString &serializedPressureCurve);
@@ -219,6 +219,7 @@ private:
 
 	void startTabletEventTimer()
 	{
+		m_anyTabletEventsReceived = true;
 		if(m_tabletEventTimerDelay > 0) {
 			m_tabletEventTimer.setRemainingTime(m_tabletEventTimerDelay);
 		}
@@ -400,12 +401,12 @@ private:
 	QDeadlineTimer m_tabletEventTimer;
 	int m_tabletEventTimerDelay = 0;
 
-	bool m_enableTouchScroll = true;
-	bool m_enableTouchDraw = false;
 	bool m_enableTouchPinch = true;
 	bool m_enableTouchTwist = true;
 	bool m_touching = false;
 	bool m_touchRotating = false;
+	bool m_anyTabletEventsReceived = false;
+	int m_oneFingerTouchAction;
 	TouchMode m_touchMode = TouchMode::Unknown;
 	QVector<QPair<long long, QPointF>> m_touchDrawBuffer;
 	QPointF m_touchStartPos;

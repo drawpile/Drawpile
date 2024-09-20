@@ -49,7 +49,7 @@ bool ViewWrapper::isTabletEnabled() const
 
 bool ViewWrapper::isTouchScrollEnabled() const
 {
-	return m_controller->isTouchScrollEnabled();
+	return m_controller->isTouchPanEnabled();
 }
 
 bool ViewWrapper::isTouchDrawEnabled() const

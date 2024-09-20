@@ -140,13 +140,12 @@ void Input::initTablet(
 	auto *oneTouch = utils::addRadioGroup(
 		form, tr("One-finger input:"), true,
 		{
-			{tr("Do nothing"), 0},
-			{tr("Draw"), 1},
-			{tr("Pan canvas"), 2},
+			{tr("None"), int(desktop::settings::OneFingerTouchAction::Nothing)},
+			{tr("Draw"), int(desktop::settings::OneFingerTouchAction::Draw)},
+			{tr("Pan"), int(desktop::settings::OneFingerTouchAction::Pan)},
+			{tr("Guess"), int(desktop::settings::OneFingerTouchAction::Guess)},
 		});
-	oneTouch->button(0)->setChecked(true);
-	settings.bindOneFingerDraw(oneTouch->button(1));
-	settings.bindOneFingerScroll(oneTouch->button(2));
+	settings.bindOneFingerTouch(oneTouch);
 	settings.bindTouchGestures(oneTouch->button(1), &QWidget::setDisabled);
 
 	auto *twoTouch = new utils::EncapsulatedLayout;

@@ -827,10 +827,11 @@ static StartupOptions initApp(DrawpileApp &app)
 		// We'll flush the flag that we checked the input here in case we crash.
 		settings.setAndroidStylusChecked(true);
 		settings.trySubmit();
-		// Enable fingerpainting if this device doesn't have a stylus.
+		// Disable finerpainting if this device is detected to have a stylus.
 		bool hasStylus = utils::androidHasStylusInput();
-		settings.setOneFingerScroll(hasStylus);
-		settings.setOneFingerDraw(!hasStylus);
+		settings.setOneFingerTouch(
+			int(hasStylus ? desktop::settings::OneFingerTouchAction::Draw
+						  : desktop::settings::OneFingerTouchAction::Guess));
 	}
 
 	settings.bindCaptureVolumeRocker([](bool capture) {

@@ -62,8 +62,9 @@ public:
 	}
 
 	bool isTabletEnabled() const { return m_enableTablet; }
-	bool isTouchScrollEnabled() const { return m_enableTouchScroll; }
-	bool isTouchDrawEnabled() const { return m_enableTouchDraw; }
+	bool isTouchDrawEnabled() const;
+	bool isTouchPanEnabled() const;
+	bool isTouchDrawOrPanEnabled() const;
 
 	canvas::Point mapToCanvas(
 		long long timeMsec, const QPoint &point, qreal pressure, qreal xtilt,
@@ -90,8 +91,7 @@ public:
 	void setTabletEnabled(bool enable) { m_enableTablet = enable; }
 
 	//! Enable/disable touch gestures
-	void setTouchScroll(bool scroll) { m_enableTouchScroll = scroll; }
-	void setTouchDraw(bool draw) { m_enableTouchDraw = draw; }
+	void setOneFingerTouchAction(int oneFingerTouchAction);
 	void setTouchPinch(bool pinch) { m_enableTouchPinch = pinch; }
 	void setTouchTwist(bool twist) { m_enableTouchTwist = twist; }
 	void setTouchUseGestureEvents(bool touchUseGestureEvents);
@@ -270,6 +270,7 @@ private:
 
 	void startTabletEventTimer()
 	{
+		m_anyTabletEventsReceived = true;
 		if(m_tabletEventTimerDelay > 0) {
 			m_tabletEventTimer.setRemainingTime(m_tabletEventTimerDelay);
 		}
@@ -431,10 +432,11 @@ private:
 	bool m_pointertracking;
 	bool m_pixelgrid;
 
-	bool m_enableTouchScroll, m_enableTouchDraw;
 	bool m_enableTouchPinch, m_enableTouchTwist;
 	bool m_useGestureEvents;
 	bool m_touching, m_touchRotating;
+	bool m_anyTabletEventsReceived;
+	int m_oneFingerTouchAction;
 	TouchMode m_touchMode;
 	QVector<QPair<long long, QPointF>> m_touchDrawBuffer;
 	qreal m_touchStartZoom, m_touchStartRotate;

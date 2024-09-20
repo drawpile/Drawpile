@@ -51,6 +51,14 @@ enum class KineticScrollGesture : int {
 };
 Q_ENUM_NS(KineticScrollGesture)
 
+enum class OneFingerTouchAction : int {
+	Nothing,
+	Pan,
+	Draw,
+	Guess,
+};
+Q_ENUM_NS(OneFingerTouchAction)
+
 enum class ThemePalette : int {
 	System,
 	Light,
