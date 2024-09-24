@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "thinsrv/multiserver.h"
 #include "cmake-config/config.h"
+#include "libserver/jsonapi.h"
 #include "libserver/serverconfig.h"
 #include "libserver/serverlog.h"
 #include "libserver/session.h"
@@ -868,17 +869,29 @@ JsonApiResult MultiServer::accountsJsonApi(JsonApiMethod method, const QStringLi
 		return JsonApiNotFound();
 
 	if(path.size()==1) {
-		if(method == JsonApiMethod::Update) {
-			QJsonObject o = db->updateAccount(path.at(0).toInt(), request);
+		QString head = path.at(0);
+
+		if (method == JsonApiMethod::Create) {
+			if(head == "auth" && request.contains("username") && request.contains("password")) {
+				RegisteredUser user = db->getUserAccount(request["username"].toString(), request["password"].toString());
+				return JsonApiResult{
+					JsonApiResult::Ok,
+					QJsonDocument(QJsonObject{{"status", user.status}})};
+			}
+
+			return JsonApiNotFound();
+
+		} else if(method == JsonApiMethod::Update) {
+			QJsonObject o = db->updateAccount(head.toInt(), request);
 			if(o.isEmpty())
 				return JsonApiNotFound();
 			return JsonApiResult {JsonApiResult::Ok, QJsonDocument(o)};
 
 		} else if(method == JsonApiMethod::Delete) {
-			if(db->deleteAccount(path.at(0).toInt())) {
+			if(db->deleteAccount(head.toInt())) {
 				QJsonObject body;
 				body["status"] = "ok";
-				body["deleted"] = path.at(0).toInt();
+				body["deleted"] = head.toInt();
 				return JsonApiResult {JsonApiResult::Ok, QJsonDocument(body)};
 			} else {
 				return JsonApiNotFound();

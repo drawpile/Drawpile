@@ -1641,6 +1641,8 @@ JsonApiResult Session::callJsonApi(
 
 		if(head == "listing")
 			return callListingsJsonApi(method, tail, request);
+		else if(head == "auth")
+			return callAuthJsonApi(method, tail, request);
 
 		int userId = head.toInt();
 		if(userId > 0) {
@@ -1700,6 +1702,42 @@ JsonApiResult Session::callListingsJsonApi(
 			}
 		}
 	}
+	return JsonApiNotFound();
+}
+
+JsonApiResult Session::callAuthJsonApi(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	if(method != JsonApiMethod::Create)
+		return JsonApiBadMethod();
+
+	int pathLength = path.length();
+
+	if (pathLength > 1)
+		return JsonApiNotFound();
+
+	if (pathLength == 1) {
+		const QString head = path.at(0);
+
+		if (head == "op") {
+			if(request.contains("password")) {
+				bool status = passwordhash::check(request["password"].toString(), m_history->opwordHash());
+				return JsonApiResult{
+						JsonApiResult::Ok,
+						QJsonDocument(QJsonObject{{"status", status}})};
+			}
+		}
+
+		return JsonApiNotFound();
+	}
+
+	if(request.contains("password")) {
+		bool status = m_history->checkPassword(request["password"].toString());
+		return JsonApiResult{
+				JsonApiResult::Ok,
+				QJsonDocument(QJsonObject{{"status", status}})};
+	}
+
 	return JsonApiNotFound();
 }
 

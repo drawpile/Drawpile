@@ -491,6 +491,10 @@ private:
 		JsonApiMethod method, const QStringList &path,
 		const QJsonObject &request);
 
+	JsonApiResult callAuthJsonApi(
+		JsonApiMethod method, const QStringList &path,
+		const QJsonObject &request);
+
 	QJsonObject getUserDescription(const Client *user) const;
 
 	SessionHistory *m_history;

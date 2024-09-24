@@ -153,6 +153,23 @@ To send a message to all session participants: `PUT /api/sessions/:id/`
 
 To shut down a session: `DELETE /api/sessions/:id/`
 
+To authenticate to a session: `POST /api/sessions/:id/auth`
+
+    {
+        "password": "the password of the session"
+    }
+
+To authenticate to a session (opword): `POST /api/sessions/:id/auth/op`
+    {
+        "password": "the opword of the session"
+    }
+
+Returns
+
+    {
+        "status": boolean (is valid)
+    }
+
 Implementation: `callJsonApi @ src/shared/server/session.cpp`
 
 ### Session users
@@ -234,6 +251,25 @@ To edit an user: `PUT /api/accounts/:id/`
     }
 
 To delete a user: `DELETE /api/accounts/:id/`
+
+To authenticate an user: `POST /api/accounts/auth`
+
+    {
+        "username": "username to authenticate",
+        "password": "user's password"
+    }
+
+Returns the status of the user:
+
+    {
+        "status": integer
+    }
+
+Possible values for status are:
+ * 0: NotFound, user with this name not found
+ * 1: BadPass, supplied password did not match
+ * 2: Banned, this username is banned
+ * 3: Ok, can log in
 
 Implementation: `accountsJsonApi @ src/server/multiserver.cpp`
 
