@@ -1031,8 +1031,8 @@ void CanvasView::onPenDown(
 					m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
 				emit penDown(
 					p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(),
-					p.rotation(), right, m_rotate, m_zoom, m_mirror, m_flip,
-					constraintMatch.toolConstraint1(),
+					p.rotation(), right, m_rotate, m_zoom / devicePixelRatioF(),
+					m_mirror, m_flip, constraintMatch.toolConstraint1(),
 					constraintMatch.toolConstraint2(), viewPos, deviceType,
 					eraserOverride);
 			}
@@ -1248,7 +1248,9 @@ void CanvasView::penMoveEvent(
 					match.toolConstraint1(), match.toolConstraint2(), pos);
 
 			} else {
-				emit penHover(point, m_rotate, m_zoom, m_mirror, m_flip);
+				emit penHover(
+					point, m_rotate, m_zoom / devicePixelRatioF(), m_mirror,
+					m_flip);
 				if(m_pointertracking && m_scene->hasImage()) {
 					emit pointerMoved(point);
 				}

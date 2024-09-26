@@ -1469,7 +1469,9 @@ void CanvasController::penMoveEvent(
 	} else {
 		if(m_fractionalTool || !m_prevPoint.intSame(point)) {
 			if(m_penState == PenState::Up) {
-				emit penHover(point, m_rotation, m_zoom, m_mirror, m_flip);
+				emit penHover(
+					point, m_rotation, m_zoom / devicePixelRatioF(), m_mirror,
+					m_flip);
 				if(m_pointerTracking && m_canvasModel) {
 					emit pointerMove(point);
 				}
@@ -1622,8 +1624,9 @@ void CanvasController::penPressEvent(
 						emit penDown(
 							point.timeMsec(), point, point.pressure(),
 							point.xtilt(), point.ytilt(), point.rotation(),
-							button == Qt::RightButton, m_rotation, m_zoom,
-							m_mirror, m_flip, constraintMatch.toolConstraint1(),
+							button == Qt::RightButton, m_rotation,
+							m_zoom / devicePixelRatioF(), m_mirror, m_flip,
+							constraintMatch.toolConstraint1(),
 							constraintMatch.toolConstraint2(), posf, deviceType,
 							eraserOverride);
 					}
