@@ -24,6 +24,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Allow configuring the number of brush slots in the tool settings, from 1 to 9, in addition to the everpresent eraser slot. Thanks vipperz for suggesting.
  * Fix: Clamp palette swatch sizes to more reasonable bounds. Thanks MachKerman for reporting.
  * Server Feature: Allow checking session, operator and server account passwords via the API. This can be used to password-protect recordings or similar. Thanks Meru for contributing.
+ * Fix: Correct some UI scaling problems with brush outlines, canvas centering, dock toggling, pixel grid and transform handles. Thanks annoy for reporting.
 
 2024-08-09 Version 2.2.2-beta.3
  * Fix: Use more accurate timers for performance profiles if the platform supports it.
