@@ -2251,7 +2251,11 @@ void CanvasController::setZoomToFit(Qt::Orientations orientations)
 		{
 			QSignalBlocker blocker(this);
 			QScopedValueRollback<bool> rollback(m_blockNotices, true);
-			setZoomAt(scale, center);
+			qreal newZoom = qBound(zoomMin, scale, zoomMax);
+			updateCanvasTransform([&] {
+				m_pos += center * (newZoom - m_zoom);
+				m_zoom = newZoom;
+			});
 			setRotation(rotation);
 			setMirror(mirror);
 			setFlip(flip);
