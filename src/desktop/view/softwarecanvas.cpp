@@ -16,13 +16,13 @@ Q_LOGGING_CATEGORY(
 namespace view {
 
 struct SoftwareCanvas::Private {
-	void updateOutline()
+	void updateOutline(qreal dpr)
 	{
 		view::CanvasScene *scene = controller->scene();
 		scene->setOutline(
 			controller->isOutlineVisibleInMode(), controller->outlinePos(),
 			controller->rotation(),
-			controller->outlineSize() * controller->zoom(),
+			controller->outlineSize() * controller->zoom() / dpr,
 			controller->outlineWidth(), controller->isSquareOutline());
 	}
 
@@ -288,13 +288,13 @@ void SoftwareCanvas::setRenderUpdateFull(bool renderUpdateFull)
 
 void SoftwareCanvas::onControllerTransformChanged()
 {
-	d->updateOutline();
+	d->updateOutline(devicePixelRatioF());
 	update();
 }
 
 void SoftwareCanvas::onControllerOutlineChanged()
 {
-	d->updateOutline();
+	d->updateOutline(devicePixelRatioF());
 }
 
 void SoftwareCanvas::onControllerTileCacheDirtyCheckNeeded()
