@@ -148,10 +148,10 @@ struct SoftwareCanvas::Private {
 					pen.setCosmetic(true);
 					painter->setPen(pen);
 
-					int left = exposed.left();
-					int right = exposed.right();
-					int top = exposed.top();
-					int bottom = exposed.bottom();
+					int left = qFloor(exposed.left());
+					int right = qCeil(exposed.right());
+					int top = qFloor(exposed.top());
+					int bottom = qCeil(exposed.bottom());
 					for(int x = left; x < right; ++x) {
 						painter->drawLine(x, top, x, bottom);
 					}
