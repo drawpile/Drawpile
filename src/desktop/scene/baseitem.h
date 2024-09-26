@@ -89,9 +89,9 @@ private:
 				return item->boundingRect().translated(item->scenePos());
 			} else {
 				QTransform tf;
-				tf.rotate(rotation);
 				QPointF t = item->scenePos();
 				tf.translate(t.x(), t.y());
+				tf.rotate(rotation);
 				return tf.map(item->boundingRect()).boundingRect();
 			}
 		} else {
