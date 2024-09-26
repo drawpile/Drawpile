@@ -65,6 +65,11 @@ QPoint SceneWrapper::viewCenterPoint() const
 	return m_view->viewCenterPoint();
 }
 
+QPointF SceneWrapper::viewTransformOffset() const
+{
+	return QPointF(0, 0);
+}
+
 bool SceneWrapper::isPointVisible(const QPointF &point) const
 {
 	return m_view->isPointVisible(point);

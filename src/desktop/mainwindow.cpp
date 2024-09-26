@@ -5378,17 +5378,20 @@ void MainWindow::reenableUpdates()
 	}
 }
 
+// clang-format on
 void MainWindow::keepCanvasPosition(const std::function<void()> &block)
 {
 	QWidget *canvasWidget = m_canvasView->viewWidget();
 	QPoint centralPosBefore = centralWidget()->pos();
 	QSize canvasSizeBefore = canvasWidget->size();
+	QPointF offsetBefore = m_canvasView->viewTransformOffset();
 	block();
 	QPoint centralPosDelta = centralWidget()->pos() - centralPosBefore;
 	QSize canvasSizeDelta = canvasWidget->size() - canvasSizeBefore;
+	QPointF offsetDelta = m_canvasView->viewTransformOffset() - offsetBefore;
 	emit viewShifted(
-		centralPosDelta.x() + canvasSizeDelta.width() / 2.0,
-		centralPosDelta.y() + canvasSizeDelta.height() / 2.0);
+		centralPosDelta.x() + canvasSizeDelta.width() / 2.0 - offsetDelta.x(),
+		centralPosDelta.y() + canvasSizeDelta.height() / 2.0 - offsetDelta.y());
 }
 
 void MainWindow::createDocks()

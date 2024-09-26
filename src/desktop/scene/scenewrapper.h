@@ -27,6 +27,7 @@ public:
 	QString pressureCurveAsString() const override;
 
 	QPoint viewCenterPoint() const override;
+	QPointF viewTransformOffset() const override;
 	bool isPointVisible(const QPointF &point) const override;
 	QRectF screenRect() const override;
 

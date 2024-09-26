@@ -67,6 +67,11 @@ QPoint ViewWrapper::viewCenterPoint() const
 	return m_controller->viewCenterPoint();
 }
 
+QPointF ViewWrapper::viewTransformOffset() const
+{
+	return m_canvasWidget->viewTransformOffset();
+}
+
 bool ViewWrapper::isPointVisible(const QPointF &point) const
 {
 	return m_controller->isPointVisible(point);

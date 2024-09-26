@@ -87,6 +87,7 @@ public:
 	virtual QString pressureCurveAsString() const = 0;
 
 	virtual QPoint viewCenterPoint() const = 0;
+	virtual QPointF viewTransformOffset() const = 0;
 	virtual bool isPointVisible(const QPointF &point) const = 0;
 	virtual QRectF screenRect() const = 0;
 
