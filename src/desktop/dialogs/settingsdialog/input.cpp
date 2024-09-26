@@ -146,7 +146,9 @@ void Input::initTablet(
 			{tr("Guess"), int(desktop::settings::OneFingerTouchAction::Guess)},
 		});
 	settings.bindOneFingerTouch(oneTouch);
-	settings.bindTouchGestures(oneTouch->button(1), &QWidget::setDisabled);
+	settings.bindTouchGestures(
+		oneTouch->button(int(desktop::settings::OneFingerTouchAction::Draw)),
+		&QWidget::setDisabled);
 
 	auto *twoTouch = new utils::EncapsulatedLayout;
 	twoTouch->setContentsMargins(0, 0, 0, 0);
