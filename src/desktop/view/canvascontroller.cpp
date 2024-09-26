@@ -5,6 +5,7 @@ extern "C" {
 #include "desktop/main.h"
 #include "desktop/scene/toggleitem.h"
 #include "desktop/utils/qtguicompat.h"
+#include "desktop/utils/touchhandler.h"
 #include "desktop/view/canvascontroller.h"
 #include "desktop/view/canvasinterface.h"
 #include "desktop/view/canvasscene.h"
@@ -13,7 +14,6 @@ extern "C" {
 #include "libclient/drawdance/eventlog.h"
 #include "libclient/tools/devicetype.h"
 #include "libclient/tools/toolstate.h"
-#include "libshared/util/qtcompat.h"
 #include <QDateTime>
 #include <QGestureEvent>
 #include <QKeyEvent>
@@ -51,7 +51,7 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 	, m_eraseCursorStyle(int(Cursor::SameAsBrush))
 	, m_alphaLockCursorStyle(int(Cursor::SameAsBrush))
 	, m_brushBlendMode(DP_BLEND_MODE_NORMAL)
-	, m_oneFingerTouchAction(int(ONE_FINGER_TOUCH_DEFAULT))
+	, m_touch(new TouchHandler(this))
 	, m_toolState(int(tools::ToolState::Normal))
 {
 	desktop::settings::Settings &settings = dpApp().settings();
@@ -59,10 +59,6 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 		this, &CanvasController::setClearColor);
 	settings.bindRenderSmooth(this, &CanvasController::setRenderSmooth);
 	settings.bindTabletEvents(this, &CanvasController::setTabletEnabled);
-	settings.bindOneFingerTouch(
-		this, &CanvasController::setOneFingerTouchAction);
-	settings.bindTwoFingerZoom(this, &CanvasController::setEnableTouchPinch);
-	settings.bindTwoFingerRotate(this, &CanvasController::setEnableTouchTwist);
 	settings.bindBrushOutlineWidth(this, &CanvasController::setOutlineWidth);
 	settings.bindGlobalPressureCurve(
 		this, &CanvasController::setSerializedPressureCurve);
@@ -75,6 +71,22 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 		this, &CanvasController::setAlphaLockCursorStyle);
 	settings.bindTabletPressTimerDelay(
 		this, &CanvasController::setTabletEventTimerDelay);
+
+	connect(
+		m_touch, &TouchHandler::touchPressed, this,
+		&CanvasController::touchPressEvent, Qt::DirectConnection);
+	connect(
+		m_touch, &TouchHandler::touchMoved, this,
+		&CanvasController::touchMoveEvent, Qt::DirectConnection);
+	connect(
+		m_touch, &TouchHandler::touchReleased, this,
+		&CanvasController::touchReleaseEvent, Qt::DirectConnection);
+	connect(
+		m_touch, &TouchHandler::touchScrolledBy, this,
+		&CanvasController::scrollByF, Qt::DirectConnection);
+	connect(
+		m_touch, &TouchHandler::touchZoomedRotated, this,
+		&CanvasController::touchZoomRotate, Qt::DirectConnection);
 
 	resetCanvasTransform();
 }
@@ -107,38 +119,17 @@ bool CanvasController::shouldRenderSmooth() const
 
 bool CanvasController::isTouchDrawEnabled() const
 {
-	switch(m_oneFingerTouchAction) {
-	case int(desktop::settings::OneFingerTouchAction::Draw):
-		return true;
-	case int(desktop::settings::OneFingerTouchAction::Guess):
-		return !m_anyTabletEventsReceived;
-	default:
-		return false;
-	}
+	return m_touch->isTouchDrawEnabled();
 }
 
 bool CanvasController::isTouchPanEnabled() const
 {
-	switch(m_oneFingerTouchAction) {
-	case int(desktop::settings::OneFingerTouchAction::Pan):
-		return false;
-	case int(desktop::settings::OneFingerTouchAction::Guess):
-		return m_anyTabletEventsReceived;
-	default:
-		return false;
-	}
+	return m_touch->isTouchPanEnabled();
 }
 
 bool CanvasController::isTouchDrawOrPanEnabled() const
 {
-	switch(m_oneFingerTouchAction) {
-	case int(desktop::settings::OneFingerTouchAction::Pan):
-	case int(desktop::settings::OneFingerTouchAction::Draw):
-	case int(desktop::settings::OneFingerTouchAction::Guess):
-		return true;
-	default:
-		return false;
-	}
+	return m_touch->isTouchDrawOrPanEnabled();
 }
 
 void CanvasController::setCanvasVisible(bool canvasVisible)
@@ -471,15 +462,16 @@ void CanvasController::handleMouseMove(QMouseEvent *event)
 {
 	QPointF posf = mousePosF(event);
 	Qt::MouseButtons buttons = event->buttons();
+	bool touching = m_touch->isTouching();
 	DP_EVENT_LOG(
 		"mouse_move x=%f y=%f buttons=0x%x modifiers=0x%x source=0x%x "
 		"penstate=%d touching=%d timestamp=%llu",
 		posf.x(), posf.y(), unsigned(buttons), unsigned(event->modifiers()),
-		unsigned(event->source()), int(m_penState), int(m_touching),
+		unsigned(event->source()), int(m_penState), int(touching),
 		qulonglong(event->timestamp()));
 
 	if((!m_tabletEnabled || !isSynthetic(event)) && !isSyntheticTouch(event) &&
-	   m_penState != PenState::TabletDown && !m_touching &&
+	   m_penState != PenState::TabletDown && !touching &&
 	   (m_penState == PenState::Up || m_tabletEventTimer.hasExpired())) {
 		if(m_penState != PenState::Up && buttons == Qt::NoButton) {
 			handleMouseRelease(event);
@@ -495,15 +487,16 @@ void CanvasController::handleMouseMove(QMouseEvent *event)
 void CanvasController::handleMousePress(QMouseEvent *event)
 {
 	QPointF posf = mousePosF(event);
+	bool touching = m_touch->isTouching();
 	DP_EVENT_LOG(
 		"mouse_press x=%f y=%f buttons=0x%x modifiers=0x%x source=0x%x "
 		"penstate=%d touching=%d timestamp=%llu",
 		posf.x(), posf.y(), unsigned(event->buttons()),
 		unsigned(event->modifiers()), unsigned(event->source()),
-		int(m_penState), int(m_touching), qulonglong(event->timestamp()));
+		int(m_penState), int(touching), qulonglong(event->timestamp()));
 
 	if(((!m_tabletEnabled || !isSynthetic(event))) &&
-	   !isSyntheticTouch(event) && !m_touching &&
+	   !isSyntheticTouch(event) && !touching &&
 	   m_tabletEventTimer.hasExpired()) {
 		event->accept();
 		penPressEvent(
@@ -516,15 +509,16 @@ void CanvasController::handleMousePress(QMouseEvent *event)
 void CanvasController::handleMouseRelease(QMouseEvent *event)
 {
 	QPointF posf = mousePosF(event);
+	bool touching = m_touch->isTouching();
 	DP_EVENT_LOG(
 		"mouse_release x=%f y=%f buttons=0x%x modifiers=0x%x source=0x%x "
 		"penstate=%d touching=%d timestamp=%llu",
 		posf.x(), posf.y(), unsigned(event->buttons()),
 		unsigned(event->modifiers()), unsigned(event->source()),
-		int(m_penState), int(m_touching), qulonglong(event->timestamp()));
+		int(m_penState), int(touching), qulonglong(event->timestamp()));
 
 	if((!m_tabletEnabled || !isSynthetic(event)) && !isSyntheticTouch(event) &&
-	   !m_touching) {
+	   !touching) {
 		event->accept();
 		penReleaseEvent(
 			QDateTime::currentMSecsSinceEpoch(), posf, event->button(),
@@ -550,7 +544,7 @@ void CanvasController::handleTabletMove(QTabletEvent *event)
 			"touching=%d effectivemodifiers=0x%u",
 			int(event->spontaneous()), posf.x(), posf.y(), pressure, xTilt,
 			yTilt, rotation, unsigned(buttons), unsigned(event->modifiers()),
-			int(m_penState), int(m_touching), unsigned(modifiers));
+			int(m_penState), int(m_touch->isTouching()), unsigned(modifiers));
 
 		// Under Windows Ink, some tablets report bogus zero-pressure inputs.
 		// We accept them so that they don't result in synthesized mouse events,
@@ -586,7 +580,7 @@ void CanvasController::handleTabletPress(QTabletEvent *event)
 			"touching=%d effectivemodifiers=0x%u",
 			int(event->spontaneous()), posf.x(), posf.y(), pressure, xTilt,
 			yTilt, rotation, unsigned(buttons), unsigned(event->modifiers()),
-			int(m_penState), int(m_touching), unsigned(modifiers));
+			int(m_penState), int(m_touch->isTouching()), unsigned(modifiers));
 
 		Qt::MouseButton button;
 		bool eraserOverride;
@@ -624,8 +618,8 @@ void CanvasController::handleTabletRelease(QTabletEvent *event)
 			"tablet_release spontaneous=%d x=%f y=%f buttons=0x%x penstate=%d "
 			"touching=%d effectivemodifiers=0x%u",
 			int(event->spontaneous()), posf.x(), posf.y(),
-			unsigned(event->buttons()), int(m_penState), int(m_touching),
-			unsigned(modifiers));
+			unsigned(event->buttons()), int(m_penState),
+			int(m_touch->isTouching()), unsigned(modifiers));
 
 		penReleaseEvent(
 			QDateTime::currentMSecsSinceEpoch(), posf, event->button(),
@@ -638,306 +632,35 @@ void CanvasController::handleTouchBegin(QTouchEvent *event)
 	event->accept();
 	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
 	int pointsCount = points.size();
-
-	QPointF posf = compat::touchPos(points.first());
-	int action = m_scene->checkHover(posf.toPoint());
-	if(action != int(drawingboard::ToggleItem::Action::None)) {
-		emit toggleActionActivated(action);
-		m_hoveringOverHud = false;
-		m_scene->removeHover();
-		resetCursor();
-		return;
-	}
-
-	m_touchDrawBuffer.clear();
-	m_touchRotating = false;
-	if(isTouchDrawEnabled() && pointsCount == 1 && !compat::isTouchPad(event)) {
-		DP_EVENT_LOG(
-			"touch_draw_begin x=%f y=%f penstate=%d touching=%d type=%d "
-			"device=%s points=%s timestamp=%llu",
-			posf.x(), posf.y(), int(m_penState), int(m_touching),
-			compat::touchDeviceType(event),
-			qUtf8Printable(compat::touchDeviceName(event)),
-			qUtf8Printable(compat::debug(points)),
-			qulonglong(event->timestamp()));
-		if(isTouchPanEnabled() || m_enableTouchPinch || m_enableTouchTwist) {
-			// Buffer the touch first, since it might end up being the
-			// beginning of an action that involves multiple fingers.
-			m_touchDrawBuffer.append(
-				{QDateTime::currentMSecsSinceEpoch(), posf});
-			m_touchMode = TouchMode::Unknown;
+	if(pointsCount > 0) {
+		int action =
+			m_scene->checkHover(compat::touchPos(points.first()).toPoint());
+		if(action == int(drawingboard::ToggleItem::Action::None)) {
+			m_touch->handleTouchBegin(event);
 		} else {
-			// There's no other actions other than drawing enabled, so we
-			// can just start drawing without awaiting what happens next.
-			m_touchMode = TouchMode::Drawing;
-			touchPressEvent(QDateTime::currentMSecsSinceEpoch(), posf);
+			emit toggleActionActivated(action);
+			m_hoveringOverHud = false;
+			m_scene->removeHover();
+			resetCursor();
 		}
-	} else {
-		DP_EVENT_LOG(
-			"touch_begin penstate=%d touching=%d type=%d device=%s "
-			"points=%s timestamp=%llu",
-			int(m_penState), int(m_touching), compat::touchDeviceType(event),
-			qUtf8Printable(compat::touchDeviceName(event)),
-			qUtf8Printable(compat::debug(points)),
-			qulonglong(event->timestamp()));
-		m_touchMode = TouchMode::Moving;
 	}
 }
 
 void CanvasController::handleTouchUpdate(QTouchEvent *event)
 {
 	event->accept();
-	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
-	int pointsCount = points.size();
-
-	if(isTouchDrawEnabled() &&
-	   ((pointsCount == 1 && m_touchMode == TouchMode::Unknown) ||
-		m_touchMode == TouchMode::Drawing) &&
-	   !compat::isTouchPad(event)) {
-		QPointF posf = compat::touchPos(compat::touchPoints(*event).first());
-		DP_EVENT_LOG(
-			"touch_draw_update x=%f y=%f penstate=%d touching=%d type=%d "
-			"device=%s points=%s timestamp=%llu",
-			posf.x(), posf.y(), int(m_penState), int(m_touching),
-			compat::touchDeviceType(event),
-			qUtf8Printable(compat::touchDeviceName(event)),
-			qUtf8Printable(compat::debug(points)),
-			qulonglong(event->timestamp()));
-		int bufferCount = m_touchDrawBuffer.size();
-		if(bufferCount == 0) {
-			if(m_touchMode == TouchMode::Drawing) {
-				touchMoveEvent(QDateTime::currentMSecsSinceEpoch(), posf);
-			} else { // Shouldn't happen, but we'll deal with it anyway.
-				m_touchMode = TouchMode::Drawing;
-				touchPressEvent(QDateTime::currentMSecsSinceEpoch(), posf);
-			}
-		} else {
-			// This still might be the beginning of a multitouch operation.
-			// If the finger didn't move enough of a distance and we didn't
-			// buffer an excessive amount of touches yet. Buffer the touched
-			// point and wait a bit more as to what's going to happen.
-			bool shouldAppend =
-				bufferCount < TOUCH_DRAW_BUFFER_COUNT &&
-				QLineF(m_touchDrawBuffer.first().second, posf).length() <
-					TOUCH_DRAW_DISTANCE;
-			if(shouldAppend) {
-				m_touchDrawBuffer.append(
-					{QDateTime::currentMSecsSinceEpoch(), posf});
-			} else {
-				m_touchMode = TouchMode::Drawing;
-				flushTouchDrawBuffer();
-				touchMoveEvent(QDateTime::currentMSecsSinceEpoch(), posf);
-			}
-		}
-	} else {
-		m_touchMode = TouchMode::Moving;
-
-		QPointF startCenter, lastCenter, center;
-		for(const auto &tp : compat::touchPoints(*event)) {
-			startCenter += compat::touchStartPos(tp);
-			lastCenter += compat::touchLastPos(tp);
-			center += compat::touchPos(tp);
-		}
-		startCenter /= pointsCount;
-		lastCenter /= pointsCount;
-		center /= pointsCount;
-
-		DP_EVENT_LOG(
-			"touch_update x=%f y=%f penstate=%d touching=%d type=%d "
-			"device=%s points=%s timestamp=%llu",
-			center.x(), center.y(), int(m_penState), int(m_touching),
-			compat::touchDeviceType(event),
-			qUtf8Printable(compat::touchDeviceName(event)),
-			qUtf8Printable(compat::debug(points)),
-			qulonglong(event->timestamp()));
-
-		if(!m_touching) {
-			m_touchStartZoom = zoom();
-			m_touchStartRotate = rotation();
-		}
-
-		// We want to pan with one finger if one-finger pan is enabled and
-		// also when pinching to zoom. Slightly non-obviously, we also want
-		// to pan with one finger when finger drawing is enabled, because if
-		// we got here with one finger, we've come out of a multitouch
-		// operation and aren't going to be drawing until all fingers leave
-		// the surface anyway, so panning is the only sensible option.
-		bool haveMultiTouch = pointsCount >= 2;
-		bool havePinchOrTwist =
-			haveMultiTouch && (m_enableTouchPinch || m_enableTouchTwist);
-		bool havePan = havePinchOrTwist ||
-					   (isTouchDrawOrPanEnabled() &&
-						(haveMultiTouch || !compat::isTouchPad(event)));
-		if(havePan) {
-			m_touching = true;
-			qreal dx = center.x() - lastCenter.x();
-			qreal dy = center.y() - lastCenter.y();
-			scrollByF(-dx, -dy);
-		}
-
-		// Scaling and rotation with two fingers
-		if(havePinchOrTwist) {
-			m_touching = true;
-			qreal startAvgDist = 0.0;
-			qreal avgDist = 0.0;
-			for(const compat::TouchPoint &tp : compat::touchPoints(*event)) {
-				startAvgDist +=
-					squareDist(compat::touchStartPos(tp) - startCenter);
-				avgDist += squareDist(compat::touchPos(tp) - center);
-			}
-			startAvgDist = sqrt(startAvgDist);
-
-			qreal touchZoom = zoom();
-			if(m_enableTouchPinch) {
-				avgDist = sqrt(avgDist);
-				qreal dZoom = avgDist / startAvgDist;
-				touchZoom = m_touchStartZoom * dZoom;
-			}
-
-			qreal touchRotation = rotation();
-			if(m_enableTouchTwist) {
-				QLineF l1(
-					compat::touchStartPos(points.first()),
-					compat::touchStartPos(points.last()));
-				QLineF l2(
-					compat::touchPos(points.first()),
-					compat::touchPos(points.last()));
-				qreal dAngle = l1.angle() - l2.angle();
-
-				// Require a small nudge to activate rotation to avoid
-				// rotating when the user just wanted to zoom. Also only
-				// rotate when touch points start out far enough from each
-				// other. Initial angle measurement is inaccurate when
-				// touchpoints are close together.
-				if(startAvgDist * devicePixelRatioF() > 80.0 &&
-				   (qAbs(dAngle) > 3.0 || m_touchRotating)) {
-					m_touchRotating = true;
-					touchRotation = m_touchStartRotate + dAngle;
-				}
-			}
-
-			{
-				QScopedValueRollback<bool> rollback(m_blockNotices, true);
-				setZoom(touchZoom);
-				setRotation(touchRotation);
-			}
-
-			showTouchTransformNotice();
-		}
-	}
+	m_touch->handleTouchUpdate(event, zoom(), rotation(), devicePixelRatioF());
 }
 
 void CanvasController::handleTouchEnd(QTouchEvent *event, bool cancel)
 {
 	event->accept();
-	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
-	if(isTouchDrawEnabled() &&
-	   ((m_touchMode == TouchMode::Unknown && !m_touchDrawBuffer.isEmpty()) ||
-		m_touchMode == TouchMode::Drawing)) {
-		DP_EVENT_LOG(
-			"touch_draw_%s penstate=%d touching=%d type=%d device=%s "
-			"points=%s timestamp=%llu",
-			cancel ? "cancel" : "end", int(m_penState), int(m_touching),
-			compat::touchDeviceType(event),
-			qUtf8Printable(compat::touchDeviceName(event)),
-			qUtf8Printable(compat::debug(points)),
-			qulonglong(event->timestamp()));
-		flushTouchDrawBuffer();
-		touchReleaseEvent(
-			QDateTime::currentMSecsSinceEpoch(),
-			compat::touchPos(compat::touchPoints(*event).first()));
-	} else {
-		DP_EVENT_LOG(
-			"touch_%s penstate=%d touching=%d type=%d device=%s points=%s "
-			"timestamp=%llu",
-			cancel ? "cancel" : "end", int(m_penState), int(m_touching),
-			compat::touchDeviceType(event),
-			qUtf8Printable(compat::touchDeviceName(event)),
-			qUtf8Printable(compat::debug(points)),
-			qulonglong(event->timestamp()));
-	}
-	m_touching = false;
+	m_touch->handleTouchEnd(event, cancel);
 }
 
 void CanvasController::handleGesture(QGestureEvent *event)
 {
-	const QPinchGesture *pinch =
-		static_cast<const QPinchGesture *>(event->gesture(Qt::PinchGesture));
-	bool hadPinchUpdate = false;
-	if(pinch) {
-		Qt::GestureState pinchState = pinch->state();
-		QPinchGesture::ChangeFlags cf = pinch->changeFlags();
-		DP_EVENT_LOG(
-			"pinch state=0x%x, change=0x%x scale=%f rotation=%f penstate=%d "
-			"touching=%d",
-			unsigned(pinchState), unsigned(cf), pinch->totalScaleFactor(),
-			pinch->totalRotationAngle(), int(m_penState), int(m_touching));
-
-		switch(pinch->state()) {
-		case Qt::GestureStarted:
-			m_gestureStartZoom = m_zoom;
-			m_gestureStartAngle = m_rotation;
-			Q_FALLTHROUGH();
-		case Qt::GestureUpdated:
-		case Qt::GestureFinished:
-			if(isTouchDrawOrPanEnabled() &&
-			   cf.testFlag(QPinchGesture::CenterPointChanged)) {
-				QPointF d = pinch->centerPoint() - pinch->lastCenterPoint();
-				scrollByF(-d.x(), -d.y());
-			}
-
-			{
-				QScopedValueRollback<bool> rollback(m_blockNotices, true);
-				if(m_enableTouchPinch &&
-				   cf.testFlag(QPinchGesture::ScaleFactorChanged)) {
-					setZoom(m_gestureStartZoom * pinch->totalScaleFactor());
-				}
-				if(m_enableTouchTwist &&
-				   cf.testFlag(QPinchGesture::RotationAngleChanged)) {
-					setRotation(
-						m_gestureStartAngle + pinch->totalRotationAngle());
-				}
-			}
-
-			showTouchTransformNotice();
-			hadPinchUpdate = true;
-			Q_FALLTHROUGH();
-		case Qt::GestureCanceled:
-			event->accept();
-			break;
-		default:
-			break;
-		}
-	}
-
-	const QPanGesture *pan =
-		static_cast<const QPanGesture *>(event->gesture(Qt::PanGesture));
-	if(pan) {
-		Qt::GestureState panState = pan->state();
-		QPointF delta = pan->delta();
-		DP_EVENT_LOG(
-			"pan state=0x%x dx=%f dy=%f penstate=%d touching=%d",
-			unsigned(panState), delta.x(), delta.y(), int(m_penState),
-			int(m_touching));
-
-		switch(pan->state()) {
-		case Qt::GestureStarted:
-			m_gestureStartZoom = m_zoom;
-			m_gestureStartAngle = m_rotation;
-			Q_FALLTHROUGH();
-		case Qt::GestureUpdated:
-		case Qt::GestureFinished:
-			if(!hadPinchUpdate && isTouchDrawOrPanEnabled()) {
-				scrollByF(delta.x() / -2.0, delta.y() / -2.0);
-			}
-			Q_FALLTHROUGH();
-		case Qt::GestureCanceled:
-			event->accept();
-			break;
-		default:
-			break;
-		}
-	}
+	m_touch->handleGesture(event, m_zoom, m_rotation);
 }
 
 void CanvasController::handleWheel(QWheelEvent *event)
@@ -950,7 +673,7 @@ void CanvasController::handleWheel(QWheelEvent *event)
 		"penstate=%d touching=%d",
 		angleDelta.x(), angleDelta.y(), posf.x(), posf.y(),
 		unsigned(event->buttons()), unsigned(event->modifiers()),
-		int(m_penState), int(m_touching));
+		int(m_penState), int(m_touch->isTouching()));
 
 	Qt::KeyboardModifiers modifiers = getWheelModifiers(event);
 	CanvasShortcuts::Match match =
@@ -1230,20 +953,6 @@ void CanvasController::handleKeyRelease(QKeyEvent *event)
 	resetCursor();
 }
 
-void CanvasController::flushTouchDrawBuffer()
-{
-	int bufferCount = m_touchDrawBuffer.size();
-	if(bufferCount != 0) {
-		const QPair<long long, QPointF> &press = m_touchDrawBuffer.first();
-		touchPressEvent(press.first, press.second);
-		for(int i = 0; i < bufferCount; ++i) {
-			const QPair<long long, QPointF> &move = m_touchDrawBuffer[i];
-			touchMoveEvent(move.first, move.second);
-		}
-		m_touchDrawBuffer.clear();
-	}
-}
-
 void CanvasController::setClearColor(const QColor clearColor)
 {
 	if(clearColor != m_clearColor) {
@@ -1263,31 +972,6 @@ void CanvasController::setRenderSmooth(bool renderSmooth)
 void CanvasController::setTabletEnabled(bool tabletEnabled)
 {
 	m_tabletEnabled = tabletEnabled;
-}
-
-void CanvasController::setOneFingerTouchAction(int oneFingerTouchAction)
-{
-	switch(oneFingerTouchAction) {
-	case int(desktop::settings::OneFingerTouchAction::Nothing):
-	case int(desktop::settings::OneFingerTouchAction::Draw):
-	case int(desktop::settings::OneFingerTouchAction::Pan):
-	case int(desktop::settings::OneFingerTouchAction::Guess):
-		m_oneFingerTouchAction = oneFingerTouchAction;
-		break;
-	default:
-		qWarning("Unknown one finger touch action %d", oneFingerTouchAction);
-		break;
-	}
-}
-
-void CanvasController::setEnableTouchPinch(bool enableTouchPinch)
-{
-	m_enableTouchPinch = enableTouchPinch;
-}
-
-void CanvasController::setEnableTouchTwist(bool enableTouchTwist)
-{
-	m_enableTouchTwist = enableTouchTwist;
 }
 
 void CanvasController::setSerializedPressureCurve(
@@ -1452,6 +1136,14 @@ void CanvasController::setTabletEventTimerDelay(int tabletEventTimerDelay)
 {
 	m_tabletEventTimerDelay = tabletEventTimerDelay;
 	m_tabletEventTimer.setRemainingTime(0);
+}
+
+void CanvasController::startTabletEventTimer()
+{
+	m_touch->onTabletEventReceived();
+	if(m_tabletEventTimerDelay > 0) {
+		m_tabletEventTimer.setRemainingTime(m_tabletEventTimerDelay);
+	}
 }
 
 void CanvasController::penMoveEvent(
@@ -1728,8 +1420,10 @@ void CanvasController::penReleaseEvent(
 	resetCursor();
 }
 
-void CanvasController::touchPressEvent(long long timeMsec, const QPointF &posf)
+void CanvasController::touchPressEvent(
+	QEvent *event, long long timeMsec, const QPointF &posf)
 {
+	Q_UNUSED(event);
 	penPressEvent(
 		timeMsec, posf, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier,
 		int(tools::DeviceType::Touch), false);
@@ -1744,6 +1438,16 @@ void CanvasController::touchReleaseEvent(
 	long long timeMsec, const QPointF &posf)
 {
 	penReleaseEvent(timeMsec, posf, Qt::LeftButton, Qt::NoModifier);
+}
+
+void CanvasController::touchZoomRotate(qreal zoom, qreal rotation)
+{
+	{
+		QScopedValueRollback<bool> rollback(m_blockNotices, true);
+		setZoom(zoom);
+		setRotation(rotation);
+	}
+	showTouchTransformNotice();
 }
 
 void CanvasController::moveDrag(const QPoint &point)
@@ -2414,14 +2118,14 @@ QString CanvasController::getRotationNoticeText() const
 
 void CanvasController::showTouchTransformNotice()
 {
-	if(m_enableTouchPinch) {
-		if(m_enableTouchTwist) {
+	if(m_touch->isTouchPinchEnabled()) {
+		if(m_touch->isTouchTwistEnabled()) {
 			showTransformNotice(QStringLiteral("%1\n%2").arg(
 				getZoomNoticeText(), getRotationNoticeText()));
 		} else {
 			showTransformNotice(getZoomNoticeText());
 		}
-	} else if(m_enableTouchTwist) {
+	} else if(m_touch->isTouchTwistEnabled()) {
 		showTransformNotice(getRotationNoticeText());
 	}
 }

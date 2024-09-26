@@ -308,6 +308,8 @@ target_sources(drawpile PRIVATE
 	utils/qtguicompat.h
 	utils/recents.cpp
 	utils/recents.h
+	utils/touchhandler.cpp
+	utils/touchhandler.h
 	utils/widgetutils.cpp
 	utils/widgetutils.h
 	view/canvascontroller.cpp

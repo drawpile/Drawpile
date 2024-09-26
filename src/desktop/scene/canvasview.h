@@ -12,6 +12,7 @@
 
 class QGestureEvent;
 class QTouchEvent;
+class TouchHandler;
 
 namespace drawingboard {
 class CanvasScene;
@@ -91,9 +92,6 @@ public:
 	void setTabletEnabled(bool enable) { m_enableTablet = enable; }
 
 	//! Enable/disable touch gestures
-	void setOneFingerTouchAction(int oneFingerTouchAction);
-	void setTouchPinch(bool pinch) { m_enableTouchPinch = pinch; }
-	void setTouchTwist(bool twist) { m_enableTouchTwist = twist; }
 	void setTouchUseGestureEvents(bool touchUseGestureEvents);
 	void setRenderSmooth(bool smooth);
 	void setRenderUpdateFull(bool updateFull);
@@ -268,13 +266,7 @@ private:
 
 	enum class NotificationBarState { None, Reconnect, Reset };
 
-	void startTabletEventTimer()
-	{
-		m_anyTabletEventsReceived = true;
-		if(m_tabletEventTimerDelay > 0) {
-			m_tabletEventTimer.setRemainingTime(m_tabletEventTimerDelay);
-		}
-	}
+	void startTabletEventTimer();
 
 	// unified mouse/stylus event handlers
 	void penPressEvent(
@@ -292,6 +284,7 @@ private:
 	void touchPressEvent(QEvent *event, long long timeMsec, const QPointF &pos);
 	void touchMoveEvent(long long timeMsec, const QPointF &pos);
 	void touchReleaseEvent(long long timeMsec, const QPointF &pos);
+	void touchZoomRotate(qreal zoom, qreal rotation);
 	void gestureEvent(QGestureEvent *event);
 
 	enum class ViewDragMode { None, Prepared, Started };
@@ -335,8 +328,6 @@ private:
 		const canvas::Point &p, bool right, bool constrain1, bool constrain2,
 		const QPointF &viewPos);
 
-	void flushTouchDrawBuffer();
-
 	void touchEvent(QTouchEvent *event);
 
 	void resetCursor();
@@ -373,8 +364,6 @@ private:
 
 	enum class PenMode { Normal, Colorpick, Layerpick };
 
-	enum class TouchMode { Unknown, Drawing, Moving };
-
 	NotificationBar *m_notificationBar;
 	NotificationBarState m_notificationBarState = NotificationBarState::None;
 
@@ -403,9 +392,6 @@ private:
 	qreal m_pointerdistance;
 	qreal m_pointervelocity;
 
-	qreal m_gestureStartZoom;
-	qreal m_gestureStartAngle;
-
 	int m_outlineSize;
 	bool m_showoutline, m_subpixeloutline, m_forceoutline;
 	QCursor m_dotcursor, m_trianglerightcursor, m_triangleleftcursor;
@@ -421,9 +407,11 @@ private:
 	QRectF m_posBounds; // Position limits to keep the canvas in view.
 
 	drawingboard::CanvasScene *m_scene;
+	TouchHandler *m_touch;
 
 	int m_zoomWheelDelta;
 
+	bool m_useGestureEvents = false;
 	bool m_enableTablet;
 	bool m_locked;
 	QString m_lockDescription;
@@ -431,15 +419,6 @@ private:
 	bool m_saveInProgress;
 	bool m_pointertracking;
 	bool m_pixelgrid;
-
-	bool m_enableTouchPinch, m_enableTouchTwist;
-	bool m_useGestureEvents;
-	bool m_touching, m_touchRotating;
-	bool m_anyTabletEventsReceived;
-	int m_oneFingerTouchAction;
-	TouchMode m_touchMode;
-	QVector<QPair<long long, QPointF>> m_touchDrawBuffer;
-	qreal m_touchStartZoom, m_touchStartRotate;
 
 	KisCubicCurve m_pressureCurve;
 

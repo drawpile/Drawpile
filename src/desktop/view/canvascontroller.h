@@ -25,6 +25,7 @@ class QMouseEvent;
 class QTabletEvent;
 class QTouchEvent;
 class QWheelEvent;
+class TouchHandler;
 
 namespace canvas {
 class CanvasModel;
@@ -130,8 +131,6 @@ public:
 	void handleKeyPress(QKeyEvent *event);
 	void handleKeyRelease(QKeyEvent *event);
 
-	void flushTouchDrawBuffer();
-
 	void setOutlineSize(int outlineSize);
 	void setOutlineMode(bool subpixel, bool square, bool force);
 	void setPixelGrid(bool pixelGrid);
@@ -196,34 +195,21 @@ private:
 	static constexpr qreal SCROLL_STEP = 64.0;
 	static constexpr qreal ROTATION_STEP = 5.0;
 	static constexpr qreal DISCRETE_ROTATION_STEP = 15.0;
-	static constexpr qreal TOUCH_DRAW_DISTANCE = 10.0;
-	static constexpr int TOUCH_DRAW_BUFFER_COUNT = 20;
 	static constexpr int ZOOM_TO_MINIMUM_DIMENSION = 15;
 
 	enum class PenMode { Normal, Colorpick, Layerpick };
 	enum class PenState { Up, MouseDown, TabletDown };
-	enum class TouchMode { Unknown, Drawing, Moving };
 	enum class ViewDragMode { None, Prepared, Started };
 
 	void setClearColor(const QColor clearColor);
 	void setRenderSmooth(bool renderSmooth);
 	void setTabletEnabled(bool tabletEnabled);
-	void setOneFingerTouchAction(int oneFingerTouchAction);
-	void setEnableTouchPinch(bool enableTouchPinch);
-	void setEnableTouchTwist(bool enableTouchTwist);
 	void setSerializedPressureCurve(const QString &serializedPressureCurve);
 	void setOutlineWidth(qreal outlineWidth);
 	void setCanvasShortcuts(QVariantMap canvasShortcuts);
 	void setShowTransformNotices(bool showTransformNotices);
 	void setTabletEventTimerDelay(int tabletEventTimerDelay);
-
-	void startTabletEventTimer()
-	{
-		m_anyTabletEventsReceived = true;
-		if(m_tabletEventTimerDelay > 0) {
-			m_tabletEventTimer.setRemainingTime(m_tabletEventTimerDelay);
-		}
-	}
+	void startTabletEventTimer();
 
 	void penMoveEvent(
 		long long timeMsec, const QPointF &posf, qreal pressure, qreal xtilt,
@@ -238,9 +224,11 @@ private:
 		long long timeMsec, const QPointF &posf, Qt::MouseButton button,
 		Qt::KeyboardModifiers modifiers);
 
-	void touchPressEvent(long long timeMsec, const QPointF &posf);
+	void
+	touchPressEvent(QEvent *event, long long timeMsec, const QPointF &posf);
 	void touchMoveEvent(long long timeMsec, const QPointF &posf);
 	void touchReleaseEvent(long long timeMsec, const QPointF &posf);
+	void touchZoomRotate(qreal zoom, qreal rotation);
 
 	void moveDrag(const QPoint &point);
 
@@ -303,11 +291,6 @@ private:
 	static void mirrorFlip(QTransform &matrix, bool mirror, bool flip);
 
 	bool isRotationInverted() const { return m_mirror ^ m_flip; }
-
-	static qreal squareDist(const QPointF &p)
-	{
-		return p.x() * p.x() + p.y() * p.y();
-	}
 
 	void setZoomToFit(Qt::Orientations orientations);
 	void rotateByDiscreteSteps(int steps);
@@ -400,21 +383,7 @@ private:
 	PenState m_penState = PenState::Up;
 	QDeadlineTimer m_tabletEventTimer;
 	int m_tabletEventTimerDelay = 0;
-
-	bool m_enableTouchPinch = true;
-	bool m_enableTouchTwist = true;
-	bool m_touching = false;
-	bool m_touchRotating = false;
-	bool m_anyTabletEventsReceived = false;
-	int m_oneFingerTouchAction;
-	TouchMode m_touchMode = TouchMode::Unknown;
-	QVector<QPair<long long, QPointF>> m_touchDrawBuffer;
-	QPointF m_touchStartPos;
-	qreal m_touchStartZoom = 0.0;
-	qreal m_touchStartRotate = 0.0;
-	QPointF m_gestureStartPos;
-	qreal m_gestureStartZoom = 0.0;
-	qreal m_gestureStartAngle = 0.0;
+	TouchHandler *m_touch;
 
 	canvas::Point m_prevPoint;
 	qreal m_pointerDistance = 0.0;
