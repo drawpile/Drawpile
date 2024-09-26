@@ -2350,7 +2350,7 @@ void CanvasView::updateCanvasTransform(const std::function<void()> &block)
 		updatePosBounds();
 		QRectF rectBefore = m_scene->canvasBounds();
 		m_scene->setCanvasTransform(calculateCanvasTransform());
-		m_scene->setZoom(m_zoom);
+		m_scene->setZoom(m_zoom / devicePixelRatioF());
 		QRectF rectAfter = m_scene->canvasBounds();
 		updateScrollBars();
 		updateCanvasPixelGrid();

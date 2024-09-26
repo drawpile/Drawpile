@@ -2172,7 +2172,7 @@ void CanvasController::updateSceneTransform()
 {
 	m_scene->setCanvasTransform(calculateCanvasTransformFrom(
 		m_pos + viewToCanvasOffset(), m_zoom, m_rotation, m_mirror, m_flip));
-	m_scene->setZoom(m_zoom);
+	m_scene->setZoom(m_zoom / devicePixelRatioF());
 }
 
 void CanvasController::updatePosBounds()
