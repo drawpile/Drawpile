@@ -1020,7 +1020,7 @@ void CanvasView::onPenDown(
 			}
 			break;
 		case PenMode::Colorpick:
-			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
+			pickColor(p, viewPos);
 			break;
 		case PenMode::Layerpick:
 			m_scene->model()->pickLayer(p.x(), p.y());
@@ -1052,7 +1052,7 @@ void CanvasView::onPenMove(
 					p.rotation(), constrain1, constrain2, viewPos);
 			break;
 		case PenMode::Colorpick:
-			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
+			pickColor(p, viewPos);
 			break;
 		case PenMode::Layerpick:
 			m_scene->model()->pickLayer(p.x(), p.y());
@@ -1335,6 +1335,12 @@ void CanvasView::penReleaseEvent(
 				constraintMatch.toolConstraint1(),
 				constraintMatch.toolConstraint2());
 		}
+
+		if(m_pickingColor) {
+			m_scene->setColorPick(QPointF(), QColor());
+			m_pickingColor = false;
+		}
+
 		m_pendown = NOTDOWN;
 
 		m_hoveringOverHud = m_scene->checkHover(mapToScene(pos.toPoint())) !=
@@ -2061,6 +2067,12 @@ void CanvasView::moveDrag(const QPoint &point)
 	}
 
 	m_dragLastPoint = point;
+}
+
+void CanvasView::pickColor(const QPointF &point, const QPointF &posf)
+{
+	QColor color = m_scene->model()->pickColor(point.x(), point.y(), 0, 0);
+	m_pickingColor = m_scene->setColorPick(mapToScene(posf.toPoint()), color);
 }
 
 void CanvasView::updateCanvasTransform(const std::function<void()> &block)

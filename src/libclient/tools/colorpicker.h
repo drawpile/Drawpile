@@ -25,7 +25,7 @@ public:
 	void setSize(int size) { m_size = size; }
 
 private:
-	void pick(const QPointF &point) const;
+	void pick(const QPointF &point, const QPointF &viewPos) const;
 
 	bool m_picking = false;
 	bool m_pickFromCurrentLayer = false;

@@ -29,6 +29,7 @@ public:
 		PathPreviewType = QGraphicsItem::UserType + 20,
 		TransformType = QGraphicsItem::UserType + 21,
 		MaskPreviewType = QGraphicsItem::UserType + 22,
+		ColorPickType = QGraphicsItem::UserType + 23,
 	};
 
 	static constexpr qreal Z_USER_MARKER = 999.0;
@@ -36,6 +37,7 @@ public:
 	static constexpr qreal Z_CATCHUP = Z_NOTICE;
 	static constexpr qreal Z_TOOL_NOTICE = Z_NOTICE + 1.0;
 	static constexpr qreal Z_TOGGLE = 99999.0;
+	static constexpr qreal Z_COLORPICK = 999998.0;
 	static constexpr qreal Z_CURSOR = 999999.0;
 
 	void setUpdateSceneOnRefresh(bool updateSceneOnRefresh);

@@ -306,6 +306,12 @@ void SceneWrapper::connectDocument(Document *doc)
 		toolCtrl, &tools::ToolController::zoomRequested, m_view,
 		&CanvasView::zoomTo);
 	connect(
+		toolCtrl, &tools::ToolController::colorUsed, m_scene,
+		&CanvasScene::setComparisonColor);
+	connect(
+		toolCtrl, &tools::ToolController::colorPickRequested, m_scene,
+		&CanvasScene::setColorPick);
+	connect(
 		toolCtrl, &tools::ToolController::maskPreviewRequested, m_scene,
 		&CanvasScene::setMaskPreview);
 	connect(
@@ -353,6 +359,8 @@ void SceneWrapper::connectDocument(Document *doc)
 	connect(
 		m_view, &CanvasView::penUp, toolCtrl,
 		&tools::ToolController::endDrawing);
+
+	m_scene->setComparisonColor(toolCtrl->foregroundColor());
 }
 
 void SceneWrapper::connectLock(view::Lock *lock)

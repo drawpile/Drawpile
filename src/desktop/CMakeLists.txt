@@ -228,6 +228,8 @@ target_sources(drawpile PRIVATE
 	scene/canvasview.h
 	scene/catchupitem.cpp
 	scene/catchupitem.h
+	scene/colorpickitem.cpp
+	scene/colorpickitem.h
 	scene/lasertrailitem.cpp
 	scene/lasertrailitem.h
 	scene/maskpreviewitem.cpp

@@ -232,6 +232,7 @@ private:
 	void touchZoomRotate(qreal zoom, qreal rotation);
 
 	void moveDrag(const QPoint &point);
+	void pickColor(const QPointF &point, const QPointF &posf);
 
 	void resetCursor();
 	void updateOutlinePos(QPointF point);
@@ -403,6 +404,7 @@ private:
 	qreal m_dragSnapRotation = 0.0;
 	int m_zoomWheelDelta = 0;
 
+	bool m_pickingColor = false;
 	bool m_canvasSizeChanging = false;
 	bool m_blockNotices = false;
 	bool m_showTransformNotices = false;

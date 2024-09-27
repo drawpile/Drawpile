@@ -292,6 +292,7 @@ private:
 
 	//! Drag the view
 	void moveDrag(const QPoint &point);
+	void pickColor(const QPointF &point, const QPointF &posf);
 
 	QTransform fromCanvasTransform() const;
 	QTransform toCanvasTransform() const;
@@ -432,6 +433,7 @@ private:
 	qreal m_brushOutlineWidth;
 	int m_brushBlendMode;
 
+	bool m_pickingColor = false;
 	bool m_scrollBarsAdjusting;
 	bool m_blockNotices;
 	bool m_showTransformNotices;

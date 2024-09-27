@@ -345,13 +345,14 @@ void CanvasModel::pickLayer(int x, int y)
 	}
 }
 
-void CanvasModel::pickColor(int x, int y, int layer, int diameter)
+QColor CanvasModel::pickColor(int x, int y, int layer, int diameter)
 {
 	QColor color = m_paintengine->sampleColor(x, y, layer, diameter);
 	if(color.alpha() > 0) {
 		color.setAlpha(255);
 		emit colorPicked(color);
 	}
+	return color;
 }
 
 void CanvasModel::inspectCanvas(int x, int y, bool clobber, bool showTiles)

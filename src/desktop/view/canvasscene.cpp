@@ -4,6 +4,7 @@ extern "C" {
 }
 #include "desktop/scene/annotationitem.h"
 #include "desktop/scene/catchupitem.h"
+#include "desktop/scene/colorpickitem.h"
 #include "desktop/scene/lasertrailitem.h"
 #include "desktop/scene/maskpreviewitem.h"
 #include "desktop/scene/noticeitem.h"
@@ -357,6 +358,32 @@ void CanvasScene::setOutline(
 		m_outline->updateRotation(rotation);
 		m_outline->setOutline(outlineSize, outlineWidth);
 		m_outline->setSquare(square);
+	}
+}
+
+void CanvasScene::setComparisonColor(const QColor &comparisonColor)
+{
+	m_comparisonColor = comparisonColor;
+	if(m_colorPick) {
+		m_colorPick->setComparisonColor(comparisonColor);
+	}
+}
+
+bool CanvasScene::setColorPick(const QPointF &pos, const QColor &color)
+{
+	if(color.isValid() && color.alpha() > 0) {
+		if(m_colorPick) {
+			m_colorPick->setColor(color);
+		} else {
+			m_colorPick = new ColorPickItem(color, m_comparisonColor);
+			addSceneItem(m_colorPick);
+		}
+		m_colorPick->updatePosition(pos);
+		return true;
+	} else {
+		delete m_colorPick;
+		m_colorPick = nullptr;
+		return false;
 	}
 }
 

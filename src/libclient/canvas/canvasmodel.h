@@ -129,7 +129,7 @@ public:
 
 public slots:
 	void pickLayer(int x, int y);
-	void pickColor(int x, int y, int layer, int diameter = 0);
+	QColor pickColor(int x, int y, int layer, int diameter = 0);
 	void inspectCanvas(int x, int y, bool clobber, bool showTiles);
 	void inspectCanvas(int contextId, bool showTiles);
 	void stopInspectingCanvas();

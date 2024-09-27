@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_VIEW_CANVASSCENE_H
 #define DESKTOP_VIEW_CANVASSCENE_H
+#include <QColor>
 #include <QElapsedTimer>
 #include <QGraphicsScene>
 #include <QHash>
@@ -21,6 +22,7 @@ namespace drawingboard {
 class AnnotationItem;
 class BaseItem;
 class CatchupItem;
+class ColorPickItem;
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 class CursorItem;
 #endif
@@ -42,6 +44,7 @@ class CanvasScene final : public QGraphicsScene {
 	using AnnotationItem = drawingboard::AnnotationItem;
 	using BaseItem = drawingboard::BaseItem;
 	using CatchupItem = drawingboard::CatchupItem;
+	using ColorPickItem = drawingboard::ColorPickItem;
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 	using CursorItem = drawingboard::CursorItem;
 #endif
@@ -86,6 +89,9 @@ public:
 	void setOutline(
 		bool visibleInMode, const QPointF &pos, qreal rotation,
 		qreal outlineSize, qreal outlineWidth, bool square);
+
+	void setComparisonColor(const QColor &comparisonColor);
+	bool setColorPick(const QPointF &pos, const QColor &color);
 
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 	void setCursor(const QCursor &cursor);
@@ -175,6 +181,8 @@ private:
 	SelectionItem *m_selection = nullptr;
 	TransformItem *m_transform = nullptr;
 	OutlineItem *m_outline = nullptr;
+	ColorPickItem *m_colorPick = nullptr;
+	QColor m_comparisonColor;
 
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 	CursorItem *m_cursorItem;

@@ -17,28 +17,30 @@ void ColorPicker::begin(const BeginParams &params)
 {
 	if(!params.right) {
 		m_picking = true;
-		pick(params.point);
+		pick(params.point, params.viewPos);
 	}
 }
 
 void ColorPicker::motion(const MotionParams &params)
 {
 	if(m_picking) {
-		pick(params.point);
+		pick(params.point, params.viewPos);
 	}
 }
 
 void ColorPicker::end(const EndParams &)
 {
 	m_picking = false;
+	m_owner.colorPickRequested(QPointF(), QColor());
 }
 
-void ColorPicker::pick(const QPointF &point) const
+void ColorPicker::pick(const QPointF &point, const QPointF &viewPos) const
 {
 	canvas::CanvasModel *canvas = m_owner.model();
 	if(canvas) {
 		int layer = m_pickFromCurrentLayer ? m_owner.activeLayer() : 0;
-		canvas->pickColor(point.x(), point.y(), layer, m_size);
+		QColor color = canvas->pickColor(point.x(), point.y(), layer, m_size);
+		m_owner.colorPickRequested(viewPos, color);
 	}
 }
 

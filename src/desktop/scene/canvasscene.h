@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef CANVAS_SCENE_H
 #define CANVAS_SCENE_H
-
 #include "desktop/scene/toggleitem.h"
+#include <QColor>
 #include <QGraphicsScene>
 #include <QHash>
 
@@ -21,6 +20,7 @@ namespace drawingboard {
 class AnnotationItem;
 class CanvasItem;
 class CatchupItem;
+class ColorPickItem;
 class LaserTrailItem;
 class MaskPreviewItem;
 class NoticeItem;
@@ -103,6 +103,8 @@ public:
 	void setOutlineSquare(bool square);
 	void setOutlineWidth(qreal width);
 	void setOutlineVisibleInMode(bool visibleInMode);
+	void setComparisonColor(const QColor &comparisonColor);
+	bool setColorPick(const QPointF &pos, const QColor &color);
 	bool isCursorOnCanvas() const { return m_cursorOnCanvas; }
 	void setCursorOnCanvas(bool onCanvas);
 	const QPointF &cursorPos() const { return m_cursorPos; }
@@ -213,6 +215,8 @@ private:
 	QVector<ToggleItem *> m_toggleItems;
 
 	OutlineItem *m_outlineItem;
+	ColorPickItem *m_colorPick = nullptr;
+	QColor m_comparisonColor;
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 	CursorItem *m_cursorItem;
 #endif

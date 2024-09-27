@@ -1208,7 +1208,7 @@ void CanvasController::penMoveEvent(
 						}
 						break;
 					case PenMode::Colorpick:
-						m_canvasModel->pickColor(point.x(), point.y(), 0, 0);
+						pickColor(point, posf);
 						break;
 					case PenMode::Layerpick:
 						m_canvasModel->pickLayer(point.x(), point.y());
@@ -1340,7 +1340,7 @@ void CanvasController::penPressEvent(
 					}
 					break;
 				case PenMode::Colorpick:
-					m_canvasModel->pickColor(point.x(), point.y(), 0, 0);
+					pickColor(point, posf);
 					break;
 				case PenMode::Layerpick:
 					m_canvasModel->pickLayer(point.x(), point.y());
@@ -1393,6 +1393,12 @@ void CanvasController::penReleaseEvent(
 				constraintMatch.toolConstraint1(),
 				constraintMatch.toolConstraint2());
 		}
+
+		if(m_pickingColor) {
+			m_scene->setColorPick(QPointF(), QColor());
+			m_pickingColor = false;
+		}
+
 		m_penState = PenState::Up;
 
 		m_hoveringOverHud = m_scene->checkHover(posf.toPoint()) !=
@@ -1538,6 +1544,12 @@ void CanvasController::moveDrag(const QPoint &point)
 	}
 
 	m_dragLastPoint = point;
+}
+
+void CanvasController::pickColor(const QPointF &point, const QPointF &posf)
+{
+	QColor color = m_canvasModel->pickColor(point.x(), point.y(), 0, 0);
+	m_pickingColor = m_scene->setColorPick(posf, color);
 }
 
 void CanvasController::resetCursor()
