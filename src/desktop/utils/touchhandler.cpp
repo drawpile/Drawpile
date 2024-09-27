@@ -8,6 +8,7 @@ extern "C" {
 #include "libshared/util/qtcompat.h"
 #include <QDateTime>
 #include <QGestureEvent>
+#include <QTimer>
 
 TouchHandler::TouchHandler(QObject *parent)
 	: QObject(parent)
@@ -19,8 +20,18 @@ TouchHandler::TouchHandler(QObject *parent)
 	, m_twoFingerTapAction(int(desktop::settings::TouchTapAction::Undo))
 	, m_threeFingerTapAction(int(desktop::settings::TouchTapAction::Redo))
 	, m_fourFingerTapAction(int(desktop::settings::TouchTapAction::HideDocks))
+	, m_oneFingerTapAndHoldAction(
+		  int(desktop::settings::TouchTapAndHoldAction::ColorPickMode))
 	, m_tapTimer(Qt::CoarseTimer)
+	, m_tapAndHoldTimer(new QTimer(this))
 {
+	m_tapAndHoldTimer->setTimerType(Qt::CoarseTimer);
+	m_tapAndHoldTimer->setSingleShot(true);
+	m_tapAndHoldTimer->setInterval(TAP_AND_HOLD_DELAY_MS);
+	connect(
+		m_tapAndHoldTimer, &QTimer::timeout, this,
+		&TouchHandler::triggerTapAndHold);
+
 	desktop::settings::Settings &settings = dpApp().settings();
 	settings.bindOneFingerTouch(this, &TouchHandler::setOneFingerTouchAction);
 	settings.bindTwoFingerPinch(this, &TouchHandler::setTwoFingerPinchAction);
@@ -29,6 +40,8 @@ TouchHandler::TouchHandler(QObject *parent)
 	settings.bindTwoFingerTap(this, &TouchHandler::setTwoFingerTapAction);
 	settings.bindThreeFingerTap(this, &TouchHandler::setThreeFingerTapAction);
 	settings.bindFourFingerTap(this, &TouchHandler::setFourFingerTapAction);
+	settings.bindOneFingerTapAndHold(
+		this, &TouchHandler::setOneFingerTapAndHoldAction);
 }
 
 bool TouchHandler::isTouchDrawEnabled() const
@@ -93,6 +106,7 @@ void TouchHandler::handleTouchBegin(QTouchEvent *event)
 	m_touchDrawBuffer.clear();
 	m_touchDragging = false;
 	m_touchRotating = false;
+	m_touchHeld = false;
 	m_maxTouchPoints = pointsCount;
 	m_tapTimer.setRemainingTime(TAP_MAX_DELAY_MS);
 	if(isTouchDrawEnabled() && pointsCount == 1 && !compat::isTouchPad(event)) {
@@ -105,7 +119,9 @@ void TouchHandler::handleTouchBegin(QTouchEvent *event)
 			qulonglong(event->timestamp()));
 		if(isTouchPanEnabled() || isTouchPinchOrTwistEnabled() ||
 		   m_oneFingerTapAction !=
-			   int(desktop::settings::TouchTapAction::Nothing)) {
+			   int(desktop::settings::TouchTapAction::Nothing) ||
+		   m_oneFingerTapAndHoldAction !=
+			   int(desktop::settings::TouchTapAndHoldAction::Nothing)) {
 			// Buffer the touch first, since it might end up being the
 			// beginning of an action that involves multiple fingers.
 			m_touchDrawBuffer.append(
@@ -127,6 +143,14 @@ void TouchHandler::handleTouchBegin(QTouchEvent *event)
 			qulonglong(event->timestamp()));
 		m_touchMode = TouchMode::Moving;
 	}
+
+	if(pointsCount == 1 && m_touchMode != TouchMode::Drawing &&
+	   m_oneFingerTapAndHoldAction !=
+		   int(desktop::settings::TouchTapAndHoldAction::Nothing)) {
+		m_tapAndHoldTimer->start();
+	} else {
+		m_tapAndHoldTimer->stop();
+	}
 }
 
 void TouchHandler::handleTouchUpdate(
@@ -138,10 +162,23 @@ void TouchHandler::handleTouchUpdate(
 		m_maxTouchPoints = pointsCount;
 	}
 
-	if(isTouchDrawEnabled() &&
-	   ((pointsCount == 1 && m_touchMode == TouchMode::Unknown) ||
-		m_touchMode == TouchMode::Drawing) &&
-	   !compat::isTouchPad(event)) {
+	if(pointsCount != 1) {
+		m_tapAndHoldTimer->stop();
+	}
+
+	m_touchPos = QPointF(0.0, 0.0);
+	for(const compat::TouchPoint &tp : compat::touchPoints(*event)) {
+		m_touchPos += compat::touchPos(tp);
+	}
+	m_touchPos /= pointsCount;
+
+	if(m_touchHeld) {
+		emit touchColorPicked(m_touchPos);
+	} else if(
+		isTouchDrawEnabled() &&
+		((pointsCount == 1 && m_touchMode == TouchMode::Unknown) ||
+		 m_touchMode == TouchMode::Drawing) &&
+		!compat::isTouchPad(event)) {
 		QPointF posf = compat::touchPos(compat::touchPoints(*event).first());
 		DP_EVENT_LOG(
 			"touch_draw_update x=%f y=%f touching=%d type=%d device=%s "
@@ -155,6 +192,7 @@ void TouchHandler::handleTouchUpdate(
 			if(m_touchMode == TouchMode::Drawing) {
 				emit touchMoved(QDateTime::currentMSecsSinceEpoch(), posf);
 			} else { // Shouldn't happen, but we'll deal with it anyway.
+				m_tapAndHoldTimer->stop();
 				m_touchMode = TouchMode::Drawing;
 				emit touchPressed(
 					event, QDateTime::currentMSecsSinceEpoch(), posf);
@@ -172,6 +210,7 @@ void TouchHandler::handleTouchUpdate(
 				m_touchDrawBuffer.append(
 					{QDateTime::currentMSecsSinceEpoch(), posf});
 			} else {
+				m_tapAndHoldTimer->stop();
 				m_touchMode = TouchMode::Drawing;
 				flushTouchDrawBuffer();
 				emit touchMoved(QDateTime::currentMSecsSinceEpoch(), posf);
@@ -180,17 +219,15 @@ void TouchHandler::handleTouchUpdate(
 	} else {
 		m_touchMode = TouchMode::Moving;
 
-		QPointF startCenter, lastCenter, center;
+		QPointF startCenter, lastCenter;
 		for(const compat::TouchPoint &tp : compat::touchPoints(*event)) {
 			QPointF startPos = compat::touchStartPos(tp);
 			startCenter += startPos;
 			lastCenter += compat::touchLastPos(tp);
-			QPointF pos = compat::touchPos(tp);
-			center += pos;
 			// This might be a tap gesture. Don't start a drag until there's
 			// been sufficient movement on any of the fingers.
 			if(!m_touchDragging &&
-			   squareDist(startPos - pos) > TAP_SLOP_SQUARED) {
+			   squareDist(startPos - compat::touchPos(tp)) > TAP_SLOP_SQUARED) {
 				m_touchDragging = true;
 			}
 		}
@@ -206,9 +243,10 @@ void TouchHandler::handleTouchUpdate(
 			}
 		}
 
+		m_tapAndHoldTimer->stop();
 		startCenter /= pointsCount;
 		lastCenter /= pointsCount;
-		center /= pointsCount;
+		QPointF center = m_touchPos;
 
 		DP_EVENT_LOG(
 			"touch_update x=%f y=%f touching=%d type=%d device=%s "
@@ -294,12 +332,16 @@ void TouchHandler::handleTouchEnd(QTouchEvent *event, bool cancel)
 {
 	event->accept();
 	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
-	if(isTouchDrawEnabled() &&
-	   ((m_touchMode == TouchMode::Unknown && !m_touchDrawBuffer.isEmpty() &&
-		 (m_touchDragging ||
-		  m_oneFingerTapAction ==
-			  int(desktop::settings::TouchTapAction::Nothing))) ||
-		m_touchMode == TouchMode::Drawing)) {
+	m_tapAndHoldTimer->stop();
+	if(m_touchHeld) {
+		emit touchColorPickFinished();
+	} else if(
+		isTouchDrawEnabled() &&
+		((m_touchMode == TouchMode::Unknown && !m_touchDrawBuffer.isEmpty() &&
+		  (m_touchDragging ||
+		   m_oneFingerTapAction ==
+			   int(desktop::settings::TouchTapAction::Nothing))) ||
+		 m_touchMode == TouchMode::Drawing)) {
 		DP_EVENT_LOG(
 			"touch_draw_%s touching=%d type=%d device=%s points=%s "
 			"timestamp=%llu",
@@ -472,6 +514,29 @@ void TouchHandler::setThreeFingerTapAction(int threeFingerTapAction)
 void TouchHandler::setFourFingerTapAction(int fourFingerTapAction)
 {
 	m_fourFingerTapAction = fourFingerTapAction;
+}
+
+void TouchHandler::setOneFingerTapAndHoldAction(int oneFingerTapAndHoldAction)
+{
+	m_oneFingerTapAndHoldAction = oneFingerTapAndHoldAction;
+}
+
+void TouchHandler::triggerTapAndHold()
+{
+	m_tapAndHoldTimer->stop();
+	if(m_maxTouchPoints == 1 && m_touchMode != TouchMode::Drawing) {
+		switch(m_oneFingerTapAndHoldAction) {
+		case int(desktop::settings::TouchTapAndHoldAction::ColorPickMode):
+			m_touchHeld = true;
+			emit touchColorPicked(m_touchPos);
+			break;
+		default:
+			qWarning(
+				"Unknown one finger tap and hold action %d",
+				m_oneFingerTapAndHoldAction);
+			break;
+		}
+	}
 }
 
 qreal TouchHandler::adjustTwistRotation(qreal degrees) const

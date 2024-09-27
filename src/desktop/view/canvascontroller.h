@@ -233,6 +233,8 @@ private:
 
 	void moveDrag(const QPoint &point);
 	void pickColor(const QPointF &point, const QPointF &posf);
+	void touchColorPick(const QPointF &posf);
+	void finishTouchColorPick();
 
 	void resetCursor();
 	void updateOutlinePos(QPointF point);

@@ -6,6 +6,7 @@
 #include <QPointF>
 
 class QGestureEvent;
+class QTimer;
 class QTouchEvent;
 
 class TouchHandler : public QObject {
@@ -38,10 +39,13 @@ signals:
 	void touchScrolledBy(qreal dx, qreal dy);
 	void touchZoomedRotated(qreal zoom, qreal rotation);
 	void touchTapActionActivated(int action);
+	void touchColorPicked(const QPointF &posf);
+	void touchColorPickFinished();
 
 private:
 	static constexpr qreal TAP_SLOP_SQUARED = 16.0 * 16.0;
 	static constexpr int TAP_MAX_DELAY_MS = 1000;
+	static constexpr int TAP_AND_HOLD_DELAY_MS = 400;
 	static constexpr int DRAW_BUFFER_COUNT = 20;
 
 	enum class TouchMode { Unknown, Drawing, Moving };
@@ -58,6 +62,9 @@ private:
 	void setTwoFingerTapAction(int twoFingerTapAction);
 	void setThreeFingerTapAction(int threeFingerTapAction);
 	void setFourFingerTapAction(int fourFingerTapAction);
+	void setOneFingerTapAndHoldAction(int oneFingerTapAndHoldAction);
+
+	void triggerTapAndHold();
 
 	qreal adjustTwistRotation(qreal degrees) const;
 	void flushTouchDrawBuffer();
@@ -66,6 +73,7 @@ private:
 	bool m_touching = false;
 	bool m_touchDragging = false;
 	bool m_touchRotating = false;
+	bool m_touchHeld = false;
 	bool m_anyTabletEventsReceived = false;
 	int m_oneFingerTouchAction;
 	int m_twoFingerPinchAction;
@@ -74,16 +82,19 @@ private:
 	int m_twoFingerTapAction;
 	int m_threeFingerTapAction;
 	int m_fourFingerTapAction;
+	int m_oneFingerTapAndHoldAction;
 	int m_maxTouchPoints = 0;
 	TouchMode m_touchMode = TouchMode::Unknown;
 	QVector<QPair<long long, QPointF>> m_touchDrawBuffer;
 	QPointF m_touchStartPos;
 	qreal m_touchStartZoom = 0.0;
 	qreal m_touchStartRotate = 0.0;
+	QPointF m_touchPos;
 	QPointF m_gestureStartPos;
 	qreal m_gestureStartZoom = 0.0;
 	qreal m_gestureStartRotation = 0.0;
 	QDeadlineTimer m_tapTimer;
+	QTimer *m_tapAndHoldTimer;
 };
 
 #endif

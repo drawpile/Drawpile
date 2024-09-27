@@ -189,6 +189,7 @@ SETTING(oneFingerTap              , OneFingerTap              , "settings/input/
 SETTING(twoFingerTap              , TwoFingerTap              , "settings/input/twofingertap"           , int(TouchTapAction::Undo))
 SETTING(threeFingerTap            , ThreeFingerTap            , "settings/input/threefingertap"         , int(TouchTapAction::Redo))
 SETTING(fourFingerTap             , FourFingerTap             , "settings/input/fourfingertap"          , int(TouchTapAction::HideDocks))
+SETTING(oneFingerTapAndHold       , OneFingerTapAndHold       , "settings/input/onefingertapandhold"    , int(TouchTapAndHoldAction::ColorPickMode))
 SETTING(tabletPressTimerDelay     , TabletPressTimerDelay     , "settings/input/tabletpresstimerdelay"  , 500)
 SETTING(touchGestures             , TouchGestures             , "settings/input/touchgestures"          , false)
 SETTING(onionSkinsFrameCount      , OnionSkinsFrameCount      , "onionskins/framecount"                 , 8)

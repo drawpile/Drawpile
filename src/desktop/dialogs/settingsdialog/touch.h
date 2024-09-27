@@ -29,6 +29,9 @@ private:
 	void
 	initTapActions(desktop::settings::Settings &settings, QFormLayout *form);
 
+	void initTapAndHoldActions(
+		desktop::settings::Settings &settings, QFormLayout *form);
+
 	void
 	initTouchActions(desktop::settings::Settings &settings, QFormLayout *form);
 };

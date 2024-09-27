@@ -85,6 +85,12 @@ enum class TouchTapAction : int {
 };
 Q_ENUM_NS(TouchTapAction)
 
+enum class TouchTapAndHoldAction : int {
+	Nothing,
+	ColorPickMode,
+};
+Q_ENUM_NS(TouchTapAndHoldAction)
+
 enum class ThemePalette : int {
 	System,
 	Light,

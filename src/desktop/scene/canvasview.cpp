@@ -178,6 +178,12 @@ CanvasView::CanvasView(QWidget *parent)
 	connect(
 		m_touch, &TouchHandler::touchTapActionActivated, this,
 		&CanvasView::touchTapActionActivated, Qt::DirectConnection);
+	connect(
+		m_touch, &TouchHandler::touchColorPicked, this,
+		&CanvasView::touchColorPick, Qt::DirectConnection);
+	connect(
+		m_touch, &TouchHandler::touchColorPickFinished, this,
+		&CanvasView::finishTouchColorPick, Qt::DirectConnection);
 }
 
 
@@ -2073,6 +2079,16 @@ void CanvasView::pickColor(const QPointF &point, const QPointF &posf)
 {
 	QColor color = m_scene->model()->pickColor(point.x(), point.y(), 0, 0);
 	m_pickingColor = m_scene->setColorPick(mapToScene(posf.toPoint()), color);
+}
+
+void CanvasView::touchColorPick(const QPointF &posf)
+{
+	pickColor(mapToCanvas(posf), posf);
+}
+
+void CanvasView::finishTouchColorPick()
+{
+	m_scene->setColorPick(QPointF(), QColor());
 }
 
 void CanvasView::updateCanvasTransform(const std::function<void()> &block)

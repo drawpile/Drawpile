@@ -24,6 +24,8 @@ void Touch::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
 	initTouchActions(settings, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
 	initTapActions(settings, utils::addFormSection(layout));
+	utils::addFormSeparator(layout);
+	initTapAndHoldActions(settings, utils::addFormSection(layout));
 }
 
 void Touch::initMode(desktop::settings::Settings &settings, QFormLayout *form)
@@ -80,6 +82,26 @@ void Touch::initTapActions(
 	form->addRow(tr("Two-finger tap:"), twoFingerTap);
 	form->addRow(tr("Three-finger tap:"), threeFingerTap);
 	form->addRow(tr("Four-finger tap:"), fourFingerTap);
+}
+
+void Touch::initTapAndHoldActions(
+	desktop::settings::Settings &settings, QFormLayout *form)
+{
+	QComboBox *oneFingerTapAndHold = new QComboBox;
+	for(QComboBox *tapAndHold : {oneFingerTapAndHold}) {
+		tapAndHold->addItem(
+			tr("No action"),
+			int(desktop::settings::TouchTapAndHoldAction::Nothing));
+		tapAndHold->addItem(
+			tr("Pick color"),
+			int(desktop::settings::TouchTapAndHoldAction::ColorPickMode));
+	}
+
+	settings.bindOneFingerTapAndHold(oneFingerTapAndHold, Qt::UserRole);
+
+	settings.bindTouchGestures(oneFingerTapAndHold, &QComboBox::setDisabled);
+
+	form->addRow(tr("One-finger tap and hold:"), oneFingerTapAndHold);
 }
 
 void Touch::initTouchActions(

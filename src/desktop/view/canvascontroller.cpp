@@ -90,6 +90,12 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 	connect(
 		m_touch, &TouchHandler::touchTapActionActivated, this,
 		&CanvasController::touchTapActionActivated, Qt::DirectConnection);
+	connect(
+		m_touch, &TouchHandler::touchColorPicked, this,
+		&CanvasController::touchColorPick, Qt::DirectConnection);
+	connect(
+		m_touch, &TouchHandler::touchColorPickFinished, this,
+		&CanvasController::finishTouchColorPick, Qt::DirectConnection);
 
 	resetCanvasTransform();
 }
@@ -1550,6 +1556,16 @@ void CanvasController::pickColor(const QPointF &point, const QPointF &posf)
 {
 	QColor color = m_canvasModel->pickColor(point.x(), point.y(), 0, 0);
 	m_pickingColor = m_scene->setColorPick(posf, color);
+}
+
+void CanvasController::touchColorPick(const QPointF &posf)
+{
+	pickColor(mapPointToCanvasF(posf), posf);
+}
+
+void CanvasController::finishTouchColorPick()
+{
+	m_scene->setColorPick(QPointF(), QColor());
 }
 
 void CanvasController::resetCursor()

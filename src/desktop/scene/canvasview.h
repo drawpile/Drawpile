@@ -293,6 +293,8 @@ private:
 	//! Drag the view
 	void moveDrag(const QPoint &point);
 	void pickColor(const QPointF &point, const QPointF &posf);
+	void touchColorPick(const QPointF &posf);
+	void finishTouchColorPick();
 
 	QTransform fromCanvasTransform() const;
 	QTransform toCanvasTransform() const;

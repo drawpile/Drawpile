@@ -25,7 +25,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Clamp palette swatch sizes to more reasonable bounds. Thanks MachKerman for reporting.
  * Server Feature: Allow checking session, operator and server account passwords via the API. This can be used to password-protect recordings or similar. Thanks Meru for contributing.
  * Fix: Correct some UI scaling problems with brush outlines, canvas centering, dock toggling, pixel grid and transform handles. Thanks annoy for reporting.
- * Feature: Extended touch tap gestures, among them two-finger tap to undo and three-finger tap to redo. Can be configured in the preferences under the Touch tab. Thanks InconsolableCellist and many others for suggesting.
+ * Feature: Extended touch tap gestures, among them two-finger tap to undo, three-finger tap to redo and tap-and-hold to summon the color picker. Can be configured in the preferences under the Touch tab. Thanks InconsolableCellist and many others for suggesting.
  * Feature: Snap canvas rotation around 0° by default. If you don't want this, you can set the canvas shortcut or touch rotation to "free rotate canvas" instead.
  * Feature: Show a color preview when picking a color from the canvas.
 
