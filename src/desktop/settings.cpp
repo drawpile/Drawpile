@@ -135,6 +135,70 @@ namespace oneFingerTouch {
 	}
 }
 
+namespace twoFingerPinch {
+	QVariant get(const SettingMeta &meta, QSettings &settings)
+	{
+		if (findKey(settings, meta.baseKey, meta.version)) {
+			bool ok;
+			int value = any::get(meta, settings).toInt(&ok);
+			if(ok) {
+				switch(value) {
+				case int(TwoFingerPinchAction::Nothing):
+				case int(TwoFingerPinchAction::Zoom):
+					return value;
+				default:
+					break;
+				}
+			}
+			return int(TwoFingerPinchAction::Zoom);
+		}
+
+		std::optional<libclient::settings::FoundKey> touchPinchKey = findKey(
+			settings, "settings/input/touchpinch", SettingMeta::Version::V0);
+		if(touchPinchKey.has_value() &&
+		settings.value(touchPinchKey->key).toBool()) {
+			return settings.value(touchPinchKey->key).toBool()
+					? int(TwoFingerPinchAction::Zoom)
+					: int(TwoFingerPinchAction::Nothing);
+		}
+
+		return int(TwoFingerPinchAction::Zoom);
+	}
+}
+
+namespace twoFingerTwist {
+	QVariant get(const SettingMeta &meta, QSettings &settings)
+	{
+		if (findKey(settings, meta.baseKey, meta.version)) {
+			bool ok;
+			int value = any::get(meta, settings).toInt(&ok);
+			if(ok) {
+				switch(value) {
+				case int(TwoFingerTwistAction::Nothing):
+				case int(TwoFingerTwistAction::Rotate):
+				case int(TwoFingerTwistAction::RotateNoSnap):
+				case int(TwoFingerTwistAction::RotateDiscrete):
+					return value;
+				default:
+					break;
+				}
+			}
+			return int(TwoFingerTwistAction::Rotate);
+		}
+
+		std::optional<libclient::settings::FoundKey> touchTwistKey = findKey(
+			settings, "settings/input/touchtwist", SettingMeta::Version::V0);
+		if(touchTwistKey.has_value() &&
+		settings.value(touchTwistKey->key).toBool()) {
+			return settings.value(touchTwistKey->key).toBool()
+					? int(TwoFingerTwistAction::Rotate)
+					: int(TwoFingerTwistAction::Nothing);
+		}
+
+		return int(TwoFingerTwistAction::Rotate);
+	}
+}
+
 namespace tabletDriver {
 	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{

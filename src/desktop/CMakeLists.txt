@@ -157,6 +157,8 @@ target_sources(drawpile PRIVATE
 	dialogs/settingsdialog/shortcuts.h
 	dialogs/settingsdialog/tools.cpp
 	dialogs/settingsdialog/tools.h
+	dialogs/settingsdialog/touch.cpp
+	dialogs/settingsdialog/touch.h
 	dialogs/startdialog.cpp
 	dialogs/startdialog.h
 	dialogs/startdialog/browse.cpp

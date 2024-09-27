@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_UTILS_TOUCHHANDLER_H
 #define DESKTOP_UTILS_TOUCHHANDLER_H
+#include <QDeadlineTimer>
 #include <QObject>
 #include <QPointF>
 
@@ -17,8 +18,9 @@ public:
 	bool isTouchDrawEnabled() const;
 	bool isTouchPanEnabled() const;
 	bool isTouchDrawOrPanEnabled() const;
-	bool isTouchPinchEnabled() const { return m_enableTouchPinch; }
-	bool isTouchTwistEnabled() const { return m_enableTouchTwist; }
+	bool isTouchPinchEnabled() const;
+	bool isTouchTwistEnabled() const;
+	bool isTouchPinchOrTwistEnabled() const;
 
 	bool isTouching() const { return m_touching; }
 
@@ -35,10 +37,12 @@ signals:
 	void touchReleased(long long timeMsec, const QPointF &posf);
 	void touchScrolledBy(qreal dx, qreal dy);
 	void touchZoomedRotated(qreal zoom, qreal rotation);
+	void touchTapActionActivated(int action);
 
 private:
-	static constexpr qreal TOUCH_DRAW_DISTANCE = 10.0;
-	static constexpr int TOUCH_DRAW_BUFFER_COUNT = 20;
+	static constexpr qreal TAP_SLOP_SQUARED = 16.0 * 16.0;
+	static constexpr int TAP_MAX_DELAY_MS = 1000;
+	static constexpr int DRAW_BUFFER_COUNT = 20;
 
 	enum class TouchMode { Unknown, Drawing, Moving };
 
@@ -48,17 +52,29 @@ private:
 	}
 
 	void setOneFingerTouchAction(int oneFingerTouchAction);
-	void setEnableTouchPinch(bool enableTouchPinch);
-	void setEnableTouchTwist(bool enableTouchTwist);
+	void setTwoFingerPinchAction(int twoFingerPinchAction);
+	void setTwoFingerTwistAction(int twoFingerTwistAction);
+	void setOneFingerTapAction(int oneFingerTapAction);
+	void setTwoFingerTapAction(int twoFingerTapAction);
+	void setThreeFingerTapAction(int threeFingerTapAction);
+	void setFourFingerTapAction(int fourFingerTapAction);
 
+	qreal adjustTwistRotation(qreal degrees) const;
 	void flushTouchDrawBuffer();
+	void emitTapAction(int action);
 
-	bool m_enableTouchPinch = true;
-	bool m_enableTouchTwist = true;
 	bool m_touching = false;
+	bool m_touchDragging = false;
 	bool m_touchRotating = false;
 	bool m_anyTabletEventsReceived = false;
 	int m_oneFingerTouchAction;
+	int m_twoFingerPinchAction;
+	int m_twoFingerTwistAction;
+	int m_oneFingerTapAction;
+	int m_twoFingerTapAction;
+	int m_threeFingerTapAction;
+	int m_fourFingerTapAction;
+	int m_maxTouchPoints = 0;
 	TouchMode m_touchMode = TouchMode::Unknown;
 	QVector<QPair<long long, QPointF>> m_touchDrawBuffer;
 	QPointF m_touchStartPos;
@@ -67,6 +83,7 @@ private:
 	QPointF m_gestureStartPos;
 	qreal m_gestureStartZoom = 0.0;
 	qreal m_gestureStartRotation = 0.0;
+	QDeadlineTimer m_tapTimer;
 };
 
 #endif

@@ -155,6 +155,7 @@ signals:
 	void savePreResetStateDismissed();
 
 	void toggleActionActivated(int action);
+	void touchTapActionActivated(int action);
 
 public slots:
 	//! Set the size of the brush preview outline

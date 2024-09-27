@@ -375,6 +375,9 @@ void ViewWrapper::connectMainWindow(MainWindow *mainWindow)
 		m_controller, &CanvasController::toggleActionActivated, mainWindow,
 		&MainWindow::handleToggleAction);
 	connect(
+		m_controller, &CanvasController::touchTapActionActivated, mainWindow,
+		&MainWindow::handleTouchTapAction);
+	connect(
 		m_view, &CanvasView::reconnectRequested, mainWindow,
 		&MainWindow::reconnect);
 	connect(

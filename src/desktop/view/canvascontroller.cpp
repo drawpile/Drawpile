@@ -87,6 +87,9 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 	connect(
 		m_touch, &TouchHandler::touchZoomedRotated, this,
 		&CanvasController::touchZoomRotate, Qt::DirectConnection);
+	connect(
+		m_touch, &TouchHandler::touchTapActionActivated, this,
+		&CanvasController::touchTapActionActivated, Qt::DirectConnection);
 
 	resetCanvasTransform();
 }

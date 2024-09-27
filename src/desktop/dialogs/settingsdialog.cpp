@@ -9,6 +9,7 @@
 #include "desktop/dialogs/settingsdialog/servers.h"
 #include "desktop/dialogs/settingsdialog/shortcuts.h"
 #include "desktop/dialogs/settingsdialog/tools.h"
+#include "desktop/dialogs/settingsdialog/touch.h"
 #include "desktop/dialogs/settingsdialog/userinterface.h"
 #include "desktop/main.h"
 #include "desktop/settings.h"
@@ -89,6 +90,8 @@ SettingsDialog::SettingsDialog(
 			 new settingsdialog::UserInterface(m_settings, this), true},
 			{"dialog-input-devices", tr("Input"),
 			 new settingsdialog::Input(m_settings, this), true},
+			{"hand", tr("Touch"), new settingsdialog::Touch(m_settings, this),
+			 true},
 			{"tools", tr("Tools"), new settingsdialog::Tools(m_settings, this),
 			 true},
 			{"network-modem", tr("Network"),

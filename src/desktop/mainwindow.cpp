@@ -2257,8 +2257,12 @@ void MainWindow::toggleTabletEventLog()
 				DP_event_log_write_meta("Tablet enabled: %d", settings.tabletEvents());
 				DP_event_log_write_meta("Tablet eraser action: %d", settings.tabletEraserAction());
 				DP_event_log_write_meta("One-finger touch action: %d", settings.oneFingerTouch());
-				DP_event_log_write_meta("Two-finger rotate: %d", settings.twoFingerRotate());
-				DP_event_log_write_meta("Two-finger zoom: %d", settings.twoFingerZoom());
+				DP_event_log_write_meta("Two-finger pinch action: %d", settings.twoFingerPinch());
+				DP_event_log_write_meta("Two-finger twist action: %d", settings.twoFingerTwist());
+				DP_event_log_write_meta("One-finger tap action: %d", settings.oneFingerTap());
+				DP_event_log_write_meta("Two-finger tap action: %d", settings.twoFingerTap());
+				DP_event_log_write_meta("Three-finger tap action: %d", settings.threeFingerTap());
+				DP_event_log_write_meta("Four-finger tap action: %d", settings.fourFingerTap());
 				DP_event_log_write_meta("Gestures: %d", settings.touchGestures());
 			} else {
 				showErrorMessageWithDetails(tr("Error opening tablet event log."), DP_error());
@@ -3192,6 +3196,43 @@ void MainWindow::handleToggleAction(int action)
 }
 
 // clang-format on
+void MainWindow::handleTouchTapAction(int action)
+{
+	switch(action) {
+	case int(desktop::settings::TouchTapAction::Undo):
+		getAction("undo")->trigger();
+		break;
+	case int(desktop::settings::TouchTapAction::Redo):
+		getAction("redo")->trigger();
+		break;
+	case int(desktop::settings::TouchTapAction::HideDocks):
+		getAction("hidedocks")->trigger();
+		break;
+	case int(desktop::settings::TouchTapAction::ColorPicker):
+		if(m_dockToolSettings->currentTool() == tools::Tool::PICKER) {
+			m_dockToolSettings->setPreviousTool();
+		} else {
+			m_dockToolSettings->setTool(tools::Tool::PICKER);
+		}
+		break;
+	case int(desktop::settings::TouchTapAction::Eraser):
+		if(m_dockToolSettings->currentTool() == tools::Tool::ERASER) {
+			m_dockToolSettings->setPreviousTool();
+		} else {
+			m_dockToolSettings->setTool(tools::Tool::ERASER);
+		}
+		break;
+	case int(desktop::settings::TouchTapAction::EraseMode):
+		getAction("currenterasemode")->trigger();
+		break;
+	case int(desktop::settings::TouchTapAction::RecolorMode):
+		getAction("currentrecolormode")->trigger();
+		break;
+	default:
+		qWarning("Unknown tap action %d", action);
+		break;
+	}
+}
 
 void MainWindow::setNotificationsMuted(bool muted)
 {

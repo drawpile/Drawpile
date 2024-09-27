@@ -311,11 +311,13 @@ void CanvasView::setTouchUseGestureEvents(bool touchUseGestureEvents)
 {
 	if(touchUseGestureEvents && !m_touchUseGestureEvents) {
 		DP_EVENT_LOG("grab gesture events");
+		viewport()->grabGesture(Qt::TapGesture);
 		viewport()->grabGesture(Qt::PanGesture);
 		viewport()->grabGesture(Qt::PinchGesture);
 		m_touchUseGestureEvents = true;
 	} else if(!touchUseGestureEvents && m_touchUseGestureEvents) {
 		DP_EVENT_LOG("ungrab gesture events");
+		viewport()->ungrabGesture(Qt::TapGesture);
 		viewport()->ungrabGesture(Qt::PanGesture);
 		viewport()->ungrabGesture(Qt::PinchGesture);
 		m_touchUseGestureEvents = false;

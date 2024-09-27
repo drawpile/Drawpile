@@ -175,6 +175,9 @@ CanvasView::CanvasView(QWidget *parent)
 	connect(
 		m_touch, &TouchHandler::touchZoomedRotated, this,
 		&CanvasView::touchZoomRotate, Qt::DirectConnection);
+	connect(
+		m_touch, &TouchHandler::touchTapActionActivated, this,
+		&CanvasView::touchTapActionActivated, Qt::DirectConnection);
 }
 
 
@@ -182,11 +185,13 @@ void CanvasView::setTouchUseGestureEvents(bool useGestureEvents)
 {
 	if(useGestureEvents && !m_useGestureEvents) {
 		DP_EVENT_LOG("grab gesture events");
+		viewport()->grabGesture(Qt::TapGesture);
 		viewport()->grabGesture(Qt::PanGesture);
 		viewport()->grabGesture(Qt::PinchGesture);
 		m_useGestureEvents = true;
 	} else if(!useGestureEvents && m_useGestureEvents) {
 		DP_EVENT_LOG("ungrab gesture events");
+		viewport()->ungrabGesture(Qt::TapGesture);
 		viewport()->ungrabGesture(Qt::PanGesture);
 		viewport()->ungrabGesture(Qt::PinchGesture);
 		m_useGestureEvents = false;

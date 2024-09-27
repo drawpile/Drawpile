@@ -59,6 +59,32 @@ enum class OneFingerTouchAction : int {
 };
 Q_ENUM_NS(OneFingerTouchAction)
 
+enum class TwoFingerPinchAction : int {
+	Nothing,
+	Zoom,
+};
+Q_ENUM_NS(TwoFingerPinchAction)
+
+enum class TwoFingerTwistAction : int {
+	Nothing,
+	Rotate,
+	RotateNoSnap,
+	RotateDiscrete,
+};
+Q_ENUM_NS(TwoFingerTwistAction)
+
+enum class TouchTapAction : int {
+	Nothing,
+	Undo,
+	Redo,
+	HideDocks,
+	ColorPicker,
+	Eraser,
+	EraseMode,
+	RecolorMode,
+};
+Q_ENUM_NS(TouchTapAction)
+
 enum class ThemePalette : int {
 	System,
 	Light,

@@ -12,11 +12,23 @@ extern "C" {
 TouchHandler::TouchHandler(QObject *parent)
 	: QObject(parent)
 	, m_oneFingerTouchAction(int(ONE_FINGER_TOUCH_DEFAULT))
+	, m_twoFingerPinchAction(int(desktop::settings::TwoFingerPinchAction::Zoom))
+	, m_twoFingerTwistAction(
+		  int(desktop::settings::TwoFingerTwistAction::Rotate))
+	, m_oneFingerTapAction(int(desktop::settings::TouchTapAction::Nothing))
+	, m_twoFingerTapAction(int(desktop::settings::TouchTapAction::Undo))
+	, m_threeFingerTapAction(int(desktop::settings::TouchTapAction::Redo))
+	, m_fourFingerTapAction(int(desktop::settings::TouchTapAction::HideDocks))
+	, m_tapTimer(Qt::CoarseTimer)
 {
 	desktop::settings::Settings &settings = dpApp().settings();
 	settings.bindOneFingerTouch(this, &TouchHandler::setOneFingerTouchAction);
-	settings.bindTwoFingerZoom(this, &TouchHandler::setEnableTouchPinch);
-	settings.bindTwoFingerRotate(this, &TouchHandler::setEnableTouchTwist);
+	settings.bindTwoFingerPinch(this, &TouchHandler::setTwoFingerPinchAction);
+	settings.bindTwoFingerTwist(this, &TouchHandler::setTwoFingerTwistAction);
+	settings.bindOneFingerTap(this, &TouchHandler::setOneFingerTapAction);
+	settings.bindTwoFingerTap(this, &TouchHandler::setTwoFingerTapAction);
+	settings.bindThreeFingerTap(this, &TouchHandler::setThreeFingerTapAction);
+	settings.bindFourFingerTap(this, &TouchHandler::setFourFingerTapAction);
 }
 
 bool TouchHandler::isTouchDrawEnabled() const
@@ -55,6 +67,23 @@ bool TouchHandler::isTouchDrawOrPanEnabled() const
 	}
 }
 
+bool TouchHandler::isTouchPinchEnabled() const
+{
+	return m_twoFingerPinchAction !=
+		   int(desktop::settings::TwoFingerPinchAction::Nothing);
+}
+
+bool TouchHandler::isTouchTwistEnabled() const
+{
+	return m_twoFingerTwistAction !=
+		   int(desktop::settings::TwoFingerTwistAction::Nothing);
+}
+
+bool TouchHandler::isTouchPinchOrTwistEnabled() const
+{
+	return isTouchPinchEnabled() || isTouchTwistEnabled();
+}
+
 void TouchHandler::handleTouchBegin(QTouchEvent *event)
 {
 	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
@@ -62,7 +91,10 @@ void TouchHandler::handleTouchBegin(QTouchEvent *event)
 	QPointF posf = compat::touchPos(points.first());
 
 	m_touchDrawBuffer.clear();
+	m_touchDragging = false;
 	m_touchRotating = false;
+	m_maxTouchPoints = pointsCount;
+	m_tapTimer.setRemainingTime(TAP_MAX_DELAY_MS);
 	if(isTouchDrawEnabled() && pointsCount == 1 && !compat::isTouchPad(event)) {
 		DP_EVENT_LOG(
 			"touch_draw_begin x=%f y=%f touching=%d type=%d device=%s "
@@ -71,7 +103,9 @@ void TouchHandler::handleTouchBegin(QTouchEvent *event)
 			qUtf8Printable(compat::touchDeviceName(event)),
 			qUtf8Printable(compat::debug(points)),
 			qulonglong(event->timestamp()));
-		if(isTouchPanEnabled() || m_enableTouchPinch || m_enableTouchTwist) {
+		if(isTouchPanEnabled() || isTouchPinchOrTwistEnabled() ||
+		   m_oneFingerTapAction !=
+			   int(desktop::settings::TouchTapAction::Nothing)) {
 			// Buffer the touch first, since it might end up being the
 			// beginning of an action that involves multiple fingers.
 			m_touchDrawBuffer.append(
@@ -100,6 +134,9 @@ void TouchHandler::handleTouchUpdate(
 {
 	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
 	int pointsCount = points.size();
+	if(pointsCount > m_maxTouchPoints) {
+		m_maxTouchPoints = pointsCount;
+	}
 
 	if(isTouchDrawEnabled() &&
 	   ((pointsCount == 1 && m_touchMode == TouchMode::Unknown) ||
@@ -128,9 +165,9 @@ void TouchHandler::handleTouchUpdate(
 			// buffer an excessive amount of touches yet. Buffer the touched
 			// point and wait a bit more as to what's going to happen.
 			bool shouldAppend =
-				bufferCount < TOUCH_DRAW_BUFFER_COUNT &&
-				QLineF(m_touchDrawBuffer.first().second, posf).length() <
-					TOUCH_DRAW_DISTANCE;
+				bufferCount < DRAW_BUFFER_COUNT &&
+				squareDist(m_touchDrawBuffer.first().second - posf) <
+					TAP_SLOP_SQUARED;
 			if(shouldAppend) {
 				m_touchDrawBuffer.append(
 					{QDateTime::currentMSecsSinceEpoch(), posf});
@@ -144,17 +181,38 @@ void TouchHandler::handleTouchUpdate(
 		m_touchMode = TouchMode::Moving;
 
 		QPointF startCenter, lastCenter, center;
-		for(const auto &tp : compat::touchPoints(*event)) {
-			startCenter += compat::touchStartPos(tp);
+		for(const compat::TouchPoint &tp : compat::touchPoints(*event)) {
+			QPointF startPos = compat::touchStartPos(tp);
+			startCenter += startPos;
 			lastCenter += compat::touchLastPos(tp);
-			center += compat::touchPos(tp);
+			QPointF pos = compat::touchPos(tp);
+			center += pos;
+			// This might be a tap gesture. Don't start a drag until there's
+			// been sufficient movement on any of the fingers.
+			if(!m_touchDragging &&
+			   squareDist(startPos - pos) > TAP_SLOP_SQUARED) {
+				m_touchDragging = true;
+			}
 		}
+
+		if(!m_touchDragging) {
+			if(m_tapTimer.hasExpired()) {
+				// The user has had their fingers down for at least a second,
+				// this is clearly no longer a tap, but some longer gesture.
+				m_touchDragging = true;
+			} else {
+				// Maybe still a tap gesture, wait for more movement.
+				return;
+			}
+		}
+
 		startCenter /= pointsCount;
 		lastCenter /= pointsCount;
 		center /= pointsCount;
 
 		DP_EVENT_LOG(
-			"touch_update x=%f y=%f touching=%d type=%d device=%s points=%s "
+			"touch_update x=%f y=%f touching=%d type=%d device=%s "
+			"points=%s "
 			"timestamp=%llu",
 			center.x(), center.y(), int(m_touching),
 			compat::touchDeviceType(event),
@@ -174,8 +232,7 @@ void TouchHandler::handleTouchUpdate(
 		// operation and aren't going to be drawing until all fingers leave
 		// the surface anyway, so panning is the only sensible option.
 		bool haveMultiTouch = pointsCount >= 2;
-		bool havePinchOrTwist =
-			haveMultiTouch && (m_enableTouchPinch || m_enableTouchTwist);
+		bool havePinchOrTwist = haveMultiTouch && isTouchPinchOrTwistEnabled();
 		bool havePan = havePinchOrTwist ||
 					   (isTouchDrawOrPanEnabled() &&
 						(haveMultiTouch || !compat::isTouchPad(event)));
@@ -199,14 +256,14 @@ void TouchHandler::handleTouchUpdate(
 			startAvgDist = sqrt(startAvgDist);
 
 			qreal touchZoom = zoom;
-			if(m_enableTouchPinch) {
+			if(isTouchPinchEnabled()) {
 				avgDist = sqrt(avgDist);
 				qreal dZoom = avgDist / startAvgDist;
 				touchZoom = m_touchStartZoom * dZoom;
 			}
 
 			qreal touchRotation = rotation;
-			if(m_enableTouchTwist) {
+			if(isTouchTwistEnabled()) {
 				QLineF l1(
 					compat::touchStartPos(points.first()),
 					compat::touchStartPos(points.last()));
@@ -223,7 +280,8 @@ void TouchHandler::handleTouchUpdate(
 				if(startAvgDist * dpr > 80.0 &&
 				   (qAbs(dAngle) > 3.0 || m_touchRotating)) {
 					m_touchRotating = true;
-					touchRotation = m_touchStartRotate + dAngle;
+					touchRotation =
+						adjustTwistRotation(m_touchStartRotate + dAngle);
 				}
 			}
 
@@ -237,7 +295,10 @@ void TouchHandler::handleTouchEnd(QTouchEvent *event, bool cancel)
 	event->accept();
 	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
 	if(isTouchDrawEnabled() &&
-	   ((m_touchMode == TouchMode::Unknown && !m_touchDrawBuffer.isEmpty()) ||
+	   ((m_touchMode == TouchMode::Unknown && !m_touchDrawBuffer.isEmpty() &&
+		 (m_touchDragging ||
+		  m_oneFingerTapAction ==
+			  int(desktop::settings::TouchTapAction::Nothing))) ||
 		m_touchMode == TouchMode::Drawing)) {
 		DP_EVENT_LOG(
 			"touch_draw_%s touching=%d type=%d device=%s points=%s "
@@ -251,7 +312,7 @@ void TouchHandler::handleTouchEnd(QTouchEvent *event, bool cancel)
 		emit touchReleased(
 			QDateTime::currentMSecsSinceEpoch(),
 			compat::touchPos(compat::touchPoints(*event).first()));
-	} else {
+	} else if(m_touchDragging) {
 		DP_EVENT_LOG(
 			"touch_%s touching=%d type=%d device=%s points=%s timestamp=%llu",
 			cancel ? "cancel" : "end", int(m_touching),
@@ -259,6 +320,26 @@ void TouchHandler::handleTouchEnd(QTouchEvent *event, bool cancel)
 			qUtf8Printable(compat::touchDeviceName(event)),
 			qUtf8Printable(compat::debug(points)),
 			qulonglong(event->timestamp()));
+	} else {
+		DP_EVENT_LOG(
+			"touch_tap_%s maxTouchPoints=%d touching=%d type=%d device=%s "
+			"points=%s timestamp=%llu",
+			cancel ? "cancel" : "end", m_maxTouchPoints, int(m_touching),
+			compat::touchDeviceType(event),
+			qUtf8Printable(compat::touchDeviceName(event)),
+			qUtf8Printable(compat::debug(points)),
+			qulonglong(event->timestamp()));
+		if(!cancel) {
+			if(m_maxTouchPoints == 1) {
+				emitTapAction(m_oneFingerTapAction);
+			} else if(m_maxTouchPoints == 2) {
+				emitTapAction(m_twoFingerTapAction);
+			} else if(m_maxTouchPoints == 3) {
+				emitTapAction(m_threeFingerTapAction);
+			} else if(m_maxTouchPoints >= 4) {
+				emitTapAction(m_fourFingerTapAction);
+			}
+		}
 	}
 	m_touching = false;
 }
@@ -266,6 +347,17 @@ void TouchHandler::handleTouchEnd(QTouchEvent *event, bool cancel)
 void TouchHandler::handleGesture(
 	QGestureEvent *event, qreal zoom, qreal rotation)
 {
+	const QTapGesture *tap =
+		static_cast<const QTapGesture *>(event->gesture(Qt::TapGesture));
+	if(tap) {
+		Qt::GestureState tapState = tap->state();
+		DP_EVENT_LOG(
+			"tap state=0x%x touching=%d", unsigned(tapState), int(m_touching));
+		if(tapState == Qt::GestureFinished) {
+			emitTapAction(m_oneFingerTapAction);
+		}
+	}
+
 	const QPinchGesture *pinch =
 		static_cast<const QPinchGesture *>(event->gesture(Qt::PinchGesture));
 	bool hadPinchUpdate = false;
@@ -290,19 +382,20 @@ void TouchHandler::handleGesture(
 				emit touchScrolledBy(-d.x(), -d.y());
 			}
 
-			bool haveZoom = m_enableTouchPinch &&
+			bool haveZoom = isTouchPinchEnabled() &&
 							cf.testFlag(QPinchGesture::ScaleFactorChanged);
 			bool haveRotation =
-				m_enableTouchTwist &&
+				isTouchTwistEnabled() &&
 				cf.testFlag(QPinchGesture::RotationAngleChanged);
 			if(haveZoom || haveRotation) {
 				qreal gestureZoom =
 					haveZoom ? m_gestureStartZoom * pinch->totalScaleFactor()
 							 : m_gestureStartZoom;
-				qreal gestureRotation =
-					haveRotation
-						? m_gestureStartRotation + pinch->totalRotationAngle()
-						: m_gestureStartRotation;
+				qreal gestureRotation = haveRotation
+											? adjustTwistRotation(
+												  m_gestureStartRotation +
+												  pinch->totalRotationAngle())
+											: m_gestureStartRotation;
 				emit touchZoomedRotated(gestureZoom, gestureRotation);
 			}
 
@@ -348,27 +441,57 @@ void TouchHandler::handleGesture(
 
 void TouchHandler::setOneFingerTouchAction(int oneFingerTouchAction)
 {
-	switch(oneFingerTouchAction) {
-	case int(desktop::settings::OneFingerTouchAction::Nothing):
-	case int(desktop::settings::OneFingerTouchAction::Draw):
-	case int(desktop::settings::OneFingerTouchAction::Pan):
-	case int(desktop::settings::OneFingerTouchAction::Guess):
-		m_oneFingerTouchAction = oneFingerTouchAction;
-		break;
-	default:
-		qWarning("Unknown one finger touch action %d", oneFingerTouchAction);
-		break;
+	m_oneFingerTouchAction = oneFingerTouchAction;
+}
+
+void TouchHandler::setTwoFingerPinchAction(int twoFingerPinchAction)
+{
+	m_twoFingerPinchAction = twoFingerPinchAction;
+}
+
+void TouchHandler::setTwoFingerTwistAction(int twoFingerTwistAction)
+{
+	m_twoFingerTwistAction = twoFingerTwistAction;
+}
+
+void TouchHandler::setOneFingerTapAction(int oneFingerTapAction)
+{
+	m_oneFingerTapAction = oneFingerTapAction;
+}
+
+void TouchHandler::setTwoFingerTapAction(int twoFingerTapAction)
+{
+	m_twoFingerTapAction = twoFingerTapAction;
+}
+
+void TouchHandler::setThreeFingerTapAction(int threeFingerTapAction)
+{
+	m_threeFingerTapAction = threeFingerTapAction;
+}
+
+void TouchHandler::setFourFingerTapAction(int fourFingerTapAction)
+{
+	m_fourFingerTapAction = fourFingerTapAction;
+}
+
+qreal TouchHandler::adjustTwistRotation(qreal degrees) const
+{
+	if(m_twoFingerTwistAction ==
+	   int(desktop::settings::TwoFingerTwistAction::Rotate)) {
+		return qAbs(std::fmod(degrees, 360.0)) < 5.0 ? 0.0 : degrees;
+	} else if(
+		m_twoFingerTwistAction ==
+		int(desktop::settings::TwoFingerTwistAction::RotateDiscrete)) {
+		qreal step = 15.0;
+		qreal offset = std::fmod(degrees, step);
+		if(offset <= step / 2.0) {
+			return qFloor(degrees / step) * step;
+		} else {
+			return qCeil(degrees / step) * step;
+		}
+	} else {
+		return degrees;
 	}
-}
-
-void TouchHandler::setEnableTouchPinch(bool enableTouchPinch)
-{
-	m_enableTouchPinch = enableTouchPinch;
-}
-
-void TouchHandler::setEnableTouchTwist(bool enableTouchTwist)
-{
-	m_enableTouchTwist = enableTouchTwist;
 }
 
 void TouchHandler::flushTouchDrawBuffer()
@@ -382,5 +505,12 @@ void TouchHandler::flushTouchDrawBuffer()
 			emit touchMoved(move.first, move.second);
 		}
 		m_touchDrawBuffer.clear();
+	}
+}
+
+void TouchHandler::emitTapAction(int action)
+{
+	if(action != int(desktop::settings::TouchTapAction::Nothing)) {
+		emit touchTapActionActivated(action);
 	}
 }

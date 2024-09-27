@@ -127,40 +127,6 @@ void Input::initTablet(
 	form->addRow(tr("Driver:"), driver);
 #endif
 
-	utils::addFormSpacer(form);
-
-	auto *touchMode = utils::addRadioGroup(
-		form, tr("Touch mode:"), true,
-		{
-			{tr("Touchscreen"), false},
-			{tr("Gestures"), true},
-		});
-	settings.bindTouchGestures(touchMode);
-
-	auto *oneTouch = utils::addRadioGroup(
-		form, tr("One-finger input:"), true,
-		{
-			{tr("None"), int(desktop::settings::OneFingerTouchAction::Nothing)},
-			{tr("Draw"), int(desktop::settings::OneFingerTouchAction::Draw)},
-			{tr("Pan"), int(desktop::settings::OneFingerTouchAction::Pan)},
-			{tr("Guess"), int(desktop::settings::OneFingerTouchAction::Guess)},
-		});
-	settings.bindOneFingerTouch(oneTouch);
-	settings.bindTouchGestures(
-		oneTouch->button(int(desktop::settings::OneFingerTouchAction::Draw)),
-		&QWidget::setDisabled);
-
-	auto *twoTouch = new utils::EncapsulatedLayout;
-	twoTouch->setContentsMargins(0, 0, 0, 0);
-	auto *zoom = new QCheckBox(tr("Pinch to zoom"));
-	settings.bindTwoFingerZoom(zoom);
-	twoTouch->addWidget(zoom);
-	auto *rotate = new QCheckBox(tr("Twist to rotate"));
-	settings.bindTwoFingerRotate(rotate);
-	twoTouch->addWidget(rotate);
-	twoTouch->addStretch();
-	form->addRow(tr("Touch gestures:"), twoTouch);
-
 	auto *testerLayout = new QVBoxLayout;
 	auto *testerLabel = new QLabel(tr("Test your tablet here:"));
 	testerLabel->setAlignment(Qt::AlignHCenter);

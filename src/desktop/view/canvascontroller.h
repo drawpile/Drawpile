@@ -189,6 +189,7 @@ signals:
 	void quickAdjust(qreal value);
 	void cursorChanged(const QCursor &cursor);
 	void toggleActionActivated(int action);
+	void touchTapActionActivated(int action);
 	void saveInProgressChanged(bool saveInProgress);
 
 private:

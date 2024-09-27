@@ -178,6 +178,7 @@ public slots:
 	void dropImage(const QImage &image);
 	void dropUrl(const QUrl &url);
 	void handleToggleAction(int action);
+	void handleTouchTapAction(int action);
 
 	void savePreResetImageAs();
 	void discardPreResetImage();

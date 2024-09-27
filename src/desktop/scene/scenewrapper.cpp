@@ -387,6 +387,9 @@ void SceneWrapper::connectMainWindow(MainWindow *mainWindow)
 		m_view, &CanvasView::toggleActionActivated, mainWindow,
 		&MainWindow::handleToggleAction);
 	connect(
+		m_view, &CanvasView::touchTapActionActivated, mainWindow,
+		&MainWindow::handleTouchTapAction);
+	connect(
 		m_view, &CanvasView::reconnectRequested, mainWindow,
 		&MainWindow::reconnect);
 	connect(
