@@ -335,6 +335,7 @@ private:
 	void setViewportCursor(const QCursor &cursor);
 
 	void setZoomToFit(Qt::Orientations orientations);
+	void setRotationSnap(qreal degrees);
 	void rotateByDiscreteSteps(int steps);
 
 	void viewRectChanged();
@@ -386,6 +387,7 @@ private:
 	QPoint m_dragLastPoint;
 	QPointF m_dragCanvasPoint;
 	qreal m_dragDiscreteRotation;
+	qreal m_dragSnapRotation = 0.0;
 
 	//! Previous pointer location
 	canvas::Point m_prevpoint;

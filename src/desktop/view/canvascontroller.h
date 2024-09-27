@@ -294,6 +294,7 @@ private:
 	bool isRotationInverted() const { return m_mirror ^ m_flip; }
 
 	void setZoomToFit(Qt::Orientations orientations);
+	void setRotationSnap(qreal degrees);
 	void rotateByDiscreteSteps(int steps);
 
 	void emitTransformChanged();
@@ -399,6 +400,7 @@ private:
 	QPoint m_dragLastPoint;
 	QPointF m_dragCanvasPoint;
 	qreal m_dragDiscreteRotation = 0.0;
+	qreal m_dragSnapRotation = 0.0;
 	int m_zoomWheelDelta = 0;
 
 	bool m_canvasSizeChanging = false;

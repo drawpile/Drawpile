@@ -32,6 +32,9 @@ CanvasShortcutsDialog::CanvasShortcutsDialog(
 	d->ui.actionCombo->addItem(
 		tr("Rotate Canvas"), CanvasShortcuts::CANVAS_ROTATE);
 	d->ui.actionCombo->addItem(
+		//: This refers to rotating the canvas without snapping around 0°.
+		tr("Free Rotate Canvas"), CanvasShortcuts::CANVAS_ROTATE_NO_SNAP);
+	d->ui.actionCombo->addItem(
 		//: This refers to rotating the canvas in 15° steps.
 		tr("Ratchet Rotate Canvas"), CanvasShortcuts::CANVAS_ROTATE_DISCRETE);
 	d->ui.actionCombo->addItem(tr("Zoom Canvas"), CanvasShortcuts::CANVAS_ZOOM);
@@ -194,6 +197,7 @@ void CanvasShortcutsDialog::updateAction()
 	case CanvasShortcuts::CANVAS_PAN:
 	case CanvasShortcuts::CANVAS_ROTATE:
 	case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+	case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 	case CanvasShortcuts::CANVAS_ZOOM:
 	case CanvasShortcuts::TOOL_ADJUST:
 		showModifiers = true;

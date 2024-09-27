@@ -586,6 +586,11 @@ void CanvasView::rotateStepCounterClockwise()
 	setRotation(rotation() - 5.0);
 }
 
+void CanvasView::setRotationSnap(qreal degrees)
+{
+	setRotation(qAbs(std::fmod(degrees, 360.0)) < 5.0 ? 0.0 : degrees);
+}
+
 void CanvasView::rotateByDiscreteSteps(int steps)
 {
 	constexpr qreal EPS = 0.01;
@@ -736,6 +741,7 @@ void CanvasView::resetCursor()
 													: Qt::OpenHandCursor);
 			break;
 		case CanvasShortcuts::CANVAS_ROTATE:
+		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 			setViewportCursor(m_rotatecursor);
 			break;
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
@@ -1111,6 +1117,7 @@ void CanvasView::penPressEvent(
 	case CanvasShortcuts::CANVAS_PAN:
 	case CanvasShortcuts::CANVAS_ROTATE:
 	case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+	case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 	case CanvasShortcuts::CANVAS_ZOOM:
 		if(m_dragmode != ViewDragMode::Started) {
 			m_dragmode = ViewDragMode::Prepared;
@@ -1142,6 +1149,7 @@ void CanvasView::penPressEvent(
 		m_dragButton = button;
 		m_dragModifiers = modifiers;
 		m_dragDiscreteRotation = 0.0;
+		m_dragSnapRotation = this->rotation();
 		resetCursor();
 	} else if(
 		(button == Qt::LeftButton || button == Qt::RightButton ||
@@ -1301,6 +1309,7 @@ void CanvasView::penReleaseEvent(
 		case CanvasShortcuts::CANVAS_PAN:
 		case CanvasShortcuts::CANVAS_ROTATE:
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
 		case CanvasShortcuts::TOOL_ADJUST:
 			m_dragmode = ViewDragMode::Prepared;
@@ -1341,6 +1350,7 @@ void CanvasView::penReleaseEvent(
 			case CanvasShortcuts::CANVAS_PAN:
 			case CanvasShortcuts::CANVAS_ROTATE:
 			case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+			case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 			case CanvasShortcuts::CANVAS_ZOOM:
 				m_penmode = PenMode::Normal;
 				m_dragmode = ViewDragMode::Prepared;
@@ -1462,6 +1472,7 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 		break;
 	case CanvasShortcuts::CANVAS_ROTATE:
 	case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+	case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 	case CanvasShortcuts::CANVAS_ZOOM: {
 		event->accept();
 		m_zoomWheelDelta += deltaY;
@@ -1469,9 +1480,11 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 		m_zoomWheelDelta -= steps * 120;
 		if(steps != 0) {
 			if(action == CanvasShortcuts::CANVAS_ROTATE) {
-				setRotation(rotation() + steps * 10);
+				setRotationSnap(rotation() + steps * 10);
 			} else if(action == CanvasShortcuts::CANVAS_ROTATE_DISCRETE) {
 				rotateByDiscreteSteps(steps);
+			} else if(action == CanvasShortcuts::CANVAS_ROTATE_NO_SNAP) {
+				setRotation(rotation() + steps * 10);
 			} else {
 				zoomStepsAt(steps, mapToCanvas(compat::wheelPosition(*event)));
 			}
@@ -1528,6 +1541,7 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 		case CanvasShortcuts::CANVAS_PAN:
 		case CanvasShortcuts::CANVAS_ROTATE:
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
 		case CanvasShortcuts::TOOL_ADJUST:
 			m_dragAction = mouseMatch.action();
@@ -1550,6 +1564,7 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 		case CanvasShortcuts::CANVAS_PAN:
 		case CanvasShortcuts::CANVAS_ROTATE:
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
 		case CanvasShortcuts::TOOL_ADJUST:
 			m_penmode = PenMode::Normal;
@@ -1562,6 +1577,7 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 			m_dragLastPoint = mapFromGlobal(QCursor::pos());
 			m_dragCanvasPoint = mapToCanvas(m_dragLastPoint);
 			m_dragDiscreteRotation = 0.0;
+			m_dragSnapRotation = rotation();
 			resetCursor();
 			break;
 		default:
@@ -1584,6 +1600,7 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 		case CanvasShortcuts::CANVAS_PAN:
 		case CanvasShortcuts::CANVAS_ROTATE:
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
 			m_penmode = PenMode::Normal;
 			m_dragmode = ViewDragMode::Prepared;
@@ -1632,6 +1649,7 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 		case CanvasShortcuts::CANVAS_PAN:
 		case CanvasShortcuts::CANVAS_ROTATE:
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
 		case CanvasShortcuts::TOOL_ADJUST:
 			m_dragmode = ViewDragMode::None;
@@ -1651,6 +1669,7 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 		case CanvasShortcuts::CANVAS_PAN:
 		case CanvasShortcuts::CANVAS_ROTATE:
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
 		case CanvasShortcuts::TOOL_ADJUST:
 			m_dragmode = ViewDragMode::Started;
@@ -1660,6 +1679,7 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 			m_dragInverted = mouseMatch.inverted();
 			m_dragSwapAxes = mouseMatch.swapAxes();
 			m_dragDiscreteRotation = 0.0;
+			m_dragSnapRotation = rotation();
 			resetCursor();
 			break;
 		default:
@@ -1681,6 +1701,7 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 		case CanvasShortcuts::CANVAS_PAN:
 		case CanvasShortcuts::CANVAS_ROTATE:
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
 			m_dragmode = ViewDragMode::Prepared;
 			m_dragAction = mouseMatch.action();
@@ -1988,7 +2009,8 @@ void CanvasView::moveDrag(const QPoint &point)
 		scrollBy(deltaX, deltaY);
 		break;
 	case CanvasShortcuts::CANVAS_ROTATE:
-	case CanvasShortcuts::CANVAS_ROTATE_DISCRETE: {
+	case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+	case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP: {
 		qreal hw = width() / 2.0;
 		qreal hh = height() / 2.0;
 		qreal a1 = qAtan2(hw - m_dragLastPoint.x(), hh - m_dragLastPoint.y());
@@ -1996,8 +2018,9 @@ void CanvasView::moveDrag(const QPoint &point)
 		qreal ad = qRadiansToDegrees(a1 - a2);
 		qreal r = m_dragInverted ? -ad : ad;
 		if(m_dragAction == CanvasShortcuts::CANVAS_ROTATE) {
-			setRotation(rotation() + r);
-		} else {
+			m_dragSnapRotation += r;
+			setRotationSnap(m_dragSnapRotation);
+		} else if(m_dragAction == CanvasShortcuts::CANVAS_ROTATE_DISCRETE) {
 			m_dragDiscreteRotation += r;
 			qreal discrete = m_dragDiscreteRotation / ROTATION_STEP_SIZE;
 			if(discrete >= 1.0) {
@@ -2009,6 +2032,8 @@ void CanvasView::moveDrag(const QPoint &point)
 				m_dragDiscreteRotation += steps * -ROTATION_STEP_SIZE;
 				rotateByDiscreteSteps(steps);
 			}
+		} else {
+			setRotation(rotation() + r);
 		}
 		break;
 	}
