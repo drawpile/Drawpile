@@ -276,7 +276,7 @@ signals:
 	void documentMetadataChanged(const drawdance::DocumentMetadata &dm);
 	void timelineChanged(const drawdance::Timeline &tl);
 	void selectionsChanged(const drawdance::SelectionSet &ss);
-	void frameVisibilityChanged(const QSet<int> layers, bool frameMode);
+	void frameVisibilityChanged(const QSet<int> layers, int viewMode);
 	void aclsChanged(
 		const drawdance::AclState &acls, int aclChangeFlags, bool reset);
 	void laserTrail(int userId, int persistence, uint32_t color);

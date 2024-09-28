@@ -65,6 +65,7 @@ private:
 
 LayerListModel::LayerListModel(QObject *parent)
 	: QAbstractItemModel(parent)
+	, m_viewMode(DP_VIEW_MODE_NORMAL)
 {
 }
 
@@ -93,19 +94,24 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 	case IsEmptyRole:
 		return item.children == 0;
 	case IsHiddenInFrameRole:
-		return m_frameMode && !m_frameLayers.contains(item.id);
+		return m_viewMode == DP_VIEW_MODE_FRAME &&
+			   !m_frameLayers.contains(item.id);
 	case IsHiddenInTreeRole:
-		if(item.hidden) {
-			return true;
-		} else {
-			QModelIndex current = index.parent();
-			while(current.isValid()) {
-				if(m_items.at(current.internalId()).hidden) {
-					return true;
-				} else {
-					current = current.parent();
+		if(m_viewMode == DP_VIEW_MODE_NORMAL) {
+			if(item.hidden) {
+				return true;
+			} else {
+				QModelIndex current = index.parent();
+				while(current.isValid()) {
+					if(m_items.at(current.internalId()).hidden) {
+						return true;
+					} else {
+						current = current.parent();
+					}
 				}
+				return false;
 			}
+		} else {
 			return false;
 		}
 	case IsCensoredInTreeRole:
@@ -487,21 +493,29 @@ void LayerListModel::setLayers(
 }
 
 void LayerListModel::setLayersVisibleInFrame(
-	const QSet<int> &layers, bool frameMode)
+	const QSet<int> &layers, int viewMode)
 {
 	QSet<int> changedFrameLayers;
-	if(frameMode) {
+	if(viewMode == DP_VIEW_MODE_FRAME) {
 		changedFrameLayers.unite(layers);
 	}
-	if(m_frameMode) {
+	if(m_viewMode == DP_VIEW_MODE_FRAME) {
 		changedFrameLayers.unite(m_frameLayers);
 	}
-	if(frameMode && m_frameMode) {
+	if(viewMode == DP_VIEW_MODE_FRAME && m_viewMode == DP_VIEW_MODE_FRAME) {
 		changedFrameLayers.subtract(layers & m_frameLayers);
 	}
 
+	bool viewModeChanged = viewMode != m_viewMode;
 	m_frameLayers = layers;
-	m_frameMode = frameMode;
+	m_viewMode = viewMode;
+	if(viewModeChanged) {
+		int last = m_items.size() - 1;
+		emit dataChanged(
+			createIndex(m_items.at(0).relIndex, 0, quintptr(0)),
+			createIndex(m_items.at(last).relIndex, 0, last),
+			{IsHiddenInTreeRole});
+	}
 
 	if(!changedFrameLayers.isEmpty()) {
 		int count = m_items.size();

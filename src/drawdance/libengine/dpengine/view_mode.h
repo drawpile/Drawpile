@@ -78,7 +78,9 @@ typedef struct DP_ViewModeContextRoot {
 } DP_ViewModeContextRoot;
 
 typedef struct DP_ViewModeResult {
-    bool hidden_by_view_mode;
+    bool visible;
+    bool isolated;
+    uint16_t opacity;
     DP_ViewModeContext child_vmc;
 } DP_ViewModeResult;
 
@@ -138,7 +140,8 @@ DP_ViewModeContext DP_view_mode_context_root_at(
     const DP_OnionSkin **out_os, uint16_t *out_parent_opacity);
 
 DP_ViewModeResult DP_view_mode_context_apply(const DP_ViewModeContext *vmc,
-                                             DP_LayerProps *lp);
+                                             DP_LayerProps *lp,
+                                             uint16_t parent_opacity);
 
 bool DP_view_mode_context_should_flatten(const DP_ViewModeContext *vmc,
                                          DP_LayerProps *lp,

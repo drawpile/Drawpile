@@ -176,7 +176,7 @@ DP_canvas_state_flatten_tile_at(DP_CanvasState *cs, int x, int y,
                                 const DP_ViewModeFilter *vmf_or_null);
 
 void DP_canvas_state_diff(DP_CanvasState *cs, DP_CanvasState *prev_or_null,
-                          DP_CanvasDiff *diff);
+                          DP_CanvasDiff *diff, int only_layer_id);
 
 DP_TransientLayerContent *DP_canvas_state_render(DP_CanvasState *cs,
                                                  DP_TransientLayerContent *lc,

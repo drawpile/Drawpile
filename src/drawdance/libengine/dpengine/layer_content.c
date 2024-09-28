@@ -214,13 +214,13 @@ static void layer_content_diff(DP_LayerContent *lc, bool censored,
         DP_canvas_diff_check(diff, diff_tile,
                              (DP_LayerContent *[]){lc, prev_lc});
         DP_layer_list_diff(lc->sub.contents, lc->sub.props,
-                           prev_lc->sub.contents, prev_lc->sub.props, diff);
+                           prev_lc->sub.contents, prev_lc->sub.props, diff, 0);
     }
     else if (censored && prev_censored) {
         DP_canvas_diff_check(diff, diff_tile_both_censored,
                              (DP_LayerContent *[]){lc, prev_lc});
         DP_layer_list_diff(lc->sub.contents, lc->sub.props,
-                           prev_lc->sub.contents, prev_lc->sub.props, diff);
+                           prev_lc->sub.contents, prev_lc->sub.props, diff, 0);
     }
     else {
         layer_content_diff_mark_both(lc, prev_lc, diff);
@@ -229,15 +229,24 @@ static void layer_content_diff(DP_LayerContent *lc, bool censored,
 
 void DP_layer_content_diff(DP_LayerContent *lc, DP_LayerProps *lp,
                            DP_LayerContent *prev_lc, DP_LayerProps *prev_lp,
-                           DP_CanvasDiff *diff)
+                           DP_CanvasDiff *diff, int only_layer_id)
 {
     DP_ASSERT(lc);
     DP_ASSERT(lp);
     DP_ASSERT(prev_lc);
     DP_ASSERT(prev_lp);
     DP_ASSERT(diff);
-    bool visible = DP_layer_props_visible(lp);
-    bool prev_visible = DP_layer_props_visible(prev_lp);
+
+    bool visible, prev_visible;
+    if (only_layer_id == 0) {
+        visible = DP_layer_props_visible(lp);
+        prev_visible = DP_layer_props_visible(prev_lp);
+    }
+    else {
+        visible = only_layer_id == DP_layer_props_id(lp);
+        prev_visible = only_layer_id == DP_layer_props_id(prev_lp);
+    }
+
     if (visible) {
         if (prev_visible) {
             if (DP_layer_props_differ(lp, prev_lp)) {

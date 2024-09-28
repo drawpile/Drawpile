@@ -79,7 +79,7 @@ bool DP_layer_list_transient(DP_LayerList *ll);
 
 void DP_layer_list_diff(DP_LayerList *ll, DP_LayerPropsList *lpl,
                         DP_LayerList *prev_ll, DP_LayerPropsList *prev_lpl,
-                        DP_CanvasDiff *diff);
+                        DP_CanvasDiff *diff, int only_layer_id);
 
 void DP_layer_list_diff_mark(DP_LayerList *ll, DP_CanvasDiff *diff);
 

@@ -1697,6 +1697,16 @@ static DP_CanvasState *apply_local_background_tile(DP_PaintEngine *pe,
     }
 }
 
+static int get_only_layer_id(DP_LocalState *ls)
+{
+    switch (DP_local_state_view_mode(ls)) {
+    case DP_VIEW_MODE_LAYER:
+        return DP_local_state_active_layer_id(ls);
+    default:
+        return 0;
+    }
+}
+
 static void
 emit_changes(DP_PaintEngine *pe, DP_CanvasState *prev, DP_CanvasState *cs,
              bool catching_up, bool catchup_done, DP_Rect tile_bounds,
@@ -1709,7 +1719,7 @@ emit_changes(DP_PaintEngine *pe, DP_CanvasState *prev, DP_CanvasState *cs,
              DP_PaintEngineCursorMovedFn cursor_moved, void *user)
 {
     DP_CanvasDiff *diff = pe->diff;
-    DP_canvas_state_diff(cs, prev, diff);
+    DP_canvas_state_diff(cs, prev, diff, get_only_layer_id(pe->local_state));
     DP_renderer_apply(pe->renderer, cs, pe->local_state, diff,
                       pe->local_view.layers_can_decrease_opacity,
                       pe->local_view.checker_color1,

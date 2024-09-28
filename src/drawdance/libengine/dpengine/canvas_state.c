@@ -1773,7 +1773,7 @@ DP_canvas_state_flatten_tile_at(DP_CanvasState *cs, int x, int y,
 
 
 static void diff_states(DP_CanvasState *cs, DP_CanvasState *prev,
-                        DP_CanvasDiff *diff)
+                        DP_CanvasDiff *diff, int only_layer_id)
 {
     bool check_all = cs->background_tile != prev->background_tile
                   || cs->width != prev->width || cs->height != prev->height;
@@ -1782,12 +1782,12 @@ static void diff_states(DP_CanvasState *cs, DP_CanvasState *prev,
     }
     else {
         DP_layer_list_diff(cs->layers, cs->layer_props, prev->layers,
-                           prev->layer_props, diff);
+                           prev->layer_props, diff, only_layer_id);
     }
 }
 
 void DP_canvas_state_diff(DP_CanvasState *cs, DP_CanvasState *prev_or_null,
-                          DP_CanvasDiff *diff)
+                          DP_CanvasDiff *diff, int only_layer_id)
 {
     DP_ASSERT(cs);
     DP_ASSERT(diff);
@@ -1800,7 +1800,7 @@ void DP_canvas_state_diff(DP_CanvasState *cs, DP_CanvasState *prev_or_null,
             diff, prev_or_null->width, prev_or_null->height, cs->width,
             cs->height, change && cs->layer_props != prev_or_null->layer_props);
         if (change) {
-            diff_states(cs, prev_or_null, diff);
+            diff_states(cs, prev_or_null, diff, only_layer_id);
         }
     }
     else {

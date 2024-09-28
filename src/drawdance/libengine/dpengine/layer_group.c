@@ -111,9 +111,37 @@ bool DP_layer_group_transient(DP_LayerGroup *lg)
     return lg->transient;
 }
 
+static void layer_group_diff_children(DP_LayerGroup *lg, DP_LayerProps *lp,
+                                      DP_LayerGroup *prev_lg,
+                                      DP_LayerProps *prev_lp,
+                                      DP_CanvasDiff *diff, int only_layer_id)
+{
+    DP_LayerPropsList *lpl = DP_layer_props_children_noinc(lp);
+    DP_ASSERT(lpl);
+    DP_LayerPropsList *prev_lpl = DP_layer_props_children_noinc(prev_lp);
+    DP_ASSERT(prev_lpl);
+    DP_layer_list_diff(lg->children, lpl, prev_lg->children, prev_lpl, diff,
+                       only_layer_id);
+}
+
+static void layer_group_diff_groups(DP_LayerGroup *lg, DP_LayerProps *lp,
+                                    DP_LayerGroup *prev_lg,
+                                    DP_LayerProps *prev_lp, DP_CanvasDiff *diff,
+                                    int only_layer_id)
+{
+    if (DP_layer_props_differ(lp, prev_lp)) {
+        DP_layer_list_diff_mark(lg->children, diff);
+        DP_layer_list_diff_mark(prev_lg->children, diff);
+    }
+    else {
+        layer_group_diff_children(lg, lp, prev_lg, prev_lp, diff,
+                                  only_layer_id);
+    }
+}
+
 void DP_layer_group_diff(DP_LayerGroup *lg, DP_LayerProps *lp,
                          DP_LayerGroup *prev_lg, DP_LayerProps *prev_lp,
-                         DP_CanvasDiff *diff)
+                         DP_CanvasDiff *diff, int only_layer_id)
 {
     DP_ASSERT(lg);
     DP_ASSERT(DP_atomic_get(&lg->refcount) > 0);
@@ -122,23 +150,20 @@ void DP_layer_group_diff(DP_LayerGroup *lg, DP_LayerProps *lp,
     DP_ASSERT(DP_atomic_get(&prev_lg->refcount) > 0);
     DP_ASSERT(prev_lp);
     DP_ASSERT(diff);
-    bool visible = DP_layer_props_visible(lp);
-    bool prev_visible = DP_layer_props_visible(prev_lp);
+
+    bool visible, prev_visible;
+    if (only_layer_id == 0) {
+        visible = DP_layer_props_visible(lp);
+        prev_visible = DP_layer_props_visible(prev_lp);
+    }
+    else {
+        visible = only_layer_id == DP_layer_props_id(lp);
+        prev_visible = only_layer_id == DP_layer_props_id(prev_lp);
+    }
+
     if (visible) {
         if (prev_visible) {
-            if (DP_layer_props_differ(lp, prev_lp)) {
-                DP_layer_list_diff_mark(lg->children, diff);
-                DP_layer_list_diff_mark(prev_lg->children, diff);
-            }
-            else {
-                DP_LayerPropsList *lpl = DP_layer_props_children_noinc(lp);
-                DP_ASSERT(lpl);
-                DP_LayerPropsList *prev_lpl =
-                    DP_layer_props_children_noinc(prev_lp);
-                DP_ASSERT(prev_lpl);
-                DP_layer_list_diff(lg->children, lpl, prev_lg->children,
-                                   prev_lpl, diff);
-            }
+            layer_group_diff_groups(lg, lp, prev_lg, prev_lp, diff, 0);
         }
         else {
             DP_layer_list_diff_mark(lg->children, diff);
@@ -146,6 +171,10 @@ void DP_layer_group_diff(DP_LayerGroup *lg, DP_LayerProps *lp,
     }
     else if (prev_visible) {
         DP_layer_list_diff_mark(prev_lg->children, diff);
+    }
+    else if (only_layer_id != 0) {
+        layer_group_diff_children(lg, lp, prev_lg, prev_lp, diff,
+                                  only_layer_id);
     }
 }
 
@@ -369,19 +398,14 @@ DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
     DP_ASSERT(parent_opacity <= DP_BIT15);
     DP_ASSERT(vmc);
 
-    if (parent_opacity == 0 || DP_layer_props_opacity(lp) == 0) {
-        return tt_or_null;
-    }
-
-    DP_ViewModeResult vmr = DP_view_mode_context_apply(vmc, lp);
-    if (vmr.hidden_by_view_mode) {
+    DP_ViewModeResult vmr = DP_view_mode_context_apply(vmc, lp, parent_opacity);
+    if (!vmr.visible) {
         return tt_or_null;
     }
 
     DP_LayerPropsList *lpl = DP_layer_props_children_noinc(lp);
-    uint16_t opacity = DP_fix15_mul(parent_opacity, DP_layer_props_opacity(lp));
     bool censored = pass_through_censored || DP_layer_props_censored(lp);
-    if (DP_layer_props_isolated(lp)) {
+    if (vmr.isolated) {
         // Flatten the group into a temporary layer with full opacity, then
         // merge the result with the group's blend mode and opacity.
         DP_TransientTile *gtt = DP_layer_list_flatten_tile_to(
@@ -390,8 +414,8 @@ DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
         if (gtt) {
             DP_TransientTile *tt = DP_transient_tile_merge_nullable(
                 tt_or_null,
-                censored ? DP_tile_censored_noinc() : (DP_Tile *)gtt, opacity,
-                DP_layer_props_blend_mode(lp));
+                censored ? DP_tile_censored_noinc() : (DP_Tile *)gtt,
+                vmr.opacity, DP_layer_props_blend_mode(lp));
             DP_transient_tile_decref(gtt);
             return tt;
         }
@@ -403,7 +427,7 @@ DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
         // Flatten the containing layers one by one, disregarding the blend
         // mode, but taking the opacity into account individually.
         return DP_layer_list_flatten_tile_to(
-            lg->children, lpl, tile_index, tt_or_null, opacity,
+            lg->children, lpl, tile_index, tt_or_null, vmr.opacity,
             include_sublayers, censored, &vmr.child_vmc);
     }
 }

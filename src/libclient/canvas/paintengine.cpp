@@ -173,8 +173,7 @@ void PaintEngine::updateLayersVisibleInFrame()
 {
 	m_updateLayersVisibleInFrame = false;
 	QSet<int> layersVisibleInFrame = m_paintEngine.getLayersVisibleInFrame();
-	bool frameMode = m_paintEngine.viewMode() == DP_VIEW_MODE_FRAME;
-	emit frameVisibilityChanged(layersVisibleInFrame, frameMode);
+	emit frameVisibilityChanged(layersVisibleInFrame, m_paintEngine.viewMode());
 }
 
 int PaintEngine::receiveMessages(

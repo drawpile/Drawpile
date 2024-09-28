@@ -1812,6 +1812,7 @@ extern "C" {
         cs: *mut DP_CanvasState,
         prev_or_null: *mut DP_CanvasState,
         diff: *mut DP_CanvasDiff,
+        only_layer_id: ::std::os::raw::c_int,
     );
 }
 extern "C" {
@@ -2634,6 +2635,7 @@ extern "C" {
         prev_lc: *mut DP_LayerContent,
         prev_lp: *mut DP_LayerProps,
         diff: *mut DP_CanvasDiff,
+        only_layer_id: ::std::os::raw::c_int,
     );
 }
 extern "C" {
@@ -3074,6 +3076,7 @@ extern "C" {
         prev_lg: *mut DP_LayerGroup,
         prev_lp: *mut DP_LayerProps,
         diff: *mut DP_CanvasDiff,
+        only_layer_id: ::std::os::raw::c_int,
     );
 }
 extern "C" {
@@ -3262,6 +3265,7 @@ extern "C" {
         prev_ll: *mut DP_LayerList,
         prev_lpl: *mut DP_LayerPropsList,
         diff: *mut DP_CanvasDiff,
+        only_layer_id: ::std::os::raw::c_int,
     );
 }
 extern "C" {
@@ -4930,7 +4934,6 @@ extern "C" {
 extern "C" {
     pub fn DP_canvas_history_stream_start_state_inc(
         ch: *mut DP_CanvasHistory,
-        dc: *mut DP_DrawContext,
     ) -> *mut DP_CanvasState;
 }
 extern "C" {
@@ -5451,7 +5454,9 @@ fn bindgen_test_layout_DP_ViewModeContextRoot() {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct DP_ViewModeResult {
-    pub hidden_by_view_mode: bool,
+    pub visible: bool,
+    pub isolated: bool,
+    pub opacity: u16,
     pub child_vmc: DP_ViewModeContext,
 }
 #[test]
@@ -5469,13 +5474,33 @@ fn bindgen_test_layout_DP_ViewModeResult() {
         concat!("Alignment of ", stringify!(DP_ViewModeResult))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).hidden_by_view_mode) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).visible) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
             stringify!(DP_ViewModeResult),
             "::",
-            stringify!(hidden_by_view_mode)
+            stringify!(visible)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).isolated) as usize - ptr as usize },
+        1usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_ViewModeResult),
+            "::",
+            stringify!(isolated)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).opacity) as usize - ptr as usize },
+        2usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_ViewModeResult),
+            "::",
+            stringify!(opacity)
         )
     );
     assert_eq!(
@@ -5653,6 +5678,7 @@ extern "C" {
     pub fn DP_view_mode_context_apply(
         vmc: *const DP_ViewModeContext,
         lp: *mut DP_LayerProps,
+        parent_opacity: u16,
     ) -> DP_ViewModeResult;
 }
 extern "C" {

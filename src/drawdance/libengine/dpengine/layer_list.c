@@ -219,7 +219,7 @@ bool DP_layer_list_transient(DP_LayerList *ll)
 
 static void diff_layers(DP_LayerList *ll, DP_LayerPropsList *lpl,
                         DP_LayerList *prev_ll, DP_LayerPropsList *prev_lpl,
-                        DP_CanvasDiff *diff, int count)
+                        DP_CanvasDiff *diff, int only_layer_id, int count)
 {
     for (int i = 0; i < count; ++i) {
         DP_LayerListEntry *lle = &ll->elements[i];
@@ -230,13 +230,13 @@ static void diff_layers(DP_LayerList *ll, DP_LayerPropsList *lpl,
             DP_layer_group_diff(
                 lle->group, DP_layer_props_list_at_noinc(lpl, i),
                 prev_lle->group, DP_layer_props_list_at_noinc(prev_lpl, i),
-                diff);
+                diff, only_layer_id);
         }
         else if (!is_group && !prev_is_group) {
             DP_layer_content_diff(
                 lle->content, DP_layer_props_list_at_noinc(lpl, i),
                 prev_lle->content, DP_layer_props_list_at_noinc(prev_lpl, i),
-                diff);
+                diff, only_layer_id);
         }
         else if (is_group) {
             DP_layer_group_diff_mark(lle->group, diff);
@@ -265,7 +265,7 @@ static void mark_layers(DP_LayerList *ll, DP_CanvasDiff *diff, int start,
 
 void DP_layer_list_diff(DP_LayerList *ll, DP_LayerPropsList *lpl,
                         DP_LayerList *prev_ll, DP_LayerPropsList *prev_lpl,
-                        DP_CanvasDiff *diff)
+                        DP_CanvasDiff *diff, int only_layer_id)
 {
     DP_ASSERT(ll);
     DP_ASSERT(lpl);
@@ -278,11 +278,13 @@ void DP_layer_list_diff(DP_LayerList *ll, DP_LayerPropsList *lpl,
         int new_count = ll->count;
         int old_count = prev_ll->count;
         if (new_count <= old_count) {
-            diff_layers(ll, lpl, prev_ll, prev_lpl, diff, new_count);
+            diff_layers(ll, lpl, prev_ll, prev_lpl, diff, only_layer_id,
+                        new_count);
             mark_layers(prev_ll, diff, new_count, old_count);
         }
         else {
-            diff_layers(ll, lpl, prev_ll, prev_lpl, diff, old_count);
+            diff_layers(ll, lpl, prev_ll, prev_lpl, diff, only_layer_id,
+                        old_count);
             mark_layers(ll, diff, old_count, new_count);
         }
     }

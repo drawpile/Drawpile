@@ -204,7 +204,7 @@ public:
 public slots:
 	void setLayers(
 		const drawdance::LayerPropsList &lpl, const QSet<int> &revealedLayers);
-	void setLayersVisibleInFrame(const QSet<int> &layers, bool frameMode);
+	void setLayersVisibleInFrame(const QSet<int> &layers, int viewMode);
 	void setLayerChecked(int layerId, bool checked);
 	void setFillSourceLayerId(int fillSourceLayerId);
 
@@ -264,8 +264,8 @@ private:
 	int m_rootLayerCount = 0;
 	uint16_t m_defaultLayer = 0;
 	bool m_autoselectAny = true;
-	bool m_frameMode = false;
 	bool m_checkMode = false;
+	int m_viewMode;
 	int m_layerIdToSelect = 0;
 	int m_fillSourceLayerId = 0;
 };

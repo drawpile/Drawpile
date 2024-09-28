@@ -61,7 +61,7 @@ bool DP_layer_group_transient(DP_LayerGroup *lg);
 
 void DP_layer_group_diff(DP_LayerGroup *lg, DP_LayerProps *lp,
                          DP_LayerGroup *prev_lg, DP_LayerProps *prev_lp,
-                         DP_CanvasDiff *diff);
+                         DP_CanvasDiff *diff, int only_layer_id);
 
 void DP_layer_group_diff_mark(DP_LayerGroup *lg, DP_CanvasDiff *diff);
 
