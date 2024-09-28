@@ -103,6 +103,12 @@ void TouchHandler::handleTouchBegin(QTouchEvent *event)
 	int pointsCount = points.size();
 	QPointF posf = compat::touchPos(points.first());
 
+	m_touchPos = QPointF(0.0, 0.0);
+	for(const compat::TouchPoint &tp : compat::touchPoints(*event)) {
+		m_touchPos += compat::touchPos(tp);
+	}
+	m_touchPos /= pointsCount;
+
 	m_touchDrawBuffer.clear();
 	m_touchDragging = false;
 	m_touchRotating = false;
