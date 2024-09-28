@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/scene/colorpickitem.h"
+#include "desktop/settings.h"
+#include "libclient/tools/devicetype.h"
 #include <QApplication>
 #include <QPainter>
 #include <QPalette>
@@ -40,6 +42,27 @@ void ColorPickItem::setComparisonColor(const QColor &comparisonColor)
 		m_cache = QPixmap();
 		refresh();
 	}
+}
+
+bool ColorPickItem::shouldShow(int source, int visibility, const QColor &color)
+{
+	if(color.isValid() && color.alpha() > 0) {
+		switch(visibility) {
+		case int(desktop::settings::SamplingRingVisibility::Never):
+			return false;
+		case int(desktop::settings::SamplingRingVisibility::TouchOnly):
+			return source == int(tools::ColorPickSource::Touch);
+		default:
+			return true;
+		}
+	} else {
+		return false;
+	}
+}
+
+int ColorPickItem::defaultVisibility()
+{
+	return int(desktop::settings::SamplingRingVisibility::Always);
 }
 
 void ColorPickItem::paint(

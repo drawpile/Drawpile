@@ -35,6 +35,7 @@ namespace view {
 
 CanvasScene::CanvasScene(bool outline, QObject *parent)
 	: QGraphicsScene(parent)
+	, m_colorPickVisibility(ColorPickItem::defaultVisibility())
 {
 	m_canvasGroup = new QGraphicsItemGroup;
 	addItem(m_canvasGroup);
@@ -369,9 +370,10 @@ void CanvasScene::setComparisonColor(const QColor &comparisonColor)
 	}
 }
 
-bool CanvasScene::setColorPick(const QPointF &pos, const QColor &color)
+bool CanvasScene::setColorPick(
+	int source, const QPointF &pos, const QColor &color)
 {
-	if(color.isValid() && color.alpha() > 0) {
+	if(ColorPickItem::shouldShow(source, m_colorPickVisibility, color)) {
 		if(m_colorPick) {
 			m_colorPick->setColor(color);
 		} else {
@@ -385,6 +387,11 @@ bool CanvasScene::setColorPick(const QPointF &pos, const QColor &color)
 		m_colorPick = nullptr;
 		return false;
 	}
+}
+
+void CanvasScene::setColorPickVisibility(int colorPickVisibility)
+{
+	m_colorPickVisibility = colorPickVisibility;
 }
 
 #ifdef HAVE_EMULATED_BITMAP_CURSOR

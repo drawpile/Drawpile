@@ -33,8 +33,11 @@ ViewWrapper::ViewWrapper(bool useOpenGl, QWidget *parent)
 	, m_canvasWidget(instantiateView(useOpenGl, m_controller, parent))
 	, m_view(new CanvasView(m_controller, m_canvasWidget, parent))
 {
-	dpApp().settings().bindUserMarkerPersistence(
+	desktop::settings::Settings &settings = dpApp().settings();
+	settings.bindUserMarkerPersistence(
 		m_scene, &CanvasScene::setUserMarkerPersistence);
+	settings.bindSamplingRingVisibility(
+		m_scene, &CanvasScene::setColorPickVisibility);
 }
 
 QAbstractScrollArea *ViewWrapper::viewWidget() const

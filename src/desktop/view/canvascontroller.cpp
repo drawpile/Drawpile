@@ -1214,7 +1214,8 @@ void CanvasController::penMoveEvent(
 						}
 						break;
 					case PenMode::Colorpick:
-						pickColor(point, posf);
+						pickColor(
+							int(tools::ColorPickSource::Canvas), point, posf);
 						break;
 					case PenMode::Layerpick:
 						m_canvasModel->pickLayer(point.x(), point.y());
@@ -1346,7 +1347,7 @@ void CanvasController::penPressEvent(
 					}
 					break;
 				case PenMode::Colorpick:
-					pickColor(point, posf);
+					pickColor(int(tools::ColorPickSource::Canvas), point, posf);
 					break;
 				case PenMode::Layerpick:
 					m_canvasModel->pickLayer(point.x(), point.y());
@@ -1401,7 +1402,8 @@ void CanvasController::penReleaseEvent(
 		}
 
 		if(m_pickingColor) {
-			m_scene->setColorPick(QPointF(), QColor());
+			m_scene->setColorPick(
+				int(tools::ColorPickSource::Canvas), QPointF(), QColor());
 			m_pickingColor = false;
 		}
 
@@ -1552,20 +1554,23 @@ void CanvasController::moveDrag(const QPoint &point)
 	m_dragLastPoint = point;
 }
 
-void CanvasController::pickColor(const QPointF &point, const QPointF &posf)
+void CanvasController::pickColor(
+	int source, const QPointF &point, const QPointF &posf)
 {
 	QColor color = m_canvasModel->pickColor(point.x(), point.y(), 0, 0);
-	m_pickingColor = m_scene->setColorPick(posf, color);
+	m_pickingColor = m_scene->setColorPick(source, posf, color);
 }
 
 void CanvasController::touchColorPick(const QPointF &posf)
 {
-	pickColor(mapPointToCanvasF(posf), posf);
+	pickColor(
+		int(tools::ColorPickSource::Touch), mapPointToCanvasF(posf), posf);
 }
 
 void CanvasController::finishTouchColorPick()
 {
-	m_scene->setColorPick(QPointF(), QColor());
+	m_scene->setColorPick(
+		int(tools::ColorPickSource::Touch), QPointF(), QColor());
 }
 
 void CanvasController::resetCursor()

@@ -5,6 +5,7 @@
 namespace tools {
 
 enum class DeviceType { Mouse, Tablet, Touch };
+enum class ColorPickSource { Canvas, Tool, Touch };
 
 }
 

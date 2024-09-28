@@ -31,8 +31,11 @@ SceneWrapper::SceneWrapper(QWidget *parent)
 	m_scene->setBackgroundBrush(
 		parent->palette().brush(QPalette::Active, QPalette::Window));
 	m_view->setCanvas(m_scene);
-	dpApp().settings().bindUserMarkerPersistence(
+	desktop::settings::Settings &settings = dpApp().settings();
+	settings.bindUserMarkerPersistence(
 		m_scene, &CanvasScene::setUserMarkerPersistence);
+	settings.bindSamplingRingVisibility(
+		m_scene, &CanvasScene::setColorPickVisibility);
 }
 
 QAbstractScrollArea *SceneWrapper::viewWidget() const

@@ -223,7 +223,8 @@ signals:
 	void actionCancelled();
 
 	void colorUsed(const QColor &color);
-	void colorPickRequested(const QPointF &pos, const QColor &color);
+	void
+	colorPickRequested(int source, const QPointF &pos, const QColor &color);
 	void panRequested(int x, int y);
 	void zoomRequested(const QRect &rect, int steps);
 	void maskPreviewRequested(const QPoint &pos, const QImage &mask);

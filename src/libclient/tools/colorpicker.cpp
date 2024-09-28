@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/tools/colorpicker.h"
 #include "libclient/canvas/canvasmodel.h"
+#include "libclient/tools/devicetype.h"
 #include "libclient/tools/toolcontroller.h"
 #include <QPixmap>
 
@@ -31,7 +32,7 @@ void ColorPicker::motion(const MotionParams &params)
 void ColorPicker::end(const EndParams &)
 {
 	m_picking = false;
-	m_owner.colorPickRequested(QPointF(), QColor());
+	m_owner.colorPickRequested(int(ColorPickSource::Tool), QPointF(), QColor());
 }
 
 void ColorPicker::pick(const QPointF &point, const QPointF &viewPos) const
@@ -40,7 +41,7 @@ void ColorPicker::pick(const QPointF &point, const QPointF &viewPos) const
 	if(canvas) {
 		int layer = m_pickFromCurrentLayer ? m_owner.activeLayer() : 0;
 		QColor color = canvas->pickColor(point.x(), point.y(), layer, m_size);
-		m_owner.colorPickRequested(viewPos, color);
+		m_owner.colorPickRequested(int(ColorPickSource::Tool), viewPos, color);
 	}
 }
 

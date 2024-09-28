@@ -292,7 +292,7 @@ private:
 
 	//! Drag the view
 	void moveDrag(const QPoint &point);
-	void pickColor(const QPointF &point, const QPointF &posf);
+	void pickColor(int source, const QPointF &point, const QPointF &posf);
 	void touchColorPick(const QPointF &posf);
 	void finishTouchColorPick();
 

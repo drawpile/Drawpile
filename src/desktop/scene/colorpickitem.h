@@ -23,6 +23,9 @@ public:
 	void setColor(const QColor &color);
 	void setComparisonColor(const QColor &comparisonColor);
 
+	static bool shouldShow(int source, int visibility, const QColor &color);
+	static int defaultVisibility();
+
 protected:
 	void paint(
 		QPainter *painter, const QStyleOptionGraphicsItem *option,

@@ -91,7 +91,8 @@ public:
 		qreal outlineSize, qreal outlineWidth, bool square);
 
 	void setComparisonColor(const QColor &comparisonColor);
-	bool setColorPick(const QPointF &pos, const QColor &color);
+	bool setColorPick(int source, const QPointF &pos, const QColor &color);
+	void setColorPickVisibility(int colorPickVisibility);
 
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 	void setCursor(const QCursor &cursor);
@@ -171,6 +172,7 @@ private:
 	bool m_selectionIgnored = false;
 	bool m_showSelectionMask = false;
 	int m_userMarkerPersistence = 1000;
+	int m_colorPickVisibility;
 	qreal m_zoom = 1.0;
 	QPointF m_cursorPos;
 	QHash<int, UserMarkerItem *> m_userMarkers;

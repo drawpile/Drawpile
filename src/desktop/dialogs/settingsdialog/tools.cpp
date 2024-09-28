@@ -122,6 +122,19 @@ void Tools::initCursors(
 	form->addRow(tr("Brush cursor:"), brushCursor);
 	form->addRow(tr("Eraser cursor:"), eraseCursor);
 	form->addRow(tr("Alpha lock cursor:"), alphaLockCursor);
+
+	QCheckBox *samplingRing = new QCheckBox(tr("Show sampling ring"));
+	samplingRing->setChecked(
+		settings.samplingRingVisibility() ==
+		int(desktop::settings::SamplingRingVisibility::Always));
+	connect(
+		samplingRing, &QCheckBox::stateChanged, this, [&settings](int state) {
+			settings.setSamplingRingVisibility(
+				state == Qt::Unchecked
+					? int(desktop::settings::SamplingRingVisibility::TouchOnly)
+					: int(desktop::settings::SamplingRingVisibility::Always));
+		});
+	form->addRow(tr("Color picker:"), samplingRing);
 }
 
 void Tools::initKeyboardShortcuts(

@@ -104,7 +104,8 @@ public:
 	void setOutlineWidth(qreal width);
 	void setOutlineVisibleInMode(bool visibleInMode);
 	void setComparisonColor(const QColor &comparisonColor);
-	bool setColorPick(const QPointF &pos, const QColor &color);
+	bool setColorPick(int source, const QPointF &pos, const QColor &color);
+	void setColorPickVisibility(int colorPickVisibility);
 	bool isCursorOnCanvas() const { return m_cursorOnCanvas; }
 	void setCursorOnCanvas(bool onCanvas);
 	const QPointF &cursorPos() const { return m_cursorPos; }
@@ -234,6 +235,7 @@ private:
 	bool m_selectionIgnored;
 	bool m_showSelectionMask;
 	int m_userMarkerPersistence;
+	int m_colorPickVisibility;
 	qreal m_zoom = 1.0;
 	QPointF m_cursorPos;
 

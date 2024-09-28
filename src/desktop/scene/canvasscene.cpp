@@ -57,6 +57,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	, m_selectionIgnored(false)
 	, m_showSelectionMask(false)
 	, m_userMarkerPersistence(1000)
+	, m_colorPickVisibility(ColorPickItem::defaultVisibility())
 {
 	setItemIndexMethod(NoIndex);
 	setSceneRect(QRectF{0.0, 0.0, 1.0, 1.0});
@@ -870,9 +871,10 @@ void CanvasScene::setComparisonColor(const QColor &comparisonColor)
 	}
 }
 
-bool CanvasScene::setColorPick(const QPointF &pos, const QColor &color)
+bool CanvasScene::setColorPick(
+	int source, const QPointF &pos, const QColor &color)
 {
-	if(color.isValid() && color.alpha() > 0) {
+	if(ColorPickItem::shouldShow(source, m_colorPickVisibility, color)) {
 		if(m_colorPick) {
 			m_colorPick->setColor(color);
 		} else {
@@ -886,6 +888,11 @@ bool CanvasScene::setColorPick(const QPointF &pos, const QColor &color)
 		m_colorPick = nullptr;
 		return false;
 	}
+}
+
+void CanvasScene::setColorPickVisibility(int colorPickVisibility)
+{
+	m_colorPickVisibility = colorPickVisibility;
 }
 
 void CanvasScene::setCursorOnCanvas(bool onCanvas)
