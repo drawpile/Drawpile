@@ -79,6 +79,10 @@ public:
 	//! Get the number of frames in an animated canvas
 	int frameCount() const;
 
+	DP_ViewModeFilter viewModeFilter(
+		drawdance::ViewModeBuffer &vmb,
+		const drawdance::CanvasState &canvasState) const;
+
 	//! Get a flat image of the given canvas state using the current view mode.
 	QImage getFlatImage(
 		drawdance::ViewModeBuffer &vmb,

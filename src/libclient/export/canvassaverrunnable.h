@@ -5,12 +5,17 @@ extern "C" {
 #include <dpengine/save_enums.h>
 }
 #include "libclient/drawdance/canvasstate.h"
+#include "libclient/drawdance/viewmode.h"
 #include <QByteArray>
 #include <QObject>
 #include <QRunnable>
 
 class QFile;
 class QTemporaryDir;
+
+namespace canvas {
+class PaintEngine;
+}
 
 /**
  * @brief A runnable for saving a canvas in a background thread
@@ -20,8 +25,8 @@ class CanvasSaverRunnable final : public QObject, public QRunnable {
 public:
 	CanvasSaverRunnable(
 		const drawdance::CanvasState &canvasState, DP_SaveImageType type,
-		const QString &path, QTemporaryDir *tempDir = nullptr,
-		QObject *parent = nullptr);
+		const QString &path, const canvas::PaintEngine *paintEngine = nullptr,
+		QTemporaryDir *tempDir = nullptr, QObject *parent = nullptr);
 
 	~CanvasSaverRunnable() override;
 
@@ -47,6 +52,8 @@ private:
 	drawdance::CanvasState m_canvasState;
 	DP_SaveImageType m_type;
 	QString m_path;
+	drawdance::ViewModeBuffer *m_vmb = nullptr;
+	DP_ViewModeFilter m_vmf;
 	QTemporaryDir *m_tempDir;
 };
 

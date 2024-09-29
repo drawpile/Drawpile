@@ -93,6 +93,24 @@ DP_SaveImageType DP_save_image_type_guess(const char *path)
 }
 
 
+bool DP_save_image_type_is_flat_image(DP_SaveImageType type)
+{
+    switch (type) {
+    case DP_SAVE_IMAGE_ORA:
+    case DP_SAVE_IMAGE_PSD:
+        return false;
+    case DP_SAVE_IMAGE_PNG:
+    case DP_SAVE_IMAGE_JPEG:
+    case DP_SAVE_IMAGE_WEBP:
+        return true;
+    case DP_SAVE_IMAGE_UNKNOWN:
+        break;
+    }
+    DP_warn("Unknown save format %d", type);
+    return true;
+}
+
+
 typedef struct DP_SaveOraLayer {
     int layer_id;
     int index;
@@ -781,13 +799,15 @@ static void bake_annotations(DP_AnnotationList *al, DP_DrawContext *dc,
     }
 }
 
-static DP_SaveResult save_flat_image(
-    DP_CanvasState *cs, DP_DrawContext *dc, DP_Rect *crop, const char *path,
-    DP_SaveResult (*save_fn)(DP_Image *, DP_Output *), DP_ViewModeFilter vmf,
-    DP_SaveBakeAnnotationFn bake_annotation, void *user)
+static DP_SaveResult
+save_flat_image(DP_CanvasState *cs, DP_DrawContext *dc, DP_Rect *crop,
+                const char *path,
+                DP_SaveResult (*save_fn)(DP_Image *, DP_Output *),
+                const DP_ViewModeFilter *vmf_or_null,
+                DP_SaveBakeAnnotationFn bake_annotation, void *user)
 {
     DP_Image *img = DP_canvas_state_to_flat_image(
-        cs, DP_FLAT_IMAGE_RENDER_FLAGS, crop, &vmf);
+        cs, DP_FLAT_IMAGE_RENDER_FLAGS, crop, vmf_or_null);
     if (!img) {
         DP_warn("Save: %s", DP_error());
         return DP_SAVE_RESULT_FLATTEN_ERROR;
@@ -814,22 +834,20 @@ static DP_SaveResult save_flat_image(
 
 static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
                           DP_SaveImageType type, const char *path,
+                          const DP_ViewModeFilter *vmf_or_null,
                           DP_SaveBakeAnnotationFn bake_annotation, void *user)
 {
     switch (type) {
     case DP_SAVE_IMAGE_ORA:
         return save_ora(cs, path, dc);
     case DP_SAVE_IMAGE_PNG:
-        return save_flat_image(cs, dc, NULL, path, save_png,
-                               DP_view_mode_filter_make_default(),
+        return save_flat_image(cs, dc, NULL, path, save_png, vmf_or_null,
                                bake_annotation, user);
     case DP_SAVE_IMAGE_JPEG:
-        return save_flat_image(cs, dc, NULL, path, save_jpeg,
-                               DP_view_mode_filter_make_default(),
+        return save_flat_image(cs, dc, NULL, path, save_jpeg, vmf_or_null,
                                bake_annotation, user);
     case DP_SAVE_IMAGE_WEBP:
-        return save_flat_image(cs, dc, NULL, path, save_webp,
-                               DP_view_mode_filter_make_default(),
+        return save_flat_image(cs, dc, NULL, path, save_webp, vmf_or_null,
                                bake_annotation, user);
     case DP_SAVE_IMAGE_PSD:
         return DP_save_psd(cs, path, dc);
@@ -841,11 +859,13 @@ static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
 
 DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc,
                       DP_SaveImageType type, const char *path,
+                      const DP_ViewModeFilter *vmf_or_null,
                       DP_SaveBakeAnnotationFn bake_annotation, void *user)
 {
     if (cs && path) {
         DP_PERF_BEGIN_DETAIL(fn, "image", "path=%s", path);
-        DP_SaveResult result = save(cs, dc, type, path, bake_annotation, user);
+        DP_SaveResult result =
+            save(cs, dc, type, path, vmf_or_null, bake_annotation, user);
         DP_PERF_END(fn);
         return result;
     }

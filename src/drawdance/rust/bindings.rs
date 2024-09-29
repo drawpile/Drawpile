@@ -7986,11 +7986,15 @@ extern "C" {
     pub fn DP_save_image_type_guess(path: *const ::std::os::raw::c_char) -> DP_SaveImageType;
 }
 extern "C" {
+    pub fn DP_save_image_type_is_flat_image(type_: DP_SaveImageType) -> bool;
+}
+extern "C" {
     pub fn DP_save(
         cs: *mut DP_CanvasState,
         dc: *mut DP_DrawContext,
         type_: DP_SaveImageType,
         path: *const ::std::os::raw::c_char,
+        vmf_or_null: *const DP_ViewModeFilter,
         bake_annotation: DP_SaveBakeAnnotationFn,
         user: *mut ::std::os::raw::c_void,
     ) -> DP_SaveResult;

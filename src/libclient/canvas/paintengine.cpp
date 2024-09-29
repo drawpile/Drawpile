@@ -763,12 +763,19 @@ int PaintEngine::frameCount() const
 	return historyCanvasState().frameCount();
 }
 
+DP_ViewModeFilter PaintEngine::viewModeFilter(
+	drawdance::ViewModeBuffer &vmb,
+	const drawdance::CanvasState &canvasState) const
+{
+	return DP_paint_engine_view_mode_filter(
+		m_paintEngine.get(), vmb.get(), canvasState.get());
+}
+
 QImage PaintEngine::getFlatImage(
 	drawdance::ViewModeBuffer &vmb, const drawdance::CanvasState &canvasState,
 	bool includeBackground, bool includeSublayers, const QRect *rect) const
 {
-	DP_ViewModeFilter vmf = DP_paint_engine_view_mode_filter(
-		m_paintEngine.get(), vmb.get(), canvasState.get());
+	DP_ViewModeFilter vmf = viewModeFilter(vmb, canvasState);
 	return canvasState.toFlatImage(
 		includeBackground, includeSublayers, rect, &vmf);
 }

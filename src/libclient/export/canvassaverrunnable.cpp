@@ -2,6 +2,7 @@
 extern "C" {
 #include <dpimpex/save.h>
 }
+#include "libclient/canvas/paintengine.h"
 #include "libclient/drawdance/annotation.h"
 #include "libclient/drawdance/global.h"
 #include "libclient/export/canvassaverrunnable.h"
@@ -17,17 +18,23 @@ extern "C" {
 
 CanvasSaverRunnable::CanvasSaverRunnable(
 	const drawdance::CanvasState &canvasState, DP_SaveImageType type,
-	const QString &path, QTemporaryDir *tempDir, QObject *parent)
+	const QString &path, const canvas::PaintEngine *paintEngine,
+	QTemporaryDir *tempDir, QObject *parent)
 	: QObject(parent)
 	, m_canvasState(canvasState)
 	, m_type(type)
 	, m_path(path)
 	, m_tempDir(tempDir)
 {
+	if(paintEngine && DP_save_image_type_is_flat_image(type)) {
+		m_vmb = new drawdance::ViewModeBuffer;
+		m_vmf = paintEngine->viewModeFilter(*m_vmb, m_canvasState);
+	}
 }
 
 CanvasSaverRunnable::~CanvasSaverRunnable()
 {
+	delete m_vmb;
 	delete m_tempDir;
 }
 
@@ -49,7 +56,8 @@ void CanvasSaverRunnable::run()
 	const char *path = pathBytes.constData();
 	drawdance::DrawContext dc = drawdance::DrawContextPool::acquire();
 	DP_SaveResult result = DP_save(
-		m_canvasState.get(), dc.get(), m_type, path, bakeAnnotation, this);
+		m_canvasState.get(), dc.get(), m_type, path, m_vmb ? &m_vmf : nullptr,
+		bakeAnnotation, this);
 
 #ifdef Q_OS_ANDROID
 	QFile tempFile(tempPath);

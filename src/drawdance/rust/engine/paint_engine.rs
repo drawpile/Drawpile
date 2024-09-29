@@ -354,6 +354,7 @@ impl PaintEngine {
                 self.main_dc.as_ptr(),
                 DP_SAVE_IMAGE_ORA,
                 cpath.as_ptr(),
+                ptr::null(),
                 None,
                 ptr::null_mut(),
             )

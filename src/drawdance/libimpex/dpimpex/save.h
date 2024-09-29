@@ -8,6 +8,7 @@ typedef struct DP_Annotation DP_Annotation;
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Rect DP_Rect;
+typedef struct DP_ViewModeFilter DP_ViewModeFilter;
 
 
 typedef struct DP_SaveFormat {
@@ -24,8 +25,11 @@ typedef bool (*DP_SaveBakeAnnotationFn)(void *user, DP_Annotation *a,
 
 DP_SaveImageType DP_save_image_type_guess(const char *path);
 
+bool DP_save_image_type_is_flat_image(DP_SaveImageType type);
+
 DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc,
                       DP_SaveImageType type, const char *path,
+                      const DP_ViewModeFilter *vmf_or_null,
                       DP_SaveBakeAnnotationFn bake_annotation, void *user);
 
 

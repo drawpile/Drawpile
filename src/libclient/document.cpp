@@ -880,8 +880,8 @@ void Document::saveCanvasState(
 	Q_ASSERT(!m_saveInProgress);
 	m_saveInProgress = true;
 
-	CanvasSaverRunnable *saver =
-		new CanvasSaverRunnable(canvasState, type, path);
+	CanvasSaverRunnable *saver = new CanvasSaverRunnable(
+		canvasState, type, path, m_canvas ? m_canvas->paintEngine() : nullptr);
 	if(isCurrentState) {
 		unmarkDirty();
 	}
