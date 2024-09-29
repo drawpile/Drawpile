@@ -312,8 +312,8 @@ void SceneWrapper::connectDocument(Document *doc)
 		toolCtrl, &tools::ToolController::colorUsed, m_scene,
 		&CanvasScene::setComparisonColor);
 	connect(
-		toolCtrl, &tools::ToolController::colorPickRequested, m_scene,
-		&CanvasScene::setColorPick);
+		toolCtrl, &tools::ToolController::colorPickRequested, m_view,
+		&CanvasView::setSceneColorPick);
 	connect(
 		toolCtrl, &tools::ToolController::maskPreviewRequested, m_scene,
 		&CanvasScene::setMaskPreview);

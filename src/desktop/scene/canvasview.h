@@ -188,6 +188,9 @@ public slots:
 	void setViewFlip(bool flip);
 	void setViewMirror(bool mirror);
 
+	bool
+	setSceneColorPick(int source, const QPointF &posf, const QColor &color);
+
 	void setLockReasons(QFlags<view::Lock::Reason> reasons);
 	void setLockDescription(const QString &lockDescription);
 	void setToolState(int toolState);

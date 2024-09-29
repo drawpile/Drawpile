@@ -2076,12 +2076,17 @@ void CanvasView::moveDrag(const QPoint &point)
 	m_dragLastPoint = point;
 }
 
+bool CanvasView::setSceneColorPick(
+	int source, const QPointF &posf, const QColor &color)
+{
+	return m_scene->setColorPick(source, mapToScene(posf.toPoint()), color);
+}
+
 void CanvasView::pickColor(
 	int source, const QPointF &point, const QPointF &posf)
 {
 	QColor color = m_scene->model()->pickColor(point.x(), point.y(), 0, 0);
-	m_pickingColor =
-		m_scene->setColorPick(source, mapToScene(posf.toPoint()), color);
+	m_pickingColor = setSceneColorPick(source, posf, color);
 }
 
 void CanvasView::touchColorPick(const QPointF &posf)
