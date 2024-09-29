@@ -35,6 +35,7 @@ typedef struct DP_LocalState DP_LocalState;
 typedef enum DP_ViewMode {
     DP_VIEW_MODE_NORMAL,
     DP_VIEW_MODE_LAYER,
+    DP_VIEW_MODE_GROUP,
     DP_VIEW_MODE_FRAME,
 } DP_ViewMode;
 

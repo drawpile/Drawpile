@@ -67,6 +67,8 @@ void DP_layer_routes_decref_nullable(DP_LayerRoutes *lr_or_null);
 
 DP_LayerRoutesEntry *DP_layer_routes_search(DP_LayerRoutes *lr, int layer_id);
 
+int DP_layer_routes_search_parent_id(DP_LayerRoutes *lr, int layer_id);
+
 DP_Message *DP_layer_routes_layer_order_make(DP_CanvasState *cs,
                                              unsigned int context_id,
                                              int source_id, int target_id,
@@ -104,6 +106,8 @@ DP_LayerProps *DP_layer_routes_entry_props(DP_LayerRoutesEntry *lre,
 void DP_layer_routes_entry_children(DP_LayerRoutesEntry *lre,
                                     DP_CanvasState *cs, DP_LayerList **out_ll,
                                     DP_LayerPropsList **out_lpl);
+
+DP_LayerRoutesEntry *DP_layer_routes_entry_parent(DP_LayerRoutesEntry *lre);
 
 uint16_t DP_layer_routes_entry_parent_opacity(DP_LayerRoutesEntry *lre,
                                               DP_CanvasState *cs);

@@ -38,6 +38,7 @@ typedef struct DP_LayerRoutesEntry {
     UT_hash_handle hh;
     bool is_group;
     int layer_id;
+    DP_LayerRoutesEntry *parent_lre;
     int index_count;
     int indexes[];
 } DP_LayerRoutesEntry;
@@ -56,8 +57,9 @@ DP_LayerRoutes *DP_layer_routes_new(void)
     return lr;
 }
 
-static void insert(DP_LayerRoutes *lr, DP_DrawContext *dc, DP_LayerProps *lp,
-                   bool is_group)
+static DP_LayerRoutesEntry *insert(DP_LayerRoutes *lr, DP_DrawContext *dc,
+                                   DP_LayerProps *lp, bool is_group,
+                                   DP_LayerRoutesEntry *parent_lre)
 {
     int index_count;
     int *indexes = DP_draw_context_layer_indexes(dc, &index_count);
@@ -66,16 +68,19 @@ static void insert(DP_LayerRoutes *lr, DP_DrawContext *dc, DP_LayerProps *lp,
         DP_LayerRoutesEntry, indexes, DP_int_to_size(index_count)));
     lre->layer_id = DP_layer_props_id(lp);
     lre->is_group = is_group;
+    lre->parent_lre = parent_lre;
     lre->index_count = index_count;
     for (int i = 0; i < index_count; ++i) {
         lre->indexes[i] = indexes[i];
     }
 
     HASH_ADD_INT(lr->entries, layer_id, lre);
+    return lre;
 }
 
 static void index_layers(DP_LayerRoutes *lr, DP_DrawContext *dc,
-                         DP_LayerPropsList *lpl)
+                         DP_LayerPropsList *lpl,
+                         DP_LayerRoutesEntry *parent_lre)
 {
     int count = DP_layer_props_list_count(lpl);
     DP_draw_context_layer_indexes_push(dc);
@@ -83,9 +88,9 @@ static void index_layers(DP_LayerRoutes *lr, DP_DrawContext *dc,
         DP_draw_context_layer_indexes_set(dc, i);
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
         DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
-        insert(lr, dc, lp, child_lpl);
+        DP_LayerRoutesEntry *lre = insert(lr, dc, lp, child_lpl, parent_lre);
         if (child_lpl) {
-            index_layers(lr, dc, child_lpl);
+            index_layers(lr, dc, child_lpl, lre);
         }
     }
     DP_draw_context_layer_indexes_pop(dc);
@@ -98,7 +103,7 @@ DP_LayerRoutes *DP_layer_routes_new_index(DP_LayerPropsList *lpl,
     DP_ASSERT(dc);
     DP_LayerRoutes *lr = DP_layer_routes_new();
     DP_draw_context_layer_indexes_clear(dc);
-    index_layers(lr, dc, lpl);
+    index_layers(lr, dc, lpl, NULL);
     return lr;
 }
 
@@ -143,6 +148,19 @@ DP_LayerRoutesEntry *DP_layer_routes_search(DP_LayerRoutes *lr, int layer_id)
     DP_LayerRoutesEntry *lre;
     HASH_FIND_INT(lr->entries, &layer_id, lre);
     return lre;
+}
+
+int DP_layer_routes_search_parent_id(DP_LayerRoutes *lr, int layer_id)
+{
+    DP_ASSERT(lr);
+    DP_LayerRoutesEntry *child_lre = DP_layer_routes_search(lr, layer_id);
+    if (child_lre) {
+        DP_LayerRoutesEntry *lre = DP_layer_routes_entry_parent(child_lre);
+        if (lre) {
+            return lre->layer_id;
+        }
+    }
+    return 0;
 }
 
 
@@ -455,6 +473,12 @@ void DP_layer_routes_entry_children(DP_LayerRoutesEntry *lre,
     DP_ASSERT(out_ll);
     DP_ASSERT(out_lpl);
     get_children(lre->index_count, lre->indexes, cs, out_ll, out_lpl);
+}
+
+DP_LayerRoutesEntry *DP_layer_routes_entry_parent(DP_LayerRoutesEntry *lre)
+{
+    DP_ASSERT(lre);
+    return lre->parent_lre;
 }
 
 uint16_t DP_layer_routes_entry_parent_opacity(DP_LayerRoutesEntry *lre,

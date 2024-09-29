@@ -5088,7 +5088,8 @@ pub struct DP_LocalState {
 }
 pub const DP_VIEW_MODE_NORMAL: DP_ViewMode = 0;
 pub const DP_VIEW_MODE_LAYER: DP_ViewMode = 1;
-pub const DP_VIEW_MODE_FRAME: DP_ViewMode = 2;
+pub const DP_VIEW_MODE_GROUP: DP_ViewMode = 2;
+pub const DP_VIEW_MODE_FRAME: DP_ViewMode = 3;
 pub type DP_ViewMode = ::std::os::raw::c_uint;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

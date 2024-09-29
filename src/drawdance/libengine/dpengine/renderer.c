@@ -355,9 +355,10 @@ DP_Renderer *DP_renderer_new(int thread_count, bool checker,
     renderer->checker_color1 = checker_color1;
     renderer->checker_color2 = checker_color2;
     renderer->checker =
-        checker ? DP_transient_tile_new_checker(
-            0, DP_pixel8_to_15(checker_color1), DP_pixel8_to_15(checker_color2))
-                : NULL;
+        checker
+            ? DP_transient_tile_new_checker(0, DP_pixel8_to_15(checker_color1),
+                                            DP_pixel8_to_15(checker_color2))
+            : NULL;
     renderer->cs = DP_canvas_state_new();
     renderer->checkers_visible = false;
     renderer->xtiles = 0;
@@ -465,6 +466,7 @@ static bool local_state_params_differ(DP_RendererLocalState *rls,
     case DP_VIEW_MODE_NORMAL:
         return false;
     case DP_VIEW_MODE_LAYER:
+    case DP_VIEW_MODE_GROUP:
         return rls->active != DP_local_state_active_layer_id(ls);
     case DP_VIEW_MODE_FRAME:
         return rls->active != DP_local_state_active_frame_index(ls)
@@ -487,6 +489,9 @@ static DP_RendererLocalState clone_local_state(DP_LocalState *ls)
     case DP_VIEW_MODE_LAYER:
         return (DP_RendererLocalState){
             DP_VIEW_MODE_LAYER, DP_local_state_active_layer_id(ls), NULL};
+    case DP_VIEW_MODE_GROUP:
+        return (DP_RendererLocalState){
+            DP_VIEW_MODE_GROUP, DP_local_state_active_layer_id(ls), NULL};
     case DP_VIEW_MODE_FRAME:
         return (DP_RendererLocalState){
             DP_VIEW_MODE_FRAME, DP_local_state_active_frame_index(ls),

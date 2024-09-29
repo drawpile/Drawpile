@@ -290,6 +290,7 @@ static void handle_view_mode(DP_LocalState *ls, DP_MsgLocalChange *mlc)
         switch (value) {
         case DP_VIEW_MODE_NORMAL:
         case DP_VIEW_MODE_LAYER:
+        case DP_VIEW_MODE_GROUP:
         case DP_VIEW_MODE_FRAME: {
             DP_ViewMode view_mode = (DP_ViewMode)value;
             if (view_mode != ls->view_mode) {
@@ -311,8 +312,13 @@ static void handle_active_layer(DP_LocalState *ls, DP_MsgLocalChange *mlc)
     if (read_int_message(mlc, "active layer", &layer_id)) {
         if (ls->active_layer_id != layer_id) {
             ls->active_layer_id = layer_id;
-            if (ls->view_mode == DP_VIEW_MODE_LAYER) {
+            switch (ls->view_mode) {
+            case DP_VIEW_MODE_LAYER:
+            case DP_VIEW_MODE_GROUP:
                 notify_view_invalidated(ls, true, 0);
+                break;
+            default:
+                break;
             }
         }
     }

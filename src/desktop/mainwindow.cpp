@@ -859,6 +859,7 @@ void MainWindow::toggleLayerViewMode()
 	// pressing the shortcut again would have no useful effect anyway.
 	QAction *actions[] = {
 		getAction("layerviewcurrentlayer"),
+		getAction("layerviewcurrentgroup"),
 		getAction("layerviewcurrentframe"),
 	};
 	for (QAction *action : actions) {
@@ -881,6 +882,8 @@ void MainWindow::updateLayerViewMode()
 	QAction *action;
 	if((action = getAction("layerviewcurrentlayer"))->isChecked()) {
 		mode = DP_VIEW_MODE_LAYER;
+	} else if((action = getAction("layerviewcurrentgroup"))->isChecked()) {
+		mode = DP_VIEW_MODE_GROUP;
 	} else if((action = getAction("layerviewcurrentframe"))->isChecked()) {
 		mode = DP_VIEW_MODE_FRAME;
 	} else {
@@ -4573,6 +4576,7 @@ void MainWindow::setupActions()
 
 	QAction *layerViewNormal = makeAction("layerviewnormal", tr("Normal View")).statusTip(tr("Show all layers normally")).noDefaultShortcut().checkable().checked();
 	QAction *layerViewCurrentLayer = makeAction("layerviewcurrentlayer", tr("Layer View")).statusTip(tr("Show only the current layer")).shortcut("Home").checkable();
+	QAction *layerViewCurrentGroup = makeAction("layerviewcurrentgroup", tr("Group View")).statusTip(tr("Show only the current parent layer group")).shortcut("Ctrl+Home").checkable();
 	QAction *layerViewCurrentFrame = makeAction("layerviewcurrentframe", tr("Frame View")).statusTip(tr("Show only layers in the current frame")).shortcut("Shift+Home").checkable();
 	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).noDefaultShortcut().checkable();
 	m_lastLayerViewMode = layerViewNormal;
@@ -4581,11 +4585,13 @@ void MainWindow::setupActions()
 	layerViewModeGroup->setExclusive(true);
 	layerViewModeGroup->addAction(layerViewNormal);
 	layerViewModeGroup->addAction(layerViewCurrentLayer);
+	layerViewModeGroup->addAction(layerViewCurrentGroup);
 	layerViewModeGroup->addAction(layerViewCurrentFrame);
 
 	QMenu *layerViewMenu = viewmenu->addMenu(tr("Layer View Mode"));
 	layerViewMenu->addAction(layerViewNormal);
 	layerViewMenu->addAction(layerViewCurrentLayer);
+	layerViewMenu->addAction(layerViewCurrentGroup);
 	layerViewMenu->addAction(layerViewCurrentFrame);
 	viewmenu->addAction(layerUncensor);
 

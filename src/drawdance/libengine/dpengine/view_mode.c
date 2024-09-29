@@ -316,6 +316,12 @@ DP_ViewModeFilter DP_view_mode_filter_make(DP_ViewModeBuffer *vmb,
         return make_normal_filter();
     case DP_VIEW_MODE_LAYER:
         return make_layer_filter(layer_id);
+    case DP_VIEW_MODE_GROUP: {
+        DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+        int group_id = DP_layer_routes_search_parent_id(lr, layer_id);
+        return group_id > 0 ? make_layer_filter(group_id)
+                            : make_normal_filter();
+    }
     case DP_VIEW_MODE_FRAME:
         return make_frame_filter(vmb, cs, frame_index, oss, TYPE_FRAME_MANUAL);
     default:
@@ -687,16 +693,37 @@ static bool pick_normal(DP_CanvasState *cs, int x, int y,
                           out_pick);
 }
 
+static bool pick_lre(DP_LayerRoutesEntry *lre, DP_CanvasState *cs, int x, int y,
+                     DP_ViewModePick *out_pick)
+{
+    if (lre) {
+        DP_LayerListEntry *lle = DP_layer_routes_entry_layer(lre, cs);
+        DP_LayerProps *lp = DP_layer_routes_entry_props(lre, cs);
+        return pick_entry(lle, lp, x, y, out_pick);
+    }
+    else {
+        return false;
+    }
+}
+
 static bool pick_layer(DP_CanvasState *cs, DP_LocalState *ls, int x, int y,
                        DP_ViewModePick *out_pick)
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
     DP_LayerRoutesEntry *lre =
         DP_layer_routes_search(lr, DP_local_state_active_layer_id(ls));
-    if (lre) {
-        DP_LayerListEntry *lle = DP_layer_routes_entry_layer(lre, cs);
-        DP_LayerProps *lp = DP_layer_routes_entry_props(lre, cs);
-        return pick_entry(lle, lp, x, y, out_pick);
+    return pick_lre(lre, cs, x, y, out_pick);
+}
+
+static bool pick_group(DP_CanvasState *cs, DP_LocalState *ls, int x, int y,
+                       DP_ViewModePick *out_pick)
+{
+    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+    DP_LayerRoutesEntry *child_lre =
+        DP_layer_routes_search(lr, DP_local_state_active_layer_id(ls));
+    if (child_lre) {
+        DP_LayerRoutesEntry *lre = DP_layer_routes_entry_parent(child_lre);
+        return pick_lre(lre, cs, x, y, out_pick);
     }
     else {
         return false;
@@ -751,6 +778,11 @@ DP_ViewModePick DP_view_mode_pick(DP_CanvasState *cs, DP_LocalState *ls, int x,
             break;
         case DP_VIEW_MODE_LAYER:
             if (pick_layer(cs, ls, x, y, &pick)) {
+                return pick;
+            }
+            break;
+        case DP_VIEW_MODE_GROUP:
+            if (pick_group(cs, ls, x, y, &pick)) {
                 return pick;
             }
             break;
