@@ -10,7 +10,7 @@ bool WinEventFilter::nativeEventFilter(
 	compat::NativeEventResult result)
 {
 	Q_UNUSED(result);
-	if(eventType == "windows_generic_MSG") {
+	if(eventType == QByteArrayLiteral("windows_generic_MSG")) {
 		MSG *msg = static_cast<MSG *>(message);
 		switch(msg->message) {
 		case WM_KEYDOWN:
