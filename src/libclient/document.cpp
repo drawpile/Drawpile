@@ -1483,8 +1483,9 @@ void Document::downloadCanvasState(
 	const drawdance::CanvasState &canvasState)
 {
 	QString path = tempDir->filePath(fileName);
-	CanvasSaverRunnable *saver =
-		new CanvasSaverRunnable(canvasState, type, path, tempDir);
+	CanvasSaverRunnable *saver = new CanvasSaverRunnable(
+		canvasState, type, path, m_canvas ? m_canvas->paintEngine() : nullptr,
+		tempDir);
 	saver->setAutoDelete(false);
 	connect(
 		saver, &CanvasSaverRunnable::saveComplete, this,
