@@ -1595,6 +1595,7 @@ void MainWindow::newDocument(const QSize &size, const QColor &background)
 	}
 }
 
+// clang-format on
 void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 {
 	if(!canReplace()) {
@@ -1631,12 +1632,16 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 
 	if(QRegularExpression{"\\.dp(rec|txt)$", opt}.match(path).hasMatch()) {
 		bool isTemplate;
-		DP_LoadResult result = m_doc->loadRecording(loadPath, false, &isTemplate);
+		DP_LoadResult result =
+			m_doc->loadRecording(loadPath, false, &isTemplate);
 		showLoadResultMessage(result);
 		if(result == DP_LOAD_RESULT_SUCCESS && !isTemplate) {
 			QFileInfo fileinfo(path);
-			m_playbackDialog = new dialogs::PlaybackDialog(m_doc->canvas(), this);
-			m_playbackDialog->setWindowTitle(fileinfo.completeBaseName() + " - " + m_playbackDialog->windowTitle());
+			m_playbackDialog =
+				new dialogs::PlaybackDialog(m_doc->canvas(), this);
+			m_playbackDialog->setWindowTitle(
+				fileinfo.completeBaseName() + " - " +
+				m_playbackDialog->windowTitle());
 			m_playbackDialog->setAttribute(Qt::WA_DeleteOnClose);
 			m_playbackDialog->show();
 			m_playbackDialog->centerOnParent();
@@ -1656,13 +1661,18 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 			delete tempFile;
 		}
 
-	} else if(QRegularExpression{"\\.drawdancedump$", opt}.match(path).hasMatch()) {
+	} else if(QRegularExpression{"\\.drawdancedump$", opt}
+				  .match(path)
+				  .hasMatch()) {
 		DP_LoadResult result = m_doc->loadRecording(loadPath, true);
 		if(result == DP_LOAD_RESULT_SUCCESS) {
 			QFileInfo fileinfo{path};
-			m_dumpPlaybackDialog = new dialogs::DumpPlaybackDialog{m_doc->canvas(), this};
-			m_dumpPlaybackDialog->setWindowTitle(QStringLiteral("%1 - %2")
-				.arg(fileinfo.completeBaseName()).arg(m_dumpPlaybackDialog->windowTitle()));
+			m_dumpPlaybackDialog =
+				new dialogs::DumpPlaybackDialog{m_doc->canvas(), this};
+			m_dumpPlaybackDialog->setWindowTitle(
+				QStringLiteral("%1 - %2")
+					.arg(fileinfo.completeBaseName())
+					.arg(m_dumpPlaybackDialog->windowTitle()));
 			m_dumpPlaybackDialog->setAttribute(Qt::WA_DeleteOnClose);
 			m_dumpPlaybackDialog->show();
 			if(tempFile) {
@@ -1701,7 +1711,8 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 				}
 
 				loader->deleteLater();
-			}, Qt::QueuedConnection);
+			},
+			Qt::QueuedConnection);
 
 		QThreadPool::globalInstance()->start(loader);
 	}
@@ -1715,11 +1726,9 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
  */
 void MainWindow::open()
 {
-	FileWrangler(getStartDialogOrThis()).openMain(
-		std::bind(&MainWindow::openPath, this, _1, _2));
+	FileWrangler(getStartDialogOrThis())
+		.openMain(std::bind(&MainWindow::openPath, this, _1, _2));
 }
-
-// clang-format on
 
 #ifdef __EMSCRIPTEN__
 void MainWindow::download()
