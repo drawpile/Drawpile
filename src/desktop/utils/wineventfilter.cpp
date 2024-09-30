@@ -1,5 +1,6 @@
 #include "desktop/utils/wineventfilter.h"
 #include "desktop/scene/canvasview.h"
+#include "desktop/view/canvasview.h"
 #include <QGuiApplication>
 #include <QKeyEvent>
 #include <windows.h>
@@ -32,7 +33,8 @@ bool WinEventFilter::handleKeyDown(void *message)
 		WORD flags = HIWORD(msg->lParam);
 		if((flags & KF_ALTDOWN) == KF_ALTDOWN) {
 			QObject *target = QGuiApplication::focusObject();
-			if(qobject_cast<widgets::CanvasView *>(target)) {
+			if(qobject_cast<widgets::CanvasView *>(target) ||
+			   qobject_cast<view::CanvasView *>(target)) {
 				bool autorepeat = (flags & KF_REPEAT) == KF_REPEAT;
 				QKeyEvent event(
 					QKeyEvent::KeyPress, Qt::Key_Space, Qt::AltModifier,
