@@ -1617,7 +1617,18 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 	}
 
 	QString loadPath = tempFile ? tempFile->fileName() : path;
-	static constexpr auto opt = QRegularExpression::CaseInsensitiveOption;
+
+	constexpr QRegularExpression::PatternOption opt =
+		QRegularExpression::CaseInsensitiveOption;
+	if(QRegularExpression(QStringLiteral("\\Afile://"), opt)
+		   .match(loadPath)
+		   .hasMatch()) {
+		QUrl url = QUrl::fromUserInput(loadPath);
+		if(url.isValid() && url.isLocalFile()) {
+			loadPath = url.toLocalFile();
+		}
+	}
+
 	if(QRegularExpression{"\\.dp(rec|txt)$", opt}.match(path).hasMatch()) {
 		bool isTemplate;
 		DP_LoadResult result = m_doc->loadRecording(loadPath, false, &isTemplate);
