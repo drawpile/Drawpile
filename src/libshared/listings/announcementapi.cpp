@@ -14,13 +14,12 @@
 
 namespace sessionlisting {
 
-static void setUserAgent(QNetworkRequest &req) {
-#ifdef __EMSCRIPTEN__
-	Q_UNUSED(req);
-#else
+static void setCommonRequestParameters(QNetworkRequest &req) {
+#ifndef __EMSCRIPTEN__
 	static const QString USER_AGENT = QStringLiteral("DrawpileListingClient/%1").arg(cmake_config::version());
 	req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
 #endif
+	req.setMaximumRedirectsAllowed(2);
 }
 
 static QString slashcat(QString s, const QString &s2)
@@ -171,7 +170,7 @@ AnnouncementApiResponse *getApiInfo(const QUrl &apiUrl)
 	AnnouncementApiResponse *res = new AnnouncementApiResponse(apiUrl);
 
 	QNetworkRequest req(apiUrl);
-	setUserAgent(req);
+	setCommonRequestParameters(req);
 
 	QNetworkReply *reply = networkaccess::getInstance()->get(req);
 	reply->connect(reply, &QNetworkReply::finished, res, [reply, res]() {
@@ -198,7 +197,7 @@ AnnouncementApiResponse *getApiInfo(const QUrl &apiUrl)
 				res->updateRequestUrl(apiUrl2);
 
 				QNetworkRequest req2(apiUrl2);
-				setUserAgent(req2);
+				setCommonRequestParameters(req2);
 
 				QNetworkReply *reply2 = networkaccess::getInstance()->get(req2);
 				reply2->connect(reply2, &QNetworkReply::finished, res, [reply2, res]() {
@@ -229,7 +228,7 @@ AnnouncementApiResponse *getSessionList(const QUrl &apiUrl)
 	url.setQuery(query);
 
 	QNetworkRequest req(url);
-	setUserAgent(req);
+	setCommonRequestParameters(req);
 
 	QNetworkReply *reply = networkaccess::getInstance()->get(req);
 	reply->connect(reply, &QNetworkReply::finished, res, [reply, res]() {
@@ -321,7 +320,7 @@ AnnouncementApiResponse *announceSession(const QUrl &apiUrl, const Session &sess
 	url.setPath(slashcat(url.path(), "sessions/"));
 	QNetworkRequest req(url);
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-	setUserAgent(req);
+	setCommonRequestParameters(req);
 
 	AnnouncementApiResponse *res = new AnnouncementApiResponse(apiUrl);
 
@@ -372,7 +371,7 @@ AnnouncementApiResponse *refreshSession(const Announcement &a, const Session &se
 
 	QNetworkRequest req(url);
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-	setUserAgent(req);
+	setCommonRequestParameters(req);
 	req.setRawHeader("X-Update-Key", a.updateKey.toUtf8());
 
 	AnnouncementApiResponse *res = new AnnouncementApiResponse(a.apiUrl);
@@ -430,7 +429,7 @@ AnnouncementApiResponse *refreshSessions(const QVector<QPair<Announcement, Sessi
 
 	QNetworkRequest req(url);
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-	setUserAgent(req);
+	setCommonRequestParameters(req);
 
 	AnnouncementApiResponse *res = new AnnouncementApiResponse(apiUrl);
 
@@ -464,7 +463,7 @@ AnnouncementApiResponse *unlistSession(const Announcement &a)
 	url.setPath(slashcat(url.path(), QStringLiteral("sessions/%1").arg(a.listingId)));
 
 	QNetworkRequest req(url);
-	setUserAgent(req);
+	setCommonRequestParameters(req);
 	req.setRawHeader("X-Update-Key", a.updateKey.toUtf8());
 
 	AnnouncementApiResponse *res = new AnnouncementApiResponse(a.apiUrl);
