@@ -348,6 +348,18 @@ public:
 		}
 	}
 
+	bool resetAllPresetChanges()
+	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
+		QMutexLocker locker(&m_mutex);
+		QSqlQuery query(m_db);
+		return exec(
+			query,
+			QStringLiteral("update preset set changed_description = null, "
+						   "changed_thumbnail = null, changed_type = null, "
+						   "changed_data = null"));
+	}
+
 	bool deletePresetById(int id)
 	{
 		QMutexLocker locker{&m_mutex};
@@ -470,6 +482,17 @@ public:
 		refreshPresetCacheInternal();
 	}
 
+	void resetAllPresetsInCache()
+	{
+		QMutexLocker locker(&m_mutex);
+		for(CachedPreset &cp : m_presetCache) {
+			cp.changedName = {};
+			cp.changedDescription = {};
+			cp.changedThumbnail = {};
+			cp.changedBrush = {};
+		}
+	}
+
 	int presetCacheSize() const { return m_presetCache.size(); }
 
 	CachedPreset &getCachedPreset(int index) { return m_presetCache[index]; }
@@ -554,6 +577,12 @@ public:
 			}
 			m_presetChanges.clear();
 		}
+	}
+
+	void discardPresetChanges()
+	{
+		m_presetChangeTimer.stop();
+		m_presetChanges.clear();
 	}
 
 private:
@@ -2035,6 +2064,15 @@ void BrushPresetModel::changePreset(
 		emit dataChanged(idx, idx);
 	}
 	d->enqueuePresetChange(presetId, {name, description, thumbnail, brush});
+}
+
+void BrushPresetModel::resetAllPresetChanges()
+{
+	beginResetModel();
+	d->discardPresetChanges();
+	d->resetAllPresetChanges();
+	d->resetAllPresetsInCache();
+	endResetModel();
 }
 
 void BrushPresetModel::writePresetChanges()

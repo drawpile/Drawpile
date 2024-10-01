@@ -266,6 +266,7 @@ public:
 		const std::optional<QPixmap> &thumbnail = {},
 		const std::optional<ActiveBrush> &brush = {},
 		bool inEraserSlot = false);
+	void resetAllPresetChanges();
 	void writePresetChanges();
 
 	int countNames(const QString &name) const;

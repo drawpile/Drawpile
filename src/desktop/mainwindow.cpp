@@ -5126,6 +5126,12 @@ void MainWindow::setupActions()
 	QAction *smallerbrush = makeAction("ensmallenbrush", tr("&Decrease Brush Size")).shortcut(Qt::Key_BracketLeft).autoRepeat();
 	QAction *biggerbrush = makeAction("embiggenbrush", tr("&Increase Brush Size")).shortcut(Qt::Key_BracketRight).autoRepeat();
 	QAction *reloadPreset = makeAction("reloadpreset", tr("&Reset Brush")).icon("view-refresh").shortcut("Shift+P");
+	QAction *reloadPresetSlots =
+		makeAction("reloadpresetslots", tr("Reset All Brush &Slots"))
+			.noDefaultShortcut();
+	QAction *reloadAllPresets =
+		makeAction("reloadallpresets", tr("Reset All &Brushes"))
+			.shortcut("Shift+Alt+P");
 
 	smallerbrush->setAutoRepeat(true);
 	biggerbrush->setAutoRepeat(true);
@@ -5140,6 +5146,14 @@ void MainWindow::setupActions()
 	connect(smallerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->stepAdjustCurrent1(false); });
 	connect(biggerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->stepAdjustCurrent1(true); });
 	connect(reloadPreset, &QAction::triggered, m_dockToolSettings->brushSettings(), &tools::BrushSettings::resetPreset);
+	connect(
+		reloadPresetSlots, &QAction::triggered,
+		m_dockToolSettings->brushSettings(),
+		&tools::BrushSettings::resetPresetsInAllSlots);
+	connect(
+		reloadAllPresets, &QAction::triggered,
+		m_dockBrushPalette,
+		&docks::BrushPalette::resetAllPresets);
 
 	toolshortcuts->addAction(currentEraseMode);
 	toolshortcuts->addAction(currentRecolorMode);
@@ -5150,6 +5164,8 @@ void MainWindow::setupActions()
 	toolshortcuts->addAction(smallerbrush);
 	toolshortcuts->addAction(biggerbrush);
 	toolshortcuts->addAction(reloadPreset);
+	toolshortcuts->addAction(reloadPresetSlots);
+	toolshortcuts->addAction(reloadAllPresets);
 
 	m_toolBarDraw = new QToolBar(tr("Drawing tools"));
 	m_toolBarDraw->setObjectName("drawtoolsbar");
@@ -5183,7 +5199,8 @@ void MainWindow::setupActions()
 		}
 	}
 
-	m_dockToolSettings->brushSettings()->setActions(reloadPreset);
+	m_dockToolSettings->brushSettings()->setActions(
+		reloadPreset, reloadPresetSlots, reloadAllPresets);
 
 	m_smallScreenSpacer = new QWidget;
 	m_smallScreenSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);

@@ -26,7 +26,9 @@ public:
 	BrushSettings(ToolController *ctrl, QObject *parent = nullptr);
 	~BrushSettings() override;
 
-	void setActions(QAction *reloadPreset);
+	void setActions(
+		QAction *reloadPreset, QAction *reloadPresetSlots,
+		QAction *reloadAllPresets);
 	void connectBrushPresets(brushes::BrushPresetModel *brushPresets);
 
 	QString toolType() const override { return QStringLiteral("brush"); }
@@ -56,6 +58,8 @@ public:
 	void setCurrentBrushDetached(const brushes::ActiveBrush &brush);
 	void setCurrentBrushPreset(const brushes::Preset &p);
 	void changeCurrentBrush(const brushes::ActiveBrush &brush);
+	void setBrushDetachedInSlot(const brushes::ActiveBrush &brush, int i);
+	void setBrushPresetInSlot(const brushes::Preset &p, int i);
 	brushes::ActiveBrush currentBrush() const;
 	int currentPresetId() const;
 	const QString &currentPresetName() const;
@@ -88,6 +92,7 @@ public slots:
 	void toggleRecolorMode() override;
 	void setEraserMode(bool erase);
 	void resetPreset();
+	void resetPresetsInAllSlots();
 
 	void changeCurrentPresetName(const QString &name);
 	void changeCurrentPresetDescription(const QString &description);
@@ -129,10 +134,10 @@ private:
 	enum class Lock { None, MyPaintPermission, MyPaintCompat, IndirectCompat };
 
 	void changePresetBrush(const brushes::ActiveBrush &brush);
-	void updateChangesInBrushPresets();
+	void updateChangesInCurrentBrushPreset();
+	void updateChangesInBrushPresetInSlot(int i);
 
-	brushes::ActiveBrush
-	changeCurrentBrushInternal(const brushes::ActiveBrush &brush);
+	void resetBrushInSlot(int i);
 	brushes::ActiveBrush changeBrushInSlot(brushes::ActiveBrush brush, int i);
 
 	void updateMenuActions();

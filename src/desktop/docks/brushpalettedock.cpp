@@ -73,6 +73,7 @@ struct BrushPalette::Private {
 	QAction *overwriteBrushAction;
 	QAction *editBrushAction;
 	QAction *resetBrushAction;
+	QAction *resetAllAction;
 	QAction *deleteBrushAction;
 	QMenu *iconSizeMenu;
 	QMenu *tagMenu;
@@ -129,6 +130,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 		d->tagMenu->addAction(QIcon::fromTheme("configure"), tr("&Edit Brush"));
 	d->resetBrushAction = d->tagMenu->addAction(
 		QIcon::fromTheme("view-refresh"), tr("&Reset Brush"));
+	d->resetAllAction = d->tagMenu->addAction(tr("Reset All &Brushes"));
 	d->tagMenu->addSeparator();
 	d->newBrushAction =
 		d->tagMenu->addAction(QIcon::fromTheme("list-add"), tr("&New Brush"));
@@ -153,6 +155,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->brushMenu = new QMenu(this);
 	d->brushMenu->addAction(d->editBrushAction);
 	d->brushMenu->addAction(d->resetBrushAction);
+	d->brushMenu->addAction(d->resetAllAction);
 	d->brushMenu->addSeparator();
 	d->brushMenu->addAction(d->newBrushAction);
 	d->brushMenu->addAction(d->overwriteBrushAction);
@@ -240,6 +243,9 @@ BrushPalette::BrushPalette(QWidget *parent)
 	connect(
 		d->resetBrushAction, &QAction::triggered, this,
 		&BrushPalette::resetCurrentPreset);
+	connect(
+		d->resetAllAction, &QAction::triggered, this,
+		&BrushPalette::resetAllPresets);
 	connect(
 		d->deleteBrushAction, &QAction::triggered, this,
 		&BrushPalette::deleteCurrentPreset);
@@ -399,6 +405,14 @@ void BrushPalette::overwriteCurrentPreset(QWidget *parent)
 		}
 	});
 	box->show();
+}
+
+void BrushPalette::resetAllPresets()
+{
+	d->presetModel->resetAllPresetChanges();
+	if(d->brushSettings) {
+		d->brushSettings->resetPresetsInAllSlots();
+	}
 }
 
 void BrushPalette::importBrushes()

@@ -38,6 +38,7 @@ public:
 	void overwriteCurrentPreset(QWidget *parent);
 
 public slots:
+	void resetAllPresets();
 	void importBrushes();
 	void exportBrushes();
 

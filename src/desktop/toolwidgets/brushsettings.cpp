@@ -142,6 +142,8 @@ struct BrushSettings::Private {
 
 	QAction *editBrushAction;
 	QAction *resetBrushAction;
+	QAction *resetSlotPresetsAction;
+	QAction *resetAllPresetsAction;
 	QAction *newBrushAction;
 	QAction *overwriteBrushAction;
 	QAction *deleteBrushAction;
@@ -243,9 +245,20 @@ BrushSettings::~BrushSettings()
 	delete d;
 }
 
-void BrushSettings::setActions(QAction *reloadPreset)
+void BrushSettings::setActions(
+	QAction *reloadPreset, QAction *reloadPresetSlots,
+	QAction *reloadAllPresets)
 {
 	d->ui.reloadButton->setDefaultAction(reloadPreset);
+	connect(
+		d->resetBrushAction, &QAction::triggered, reloadPreset,
+		&QAction::trigger);
+	connect(
+		d->resetSlotPresetsAction, &QAction::triggered, reloadPresetSlots,
+		&QAction::trigger);
+	connect(
+		d->resetAllPresetsAction, &QAction::triggered, reloadAllPresets,
+		&QAction::trigger);
 }
 
 void BrushSettings::connectBrushPresets(brushes::BrushPresetModel *brushPresets)
@@ -314,9 +327,8 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 
 	d->resetBrushAction =
 		menu->addAction(QIcon::fromTheme("view-refresh"), tr("&Reset Brush"));
-	connect(
-		d->resetBrushAction, &QAction::triggered, this,
-		&BrushSettings::resetPreset);
+	d->resetSlotPresetsAction = menu->addAction(tr("Reset All Brush &Slots"));
+	d->resetAllPresetsAction = menu->addAction(tr("Reset All &Brushes"));
 
 	menu->addSeparator();
 
@@ -691,7 +703,7 @@ void BrushSettings::setBrushPresetsAttach(bool brushPresetsAttach)
 					if(preset.attached) {
 						d->ui.preview->setPreset(
 							preset.effectiveThumbnail(), preset.hasChanges());
-						updateChangesInBrushPresets();
+						updateChangesInCurrentBrushPreset();
 					}
 				}
 			} else if(d->current == i) {
@@ -720,40 +732,52 @@ void BrushSettings::setBrushPresetsAttach(bool brushPresetsAttach)
 
 void BrushSettings::setCurrentBrushDetached(const brushes::ActiveBrush &brush)
 {
-	brushes::Preset p;
-	p.originalBrush = brush;
-	setCurrentBrushPreset(p);
+	setBrushDetachedInSlot(brush, d->current);
 }
 
 void BrushSettings::setCurrentBrushPreset(const brushes::Preset &p)
 {
-	brushes::ActiveBrush brush = changeCurrentBrushInternal(p.effectiveBrush());
-	Preset &preset = d->currentPreset();
-	if(p.id <= 0) {
-		preset = Preset::makeDetached(brush);
-		emit presetIdChanged(0);
-	} else if(d->presetsAttach) {
-		preset = Preset::makeAttached(p);
-		preset.changeBrush(brush, isCurrentEraserSlot());
-		emit presetIdChanged(p.id);
-	} else {
-		preset = Preset::makeDetached(p.originalBrush, true, p.id);
-	}
-	updateMenuActions();
-	updateUi();
-	updateChangesInBrushPresets();
+	setBrushPresetInSlot(p, d->current);
+}
+
+void BrushSettings::setBrushDetachedInSlot(
+	const brushes::ActiveBrush &brush, int i)
+{
+	brushes::Preset p;
+	p.originalBrush = brush;
+	setBrushPresetInSlot(p, i);
 }
 
 void BrushSettings::changeCurrentBrush(const brushes::ActiveBrush &brush)
 {
-	changePresetBrush(changeCurrentBrushInternal(brush));
+	changePresetBrush(changeBrushInSlot(brush, d->current));
 	updateUi();
 }
 
-brushes::ActiveBrush
-BrushSettings::changeCurrentBrushInternal(const brushes::ActiveBrush &brush)
+void BrushSettings::setBrushPresetInSlot(const brushes::Preset &p, int i)
 {
-	return changeBrushInSlot(brush, d->current);
+	brushes::ActiveBrush brush = changeBrushInSlot(p.effectiveBrush(), i);
+	Preset &preset = d->presetAt(i);
+	bool isCurrent = i == d->current;
+	if(p.id <= 0) {
+		preset = Preset::makeDetached(brush);
+		if(isCurrent) {
+			emit presetIdChanged(0);
+		}
+	} else if(d->presetsAttach) {
+		preset = Preset::makeAttached(p);
+		preset.changeBrush(brush, i == ERASER_SLOT_INDEX);
+		if(isCurrent) {
+			emit presetIdChanged(p.id);
+		}
+	} else {
+		preset = Preset::makeDetached(p.originalBrush, true, p.id);
+	}
+	if(isCurrent) {
+		updateMenuActions();
+		updateUi();
+	}
+	updateChangesInBrushPresetInSlot(i);
 }
 
 brushes::ActiveBrush
@@ -847,7 +871,7 @@ void BrushSettings::selectBrushSlot(int i)
 	const Preset &preset = d->currentPreset();
 	updateMenuActions();
 	emit presetIdChanged(preset.effectiveId());
-	updateChangesInBrushPresets();
+	updateChangesInCurrentBrushPreset();
 }
 
 void BrushSettings::toggleEraserMode()
@@ -886,16 +910,28 @@ void BrushSettings::toggleRecolorMode()
 
 void BrushSettings::resetPreset()
 {
-	Preset &preset = d->currentPreset();
+	resetBrushInSlot(d->current);
+}
+
+void BrushSettings::resetPresetsInAllSlots()
+{
+	for(int i = 0; i < TOTAL_SLOT_COUNT; ++i) {
+		resetBrushInSlot(i);
+	}
+}
+
+void BrushSettings::resetBrushInSlot(int i)
+{
+	Preset &preset = d->presetAt(i);
 	if(preset.valid) {
 		if(preset.attached) {
 			preset.changedName = {};
 			preset.changedDescription = {};
 			preset.changedThumbnail = {};
 			preset.changedBrush = {};
-			setCurrentBrushPreset(preset);
+			setBrushPresetInSlot(preset, i);
 		} else {
-			setCurrentBrushDetached(preset.originalBrush);
+			setBrushDetachedInSlot(preset.originalBrush, i);
 		}
 	}
 }
@@ -905,7 +941,7 @@ void BrushSettings::changeCurrentPresetName(const QString &name)
 	Preset &preset = d->currentPreset();
 	if(preset.changeName(name)) {
 		d->ui.preview->setPresetChanged(preset.hasChanges());
-		updateChangesInBrushPresets();
+		updateChangesInCurrentBrushPreset();
 	}
 }
 
@@ -914,7 +950,7 @@ void BrushSettings::changeCurrentPresetDescription(const QString &description)
 	Preset &preset = d->currentPreset();
 	if(preset.changeDescription(description)) {
 		d->ui.preview->setPresetChanged(preset.hasChanges());
-		updateChangesInBrushPresets();
+		updateChangesInCurrentBrushPreset();
 	}
 }
 
@@ -924,7 +960,7 @@ void BrushSettings::changeCurrentPresetThumbnail(const QPixmap &thumbnail)
 	if(preset.changeThumbnail(thumbnail)) {
 		d->ui.preview->setPresetThumbnail(thumbnail);
 		d->ui.preview->setPresetChanged(preset.hasChanges());
-		updateChangesInBrushPresets();
+		updateChangesInCurrentBrushPreset();
 	}
 }
 
@@ -1360,17 +1396,22 @@ void BrushSettings::changePresetBrush(const brushes::ActiveBrush &brush)
 	if(preset.isAttached()) {
 		d->ui.preview->setPresetChanged(preset.hasChanges());
 	}
-	updateChangesInBrushPresets();
+	updateChangesInCurrentBrushPreset();
 }
 
-void BrushSettings::updateChangesInBrushPresets()
+void BrushSettings::updateChangesInCurrentBrushPreset()
 {
-	const Preset &preset = d->currentPreset();
+	updateChangesInBrushPresetInSlot(d->current);
+}
+
+void BrushSettings::updateChangesInBrushPresetInSlot(int i)
+{
+	const Preset &preset = d->presetAt(i);
 	if(d->brushPresets && preset.isAttached()) {
 		d->brushPresets->changePreset(
 			preset.id, preset.changedName, preset.changedDescription,
 			preset.changedThumbnail, preset.changedBrush,
-			isCurrentEraserSlot());
+			i == ERASER_SLOT_INDEX);
 	}
 }
 
