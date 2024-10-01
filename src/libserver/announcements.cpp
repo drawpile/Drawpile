@@ -171,120 +171,135 @@ void Announcements::timerEvent(QTimerEvent *event)
 
 void Announcements::refreshListings()
 {
-	QVector<QPair<Announcement, Session>> updates;
-	QUrl refreshServer;
-	bool needsSecondPass = false;
+	using Update = QPair<Announcement, Session>;
 
-	// Gather a list of announcements that need refreshing
+	QSet<QUrl> refreshServers;
 	for(Listing &listing : m_announcements) {
-		bool shouldRefresh = listing.finishedListing && (
-			listing.refreshTimer.hasExpired(listing.announcement.refreshInterval * 60 * 1000) ||
-			listing.session->hasUrgentAnnouncementChange(listing.description) ||
-			refreshServer == listing.listServer);
-
+		bool shouldRefresh =
+			!refreshServers.contains(listing.listServer) &&
+			listing.finishedListing &&
+			(listing.refreshTimer.hasExpired(
+				 listing.announcement.refreshInterval * 60 * 1000) ||
+			 listing.session->hasUrgentAnnouncementChange(listing.description));
 		if(shouldRefresh) {
-			Q_ASSERT(listing.announcement.apiUrl == listing.listServer);
-
-			// The bulk update function can only update one server at a time.
-			// Therefore, if there are refreshable listings for more than one server,
-			// we'll call refreshListings recursively until everything has been updated.
-			// Also, if there is at least one session that needs refreshing, we'll refresh
-			// all sessions listed at the same listserver. This way, the refresh intervals
-			// sync up and we minimize the number of requests we need to make.
-			if(!refreshServer.isValid()) {
-				refreshServer = listing.listServer;
-
-			} else if(refreshServer != listing.listServer) {
-				needsSecondPass = true;
-				continue;
-			}
-
-			Session description = listing.session->getSessionAnnouncement();
-
-			updates << QPair<Announcement, Session> {
-				listing.announcement,
-				description
-			};
-
-			listing.refreshTimer.start();
+			refreshServers.insert(listing.listServer);
 		}
 	}
 
-	if(updates.isEmpty())
-		return;
+	for(QUrl refreshServer : refreshServers) {
+		QVector<Update> updates;
+		for(Listing &listing : m_announcements) {
+			if(listing.listServer == refreshServer) {
+				updates.append(
+					{listing.announcement,
+					 listing.session->getSessionAnnouncement()});
+				listing.refreshTimer.start();
+			}
+		}
 
-	// Bulk refresh
-	server::Log()
-		.about(server::Log::Level::Info, server::Log::Topic::PubList)
-		.message(QStringLiteral("Refreshing %1 announcements at %2").arg(updates.size()).arg(updates.first().first.apiUrl.toString()))
-		.to(m_config->logger());
-
-	auto *response = sessionlisting::refreshSessions(updates);
-
-	connect(response, &AnnouncementApiResponse::finished, [this, refreshServer, updates, response](const QVariant &result, const QString &message, const QString &error) {
-		response->deleteLater();
-
-		if(!message.isEmpty()) {
+		int updateCount = updates.size();
+		if(updateCount == 0) {
+			// Shouldn't happen.
+			server::Log()
+				.about(server::Log::Level::Error, server::Log::Topic::PubList)
+				.message(QStringLiteral("No announcements for server %1")
+							 .arg(refreshServer.toString()))
+				.to(m_config->logger());
+			continue;
+		} else {
 			server::Log()
 				.about(server::Log::Level::Info, server::Log::Topic::PubList)
-				.message(message)
+				.message(QStringLiteral("Refreshing %1 announcements at %2")
+							 .arg(updateCount)
+							 .arg(updates.first().first.apiUrl.toString()))
 				.to(m_config->logger());
 		}
 
-		if(!error.isEmpty()) {
-			// If bulk refresh fails, there is a serious problem
-			// with the server. Remove all listings.
-			server::Log()
-				.about(server::Log::Level::Warn, server::Log::Topic::PubList)
-				.message(refreshServer.toString() + ": bulk refresh error: " + error)
-				.to(m_config->logger());
+		AnnouncementApiResponse *response =
+			sessionlisting::refreshSessions(updates);
 
-			unlistSession(nullptr, refreshServer, false);
-			return;
-		}
+		connect(
+			response, &AnnouncementApiResponse::finished,
+			[this, refreshServer, updates, response](
+				const QVariant &result, const QString &message,
+				const QString &error) {
+				response->deleteLater();
 
-		const QVariantHash results = result.toHash();
-		const QVariantHash responses = results["responses"].toHash();
-		const QVariantHash errors = results["errors"].toHash();
+				if(!message.isEmpty()) {
+					server::Log()
+						.about(
+							server::Log::Level::Info,
+							server::Log::Topic::PubList)
+						.message(message)
+						.to(m_config->logger());
+				}
 
-		for(const auto &pair : updates) {
-			Q_ASSERT(pair.first.apiUrl == refreshServer);
+				if(!error.isEmpty()) {
+					// If bulk refresh fails, there is a serious problem
+					// with the server. Remove all listings.
+					server::Log()
+						.about(
+							server::Log::Level::Warn,
+							server::Log::Topic::PubList)
+						.message(QStringLiteral("%1: bulk refresh error: %2")
+									 .arg(refreshServer.toString(), error))
+						.to(m_config->logger());
+					unlistSession(nullptr, refreshServer, false);
+					return;
+				}
 
-			Listing *listing = findListingById(refreshServer, pair.first.listingId);
-			if(!listing) {
-				// Whoops! Looks like this session has ended
-				continue;
-			}
+				const QVariantHash results = result.toHash();
+				const QVariantHash responses = results["responses"].toHash();
+				const QVariantHash errors = results["errors"].toHash();
+				for(const Update &pair : updates) {
+					Q_ASSERT(pair.first.apiUrl == refreshServer);
 
-			listing->description = pair.second;
+					Listing *listing =
+						findListingById(refreshServer, pair.first.listingId);
+					if(!listing) {
+						// Whoops! Looks like this session has ended
+						continue;
+					}
 
-			// Remove missing listings
-			const QString listingId = QString::number(listing->announcement.listingId);
-			const QString resultValue = responses.value(listingId).toString();
-			if(resultValue != "ok") {
-				QString errorMessage = errors[listingId].toString();
-				server::Log()
-					.about(server::Log::Level::Warn, server::Log::Topic::PubList)
-					.session(listing->announcement.id)
-					.message(QStringLiteral("%1: %2 (%3)").arg(
-						listing->listServer.toString(), resultValue,
-						errorMessage.isEmpty() ? "no error message" : errorMessage))
-					.to(m_config->logger());
+					listing->description = pair.second;
 
-				QString announcementErrorMessage =
-					QStringLiteral("The session has been delisted from %1: %2").arg(
-						listing->listServer.host(),
-						errorMessage.isEmpty() ? "no reason given" : errorMessage);
-				emit announcementError(listing->session, announcementErrorMessage);
+					// Remove missing listings
+					const QString listingId =
+						QString::number(listing->announcement.listingId);
+					const QString resultValue =
+						responses.value(listingId).toString();
+					if(resultValue != QStringLiteral("ok")) {
+						QString errorMessage = errors[listingId].toString();
+						server::Log()
+							.about(
+								server::Log::Level::Warn,
+								server::Log::Topic::PubList)
+							.session(listing->announcement.id)
+							.message(QStringLiteral("%1: %2 (%3)")
+										 .arg(
+											 listing->listServer.toString(),
+											 resultValue,
+											 errorMessage.isEmpty()
+												 ? "no error message"
+												 : errorMessage))
+							.to(m_config->logger());
 
-				unlistSession(listing->session, listing->listServer, false);
-			}
-		}
-	});
+						QString announcementErrorMessage =
+							QStringLiteral(
+								"The session has been delisted from %1: %2")
+								.arg(
+									listing->listServer.host(),
+									errorMessage.isEmpty() ? "no reason given"
+														   : errorMessage);
+						emit announcementError(
+							listing->session, announcementErrorMessage);
 
-	// If there were refreshes for more than one server, do them next
-	if(needsSecondPass)
-		refreshListings();
+						unlistSession(
+							listing->session, listing->listServer, false);
+					}
+				}
+			});
+	}
 }
 
 QVector<Announcement> Announcements::getAnnouncements(const Announcable *session) const

@@ -31,6 +31,7 @@ Unreleased Version 2.2.2-pre
  * Fix: In layer view mode, render the layer truly in isolation instead of applying opacities, visibilities or alpha preserve to it. Thanks MachKerman and incoheart for reporting.
  * Feature: Add Layer > Group View to show the parent group of the current layer in isolation. Thanks Rylan for suggesting.
  * Fix: Save and export images according to the current view mode. Thanks incoheart for reporting.
+ * Server Fix: Don't get announcement refreshes stuck in an infinite loop. Thanks Meru for reporting.
 
 2024-08-09 Version 2.2.2-beta.3
  * Fix: Use more accurate timers for performance profiles if the platform supports it.
