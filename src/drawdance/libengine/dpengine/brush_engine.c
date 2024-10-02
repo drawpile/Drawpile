@@ -680,6 +680,70 @@ static void get_color_mypaint(MyPaintSurface *self, float x, float y,
 }
 
 
+// The MyPaint brush engine sometimes ignores the first stroke issued. We do a
+// dummy stroke to begin with to get that out of the way, these dummy functions
+// here just accept the stroke and throw it away.
+
+static int add_dab_mypaint_pigment_dummy(
+    DP_UNUSED MyPaintSurface2 *self, DP_UNUSED float x, DP_UNUSED float y,
+    DP_UNUSED float radius, DP_UNUSED float color_r, DP_UNUSED float color_g,
+    DP_UNUSED float color_b, DP_UNUSED float opaque, DP_UNUSED float hardness,
+    DP_UNUSED float alpha_eraser, DP_UNUSED float aspect_ratio,
+    DP_UNUSED float angle, DP_UNUSED float lock_alpha, DP_UNUSED float colorize,
+    DP_UNUSED float posterize, DP_UNUSED float posterize_num,
+    DP_UNUSED float paint)
+{
+    return 1;
+}
+
+static int add_dab_mypaint_dummy(MyPaintSurface *self, float x, float y,
+                                 float radius, float color_r, float color_g,
+                                 float color_b, float opaque, float hardness,
+                                 float alpha_eraser, float aspect_ratio,
+                                 float angle, float lock_alpha, float colorize)
+{
+    return add_dab_mypaint_pigment_dummy(
+        (MyPaintSurface2 *)self, x, y, radius, color_r, color_g, color_b,
+        opaque, hardness, alpha_eraser, aspect_ratio, angle, lock_alpha,
+        colorize, 0.0f, 0.0f, 0.0f);
+}
+
+static void get_color_mypaint_pigment_dummy(
+    DP_UNUSED MyPaintSurface2 *self, DP_UNUSED float x, DP_UNUSED float y,
+    DP_UNUSED float radius, float *color_r, float *color_g, float *color_b,
+    float *color_a, DP_UNUSED float paint)
+{
+    *color_r = 0.0f;
+    *color_g = 0.0f;
+    *color_b = 0.0f;
+    *color_a = 0.0f;
+}
+
+static void get_color_mypaint_dummy(MyPaintSurface *self, float x, float y,
+                                    float radius, float *color_r,
+                                    float *color_g, float *color_b,
+                                    float *color_a)
+{
+    get_color_mypaint_pigment_dummy((MyPaintSurface2 *)self, x, y, radius,
+                                    color_r, color_g, color_b, color_a, 0.0f);
+}
+
+static void issue_dummy_mypaint_stroke(MyPaintBrush *mb)
+{
+    MyPaintSurface2 surface = {{add_dab_mypaint_dummy, get_color_mypaint_dummy,
+                                NULL, NULL, NULL, NULL, 0},
+                               add_dab_mypaint_pigment_dummy,
+                               get_color_mypaint_pigment_dummy,
+                               NULL};
+    mypaint_brush_reset(mb);
+    mypaint_brush_new_stroke(mb);
+    mypaint_brush_stroke_to_2(mb, &surface, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+                              1000.0f, 1.0f, 0.0f, 0.0f);
+    mypaint_brush_stroke_to_2(mb, &surface, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0,
+                              1.0f, 0.0f, 0.0f);
+}
+
+
 DP_BrushEngine *
 DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
                     DP_BrushEnginePollControlFn poll_control_or_null,
@@ -720,6 +784,7 @@ DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
         user};
     DP_queue_init(&be->stabilizer.queue, 128, sizeof(DP_BrushPoint));
     DP_vector_init(&be->stabilizer.points, 128, sizeof(DP_BrushPoint));
+    issue_dummy_mypaint_stroke(be->mypaint_brush);
     return be;
 }
 
