@@ -15,8 +15,9 @@ public:
 		MagicWandTool *tool, const QAtomicInt &cancel,
 		const drawdance::CanvasState &canvasState, const QPointF &point,
 		int size, double tolerance, int sourceLayerId, int gap, int expansion,
-		int featherRadius, bool continuous, int targetLayerId,
-		DP_ViewMode viewMode, int activeLayerId, int activeFrameIndex)
+		DP_FloodFillKernel kernel, int featherRadius, bool continuous,
+		int targetLayerId, DP_ViewMode viewMode, int activeLayerId,
+		int activeFrameIndex)
 		: m_tool(tool)
 		, m_cancel(cancel)
 		, m_canvasState(canvasState)
@@ -26,6 +27,7 @@ public:
 		, m_sourceLayerId(sourceLayerId)
 		, m_gap(gap)
 		, m_expansion(expansion)
+		, m_kernel(kernel)
 		, m_featherRadius(featherRadius)
 		, m_continuous(continuous)
 		, m_targetLayerId(targetLayerId)
@@ -41,8 +43,8 @@ public:
 		m_result = m_canvasState.floodFill(
 			0, 0, m_point.x(), m_point.y(), fillColor, m_tolerance,
 			m_sourceLayerId, m_size, m_continuous ? m_gap : 0, m_expansion,
-			m_featherRadius, false, m_continuous, m_viewMode, m_activeLayerId,
-			m_activeFrameIndex, m_cancel, m_img, m_x, m_y);
+			m_kernel, m_featherRadius, false, m_continuous, m_viewMode,
+			m_activeLayerId, m_activeFrameIndex, m_cancel, m_img, m_x, m_y);
 		if(m_result != DP_FLOOD_FILL_SUCCESS &&
 		   m_result != DP_FLOOD_FILL_CANCELLED) {
 			m_error = QString::fromUtf8(DP_error());
@@ -67,6 +69,7 @@ private:
 	int m_sourceLayerId;
 	int m_gap;
 	int m_expansion;
+	DP_FloodFillKernel m_kernel;
 	int m_featherRadius;
 	bool m_continuous;
 	int m_targetLayerId;
@@ -155,6 +158,7 @@ void MagicWandTool::updateParameters()
 			selectionParams.featherRadius != m_pendingParams.featherRadius ||
 			selectionParams.gap != m_pendingParams.gap ||
 			selectionParams.source != m_pendingParams.source ||
+			selectionParams.kernel != m_pendingParams.kernel ||
 			selectionParams.continuous != m_pendingParams.continuous;
 		m_op = SelectionTool::resolveOp(
 			m_lastConstrain, m_lastCenter, selectionParams.defaultOp);
@@ -206,6 +210,7 @@ void MagicWandTool::fillAt(const QPointF &point, bool constrain, bool center)
 			this, m_cancel, paintEngine->viewCanvasState(), point,
 			selectionParams.size, selectionParams.tolerance, layerId,
 			selectionParams.gap, selectionParams.expansion,
+			DP_FloodFillKernel(selectionParams.kernel),
 			selectionParams.featherRadius, selectionParams.continuous,
 			activeLayerId, paintEngine->viewMode(), paintEngine->viewLayer(),
 			paintEngine->viewFrame()));

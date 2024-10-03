@@ -240,7 +240,7 @@ private slots:
 	void showBrushSettingsDialogPreset();
 
 	void showAlterSelectionDialog();
-	void alterSelection(int expand, int feather, bool fromEdge);
+	void alterSelection(int expand, int kernel, int feather, bool fromEdge);
 	void changeUndoDepthLimit();
 
 	void updateDevToolsActions();

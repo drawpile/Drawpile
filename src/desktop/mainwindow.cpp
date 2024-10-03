@@ -3764,13 +3764,15 @@ void MainWindow::showAlterSelectionDialog()
 	}
 }
 
-void MainWindow::alterSelection(int expand, int feather, bool fromEdge)
+void MainWindow::alterSelection(
+	int expand, int kernel, int feather, bool fromEdge)
 {
 	canvas::CanvasModel *canvas = m_doc->canvas();
 	if(canvas) {
 		SelectionAlteration *sa = new SelectionAlteration(
 			canvas->paintEngine()->viewCanvasState(), m_doc->client()->myId(),
-			canvas::CanvasModel::MAIN_SELECTION_ID, expand, feather, fromEdge);
+			canvas::CanvasModel::MAIN_SELECTION_ID, expand, kernel, feather,
+			fromEdge);
 		sa->setAutoDelete(true);
 		connect(
 			sa, &SelectionAlteration::success, m_doc, &Document::selectMask);

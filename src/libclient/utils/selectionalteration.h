@@ -12,7 +12,7 @@ class SelectionAlteration : public QObject, public QRunnable {
 public:
 	SelectionAlteration(
 		const drawdance::CanvasState &canvasState, unsigned int contextId,
-		int selectionId, int expand, int feather, bool fromEdge,
+		int selectionId, int expand, int kernel, int feather, bool fromEdge,
 		QObject *parent = nullptr);
 
 	void run() override;
@@ -22,7 +22,7 @@ public slots:
 
 signals:
 	void success(const QImage &img, int x, int y);
-    void failure(int floodFillResult);
+	void failure(int floodFillResult);
 
 private:
 	QAtomicInt m_cancel;
@@ -30,6 +30,7 @@ private:
 	const unsigned int m_contextId;
 	const int m_selectionId;
 	const int m_expand;
+	const int m_kernel;
 	const int m_feather;
 	const bool m_fromEdge;
 };

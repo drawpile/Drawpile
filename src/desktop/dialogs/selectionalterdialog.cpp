@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+extern "C" {
+#include <dpengine/flood_fill.h>
+}
 #include "desktop/dialogs/selectionalterdialog.h"
 #include "desktop/utils/widgetutils.h"
-#include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/widgets/expandshrinkspinner.h"
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QDialogButtonBox>
@@ -18,47 +21,16 @@ SelectionAlterDialog::SelectionAlterDialog(QWidget *parent)
 	setWindowModality(Qt::WindowModal);
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
-	QHBoxLayout *expandLayout = new QHBoxLayout;
-	expandLayout->setSpacing(0);
-
-	m_expandSpinner = new QSpinBox;
-	m_expandSpinner->setRange(0, 9999);
-	m_expandSpinner->setValue(getIntProperty(parent, PROP_EXPAND));
-	m_expandSpinner->setSuffix(tr("px"));
-	expandLayout->addWidget(m_expandSpinner, 1);
+	m_expandShrinkSpinner = new widgets::ExpandShrinkSpinner(false);
+	m_expandShrinkSpinner->setSpinnerRange(0, 9999);
+	m_expandShrinkSpinner->setSpinnerValue(getIntProperty(parent, PROP_EXPAND));
+	m_expandShrinkSpinner->setShrink(getBoolProperty(parent, PROP_SHRINK));
+	m_expandShrinkSpinner->setKernel(getIntProperty(parent, PROP_KERNEL));
+	layout->addWidget(m_expandShrinkSpinner);
 	connect(
-		m_expandSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_expandShrinkSpinner,
+		&widgets::ExpandShrinkSpinner::spinnerValueChanged, this,
 		&SelectionAlterDialog::updateControls);
-
-	expandLayout->addSpacing(3);
-
-	widgets::GroupedToolButton *expandButton =
-		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
-	expandButton->setIcon(QIcon::fromTheme("zoom-in"));
-	expandButton->setStatusTip(tr("Expand"));
-	expandButton->setToolTip(expandButton->statusTip());
-	expandButton->setCheckable(true);
-	expandButton->setChecked(!getBoolProperty(parent, PROP_SHRINK));
-	expandLayout->addWidget(expandButton);
-
-	widgets::GroupedToolButton *shrinkButton =
-		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
-	shrinkButton->setIcon(QIcon::fromTheme("zoom-out"));
-	shrinkButton->setStatusTip(tr("Shrink"));
-	shrinkButton->setToolTip(shrinkButton->statusTip());
-	shrinkButton->setCheckable(true);
-	shrinkButton->setChecked(!expandButton->isChecked());
-	expandLayout->addWidget(shrinkButton);
-
-	m_expandGroup = new QButtonGroup(this);
-	m_expandGroup->addButton(expandButton, 0);
-	m_expandGroup->addButton(shrinkButton, 1);
-	connect(
-		m_expandGroup,
-		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
-		&SelectionAlterDialog::updateControls);
-
-	layout->addLayout(expandLayout);
 
 	m_featherSpinner = new QSpinBox;
 	m_featherSpinner->setRange(0, 999);
@@ -107,16 +79,14 @@ int SelectionAlterDialog::getIntProperty(QWidget *w, const char *name)
 
 void SelectionAlterDialog::updateControls()
 {
-	bool shrink = m_expandGroup->checkedId() != 0;
-	bool haveExpand = m_expandSpinner->value() != 0;
+	bool shrink = m_expandShrinkSpinner->isShrink();
+	bool haveExpand = m_expandShrinkSpinner->spinnerValue() != 0;
 	bool haveFeather = m_featherSpinner->value() != 0;
 
 	if(shrink) {
-		m_expandSpinner->setPrefix(tr("Shrink: "));
 		//: "Feather" is a verb here, referring to blurring the selection.
 		m_fromEdgeBox->setText(tr("Shrink and feather from canvas edge"));
 	} else {
-		m_expandSpinner->setPrefix(tr("Expand: "));
 		//: "Feather" is a verb here, referring to blurring the selection.
 		m_fromEdgeBox->setText(tr("Feather from canvas edge"));
 	}
@@ -129,18 +99,21 @@ void SelectionAlterDialog::updateControls()
 
 void SelectionAlterDialog::emitAlterSelectionRequested()
 {
-	bool shrink = m_expandGroup->checkedId() != 0;
-	int expand = m_expandSpinner->value();
+	bool shrink = m_expandShrinkSpinner->isShrink();
+	int expand = m_expandShrinkSpinner->spinnerValue();
+	int kernel = m_expandShrinkSpinner->kernel();
 	int feather = m_featherSpinner->value();
 	bool fromEdge = m_fromEdgeBox->isChecked();
 	QWidget *pw = parentWidget();
 	if(pw) {
 		pw->setProperty(PROP_SHRINK, shrink);
 		pw->setProperty(PROP_EXPAND, expand);
+		pw->setProperty(PROP_KERNEL, kernel);
 		pw->setProperty(PROP_FEATHER, feather);
 		pw->setProperty(PROP_FROM_EDGE, fromEdge);
 	}
-	emit alterSelectionRequested(expand * (shrink ? -1 : 1), feather, fromEdge);
+	emit alterSelectionRequested(
+		m_expandShrinkSpinner->effectiveValue(), kernel, feather, fromEdge);
 }
 
 }

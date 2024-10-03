@@ -33,6 +33,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Save and export images according to the current view mode. Thanks incoheart for reporting.
  * Server Fix: Don't get announcement refreshes stuck in an infinite loop. Thanks Meru for reporting.
  * Fix: Make MyPaint brushes not ignore the first stroke made with them. This would also sometimes lead to a blank preview.
+ * Feature: Allow choosing between a round and square expansion/shrinking kernel in flood fill, magic wand and when altering a selection. The latter is particularly useful for pixel art. Thanks Bigcheese and MorrowShore for suggesting.
 
 2024-08-09 Version 2.2.2-beta.3
  * Fix: Use more accurate timers for performance profiles if the platform supports it.

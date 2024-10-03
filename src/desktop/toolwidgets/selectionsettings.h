@@ -15,6 +15,7 @@ class CanvasModel;
 }
 
 namespace widgets {
+class ExpandShrinkSpinner;
 class GroupedToolButton;
 }
 
@@ -75,8 +76,7 @@ private:
 	KisSliderSpinBox *m_sizeSlider = nullptr;
 	KisSliderSpinBox *m_opacitySlider = nullptr;
 	KisSliderSpinBox *m_toleranceSlider = nullptr;
-	QButtonGroup *m_expandGroup = nullptr;
-	KisSliderSpinBox *m_expandSlider = nullptr;
+	widgets::ExpandShrinkSpinner *m_expandShrink = nullptr;
 	KisSliderSpinBox *m_featherSlider = nullptr;
 	KisSliderSpinBox *m_closeGapsSlider = nullptr;
 	QButtonGroup *m_sourceGroup = nullptr;

@@ -345,6 +345,8 @@ target_sources(drawpile PRIVATE
 	widgets/curvewidget.h
 	widgets/dualcolorbutton.cpp
 	widgets/dualcolorbutton.h
+	widgets/expandshrinkspinner.cpp
+	widgets/expandshrinkspinner.h
 	widgets/filmstrip.cpp
 	widgets/filmstrip.h
 	widgets/flipbookview.cpp

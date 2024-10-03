@@ -58,6 +58,7 @@ public:
 		int featherRadius = 0;
 		int gap = 0;
 		int source = int(SelectionSource::Layer);
+		int kernel = 0;
 		bool continuous = true;
 	};
 

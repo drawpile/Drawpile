@@ -18,9 +18,9 @@ public:
 		FloodFill *tool, const QAtomicInt &cancel,
 		const drawdance::CanvasState &canvasState, unsigned int contextId,
 		const QPointF &point, const QColor &fillColor, double tolerance,
-		int sourceLayerId, int size, int gap, int expansion, int featherRadius,
-		Area area, DP_ViewMode viewMode, int activeLayerId,
-		int activeFrameIndex)
+		int sourceLayerId, int size, int gap, int expansion,
+		DP_FloodFillKernel kernel, int featherRadius, Area area,
+		DP_ViewMode viewMode, int activeLayerId, int activeFrameIndex)
 		: m_tool{tool}
 		, m_cancel{cancel}
 		, m_canvasState{canvasState}
@@ -32,6 +32,7 @@ public:
 		, m_size{size}
 		, m_gap{gap}
 		, m_expansion{expansion}
+		, m_kernel(kernel)
 		, m_featherRadius{featherRadius}
 		, m_area(area)
 		, m_viewMode{viewMode}
@@ -45,8 +46,8 @@ public:
 		if(m_area == Area::Selection) {
 			m_result = m_canvasState.selectionFill(
 				m_contextId, canvas::CanvasModel::MAIN_SELECTION_ID,
-				m_fillColor, m_expansion, m_featherRadius, false, m_cancel,
-				m_img, m_x, m_y);
+				m_fillColor, m_expansion, m_kernel, m_featherRadius, false,
+				m_cancel, m_img, m_x, m_y);
 		} else {
 			int size = m_canvasState.selectionExists(
 						   m_contextId, canvas::CanvasModel::MAIN_SELECTION_ID)
@@ -57,8 +58,8 @@ public:
 				m_contextId, canvas::CanvasModel::MAIN_SELECTION_ID,
 				m_point.x(), m_point.y(), m_fillColor, m_tolerance,
 				m_sourceLayerId, size, continuous ? m_gap : 0, m_expansion,
-				m_featherRadius, false, continuous, m_viewMode, m_activeLayerId,
-				m_activeFrameIndex, m_cancel, m_img, m_x, m_y);
+				m_kernel, m_featherRadius, false, continuous, m_viewMode,
+				m_activeLayerId, m_activeFrameIndex, m_cancel, m_img, m_x, m_y);
 		}
 		if(m_result != DP_FLOOD_FILL_SUCCESS &&
 		   m_result != DP_FLOOD_FILL_CANCELLED) {
@@ -87,6 +88,7 @@ private:
 	int m_size;
 	int m_gap;
 	int m_expansion;
+	DP_FloodFillKernel m_kernel;
 	int m_featherRadius;
 	Area m_area;
 	DP_ViewMode m_viewMode;
@@ -105,6 +107,7 @@ FloodFill::FloodFill(ToolController &owner)
 		  true, true, false, false, false)
 	, m_tolerance(0.01)
 	, m_expansion(0)
+	, m_kernel(int(DP_FLOOD_FILL_KERNEL_ROUND))
 	, m_featherRadius(0)
 	, m_size(500)
 	, m_opacity(1.0)
@@ -186,13 +189,14 @@ ToolState FloodFill::toolState() const
 }
 
 void FloodFill::setParameters(
-	qreal tolerance, int expansion, int featherRadius, int size, qreal opacity,
-	int gap, Source source, int blendMode, Area area)
+	qreal tolerance, int expansion, int kernel, int featherRadius, int size,
+	qreal opacity, int gap, Source source, int blendMode, Area area)
 {
 	bool needsUpdate = opacity != m_opacity || blendMode != m_blendMode;
 	bool needsRefill = tolerance != m_tolerance || expansion != m_expansion ||
-					   featherRadius != m_featherRadius || size != m_size ||
-					   gap != m_gap || source != m_source || area != m_area;
+					   kernel != m_kernel || featherRadius != m_featherRadius ||
+					   size != m_size || gap != m_gap || source != m_source ||
+					   area != m_area;
 
 	if(needsUpdate) {
 		m_opacity = opacity;
@@ -205,6 +209,7 @@ void FloodFill::setParameters(
 	if(needsRefill) {
 		m_tolerance = tolerance;
 		m_expansion = expansion;
+		m_kernel = kernel;
 		m_featherRadius = featherRadius;
 		m_size = size;
 		m_gap = gap;
@@ -260,9 +265,9 @@ void FloodFill::fillAt(const QPointF &point, int activeLayerId)
 		m_owner.executeAsync(new Task(
 			this, m_cancel, paintEngine->viewCanvasState(),
 			canvas->localUserId(), point, fillColor, m_tolerance, layerId,
-			m_size, m_gap, m_expansion, m_featherRadius, m_area,
-			paintEngine->viewMode(), paintEngine->viewLayer(),
-			paintEngine->viewFrame()));
+			m_size, m_gap, m_expansion, DP_FloodFillKernel(m_kernel),
+			m_featherRadius, m_area, paintEngine->viewMode(),
+			paintEngine->viewLayer(), paintEngine->viewFrame()));
 	}
 }
 

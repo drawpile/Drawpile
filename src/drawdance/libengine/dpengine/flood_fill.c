@@ -329,19 +329,25 @@ static int get_kernel_diameter(int radius)
     return radius * 2 + 1;
 }
 
-static unsigned char *generate_expansion_kernel(int expand)
+static unsigned char *generate_expansion_kernel(DP_FloodFillKernel kernel_shape,
+                                                int expand)
 {
-    int diameter = get_kernel_diameter(expand);
-    size_t kernel_size = DP_square_size(DP_int_to_size(diameter));
-    unsigned char *kernel = DP_malloc(kernel_size);
-    int rr = DP_square_int(expand);
-    for (int y = 0; y < diameter; ++y) {
-        for (int x = 0; x < diameter; ++x) {
-            kernel[y * diameter + x] =
-                DP_square_int(x - expand) + DP_square_int(y - expand) <= rr;
-        }
+    if (kernel_shape == DP_FLOOD_FILL_KERNEL_SQUARE) {
+        return NULL;
     }
-    return kernel;
+    else {
+        int diameter = get_kernel_diameter(expand);
+        size_t kernel_size = DP_square_size(DP_int_to_size(diameter));
+        unsigned char *kernel = DP_malloc(kernel_size);
+        int rr = DP_square_int(expand);
+        for (int y = 0; y < diameter; ++y) {
+            for (int x = 0; x < diameter; ++x) {
+                kernel[y * diameter + x] =
+                    DP_square_int(x - expand) + DP_square_int(y - expand) <= rr;
+            }
+        }
+        return kernel;
+    }
 }
 
 static void apply_expansion_kernel(float *mask, int mask_width, float value,
@@ -356,12 +362,10 @@ static void apply_expansion_kernel(float *mask, int mask_width, float value,
     int start_y = DP_max_int(start_y0, 0);
     int end_x = DP_min_int(x0 + expand, width - 1);
     int end_y = DP_min_int(y0 + expand, height - 1);
-    int diameter = get_kernel_diameter(expand);
+    int diameter = kernel ? get_kernel_diameter(expand) : 0;
     for (int y = start_y; y <= end_y; ++y) {
         for (int x = start_x; x <= end_x; ++x) {
-            int kernel_x = x - start_x0;
-            int kernel_y = y - start_y0;
-            if (kernel[kernel_y * diameter + kernel_x]) {
+            if (!kernel || kernel[(y - start_y0) * diameter + (x - start_x0)]) {
                 int mx = x - expand_min_x + feather_radius;
                 int my = y - expand_min_y + feather_radius;
                 int index = my * mask_width + mx;
@@ -384,9 +388,7 @@ static float erode_mask_pixel(const float *in_mask, int mask_width,
     float value = 1.0f;
     for (int y = start_y; y <= end_y; ++y) {
         for (int x = start_x; x <= end_x; ++x) {
-            int kernel_x = x - start_x;
-            int kernel_y = y - start_y;
-            if (kernel[kernel_y * diameter + kernel_x]) {
+            if (!kernel || kernel[(y - start_y) * diameter + (x - start_x)]) {
                 value = DP_min_float(value, in_mask[y * mask_width + x]);
                 if (value == 0.0f) {
                     return 0.0f;
@@ -402,7 +404,7 @@ static void erode_mask(DP_FillContext *c, const float *in_mask, int in_width,
                        int feather_radius, int shrink,
                        const unsigned char *kernel)
 {
-    int diameter = get_kernel_diameter(shrink);
+    int diameter = kernel ? get_kernel_diameter(shrink) : 0;
     for (int y = shrink; y < in_height - shrink && !is_cancelled(c); ++y) {
         int out_y = y - shrink + feather_radius;
         for (int x = shrink; x < in_width - shrink; ++x) {
@@ -593,8 +595,9 @@ static void feather_mask(DP_FillContext *c, float *mask, float *tmp, int width,
 
 static float *make_mask(DP_FillContext *c,
                         float (*get_output)(void *, int, int), int expand,
-                        int feather_radius, bool from_edge, int *out_img_x,
-                        int *out_img_y, int *out_img_width, int *out_img_height)
+                        DP_FloodFillKernel kernel_shape, int feather_radius,
+                        bool from_edge, int *out_img_x, int *out_img_y,
+                        int *out_img_width, int *out_img_height)
 {
     int min_x = c->min_x, min_y = c->min_y;
     int max_x = c->max_x, max_y = c->max_y;
@@ -629,7 +632,7 @@ static float *make_mask(DP_FillContext *c,
         }
     }
     else if (expand > 0) {
-        unsigned char *kernel = generate_expansion_kernel(expand);
+        unsigned char *kernel = generate_expansion_kernel(kernel_shape, expand);
         for (int y = min_y; y <= max_y; ++y) {
             if (is_cancelled(c)) {
                 DP_free(kernel);
@@ -676,7 +679,7 @@ static float *make_mask(DP_FillContext *c,
                          tmp_height);
         }
 
-        unsigned char *kernel = generate_expansion_kernel(shrink);
+        unsigned char *kernel = generate_expansion_kernel(kernel_shape, shrink);
         erode_mask(c, tmp, tmp_width, tmp_height, mask, img_width,
                    feather_radius, shrink, kernel);
         DP_free(kernel);
@@ -794,14 +797,13 @@ static DP_FloodFillResult finish_fill(DP_FillContext *c, float *mask, int img_x,
     return DP_FLOOD_FILL_SUCCESS;
 }
 
-DP_FloodFillResult
-DP_flood_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
-              int x, int y, DP_UPixelFloat fill_color, double tolerance,
-              int layer_id, int size, int gap, int expand, int feather_radius,
-              bool from_edge, bool continuous, DP_ViewMode view_mode,
-              int active_layer_id, int active_frame_index, DP_Image **out_img,
-              int *out_x, int *out_y, DP_FloodFillShouldCancelFn should_cancel,
-              void *user)
+DP_FloodFillResult DP_flood_fill(
+    DP_CanvasState *cs, unsigned int context_id, int selection_id, int x, int y,
+    DP_UPixelFloat fill_color, double tolerance, int layer_id, int size,
+    int gap, int expand, DP_FloodFillKernel kernel_shape, int feather_radius,
+    bool from_edge, bool continuous, DP_ViewMode view_mode, int active_layer_id,
+    int active_frame_index, DP_Image **out_img, int *out_x, int *out_y,
+    DP_FloodFillShouldCancelFn should_cancel, void *user)
 {
     DP_ASSERT(cs);
 
@@ -938,8 +940,8 @@ DP_flood_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
 
     int img_x, img_y, img_width, img_height;
     float *mask = make_mask(&c.parent, get_flood_mask_value, expand,
-                            DP_max_int(feather_radius, 0), from_edge, &img_x,
-                            &img_y, &img_width, &img_height);
+                            kernel_shape, DP_max_int(feather_radius, 0),
+                            from_edge, &img_x, &img_y, &img_width, &img_height);
     DP_free(c.output);
     if (is_cancelled(&c.parent)) {
         DP_free(mask);
@@ -1011,7 +1013,8 @@ static float get_selection_mask_value(void *user, int x, int y)
 
 DP_FloodFillResult
 DP_selection_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
-                  DP_UPixelFloat fill_color, int expand, int feather_radius,
+                  DP_UPixelFloat fill_color, int expand,
+                  DP_FloodFillKernel kernel_shape, int feather_radius,
                   bool from_edge, DP_Image **out_img, int *out_x, int *out_y,
                   DP_FloodFillShouldCancelFn should_cancel, void *user)
 {
@@ -1030,7 +1033,7 @@ DP_selection_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
     }
 
     int img_x, img_y, img_width, img_height;
-    float *mask = make_mask(&c, get_selection_mask_value, expand,
+    float *mask = make_mask(&c, get_selection_mask_value, expand, kernel_shape,
                             DP_max_int(feather_radius, 0), from_edge, &img_x,
                             &img_y, &img_width, &img_height);
     if (is_cancelled(&c)) {

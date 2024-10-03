@@ -28,7 +28,8 @@ static const ToolProperties::RangedValue<int> expand{
 	opacity{QStringLiteral("opacity"), 100, 1, 100},
 	gap{QStringLiteral("gap"), 0, 0, 32},
 	source{QStringLiteral("source"), 2, 0, 3},
-	area{QStringLiteral("area"), 0, 0, 2};
+	area{QStringLiteral("area"), 0, 0, 2},
+	kernel{QStringLiteral("kernel"), 0, 0, 1};
 static const ToolProperties::RangedValue<double> tolerance{
 	QStringLiteral("tolerance"), 0.0, 0.0, 1.0};
 }
@@ -51,13 +52,11 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	m_ui = new Ui_FillSettings;
 	m_ui->setupUi(uiwidget);
 	m_ui->size->setExponentRatio(3.0);
+	m_ui->expandShrink->setBlockUpdateSignalOnDrag(true);
+	m_ui->expandShrink->setSpinnerRange(props::expand.min, props::expand.max);
 	utils::setWidgetRetainSizeWhenHidden(m_ui->sourceDummyCombo, true);
 	m_ui->sourceDummyCombo->hide();
 	utils::setWidgetRetainSizeWhenHidden(m_ui->sourceFillSource, true);
-
-	m_expandGroup = new QButtonGroup(this);
-	m_expandGroup->addButton(m_ui->expandButton, 0);
-	m_expandGroup->addButton(m_ui->shrinkButton, 1);
 
 	m_sourceGroup = new QButtonGroup(this);
 	m_sourceGroup->setExclusive(true);
@@ -94,11 +93,13 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 		m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&FillSettings::pushSettings);
 	connect(
-		m_expandGroup,
-		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
+		m_ui->expandShrink, &widgets::ExpandShrinkSpinner::spinnerValueChanged,
+		this, &FillSettings::pushSettings);
+	connect(
+		m_ui->expandShrink, &widgets::ExpandShrinkSpinner::shrinkChanged, this,
 		&FillSettings::pushSettings);
 	connect(
-		m_ui->expand, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_ui->expandShrink, &widgets::ExpandShrinkSpinner::kernelChanged, this,
 		&FillSettings::pushSettings);
 	connect(
 		m_ui->feather, QOverload<int>::of(&QSpinBox::valueChanged), this,
@@ -163,16 +164,14 @@ void FillSettings::pushSettings()
 
 	FloodFill *tool =
 		static_cast<FloodFill *>(controller()->getTool(Tool::FLOODFILL));
-	bool shrink = m_expandGroup->checkedId() != 0;
 	int size = m_ui->size->value();
 	tool->setParameters(
 		m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()),
-		m_ui->expand->value() * (shrink ? -1 : 1), m_ui->feather->value(),
-		isSizeUnlimited(size) ? -1 : size, m_ui->opacity->value() / 100.0,
-		m_ui->gap->value(), FloodFill::Source(m_sourceGroup->checkedId()),
-		blendMode, FloodFill::Area(area));
-
-	m_ui->expand->setPrefix(shrink ? tr("Shrink: ") : tr("Expand: "));
+		m_ui->expandShrink->effectiveValue(), m_ui->expandShrink->kernel(),
+		m_ui->feather->value(), isSizeUnlimited(size) ? -1 : size,
+		m_ui->opacity->value() / 100.0, m_ui->gap->value(),
+		FloodFill::Source(m_sourceGroup->checkedId()), blendMode,
+		FloodFill::Area(area));
 
 	if(!m_ui->sourceFillSource->isEnabled() &&
 	   m_ui->sourceFillSource->isChecked()) {
@@ -230,8 +229,9 @@ ToolProperties FillSettings::saveToolSettings()
 	cfg.setValue(
 		props::tolerance,
 		m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()));
-	cfg.setValue(props::shrink, m_expandGroup->checkedId() != 0);
-	cfg.setValue(props::expand, m_ui->expand->value());
+	cfg.setValue(props::expand, m_ui->expandShrink->spinnerValue());
+	cfg.setValue(props::shrink, m_ui->expandShrink->isShrink());
+	cfg.setValue(props::kernel, m_ui->expandShrink->kernel());
 	cfg.setValue(props::featherRadius, m_ui->feather->value());
 	cfg.setValue(props::size, m_ui->size->value());
 	cfg.setValue(props::opacity, m_ui->opacity->value());
@@ -263,8 +263,9 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 {
 	m_ui->tolerance->setValue(
 		cfg.value(props::tolerance) * m_ui->tolerance->maximum());
-	checkGroupButton(m_expandGroup, cfg.value(props::shrink) ? 1 : 0);
-	m_ui->expand->setValue(cfg.value(props::expand));
+	m_ui->expandShrink->setSpinnerValue(cfg.value(props::expand));
+	m_ui->expandShrink->setShrink(cfg.value(props::shrink));
+	m_ui->expandShrink->setKernel(cfg.value(props::kernel));
 	m_ui->feather->setValue(cfg.value(props::featherRadius));
 	m_ui->size->setValue(cfg.value(props::size));
 	m_ui->opacity->setValue(cfg.value(props::opacity));

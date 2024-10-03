@@ -8,6 +8,10 @@ class QCheckBox;
 class QDialogButtonBox;
 class QSpinBox;
 
+namespace widgets {
+class ExpandShrinkSpinner;
+}
+
 namespace dialogs {
 
 class SelectionAlterDialog final : public QDialog {
@@ -16,11 +20,13 @@ public:
 	SelectionAlterDialog(QWidget *parent = nullptr);
 
 signals:
-	void alterSelectionRequested(int expand, int feather, bool fromEdge);
+	void
+	alterSelectionRequested(int expand, int kernel, int feather, bool fromEdge);
 
 private:
 	static constexpr char PROP_SHRINK[] = "SelectionAlterDialog_shrink";
 	static constexpr char PROP_EXPAND[] = "SelectionAlterDialog_expand";
+	static constexpr char PROP_KERNEL[] = "SelectionAlterDialog_kernel";
 	static constexpr char PROP_FEATHER[] = "SelectionAlterDialog_feather";
 	static constexpr char PROP_FROM_EDGE[] = "SelectionAlterDialog_fromEdge";
 
@@ -30,8 +36,7 @@ private:
 	void updateControls();
 	void emitAlterSelectionRequested();
 
-	QButtonGroup *m_expandGroup;
-	QSpinBox *m_expandSpinner;
+	widgets::ExpandShrinkSpinner *m_expandShrinkSpinner;
 	QSpinBox *m_featherSpinner;
 	QCheckBox *m_fromEdgeBox;
 	QDialogButtonBox *m_buttons;

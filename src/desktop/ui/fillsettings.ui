@@ -26,56 +26,7 @@
    <property name="spacing">
     <number>3</number>
    </property>
-   <item row="11" column="0">
-    <widget class="QLabel" name="sourceLabel">
-     <property name="text">
-      <string>Source:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="opacity">
-     <property name="suffix">
-      <string>%</string>
-     </property>
-     <property name="prefix">
-      <string>Opacity: </string>
-     </property>
-     <property name="minimum">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <number>100</number>
-     </property>
-     <property name="value">
-      <number>100</number>
-     </property>
-     <property name="blockUpdateSignalOnDrag">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="0">
-    <widget class="QLabel" name="modeLabel">
-     <property name="text">
-      <string>Mode:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="tolerance">
-     <property name="prefix">
-      <string>Tolerance: </string>
-     </property>
-     <property name="maximum">
-      <number>254</number>
-     </property>
-     <property name="blockUpdateSignalOnDrag">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="1">
+   <item row="11" column="1">
     <layout class="QHBoxLayout" name="modeLayout">
      <property name="spacing">
       <number>0</number>
@@ -174,20 +125,7 @@
      </item>
     </layout>
    </item>
-   <item row="14" column="0" colspan="2">
-    <spacer name="bottomSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="11" column="1">
+   <item row="10" column="1">
     <layout class="QHBoxLayout" name="sourceLayout">
      <property name="spacing">
       <number>0</number>
@@ -287,6 +225,100 @@
      </item>
     </layout>
    </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="tolerance">
+     <property name="prefix">
+      <string>Tolerance: </string>
+     </property>
+     <property name="maximum">
+      <number>254</number>
+     </property>
+     <property name="blockUpdateSignalOnDrag" stdset="0">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="gap">
+     <property name="suffix">
+      <string>px</string>
+     </property>
+     <property name="prefix">
+      <string>Close Gaps: </string>
+     </property>
+     <property name="maximum">
+      <number>32</number>
+     </property>
+     <property name="blockUpdateSignalOnDrag" stdset="0">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="0" colspan="2">
+    <spacer name="bottomSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="7" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="feather">
+     <property name="suffix">
+      <string>px</string>
+     </property>
+     <property name="prefix">
+      <string>Feather: </string>
+     </property>
+     <property name="maximum">
+      <number>40</number>
+     </property>
+     <property name="blockUpdateSignalOnDrag" stdset="0">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="opacity">
+     <property name="suffix">
+      <string>%</string>
+     </property>
+     <property name="prefix">
+      <string>Opacity: </string>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>100</number>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+     <property name="blockUpdateSignalOnDrag" stdset="0">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0">
+    <widget class="QLabel" name="modeLabel">
+     <property name="text">
+      <string>Mode:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0">
+    <widget class="QLabel" name="sourceLabel">
+     <property name="text">
+      <string>Source:</string>
+     </property>
+    </widget>
+   </item>
    <item row="2" column="0" colspan="2">
     <widget class="KisSliderSpinBox" name="size">
      <property name="suffix">
@@ -304,124 +336,13 @@
      <property name="singleStep">
       <number>1</number>
      </property>
-     <property name="blockUpdateSignalOnDrag">
+     <property name="blockUpdateSignalOnDrag" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="8" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="feather">
-     <property name="suffix">
-      <string>px</string>
-     </property>
-     <property name="prefix">
-      <string>Feather: </string>
-     </property>
-     <property name="maximum">
-      <number>40</number>
-     </property>
-     <property name="blockUpdateSignalOnDrag">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="gap">
-     <property name="suffix">
-      <string>px</string>
-     </property>
-     <property name="prefix">
-      <string>Close Gaps: </string>
-     </property>
-     <property name="maximum">
-      <number>32</number>
-     </property>
-     <property name="blockUpdateSignalOnDrag">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0,0,0">
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="KisSliderSpinBox" name="expand">
-       <property name="suffix">
-        <string>px</string>
-       </property>
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="blockUpdateSignalOnDrag">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="expandSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Maximum</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>3</width>
-         <height>0</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="widgets::GroupedToolButton" name="expandButton">
-       <property name="toolTip">
-        <string>Expand</string>
-       </property>
-       <property name="statusTip">
-        <string>Expand</string>
-       </property>
-       <property name="icon">
-        <iconset theme="zoom-in">
-         <normaloff>theme:zoom-in.svg</normaloff>theme:zoom-in.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-       <property name="groupPosition">
-        <enum>widgets::GroupedToolButton::GroupLeft</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="widgets::GroupedToolButton" name="shrinkButton">
-       <property name="toolTip">
-        <string>Shrink</string>
-       </property>
-       <property name="statusTip">
-        <string>Shrink</string>
-       </property>
-       <property name="icon">
-        <iconset theme="zoom-out">
-         <normaloff>theme:zoom-out.svg</normaloff>theme:zoom-out.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="groupPosition">
-        <enum>widgets::GroupedToolButton::GroupRight</enum>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item row="5" column="0" colspan="2">
+    <widget class="widgets::ExpandShrinkSpinner" name="expandShrink" native="true"/>
    </item>
   </layout>
  </widget>
@@ -435,6 +356,11 @@
    <class>widgets::GroupedToolButton</class>
    <extends>QToolButton</extends>
    <header>desktop/widgets/groupedtoolbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>widgets::ExpandShrinkSpinner</class>
+   <extends>QWidget</extends>
+   <header>desktop/widgets/expandshrinkspinner.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

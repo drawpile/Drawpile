@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/toolwidgets/selectionsettings.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/expandshrinkspinner.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/tools/toolcontroller.h"
@@ -31,7 +32,8 @@ static const ToolProperties::RangedValue<int> expand{
 	opacity{QStringLiteral("opacity"), 100, 1, 100},
 	gap{QStringLiteral("gap"), 0, 0, 32},
 	source{QStringLiteral("source"), 2, 0, 2},
-	area{QStringLiteral("area"), 0, 0, 1};
+	area{QStringLiteral("area"), 0, 0, 1},
+	kernel{QStringLiteral("kernel"), 0, 0, 1};
 static const ToolProperties::RangedValue<double> tolerance{
 	QStringLiteral("tolerance"), 0.0, 0.0, 1.0};
 }
@@ -64,8 +66,9 @@ ToolProperties SelectionSettings::saveToolSettings()
 	cfg.setValue(
 		props::tolerance,
 		m_toleranceSlider->value() / qreal(m_toleranceSlider->maximum()));
-	cfg.setValue(props::shrink, m_expandGroup->checkedId() != 0);
-	cfg.setValue(props::expand, m_expandSlider->value());
+	cfg.setValue(props::shrink, m_expandShrink->isShrink());
+	cfg.setValue(props::expand, m_expandShrink->spinnerValue());
+	cfg.setValue(props::kernel, m_expandShrink->kernel());
 	cfg.setValue(props::featherRadius, m_featherSlider->value());
 	cfg.setValue(props::gap, m_closeGapsSlider->value());
 	cfg.setValue(props::source, m_sourceGroup->checkedId());
@@ -80,8 +83,9 @@ void SelectionSettings::restoreToolSettings(const ToolProperties &cfg)
 	m_opacitySlider->setValue(cfg.value(props::opacity));
 	m_toleranceSlider->setValue(
 		cfg.value(props::tolerance) * m_toleranceSlider->maximum());
-	checkGroupButton(m_expandGroup, cfg.value(props::shrink) ? 1 : 0);
-	m_expandSlider->setValue(cfg.value(props::expand));
+	m_expandShrink->setSpinnerValue(cfg.value(props::expand));
+	m_expandShrink->setShrink(cfg.value(props::shrink));
+	m_expandShrink->setKernel(cfg.value(props::kernel));
 	m_featherSlider->setValue(cfg.value(props::featherRadius));
 	m_closeGapsSlider->setValue(cfg.value(props::gap));
 	checkGroupButton(m_sourceGroup, cfg.value(props::source));
@@ -135,19 +139,16 @@ void SelectionSettings::pushSettings()
 	selectionParams.opacity = m_opacitySlider->value() / 100.0;
 	selectionParams.tolerance =
 		m_toleranceSlider->value() / qreal(m_toleranceSlider->maximum());
-	bool shrink = m_expandGroup->checkedId() != 0;
-	selectionParams.expansion = m_expandSlider->value() * (shrink ? -1 : 1);
+	selectionParams.expansion = m_expandShrink->effectiveValue();
 	selectionParams.featherRadius = m_featherSlider->value();
 	selectionParams.gap = m_closeGapsSlider->value();
 	selectionParams.source = m_sourceGroup->checkedId();
+	selectionParams.kernel = m_expandShrink->kernel();
 	bool continuous = m_areaGroup->checkedId() == int(Area::Continuous);
 	selectionParams.continuous = continuous;
 	m_closeGapsSlider->setEnabled(continuous);
 	ToolController *ctrl = controller();
 	ctrl->setSelectionParams(selectionParams);
-	m_expandSlider->setPrefix(
-		shrink ? QCoreApplication::translate("FillSettings", "Shrink: ")
-			   : QCoreApplication::translate("FillSettings", "Expand: "));
 	if(ctrl->activeTool() == Tool::MAGICWAND) {
 		static_cast<MagicWandTool *>(ctrl->getTool(Tool::MAGICWAND))
 			->updateParameters();
@@ -270,49 +271,19 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 		this, &SelectionSettings::pushSettings);
 	magicWandLayout->addRow(m_toleranceSlider);
 
-	QHBoxLayout *expandLayout = new QHBoxLayout;
-	expandLayout->setSpacing(0);
-
-	m_expandSlider = new KisSliderSpinBox;
-	m_expandSlider->setRange(0, 100);
-	m_expandSlider->setSuffix(
-		QCoreApplication::translate("FillSettings", "px"));
-	m_expandSlider->setBlockUpdateSignalOnDrag(true);
+	m_expandShrink = new widgets::ExpandShrinkSpinner;
+	m_expandShrink->setSpinnerRange(props::expand.min, props::expand.max);
+	m_expandShrink->setBlockUpdateSignalOnDrag(true);
 	connect(
-		m_expandSlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		m_expandShrink, &widgets::ExpandShrinkSpinner::spinnerValueChanged,
 		this, &SelectionSettings::pushSettings);
-	expandLayout->addWidget(m_expandSlider, 1);
-
-	expandLayout->addSpacing(3);
-
-	widgets::GroupedToolButton *expandButton =
-		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
-	expandButton->setIcon(QIcon::fromTheme("zoom-in"));
-	expandButton->setStatusTip(
-		QCoreApplication::translate("FillSettings", "Expand"));
-	expandButton->setToolTip(expandButton->statusTip());
-	expandButton->setCheckable(true);
-	expandButton->setChecked(true);
-	expandLayout->addWidget(expandButton);
-
-	widgets::GroupedToolButton *shrinkButton =
-		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
-	shrinkButton->setIcon(QIcon::fromTheme("zoom-out"));
-	shrinkButton->setStatusTip(
-		QCoreApplication::translate("FillSettings", "Shrink"));
-	shrinkButton->setToolTip(shrinkButton->statusTip());
-	shrinkButton->setCheckable(true);
-	expandLayout->addWidget(shrinkButton);
-
-	m_expandGroup = new QButtonGroup(this);
-	m_expandGroup->addButton(expandButton, 0);
-	m_expandGroup->addButton(shrinkButton, 1);
 	connect(
-		m_expandGroup,
-		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
+		m_expandShrink, &widgets::ExpandShrinkSpinner::shrinkChanged, this,
 		&SelectionSettings::pushSettings);
-
-	magicWandLayout->addRow(expandLayout);
+	connect(
+		m_expandShrink, &widgets::ExpandShrinkSpinner::kernelChanged, this,
+		&SelectionSettings::pushSettings);
+	magicWandLayout->addRow(m_expandShrink);
 
 	m_featherSlider = new KisSliderSpinBox;
 	m_featherSlider->setRange(0, 40);

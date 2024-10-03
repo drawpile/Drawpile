@@ -28,6 +28,11 @@
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_Image DP_Image;
 
+typedef enum DP_FloodFillKernel {
+    DP_FLOOD_FILL_KERNEL_ROUND,
+    DP_FLOOD_FILL_KERNEL_SQUARE,
+} DP_FloodFillKernel;
+
 typedef enum DP_FloodFillResult {
     DP_FLOOD_FILL_SUCCESS,
     DP_FLOOD_FILL_OUT_OF_BOUNDS,
@@ -38,18 +43,18 @@ typedef enum DP_FloodFillResult {
 
 typedef bool (*DP_FloodFillShouldCancelFn)(void *user);
 
-DP_FloodFillResult
-DP_flood_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
-              int x, int y, DP_UPixelFloat fill_color, double tolerance,
-              int layer_id, int size, int gap, int expand, int feather_radius,
-              bool from_edge, bool continuous, DP_ViewMode view_mode,
-              int active_layer_id, int active_frame_index, DP_Image **out_img,
-              int *out_x, int *out_y, DP_FloodFillShouldCancelFn should_cancel,
-              void *user);
+DP_FloodFillResult DP_flood_fill(
+    DP_CanvasState *cs, unsigned int context_id, int selection_id, int x, int y,
+    DP_UPixelFloat fill_color, double tolerance, int layer_id, int size,
+    int gap, int expand, DP_FloodFillKernel kernel_shape, int feather_radius,
+    bool from_edge, bool continuous, DP_ViewMode view_mode, int active_layer_id,
+    int active_frame_index, DP_Image **out_img, int *out_x, int *out_y,
+    DP_FloodFillShouldCancelFn should_cancel, void *user);
 
 DP_FloodFillResult
 DP_selection_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
-                  DP_UPixelFloat fill_color, int expand, int feather_radius,
+                  DP_UPixelFloat fill_color, int expand,
+                  DP_FloodFillKernel kernel_shape, int feather_radius,
                   bool from_edge, DP_Image **out_img, int *out_x, int *out_y,
                   DP_FloodFillShouldCancelFn should_cancel, void *user);
 

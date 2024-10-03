@@ -62,7 +62,6 @@ private:
 	void selectBlendMode(int blendMode);
 
 	Ui_FillSettings *m_ui = nullptr;
-	QButtonGroup *m_expandGroup = nullptr;
 	QButtonGroup *m_sourceGroup = nullptr;
 	QButtonGroup *m_areaGroup = nullptr;
 	int m_previousMode;

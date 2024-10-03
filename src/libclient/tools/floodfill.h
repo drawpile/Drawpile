@@ -40,7 +40,7 @@ public:
 	ToolState toolState() const override;
 
 	void setParameters(
-		qreal tolerance, int expansion, int featherRadius, int size,
+		qreal tolerance, int expansion, int kernel, int featherRadius, int size,
 		qreal opacity, int gap, Source source, int blendMode, Area area);
 
 private:
@@ -63,6 +63,7 @@ private:
 
 	qreal m_tolerance;
 	int m_expansion;
+	int m_kernel;
 	int m_featherRadius;
 	int m_size;
 	qreal m_opacity;
