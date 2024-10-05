@@ -1542,8 +1542,8 @@ void MainWindow::closeStartDialog(dialogs::StartDialog *dlg, bool reparent)
 			child->show();
 		}
 	} else {
+		dlg->close();
 	}
-	dlg->close();
 }
 
 QWidget *MainWindow::getStartDialogOrThis()
