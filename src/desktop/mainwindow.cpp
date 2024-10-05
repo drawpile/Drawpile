@@ -1535,6 +1535,13 @@ void MainWindow::setStartDialogActions(dialogs::StartDialog *dlg)
 
 void MainWindow::closeStartDialog(dialogs::StartDialog *dlg, bool reparent)
 {
+	// Linux on Qt6 crashes when reparenting children of a dialog that's about
+	// to close after hosting, so we don't reparent in that case and just close
+	// the dialog. On the other hand, macOS on Qt6 crashes when closing the
+	// dialog instead, so we always reparent there.
+#ifdef Q_OS_MACOS
+	reparent = true;
+#endif
 	if(reparent) {
 		for(QDialog *child : dlg->findChildren<QDialog *>(
 				QString(), Qt::FindDirectChildrenOnly)) {
