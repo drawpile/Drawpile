@@ -216,7 +216,7 @@ fi
 : "${ANDROID_BUILD_TOOLS_VERSION:=34.0.0-rc3}"
 : "${ANDROID_NDK_VERSION:=27.0.12077973}"
 : "${ANDROID_PLATFORM_VERSION:=34}"
-: "${ANDROID_SDK_DIR=$HOME/Android/Sdk}"
+: "${ANDROID_SDK_DIR:=$HOME/Android/Sdk}"
 
 case $ANDROID_ABI in
     'armeabi-v7a')
