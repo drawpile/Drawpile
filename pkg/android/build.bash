@@ -126,6 +126,9 @@ build_other() {
 }
 
 setup() {
+    if [[ $# -ne 0 ]]; then
+        croak 'setup does not take any arguments'
+    fi
     check_sdk
     install_sdk
     build_qt
@@ -192,6 +195,7 @@ configure() {
         -DSERVER=OFF \
         -DTESTS=OFF \
         -DTOOLS=OFF \
+        "$@" \
         -G Ninja \
         -S "$SRC_DIR" \
         -B "$build_dir"
@@ -264,16 +268,12 @@ ANDROID_NDK_DIR="$ANDROID_SDK_DIR/ndk/$ANDROID_NDK_VERSION"
 ANDROID_TOOLCHAIN_FILE="$ANDROID_NDK_DIR/build/cmake/android.toolchain.cmake"
 ANDROID_PLATFORM="android-$ANDROID_PLATFORM_VERSION"
 
-if [[ $# -ne 1 ]]; then
-    croak_with_usage
-fi
-
 case $1 in
     'setup')
-        setup
+        setup "${@:2}"
         ;;
     'configure')
-        configure
+        configure "${@:2}"
         ;;
     *)
         croak_with_usage
