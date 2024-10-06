@@ -104,6 +104,18 @@ endif()
 message(STATUS "Project version: ${PROJECT_VERSION}")
 message(STATUS "Protocol version: ${DRAWPILE_PROTO_SERVER_VERSION}.${DRAWPILE_PROTO_MAJOR_VERSION}.${DRAWPILE_PROTO_MINOR_VERSION}")
 
+if(ANDROID)
+	if(BUILD_ANDROID_VERSION_CODE STREQUAL "")
+		calculate_android_version_code(DRAWPILE_ANDROID_VERSION_CODE "${PROJECT_VERSION}" "${ANDROID_ABI}")
+		if(DRAWPILE_ANDROID_VERSION_CODE LESS_EQUAL 0)
+			message(FATAL_ERROR "Unable to determine version code from '${PROJECT_VERSION}', specify -DBUILD_VERSION_CODE explicitly")
+		endif()
+	else()
+		set(DRAWPILE_ANDROID_VERSION_CODE "${BUILD_ANDROID_VERSION_CODE}")
+	endif()
+	message(STATUS "Android version code: ${DRAWPILE_ANDROID_VERSION_CODE}")
+endif()
+
 # https://doc.qt.io/qt-6/cmake-qt5-and-qt6-compatibility.html
 
 if(QT_VERSION)

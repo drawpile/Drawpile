@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="${ANDROID_PACKAGE_NAMESPACE}"
     android:installLocation="auto"
-    android:versionCode="-- %%INSERT_VERSION_CODE%% --"
-    android:versionName="-- %%INSERT_VERSION_NAME%% --">
+    android:versionCode="${DRAWPILE_ANDROID_VERSION_CODE}"
+    android:versionName="${PROJECT_VERSION}">
     <!-- %%INSERT_PERMISSIONS -->
     <!-- WAKE_LOCK is used to prevent the device from severing the connection to
          the server by sleeping when it is locked -->
