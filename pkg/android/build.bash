@@ -217,6 +217,7 @@ fi
 : "${ANDROID_NDK_VERSION:=27.0.12077973}"
 : "${ANDROID_PLATFORM_VERSION:=34}"
 : "${ANDROID_SDK_DIR:=$HOME/Android/Sdk}"
+: "${ANDROID_SDKMANAGER:=$ANDROID_SDK_DIR/cmdline-tools/latest/bin/sdkmanager}"
 
 case $ANDROID_ABI in
     'armeabi-v7a')
@@ -262,7 +263,6 @@ fi
 ANDROID_NDK_DIR="$ANDROID_SDK_DIR/ndk/$ANDROID_NDK_VERSION"
 ANDROID_TOOLCHAIN_FILE="$ANDROID_NDK_DIR/build/cmake/android.toolchain.cmake"
 ANDROID_PLATFORM="android-$ANDROID_PLATFORM_VERSION"
-ANDROID_SDKMANAGER="$ANDROID_SDK_DIR/cmdline-tools/latest/bin/sdkmanager"
 
 if [[ $# -ne 1 ]]; then
     croak_with_usage
