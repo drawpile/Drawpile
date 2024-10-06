@@ -54,6 +54,15 @@ set_mac_deployment_target(${QT_VERSION})
 
 include(BuildDependency)
 
+set(enable_lto ON)
+# Qt6 has various issues with link-time optimization. On Linux, rcc fails to
+# build with a weird error about not finding qt_version_tag.
+# https://bugreports.qt.io/browse/QTBUG-72846 regressed in Qt6 due to
+# https://gitlab.kitware.com/cmake/cmake/-/issues/23864
+if(QT_VERSION VERSION_GREATER_EQUAL 6)
+	set(enable_lto OFF)
+endif()
+
 if(ANDROID)
 	list(APPEND BASE_FLAGS
 		-android-ndk "${ANDROID_NDK_ROOT}"
@@ -77,14 +86,20 @@ if(ANDROID)
 		)
 	endif()
 
+	# On Android with the x86 and x86_64 ABIs, Qt5 fails to build with
+	# link-time optimization enabled. Something about not being able to find
+	# _GLOBAL_OFFSET_TABLE_, which has something to do with -fPIC, which Qt
+	# always includes on Android with no way to turn it off.
 	if(ANDROID_ABI STREQUAL "armeabi-v7a")
 		set(openssl_abi arm)
 	elseif(ANDROID_ABI STREQUAL "arm64-v8a")
 		set(openssl_abi arm64)
 	elseif(ANDROID_ABI STREQUAL "x86")
 		set(openssl_abi x86)
+		set(enable_lto OFF)
 	elseif(ANDROID_ABI STREQUAL "x86_64")
 		set(openssl_abi x86_64)
+		set(enable_lto OFF)
 	else()
 		message(FATAL_ERROR "Unknown Android ABI '${ANDROID_ABI}'")
 	endif()
@@ -138,11 +153,7 @@ if(EMSCRIPTEN)
 	set(BASE_RELEASE_FLAGS -feature-optimize_full)
 else()
 	set(BASE_DEBUG_INFO_FLAGS -separate-debug-info)
-	# Qt6 has various issues with link-time optimization. On Linux, rcc fails to
-	# build with a weird error about not finding qt_version_tag.
-	# https://bugreports.qt.io/browse/QTBUG-72846 regressed in Qt6 due to
-	# https://gitlab.kitware.com/cmake/cmake/-/issues/23864
-	if(QT_VERSION VERSION_LESS 6)
+	if(enable_lto)
 		list(APPEND BASE_FLAGS -ltcg)
 	endif()
 endif()

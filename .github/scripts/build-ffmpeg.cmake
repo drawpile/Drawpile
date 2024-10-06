@@ -93,6 +93,14 @@ if(LIBVPX)
 				--target=armv7-android-gcc --disable-neon-asm)
 		elseif(TARGET_ARCH STREQUAL "arm64")
 			list(PREPEND libvpx_configure_args --target=arm64-android-gcc)
+		elseif(TARGET_ARCH STREQUAL "x86")
+			# Need to use yasm as the assembler for x86 and x86_64, otherwise
+			# invalid flags get passed to clang and the compilation fails.
+			list(PREPEND libvpx_configure_args
+				--target=x86-android-gcc --as=yasm)
+		elseif(TARGET_ARCH STREQUAL "x86_64")
+			list(PREPEND libvpx_configure_args
+				--target=x86_64-android-gcc --as=yasm)
 		else()
 			message(FATAL_ERROR "Unhandled TARGET_ARCH '${TARGET_ARCH}'")
 		endif()
@@ -179,13 +187,21 @@ if(LIBX264)
 		--enable-strip
 	)
 
-	# Configure only checks if *linkage* of functions works, but not if they're
-	# actually present in any headers. This causes weird compile errors about
-	# fseeko and ftello not being present on 32 bit Android. The code appears
-	# to work fine though, so either this doesn't matter or we don't hit that
-	# code. So we just disable the error and carry on.
-	if(ANDROID AND TARGET_ARCH STREQUAL "arm32")
-		list(APPEND x264_configure_args "--extra-cflags=-Wno-error=implicit-function-declaration")
+	if(ANDROID)
+		if(TARGET_ARCH STREQUAL "arm32")
+			# Configure only checks if *linkage* of functions works, but not if
+			# they're actually present in any headers. This causes weird
+			# compile errors about fseeko and ftello not being present on 32
+			# bit Android. The code appears to work fine though, so either this
+			# doesn't matter or we don't hit that code. So we just disable the
+			# error and carry on.
+			list(APPEND x264_configure_args "--extra-cflags=-Wno-error=implicit-function-declaration")
+		elseif(TARGET_ARCH STREQUAL "x86" OR TARGET_ARCH STREQUAL "x86_64")
+			# Configure fails to check for the nasm version properly somehow,
+			# failing even if a more recent version is found than required.
+			# We just disable assembly on this ABI then.
+			list(APPEND x264_configure_args "--disable-asm")
+		endif()
 	endif()
 
 	build_dependency(x264 ${LIBX264} ${BUILD_TYPE}
@@ -261,6 +277,12 @@ if(FFMPEG)
 		elseif(TARGET_ARCH STREQUAL "arm64")
 			list(PREPEND ffmpeg_configure_args
 				--arch=aarch64 --cpu=armv8-a --enable-neon)
+		elseif(TARGET_ARCH STREQUAL "x86")
+			# ffmpeg produces invalid assembly when building a static library
+			# for Android x86 and x86_64, so we disable assembly on these ABIs.
+			list(PREPEND ffmpeg_configure_args --arch=x86_32 --disable-asm)
+		elseif(TARGET_ARCH STREQUAL "x86_64")
+			list(PREPEND ffmpeg_configure_args --arch=x86_64 --disable-asm)
 		else()
 			message(FATAL_ERROR "Unhandled TARGET_ARCH '${TARGET_ARCH}'")
 		endif()
