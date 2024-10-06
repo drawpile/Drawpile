@@ -1,0 +1,5 @@
+Drawpile is a collaborative drawing program that lets multiple people draw, sketch, paint and animate on the same canvas simultaneously.
+
+The Android version works on both tablets and phones. The program is built for use primarily with a pressure-sensitive pen, but drawing via touch is also possible.
+
+If you have any questions, need help with anything or can't manage to get the application working, check out the help page on drawpile.net on how to get in contact!
