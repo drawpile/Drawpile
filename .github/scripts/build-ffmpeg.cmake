@@ -304,11 +304,12 @@ if(FFMPEG)
 	endif()
 
 	build_dependency(ffmpeg ${FFMPEG} ${BUILD_TYPE}
-		URL https://ffmpeg.org/releases/ffmpeg-@version@.tar.xz
+		URL https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n@version@.tar.gz
 		TARGET_ARCH "${TARGET_ARCH}"
+		SOURCE_DIR "FFmpeg-n@version@"
 		VERSIONS
 			7.0.1
-			SHA384=25650331f409bf7efc09f0d859ce9a1a8e16fe429e4f9b2593743eb68e723b186559739e8b02aac83c6e5c96137fec7e
+			SHA384=f28ca267732ded75262f6d739fe9228730424bb9b20dce4bd40fa68fb5d42b66a8df909e756a017c438ab821c3faeda2
 		ALL_PLATFORMS
 			AUTOMAKE
 				ASSIGN_PREFIX
