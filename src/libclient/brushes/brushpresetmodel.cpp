@@ -70,6 +70,7 @@ public:
 			  QStringLiteral("initialbrushpresets.db"))}
 	{
 		initDb();
+		enableForeignKeys();
 		refreshTagCacheInternal();
 		refreshPresetCacheInternal();
 		m_presetChangeTimer.setTimerType(Qt::VeryCoarseTimer);
@@ -762,6 +763,17 @@ private:
 		return utils::db::exec(query, sql, params);
 	}
 
+	bool enableForeignKeys()
+	{
+		QSqlQuery query(m_db);
+		if(exec(query, QStringLiteral("pragma foreign_keys = on"))) {
+			return true;
+		} else {
+			qWarning("Error enabling foreign keys, trying to continue anyway");
+			return false;
+		}
+	}
+
 	void initDb()
 	{
 		bool ok = utils::db::tx(m_db, [this]() {
@@ -775,11 +787,10 @@ private:
 
 	bool createStateTable(QSqlQuery &query)
 	{
-		return exec(query, QStringLiteral("pragma foreign_keys = on")) &&
-			   exec(
-				   query, QStringLiteral("create table if not exists state (\n"
-										 "	key text primary key not null,\n"
-										 "	value)"));
+		return exec(
+			query, QStringLiteral("create table if not exists state (\n"
+								  "	key text primary key not null,\n"
+								  "	value)"));
 	}
 
 	bool executeMigrations(QSqlQuery &query)
