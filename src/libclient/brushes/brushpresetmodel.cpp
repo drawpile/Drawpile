@@ -1225,6 +1225,8 @@ BrushImportResult BrushPresetTagModel::importBrushPack(const QString &file)
 		}
 	}
 
+	d->refreshTagCache();
+	d->refreshPresetCache();
 	m_presetModel->endResetModel();
 	endResetModel();
 	return result;
