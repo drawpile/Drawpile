@@ -70,6 +70,7 @@ public:
 			  QStringLiteral("initialbrushpresets.db"))}
 	{
 		initDb();
+		cleanupDb();
 		enableForeignKeys();
 		refreshTagCacheInternal();
 		refreshPresetCacheInternal();
@@ -783,6 +784,19 @@ private:
 		if(!ok) {
 			qWarning("Error initializing brush database");
 		}
+	}
+
+	void cleanupDb()
+	{
+		QSqlQuery query(m_db);
+		// Purge any orphaned tag assignments.
+		exec(
+			query, QStringLiteral("delete from preset_tag "
+								  "where not exists(select 1 from tag t "
+								  "where t.id = preset_tag.tag_id) "
+								  "or not exists(select 1 from preset p "
+								  "where p.id = preset_tag.preset_id)"));
+		exec(query, "vacuum");
 	}
 
 	bool createStateTable(QSqlQuery &query)
