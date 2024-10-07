@@ -132,8 +132,6 @@ target_sources(drawpile PRIVATE
 	dialogs/sessionsettings.h
 	dialogs/settingsdialog.cpp
 	dialogs/settingsdialog.h
-	dialogs/settingsdialog/canvasshortcuts.cpp
-	dialogs/settingsdialog/canvasshortcuts.h
 	dialogs/settingsdialog/general.cpp
 	dialogs/settingsdialog/general.h
 	dialogs/settingsdialog/helpers.h
@@ -157,8 +155,6 @@ target_sources(drawpile PRIVATE
 	dialogs/settingsdialog/shortcuts.h
 	dialogs/settingsdialog/tools.cpp
 	dialogs/settingsdialog/tools.h
-	dialogs/settingsdialog/touch.cpp
-	dialogs/settingsdialog/touch.h
 	dialogs/startdialog.cpp
 	dialogs/startdialog.h
 	dialogs/startdialog/browse.cpp
