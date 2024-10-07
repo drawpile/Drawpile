@@ -6,6 +6,7 @@
 
 class CustomShortcutModel;
 class QLineEdit;
+class QTabWidget;
 class QVBoxLayout;
 
 namespace desktop {
@@ -28,10 +29,15 @@ public slots:
 	void finishEditing();
 
 private:
-	void initGlobalShortcuts(
-		desktop::settings::Settings &settings, QVBoxLayout *form,
-		QLineEdit *filter);
+	QWidget *initActionShortcuts(
+		desktop::settings::Settings &settings, QLineEdit *filter);
 
+	QWidget *initCanvasShortcuts(
+		desktop::settings::Settings &settings, QLineEdit *filter);
+
+	QWidget *initTouchShortcuts(desktop::settings::Settings &settings);
+
+	QTabWidget *m_tabs;
 	CustomShortcutModel *m_globalShortcutsModel;
 	QItemEditorFactory m_itemEditorFactory;
 	ProportionalTableView *m_shortcutsTable;
