@@ -1,29 +1,31 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef DP_ACTIONBUILDER_H
-#define DP_ACTIONBUILDER_H
-
+#ifndef DESKTOP_UTILS_ACTIONBUILDER_H
+#define DESKTOP_UTILS_ACTIONBUILDER_H
+#include "libclient/utils/customshortcutmodel.h"
 #include <QAction>
 #include <QIcon>
-#include "libclient/utils/customshortcutmodel.h"
 
 /**
  * @brief A helper class for configuring QActions
  */
-class ActionBuilder
-{
+class ActionBuilder {
 public:
-	explicit ActionBuilder(QAction *action) : m_action(action) { Q_ASSERT(m_action); }
+	explicit ActionBuilder(QAction *action)
+		: m_action(action)
+	{
+		Q_ASSERT(m_action);
+	}
 
-	QAction *get() {
-		// If an action is tagged as "remembered", it should be checkable as well
-		Q_ASSERT(m_action->isCheckable() || !m_action->property("remembered").toBool());
+	QAction *get()
+	{
+		// Remembering only makes sense if there's a check state to remember.
+		Q_ASSERT(
+			m_action->isCheckable() ||
+			!m_action->property("remembered").toBool());
 		return m_action;
 	}
 
-	operator QAction*() {
-		return get();
-	}
+	operator QAction *() { return get(); }
 
 	ActionBuilder &icon(const QString &name)
 	{
@@ -31,18 +33,28 @@ public:
 		return *this;
 	}
 
-	ActionBuilder &noDefaultShortcut() {
-		CustomShortcutModel::registerCustomizableAction(m_action->objectName(), m_action->text().remove('&'), QKeySequence(), QKeySequence());
+	ActionBuilder &noDefaultShortcut()
+	{
+		CustomShortcutModel::registerCustomizableAction(
+			m_action->objectName(), m_action->text().remove('&'),
+			QKeySequence(), QKeySequence());
 		return *this;
 	}
 
-	ActionBuilder &shortcut(const QString &key) { return shortcut(QKeySequence(key)); }
+	ActionBuilder &shortcut(const QString &key)
+	{
+		return shortcut(QKeySequence(key));
+	}
 
-	ActionBuilder &shortcut(const QKeySequence &shortcut, const QKeySequence &alternateShortcut = QKeySequence())
+	ActionBuilder &shortcut(
+		const QKeySequence &shortcut,
+		const QKeySequence &alternateShortcut = QKeySequence())
 	{
 		Q_ASSERT(!m_action->objectName().isEmpty());
 		m_action->setShortcut(shortcut);
-		CustomShortcutModel::registerCustomizableAction(m_action->objectName(), m_action->text().remove('&'), shortcut, alternateShortcut);
+		CustomShortcutModel::registerCustomizableAction(
+			m_action->objectName(), m_action->text().remove('&'), shortcut,
+			alternateShortcut);
 		return *this;
 	}
 
@@ -103,4 +115,4 @@ private:
 	QAction *m_action;
 };
 
-#endif // ACTIONBUILDER_H
+#endif
