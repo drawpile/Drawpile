@@ -2,6 +2,7 @@
 #ifndef LIBCLIENT_UTILS_CUSTOMSHORTCUTMODEL_H
 #define LIBCLIENT_UTILS_CUSTOMSHORTCUTMODEL_H
 #include <QAbstractTableModel>
+#include <QIcon>
 #include <QKeySequence>
 #include <QList>
 #include <QMap>
@@ -10,6 +11,7 @@
 struct CustomShortcut {
 	QString name;
 	QString title;
+	QIcon icon;
 	QKeySequence defaultShortcut;
 	QKeySequence defaultAlternateShortcut;
 	QKeySequence alternateShortcut;
@@ -58,10 +60,13 @@ public:
 	void updateShortcuts();
 
 	static QList<QKeySequence> getDefaultShortcuts(const QString &name);
+	static bool isCustomizableActionRegistered(const QString &name);
 	static void registerCustomizableAction(
-		const QString &name, const QString &title,
+		const QString &name, const QString &title, const QIcon &icon,
 		const QKeySequence &defaultShortcut,
 		const QKeySequence &defaultAlternateShortcut);
+	static void
+	setCustomizableActionIcon(const QString &name, const QIcon &icon);
 	static void changeDisabledActionNames(
 		const QVector<QPair<QString, bool>> &nameDisabledPairs);
 

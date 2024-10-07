@@ -4051,7 +4051,8 @@ void MainWindow::setupActions()
 		CustomShortcutModel::registerCustomizableAction(
 			toggledockaction->objectName(),
 			tr("Toggle Dock %1").arg(toggledockaction->text()),
-			toggledockaction->shortcut(), QKeySequence());
+			toggledockaction->icon(), toggledockaction->shortcut(),
+			QKeySequence());
 		addAction(toggledockaction);
 		m_desktopModeActions->addAction(toggledockaction);
 	}
@@ -5338,7 +5339,8 @@ void MainWindow::setupActions()
 		q->setShortcut(QKeySequence(QString::number((i + 1) % 10)));
 		q->setProperty("toolslotidx", i);
 		CustomShortcutModel::registerCustomizableAction(
-			q->objectName(), q->text(), q->shortcut(), QKeySequence());
+			q->objectName(), q->text(), q->icon(), q->shortcut(),
+			QKeySequence());
 		m_brushSlots->addAction(q);
 		addAction(q);
 		// Swapping with the eraser slot doesn't make sense.
@@ -5348,7 +5350,8 @@ void MainWindow::setupActions()
 			s->setAutoRepeat(false);
 			s->setObjectName(QStringLiteral("swapslot%1").arg(i));
 			CustomShortcutModel::registerCustomizableAction(
-				s->objectName(), s->text(), QKeySequence(), QKeySequence());
+				s->objectName(), s->text(), s->icon(), QKeySequence(),
+				QKeySequence());
 			addAction(s);
 			connect(s, &QAction::triggered, this, [this, i] {
 				m_dockToolSettings->brushSettings()->swapWithSlot(i);
