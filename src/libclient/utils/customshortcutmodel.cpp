@@ -52,6 +52,14 @@ QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
 		} else {
 			return QVariant();
 		}
+	} else if(role == Qt::DecorationRole) {
+		if(index.column() == int(Action)) {
+			const CustomShortcut &cs =
+				m_loadedShortcuts[m_shortcutIndexes[row]];
+			return cs.icon;
+		} else {
+			return QVariant();
+		}
 	} else if(role == Qt::ForegroundRole) {
 		if(m_conflictRows.contains(row)) {
 			return QColor(Qt::white);
@@ -197,16 +205,32 @@ void CustomShortcutModel::updateShortcuts()
 	endResetModel();
 }
 
+bool CustomShortcutModel::isCustomizableActionRegistered(const QString &name)
+{
+	return m_customizableActions.contains(name);
+}
+
 void CustomShortcutModel::registerCustomizableAction(
-	const QString &name, const QString &title,
+	const QString &name, const QString &title, const QIcon &icon,
 	const QKeySequence &defaultShortcut,
 	const QKeySequence &defaultAlternateShortcut)
 {
 	if(!m_customizableActions.contains(name)) {
 		m_customizableActions.insert(
-			name, CustomShortcut{
-					  name, title, defaultShortcut, defaultAlternateShortcut,
-					  QKeySequence(), QKeySequence()});
+			name,
+			CustomShortcut{
+				name, title, icon, defaultShortcut, defaultAlternateShortcut,
+				QKeySequence(), QKeySequence()});
+	}
+}
+
+void CustomShortcutModel::setCustomizableActionIcon(
+	const QString &name, const QIcon &icon)
+{
+	QMap<QString, CustomShortcut>::Iterator it =
+		m_customizableActions.find(name);
+	if(it != m_customizableActions.end()) {
+		it->icon = icon;
 	}
 }
 

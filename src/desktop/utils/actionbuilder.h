@@ -30,14 +30,19 @@ public:
 	ActionBuilder &icon(const QString &name)
 	{
 		m_action->setIcon(QIcon::fromTheme(name));
+		CustomShortcutModel::setCustomizableActionIcon(
+			m_action->objectName(), m_action->icon());
 		return *this;
 	}
 
 	ActionBuilder &noDefaultShortcut()
 	{
+		Q_ASSERT(!m_action->objectName().isEmpty());
+		Q_ASSERT(!CustomShortcutModel::isCustomizableActionRegistered(
+			m_action->objectName()));
 		CustomShortcutModel::registerCustomizableAction(
 			m_action->objectName(), m_action->text().remove('&'),
-			QKeySequence(), QKeySequence());
+			m_action->icon(), QKeySequence(), QKeySequence());
 		return *this;
 	}
 
@@ -51,10 +56,12 @@ public:
 		const QKeySequence &alternateShortcut = QKeySequence())
 	{
 		Q_ASSERT(!m_action->objectName().isEmpty());
+		Q_ASSERT(!CustomShortcutModel::isCustomizableActionRegistered(
+			m_action->objectName()));
 		m_action->setShortcut(shortcut);
 		CustomShortcutModel::registerCustomizableAction(
-			m_action->objectName(), m_action->text().remove('&'), shortcut,
-			alternateShortcut);
+			m_action->objectName(), m_action->text().remove('&'),
+			m_action->icon(), shortcut, alternateShortcut);
 		return *this;
 	}
 
