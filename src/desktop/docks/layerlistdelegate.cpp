@@ -85,26 +85,8 @@ bool LayerListDelegate::editorEvent(
 		const QMouseEvent *me = static_cast<QMouseEvent *>(event);
 
 		if(me->button() == Qt::LeftButton) {
-			QPoint pos = me->pos();
-
-			if(getOpacityGlyphRect(option).contains(pos)) {
-				// Clicked on opacity glyph: toggle visibility
-				const canvas::LayerListItem &layer =
-					index.data().value<canvas::LayerListItem>();
-				emit toggleVisibility(layer.id, layer.hidden);
-				m_justToggledVisibility = true;
+			if(handleClick(me, option, index)) {
 				return true;
-			}
-
-			if(getCheckRect(option).contains(pos)) {
-				int checkState =
-					index.data(canvas::LayerListModel::CheckStateRole).toInt();
-				if(hasCheckBox(checkState)) {
-					emit toggleChecked(
-						index.data(canvas::LayerListModel::IdRole).toInt(),
-						checkState == int(canvas::LayerListModel::Unchecked));
-					return true;
-				}
 			}
 		}
 		m_justToggledVisibility = false;
@@ -122,14 +104,11 @@ bool LayerListDelegate::editorEvent(
 		m_justToggledVisibility = false;
 		const QMouseEvent *me = static_cast<QMouseEvent *>(event);
 		if(me->button() == Qt::LeftButton) {
-			QPoint pos = me->pos();
-			if(!getOpacityGlyphRect(option).contains(pos) &&
-			   !(getCheckRect(option).contains(pos) &&
-				 hasCheckBox(index.data(canvas::LayerListModel::CheckStateRole)
-								 .toInt()))) {
-				emit editProperties(index);
+			if(handleClick(me, option, index)) {
+				return true;
 			}
 
+			emit editProperties(index);
 			return true;
 		}
 	}
@@ -173,6 +152,33 @@ bool LayerListDelegate::hasCheckBox(int checkState)
 	default:
 		return true;
 	}
+}
+
+bool LayerListDelegate::handleClick(
+	const QMouseEvent *me, const QStyleOptionViewItem &option,
+	const QModelIndex &index)
+{
+	QPoint pos = me->pos();
+	if(getOpacityGlyphRect(option).contains(pos)) {
+		m_justToggledVisibility = true;
+		const canvas::LayerListItem &layer =
+			index.data().value<canvas::LayerListItem>();
+		emit toggleVisibility(layer.id, layer.hidden);
+		return true;
+	}
+
+	if(getCheckRect(option).contains(pos)) {
+		int checkState =
+			index.data(canvas::LayerListModel::CheckStateRole).toInt();
+		if(hasCheckBox(checkState)) {
+			emit toggleChecked(
+				index.data(canvas::LayerListModel::IdRole).toInt(),
+				checkState == int(canvas::LayerListModel::Unchecked));
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void LayerListDelegate::drawOpacityGlyph(

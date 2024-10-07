@@ -41,6 +41,10 @@ private:
 	static QRect getCheckRect(const QStyleOptionViewItem &opt);
 	static bool hasCheckBox(int checkState);
 
+	bool handleClick(
+		const QMouseEvent *me, const QStyleOptionViewItem &option,
+		const QModelIndex &index);
+
 	void drawOpacityGlyph(
 		const QRect &rect, QPainter *painter, float value, bool hidden,
 		bool censored, bool group) const;
