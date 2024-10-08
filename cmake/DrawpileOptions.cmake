@@ -85,6 +85,9 @@ endif()
 option(DIST_BUILD "Build for stand-alone distribution")
 add_feature_info("Distribution build (DIST_BUILD)" DIST_BUILD "")
 
+option(DISABLE_UPDATE_CHECK_DEFAULT "Don't enable update checks by default" OFF)
+add_feature_info("Update checking disabled by default (DISABLE_UPDATE_CHECK_DEFAULT)" DISABLE_UPDATE_CHECK_DEFAULT "")
+
 if(NOT CMAKE_CROSSCOMPILING)
 	if(DIST_BUILD)
 		set(source_assets_default OFF)

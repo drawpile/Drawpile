@@ -44,6 +44,14 @@
 #	endif
 #endif
 
+#ifndef UPDATE_CHECK_DEFAULT
+#	if DISABLE_UPDATE_CHECK_DEFAULT
+#		define UPDATE_CHECK_DEFAULT false
+#	else
+#		define UPDATE_CHECK_DEFAULT true
+#	endif
+#endif
+
 #ifndef THEME_PALETTE_DEFAULT
 #	ifdef Q_OS_MACOS
 #		define THEME_PALETTE_DEFAULT ThemePalette::System
@@ -226,7 +234,7 @@ SETTING_FULL(V2, themeStyle       , ThemeStyle                , "settings/theme/
 	, &any::get       , &any::set, &themeStyle::notify)
 SETTING(toolToggle                , ToolToggle                , "settings/tooltoggle"                   , true)
 SETTING(toolset                   , Toolset                   , "tools/toolset"                         , (QMap<QString, QVariantHash>()))
-SETTING(updateCheckEnabled        , UpdateCheckEnabled        , "settings/updatecheck"                  , true)
+SETTING(updateCheckEnabled        , UpdateCheckEnabled        , "settings/updatecheck"                  , UPDATE_CHECK_DEFAULT)
 SETTING(userMarkerPersistence     , UserMarkerPersistence     , "settings/usermarkerpersistence"        , 1000)
 SETTING(videoExportCustomFfmpeg   , VideoExportCustomFfmpeg   , "videoexport/customffmpeg"              , QString())
 SETTING(videoExportFfmpegPath     , VideoExportFfmpegPath     , "videoexport/ffmpegpath"                , QString("ffmpeg"))

@@ -482,6 +482,10 @@ if(WIN32 AND QT_VERSION_MAJOR VERSION_EQUAL 6)
 	target_include_directories(drawpile PRIVATE "${Qt6Gui_PRIVATE_INCLUDE_DIRS}")
 endif()
 
+if(DISABLE_UPDATE_CHECK_DEFAULT)
+	target_compile_definitions(drawpile PRIVATE DISABLE_UPDATE_CHECK_DEFAULT=1)
+endif()
+
 if(PROXY_STYLE)
 	target_compile_definitions(drawpile PRIVATE HAVE_PROXY_STYLE=1)
 	target_sources(drawpile PRIVATE utils/fusionui.cpp utils/fusionui.h)
