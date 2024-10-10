@@ -1548,9 +1548,10 @@ void MainWindow::closeStartDialog(dialogs::StartDialog *dlg, bool reparent)
 			child->setParent(this, child->windowFlags());
 			child->show();
 		}
-	} else {
-		dlg->close();
 	}
+	// Delay closing for a moment to work around Qt bugs. Sometimes it ends up
+	// losing window handles or chasing null pointers here otherwise.
+	QTimer::singleShot(100, dlg, &dialogs::StartDialog::close);
 }
 
 QWidget *MainWindow::getStartDialogOrThis()
