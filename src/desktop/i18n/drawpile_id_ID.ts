@@ -44,12 +44,12 @@
     <message>
         <location line="+28"/>
         <source>Entire session</source>
-        <translation type="unfinished"></translation>
+        <translation>Seluruh sesi</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Offender:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pelaku:</translation>
     </message>
 </context>
 <context>
@@ -57,17 +57,17 @@
     <message>
         <location filename="../ui/addserverdialog.ui" line="+14"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Tambah Server</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>Masukkan daftar URL server:</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Anda dapat menemukan beberapa daftar server di &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/komunitas&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
