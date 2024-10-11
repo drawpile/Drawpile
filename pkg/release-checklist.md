@@ -16,6 +16,10 @@ Yes, this can be automated to a large degree. It just hasn't happened yet becaus
     * Run `pkg/update-appdata-releases.py` to generate drawpile.appdata.xml
     * Run `pkg/update-appdata-releases.py --legacy` to generate net.drawpile.drawpile.appdata.xml
     * Create a signed commit "Update appdata XMLs for $VERSION"
+* Update F-Droid metadata:
+    * Update the version name and code in `metadata/fdroidversion.txt`
+    * Create four identical changelog files in `metadata/en-US/changelogs` with a short change description (500 characters max)
+    * Create a signed commit "Update F-Droid version for $VERSION"
 * Update Cargo version:
     * Run `pkg/update-cargo-version.bash $VERSION`.
     * Build once locally so that the Cargo.lock file gets updated.
