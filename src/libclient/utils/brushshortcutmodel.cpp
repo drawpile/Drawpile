@@ -178,7 +178,7 @@ const QKeySequence &BrushShortcutModel::shortcutAt(int row)
 	return m_presets[row].shortcut;
 }
 
-const QVector<int> &BrushShortcutModel::tagIdsAt(int row)
+const QSet<int> &BrushShortcutModel::tagIdsAt(int row)
 {
 	Q_ASSERT(row >= 0);
 	Q_ASSERT(row < m_presets.size());

@@ -51,7 +51,7 @@ struct CachedTag {
 };
 
 struct CachedPreset : Preset {
-	QVector<int> tagIds;
+	QSet<int> tagIds;
 };
 
 struct PresetChange {
@@ -755,7 +755,7 @@ private:
 		return s.isNull() ? QStringLiteral("") : s;
 	}
 
-	static void parseGroupedTagIds(const QString &input, QVector<int> &tagIds)
+	static void parseGroupedTagIds(const QString &input, QSet<int> &tagIds)
 	{
 		QStringList tagIdStrings =
 			input.split(QChar(','), compat::SkipEmptyParts);
@@ -764,7 +764,7 @@ private:
 			bool ok;
 			int tagId = tagIdString.toInt(&ok);
 			if(ok && tagId > 0) {
-				tagIds.append(tagId);
+				tagIds.insert(tagId);
 			}
 		}
 	}
@@ -1136,7 +1136,7 @@ private:
 	int m_tagIdToFilter = -1;
 };
 
-bool Tag::accepts(const QVector<int> &tagIds) const
+bool Tag::accepts(const QSet<int> &tagIds) const
 {
 	switch(id) {
 	case ALL_ID:
@@ -2209,7 +2209,7 @@ QList<TagAssignment> BrushPresetModel::getTagAssignments(int presetId)
 	if(i == -1) {
 		return d->readTagAssignmentsByPresetId(presetId);
 	} else {
-		const QVector<int> assignedTagIds = d->getCachedPreset(i).tagIds;
+		const QSet<int> assignedTagIds = d->getCachedPreset(i).tagIds;
 		QList<TagAssignment> tagAssignments;
 		int tagCount = d->tagCacheSize();
 		for(int j = 0; j < tagCount; ++j) {
@@ -2255,6 +2255,16 @@ bool BrushPresetModel::changeTagAssignment(
 	int tagIdToFilter = d->tagIdToFilter();
 	switch(tagIdToFilter) {
 	case ALL_ID:
+		if(int i = d->getCachedPresetIndexById(presetId); i != -1) {
+			CachedPreset &cp = d->getCachedPreset(i);
+			if(assigned) {
+				cp.tagIds.insert(tagId);
+			} else {
+				cp.tagIds.remove(tagId);
+			}
+			QModelIndex idx = index(i);
+			emit dataChanged(idx, idx);
+		}
 		break;
 	case UNTAGGED_ID:
 		if(assigned) {
@@ -2277,6 +2287,15 @@ bool BrushPresetModel::changeTagAssignment(
 				beginRemoveRows(QModelIndex(), i, i);
 				d->removeCachedPreset(i);
 				endRemoveRows();
+			} else {
+				CachedPreset &cp = d->getCachedPreset(i);
+				if(assigned) {
+					cp.tagIds.insert(tagId);
+				} else {
+					cp.tagIds.remove(tagId);
+				}
+				QModelIndex idx = index(i);
+				emit dataChanged(idx, idx);
 			}
 		}
 		break;

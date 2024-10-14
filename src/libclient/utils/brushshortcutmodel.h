@@ -39,7 +39,7 @@ public:
 	Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 	const QKeySequence &shortcutAt(int row);
-	const QVector<int> &tagIdsAt(int row);
+	const QSet<int> &tagIdsAt(int row);
 
 	QModelIndex indexById(int presetId, int column = 0) const;
 

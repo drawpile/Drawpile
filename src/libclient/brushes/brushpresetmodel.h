@@ -29,7 +29,7 @@ struct Tag {
 
 	bool isAssignable() const { return id > 0; }
 	bool isEditable() const { return id > 0; }
-	bool accepts(const QVector<int> &tagIds) const;
+	bool accepts(const QSet<int> &tagIds) const;
 };
 
 struct TagAssignment {
@@ -83,7 +83,7 @@ struct ShortcutPreset {
 	QString name;
 	QPixmap thumbnail;
 	QKeySequence shortcut;
-	QVector<int> tagIds;
+	QSet<int> tagIds;
 };
 
 struct PresetMetadata {
