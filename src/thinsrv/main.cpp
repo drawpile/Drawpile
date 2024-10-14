@@ -1,32 +1,27 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include "libserver/jsonapi.h" // for datatype registration
-
-#include "thinsrv/initsys.h"
-#include "thinsrv/headless/headless.h"
 #include "cmake-config/config.h"
-
-#ifdef HAVE_SERVERGUI
-#include "thinsrv/gui/gui.h"
-#include <QApplication>
-
-#else
-#include <QCoreApplication>
-#endif
-
+#include "libserver/jsonapi.h" // for datatype registration
+#include "thinsrv/headless/headless.h"
+#include "thinsrv/initsys.h"
 #include <cstdio>
 #include <cstring>
-
+#ifdef HAVE_SERVERGUI
+#	include "thinsrv/gui/gui.h"
+#	include <QApplication>
+#else
+#	include <QCoreApplication>
+#endif
 #ifdef Q_OS_UNIX
-#include <unistd.h>
+#	include <unistd.h>
 #endif
 
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 #ifdef Q_OS_UNIX
 	// Security check
 	if(geteuid() == 0) {
-		fprintf(stderr, "This program should not be run as root!\n");
+		std::fprintf(stderr, "This program should not be run as root!\n");
 		return 1;
 	}
 #endif
@@ -36,27 +31,30 @@ int main(int argc, char *argv[]) {
 	qRegisterMetaType<server::JsonApiMethod>("JsonApiMethod");
 	qRegisterMetaType<server::JsonApiResult>("JsonApiResult");
 
-	// GUI version is started if:
-	//  * --gui command line argument is given
-	//  * or no command line arguments are given
-	//  * and listening fds were not passed by an init system
-	bool useGui = false;
+// GUI version is started if:
+//  * --gui command line argument is given
+//  * or no command line arguments are given
+//  * and listening fds were not passed by an init system
 #ifdef HAVE_SERVERGUI
+	bool useGui = false;
 	if(initsys::getListenFds().isEmpty()) {
-		useGui = argc==1;
-		for(int i=1;i<argc;++i) {
-			if(strcmp(argv[i], "--gui")==0) {
+		useGui = argc == 1;
+		for(int i = 1; i < argc; ++i) {
+			if(strcmp(argv[i], "--gui") == 0) {
 				useGui = true;
 				break;
 			}
 		}
 	}
 
-	if(useGui)
+	if(useGui) {
 		app.reset(new QApplication(argc, argv));
-	else
-#endif
+	} else {
 		app.reset(new QCoreApplication(argc, argv));
+	}
+#else
+	app.reset(new QCoreApplication(argc, argv));
+#endif
 
 
 	// Set common settings
@@ -66,17 +64,16 @@ int main(int argc, char *argv[]) {
 	QCoreApplication::setApplicationVersion(cmake_config::version());
 
 	// Start the server
-	if(useGui) {
 #ifdef HAVE_SERVERGUI
-		if(!server::gui::start())
-			return 1;
+	bool started = useGui ? server::gui::start() : server::headless::start();
+#else
+	bool started = server::headless::start();
 #endif
-	} else {
-		if(!server::headless::start())
-			return 1;
+	if(!started) {
+		return 1;
 	}
 
 	initsys::notifyReady();
+
 	return app->exec();
 }
-
