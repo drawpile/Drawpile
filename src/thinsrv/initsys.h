@@ -41,6 +41,20 @@ void notifyStatus(const QString &status);
  */
 QList<int> getListenFds();
 
+/**
+ * If a watchdog is enabled, this returns a positive millisecond value in which
+ * to call the watchdog function to let the init system know that the process is
+ * doing fine. If no watchdog is enabled, it returns a value <= 0. Can only be
+ * called once, since it may unset environment variables.
+ */
+int getWatchdogMsec();
+
+/**
+ * Signal the init system watchdog that we're doing fine. Should be called in an
+ * interval that getWatchDogMsec gave you.
+ */
+void watchdog();
+
 }
 
 #endif // INITSYS_H

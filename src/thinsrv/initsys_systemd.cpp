@@ -39,4 +39,39 @@ QList<int> getListenFds()
 	return fds;
 }
 
+int getWatchdogMsec()
+{
+	uint64_t usec;
+	int result = sd_watchdog_enabled(1, &usec);
+	if(result < 0) {
+		qWarning("sd_watchdog_enabled: error %d", result);
+		return -1;
+	} else if(result == 0) {
+		return 0;
+	} else {
+		// The systemd docs recommend sending keepalives every half interval.
+		uint64_t msec = usec / uint64_t(2000);
+		if(msec == uint64_t(0)) {
+			qWarning(
+				"Watchdog timeout %" PRIu64
+				"usec results in keepalive interval of 0",
+				usec);
+			return -2;
+		} else if(msec > uint64_t(60000)) {
+			qWarning(
+				"Excessive watchdog timeout of %" PRIu64
+				"usec, using 1 minute keepalive interval instead",
+				usec);
+			return 60000;
+		} else {
+			return int(msec);
+		}
+	}
+}
+
+void watchdog()
+{
+	sd_notify(0, "WATCHDOG=1");
+}
+
 }

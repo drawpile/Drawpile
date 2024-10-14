@@ -7,6 +7,8 @@ After=network.target
 Type=notify
 NotifyAccess=main
 ExecStart=@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/@srvname@@CMAKE_EXECUTABLE_SUFFIX@
+Restart=always
+WatchdogSec=60s
 User=nobody
 
 [Install]

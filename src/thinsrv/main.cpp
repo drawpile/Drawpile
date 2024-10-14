@@ -3,6 +3,7 @@
 #include "libserver/jsonapi.h" // for datatype registration
 #include "thinsrv/headless/headless.h"
 #include "thinsrv/initsys.h"
+#include <QTimer>
 #include <cstdio>
 #include <cstring>
 #ifdef HAVE_SERVERGUI
@@ -74,6 +75,23 @@ int main(int argc, char *argv[])
 	}
 
 	initsys::notifyReady();
+	int watchdogMsec = initsys::getWatchdogMsec();
+	if(watchdogMsec > 0) {
+		QTimer *watchdogTimer = new QTimer;
+		watchdogTimer->setInterval(watchdogMsec);
+		if(watchdogMsec < 5000) {
+			qInfo("Setting coarse watchdog timer every %dms", watchdogMsec);
+			watchdogTimer->setTimerType(Qt::CoarseTimer);
+		} else {
+			qInfo(
+				"Setting very coarse watchdog timer every %dms", watchdogMsec);
+			watchdogTimer->setTimerType(Qt::VeryCoarseTimer);
+		}
+		QObject::connect(watchdogTimer, &QTimer::timeout, &initsys::watchdog);
+		watchdogTimer->start();
+	} else {
+		qInfo("Watchdog timer not enabled");
+	}
 
 	return app->exec();
 }

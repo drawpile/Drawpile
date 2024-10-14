@@ -28,4 +28,14 @@ QList<int> getListenFds()
 	return QList<int>();
 }
 
+int getWatchdogMsec()
+{
+	return 0;
+}
+
+void watchdog()
+{
+	// dummy
+}
+
 }
