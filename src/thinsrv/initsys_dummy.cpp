@@ -17,7 +17,7 @@ void notifyReady()
 void notifyStatus(const QString &status)
 {
 #ifndef NDEBUG
-	fprintf(stderr, "STATUS: %s\n", status.toLocal8Bit().constData());
+	std::fprintf(stderr, "STATUS: %s\n", qUtf8Printable(status));
 #else
 	Q_UNUSED(status);
 #endif

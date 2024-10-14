@@ -19,7 +19,7 @@ void notifyReady()
 
 void notifyStatus(const QString &status)
 {
-	sd_notifyf(0, "STATUS=%s", status.toLocal8Bit().constData());
+	sd_notifyf(0, "STATUS=%s", qUtf8Printable(status));
 }
 
 QList<int> getListenFds()
