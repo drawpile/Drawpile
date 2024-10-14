@@ -2350,7 +2350,9 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
 
 		tools::BrushSettings *brushSettings =
 			m_dockToolSettings->brushSettings();
-		std::function<void(int)> updatePreset = [brushSettings,
+		brushes::BrushPresetModel *presetModel =
+			dpApp().brushPresets()->presetModel();
+		std::function<void(int)> updatePreset = [brushSettings, presetModel,
 												 dlg](int presetId) {
 			bool attached = presetId > 0;
 			dlg->setPresetAttached(attached, presetId);
@@ -2361,7 +2363,8 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
 					brushSettings->currentPresetDescription());
 				dlg->setPresetThumbnail(
 					brushSettings->currentPresetThumbnail());
-				dlg->setPresetShortcut(brushSettings->currentPresetShortcut());
+				dlg->setPresetShortcut(
+					presetModel->getShortcutForPresetId(presetId));
 			}
 		};
 		connect(
@@ -2412,8 +2415,7 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
 				&docks::BrushPalette::overwriteCurrentPreset,
 				m_dockBrushPalette, dlg));
 		connect(
-			dpApp().brushPresets()->presetModel(),
-			&brushes::BrushPresetModel::presetShortcutChanged, dlg,
+			presetModel, &brushes::BrushPresetModel::presetShortcutChanged, dlg,
 			[dlg](int presetId, const QKeySequence &shortcut) {
 				if(dlg->isPresetAttached() && dlg->presetId() == presetId) {
 					dlg->setPresetShortcut(shortcut);

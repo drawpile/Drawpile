@@ -276,7 +276,6 @@ void BrushSettings::connectBrushPresets(brushes::BrushPresetModel *brushPresets)
 				preset.originalDescription = opt->originalDescription;
 				preset.originalThumbnail = opt->originalThumbnail;
 				preset.originalBrush = opt->originalBrush;
-				preset.shortcut = opt->shortcut;
 				preset.changedName = opt->changedName;
 				preset.changedDescription = opt->changedDescription;
 				preset.changedThumbnail = opt->changedThumbnail;
@@ -295,9 +294,6 @@ void BrushSettings::connectBrushPresets(brushes::BrushPresetModel *brushPresets)
 	connect(
 		brushPresets, &brushes::BrushPresetModel::presetChanged, this,
 		&BrushSettings::handlePresetChanged);
-	connect(
-		brushPresets, &brushes::BrushPresetModel::presetShortcutChanged, this,
-		&BrushSettings::handlePresetShortcutChanged);
 	connect(
 		brushPresets, &brushes::BrushPresetModel::presetRemoved, this,
 		&BrushSettings::handlePresetRemoved);
@@ -836,11 +832,6 @@ const QString &BrushSettings::currentPresetDescription() const
 const QPixmap &BrushSettings::currentPresetThumbnail() const
 {
 	return d->currentPreset().effectiveThumbnail();
-}
-
-const QKeySequence &BrushSettings::currentPresetShortcut() const
-{
-	return d->currentPreset().shortcut;
 }
 
 int BrushSettings::currentBrushSlot() const
@@ -1725,17 +1716,6 @@ void BrushSettings::handlePresetChanged(
 			if(i == d->current) {
 				d->ui.preview->setPreset(thumbnail, preset.hasChanges());
 			}
-		}
-	}
-}
-
-void BrushSettings::handlePresetShortcutChanged(
-	int presetId, const QKeySequence &shortcut)
-{
-	for(int i = 0; i < TOTAL_SLOT_COUNT; ++i) {
-		Preset &preset = d->presetAt(i);
-		if(preset.isAttached() && preset.id == presetId) {
-			preset.shortcut = shortcut;
 		}
 	}
 }

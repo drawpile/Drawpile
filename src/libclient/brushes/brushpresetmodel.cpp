@@ -79,6 +79,16 @@ struct PresetShortcutEntry {
 struct PresetShortcut {
 	QVector<PresetShortcutEntry> entries;
 
+	bool containsId(int id) const
+	{
+		for(const PresetShortcutEntry &entry : entries) {
+			if(entry.id == id) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	QVector<int> ids() const
 	{
 		QVector<int> v;
@@ -355,9 +365,9 @@ public:
 		QMutexLocker locker(&m_mutex);
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
-			"select id, name, description, thumbnail, data, shortcut, "
-			"changed_name, changed_description, changed_thumbnail, "
-			"changed_data from preset where id = ?");
+			"select id, name, description, thumbnail, data, changed_name, "
+			"changed_description, changed_thumbnail, changed_data from preset "
+			"where id = ?");
 		if(exec(query, sql, {id}) && query.next()) {
 			Preset preset;
 			readPreset(preset, query);
@@ -672,6 +682,19 @@ public:
 		}
 	}
 
+	QKeySequence getShortcutForPresetId(int presetId) const
+	{
+		for(PresetShortcutMap::const_iterator
+				it = m_presetShortcuts.constBegin(),
+				end = m_presetShortcuts.constEnd();
+			it != end; ++it) {
+			if(it->containsId(presetId)) {
+				return it.key();
+			}
+		}
+		return QKeySequence();
+	}
+
 	QVector<int> getPresetIdsForShortcut(const QKeySequence &shortcut) const
 	{
 		PresetShortcutMap::const_iterator found =
@@ -798,9 +821,9 @@ private:
 
 		QString sql = QStringLiteral(
 			"select p.id, p.name, p.description, p.thumbnail, p.data, "
-			"p.shortcut, p.changed_name, p.changed_description, "
-			"p.changed_thumbnail, p.changed_data, group_concat(t.tag_id) tags "
-			"from preset p left join preset_tag t on t.preset_id = p.id");
+			"p.changed_name, p.changed_description, p.changed_thumbnail, "
+			"p.changed_data, group_concat(t.tag_id) tags from preset p left "
+			"join preset_tag t on t.preset_id = p.id");
 		QVariantList params;
 		switch(m_tagIdToFilter) {
 		case ALL_ID:
@@ -822,7 +845,7 @@ private:
 			while(query.next()) {
 				CachedPreset cp;
 				readPreset(cp, query);
-				parseGroupedTagIds(query.value(10).toString(), cp.tagIds);
+				parseGroupedTagIds(query.value(9).toString(), cp.tagIds);
 				m_presetCache.append(cp);
 			}
 		}
@@ -843,20 +866,18 @@ private:
 
 		preset.originalBrush =
 			loadBrush(preset.id, query.value(4).toByteArray());
-		preset.shortcut = QKeySequence::fromString(
-			query.value(5).toString(), QKeySequence::PortableText);
 
-		QVariant changedName = query.value(6);
+		QVariant changedName = query.value(5);
 		if(!changedName.isNull()) {
 			preset.changedName = changedName.toString();
 		}
 
-		QVariant changedDescription = query.value(7);
+		QVariant changedDescription = query.value(6);
 		if(!changedDescription.isNull()) {
 			preset.changedDescription = changedDescription.toString();
 		}
 
-		QVariant changedThumbnail = query.value(8);
+		QVariant changedThumbnail = query.value(7);
 		if(!changedThumbnail.isNull()) {
 			if(pixmap.loadFromData(changedThumbnail.toByteArray())) {
 				preset.changedThumbnail = pixmap;
@@ -866,7 +887,7 @@ private:
 			}
 		}
 
-		QVariant changedData = query.value(9);
+		QVariant changedData = query.value(8);
 		if(!changedData.isNull()) {
 			preset.changedBrush =
 				loadBrush(preset.id, changedData.toByteArray());
@@ -2280,8 +2301,7 @@ std::optional<Preset> BrushPresetModel::newPreset(
 	d->refreshShortcuts();
 	if(presetId > 0) {
 		return Preset{
-			presetId,		name, description, thumbnail, brush,
-			QKeySequence(), {},	  {},		   {},		  {},
+			presetId, name, description, thumbnail, brush, {}, {}, {}, {},
 		};
 	} else {
 		return {};
@@ -2309,20 +2329,6 @@ bool BrushPresetModel::updatePresetShortcut(
 {
 	bool ok = d->updatePresetShortcut(
 		presetId, shortcut.toString(QKeySequence::PortableText));
-
-	int count = d->presetCacheSize();
-	for(int i = 0; i < count; ++i) {
-		CachedPreset &cp = d->getCachedPreset(i);
-		if(cp.id == presetId) {
-			if(cp.shortcut != shortcut) {
-				cp.shortcut = shortcut;
-				QModelIndex idx = createIndex(i, 0);
-				emit dataChanged(idx, idx);
-				break;
-			}
-		}
-	}
-
 	d->refreshShortcuts();
 	emit presetShortcutChanged(presetId, shortcut);
 	return ok;
@@ -2389,6 +2395,11 @@ void BrushPresetModel::getShortcutActions(
 		void(const QString &, const QString &, const QKeySequence &)> &fn) const
 {
 	d->getShortcutActions(fn);
+}
+
+QKeySequence BrushPresetModel::getShortcutForPresetId(int presetId)
+{
+	return d->getShortcutForPresetId(presetId);
 }
 
 QVector<int>

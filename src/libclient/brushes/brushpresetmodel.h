@@ -44,7 +44,6 @@ struct Preset {
 	QString originalDescription;
 	QPixmap originalThumbnail;
 	ActiveBrush originalBrush;
-	QKeySequence shortcut;
 	std::optional<QString> changedName;
 	std::optional<QString> changedDescription;
 	std::optional<QPixmap> changedThumbnail;
@@ -290,8 +289,8 @@ public:
 		const std::function<void(
 			const QString &, const QString &, const QKeySequence &)> &fn) const;
 
+	QKeySequence getShortcutForPresetId(int presetId);
 	QVector<int> getPresetIdsForShortcut(const QKeySequence &shortcut) const;
-
 	QVector<ShortcutPreset> getShortcutPresets() const;
 
 	QSize iconSize() const;
