@@ -57,7 +57,7 @@
     <message>
         <location filename="../ui/addserverdialog.ui" line="+14"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Thêm Máy chủ</translation>
     </message>
     <message>
         <location line="+28"/>
