@@ -405,11 +405,10 @@ public:
 		if(exec(
 			   query,
 			   QStringLiteral(
-				   "update preset set name = ?, description = ?, "
-				   "thumbnail = ?, type = ?, data = ?, shortcut = ?, "
-				   "changed_name = null, changed_description = null, "
-				   "changed_thumbnail = null, changed_type = null, "
-				   "changed_data = null where id = ?"),
+				   "update preset set name = ?, description = ?, thumbnail = "
+				   "?, type = ?, data = ?, changed_name = null, "
+				   "changed_description = null, changed_thumbnail = null, "
+				   "changed_type = null, changed_data = null where id = ?"),
 			   {nonNullString(name), nonNullString(description), thumbnail,
 				type, data, id})) {
 			return query.numRowsAffected() == 1;
