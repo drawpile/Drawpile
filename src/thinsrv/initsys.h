@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef INITSYS_H
-#define INITSYS_H
-
-#include <QString>
+#ifndef THINSRV_INITSYS_H
+#define THINSRV_INITSYS_H
 #include <QList>
+#include <QString>
 
 /**
  * Integration with the init system.
