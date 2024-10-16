@@ -479,7 +479,8 @@ endif()
 # On Qt6, private headers are required to switch between Windows Ink and Wintab.
 if(WIN32 AND QT_VERSION_MAJOR VERSION_EQUAL 6)
 	# TODO: Check this is doing the right thing
-	target_include_directories(drawpile PRIVATE "${Qt6Gui_PRIVATE_INCLUDE_DIRS}")
+	target_include_directories(drawpile SYSTEM PRIVATE
+		"${Qt6Gui_PRIVATE_INCLUDE_DIRS}")
 endif()
 
 if(DISABLE_UPDATE_CHECK_DEFAULT)
@@ -490,7 +491,7 @@ if(PROXY_STYLE)
 	target_compile_definitions(drawpile PRIVATE HAVE_PROXY_STYLE=1)
 	target_sources(drawpile PRIVATE utils/fusionui.cpp utils/fusionui.h)
 	# Can't proxy Fusion UI without getting our hands on some private headers.
-	target_include_directories(drawpile PRIVATE
+	target_include_directories(drawpile SYSTEM PRIVATE
 		"${Qt${QT_VERSION_MAJOR}Widgets_PRIVATE_INCLUDE_DIRS}")
 endif()
 
