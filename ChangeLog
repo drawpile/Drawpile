@@ -38,6 +38,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Put all shortcuts onto a single settings page, showing conflicts between them better. Allow searching for shortcuts by name and keybinding, as well as filtering out only conflicts. Thanks MajorCooke for suggesting parts of this.
  * Feature: Allow assigning keyboard shortcuts to brushes. Assigning the same shortcut to multiple brushes will toggle through them. Thanks annoy for suggesting.
  * Fix: Make user interface scaling not round to multiple of 100% anymore. Thanks blau, Buch, Chryssabliss and ShotgunnerFox for reporting.
+ * Fix: Don't use system message boxes on Android, since they behave in various broken and nonsensical ways, like showing you a yes button three times.  Thanks Hopfel for reporting.
 
 2024-08-09 Version 2.2.2-beta.3
  * Fix: Use more accurate timers for performance profiles if the platform supports it.

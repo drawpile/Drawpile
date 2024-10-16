@@ -1075,6 +1075,10 @@ extern "C" void drawpileMain(int argc, char **argv)
 #ifdef Q_OS_ANDROID
 	// Android has a weird title bar by default, we want a menu bar instead.
 	QApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
+	// Android uses native dialogs for message boxes and the like, whose
+	// behavior is busted in various ways and who don't react like they're
+	// supposed to. We use proper Qt dialogs instead.
+	qputenv("QT_USE_ANDROID_NATIVE_DIALOGS", "0");
 #endif
 
 	// Don't compress input events, that causes jaggy lines on slow devices.
