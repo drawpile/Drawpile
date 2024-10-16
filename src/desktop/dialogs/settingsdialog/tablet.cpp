@@ -31,7 +31,6 @@ void Tablet::createButtons(QDialogButtonBox *buttons)
 	m_tabletTesterButton->setAutoDefault(false);
 	buttons->addButton(m_tabletTesterButton, QDialogButtonBox::ActionRole);
 	m_tabletTesterButton->setEnabled(false);
-	m_tabletTesterButton->setVisible(false);
 	connect(
 		m_tabletTesterButton, &QPushButton::clicked, this,
 		&Tablet::tabletTesterRequested);

@@ -174,6 +174,7 @@ SettingsDialog::SettingsDialog(
 
 	tabletPage->createButtons(buttons);
 	touchPage->createButtons(buttons);
+	hidePanelButtons(buttons);
 	connect(
 		tabletPage, &settingsdialog::Tablet::tabletTesterRequested, this,
 		&SettingsDialog::tabletTesterRequested);
@@ -229,12 +230,7 @@ settingsdialog::Shortcuts *SettingsDialog::activateShortcutsPanel()
 
 void SettingsDialog::activatePanel(QWidget *panel, QDialogButtonBox *buttons)
 {
-	QAbstractButton *closeButton = buttons->button(QDialogButtonBox::Close);
-	for(QAbstractButton *button : buttons->buttons()) {
-		if(button != closeButton) {
-			button->hide();
-		}
-	}
+	hidePanelButtons(buttons);
 	m_stack->setCurrentWidget(panel);
 
 	settingsdialog::Tablet *tablet =
@@ -246,6 +242,16 @@ void SettingsDialog::activatePanel(QWidget *panel, QDialogButtonBox *buttons)
 	settingsdialog::Touch *touch = qobject_cast<settingsdialog::Touch *>(panel);
 	if(touch) {
 		touch->showButtons();
+	}
+}
+
+void SettingsDialog::hidePanelButtons(QDialogButtonBox *buttons)
+{
+	QAbstractButton *closeButton = buttons->button(QDialogButtonBox::Close);
+	for(QAbstractButton *button : buttons->buttons()) {
+		if(button != closeButton) {
+			button->hide();
+		}
 	}
 }
 

@@ -36,6 +36,7 @@ signals:
 private:
 	settingsdialog::Shortcuts *activateShortcutsPanel();
 	void activatePanel(QWidget *panel, QDialogButtonBox *buttons);
+	void hidePanelButtons(QDialogButtonBox *buttons);
 	void addPanel(QWidget *panel);
 
 	desktop::settings::Settings &m_settings;

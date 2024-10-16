@@ -26,7 +26,6 @@ void Touch::createButtons(QDialogButtonBox *buttons)
 	m_touchTesterButton->setAutoDefault(false);
 	buttons->addButton(m_touchTesterButton, QDialogButtonBox::ActionRole);
 	m_touchTesterButton->setEnabled(false);
-	m_touchTesterButton->setVisible(false);
 	connect(
 		m_touchTesterButton, &QPushButton::clicked, this,
 		&Touch::touchTesterRequested);
