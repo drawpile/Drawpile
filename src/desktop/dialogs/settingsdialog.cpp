@@ -81,7 +81,6 @@ SettingsDialog::SettingsDialog(
 #else
 	bool showServers = true;
 #endif
-	settingsdialog::UserInterface *userInterfacePage;
 	settingsdialog::Tablet *tabletPage;
 	settingsdialog::Touch *touchPage;
 	const std::initializer_list<
@@ -90,9 +89,7 @@ SettingsDialog::SettingsDialog(
 			{"configure", tr("General"),
 			 new settingsdialog::General(m_settings, this), true},
 			{"window_", tr("User Interface"),
-			 (userInterfacePage =
-				  new settingsdialog::UserInterface(m_settings, this)),
-			 true},
+			 new settingsdialog::UserInterface(m_settings, this), true},
 			{"input-tablet", tr("Tablet"),
 			 (tabletPage = new settingsdialog::Tablet(m_settings, this)), true},
 			{"input-touchscreen", tr("Touch"),
@@ -178,10 +175,6 @@ SettingsDialog::SettingsDialog(
 	tabletPage->createButtons(buttons);
 	touchPage->createButtons(buttons);
 	connect(
-		userInterfacePage,
-		&settingsdialog::UserInterface::scalingDialogRequested, this,
-		&SettingsDialog::scalingDialogRequested);
-	connect(
 		tabletPage, &settingsdialog::Tablet::tabletTesterRequested, this,
 		&SettingsDialog::tabletTesterRequested);
 	connect(
@@ -202,16 +195,6 @@ SettingsDialog::~SettingsDialog()
 {
 	m_settings.trySubmit();
 	m_settings.scalingSettings()->sync();
-}
-
-void SettingsDialog::showUserInterfacePage()
-{
-	for(QAbstractButton *button : m_group->buttons()) {
-		QWidget *panel = button->property("panel").value<QWidget *>();
-		if(qobject_cast<settingsdialog::UserInterface *>(panel)) {
-			button->click();
-		}
-	}
 }
 
 void SettingsDialog::initiateFixShortcutConflicts()

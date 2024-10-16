@@ -44,14 +44,6 @@
 #	endif
 #endif
 
-#ifndef OVERRIDE_SCALE_FACTOR_DEFAULT
-#	if defined(Q_OS_ANDROID)
-#		define OVERRIDE_SCALE_FACTOR_DEFAULT true
-#	else
-#		define OVERRIDE_SCALE_FACTOR_DEFAULT false
-#	endif
-#endif
-
 #ifndef UPDATE_CHECK_DEFAULT
 #	if DISABLE_UPDATE_CHECK_DEFAULT
 #		define UPDATE_CHECK_DEFAULT false
@@ -122,9 +114,8 @@ SETTING(filterInactive            , FilterInactive            , "history/filteri
 SETTING(filterLocked              , FilterLocked              , "history/filterlocked"                  , false)
 SETTING(filterNsfm                , FilterNsfm                , "history/filternsfw"                    , false)
 SETTING(flipbookWindow            , FlipbookWindow            , "flipbook/window"                       , QRect())
-SETTING(fontSize                  , FontSize                  , "settings/fontSize"                     , -1)
 SETTING(overrideFontSize          , OverrideFontSize          , "settings/overridefontsize"             , OVERRIDE_FONT_SIZE_DEFAULT)
-SETTING(overrideScaleFactor       , OverrideScaleFactor       , "settings/overridescalefactor"          , OVERRIDE_SCALE_FACTOR_DEFAULT)
+SETTING(fontSize                  , FontSize                  , "settings/fontSize"                     , -1)
 SETTING(globalPressureCurve       , GlobalPressureCurve       , "settings/input/globalcurve"            , GLOBAL_PRESSURE_CURVE_DEFAULT)
 SETTING(hostEnableAdvanced        , HostEnableAdvanced        , "history/hostenableadvanced"            , false)
 SETTING(ignoreCarrierGradeNat     , IgnoreCarrierGradeNat     , "history/cgnalert"                      , false)
@@ -224,7 +215,6 @@ SETTING(renderCanvas              , RenderCanvas              , "settings/render
 SETTING(renderSmooth              , RenderSmooth              , "settings/render/smooth"                , true)
 SETTING(renderUpdateFull          , RenderUpdateFull          , "settings/render/updatefull"            , false)
 SETTING(samplingRingVisibility    , SamplingRingVisibility    , "settings/colorpicker/samplingring"     , int(SamplingRingVisibility::Always))
-SETTING(scaleFactor               , ScaleFactor               , "settings/scalefactor"                  , 1.0)
 SETTING(serverHideIp              , ServerHideIp              , "settings/hideServerIp"                 , false)
 SETTING(shareBrushSlotColor       , ShareBrushSlotColor       , "settings/sharebrushslotcolor"          , false)
 SETTING(shortcuts                 , Shortcuts                 , "settings/shortcuts"                    , QVariantMap())

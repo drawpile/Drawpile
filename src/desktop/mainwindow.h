@@ -18,7 +18,6 @@ extern "C" {
 #include <QTimer>
 #include <QUrl>
 #include <QVariantMap>
-#include <functional>
 
 class ActionBuilder;
 class Document;
@@ -57,7 +56,6 @@ namespace dialogs {
 class DumpPlaybackDialog;
 class PlaybackDialog;
 class HostDialog;
-class ScalingDialog;
 class SessionSettingsDialog;
 class ServerLogDialog;
 class SettingsDialog;
@@ -126,10 +124,6 @@ public:
 
 	bool notificationsMuted() const { return m_notificationsMuted; }
 	bool isInitialCatchup() const { return m_initialCatchup; }
-
-	void stashLayout();
-	void unstashLayout();
-	void discardStashedLayout();
 
 signals:
 	void hostSessionEnabled(bool enabled);
@@ -304,16 +298,8 @@ private:
 	void setStartDialogActions(dialogs::StartDialog *dlg);
 	void closeStartDialog(dialogs::StartDialog *dlg, bool join);
 	QWidget *getStartDialogOrThis();
-	dialogs::StartDialog *getStartDialog();
 
 	void showBrushSettingsDialog(bool openOnPresetPage);
-
-	void showScalingDialogFromSettings(dialogs::SettingsDialog *settingsDlg);
-	dialogs::ScalingDialog *showScalingDialog(bool hadStartDialog);
-	void applyScalingDialog(dialogs::ScalingDialog *dlg, bool hadStartDialog);
-	void reshowSettingsDialog(bool hadStartDialog);
-	void reshowStartDialog();
-	std::function<void()> delayed(std::function<void()> fn);
 
 	void importAnimation(int source);
 	void showAnimationExportDialog(bool fromFlipbook);
@@ -387,7 +373,6 @@ private:
 	bool m_smallScreenMode;
 	bool m_updatingInterfaceMode;
 	QByteArray m_desktopModeState;
-	QByteArray m_stashedState;
 	QDeadlineTimer m_lastDisconnectNotificationTimer;
 
 	QTimer m_saveWindowDebounce;

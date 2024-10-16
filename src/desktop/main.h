@@ -49,10 +49,6 @@ public:
 
 	void deleteAllMainWindowsExcept(MainWindow *win);
 
-	void stashMainWindowLayouts();
-	void unstashMainWindowLayouts();
-	void discardStashedMainWindowLayouts();
-
 	const desktop::settings::Settings &settings() const { return m_settings; }
 	desktop::settings::Settings &settings() { return m_settings; }
 

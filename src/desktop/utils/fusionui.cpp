@@ -12,12 +12,30 @@
 #include <QPixmapCache>
 #include <QStyleFactory>
 #include <QStyleOption>
-#include <QtWidgets/private/qapplication_p.h>
 #include <QtWidgets/private/qstylehelper_p.h>
+QT_WARNING_PUSH
+QT_WARNING_DISABLE_CLANG("-Wextra-semi")
+QT_WARNING_DISABLE_GCC("-Wextra-semi")
+QT_WARNING_DISABLE_CLANG("-Wold-style-cast")
+QT_WARNING_DISABLE_GCC("-Wold-style-cast")
+QT_WARNING_DISABLE_CLANG("-Wpedantic")
+QT_WARNING_DISABLE_GCC("-Wpedantic")
+QT_WARNING_DISABLE_CLANG("-Wshadow")
+QT_WARNING_DISABLE_GCC("-Wshadow")
+QT_WARNING_DISABLE_CLANG("-Wzero-as-null-pointer-constant")
+QT_WARNING_DISABLE_GCC("-Wzero-as-null-pointer-constant")
+#include <QtWidgets/private/qapplication_p.h>
 #ifdef Q_OS_MACOS
+QT_WARNING_DISABLE_CLANG("-Wc++98-compat-extra-semi")
+QT_WARNING_DISABLE_CLANG("-Wgnu-anonymous-struct")
+QT_WARNING_DISABLE_CLANG("-Wnested-anon-types")
+QT_WARNING_DISABLE_CLANG("-Wsuggest-destructor-override")
+QT_WARNING_DISABLE_CLANG("-Wunused-template")
+QT_WARNING_DISABLE_CLANG("-Wzero-as-null-pointer-constant")
 #	include <QtGui/private/qguiapplication_p.h>
 #	include <qpa/qplatformtheme.h>
 #endif
+QT_WARNING_POP
 
 namespace fusionui {
 

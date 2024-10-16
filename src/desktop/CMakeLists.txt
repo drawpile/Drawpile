@@ -42,8 +42,6 @@ target_sources(drawpile PRIVATE
 	mainwindow.h
 	notifications.cpp
 	notifications.h
-	scaling.cpp
-	scaling.h
 	settings_table.h
 	settings.cpp
 	settings.h
@@ -124,8 +122,6 @@ target_sources(drawpile PRIVATE
 	dialogs/resetdialog.h
 	dialogs/resizedialog.cpp
 	dialogs/resizedialog.h
-	dialogs/scalingdialog.cpp
-	dialogs/scalingdialog.h
 	dialogs/selectionalterdialog.cpp
 	dialogs/selectionalterdialog.h
 	dialogs/serverlogdialog.cpp
@@ -480,10 +476,11 @@ elseif(APPLE)
 	)
 endif()
 
-# We ned access to the private QHighDpiScaling class to adjust runtime scaling.
 # On Qt6, private headers are required to switch between Windows Ink and Wintab.
-target_include_directories(drawpile SYSTEM PRIVATE
-	"${Qt${QT_VERSION_MAJOR}Gui_PRIVATE_INCLUDE_DIRS}")
+if(WIN32 AND QT_VERSION_MAJOR VERSION_EQUAL 6)
+	# TODO: Check this is doing the right thing
+	target_include_directories(drawpile PRIVATE "${Qt6Gui_PRIVATE_INCLUDE_DIRS}")
+endif()
 
 if(DISABLE_UPDATE_CHECK_DEFAULT)
 	target_compile_definitions(drawpile PRIVATE DISABLE_UPDATE_CHECK_DEFAULT=1)
@@ -493,7 +490,7 @@ if(PROXY_STYLE)
 	target_compile_definitions(drawpile PRIVATE HAVE_PROXY_STYLE=1)
 	target_sources(drawpile PRIVATE utils/fusionui.cpp utils/fusionui.h)
 	# Can't proxy Fusion UI without getting our hands on some private headers.
-	target_include_directories(drawpile SYSTEM PRIVATE
+	target_include_directories(drawpile PRIVATE
 		"${Qt${QT_VERSION_MAJOR}Widgets_PRIVATE_INCLUDE_DIRS}")
 endif()
 

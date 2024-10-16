@@ -14,7 +14,6 @@
 #include "desktop/dialogs/playbackdialog.h"
 #include "desktop/dialogs/resetdialog.h"
 #include "desktop/dialogs/resizedialog.h"
-#include "desktop/dialogs/scalingdialog.h"
 #include "desktop/dialogs/selectionalterdialog.h"
 #include "desktop/dialogs/serverlogdialog.h"
 #include "desktop/dialogs/sessionsettings.h"
@@ -37,7 +36,6 @@
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
-#include "desktop/scaling.h"
 #include "desktop/scene/toggleitem.h"
 #include "desktop/tabletinput.h"
 #include "desktop/toolwidgets/annotationsettings.h"
@@ -117,6 +115,7 @@
 #include <QUrl>
 #include <QVBoxLayout>
 #include <QWindow>
+#include <functional>
 #ifdef Q_OS_WIN
 #	include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
@@ -1489,6 +1488,7 @@ bool MainWindow::event(QEvent *event)
 
 	return QMainWindow::event(event);
 }
+// clang-format off
 
 dialogs::StartDialog *MainWindow::showStartDialog()
 {
@@ -1505,26 +1505,6 @@ void MainWindow::showPopupMessage(const QString &message)
 {
 	m_netstatus->showMessage(message);
 }
-
-void MainWindow::stashLayout()
-{
-	setDocksHidden(false);
-	m_stashedState = saveState();
-}
-
-void MainWindow::unstashLayout()
-{
-	if(!m_stashedState.isEmpty()) {
-		restoreState(m_stashedState);
-		discardStashedLayout();
-	}
-}
-
-void MainWindow::discardStashedLayout()
-{
-	m_stashedState.clear();
-}
-// clang-format off
 
 void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 {
@@ -1601,18 +1581,13 @@ void MainWindow::closeStartDialog(dialogs::StartDialog *dlg, bool reparent)
 
 QWidget *MainWindow::getStartDialogOrThis()
 {
-	dialogs::StartDialog *dlg = getStartDialog();
+	dialogs::StartDialog *dlg = findChild<dialogs::StartDialog *>(
+		QStringLiteral("startdialog"), Qt::FindDirectChildrenOnly);
 	if(dlg) {
 		return dlg;
 	} else {
 		return this;
 	}
-}
-
-dialogs::StartDialog *MainWindow::getStartDialog()
-{
-	return findChild<dialogs::StartDialog *>(
-		QStringLiteral("startdialog"), Qt::FindDirectChildrenOnly);
 }
 
 void MainWindow::start()
@@ -2469,16 +2444,8 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
  */
 dialogs::SettingsDialog *MainWindow::showSettings()
 {
-	bool hadStartDialog;
-	if(dialogs::StartDialog *startDlg = getStartDialog()) {
-		startDlg->close();
-		hadStartDialog = true;
-	} else {
-		hadStartDialog = false;
-	}
-
-	dialogs::SettingsDialog *dlg =
-		new dialogs::SettingsDialog(m_singleSession, m_smallScreenMode, this);
+	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog(
+		m_singleSession, m_smallScreenMode, getStartDialogOrThis());
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	connect(
 		dlg, &dialogs::SettingsDialog::tabletTesterRequested, this,
@@ -2486,15 +2453,6 @@ dialogs::SettingsDialog *MainWindow::showSettings()
 	connect(
 		dlg, &dialogs::SettingsDialog::touchTesterRequested, this,
 		std::bind(&MainWindow::showTouchTestDialog, this, dlg));
-	connect(
-		dlg, &dialogs::SettingsDialog::scalingDialogRequested, this,
-		std::bind(&MainWindow::showScalingDialogFromSettings, this, dlg));
-	if(hadStartDialog) {
-		connect(
-			dlg, &dialogs::SettingsDialog::destroyed, this,
-			&MainWindow::reshowStartDialog);
-	}
-
 	utils::showWindow(dlg, shouldShowDialogMaximized());
 	return dlg;
 }
@@ -2535,118 +2493,6 @@ dialogs::TouchTestDialog *MainWindow::showTouchTestDialog(QWidget *parent)
 		utils::showWindow(ttd, shouldShowDialogMaximized());
 	}
 	return ttd;
-}
-
-void MainWindow::showScalingDialogFromSettings(
-	dialogs::SettingsDialog *settingsDlg)
-{
-	bool hadStartDialog = disconnect(
-		settingsDlg, &dialogs::SessionSettingsDialog::destroyed, this,
-		&MainWindow::reshowStartDialog);
-	settingsDlg->close();
-	showScalingDialog(hadStartDialog);
-}
-
-dialogs::ScalingDialog *MainWindow::showScalingDialog(bool hadStartDialog)
-{
-	dialogs::ScalingDialog *dlg = new dialogs::ScalingDialog(this);
-	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	dlg->setWindowModality(Qt::ApplicationModal);
-	connect(
-		dlg, &dialogs::ScalingDialog::accepted, this,
-		std::bind(&MainWindow::applyScalingDialog, this, dlg, hadStartDialog));
-	connect(
-		dlg, &dialogs::ScalingDialog::rejected, this,
-		std::bind(&MainWindow::reshowSettingsDialog, this, hadStartDialog));
-	dlg->show();
-	return dlg;
-}
-
-void MainWindow::applyScalingDialog(
-	dialogs::ScalingDialog *dlg, bool hadStartDialog)
-{
-	qreal factor;
-	bool scalingOverride = dlg->scalingOverride(factor);
-	delayed([this, hadStartDialog, factor, scalingOverride] {
-		dpApp().stashMainWindowLayouts();
-		scaling::setOverrideFactor(scalingOverride ? factor : 0.0);
-
-		QMessageBox *box = utils::makeQuestion(
-			this, tr("Scaling Changed"),
-			tr("Scaling changed. Do you want to keep it like this?"));
-		box->button(QMessageBox::Yes)->setText(tr("Keep"));
-		box->button(QMessageBox::No)->setText(tr("Revert"));
-
-		connect(
-			box, &QMessageBox::accepted, this,
-			delayed([this, hadStartDialog, scalingOverride, factor] {
-				DrawpileApp &app = dpApp();
-				app.discardStashedMainWindowLayouts();
-				desktop::settings::Settings &settings = app.settings();
-				settings.setOverrideScaleFactor(scalingOverride);
-				if(scalingOverride) {
-					settings.setScaleFactor(factor);
-				}
-				reshowSettingsDialog(hadStartDialog);
-			}));
-		connect(
-			box, &QMessageBox::rejected, this,
-			delayed([this, hadStartDialog, scalingOverride, factor] {
-				const desktop::settings::Settings &settings =
-					dpApp().settings();
-				scaling::setOverrideFactor(
-					settings.overrideScaleFactor() ? settings.scaleFactor()
-												   : 0.0);
-				dpApp().unstashMainWindowLayouts();
-				showScalingDialog(hadStartDialog)
-					->setScalingOverride(scalingOverride, factor);
-			}));
-
-		QTimer *timer = new QTimer(box);
-		timer->setInterval(1000);
-
-		static constexpr char TIME_REMAINING_PROP[] = "drawpile_time_remaining";
-		box->setProperty(TIME_REMAINING_PROP, 15);
-		std::function<void()> tick = [box, timer] {
-			int time = box->property(TIME_REMAINING_PROP).toInt();
-			if(time >= 0) {
-				box->setInformativeText(
-					tr("The scaling will revert in %n second(s).", "", time));
-				box->setProperty(TIME_REMAINING_PROP, time - 1);
-			} else {
-				timer->stop();
-				box->reject();
-			}
-		};
-		tick();
-
-		connect(timer, &QTimer::timeout, box, tick);
-		timer->start();
-		box->show();
-	})();
-}
-
-void MainWindow::reshowSettingsDialog(bool hadStartDialog)
-{
-	dialogs::SettingsDialog *dlg = showSettings();
-	dlg->showUserInterfacePage();
-	if(hadStartDialog) {
-		connect(
-			dlg, &dialogs::SettingsDialog::destroyed, this,
-			&MainWindow::reshowStartDialog);
-	}
-}
-
-void MainWindow::reshowStartDialog()
-{
-	showStartDialog()->showPage(dialogs::StartDialog::Guess);
-}
-
-std::function<void()> MainWindow::delayed(std::function<void()> fn)
-{
-	return [this, fn] {
-		QTimer::singleShot(100, this, fn);
-	};
 }
 
 void MainWindow::host()
@@ -3370,7 +3216,7 @@ void MainWindow::setDocksHidden(bool hidden)
 			// out another way to do it that doesn't introduce flicker or the
 			// window resizing.
 			restoreState(saveState());
-		} else if(!m_hiddenDockState.isEmpty()) {
+		} else {
 			restoreState(m_hiddenDockState);
 			m_hiddenDockState.clear();
 		}

@@ -4,7 +4,6 @@
 #include "desktop/dialogs/startdialog.h"
 #include "desktop/mainwindow.h"
 #include "desktop/notifications.h"
-#include "desktop/scaling.h"
 #include "desktop/settings.h"
 #include "desktop/tabletinput.h"
 #include "desktop/utils/globalkeyeventfilter.h"
@@ -32,7 +31,6 @@
 #include <QTranslator>
 #include <QUrl>
 #include <QWidget>
-#include <functional>
 #include <memory>
 #if defined(Q_OS_MACOS)
 #	include "desktop/utils/macui.h"
@@ -601,38 +599,14 @@ void DrawpileApp::openStart(const QString &page, bool restoreWindowPosition)
 	}
 }
 
-static void forEachMainWindow(const std::function<void(MainWindow *)> &fn)
-{
-	for(QWidget *widget : QApplication::topLevelWidgets()) {
-		MainWindow *mw = qobject_cast<MainWindow *>(widget);
-		if(mw) {
-			fn(mw);
-		}
-	}
-}
-
 void DrawpileApp::deleteAllMainWindowsExcept(MainWindow *win)
 {
-	forEachMainWindow([win](MainWindow *mw) {
-		if(mw != win) {
+	for(QWidget *widget : topLevelWidgets()) {
+		MainWindow *mw = qobject_cast<MainWindow *>(widget);
+		if(mw && mw != win) {
 			mw->deleteLater();
 		}
-	});
-}
-
-void DrawpileApp::stashMainWindowLayouts()
-{
-	forEachMainWindow(&MainWindow::stashLayout);
-}
-
-void DrawpileApp::unstashMainWindowLayouts()
-{
-	forEachMainWindow(&MainWindow::unstashLayout);
-}
-
-void DrawpileApp::discardStashedMainWindowLayouts()
-{
-	forEachMainWindow(&MainWindow::discardStashedLayout);
+	}
 }
 
 static QStringList gatherPotentialLanguages(const QLocale &locale)
@@ -844,10 +818,6 @@ static StartupOptions initApp(DrawpileApp &app)
 	app.initState();
 	desktop::settings::Settings &settings = app.settings();
 	settings.bindWriteLogFile(&utils::enableLogFile);
-	QApplication::processEvents();
-	scaling::initScaling(
-		settings.overrideScaleFactor() ? settings.scaleFactor() : 0.0);
-	QApplication::processEvents();
 	app.initTheme();
 	app.initCanvasImplementation(parser.value(renderer));
 	app.initInterface();
@@ -871,8 +841,6 @@ static StartupOptions initApp(DrawpileApp &app)
 			qunsetenv("QT_ANDROID_VOLUME_KEYS");
 		}
 	});
-
-	qputenv("QT_USE_ANDROID_NATIVE_DIALOGS", "0");
 #endif
 
 #ifdef Q_OS_MACOS
@@ -969,12 +937,22 @@ static int applyRenderSettingsFrom(const QString &path)
 	QSettings cfg(path, QSettings::IniFormat);
 
 #ifndef HAVE_QT_COMPAT_DEFAULT_HIGHDPI_SCALING
-	QApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
+#	ifdef Q_OS_ANDROID
+	bool highDpiScalingDefault = false;
+#	else
+	bool highDpiScalingDefault = true;
+#	endif
+	QApplication::setAttribute(
+		Qt::AA_EnableHighDpiScaling,
+		cfg.value(QStringLiteral("enabled"), highDpiScalingDefault).toBool());
 #endif
 
-	if(qgetenv("QT_SCALE_FACTOR_ROUNDING_POLICY").isEmpty()) {
-		QApplication::setHighDpiScaleFactorRoundingPolicy(
-			Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+	if(qgetenv("QT_SCALE_FACTOR").isEmpty()) {
+		if(cfg.value(QStringLiteral("override")).toBool()) {
+			qreal factor = qBound(
+				1.0, cfg.value(QStringLiteral("factor")).toInt() / 100.0, 4.0);
+			qputenv("QT_SCALE_FACTOR", qUtf8Printable(QString::number(factor)));
+		}
 	}
 
 	bool vsyncOk;

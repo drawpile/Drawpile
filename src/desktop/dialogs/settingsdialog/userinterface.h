@@ -21,9 +21,6 @@ public:
 	UserInterface(
 		desktop::settings::Settings &settings, QWidget *parent = nullptr);
 
-signals:
-	void scalingDialogRequested();
-
 protected:
 	void
 	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) override;
@@ -40,8 +37,6 @@ private:
 
 	void initRequiringRestart(
 		desktop::settings::Settings &settings, QFormLayout *form);
-
-	void initScaling(QFormLayout *layout);
 
 	void pickColor(
 		desktop::settings::Settings &settings,
