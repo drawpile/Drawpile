@@ -389,11 +389,7 @@ int DrawpileApp::getCanvasImplementationFor(int canvasImplementation)
 	case int(CanvasImplementation::Software):
 		return canvasImplementation;
 	default:
-#ifdef __EMSCRIPTEN__
-		return int(CanvasImplementation::OpenGl);
-#else
-		return int(CanvasImplementation::GraphicsView);
-#endif
+		return int(CANVAS_IMPLEMENTATION_DEFAULT);
 	}
 }
 

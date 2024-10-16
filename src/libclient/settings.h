@@ -43,6 +43,22 @@ enum class CanvasImplementation : int {
 };
 Q_ENUM_NS(CanvasImplementation)
 
+#if defined(__EMSCRIPTEN__)
+#	define CANVAS_IMPLEMENTATION_DEFAULT                                      \
+		::libclient::settings::CanvasImplementation::OpenGl
+#	undef CANVAS_IMPLEMENTATION_FALLBACK
+#elif defined(Q_OS_ANDROID)
+#	define CANVAS_IMPLEMENTATION_DEFAULT                                      \
+		::libclient::settings::CanvasImplementation::OpenGl
+#	define CANVAS_IMPLEMENTATION_FALLBACK                                     \
+		::libclient::settings::CanvasImplementation::GraphicsView
+#else
+#	define CANVAS_IMPLEMENTATION_DEFAULT                                      \
+		::libclient::settings::CanvasImplementation::GraphicsView
+#	define CANVAS_IMPLEMENTATION_FALLBACK                                     \
+		::libclient::settings::CanvasImplementation::Default
+#endif
+
 // On most platforms, tablet input comes at a very high precision and frequency,
 // so some smoothing is sensible by default. On Android (at least on a Samsung
 // Galaxy S6 Lite, a Samsung Galaxy S8 Ultra and reports from unknown devices)
