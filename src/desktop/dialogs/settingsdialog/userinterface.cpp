@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog/userinterface.h"
 #include "desktop/dialogs/colordialog.h"
+#include "desktop/scaling.h"
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
@@ -9,8 +10,10 @@
 #include <QComboBox>
 #include <QFont>
 #include <QFormLayout>
+#include <QLabel>
 #include <QPair>
 #include <QPlainTextEdit>
+#include <QPushButton>
 #include <QSurfaceFormat>
 #include <QtColorWidgets/ColorPreview>
 
@@ -30,6 +33,7 @@ void UserInterface::setUp(
 	initRequiringRestart(settings, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
 	QFormLayout *form = utils::addFormSection(layout);
+	initScaling(form);
 	initInterfaceMode(settings, form);
 	initKineticScrolling(settings, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
@@ -171,51 +175,6 @@ void UserInterface::initRequiringRestart(
 	desktop::settings::Settings &settings, QFormLayout *form)
 {
 	QSettings *scalingSettings = settings.scalingSettings();
-	QString scalingLabel = tr("Scaling:");
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	QCheckBox *highDpiScalingEnabled =
-		new QCheckBox(tr("Enable high-DPI scaling (experimental)"));
-	highDpiScalingEnabled->setChecked(
-		scalingSettings->value(QStringLiteral("enabled")).toBool());
-	connect(
-		highDpiScalingEnabled, &QCheckBox::clicked, scalingSettings,
-		[scalingSettings](bool checked) {
-			scalingSettings->setValue(QStringLiteral("enabled"), checked);
-		});
-	form->addRow(scalingLabel, highDpiScalingEnabled);
-	scalingLabel = nullptr;
-#endif
-
-	QCheckBox *overrideScaleFactor =
-		new QCheckBox(tr("Override system scale factor (experimental)"));
-	overrideScaleFactor->setChecked(
-		scalingSettings->value(QStringLiteral("override")).toBool());
-	connect(
-		overrideScaleFactor, &QCheckBox::clicked, scalingSettings,
-		[scalingSettings](bool checked) {
-			scalingSettings->setValue(QStringLiteral("override"), checked);
-		});
-	form->addRow(scalingLabel, overrideScaleFactor);
-
-	KisSliderSpinBox *scaleFactor = new KisSliderSpinBox;
-	scaleFactor->setRange(100, 400);
-	scaleFactor->setSingleStep(25);
-	scaleFactor->setPrefix(tr("Scale factor: "));
-	scaleFactor->setSuffix(tr("%"));
-	scaleFactor->setValue(
-		scalingSettings->value(QStringLiteral("factor")).toInt());
-	connect(
-		scaleFactor, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
-		scalingSettings, [scalingSettings](int value) {
-			scalingSettings->setValue(QStringLiteral("factor"), value);
-		});
-	form->addRow(nullptr, scaleFactor);
-
-	connect(
-		overrideScaleFactor, &QCheckBox::clicked, scaleFactor,
-		&QWidget::setEnabled);
-	scaleFactor->setEnabled(overrideScaleFactor->isChecked());
 
 	QCheckBox *overrideFontSize =
 		new QCheckBox(tr("Override system font size"));
@@ -251,11 +210,35 @@ void UserInterface::initRequiringRestart(
 								  ? tr("%1px").arg(font().pixelSize())
 								  : tr("%1pt").arg(pointSize);
 	form->addRow(
-		nullptr,
-		utils::formNote(tr("Changes apply after you restart Drawpile. Current "
-						   "scale factor is %1%, font size is %2.")
-							.arg(qRound(devicePixelRatioF() * 100.0))
-							.arg(currentFontSize)));
+		nullptr, utils::formNote(tr("Changes apply after you restart Drawpile. "
+									"Current font size is %1.")
+									 .arg(currentFontSize)));
+}
+
+void UserInterface::initScaling(QFormLayout *form)
+{
+	QHBoxLayout *layout = new QHBoxLayout;
+
+	QLabel *scalingLabel = new QLabel;
+	int factor = qRound(scaling::getWidgetScale(this) * 100.0);
+	int dpr = qRound(devicePixelRatioF() * 100.0);
+	if(factor == dpr) {
+		scalingLabel->setText(tr("%1%").arg(factor));
+	} else {
+		scalingLabel->setText(tr("%1% (effectively %2%)").arg(factor).arg(dpr));
+	}
+	layout->addWidget(scalingLabel);
+
+	QPushButton *changeButton = new QPushButton(tr("Change"));
+	changeButton->setToolTip(tr("Change the user interface scaling"));
+	changeButton->setAutoDefault(false);
+	layout->addWidget(changeButton);
+	connect(
+		changeButton, &QPushButton::clicked, this,
+		&UserInterface::scalingDialogRequested);
+
+	layout->addStretch();
+	form->addRow(tr("Interface scale:"), layout);
 }
 
 void UserInterface::pickColor(

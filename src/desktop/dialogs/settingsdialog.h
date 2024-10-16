@@ -26,12 +26,14 @@ public:
 		bool singleSession, bool smallScreenMode, QWidget *parent = nullptr);
 	~SettingsDialog() override;
 
+	void showUserInterfacePage();
 	void initiateFixShortcutConflicts();
 	void initiateBrushShortcutChange(int presetId);
 
 signals:
 	void tabletTesterRequested();
 	void touchTesterRequested();
+	void scalingDialogRequested();
 
 private:
 	settingsdialog::Shortcuts *activateShortcutsPanel();
