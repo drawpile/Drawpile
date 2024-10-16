@@ -947,6 +947,11 @@ static int applyRenderSettingsFrom(const QString &path)
 		cfg.value(QStringLiteral("enabled"), highDpiScalingDefault).toBool());
 #endif
 
+	if(qgetenv("QT_SCALE_FACTOR_ROUNDING_POLICY").isEmpty()) {
+		QApplication::setHighDpiScaleFactorRoundingPolicy(
+			Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+	}
+
 	if(qgetenv("QT_SCALE_FACTOR").isEmpty()) {
 		if(cfg.value(QStringLiteral("override")).toBool()) {
 			qreal factor = qBound(

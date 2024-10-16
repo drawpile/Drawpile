@@ -90,11 +90,16 @@ QString SystemInfoDialog::getSystemInfo() const
 	info += QStringLiteral("Word size: %1\n").arg(int(QSysInfo::WordSize));
 	info += QStringLiteral("\n");
 
-	desktop::settings::Settings &settings = dpApp().settings();
+	DrawpileApp &app = dpApp();
+	desktop::settings::Settings &settings = app.settings();
 	info += QStringLiteral("Interface mode: %1\n")
 				.arg(QMetaEnum::fromType<desktop::settings::InterfaceMode>()
 						 .valueToKey(settings.interfaceMode()));
 	info += QStringLiteral("Device pixel ratio: %1\n").arg(devicePixelRatioF());
+	info +=
+		QStringLiteral("Scale factor rounding: %1\n")
+			.arg(QMetaEnum::fromType<Qt::HighDpiScaleFactorRoundingPolicy>()
+					 .valueToKey(int(app.highDpiScaleFactorRoundingPolicy())));
 	QSettings *scalingSettings = settings.scalingSettings();
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	QString highDpiScaling = QStringLiteral("%1").arg(boolToEnabledDisabled(
@@ -121,6 +126,9 @@ QString SystemInfoDialog::getSystemInfo() const
 				.arg(QString::fromUtf8(qgetenv("QT_OPENGL")));
 	info += QStringLiteral("QT_SCALE_FACTOR: \"%1\"\n")
 				.arg(QString::fromUtf8(qgetenv("QT_SCALE_FACTOR")));
+	info +=
+		QStringLiteral("QT_SCALE_FACTOR_ROUNDING_POLICY: \"%1\"\n")
+			.arg(QString::fromUtf8(qgetenv("QT_SCALE_FACTOR_ROUNDING_POLICY")));
 	info += QStringLiteral("DRAWPILE_VSYNC: \"%1\"\n")
 				.arg(QString::fromUtf8(qgetenv("DRAWPILE_VSYNC")));
 	info += QStringLiteral("\n");
