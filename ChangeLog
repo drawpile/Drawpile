@@ -36,7 +36,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Allow choosing between a round and square expansion/shrinking kernel in flood fill, magic wand and when altering a selection. The latter is particularly useful for pixel art. Thanks Bigcheese and MorrowShore for suggesting.
  * Fix: Don't ignore double-clicks when toggling layer visibility or check state. Thanks Chryssabliss for reporting.
  * Feature: Put all shortcuts onto a single settings page, showing conflicts between them better. Allow searching for shortcuts by name and keybinding, as well as filtering out only conflicts. Thanks MajorCooke for suggesting parts of this.
- * Feature: Allow assigning keyboard shortcuts to brushes. Assigning the same shortcut to multiple brushes will toggle through them. Thanks annoy for suggestion.
+ * Feature: Allow assigning keyboard shortcuts to brushes. Assigning the same shortcut to multiple brushes will toggle through them. Thanks annoy for suggesting.
  * Fix: Make user interface scaling not round to multiple of 100% anymore. Thanks blau, Buch, Chryssabliss and ShotgunnerFox for reporting.
 
 2024-08-09 Version 2.2.2-beta.3
