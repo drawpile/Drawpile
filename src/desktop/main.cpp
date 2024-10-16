@@ -936,28 +936,34 @@ static int applyRenderSettingsFrom(const QString &path)
 {
 	QSettings cfg(path, QSettings::IniFormat);
 
-#ifndef HAVE_QT_COMPAT_DEFAULT_HIGHDPI_SCALING
-#	ifdef Q_OS_ANDROID
-	bool highDpiScalingDefault = false;
-#	else
-	bool highDpiScalingDefault = true;
-#	endif
-	QApplication::setAttribute(
-		Qt::AA_EnableHighDpiScaling,
-		cfg.value(QStringLiteral("enabled"), highDpiScalingDefault).toBool());
+	bool overrideScaling = false;
+	if(qgetenv("QT_SCALE_FACTOR").isEmpty()) {
+		if(cfg.value(
+				  QStringLiteral("scaling_override"), SCALING_OVERRIDE_DEFAULT)
+			   .toBool()) {
+			qreal factor = qBound(
+				1.0,
+				cfg.value(QStringLiteral("scaling_factor"), 100).toInt() /
+					100.0,
+				4.0);
+			qputenv("QT_SCALE_FACTOR", qUtf8Printable(QString::number(factor)));
+			overrideScaling = true;
+		}
+	}
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	if(qgetenv("QT_AUTO_SCREEN_SCALE_FACTOR").isEmpty()) {
+		qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", overrideScaling ? "0" : "1");
+	}
+#else
+	if(qgetenv("QT_ENABLE_HIGHDPI_SCALING").isEmpty()) {
+		qputenv("QT_ENABLE_HIGHDPI_SCALING", overrideScaling ? "0" : "1");
+	}
 #endif
 
 	if(qgetenv("QT_SCALE_FACTOR_ROUNDING_POLICY").isEmpty()) {
 		QApplication::setHighDpiScaleFactorRoundingPolicy(
 			Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
-	}
-
-	if(qgetenv("QT_SCALE_FACTOR").isEmpty()) {
-		if(cfg.value(QStringLiteral("override")).toBool()) {
-			qreal factor = qBound(
-				1.0, cfg.value(QStringLiteral("factor")).toInt() / 100.0, 4.0);
-			qputenv("QT_SCALE_FACTOR", qUtf8Printable(QString::number(factor)));
-		}
 	}
 
 	bool vsyncOk;

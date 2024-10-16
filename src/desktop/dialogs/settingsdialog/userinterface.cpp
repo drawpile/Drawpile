@@ -173,28 +173,18 @@ void UserInterface::initRequiringRestart(
 	QSettings *scalingSettings = settings.scalingSettings();
 	QString scalingLabel = tr("Scaling:");
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	QCheckBox *highDpiScalingEnabled =
-		new QCheckBox(tr("Enable high-DPI scaling (experimental)"));
-	highDpiScalingEnabled->setChecked(
-		scalingSettings->value(QStringLiteral("enabled")).toBool());
-	connect(
-		highDpiScalingEnabled, &QCheckBox::clicked, scalingSettings,
-		[scalingSettings](bool checked) {
-			scalingSettings->setValue(QStringLiteral("enabled"), checked);
-		});
-	form->addRow(scalingLabel, highDpiScalingEnabled);
-	scalingLabel = nullptr;
-#endif
-
 	QCheckBox *overrideScaleFactor =
-		new QCheckBox(tr("Override system scale factor (experimental)"));
+		new QCheckBox(tr("Override system scale factor"));
 	overrideScaleFactor->setChecked(
-		scalingSettings->value(QStringLiteral("override")).toBool());
+		scalingSettings
+			->value(
+				QStringLiteral("scaling_override"), SCALING_OVERRIDE_DEFAULT)
+			.toBool());
 	connect(
 		overrideScaleFactor, &QCheckBox::clicked, scalingSettings,
 		[scalingSettings](bool checked) {
-			scalingSettings->setValue(QStringLiteral("override"), checked);
+			scalingSettings->setValue(
+				QStringLiteral("scaling_override"), checked);
 		});
 	form->addRow(scalingLabel, overrideScaleFactor);
 
@@ -204,11 +194,11 @@ void UserInterface::initRequiringRestart(
 	scaleFactor->setPrefix(tr("Scale factor: "));
 	scaleFactor->setSuffix(tr("%"));
 	scaleFactor->setValue(
-		scalingSettings->value(QStringLiteral("factor")).toInt());
+		scalingSettings->value(QStringLiteral("scaling_factor"), 100).toInt());
 	connect(
 		scaleFactor, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		scalingSettings, [scalingSettings](int value) {
-			scalingSettings->setValue(QStringLiteral("factor"), value);
+			scalingSettings->setValue(QStringLiteral("scaling_factor"), value);
 		});
 	form->addRow(nullptr, scaleFactor);
 

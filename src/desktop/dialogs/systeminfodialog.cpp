@@ -101,18 +101,16 @@ QString SystemInfoDialog::getSystemInfo() const
 			.arg(QMetaEnum::fromType<Qt::HighDpiScaleFactorRoundingPolicy>()
 					 .valueToKey(int(app.highDpiScaleFactorRoundingPolicy())));
 	QSettings *scalingSettings = settings.scalingSettings();
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	QString highDpiScaling = QStringLiteral("%1").arg(boolToEnabledDisabled(
-		scalingSettings->value(QStringLiteral("enabled")).toBool()));
-#else
-	QString highDpiScaling = QStringLiteral("always enabled");
-#endif
-	info += QStringLiteral("High-DPI scaling: %1\n").arg(highDpiScaling);
 	info += QStringLiteral("Override scaling setting: %1\n")
 				.arg(
-					scalingSettings->value(QStringLiteral("override")).toBool()
+					scalingSettings
+							->value(
+								QStringLiteral("scaling_override"),
+								SCALING_OVERRIDE_DEFAULT)
+							.toBool()
 						? QStringLiteral("%1%").arg(
-							  scalingSettings->value(QStringLiteral("factor"))
+							  scalingSettings
+								  ->value(QStringLiteral("scaling_factor"), 100)
 								  .toInt())
 						: QStringLiteral("disabled"));
 	info += QStringLiteral("Override font size: %1\n")
@@ -126,6 +124,13 @@ QString SystemInfoDialog::getSystemInfo() const
 				.arg(QString::fromUtf8(qgetenv("QT_OPENGL")));
 	info += QStringLiteral("QT_SCALE_FACTOR: \"%1\"\n")
 				.arg(QString::fromUtf8(qgetenv("QT_SCALE_FACTOR")));
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	info += QStringLiteral("QT_AUTO_SCREEN_SCALE_FACTOR: \"%1\"\n")
+				.arg(QString::fromUtf8(qgetenv("QT_AUTO_SCREEN_SCALE_FACTOR")));
+#else
+	info += QStringLiteral("QT_ENABLE_HIGHDPI_SCALING: \"%1\"\n")
+				.arg(QString::fromUtf8(qgetenv("QT_ENABLE_HIGHDPI_SCALING")));
+#endif
 	info +=
 		QStringLiteral("QT_SCALE_FACTOR_ROUNDING_POLICY: \"%1\"\n")
 			.arg(QString::fromUtf8(qgetenv("QT_SCALE_FACTOR_ROUNDING_POLICY")));

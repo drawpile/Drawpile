@@ -44,6 +44,14 @@
 #	endif
 #endif
 
+#ifndef SCALING_OVERRIDE_DEFAULT
+#	if defined(Q_OS_ANDROID)
+#		define SCALING_OVERRIDE_DEFAULT true
+#	else
+#		define SCALING_OVERRIDE_DEFAULT false
+#	endif
+#endif
+
 #ifndef UPDATE_CHECK_DEFAULT
 #	if DISABLE_UPDATE_CHECK_DEFAULT
 #		define UPDATE_CHECK_DEFAULT false
