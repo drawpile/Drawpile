@@ -3216,7 +3216,7 @@ void MainWindow::setDocksHidden(bool hidden)
 			// out another way to do it that doesn't introduce flicker or the
 			// window resizing.
 			restoreState(saveState());
-		} else {
+		} else if(!m_hiddenDockState.isEmpty()) {
 			restoreState(m_hiddenDockState);
 			m_hiddenDockState.clear();
 		}
