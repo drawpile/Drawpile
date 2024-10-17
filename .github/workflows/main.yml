@@ -52,6 +52,7 @@ jobs:
             build_flags: -DINITSYS=systemd -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
             build_type: Release
             collect_symbols: false
+            signpath: false
             # This causes the AppImage to be generated, instead of just creating
             # the portable tree, because there seems to be no way to separate
             # these steps with linuxdeploy
@@ -100,6 +101,7 @@ jobs:
             sccache_triplet: x86_64-unknown-linux-musl
             build_type: Release
             collect_symbols: false
+            signpath: false
             packager: cmake --install build --config Release --prefix .
             cross_qt_args: >-
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
@@ -165,6 +167,7 @@ jobs:
             sccache_triplet: x86_64-unknown-linux-musl
             build_type: Release
             collect_symbols: false
+            signpath: false
             packager: cmake --install build --config Release --prefix .
             cross_qt_args: >-
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
@@ -230,6 +233,7 @@ jobs:
             build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
             build_type: Release
             collect_symbols: false
+            signpath: false
             sccache_triplet: x86_64-apple-darwin
             packager: cpack --verbose --config build/CPackConfig.cmake -C Release
 
@@ -241,6 +245,7 @@ jobs:
             build_flags: -DBUILD_PACKAGE_SUFFIX=arm64 -G Ninja
             build_type: Release
             collect_symbols: false
+            signpath: false
             sccache_triplet: aarch64-apple-darwin
             packager: cpack --verbose --config build/CPackConfig.cmake -C Release
 
@@ -253,6 +258,7 @@ jobs:
             build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
             build_type: RelWithDebInfo
             collect_symbols: true
+            signpath: true
             qt_pre_build: >
               choco install gperf jom winflexbison3 &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
@@ -277,6 +283,7 @@ jobs:
             build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
             build_type: RelWithDebInfo
             collect_symbols: false
+            signpath: false
             qt_pre_build: >
               choco install gperf jom winflexbison3 &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
@@ -299,6 +306,7 @@ jobs:
             build_flags: -DCARGO_TRIPLE=i686-pc-windows-msvc -DBUILD_PACKAGE_SUFFIX=x86 -G Ninja
             build_type: RelWithDebInfo
             collect_symbols: false
+            signpath: true
             qt_pre_build: >
               choco install gperf jom winflexbison3 &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
@@ -467,7 +475,7 @@ jobs:
           key: gradle-${{ runner.os }}-${{ matrix.arch }}+${{ matrix.cross_os }}-${{ matrix.qt }}
         if: matrix.cross_os == 'Android'
 
-      - name: Prepare Windows signing
+      - name: Prepare local Windows signing for builds not using SignPath
         run: |
           if ($env:WINDOWS_CERTIFICATE) {
             New-Item -ItemType directory -Path "$env:GITHUB_WORKSPACE/wincert"
@@ -478,7 +486,30 @@ jobs:
           }
         env:
           WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && matrix.packager && (!startsWith(github.ref, 'refs/tags/') || !matrix.signpath)
+
+      - name: Figure out Windows product version from build version
+        run: >
+          cmake
+          "-DBUILD_VERSION=${{ github.ref_name }}"
+          "-DOUTPUT_PATH=$env:GITHUB_ENV"
+          "-DSEARCH_PATHS=${{ matrix.cross_os && format('{0};', steps.cross-deps.outputs.path) }}${{ steps.deps.outputs.path }}"
+          -P ".github/scripts/build-to-product-version.cmake"
+        if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
+
+      - name: Install rcedit to set PE metadata on Windows
+        run: |
+          choco install rcedit
+        if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
+
+      - name: Set PE metadata of dependencies on Windows
+        run: >
+          cmake
+          "-DPRODUCT_NAME=Drawpile client"
+          "-DPRODUCT_VERSION=$env:WINDOWS_PRODUCT_VERSION"
+          "-DSEARCH_PATHS=${{ matrix.cross_os && format('{0};', steps.cross-deps.outputs.path) }}${{ steps.deps.outputs.path }}"
+          -P ".github/scripts/edit-pe-metadata.cmake"
+        if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
 
       - name: Generate project
         run: >
@@ -535,6 +566,15 @@ jobs:
           WINDOWS_PFX_PASS: ${{ secrets.WINDOWS_CERTIFICATE_PASS }}
           WINDOWS_PFX_TIMESTAMP_URL: 'http://timestamp.digicert.com'
 
+      - name: Set PE metadata built files on Windows
+        run: >
+          cmake
+          "-DPRODUCT_NAME=Drawpile client"
+          "-DPRODUCT_VERSION=$env:WINDOWS_PRODUCT_VERSION"
+          "-DSEARCH_PATHS=build"
+          -P ".github/scripts/edit-pe-metadata.cmake"
+        if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
+
       - name: Run C++ tests
         run: ctest -C ${{ matrix.build_type }} --output-on-failure
         working-directory: build
@@ -546,6 +586,52 @@ jobs:
           WINDOWS_PFX_PASS: ${{ secrets.WINDOWS_CERTIFICATE_PASS }}
           WINDOWS_PFX_TIMESTAMP_URL: 'http://timestamp.digicert.com'
         if: matrix.packager
+
+      - name: Upload artifacts for SignPath to sign
+        uses: actions/upload-artifact@v4
+        id: signpath-upload
+        with:
+          name: SignPath${{ matrix.component && format('-{0}', matrix.component) }}-${{ matrix.cross_os || runner.os }}-${{ matrix.arch }}-Qt${{ matrix.qt }}
+          path: |
+            Drawpile-*.msi
+            Drawpile-*.zip
+        if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
+
+      - name: Delete unsigned artifacts
+        id: signpath-delete-unsigned
+        shell: bash
+        run: rm -vf Drawpile-*.msi Drawpile-*.zip
+        if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
+
+      - name: Submit artifacts to SignPath to sign
+        uses: signpath/github-action-submit-signing-request@v1
+        id: signpath-sign
+        with:
+          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+          organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
+          project-slug: 'Drawpile'
+          signing-policy-slug: 'release-signing'
+          artifact-configuration-slug: 'client'
+          github-artifact-id: '${{ steps.signpath-upload.outputs.artifact-id }}'
+          wait-for-completion: true
+          output-artifact-directory: '.'
+          parameters: |
+            version: "${{ github.ref_name }}"
+            productname: "Drawpile client"
+            productversion: "${{ env.WINDOWS_PRODUCT_VERSION }}"
+        if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
+
+      - name: Delete unsigned artifacts uploaded for SignPath after signing
+        uses: actions/github-script@v7
+        id: signpath-delete-uploaded
+        with:
+          script: |
+            github.rest.actions.deleteArtifact({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              artifact_id: ${{ steps.signpath-upload.outputs.artifact-id }}
+            });
+        if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
 
       - name: Bundle PDBs
         run: >
@@ -613,7 +699,10 @@ jobs:
 
       - name: Collect release notes
         if: startsWith(github.ref, 'refs/tags/')
-        run: awk -v RS='' '/^[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2} Version ${{ github.ref_name }}/,/^[[:digit:]]/' checkout/ChangeLog | tail '+2' > release-description
+        run: |
+          echo '**Code signing policy:** <https://drawpile.net/codesigningpolicy/>' > release-description
+          echo >> release-description
+          awk -v RS='' '/^[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2} Version ${{ github.ref_name }}/,/^[[:digit:]]/' checkout/ChangeLog | tail '+2' >> release-description
 
       - name: Write continuous release description
         if: "!startsWith(github.ref, 'refs/tags/')"
