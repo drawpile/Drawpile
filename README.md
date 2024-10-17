@@ -4,6 +4,8 @@
 
 Drawpile is a drawing program that lets you draw, paint and animate together with others on the same canvas. It runs on Windows, Linux, macOS and Android.
 
+Thanks to [SignPath.io](https://signpath.io/) for the code signing services and [the SignPath Foundation](https://signpath.org/) for providing us with an open source signing certificate.
+
 ## Installing
 
 Take a look at [the downloads page on drawpile.net](https://drawpile.net/download/) or [the GitHub releases](https://github.com/drawpile/Drawpile/releases).
