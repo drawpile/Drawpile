@@ -98,7 +98,7 @@
     <message>
         <location line="+20"/>
         <source>MyPaint Brush</source>
-        <translation>MyPaint Pincel</translation>
+        <translation>Pincel de MyPaint</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -427,7 +427,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+7"/>
         <source>Single Step</source>
-        <translation type="unfinished">Paso Único</translation>
+        <translation>Paso Único</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -514,7 +514,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location filename="../ui/filetypedialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished">Nombre:</translation>
+        <translation>Nombre:</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -629,12 +629,12 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="-253"/>
         <source>Add Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Añadir Avatar</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Import Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar fotograma de animación</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -654,12 +654,12 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Imagenes en Capa</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar Pinceles</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -669,7 +669,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+12"/>
         <source>Open Image</source>
-        <translation type="unfinished">Abrir Imagen</translation>
+        <translation>Abrir Imagen</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -679,7 +679,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+5"/>
         <source>Paste File</source>
-        <translation type="unfinished"></translation>
+        <translation>Pegar Archivo</translation>
     </message>
     <message>
         <location line="+167"/>
@@ -694,7 +694,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+7"/>
         <source>Export Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar WEBP Animada</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -745,7 +745,7 @@ a 64x64 pixeles.</translation>
         <location line="+70"/>
         <location line="+5"/>
         <source>Untitled</source>
-        <translation type="unfinished">Sin titulo</translation>
+        <translation>Sin título</translation>
     </message>
     <message>
         <location line="+102"/>
@@ -790,7 +790,7 @@ a 64x64 pixeles.</translation>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-2"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opacidad: </translation>
+        <translation>Opacidad: </translation>
     </message>
     <message>
         <location line="+44"/>
@@ -829,7 +829,7 @@ a 64x64 pixeles.</translation>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+15"/>
         <source>Current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Capa actual</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -841,7 +841,7 @@ a 64x64 pixeles.</translation>
         <location line="+35"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-143"/>
         <source>Size Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>Límite de Tamaño: </translation>
     </message>
     <message>
         <location line="+38"/>
@@ -854,14 +854,14 @@ a 64x64 pixeles.</translation>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-40"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir</translation>
     </message>
     <message>
         <location line="+20"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+10"/>
         <source>Shrink</source>
-        <translation type="unfinished"></translation>
+        <translation>Contraer</translation>
     </message>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-153"/>
@@ -1190,7 +1190,7 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location line="+13"/>
         <source>NSFM</source>
-        <translation type="unfinished">NSFM</translation>
+        <translation>NSFW</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -1675,31 +1675,31 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+4"/>
         <source>1 Second</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Segundo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>10 Seconds</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>10 Segundos</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Minute</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Minuto</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Hour</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Hora</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Forever</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>Para siempre</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -1864,7 +1864,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+0"/>
         <source>Show only layers in the current frame</source>
-        <translation type="unfinished">Solo mostrar capas en el cuadro actual</translation>
+        <translation>Solo mostrar capas en el fotograma actual</translation>
     </message>
     <message>
         <location line="+71"/>
@@ -2097,7 +2097,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-101"/>
         <source>Image saving failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardando imagen ha reprobada</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -2107,7 +2107,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Download complete, click on &quot;Save&quot; to save your file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Descarga completa, haz clic en &quot;Guardar&quot; para guardar tu archivo.</translation>
     </message>
     <message>
         <location line="+67"/>
@@ -2177,17 +2177,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+424"/>
         <source>Disconnected</source>
-        <translation type="unfinished">Desconectado</translation>
+        <translation>Desconectado</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;ve been disconnected from the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Has sido desconectada desde el servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Connection Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Conexión ha reprobada</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2207,7 +2207,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+31"/>
         <source>Error</source>
-        <translation type="unfinished">Error</translation>
+        <translation>Error</translation>
     </message>
     <message>
         <location line="+667"/>
@@ -2398,7 +2398,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+16"/>
         <source>Hide From Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Ocultar de Cursor</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3209,12 +3209,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+65"/>
         <source>Could not write log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">No podía escribir archivo de historia: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Could not read log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">No podía leer archivo de historia: %1</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4183,22 +4183,22 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+10"/>
         <source>Output</source>
-        <translation type="unfinished">Salida</translation>
+        <translation>Salida</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Frames as PNGs</source>
-        <translation type="unfinished"></translation>
+        <translation>Fotogramas de animación como PNGs</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frames as PNGs in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>Fotogramas de animación como PNGs</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>Fotogramas de animación en ZIP</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4213,7 +4213,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Video de WEBM</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4291,12 +4291,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+18"/>
         <source>Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Fotogramas</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Import a series of images as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar un serie de imagens como fotogramas de animación en la línea de tiempo.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4306,12 +4306,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+8"/>
         <source>Canvas Background:</source>
-        <translation type="unfinished">Fondo de Canvas:</translation>
+        <translation>Fondo de Lienzo:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Add</source>
-        <translation type="unfinished">Agregar</translation>
+        <translation>Añadir</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7444,7 +7444,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+11"/>
         <source>Qt Graphics View</source>
         <extracomment>One of the canvas renderer options. &quot;Qt&quot; is a software framework.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Visa de gráficas Qt</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8195,7 +8195,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-64"/>
         <source>Unpin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Retirar</translation>
     </message>
     <message>
         <location line="+1"/>
