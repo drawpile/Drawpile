@@ -751,7 +751,7 @@ a 64x64 pixeles.</translation>
         <location line="+102"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
-        <translation>Sintitulo%1</translation>
+        <translation>Sin_título%1</translation>
     </message>
 </context>
 <context>
@@ -1352,7 +1352,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+99"/>
         <location line="+1675"/>
         <source>Untitled</source>
-        <translation>Sin titulo</translation>
+        <translation>Sin título</translation>
     </message>
     <message>
         <location line="-1291"/>
@@ -2192,7 +2192,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Could not establish a connection to the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>No podía establecer una conexión al servidor.</translation>
     </message>
     <message>
         <location line="+200"/>
@@ -4203,7 +4203,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBP de animación</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4316,7 +4316,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+7"/>
         <source>Remove</source>
-        <translation type="unfinished">Remover</translation>
+        <translation>Remover</translation>
     </message>
     <message>
         <location line="+6"/>
