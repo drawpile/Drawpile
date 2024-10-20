@@ -97,104 +97,68 @@ void ColorWheel::paintEvent(QPaintEvent * )
     painter.translate(x, y);
     painter.setPen(Qt::NoPen);
 
-    bool outer_selector = !p->preview_outer || p->mouse_status != DragSquare;
-    bool inner_selector = !p->preview_inner || p->mouse_status != DragCircle;
-
     qreal outer = p->outer_radius();
     QRect hue_ring_bounds(-outer, -outer, outer * 2.0, outer * 2.0);
-    if ( !outer_selector || !inner_selector )
-    {
-        QRect inner_preview_bounds;
-        if ( outer_selector )
-        {
-            qreal inner = p->inner_radius() + 1.0;
-            inner_preview_bounds = QRect(-inner, -inner, inner * 2.0, inner * 2.0);
-        }
-        else
-        {
-            inner_preview_bounds = hue_ring_bounds;
-        }
 
-        if ( p->comparison_color.isValid() )
-        {
-            painter.save();
-            painter.setClipRect(QRect(-outer, -outer, outer * 2.0, outer));
-        }
-        painter.setBrush(color());
-        painter.drawEllipse(inner_preview_bounds);
-        if ( p->comparison_color.isValid() )
-        {
-            painter.setClipRect(QRect(-outer, 0, outer * 2.0, outer));
-            painter.setBrush(p->comparison_color);
-            painter.drawEllipse(inner_preview_bounds);
-            painter.restore();
-        }
-    }
+    // hue wheel
+    if(p->hue_ring.isNull())
+        p->render_ring();
 
-    if ( outer_selector )
-    {
-        // hue wheel
-        if(p->hue_ring.isNull())
-            p->render_ring();
+    painter.drawPixmap(hue_ring_bounds, p->hue_ring);
 
-        painter.drawPixmap(hue_ring_bounds, p->hue_ring);
-
-        // hue selector
-        p->draw_ring_editor(p->hue, painter, Qt::black);
-    }
+    // hue selector
+    p->draw_ring_editor(p->hue, painter, Qt::black);
 
     // lum-sat square
-    if ( inner_selector )
+    if(p->inner_selector.isNull())
+        p->render_inner_selector();
+
+    if ( p->mirrored_selector )
+        painter.scale(-1.0, 1.0);
+    painter.rotate(p->selector_image_angle());
+    painter.translate(p->selector_image_offset());
+
+    QPointF selector_position;
+    if ( p->selector_shape == ShapeSquare )
     {
-        if(p->inner_selector.isNull())
-            p->render_inner_selector();
-
-        if ( p->mirrored_selector )
-            painter.scale(-1.0, 1.0);
-        painter.rotate(p->selector_image_angle());
-        painter.translate(p->selector_image_offset());
-
-        QPointF selector_position;
-        if ( p->selector_shape == ShapeSquare )
-        {
-            qreal side = p->square_size();
-            selector_position = QPointF(p->sat*side, p->val*side);
-        }
-        else if ( p->selector_shape == ShapeTriangle )
-        {
-            qreal side = p->triangle_side();
-            qreal height = p->triangle_height();
-            qreal slice_h = side * p->val;
-            qreal ymin = side/2-slice_h/2;
-
-            selector_position = QPointF(p->val*height, ymin + p->sat*slice_h);
-            QPolygonF triangle;
-            triangle.append(QPointF(0,side/2));
-            triangle.append(QPointF(height,0));
-            triangle.append(QPointF(height,side));
-            QPainterPath clip;
-            clip.addPolygon(triangle);
-            painter.setClipPath(clip);
-        }
-
-        painter.drawImage(QRectF(QPointF(0, 0), p->selector_size()), p->inner_selector);
-        painter.setClipping(false);
-
-        // lum-sat selector
-        // we define the color of the selection based on the background color of the widget
-        // in order to improve to contrast
-        if (p->backgroundIsDark)
-        {
-            bool isWhite = (p->val < 0.65 || p->sat > 0.43);
-            painter.setPen(QPen(isWhite ? Qt::white : Qt::black, 3));
-        }
-        else
-        {
-            painter.setPen(QPen(p->val > 0.5 ? Qt::black : Qt::white, 3));
-        }
-        painter.setBrush(Qt::NoBrush);
-        painter.drawEllipse(selector_position, selector_radius, selector_radius);
+        qreal side = p->square_size();
+        selector_position = QPointF(p->sat*side, p->val*side);
     }
+    else if ( p->selector_shape == ShapeTriangle )
+    {
+        qreal side = p->triangle_side();
+        qreal height = p->triangle_height();
+        qreal slice_h = side * p->val;
+        qreal ymin = side/2-slice_h/2;
+
+        selector_position = QPointF(p->val*height, ymin + p->sat*slice_h);
+        QPolygonF triangle;
+        triangle.append(QPointF(0,side/2));
+        triangle.append(QPointF(height,0));
+        triangle.append(QPointF(height,side));
+        QPainterPath clip;
+        clip.addPolygon(triangle);
+        painter.setClipPath(clip);
+    }
+
+    painter.drawImage(QRectF(QPointF(0, 0), p->selector_size()), p->inner_selector);
+    painter.setClipping(false);
+
+    // lum-sat selector
+    // we define the color of the selection based on the background color of the widget
+    // in order to improve to contrast
+    if (p->backgroundIsDark)
+    {
+        bool isWhite = (p->val < 0.65 || p->sat > 0.43);
+        painter.setPen(QPen(isWhite ? Qt::white : Qt::black, 3));
+    }
+    else
+    {
+        painter.setPen(QPen(p->val > 0.5 ? Qt::black : Qt::white, 3));
+    }
+    painter.setBrush(Qt::NoBrush);
+    painter.drawEllipse(selector_position, selector_radius, selector_radius);
+
 }
 
 void ColorWheel::mouseMoveEvent(QMouseEvent *ev)
@@ -339,21 +303,6 @@ qreal ColorWheel::wheelRatio() const
     return p->wheel_ratio;
 }
 
-bool ColorWheel::previewOuter() const
-{
-    return p->preview_outer;
-}
-
-bool ColorWheel::previewInner() const
-{
-    return p->preview_inner;
-}
-
-QColor ColorWheel::comparisonColor() const
-{
-    return p->comparison_color;
-}
-
 
 void ColorWheel::setColorSpace(color_widgets::ColorWheel::ColorSpaceEnum space)
 {
@@ -437,42 +386,6 @@ void ColorWheel::setWheelRatio(qreal ratio)
         p->wheel_ratio = ratio;
         update();
         Q_EMIT wheelRatioChanged(ratio);
-    }
-}
-
-void ColorWheel::setPreviewOuter(bool preview)
-{
-    if ( preview != p->preview_outer )
-    {
-        p->preview_outer = preview;
-        if ( p->mouse_status == DragSquare )
-            update();
-        Q_EMIT previewOuterChanged(preview);
-    }
-}
-
-void ColorWheel::setPreviewInner(bool preview)
-{
-    if ( preview != p->preview_inner )
-    {
-        p->preview_inner = preview;
-        if ( p->mouse_status == DragCircle )
-            update();
-        Q_EMIT previewInnerChanged(preview);
-    }
-}
-
-void ColorWheel::setComparisonColor(QColor color)
-{
-    if ( color != p->comparison_color )
-    {
-        p->comparison_color = color;
-        if ( ( p->preview_outer && p->mouse_status == DragSquare ) ||
-             ( p->preview_inner && p->mouse_status == DragCircle ))
-        {
-            update();
-        }
-        Q_EMIT comparisonColorChanged(color);
     }
 }
 

@@ -46,9 +46,6 @@ public:
     bool mirrored_selector = false;
     bool align_top = false;
     qreal wheel_ratio = WHEEL_RATIO_DEFAULT;
-    bool preview_outer = false;
-    bool preview_inner = false;
-    QColor comparison_color;
     qreal device_pixel_ratio = 1.0;
 
     Private(ColorWheel *widget)

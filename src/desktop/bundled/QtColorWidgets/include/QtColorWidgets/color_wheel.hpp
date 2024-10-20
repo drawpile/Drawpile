@@ -35,9 +35,6 @@ class QCP_EXPORT ColorWheel : public QWidget
     Q_PROPERTY(bool mirroredSelector READ mirroredSelector WRITE setMirroredSelector NOTIFY mirroredSelectorChanged DESIGNABLE true )
     Q_PROPERTY(bool alignTop READ alignTop WRITE setAlignTop NOTIFY alignTop DESIGNABLE false )
     Q_PROPERTY(qreal wheelRatio READ wheelRatio WRITE setWheelRatio NOTIFY wheelRatioChanged DESIGNABLE false )
-    Q_PROPERTY(bool previewOuter READ previewOuter WRITE setPreviewOuter NOTIFY previewOuterChanged DESIGNABLE false )
-    Q_PROPERTY(bool previewInner READ previewInner WRITE setPreviewInner NOTIFY previewInnerChanged DESIGNABLE false )
-    Q_PROPERTY(QColor comparisonColor READ comparisonColor WRITE setComparisonColor NOTIFY comparisonColorChanged DESIGNABLE false )
 
 public:
     Q_CONSTEXPR static qreal WHEEL_RATIO_DEFAULT = 0.1;
@@ -106,15 +103,6 @@ public:
     /// Ratio that the wheel width scales with the widget size, <= 0 means disabled
     qreal wheelRatio() const;
 
-    /// Whether to preview the color on the outer ring when picking on the inner selector
-    bool previewOuter() const;
-
-    /// Whether to preview the color inside the ring when picking on the ring
-    bool previewInner() const;
-
-    /// Color to compare to when previewing
-    QColor comparisonColor() const;
-
 public Q_SLOTS:
 
     /// Set current color
@@ -153,15 +141,6 @@ public Q_SLOTS:
     /// Ratio for the wheel width scaling with widget size, <= 0 disables
     void setWheelRatio(qreal ratio);
 
-    /// Whether to preview the color on the outer ring when picking on the inner selector
-    void setPreviewOuter(bool preview);
-
-    /// Whether to preview the color inside the ring when picking on the ring
-    void setPreviewInner(bool preview);
-
-    /// Color to compare to when previewing, set to an invalid color to disable
-    void setComparisonColor(QColor color);
-
 Q_SIGNALS:
     /**
      * Emitted when the user selects a color or setColor is called
@@ -186,12 +165,6 @@ Q_SIGNALS:
     void alignTopChanged(bool top);
 
     void wheelRatioChanged(qreal ratio);
-
-    void previewOuterChanged(bool preview);
-
-    void previewInnerChanged(bool preview);
-
-    void comparisonColorChanged(QColor color);
 
     /**
      * Emitted when the user releases from dragging
