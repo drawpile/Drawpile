@@ -21,7 +21,8 @@ public:
 #endif
 		int format, int width, int height, int loops, int start, int end,
 		int framerate, const QRect &crop, bool scaleSmooth,
-		const drawdance::CanvasState &canvasState, QObject *parent = nullptr);
+		bool paletteFromMergedImage, const drawdance::CanvasState &canvasState,
+		QObject *parent = nullptr);
 
 	void run() override;
 
@@ -59,6 +60,7 @@ private:
 	const QRect m_crop;
 	const drawdance::CanvasState m_canvasState;
 	const bool m_scaleSmooth;
+	const bool m_paletteFromMergedImage;
 	bool m_cancelled;
 };
 

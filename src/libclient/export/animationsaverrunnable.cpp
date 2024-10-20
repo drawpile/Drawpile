@@ -21,7 +21,8 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 #endif
 	int format, int width, int height, int loops, int start, int end,
 	int framerate, const QRect &crop, bool scaleSmooth,
-	const drawdance::CanvasState &canvasState, QObject *parent)
+	bool paletteFromMergedImage, const drawdance::CanvasState &canvasState,
+	QObject *parent)
 	: QObject(parent)
 #ifndef __EMSCRIPTEN__
 	, m_path(path)
@@ -36,6 +37,7 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 	, m_crop(crop)
 	, m_canvasState(canvasState)
 	, m_scaleSmooth(scaleSmooth)
+	, m_paletteFromMergedImage(paletteFromMergedImage)
 	, m_cancelled(false)
 {
 }
@@ -92,7 +94,8 @@ void AnimationSaverRunnable::run()
 			m_height,
 			m_scaleSmooth ? DP_MSG_TRANSFORM_REGION_MODE_BILINEAR
 						  : DP_MSG_TRANSFORM_REGION_MODE_NEAREST,
-			m_start, m_end, m_framerate, &onProgress, this);
+			m_start, m_end, m_framerate, m_paletteFromMergedImage, &onProgress,
+			this);
 		break;
 	}
 #ifdef DP_LIBAV

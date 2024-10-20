@@ -72,6 +72,7 @@ void DP_view_mode_buffer_dispose(DP_ViewModeBuffer *vmb)
             DP_vector_dispose(&vmb->tracks[i].hidden_layer_ids);
         }
         DP_free(vmb->tracks);
+        *vmb = (DP_ViewModeBuffer){0, 0, NULL};
     }
 }
 

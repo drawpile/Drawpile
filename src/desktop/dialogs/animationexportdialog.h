@@ -44,7 +44,8 @@ signals:
 		const QString &path,
 #endif
 		int format, int loops, int start, int end, int framerate,
-		const QRect &crop, int scalePercent, bool scaleSmooth);
+		const QRect &crop, int scalePercent, bool scaleSmooth,
+		bool paletteFromMergedImage);
 
 private:
 	void updateOutputUi();
@@ -79,6 +80,8 @@ private:
 	QCheckBox *m_scaleSmoothBox;
 	QLabel *m_scaleLabel;
 	QSpinBox *m_loopsSpinner;
+	QLabel *m_paletteLabel;
+	QComboBox *m_paletteCombo;
 	QSpinBox *m_startSpinner;
 	QSpinBox *m_endSpinner;
 	QSpinBox *m_framerateSpinner;

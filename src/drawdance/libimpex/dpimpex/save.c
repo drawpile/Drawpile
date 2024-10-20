@@ -1328,28 +1328,124 @@ DP_SaveResult DP_save_animation_zip(DP_CanvasState *cs, DP_DrawContext *dc,
 }
 
 
+typedef struct DP_WriteGifContext {
+    DP_CanvasState *cs;
+    DP_DrawContext *dc;
+    const char *path;
+    DP_Rect *crop;
+    int width;
+    int height;
+    int interpolation;
+    int start;
+    int end_inclusive;
+    int framerate;
+    bool palette_from_merged_image;
+    DP_Output *output;
+    jo_gifx_palette_t *pal;
+    jo_gifx_t *gif;
+    DP_ViewModeBuffer vmb;
+    struct {
+        int done;
+        int total;
+        DP_SaveAnimationProgressFn fn;
+        void *user;
+    } progress;
+} DP_WriteGifContext;
+
+static bool increment_gif_progress(DP_WriteGifContext *c, int n)
+{
+    DP_SaveAnimationProgressFn fn = c->progress.fn;
+    if (fn) {
+        int done = c->progress.done + n;
+        c->progress.done = done;
+        int total = c->progress.total;
+        double progress = done < total && total != 0
+                            ? DP_int_to_double(done) / DP_int_to_double(total)
+                            : 1.0;
+        return fn(c->progress.user, progress);
+    }
+    else {
+        return true;
+    }
+}
+
+static void write_gif_context_dispose(DP_WriteGifContext *c)
+{
+    DP_view_mode_buffer_dispose(&c->vmb);
+    jo_gifx_abort(c->gif);
+    jo_gifx_palette_free(c->pal);
+    DP_output_free_discard(c->output);
+}
+
 static bool write_gif(void *user, const void *buffer, size_t size)
 {
     DP_Output *output = user;
     return DP_output_write(output, buffer, size);
 }
 
-static jo_gifx_t *start_gif(DP_CanvasState *cs, DP_Rect *crop,
-                            DP_Output *output, int width, int height)
+static void quantize_gif_palette_from_image(jo_gifx_palette_t *pal,
+                                            DP_Image *img)
 {
-    jo_gifx_palette_t *pal = jo_gifx_palette_new();
+    if (img) {
+        jo_gifx_palette_quantize(pal, (uint32_t *)DP_image_pixels(img),
+                                 DP_image_width(img) * DP_image_height(img));
+    }
+}
 
+static bool generate_gif_palette_from_merged_image(DP_WriteGifContext *c)
+{
     DP_Image *img = DP_canvas_state_to_flat_image(
-        cs, DP_FLAT_IMAGE_RENDER_FLAGS, crop, NULL);
-    jo_gifx_palette_quantize(pal, (uint32_t *)DP_image_pixels(img),
-                             DP_image_width(img) * DP_image_height(img));
+        c->cs, DP_FLAT_IMAGE_RENDER_FLAGS, c->crop, NULL);
+    quantize_gif_palette_from_image(c->pal, img);
     DP_image_free(img);
+    return increment_gif_progress(c, 1);
+}
 
-    jo_gifx_palette_finish(pal);
-    jo_gifx_t *gif = jo_gifx_start(write_gif, output, DP_int_to_uint16(width),
-                                   DP_int_to_uint16(height), 0, pal);
-    jo_gifx_palette_free(pal);
-    return gif;
+static DP_Image *generate_frame_gif(DP_WriteGifContext *c, int i)
+{
+    return generate_frame_image(c->cs, c->dc, c->crop, c->width, c->height,
+                                c->interpolation, &c->vmb, i, NULL);
+}
+
+static bool generate_gif_palette_from_each_frame(DP_WriteGifContext *c)
+{
+    for (int i = c->start; i <= c->end_inclusive; ++i) {
+        int instances = 1;
+        while (i < c->end_inclusive
+               && DP_canvas_state_same_frame(c->cs, i, i + 1)) {
+            ++i;
+            ++instances;
+        }
+
+        DP_Image *img = generate_frame_gif(c, i);
+        quantize_gif_palette_from_image(c->pal, img);
+        DP_image_free(img);
+
+        if (!increment_gif_progress(c, instances)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static bool start_gif(DP_WriteGifContext *c)
+{
+    c->pal = jo_gifx_palette_new();
+
+    bool ok = c->palette_from_merged_image
+                ? generate_gif_palette_from_merged_image(c)
+                : generate_gif_palette_from_each_frame(c);
+    if (ok) {
+        jo_gifx_palette_finish(c->pal);
+        c->gif = jo_gifx_start(write_gif, c->output, DP_int_to_uint16(c->width),
+                               DP_int_to_uint16(c->height), 0, c->pal);
+        jo_gifx_palette_free(c->pal);
+        c->pal = NULL;
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 static double get_gif_centiseconds_per_frame(int framerate)
@@ -1357,81 +1453,63 @@ static double get_gif_centiseconds_per_frame(int framerate)
     return 100.0 / DP_int_to_double(DP_min_int(DP_max_int(framerate, 1), 100));
 }
 
-static bool report_gif_progress(DP_SaveAnimationProgressFn progress_fn,
-                                void *user, int frames_done, int frame_count)
+static DP_SaveResult save_animation_gif(DP_WriteGifContext *c)
 {
-    double part = DP_int_to_double(frames_done);
-    double total = DP_int_to_double(frame_count);
-    return !progress_fn || progress_fn(user, part / total);
-}
-
-static DP_SaveResult
-save_animation_gif(DP_CanvasState *cs, DP_DrawContext *dc, const char *path,
-                   DP_SaveAnimationProgressFn progress_fn, void *user,
-                   DP_Rect *crop, int width, int height, int interpolation,
-                   int start, int end_inclusive, int framerate)
-{
-    DP_Output *output = DP_file_output_new_from_path(path);
-    if (!output) {
+    c->output = DP_file_output_new_from_path(c->path);
+    if (!c->output) {
         return DP_SAVE_RESULT_OPEN_ERROR;
     }
 
-    jo_gifx_t *gif = start_gif(cs, crop, output, width, height);
-    if (!gif) {
-        DP_output_free(output);
+    int frame_count = count_frames(c->start, c->end_inclusive);
+    c->progress.total =
+        frame_count + (c->palette_from_merged_image ? 1 : frame_count);
+
+    DP_view_mode_buffer_init(&c->vmb);
+    if (!start_gif(c)) {
         return DP_SAVE_RESULT_OPEN_ERROR;
     }
 
-    int frame_count = count_frames(start, end_inclusive);
-    if (!report_gif_progress(progress_fn, user, 0, frame_count)) {
-        jo_gifx_abort(gif);
-        DP_output_free(output);
-        return DP_SAVE_RESULT_CANCEL;
-    }
-
-    DP_ViewModeBuffer vmb;
-    DP_view_mode_buffer_init(&vmb);
-    double centiseconds_per_frame = get_gif_centiseconds_per_frame(framerate);
+    double centiseconds_per_frame =
+        get_gif_centiseconds_per_frame(c->framerate);
     double delay_frac = 0.0;
-    for (int i = start; i <= end_inclusive; ++i) {
+    for (int i = c->start; i <= c->end_inclusive; ++i) {
         int instances = 1;
-        while (i < end_inclusive && DP_canvas_state_same_frame(cs, i, i + 1)) {
+        while (i < c->end_inclusive
+               && DP_canvas_state_same_frame(c->cs, i, i + 1)) {
             ++i;
             ++instances;
         }
 
-        DP_Image *img = generate_frame_image(cs, dc, crop, width, height,
-                                             interpolation, &vmb, i, NULL);
+        DP_Image *img = generate_frame_gif(c, i);
         double delay = centiseconds_per_frame * DP_int_to_double(instances);
         double delay_floored = floor(delay + delay_frac);
         delay_frac = delay - delay_floored;
-        bool frame_ok = jo_gifx_frame(write_gif, output, gif,
+        bool frame_ok = jo_gifx_frame(write_gif, c->output, c->gif,
                                       (uint32_t *)DP_image_pixels(img),
                                       DP_double_to_uint16(delay_floored));
         DP_image_free(img);
         if (!frame_ok) {
-            jo_gifx_abort(gif);
-            DP_output_free(output);
-            DP_view_mode_buffer_dispose(&vmb);
             return DP_SAVE_RESULT_WRITE_ERROR;
         }
 
-        if (!report_gif_progress(progress_fn, user, i - start + 1,
-                                 frame_count)) {
-            jo_gifx_abort(gif);
-            DP_output_free(output);
-            DP_view_mode_buffer_dispose(&vmb);
+        if (!increment_gif_progress(c, instances)) {
             return DP_SAVE_RESULT_CANCEL;
         }
     }
-    DP_view_mode_buffer_dispose(&vmb);
+    DP_view_mode_buffer_dispose(&c->vmb);
 
-    if (!jo_gifx_end(write_gif, output, gif) || !DP_output_flush(output)) {
-        DP_output_free(output);
+    bool gif_end_ok = jo_gifx_end(write_gif, c->output, c->gif);
+    c->gif = NULL;
+    if (!gif_end_ok || !DP_output_flush(c->output)) {
         return DP_SAVE_RESULT_WRITE_ERROR;
     }
 
-    DP_output_free(output);
+    bool output_free_ok = DP_output_free(c->output);
+    c->output = NULL;
+    if (!output_free_ok) {
+        return DP_SAVE_RESULT_WRITE_ERROR;
+    }
+
     return DP_SAVE_RESULT_SUCCESS;
 }
 
@@ -1439,6 +1517,7 @@ DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, DP_DrawContext *dc,
                                     const char *path, DP_Rect *crop, int width,
                                     int height, int interpolation, int start,
                                     int end_inclusive, int framerate,
+                                    bool palette_from_merged_image,
                                     DP_SaveAnimationProgressFn progress_fn,
                                     void *user)
 {
@@ -1457,9 +1536,26 @@ DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, DP_DrawContext *dc,
 
         DP_PERF_BEGIN_DETAIL(fn, "animation_gif", "frame_count=%d,path=%s",
                              count_frames(start, end_inclusive), path);
-        DP_SaveResult result = save_animation_gif(
-            cs, dc, path, progress_fn, user, crop, width, height, interpolation,
-            start, end_inclusive, framerate);
+        DP_WriteGifContext c = {
+            cs,
+            dc,
+            path,
+            crop,
+            width,
+            height,
+            interpolation,
+            start,
+            end_inclusive,
+            framerate,
+            palette_from_merged_image,
+            NULL,
+            NULL,
+            NULL,
+            {0, 0, NULL},
+            {0, 0, progress_fn, user},
+        };
+        DP_SaveResult result = save_animation_gif(&c);
+        write_gif_context_dispose(&c);
         DP_PERF_END(fn);
         return result;
     }
