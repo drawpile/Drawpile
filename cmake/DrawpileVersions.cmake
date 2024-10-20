@@ -46,7 +46,7 @@ function(calculate_android_version_code out_var version abi_name)
 		if(version MATCHES "-beta\\.([0-9]+)")
 			set(beta "${CMAKE_MATCH_1}")
 		else()
-			set(beta 0)
+			set(beta 99)
 		endif()
 
 		if(version MATCHES "-fix\\.([0-9]+)")
