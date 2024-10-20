@@ -4,6 +4,7 @@
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/main.h"
+#include "desktop/widgets/colorpopup.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include <QAction>
 #include <QActionGroup>
@@ -13,6 +14,31 @@
 #include <QtColorWidgets/swatch.hpp>
 
 namespace docks {
+
+namespace {
+
+class PopupColorWheel : public color_widgets::ColorWheel {
+public:
+	PopupColorWheel(ColorSpinnerDock *dock)
+		: color_widgets::ColorWheel()
+		, m_dock(dock)
+	{
+	}
+
+protected:
+	void mousePressEvent(QMouseEvent *event) override
+	{
+		if(event->buttons() & Qt::LeftButton) {
+			m_dock->showPreviewPopup();
+		}
+		color_widgets::ColorWheel::mousePressEvent(event);
+	}
+
+private:
+	ColorSpinnerDock *m_dock;
+};
+
+}
 
 struct ColorSpinnerDock::Private {
 	widgets::GroupedToolButton *menuButton = nullptr;
@@ -31,7 +57,10 @@ struct ColorSpinnerDock::Private {
 	QAction *alignCenterAction = nullptr;
 	QAction *previewAction = nullptr;
 	color_widgets::Swatch *lastUsedSwatch = nullptr;
-	color_widgets::ColorWheel *colorwheel = nullptr;
+	QColor lastUsedColor;
+	PopupColorWheel *colorwheel = nullptr;
+	widgets::ColorPopup *popup = nullptr;
+	bool popupEnabled = false;
 	bool updating = false;
 };
 
@@ -229,7 +258,7 @@ ColorSpinnerDock::ColorSpinnerDock(const QString &title, QWidget *parent)
 	layout->setContentsMargins(4, 4, 4, 4);
 	layout->setSpacing(0);
 
-	d->colorwheel = new color_widgets::ColorWheel;
+	d->colorwheel = new PopupColorWheel(this);
 	d->colorwheel->setMinimumSize(64, 64);
 	layout->addWidget(d->colorwheel);
 
@@ -238,6 +267,9 @@ ColorSpinnerDock::ColorSpinnerDock(const QString &title, QWidget *parent)
 	connect(
 		d->colorwheel, &color_widgets::ColorWheel::colorSelected, this,
 		&ColorSpinnerDock::colorSelected);
+	connect(
+		d->colorwheel, &color_widgets::ColorWheel::editingFinished, this,
+		&ColorSpinnerDock::hidePreviewPopup);
 
 	desktop::settings::Settings &settings = dpApp().settings();
 	settings.bindColorWheelShape(this, &ColorSpinnerDock::setShape);
@@ -253,6 +285,29 @@ ColorSpinnerDock::~ColorSpinnerDock()
 	delete d;
 }
 
+void ColorSpinnerDock::showPreviewPopup()
+{
+	if(d->popupEnabled) {
+		if(!d->popup) {
+			d->popup = new widgets::ColorPopup(this);
+			d->popup->setSelectedColor(d->colorwheel->color());
+		}
+		d->popup->setPreviousColor(d->colorwheel->color());
+		d->popup->setLastUsedColor(d->lastUsedColor);
+		d->popup->showPopup(
+			this, isFloating() ? nullptr : parentWidget(),
+			mapFromGlobal(d->colorwheel->mapToGlobal(QPoint(0, 0))).y(),
+			!d->colorwheel->alignTop());
+	}
+}
+
+void ColorSpinnerDock::hidePreviewPopup()
+{
+	if(d->popup) {
+		d->popup->hide();
+	}
+}
+
 void ColorSpinnerDock::setColor(const QColor &color)
 {
 	d->lastUsedSwatch->setSelected(
@@ -260,9 +315,13 @@ void ColorSpinnerDock::setColor(const QColor &color)
 
 	if(d->colorwheel->color() != color) {
 		d->colorwheel->setColor(color);
-		d->colorwheel->setComparisonColor(color);
-	} else if(!d->colorwheel->comparisonColor().isValid()) {
-		d->colorwheel->setComparisonColor(color);
+		d->lastUsedColor = color;
+	} else if(!d->lastUsedColor.isValid()) {
+		d->lastUsedColor = color;
+	}
+
+	if(d->popup) {
+		d->popup->setSelectedColor(color);
 	}
 }
 
@@ -271,8 +330,8 @@ void ColorSpinnerDock::setLastUsedColors(const color_widgets::ColorPalette &pal)
 	d->lastUsedSwatch->setPalette(pal);
 	d->lastUsedSwatch->setSelected(
 		findPaletteColor(d->lastUsedSwatch->palette(), d->colorwheel->color()));
-	d->colorwheel->setComparisonColor(
-		pal.count() == 0 ? d->colorwheel->color() : pal.colorAt(0));
+	d->lastUsedColor =
+		pal.count() == 0 ? d->colorwheel->color() : pal.colorAt(0);
 }
 
 void ColorSpinnerDock::setShape(color_widgets::ColorWheel::ShapeEnum shape)
@@ -339,8 +398,10 @@ void ColorSpinnerDock::setPreview(int preview)
 	QScopedValueRollback<bool> guard(d->updating, true);
 	bool enabled = preview != 0;
 	d->previewAction->setChecked(enabled);
-	d->colorwheel->setPreviewOuter(enabled);
-	d->colorwheel->setPreviewInner(enabled);
+	d->popupEnabled = enabled;
+	if(!enabled) {
+		hidePreviewPopup();
+	}
 }
 
 void ColorSpinnerDock::updateShapeAction()

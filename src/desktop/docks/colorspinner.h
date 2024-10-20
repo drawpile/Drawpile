@@ -16,6 +16,9 @@ public:
 	ColorSpinnerDock(const QString &title, QWidget *parent);
 	~ColorSpinnerDock() override;
 
+	void showPreviewPopup();
+	void hidePreviewPopup();
+
 public slots:
 	void setColor(const QColor &color);
 	void setLastUsedColors(const color_widgets::ColorPalette &pal);

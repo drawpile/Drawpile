@@ -341,6 +341,8 @@ target_sources(drawpile PRIVATE
 	widgets/canvasshortcutedit.h
 	widgets/colorbutton.cpp
 	widgets/colorbutton.h
+	widgets/colorpopup.cpp
+	widgets/colorpopup.h
 	widgets/curvewidget.cpp
 	widgets/curvewidget.h
 	widgets/dualcolorbutton.cpp
