@@ -35,18 +35,26 @@
 #include <stddef.h>
 #include <stdint.h>
 
+typedef struct jo_gifx_palette_t jo_gifx_palette_t;
 typedef struct jo_gifx_t jo_gifx_t;
 typedef bool (*jo_gifx_write_fn)(void *user, const void *buffer, size_t size);
+
+jo_gifx_palette_t *jo_gifx_palette_new(void);
+
+void jo_gifx_palette_quantize(jo_gifx_palette_t *pal, uint32_t *rgba,
+                              int rgbaSize);
+
+void jo_gifx_palette_finish(jo_gifx_palette_t *pal);
+
+void jo_gifx_palette_free(jo_gifx_palette_t *pal);
 
 // Allocate handle, write header. Width and height are the image dimensions,
 // repeat is animation repetition count (0 means forever, anything that doesn't
 // fit into a uint16_t means no animation), numColors is the number of colors in
-// the palette, must be a power of 2 - 1 (e.g. 255). The given rgba pixels will
-// be used to generate a palette. Returns either the handle or NULL if writing
-// the header failed.
+// the palette, must be a power of 2 - 1 (e.g. 255). Returns either the handle
+// or NULL if writing the header failed. Does not take ownership of the pallete.
 jo_gifx_t *jo_gifx_start(jo_gifx_write_fn write_fn, void *user, uint16_t width,
-                         uint16_t height, int repeat, int numColors,
-                         uint32_t *rgba);
+                         uint16_t height, int repeat, jo_gifx_palette_t *pal);
 
 // Appends a frame with the given pixels, delayCsec is the amount of time the
 // frame persists in centiseconds (hundredth of a second, not milliseconds.)

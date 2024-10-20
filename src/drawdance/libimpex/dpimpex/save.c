@@ -1337,12 +1337,18 @@ static bool write_gif(void *user, const void *buffer, size_t size)
 static jo_gifx_t *start_gif(DP_CanvasState *cs, DP_Rect *crop,
                             DP_Output *output, int width, int height)
 {
+    jo_gifx_palette_t *pal = jo_gifx_palette_new();
+
     DP_Image *img = DP_canvas_state_to_flat_image(
         cs, DP_FLAT_IMAGE_RENDER_FLAGS, crop, NULL);
-    jo_gifx_t *gif = jo_gifx_start(write_gif, output, DP_int_to_uint16(width),
-                                   DP_int_to_uint16(height), 0, 255,
-                                   (uint32_t *)DP_image_pixels(img));
+    jo_gifx_palette_quantize(pal, (uint32_t *)DP_image_pixels(img),
+                             DP_image_width(img) * DP_image_height(img));
     DP_image_free(img);
+
+    jo_gifx_palette_finish(pal);
+    jo_gifx_t *gif = jo_gifx_start(write_gif, output, DP_int_to_uint16(width),
+                                   DP_int_to_uint16(height), 0, pal);
+    jo_gifx_palette_free(pal);
     return gif;
 }
 

@@ -37,6 +37,15 @@
 
 #define HASH_SIZE 5003
 
+
+struct jo_gifx_palette_t {
+    int numColors;
+    unsigned char map[0x300];
+    int network[256][3];
+    int bias[256];
+    int freq[256];
+};
+
 struct jo_gifx_t {
     unsigned char palette[0x300];
     uint16_t width, height;
@@ -47,9 +56,37 @@ struct jo_gifx_t {
     unsigned char pixels[];
 };
 
+jo_gifx_palette_t *jo_gifx_palette_new(void)
+{
+    // defs for freq and bias
+    const int intbiasshift = 16; /* bias for fractions */
+    const int intbias = (((int)1) << intbiasshift);
+
+    jo_gifx_palette_t *pal = calloc(1, sizeof(*pal));
+    pal->numColors = 0;
+    for (int i = 0; i < 255; ++i) {
+        // Put nurons evenly through the luminance spectrum.
+        pal->network[i][0] = pal->network[i][1] = pal->network[i][2] =
+            (i << 12) / 255;
+        pal->freq[i] = intbias / 255;
+    }
+    return pal;
+}
+
+static bool palette_has_color(jo_gifx_palette_t *pal, int r, int g, int b)
+{
+    for (int i = 0; i < pal->numColors; ++i) {
+        if (pal->map[i * 3] == r && pal->map[i * 3 + 1] == g
+            && pal->map[i * 3 + 2] == b) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // Based on NeuQuant algorithm
-static void jo_gifx_quantize(uint32_t *rgba, int rgbaSize, int sample,
-                             unsigned char *map, int numColors)
+static void palette_quantize(jo_gifx_palette_t *pal, uint32_t *rgba,
+                             int rgbaSize)
 {
     // defs for freq and bias
     const int intbiasshift = 16; /* bias for fractions */
@@ -74,123 +111,155 @@ static void jo_gifx_quantize(uint32_t *rgba, int rgbaSize, int sample,
     const int alpharadbshift = (alphabiasshift + radbiasshift);
     const int alpharadbias = (((int)1) << alpharadbshift);
 
-    sample = sample < 1 ? 1 : sample > 30 ? 30 : sample;
-    int network[256][3];
-    int bias[256] = {0}, freq[256];
-    for (int i = 0; i < numColors; ++i) {
-        // Put nurons evenly through the luminance spectrum.
-        network[i][0] = network[i][1] = network[i][2] = (i << 12) / numColors;
-        freq[i] = intbias / numColors;
-    }
+    // always go for the maximum number of colors (256th is transparency)
+    const int numColors = 255;
+
     // Learn
-    {
-        const int primes[5] = {499, 491, 487, 503};
-        int step = 4;
-        for (int i = 0; i < 4; ++i) {
-            if (rgbaSize > primes[i] * 4
-                && (rgbaSize % primes[i])) { // TODO/Error? primes[i]*4?
-                step = primes[i] * 4;
+    const int primes[5] = {499, 491, 487, 503};
+    int sample = 30;
+    int step = 4;
+    for (int i = 0; i < 4; ++i) {
+        if (rgbaSize > primes[i] * 4
+            && (rgbaSize % primes[i])) { // TODO/Error? primes[i]*4?
+            step = primes[i] * 4;
+        }
+    }
+    sample = step == 4 ? 1 : sample;
+
+    int alphadec = 30 + ((sample - 1) / 3);
+    int samplepixels = rgbaSize / (4 * sample);
+    int delta = samplepixels / 100;
+    int alpha = initalpha;
+    delta = delta == 0 ? 1 : delta;
+
+    int radius = (numColors >> 3) * radiusbias;
+    int rad = radius >> radiusbiasshift;
+    rad = rad <= 1 ? 0 : rad;
+    int radSq = rad * rad;
+    int radpower[32];
+    for (int i = 0; i < rad; i++) {
+        radpower[i] = alpha * (((radSq - i * i) * radbias) / radSq);
+    }
+
+    // Randomly walk through the pixels and relax neurons to the "optimal"
+    // target.
+    for (int i = 0, pix = 0; i < samplepixels;) {
+        uint32_t color = rgba[pix / 4];
+        int r = ((color >> 16) & 0xff) << 4;
+        int g = ((color >> 8) & 0xff) << 4;
+        int b = (color & 0xff) << 4;
+        int j = -1;
+        {
+            // finds closest neuron (min dist) and updates freq
+            // finds best neuron (min dist-bias) and returns position
+            // for frequently chosen neurons, freq[k] is high and bias[k] is
+            // negative bias[k] = gamma*((1/numColors)-freq[k])
+
+            int bestd = 0x7FFFFFFF, bestbiasd = 0x7FFFFFFF, bestpos = -1;
+            for (int k = 0; k < numColors; k++) {
+                int *n = pal->network[k];
+                int dist = abs(n[0] - r) + abs(n[1] - g) + abs(n[2] - b);
+                if (dist < bestd) {
+                    bestd = dist;
+                    bestpos = k;
+                }
+                int biasdist = dist - ((pal->bias[k]) >> (intbiasshift - 4));
+                if (biasdist < bestbiasd) {
+                    bestbiasd = biasdist;
+                    j = k;
+                }
+                int betafreq = pal->freq[k] >> betashift;
+                pal->freq[k] -= betafreq;
+                pal->bias[k] += betafreq << gammashift;
+            }
+            pal->freq[bestpos] += beta;
+            pal->bias[bestpos] -= betagamma;
+        }
+
+        // Move neuron j towards biased (b,g,r) by factor alpha
+        pal->network[j][0] -= (pal->network[j][0] - r) * alpha / initalpha;
+        pal->network[j][1] -= (pal->network[j][1] - g) * alpha / initalpha;
+        pal->network[j][2] -= (pal->network[j][2] - b) * alpha / initalpha;
+        if (rad != 0) {
+            // Move adjacent neurons by precomputed
+            // alpha*(1-((i-j)^2/[r]^2)) in radpower[|i-j|]
+            int lo = j - rad;
+            lo = lo < -1 ? -1 : lo;
+            int hi = j + rad;
+            hi = hi > numColors ? numColors : hi;
+            for (int jj = j + 1, m = 1; jj < hi; ++jj) {
+                int a = radpower[m++];
+                pal->network[jj][0] -=
+                    (pal->network[jj][0] - r) * a / alpharadbias;
+                pal->network[jj][1] -=
+                    (pal->network[jj][1] - g) * a / alpharadbias;
+                pal->network[jj][2] -=
+                    (pal->network[jj][2] - b) * a / alpharadbias;
+            }
+            for (int k = j - 1, m = 1; k > lo; --k) {
+                int a = radpower[m++];
+                pal->network[k][0] -=
+                    (pal->network[k][0] - r) * a / alpharadbias;
+                pal->network[k][1] -=
+                    (pal->network[k][1] - g) * a / alpharadbias;
+                pal->network[k][2] -=
+                    (pal->network[k][2] - b) * a / alpharadbias;
             }
         }
-        sample = step == 4 ? 1 : sample;
 
-        int alphadec = 30 + ((sample - 1) / 3);
-        int samplepixels = rgbaSize / (4 * sample);
-        int delta = samplepixels / 100;
-        int alpha = initalpha;
-        delta = delta == 0 ? 1 : delta;
+        pix += step;
+        pix = pix >= rgbaSize ? pix - rgbaSize : pix;
 
-        int radius = (numColors >> 3) * radiusbias;
-        int rad = radius >> radiusbiasshift;
-        rad = rad <= 1 ? 0 : rad;
-        int radSq = rad * rad;
-        int radpower[32];
-        for (int i = 0; i < rad; i++) {
-            radpower[i] = alpha * (((radSq - i * i) * radbias) / radSq);
-        }
-
-        // Randomly walk through the pixels and relax neurons to the "optimal"
-        // target.
-        for (int i = 0, pix = 0; i < samplepixels;) {
-            uint32_t color = rgba[pix / 4];
-            int r = ((color >> 16) & 0xff) << 4;
-            int g = ((color >> 8) & 0xff) << 4;
-            int b = (color & 0xff) << 4;
-            int j = -1;
-            {
-                // finds closest neuron (min dist) and updates freq
-                // finds best neuron (min dist-bias) and returns position
-                // for frequently chosen neurons, freq[k] is high and bias[k] is
-                // negative bias[k] = gamma*((1/numColors)-freq[k])
-
-                int bestd = 0x7FFFFFFF, bestbiasd = 0x7FFFFFFF, bestpos = -1;
-                for (int k = 0; k < numColors; k++) {
-                    int *n = network[k];
-                    int dist = abs(n[0] - r) + abs(n[1] - g) + abs(n[2] - b);
-                    if (dist < bestd) {
-                        bestd = dist;
-                        bestpos = k;
-                    }
-                    int biasdist = dist - ((bias[k]) >> (intbiasshift - 4));
-                    if (biasdist < bestbiasd) {
-                        bestbiasd = biasdist;
-                        j = k;
-                    }
-                    int betafreq = freq[k] >> betashift;
-                    freq[k] -= betafreq;
-                    bias[k] += betafreq << gammashift;
-                }
-                freq[bestpos] += beta;
-                bias[bestpos] -= betagamma;
-            }
-
-            // Move neuron j towards biased (b,g,r) by factor alpha
-            network[j][0] -= (network[j][0] - r) * alpha / initalpha;
-            network[j][1] -= (network[j][1] - g) * alpha / initalpha;
-            network[j][2] -= (network[j][2] - b) * alpha / initalpha;
-            if (rad != 0) {
-                // Move adjacent neurons by precomputed
-                // alpha*(1-((i-j)^2/[r]^2)) in radpower[|i-j|]
-                int lo = j - rad;
-                lo = lo < -1 ? -1 : lo;
-                int hi = j + rad;
-                hi = hi > numColors ? numColors : hi;
-                for (int jj = j + 1, m = 1; jj < hi; ++jj) {
-                    int a = radpower[m++];
-                    network[jj][0] -= (network[jj][0] - r) * a / alpharadbias;
-                    network[jj][1] -= (network[jj][1] - g) * a / alpharadbias;
-                    network[jj][2] -= (network[jj][2] - b) * a / alpharadbias;
-                }
-                for (int k = j - 1, m = 1; k > lo; --k) {
-                    int a = radpower[m++];
-                    network[k][0] -= (network[k][0] - r) * a / alpharadbias;
-                    network[k][1] -= (network[k][1] - g) * a / alpharadbias;
-                    network[k][2] -= (network[k][2] - b) * a / alpharadbias;
-                }
-            }
-
-            pix += step;
-            pix = pix >= rgbaSize ? pix - rgbaSize : pix;
-
-            // every 1% of the image, move less over the following iterations.
-            if (++i % delta == 0) {
-                alpha -= alpha / alphadec;
-                radius -= radius / radiusdec;
-                rad = radius >> radiusbiasshift;
-                rad = rad <= 1 ? 0 : rad;
-                radSq = rad * rad;
-                for (j = 0; j < rad; j++) {
-                    radpower[j] = alpha * ((radSq - j * j) * radbias / radSq);
-                }
+        // every 1% of the image, move less over the following iterations.
+        if (++i % delta == 0) {
+            alpha -= alpha / alphadec;
+            radius -= radius / radiusdec;
+            rad = radius >> radiusbiasshift;
+            rad = rad <= 1 ? 0 : rad;
+            radSq = rad * rad;
+            for (j = 0; j < rad; j++) {
+                radpower[j] = alpha * ((radSq - j * j) * radbias / radSq);
             }
         }
     }
-    // Unbias network to give byte values 0..255
-    for (int i = 0; i < numColors; i++) {
-        map[i * 3 + 0] = network[i][0] >>= 4;
-        map[i * 3 + 1] = network[i][1] >>= 4;
-        map[i * 3 + 2] = network[i][2] >>= 4;
+}
+
+void jo_gifx_palette_quantize(jo_gifx_palette_t *pal, uint32_t *rgba,
+                              int rgbaSize)
+{
+    // Dumb algorithm that just fills up a palette with all available colors.
+    for (int i = 0; i < rgbaSize && pal->numColors <= 255; ++i) {
+        uint32_t color = rgba[i];
+        int r = (color >> 16) & 0xff;
+        int g = (color >> 8) & 0xff;
+        int b = color & 0xff;
+        if (!palette_has_color(pal, r, g, b)) {
+            pal->map[pal->numColors * 3] = r;
+            pal->map[pal->numColors * 3 + 1] = g;
+            pal->map[pal->numColors * 3 + 2] = b;
+            ++pal->numColors;
+        }
     }
+    // If the above runs out of colors, we have this fancier quantization.
+    palette_quantize(pal, rgba, rgbaSize);
+}
+
+void jo_gifx_palette_finish(jo_gifx_palette_t *pal)
+{
+    // If we don't have too many colors, we can just use them straight.
+    if (pal->numColors > 255) {
+        // Unbias network to give byte values 0..255
+        for (int i = 0; i < 255; i++) {
+            pal->map[i * 3 + 0] = pal->network[i][0] >>= 4;
+            pal->map[i * 3 + 1] = pal->network[i][1] >>= 4;
+            pal->map[i * 3 + 2] = pal->network[i][2] >>= 4;
+        }
+    }
+}
+
+void jo_gifx_palette_free(jo_gifx_palette_t *pal)
+{
+    free(pal);
 }
 
 typedef struct {
@@ -313,9 +382,9 @@ static bool jo_gifx_write_uint16(jo_gifx_write_fn write_fn, void *user,
 }
 
 jo_gifx_t *jo_gifx_start(jo_gifx_write_fn write_fn, void *user, uint16_t width,
-                         uint16_t height, int repeat, int numColors,
-                         uint32_t *rgba)
+                         uint16_t height, int repeat, jo_gifx_palette_t *pal)
 {
+    int numColors = pal->numColors > 255 ? 255 : pal->numColors;
     int palSize = log2(numColors);
     unsigned char header[] = {// "GIF89a" in ASCII
                               0x47, 0x49, 0x46, 0x38, 0x39, 0x61,
@@ -329,7 +398,6 @@ jo_gifx_t *jo_gifx_start(jo_gifx_write_fn write_fn, void *user, uint16_t width,
         return NULL;
     }
 
-    numColors = numColors > 255 ? 255 : numColors < 2 ? 2 : numColors;
     size_t size = width * height;
     jo_gifx_t *gif = calloc(1, sizeof(*gif) + size * 6);
     if (!gif) {
@@ -338,11 +406,10 @@ jo_gifx_t *jo_gifx_start(jo_gifx_write_fn write_fn, void *user, uint16_t width,
 
     gif->width = width;
     gif->height = height;
-    gif->numColors = numColors;
+    gif->numColors = numColors + 1;
     gif->palSize = palSize;
-
+    memcpy(gif->palette, pal->map, sizeof(gif->palette));
     unsigned char *palette = gif->palette;
-    jo_gifx_quantize(rgba, size * 4, 1, palette, gif->numColors);
     if (!write_fn(user, palette, 3 * (1 << (gif->palSize + 1)))) {
         jo_gifx_abort(gif);
         return NULL;
