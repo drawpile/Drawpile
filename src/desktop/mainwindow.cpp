@@ -2123,6 +2123,9 @@ void MainWindow::exportAnimation(
 		saver, &AnimationSaverRunnable::progress, progressDialog,
 		&QProgressDialog::setValue);
 	connect(
+		saver, &AnimationSaverRunnable::saveComplete, progressDialog,
+		&QProgressDialog::deleteLater);
+	connect(
 		saver, &AnimationSaverRunnable::saveComplete, this,
 		&MainWindow::showErrorMessage);
 	connect(
