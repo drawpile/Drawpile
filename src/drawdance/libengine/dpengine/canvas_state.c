@@ -1687,6 +1687,35 @@ static void into_flat_image_to_buffer(void *buffer, DP_TransientTile *tt,
     }
 }
 
+static void into_flat_image_to_buffer_one_bit_alpha(void *buffer,
+                                                    DP_TransientTile *tt,
+                                                    DP_TileIterator *ti)
+{
+    DP_Image *img = buffer;
+    DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(ti);
+    while (DP_tile_into_dst_iterator_next(&tidi)) {
+        DP_Pixel15 pixel15 =
+            DP_transient_tile_pixel_at(tt, tidi.tile_x, tidi.tile_y);
+        DP_Pixel8 pixel8;
+        if (pixel15.a == DP_BIT15) {
+            pixel8 = DP_pixel15_to_8(pixel15);
+        }
+        else if (pixel15.a >= DP_BIT15 / 2) {
+            DP_UPixel15 upixel15 = DP_pixel15_unpremultiply(pixel15);
+            pixel8 = (DP_Pixel8){
+                .b = DP_channel15_to_8(upixel15.b),
+                .g = DP_channel15_to_8(upixel15.g),
+                .r = DP_channel15_to_8(upixel15.r),
+                .a = 255,
+            };
+        }
+        else {
+            pixel8.color = 0;
+        }
+        DP_image_pixel_at_set(img, tidi.dst_x, tidi.dst_y, pixel8);
+    }
+}
+
 DP_Image *DP_canvas_state_into_flat_image(DP_CanvasState *cs,
                                           unsigned int flags,
                                           const DP_Rect *area_or_null,
@@ -1696,7 +1725,10 @@ DP_Image *DP_canvas_state_into_flat_image(DP_CanvasState *cs,
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     return flatten_canvas(cs, flags, area_or_null, vmf_or_null,
-                          into_flat_image_get_buffer, into_flat_image_to_buffer,
+                          into_flat_image_get_buffer,
+                          flags & DP_FLAT_IMAGE_ONE_BIT_ALPHA
+                              ? into_flat_image_to_buffer_one_bit_alpha
+                              : into_flat_image_to_buffer,
                           inout_img_or_null);
 }
 

@@ -73,15 +73,111 @@ jo_gifx_palette_t *jo_gifx_palette_new(void)
     return pal;
 }
 
-static bool palette_has_color(jo_gifx_palette_t *pal, int r, int g, int b)
+#define PALETTE_SEARCH_NOT_FOUND 0
+#define PALETTE_SEARCH_FOUND     1
+#define PALETTE_SEARCH_CLOSE     2
+
+static bool palette_is_close(int rd, int gd, int bd)
 {
+    return rd <= 3 && gd <= 3 && bd <= 3;
+}
+
+static int palette_search(jo_gifx_palette_t *pal, int r, int g, int b)
+{
+    int result = PALETTE_SEARCH_NOT_FOUND;
     for (int i = 0; i < pal->numColors; ++i) {
-        if (pal->map[i * 3] == r && pal->map[i * 3 + 1] == g
-            && pal->map[i * 3 + 2] == b) {
+        int rd = abs(pal->map[i * 3] - r);
+        int gd = abs(pal->map[i * 3 + 1] - g);
+        int bd = abs(pal->map[i * 3 + 2] - b);
+        if (rd == 0 && gd == 0 && bd == 0) {
+            result = PALETTE_SEARCH_FOUND;
+            break;
+        }
+        else if (palette_is_close(rd, gd, bd)) {
+            result = PALETTE_SEARCH_CLOSE;
+        }
+    }
+    return result;
+}
+
+static bool palette_append(jo_gifx_palette_t *pal, int r, int g, int b)
+{
+    int i = pal->numColors;
+    if (i <= 254) {
+        pal->map[i * 3] = r;
+        pal->map[i * 3 + 1] = g;
+        pal->map[i * 3 + 2] = b;
+        pal->numColors = i + 1;
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+static bool palette_replace(jo_gifx_palette_t *pal, int rr, int rg, int rb)
+{
+    int numColors = pal->numColors;
+    for (int i = 0; i < numColors; ++i) {
+        int r1 = pal->map[i * 3];
+        int g1 = pal->map[i * 3 + 1];
+        int b1 = pal->map[i * 3 + 2];
+
+        int best_index = -1;
+        int best_d = 0xfff;
+        int best_r, best_g, best_b;
+        for (int j = i + 1; j < numColors; ++j) {
+            int r2 = pal->map[j * 3];
+            int g2 = pal->map[j * 3 + 1];
+            int b2 = pal->map[j * 3 + 2];
+            int rd = abs(r2 - r1);
+            int gd = abs(g2 - g1);
+            int bd = abs(b2 - b1);
+            int d = rd + gd + bd;
+            bool is_best = d < best_d && palette_is_close(rd, gd, bd);
+            if (is_best) {
+                best_index = j;
+                best_r = r2;
+                best_g = g2;
+                best_b = b2;
+                best_d = d;
+            }
+        }
+
+        if (best_index != -1) {
+            pal->map[i * 3] = (r1 + best_r) / 2;
+            pal->map[i * 3 + 1] = (g1 + best_g) / 2;
+            pal->map[i * 3 + 2] = (b1 + best_b) / 2;
+            pal->map[best_index * 3] = rr;
+            pal->map[best_index * 3 + 1] = rg;
+            pal->map[best_index * 3 + 2] = rb;
             return true;
         }
     }
     return false;
+}
+
+static void palette_palettize(jo_gifx_palette_t *pal, uint32_t *rgba,
+                              int rgbaSize)
+{
+    if (pal->numColors >= 0) {
+        for (int i = 0; i < rgbaSize; ++i) {
+            uint32_t color = rgba[i];
+            if (color != 0) {
+                int r = (color >> 16) & 0xff;
+                int g = (color >> 8) & 0xff;
+                int b = color & 0xff;
+                int result = palette_search(pal, r, g, b);
+                if (result != PALETTE_SEARCH_FOUND
+                    && !palette_append(pal, r, g, b)
+                    && result != PALETTE_SEARCH_CLOSE
+                    && !palette_replace(pal, r, g, b)) {
+                    pal->numColors = -1;
+                    return;
+                }
+            }
+        }
+    }
 }
 
 // Based on NeuQuant algorithm
@@ -227,19 +323,10 @@ static void palette_quantize(jo_gifx_palette_t *pal, uint32_t *rgba,
 void jo_gifx_palette_quantize(jo_gifx_palette_t *pal, uint32_t *rgba,
                               int rgbaSize)
 {
-    // Dumb algorithm that just fills up a palette with all available colors.
-    for (int i = 0; i < rgbaSize && pal->numColors <= 255; ++i) {
-        uint32_t color = rgba[i];
-        int r = (color >> 16) & 0xff;
-        int g = (color >> 8) & 0xff;
-        int b = color & 0xff;
-        if (!palette_has_color(pal, r, g, b)) {
-            pal->map[pal->numColors * 3] = r;
-            pal->map[pal->numColors * 3 + 1] = g;
-            pal->map[pal->numColors * 3 + 2] = b;
-            ++pal->numColors;
-        }
-    }
+    // Simple algorithm that mostly fills up a palette with all available
+    // colors, fudging very similar ones if necessary. Sets numColors to -1 if
+    // it can't manage to palettize the image this way.
+    palette_palettize(pal, rgba, rgbaSize);
     // If the above runs out of colors, we have this fancier quantization.
     palette_quantize(pal, rgba, rgbaSize);
 }
@@ -247,13 +334,14 @@ void jo_gifx_palette_quantize(jo_gifx_palette_t *pal, uint32_t *rgba,
 void jo_gifx_palette_finish(jo_gifx_palette_t *pal)
 {
     // If we don't have too many colors, we can just use them straight.
-    if (pal->numColors > 255) {
+    if (pal->numColors == -1) {
         // Unbias network to give byte values 0..255
         for (int i = 0; i < 255; i++) {
             pal->map[i * 3 + 0] = pal->network[i][0] >>= 4;
             pal->map[i * 3 + 1] = pal->network[i][1] >>= 4;
             pal->map[i * 3 + 2] = pal->network[i][2] >>= 4;
         }
+        pal->numColors = 255;
     }
 }
 
@@ -393,7 +481,7 @@ jo_gifx_t *jo_gifx_start(jo_gifx_write_fn write_fn, void *user, uint16_t width,
                               // Height in 16 bit little-endian
                               height & 0xff, (height >> 8) & 0xff,
                               // Palette size, background color, aspect ratio
-                              0xf0 | palSize, 0, 0};
+                              0xf0 | palSize, numColors, 0};
     if (!write_fn(user, header, sizeof(header))) {
         return NULL;
     }
@@ -408,7 +496,8 @@ jo_gifx_t *jo_gifx_start(jo_gifx_write_fn write_fn, void *user, uint16_t width,
     gif->height = height;
     gif->numColors = numColors + 1;
     gif->palSize = palSize;
-    memcpy(gif->palette, pal->map, sizeof(gif->palette));
+    memcpy(gif->palette, pal->map, numColors * 3);
+    memcpy(gif->palette + numColors * 3, pal->map, 3);
     unsigned char *palette = gif->palette;
     if (!write_fn(user, palette, 3 * (1 << (gif->palSize + 1)))) {
         jo_gifx_abort(gif);
@@ -452,6 +541,7 @@ bool jo_gifx_frame(jo_gifx_write_fn write_fn, void *user, jo_gifx_t *gif,
     }
 
     int usableColors = gif->numColors - 1; // Last color is transparency.
+    bool hasTransparency = false;
     {
         unsigned char *ditheredPixels = gif->pixels + size * 2;
         for (size_t i = 0; i < size; ++i) {
@@ -463,60 +553,68 @@ bool jo_gifx_frame(jo_gifx_write_fn write_fn, void *user, jo_gifx_t *gif,
         }
 
         for (int k = 0; k < size * 4; k += 4) {
-            int rgb[3] = {ditheredPixels[k + 0], ditheredPixels[k + 1],
-                          ditheredPixels[k + 2]};
-            int bestd = 0x7FFFFFFF, best = -1;
-            // TODO: exhaustive search. do something better.
-            for (int i = 0; i < usableColors; ++i) {
-                int bb = palette[i * 3 + 0] - rgb[0];
-                int gg = palette[i * 3 + 1] - rgb[1];
-                int rr = palette[i * 3 + 2] - rgb[2];
-                int d = bb * bb + gg * gg + rr * rr;
-                if (d < bestd) {
-                    bestd = d;
-                    best = i;
+            if (ditheredPixels[k + 3] == 0) {
+                indexedPixels[k / 4] = usableColors;
+                hasTransparency = true;
+            }
+            else {
+                int rgb[3] = {ditheredPixels[k + 0], ditheredPixels[k + 1],
+                              ditheredPixels[k + 2]};
+                int bestd = 0x7FFFFFFF, best = -1;
+                // TODO: exhaustive search. do something better.
+                for (int i = 0; i < usableColors; ++i) {
+                    int bb = palette[i * 3 + 0] - rgb[0];
+                    int gg = palette[i * 3 + 1] - rgb[1];
+                    int rr = palette[i * 3 + 2] - rgb[2];
+                    int d = bb * bb + gg * gg + rr * rr;
+                    if (d < bestd) {
+                        bestd = d;
+                        best = i;
+                    }
                 }
-            }
-            indexedPixels[k / 4] = best;
-            int diff[3] = {
-                ditheredPixels[k + 0] - palette[indexedPixels[k / 4] * 3 + 0],
-                ditheredPixels[k + 1] - palette[indexedPixels[k / 4] * 3 + 1],
-                ditheredPixels[k + 2] - palette[indexedPixels[k / 4] * 3 + 2]};
-            // Floyd-Steinberg Error Diffusion
-            // TODO: Use something better --
-            // http://caca.zoy.org/study/part3.html
-            if (k + 4 < size * 4) {
-                ditheredPixels[k + 4 + 0] = (unsigned char)jo_gifx_clamp(
-                    ditheredPixels[k + 4 + 0] + (diff[0] * 7 / 16), 0, 255);
-                ditheredPixels[k + 4 + 1] = (unsigned char)jo_gifx_clamp(
-                    ditheredPixels[k + 4 + 1] + (diff[1] * 7 / 16), 0, 255);
-                ditheredPixels[k + 4 + 2] = (unsigned char)jo_gifx_clamp(
-                    ditheredPixels[k + 4 + 2] + (diff[2] * 7 / 16), 0, 255);
-            }
-            if (k + width * 4 + 4 < size * 4) {
-                for (int i = 0; i < 3; ++i) {
-                    ditheredPixels[k - 4 + width * 4 + i] =
-                        (unsigned char)jo_gifx_clamp(
-                            ditheredPixels[k - 4 + width * 4 + i]
-                                + (diff[i] * 3 / 16),
-                            0, 255);
-                    ditheredPixels[k + width * 4 + i] =
-                        (unsigned char)jo_gifx_clamp(
-                            ditheredPixels[k + width * 4 + i]
-                                + (diff[i] * 5 / 16),
-                            0, 255);
-                    ditheredPixels[k + width * 4 + 4 + i] =
-                        (unsigned char)jo_gifx_clamp(
-                            ditheredPixels[k + width * 4 + 4 + i]
-                                + (diff[i] * 1 / 16),
-                            0, 255);
+                indexedPixels[k / 4] = best;
+                int diff[3] = {ditheredPixels[k + 0]
+                                   - palette[indexedPixels[k / 4] * 3 + 0],
+                               ditheredPixels[k + 1]
+                                   - palette[indexedPixels[k / 4] * 3 + 1],
+                               ditheredPixels[k + 2]
+                                   - palette[indexedPixels[k / 4] * 3 + 2]};
+                // Floyd-Steinberg Error Diffusion
+                // TODO: Use something better --
+                // http://caca.zoy.org/study/part3.html
+                if (k + 4 < size * 4) {
+                    ditheredPixels[k + 4 + 0] = (unsigned char)jo_gifx_clamp(
+                        ditheredPixels[k + 4 + 0] + (diff[0] * 7 / 16), 0, 255);
+                    ditheredPixels[k + 4 + 1] = (unsigned char)jo_gifx_clamp(
+                        ditheredPixels[k + 4 + 1] + (diff[1] * 7 / 16), 0, 255);
+                    ditheredPixels[k + 4 + 2] = (unsigned char)jo_gifx_clamp(
+                        ditheredPixels[k + 4 + 2] + (diff[2] * 7 / 16), 0, 255);
+                }
+                if (k + width * 4 + 4 < size * 4) {
+                    for (int i = 0; i < 3; ++i) {
+                        ditheredPixels[k - 4 + width * 4 + i] =
+                            (unsigned char)jo_gifx_clamp(
+                                ditheredPixels[k - 4 + width * 4 + i]
+                                    + (diff[i] * 3 / 16),
+                                0, 255);
+                        ditheredPixels[k + width * 4 + i] =
+                            (unsigned char)jo_gifx_clamp(
+                                ditheredPixels[k + width * 4 + i]
+                                    + (diff[i] * 5 / 16),
+                                0, 255);
+                        ditheredPixels[k + width * 4 + 4 + i] =
+                            (unsigned char)jo_gifx_clamp(
+                                ditheredPixels[k + width * 4 + 4 + i]
+                                    + (diff[i] * 1 / 16),
+                                0, 255);
+                    }
                 }
             }
         }
     }
 
     unsigned char *outputPixels;
-    if (gif->frame > 0) {
+    if (!hasTransparency && gif->frame > 0) {
         outputPixels = gif->pixels + size * 2;
         for (size_t i = 0; i < size; ++i) {
             outputPixels[i] = indexedPixels[i] == prevIndexedPixels[i]
@@ -530,7 +628,7 @@ bool jo_gifx_frame(jo_gifx_write_fn write_fn, void *user, jo_gifx_t *gif,
 
     unsigned char imageHeader[] = {
         // Graphic Control Extension
-        0x21, 0xf9, 0x04, 0x05,
+        0x21, 0xf9, 0x04, hasTransparency ? 0x09 : 0x05,
         // Delay in centiseconds, 16 bit little-endian
         delayCsec & 0xff, (delayCsec >> 8) & 0xff,
         // Transparent pixel index (last color in palette), end of block

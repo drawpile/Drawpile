@@ -935,12 +935,12 @@ static void set_error_result(struct DP_SaveFrameContext *c,
 static DP_Image *generate_frame_image(DP_CanvasState *cs, DP_DrawContext *dc,
                                       DP_Rect *crop, int width, int height,
                                       int interpolation, DP_ViewModeBuffer *vmb,
-                                      int frame_index, DP_Mutex *mutex_or_null)
+                                      int frame_index, unsigned int flags,
+                                      DP_Mutex *mutex_or_null)
 {
     DP_ViewModeFilter vmf =
         DP_view_mode_filter_make_frame_render(vmb, cs, frame_index);
-    DP_Image *img = DP_canvas_state_to_flat_image(
-        cs, DP_FLAT_IMAGE_RENDER_FLAGS, crop, &vmf);
+    DP_Image *img = DP_canvas_state_to_flat_image(cs, flags, crop, &vmf);
     if (!img) {
         DP_warn("Flatten frame %d: %s", frame_index, DP_error());
         return NULL;
@@ -975,9 +975,9 @@ static unsigned char *generate_frame_png(struct DP_SaveFrameContext *c,
                                          DP_ViewModeBuffer *vmb,
                                          int frame_index, size_t *out_size)
 {
-    DP_Image *img =
-        generate_frame_image(c->cs, c->dc, c->crop, c->width, c->height,
-                             c->interpolation, vmb, frame_index, c->mutex);
+    DP_Image *img = generate_frame_image(
+        c->cs, c->dc, c->crop, c->width, c->height, c->interpolation, vmb,
+        frame_index, DP_FLAT_IMAGE_RENDER_FLAGS, c->mutex);
     if (!img) {
         set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
         return NULL;
@@ -1035,9 +1035,9 @@ static void write_frame_to_zip(struct DP_SaveFrameContext *c, int frame_index,
 static char *save_frame(struct DP_SaveFrameContext *c, DP_ViewModeBuffer *vmb,
                         int frame_index)
 {
-    DP_Image *img =
-        generate_frame_image(c->cs, c->dc, c->crop, c->width, c->height,
-                             c->interpolation, vmb, frame_index, c->mutex);
+    DP_Image *img = generate_frame_image(
+        c->cs, c->dc, c->crop, c->width, c->height, c->interpolation, vmb,
+        frame_index, DP_FLAT_IMAGE_RENDER_FLAGS, c->mutex);
     if (!img) {
         set_error_result(c, DP_SAVE_RESULT_FLATTEN_ERROR);
         return NULL;
@@ -1403,8 +1403,9 @@ static bool generate_gif_palette_from_merged_image(DP_WriteGifContext *c)
 
 static DP_Image *generate_frame_gif(DP_WriteGifContext *c, int i)
 {
-    return generate_frame_image(c->cs, c->dc, c->crop, c->width, c->height,
-                                c->interpolation, &c->vmb, i, NULL);
+    return generate_frame_image(
+        c->cs, c->dc, c->crop, c->width, c->height, c->interpolation, &c->vmb,
+        i, DP_FLAT_IMAGE_RENDER_FLAGS | DP_FLAT_IMAGE_ONE_BIT_ALPHA, NULL);
 }
 
 static bool generate_gif_palette_from_each_frame(DP_WriteGifContext *c)

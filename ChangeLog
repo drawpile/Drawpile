@@ -42,6 +42,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Use hardware renderer on Android by default.
  * Fix: Don't use a quantized palette for GIF exports when the animation has less than 256 colors to begin with. Thanks JJ for reporting.
  * Feature: Allow generating GIF palettes from each frame instead of the merged image.
+ * Feature: Support transparent backgrounds for GIF (as far as the format supports it, i.e. no partially transparent pixels.)
 
 2024-08-09 Version 2.2.2-beta.3
  * Fix: Use more accurate timers for performance profiles if the platform supports it.
