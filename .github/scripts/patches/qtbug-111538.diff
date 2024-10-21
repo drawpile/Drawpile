@@ -1,3 +1,8 @@
+Description: fix for https://bugreports.qt.io/browse/QTBUG-111538 -
+QDockAreaLayout::updateSeparatorWidgets crash with null pointer dereference
+sometime after restoring state due to recursion into
+QMainWindowLayout::setGeometry causing corruption of separatorWidgets
+
 --- a/src/widgets/widgets/qmainwindowlayout.cpp	2023-02-27 15:50:14.000000000 -0600
 +++ b/src/widgets/widgets/qmainwindowlayout.cpp	2023-02-27 15:50:19.000000000 -0600
 @@ -46,6 +46,8 @@

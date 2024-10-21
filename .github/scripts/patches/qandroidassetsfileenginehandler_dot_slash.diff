@@ -1,3 +1,8 @@
+Description: Patch Android asset file handler to strip any instance of "./" from
+the paths its given. The icon engine stuffs those in there unconditionally and
+(reasonably) expects that to have no effect, but on Android's weird content URI
+file system, it leads to the paths not resolving anymore.
+
 --- a/src/plugins/platforms/android/qandroidassetsfileenginehandler.cpp	2023-04-26 08:39:21.720887254 +0200
 +++ b/src/plugins/platforms/android/qandroidassetsfileenginehandler.cpp	2023-04-26 08:39:24.477553939 +0200
 @@ -55,6 +55,7 @@

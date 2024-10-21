@@ -1,3 +1,5 @@
+Description: Properly pass -ltcg flag through on Android.
+
 --- a/mkspecs/android-clang/qmake.conf    2023-04-02 00:10:00.000000000 -0500
 +++ b/mkspecs/android-clang/qmake.conf    2023-04-02 00:10:25.000000000 -0500
 @@ -52,8 +52,10 @@
