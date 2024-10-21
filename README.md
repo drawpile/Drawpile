@@ -25,3 +25,20 @@ Pull requests are welcome, be it for code or anything else! If you want to contr
 If you want to translate Drawpile to your language, take a look at [Drawpile on Weblate](https://hosted.weblate.org/engage/drawpile/). You can translate it directly in the browser.
 
 [![translation status](https://hosted.weblate.org/widgets/drawpile/-/287x66-grey.png)](https://hosted.weblate.org/engage/drawpile/)
+
+## Client Dependencies
+
+The Drawpile client uses the following shared libraries:
+
+* Qt (all platforms)
+* OpenSSL (all platforms)
+* KDE Framework Archive (Windows, Linux AppImage, Android)
+* libzip (macOS, Linux Flatpak)
+
+On Windows, these libraries are signed along with the executable using free code signing provided by [SignPath.io](https://about.signpath.io/) and a  certificate by [SignPath Foundation](https://signpath.org/). See [the code signing policy on drawpile.net](https://drawpile.net/codesigningpolicy/) for details.
+
+The dependencies are pinned to known good versions and the source code for is verified against the hashes and signatures provided in their releases from upstream. SHA384 hash checks are also done for each build to ensure integrity of the source code retrieved from upstream.
+
+We make some patches to these dependencies when building the application, which you can find in [.github/scripts/patches](.github/scripts/patches). Each patch file contains a description as to what it does.
+
+You can find build processes, versions, the upstream source URLs and hashes [for Qt and OpenSSL here](.github/scripts/build-qt.cmake) and [for KDE Framework Archive and libzip here](.github/scripts/build-other.cmake).
