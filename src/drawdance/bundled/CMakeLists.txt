@@ -37,10 +37,6 @@ add_library(uthash INTERFACE)
 target_include_directories(uthash SYSTEM INTERFACE "uthash")
 
 if(CLIENT OR TOOLS)
-    add_library(jo_gifx OBJECT jo_gifx/jo_gifx.h jo_gifx/jo_gifx.c)
-    target_include_directories(
-        jo_gifx SYSTEM PUBLIC ${CMAKE_CURRENT_LIST_DIR}/jo_gifx)
-
     set(psd_sdk_sources
     psd_sdk/Psd.h
     psd_sdk/PsdAllocator.cpp

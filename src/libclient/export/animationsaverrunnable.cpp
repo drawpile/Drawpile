@@ -21,8 +21,7 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 #endif
 	int format, int width, int height, int loops, int start, int end,
 	int framerate, const QRect &crop, bool scaleSmooth,
-	bool paletteFromMergedImage, const drawdance::CanvasState &canvasState,
-	QObject *parent)
+	const drawdance::CanvasState &canvasState, QObject *parent)
 	: QObject(parent)
 #ifndef __EMSCRIPTEN__
 	, m_path(path)
@@ -37,7 +36,6 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 	, m_crop(crop)
 	, m_canvasState(canvasState)
 	, m_scaleSmooth(scaleSmooth)
-	, m_paletteFromMergedImage(paletteFromMergedImage)
 	, m_cancelled(false)
 {
 }
@@ -87,25 +85,36 @@ void AnimationSaverRunnable::run()
 			m_start, m_end, &onProgress, this);
 		break;
 	}
+#ifdef DP_LIBAV
 	case int(AnimationFormat::Gif): {
-		drawdance::DrawContext dc = drawdance::DrawContextPool::acquire();
-		result = DP_save_animation_gif(
-			m_canvasState.get(), dc.get(), pathBytes.constData(), pr, m_width,
+		DP_SaveGifParams params = {
+			m_canvasState.get(),
+			pr,
+			DP_SAVE_VIDEO_DESTINATION_PATH,
+			const_cast<char *>(pathBytes.constData()),
+			m_scaleSmooth ? DP_SAVE_VIDEO_FLAGS_SCALE_SMOOTH
+						  : DP_SAVE_VIDEO_FLAGS_NONE,
+			m_width,
 			m_height,
-			m_scaleSmooth ? DP_MSG_TRANSFORM_REGION_MODE_BILINEAR
-						  : DP_MSG_TRANSFORM_REGION_MODE_NEAREST,
-			m_start, m_end, m_framerate, m_paletteFromMergedImage, &onProgress,
-			this);
+			m_start,
+			m_end,
+			m_framerate,
+			&onProgress,
+			this,
+		};
+		result = DP_save_animation_video_gif(params);
 		break;
 	}
-#ifdef DP_LIBAV
 	case int(AnimationFormat::Webp):
 	case int(AnimationFormat::Mp4):
 	case int(AnimationFormat::Webm): {
 		DP_SaveVideoParams params = {
 			m_canvasState.get(),
 			pr,
-			pathBytes.constData(),
+			DP_SAVE_VIDEO_DESTINATION_PATH,
+			const_cast<char *>(pathBytes.constData()),
+			nullptr,
+			0,
 			m_scaleSmooth ? DP_SAVE_VIDEO_FLAGS_SCALE_SMOOTH
 						  : DP_SAVE_VIDEO_FLAGS_NONE,
 			formatToSaveVideoFormat(),
@@ -123,9 +132,13 @@ void AnimationSaverRunnable::run()
 	}
 #endif
 	default:
-		qWarning("Unhandled animation format %d", m_format);
+		DP_error_set("Unhandled animation format %d", m_format);
 		result = DP_SAVE_RESULT_UNKNOWN_FORMAT;
 		break;
+	}
+
+	if(result != DP_SAVE_RESULT_SUCCESS) {
+		qWarning("Error %d saving animation: %s", int(result), DP_error());
 	}
 
 #ifdef __EMSCRIPTEN__

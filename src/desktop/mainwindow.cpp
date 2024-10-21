@@ -2091,7 +2091,7 @@ void MainWindow::exportAnimation(
 	const QString &path,
 #endif
 	int format, int loops, int start, int end, int framerate, const QRect &crop,
-	int scalePercent, bool scaleSmooth, bool paletteFromMergedImage)
+	int scalePercent, bool scaleSmooth)
 {
 	m_animationExportScalePercent = scalePercent;
 	m_animationExportScaleSmooth = scaleSmooth;
@@ -2116,7 +2116,7 @@ void MainWindow::exportAnimation(
 		path,
 #endif
 		format, size.width(), size.height(), loops, start, end, framerate,
-		effectiveCrop, scaleSmooth, paletteFromMergedImage, canvasState, this);
+		effectiveCrop, scaleSmooth, canvasState, this);
 	saver->setAutoDelete(true);
 
 	connect(

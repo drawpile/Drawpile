@@ -16,9 +16,10 @@ bool isAnimationFormatSupported(AnimationFormat format)
 		return true;
 #endif
 	case AnimationFormat::Zip:
-	case AnimationFormat::Gif:
-		return true;
 #ifdef DP_LIBAV
+	case AnimationFormat::Gif:
+		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_PALETTE) &&
+			   DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_GIF);
 	case AnimationFormat::Mp4:
 		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_MP4);
 	case AnimationFormat::Webm:

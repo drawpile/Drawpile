@@ -64,12 +64,6 @@ AnimationExportDialog::AnimationExportDialog(
 	m_loopsSpinner->setRange(1, 99);
 	outputForm->addRow(m_loopsLabel, m_loopsSpinner);
 
-	m_paletteLabel = new QLabel(tr("Palette:"));
-	m_paletteCombo = new QComboBox;
-	m_paletteCombo->addItem(tr("Generate from normal view"), 1);
-	m_paletteCombo->addItem(tr("Generate from frames"), 0);
-	outputForm->addRow(m_paletteLabel, m_paletteCombo);
-
 	m_scaleSpinner = new QSpinBox;
 	m_scaleSpinner->setRange(1, 1000);
 	m_scaleSpinner->setValue(scalePercent);
@@ -265,9 +259,6 @@ void AnimationExportDialog::updateOutputUi()
 					 format == int(AnimationFormat::Webm);
 	m_loopsLabel->setVisible(showLoops);
 	m_loopsSpinner->setVisible(showLoops);
-	bool showPalette = format == int(AnimationFormat::Gif);
-	m_paletteLabel->setVisible(showPalette);
-	m_paletteCombo->setVisible(showPalette);
 }
 
 void AnimationExportDialog::updateScalingUi()
@@ -437,8 +428,7 @@ void AnimationExportDialog::requestExport()
 #endif
 		format, m_loopsSpinner->value(), m_startSpinner->value() - 1,
 		m_endSpinner->value() - 1, m_framerateSpinner->value(), getCropRect(),
-		m_scaleSpinner->value(), m_scaleSmoothBox->isChecked(),
-		m_paletteCombo->currentData().toInt() == 1);
+		m_scaleSpinner->value(), m_scaleSmoothBox->isChecked());
 }
 
 QRect AnimationExportDialog::getCropRect() const

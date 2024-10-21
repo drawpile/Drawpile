@@ -230,8 +230,6 @@ if(FFMPEG)
 		--disable-autodetect
 		--disable-programs
 		--disable-avdevice
-		--disable-avfilter
-		--disable-swresample
 		--disable-postproc
 		--disable-alsa
 		--disable-appkit
@@ -261,13 +259,19 @@ if(FFMPEG)
 		--disable-outdevs
 		--disable-devices
 		--disable-filters
-		--enable-encoder=libx264
+		--enable-encoder=gif
 		--enable-encoder=libvpx_vp8
 		--enable-encoder=libwebp
 		--enable-encoder=libwebp_anim
+		--enable-encoder=libx264
+		--enable-encoder=rawvideo
+		--enable-muxer=gif
 		--enable-muxer=mp4
+		--enable-muxer=rawvideo
 		--enable-muxer=webm
 		--enable-muxer=webp
+		--enable-filter=palettegen
+		--enable-filter=paletteuse
 	)
 
 	if(ANDROID)

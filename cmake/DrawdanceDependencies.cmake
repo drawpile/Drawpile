@@ -12,6 +12,7 @@ if(CLIENT OR TOOLS)
         if(PKGCONFIG_FOUND)
             pkg_check_modules(LIBAV IMPORTED_TARGET GLOBAL
                 libavcodec
+                libavfilter
                 libavformat
                 libavutil
                 libswscale

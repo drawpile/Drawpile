@@ -51,13 +51,5 @@ DP_SaveResult DP_save_animation_zip(DP_CanvasState *cs, DP_DrawContext *dc,
                                     DP_SaveAnimationProgressFn progress_fn,
                                     void *user);
 
-DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, DP_DrawContext *dc,
-                                    const char *path, DP_Rect *crop, int width,
-                                    int height, int interpolation, int start,
-                                    int end_inclusive, int framerate,
-                                    bool palette_from_merged_image,
-                                    DP_SaveAnimationProgressFn progress_fn,
-                                    void *user);
-
 
 #endif
