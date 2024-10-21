@@ -58,9 +58,8 @@ DP_Rect get_crop(DP_CanvasState *cs, const DP_Rect *area)
 {
     int width = DP_canvas_state_width(cs);
     int height = DP_canvas_state_height(cs);
-    DP_Rect canvas_area = DP_rect_make(0, 0, width - 1, height - 1);
+    DP_Rect canvas_area = DP_rect_make(0, 0, width, height);
     return area ? DP_rect_intersection(canvas_area, *area) : canvas_area;
-    return (DP_Rect){0, 0, -1, -1};
 }
 
 const char *get_format_name(int format)

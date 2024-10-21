@@ -40,6 +40,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Make user interface scaling not round to multiple of 100% anymore. Thanks blau, Buch, Chryssabliss and ShotgunnerFox for reporting.
  * Fix: Don't use system message boxes on Android, since they behave in various broken and nonsensical ways, like showing you a yes button three times.  Thanks Hopfel for reporting.
  * Feature: Use hardware renderer on Android by default.
+ * Fix: Don't unnecessarily scale full-canvas animations by a single pixel.
  * Fix: Don't use a quantized palette for GIF exports when the animation has less than 256 colors to begin with. Thanks JJ for reporting.
  * Feature: Allow generating GIF palettes from each frame instead of the merged image.
  * Feature: Support transparent backgrounds for GIF (as far as the format supports it, i.e. no partially transparent pixels.)
