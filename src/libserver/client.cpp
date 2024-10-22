@@ -13,6 +13,7 @@
 #include <QSslSocket>
 #include <QStringList>
 #include <QTcpSocket>
+#include <QTimeZone>
 #include <QTimer>
 #ifdef HAVE_WEBSOCKETS
 #	include <QWebSocket>
@@ -240,10 +241,11 @@ QJsonObject Client::description(bool includeSession) const
 	u["name"] = username();
 	u["ip"] = peerAddress().toString();
 	u["s"] = sid();
-	u["lastActive"] = QDateTime::fromMSecsSinceEpoch(d->lastActive, Qt::UTC)
+	QTimeZone utc = QTimeZone::utc();
+	u["lastActive"] = QDateTime::fromMSecsSinceEpoch(d->lastActive, utc)
 						  .toString(Qt::ISODate);
 	u["lastActiveDrawing"] =
-		QDateTime::fromMSecsSinceEpoch(d->lastActiveDrawing, Qt::UTC)
+		QDateTime::fromMSecsSinceEpoch(d->lastActiveDrawing, utc)
 			.toString(Qt::ISODate);
 	u["auth"] = isAuthenticated();
 	u["op"] = isOperator();
