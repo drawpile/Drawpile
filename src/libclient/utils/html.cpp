@@ -37,7 +37,11 @@ QString linkify(const QString &input, const QString &extra)
 
 	static const QRegularExpression protore("^[a-zA-Z]{3,}:");
 
-	auto matches = linkre.globalMatch(in);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+	QRegularExpressionMatchIterator matches = linkre.globalMatchView(in);
+#else
+	QRegularExpressionMatchIterator matches = linkre.globalMatch(in);
+#endif
 	QString out;
 	int pos=0;
 
