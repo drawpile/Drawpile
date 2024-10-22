@@ -61,21 +61,21 @@ private:
 
 	void adjustPendingImage(bool adjustOpacity);
 
-	qreal m_tolerance;
-	int m_expansion;
+	qreal m_tolerance = 0.01;
+	int m_expansion = 0;
 	int m_kernel;
-	int m_featherRadius;
-	int m_size;
-	qreal m_opacity;
-	int m_gap;
-	Source m_source;
+	int m_featherRadius = 0;
+	int m_size = 500;
+	qreal m_opacity = 1.0;
+	int m_gap = 0;
+	Source m_source = Source::CurrentLayer;
 	int m_blendMode;
-	Area m_area;
-	bool m_running;
-	bool m_repeat;
-	QAtomicInt m_cancel;
+	Area m_area = Area::Continuous;
+	bool m_running = false;
+	bool m_repeat = false;
+	QAtomicInt m_cancel = false;
 	QPointF m_lastPoint;
-	int m_lastActiveLayerId;
+	int m_lastActiveLayerId = 0;
 	QImage m_pendingImage;
 	QPoint m_pendingPos;
 	Area m_pendingArea;

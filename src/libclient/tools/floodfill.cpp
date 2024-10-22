@@ -21,23 +21,23 @@ public:
 		int sourceLayerId, int size, int gap, int expansion,
 		DP_FloodFillKernel kernel, int featherRadius, Area area,
 		DP_ViewMode viewMode, int activeLayerId, int activeFrameIndex)
-		: m_tool{tool}
-		, m_cancel{cancel}
-		, m_canvasState{canvasState}
+		: m_tool(tool)
+		, m_cancel(cancel)
+		, m_canvasState(canvasState)
 		, m_contextId(contextId)
-		, m_point{point}
-		, m_fillColor{fillColor}
-		, m_tolerance{tolerance}
-		, m_sourceLayerId{sourceLayerId}
-		, m_size{size}
-		, m_gap{gap}
-		, m_expansion{expansion}
+		, m_point(point)
+		, m_fillColor(fillColor)
+		, m_tolerance(tolerance)
+		, m_sourceLayerId(sourceLayerId)
+		, m_size(size)
+		, m_gap(gap)
+		, m_expansion(expansion)
 		, m_kernel(kernel)
-		, m_featherRadius{featherRadius}
+		, m_featherRadius(featherRadius)
 		, m_area(area)
-		, m_viewMode{viewMode}
-		, m_activeLayerId{activeLayerId}
-		, m_activeFrameIndex{activeFrameIndex}
+		, m_viewMode(viewMode)
+		, m_activeLayerId(activeLayerId)
+		, m_activeFrameIndex(activeFrameIndex)
 	{
 	}
 
@@ -105,20 +105,8 @@ FloodFill::FloodFill(ToolController &owner)
 	: Tool(
 		  owner, FLOODFILL, QCursor(QPixmap(":cursors/bucket.png"), 2, 29),
 		  true, true, false, false, false)
-	, m_tolerance(0.01)
-	, m_expansion(0)
 	, m_kernel(int(DP_FLOOD_FILL_KERNEL_ROUND))
-	, m_featherRadius(0)
-	, m_size(500)
-	, m_opacity(1.0)
-	, m_gap{0}
-	, m_source(Source::CurrentLayer)
 	, m_blendMode(DP_BLEND_MODE_NORMAL)
-	, m_area(Area::Continuous)
-	, m_running{false}
-	, m_repeat(false)
-	, m_cancel{false}
-	, m_lastActiveLayerId(0)
 {
 }
 
