@@ -11,6 +11,7 @@
 #include <QJsonArray>
 #include <QUrlQuery>
 #include <QDebug>
+#include <QTimeZone>
 
 namespace sessionlisting {
 
@@ -247,6 +248,7 @@ AnnouncementApiResponse *getSessionList(const QUrl &apiUrl)
 
 		QVector<Session> sessions;
 
+		QTimeZone utc = QTimeZone::utc();
 		for(const QJsonValue jsv : doc.array()) {
 			if(!jsv.isObject()) {
 				res->setError(QStringLiteral("Expected session description!"));
@@ -256,7 +258,7 @@ AnnouncementApiResponse *getSessionList(const QUrl &apiUrl)
 			const QJsonObject obj = jsv.toObject();
 
 			QDateTime started = QDateTime::fromString(obj["started"].toString(), Qt::ISODate);
-			started.setTimeSpec(Qt::UTC);
+			started.setTimeZone(utc);
 
 			sessions << Session {
 				obj["host"].toString(),
