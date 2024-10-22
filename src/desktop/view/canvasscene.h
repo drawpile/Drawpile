@@ -147,7 +147,7 @@ private:
 
 	void setTransformNoticePosition();
 	void setLockNoticePosition();
-	void setToolNoticePosition(bool initial);
+	void setToolNoticePosition();
 	void setCatchupPosition();
 	void setStreamResetNoticePosition();
 	void setTogglePositions();
