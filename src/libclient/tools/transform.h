@@ -181,6 +181,9 @@ private:
 		qreal &inOutClosestDistance, QPointF &outOffset,
 		Handle consideredHandle, const QLineF &consideredEdge) const;
 
+	static QPointF getQuadHandlePoint(
+		const TransformQuad &quad, Handle handle, const QPointF &targetPoint);
+
 	void returnToPreviousTool();
 
 	QCursor m_moveCursor =
@@ -207,6 +210,7 @@ private:
 	Handle m_hoverHandle = Handle::Invalid;
 	Handle m_dragHandle = Handle::None;
 	QPointF m_dragStartPoint;
+	QPointF m_dragStartHandlePoint;
 	QPointF m_dragStartOffset;
 	TransformQuad m_dragStartQuad;
 	ClickDetector m_clickDetector;

@@ -42,6 +42,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Use hardware renderer on Android by default.
  * Fix: Don't unnecessarily scale full-canvas animations by a single pixel.
  * Feature: Replace GIF export with ffmpeg's libraries, since they are also used for videos. It's way faster, generates much better palettes and . Thanks dAVePAGE and JJ for reporting issues in this regard.
+ * Fix: Constrain aspect ratio of transform scaling properly, it was getting offset by the distance between the clicked point and the actual corner. Thanks Blozzom for reporting.
 
 2024-08-09 Version 2.2.2-beta.3
  * Fix: Use more accurate timers for performance profiles if the platform supports it.

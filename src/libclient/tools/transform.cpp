@@ -588,6 +588,8 @@ void TransformTool::startDrag(
 	if(m_dragHandle != Handle::None) {
 		m_dragStartPoint = point;
 		m_dragStartQuad = transform->dstQuad();
+		m_dragStartHandlePoint =
+			getQuadHandlePoint(m_dragStartQuad, m_dragHandle, m_dragStartPoint);
 		emitStateChange(transform, m_dragHandle);
 	}
 }
@@ -886,9 +888,9 @@ void TransformTool::dragScaleCorner(
 	QPointF delta = point - m_dragStartPoint;
 	if(constrain) {
 		delta = getPointAlongAxis(
-					QLineF(m_dragStartPoint, oppositePoint),
-					m_dragStartPoint + delta) -
-				m_dragStartPoint;
+					QLineF(m_dragStartHandlePoint, oppositePoint),
+					m_dragStartHandlePoint + delta) -
+				m_dragStartHandlePoint;
 	}
 
 	QLineF axis1(dependentPoint1, oppositePoint);
@@ -1152,6 +1154,31 @@ void TransformTool::checkHandleEdgeAt(
 		inOutClosestHandle = consideredHandle;
 		inOutClosestDistance = distance;
 		outOffset = point - edgePoint;
+	}
+}
+
+QPointF TransformTool::getQuadHandlePoint(
+	const TransformQuad &quad, Handle handle, const QPointF &targetPoint)
+{
+	switch(handle) {
+	case Handle::TopLeft:
+		return quad.topLeft();
+	case Handle::Top:
+		return quad.top();
+	case Handle::TopRight:
+		return quad.topRight();
+	case Handle::Right:
+		return quad.right();
+	case Handle::BottomRight:
+		return quad.bottomRight();
+	case Handle::Bottom:
+		return quad.bottom();
+	case Handle::BottomLeft:
+		return quad.bottomLeft();
+	case Handle::Left:
+		return quad.left();
+	default:
+		return targetPoint;
 	}
 }
 
