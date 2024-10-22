@@ -107,8 +107,7 @@ QSize PaletteWidget::calcSwatchSize(int availableWidth) const
 	s.setWidth(qMax(
 		1 + m_spacing * 2,
 		(availableWidth - m_spacing) / m_columns - m_spacing));
-	int buttonHeight =
-		qMax(16, style()->pixelMetric(QStyle::PM_DialogButtonsButtonHeight));
+	int buttonHeight = qMax(16, style()->pixelMetric(QStyle::PM_LargeIconSize));
 	s.setHeight(qBound(
 		buttonHeight / 2,
 		qMin(int(s.width() * 0.75 + 0.5), availableWidth / 16), buttonHeight));
