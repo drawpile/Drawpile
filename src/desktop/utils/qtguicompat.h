@@ -87,10 +87,10 @@ using DeviceType = QInputDevice::DeviceType;
 using EnterEvent = QEnterEvent;
 using PointerType = QPointingDevice::PointerType;
 using TouchPoint = QEventPoint;
-const auto UnknownPointer = PointerType::Unknown;
-const auto NoDevice = DeviceType::Unknown;
-const auto FourDMouseDevice = DeviceType::Mouse;
-const auto RotationStylusDevice = DeviceType::Stylus;
+constexpr auto UnknownPointer = PointerType::Unknown;
+constexpr auto NoDevice = DeviceType::Unknown;
+constexpr auto FourDMouseDevice = DeviceType::Mouse;
+constexpr auto RotationStylusDevice = DeviceType::Stylus;
 
 inline auto makeTabletEvent(
 	QEvent::Type type, const QPointF &pos, const QPointF &globalPos,
@@ -214,10 +214,10 @@ using DeviceType = QTabletEvent::TabletDevice;
 using EnterEvent = QEvent;
 using PointerType = QTabletEvent::PointerType;
 using TouchPoint = QTouchEvent::TouchPoint;
-const auto UnknownPointer = PointerType::UnknownPointer;
-const auto NoDevice = DeviceType::NoDevice;
-const auto FourDMouseDevice = DeviceType::FourDMouse;
-const auto RotationStylusDevice = DeviceType::RotationStylus;
+constexpr auto UnknownPointer = PointerType::UnknownPointer;
+constexpr auto NoDevice = DeviceType::NoDevice;
+constexpr auto FourDMouseDevice = DeviceType::FourDMouse;
+constexpr auto RotationStylusDevice = DeviceType::RotationStylus;
 
 inline auto makeTabletEvent(
 	QEvent::Type type, const QPointF &pos, const QPointF &globalPos,
