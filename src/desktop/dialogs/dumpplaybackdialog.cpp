@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/dumpplaybackdialog.h"
+#include "desktop/utils/qtguicompat.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/drawdance/canvashistory.h"
@@ -123,12 +124,16 @@ DumpPlaybackDialog::DumpPlaybackDialog(
 	connect(
 		d->ui.jumpButton, &QPushButton::clicked, this,
 		&DumpPlaybackDialog::jump);
-	connect(d->ui.hideWithoutState, &QCheckBox::stateChanged, [this](int) {
-		updateHistoryTable();
-	});
-	connect(d->ui.hideGoneEntries, &QCheckBox::stateChanged, [this](int) {
-		updateHistoryTable();
-	});
+	connect(
+		d->ui.hideWithoutState, compat::CheckBoxStateChanged,
+		[this](compat::CheckBoxState) {
+			updateHistoryTable();
+		});
+	connect(
+		d->ui.hideGoneEntries, compat::CheckBoxStateChanged,
+		[this](compat::CheckBoxState) {
+			updateHistoryTable();
+		});
 	connect(d->timer, &QTimer::timeout, this, &DumpPlaybackDialog::singleStep);
 
 	updateUi();

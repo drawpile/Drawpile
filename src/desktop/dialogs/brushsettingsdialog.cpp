@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/brushsettingsdialog.h"
 #include "desktop/filewrangler.h"
+#include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/curvewidget.h"
 #include "desktop/widgets/keysequenceedit.h"
@@ -572,31 +573,34 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->eraseModeBox = new QCheckBox{tr("Eraser Mode"), widget};
 	layout->addRow(d->eraseModeBox);
 	connect(
-		d->eraseModeBox, &QCheckBox::stateChanged,
-		makeBrushChangeCallbackArg<int>([this](int state) {
-			d->brush.classic().erase = state != Qt::Unchecked;
-			d->brush.myPaint().brush().erase = state != Qt::Unchecked;
-			emitChange();
-		}));
+		d->eraseModeBox, compat::CheckBoxStateChanged,
+		makeBrushChangeCallbackArg<compat::CheckBoxState>(
+			[this](compat::CheckBoxState state) {
+				d->brush.classic().erase = state != Qt::Unchecked;
+				d->brush.myPaint().brush().erase = state != Qt::Unchecked;
+				emitChange();
+			}));
 
 	d->colorPickBox =
 		new QCheckBox{tr("Pick Initial Color from Layer"), widget};
 	layout->addRow(d->colorPickBox);
 	connect(
-		d->colorPickBox, &QCheckBox::stateChanged,
-		makeBrushChangeCallbackArg<int>([this](int state) {
-			d->brush.classic().colorpick = state != Qt::Unchecked;
-			emitChange();
-		}));
+		d->colorPickBox, compat::CheckBoxStateChanged,
+		makeBrushChangeCallbackArg<compat::CheckBoxState>(
+			[this](compat::CheckBoxState state) {
+				d->brush.classic().colorpick = state != Qt::Unchecked;
+				emitChange();
+			}));
 
 	d->lockAlphaBox = new QCheckBox{tr("Lock Alpha (Recolor Mode)"), widget};
 	layout->addRow(d->lockAlphaBox);
 	connect(
-		d->lockAlphaBox, &QCheckBox::stateChanged,
-		makeBrushChangeCallbackArg<int>([this](int state) {
-			d->brush.myPaint().brush().lock_alpha = state != Qt::Unchecked;
-			emitChange();
-		}));
+		d->lockAlphaBox, compat::CheckBoxStateChanged,
+		makeBrushChangeCallbackArg<compat::CheckBoxState>(
+			[this](compat::CheckBoxState state) {
+				d->brush.myPaint().brush().lock_alpha = state != Qt::Unchecked;
+				emitChange();
+			}));
 
 	d->spacingSpinner = new KisSliderSpinBox{widget};
 	layout->addRow(d->spacingSpinner);

@@ -2,6 +2,7 @@
 
 #ifndef MYPAINTINPUT_H
 #define MYPAINTINPUT_H
+#include "desktop/utils/qtguicompat.h"
 #include "libclient/brushes/brush.h"
 #include <QWidget>
 #include <mypaint-brush-settings.h>
@@ -34,7 +35,7 @@ signals:
 	void controlPointsChanged();
 
 private slots:
-	void changeBoxState(int state);
+	void changeBoxState(compat::CheckBoxState state);
 
 private:
 	void constructCurveWidgets();

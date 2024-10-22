@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog/tools.h"
 #include "desktop/settings.h"
+#include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/view/cursor.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
@@ -128,7 +129,8 @@ void Tools::initCursors(
 		settings.samplingRingVisibility() ==
 		int(desktop::settings::SamplingRingVisibility::Always));
 	connect(
-		samplingRing, &QCheckBox::stateChanged, this, [&settings](int state) {
+		samplingRing, compat::CheckBoxStateChanged, this,
+		[&settings](compat::CheckBoxState state) {
 			settings.setSamplingRingVisibility(
 				state == Qt::Unchecked
 					? int(desktop::settings::SamplingRingVisibility::TouchOnly)

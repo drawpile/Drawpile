@@ -2,6 +2,7 @@
 #ifndef DP_DESKTOP_UTILS_QTGUICOMPAT_H
 #define DP_DESKTOP_UTILS_QTGUICOMPAT_H
 #include <QApplication>
+#include <QCheckBox>
 #include <QDragMoveEvent>
 #include <QDropEvent>
 #include <QKeyEvent>
@@ -317,6 +318,16 @@ inline void disableImageReaderAllocationLimit()
 {
 	// Nothing to do, Qt 5 doesn't have this limit.
 }
+#endif
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+using CheckBoxState = Qt::CheckState;
+constexpr auto CheckBoxStateChanged =
+	QOverload<CheckBoxState>::of(&QCheckBox::checkStateChanged);
+#else
+using CheckBoxState = int;
+constexpr auto CheckBoxStateChanged =
+	QOverload<CheckBoxState>::of(&QCheckBox::stateChanged);
 #endif
 }
 

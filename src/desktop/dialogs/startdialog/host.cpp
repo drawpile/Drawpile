@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/startdialog/host.h"
 #include "desktop/main.h"
+#include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/recents.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/net/server.h"
@@ -202,8 +203,10 @@ Host::Host(QWidget *parent)
 	m_advancedBox = new QCheckBox(tr("Enable advanced options"));
 	layout->addWidget(m_advancedBox);
 	connect(
-		m_advancedBox, &QCheckBox::stateChanged, this,
-		&Host::updateAdvancedSectionVisible);
+		m_advancedBox, compat::CheckBoxStateChanged, this,
+		[this](compat::CheckBoxState state) {
+			updateAdvancedSectionVisible(state != Qt::Unchecked);
+		});
 
 	m_advancedSection = utils::addFormSection(layout);
 

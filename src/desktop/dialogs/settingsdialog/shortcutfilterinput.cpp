@@ -27,7 +27,7 @@ ShortcutFilterInput::ShortcutFilterInput(QWidget *parent)
 		m_filterEdit, &QLineEdit::textChanged, this,
 		&ShortcutFilterInput::handleFilterTextChanged);
 	connect(
-		m_conflictBox, &QCheckBox::stateChanged, this,
+		m_conflictBox, compat::CheckBoxStateChanged, this,
 		&ShortcutFilterInput::handleConflictBoxStateChanged);
 }
 
@@ -50,7 +50,8 @@ void ShortcutFilterInput::handleFilterTextChanged(const QString &text)
 	}
 }
 
-void ShortcutFilterInput::handleConflictBoxStateChanged(int state)
+void ShortcutFilterInput::handleConflictBoxStateChanged(
+	compat::CheckBoxState state)
 {
 	bool checked = state != Qt::Unchecked;
 	m_filterEdit->setDisabled(checked);
