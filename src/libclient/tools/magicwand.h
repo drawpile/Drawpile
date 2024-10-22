@@ -20,11 +20,16 @@ public:
 	void undoMultipart() override;
 	void cancelMultipart() override;
 	void dispose() override;
-	ToolState toolState() const override;
 
 	void updateParameters();
 
 private:
+	// Dummy constant for potential future editable fill functionality, which
+	// used to previously exist, similar to how the flood fill tool works
+	// currently. However, this is less necessary with selections being
+	// local-only, so currently editable wand selections are always disabled.
+	static constexpr bool EDITABLE = false;
+
 	class Task;
 	friend Task;
 

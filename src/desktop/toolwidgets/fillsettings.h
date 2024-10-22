@@ -3,6 +3,7 @@
 #define DESKTOP_TOOLWIDGETS_FILL_H
 #include "desktop/toolwidgets/toolsettings.h"
 
+class QAction;
 class QButtonGroup;
 class Ui_FillSettings;
 
@@ -40,6 +41,8 @@ public:
 
 	void setCompatibilityMode(bool compatibilityMode);
 
+	QWidget *getHeaderWidget() override { return m_headerWidget; }
+
 signals:
 	void pixelSizeChanged(int size);
 
@@ -54,6 +57,8 @@ protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
+	void updateSettings();
+
 	void updateSize();
 	static bool isSizeUnlimited(int size);
 	int calculatePixelSize(int size) const;
@@ -61,7 +66,12 @@ private:
 	void initBlendModeOptions();
 	void selectBlendMode(int blendMode);
 
+	void setButtonState(bool running, bool pending);
+
+	QWidget *m_headerWidget = nullptr;
 	Ui_FillSettings *m_ui = nullptr;
+	QAction *m_editableAction = nullptr;
+	QAction *m_confirmAction = nullptr;
 	QButtonGroup *m_sourceGroup = nullptr;
 	QButtonGroup *m_areaGroup = nullptr;
 	int m_previousMode;
@@ -69,6 +79,7 @@ private:
 	qreal m_quickAdjust1 = 0.0;
 	bool m_haveSelection = false;
 	bool m_compatibilityMode = false;
+	bool m_updating = false;
 };
 
 }

@@ -758,7 +758,7 @@ void DP_transient_layer_list_merge_at(DP_TransientLayerList *tll,
     DP_ASSERT(index < tll->count);
     DP_ASSERT(tll->elements[index].is_group);
     DP_LayerGroup *lg = tll->elements[index].group;
-    DP_TransientLayerContent *tlc = DP_layer_group_merge(lg, lp);
+    DP_TransientLayerContent *tlc = DP_layer_group_merge(lg, lp, true);
     DP_layer_group_decref(lg);
     tll->elements[index] =
         (DP_LayerListEntry){.is_group = false, .transient_content = tlc};

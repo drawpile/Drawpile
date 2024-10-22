@@ -37,11 +37,11 @@ public:
 	bool usesBrushColor() const override { return true; }
 	void setActiveLayer(int layerId) override;
 	void setForegroundColor(const QColor &color) override;
-	ToolState toolState() const override;
 
 	void setParameters(
 		qreal tolerance, int expansion, int kernel, int featherRadius, int size,
-		qreal opacity, int gap, Source source, int blendMode, Area area);
+		qreal opacity, int gap, Source source, int blendMode, Area area,
+		bool editableFills, bool confirmFills);
 
 private:
 	class Task;
@@ -49,7 +49,7 @@ private:
 
 	int lastActiveLayerId() const;
 
-	void fillAt(const QPointF &point, int activeLayerId);
+	void fillAt(const QPointF &point, int activeLayerId, bool editable);
 	void repeatFill();
 	void floodFillFinished(Task *task);
 
@@ -61,6 +61,8 @@ private:
 
 	void adjustPendingImage(bool adjustOpacity);
 
+	void emitFloodFillStateChanged();
+
 	qreal m_tolerance = 0.01;
 	int m_expansion = 0;
 	int m_kernel;
@@ -71,8 +73,11 @@ private:
 	Source m_source = Source::CurrentLayer;
 	int m_blendMode;
 	Area m_area = Area::Continuous;
+	bool m_editableFills = false;
+	bool m_confirmFills = false;
 	bool m_running = false;
 	bool m_repeat = false;
+	bool m_pendingEditable = false;
 	QAtomicInt m_cancel = false;
 	QPointF m_lastPoint;
 	int m_lastActiveLayerId = 0;
@@ -80,6 +85,11 @@ private:
 	QPoint m_pendingPos;
 	Area m_pendingArea;
 	QColor m_pendingColor;
+	int m_originalLayerId = 0;
+	int m_originalBlendMode;
+	QCursor m_bucketCursor;
+	QCursor m_pendingCursor;
+	QCursor m_confirmCursor;
 };
 
 }

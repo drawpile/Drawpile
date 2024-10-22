@@ -335,7 +335,8 @@ DP_Pixel8 *DP_layer_group_to_pixels8(DP_LayerGroup *lg, DP_LayerProps *lp,
 }
 
 DP_TransientLayerContent *DP_layer_group_merge(DP_LayerGroup *lg,
-                                               DP_LayerProps *lp)
+                                               DP_LayerProps *lp,
+                                               bool include_sublayers)
 {
     DP_ASSERT(lg);
     DP_ASSERT(DP_atomic_get(&lg->refcount) > 0);
@@ -343,8 +344,8 @@ DP_TransientLayerContent *DP_layer_group_merge(DP_LayerGroup *lg,
     DP_LayerPropsList *lpl = DP_layer_props_children_noinc(lp);
     DP_TransientLayerContent *tlc =
         DP_transient_layer_content_new_init(lg->width, lg->height, NULL);
-    DP_layer_list_merge_to_flat_image(lg->children, lpl, tlc, DP_BIT15, true,
-                                      true, false);
+    DP_layer_list_merge_to_flat_image(lg->children, lpl, tlc, DP_BIT15,
+                                      include_sublayers, true, false);
     return tlc;
 }
 

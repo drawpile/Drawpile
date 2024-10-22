@@ -124,8 +124,6 @@ public:
 	int globalSmoothing() const { return m_globalSmoothing; }
 
 	void setMouseSmoothing(bool mouseSmoothing);
-	void setShowFillNotices(bool showFillNotices);
-	bool showFillNotices() const { return m_showFillNotices; }
 
 	void setTransformParams(bool accurate, int interpolation);
 	int transformInterpolation() const { return m_transformInterpolation; }
@@ -166,8 +164,6 @@ public:
 	 * finished() on the main thread when it's done, then calls deleteLater().
 	 */
 	void executeAsync(Task *task);
-
-	void refreshToolState();
 
 public slots:
 	//! Start a new stroke
@@ -235,7 +231,9 @@ signals:
 	void showMessageRequested(const QString &message);
 	void toolNoticeRequested(const QString &text);
 
+	void floodFillStateChanged(bool running, bool pending);
 	void toolStateChanged(int state);
+
 	void asyncExecutionFinished(Task *task);
 
 private slots:
@@ -264,7 +262,6 @@ private:
 	bool m_drawing;
 	bool m_applyGlobalSmoothing;
 	bool m_mouseSmoothing;
-	bool m_showFillNotices;
 
 	int m_globalSmoothing;
 	bool m_interpolateInputs;

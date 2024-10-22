@@ -9,15 +9,20 @@
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
 #include "ui_fillsettings.h"
+#include <QAction>
 #include <QButtonGroup>
 #include <QIcon>
+#include <QMenu>
+#include <QScopedValueRollback>
 #include <QSignalBlocker>
 
 namespace tools {
 
 namespace props {
 static const ToolProperties::Value<bool> shrink{
-	QStringLiteral("shrink"), false};
+	QStringLiteral("shrink"), false},
+	editable{QStringLiteral("editable"), false},
+	confirm{QStringLiteral("confirm"), false};
 static const ToolProperties::RangedValue<int> expand{
 	QStringLiteral("expand"), 0, 0, 100},
 	featherRadius{QStringLiteral("featherRadius"), 0, 0, 40},
@@ -48,6 +53,41 @@ FillSettings::~FillSettings()
 
 QWidget *FillSettings::createUiWidget(QWidget *parent)
 {
+	m_headerWidget = new QWidget(parent);
+	QHBoxLayout *headerLayout = new QHBoxLayout;
+	headerLayout->setSpacing(0);
+	headerLayout->setContentsMargins(0, 0, 0, 0);
+
+	widgets::GroupedToolButton *menuButton = new widgets::GroupedToolButton(
+		widgets::GroupedToolButton::NotGrouped, m_headerWidget);
+	menuButton->setIcon(QIcon::fromTheme("application-menu"));
+	menuButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	menuButton->setPopupMode(QToolButton::InstantPopup);
+	menuButton->setStatusTip(tr("Fill tool settings"));
+	menuButton->setToolTip(menuButton->statusTip());
+	headerLayout->addWidget(menuButton);
+
+	QMenu *menu = new QMenu(menuButton);
+	menuButton->setMenu(menu);
+
+	m_editableAction = menu->addAction(tr("&Edit pending fills"));
+	m_editableAction->setStatusTip(tr(
+		"Apply changes in settings, color and layer to fills not yet applied"));
+	m_editableAction->setCheckable(true);
+	connect(
+		m_editableAction, &QAction::triggered, this,
+		&FillSettings::updateSettings);
+
+	m_confirmAction = menu->addAction(tr("&Confirm fills with second click"));
+	m_confirmAction->setStatusTip(tr(
+		"Lets you apply fills with a click instead of starting another fill"));
+	m_confirmAction->setCheckable(true);
+	connect(
+		m_confirmAction, &QAction::triggered, this,
+		&FillSettings::updateSettings);
+
+	headerLayout->addStretch();
+
 	QWidget *uiwidget = new QWidget(parent);
 	m_ui = new Ui_FillSettings;
 	m_ui->setupUi(uiwidget);
@@ -85,36 +125,36 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 		&FillSettings::updateSize);
 	connect(
 		m_ui->opacity, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&FillSettings::pushSettings);
+		&FillSettings::updateSettings);
 	connect(
 		m_ui->tolerance, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&FillSettings::pushSettings);
+		&FillSettings::updateSettings);
 	connect(
 		m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&FillSettings::pushSettings);
+		&FillSettings::updateSettings);
 	connect(
 		m_ui->expandShrink, &widgets::ExpandShrinkSpinner::spinnerValueChanged,
-		this, &FillSettings::pushSettings);
+		this, &FillSettings::updateSettings);
 	connect(
 		m_ui->expandShrink, &widgets::ExpandShrinkSpinner::shrinkChanged, this,
-		&FillSettings::pushSettings);
+		&FillSettings::updateSettings);
 	connect(
 		m_ui->expandShrink, &widgets::ExpandShrinkSpinner::kernelChanged, this,
-		&FillSettings::pushSettings);
+		&FillSettings::updateSettings);
 	connect(
 		m_ui->feather, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&FillSettings::pushSettings);
+		&FillSettings::updateSettings);
 	connect(
 		m_ui->gap, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&FillSettings::pushSettings);
+		&FillSettings::updateSettings);
 	connect(
 		m_sourceGroup,
 		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
-		&FillSettings::pushSettings);
+		&FillSettings::updateSettings);
 	connect(
 		m_areaGroup,
 		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
-		&FillSettings::pushSettings);
+		&FillSettings::updateSettings);
 	connect(
 		m_areaGroup,
 		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
@@ -122,8 +162,26 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	connect(
 		m_ui->blendModeCombo,
 		QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-		&FillSettings::pushSettings);
+		&FillSettings::updateSettings);
 	updateSize();
+
+	m_ui->applyButton->setIcon(
+		uiwidget->style()->standardIcon(QStyle::SP_DialogApplyButton));
+	connect(
+		m_ui->applyButton, &QPushButton::clicked, controller(),
+		&ToolController::finishMultipartDrawing);
+
+	m_ui->cancelButton->setIcon(
+		uiwidget->style()->standardIcon(QStyle::SP_DialogCancelButton));
+	connect(
+		m_ui->cancelButton, &QPushButton::clicked, controller(),
+		&ToolController::cancelMultipartDrawing);
+
+	connect(
+		controller(), &ToolController::floodFillStateChanged, this,
+		&FillSettings::setButtonState);
+	setButtonState(false, false);
+
 	return uiwidget;
 }
 
@@ -171,7 +229,8 @@ void FillSettings::pushSettings()
 		m_ui->feather->value(), isSizeUnlimited(size) ? -1 : size,
 		m_ui->opacity->value() / 100.0, m_ui->gap->value(),
 		FloodFill::Source(m_sourceGroup->checkedId()), blendMode,
-		FloodFill::Area(area));
+		FloodFill::Area(area), m_editableAction->isChecked(),
+		m_confirmAction->isChecked());
 
 	if(!m_ui->sourceFillSource->isEnabled() &&
 	   m_ui->sourceFillSource->isChecked()) {
@@ -230,6 +289,8 @@ ToolProperties FillSettings::saveToolSettings()
 		props::tolerance,
 		m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()));
 	cfg.setValue(props::expand, m_ui->expandShrink->spinnerValue());
+	cfg.setValue(props::editable, m_editableAction->isChecked());
+	cfg.setValue(props::confirm, m_confirmAction->isChecked());
 	cfg.setValue(props::shrink, m_ui->expandShrink->isShrink());
 	cfg.setValue(props::kernel, m_ui->expandShrink->kernel());
 	cfg.setValue(props::featherRadius, m_ui->feather->value());
@@ -261,6 +322,10 @@ int FillSettings::getSize() const
 
 void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 {
+	QScopedValueRollback<bool> rollback(m_updating);
+
+	m_editableAction->setChecked(cfg.value(props::editable));
+	m_confirmAction->setChecked(cfg.value(props::confirm));
 	m_ui->tolerance->setValue(
 		cfg.value(props::tolerance) * m_ui->tolerance->maximum());
 	m_ui->expandShrink->setSpinnerValue(cfg.value(props::expand));
@@ -307,6 +372,13 @@ void FillSettings::stepAdjust1(bool increase)
 	if(size->isEnabled()) {
 		size->setValue(stepLogarithmic(
 			size->minimum(), size->maximum(), size->value(), increase));
+	}
+}
+
+void FillSettings::updateSettings()
+{
+	if(!m_updating) {
+		pushSettings();
 	}
 }
 
@@ -366,6 +438,12 @@ void FillSettings::selectBlendMode(int blendMode)
 			break;
 		}
 	}
+}
+
+void FillSettings::setButtonState(bool running, bool pending)
+{
+	m_ui->applyButton->setEnabled(pending);
+	m_ui->cancelButton->setEnabled(running || pending);
 }
 
 }

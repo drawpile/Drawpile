@@ -152,6 +152,9 @@ DP_TransientTile *DP_layer_content_flatten_tile_to(
 DP_TransientLayerContent *DP_transient_layer_content_new(DP_LayerContent *lc);
 
 DP_TransientLayerContent *
+DP_transient_layer_content_new_transient(DP_TransientLayerContent *tlc);
+
+DP_TransientLayerContent *
 DP_transient_layer_content_new_init(int width, int height, DP_Tile *tile);
 
 DP_TransientLayerContent *

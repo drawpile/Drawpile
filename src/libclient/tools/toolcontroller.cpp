@@ -32,7 +32,6 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_drawing(false)
 	, m_applyGlobalSmoothing(true)
 	, m_mouseSmoothing(false)
-	, m_showFillNotices(true)
 	, m_globalSmoothing(0)
 	, m_interpolateInputs(false)
 	, m_stabilizationMode(brushes::Stabilizer)
@@ -135,7 +134,6 @@ void ToolController::setActiveTool(Tool::Type tool)
 			activeToolIgnoresSelections());
 		emit toolCursorChanged(activeToolCursor());
 		emit toolNoticeRequested(QString());
-		refreshToolState();
 	}
 }
 
@@ -390,11 +388,6 @@ void ToolController::setMouseSmoothing(bool mouseSmoothing)
 	m_mouseSmoothing = mouseSmoothing;
 }
 
-void ToolController::setShowFillNotices(bool showFillNotices)
-{
-	m_showFillNotices = showFillNotices;
-}
-
 void ToolController::updateSmoothing()
 {
 	int strength = m_globalSmoothing;
@@ -580,7 +573,7 @@ void ToolController::executeAsync(Task *task)
 		task->run();
 		emit asyncExecutionFinished(task);
 		if(--m_taskCount == 0) {
-			emit toolStateChanged(int(m_activeTool->toolState()));
+			emit toolStateChanged(int(ToolState::Normal));
 		}
 	}));
 }
@@ -589,13 +582,6 @@ void ToolController::notifyAsyncExecutionFinished(Task *task)
 {
 	task->finished();
 	task->deleteLater();
-}
-
-void ToolController::refreshToolState()
-{
-	if(m_taskCount == 0) {
-		emit toolStateChanged(int(m_activeTool->toolState()));
-	}
 }
 
 }

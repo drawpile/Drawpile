@@ -107,9 +107,9 @@ public:
 		unsigned int contextId, int selectionId, int x, int y,
 		const QColor &fillColor, double tolerance, int layerId, int sizeLimit,
 		int gap, int expand, DP_FloodFillKernel kernel, int featherRadius,
-		bool fromEdge, bool continuous, DP_ViewMode viewMode, int activeLayerId,
-		int activeFrameIndex, const QAtomicInt &cancel, QImage &outImg,
-		int &outX, int &outY) const;
+		bool fromEdge, bool continuous, bool includeSublayers,
+		DP_ViewMode viewMode, int activeLayerId, int activeFrameIndex,
+		const QAtomicInt &cancel, QImage &outImg, int &outX, int &outY) const;
 
 	DP_FloodFillResult selectionFill(
 		unsigned int contextId, int selectionId, const QColor &fillColor,

@@ -789,9 +789,6 @@ void CanvasView::resetCursor()
 	} else if(m_toolState == int(tools::ToolState::Busy)) {
 		setViewportCursor(Qt::WaitCursor);
 		return;
-	} else if(m_toolState == int(tools::ToolState::AwaitingConfirmation)) {
-		setViewportCursor(m_checkCursor);
-		return;
 	}
 
 	if(m_toolcursor.shape() == Qt::CrossCursor) {

@@ -9,6 +9,7 @@ pub const DP_TILE_SIZE: u32 = 64;
 pub const DP_TILE_LENGTH: u32 = 4096;
 pub const DP_FLAT_IMAGE_INCLUDE_BACKGROUND: u32 = 1;
 pub const DP_FLAT_IMAGE_INCLUDE_SUBLAYERS: u32 = 2;
+pub const DP_FLAT_IMAGE_ONE_BIT_ALPHA: u32 = 4;
 pub const DP_FLAT_IMAGE_RENDER_FLAGS: u32 = 3;
 pub const DP_DOCUMENT_METADATA_DPIX_DEFAULT: u32 = 72;
 pub const DP_DOCUMENT_METADATA_DPIY_DEFAULT: u32 = 72;
@@ -2814,6 +2815,11 @@ extern "C" {
     ) -> *mut DP_TransientLayerContent;
 }
 extern "C" {
+    pub fn DP_transient_layer_content_new_transient(
+        tlc: *mut DP_TransientLayerContent,
+    ) -> *mut DP_TransientLayerContent;
+}
+extern "C" {
     pub fn DP_transient_layer_content_new_init(
         width: ::std::os::raw::c_int,
         height: ::std::os::raw::c_int,
@@ -3130,6 +3136,7 @@ extern "C" {
     pub fn DP_layer_group_merge(
         lg: *mut DP_LayerGroup,
         lp: *mut DP_LayerProps,
+        include_sublayers: bool,
     ) -> *mut DP_TransientLayerContent;
 }
 extern "C" {
@@ -7283,6 +7290,12 @@ extern "C" {
     ) -> *mut DP_TransientTile;
 }
 extern "C" {
+    pub fn DP_transient_tile_new_transient(
+        tt: *mut DP_TransientTile,
+        context_id: ::std::os::raw::c_uint,
+    ) -> *mut DP_TransientTile;
+}
+extern "C" {
     pub fn DP_transient_tile_new_blank(context_id: ::std::os::raw::c_uint)
         -> *mut DP_TransientTile;
 }
@@ -8028,22 +8041,6 @@ extern "C" {
         interpolation: ::std::os::raw::c_int,
         start: ::std::os::raw::c_int,
         end_inclusive: ::std::os::raw::c_int,
-        progress_fn: DP_SaveAnimationProgressFn,
-        user: *mut ::std::os::raw::c_void,
-    ) -> DP_SaveResult;
-}
-extern "C" {
-    pub fn DP_save_animation_gif(
-        cs: *mut DP_CanvasState,
-        dc: *mut DP_DrawContext,
-        path: *const ::std::os::raw::c_char,
-        crop: *mut DP_Rect,
-        width: ::std::os::raw::c_int,
-        height: ::std::os::raw::c_int,
-        interpolation: ::std::os::raw::c_int,
-        start: ::std::os::raw::c_int,
-        end_inclusive: ::std::os::raw::c_int,
-        framerate: ::std::os::raw::c_int,
         progress_fn: DP_SaveAnimationProgressFn,
         user: *mut ::std::os::raw::c_void,
     ) -> DP_SaveResult;

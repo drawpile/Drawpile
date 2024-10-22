@@ -26,6 +26,41 @@
    <property name="spacing">
     <number>3</number>
    </property>
+   <item row="2" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="size">
+     <property name="suffix">
+      <string>px</string>
+     </property>
+     <property name="prefix">
+      <string>Size Limit: </string>
+     </property>
+     <property name="minimum">
+      <number>20</number>
+     </property>
+     <property name="maximum">
+      <number>5000</number>
+     </property>
+     <property name="singleStep">
+      <number>1</number>
+     </property>
+     <property name="blockUpdateSignalOnDrag" stdset="0">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="tolerance">
+     <property name="prefix">
+      <string>Tolerance: </string>
+     </property>
+     <property name="maximum">
+      <number>254</number>
+     </property>
+     <property name="blockUpdateSignalOnDrag" stdset="0">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
    <item row="11" column="1">
     <layout class="QHBoxLayout" name="modeLayout">
      <property name="spacing">
@@ -124,6 +159,28 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="opacity">
+     <property name="suffix">
+      <string>%</string>
+     </property>
+     <property name="prefix">
+      <string>Opacity: </string>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>100</number>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+     <property name="blockUpdateSignalOnDrag" stdset="0">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item row="10" column="1">
     <layout class="QHBoxLayout" name="sourceLayout">
@@ -225,18 +282,28 @@
      </item>
     </layout>
    </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="tolerance">
-     <property name="prefix">
-      <string>Tolerance: </string>
+   <item row="14" column="0" colspan="2">
+    <spacer name="bottomSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
-     <property name="maximum">
-      <number>254</number>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
      </property>
-     <property name="blockUpdateSignalOnDrag" stdset="0">
-      <bool>true</bool>
+    </spacer>
+   </item>
+   <item row="10" column="0">
+    <widget class="QLabel" name="sourceLabel">
+     <property name="text">
+      <string>Source:</string>
      </property>
     </widget>
+   </item>
+   <item row="5" column="0" colspan="2">
+    <widget class="widgets::ExpandShrinkSpinner" name="expandShrink" native="true"/>
    </item>
    <item row="8" column="0" colspan="2">
     <widget class="KisSliderSpinBox" name="gap">
@@ -254,19 +321,6 @@
      </property>
     </widget>
    </item>
-   <item row="13" column="0" colspan="2">
-    <spacer name="bottomSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="7" column="0" colspan="2">
     <widget class="KisSliderSpinBox" name="feather">
      <property name="suffix">
@@ -283,28 +337,6 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="opacity">
-     <property name="suffix">
-      <string>%</string>
-     </property>
-     <property name="prefix">
-      <string>Opacity: </string>
-     </property>
-     <property name="minimum">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <number>100</number>
-     </property>
-     <property name="value">
-      <number>100</number>
-     </property>
-     <property name="blockUpdateSignalOnDrag" stdset="0">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item row="11" column="0">
     <widget class="QLabel" name="modeLabel">
      <property name="text">
@@ -312,37 +344,35 @@
      </property>
     </widget>
    </item>
-   <item row="10" column="0">
-    <widget class="QLabel" name="sourceLabel">
-     <property name="text">
-      <string>Source:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="size">
-     <property name="suffix">
-      <string>px</string>
-     </property>
-     <property name="prefix">
-      <string>Size Limit: </string>
-     </property>
-     <property name="minimum">
-      <number>20</number>
-     </property>
-     <property name="maximum">
-      <number>5000</number>
-     </property>
-     <property name="singleStep">
-      <number>1</number>
-     </property>
-     <property name="blockUpdateSignalOnDrag" stdset="0">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0" colspan="2">
-    <widget class="widgets::ExpandShrinkSpinner" name="expandShrink" native="true"/>
+   <item row="13" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="applyCancelLayout">
+     <item>
+      <widget class="QPushButton" name="applyButton">
+       <property name="toolTip">
+        <string>Apply the pending fill, making it visible for everyone</string>
+       </property>
+       <property name="statusTip">
+        <string>Apply the pending fill, making it visible for everyone</string>
+       </property>
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancelButton">
+       <property name="toolTip">
+        <string>Cancel the pending fill, without anyone else seeing its effects</string>
+       </property>
+       <property name="statusTip">
+        <string>Cancel the pending fill, without anyone else seeing its effects</string>
+       </property>
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -363,6 +393,24 @@
    <header>desktop/widgets/expandshrinkspinner.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>size</tabstop>
+  <tabstop>opacity</tabstop>
+  <tabstop>tolerance</tabstop>
+  <tabstop>feather</tabstop>
+  <tabstop>gap</tabstop>
+  <tabstop>sourceMerged</tabstop>
+  <tabstop>sourceMergedWithoutBackground</tabstop>
+  <tabstop>sourceLayer</tabstop>
+  <tabstop>sourceFillSource</tabstop>
+  <tabstop>sourceDummyCombo</tabstop>
+  <tabstop>areaContinuous</tabstop>
+  <tabstop>areaSimilar</tabstop>
+  <tabstop>areaSelection</tabstop>
+  <tabstop>blendModeCombo</tabstop>
+  <tabstop>applyButton</tabstop>
+  <tabstop>cancelButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

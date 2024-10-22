@@ -43,9 +43,9 @@ typedef struct DP_UserCursors DP_UserCursors;
 typedef struct DP_ViewModeFilter DP_ViewModeFilter;
 
 
-#define DP_FLAT_IMAGE_INCLUDE_BACKGROUND (1 << 0)
-#define DP_FLAT_IMAGE_INCLUDE_SUBLAYERS  (1 << 1)
-#define DP_FLAT_IMAGE_ONE_BIT_ALPHA      (1 << 2)
+#define DP_FLAT_IMAGE_INCLUDE_BACKGROUND (1u << 0u)
+#define DP_FLAT_IMAGE_INCLUDE_SUBLAYERS  (1u << 1u)
+#define DP_FLAT_IMAGE_ONE_BIT_ALPHA      (1u << 2u)
 #define DP_FLAT_IMAGE_RENDER_FLAGS \
     (DP_FLAT_IMAGE_INCLUDE_BACKGROUND | DP_FLAT_IMAGE_INCLUDE_SUBLAYERS)
 

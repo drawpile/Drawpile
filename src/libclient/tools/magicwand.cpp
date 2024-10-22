@@ -43,7 +43,7 @@ public:
 		m_result = m_canvasState.floodFill(
 			0, 0, m_point.x(), m_point.y(), fillColor, m_tolerance,
 			m_sourceLayerId, m_size, m_continuous ? m_gap : 0, m_expansion,
-			m_kernel, m_featherRadius, false, m_continuous, m_viewMode,
+			m_kernel, m_featherRadius, false, m_continuous, false, m_viewMode,
 			m_activeLayerId, m_activeFrameIndex, m_cancel, m_img, m_x, m_y);
 		if(m_result != DP_FLOOD_FILL_SUCCESS &&
 		   m_result != DP_FLOOD_FILL_CANCELLED) {
@@ -98,9 +98,8 @@ void MagicWandTool::begin(const BeginParams &params)
 	} else if(!m_running) {
 		if(havePending()) {
 			flushPending();
-		} else {
-			fillAt(params.point, params.constrain, params.center);
 		}
+		fillAt(params.point, params.constrain, params.center);
 	}
 }
 
@@ -140,17 +139,11 @@ void MagicWandTool::dispose()
 	}
 }
 
-ToolState MagicWandTool::toolState() const
-{
-	return havePending() ? ToolState::AwaitingConfirmation : ToolState::Normal;
-}
-
 void MagicWandTool::updateParameters()
 {
 	if(havePending()) {
 		const ToolController::SelectionParams &selectionParams =
 			m_owner.selectionParams();
-		bool needsUpdate = selectionParams.opacity != m_pendingParams.opacity;
 		bool needsRefill =
 			selectionParams.size != m_pendingParams.size ||
 			selectionParams.tolerance != m_pendingParams.tolerance ||
@@ -165,8 +158,6 @@ void MagicWandTool::updateParameters()
 		m_pendingParams = selectionParams;
 		if(needsRefill) {
 			repeatFill();
-		} else if(needsUpdate) {
-			updateToolNotice();
 		}
 	}
 }
@@ -202,7 +193,7 @@ void MagicWandTool::fillAt(const QPointF &point, bool constrain, bool center)
 		}
 
 		setHandlesRightClick(true);
-		emit m_owner.toolNoticeRequested(
+		requestToolNotice(
 			QCoreApplication::translate("MagicWandSettings", "Selecting…"));
 
 		canvas::PaintEngine *paintEngine = canvas->paintEngine();
@@ -231,47 +222,34 @@ void MagicWandTool::floodFillFinished(Task *task)
 {
 	m_running = false;
 	DP_FloodFillResult result = task->result();
-	QString toolNoticeText;
 	if(result == DP_FLOOD_FILL_SUCCESS) {
 		m_pendingImage = task->takeImage();
 		if(m_pendingImage.isNull()) {
 			qWarning("Magic wand failed: image is null");
 		} else {
 			m_pendingPos = task->pos();
-			emit m_owner.maskPreviewRequested(m_pendingPos, m_pendingImage);
+			if(!EDITABLE) {
+				emit m_owner.maskPreviewRequested(m_pendingPos, m_pendingImage);
+			}
 		}
 	} else if(result != DP_FLOOD_FILL_CANCELLED) {
 		qWarning("Magic wand failed: %s", qUtf8Printable(task->error()));
 	}
-	updateToolNotice();
+	requestToolNotice(QString());
 	setHandlesRightClick(havePending());
-	m_owner.refreshToolState();
 	if(m_repeat) {
 		fillAt(m_lastPoint, m_lastConstrain, m_lastCenter);
+	} else if(!EDITABLE) {
+		flushPending();
 	}
-}
-
-void MagicWandTool::updateToolNotice()
-{
-	QString toolNoticeText;
-	if(havePending() && m_owner.showFillNotices()) {
-		toolNoticeText =
-			QCoreApplication::translate(
-				"MagicWandSettings", "%1 by %2 pixels, %3% opacity.\n"
-									 "Click to apply, undo to cancel.")
-				.arg(
-					QString::number(m_pendingImage.width()),
-					QString::number(m_pendingImage.height()),
-					QString::number(
-						qRound(m_owner.selectionParams().opacity * 100.0)));
-	}
-	emit m_owner.toolNoticeRequested(toolNoticeText);
 }
 
 void MagicWandTool::flushPending()
 {
 	if(havePending()) {
-		adjustPendingImage();
+		if(EDITABLE) {
+			adjustPendingImage();
+		}
 		net::Client *client = m_owner.client();
 		uint8_t contextId = client->myId();
 		net::MessageList msgs;
@@ -291,10 +269,11 @@ void MagicWandTool::disposePending()
 {
 	if(havePending()) {
 		m_pendingImage = QImage();
-		emit m_owner.maskPreviewRequested(QPoint(), QImage());
+		if(!EDITABLE) {
+			emit m_owner.maskPreviewRequested(QPoint(), QImage());
+		}
 		setHandlesRightClick(false);
-		emit m_owner.toolNoticeRequested(QString());
-		m_owner.refreshToolState();
+		requestToolNotice(QString());
 	}
 }
 

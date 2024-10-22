@@ -160,6 +160,9 @@ void DP_tile_sample(DP_Tile *tile_or_null, const uint16_t *mask, int x, int y,
 
 DP_TransientTile *DP_transient_tile_new(DP_Tile *tile, unsigned int context_id);
 
+DP_TransientTile *DP_transient_tile_new_transient(DP_TransientTile *tt,
+                                                  unsigned int context_id);
+
 DP_TransientTile *DP_transient_tile_new_blank(unsigned int context_id);
 
 DP_TransientTile *DP_transient_tile_new_nullable(DP_Tile *tile_or_null,

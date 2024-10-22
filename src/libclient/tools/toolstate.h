@@ -4,7 +4,7 @@
 
 namespace tools {
 
-enum class ToolState { Normal, Busy, AwaitingConfirmation };
+enum class ToolState { Normal, Busy };
 
 }
 

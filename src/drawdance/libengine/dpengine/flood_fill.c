@@ -104,8 +104,20 @@ static void init_selection(DP_FillContext *c, DP_CanvasState *cs,
 
 static DP_LayerContent *merge_image(DP_CanvasState *cs, DP_ViewMode view_mode,
                                     int active_layer_id, int active_frame_index,
-                                    unsigned int flags)
+                                    bool include_background,
+                                    bool include_sublayers)
 {
+    static_assert(DP_FLAT_IMAGE_RENDER_FLAGS & DP_FLAT_IMAGE_INCLUDE_BACKGROUND,
+                  "render flags include background (and we may exclude it)");
+    static_assert(DP_FLAT_IMAGE_RENDER_FLAGS & DP_FLAT_IMAGE_INCLUDE_SUBLAYERS,
+                  "render flags include sublayers (and we may exclude them)");
+    unsigned int flags = DP_FLAT_IMAGE_RENDER_FLAGS;
+    if (!include_background) {
+        flags &= ~DP_FLAT_IMAGE_INCLUDE_BACKGROUND;
+    }
+    if (!include_sublayers) {
+        flags &= ~DP_FLAT_IMAGE_INCLUDE_SUBLAYERS;
+    }
     DP_ViewModeBuffer vmb;
     DP_view_mode_buffer_init(&vmb);
     DP_ViewModeFilter vmf = DP_view_mode_filter_make(
@@ -797,13 +809,15 @@ static DP_FloodFillResult finish_fill(DP_FillContext *c, float *mask, int img_x,
     return DP_FLOOD_FILL_SUCCESS;
 }
 
-DP_FloodFillResult DP_flood_fill(
-    DP_CanvasState *cs, unsigned int context_id, int selection_id, int x, int y,
-    DP_UPixelFloat fill_color, double tolerance, int layer_id, int size,
-    int gap, int expand, DP_FloodFillKernel kernel_shape, int feather_radius,
-    bool from_edge, bool continuous, DP_ViewMode view_mode, int active_layer_id,
-    int active_frame_index, DP_Image **out_img, int *out_x, int *out_y,
-    DP_FloodFillShouldCancelFn should_cancel, void *user)
+DP_FloodFillResult
+DP_flood_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
+              int x, int y, DP_UPixelFloat fill_color, double tolerance,
+              int layer_id, int size, int gap, int expand,
+              DP_FloodFillKernel kernel_shape, int feather_radius,
+              bool from_edge, bool continuous, bool include_sublayers,
+              DP_ViewMode view_mode, int active_layer_id,
+              int active_frame_index, DP_Image **out_img, int *out_x,
+              int *out_y, DP_FloodFillShouldCancelFn should_cancel, void *user)
 {
     DP_ASSERT(cs);
 
@@ -857,14 +871,11 @@ DP_FloodFillResult DP_flood_fill(
 
     if (layer_id == 0) {
         c.lc = merge_image(cs, view_mode, active_layer_id, active_frame_index,
-                           DP_FLAT_IMAGE_RENDER_FLAGS
-                               & ~DP_FLAT_IMAGE_INCLUDE_SUBLAYERS);
+                           true, include_sublayers);
     }
     else if (layer_id == -1) {
         c.lc = merge_image(cs, view_mode, active_layer_id, active_frame_index,
-                           DP_FLAT_IMAGE_RENDER_FLAGS
-                               & ~(DP_FLAT_IMAGE_INCLUDE_BACKGROUND
-                                   | DP_FLAT_IMAGE_INCLUDE_SUBLAYERS));
+                           false, include_sublayers);
     }
     else {
         DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
@@ -876,8 +887,13 @@ DP_FloodFillResult DP_flood_fill(
         else if (DP_layer_routes_entry_is_group(lre)) {
             DP_LayerGroup *lg = DP_layer_routes_entry_group(lre, cs);
             DP_LayerProps *lp = DP_layer_routes_entry_props(lre, cs);
-            DP_TransientLayerContent *tlc = DP_layer_group_merge(lg, lp);
+            DP_TransientLayerContent *tlc =
+                DP_layer_group_merge(lg, lp, include_sublayers);
             c.lc = (DP_LayerContent *)tlc;
+        }
+        else if (include_sublayers) {
+            c.lc = DP_layer_content_merge_sublayers(
+                DP_layer_routes_entry_content(lre, cs));
         }
         else {
             c.lc =

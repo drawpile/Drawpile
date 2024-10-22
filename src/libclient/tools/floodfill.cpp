@@ -20,7 +20,8 @@ public:
 		const QPointF &point, const QColor &fillColor, double tolerance,
 		int sourceLayerId, int size, int gap, int expansion,
 		DP_FloodFillKernel kernel, int featherRadius, Area area,
-		DP_ViewMode viewMode, int activeLayerId, int activeFrameIndex)
+		DP_ViewMode viewMode, int activeLayerId, int activeFrameIndex,
+		bool editable)
 		: m_tool(tool)
 		, m_cancel(cancel)
 		, m_canvasState(canvasState)
@@ -38,6 +39,7 @@ public:
 		, m_viewMode(viewMode)
 		, m_activeLayerId(activeLayerId)
 		, m_activeFrameIndex(activeFrameIndex)
+		, m_editable(editable)
 	{
 	}
 
@@ -58,8 +60,9 @@ public:
 				m_contextId, canvas::CanvasModel::MAIN_SELECTION_ID,
 				m_point.x(), m_point.y(), m_fillColor, m_tolerance,
 				m_sourceLayerId, size, continuous ? m_gap : 0, m_expansion,
-				m_kernel, m_featherRadius, false, continuous, m_viewMode,
-				m_activeLayerId, m_activeFrameIndex, m_cancel, m_img, m_x, m_y);
+				m_kernel, m_featherRadius, false, continuous, !m_editable,
+				m_viewMode, m_activeLayerId, m_activeFrameIndex, m_cancel,
+				m_img, m_x, m_y);
 		}
 		if(m_result != DP_FLOOD_FILL_SUCCESS &&
 		   m_result != DP_FLOOD_FILL_CANCELLED) {
@@ -75,6 +78,7 @@ public:
 	Area area() const { return m_area; }
 	QColor color() const { return m_fillColor; }
 	const QString &error() const { return m_error; }
+	bool isEditable() const { return m_editable; }
 
 private:
 	FloodFill *m_tool;
@@ -99,14 +103,21 @@ private:
 	int m_x;
 	int m_y;
 	QString m_error;
+	const bool m_editable;
 };
 
 FloodFill::FloodFill(ToolController &owner)
 	: Tool(
-		  owner, FLOODFILL, QCursor(QPixmap(":cursors/bucket.png"), 2, 29),
-		  true, true, false, false, false)
+		  owner, FLOODFILL,
+		  QCursor(QPixmap(QStringLiteral(":cursors/bucket.png")), 2, 29), true,
+		  true, false, false, false)
 	, m_kernel(int(DP_FLOOD_FILL_KERNEL_ROUND))
 	, m_blendMode(DP_BLEND_MODE_NORMAL)
+	, m_originalBlendMode(m_blendMode)
+	, m_bucketCursor(cursor())
+	, m_pendingCursor(
+		  QPixmap(QStringLiteral(":cursors/bucketcheck.png")), 2, 29)
+	, m_confirmCursor(QPixmap(QStringLiteral(":cursors/check.png")))
 {
 }
 
@@ -115,10 +126,13 @@ void FloodFill::begin(const BeginParams &params)
 	if(params.right) {
 		cancelMultipart();
 	} else if(!m_running) {
+		bool shouldFill = true;
 		if(havePending()) {
+			shouldFill = !m_confirmFills;
 			flushPending();
-		} else {
-			fillAt(params.point, m_owner.activeLayer());
+		}
+		if(shouldFill) {
+			fillAt(params.point, m_owner.activeLayer(), m_editableFills);
 		}
 	}
 }
@@ -137,6 +151,7 @@ bool FloodFill::isMultipart() const
 
 void FloodFill::finishMultipart()
 {
+	dispose();
 	flushPending();
 }
 
@@ -171,20 +186,24 @@ void FloodFill::setForegroundColor(const QColor &color)
 	updatePendingPreview();
 }
 
-ToolState FloodFill::toolState() const
-{
-	return havePending() ? ToolState::AwaitingConfirmation : ToolState::Normal;
-}
-
 void FloodFill::setParameters(
 	qreal tolerance, int expansion, int kernel, int featherRadius, int size,
-	qreal opacity, int gap, Source source, int blendMode, Area area)
+	qreal opacity, int gap, Source source, int blendMode, Area area,
+	bool editableFills, bool confirmFills)
 {
 	bool needsUpdate = opacity != m_opacity || blendMode != m_blendMode;
 	bool needsRefill = tolerance != m_tolerance || expansion != m_expansion ||
 					   kernel != m_kernel || featherRadius != m_featherRadius ||
 					   size != m_size || gap != m_gap || source != m_source ||
 					   area != m_area;
+	m_editableFills = editableFills;
+
+	if(confirmFills != m_confirmFills) {
+		m_confirmFills = confirmFills;
+		if(havePending()) {
+			setCursor(confirmFills ? m_confirmCursor : m_pendingCursor);
+		}
+	}
 
 	if(needsUpdate) {
 		m_opacity = opacity;
@@ -213,13 +232,15 @@ int FloodFill::lastActiveLayerId() const
 								   : m_owner.activeLayer();
 }
 
-void FloodFill::fillAt(const QPointF &point, int activeLayerId)
+void FloodFill::fillAt(const QPointF &point, int activeLayerId, bool editable)
 {
 	m_repeat = false;
 	canvas::CanvasModel *canvas = m_owner.model();
 	if(canvas && !m_running) {
 		m_lastPoint = point;
 		m_lastActiveLayerId = activeLayerId;
+		m_originalLayerId = activeLayerId;
+		m_originalBlendMode = m_blendMode;
 
 		QColor fillColor = m_blendMode == DP_BLEND_MODE_ERASE
 							   ? Qt::black
@@ -248,55 +269,65 @@ void FloodFill::fillAt(const QPointF &point, int activeLayerId)
 		m_cancel = false;
 		canvas::PaintEngine *paintEngine = canvas->paintEngine();
 		setHandlesRightClick(true);
-		emit m_owner.toolNoticeRequested(
+		emitFloodFillStateChanged();
+		requestToolNotice(
 			QCoreApplication::translate("FillSettings", "Filling…"));
 		m_owner.executeAsync(new Task(
 			this, m_cancel, paintEngine->viewCanvasState(),
 			canvas->localUserId(), point, fillColor, m_tolerance, layerId,
 			m_size, m_gap, m_expansion, DP_FloodFillKernel(m_kernel),
 			m_featherRadius, m_area, paintEngine->viewMode(),
-			paintEngine->viewLayer(), paintEngine->viewFrame()));
+			paintEngine->viewLayer(), paintEngine->viewFrame(), editable));
 	}
 }
 
 void FloodFill::repeatFill()
 {
-	if(m_running) {
-		m_repeat = true;
-		m_cancel = true;
-	} else if(havePending()) {
-		fillAt(m_lastPoint, lastActiveLayerId());
+	if(m_pendingEditable) {
+		if(m_running) {
+			m_repeat = true;
+			m_cancel = true;
+		} else if(havePending()) {
+			fillAt(m_lastPoint, lastActiveLayerId(), true);
+		}
 	}
 }
 
 void FloodFill::floodFillFinished(Task *task)
 {
 	m_running = false;
-	DP_FloodFillResult result = task->result();
-	if(result == DP_FLOOD_FILL_SUCCESS) {
-		m_pendingImage = task->takeImage();
-		if(m_pendingImage.isNull()) {
-			qWarning("Flood fill failed: image is null");
-		} else {
-			m_pendingPos = task->pos();
-			m_pendingArea = task->area();
-			m_pendingColor = task->color();
+	if(isActiveTool()) {
+		DP_FloodFillResult result = task->result();
+		if(result == DP_FLOOD_FILL_SUCCESS) {
+			m_pendingImage = task->takeImage();
+			if(m_pendingImage.isNull()) {
+				qWarning("Flood fill failed: image is null");
+			} else {
+				m_pendingPos = task->pos();
+				m_pendingArea = task->area();
+				m_pendingColor = task->color();
+				m_pendingEditable = task->isEditable();
+				setCursor(m_confirmFills ? m_confirmCursor : m_pendingCursor);
+			}
+		} else if(result != DP_FLOOD_FILL_CANCELLED) {
+			qWarning("Flood fill failed: %s", qUtf8Printable(task->error()));
+			m_pendingImage = QImage();
 		}
-	} else if(result != DP_FLOOD_FILL_CANCELLED) {
-		qWarning("Flood fill failed: %s", qUtf8Printable(task->error()));
+	} else {
 		m_pendingImage = QImage();
+		m_repeat = false;
 	}
 	previewPending();
 	setHandlesRightClick(havePending());
-	m_owner.refreshToolState();
+	emitFloodFillStateChanged();
 	if(m_repeat) {
-		fillAt(m_lastPoint, lastActiveLayerId());
+		fillAt(m_lastPoint, lastActiveLayerId(), m_pendingEditable);
 	}
 }
 
 void FloodFill::updatePendingPreview()
 {
-	if(m_owner.model() && havePending()) {
+	if(m_owner.model() && havePending() && m_pendingEditable) {
 		previewPending();
 	}
 }
@@ -310,8 +341,12 @@ void FloodFill::previewPending()
 			int layerId = m_owner.activeLayer();
 			if(layerId <= 0) {
 				canvas->paintEngine()->clearFillPreview();
-				toolNoticeText = QCoreApplication::translate(
-					"FillSettings", "No layer selected.");
+				if(m_pendingEditable) {
+					toolNoticeText = QCoreApplication::translate(
+						"FillSettings", "No layer selected.");
+				} else {
+					disposePending();
+				}
 			} else {
 				QModelIndex layerIndex =
 					canvas->layerlist()->layerIndex(layerId);
@@ -321,61 +356,34 @@ void FloodFill::previewPending()
 				if(layerIndex.data(canvas::LayerListModel::IsGroupRole)
 					   .toBool()) {
 					canvas->paintEngine()->clearFillPreview();
-					toolNoticeText =
-						QCoreApplication::translate(
-							"FillSettings", "Can't fill layer group %1.\n"
-											"Select a regular layer instead.")
-							.arg(layerTitle);
+					if(m_pendingEditable) {
+						toolNoticeText = QCoreApplication::translate(
+											 "FillSettings",
+											 "Can't fill layer group %1.\n"
+											 "Select a regular layer instead.")
+											 .arg(layerTitle);
+					} else {
+						disposePending();
+					}
 				} else {
 					adjustPendingImage(false);
 					canvas->paintEngine()->previewFill(
 						layerId, m_blendMode, m_opacity, m_pendingPos.x(),
 						m_pendingPos.y(), m_pendingImage);
-
-					if(m_owner.showFillNotices()) {
-						QString areaText;
-						switch(m_pendingArea) {
-						case Area::Continuous:
-							areaText = QCoreApplication::translate(
-								"FillSettings", "Continuous fill");
-							break;
-						case Area::Similar:
-							areaText = QCoreApplication::translate(
-								"FillSettings", "Similar color fill");
-							break;
-						case Area::Selection:
-							areaText = QCoreApplication::translate(
-								"FillSettings", "Selection fill");
-							break;
-						}
-						toolNoticeText =
-							QCoreApplication::translate(
-								"FillSettings",
-								"%1, %2 by %3 pixels.\n"
-								"%4 at %5% opacity on %6.\n"
-								"Click to apply, undo to cancel.")
-								.arg(
-									areaText,
-									QString::number(m_pendingImage.width()),
-									QString::number(m_pendingImage.height()),
-									canvas::blendmode::translatedName(
-										m_blendMode),
-									QString::number(qRound(m_opacity * 100.0)),
-									layerTitle);
-					}
 				}
 			}
 		} else {
 			canvas->paintEngine()->clearFillPreview();
 		}
 	}
-	emit m_owner.toolNoticeRequested(toolNoticeText);
+	requestToolNotice(toolNoticeText);
 }
 
 void FloodFill::flushPending()
 {
 	if(havePending()) {
-		int layerId = m_owner.activeLayer();
+		int layerId =
+			m_pendingEditable ? m_owner.activeLayer() : m_originalLayerId;
 		canvas::CanvasModel *canvas = m_owner.model();
 		bool canFill = layerId > 0 && canvas &&
 					   !canvas->layerlist()
@@ -383,12 +391,15 @@ void FloodFill::flushPending()
 							.data(canvas::LayerListModel::IsGroupRole)
 							.toBool();
 		if(canFill) {
-			adjustPendingImage(true);
+			if(m_pendingEditable) {
+				adjustPendingImage(true);
+			}
 			net::Client *client = m_owner.client();
 			uint8_t contextId = client->myId();
 			net::MessageList msgs;
 			net::makePutImageMessages(
-				msgs, contextId, m_owner.activeLayer(), m_blendMode,
+				msgs, contextId, m_owner.activeLayer(),
+				m_pendingEditable ? m_blendMode : m_originalBlendMode,
 				m_pendingPos.x(), m_pendingPos.y(), m_pendingImage);
 			if(!msgs.isEmpty()) {
 				msgs.prepend(net::makeUndoPointMessage(contextId));
@@ -405,7 +416,8 @@ void FloodFill::disposePending()
 		m_pendingImage = QImage();
 		previewPending();
 		setHandlesRightClick(false);
-		m_owner.refreshToolState();
+		setCursor(m_bucketCursor);
+		emitFloodFillStateChanged();
 	}
 }
 
@@ -429,6 +441,11 @@ void FloodFill::adjustPendingImage(bool adjustOpacity)
 			painter.fillRect(rect, Qt::black);
 		}
 	}
+}
+
+void FloodFill::emitFloodFillStateChanged()
+{
+	emit m_owner.floodFillStateChanged(m_running, havePending());
 }
 
 }

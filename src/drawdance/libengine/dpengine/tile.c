@@ -544,6 +544,12 @@ DP_TransientTile *DP_transient_tile_new(DP_Tile *tile, unsigned int context_id)
     return tt;
 }
 
+DP_TransientTile *DP_transient_tile_new_transient(DP_TransientTile *tt,
+                                                  unsigned int context_id)
+{
+    return DP_transient_tile_new((DP_Tile *)tt, context_id);
+}
+
 DP_TransientTile *DP_transient_tile_new_blank(unsigned int context_id)
 {
     DP_TransientTile *tt = alloc_tile(true, true, context_id);

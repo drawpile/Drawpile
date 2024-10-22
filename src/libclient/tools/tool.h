@@ -148,13 +148,11 @@ public:
 	//! Current foreground color changed
 	virtual void setForegroundColor(const QColor &color) { Q_UNUSED(color); }
 
-	//! If this tool is operating or is waiting for a click to confirm
-	//! something. For example, the fill tool asks for confirmation to fill.
-	virtual ToolState toolState() const { return ToolState::Normal; }
-
 protected:
+	bool isActiveTool() const;
 	void setHandlesRightClick(bool handlesRightClick);
 	void setCursor(const QCursor &cursor);
+	void requestToolNotice(const QString &text);
 
 	ToolController &m_owner;
 
