@@ -32,7 +32,9 @@ TcpServer::TcpServer(int timeoutSecs, int proxyMode, Client *client)
 	connect(
 		m_socket, &QSslSocket::disconnected, this,
 		&TcpServer::handleDisconnect);
-	connect(m_socket, compat::SocketError, this, &TcpServer::handleSocketError);
+	connect(
+		m_socket, COMPAT_SOCKET_ERROR_SIGNAL(QSslSocket), this,
+		&TcpServer::handleSocketError);
 	connect(
 		m_socket, &QSslSocket::stateChanged, this,
 		&TcpServer::handleSocketStateChange);

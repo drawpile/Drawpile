@@ -573,7 +573,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->eraseModeBox = new QCheckBox{tr("Eraser Mode"), widget};
 	layout->addRow(d->eraseModeBox);
 	connect(
-		d->eraseModeBox, compat::CheckBoxStateChanged,
+		d->eraseModeBox, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox),
 		makeBrushChangeCallbackArg<compat::CheckBoxState>(
 			[this](compat::CheckBoxState state) {
 				d->brush.classic().erase = state != Qt::Unchecked;
@@ -585,7 +585,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 		new QCheckBox{tr("Pick Initial Color from Layer"), widget};
 	layout->addRow(d->colorPickBox);
 	connect(
-		d->colorPickBox, compat::CheckBoxStateChanged,
+		d->colorPickBox, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox),
 		makeBrushChangeCallbackArg<compat::CheckBoxState>(
 			[this](compat::CheckBoxState state) {
 				d->brush.classic().colorpick = state != Qt::Unchecked;
@@ -595,7 +595,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->lockAlphaBox = new QCheckBox{tr("Lock Alpha (Recolor Mode)"), widget};
 	layout->addRow(d->lockAlphaBox);
 	connect(
-		d->lockAlphaBox, compat::CheckBoxStateChanged,
+		d->lockAlphaBox, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox),
 		makeBrushChangeCallbackArg<compat::CheckBoxState>(
 			[this](compat::CheckBoxState state) {
 				d->brush.myPaint().brush().lock_alpha = state != Qt::Unchecked;

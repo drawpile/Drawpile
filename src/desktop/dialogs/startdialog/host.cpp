@@ -203,7 +203,7 @@ Host::Host(QWidget *parent)
 	m_advancedBox = new QCheckBox(tr("Enable advanced options"));
 	layout->addWidget(m_advancedBox);
 	connect(
-		m_advancedBox, compat::CheckBoxStateChanged, this,
+		m_advancedBox, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox), this,
 		[this](compat::CheckBoxState state) {
 			updateAdvancedSectionVisible(state != Qt::Unchecked);
 		});

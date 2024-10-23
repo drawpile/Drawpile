@@ -27,7 +27,7 @@ ShortcutFilterInput::ShortcutFilterInput(QWidget *parent)
 		m_filterEdit, &QLineEdit::textChanged, this,
 		&ShortcutFilterInput::handleFilterTextChanged);
 	connect(
-		m_conflictBox, compat::CheckBoxStateChanged, this,
+		m_conflictBox, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox), this,
 		&ShortcutFilterInput::handleConflictBoxStateChanged);
 }
 

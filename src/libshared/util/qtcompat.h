@@ -33,11 +33,13 @@ constexpr auto SkipEmptyParts = Qt::SkipEmptyParts;
 constexpr auto SkipEmptyParts = QString::SkipEmptyParts;
 #endif
 
+// Do not attempt to replace these #defines with something more C++ish.
+// That gets miscompiled on MSVC and your signals will not connect.
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-constexpr auto SocketError = &QAbstractSocket::errorOccurred;
+#	define COMPAT_SOCKET_ERROR_SIGNAL(CLS) &CLS::errorOccurred
 #else
-constexpr auto SocketError =
-	QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error);
+#	define COMPAT_SOCKET_ERROR_SIGNAL(CLS)                                    \
+		QOverload<QAbstractSocket::SocketError>::of(&CLS::error)
 #endif
 
 // Since 5.15.2, the behavior of QStringView::mid() is compatible with

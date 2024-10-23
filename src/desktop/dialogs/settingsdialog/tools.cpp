@@ -129,7 +129,7 @@ void Tools::initCursors(
 		settings.samplingRingVisibility() ==
 		int(desktop::settings::SamplingRingVisibility::Always));
 	connect(
-		samplingRing, compat::CheckBoxStateChanged, this,
+		samplingRing, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox), this,
 		[&settings](compat::CheckBoxState state) {
 			settings.setSamplingRingVisibility(
 				state == Qt::Unchecked

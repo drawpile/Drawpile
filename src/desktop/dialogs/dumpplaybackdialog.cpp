@@ -125,12 +125,12 @@ DumpPlaybackDialog::DumpPlaybackDialog(
 		d->ui.jumpButton, &QPushButton::clicked, this,
 		&DumpPlaybackDialog::jump);
 	connect(
-		d->ui.hideWithoutState, compat::CheckBoxStateChanged,
+		d->ui.hideWithoutState, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox),
 		[this](compat::CheckBoxState) {
 			updateHistoryTable();
 		});
 	connect(
-		d->ui.hideGoneEntries, compat::CheckBoxStateChanged,
+		d->ui.hideGoneEntries, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox),
 		[this](compat::CheckBoxState) {
 			updateHistoryTable();
 		});

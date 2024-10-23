@@ -23,10 +23,10 @@
 namespace {
 #ifdef HAVE_WEBSOCKETS
 #	if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-const auto WebSocketError = &QWebSocket::errorOccurred;
+#		define COMPAT_WEBSOCKET_ERROR_SIGNAL(CLS) &CLS::errorOccurred
 #	else
-const auto WebSocketError =
-	QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error);
+#		define COMPAT_WEBSOCKET_ERROR_SIGNAL(CLS)                             \
+			QOverload<QAbstractSocket::SocketError>::of(&CLS::error)
 #	endif
 #endif
 }
@@ -183,7 +183,9 @@ Client::Client(
 	connect(
 		tcpSocket, &QAbstractSocket::disconnected, this,
 		&Client::socketDisconnect);
-	connect(tcpSocket, compat::SocketError, this, &Client::socketError);
+	connect(
+		tcpSocket, COMPAT_SOCKET_ERROR_SIGNAL(QTcpSocket), this,
+		&Client::socketError);
 	connect(
 		d->msgqueue, &net::MessageQueue::messageAvailable, this,
 		&Client::receiveMessages);
@@ -207,7 +209,9 @@ Client::Client(
 	webSocket->setParent(this);
 	connect(
 		webSocket, &QWebSocket::disconnected, this, &Client::socketDisconnect);
-	connect(webSocket, WebSocketError, this, &Client::socketError);
+	connect(
+		webSocket, COMPAT_WEBSOCKET_ERROR_SIGNAL(QWebSocket), this,
+		&Client::socketError);
 	connect(
 		d->msgqueue, &net::MessageQueue::messageAvailable, this,
 		&Client::receiveMessages);

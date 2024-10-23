@@ -40,7 +40,7 @@ MyPaintInput::MyPaintInput(
 	widgetLayout->addWidget(m_box);
 	m_box->setToolTip(inputDescription);
 	connect(
-		m_box, compat::CheckBoxStateChanged, this,
+		m_box, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox), this,
 		&MyPaintInput::changeBoxState);
 
 	// Constructing these widgets in large volumes is slow and make the brush

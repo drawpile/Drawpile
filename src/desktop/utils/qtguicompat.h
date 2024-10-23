@@ -320,14 +320,14 @@ inline void disableImageReaderAllocationLimit()
 }
 #endif
 
+// Do not attempt to replace these #defines with something more C++ish.
+// That gets miscompiled on MSVC and your signals will not connect.
 #if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
 using CheckBoxState = Qt::CheckState;
-constexpr auto CheckBoxStateChanged =
-	QOverload<CheckBoxState>::of(&QCheckBox::checkStateChanged);
+#	define COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(CLS) &CLS::checkStateChanged
 #else
 using CheckBoxState = int;
-constexpr auto CheckBoxStateChanged =
-	QOverload<CheckBoxState>::of(&QCheckBox::stateChanged);
+#	define COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(CLS) &CLS::stateChanged
 #endif
 }
 
