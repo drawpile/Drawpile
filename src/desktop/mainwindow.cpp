@@ -5311,9 +5311,6 @@ void MainWindow::setupActions()
 		makeAction("reloadallpresets", tr("Reset All &Brushes"))
 			.shortcut("Shift+Alt+P");
 
-	smallerbrush->setAutoRepeat(true);
-	biggerbrush->setAutoRepeat(true);
-
 	connect(currentEraseMode, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::toggleEraserMode);
 	connect(currentRecolorMode, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::toggleRecolorMode);
 	connect(changeForegroundColor, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::changeForegroundColor);
