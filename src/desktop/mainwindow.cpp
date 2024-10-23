@@ -2430,7 +2430,7 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
 				showSettings()->initiateBrushShortcutChange(presetId);
 			});
 
-		if(openOnPresetPage) {
+		if(openOnPresetPage && dlg->isPresetAttached()) {
 			dlg->showPresetPage();
 		} else {
 			dlg->showGeneralPage();
