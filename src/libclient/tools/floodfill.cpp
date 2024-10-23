@@ -241,6 +241,7 @@ void FloodFill::fillAt(const QPointF &point, int activeLayerId, bool editable)
 		m_lastActiveLayerId = activeLayerId;
 		m_originalLayerId = activeLayerId;
 		m_originalBlendMode = m_blendMode;
+		m_originalOpacity = m_opacity;
 
 		QColor fillColor = m_blendMode == DP_BLEND_MODE_ERASE
 							   ? Qt::black
@@ -366,7 +367,7 @@ void FloodFill::previewPending()
 						disposePending();
 					}
 				} else {
-					adjustPendingImage(false);
+					adjustPendingImage(true, false);
 					canvas->paintEngine()->previewFill(
 						layerId, m_blendMode, m_opacity, m_pendingPos.x(),
 						m_pendingPos.y(), m_pendingImage);
@@ -391,9 +392,7 @@ void FloodFill::flushPending()
 							.data(canvas::LayerListModel::IsGroupRole)
 							.toBool();
 		if(canFill) {
-			if(m_pendingEditable) {
-				adjustPendingImage(true);
-			}
+			adjustPendingImage(m_pendingEditable, true);
 			net::Client *client = m_owner.client();
 			uint8_t contextId = client->myId();
 			net::MessageList msgs;
@@ -421,12 +420,13 @@ void FloodFill::disposePending()
 	}
 }
 
-void FloodFill::adjustPendingImage(bool adjustOpacity)
+void FloodFill::adjustPendingImage(bool adjustColor, bool adjustOpacity)
 {
 	QColor color = m_owner.foregroundColor();
-	bool needsColorChange =
-		m_blendMode != DP_BLEND_MODE_ERASE && m_pendingColor != color;
-	bool needsOpacityChange = adjustOpacity && m_opacity < 1.0;
+	qreal opacity = m_pendingEditable ? m_opacity : m_originalOpacity;
+	bool needsColorChange = adjustColor && m_blendMode != DP_BLEND_MODE_ERASE &&
+							m_pendingColor != color;
+	bool needsOpacityChange = adjustOpacity && opacity < 1.0;
 	if(needsColorChange || needsOpacityChange) {
 		QPainter painter(&m_pendingImage);
 		QRect rect = m_pendingImage.rect();
@@ -437,7 +437,7 @@ void FloodFill::adjustPendingImage(bool adjustOpacity)
 		}
 		if(needsOpacityChange) {
 			painter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-			painter.setOpacity(m_opacity);
+			painter.setOpacity(opacity);
 			painter.fillRect(rect, Qt::black);
 		}
 	}

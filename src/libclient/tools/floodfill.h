@@ -59,7 +59,7 @@ private:
 	void flushPending();
 	void disposePending();
 
-	void adjustPendingImage(bool adjustOpacity);
+	void adjustPendingImage(bool adjustColor, bool adjustOpacity);
 
 	void emitFloodFillStateChanged();
 
@@ -87,6 +87,7 @@ private:
 	QColor m_pendingColor;
 	int m_originalLayerId = 0;
 	int m_originalBlendMode;
+	qreal m_originalOpacity;
 	QCursor m_bucketCursor;
 	QCursor m_pendingCursor;
 	QCursor m_confirmCursor;
