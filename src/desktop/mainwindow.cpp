@@ -5304,12 +5304,31 @@ void MainWindow::setupActions()
 	QAction *smallerbrush = makeAction("ensmallenbrush", tr("&Decrease Brush Size")).shortcut(Qt::Key_BracketLeft).autoRepeat();
 	QAction *biggerbrush = makeAction("embiggenbrush", tr("&Increase Brush Size")).shortcut(Qt::Key_BracketRight).autoRepeat();
 	QAction *reloadPreset = makeAction("reloadpreset", tr("&Reset Brush")).icon("view-refresh").shortcut("Shift+P");
+	// clang-format on
 	QAction *reloadPresetSlots =
 		makeAction("reloadpresetslots", tr("Reset All Brush &Slots"))
 			.noDefaultShortcut();
 	QAction *reloadAllPresets =
 		makeAction("reloadallpresets", tr("Reset All &Brushes"))
 			.shortcut("Shift+Alt+P");
+	QAction *nextPreset =
+		makeAction("nextpreset", tr("&Next Brush")).shortcut(".").autoRepeat();
+	QAction *previousPreset = makeAction("prevpreset", tr("&Previous Brush"))
+								  .shortcut(",")
+								  .autoRepeat();
+	QAction *nextTag = makeAction("nexttag", tr("Next Brush Tag"))
+						   .noDefaultShortcut()
+						   .autoRepeat();
+	QAction *previousTag = makeAction("prevtag", tr("Previous Brush Tag"))
+							   .noDefaultShortcut()
+							   .autoRepeat();
+	QAction *nextSlot = makeAction("nextslot", tr("Next Brush Slot"))
+							.noDefaultShortcut()
+							.autoRepeat();
+	QAction *previousSlot = makeAction("prevslot", tr("Previous Brush Slot"))
+								.noDefaultShortcut()
+								.autoRepeat();
+	// clang-format off
 
 	connect(currentEraseMode, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::toggleEraserMode);
 	connect(currentRecolorMode, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::toggleRecolorMode);
@@ -5341,6 +5360,12 @@ void MainWindow::setupActions()
 	toolshortcuts->addAction(reloadPreset);
 	toolshortcuts->addAction(reloadPresetSlots);
 	toolshortcuts->addAction(reloadAllPresets);
+	toolshortcuts->addAction(nextPreset);
+	toolshortcuts->addAction(previousPreset);
+	toolshortcuts->addAction(nextTag);
+	toolshortcuts->addAction(previousTag);
+	toolshortcuts->addAction(nextSlot);
+	toolshortcuts->addAction(previousSlot);
 
 	m_toolBarDraw = new QToolBar(tr("Drawing tools"));
 	m_toolBarDraw->setObjectName("drawtoolsbar");
@@ -5375,7 +5400,9 @@ void MainWindow::setupActions()
 	}
 
 	m_dockToolSettings->brushSettings()->setActions(
-		reloadPreset, reloadPresetSlots, reloadAllPresets);
+		reloadPreset, reloadPresetSlots, reloadAllPresets, nextSlot, previousSlot);
+	m_dockBrushPalette->setActions(
+		nextPreset, previousPreset, nextTag, previousTag);
 
 	m_smallScreenSpacer = new QWidget;
 	m_smallScreenSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);

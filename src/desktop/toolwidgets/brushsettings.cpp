@@ -247,7 +247,7 @@ BrushSettings::~BrushSettings()
 
 void BrushSettings::setActions(
 	QAction *reloadPreset, QAction *reloadPresetSlots,
-	QAction *reloadAllPresets)
+	QAction *reloadAllPresets, QAction *nextSlot, QAction *previousSlot)
 {
 	d->ui.reloadButton->setDefaultAction(reloadPreset);
 	connect(
@@ -259,6 +259,11 @@ void BrushSettings::setActions(
 	connect(
 		d->resetAllPresetsAction, &QAction::triggered, reloadAllPresets,
 		&QAction::trigger);
+	connect(
+		nextSlot, &QAction::triggered, this, &BrushSettings::selectNextSlot);
+	connect(
+		previousSlot, &QAction::triggered, this,
+		&BrushSettings::selectPreviousSlot);
 }
 
 void BrushSettings::connectBrushPresets(brushes::BrushPresetModel *brushPresets)
@@ -1003,6 +1008,30 @@ void BrushSettings::selectEraserSlot(bool eraser)
 														 : 0);
 		}
 	}
+}
+
+void BrushSettings::selectNextSlot()
+{
+	int i;
+	if(d->current == ERASER_SLOT_INDEX) {
+		i = 0;
+	} else {
+		i = d->current + 1;
+	}
+	selectBrushSlot(i);
+}
+
+void BrushSettings::selectPreviousSlot()
+{
+	int i;
+	if(d->current == 0) {
+		i = d->brushSlotCount;
+	} else if(d->current == ERASER_SLOT_INDEX) {
+		i = d->brushSlotCount - 1;
+	} else {
+		i = d->current - 1;
+	}
+	selectBrushSlot(i);
 }
 
 void BrushSettings::swapWithSlot(int i)

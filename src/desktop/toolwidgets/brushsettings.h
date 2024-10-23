@@ -28,7 +28,7 @@ public:
 
 	void setActions(
 		QAction *reloadPreset, QAction *reloadPresetSlots,
-		QAction *reloadAllPresets);
+		QAction *reloadAllPresets, QAction *nextSlot, QAction *previousSlot);
 	void connectBrushPresets(brushes::BrushPresetModel *brushPresets);
 
 	QString toolType() const override { return QStringLiteral("brush"); }
@@ -86,6 +86,8 @@ public:
 public slots:
 	void selectBrushSlot(int i);
 	void selectEraserSlot(bool eraser);
+	void selectNextSlot();
+	void selectPreviousSlot();
 	void swapWithSlot(int i);
 	void setGlobalSmoothing(int smoothing);
 	void toggleEraserMode() override;

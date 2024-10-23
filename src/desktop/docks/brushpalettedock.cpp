@@ -45,6 +45,12 @@ public:
 	{
 	}
 
+	// Used by next/previous preset actions, for those we *do* want to scroll.
+	void forceScrollTo(const QModelIndex &index)
+	{
+		QListView::scrollTo(index, EnsureVisible);
+	}
+
 protected:
 	void scrollTo(
 		const QModelIndex &index,
@@ -84,7 +90,7 @@ struct BrushPalette::Private {
 	QAction *importBrushesAction;
 	QAction *exportTagAction;
 	QAction *exportPresetAction;
-	QListView *presetListView;
+	IgnoreEnsureVisibleListView *presetListView;
 
 	int selectedPresetId = 0;
 };
@@ -303,6 +309,21 @@ void BrushPalette::connectBrushSettings(tools::BrushSettings *brushSettings)
 	brushSettings->connectBrushPresets(d->presetModel);
 }
 
+void BrushPalette::setActions(
+	QAction *nextPreset, QAction *previousPreset, QAction *nextTag,
+	QAction *previousTag)
+{
+	connect(
+		nextPreset, &QAction::triggered, this, &BrushPalette::selectNextPreset);
+	connect(
+		previousPreset, &QAction::triggered, this,
+		&BrushPalette::selectPreviousPreset);
+	connect(nextTag, &QAction::triggered, this, &BrushPalette::selectNextTag);
+	connect(
+		previousTag, &QAction::triggered, this,
+		&BrushPalette::selectPreviousTag);
+}
+
 void BrushPalette::newPreset()
 {
 	if(!d->brushSettings) {
@@ -505,6 +526,56 @@ void BrushPalette::onOpen(const QString &path, QTemporaryFile *tempFile)
 void BrushPalette::exportBrushes()
 {
 	showExportDialog();
+}
+
+void BrushPalette::selectNextPreset()
+{
+	int rowCount = d->presetProxyModel->rowCount();
+	if(rowCount > 0) {
+		QModelIndex currentIdx = d->presetListView->currentIndex();
+		int lastRow = rowCount - 1;
+		int currentRow = currentIdx.isValid() ? currentIdx.row() : rowCount;
+		int targetRow = currentRow < lastRow ? currentRow + 1 : 0;
+		QModelIndex targetIdx =
+			d->presetProxyModel->index(qBound(0, targetRow, lastRow), 0);
+		d->presetListView->setCurrentIndex(targetIdx);
+		d->presetListView->forceScrollTo(targetIdx);
+	}
+}
+
+void BrushPalette::selectPreviousPreset()
+{
+	int rowCount = d->presetProxyModel->rowCount();
+	if(rowCount > 0) {
+		QModelIndex currentIdx = d->presetListView->currentIndex();
+		int lastRow = rowCount - 1;
+		int currentRow = currentIdx.isValid() ? currentIdx.row() : -1;
+		int targetRow = currentRow > 0 ? currentRow - 1 : lastRow;
+		QModelIndex targetIdx =
+			d->presetProxyModel->index(qBound(0, targetRow, lastRow), 0);
+		d->presetListView->setCurrentIndex(targetIdx);
+		d->presetListView->forceScrollTo(targetIdx);
+	}
+}
+
+void BrushPalette::selectNextTag()
+{
+	int index = d->tagComboBox->currentIndex() + 1;
+	if(index < d->tagComboBox->count()) {
+		d->tagComboBox->setCurrentIndex(index);
+	} else {
+		d->tagComboBox->setCurrentIndex(0);
+	}
+}
+
+void BrushPalette::selectPreviousTag()
+{
+	int index = d->tagComboBox->currentIndex() - 1;
+	if(index >= 0) {
+		d->tagComboBox->setCurrentIndex(index);
+	} else {
+		d->tagComboBox->setCurrentIndex(d->tagComboBox->count() - 1);
+	}
 }
 
 void BrushPalette::tagIndexChanged(int row)

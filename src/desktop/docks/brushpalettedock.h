@@ -34,6 +34,9 @@ public:
 	~BrushPalette() override;
 
 	void connectBrushSettings(tools::BrushSettings *brushSettings);
+	void setActions(
+		QAction *nextPreset, QAction *previousPreset, QAction *nextTag,
+		QAction *previousTag);
 
 	void newPreset();
 	void overwriteCurrentPreset(QWidget *parent);
@@ -43,6 +46,10 @@ public slots:
 	void resetAllPresets();
 	void importBrushes();
 	void exportBrushes();
+	void selectNextPreset();
+	void selectPreviousPreset();
+	void selectNextTag();
+	void selectPreviousTag();
 
 signals:
 	void editBrushRequested();
