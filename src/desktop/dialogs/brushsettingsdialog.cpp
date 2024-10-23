@@ -248,6 +248,7 @@ void BrushSettingsDialog::setGlobalSmoothing(int smoothing)
 void BrushSettingsDialog::updateUiFromActiveBrush(
 	const brushes::ActiveBrush &brush)
 {
+	utils::ScopedUpdateDisabler disabler(this);
 	QScopedValueRollback<bool> rollback(d->updating, true);
 	QSignalBlocker blocker{this};
 	d->brush = brush;
