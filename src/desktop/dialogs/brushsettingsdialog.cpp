@@ -1244,6 +1244,8 @@ void BrushSettingsDialog::updateUiFromMyPaintBrush()
 
 	d->brushModeLabel->setVisible(false);
 	d->brushModeCombo->setVisible(false);
+	d->eraseModeLabel->setVisible(false);
+	d->eraseModeCombo->setVisible(false);
 	d->colorPickBox->setVisible(false);
 	d->spacingSpinner->setVisible(false);
 
