@@ -270,6 +270,8 @@ public:
 		int presetId, const QString &name, const QString &description,
 		const QPixmap &thumbnail, const ActiveBrush &brush);
 
+	bool updatePresetBrush(int presetId, const ActiveBrush &brush);
+
 	bool updatePresetShortcut(int presetId, const QKeySequence &shortcut);
 
 	bool deletePreset(int presetId);

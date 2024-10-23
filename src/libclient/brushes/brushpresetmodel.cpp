@@ -417,6 +417,23 @@ public:
 		}
 	}
 
+	bool updatePresetBrush(int id, const QString &type, const QByteArray &data)
+	{
+		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
+		QMutexLocker locker(&m_mutex);
+		QSqlQuery query(m_db);
+		if(exec(
+			   query,
+			   QStringLiteral(
+				   "update preset set type = ?, data = ?, changed_type = null, "
+				   "changed_data = null where id = ?"),
+			   {type, data, id})) {
+			return query.numRowsAffected() == 1;
+		} else {
+			return false;
+		}
+	}
+
 	bool updatePresetShortcut(int id, const QString &shortcut)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
@@ -2339,6 +2356,17 @@ bool BrushPresetModel::updatePreset(
 	endResetModel();
 	d->refreshShortcuts();
 	emit presetChanged(presetId, name, description, thumbnail, brush);
+	return ok;
+}
+
+bool BrushPresetModel::updatePresetBrush(int presetId, const ActiveBrush &brush)
+{
+	beginResetModel();
+	d->removePresetChange(presetId);
+	bool ok =
+		d->updatePresetBrush(presetId, brush.presetType(), brush.presetData());
+	d->refreshPresetCache();
+	endResetModel();
 	return ok;
 }
 

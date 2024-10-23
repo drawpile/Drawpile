@@ -839,6 +839,11 @@ const QPixmap &BrushSettings::currentPresetThumbnail() const
 	return d->currentPreset().effectiveThumbnail();
 }
 
+bool BrushSettings::isCurrentPresetAttached() const
+{
+	return d->currentPreset().attached;
+}
+
 int BrushSettings::currentBrushSlot() const
 {
 	return d->current;
@@ -1114,7 +1119,6 @@ void BrushSettings::updateMenuActions()
 	const Preset &preset = d->currentPreset();
 	bool attached = preset.isAttached();
 	d->resetBrushAction->setEnabled(preset.valid);
-	d->overwriteBrushAction->setEnabled(attached);
 	d->deleteBrushAction->setEnabled(attached);
 	d->detachBrushAction->setEnabled(attached);
 }

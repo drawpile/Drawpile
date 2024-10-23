@@ -93,6 +93,7 @@ struct BrushPalette::Private {
 	IgnoreEnsureVisibleListView *presetListView;
 
 	int selectedPresetId = 0;
+	int lastSelectedPresetId = 0;
 };
 
 BrushPalette::BrushPalette(QWidget *parent)
@@ -394,7 +395,8 @@ void BrushPalette::overwriteCurrentPreset(QWidget *parent)
 		return;
 	}
 
-	int presetId = d->selectedPresetId;
+	int presetId = d->selectedPresetId <= 0 ? d->lastSelectedPresetId
+											: d->selectedPresetId;
 	if(presetId <= 0) {
 		return;
 	}
@@ -414,13 +416,17 @@ void BrushPalette::overwriteCurrentPreset(QWidget *parent)
 	box->button(QMessageBox::No)->setText(tr("Keep"));
 	box->setDefaultButton(QMessageBox::No);
 	connect(box, &QMessageBox::finished, this, [this, presetId](int result) {
-		if(result == QMessageBox::Yes &&
-		   d->brushSettings->currentPresetId() == presetId) {
-			d->presetModel->updatePreset(
-				presetId, d->brushSettings->currentPresetName(),
-				d->brushSettings->currentPresetDescription(),
-				d->brushSettings->currentPresetThumbnail(),
-				d->brushSettings->currentBrush());
+		if(result == QMessageBox::Yes) {
+			if(!d->brushSettings->isCurrentPresetAttached()) {
+				d->presetModel->updatePresetBrush(
+					presetId, d->brushSettings->currentBrush());
+			} else if(d->brushSettings->currentPresetId() == presetId) {
+				d->presetModel->updatePreset(
+					presetId, d->brushSettings->currentPresetName(),
+					d->brushSettings->currentPresetDescription(),
+					d->brushSettings->currentPresetThumbnail(),
+					d->brushSettings->currentBrush());
+			}
 		}
 	});
 	box->show();
@@ -591,6 +597,9 @@ void BrushPalette::setSelectedPresetId(int presetId)
 {
 	if(presetId != d->selectedPresetId) {
 		d->selectedPresetId = presetId;
+		if(presetId != 0) {
+			d->lastSelectedPresetId = presetId;
+		}
 		updateSelectedPreset();
 	}
 }
@@ -650,6 +659,7 @@ void BrushPalette::presetCurrentIndexChanged(
 	bool selected = presetId > 0;
 	if(selected) {
 		d->selectedPresetId = presetId;
+		d->lastSelectedPresetId = presetId;
 		if(d->brushSettings && d->brushSettings->brushPresetsAttach()) {
 			applyToBrushSettings(current);
 		}

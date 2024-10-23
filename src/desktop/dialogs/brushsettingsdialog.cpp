@@ -185,7 +185,6 @@ void BrushSettingsDialog::setPresetAttached(bool presetAttached, int presetId)
 	d->presetId = presetId;
 	d->presetAttached = presetAttached;
 	d->presetAttachedWidget->setEnabled(presetAttached);
-	d->overwriteBrushButton->setEnabled(presetAttached);
 }
 
 void BrushSettingsDialog::setPresetName(const QString &presetName)

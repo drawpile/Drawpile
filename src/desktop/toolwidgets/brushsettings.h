@@ -65,6 +65,7 @@ public:
 	const QString &currentPresetName() const;
 	const QString &currentPresetDescription() const;
 	const QPixmap &currentPresetThumbnail() const;
+	bool isCurrentPresetAttached() const;
 
 	int currentBrushSlot() const;
 	bool isCurrentEraserSlot() const;
