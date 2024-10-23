@@ -1250,6 +1250,7 @@ void BrushSettingsDialog::updateUiFromMyPaintBrush()
 	d->spacingSpinner->setVisible(false);
 
 	d->paintModeCombo->setCurrentIndex(brush.incremental ? 0 : 1);
+	d->paintModeCombo->setEnabled(true);
 	d->eraseModeBox->setChecked(brush.erase);
 	d->lockAlphaBox->setChecked(brush.lock_alpha);
 	d->lockAlphaBox->setVisible(true);
