@@ -1646,8 +1646,11 @@ void Document::removeEmptyAnnotations()
 		}
 	}
 
-	m_client->sendMessages(
-		m_messageBuffer.count(), m_messageBuffer.constData());
+	if(!m_messageBuffer.isEmpty()) {
+		m_messageBuffer.prepend(net::makeUndoPointMessage(contextId));
+		m_client->sendMessages(
+			m_messageBuffer.size(), m_messageBuffer.constData());
+	}
 	m_messageBuffer.clear();
 }
 
