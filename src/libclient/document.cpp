@@ -142,6 +142,10 @@ Document::Document(
 	connect(
 		this, &Document::buildStreamResetImageFinished, this,
 		&Document::startSendingStreamResetSnapshot, Qt::QueuedConnection);
+
+	connect(
+		m_toolctrl, &tools::ToolController::deleteAnnotationRequested, this,
+		&Document::deleteAnnotation);
 }
 
 void Document::initCanvas()
@@ -1625,6 +1629,16 @@ void Document::fillArea(const QColor &color, DP_BlendMode mode, float opacity)
 	m_messageBuffer.prepend(net::makeUndoPointMessage(contextId));
 	m_client->sendMessages(m_messageBuffer.size(), m_messageBuffer.constData());
 	m_messageBuffer.clear();
+}
+
+void Document::deleteAnnotation(int annotationId)
+{
+	unsigned int contextId = m_client->myId();
+	net::Message msgs[] = {
+		net::makeUndoPointMessage(contextId),
+		net::makeAnnotationDeleteMessage(contextId, annotationId),
+	};
+	m_client->sendMessages(2, msgs);
 }
 
 void Document::removeEmptyAnnotations()

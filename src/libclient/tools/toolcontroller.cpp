@@ -143,6 +143,14 @@ void ToolController::setActiveTool(Tool::Type tool)
 void ToolController::setActiveAnnotation(uint16_t id)
 {
 	if(m_activeAnnotation != id) {
+		if(m_activeAnnotation != 0) {
+			drawdance::Annotation a =
+				m_model->paintEngine()->getAnnotationById(m_activeAnnotation);
+			if(!a.isNull() && a.textBytes().isEmpty()) {
+				emit deleteAnnotationRequested(a.id());
+			}
+		}
+
 		m_activeAnnotation = id;
 		emit activeAnnotationChanged(id);
 	}

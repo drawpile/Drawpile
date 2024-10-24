@@ -291,6 +291,19 @@ uint16_t PaintEngine::findAvailableAnnotationId(uint8_t forUser) const
 	return 0;
 }
 
+drawdance::Annotation PaintEngine::getAnnotationById(int annotationId) const
+{
+	drawdance::AnnotationList annotations = viewCanvasState().annotations();
+	int count = annotations.count();
+	for(int i = 0; i < count; ++i) {
+		drawdance::Annotation annotation = annotations.at(i);
+		if(annotation.id() == annotationId) {
+			return annotation;
+		}
+	}
+	return drawdance::Annotation::null();
+}
+
 drawdance::Annotation
 PaintEngine::getAnnotationAt(int x, int y, int expand) const
 {

@@ -294,6 +294,7 @@ public slots:
 	void copyLayer();
 	void cutLayer();
 
+	void deleteAnnotation(int annotationId);
 	void removeEmptyAnnotations();
 	void clearArea();
 	void fillArea(const QColor &color, DP_BlendMode mode, float opacity);

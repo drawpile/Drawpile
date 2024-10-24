@@ -132,6 +132,9 @@ public:
 	uint16_t findAvailableAnnotationId(uint8_t forUser) const;
 
 	//! Get the annotation at the given point
+	drawdance::Annotation getAnnotationById(int annotationId) const;
+
+	//! Get the annotation at the given point
 	drawdance::Annotation getAnnotationAt(int x, int y, int expand) const;
 
 	//! Is OpenRaster file format needed to save the canvas losslessly?
