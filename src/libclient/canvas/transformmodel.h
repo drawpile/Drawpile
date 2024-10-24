@@ -50,6 +50,8 @@ public:
 		uint8_t contextId, int layerId, int interpolation,
 		bool compatibilityMode, bool stamp, bool *outMovedSelection = nullptr);
 
+	bool isAllowedToApplyActiveTransform() const;
+
 	void endActiveTransform(bool applied);
 
 	int getEffectiveInterpolation(int interpolation) const;

@@ -122,6 +122,8 @@ public:
 	showResetNotice(bool compatibilityMode, bool saveInProgress) = 0;
 	virtual void hideResetNotice() = 0;
 
+	virtual void showPopupNotice(const QString &message) = 0;
+
 	virtual void disposeScene() = 0;
 
 	virtual void connectActions(const Actions &actions) = 0;

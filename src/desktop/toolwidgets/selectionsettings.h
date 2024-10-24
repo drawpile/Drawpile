@@ -45,11 +45,6 @@ public:
 	void setAction(QAction *starttransform);
 	void setActionEnabled(bool enabled);
 
-	void setPutImageAllowed(bool putImageAllowed)
-	{
-		m_putImageAllowed = putImageAllowed;
-	}
-
 	QWidget *getHeaderWidget() override { return m_headerWidget; }
 
 public slots:
@@ -83,7 +78,6 @@ private:
 	QButtonGroup *m_areaGroup = nullptr;
 	QPushButton *m_startTransformButton = nullptr;
 	bool m_isMagicWand = false;
-	bool m_putImageAllowed = true;
 };
 
 }

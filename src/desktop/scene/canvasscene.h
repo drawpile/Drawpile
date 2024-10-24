@@ -69,6 +69,8 @@ public:
 	void showLockNotice(const QString &text);
 	void hideLockNotice();
 
+	void showPopupNotice(const QString &text);
+
 	void setToolNotice(const QString &text);
 
 	ToggleItem::Action
@@ -179,11 +181,12 @@ private slots:
 private:
 	static constexpr qreal NOTICE_OFFSET = 16.0;
 	static constexpr qreal NOTICE_PERSIST = 1.0;
-	static constexpr qreal TOOL_NOTICE_OFFSET = 8.0;
+	static constexpr qreal POPUP_PERSIST = 3.0;
 
 	void setTransformNoticePosition();
 	void setLockNoticePosition();
 	void setToolNoticePosition();
+	void setPopupNoticePosition();
 	void setCatchupPosition();
 	void setStreamResetNoticePosition();
 
@@ -211,6 +214,7 @@ private:
 	NoticeItem *m_transformNotice;
 	NoticeItem *m_lockNotice;
 	NoticeItem *m_toolNotice;
+	NoticeItem *m_popupNotice = nullptr;
 	CatchupItem *m_catchup;
 	NoticeItem *m_streamResetNotice;
 	QVector<ToggleItem *> m_toggleItems;

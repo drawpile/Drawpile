@@ -112,6 +112,8 @@ public:
 	bool showLockNotice(const QString &text);
 	bool hideLockNotice();
 
+	void showPopupNotice(const QString &text);
+
 	void setToolNotice(const QString &text);
 
 	bool hasCatchup() const;
@@ -128,7 +130,7 @@ signals:
 private:
 	static constexpr qreal NOTICE_OFFSET = 16.0;
 	static constexpr qreal NOTICE_PERSIST = 1.0;
-	static constexpr qreal TOOL_NOTICE_OFFSET = 8.0;
+	static constexpr qreal POPUP_PERSIST = 3.0;
 
 	void addSceneItem(BaseItem *item);
 
@@ -148,6 +150,7 @@ private:
 	void setTransformNoticePosition();
 	void setLockNoticePosition();
 	void setToolNoticePosition();
+	void setPopupNoticePosition();
 	void setCatchupPosition();
 	void setStreamResetNoticePosition();
 	void setTogglePositions();
@@ -194,6 +197,7 @@ private:
 	NoticeItem *m_transformNotice = nullptr;
 	NoticeItem *m_lockNotice = nullptr;
 	NoticeItem *m_toolNotice = nullptr;
+	NoticeItem *m_popupNotice = nullptr;
 
 	CatchupItem *m_catchup = nullptr;
 	NoticeItem *m_streamResetNotice = nullptr;

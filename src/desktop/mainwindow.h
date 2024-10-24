@@ -121,6 +121,7 @@ public:
 	dialogs::StartDialog *showStartDialog();
 
 	void showPopupMessage(const QString &message);
+	void showPermissionDeniedMessage(int feature);
 
 	bool notificationsMuted() const { return m_notificationsMuted; }
 	bool isInitialCatchup() const { return m_initialCatchup; }
@@ -325,6 +326,9 @@ private:
 
 	//! Enable or disable drawing tools
 	void setDrawingToolsEnabled(bool enable);
+
+	void aboutToShowMenu();
+	void aboutToHideMenu();
 
 	//! Display an error message
 	void showErrorMessage(const QString &message);

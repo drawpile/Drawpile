@@ -307,6 +307,9 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_doc, &Document::currentPathChanged, this, &MainWindow::updateTitle);
 	connect(m_doc, &Document::recorderStateChanged, this, &MainWindow::setRecorderStatus);
 	connect(m_doc, &Document::sessionResetState, this, &MainWindow::showResetNoticeDialog, Qt::QueuedConnection);
+	connect(
+		m_doc, &Document::permissionDenied, this,
+		&MainWindow::showPermissionDeniedMessage);
 
 	connect(m_doc, &Document::autoResetTooLarge, this, [this](int maxSize) {
 		m_doc->sendLockSession(true);
@@ -338,6 +341,11 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 
 	connect(m_dockToolSettings, &docks::ToolSettings::toolChanged, this, &MainWindow::toolChanged);
 	connect(m_dockToolSettings, &docks::ToolSettings::activeBrushChanged, this, &MainWindow::updateLockWidget);
+	connect(
+		m_dockToolSettings, &docks::ToolSettings::showMessageRequested, this,
+		[this](const QString &message) {
+			m_canvasView->showPopupNotice(message);
+		});
 
 	// Color docks
 	connect(m_dockToolSettings, &docks::ToolSettings::foregroundColorChanged, m_dockColorPalette, &docks::ColorPaletteDock::setColor);
@@ -426,6 +434,14 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		&tools::AnnotationSettings::selectionIdChanged, this,
 		&MainWindow::updateSelectTransformActions);
 	connect(
+		m_dockToolSettings->annotationSettings(),
+		&tools::AnnotationSettings::showAnnotationsRequested, [this] {
+			QAction *showannotations = getAction("showannotations");
+			if(!showannotations->isChecked()) {
+				showannotations->toggle();
+			}
+		});
+	connect(
 		m_dockLayers, &docks::LayerList::layerSelected, m_chatbox,
 		&widgets::ChatBox::setCurrentLayer);
 	connect(
@@ -435,6 +451,14 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(
 		m_dockBrushPalette, &docks::BrushPalette::editBrushRequested, this,
 		&MainWindow::showBrushSettingsDialogPreset);
+	connect(
+		m_dockToolSettings->laserPointerSettings(),
+		&tools::LaserPointerSettings::showLaserTrailsRequested, [this] {
+			QAction *showlasers = getAction("showlasers");
+			if(!showlasers->isChecked()) {
+				showlasers->toggle();
+			}
+		});
 
 	// Network status changes
 	connect(m_doc, &Document::serverConnected, this, &MainWindow::onServerConnected);
@@ -708,12 +732,36 @@ void MainWindow::updateTitle()
 #endif
 }
 
+// clang-format on
 void MainWindow::setDrawingToolsEnabled(bool enable)
 {
 	bool actuallyEnabled = enable && m_doc->canvas();
 	m_drawingtools->setEnabled(actuallyEnabled);
 	m_freehandButton->setEnabled(actuallyEnabled);
 }
+
+void MainWindow::aboutToShowMenu()
+{
+	canvas::CanvasModel *canvas = m_doc->canvas();
+	canvas::AclState *aclState = canvas ? canvas->aclState() : nullptr;
+	m_canvasbgtools->setEnabled(
+		aclState && aclState->canUseFeature(DP_FEATURE_BACKGROUND));
+	m_putimagetools->setEnabled(
+		aclState && aclState->canUseFeature(DP_FEATURE_PUT_IMAGE));
+	m_resizetools->setEnabled(
+		aclState && aclState->canUseFeature(DP_FEATURE_RESIZE));
+	m_undotools->setEnabled(
+		aclState && aclState->canUseFeature(DP_FEATURE_UNDO));
+}
+
+void MainWindow::aboutToHideMenu()
+{
+	m_canvasbgtools->setEnabled(true);
+	m_putimagetools->setEnabled(true);
+	m_resizetools->setEnabled(true);
+	m_undotools->setEnabled(true);
+}
+// clang-format off
 
 /**
  * Load customized shortcuts
@@ -1488,7 +1536,6 @@ bool MainWindow::event(QEvent *event)
 
 	return QMainWindow::event(event);
 }
-// clang-format off
 
 dialogs::StartDialog *MainWindow::showStartDialog()
 {
@@ -1505,6 +1552,38 @@ void MainWindow::showPopupMessage(const QString &message)
 {
 	m_netstatus->showMessage(message);
 }
+
+void MainWindow::showPermissionDeniedMessage(int feature)
+{
+	QString message;
+	switch(feature) {
+	case DP_FEATURE_PUT_IMAGE:
+		message =
+			//: "Delete" refers to Edit > Delete, which erases the contents of a
+			//: selection and the default shortcut is the delete key.
+			tr("You don't have permission to cut, paste, fill or delete.");
+		break;
+	case DP_FEATURE_RESIZE:
+		message = tr("You don't have permission to resize the canvas.");
+		break;
+	case DP_FEATURE_BACKGROUND:
+		message =
+			tr("You don't have permission to change the session background.");
+		break;
+	case DP_FEATURE_CREATE_ANNOTATION:
+		message = tr("You don't have permission to create annotations.");
+		break;
+	case DP_FEATURE_UNDO:
+		message = tr("You don't have permission to undo or redo.");
+		break;
+	default:
+		qWarning("Unhandled denied permission %d", feature);
+		message = tr("You don't have permission to do that.");
+		break;
+	}
+	m_canvasView->showPopupNotice(message);
+}
+// clang-format off
 
 void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 {
@@ -3053,21 +3132,10 @@ void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
 {
 	switch(feature) {
 	case DP_FEATURE_PUT_IMAGE:
-		m_putimagetools->setEnabled(canUse);
-		getAction("toolfill")->setEnabled(canUse);
-		m_dockToolSettings->selectionSettings()->setPutImageAllowed(canUse);
-		break;
-	case DP_FEATURE_RESIZE:
-		m_resizetools->setEnabled(canUse);
-		break;
-	case DP_FEATURE_BACKGROUND:
-		m_canvasbgtools->setEnabled(canUse);
+		m_dockToolSettings->fillSettings()->setFeatureAccess(canUse);
 		break;
 	case DP_FEATURE_LASER:
-		getAction("toollaser")->setEnabled(canUse && getAction("showlasers")->isChecked());
-		break;
-	case DP_FEATURE_UNDO:
-		m_undotools->setEnabled(canUse);
+		m_dockToolSettings->laserPointerSettings()->setFeatureAccess(canUse);
 		break;
 	case DP_FEATURE_TIMELINE:
 		m_dockTimeline->setFeatureAccess(canUse);
@@ -3134,24 +3202,16 @@ void MainWindow::showLoadResultMessage(DP_LoadResult result)
 
 void MainWindow::setShowAnnotations(bool show)
 {
-	QAction *annotationtool = getAction("tooltext");
-	annotationtool->setEnabled(show);
 	m_canvasView->setShowAnnotations(show);
-	if(!show) {
-		if(annotationtool->isChecked())
-			getAction("toolbrush")->trigger();
-	}
+	m_dockToolSettings->annotationSettings()->setAnnotationsShown(show);
+	updateLockWidget();
 }
 
 void MainWindow::setShowLaserTrails(bool show)
 {
-	QAction *lasertool = getAction("toollaser");
-	lasertool->setEnabled(show);
 	m_canvasView->setShowLaserTrails(show);
-	if(!show) {
-		if(lasertool->isChecked())
-			getAction("toolbrush")->trigger();
-	}
+	m_dockToolSettings->laserPointerSettings()->setLaserTrailsShown(show);
+	updateLockWidget();
 }
 
 /**
@@ -3564,6 +3624,7 @@ void MainWindow::paste()
 	}
 }
 
+// clang-format on
 void MainWindow::pasteCentered()
 {
 	const QMimeData *mimeData = Document::getClipboardData();
@@ -3574,14 +3635,16 @@ void MainWindow::pasteCentered()
 
 void MainWindow::pasteFile()
 {
-	FileWrangler::ImageOpenFn imageOpenCompleted = [this](QImage &img) {
-		if(img.isNull()) {
-			showErrorMessage(tr("The image could not be loaded"));
-		} else {
-			pasteImage(img);
-		}
-	};
-	FileWrangler(this).openPasteImage(imageOpenCompleted);
+	if(m_doc->checkPermission(DP_FEATURE_PUT_IMAGE)) {
+		FileWrangler::ImageOpenFn imageOpenCompleted = [this](QImage &img) {
+			if(img.isNull()) {
+				showErrorMessage(tr("The image could not be loaded"));
+			} else {
+				pasteImage(img);
+			}
+		};
+		FileWrangler(this).openPasteImage(imageOpenCompleted);
+	}
 }
 
 void MainWindow::pasteFilePath(const QString &path)
@@ -3598,13 +3661,13 @@ void MainWindow::pasteImage(
 	const QImage &image, const QPoint *point, bool force)
 {
 	canvas::CanvasModel *canvas = m_canvasView->canvas();
-	if(canvas && canvas->aclState()->canUseFeature(DP_FEATURE_PUT_IMAGE) &&
-	   !canvas->transform()->isActive() && !image.isNull() &&
+	if(canvas && !canvas->transform()->isActive() && !image.isNull() &&
 	   !image.size().isEmpty()) {
 		QRect srcBounds = canvas->getPasteBounds(
 			image.size(), point ? *point : m_canvasView->viewCenterPoint(),
 			force);
-		if(!srcBounds.isEmpty()) {
+		if(!srcBounds.isEmpty() &&
+		   m_doc->checkPermission(DP_FEATURE_PUT_IMAGE)) {
 			m_dockToolSettings->startTransformPaste(
 				srcBounds,
 				image.convertToFormat(QImage::Format_ARGB32_Premultiplied));
@@ -3628,6 +3691,7 @@ void MainWindow::dropUrl(const QUrl &url)
 		}
 	}
 }
+// clang-format off
 
 void MainWindow::clearOrDelete()
 {
@@ -3654,6 +3718,7 @@ void MainWindow::clearOrDelete()
 	m_doc->clearArea();
 }
 
+// clang-format on
 void MainWindow::resizeCanvas()
 {
 	canvas::CanvasModel *canvas = m_doc->canvas();
@@ -3662,30 +3727,37 @@ void MainWindow::resizeCanvas()
 		return;
 	}
 
+	if(!m_doc->checkPermission(DP_FEATURE_RESIZE)) {
+		return;
+	}
+
 	const QSize size = m_doc->canvas()->size();
 	dialogs::ResizeDialog *dlg = new dialogs::ResizeDialog(size, this);
 	canvas::PaintEngine *paintEngine = m_doc->canvas()->paintEngine();
 	dlg->setBackgroundColor(paintEngine->historyBackgroundColor());
-	dlg->setPreviewImage(paintEngine->renderPixmap().scaled(
-		300, 300, Qt::KeepAspectRatio));
+	dlg->setPreviewImage(
+		paintEngine->renderPixmap().scaled(300, 300, Qt::KeepAspectRatio));
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
 	// Preset crop from selection if one exists
-	if (canvas->selection()->isValid()) {
+	if(canvas->selection()->isValid()) {
 		dlg->setBounds(canvas->selection()->bounds());
 	}
 
 	connect(dlg, &QDialog::accepted, this, [this, dlg]() {
-		if (m_doc->canvas()->selection()) {
-			m_doc->selectNone();
-		}
-		dialogs::ResizeVector r = dlg->resizeVector();
-		if(!r.isZero()) {
-			m_doc->sendResizeCanvas(r.top, r.right, r.bottom, r.left);
+		if(m_doc->checkPermission(DP_FEATURE_RESIZE)) {
+			if(m_doc->canvas()->selection()) {
+				m_doc->selectNone();
+			}
+			dialogs::ResizeVector r = dlg->resizeVector();
+			if(!r.isZero()) {
+				m_doc->sendResizeCanvas(r.top, r.right, r.bottom, r.left);
+			}
 		}
 	});
 	utils::showWindow(dlg, shouldShowDialogMaximized());
 }
+// clang-format off
 
 static QIcon makeBackgroundColorIcon(QColor &color)
 {
@@ -3736,19 +3808,19 @@ void MainWindow::updateBackgroundActions()
 	}
 }
 
+// clang-format on
 void MainWindow::changeCanvasBackground()
 {
-	if(!m_doc->canvas()) {
-		qWarning("changeCanvasBackground: no canvas!");
-		return;
+	if(m_doc->checkPermission(DP_FEATURE_RESIZE)) {
+		color_widgets::ColorDialog *dlg = dialogs::newDeleteOnCloseColorDialog(
+			m_doc->canvas()->paintEngine()->historyBackgroundColor(), this);
+		connect(
+			dlg, &color_widgets::ColorDialog::colorSelected, m_doc,
+			&Document::sendCanvasBackground);
+		utils::showWindow(dlg, shouldShowDialogMaximized());
 	}
-	color_widgets::ColorDialog *dlg = dialogs::newDeleteOnCloseColorDialog(
-		m_doc->canvas()->paintEngine()->historyBackgroundColor(), this);
-	connect(dlg, &color_widgets::ColorDialog::colorSelected, m_doc, &Document::sendCanvasBackground);
-	utils::showWindow(dlg, shouldShowDialogMaximized());
 }
 
-// clang-format on
 void MainWindow::changeLocalCanvasBackground()
 {
 	if(!m_doc->canvas()) {
@@ -4150,13 +4222,8 @@ void MainWindow::setupActions()
 	m_canvasbgtools->setEnabled(false);
 
 	m_resizetools = new QActionGroup(this);
-	m_resizetools->setEnabled(false);
-
 	m_putimagetools = new QActionGroup(this);
-	m_putimagetools->setEnabled(false);
-
 	m_undotools = new QActionGroup(this);
-	m_undotools->setEnabled(false);
 
 	m_drawingtools = new QActionGroup(this);
 	connect(m_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
@@ -5498,6 +5565,16 @@ void MainWindow::setupActions()
 #endif
 
 	// clang-format on
+	// Hooks to disable menu actions the user doesn't have permission for when
+	// the menus are shown and then reenable them afterwards so that shortcuts
+	// still attempt to activate them and trigger a permission denied message.
+	for(QMenu *menu :
+		{filemenu, editmenu, viewmenu, layerMenu, selectMenu, animationMenu,
+		 sessionmenu, toolsmenu, helpmenu}) {
+		connect(menu, &QMenu::aboutToShow, this, &MainWindow::aboutToShowMenu);
+		connect(menu, &QMenu::aboutToHide, this, &MainWindow::aboutToHideMenu);
+	}
+
 	// Brush slot shortcuts
 	m_brushSlots = new QActionGroup(this);
 	for(int i = 0; i < 10; ++i) {

@@ -3,6 +3,8 @@
 #define DESKTOP_TOOLSETTINGS_LASER_H
 #include "desktop/toolwidgets/toolsettings.h"
 
+class QLabel;
+class QStackedWidget;
 class Ui_LaserSettings;
 
 namespace tools {
@@ -17,6 +19,7 @@ public:
 
 	bool affectsCanvas() override { return true; }
 	bool affectsLayer() override { return false; }
+	bool isLocked() override;
 
 	bool pointerTracking() const;
 
@@ -27,18 +30,30 @@ public:
 	virtual ToolProperties saveToolSettings() override;
 	virtual void restoreToolSettings(const ToolProperties &cfg) override;
 
+	void setFeatureAccess(bool featureAccess);
+	void setLaserTrailsShown(bool laserTrailsShown);
+
 public slots:
 	void pushSettings() override;
 
 signals:
 	void pointerTrackingToggled(bool);
+	void showLaserTrailsRequested();
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
-	Ui_LaserSettings *m_ui;
+	void togglePointerTracking(bool checked);
+	void updateWidgets();
+
+	QStackedWidget *m_stack = nullptr;
+	Ui_LaserSettings *m_ui = nullptr;
+	QLabel *m_permissionDeniedLabel = nullptr;
+	QLabel *m_laserTrailsHiddenLabel = nullptr;
 	qreal m_quickAdjust1 = 0.0;
+	bool m_featureAccess = true;
+	bool m_laserTrailsShown = true;
 };
 
 }

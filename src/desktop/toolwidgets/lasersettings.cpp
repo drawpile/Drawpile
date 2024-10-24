@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/toolwidgets/lasersettings.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/tools/laser.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
 #include "ui_lasersettings.h"
+#include <QLabel>
+#include <QStackedWidget>
+#include <QVBoxLayout>
 
 namespace tools {
 
@@ -18,13 +22,17 @@ static const ToolProperties::Value<bool> tracking{
 LaserPointerSettings::LaserPointerSettings(
 	ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent)
-	, m_ui(nullptr)
 {
 }
 
 LaserPointerSettings::~LaserPointerSettings()
 {
 	delete m_ui;
+}
+
+bool LaserPointerSettings::isLocked()
+{
+	return !m_featureAccess || !m_laserTrailsShown;
 }
 
 void LaserPointerSettings::pushSettings()
@@ -51,13 +59,17 @@ void LaserPointerSettings::pushSettings()
 
 QWidget *LaserPointerSettings::createUiWidget(QWidget *parent)
 {
-	QWidget *widget = new QWidget(parent);
+	m_stack = new QStackedWidget(parent);
+	m_stack->setContentsMargins(0, 0, 0, 0);
+
+	QWidget *uiWidget = new QWidget;
 	m_ui = new Ui_LaserSettings;
-	m_ui->setupUi(widget);
+	m_ui->setupUi(uiWidget);
+	m_stack->addWidget(uiWidget);
 
 	connect(
-		m_ui->trackpointer, SIGNAL(clicked(bool)), this,
-		SIGNAL(pointerTrackingToggled(bool)));
+		m_ui->trackpointer, &QCheckBox::clicked, this,
+		&LaserPointerSettings::togglePointerTracking);
 	connect(
 		m_ui->persistence, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&LaserPointerSettings::pushSettings);
@@ -74,7 +86,36 @@ QWidget *LaserPointerSettings::createUiWidget(QWidget *parent)
 		m_ui->color3, &QAbstractButton::toggled, this,
 		&LaserPointerSettings::pushSettings);
 
-	return widget;
+	QWidget *disabledWidget = new QWidget;
+	QVBoxLayout *disabledLayout = new QVBoxLayout(disabledWidget);
+
+	m_permissionDeniedLabel =
+		new QLabel(tr("You don't have permission to use the laser pointer."));
+	m_permissionDeniedLabel->setTextFormat(Qt::PlainText);
+	m_permissionDeniedLabel->setWordWrap(true);
+	disabledLayout->addWidget(m_permissionDeniedLabel);
+
+	m_laserTrailsHiddenLabel =
+		new QLabel(QStringLiteral("%1<a href=\"#\">%2</a>")
+					   .arg(
+						   //: This is part of the sentence "Laser trails are
+						   //: hidden. _Show_". The latter is a clickable link.
+						   tr("Laser trails are hidden. ").toHtmlEscaped(),
+						   //: This is part of the sentence "Laser trails are
+						   //: hidden. _Show_". The latter is a clickable link.
+						   tr("Show").toHtmlEscaped()));
+	m_laserTrailsHiddenLabel->setTextFormat(Qt::RichText);
+	m_laserTrailsHiddenLabel->setWordWrap(true);
+	disabledLayout->addWidget(m_laserTrailsHiddenLabel);
+	connect(
+		m_laserTrailsHiddenLabel, &QLabel::linkActivated, this,
+		&LaserPointerSettings::showLaserTrailsRequested);
+
+	disabledLayout->addStretch();
+	m_stack->addWidget(disabledWidget);
+
+	updateWidgets();
+	return m_stack;
 }
 
 ToolProperties LaserPointerSettings::saveToolSettings()
@@ -118,9 +159,34 @@ void LaserPointerSettings::restoreToolSettings(const ToolProperties &cfg)
 	}
 }
 
+void LaserPointerSettings::setFeatureAccess(bool featureAccess)
+{
+	bool pointerTrackingBefore = pointerTracking();
+	m_featureAccess = featureAccess;
+	bool pointerTrackingAfter = pointerTracking();
+	if(pointerTrackingBefore != pointerTrackingAfter &&
+	   controller()->activeTool() == Tool::LASERPOINTER) {
+		emit pointerTrackingToggled(pointerTrackingAfter);
+	}
+	updateWidgets();
+}
+
+void LaserPointerSettings::setLaserTrailsShown(bool laserTrailsShown)
+{
+	bool pointerTrackingBefore = pointerTracking();
+	m_laserTrailsShown = laserTrailsShown;
+	bool pointerTrackingAfter = pointerTracking();
+	if(pointerTrackingBefore != pointerTrackingAfter &&
+	   controller()->activeTool() == Tool::LASERPOINTER) {
+		emit pointerTrackingToggled(pointerTrackingAfter);
+	}
+	updateWidgets();
+}
+
 bool LaserPointerSettings::pointerTracking() const
 {
-	return m_ui->trackpointer->isChecked();
+	return m_featureAccess && m_laserTrailsShown &&
+		   m_ui->trackpointer->isChecked();
 }
 
 void LaserPointerSettings::setForeground(const QColor &color)
@@ -146,6 +212,23 @@ void LaserPointerSettings::stepAdjust1(bool increase)
 	persistence->setValue(stepLogarithmic(
 		persistence->minimum(), persistence->maximum(), persistence->value(),
 		increase));
+}
+
+void LaserPointerSettings::togglePointerTracking(bool checked)
+{
+	if(m_featureAccess && m_laserTrailsShown) {
+		emit pointerTrackingToggled(checked);
+	}
+}
+
+void LaserPointerSettings::updateWidgets()
+{
+	if(m_stack) {
+		utils::ScopedUpdateDisabler disabler(m_stack);
+		m_stack->setCurrentIndex(m_featureAccess && m_laserTrailsShown ? 0 : 1);
+		m_permissionDeniedLabel->setVisible(!m_featureAccess);
+		m_laserTrailsHiddenLabel->setVisible(!m_laserTrailsShown);
+	}
 }
 
 }

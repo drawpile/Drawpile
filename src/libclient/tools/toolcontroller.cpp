@@ -120,6 +120,9 @@ void ToolController::finishActiveTool()
 	endDrawing(false, false);
 	if(m_activeTool->isMultipart()) {
 		m_activeTool->finishMultipart();
+		if(m_activeTool->isMultipart()) {
+			m_activeTool->cancelMultipart();
+		}
 	}
 }
 
@@ -267,9 +270,6 @@ void ToolController::setModel(canvas::CanvasModel *model)
 {
 	m_model = model;
 	connect(
-		m_model->aclState(), &canvas::AclState::featureAccessChanged, this,
-		&ToolController::onFeatureAccessChange);
-	connect(
 		m_model->transform(), &canvas::TransformModel::transformChanged, this,
 		&ToolController::updateTransformPreview);
 	connect(
@@ -281,13 +281,6 @@ void ToolController::setModel(canvas::CanvasModel *model)
 	m_model->setTransformInterpolation(m_transformInterpolation);
 	m_model->transform()->setPreviewAccurate(m_transformPreviewAccurate);
 	emit modelChanged(model);
-}
-
-void ToolController::onFeatureAccessChange(DP_Feature feature, bool canUse)
-{
-	if(feature == DP_FEATURE_REGION_MOVE) {
-		transformTool()->setFeatureAccess(canUse);
-	}
 }
 
 void ToolController::updateTransformPreview()

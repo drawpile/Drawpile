@@ -57,6 +57,8 @@ public:
 	void showResetNotice(bool compatibilityMode, bool saveInProgress) override;
 	void hideResetNotice() override;
 
+	void showPopupNotice(const QString &message) override;
+
 	void disposeScene() override;
 
 	void connectActions(const Actions &actions) override;

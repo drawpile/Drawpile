@@ -206,6 +206,8 @@ public:
 	void handleCommands(int count, const net::Message *msgs) override;
 	void handleLocalCommands(int count, const net::Message *msgs) override;
 
+	bool checkPermission(int feature);
+
 signals:
 	//! Connection opened, but not yet logged in
 	void serverConnected(const QString &address, int port);
@@ -257,6 +259,8 @@ signals:
 	void buildStreamResetImageFinished(
 		const net::MessageList &image, int messageCount,
 		const QString &correlator);
+
+	void permissionDenied(int feature);
 
 public slots:
 	// Convenience slots

@@ -5,6 +5,8 @@
 
 class QAction;
 class QActionGroup;
+class QLabel;
+class QStackedWidget;
 class QTextCharFormat;
 class QTimer;
 class Ui_TextSettings;
@@ -31,6 +33,7 @@ public:
 
 	bool affectsCanvas() override { return true; }
 	bool affectsLayer() override { return false; }
+	bool isLocked() override;
 
 	/**
 	 * @brief Get the ID of the currently selected annotation
@@ -44,8 +47,14 @@ public:
 	 */
 	void setFocusAt(int cursorPos);
 
-	void setCanvasView(view::CanvasWrapper *canvasView) { m_canvasView = canvasView; }
+	void setCanvasView(view::CanvasWrapper *canvasView)
+	{
+		m_canvasView = canvasView;
+	}
+
 	QWidget *getHeaderWidget() override;
+
+	void setAnnotationsShown(bool annotationsShown);
 
 public slots:
 	//! Set the currently selected annotation item
@@ -56,6 +65,7 @@ public slots:
 
 signals:
 	void selectionIdChanged(int id);
+	void showAnnotationsRequested();
 
 private slots:
 	void changeAlignment(const QAction *action);
@@ -79,17 +89,19 @@ private:
 	void resetContentFont(bool resetFamily, bool resetSize, bool resetColor);
 	void setFontFamily(QTextCharFormat &fmt);
 	void setUiEnabled(bool enabled);
+	void updateWidgets();
 
-	Ui_TextSettings *m_ui;
-	QWidget *m_headerWidget;
-	QActionGroup *m_editActions;
-	QAction *m_protectedAction;
-
-	uint16_t m_selectionId;
-
-	bool m_noupdate;
-	QTimer *m_updatetimer;
-	view::CanvasWrapper *m_canvasView;
+	QWidget *m_headerWidget = nullptr;
+	QStackedWidget *m_stack = nullptr;
+	Ui_TextSettings *m_ui = nullptr;
+	QLabel *m_annotationsHiddenLabel = nullptr;
+	QActionGroup *m_editActions = nullptr;
+	QAction *m_protectedAction = nullptr;
+	uint16_t m_selectionId = 0;
+	bool m_annotationsShown = true;
+	bool m_noupdate = false;
+	QTimer *m_updatetimer = nullptr;
+	view::CanvasWrapper *m_canvasView = nullptr;
 };
 
 }

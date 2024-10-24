@@ -109,20 +109,27 @@ void TransformTool::end(const EndParams &)
 void TransformTool::finishMultipart()
 {
 	canvas::TransformModel *transform = getActiveTransformModel();
-	if(transform) {
+	bool allowed = true;
+	if(transform && (allowed = transform->isAllowedToApplyActiveTransform())) {
 		net::Client *client = m_owner.client();
 		bool movedSelection = false;
-		QVector<net::Message> msgs = transform->applyActiveTransform(
+		net::MessageList msgs = transform->applyActiveTransform(
 			client->myId(), m_owner.activeLayer(),
 			m_owner.transformInterpolation(), client->isCompatibilityMode(),
 			false, &movedSelection);
-		bool send = !msgs.isEmpty();
-		if(send) {
-			client->sendMessages(msgs.size(), msgs.constData());
+		allowed = checkAndSend(client, msgs);
+		if(allowed) {
+			endTransform(transform, !msgs.isEmpty() && movedSelection);
 		}
-		endTransform(transform, send && movedSelection);
 	}
-	returnToPreviousTool();
+
+	if(allowed) {
+		returnToPreviousTool();
+	} else {
+		emit m_owner.showMessageRequested(QCoreApplication::translate(
+			"tools::TransformSettings",
+			"You don't have permission for that transformation."));
+	}
 }
 
 void TransformTool::cancelMultipart()
@@ -307,15 +314,24 @@ void TransformTool::shrinkToView(const QRectF &viewBounds)
 void TransformTool::stamp()
 {
 	canvas::TransformModel *transform = getActiveTransformModel();
+	bool allowed = true;
 	if(transform) {
-		net::Client *client = m_owner.client();
-		QVector<net::Message> msgs = transform->applyActiveTransform(
-			client->myId(), m_owner.activeLayer(),
-			m_owner.transformInterpolation(), client->isCompatibilityMode(),
-			true);
-		if(!msgs.isEmpty()) {
-			client->sendMessages(msgs.size(), msgs.constData());
+		allowed =
+			m_owner.model()->aclState()->canUseFeature(DP_FEATURE_PUT_IMAGE);
+		if(allowed) {
+			net::Client *client = m_owner.client();
+			net::MessageList msgs = transform->applyActiveTransform(
+				client->myId(), m_owner.activeLayer(),
+				m_owner.transformInterpolation(), client->isCompatibilityMode(),
+				true);
+			allowed = checkAndSend(client, msgs);
 		}
+	}
+
+	if(!allowed) {
+		emit m_owner.showMessageRequested(QCoreApplication::translate(
+			"tools::TransformSettings",
+			"You don't have permission to stamp selections."));
 	}
 }
 
@@ -352,18 +368,18 @@ TransformTool::tryBeginMove(bool firstClick, bool onlyMask)
 	Q_ASSERT(!isTransformActive());
 	Q_ASSERT(m_quadStack.isEmpty());
 
-	if(!m_canTransform) {
-		emit m_owner.showMessageRequested(QCoreApplication::translate(
-			"tools::TransformSettings",
-			"You don't have permission to transform selections."));
-		returnToPreviousTool();
-		return nullptr;
-	}
-
 	canvas::CanvasModel *canvas = m_owner.model();
 	if(!canvas) {
 		emit m_owner.showMessageRequested(QCoreApplication::translate(
 			"tools::TransformSettings", "No canvas present."));
+		returnToPreviousTool();
+		return nullptr;
+	}
+
+	if(!canvas->aclState()->canUseFeature(DP_FEATURE_REGION_MOVE)) {
+		emit m_owner.showMessageRequested(QCoreApplication::translate(
+			"tools::TransformSettings",
+			"You don't have permission to transform selections."));
 		returnToPreviousTool();
 		return nullptr;
 	}
@@ -429,6 +445,45 @@ void TransformTool::endTransform(
 	m_quadStackTop = -1;
 	m_clickDetector.clear();
 	emitStateChange(transform, Handle::None);
+}
+
+bool TransformTool::checkAndSend(
+	net::Client *client, const net::MessageList &msgs)
+{
+	int count = msgs.size();
+	if(count != 0) {
+		canvas::CanvasModel *canvas = m_owner.model();
+		if(canvas) {
+			canvas::AclState *aclState = canvas->aclState();
+			bool transformAllowed =
+				aclState->canUseFeature(DP_FEATURE_REGION_MOVE);
+			bool putImageAllowed =
+				aclState->canUseFeature(DP_FEATURE_PUT_IMAGE);
+			for(const net::Message &msg : msgs) {
+				switch(msg.type()) {
+				case DP_MSG_MOVE_RECT:
+				case DP_MSG_MOVE_REGION:
+				case DP_MSG_TRANSFORM_REGION:
+					if(transformAllowed) {
+						break;
+					} else {
+						return false;
+					}
+					break;
+				case DP_MSG_PUT_IMAGE:
+					if(putImageAllowed) {
+						break;
+					} else {
+						return false;
+					}
+				default:
+					break;
+				}
+			}
+		}
+		client->sendMessages(count, msgs.constData());
+	}
+	return true;
 }
 
 void TransformTool::updateHoverHandle(

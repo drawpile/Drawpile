@@ -2,6 +2,7 @@
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/scene/annotationitem.h"
 #include "desktop/utils/qtguicompat.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/view/canvaswrapper.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "libclient/canvas/canvasmodel.h"
@@ -11,9 +12,12 @@
 #include "ui_textsettings.h"
 #include <QActionGroup>
 #include <QIcon>
+#include <QLabel>
 #include <QMenu>
+#include <QStackedWidget>
 #include <QTextBlock>
 #include <QTimer>
+#include <QVBoxLayout>
 
 namespace tools {
 
@@ -22,11 +26,6 @@ static const char *VALIGN_PROP = "VALIGN";
 
 AnnotationSettings::AnnotationSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent)
-	, m_ui(nullptr)
-	, m_headerWidget(nullptr)
-	, m_selectionId(0)
-	, m_noupdate(false)
-	, m_canvasView(nullptr)
 {
 }
 
@@ -35,11 +34,20 @@ AnnotationSettings::~AnnotationSettings()
 	delete m_ui;
 }
 
+bool AnnotationSettings::isLocked()
+{
+	return !m_annotationsShown;
+}
+
 QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 {
-	QWidget *widget = new QWidget(parent);
+	m_stack = new QStackedWidget(parent);
+	m_stack->setContentsMargins(0, 0, 0, 0);
+
+	QWidget *uiWidget = new QWidget(parent);
 	m_ui = new Ui_TextSettings;
-	m_ui->setupUi(widget);
+	m_ui->setupUi(uiWidget);
+	m_stack->addWidget(uiWidget);
 
 	// Set up the header widget
 	m_headerWidget = new QWidget(parent);
@@ -171,15 +179,46 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 
 	// Set initial content format
 	resetContentFormat();
-
 	setUiEnabled(false);
 
-	return widget;
+	QWidget *disabledWidget = new QWidget;
+	QVBoxLayout *disabledLayout = new QVBoxLayout(disabledWidget);
+
+	m_annotationsHiddenLabel =
+		new QLabel(QStringLiteral("%1<a href=\"#\">%2</a>")
+					   .arg(
+						   //: This is part of the sentence "Annotations are
+						   //: hidden. _Show_". The latter is a clickable link.
+						   tr("Annotations are hidden. ").toHtmlEscaped(),
+						   //: This is part of the sentence "Annotations are
+						   //: hidden. _Show_". The latter is a clickable link.
+						   tr("Show").toHtmlEscaped()));
+	m_annotationsHiddenLabel->setTextFormat(Qt::RichText);
+	m_annotationsHiddenLabel->setWordWrap(true);
+	disabledLayout->addWidget(m_annotationsHiddenLabel);
+	connect(
+		m_annotationsHiddenLabel, &QLabel::linkActivated, this,
+		&AnnotationSettings::showAnnotationsRequested);
+
+	disabledLayout->addStretch();
+	m_stack->addWidget(disabledWidget);
+
+	updateWidgets();
+	return m_stack;
 }
 
 QWidget *AnnotationSettings::getHeaderWidget()
 {
 	return m_headerWidget;
+}
+
+void AnnotationSettings::setAnnotationsShown(bool annotationsShown)
+{
+	if(!annotationsShown && m_annotationsShown) {
+		controller()->getTool(Tool::ANNOTATION)->cancelMultipart();
+	}
+	m_annotationsShown = annotationsShown;
+	updateWidgets();
 }
 
 void AnnotationSettings::setUiEnabled(bool enabled)
@@ -479,7 +518,12 @@ void AnnotationSettings::removeAnnotation()
 
 void AnnotationSettings::bake()
 {
-	Q_ASSERT(selected());
+	int annotationId = selected();
+	if(annotationId == 0) {
+		qWarning("No annotation to bake selected");
+		return;
+	}
+
 	const drawingboard::AnnotationItem *a =
 		m_canvasView->getAnnotationItem(selected());
 	if(!a) {
@@ -487,9 +531,17 @@ void AnnotationSettings::bake()
 		return;
 	}
 
-	net::Client *client = controller()->client();
+	ToolController *ctrl = controller();
+	canvas::CanvasModel *canvas = ctrl->model();
+	if(canvas && !canvas->aclState()->canUseFeature(DP_FEATURE_PUT_IMAGE)) {
+		emit ctrl->showMessageRequested(
+			tr("You don't have permission to paste merged annotations."));
+		return;
+	}
+
+	net::Client *client = ctrl->client();
 	uint8_t contextId = client->myId();
-	int layer = controller()->activeLayer();
+	int layer = ctrl->activeLayer();
 	QRect rect = a->rect().toRect();
 	QImage img = a->toImage();
 	net::MessageList msgs = {
@@ -499,6 +551,17 @@ void AnnotationSettings::bake()
 	net::makePutImageMessages(
 		msgs, contextId, layer, DP_BLEND_MODE_NORMAL, rect.x(), rect.y(), img);
 	client->sendMessages(msgs.count(), msgs.data());
+}
+
+void AnnotationSettings::updateWidgets()
+{
+	if(m_stack) {
+		utils::ScopedUpdateDisabler disabler(m_stack);
+		m_stack->setCurrentIndex(m_annotationsShown ? 0 : 1);
+		m_ui->font->setVisible(m_annotationsShown);
+		m_ui->size->setVisible(m_annotationsShown);
+		m_annotationsHiddenLabel->setVisible(!m_annotationsShown);
+	}
 }
 
 }

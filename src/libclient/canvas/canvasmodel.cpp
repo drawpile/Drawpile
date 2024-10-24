@@ -175,6 +175,16 @@ void CanvasModel::handleLocalCommands(int count, const net::Message *msgs)
 	}
 }
 
+bool CanvasModel::checkPermission(int feature)
+{
+	if(m_aclstate->canUseFeature(DP_Feature(feature))) {
+		return true;
+	} else {
+		emit permissionDenied(feature);
+		return false;
+	}
+}
+
 void CanvasModel::handleMetaMessages(int count, const net::Message *msgs)
 {
 	for(int i = 0; i < count; ++i) {

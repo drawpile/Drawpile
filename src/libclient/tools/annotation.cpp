@@ -40,8 +40,7 @@ void Annotation::begin(const BeginParams &params)
 
 	if(selection.isNull()) {
 		// No annotation, start creating a new one
-		if(!m_owner.model()->aclState()->canUseFeature(
-			   DP_FEATURE_CREATE_ANNOTATION)) {
+		if(!m_owner.model()->checkPermission(DP_FEATURE_CREATE_ANNOTATION)) {
 			m_handle = Handle::Outside;
 			return;
 		}

@@ -145,13 +145,13 @@ signals:
 
 	void activeBrushChanged();
 
+	void showMessageRequested(const QString &message);
+
 private:
 	void selectTool(tools::Tool::Type tool);
 	void startTransformMove(bool onlyMask);
 	void clearTemporaryTransform();
 	static bool hasBrushCursor(tools::Tool::Type tool);
-
-	void showMessage(const QString &message);
 
 	struct Private;
 	Private *d;

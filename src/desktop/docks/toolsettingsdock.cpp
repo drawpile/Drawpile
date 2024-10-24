@@ -240,7 +240,7 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 		&ToolSettings::setToolTemporary);
 	connect(
 		d->ctrl, &tools::ToolController::showMessageRequested, this,
-		&ToolSettings::showMessage);
+		&ToolSettings::showMessageRequested);
 
 	// Tool settings are only saved periodically currently, see TODO below.
 	// Mixing periodic and instantaneous saving causes some desynchronization
@@ -695,13 +695,6 @@ bool ToolSettings::hasBrushCursor(tools::Tool::Type tool)
 		return true;
 	default:
 		return false;
-	}
-}
-
-void ToolSettings::showMessage(const QString &message)
-{
-	if(!message.isEmpty()) {
-		ToolMessage::showText(message);
 	}
 }
 

@@ -194,6 +194,13 @@ void SceneWrapper::showResetNotice(bool compatibilityMode, bool saveInProgress)
 	m_view->showResetNotice(compatibilityMode, saveInProgress);
 }
 
+void SceneWrapper::showPopupNotice(const QString &message)
+{
+	if(m_scene) {
+		m_scene->showPopupNotice(message);
+	}
+}
+
 void SceneWrapper::hideResetNotice()
 {
 	m_view->hideResetNotice();

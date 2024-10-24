@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef LIBCLIENT_TOOLS_TRANSFORM_H
 #define LIBCLIENT_TOOLS_TRANSFORM_H
+#include "libclient/net/message.h"
 #include "libclient/tools/clickdetector.h"
 #include "libclient/tools/tool.h"
 #include "libclient/utils/transformquad.h"
@@ -10,6 +11,10 @@
 
 namespace canvas {
 class TransformModel;
+}
+
+namespace net {
+class Client;
 }
 
 namespace tools {
@@ -80,6 +85,8 @@ private:
 	canvas::TransformModel *tryBeginMove(bool firstClick, bool onlyMask);
 	void tryBeginPaste(const QRect &srcBounds, const QImage &image);
 	void endTransform(canvas::TransformModel *transform, bool applied);
+
+	bool checkAndSend(net::Client *client, const net::MessageList &msgs);
 
 	void updateHoverHandle(
 		const canvas::TransformModel *transform, const QPointF &point);

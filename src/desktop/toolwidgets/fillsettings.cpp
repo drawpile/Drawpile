@@ -12,9 +12,12 @@
 #include <QAction>
 #include <QButtonGroup>
 #include <QIcon>
+#include <QLabel>
 #include <QMenu>
 #include <QScopedValueRollback>
 #include <QSignalBlocker>
+#include <QStackedWidget>
+#include <QVBoxLayout>
 
 namespace tools {
 
@@ -49,6 +52,11 @@ FillSettings::FillSettings(ToolController *ctrl, QObject *parent)
 FillSettings::~FillSettings()
 {
 	delete m_ui;
+}
+
+bool FillSettings::isLocked()
+{
+	return !m_featureAccess;
 }
 
 QWidget *FillSettings::createUiWidget(QWidget *parent)
@@ -88,9 +96,14 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 
 	headerLayout->addStretch();
 
+	m_stack = new QStackedWidget(parent);
+	m_stack->setContentsMargins(0, 0, 0, 0);
+
 	QWidget *uiwidget = new QWidget(parent);
 	m_ui = new Ui_FillSettings;
 	m_ui->setupUi(uiwidget);
+	m_stack->addWidget(uiwidget);
+
 	m_ui->size->setExponentRatio(3.0);
 	m_ui->expandShrink->setBlockUpdateSignalOnDrag(true);
 	m_ui->expandShrink->setSpinnerRange(props::expand.min, props::expand.max);
@@ -182,7 +195,20 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 		&FillSettings::setButtonState);
 	setButtonState(false, false);
 
-	return uiwidget;
+	QWidget *disabledWidget = new QWidget;
+	QVBoxLayout *disabledLayout = new QVBoxLayout(disabledWidget);
+
+	m_permissionDeniedLabel =
+		new QLabel(tr("You don't have permission to use the fill tool."));
+	m_permissionDeniedLabel->setTextFormat(Qt::PlainText);
+	m_permissionDeniedLabel->setWordWrap(true);
+	disabledLayout->addWidget(m_permissionDeniedLabel);
+
+	disabledLayout->addStretch();
+	m_stack->addWidget(disabledWidget);
+
+	updateWidgets();
+	return m_stack;
 }
 
 void FillSettings::setCompatibilityMode(bool compatibilityMode)
@@ -192,6 +218,15 @@ void FillSettings::setCompatibilityMode(bool compatibilityMode)
 		m_compatibilityMode = compatibilityMode;
 		initBlendModeOptions();
 	}
+}
+
+void FillSettings::setFeatureAccess(bool featureAccess)
+{
+	if(!featureAccess && m_featureAccess) {
+		controller()->getTool(Tool::FLOODFILL)->cancelMultipart();
+	}
+	m_featureAccess = featureAccess;
+	updateWidgets();
 }
 
 void FillSettings::pushSettings()
@@ -444,6 +479,15 @@ void FillSettings::setButtonState(bool running, bool pending)
 {
 	m_ui->applyButton->setEnabled(pending);
 	m_ui->cancelButton->setEnabled(running || pending);
+}
+
+void FillSettings::updateWidgets()
+{
+	if(m_stack) {
+		utils::ScopedUpdateDisabler disabler(m_stack);
+		m_stack->setCurrentIndex(m_featureAccess ? 0 : 1);
+		m_permissionDeniedLabel->setVisible(!m_featureAccess);
+	}
 }
 
 }

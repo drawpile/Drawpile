@@ -237,7 +237,6 @@ signals:
 	void asyncExecutionFinished(Task *task);
 
 private slots:
-	void onFeatureAccessChange(DP_Feature feature, bool canUse);
 	void updateTransformPreview();
 	void setTransformCutPreview(
 		const QSet<int> &layerIds, const QRect &maskBounds, const QImage &mask);

@@ -186,6 +186,11 @@ void ViewWrapper::hideResetNotice()
 	m_view->hideResetNotice();
 }
 
+void ViewWrapper::showPopupNotice(const QString &message)
+{
+	m_scene->showPopupNotice(message);
+}
+
 void ViewWrapper::disposeScene()
 {
 	// Nothing, not needed for this implementation.

@@ -5,6 +5,7 @@ extern "C" {
 #include <dpengine/preview.h>
 #include <dpmsg/blend_mode.h>
 }
+#include "libclient/canvas/acl.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
@@ -187,6 +188,27 @@ QVector<net::Message> TransformModel::applyActiveTransform(
 		}
 	} else {
 		return {};
+	}
+}
+
+bool TransformModel::isAllowedToApplyActiveTransform() const
+{
+	if(m_active && m_dstQuadValid) {
+		const AclState *aclState = m_canvas->aclState();
+		if(m_pasted) {
+			return aclState->canUseFeature(DP_FEATURE_PUT_IMAGE);
+		} else if(aclState->canUseFeature(DP_FEATURE_REGION_MOVE)) {
+			bool sizeOutOfBounds = isDstQuadBoundingRectAreaSizeOutOfBounds();
+			bool adjustsImage =
+				m_blendMode != int(DP_BLEND_MODE_NORMAL) || m_opacity < 1.0;
+			bool needsPutImage = sizeOutOfBounds || adjustsImage;
+			return !needsPutImage ||
+				   aclState->canUseFeature(DP_FEATURE_PUT_IMAGE);
+		} else {
+			return false;
+		}
+	} else {
+		return true;
 	}
 }
 

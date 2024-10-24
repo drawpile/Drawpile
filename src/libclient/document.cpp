@@ -173,6 +173,9 @@ void Document::initCanvas()
 	connect(
 		m_canvas, &canvas::CanvasModel::recorderStateChanged, this,
 		&Document::recorderStateChanged);
+	connect(
+		m_canvas, &canvas::CanvasModel::permissionDenied, this,
+		&Document::permissionDenied);
 
 	connect(
 		m_canvas->paintEngine(), &canvas::PaintEngine::streamResetStarted, this,
@@ -833,6 +836,11 @@ void Document::handleLocalCommands(int count, const net::Message *msgs)
 	}
 }
 
+bool Document::checkPermission(int feature)
+{
+	return m_canvas && m_canvas->checkPermission(feature);
+}
+
 void Document::autosave()
 {
 	if(!m_autosaveTimer->isActive()) {
@@ -1020,12 +1028,14 @@ void Document::sendResetSession(const net::MessageList &resetImage)
 
 void Document::sendResizeCanvas(int top, int right, int bottom, int left)
 {
-	uint8_t contextId = m_client->myId();
-	net::Message msgs[] = {
-		net::makeUndoPointMessage(contextId),
-		net::makeCanvasResizeMessage(contextId, top, right, bottom, left),
-	};
-	m_client->sendMessages(DP_ARRAY_LENGTH(msgs), msgs);
+	if(checkPermission(DP_FEATURE_RESIZE)) {
+		uint8_t contextId = m_client->myId();
+		net::Message msgs[] = {
+			net::makeUndoPointMessage(contextId),
+			net::makeCanvasResizeMessage(contextId, top, right, bottom, left),
+		};
+		m_client->sendMessages(DP_ARRAY_LENGTH(msgs), msgs);
+	}
 }
 
 void Document::sendUnban(int entryId)
@@ -1055,12 +1065,14 @@ void Document::sendTerminateSession(const QString &reason)
 
 void Document::sendCanvasBackground(const QColor &color)
 {
-	uint8_t contextId = m_client->myId();
-	net::Message msgs[] = {
-		net::makeUndoPointMessage(contextId),
-		net::makeCanvasBackgroundMessage(contextId, color),
-	};
-	m_client->sendMessages(DP_ARRAY_LENGTH(msgs), msgs);
+	if(checkPermission(DP_FEATURE_BACKGROUND)) {
+		uint8_t contextId = m_client->myId();
+		net::Message msgs[] = {
+			net::makeUndoPointMessage(contextId),
+			net::makeCanvasBackgroundMessage(contextId, color),
+		};
+		m_client->sendMessages(DP_ARRAY_LENGTH(msgs), msgs);
+	}
 }
 
 void Document::sendAbuseReport(int userId, const QString &message)
@@ -1294,7 +1306,8 @@ void Document::undo()
 		return;
 	// Only allow undos if the pen or mouse button is not down. If we're in a
 	// multipart drawing, e.g. with the bezier tool, we only undo the last part.
-	if(!m_toolctrl->isDrawing() && !m_toolctrl->undoMultipartDrawing()) {
+	if(!m_toolctrl->isDrawing() && !m_toolctrl->undoMultipartDrawing() &&
+	   checkPermission(DP_FEATURE_UNDO)) {
 		m_client->sendMessage(net::makeUndoMessage(m_client->myId(), 0, false));
 	}
 }
@@ -1305,7 +1318,8 @@ void Document::redo()
 		return;
 	// Only allow undos if the pen or mouse button is not down. If we're in a
 	// multipart drawing, e.g. with a transform, we only redo the last part.
-	if(!m_toolctrl->isDrawing() && !m_toolctrl->redoMultipartDrawing()) {
+	if(!m_toolctrl->isDrawing() && !m_toolctrl->redoMultipartDrawing() &&
+	   checkPermission(DP_FEATURE_UNDO)) {
 		m_client->sendMessage(net::makeUndoMessage(m_client->myId(), 0, true));
 	}
 }
@@ -1544,14 +1558,17 @@ void Document::copyLayer()
 
 void Document::cutLayer()
 {
-	if(m_canvas && copyFromLayer(m_toolctrl->activeLayer())) {
+	if(checkPermission(DP_FEATURE_PUT_IMAGE) &&
+	   copyFromLayer(m_toolctrl->activeLayer())) {
 		clearArea();
 	}
 }
 
 void Document::clearArea()
 {
-	fillArea(Qt::white, DP_BLEND_MODE_ERASE, 1.0f);
+	if(checkPermission(DP_FEATURE_PUT_IMAGE)) {
+		fillArea(Qt::white, DP_BLEND_MODE_ERASE, 1.0f);
+	}
 }
 
 void Document::fillArea(const QColor &color, DP_BlendMode mode, float opacity)
@@ -1573,6 +1590,10 @@ void Document::fillArea(const QColor &color, DP_BlendMode mode, float opacity)
 
 	QImage mask = selection->mask();
 	if(mask.isNull() || mask.size().isEmpty()) {
+		return;
+	}
+
+	if(!checkPermission(DP_FEATURE_PUT_IMAGE)) {
 		return;
 	}
 

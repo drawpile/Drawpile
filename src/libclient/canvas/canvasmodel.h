@@ -127,6 +127,8 @@ public:
 	//! Handle a local drawing command (will be put in the local fork)
 	void handleLocalCommands(int count, const net::Message *msgs);
 
+	bool checkPermission(int feature);
+
 public slots:
 	void pickLayer(int x, int y);
 	QColor pickColor(int x, int y, int layer, int diameter = 0);
@@ -160,6 +162,8 @@ signals:
 	void recorderStateChanged(bool recording);
 
 	void compatibilityModeChanged(bool compatibilityMode);
+
+	void permissionDenied(int feature);
 
 private slots:
 	void onLaserTrail(int userId, int persistence, uint32_t color);

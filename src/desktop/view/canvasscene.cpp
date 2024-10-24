@@ -448,6 +448,9 @@ void CanvasScene::setNotificationBarHeight(int height)
 		if(m_toolNotice) {
 			setToolNoticePosition();
 		}
+		if(m_popupNotice) {
+			setPopupNoticePosition();
+		}
 	}
 }
 
@@ -488,6 +491,20 @@ bool CanvasScene::hideLockNotice()
 		return true;
 	} else {
 		return false;
+	}
+}
+
+void CanvasScene::showPopupNotice(const QString &text)
+{
+	if(!text.isEmpty()) {
+		if(m_popupNotice) {
+			m_popupNotice->setPersist(POPUP_PERSIST);
+			m_popupNotice->setText(text);
+		} else {
+			m_popupNotice = new NoticeItem(text, POPUP_PERSIST);
+			addSceneItem(m_popupNotice);
+		}
+		setPopupNoticePosition();
 	}
 }
 
@@ -594,6 +611,9 @@ void CanvasScene::onSceneRectChanged()
 	}
 	if(m_toolNotice) {
 		setToolNoticePosition();
+	}
+	if(m_popupNotice) {
+		setPopupNoticePosition();
 	}
 	if(m_catchup) {
 		setCatchupPosition();
@@ -816,6 +836,15 @@ void CanvasScene::setToolNoticePosition()
 		QPointF(NOTICE_OFFSET, -toolNoticeBounds.height() - NOTICE_OFFSET));
 }
 
+void CanvasScene::setPopupNoticePosition()
+{
+	QRectF popupNoticeBounds = m_popupNotice->boundingRect();
+	QRectF sr = sceneRect();
+	m_popupNotice->updatePosition(
+		sr.topLeft() +
+		QPointF((sr.width() - popupNoticeBounds.width()) / 2.0, NOTICE_OFFSET));
+}
+
 void CanvasScene::setCatchupPosition()
 {
 	QRectF catchupBounds = m_catchup->boundingRect();
@@ -872,6 +901,11 @@ void CanvasScene::advanceAnimations()
 	if(m_transformNotice && !m_transformNotice->animationStep(dt)) {
 		delete m_transformNotice;
 		m_transformNotice = nullptr;
+	}
+
+	if(m_popupNotice && !m_popupNotice->animationStep(dt)) {
+		delete m_popupNotice;
+		m_popupNotice = nullptr;
 	}
 
 	if(m_catchup && !m_catchup->animationStep(dt)) {
