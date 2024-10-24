@@ -1,48 +1,48 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/toolwidgets/lasersettings.h"
+#include "libclient/tools/laser.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
-#include "libclient/tools/laser.h"
-
 #include "ui_lasersettings.h"
 
 namespace tools {
 
 namespace props {
-	static const ToolProperties::RangedValue<int>
-		persistence { QStringLiteral("persistence"), 1, 1, 15 },
-		color { QStringLiteral("color"), 0, 0, 3}
-		;
-	static const ToolProperties::Value<bool>
-		tracking { QStringLiteral("tracking"), true }
-		;
+static const ToolProperties::RangedValue<int> persistence{
+	QStringLiteral("persistence"), 1, 1, 15},
+	color{QStringLiteral("color"), 0, 0, 3};
+static const ToolProperties::Value<bool> tracking{
+	QStringLiteral("tracking"), true};
 }
 
-LaserPointerSettings::LaserPointerSettings(ToolController *ctrl, QObject *parent)
-	: ToolSettings(ctrl, parent), _ui(nullptr)
+LaserPointerSettings::LaserPointerSettings(
+	ToolController *ctrl, QObject *parent)
+	: ToolSettings(ctrl, parent)
+	, m_ui(nullptr)
 {
 }
 
 LaserPointerSettings::~LaserPointerSettings()
 {
-	delete _ui;
+	delete m_ui;
 }
 
 void LaserPointerSettings::pushSettings()
 {
-	auto *tool = static_cast<LaserPointer*>(controller()->getTool(Tool::LASERPOINTER));
-	tool->setPersistence(_ui->persistence->value());
+	LaserPointer *tool =
+		static_cast<LaserPointer *>(controller()->getTool(Tool::LASERPOINTER));
+	tool->setPersistence(m_ui->persistence->value());
 
 	QColor c;
-	if(_ui->color0->isChecked())
-		c = _ui->color0->color();
-	else if(_ui->color1->isChecked())
-		c = _ui->color1->color();
-	else if(_ui->color2->isChecked())
-		c = _ui->color2->color();
-	else if(_ui->color3->isChecked())
-		c = _ui->color3->color();
+	if(m_ui->color0->isChecked()) {
+		c = m_ui->color0->color();
+	} else if(m_ui->color1->isChecked()) {
+		c = m_ui->color1->color();
+	} else if(m_ui->color2->isChecked()) {
+		c = m_ui->color2->color();
+	} else if(m_ui->color3->isChecked()) {
+		c = m_ui->color3->color();
+	}
 
 	brushes::ActiveBrush b;
 	b.setQColor(c);
@@ -52,15 +52,27 @@ void LaserPointerSettings::pushSettings()
 QWidget *LaserPointerSettings::createUiWidget(QWidget *parent)
 {
 	QWidget *widget = new QWidget(parent);
-	_ui = new Ui_LaserSettings;
-	_ui->setupUi(widget);
+	m_ui = new Ui_LaserSettings;
+	m_ui->setupUi(widget);
 
-	connect(_ui->trackpointer, SIGNAL(clicked(bool)), this, SIGNAL(pointerTrackingToggled(bool)));
-	connect(_ui->persistence, QOverload<int>::of(&QSpinBox::valueChanged), this, &LaserPointerSettings::pushSettings);
-	connect(_ui->color0, &QAbstractButton::toggled, this, &LaserPointerSettings::pushSettings);
-	connect(_ui->color1, &QAbstractButton::toggled, this, &LaserPointerSettings::pushSettings);
-	connect(_ui->color2, &QAbstractButton::toggled, this, &LaserPointerSettings::pushSettings);
-	connect(_ui->color3, &QAbstractButton::toggled, this, &LaserPointerSettings::pushSettings);
+	connect(
+		m_ui->trackpointer, SIGNAL(clicked(bool)), this,
+		SIGNAL(pointerTrackingToggled(bool)));
+	connect(
+		m_ui->persistence, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&LaserPointerSettings::pushSettings);
+	connect(
+		m_ui->color0, &QAbstractButton::toggled, this,
+		&LaserPointerSettings::pushSettings);
+	connect(
+		m_ui->color1, &QAbstractButton::toggled, this,
+		&LaserPointerSettings::pushSettings);
+	connect(
+		m_ui->color2, &QAbstractButton::toggled, this,
+		&LaserPointerSettings::pushSettings);
+	connect(
+		m_ui->color3, &QAbstractButton::toggled, this,
+		&LaserPointerSettings::pushSettings);
 
 	return widget;
 }
@@ -68,17 +80,18 @@ QWidget *LaserPointerSettings::createUiWidget(QWidget *parent)
 ToolProperties LaserPointerSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
-	cfg.setValue(props::tracking, _ui->trackpointer->isChecked());
-	cfg.setValue(props::persistence, _ui->persistence->value());
+	cfg.setValue(props::tracking, m_ui->trackpointer->isChecked());
+	cfg.setValue(props::persistence, m_ui->persistence->value());
 
-	int color=0;
+	int color = 0;
 
-	if(_ui->color1->isChecked())
-		color=1;
-	else if(_ui->color2->isChecked())
-		color=2;
-	else if(_ui->color3->isChecked())
-		color=3;
+	if(m_ui->color1->isChecked()) {
+		color = 1;
+	} else if(m_ui->color2->isChecked()) {
+		color = 2;
+	} else if(m_ui->color3->isChecked()) {
+		color = 3;
+	}
 	cfg.setValue(props::color, color);
 
 	return cfg;
@@ -86,25 +99,33 @@ ToolProperties LaserPointerSettings::saveToolSettings()
 
 void LaserPointerSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	_ui->trackpointer->setChecked(cfg.value(props::tracking));
-	_ui->persistence->setValue(cfg.value(props::persistence));
+	m_ui->trackpointer->setChecked(cfg.value(props::tracking));
+	m_ui->persistence->setValue(cfg.value(props::persistence));
 
 	switch(cfg.value(props::color)) {
-	case 0: _ui->color0->setChecked(true); break;
-	case 1: _ui->color1->setChecked(true); break;
-	case 2: _ui->color2->setChecked(true); break;
-	case 3: _ui->color3->setChecked(true); break;
+	case 0:
+		m_ui->color0->setChecked(true);
+		break;
+	case 1:
+		m_ui->color1->setChecked(true);
+		break;
+	case 2:
+		m_ui->color2->setChecked(true);
+		break;
+	case 3:
+		m_ui->color3->setChecked(true);
+		break;
 	}
 }
 
 bool LaserPointerSettings::pointerTracking() const
 {
-	return _ui->trackpointer->isChecked();
+	return m_ui->trackpointer->isChecked();
 }
 
 void LaserPointerSettings::setForeground(const QColor &color)
 {
-	_ui->color0->setColor(color);
+	m_ui->color0->setColor(color);
 	pushSettings();
 }
 
@@ -115,17 +136,16 @@ void LaserPointerSettings::quickAdjust1(qreal adjustment)
 	qreal f = modf(m_quickAdjust1, &i);
 	if(int(i)) {
 		m_quickAdjust1 = f;
-		_ui->persistence->setValue(_ui->persistence->value() + int(i));
+		m_ui->persistence->setValue(m_ui->persistence->value() + int(i));
 	}
 }
 
 void LaserPointerSettings::stepAdjust1(bool increase)
 {
-	QSpinBox *persistence = _ui->persistence;
+	QSpinBox *persistence = m_ui->persistence;
 	persistence->setValue(stepLogarithmic(
 		persistence->minimum(), persistence->maximum(), persistence->value(),
 		increase));
 }
 
 }
-
