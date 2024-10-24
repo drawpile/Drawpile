@@ -9777,12 +9777,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Bilinear</source>
-        <translation type="unfinished"></translation>
+        <translation>Билинейный</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smoothed interpolation</source>
-        <translation type="unfinished"></translation>
+        <translation>Сглаженная интерполяция</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -9834,7 +9834,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Применить</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9878,7 +9878,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../view/canvasscene.cpp" line="+487"/>
         <source>Restoring canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Восстановление холста…</translation>
     </message>
 </context>
 <context>
@@ -9886,7 +9886,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../view/canvasview.cpp" line="+134"/>
         <source>Save As…</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить как…</translation>
     </message>
 </context>
 <context>
@@ -9904,12 +9904,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Canvas is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Холст заблокирован</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>User is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Пользователь заблокирован</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9919,27 +9919,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Layer is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Слой заблокирован</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is censored</source>
-        <translation type="unfinished"></translation>
+        <translation>Слой под цензурой</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Слой скрыт</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is not visible in this frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Слой не виден на этом кадре</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Tool is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Инструмент заблокирован</translation>
     </message>
 </context>
 <context>
@@ -10050,13 +10050,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+30"/>
         <location filename="../view/canvascontroller.cpp" line="+34"/>
         <source>Downloading…</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка…</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../view/canvascontroller.cpp" line="+3"/>
         <source>Saving…</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранение…</translation>
     </message>
 </context>
 <context>
@@ -10288,12 +10288,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/dualcolorbutton.cpp" line="+31"/>
         <source>Set foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>Настроить цвет переднего плана</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Set background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Настроить цвет заднего плана</translation>
     </message>
     <message>
         <location line="+5"/>
