@@ -32,6 +32,8 @@ private:
 		Left
 	};
 
+	void deselectAnnotation();
+
 	/// ID of the currently selected annotation
 	uint16_t m_selectedId;
 

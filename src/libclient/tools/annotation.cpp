@@ -24,8 +24,7 @@ Annotation::Annotation(ToolController &owner)
 void Annotation::begin(const BeginParams &params)
 {
 	if(params.right) {
-		m_selectedId = 0;
-		m_owner.setActiveAnnotation(m_selectedId);
+		deselectAnnotation();
 		return;
 	}
 
@@ -39,6 +38,11 @@ void Annotation::begin(const BeginParams &params)
 			point.x(), point.y(), handleSize);
 
 	if(selection.isNull()) {
+		if(m_owner.activeAnnotation() != 0) {
+			deselectAnnotation();
+			return;
+		}
+
 		// No annotation, start creating a new one
 		if(!m_owner.model()->checkPermission(DP_FEATURE_CREATE_ANNOTATION)) {
 			m_handle = Handle::Outside;
@@ -243,6 +247,12 @@ void Annotation::end(const EndParams &)
 	}
 
 	m_selectedId = 0;
+}
+
+void Annotation::deselectAnnotation()
+{
+	m_selectedId = 0;
+	m_owner.setActiveAnnotation(0);
 }
 
 }
