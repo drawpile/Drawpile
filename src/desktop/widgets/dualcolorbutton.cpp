@@ -28,12 +28,12 @@ QSize DualColorButton::minimumSizeHint() const
 
 QString DualColorButton::foregroundText()
 {
-	return tr("Set foreground color");
+	return tr("Set foreground color…");
 }
 
 QString DualColorButton::backgroundText()
 {
-	return tr("Set background color");
+	return tr("Set background color…");
 }
 
 QString DualColorButton::resetText()
