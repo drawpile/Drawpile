@@ -3677,7 +3677,7 @@ void MainWindow::resizeCanvas()
 
 	connect(dlg, &QDialog::accepted, this, [this, dlg]() {
 		if (m_doc->canvas()->selection()) {
-			// m_doc->canvas()->setSelection(nullptr);
+			m_doc->selectNone();
 		}
 		dialogs::ResizeVector r = dlg->resizeVector();
 		if(!r.isZero()) {
