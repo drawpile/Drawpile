@@ -3704,7 +3704,7 @@ void MainWindow::clearOrDelete()
 }
 
 // clang-format on
-void MainWindow::resizeCanvas()
+void MainWindow::resizeCanvas(int expandDirection)
 {
 	canvas::CanvasModel *canvas = m_doc->canvas();
 	if(!canvas) {
@@ -3717,7 +3717,9 @@ void MainWindow::resizeCanvas()
 	}
 
 	const QSize size = m_doc->canvas()->size();
-	dialogs::ResizeDialog *dlg = new dialogs::ResizeDialog(size, this);
+	dialogs::ResizeDialog *dlg = new dialogs::ResizeDialog(
+		size, getAction("expandup"), getAction("expandleft"),
+		getAction("expandright"), getAction("expanddown"), this);
 	canvas::PaintEngine *paintEngine = m_doc->canvas()->paintEngine();
 	dlg->setBackgroundColor(paintEngine->historyBackgroundColor());
 	dlg->setPreviewImage(
@@ -3728,6 +3730,8 @@ void MainWindow::resizeCanvas()
 	if(canvas->selection()->isValid()) {
 		dlg->setBounds(canvas->selection()->bounds());
 	}
+
+	dlg->initialExpand(expandDirection);
 
 	connect(dlg, &QDialog::accepted, this, [this, dlg]() {
 		if(m_doc->checkPermission(DP_FEATURE_RESIZE)) {
@@ -3740,7 +3744,7 @@ void MainWindow::resizeCanvas()
 			}
 		}
 	});
-	utils::showWindow(dlg, shouldShowDialogMaximized());
+	utils::showWindow(dlg);
 }
 // clang-format off
 
@@ -4496,10 +4500,19 @@ void MainWindow::setupActions()
 #	endif
 #endif
 
-	QAction *expandup = makeAction("expandup", tr("Expand &Up")).shortcut(CTRL_KEY | Qt::Key_J);
-	QAction *expanddown = makeAction("expanddown", tr("Expand &Down")).shortcut(CTRL_KEY | Qt::Key_K);
-	QAction *expandleft = makeAction("expandleft", tr("Expand &Left")).shortcut(CTRL_KEY | Qt::Key_H);
-	QAction *expandright = makeAction("expandright", tr("Expand &Right")).shortcut(CTRL_KEY | Qt::Key_L);
+	// clang-format on
+	QAction *expandup = makeAction("expandup", tr("Expand &Up…"))
+							.icon("drawpile_expandup")
+							.shortcut(CTRL_KEY | Qt::Key_J);
+	QAction *expanddown = makeAction("expanddown", tr("Expand &Down…"))
+							  .icon("drawpile_expanddown")
+							  .shortcut(CTRL_KEY | Qt::Key_K);
+	QAction *expandleft = makeAction("expandleft", tr("Expand &Left…"))
+							  .icon("drawpile_expandleft")
+							  .shortcut(CTRL_KEY | Qt::Key_H);
+	QAction *expandright = makeAction("expandright", tr("Expand &Right…"))
+							   .icon("drawpile_expandright")
+							   .shortcut(CTRL_KEY | Qt::Key_L);
 
 	QAction *cleararea = makeAction("cleararea", tr("Delete"))
 							 .shortcut(QKeySequence::Delete)
@@ -4532,6 +4545,7 @@ void MainWindow::setupActions()
 	connect(copylayer, &QAction::triggered, m_doc, &Document::copyLayer);
 	connect(cutlayer, &QAction::triggered, m_doc, &Document::cutLayer);
 	connect(paste, &QAction::triggered, this, &MainWindow::paste);
+	// clang-format off
 	connect(pasteCentered, &QAction::triggered, this, &MainWindow::pasteCentered);
 #ifndef SINGLE_MAIN_WINDOW
 	connect(
@@ -4542,7 +4556,11 @@ void MainWindow::setupActions()
 	connect(pastefile, SIGNAL(triggered()), this, SLOT(pasteFile()));
 	connect(deleteAnnotations, &QAction::triggered, m_doc, &Document::removeEmptyAnnotations);
 	connect(cleararea, &QAction::triggered, this, &MainWindow::clearOrDelete);
-	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
+	connect(
+		resize, &QAction::triggered, this,
+		std::bind(
+			&MainWindow::resizeCanvas, this,
+			int(dialogs::ResizeDialog::ExpandDirection::None)));
 	connect(canvasBackground, &QAction::triggered, this, &MainWindow::changeCanvasBackground);
 	connect(setLocalBackground, &QAction::triggered, this, &MainWindow::changeLocalCanvasBackground);
 	connect(clearLocalBackground, &QAction::triggered, this, &MainWindow::clearLocalCanvasBackground);
@@ -4558,11 +4576,27 @@ void MainWindow::setupActions()
 	}
 #endif
 
-	// Expanding by multiples of tile size allows efficient resizing
-	connect(expandup, &QAction::triggered, this, [this] { m_doc->sendResizeCanvas(64, 0 ,0, 0);});
-	connect(expandright, &QAction::triggered, this, [this] { m_doc->sendResizeCanvas(0, 64, 0, 0);});
-	connect(expanddown, &QAction::triggered, this, [this] { m_doc->sendResizeCanvas(0,0, 64, 0);});
-	connect(expandleft, &QAction::triggered, this, [this] { m_doc->sendResizeCanvas(0,0, 0, 64);});
+	// clang-format on
+	connect(
+		expandup, &QAction::triggered, this,
+		std::bind(
+			&MainWindow::resizeCanvas, this,
+			int(dialogs::ResizeDialog::ExpandDirection::Up)));
+	connect(
+		expanddown, &QAction::triggered, this,
+		std::bind(
+			&MainWindow::resizeCanvas, this,
+			int(dialogs::ResizeDialog::ExpandDirection::Down)));
+	connect(
+		expandleft, &QAction::triggered, this,
+		std::bind(
+			&MainWindow::resizeCanvas, this,
+			int(dialogs::ResizeDialog::ExpandDirection::Left)));
+	connect(
+		expandright, &QAction::triggered, this,
+		std::bind(
+			&MainWindow::resizeCanvas, this,
+			int(dialogs::ResizeDialog::ExpandDirection::Right)));
 
 	QMenu *editmenu = menuBar()->addMenu(tr("&Edit"));
 	editmenu->addAction(undo);
@@ -4590,6 +4624,7 @@ void MainWindow::setupActions()
 	backgroundmenu->addAction(canvasBackground);
 	backgroundmenu->addAction(setLocalBackground);
 	backgroundmenu->addAction(clearLocalBackground);
+	// clang-format off
 	connect(backgroundmenu, &QMenu::aboutToShow, this, &MainWindow::updateBackgroundActions);
 
 	editmenu->addSeparator();

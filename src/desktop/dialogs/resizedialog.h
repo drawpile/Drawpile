@@ -3,6 +3,7 @@
 #define DESKTOP_DIALOGS_RESIZEDIALOG_H
 #include <QDialog>
 
+class QAction;
 class Ui_ResizeDialog;
 
 namespace dialogs {
@@ -19,12 +20,18 @@ struct ResizeVector {
 class ResizeDialog final : public QDialog {
 	Q_OBJECT
 public:
-	explicit ResizeDialog(const QSize &oldsize, QWidget *parent = nullptr);
+	enum class ExpandDirection { None, Up, Left, Right, Down };
+
+	ResizeDialog(
+		const QSize &oldsize, const QAction *expandUpAction,
+		const QAction *expandLeftAction, const QAction *expandRightAction,
+		const QAction *expandDownAction, QWidget *parent = nullptr);
 	~ResizeDialog() override;
 
 	void setBackgroundColor(const QColor &bgColor);
 	void setPreviewImage(const QImage &image);
 	void setBounds(const QRect &rect);
+	void initialExpand(int expandDirection);
 
 	QSize newSize() const;
 	QPoint newOffset() const;
@@ -37,9 +44,15 @@ private slots:
 	void widthChanged(int);
 	void heightChanged(int);
 	void toggleAspectRatio(bool keep);
+	void expandUp();
+	void expandLeft();
+	void expandRight();
+	void expandDown();
 	void reset();
 
 private:
+	static constexpr int EXPAND = 64;
+
 	Ui_ResizeDialog *m_ui;
 
 	QSize m_oldsize;

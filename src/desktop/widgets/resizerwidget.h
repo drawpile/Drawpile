@@ -20,6 +20,7 @@ public:
 
 	QPoint offset() const { return m_offset; }
 	void setOffset(const QPoint &offset);
+	void changeOffsetBy(const QPoint &change) { setOffset(m_offset + change); }
 
 public slots:
 	void center();

@@ -15,20 +15,7 @@
   </property>
   <layout class="QVBoxLayout">
    <item>
-    <layout class="QHBoxLayout">
-     <item>
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
+    <layout class="QHBoxLayout" name="dimensionsLayout" stretch="1,0,1,1">
      <item>
       <widget class="QSpinBox" name="width">
        <property name="minimum">
@@ -43,12 +30,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel">
+      <widget class="QLabel" name="label">
        <property name="text">
         <string notr="true">×</string>
-       </property>
-       <property name="buddy">
-        <cstring>height</cstring>
        </property>
       </widget>
      </item>
@@ -72,30 +56,60 @@
        </property>
       </widget>
      </item>
-     <item>
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
     </layout>
    </item>
    <item>
-    <widget class="widgets::ResizerWidget" name="resizer">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
+    <layout class="QGridLayout" name="grid" rowstretch="0,1,0" columnstretch="0,1,0">
+     <item row="0" column="1">
+      <widget class="QToolButton" name="expandUp"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QToolButton" name="expandLeft"/>
+     </item>
+     <item row="1" column="2">
+      <widget class="QToolButton" name="expandRight"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QToolButton" name="expandDown"/>
+     </item>
+     <item row="1" column="1">
+      <widget class="QFrame" name="frame">
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QVBoxLayout" name="frameLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="widgets::ResizerWidget" name="resizer" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttons">
@@ -116,6 +130,15 @@
    <header>desktop/widgets/resizerwidget.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>width</tabstop>
+  <tabstop>height</tabstop>
+  <tabstop>keepaspect</tabstop>
+  <tabstop>expandUp</tabstop>
+  <tabstop>expandLeft</tabstop>
+  <tabstop>expandRight</tabstop>
+  <tabstop>expandDown</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -125,8 +148,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>257</x>
+     <y>365</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -141,8 +164,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>325</x>
+     <y>365</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

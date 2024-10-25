@@ -233,7 +233,7 @@ private slots:
 
 	void clearOrDelete();
 
-	void resizeCanvas();
+	void resizeCanvas(int expandDirection);
 	void updateBackgroundActions();
 	void changeCanvasBackground();
 	void changeLocalCanvasBackground();
