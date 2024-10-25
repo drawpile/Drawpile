@@ -1,26 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef RESIZERWIDGET_H
-#define RESIZERWIDGET_H
-
+#ifndef DESKTOP_WIDGETS_RESIZERWIDGET_H
+#define DESKTOP_WIDGETS_RESIZERWIDGET_H
 #include <QWidget>
-
-#ifdef DESIGNER_PLUGIN
-#include <QtUiPlugin/QDesignerExportWidget>
-#else
-#define QDESIGNER_WIDGET_EXPORT
-#endif
 
 namespace widgets {
 
-class QDESIGNER_WIDGET_EXPORT ResizerWidget final : public QWidget
-{
-	Q_PROPERTY(QSize targetSize READ targetSize WRITE setTargetSize)
-	Q_PROPERTY(QSize originalSize READ originalSize WRITE setOriginalSize)
-	Q_PROPERTY(QPoint offset READ offset WRITE setOffset NOTIFY offsetChanged)
+class ResizerWidget final : public QWidget {
 	Q_OBJECT
 public:
-	explicit ResizerWidget(QWidget *parent=nullptr);
+	explicit ResizerWidget(QWidget *parent = nullptr);
 
 	void setBackgroundColor(const QColor &bgColor);
 	void setImage(const QImage &image);
@@ -40,10 +28,10 @@ signals:
 	void offsetChanged(const QPoint &);
 
 protected:
-	void paintEvent(QPaintEvent*) override;
-	void resizeEvent(QResizeEvent*) override;
-	void mousePressEvent(QMouseEvent*) override;
-	void mouseMoveEvent(QMouseEvent*) override;
+	void paintEvent(QPaintEvent *) override;
+	void resizeEvent(QResizeEvent *) override;
+	void mousePressEvent(QMouseEvent *) override;
+	void mouseMoveEvent(QMouseEvent *) override;
 
 private:
 	void updateScales();

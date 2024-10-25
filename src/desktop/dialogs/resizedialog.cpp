@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/resizedialog.h"
 #include "libclient/utils/images.h"
-
 #include "ui_resizedialog.h"
-
 #include <QMessageBox>
 #include <QPushButton>
+#include <QSignalBlocker>
 
 namespace dialogs {
 
-ResizeDialog::ResizeDialog(const QSize &oldsize, QWidget *parent) :
-	QDialog(parent), m_oldsize(oldsize), m_aspectratio(0), m_lastchanged(0)
+ResizeDialog::ResizeDialog(const QSize &oldsize, QWidget *parent)
+	: QDialog(parent)
+	, m_oldsize(oldsize)
 {
 	m_ui = new Ui_ResizeDialog;
 	m_ui->setupUi(this);
@@ -27,12 +26,22 @@ ResizeDialog::ResizeDialog(const QSize &oldsize, QWidget *parent) :
 	m_ui->width->setValue(m_oldsize.width());
 	m_ui->height->setValue(m_oldsize.height());
 
-	connect(m_ui->width, QOverload<int>::of(&QSpinBox::valueChanged), this, &ResizeDialog::widthChanged);
-	connect(m_ui->height, QOverload<int>::of(&QSpinBox::valueChanged), this, &ResizeDialog::heightChanged);
-	connect(m_ui->keepaspect, &QCheckBox::toggled, this, &ResizeDialog::toggleAspectRatio);
+	connect(
+		m_ui->width, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&ResizeDialog::widthChanged);
+	connect(
+		m_ui->height, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&ResizeDialog::heightChanged);
+	connect(
+		m_ui->keepaspect, &QCheckBox::toggled, this,
+		&ResizeDialog::toggleAspectRatio);
 
-	connect(centerButton, &QPushButton::clicked, m_ui->resizer, &widgets::ResizerWidget::center);
-	connect(m_ui->buttons->button(QDialogButtonBox::Reset), &QAbstractButton::clicked, this, &ResizeDialog::reset);
+	connect(
+		centerButton, &QPushButton::clicked, m_ui->resizer,
+		&widgets::ResizerWidget::center);
+	connect(
+		m_ui->buttons->button(QDialogButtonBox::Reset),
+		&QAbstractButton::clicked, this, &ResizeDialog::reset);
 }
 
 ResizeDialog::~ResizeDialog()
@@ -52,7 +61,7 @@ void ResizeDialog::setPreviewImage(const QImage &image)
 
 void ResizeDialog::setBounds(const QRect &rect)
 {
-	auto rectIn = rect.intersected({{0,0}, m_ui->resizer->originalSize()});
+	QRect rectIn = rect.intersected({{0, 0}, m_ui->resizer->originalSize()});
 
 	m_ui->width->setValue(rectIn.width());
 	m_ui->height->setValue(rectIn.height());
@@ -65,7 +74,8 @@ void ResizeDialog::done(int r)
 {
 	if(r == QDialog::Accepted) {
 		if(!utils::checkImageSize(newSize())) {
-			QMessageBox::information(this, tr("Error"), tr("Size is too large"));
+			QMessageBox::information(
+				this, tr("Error"), tr("Size is too large"));
 			return;
 		}
 	}
@@ -76,9 +86,8 @@ void ResizeDialog::done(int r)
 void ResizeDialog::widthChanged(int newWidth)
 {
 	if(m_aspectratio) {
-		m_ui->height->blockSignals(true);
+		QSignalBlocker blocker(m_ui->height);
 		m_ui->height->setValue(newWidth / m_aspectratio);
-		m_ui->height->blockSignals(false);
 	}
 	m_ui->resizer->setTargetSize(QSize(newWidth, m_ui->height->value()));
 	m_lastchanged = 0;
@@ -87,9 +96,8 @@ void ResizeDialog::widthChanged(int newWidth)
 void ResizeDialog::heightChanged(int newHeight)
 {
 	if(m_aspectratio) {
-		m_ui->width->blockSignals(true);
+		QSignalBlocker blocker(m_ui->width);
 		m_ui->width->setValue(newHeight * m_aspectratio);
-		m_ui->width->blockSignals(false);
 	}
 	m_ui->resizer->setTargetSize(QSize(m_ui->width->value(), newHeight));
 	m_lastchanged = 1;
@@ -98,7 +106,8 @@ void ResizeDialog::heightChanged(int newHeight)
 void ResizeDialog::toggleAspectRatio(bool keep)
 {
 	if(keep) {
-		m_aspectratio = float(m_ui->width->value()) / float(m_ui->height->value());
+		m_aspectratio =
+			qreal(m_ui->width->value()) / qreal(m_ui->height->value());
 	} else {
 		m_aspectratio = 0;
 	}
