@@ -13,6 +13,7 @@
 #include <QFrame>
 #include <QGraphicsOpacityEffect>
 #include <QHeaderView>
+#include <QKeySequence>
 #include <QLabel>
 #include <QMessageBox>
 #include <QPaintEvent>
@@ -1018,6 +1019,32 @@ QMessageBox *showCritical(
 	QMessageBox *msgbox = makeCritical(parent, title, text, informativeText);
 	msgbox->show();
 	return msgbox;
+}
+
+QString makeActionShortcutText(QString text, const QKeySequence &shortcut)
+{
+	static const QRegularExpression acceleratorRegex(QStringLiteral("&([^&])"));
+	text.replace(acceleratorRegex, QStringLiteral("\\1"));
+
+	// In languages with non-latin alphabets, it's a common
+	// convention to add a keyboard shortcut like this:
+	// English: &File
+	// Japanese: ファイル(&F)
+	int i = text.lastIndexOf('(');
+	if(i > 0) {
+		text.truncate(i);
+	}
+
+	if(shortcut.isEmpty()) {
+		return text;
+	} else {
+		//: This makes an action and a keyboard shortcut, like "Undo
+		//: (Ctrl+Z)". %1 is the action, %2 is the shortcut. You only
+		//: need to change this if your language uses different spaces
+		//: or parentheses, otherwise just leave it as-is.
+		return QCoreApplication::translate("MainWindow", "%1 (%2)")
+			.arg(text, shortcut.toString(QKeySequence::NativeText));
+	}
 }
 
 }

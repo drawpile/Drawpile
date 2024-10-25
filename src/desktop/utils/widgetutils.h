@@ -16,6 +16,7 @@ class QCursor;
 class QFormLayout;
 class QFrame;
 class QHeaderView;
+class QKeySequence;
 class QLabel;
 class QMessageBox;
 class QWidget;
@@ -210,6 +211,8 @@ QMessageBox *showWarning(
 QMessageBox *showCritical(
 	QWidget *parent, const QString &title, const QString &text,
 	const QString &informativeText = QString());
+
+QString makeActionShortcutText(QString text, const QKeySequence &shortcut);
 
 }
 
