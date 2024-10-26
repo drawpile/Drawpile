@@ -20,23 +20,23 @@
         <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished">衝突</translation>
+        <translation>競合</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (競合)</translation>
     </message>
     <message>
         <location line="+85"/>
         <source>Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shortcut</source>
-        <translation type="unfinished">ショートカット</translation>
+        <translation>ショートカット</translation>
     </message>
 </context>
 <context>
@@ -83,13 +83,13 @@
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished">衝突</translation>
+        <translation>競合</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (競合)</translation>
     </message>
     <message>
         <location line="+76"/>
@@ -301,13 +301,13 @@
         <location filename="../utils/customshortcutmodel.cpp" line="+57"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation>衝突</translation>
+        <translation>競合</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (競合)</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -908,7 +908,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+15"/>
         <source>Unknown brush format in file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル &apos;%1&apos; に不明なブラシ形式があります</translation>
     </message>
     <message>
         <location line="+66"/>
@@ -923,22 +923,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+61"/>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシファイル &apos;%1&apos; には JSON オブジェクトが含まれていません</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Brush file &apos;%1&apos; has invalid version %d</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシファイル &apos;%1&apos; には無効なバージョン %d があります</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシファイル &apos;%1&apos; には無効な &apos;色&apos; 設定が含まれています</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシファイル &apos;%1&apos; には古い設定 &apos;%2&apos; が含まれています</translation>
     </message>
     <message>
         <location line="+129"/>
@@ -1647,7 +1647,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/server.cpp" line="+195"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロキシを使用する予定がない場合は、Drawpile の設定の 「ネットワーク」タブでネットワーク プロキシを無効にすることができます。</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -1683,13 +1683,13 @@ Select a regular layer instead.</source>
         <location line="+51"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ソケットエラー %1: %2</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (エラー %2)</translation>
     </message>
 </context>
 <context>
@@ -1707,12 +1707,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="-244"/>
         <source>You don&apos;t have permission for that transformation.</source>
-        <translation type="unfinished"></translation>
+        <translation>その変換をする権限がありません。</translation>
     </message>
     <message>
         <location line="+203"/>
         <source>You don&apos;t have permission to stamp selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲にスタンプする権限がありません。</translation>
     </message>
     <message>
         <location line="+57"/>
