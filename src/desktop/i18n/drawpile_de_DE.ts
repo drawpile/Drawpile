@@ -9574,12 +9574,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+4"/>
         <source>Import palette…</source>
-        <translation>Palette importieren</translation>
+        <translation>Palette importieren…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export palette…</source>
-        <translation type="unfinished"></translation>
+        <translation>Palette exportieren…</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -9675,12 +9675,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="-317"/>
         <source>Show all sliders at once</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Schieber gleichzeitig anzeigen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show hex input</source>
-        <translation type="unfinished"></translation>
+        <translation>Hexadezimaleingabe anzeigen</translation>
     </message>
     <message>
         <location line="+80"/>
@@ -9703,7 +9703,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+19"/>
         <source>RGB</source>
-        <translation type="unfinished"></translation>
+        <translation>RGB</translation>
     </message>
     <message>
         <location line="+177"/>
@@ -9779,77 +9779,77 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+4"/>
         <source>Rotating triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotierendes Dreieck</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Rotating square</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotierendes Quadrat</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Fixiertes Dreieck</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed square</source>
-        <translation type="unfinished"></translation>
+        <translation>Fixiertes Quadrat</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbraum</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>HSV</source>
-        <translation type="unfinished"></translation>
+        <translation>HSV</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>HSL</source>
-        <translation type="unfinished"></translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>HCL</source>
-        <translation type="unfinished"></translation>
+        <translation>HCL</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Direction</source>
-        <translation type="unfinished">Richtung</translation>
+        <translation>Richtung</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ascending</source>
-        <translation type="unfinished">Aufsteigend</translation>
+        <translation>Aufsteigend</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Descending</source>
-        <translation type="unfinished">Absteigend</translation>
+        <translation>Absteigend</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausrichtung</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top</source>
-        <translation type="unfinished">Oben</translation>
+        <translation>Oben</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Mittig</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Preview selected color</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorschau der gewählten Farbe</translation>
     </message>
 </context>
 <context>
