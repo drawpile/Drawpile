@@ -2572,7 +2572,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+111"/>
         <source>Group View</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruppenansicht</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8662,7 +8662,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>Toggle recolor mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Umfärbungsmodus umschalten</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -8727,7 +8727,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+7"/>
         <source>Rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand rotieren</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8737,7 +8737,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>Ratchet rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand in Schritten rotieren</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9445,7 +9445,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+23"/>
         <source>No brush selected</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but no brush is actually selected.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kein Pinsel ausgewählt</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -9574,7 +9574,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+4"/>
         <source>Import palette…</source>
-        <translation type="unfinished"></translation>
+        <translation>Palette importieren</translation>
     </message>
     <message>
         <location line="+2"/>
