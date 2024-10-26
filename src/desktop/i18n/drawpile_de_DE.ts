@@ -10984,7 +10984,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../widgets/dualcolorbutton.cpp" line="+31"/>
         <source>Set foreground color…</source>
-        <translation>Vordergrundfarbe setzen</translation>
+        <translation>Vordergrundfarbe setzen…</translation>
     </message>
     <message>
         <location line="+5"/>
