@@ -10989,7 +10989,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+5"/>
         <source>Set background color…</source>
-        <translation>Hintergrundfarbe einstellen&#xa0;…</translation>
+        <translation>Hintergrundfarbe setzen…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -11007,37 +11007,37 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../widgets/expandshrinkspinner.cpp" line="+27"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Expand</source>
-        <translation type="unfinished">Vergrößern</translation>
+        <translation>Vergrößern</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shrink</source>
-        <translation type="unfinished">Schrumpfen</translation>
+        <translation>Schrumpfen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Round expansion shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Runde Vergrößerungsform</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Square kernel shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadratische Kernelform</translation>
     </message>
     <message>
         <location line="+93"/>
         <source>Shrink: </source>
-        <translation type="unfinished">Schrumpfen: </translation>
+        <translation>Schrumpfen: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Expand: </source>
-        <translation type="unfinished">Erweitern: </translation>
+        <translation>Erweitern: </translation>
     </message>
 </context>
 <context>
