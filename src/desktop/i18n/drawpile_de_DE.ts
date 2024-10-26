@@ -2472,7 +2472,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+18"/>
         <source>Expand &amp;Up…</source>
-        <translation>Nach &amp;oben vergrößern</translation>
+        <translation>Nach &amp;oben vergrößern…</translation>
     </message>
     <message>
         <location line="+3"/>
