@@ -15,9 +15,34 @@
     </message>
 </context>
 <context>
+    <name>BrushShortcutModel</name>
+    <message>
+        <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
+        <source>Conflict</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
+        <translation type="unfinished">衝突</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 (conflict)</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+85"/>
+        <source>Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Shortcut</source>
+        <translation type="unfinished">ショートカット</translation>
+    </message>
+</context>
+<context>
     <name>CanvasSaverRunnable</name>
     <message>
-        <location filename="../export/canvassaverrunnable.cpp" line="+41"/>
+        <location filename="../export/canvassaverrunnable.cpp" line="+84"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation>引数が間違っています。これはおそらく Drawpile のバグです。</translation>
     </message>
@@ -55,7 +80,19 @@
 <context>
     <name>CanvasShortcutsModel</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="+94"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
+        <source>Conflict</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
+        <translation type="unfinished">衝突</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 (conflict)</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+76"/>
         <source>Shortcut</source>
         <translation>ショートカット</translation>
     </message>
@@ -70,7 +107,7 @@
         <translation>修飾</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+66"/>
         <source>%1</source>
         <extracomment>Example: &quot;Pan Canvas&quot;</extracomment>
         <translation>%1</translation>
@@ -105,7 +142,7 @@
         <translation>+</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+40"/>
         <source>Unset</source>
         <translation>設定解除</translation>
     </message>
@@ -261,27 +298,34 @@
 <context>
     <name>CustomShortcutModel</name>
     <message>
-        <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
+        <location filename="../utils/customshortcutmodel.cpp" line="+57"/>
         <source>Conflict</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
         <translation>衝突</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+4"/>
+        <source>%1 (conflict)</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+126"/>
         <source>Action</source>
         <translation>アクション</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Shortcut</source>
         <translation>ショートカット</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Alternate</source>
         <translation>代替</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Default</source>
         <translation>デフォルト</translation>
     </message>
@@ -289,7 +333,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+757"/>
+        <location filename="../document.cpp" line="+917"/>
         <source>Unknown format.</source>
         <translation>不明な形式。</translation>
     </message>
@@ -314,7 +358,7 @@
         <translation>不明なエラー。</translation>
     </message>
     <message>
-        <location line="+438"/>
+        <location line="+606"/>
         <source>Error saving image</source>
         <translation>画像保存時のエラー</translation>
     </message>
@@ -356,45 +400,21 @@
 <context>
     <name>FillSettings</name>
     <message>
-        <location filename="../tools/floodfill.cpp" line="+251"/>
+        <location filename="../tools/floodfill.cpp" line="+275"/>
         <source>Filling…</source>
         <translation>塗りつぶし中…</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="+71"/>
         <source>No layer selected.</source>
         <translation>レイヤーが未選択です。</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+15"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
         <translation>レイヤーグループ %1 を塗りつぶしできません。
 代わりに通常のレイヤーを選択してください。</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Continuous fill</source>
-        <translation>連続塗りつぶし</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Similar color fill</source>
-        <translation>近似色塗りつぶし</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Selection fill</source>
-        <translation>選択範囲の塗りつぶし</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>%1, %2 by %3 pixels.
-%4 at %5% opacity on %6.
-Click to apply, undo to cancel.</source>
-        <translation>%1, %3 ピクセルの %2。
-%4 で %5% 透明度 で %6。
-クリックすると適用し、元に戻すとキャンセルします。</translation>
     </message>
 </context>
 <context>
@@ -418,16 +438,9 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>MagicWandSettings</name>
     <message>
-        <location filename="../tools/magicwand.cpp" line="+202"/>
+        <location filename="../tools/magicwand.cpp" line="+197"/>
         <source>Selecting…</source>
         <translation>選択中…</translation>
-    </message>
-    <message>
-        <location line="+52"/>
-        <source>%1 by %2 pixels, %3% opacity.
-Click to apply, undo to cancel.</source>
-        <translation>%1 %2 ピクセル、 %3% 透明度。
-クリックすると適用され、元に戻すとキャンセルされます。</translation>
     </message>
 </context>
 <context>
@@ -516,7 +529,7 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../drawdance/canvasstate.cpp" line="+47"/>
+        <location filename="../drawdance/canvasstate.cpp" line="+48"/>
         <source>Layer %1</source>
         <translation>レイヤー %1</translation>
     </message>
@@ -524,7 +537,7 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>QShortcut</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="-103"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="-131"/>
         <source>Shift</source>
         <translation>Shift</translation>
     </message>
@@ -547,12 +560,12 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+529"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+534"/>
         <source>(untitled)</source>
         <translation>(無題)</translation>
     </message>
     <message>
-        <location line="-454"/>
+        <location line="-458"/>
         <source>%1d%2h%3m</source>
         <translation>%1日%2時間%3分</translation>
     </message>
@@ -653,7 +666,7 @@ Click to apply, undo to cancel.</source>
         <translation>経過時間</translation>
     </message>
     <message>
-        <location line="+177"/>
+        <location line="+181"/>
         <source>incompatible</source>
         <translation>非対応</translation>
     </message>
@@ -801,7 +814,7 @@ Click to apply, undo to cancel.</source>
         <translation>色</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+10"/>
         <source>Unknown</source>
         <translation>不明</translation>
     </message>
@@ -809,7 +822,7 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+612"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+1367"/>
         <source>Default</source>
         <translation>デフォルト</translation>
     </message>
@@ -817,7 +830,7 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>brushes::BrushPresetTagModel</name>
     <message>
-        <location line="-103"/>
+        <location line="-128"/>
         <source>All</source>
         <translation>すべて</translation>
     </message>
@@ -837,7 +850,7 @@ Click to apply, undo to cancel.</source>
         <translation>どのタグにも割り当てられていないブラシを表示します。</translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+198"/>
         <source>Default</source>
         <translation>デフォルト</translation>
     </message>
@@ -847,18 +860,18 @@ Click to apply, undo to cancel.</source>
         <translation>クラシックブラシ %1</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Converted from %1.</source>
         <translation>%1から変換されました。</translation>
     </message>
     <message>
-        <location line="+19"/>
-        <location line="+211"/>
+        <location line="+16"/>
+        <location line="+460"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
         <translation>&apos;%1&apos; を開けません。</translation>
     </message>
     <message>
-        <location line="-181"/>
+        <location line="-423"/>
         <source>Invalid brush pack: order.conf not found inside</source>
         <translation>無効なブラシ パック: order.conf が内部に見つかりません</translation>
     </message>
@@ -868,12 +881,12 @@ Click to apply, undo to cancel.</source>
         <translation>未分類 %1</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+23"/>
         <source>Invalid brush pack: order.conf contains no brushes</source>
         <translation>無効なブラシ パック: order.conf にブラシが含まれていません</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+53"/>
         <source>Could not create tag &apos;%1&apos;.</source>
         <translation>タグ &apos;%1&apos; を作成できませんでした。</translation>
     </message>
@@ -888,22 +901,47 @@ Click to apply, undo to cancel.</source>
         <translation>ブラシ &apos;%1&apos; をタグ &apos;%2&apos; に割り当てることができませんでした。</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+19"/>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
         <translation>ブラシ ファイル &apos;%1&apos; を読み取れません</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+15"/>
+        <source>Unknown brush format in file &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+66"/>
         <source>Brush file &apos;%1&apos; does not contain valid JSON: %1</source>
         <translation>ブラシ ファイル &apos;%1&apos; には有効な JSON が含まれていません: %1</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="-55"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
         <translation>ブラシ ファイル &apos;%1&apos; からブラシをロードできません</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+61"/>
+        <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Brush file &apos;%1&apos; has invalid version %d</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+49"/>
+        <source>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+129"/>
         <source>No brushes exported</source>
         <translation>ブラシはエクスポートされませんでした</translation>
     </message>
@@ -918,27 +956,22 @@ Click to apply, undo to cancel.</source>
         <translation>&apos;%1&apos;: %2 の書き込みエラー</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+14"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
         <translation>&apos;%1&apos; タグをエクスポートできません</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+18"/>
         <source>Missing preset %1</source>
         <translation>プリセット %1 がありません</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Invalid preset %1</source>
-        <translation>プリセット %1 は無効です</translation>
-    </message>
-    <message>
-        <location line="+13"/>
+        <location line="+17"/>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
         <translation>&apos;%1&apos; プリセットをエクスポートできません</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+11"/>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
         <translation>&apos;%1&apos; プリセットのサムネイルをエクスポートできません</translation>
     </message>
@@ -946,7 +979,7 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>canvas::PaintEngine</name>
     <message>
-        <location filename="../canvas/paintengine.cpp" line="+203"/>
+        <location filename="../canvas/paintengine.cpp" line="+205"/>
         <source>Layer %1</source>
         <translation>レイヤー %1</translation>
     </message>
@@ -1086,7 +1119,7 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+492"/>
+        <location filename="../net/client.cpp" line="+527"/>
         <source>%1 banned by %2.</source>
         <translation>%1 は %2 によりBANされた。</translation>
     </message>
@@ -1111,7 +1144,7 @@ Click to apply, undo to cancel.</source>
         <translation>サーバーによって %1 の管理者ステータスが破棄されました。</translation>
     </message>
     <message>
-        <location line="-439"/>
+        <location line="-474"/>
         <source>You have been kicked.</source>
         <translation>あなたはキックされました。</translation>
     </message>
@@ -1151,7 +1184,7 @@ Click to apply, undo to cancel.</source>
         <translation>切断されました: %1</translation>
     </message>
     <message>
-        <location line="+371"/>
+        <location line="+406"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>モデレーターのみが通常のBANをエクスポートできます。</translation>
@@ -1263,7 +1296,7 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+120"/>
+        <location filename="../net/login.cpp" line="+121"/>
         <location line="+529"/>
         <source>Invalid state</source>
         <translation>無効な状態です</translation>
@@ -1612,7 +1645,12 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+200"/>
+        <location filename="../net/server.cpp" line="+195"/>
+        <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Network read error</source>
         <translation>ネットワーク読み込みエラー</translation>
     </message>
@@ -1641,21 +1679,43 @@ Click to apply, undo to cancel.</source>
         <source>Received invalid data</source>
         <translation>無効なデータを受信</translation>
     </message>
+    <message>
+        <location line="+51"/>
+        <source>Socket error %1: %2</source>
+        <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 (error %2)</source>
+        <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>tools::TransformSettings</name>
     <message>
-        <location filename="../tools/transform.cpp" line="+347"/>
+        <location filename="../tools/transform.cpp" line="+380"/>
         <source>You don&apos;t have permission to transform selections.</source>
         <translation>選択範囲を変形する権限がありません。</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-7"/>
         <source>No canvas present.</source>
         <translation>キャンバスが存在しません。</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="-244"/>
+        <source>You don&apos;t have permission for that transformation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+203"/>
+        <source>You don&apos;t have permission to stamp selections.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>Nothing selected that could be transformed.</source>
         <translation>変形できるものが選択されていません。</translation>
     </message>

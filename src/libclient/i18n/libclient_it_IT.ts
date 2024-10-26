@@ -15,9 +15,34 @@
     </message>
 </context>
 <context>
+    <name>BrushShortcutModel</name>
+    <message>
+        <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
+        <source>Conflict</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
+        <translation type="unfinished">Conflitto</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 (conflict)</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+85"/>
+        <source>Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Shortcut</source>
+        <translation type="unfinished">Scorciatoia</translation>
+    </message>
+</context>
+<context>
     <name>CanvasSaverRunnable</name>
     <message>
-        <location filename="../export/canvassaverrunnable.cpp" line="+41"/>
+        <location filename="../export/canvassaverrunnable.cpp" line="+84"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation>Argomenti sbagliati, questo è probabilmente un bug in Drawpile.</translation>
     </message>
@@ -55,7 +80,19 @@
 <context>
     <name>CanvasShortcutsModel</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="+94"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
+        <source>Conflict</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
+        <translation type="unfinished">Conflitto</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 (conflict)</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+76"/>
         <source>Shortcut</source>
         <translation>Scorciatoia</translation>
     </message>
@@ -70,7 +107,7 @@
         <translation>Modificatori</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+66"/>
         <source>%1</source>
         <extracomment>Example: &quot;Pan Canvas&quot;</extracomment>
         <translation>%1</translation>
@@ -105,7 +142,7 @@
         <translation>+</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+40"/>
         <source>Unset</source>
         <translation>Non impostato</translation>
     </message>
@@ -261,27 +298,34 @@
 <context>
     <name>CustomShortcutModel</name>
     <message>
-        <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
+        <location filename="../utils/customshortcutmodel.cpp" line="+57"/>
         <source>Conflict</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
         <translation>Conflitto</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+4"/>
+        <source>%1 (conflict)</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+126"/>
         <source>Action</source>
         <translation>Azione</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Shortcut</source>
         <translation>Scorciatoia</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Alternate</source>
         <translation>Alternato</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Default</source>
         <translation>Predefinito</translation>
     </message>
@@ -289,7 +333,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+757"/>
+        <location filename="../document.cpp" line="+917"/>
         <source>Unknown format.</source>
         <translation>Formato sconosciuto.</translation>
     </message>
@@ -314,7 +358,7 @@
         <translation>Errore sconosciuto.</translation>
     </message>
     <message>
-        <location line="+438"/>
+        <location line="+606"/>
         <source>Error saving image</source>
         <translation>Errore durante il salvataggio dell&apos;immagine</translation>
     </message>
@@ -356,45 +400,21 @@
 <context>
     <name>FillSettings</name>
     <message>
-        <location filename="../tools/floodfill.cpp" line="+251"/>
+        <location filename="../tools/floodfill.cpp" line="+275"/>
         <source>Filling…</source>
         <translation>Riempimento…</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="+71"/>
         <source>No layer selected.</source>
         <translation>Nessun livello selezionato.</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+15"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
         <translation>Impossibile riempire il gruppo di livelli %1.
 Seleziona invece un livello normale.</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Continuous fill</source>
-        <translation>Riempimento continuo</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Similar color fill</source>
-        <translation>Colore di riempimento simile</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Selection fill</source>
-        <translation>Riempimento della selezione</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>%1, %2 by %3 pixels.
-%4 at %5% opacity on %6.
-Click to apply, undo to cancel.</source>
-        <translation>%1, %2 per %3 pixel.
-%4 con %5% di opacità su %6.
-Fare clic per applicare, indietro per annullare.</translation>
     </message>
 </context>
 <context>
@@ -418,16 +438,9 @@ Fare clic per applicare, indietro per annullare.</translation>
 <context>
     <name>MagicWandSettings</name>
     <message>
-        <location filename="../tools/magicwand.cpp" line="+202"/>
+        <location filename="../tools/magicwand.cpp" line="+197"/>
         <source>Selecting…</source>
         <translation>Selezione…</translation>
-    </message>
-    <message>
-        <location line="+52"/>
-        <source>%1 by %2 pixels, %3% opacity.
-Click to apply, undo to cancel.</source>
-        <translation>%1 per %2 pixel, %3% di opacità.
-Fare clic per applicare, indietro per annullare.</translation>
     </message>
 </context>
 <context>
@@ -516,7 +529,7 @@ Fare clic per applicare, indietro per annullare.</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../drawdance/canvasstate.cpp" line="+47"/>
+        <location filename="../drawdance/canvasstate.cpp" line="+48"/>
         <source>Layer %1</source>
         <translation>Livello %1</translation>
     </message>
@@ -524,7 +537,7 @@ Fare clic per applicare, indietro per annullare.</translation>
 <context>
     <name>QShortcut</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="-103"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="-131"/>
         <source>Shift</source>
         <translation>Shift</translation>
     </message>
@@ -547,12 +560,12 @@ Fare clic per applicare, indietro per annullare.</translation>
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+529"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+534"/>
         <source>(untitled)</source>
         <translation>(Senza titolo)</translation>
     </message>
     <message>
-        <location line="-454"/>
+        <location line="-458"/>
         <source>%1d%2h%3m</source>
         <translation>%1g%2h%3m</translation>
     </message>
@@ -656,7 +669,7 @@ Fare clic per applicare, indietro per annullare.</translation>
         <translation>Durata</translation>
     </message>
     <message>
-        <location line="+177"/>
+        <location line="+181"/>
         <source>incompatible</source>
         <translation>incompatibile</translation>
     </message>
@@ -804,7 +817,7 @@ Fare clic per applicare, indietro per annullare.</translation>
         <translation>Colore</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+10"/>
         <source>Unknown</source>
         <translation>Sconosciuto</translation>
     </message>
@@ -812,7 +825,7 @@ Fare clic per applicare, indietro per annullare.</translation>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+612"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+1367"/>
         <source>Default</source>
         <translation>Predefinito</translation>
     </message>
@@ -820,7 +833,7 @@ Fare clic per applicare, indietro per annullare.</translation>
 <context>
     <name>brushes::BrushPresetTagModel</name>
     <message>
-        <location line="-103"/>
+        <location line="-128"/>
         <source>All</source>
         <translation>Tutto</translation>
     </message>
@@ -840,7 +853,7 @@ Fare clic per applicare, indietro per annullare.</translation>
         <translation>Mostra i pennelli non assegnati ad alcun tag.</translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+198"/>
         <source>Default</source>
         <translation>Predefinito</translation>
     </message>
@@ -850,18 +863,18 @@ Fare clic per applicare, indietro per annullare.</translation>
         <translation>Pennello Classico %1</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Converted from %1.</source>
         <translation>Convertito da %1.</translation>
     </message>
     <message>
-        <location line="+19"/>
-        <location line="+211"/>
+        <location line="+16"/>
+        <location line="+460"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
         <translation>Impossibile aprire &apos;%1&apos;.</translation>
     </message>
     <message>
-        <location line="-181"/>
+        <location line="-423"/>
         <source>Invalid brush pack: order.conf not found inside</source>
         <translation>Pacchetto di pennelli non valido: order.conf non trovato all&apos;interno</translation>
     </message>
@@ -871,12 +884,12 @@ Fare clic per applicare, indietro per annullare.</translation>
         <translation>Senza categoria %1</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+23"/>
         <source>Invalid brush pack: order.conf contains no brushes</source>
         <translation>Pacchetto di pennelli non valido: order.conf non contiene pennelli</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+53"/>
         <source>Could not create tag &apos;%1&apos;.</source>
         <translation>Impossibile creare il tag &apos;%1&apos;.</translation>
     </message>
@@ -891,22 +904,47 @@ Fare clic per applicare, indietro per annullare.</translation>
         <translation>Impossibile assegnare il pennello &apos;%1&apos; al tag &apos;%2&apos;.</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+19"/>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
         <translation>Impossibile leggere il file del pennello &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+15"/>
+        <source>Unknown brush format in file &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+66"/>
         <source>Brush file &apos;%1&apos; does not contain valid JSON: %1</source>
         <translation>Il file pennello &apos;%1&apos; non contiene JSON valido: %1</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="-55"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
         <translation>Impossibile caricare il pennello dal file pennello &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+61"/>
+        <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Brush file &apos;%1&apos; has invalid version %d</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+49"/>
+        <source>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+129"/>
         <source>No brushes exported</source>
         <translation>Nessun pennello esportato</translation>
     </message>
@@ -921,27 +959,22 @@ Fare clic per applicare, indietro per annullare.</translation>
         <translation>Errore scrittura &apos;%1&apos; : %2</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+14"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
         <translation>Impossibile esportare tag &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+18"/>
         <source>Missing preset %1</source>
         <translation>Preset mancante &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Invalid preset %1</source>
-        <translation>Preset invalido %1</translation>
-    </message>
-    <message>
-        <location line="+13"/>
+        <location line="+17"/>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
         <translation>Impossibile esportare preset &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+11"/>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
         <translation>Impossibile esportare anteprima del preset &apos;%1&apos;</translation>
     </message>
@@ -949,7 +982,7 @@ Fare clic per applicare, indietro per annullare.</translation>
 <context>
     <name>canvas::PaintEngine</name>
     <message>
-        <location filename="../canvas/paintengine.cpp" line="+203"/>
+        <location filename="../canvas/paintengine.cpp" line="+205"/>
         <source>Layer %1</source>
         <translation>Livello %1</translation>
     </message>
@@ -1089,7 +1122,7 @@ Fare clic per applicare, indietro per annullare.</translation>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+492"/>
+        <location filename="../net/client.cpp" line="+527"/>
         <source>%1 banned by %2.</source>
         <translation>%1 bannato da %2.</translation>
     </message>
@@ -1114,7 +1147,7 @@ Fare clic per applicare, indietro per annullare.</translation>
         <translation>Stato da Operatore revocato da %1 dal server.</translation>
     </message>
     <message>
-        <location line="-439"/>
+        <location line="-474"/>
         <source>You have been kicked.</source>
         <translation>Sei stato espulso.</translation>
     </message>
@@ -1154,7 +1187,7 @@ Fare clic per applicare, indietro per annullare.</translation>
         <translation>Disconnesso: %1</translation>
     </message>
     <message>
-        <location line="+371"/>
+        <location line="+406"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>Solo i moderatori possono esportare i ban.</translation>
@@ -1266,7 +1299,7 @@ Fare clic per applicare, indietro per annullare.</translation>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+120"/>
+        <location filename="../net/login.cpp" line="+121"/>
         <location line="+529"/>
         <source>Invalid state</source>
         <translation>Stato non valido</translation>
@@ -1616,7 +1649,12 @@ Fare clic per applicare, indietro per annullare.</translation>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+200"/>
+        <location filename="../net/server.cpp" line="+195"/>
+        <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Network read error</source>
         <translation>Errore di lettura della rete</translation>
     </message>
@@ -1645,21 +1683,43 @@ Fare clic per applicare, indietro per annullare.</translation>
         <source>Received invalid data</source>
         <translation>Ricevuti dati non validi</translation>
     </message>
+    <message>
+        <location line="+51"/>
+        <source>Socket error %1: %2</source>
+        <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 (error %2)</source>
+        <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>tools::TransformSettings</name>
     <message>
-        <location filename="../tools/transform.cpp" line="+347"/>
+        <location filename="../tools/transform.cpp" line="+380"/>
         <source>You don&apos;t have permission to transform selections.</source>
         <translation>Non hai l&apos;autorizzazione per trasformare le selezioni.</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-7"/>
         <source>No canvas present.</source>
         <translation>Nessuna tela presente.</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="-244"/>
+        <source>You don&apos;t have permission for that transformation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+203"/>
+        <source>You don&apos;t have permission to stamp selections.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>Nothing selected that could be transformed.</source>
         <translation>Niente di selezionato che potrebbe essere trasformato.</translation>
     </message>

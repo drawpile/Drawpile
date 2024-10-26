@@ -15,9 +15,34 @@
     </message>
 </context>
 <context>
+    <name>BrushShortcutModel</name>
+    <message>
+        <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
+        <source>Conflict</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
+        <translation type="unfinished">冲突</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 (conflict)</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+85"/>
+        <source>Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Shortcut</source>
+        <translation type="unfinished">快捷键</translation>
+    </message>
+</context>
+<context>
     <name>CanvasSaverRunnable</name>
     <message>
-        <location filename="../export/canvassaverrunnable.cpp" line="+41"/>
+        <location filename="../export/canvassaverrunnable.cpp" line="+84"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation>糟糕的争论, 这可能是Drawpile的一个bug.</translation>
     </message>
@@ -55,7 +80,19 @@
 <context>
     <name>CanvasShortcutsModel</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="+94"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
+        <source>Conflict</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
+        <translation type="unfinished">冲突</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 (conflict)</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+76"/>
         <source>Shortcut</source>
         <translation>快捷键</translation>
     </message>
@@ -70,7 +107,7 @@
         <translation>修饰键</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+66"/>
         <source>%1</source>
         <extracomment>Example: &quot;Pan Canvas&quot;</extracomment>
         <translation>%1</translation>
@@ -105,7 +142,7 @@
         <translation>+</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+40"/>
         <source>Unset</source>
         <translation>未设置</translation>
     </message>
@@ -261,27 +298,34 @@
 <context>
     <name>CustomShortcutModel</name>
     <message>
-        <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
+        <location filename="../utils/customshortcutmodel.cpp" line="+57"/>
         <source>Conflict</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
         <translation>冲突</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+4"/>
+        <source>%1 (conflict)</source>
+        <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+126"/>
         <source>Action</source>
         <translation>动作</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Shortcut</source>
         <translation>快捷键</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Alternate</source>
         <translation>备选</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Default</source>
         <translation>默认</translation>
     </message>
@@ -289,7 +333,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+757"/>
+        <location filename="../document.cpp" line="+917"/>
         <source>Unknown format.</source>
         <translation>未知格式.</translation>
     </message>
@@ -314,7 +358,7 @@
         <translation>未知错误.</translation>
     </message>
     <message>
-        <location line="+438"/>
+        <location line="+606"/>
         <source>Error saving image</source>
         <translation>保存图片时出现错误</translation>
     </message>
@@ -356,45 +400,21 @@
 <context>
     <name>FillSettings</name>
     <message>
-        <location filename="../tools/floodfill.cpp" line="+251"/>
+        <location filename="../tools/floodfill.cpp" line="+275"/>
         <source>Filling…</source>
         <translation>填充…</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="+71"/>
         <source>No layer selected.</source>
         <translation>未选择图层.</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+15"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
         <translation>无法填充图层组 %1.
 请选择一个常规图层.</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Continuous fill</source>
-        <translation>连续区域填充</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Similar color fill</source>
-        <translation>相似颜色填充</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Selection fill</source>
-        <translation>选区填充</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>%1, %2 by %3 pixels.
-%4 at %5% opacity on %6.
-Click to apply, undo to cancel.</source>
-        <translation>%1, %2 乘以 %3 像素.
-%4 以 %5% 的不透明度显示在 %6.
-点击应用, 撤销取消.</translation>
     </message>
 </context>
 <context>
@@ -418,16 +438,9 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>MagicWandSettings</name>
     <message>
-        <location filename="../tools/magicwand.cpp" line="+202"/>
+        <location filename="../tools/magicwand.cpp" line="+197"/>
         <source>Selecting…</source>
         <translation>选择…</translation>
-    </message>
-    <message>
-        <location line="+52"/>
-        <source>%1 by %2 pixels, %3% opacity.
-Click to apply, undo to cancel.</source>
-        <translation>%1 乘以 %2 像素, %3% 不透明度.
-点击应用, 撤销取消.</translation>
     </message>
 </context>
 <context>
@@ -516,7 +529,7 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../drawdance/canvasstate.cpp" line="+47"/>
+        <location filename="../drawdance/canvasstate.cpp" line="+48"/>
         <source>Layer %1</source>
         <translation>图层 %1</translation>
     </message>
@@ -524,7 +537,7 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>QShortcut</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="-103"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="-131"/>
         <source>Shift</source>
         <translation>Shift键</translation>
     </message>
@@ -547,12 +560,12 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+529"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+534"/>
         <source>(untitled)</source>
         <translation>(未命名)</translation>
     </message>
     <message>
-        <location line="-454"/>
+        <location line="-458"/>
         <source>%1d%2h%3m</source>
         <translation>%1d%2h%3m</translation>
     </message>
@@ -653,7 +666,7 @@ Click to apply, undo to cancel.</source>
         <translation>存在时长</translation>
     </message>
     <message>
-        <location line="+177"/>
+        <location line="+181"/>
         <source>incompatible</source>
         <translation>不兼容的</translation>
     </message>
@@ -801,7 +814,7 @@ Click to apply, undo to cancel.</source>
         <translation>颜色</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+10"/>
         <source>Unknown</source>
         <translation>未知的</translation>
     </message>
@@ -809,7 +822,7 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+612"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+1367"/>
         <source>Default</source>
         <translation>Default</translation>
     </message>
@@ -817,7 +830,7 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>brushes::BrushPresetTagModel</name>
     <message>
-        <location line="-103"/>
+        <location line="-128"/>
         <source>All</source>
         <translation>全部</translation>
     </message>
@@ -837,7 +850,7 @@ Click to apply, undo to cancel.</source>
         <translation>显示未添加标签的笔刷.</translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+198"/>
         <source>Default</source>
         <translation>Default</translation>
     </message>
@@ -847,18 +860,18 @@ Click to apply, undo to cancel.</source>
         <translation>Classic Brush %1</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Converted from %1.</source>
         <translation>Converted from %1.</translation>
     </message>
     <message>
-        <location line="+19"/>
-        <location line="+211"/>
+        <location line="+16"/>
+        <location line="+460"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
         <translation>无法打开 &apos;%1&apos;.</translation>
     </message>
     <message>
-        <location line="-181"/>
+        <location line="-423"/>
         <source>Invalid brush pack: order.conf not found inside</source>
         <translation>无效笔刷包: 里面未找到order.conf</translation>
     </message>
@@ -868,12 +881,12 @@ Click to apply, undo to cancel.</source>
         <translation>未分类 %1</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+23"/>
         <source>Invalid brush pack: order.conf contains no brushes</source>
         <translation>无效笔刷包: order.conf 未包含笔刷</translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="+71"/>
         <source>Could not create brush preset &apos;%1&apos;.</source>
         <translation>无法创建笔刷预设&apos;%1&apos;.</translation>
     </message>
@@ -883,7 +896,32 @@ Click to apply, undo to cancel.</source>
         <translation>无法将笔刷&apos;%1&apos;分配给标签&apos;%2&apos;.</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+34"/>
+        <source>Unknown brush format in file &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+72"/>
+        <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Brush file &apos;%1&apos; has invalid version %d</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+49"/>
+        <source>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+129"/>
         <source>No brushes exported</source>
         <translation>没有笔刷导出</translation>
     </message>
@@ -898,47 +936,42 @@ Click to apply, undo to cancel.</source>
         <translation>错误写入 &apos;%1&apos;: %2</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+14"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
         <translation>无法导出标签 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+18"/>
         <source>Missing preset %1</source>
         <translation>缺少预设 %1</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Invalid preset %1</source>
-        <translation>无效预设 %1</translation>
-    </message>
-    <message>
-        <location line="+13"/>
+        <location line="+17"/>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
         <translation>无法导出预设 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+11"/>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
         <translation>无法导出预设图标 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="-180"/>
+        <location line="-425"/>
         <source>Could not create tag &apos;%1&apos;.</source>
         <translation>无法创建标签&apos;%1&apos;.</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+44"/>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
         <translation>无法读取笔刷文件 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+81"/>
         <source>Brush file &apos;%1&apos; does not contain valid JSON: %1</source>
         <translation>笔刷文件 &apos;%1&apos; 不包含有效的 JSON: %1</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="-55"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
         <translation>无法从笔刷文件&apos;%1&apos;中加载笔刷</translation>
     </message>
@@ -946,7 +979,7 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>canvas::PaintEngine</name>
     <message>
-        <location filename="../canvas/paintengine.cpp" line="+203"/>
+        <location filename="../canvas/paintengine.cpp" line="+205"/>
         <source>Layer %1</source>
         <translation>图层 %1</translation>
     </message>
@@ -1086,7 +1119,7 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+492"/>
+        <location filename="../net/client.cpp" line="+527"/>
         <source>%1 banned by %2.</source>
         <translation>%1 已被 %2 禁止IP.</translation>
     </message>
@@ -1111,7 +1144,7 @@ Click to apply, undo to cancel.</source>
         <translation>%1 的房间管理员身份已被服务器移除.</translation>
     </message>
     <message>
-        <location line="-439"/>
+        <location line="-474"/>
         <source>You have been kicked.</source>
         <translation>你已被踢除.</translation>
     </message>
@@ -1151,7 +1184,7 @@ Click to apply, undo to cancel.</source>
         <translation>断开连接: %1</translation>
     </message>
     <message>
-        <location line="+371"/>
+        <location line="+406"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>只有服务器管理员可以导出普通的被禁的用户.</translation>
@@ -1263,7 +1296,7 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+120"/>
+        <location filename="../net/login.cpp" line="+121"/>
         <location line="+529"/>
         <source>Invalid state</source>
         <translation>无效状态</translation>
@@ -1612,7 +1645,12 @@ Click to apply, undo to cancel.</source>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+200"/>
+        <location filename="../net/server.cpp" line="+195"/>
+        <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Network read error</source>
         <translation>网络读取错误</translation>
     </message>
@@ -1641,21 +1679,43 @@ Click to apply, undo to cancel.</source>
         <source>Received invalid data</source>
         <translation>接收数据无效</translation>
     </message>
+    <message>
+        <location line="+51"/>
+        <source>Socket error %1: %2</source>
+        <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 (error %2)</source>
+        <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>tools::TransformSettings</name>
     <message>
-        <location filename="../tools/transform.cpp" line="+347"/>
+        <location filename="../tools/transform.cpp" line="+380"/>
         <source>You don&apos;t have permission to transform selections.</source>
         <translation>你没有权限变换选区.</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-7"/>
         <source>No canvas present.</source>
         <translation>无画布.</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="-244"/>
+        <source>You don&apos;t have permission for that transformation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+203"/>
+        <source>You don&apos;t have permission to stamp selections.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>Nothing selected that could be transformed.</source>
         <translation>未选中有东西可以被变换.</translation>
     </message>
