@@ -47,6 +47,9 @@ Unreleased Version 2.2.2-pre
  * Feature: Allow configuring flood fill preview and confirmation behavior, defaulting to the simplest mode similar to single-user software, but still previewing fills locally first. The magic wand always works this way for now, since selections are local only anyway.
  * Feature: Show resize dialog when expanding canvas, to avoid accidental resizes and improve performance by doing the expansions all in one step. The keyboard shortcuts to expand the canvas work in this dialog now and also auto-repeat if you hold them down. Thanks Bluestrings and tobiasBora for suggesting things in this regard.
  * Fix: Indicate denied permissions by showing a message to that effect, rather than just disabling the actions and leaving you guessing. Thanks Venesio for reporting.
+ * Fix: Clicking off of an annotation will no longer instantly create a new one in that spot. It will instead only deselect the annotation that was selected.
+ * Fix: The Delete Empty Annotations can now be undone without undoing what happened before it as well.
+ * Feature: Empty annotations are now automatically deleted when you deselect them, to avoid the common clutter of stray empty annotations across the canvas. If you really did want an empty annotation, you can hit undo and it will return.
 
 2024-08-09 Version 2.2.2-beta.3
  * Fix: Use more accurate timers for performance profiles if the platform supports it.
