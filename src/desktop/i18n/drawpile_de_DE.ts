@@ -116,7 +116,7 @@
     <message>
         <location line="-92"/>
         <source>Brush type</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinseltyp</translation>
     </message>
     <message>
         <location line="+95"/>
@@ -795,23 +795,23 @@
         <location line="+96"/>
         <location line="+3"/>
         <source>Apply the pending fill, making it visible for everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>Wendet die bevorstehende Füllung an, womit sie für alle sichtbar wird</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Apply</source>
-        <translation type="unfinished">Anwenden</translation>
+        <translation>Anwenden</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation type="unfinished"></translation>
+        <translation>Bricht die bevorstehende Füllung ab, ohne dass andere sie sehen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location line="-336"/>
@@ -1605,57 +1605,57 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location line="+202"/>
         <source>&amp;Fit Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>An Leinwand &amp;anpassen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fit Canvas &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>An Leinwand&amp;breite anpassen</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Fit Canvas &amp;Height</source>
-        <translation type="unfinished"></translation>
+        <translation>An Leinwand&amp;höhe anpassen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Reset Canvas Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand&amp;rotation zurücksetzen</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Rotate Canvas Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand gegen den Uhrzeigersinn rotieren</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Mirror Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand horizontal spiegeln</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror the canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Spiegelt die Leinwand horizontal</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand horizontal spiegeln/umkehren</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand vertikal spiegeln</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the canvas upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Spiegelt die Leinwand vertikal</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand vertikal spiegeln/umkehren</translation>
     </message>
     <message>
         <location line="+266"/>
@@ -1889,7 +1889,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <location line="+6"/>
         <location filename="../mainwindow.cpp" line="+2"/>
         <source>Toggle Layer &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebenen&amp;sichtbarkeit umschalten</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+18"/>
@@ -2182,32 +2182,32 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <location line="+349"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sie haben keine Berechtigung zum Ausschneiden, Einfügen, Füllen oder Löschen.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to resize the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie haben keine Berechtigung die Leinwandgröße zu ändern.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie haben keine Berechtigung den Sitzungshintergrund zu ändern.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to create annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>SIe haben keine Berechtigung um Annotationen zu erstellen.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to undo or redo.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie haben keine Berechtigung zum Rückgängig machen oder Wiederherstellen.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie haben keine Berechtigung dies zu tun.</translation>
     </message>
     <message>
         <location line="+222"/>
@@ -2382,12 +2382,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+22"/>
         <source>Cause Crash</source>
-        <translation type="unfinished"></translation>
+        <translation>Absturz verursachen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Do you really want to crash Drawpile? This will terminate the program and you will lose any unsaved data!</source>
-        <translation type="unfinished"></translation>
+        <translation>Möchten Sie wirklich Drawpile zum Absturz bringen? Dies wird das Programm beenden und Sie werden alle ungespeicherten Daten verlieren!</translation>
     </message>
     <message>
         <location line="+39"/>
