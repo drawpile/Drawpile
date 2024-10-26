@@ -10989,7 +10989,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+5"/>
         <source>Set background color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrundfarbe einstellen&#xa0;…</translation>
     </message>
     <message>
         <location line="+5"/>
