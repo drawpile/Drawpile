@@ -8722,7 +8722,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+2"/>
         <source>Two-finger pinch:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit zwei Fingern kneifen:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8742,7 +8742,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>Two-finger twist:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit zwei Fingern drehen:</translation>
     </message>
 </context>
 <context>
@@ -9426,14 +9426,14 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Überschreiben</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+297"/>
         <location line="+45"/>
         <source>Keep</source>
-        <translation type="unfinished"></translation>
+        <translation>Beibehalten</translation>
     </message>
     <message>
         <location line="-142"/>
@@ -9461,7 +9461,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="-3"/>
         <source>Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel löschen</translation>
     </message>
     <message>
         <location line="+1"/>
