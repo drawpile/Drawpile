@@ -9649,7 +9649,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../docks/colorsliders.cpp" line="+80"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbraum</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9670,7 +9670,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+330"/>
         <source>HCL</source>
         <extracomment>Color space HCL (hue, chroma, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HCL</translation>
     </message>
     <message>
         <location line="-317"/>
