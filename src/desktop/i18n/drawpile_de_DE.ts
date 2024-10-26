@@ -9935,7 +9935,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Visibility</source>
-        <translation>Ebenen&amp;sichtbarkeit umschalten</translation>
+        <translation>Ebenengruppen&amp;sichtbarkeit umschalten</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10166,18 +10166,18 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+81"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Anmerkungen sind versteckt. </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Anzeigen</translation>
     </message>
     <message>
         <location line="+343"/>
         <source>You don&apos;t have permission to paste merged annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie haben keine Berechtigung zusammengeführte Annotationen einzufügen.</translation>
     </message>
 </context>
 <context>
@@ -10185,42 +10185,42 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-106"/>
         <source>&amp;Edit Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Pins&amp;el bearbeiten…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel zu&amp;rücksetzen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Pinsel-&amp;Slots zurücksetzen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle &amp;Pinsel zurücksetzen</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;New Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Neuer Pinsel…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel &amp;überschreiben</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel &amp;löschen</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>De&amp;tach Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel a&amp;blösen</translation>
     </message>
     <message>
         <location line="+84"/>
@@ -10301,32 +10301,32 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../toolwidgets/fillsettings.cpp" line="+74"/>
         <source>Fill tool settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Füllwerkzeugeinstellungen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Edit pending fills</source>
-        <translation type="unfinished"></translation>
+        <translation>B&amp;evorstehende Füllungen bearbeiten</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply changes in settings, color and layer to fills not yet applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Änderungen an Einstellungen, Farbe und Ebenen auf noch nicht angewendete Füllungen anwenden</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Confirm fills with second click</source>
-        <translation type="unfinished"></translation>
+        <translation>Füllung mit zweitem &amp;Klick bestätigen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lets you apply fills with a click instead of starting another fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Lässt Sie Füllungen per Klick anwenden, statt damit die nächste Füllung zu beginnen</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>You don&apos;t have permission to use the fill tool.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie haben keine Berechtigung das Füllwerkzeug zu verwenden.</translation>
     </message>
     <message>
         <location line="+223"/>
@@ -10344,19 +10344,19 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../toolwidgets/lasersettings.cpp" line="+93"/>
         <source>You don&apos;t have permission to use the laser pointer.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie haben keine Berechtigung den Laserpointer zu verwenden.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Laser trails are hidden. </source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Laserspuren sind versteckt. </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Anzeigen</translation>
     </message>
 </context>
 <context>
@@ -10553,12 +10553,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+32"/>
         <source>Compressing canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand wird komprimiert…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Uploading canvas %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand hochladen %1%</translation>
     </message>
 </context>
 <context>
@@ -10627,7 +10627,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../widgets/brushpreview.cpp" line="+18"/>
         <source>Click to edit brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Klicken um den Pinsel zu bearbeiten</translation>
     </message>
 </context>
 <context>
