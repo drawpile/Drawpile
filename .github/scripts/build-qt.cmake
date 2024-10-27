@@ -36,7 +36,7 @@ option(KEEP_ARCHIVES "Keep downloaded archives instead of deleting them" OFF)
 option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
 option(KEEP_BINARY_DIRS "Keep build directories instead of deleting them" OFF)
 set(TARGET_ARCH "x86_64" CACHE STRING
-	"Target architecture (x86, x86_64, arm32, arm64)")
+	"Target architecture (x86, x86_64, arm32, arm64, wasm)")
 
 if(NOT QT_VERSION)
 	message(FATAL_ERROR "-DQT_VERSION is required")

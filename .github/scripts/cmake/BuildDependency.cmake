@@ -48,7 +48,7 @@ function(build_dependency name version build_type)
 	set(multiValueArgs VERSIONS PATCHES ALL_PLATFORMS UNIX WIN32)
 	cmake_parse_arguments(PARSE_ARGV 3 ARG "" "${oneValueArgs}" "${multiValueArgs}")
 
-	if(ARG_TARGET_ARCH STREQUAL "x86" OR ARG_TARGET_ARCH STREQUAL "arm32")
+	if(ARG_TARGET_ARCH STREQUAL "x86" OR ARG_TARGET_ARCH STREQUAL "arm32" OR ARG_TARGET_ARCH STREQUAL "wasm")
 		set(BUILD_TARGET_BITS 32)
 	elseif(ARG_TARGET_ARCH STREQUAL "x86_64" OR ARG_TARGET_ARCH STREQUAL "arm64")
 		set(BUILD_TARGET_BITS 64)
@@ -224,10 +224,19 @@ function(_build_automake build_type target_bits source_dir)
 		set(install install)
 	endif()
 
-	# Windows needs special care because shebangs don't work there and it has
-	# both GNU Make, which regular autoconf uses, and Microsoft's nmake, which
-	# OpenSSL uses. They are mutually incompatible of course.
-	if(WIN32)
+	if(EMSCRIPTEN)
+		set(make "emmake" "make")
+		execute_process(
+			COMMAND "${CMAKE_COMMAND}" -E env ${env}
+				emconfigure "${configure}" ${prefix} ${configure_flags}
+			COMMAND_ECHO STDOUT
+			WORKING_DIRECTORY "${source_dir}"
+			COMMAND_ERROR_IS_FATAL ANY
+		)
+	elseif(WIN32)
+		# Windows needs special care because shebangs don't work there and it
+		# has both GNU Make, which regular autoconf uses, and Microsoft's nmake,
+		# which OpenSSL uses. They are mutually incompatible of course.
 		if(ARG_WIN32_CC_CL)
 			list(APPEND env "CC=cl")
 		endif()
@@ -280,7 +289,13 @@ function(_build_automake build_type target_bits source_dir)
 endfunction()
 
 function(_build_cmake build_type target_bits source_dir)
-	set(configure "${CMAKE_COMMAND}" -S "${source_dir}" -B .)
+	if(OVERRIDE_CMAKE_COMMAND)
+		set(configure "${OVERRIDE_CMAKE_COMMAND}")
+	else()
+		set(configure "${CMAKE_COMMAND}")
+	endif()
+	list(APPEND configure -S "${source_dir}" -B .)
+
 	cmake_parse_arguments(PARSE_ARGV 2 "CMAKE_ARG" "NO_DEFAULT_FLAGS;NO_DEFAULT_BUILD_TYPE" "" "")
 	_parse_flags("${build_type}" "${source_dir}" configure configure_flags env ${CMAKE_ARG_UNPARSED_ARGUMENTS})
 

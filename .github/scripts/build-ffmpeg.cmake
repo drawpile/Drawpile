@@ -17,8 +17,12 @@ set(FFMPEG "7.0.1" CACHE STRING
 option(KEEP_ARCHIVES "Keep downloaded archives instead of deleting them" OFF)
 option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
 option(KEEP_BINARY_DIRS "Keep build directories instead of deleting them" OFF)
+option(EMSCRIPTEN "Build for WebAssembly via Emscripten" OFF)
+option(EMSCRIPTEN_THREADS "Enable threads in Emscripten" ON)
 set(TARGET_ARCH "x86_64" CACHE STRING
-	"Target architecture (x86, x86_64, arm32, arm64)")
+	"Target architecture (x86, x86_64, arm32, arm64, wasm)")
+set(OVERRIDE_CMAKE_COMMAND "" CACHE STRING
+	"Command to use to run cmake (instead of ${CMAKE_COMMAND})")
 
 include(BuildDependency)
 
@@ -46,6 +50,10 @@ if(LIBWEBP)
 		list(APPEND libwebp_cmake_args -DWEBP_ENABLE_WUNUSED_RESULT=ON)
 	endif()
 
+	if(EMSCRIPTEN AND EMSCRIPTEN_THREADS)
+		list(APPEND libwebp_cmake_args -DCMAKE_C_FLAGS=-pthread)
+	endif()
+
 	build_dependency(libwebp ${LIBWEBP} ${BUILD_TYPE}
 		URL https://github.com/webmproject/libwebp/archive/refs/tags/v@version@.tar.gz
 		TARGET_ARCH "${TARGET_ARCH}"
@@ -62,7 +70,7 @@ if(LIBWEBP)
 	)
 endif()
 
-if(LIBVPX)
+if(NOT EMSCRIPTEN AND LIBVPX)
 	set(libvpx_configure_args
 		--disable-debug
 		--disable-debug-libs
@@ -172,7 +180,7 @@ if(LIBVPX)
 	endif()
 endif()
 
-if(LIBX264)
+if(NOT EMSCRIPTEN AND LIBX264)
 	set(x264_configure_args
 		--enable-static
 		--enable-pic
@@ -217,7 +225,7 @@ if(LIBX264)
 	)
 endif()
 
-if(FFMPEG)
+if(NOT EMSCRIPTEN AND FFMPEG)
 	set(ffmpeg_configure_args
 		# This referes to warnings in configure, not build warnings. Warnings
 		# include pretty important stuff like not including a requested encoder,

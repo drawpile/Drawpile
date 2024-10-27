@@ -22,8 +22,12 @@ set(KARCHIVE6 "v6.3.0" CACHE STRING
 option(KEEP_ARCHIVES "Keep downloaded archives instead of deleting them" OFF)
 option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
 option(KEEP_BINARY_DIRS "Keep build directories instead of deleting them" OFF)
+option(EMSCRIPTEN "Build for WebAssembly via Emscripten" OFF)
+option(EMSCRIPTEN_THREADS "Enable threads in Emscripten" ON)
 set(TARGET_ARCH "x86_64" CACHE STRING
-	"Target architecture (x86, x86_64, arm32, arm64)")
+	"Target architecture (x86, x86_64, arm32, arm64, wasm)")
+set(OVERRIDE_CMAKE_COMMAND "" CACHE STRING
+	"Command to use to run cmake (instead of ${CMAKE_COMMAND})")
 
 # Hack to get Qt version, since its `find_package` code does not support script
 # mode and this information is needed to set up QtKeychain and the macOS version
@@ -56,6 +60,9 @@ if(QT_VERSION VERSION_GREATER_EQUAL 6)
 else()
 	set(BUILD_WITH_QT6 off)
 	set(KARCHIVE "${KARCHIVE5}")
+	if(EMSCRIPTEN)
+		message(FATAL_ERROR "Building for Emscripten is only implemented for Qt6")
+	endif()
 endif()
 
 include(QtMacDeploymentTarget)
@@ -63,9 +70,13 @@ set_mac_deployment_target(${QT_VERSION})
 
 include(BuildDependency)
 
-# macdeployqt does not search rpaths correctly so give a full path of the
-# library instead
-if(APPLE AND NOT ANDROID)
+if(EMSCRIPTEN)
+	if(EMSCRIPTEN_THREADS)
+		set(extra_cmake_flags -DCMAKE_C_FLAGS=-pthread)
+	endif()
+elseif(APPLE AND NOT ANDROID)
+	# macdeployqt does not search rpaths correctly so give a full path of the
+	# library instead
 	set(extra_cmake_flags "-DCMAKE_INSTALL_NAME_DIR=${CMAKE_INSTALL_PREFIX}/lib")
 endif()
 
@@ -82,7 +93,7 @@ if(WIN32 AND ZLIB)
 	)
 endif()
 
-if(NOT ANDROID AND LIBMICROHTTPD)
+if(NOT ANDROID AND NOT EMSCRIPTEN AND LIBMICROHTTPD)
 	if(USE_ASAN)
 		set(extra_debug_flags --enable-sanitizers=address)
 	endif()
@@ -110,7 +121,7 @@ if(NOT ANDROID AND LIBMICROHTTPD)
 	)
 endif()
 
-if(LIBSODIUM)
+if(NOT EMSCRIPTEN AND LIBSODIUM)
 	unset(libsodium_configure_args)
 	if(ANDROID)
 		list(APPEND libsodium_configure_args ac_cv_func_memset_explicit=no)
@@ -137,7 +148,7 @@ if(LIBSODIUM)
 	)
 endif()
 
-if(QTKEYCHAIN)
+if(NOT EMSCRIPTEN AND QTKEYCHAIN)
 	build_dependency(qtkeychain ${QTKEYCHAIN} ${BUILD_TYPE}
 		URL https://github.com/frankosterfeld/qtkeychain/archive/@version@.tar.gz
 		TARGET_ARCH "${TARGET_ARCH}"
