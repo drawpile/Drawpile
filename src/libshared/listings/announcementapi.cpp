@@ -247,8 +247,11 @@ AnnouncementApiResponse *getSessionList(const QUrl &apiUrl)
 		}
 
 		QVector<Session> sessions;
-
+#if QT_CONFIG(timezone)
 		QTimeZone utc = QTimeZone::utc();
+#else
+		QTimeZone utc = QTimeZone(QTimeZone::UTC);
+#endif
 		for(const QJsonValue jsv : doc.array()) {
 			if(!jsv.isObject()) {
 				res->setError(QStringLiteral("Expected session description!"));

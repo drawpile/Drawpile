@@ -245,7 +245,11 @@ QJsonObject Client::description(bool includeSession) const
 	u["name"] = username();
 	u["ip"] = peerAddress().toString();
 	u["s"] = sid();
+#if QT_CONFIG(timezone)
 	QTimeZone utc = QTimeZone::utc();
+#else
+	QTimeZone utc = QTimeZone(QTimeZone::UTC);
+#endif
 	u["lastActive"] = QDateTime::fromMSecsSinceEpoch(d->lastActive, utc)
 						  .toString(Qt::ISODate);
 	u["lastActiveDrawing"] =
