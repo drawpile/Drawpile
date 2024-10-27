@@ -161,7 +161,7 @@
     <message>
         <location line="-214"/>
         <source>Brush type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo de cepillo</translation>
     </message>
     <message>
         <location line="+92"/>
@@ -629,12 +629,12 @@
     <message>
         <location line="+167"/>
         <source>Export Frames in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Fotogramas en ZIP</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Video de WEBM</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -789,7 +789,7 @@
     <message>
         <location line="+3"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplicar</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -817,7 +817,7 @@
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+127"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Límite de Tamaño: Sin límite</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="-260"/>
@@ -1352,32 +1352,32 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+131"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>No tienes permisión para cortar, pegar, llenar o eliminar.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to resize the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>No tienes permisión para cambiar el tamaño del lienzo.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation type="unfinished"></translation>
+        <translation>No tienes permisión para cambiar el fondo de lienzo.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to create annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>No tienes permisión para añadir anotaciones.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to undo or redo.</source>
-        <translation type="unfinished"></translation>
+        <translation>No tienes permisión para deshacer o rehacer.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>No tienes permisión para hacer eso.</translation>
     </message>
     <message>
         <location line="+390"/>
@@ -1500,7 +1500,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Do you really want to crash Drawpile? This will terminate the program and you will lose any unsaved data!</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Actualmente quieres fallar a Drawpile? ¡Esta acción cerrará Drawpile y perderás tu información sin guardada!</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -1651,22 +1651,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+16"/>
         <source>Expand &amp;Up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir Arriba…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Down…</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir Baja…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Left…</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir Izquierda…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Right…</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir Derecha…</translation>
     </message>
     <message>
         <location line="+176"/>
@@ -1711,7 +1711,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Flip Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Reflejar lienzo</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1726,7 +1726,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+135"/>
         <source>Group View</source>
-        <translation type="unfinished"></translation>
+        <translation>Vista de Grupo</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2185,7 +2185,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+22"/>
         <source>Error downloading profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error descargando perfil.</translation>
     </message>
     <message>
         <location line="+5"/>
