@@ -20,23 +20,23 @@
         <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished">Conflitto</translation>
+        <translation>Conflitto</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (conflitto)</translation>
     </message>
     <message>
         <location line="+85"/>
         <source>Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pennello</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shortcut</source>
-        <translation type="unfinished">Scorciatoia</translation>
+        <translation>Scorciatoia</translation>
     </message>
 </context>
 <context>
@@ -83,13 +83,13 @@
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished">Conflitto</translation>
+        <translation>Conflitto</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (conflitto)</translation>
     </message>
     <message>
         <location line="+76"/>
@@ -307,7 +307,7 @@
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (conflitto)</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -911,7 +911,7 @@ Seleziona invece un livello normale.</translation>
     <message>
         <location line="+15"/>
         <source>Unknown brush format in file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato pennello sconosciuto nel file &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+66"/>
@@ -926,22 +926,22 @@ Seleziona invece un livello normale.</translation>
     <message>
         <location line="+61"/>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
-        <translation type="unfinished"></translation>
+        <translation>Il file del pennello &apos;%1&apos; non contiene un oggetto JSON</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Brush file &apos;%1&apos; has invalid version %d</source>
-        <translation type="unfinished"></translation>
+        <translation>Il file del pennello &apos;%1&apos; ha una versione non valida %d</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>Il file del pennello &apos;%1&apos; contiene un&apos;impostazione &apos;colore&apos; non valida</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>Il file del pennello &quot;%1&quot; contiene un&apos;impostazione &quot;%2&quot; obsoleta</translation>
     </message>
     <message>
         <location line="+129"/>
@@ -1651,7 +1651,7 @@ Seleziona invece un livello normale.</translation>
     <message>
         <location filename="../net/server.cpp" line="+195"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se non intendi utilizzare un proxy, puoi disattivare il proxy di rete nelle preferenze di Drawpile, nella scheda Rete.</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -1687,13 +1687,13 @@ Seleziona invece un livello normale.</translation>
         <location line="+51"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Errore socket %1: %2</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (errore %2)</translation>
     </message>
 </context>
 <context>
@@ -1711,12 +1711,12 @@ Seleziona invece un livello normale.</translation>
     <message>
         <location line="-244"/>
         <source>You don&apos;t have permission for that transformation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non hai l&apos;autorizzazione per quella trasformazione.</translation>
     </message>
     <message>
         <location line="+203"/>
         <source>You don&apos;t have permission to stamp selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non hai l&apos;autorizzazione per apporre stamp sulle selezioni.</translation>
     </message>
     <message>
         <location line="+57"/>
