@@ -20,23 +20,23 @@
         <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished">冲突</translation>
+        <translation>冲突</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (冲突)</translation>
     </message>
     <message>
         <location line="+85"/>
         <source>Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷预设</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shortcut</source>
-        <translation type="unfinished">快捷键</translation>
+        <translation>快捷键</translation>
     </message>
 </context>
 <context>
@@ -83,13 +83,13 @@
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished">冲突</translation>
+        <translation>冲突</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (冲突)</translation>
     </message>
     <message>
         <location line="+76"/>
@@ -234,7 +234,7 @@
     <message>
         <location line="+8"/>
         <source>Inverted, Swap Axes</source>
-        <translation>反转,切换轴向</translation>
+        <translation>反转, 切换轴向</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -307,7 +307,7 @@
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (冲突)</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -368,7 +368,7 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="+62"/>
         <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
-        <translation>你可以从 &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt; 中下载Windows版本的 ffmpeg. 然后在 ffmpeg 路径方框里选择解压出来的 ffmpeg.exe .</translation>
+        <translation>你可以从&lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;中下载Windows版本的ffmpeg. 然后在路径里选择解压出来的 ffmpeg.exe 程序.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -384,7 +384,7 @@
         <location line="+98"/>
         <source>Failed to start ffmpeg using &apos;%1&apos;. %2</source>
         <extracomment>%1 is the path to ffmpeg, %2 is the note on what to do to acquire ffmpeg, e.g. download it on Windows or install the package on Linux.</extracomment>
-        <translation>使用 &apos;%1&apos; 启动ffmpeg失败. %2</translation>
+        <translation>使用 &apos;%1&apos; 启动 ffmpeg 失败. %2</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -842,7 +842,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>Show all brushes, regardless of tagging.</source>
-        <translation>显示全部笔刷,不管是否添加标签.</translation>
+        <translation>显示全部笔刷, 不管是否添加标签.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -898,27 +898,27 @@ Select a regular layer instead.</source>
     <message>
         <location line="+34"/>
         <source>Unknown brush format in file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>文件 &apos;%1&apos; 中的未知笔刷格式</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷文件 &apos;%1&apos; 不包含 JSON 对象</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Brush file &apos;%1&apos; has invalid version %d</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷文件 &apos;%1&apos; 中有无效版本 %d</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷文件 &apos;%1&apos; 包含无效 &apos;颜色&apos; 设置</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷文件 &apos;%1&apos; 包含旧的 &apos;%2&apos; 设置</translation>
     </message>
     <message>
         <location line="+129"/>
@@ -1416,12 +1416,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="-856"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
-        <translation>此服务器不提供登录方式来加入房间!</translation>
+        <translation>此服务器没有提供登录方式来加入房间!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
-        <translation>此服务器不提供登录方式来创建房间!</translation>
+        <translation>此服务器没有提供登录方式来创建房间!</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1647,7 +1647,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/server.cpp" line="+195"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>如果你不打算使用代理, 你可以在首选项的网络页面中禁用网络代理.</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -1683,13 +1683,13 @@ Select a regular layer instead.</source>
         <location line="+51"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Socket 错误 %1: %2</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (错误 %2)</translation>
     </message>
 </context>
 <context>
@@ -1707,12 +1707,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="-244"/>
         <source>You don&apos;t have permission for that transformation.</source>
-        <translation type="unfinished"></translation>
+        <translation>你没有权限进行这种变换.</translation>
     </message>
     <message>
         <location line="+203"/>
         <source>You don&apos;t have permission to stamp selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>你没有权限进行图章变换.</translation>
     </message>
     <message>
         <location line="+57"/>
