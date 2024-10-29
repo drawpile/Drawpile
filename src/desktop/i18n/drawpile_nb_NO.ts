@@ -21,7 +21,7 @@
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished">Odstranit</translation>
+        <translation>Fjern</translation>
     </message>
 </context>
 <context>
