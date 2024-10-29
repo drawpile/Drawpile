@@ -784,23 +784,23 @@
         <location line="+96"/>
         <location line="+3"/>
         <source>Apply the pending fill, making it visible for everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>Applica il riempimento in sospeso, rendendolo visibile a tutti</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Apply</source>
-        <translation type="unfinished">Applica</translation>
+        <translation>Applica</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation type="unfinished"></translation>
+        <translation>Annulla il riempimento in sospeso, senza che nessun altro ne veda gli effetti</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location line="-336"/>
@@ -1650,17 +1650,17 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+8"/>
         <source>Rotate Canvas Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Ruota la tela in senso antiorario</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Mirror Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Tela a specchio</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror the canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Specchia la tela orizzontalmente</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1710,12 +1710,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+111"/>
         <source>Group View</source>
-        <translation type="unfinished"></translation>
+        <translation>Vista di gruppo</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show only the current parent layer group</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra solo il gruppo di livelli padre corrente</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -2259,32 +2259,32 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <location line="+349"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Non hai il permesso di tagliare, incollare, riempire o eliminare.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to resize the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non hai l&apos;autorizzazione per ridimensionare la tela.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non hai l&apos;autorizzazione per modificare lo sfondo della sessione.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to create annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non hai l&apos;autorizzazione per creare annotazioni.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to undo or redo.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non hai l&apos;autorizzazione per annullare o ripristinare.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non sei autorizzato a farlo.</translation>
     </message>
     <message>
         <location line="+222"/>
@@ -2490,7 +2490,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+1"/>
         <source>Do you really want to crash Drawpile? This will terminate the program and you will lose any unsaved data!</source>
-        <translation type="unfinished"></translation>
+        <translation>Vuoi davvero mandare in crash Drawpile? Questo terminerà il programma e perderai tutti i dati non salvati!</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -3324,7 +3324,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
         <location filename="../utils/widgetutils.cpp" line="+1045"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -4317,7 +4317,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+8"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4576,7 +4576,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+83"/>
         <source>No shortcut assigned</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessuna scorciatoia assegnata</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -4586,7 +4586,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+0"/>
         <source>Brush metadata settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostazioni dei metadati del pennello.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4601,7 +4601,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+62"/>
         <source>Save as New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Salva come nuovo pennello</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4611,22 +4611,22 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+64"/>
         <source>Change…</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifica…</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Shortcut:</source>
-        <translation type="unfinished"></translation>
+        <translation>Scorciatoia:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Choose File…</source>
-        <translation type="unfinished"></translation>
+        <translation>Scegli File…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Will be resized to 64x64 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verrà ridimensionato a 64x64 pixel.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4636,7 +4636,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+3"/>
         <source>Add Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi etichetta:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4651,7 +4651,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+16"/>
         <source>Brush is not attached.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il pennello non è attaccato.</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -7208,12 +7208,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Tablet</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablet</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touch</source>
-        <translation type="unfinished"></translation>
+        <translation>Tocco</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7829,7 +7829,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+4"/>
         <source>Network proxy:</source>
-        <translation type="unfinished"></translation>
+        <translation>Proxy di rete:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8250,12 +8250,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/shortcutfilterinput.cpp" line="+18"/>
         <source>Search…</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show conflicts only</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra solo i conflitti</translation>
     </message>
 </context>
 <context>
@@ -8322,7 +8322,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+95"/>
         <source>Actions</source>
-        <translation type="unfinished"></translation>
+        <translation>Azioni</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8351,7 +8351,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+26"/>
         <source>Tablet</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablet</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8396,7 +8396,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+8"/>
         <source>Tablet driver:</source>
-        <translation type="unfinished"></translation>
+        <translation>Driver del tablet:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8406,7 +8406,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Pen pressure:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pressione della penna:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8625,7 +8625,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+13"/>
         <location line="+9"/>
         <source>No action</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessuna azione</translation>
     </message>
     <message>
         <location line="-82"/>
