@@ -116,7 +116,7 @@
     <message>
         <location line="-92"/>
         <source>Brush type</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷类型</translation>
     </message>
     <message>
         <location line="+95"/>
@@ -195,7 +195,7 @@
     <message>
         <location line="-26"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation>反转输入方向.例如,向上滚动放大，而不是缩小.</translation>
+        <translation>反转输入方向. 例如, 向上滚动放大, 而不是缩小.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -205,7 +205,7 @@
     <message>
         <location line="+7"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation>切换水平和垂直方向.例如,上下移动光标来改变画笔大小而不是左右移动.</translation>
+        <translation>切换水平和垂直方向. 例如, 上下移动光标来改变画笔大小而不是左右移动.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -795,23 +795,23 @@
         <location line="+96"/>
         <location line="+3"/>
         <source>Apply the pending fill, making it visible for everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>应用待处理的填充, 使其对所有人可见</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Apply</source>
-        <translation type="unfinished">应用</translation>
+        <translation>应用</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation type="unfinished"></translation>
+        <translation>取消待处理的填充, 而其他人不会看到其效果</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished">取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <location line="-336"/>
@@ -1435,23 +1435,23 @@ Subrange: [%3, %4]</source>
         <location line="+199"/>
         <location filename="../widgets/macmenu.cpp" line="-169"/>
         <source>&amp;New</source>
-        <translation>&amp;新建(&amp;N)</translation>
+        <translation>新建(&amp;N)</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Open...</source>
-        <translation>&amp;打开(&amp;O)...</translation>
+        <translation>打开(&amp;O)...</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&amp;Save</source>
-        <translation>&amp;保存(&amp;S)</translation>
+        <translation>保存(&amp;S)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save &amp;As...</source>
-        <translation>&amp;另存为(&amp;A)...</translation>
+        <translation>另存为(&amp;A)...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1505,32 +1505,32 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+349"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>你没有权限进行剪切, 粘贴, 填充或者删除.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to resize the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>你没有权限修改画布大小.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation type="unfinished"></translation>
+        <translation>你没有权限修改画布颜色.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to create annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>你没有权限进行文字输入.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to undo or redo.</source>
-        <translation type="unfinished"></translation>
+        <translation>你没有权限进行撤销和重做.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>你没有权限这样做.</translation>
     </message>
     <message>
         <location line="+411"/>
@@ -1672,12 +1672,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-1287"/>
         <source>Cause Crash</source>
-        <translation type="unfinished"></translation>
+        <translation>导致崩溃</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Do you really want to crash Drawpile? This will terminate the program and you will lose any unsaved data!</source>
-        <translation type="unfinished"></translation>
+        <translation>你确定想让 Drawpile 崩溃吗? 这会终止程序且让你丢失所有未保存的数据!</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -1784,27 +1784,27 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+9"/>
         <source>&amp;Brush Settings</source>
-        <translation>笔刷设定(&amp;B)</translation>
+        <translation>笔刷设置(&amp;B)</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Expand &amp;Up…</source>
-        <translation type="unfinished"></translation>
+        <translation>向上扩展(&amp;U)…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Down…</source>
-        <translation type="unfinished"></translation>
+        <translation>向下扩展(&amp;D)…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Left…</source>
-        <translation type="unfinished"></translation>
+        <translation>向左扩展(&amp;L)…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Right…</source>
-        <translation type="unfinished"></translation>
+        <translation>向右扩展(&amp;R)…</translation>
     </message>
     <message>
         <location line="+170"/>
@@ -1829,57 +1829,57 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>&amp;Fit Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>适应窗口(&amp;F)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fit Canvas &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>适应窗口宽度(&amp;W)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Fit Canvas &amp;Height</source>
-        <translation type="unfinished"></translation>
+        <translation>适应窗口高度(&amp;H)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Reset Canvas Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>旋转角度归零(&amp;R)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Rotate Canvas Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>逆时针旋转画布</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Mirror Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>水平翻转</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror the canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>将画布水平翻转过来</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>水平/垂直翻转画布</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直翻转</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the canvas upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>将画布垂直翻转过来</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>水平/垂直翻转画布</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -1909,12 +1909,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+111"/>
         <source>Group View</source>
-        <translation type="unfinished"></translation>
+        <translation>组视图</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show only the current parent layer group</source>
-        <translation type="unfinished"></translation>
+        <translation>只显示当前父图层组</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -2118,7 +2118,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>切换图层可见性(&amp;V)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="-77"/>
@@ -2203,7 +2203,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+29"/>
         <source>Cause Crash…</source>
-        <translation type="unfinished"></translation>
+        <translation>导致崩溃…</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2228,47 +2228,47 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>重置笔刷(&amp;R)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished"></translation>
+        <translation>重置所有笔刷数字预设(&amp;S)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>重置所有笔刷预设(&amp;B)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Next Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>下一个笔刷预设(&amp;N)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Previous Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>上一个笔刷预设(&amp;P)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Next Brush Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>下一个笔刷标签</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Previous Brush Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>上一个笔刷标签</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Next Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>下一个笔刷数字预设</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Previous Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>上一个笔刷数字预设</translation>
     </message>
     <message>
         <location line="+143"/>
@@ -2709,32 +2709,32 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>&amp;Mirror Transform</source>
-        <translation>镜像变换(&amp;M)</translation>
+        <translation>水平变换(&amp;M)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror the transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>将变换的图片水平翻转</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>水平/垂直翻转变换的图片</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Flip Transform</source>
-        <translation>翻转变换(&amp;F)</translation>
+        <translation>垂直变换(&amp;F)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the transformed image upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>将变换的图片垂直翻转</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>mirror/flip transformed image vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>水平/垂直翻转变换的图片</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3323,7 +3323,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../utils/widgetutils.cpp" line="+1045"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -4316,17 +4316,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+8"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished">平滑</translation>
+        <translation>平滑</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Scaling:</source>
-        <translation type="unfinished">缩放比例:</translation>
+        <translation>缩放比例:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4386,7 +4386,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+125"/>
         <source>Output resolution will be %1x%2 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>输出分辨率将为 %1x%2 像素.</translation>
     </message>
 </context>
 <context>
@@ -4577,7 +4577,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Core brush settings.</source>
-        <translation>核心笔刷设定.</translation>
+        <translation>核心笔刷设置.</translation>
     </message>
     <message>
         <location line="+229"/>
@@ -4663,72 +4663,72 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-374"/>
         <source>No shortcut assigned</source>
-        <translation type="unfinished"></translation>
+        <translation>未指定快捷键</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Brush</source>
-        <translation type="unfinished">圆头笔刷</translation>
+        <translation>笔刷</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Brush metadata settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷原数据设置.</translation>
     </message>
     <message>
         <location line="+64"/>
         <source>Save as New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>另存为新笔刷</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>覆盖当前笔刷</translation>
     </message>
     <message>
         <location line="+64"/>
         <source>Change…</source>
-        <translation type="unfinished"></translation>
+        <translation>更改…</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Shortcut:</source>
-        <translation type="unfinished"></translation>
+        <translation>快捷键:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Choose File…</source>
-        <translation type="unfinished"></translation>
+        <translation>选择文件…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Will be resized to 64x64 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>图片大小将被调整为 64x64 像素.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished">笔刷图标:</translation>
+        <translation>笔刷图标:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Add Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>添加标记:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷名:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Description:</source>
-        <translation type="unfinished">笔刷描述:</translation>
+        <translation>笔刷描述:</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Brush is not attached.</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷未附着.</translation>
     </message>
     <message>
         <location line="+164"/>
@@ -6182,7 +6182,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Free Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas without snapping around 0°.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>自由旋转画布</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6228,22 +6228,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+98"/>
         <source>A regular key combination on the canvas without further mouse or pen inputs. Example: holding Space to pan, without having to click as well.</source>
-        <translation>在画布上的常规组合键,无需进一步的鼠标或笔输入.例如:按住空格可以平移,而不需要同时点击.</translation>
+        <translation>在画布上的常规组合键, 无需进一步的鼠标或笔输入. 例如:按住空格可以平移, 而不需要同时点击.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Pressing a mouse or pen button, optionally while also holding down keys. Putting the pen down is like a left click. Example: holding space and pressing left click to pan.</source>
-        <translation>按下鼠标或笔的按钮,也可以选择同时按住按键.把笔放下来就像左键.例如:按住空格并按下左键来平移.</translation>
+        <translation>按下鼠标或笔的按钮, 也可以选择同时按住按键. 把笔放下来就像左键. 例如:按住空格并按下左键来平移.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Turning the mouse wheel or some input device that acts like one, optionally while also holding down keys. Example: scrolling to zoom the canvas.</source>
-        <translation>转动鼠标滚轮或一些类似于鼠标滚轮的输入设备,可以选择同时按住按键.例如:滚动以缩放画布.</translation>
+        <translation>转动鼠标滚轮或一些类似于鼠标滚轮的输入设备, 可以选择同时按住按键. 例如:滚动以缩放画布.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Keys to hold down to make rectangle, line or selection tools behave differently. Constrain means to e.g. keep the aspect ratio, center means to e.g. center shapes around the origin.</source>
-        <translation>按住的键可以使矩形,直线或选择工具的行为不同.约束是指保持长宽比,居中是指以原点为中心的形状.</translation>
+        <translation>按住的键可以使矩形, 直线或选择工具的行为不同. 约束是指保持长宽比, 居中是指以原点为中心的形状.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6258,7 +6258,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>You can&apos;t assign a shortcut to a Left Click without any keys since that would interfere with drawing.</source>
-        <translation>你不能在没有任何键的情况下为左键指定一个快捷键,因为那会影响到绘图.</translation>
+        <translation>你不能在没有任何键的情况下为左键指定一个快捷键, 因为那会影响到绘图.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6865,22 +6865,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="+28"/>
         <source>Expand up</source>
-        <translation type="unfinished"></translation>
+        <translation>向上扩展</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand left</source>
-        <translation type="unfinished"></translation>
+        <translation>向左扩展</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand right</source>
-        <translation type="unfinished"></translation>
+        <translation>向右扩展</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand down</source>
-        <translation type="unfinished"></translation>
+        <translation>向下扩展</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7176,7 +7176,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Choose a new undo limit for this session, the current limit is %1. Undos are shared between all participants. Changing the limit will start the undo stack anew, you won&apos;t be able to undo before the point where you changed it.</source>
-        <translation>为这个房间选择一个新的撤销限制,当前的限制是%1.撤销是在所有用户之间共享的.更改限制将重新开始撤销堆栈,你将无法在你更改限制的地方之前进行撤销.</translation>
+        <translation>为这个房间选择一个新的撤销限制, 当前的限制是%1. 撤销是在所有用户之间共享的. 更改限制将重新开始撤销堆栈, 你将无法在你更改限制的地方之前进行撤销.</translation>
     </message>
 </context>
 <context>
@@ -7199,12 +7199,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Tablet</source>
-        <translation type="unfinished"></translation>
+        <translation>输入</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touch</source>
-        <translation type="unfinished"></translation>
+        <translation>触控</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7819,17 +7819,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Network proxy:</source>
-        <translation type="unfinished"></translation>
+        <translation>网络代理:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>系统</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disabled</source>
-        <translation type="unfinished">禁用</translation>
+        <translation>禁用</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -8237,12 +8237,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/shortcutfilterinput.cpp" line="+18"/>
         <source>Search…</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show conflicts only</source>
-        <translation type="unfinished"></translation>
+        <translation>只显示冲突的</translation>
     </message>
 </context>
 <context>
@@ -8266,65 +8266,65 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+117"/>
         <source>Edit Canvas Shortcut</source>
-        <translation type="unfinished">编辑画布快捷键</translation>
+        <translation>编辑画布快捷键</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Add canvas shortcut…</source>
-        <translation type="unfinished">新建画布快捷键…</translation>
+        <translation>新建画布快捷键…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>New Canvas Shortcut</source>
-        <translation type="unfinished">新建画布快捷键</translation>
+        <translation>新建画布快捷键</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Remove selected canvas shortcut…</source>
-        <translation type="unfinished">移除选中的画布快捷键…</translation>
+        <translation>移除选中的画布快捷键…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove canvas shortcut</source>
-        <translation type="unfinished">移除画布快捷键</translation>
+        <translation>移除画布快捷键</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>确定移除 %n 画布快捷键吗?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Restore Canvas Shortcut Defaults</source>
-        <translation type="unfinished">恢复默认画布快捷键</translation>
+        <translation>恢复默认画布快捷键</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really restore all canvas shortcuts to their default values?</source>
-        <translation type="unfinished">确定将所有画布快捷键恢复为默认值吗?</translation>
+        <translation>确定将所有画布快捷键恢复为默认值吗?</translation>
     </message>
     <message>
         <location line="+95"/>
         <source>Actions</source>
-        <translation type="unfinished"></translation>
+        <translation>动作</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Brushes</source>
-        <translation type="unfinished">预设面板</translation>
+        <translation>笔刷</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>画布</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 (%2)</source>
         <extracomment>This is for showing search feedback in the tabs of the shortcut preferences. %1 is the original tab title, like &quot;Actions&quot; or &quot;Brushes&quot;, %2 is the number of search results in that tab.</extracomment>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -8332,108 +8332,108 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/tablet.cpp" line="+30"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished">数位板测试</translation>
+        <translation>数位板测试</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Tablet</source>
-        <translation type="unfinished"></translation>
+        <translation>数位板</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Output</source>
-        <translation type="unfinished">输出</translation>
+        <translation>输出</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Global pressure curve:</source>
-        <translation type="unfinished">全局曲线:</translation>
+        <translation>全局曲线:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>KisTablet Windows Ink</source>
-        <translation type="unfinished">KisTablet Windows Ink</translation>
+        <translation>KisTablet Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>KisTablet Wintab</source>
-        <translation type="unfinished">KisTablet Wintab</translation>
+        <translation>KisTablet Wintab</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>KisTablet Wintab Relative</source>
-        <translation type="unfinished">KisTablet Wintab Relative</translation>
+        <translation>KisTablet Wintab Relative</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Qt5</source>
-        <translation type="unfinished">Qt5</translation>
+        <translation>Qt5</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Qt6 Windows Ink</source>
-        <translation type="unfinished">Qt6 Windows Ink</translation>
+        <translation>Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Qt6 Wintab</source>
-        <translation type="unfinished">Qt6 Wintab</translation>
+        <translation>Qt6 Wintab</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Tablet driver:</source>
-        <translation type="unfinished"></translation>
+        <translation>驱动:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Enable pressure sensitivity</source>
-        <translation type="unfinished">启用压感</translation>
+        <translation>启用压感</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pen pressure:</source>
-        <translation type="unfinished"></translation>
+        <translation>笔压:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Global smoothing: </source>
-        <translation type="unfinished">全局平滑度: </translation>
+        <translation>全局平滑度: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">平滑:</translation>
+        <translation>平滑:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Apply global smoothing to mouse</source>
-        <translation type="unfinished">对鼠标应用全局平滑处理</translation>
+        <translation>对鼠标应用全局平滑处理</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Compensate jagged curves</source>
-        <translation type="unfinished">修正锯齿曲线</translation>
+        <translation>修正锯齿曲线</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Treat as regular pen tip</source>
-        <translation type="unfinished"></translation>
+        <translation>与普通笔尖一样处理</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished">切换到数字预设橡皮</translation>
+        <translation>切换到数字预设橡皮</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished">以当前笔刷预设擦除</translation>
+        <translation>以当前笔刷预设擦除</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser tip behavior:</source>
         <extracomment>This refers to the eraser end tablet pen, not a tooltip or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>橡皮笔尖行为:</translation>
     </message>
 </context>
 <context>
@@ -8456,22 +8456,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Attach selected brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>附着选中的笔刷预设</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>When enabled, changes in a brush slot will be saved to the brush itself automatically. When disabled, the brush itself only changes when you save it explicitly.</source>
-        <translation type="unfinished"></translation>
+        <translation>启用时, 笔刷数字预设中的更改将自动保存到笔刷预设. 禁用时, 笔刷预设只有在你明确保存后才会发生更改.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Brush slots:</source>
-        <translation type="unfinished"></translation>
+        <translation>数字预设:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Share one color across all brush slots</source>
-        <translation>笔刷面板的数字预设保持同一颜色</translation>
+        <translation>所有数字预设保持同一颜色</translation>
     </message>
     <message>
         <location line="-95"/>
@@ -8491,7 +8491,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+17"/>
         <source>Brush outline:</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷轮廓:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -8526,18 +8526,18 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>Show sampling ring</source>
-        <translation type="unfinished"></translation>
+        <translation>显示取样环</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color picker:</source>
-        <translation type="unfinished"></translation>
+        <translation>拾色器:</translation>
     </message>
     <message numerus="yes">
         <location line="+37"/>
         <source>Show %1 brush slot(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>显示 %1 个数字预设(s)</numerusform>
         </translation>
     </message>
     <message>
@@ -8586,22 +8586,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/touch.cpp" line="+25"/>
         <source>Touch Tester</source>
-        <translation type="unfinished">触控屏测试</translation>
+        <translation>触控屏测试</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Touch mode:</source>
-        <translation type="unfinished">触控模式:</translation>
+        <translation>触控模式:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished">触控屏</translation>
+        <translation>触控屏幕</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished">手势</translation>
+        <translation>手势</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8610,122 +8610,122 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+13"/>
         <location line="+9"/>
         <source>No action</source>
-        <translation type="unfinished"></translation>
+        <translation>无操作</translation>
     </message>
     <message>
         <location line="-82"/>
         <source>Undo</source>
-        <translation type="unfinished">撤销</translation>
+        <translation>撤销</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Redo</source>
-        <translation type="unfinished">重做</translation>
+        <translation>重做</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hide docks</source>
-        <translation type="unfinished"></translation>
+        <translation>隐藏面板</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle color picker</source>
-        <translation type="unfinished"></translation>
+        <translation>切换拾色器</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>切换橡皮</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle erase mode</source>
-        <translation type="unfinished"></translation>
+        <translation>切换橡皮模式</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle recolor mode</source>
-        <translation type="unfinished"></translation>
+        <translation>切换 recolor 模式</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>One-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>单指轻点:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Two-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>双指轻点:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Three-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>三指轻点:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Four-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>四指轻点:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished"></translation>
+        <translation>拾色</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>One-finger tap and hold:</source>
-        <translation type="unfinished"></translation>
+        <translation>单指轻点按住:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Draw</source>
-        <translation type="unfinished">绘画</translation>
+        <translation>绘画</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pan canvas</source>
-        <translation type="unfinished">移动画布</translation>
+        <translation>移动画布</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Guess</source>
-        <translation type="unfinished"></translation>
+        <translation>猜测</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>One-finger touch:</source>
-        <translation type="unfinished"></translation>
+        <translation>单指触控:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Zoom</source>
-        <translation type="unfinished">缩放</translation>
+        <translation>缩放</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Two-finger pinch:</source>
-        <translation type="unfinished"></translation>
+        <translation>双指捏合:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>旋转画布</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Free rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>自由旋转画布</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ratchet rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>15度增量旋转画布</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Two-finger twist:</source>
-        <translation type="unfinished"></translation>
+        <translation>双指扭动:</translation>
     </message>
 </context>
 <context>
@@ -8809,7 +8809,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+71"/>
         <source>Override system scale factor</source>
-        <translation type="unfinished"></translation>
+        <translation>覆盖系统缩放比例</translation>
     </message>
     <message>
         <location line="-126"/>
@@ -9334,101 +9334,101 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+26"/>
         <source>&amp;Edit Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑笔刷(&amp;E)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>重置笔刷(&amp;R)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>重置所有笔刷预设(&amp;B)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>新建笔刷预设(&amp;N)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>覆盖笔刷预设(&amp;O)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>删除笔刷预设(&amp;D)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Brush &amp;Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷标签(&amp;T)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Icon Size</source>
-        <translation type="unfinished"></translation>
+        <translation>图标大小(&amp;I)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ne&amp;w Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>新建标签(&amp;W)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rena&amp;me Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名标签(&amp;M)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>De&amp;lete Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>删除标签(&amp;L)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Im&amp;port Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>导入笔刷(&amp;P)…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>E&amp;xport Tag…</source>
-        <translation type="unfinished"></translation>
+        <translation>导出笔刷(&amp;X)…</translation>
     </message>
     <message>
         <location line="+252"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>覆盖笔刷预设</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really overwrite brush &apos;%1&apos; with the current one?</source>
-        <translation type="unfinished"></translation>
+        <translation>确定将当前的更改覆盖笔刷预设 &apos;%1&apos; 吗?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>覆盖</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+297"/>
         <location line="+45"/>
         <source>Keep</source>
-        <translation type="unfinished"></translation>
+        <translation>保留</translation>
     </message>
     <message>
         <location line="-142"/>
         <source>No tags</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but there&apos;s no tags to assign it to.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>无标签</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>No brush selected</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but no brush is actually selected.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>未选中笔刷预设</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -9439,17 +9439,17 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+34"/>
         <location line="+45"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>删除</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>删除笔刷预设</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete brush &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>确定删除笔刷预设 &apos;%1&apos; 吗?</translation>
     </message>
     <message>
         <location line="-581"/>
@@ -9534,32 +9534,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-191"/>
         <source>New palette</source>
-        <translation type="unfinished"></translation>
+        <translation>新建色板</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Duplicate palette</source>
-        <translation type="unfinished"></translation>
+        <translation>复制色板</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete palette</source>
-        <translation type="unfinished"></translation>
+        <translation>删除色板</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rename palette</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名色板</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import palette…</source>
-        <translation type="unfinished"></translation>
+        <translation>导入色板…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export palette…</source>
-        <translation type="unfinished"></translation>
+        <translation>导出色板…</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -9629,38 +9629,38 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorsliders.cpp" line="+80"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>色彩空间</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+364"/>
         <source>HSV</source>
         <extracomment>Color space HSV (hue, chroma, value)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSV</translation>
     </message>
     <message>
         <location line="-353"/>
         <location line="+329"/>
         <source>HSL</source>
         <extracomment>Color space HSL (hue, saturation, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="-318"/>
         <location line="+330"/>
         <source>HCL</source>
         <extracomment>Color space HCL (hue, chroma, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HCL</translation>
     </message>
     <message>
         <location line="-317"/>
         <source>Show all sliders at once</source>
-        <translation type="unfinished"></translation>
+        <translation>同时显示所有滑块</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show hex input</source>
-        <translation type="unfinished"></translation>
+        <translation>显示十六进制输入</translation>
     </message>
     <message>
         <location line="+80"/>
@@ -9683,7 +9683,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>RGB</source>
-        <translation type="unfinished"></translation>
+        <translation>RGB</translation>
     </message>
     <message>
         <location line="+177"/>
@@ -9754,82 +9754,82 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorspinner.cpp" line="+77"/>
         <source>Shape</source>
-        <translation type="unfinished"></translation>
+        <translation>形状</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Rotating triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>旋转三角</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Rotating square</source>
-        <translation type="unfinished"></translation>
+        <translation>旋转方形</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>固定三角</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed square</source>
-        <translation type="unfinished"></translation>
+        <translation>固定方形</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>色彩空间</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>HSV</source>
-        <translation type="unfinished"></translation>
+        <translation>HSV</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>HSL</source>
-        <translation type="unfinished"></translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>HCL</source>
-        <translation type="unfinished"></translation>
+        <translation>HCL</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Direction</source>
-        <translation type="unfinished">方向</translation>
+        <translation>方向</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ascending</source>
-        <translation type="unfinished">上升</translation>
+        <translation>上升</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Descending</source>
-        <translation type="unfinished">下降</translation>
+        <translation>下降</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>对齐</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top</source>
-        <translation type="unfinished">靠上</translation>
+        <translation>靠上</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Center</source>
-        <translation type="unfinished">居中</translation>
+        <translation>居中</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Preview selected color</source>
-        <translation type="unfinished"></translation>
+        <translation>预览选中的颜色</translation>
     </message>
 </context>
 <context>
@@ -9915,7 +9915,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>切换图层组可见性(&amp;V)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10146,18 +10146,18 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+81"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>注释已隐藏. </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>显示</translation>
     </message>
     <message>
         <location line="+343"/>
         <source>You don&apos;t have permission to paste merged annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>你没有权限粘贴合并的注释.</translation>
     </message>
 </context>
 <context>
@@ -10165,42 +10165,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-106"/>
         <source>&amp;Edit Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑笔刷(&amp;E)…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>重置笔刷(&amp;R)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished"></translation>
+        <translation>重置所有笔刷数字预设(&amp;S)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>重置所有笔刷预设(&amp;B)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;New Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>新建笔刷预设(&amp;N)…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>覆盖笔刷预设(&amp;O)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>删除笔刷预设(&amp;D)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>De&amp;tach Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>取消附着(&amp;T)</translation>
     </message>
     <message>
         <location line="+84"/>
@@ -10255,7 +10255,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-5"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
-        <translation>你没有权限使用MyPaint笔刷.</translation>
+        <translation>你没有权限使用 MyPaint 笔刷.</translation>
     </message>
 </context>
 <context>
@@ -10281,32 +10281,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/fillsettings.cpp" line="+74"/>
         <source>Fill tool settings</source>
-        <translation type="unfinished"></translation>
+        <translation>填充工具设置</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Edit pending fills</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑待处理的填充(&amp;E)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply changes in settings, color and layer to fills not yet applied</source>
-        <translation type="unfinished"></translation>
+        <translation>对未应用的填充进行实时预览在设置, 颜色和图层中的更改</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Confirm fills with second click</source>
-        <translation type="unfinished"></translation>
+        <translation>第二次点击时确定填充(&amp;C)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lets you apply fills with a click instead of starting another fill</source>
-        <translation type="unfinished"></translation>
+        <translation>让你点击一下即可应用填充, 而无需开始另一个填充</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>You don&apos;t have permission to use the fill tool.</source>
-        <translation type="unfinished"></translation>
+        <translation>你没有权限使用填充工具.</translation>
     </message>
     <message>
         <location line="+223"/>
@@ -10324,19 +10324,19 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/lasersettings.cpp" line="+93"/>
         <source>You don&apos;t have permission to use the laser pointer.</source>
-        <translation type="unfinished"></translation>
+        <translation>你没有权限使用记号笔.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Laser trails are hidden. </source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>记号轨迹已隐藏. </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>显示</translation>
     </message>
 </context>
 <context>
@@ -10533,12 +10533,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+32"/>
         <source>Compressing canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>压缩画布…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Uploading canvas %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>上传画布 %1%</translation>
     </message>
 </context>
 <context>
@@ -10607,7 +10607,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/brushpreview.cpp" line="+18"/>
         <source>Click to edit brush</source>
-        <translation type="unfinished"></translation>
+        <translation>点击编辑笔刷</translation>
     </message>
 </context>
 <context>
@@ -10625,27 +10625,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+28"/>
         <source>Press a key combination. Hit Escape to cancel.</source>
-        <translation>按下一个组合键.按Escape键来取消.</translation>
+        <translation>按下一个组合键. 按Escape键来取消.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Click the desired mouse button into the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation>在上面的字段中点击所需的鼠标按钮,可以选择在按住键的同时.按Escape键来取消.</translation>
+        <translation>在上面的字段中点击所需的鼠标按钮, 也可以按住键不放. 按Escape键来取消.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Turn the mouse wheel or click into in the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation>转动鼠标滚轮或点击进入上面的字段,可以选择在按住键的同时.按Escape键来取消.</translation>
+        <translation>转动鼠标滚轮或点击进入上面的字段, 也可以按住键不放. 按Escape键来取消.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Hold down the desired key combination and click into the field above. Hit Escape to cancel.</source>
-        <translation>按住所需的组合键和点击进入上面的字段.按Escape键来取消.</translation>
+        <translation>按住所需的组合键并点击上面的字段. 按Escape键来取消.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Unknown shortcut type %1. Hit Escape to cancel.</source>
-        <translation>未知的快捷键类型%1.按Escape键来取消.</translation>
+        <translation>未知的快捷键类型%1. 按Escape键来取消.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -10790,7 +10790,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+166"/>
         <source>/!: only operators are allowed to send shouts.</source>
-        <translation>/!:只有operator可以发送公告消息.</translation>
+        <translation>/!:只有房间管理员可以发送公告消息.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10805,7 +10805,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>/alert: only operators are allowed to send alerts.</source>
-        <translation>/alert:只有operator可以发送弹窗消息.</translation>
+        <translation>/alert:只有房间管理员可以发送弹窗消息.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10820,7 +10820,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>/pin: only operators are allowed to pin.</source>
-        <translation>/pin:只有operator可以发送置顶消息.</translation>
+        <translation>/pin:只有房间管理员可以发送置顶消息.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10835,7 +10835,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>/unpin: only operators are allowed to unpin.</source>
-        <translation>/unpin:只有operator可以取消置顶消息.</translation>
+        <translation>/unpin:只有房间管理员可以取消置顶消息.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10862,10 +10862,10 @@ Values above 0.5 may not be noticeable.</source>
         <translation>可用的客户端命令:
 /help - 显示此信息
 /clear - 清除聊天窗口
-/! &lt;text&gt; - 发送公告消息 (限operators)
-/alert &lt;text&gt; - 发送弹窗消息 (限operators)
-/pin &lt;text&gt; - 发送置顶消息 (限operators)
-/unpin - 移除置顶消息 (限operators)
+/! &lt;text&gt; - 发送公告消息 (限房间管理员)
+/alert &lt;text&gt; - 发送弹窗消息 (限房间管理员)
+/pin &lt;text&gt; - 发送置顶消息 (限房间管理员)
+/unpin - 移除置顶消息 (限房间管理员)
 /me &lt;text&gt; - 发送动作消息
 /roll &lt;dice&gt; - 掷骰子,例如:1d6为六面骰子</translation>
     </message>
@@ -10964,12 +10964,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/dualcolorbutton.cpp" line="+31"/>
         <source>Set foreground color…</source>
-        <translation type="unfinished"></translation>
+        <translation>设置前景色…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Set background color…</source>
-        <translation type="unfinished"></translation>
+        <translation>设置背景颜色…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -10987,37 +10987,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/expandshrinkspinner.cpp" line="+27"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Expand</source>
-        <translation type="unfinished">扩展</translation>
+        <translation>扩展</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shrink</source>
-        <translation type="unfinished">缩小</translation>
+        <translation>缩小</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Round expansion shape</source>
-        <translation type="unfinished"></translation>
+        <translation>圆形扩展形状</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Square kernel shape</source>
-        <translation type="unfinished"></translation>
+        <translation>方形内核形状</translation>
     </message>
     <message>
         <location line="+93"/>
         <source>Shrink: </source>
-        <translation type="unfinished">缩小: </translation>
+        <translation>缩小: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Expand: </source>
-        <translation type="unfinished">扩展: </translation>
+        <translation>扩展: </translation>
     </message>
 </context>
 <context>
