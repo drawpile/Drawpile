@@ -77,6 +77,8 @@ int DP_layer_content_width(DP_LayerContent *lc);
 
 int DP_layer_content_height(DP_LayerContent *lc);
 
+DP_Tile *DP_layer_content_tile_at_index_noinc(DP_LayerContent *lc, int i);
+
 DP_Tile *DP_layer_content_tile_at_noinc(DP_LayerContent *lc, int x, int y);
 
 DP_Pixel15 DP_layer_content_pixel_at(DP_LayerContent *lc, int x, int y);
@@ -142,7 +144,12 @@ DP_TransientLayerContent *DP_layer_content_resize(DP_LayerContent *lc,
                                                   int top, int right,
                                                   int bottom, int left);
 
+bool DP_layer_content_has_sublayers(DP_LayerContent *lc);
+
 DP_LayerContent *DP_layer_content_merge_sublayers(DP_LayerContent *lc);
+
+DP_Tile *DP_layer_content_flatten_tile(DP_LayerContent *lc, int tile_index,
+                                       bool censored, bool include_sublayers);
 
 DP_TransientTile *DP_layer_content_flatten_tile_to(
     DP_LayerContent *lc, int tile_index, DP_TransientTile *tt_or_null,
@@ -175,6 +182,10 @@ DP_transient_layer_content_persist(DP_TransientLayerContent *tlc);
 int DP_transient_layer_content_width(DP_TransientLayerContent *tlc);
 
 int DP_transient_layer_content_height(DP_TransientLayerContent *tlc);
+
+DP_Tile *
+DP_transient_layer_content_tile_at_index_noinc(DP_TransientLayerContent *tlc,
+                                               int i);
 
 DP_Tile *DP_transient_layer_content_tile_at_noinc(DP_TransientLayerContent *tlc,
                                                   int x, int y);

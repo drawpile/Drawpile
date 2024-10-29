@@ -384,6 +384,21 @@ void DP_layer_group_merge_to_flat_image(DP_LayerGroup *lg, DP_LayerProps *lp,
     }
 }
 
+DP_TransientTile *DP_layer_group_flatten_tile(DP_LayerGroup *lg,
+                                              DP_LayerProps *lp, int tile_index,
+                                              bool include_sublayers)
+{
+    DP_ASSERT(lg);
+    DP_ASSERT(DP_atomic_get(&lg->refcount) > 0);
+    DP_ASSERT(lp);
+    DP_ASSERT(tile_index >= 0);
+    DP_ASSERT(tile_index < DP_tile_total_round(lg->width, lg->height));
+    DP_ViewModeContext vmc = DP_view_mode_context_make_default();
+    return DP_layer_list_flatten_tile_to(
+        lg->children, DP_layer_props_children_noinc(lp), tile_index, NULL,
+        DP_BIT15, include_sublayers, false, &vmc);
+}
+
 DP_TransientTile *
 DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
                                int tile_index, DP_TransientTile *tt_or_null,

@@ -306,6 +306,15 @@ int DP_layer_content_height(DP_LayerContent *lc)
     return lc->height;
 }
 
+DP_Tile *DP_layer_content_tile_at_index_noinc(DP_LayerContent *lc, int i)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_ASSERT(i >= 0);
+    DP_ASSERT(i < DP_tile_total_round(lc->width, lc->height));
+    return lc->elements[i].tile;
+}
+
 DP_Tile *DP_layer_content_tile_at_noinc(DP_LayerContent *lc, int x, int y)
 {
     DP_ASSERT(lc);
@@ -1031,6 +1040,15 @@ static DP_Tile *flatten_censored_tile(DP_LayerContent *lc, int tile_index,
     }
 }
 
+DP_Tile *DP_layer_content_flatten_tile(DP_LayerContent *lc, int tile_index,
+                                       bool censored, bool include_sublayers)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    return censored ? flatten_censored_tile(lc, tile_index, include_sublayers)
+                    : flatten_tile(lc, tile_index, include_sublayers);
+}
+
 DP_TransientTile *DP_layer_content_flatten_tile_to(
     DP_LayerContent *lc, int tile_index, DP_TransientTile *tt_or_null,
     uint16_t opacity, int blend_mode, bool censored, bool include_sublayers)
@@ -1284,6 +1302,15 @@ DP_TransientLayerContent *DP_layer_content_resize(DP_LayerContent *lc,
     return tlc;
 }
 
+bool DP_layer_content_has_sublayers(DP_LayerContent *lc)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    int count = DP_layer_list_count(lc->sub.contents);
+    DP_ASSERT(count == DP_layer_props_list_count(lc->sub.props));
+    return count != 0;
+}
+
 DP_LayerContent *DP_layer_content_merge_sublayers(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
@@ -1452,6 +1479,16 @@ int DP_transient_layer_content_height(DP_TransientLayerContent *tlc)
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     return DP_layer_content_height((DP_LayerContent *)tlc);
+}
+
+DP_Tile *
+DP_transient_layer_content_tile_at_index_noinc(DP_TransientLayerContent *tlc,
+                                               int i)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    return DP_layer_content_tile_at_index_noinc((DP_LayerContent *)tlc, i);
 }
 
 DP_Tile *DP_transient_layer_content_tile_at_noinc(DP_TransientLayerContent *tlc,

@@ -34,6 +34,7 @@
 #include "layer_routes.h"
 #include "pixels.h"
 #include "selection.h"
+#include "tile.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
@@ -48,6 +49,18 @@
 // interactive techniques. pp. 276–283.
 // See https://en.wikipedia.org/wiki/Flood_fill#Span_Filling
 
+#define SOURCE_STATUS_MERGED  1
+#define SOURCE_STATUS_DILATED 2
+#define SOURCE_STATUS_ERODED  3
+
+typedef enum DP_FloodFillContextType {
+    DP_FLOOD_FILL_SOURCE_LAYER_CONTENT,
+    DP_FLOOD_FILL_SOURCE_LAYER_CONTENT_WITH_SUBLAYERS,
+    DP_FLOOD_FILL_SOURCE_LAYER_GROUP,
+    DP_FLOOD_FILL_SOURCE_LAYER_GROUP_WITH_SUBLAYERS,
+    DP_FLOOD_FILL_SOURCE_MERGED,
+} DP_FloodFillContextType;
+
 typedef struct DP_FillContext {
     int width, height;
     DP_Rect area;
@@ -60,17 +73,57 @@ typedef struct DP_FillContext {
 
 typedef struct DP_FloodFillContext {
     DP_FillContext parent;
-    unsigned char *input;
-    unsigned char *output;
-    DP_LayerContent *lc;
+    DP_FloodFillContextType type;
+    int xtiles;
+    int gap;
+    float tolerance_squared;
     DP_UPixelFloat reference_color;
-    double tolerance_squared;
+    union {
+        DP_LayerContent *lc;
+        struct {
+            DP_LayerGroup *lg;
+            DP_LayerProps *lp;
+        };
+        struct {
+            DP_CanvasState *cs;
+            DP_ViewModeBuffer vmb;
+            DP_ViewModeFilter vmf;
+            unsigned int flags;
+        };
+    };
+    unsigned char *flood_map;
+    unsigned char *dilate_map;
+    unsigned char *erode_map;
+    unsigned char *tile_status;
+    unsigned char *output;
     DP_Queue queue;
 } DP_FloodFillContext;
 
 typedef struct DP_FillSeed {
     int x, y;
 } DP_FillSeed;
+
+
+static unsigned char *buffer_at(unsigned char *buffer, DP_Rect area, int x,
+                                int y)
+{
+    DP_ASSERT(DP_rect_contains(area, x, y));
+    int bx = x - area.x1;
+    int by = y - area.y1;
+    return &buffer[by * DP_rect_width(area) + bx];
+}
+
+static unsigned char buffer_get(const unsigned char *buffer, DP_Rect area,
+                                int x, int y)
+{
+    return *buffer_at((unsigned char *)buffer, area, x, y);
+}
+
+static void buffer_set(unsigned char *buffer, DP_Rect area, int x, int y,
+                       unsigned char value)
+{
+    *buffer_at(buffer, area, x, y) = value;
+}
 
 static bool is_cancelled(DP_FillContext *c)
 {
@@ -86,6 +139,415 @@ static bool is_cancelled(DP_FillContext *c)
     }
 }
 
+
+static bool source_is_merged(DP_FloodFillContext *c, int tile_index)
+{
+    return c->tile_status[tile_index] >= SOURCE_STATUS_MERGED;
+}
+
+static bool source_is_dilated(DP_FloodFillContext *c, int tile_index)
+{
+    return c->tile_status[tile_index] >= SOURCE_STATUS_DILATED;
+}
+
+static bool source_is_eroded(DP_FloodFillContext *c, int tile_index)
+{
+    return c->tile_status[tile_index] >= SOURCE_STATUS_ERODED;
+}
+
+static void source_set_merged(DP_FloodFillContext *c, int tile_index)
+{
+    DP_ASSERT(c->parent.cancelled || c->tile_status[tile_index] == 0);
+    c->tile_status[tile_index] = SOURCE_STATUS_MERGED;
+}
+
+static void source_set_dilated(DP_FloodFillContext *c, int tile_index)
+{
+    DP_ASSERT(c->parent.cancelled
+              || c->tile_status[tile_index] == SOURCE_STATUS_MERGED);
+    c->tile_status[tile_index] = SOURCE_STATUS_DILATED;
+}
+
+static void source_set_eroded(DP_FloodFillContext *c, int tile_index)
+{
+    DP_ASSERT(c->parent.cancelled
+              || c->tile_status[tile_index] == SOURCE_STATUS_DILATED);
+    c->tile_status[tile_index] = SOURCE_STATUS_ERODED;
+}
+
+static DP_Tile *source_merge_tile(DP_FloodFillContext *c, int tile_index)
+{
+    switch (c->type) {
+    case DP_FLOOD_FILL_SOURCE_LAYER_CONTENT:
+        return DP_tile_incref_nullable(
+            DP_layer_content_tile_at_index_noinc(c->lc, tile_index));
+    case DP_FLOOD_FILL_SOURCE_LAYER_CONTENT_WITH_SUBLAYERS:
+        return DP_layer_content_flatten_tile(c->lc, tile_index, false, true);
+    case DP_FLOOD_FILL_SOURCE_LAYER_GROUP:
+        return (DP_Tile *)DP_layer_group_flatten_tile(c->lg, c->lp, tile_index,
+                                                      false);
+    case DP_FLOOD_FILL_SOURCE_LAYER_GROUP_WITH_SUBLAYERS:
+        return (DP_Tile *)DP_layer_group_flatten_tile(c->lg, c->lp, tile_index,
+                                                      true);
+    case DP_FLOOD_FILL_SOURCE_MERGED:
+        return (DP_Tile *)DP_canvas_state_flatten_tile(c->cs, tile_index,
+                                                       c->flags, &c->vmf);
+    }
+    DP_UNREACHABLE();
+}
+
+static DP_UPixelFloat source_to_color(DP_Pixel15 pixel)
+{
+    return DP_upixel15_to_float(DP_pixel15_unpremultiply(pixel));
+}
+
+static bool source_should_flood(DP_Pixel15 pixel,
+                                DP_UPixelFloat reference_color,
+                                float tolerance_squared)
+{
+    // TODO: we could use better functions for color distance than this.
+    // Guess if we're supposed to fill a transparent-ish pixel.
+    if (reference_color.a < 0.05f) {
+        float a = DP_channel15_to_float(pixel.a);
+        return a * a <= tolerance_squared;
+    }
+    else {
+        DP_UPixelFloat color = source_to_color(pixel);
+        float b = color.b - reference_color.b;
+        float g = color.g - reference_color.g;
+        float r = color.r - reference_color.r;
+        float a = color.a - reference_color.a;
+        return b * b + g * g + r * r + a * a <= tolerance_squared;
+    }
+}
+
+static void source_tile_bounds(DP_FloodFillContext *c, int xt, int yt,
+                               int *out_canvas_left, int *out_canvas_top,
+                               int *out_buffer_left, int *out_buffer_top,
+                               int *out_buffer_right, int *out_buffer_bottom)
+{
+    int canvas_left = xt * DP_TILE_SIZE;
+    if (out_canvas_left) {
+        *out_canvas_left = canvas_left;
+    }
+
+    int canvas_top = yt * DP_TILE_SIZE;
+    if (out_canvas_top) {
+        *out_canvas_top = canvas_top;
+    }
+
+    DP_Rect area = c->parent.area;
+    *out_buffer_left = DP_max_int(canvas_left, area.x1);
+    *out_buffer_top = DP_max_int(canvas_top, area.y1);
+    *out_buffer_right = DP_min_int(canvas_left + DP_TILE_SIZE - 1, area.x2);
+    *out_buffer_bottom = DP_min_int(canvas_top + DP_TILE_SIZE - 1, area.y2);
+}
+
+static void source_flood_dec(DP_FloodFillContext *c, int xt, int yt, DP_Tile *t)
+{
+    int canvas_left, canvas_top, buffer_left, buffer_top, buffer_right,
+        buffer_bottom;
+    source_tile_bounds(c, xt, yt, &canvas_left, &canvas_top, &buffer_left,
+                       &buffer_top, &buffer_right, &buffer_bottom);
+    DP_UPixelFloat reference_color = c->reference_color;
+    float tolerance_squared = c->tolerance_squared;
+    for (int y = buffer_top; y <= buffer_bottom; ++y) {
+        for (int x = buffer_left; x <= buffer_right; ++x) {
+            if (source_should_flood(
+                    DP_tile_pixel_at(t, x - canvas_left, y - canvas_top),
+                    reference_color, tolerance_squared)) {
+                buffer_set(c->flood_map, c->parent.area, x, y, 1);
+            }
+        }
+    }
+    DP_tile_decref(t);
+}
+
+static void source_flood_null(DP_FloodFillContext *c, int xt, int yt)
+{
+    DP_UPixelFloat reference_color = c->reference_color;
+    float tolerance_squared = c->tolerance_squared;
+    if (source_should_flood(DP_pixel15_zero(), reference_color,
+                            tolerance_squared)) {
+        int buffer_left, buffer_top, buffer_right, buffer_bottom;
+        source_tile_bounds(c, xt, yt, NULL, NULL, &buffer_left, &buffer_top,
+                           &buffer_right, &buffer_bottom);
+        size_t stride = DP_int_to_size(buffer_right - buffer_left + 1);
+        for (int y = buffer_top; y <= buffer_bottom; ++y) {
+            memset(buffer_at(c->flood_map, c->parent.area, buffer_left, y), 1,
+                   stride);
+        }
+    }
+}
+
+static void source_flood_nullable_dec(DP_FloodFillContext *c, int xt, int yt,
+                                      DP_Tile *t_or_null)
+{
+    if (t_or_null) {
+        source_flood_dec(c, xt, yt, t_or_null);
+    }
+    else {
+        source_flood_null(c, xt, yt);
+    }
+}
+
+static void source_init_at(DP_FloodFillContext *c, int x, int y)
+{
+    DP_ASSERT(DP_rect_contains(c->parent.area, x, y));
+    int xt = x / DP_TILE_SIZE;
+    int yt = y / DP_TILE_SIZE;
+    int tile_index = yt * c->xtiles + xt;
+    DP_Tile *t = source_merge_tile(c, tile_index);
+    source_set_merged(c, tile_index);
+    c->reference_color =
+        t ? source_to_color(DP_tile_pixel_at(t, x - xt * DP_TILE_SIZE,
+                                             y - yt * DP_TILE_SIZE))
+          : DP_upixel_float_zero();
+    source_flood_nullable_dec(c, xt, yt, t);
+}
+
+static unsigned int source_flags_make(bool include_background,
+                                      bool include_sublayers)
+{
+    static_assert(DP_FLAT_IMAGE_RENDER_FLAGS & DP_FLAT_IMAGE_INCLUDE_BACKGROUND,
+                  "render flags include background (and we may exclude it)");
+    static_assert(DP_FLAT_IMAGE_RENDER_FLAGS & DP_FLAT_IMAGE_INCLUDE_SUBLAYERS,
+                  "render flags include sublayers (and we may exclude them)");
+    unsigned int flags = DP_FLAT_IMAGE_RENDER_FLAGS;
+    if (!include_background) {
+        flags &= ~DP_FLAT_IMAGE_INCLUDE_BACKGROUND;
+    }
+    if (!include_sublayers) {
+        flags &= ~DP_FLAT_IMAGE_INCLUDE_SUBLAYERS;
+    }
+    return flags;
+}
+
+static size_t source_map_size(DP_FloodFillContext *c)
+{
+    DP_Rect area = c->parent.area;
+    return DP_int_to_size(DP_rect_width(area))
+         * DP_int_to_size(DP_rect_height(area));
+}
+
+static bool source_init(DP_FloodFillContext *c, DP_CanvasState *cs,
+                        int layer_id, bool include_sublayers,
+                        DP_ViewMode view_mode, int active_layer_id,
+                        int active_frame_index, double tolerance, int gap,
+                        int x, int y)
+{
+    DP_ASSERT(gap >= 0);
+    if (layer_id <= 0) {
+        c->type = DP_FLOOD_FILL_SOURCE_MERGED;
+        c->cs = cs;
+        DP_view_mode_buffer_init(&c->vmb);
+        c->vmf = DP_view_mode_filter_make(
+            &c->vmb, view_mode, cs, active_layer_id, active_frame_index, NULL);
+        c->flags = source_flags_make(layer_id == 0, include_sublayers);
+    }
+    else {
+        DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+        DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
+        if (!lre) {
+            DP_error_set("Flood fill: layer %d not found", layer_id);
+            return false;
+        }
+        else if (DP_layer_routes_entry_is_group(lre)) {
+            c->type = include_sublayers
+                        ? DP_FLOOD_FILL_SOURCE_LAYER_GROUP_WITH_SUBLAYERS
+                        : DP_FLOOD_FILL_SOURCE_LAYER_GROUP;
+            c->lg = DP_layer_routes_entry_group(lre, cs);
+            c->lp = DP_layer_routes_entry_props(lre, cs);
+        }
+        else {
+            DP_LayerContent *lc = DP_layer_routes_entry_content(lre, cs);
+            if (include_sublayers && DP_layer_content_has_sublayers(lc) != 0) {
+                c->type = DP_FLOOD_FILL_SOURCE_LAYER_CONTENT_WITH_SUBLAYERS;
+                c->lc = lc;
+            }
+            else {
+                c->type = DP_FLOOD_FILL_SOURCE_LAYER_CONTENT;
+                c->lc = lc;
+            }
+        }
+    }
+    int canvas_width = DP_canvas_state_width(cs);
+    int canvas_height = DP_canvas_state_height(cs);
+    DP_TileCounts tc = DP_tile_counts_round(canvas_width, canvas_height);
+    c->xtiles = tc.x;
+    c->gap = gap;
+    c->tolerance_squared = DP_double_to_float(tolerance * tolerance);
+    size_t map_size = source_map_size(c);
+    c->flood_map = DP_malloc_zeroed(map_size);
+    c->dilate_map = gap == 0 ? NULL : DP_malloc_zeroed(map_size);
+    c->erode_map = gap == 0 ? NULL : DP_malloc_zeroed(map_size);
+    c->tile_status =
+        DP_malloc_zeroed(DP_int_to_size(tc.x) * DP_int_to_size(tc.y));
+    source_init_at(c, x, y);
+    return true;
+}
+
+static void source_move_flood_map_to_outout(DP_FloodFillContext *c)
+{
+    DP_ASSERT(c->flood_map);
+    DP_ASSERT(!c->output);
+    c->output = c->flood_map;
+    c->flood_map = NULL;
+}
+
+static void source_dispose(DP_FloodFillContext *c)
+{
+    switch (c->type) {
+    case DP_FLOOD_FILL_SOURCE_MERGED:
+        DP_view_mode_buffer_dispose(&c->vmb);
+        DP_FALLTHROUGH();
+    case DP_FLOOD_FILL_SOURCE_LAYER_CONTENT_WITH_SUBLAYERS:
+    case DP_FLOOD_FILL_SOURCE_LAYER_GROUP:
+    case DP_FLOOD_FILL_SOURCE_LAYER_GROUP_WITH_SUBLAYERS:
+    case DP_FLOOD_FILL_SOURCE_LAYER_CONTENT:
+        DP_free(c->tile_status);
+        DP_free(c->erode_map);
+        DP_free(c->dilate_map);
+        DP_free(c->flood_map);
+        return;
+    }
+    DP_UNREACHABLE();
+}
+
+static unsigned char source_flood_map_at(DP_FloodFillContext *c, int x, int y)
+{
+    int xt = x / DP_TILE_SIZE;
+    int yt = y / DP_TILE_SIZE;
+    int tile_index = yt * c->xtiles + xt;
+    if (!source_is_merged(c, tile_index)) {
+        DP_Tile *t = source_merge_tile(c, tile_index);
+        source_set_merged(c, tile_index);
+        source_flood_nullable_dec(c, xt, yt, t);
+    }
+    return buffer_get(c->flood_map, c->parent.area, x, y);
+}
+
+static void source_dilate_pixel(DP_FloodFillContext *c, int x0, int y0)
+{
+    int gap = c->gap;
+    DP_Rect area = c->parent.area;
+    int x1 = DP_max_int(area.x1, x0 - gap);
+    int y1 = DP_max_int(area.y1, y0 - gap);
+    int x2 = DP_min_int(area.x2, x0 + gap);
+    int y2 = DP_min_int(area.y2, y0 + gap);
+    for (int y = y1; y <= y2; ++y) {
+        for (int x = x1; x <= x2; ++x) {
+            if (source_flood_map_at(c, x, y) == 0) {
+                buffer_set(c->dilate_map, area, x0, y0, 1);
+                return;
+            }
+        }
+    }
+}
+
+static void source_dilate_tile(DP_FloodFillContext *c, int xt, int yt)
+{
+    int buffer_left, buffer_top, buffer_right, buffer_bottom;
+    source_tile_bounds(c, xt, yt, NULL, NULL, &buffer_left, &buffer_top,
+                       &buffer_right, &buffer_bottom);
+    for (int y = buffer_top; y <= buffer_bottom; ++y) {
+        for (int x = buffer_left; x <= buffer_right; ++x) {
+            if (is_cancelled(&c->parent)) {
+                return;
+            }
+            source_dilate_pixel(c, x, y);
+        }
+    }
+}
+
+static unsigned char source_dilate_map_at(DP_FloodFillContext *c, int x, int y)
+{
+    int xt = x / DP_TILE_SIZE;
+    int yt = y / DP_TILE_SIZE;
+    int tile_index = yt * c->xtiles + xt;
+    if (!source_is_dilated(c, tile_index)) {
+        source_dilate_tile(c, xt, yt);
+        source_set_dilated(c, tile_index);
+    }
+    return buffer_get(c->dilate_map, c->parent.area, x, y);
+}
+
+static void source_erode_pixel(DP_FloodFillContext *c, int x0, int y0)
+{
+    int gap = c->gap;
+    DP_Rect area = c->parent.area;
+    int x1 = DP_max_int(area.x1, x0 - gap);
+    int y1 = DP_max_int(area.y1, y0 - gap);
+    int x2 = DP_min_int(area.x2, x0 + gap);
+    int y2 = DP_min_int(area.y2, y0 + gap);
+    for (int y = y1; y <= y2; ++y) {
+        for (int x = x1; x <= x2; ++x) {
+            if (source_dilate_map_at(c, x, y) == 0) {
+                buffer_set(c->erode_map, area, x0, y0, 1);
+                return;
+            }
+        }
+    }
+}
+
+static void source_erode_tile(DP_FloodFillContext *c, int xt, int yt)
+{
+    int buffer_left, buffer_top, buffer_right, buffer_bottom;
+    source_tile_bounds(c, xt, yt, NULL, NULL, &buffer_left, &buffer_top,
+                       &buffer_right, &buffer_bottom);
+    for (int y = buffer_top; y <= buffer_bottom; ++y) {
+        for (int x = buffer_left; x <= buffer_right; ++x) {
+            if (is_cancelled(&c->parent)) {
+                return;
+            }
+            source_erode_pixel(c, x, y);
+        }
+    }
+}
+
+static unsigned char source_erode_map_at(DP_FloodFillContext *c, int x, int y)
+{
+    int xt = x / DP_TILE_SIZE;
+    int yt = y / DP_TILE_SIZE;
+    int tile_index = yt * c->xtiles + xt;
+    if (!source_is_eroded(c, tile_index)) {
+        source_erode_tile(c, xt, yt);
+        source_set_eroded(c, tile_index);
+    }
+    return buffer_get(c->erode_map, c->parent.area, x, y);
+}
+
+static unsigned char source_at(DP_FloodFillContext *c, int x, int y)
+{
+    return c->gap == 0 ? source_flood_map_at(c, x, y)
+                       : source_erode_map_at(c, x, y);
+}
+
+static void source_flood_all(DP_FloodFillContext *c)
+{
+    DP_ASSERT(c->gap == 0);
+    DP_Rect area = c->parent.area;
+    int tile_left = area.x1 / DP_TILE_SIZE;
+    int tile_top = area.y1 / DP_TILE_SIZE;
+    int tile_right = area.x2 / DP_TILE_SIZE;
+    int tile_bottom = area.y2 / DP_TILE_SIZE;
+    int xtiles = c->xtiles;
+    for (int yt = tile_top; yt <= tile_bottom; ++yt) {
+        for (int xt = tile_left; xt <= tile_right; ++xt) {
+            if (is_cancelled(&c->parent)) {
+                return;
+            }
+            int tile_index = yt * xtiles + xt;
+            if (!source_is_merged(c, tile_index)) {
+                DP_Tile *t = source_merge_tile(c, tile_index);
+                source_set_merged(c, tile_index);
+                source_flood_nullable_dec(c, xt, yt, t);
+            }
+        }
+    }
+}
+
+
 static void init_selection(DP_FillContext *c, DP_CanvasState *cs,
                            unsigned int context_id, int selection_id)
 {
@@ -100,165 +562,6 @@ static void init_selection(DP_FillContext *c, DP_CanvasState *cs,
             }
         }
     }
-}
-
-static DP_LayerContent *merge_image(DP_CanvasState *cs, DP_ViewMode view_mode,
-                                    int active_layer_id, int active_frame_index,
-                                    bool include_background,
-                                    bool include_sublayers)
-{
-    static_assert(DP_FLAT_IMAGE_RENDER_FLAGS & DP_FLAT_IMAGE_INCLUDE_BACKGROUND,
-                  "render flags include background (and we may exclude it)");
-    static_assert(DP_FLAT_IMAGE_RENDER_FLAGS & DP_FLAT_IMAGE_INCLUDE_SUBLAYERS,
-                  "render flags include sublayers (and we may exclude them)");
-    unsigned int flags = DP_FLAT_IMAGE_RENDER_FLAGS;
-    if (!include_background) {
-        flags &= ~DP_FLAT_IMAGE_INCLUDE_BACKGROUND;
-    }
-    if (!include_sublayers) {
-        flags &= ~DP_FLAT_IMAGE_INCLUDE_SUBLAYERS;
-    }
-    DP_ViewModeBuffer vmb;
-    DP_view_mode_buffer_init(&vmb);
-    DP_ViewModeFilter vmf = DP_view_mode_filter_make(
-        &vmb, view_mode, cs, active_layer_id, active_frame_index, NULL);
-    DP_LayerContent *lc =
-        (DP_LayerContent *)DP_canvas_state_to_flat_layer(cs, flags, &vmf);
-    DP_view_mode_buffer_dispose(&vmb);
-    return lc;
-}
-
-static unsigned char *buffer_at(unsigned char *buffer, DP_Rect area, int x,
-                                int y)
-{
-    DP_ASSERT(DP_rect_contains(area, x, y));
-    int bx = x - DP_rect_left(area);
-    int by = y - DP_rect_top(area);
-    return &buffer[by * DP_rect_width(area) + bx];
-}
-
-static unsigned char buffer_get(unsigned char *buffer, DP_Rect area, int x,
-                                int y)
-{
-    return *buffer_at(buffer, area, x, y);
-}
-
-static void buffer_set(unsigned char *buffer, DP_Rect area, int x, int y,
-                       unsigned char value)
-{
-    *buffer_at(buffer, area, x, y) = value;
-}
-
-static DP_UPixelFloat get_color_at(DP_LayerContent *lc, int x, int y)
-{
-    return DP_upixel15_to_float(
-        DP_pixel15_unpremultiply(DP_layer_content_pixel_at(lc, x, y)));
-}
-
-static bool should_flood(DP_FloodFillContext *c, int x, int y)
-{
-    DP_UPixelFloat reference_color = c->reference_color;
-    // TODO: we could use better functions for color distance than this.
-    // Guess if we're supposed to fill a transparent-ish pixel.
-    if (reference_color.a < 0.05f) {
-        double a =
-            DP_channel15_to_float(DP_layer_content_pixel_at(c->lc, x, y).a);
-        return a * a <= c->tolerance_squared;
-    }
-    else {
-        DP_UPixelFloat color = get_color_at(c->lc, x, y);
-        double b = color.b - reference_color.b;
-        double g = color.g - reference_color.g;
-        double r = color.r - reference_color.r;
-        double a = color.a - reference_color.a;
-        return b * b + g * g + r * r + a * a <= c->tolerance_squared;
-    }
-}
-
-static void update_bounds(DP_FillContext *c, int x, int y)
-{
-    if (x < c->min_x) {
-        c->min_x = x;
-    }
-    if (x > c->max_x) {
-        c->max_x = x;
-    }
-    if (y < c->min_y) {
-        c->min_y = y;
-    }
-    if (y > c->max_y) {
-        c->max_y = y;
-    }
-}
-
-static void flood(DP_FloodFillContext *c, bool should_update_bounds)
-{
-    DP_Rect area = c->parent.area;
-    for (int y = area.y1; y <= area.y2; ++y) {
-        for (int x = area.x1; x <= area.x2; ++x) {
-            buffer_set(c->input, area, x, y, should_flood(c, x, y) ? 1 : 0);
-            if (should_update_bounds) {
-                update_bounds(&c->parent, x, y);
-            }
-        }
-    }
-}
-
-static void dilate_erode_pixel(DP_Rect area, unsigned char *src,
-                               unsigned char *dst, int gap, int x0, int y0)
-{
-    int x1 = DP_max_int(area.x1, x0 - gap);
-    int y1 = DP_max_int(area.y1, y0 - gap);
-    int x2 = DP_min_int(area.x2, x0 + gap);
-    int y2 = DP_min_int(area.y2, y0 + gap);
-    for (int y = y1; y <= y2; ++y) {
-        for (int x = x1; x <= x2; ++x) {
-            if (buffer_get(src, area, x, y) == 0) {
-                buffer_set(dst, area, x0, y0, 1);
-                return;
-            }
-        }
-    }
-}
-
-static void dilate_erode(DP_FillContext *c, unsigned char *src,
-                         unsigned char *dst, int gap)
-{
-    DP_Rect area = c->area;
-    for (int y = area.y1; y <= area.y2; ++y) {
-        for (int x = area.x1; x <= area.x2; ++x) {
-            if (is_cancelled(c)) {
-                return;
-            }
-            dilate_erode_pixel(area, src, dst, gap, x, y);
-        }
-    }
-}
-
-static void gap_fill(DP_FloodFillContext *c, int gap, size_t buffer_size)
-{
-    // Classic, simple gap-filling algorithm: dilate the outlines into the
-    // output buffer, erode them back into the input buffer, then clear the
-    // output buffer again. Erosion just means dilation of transparent pixels,
-    // so we can use a single algorithm for these. Unlike with the fill
-    // expansion stuff below, we use a trivial square kernel, the round kernel
-    // gives worse results with more corners remaining unfilled.
-    dilate_erode(&c->parent, c->input, c->output, gap);
-    if (is_cancelled(&c->parent)) {
-        return;
-    }
-
-    memset(c->input, 0, buffer_size);
-    if (is_cancelled(&c->parent)) {
-        return;
-    }
-
-    dilate_erode(&c->parent, c->output, c->input, gap);
-    if (is_cancelled(&c->parent)) {
-        return;
-    }
-
-    memset(c->output, 0, buffer_size);
 }
 
 static void add_seed(DP_Queue *s, int x, int y)
@@ -279,8 +582,23 @@ static bool inside(DP_FloodFillContext *c, int x, int y)
 {
     DP_Rect area = c->parent.area;
     return DP_rect_contains(area, x, y)
-        && buffer_get(c->output, area, x, y) == 0
-        && buffer_get(c->input, area, x, y) != 0;
+        && buffer_get(c->output, area, x, y) == 0 && source_at(c, x, y) != 0;
+}
+
+static void update_bounds(DP_FillContext *c, int x, int y)
+{
+    if (x < c->min_x) {
+        c->min_x = x;
+    }
+    if (x > c->max_x) {
+        c->max_x = x;
+    }
+    if (y < c->min_y) {
+        c->min_y = y;
+    }
+    if (y > c->max_y) {
+        c->max_y = y;
+    }
 }
 
 static void set_pixel(DP_FloodFillContext *c, int x, int y)
@@ -303,7 +621,7 @@ static void scan(DP_FloodFillContext *c, DP_Queue *s, int lx, int rx, int y)
     }
 }
 
-static void fill(DP_FloodFillContext *c, int x0, int y0)
+static void flood_fill(DP_FloodFillContext *c, int x0, int y0)
 {
     DP_Queue *s = &c->queue;
     add_seed(s, x0, y0);
@@ -324,12 +642,12 @@ static void fill(DP_FloodFillContext *c, int x0, int y0)
     }
 }
 
-static void tighten_bounds(DP_FloodFillContext *c)
+static void tighten_output_bounds(DP_FloodFillContext *c)
 {
     DP_Rect area = c->parent.area;
     for (int y = area.y1; y <= area.y2; ++y) {
         for (int x = area.x1; x <= area.x2; ++x) {
-            if (buffer_get(c->input, area, x, y)) {
+            if (buffer_get(c->output, area, x, y)) {
                 update_bounds(&c->parent, x, y);
             }
         }
@@ -835,11 +1153,17 @@ DP_flood_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
             should_cancel,
             user,
         },
-        NULL,
-        NULL,
-        NULL,
+        (DP_FloodFillContextType)0,
+        0,
+        0,
+        0.0,
         {0.0f, 0.0f, 0.0f, 0.0f},
-        tolerance * tolerance,
+        {NULL},
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
         DP_QUEUE_NULL,
     };
     if (is_cancelled(&c.parent)) {
@@ -869,78 +1193,29 @@ DP_flood_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
         return DP_FLOOD_FILL_OUT_OF_BOUNDS;
     }
 
-    if (layer_id == 0) {
-        c.lc = merge_image(cs, view_mode, active_layer_id, active_frame_index,
-                           true, include_sublayers);
-    }
-    else if (layer_id == -1) {
-        c.lc = merge_image(cs, view_mode, active_layer_id, active_frame_index,
-                           false, include_sublayers);
-    }
-    else {
-        DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-        DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
-        if (!lre) {
-            DP_error_set("Flood fill: layer %d not found", layer_id);
-            return DP_FLOOD_FILL_INVALID_LAYER;
-        }
-        else if (DP_layer_routes_entry_is_group(lre)) {
-            DP_LayerGroup *lg = DP_layer_routes_entry_group(lre, cs);
-            DP_LayerProps *lp = DP_layer_routes_entry_props(lre, cs);
-            DP_TransientLayerContent *tlc =
-                DP_layer_group_merge(lg, lp, include_sublayers);
-            c.lc = (DP_LayerContent *)tlc;
-        }
-        else if (include_sublayers) {
-            c.lc = DP_layer_content_merge_sublayers(
-                DP_layer_routes_entry_content(lre, cs));
-        }
-        else {
-            c.lc =
-                DP_layer_content_incref(DP_layer_routes_entry_content(lre, cs));
-        }
+    if (!source_init(&c, cs, layer_id, include_sublayers, view_mode,
+                     active_layer_id, active_frame_index, tolerance,
+                     continuous ? DP_max_int(0, gap) : 0, x, y)) {
+        return DP_FLOOD_FILL_INVALID_LAYER;
     }
 
     if (is_cancelled(&c.parent)) {
-        DP_layer_content_decref(c.lc);
-        return DP_FLOOD_FILL_CANCELLED;
-    }
-
-    size_t buffer_size = DP_int_to_size(DP_rect_width(c.parent.area))
-                       * DP_int_to_size(DP_rect_height(c.parent.area));
-    c.input = DP_malloc(buffer_size);
-    c.reference_color = get_color_at(c.lc, x, y);
-    flood(&c, !continuous && gap <= 0);
-    DP_layer_content_decref(c.lc);
-    if (is_cancelled(&c.parent)) {
-        DP_free(c.input);
+        source_dispose(&c);
         return DP_FLOOD_FILL_CANCELLED;
     }
 
     if (continuous) {
-        c.output = DP_malloc_zeroed(buffer_size);
-        if (gap > 0) {
-            gap_fill(&c, gap, buffer_size);
-            if (is_cancelled(&c.parent)) {
-                DP_free(c.input);
-                DP_free(c.output);
-                return DP_FLOOD_FILL_CANCELLED;
-            }
-        }
-
+        c.output = DP_malloc_zeroed(source_map_size(&c));
         DP_queue_init(&c.queue, 1024, sizeof(DP_FillSeed));
-        fill(&c, x, y);
+        flood_fill(&c, x, y);
         DP_queue_dispose(&c.queue);
-        DP_free(c.input);
+        source_dispose(&c);
     }
     else {
-        if (gap > 0) {
-            c.output = DP_malloc_zeroed(buffer_size);
-            gap_fill(&c, gap, buffer_size);
-            tighten_bounds(&c);
-            DP_free(c.output);
-        }
-        c.output = c.input;
+        source_flood_all(&c);
+        source_move_flood_map_to_outout(&c);
+        source_dispose(&c);
+        tighten_output_bounds(&c);
     }
 
     if (is_cancelled(&c.parent)) {
