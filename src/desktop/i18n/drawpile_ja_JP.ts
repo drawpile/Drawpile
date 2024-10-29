@@ -784,7 +784,7 @@
         <location line="+96"/>
         <location line="+3"/>
         <source>Apply the pending fill, making it visible for everyone</source>
-        <translation>処理中の塗りつぶしを適用し、誰でも見えるようにします</translation>
+        <translation>確定前の塗りつぶし結果をキャンバスに反映し、誰でも見えるようにします</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -795,7 +795,7 @@
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation>処理中の塗りつぶしを、他の人にその状態を見られることなくキャンセルします</translation>
+        <translation>確定前の塗りつぶし結果を、キャンバスに反映させずに他の人にそれを見られることなくキャンセルします</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8649,22 +8649,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>One-finger tap:</source>
-        <translation>一本指タップ:</translation>
+        <translation>１本指タップ:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Two-finger tap:</source>
-        <translation>二本指タップ:</translation>
+        <translation>２本指タップ:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Three-finger tap:</source>
-        <translation>三本指タップ:</translation>
+        <translation>３本指タップ:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Four-finger tap:</source>
-        <translation>四本指タップ:</translation>
+        <translation>４本指タップ:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -8674,7 +8674,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>One-finger tap and hold:</source>
-        <translation>一本指タップでホールド:</translation>
+        <translation>１本指タップでホールド:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -8694,7 +8694,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>One-finger touch:</source>
-        <translation>一本指タッチ:</translation>
+        <translation>１本指タッチ:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8704,7 +8704,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Two-finger pinch:</source>
-        <translation>二本指ピンチ:</translation>
+        <translation>２本指ピンチ:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8724,7 +8724,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Two-finger twist:</source>
-        <translation>二本指ひねり:</translation>
+        <translation>２本指ひねり:</translation>
     </message>
 </context>
 <context>
@@ -8868,7 +8868,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+20"/>
         <source>Scale factor: </source>
-        <translation>スケールファクター: </translation>
+        <translation>拡大率: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10285,7 +10285,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>&amp;Edit pending fills</source>
-        <translation>処理中の塗りつぶしの設定(&amp;E)</translation>
+        <translation>塗りつぶし確定前のの設定(&amp;E)</translation>
     </message>
     <message>
         <location line="+1"/>
