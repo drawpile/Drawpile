@@ -6,7 +6,6 @@
 #include "libserver/serverlog.h"
 #include "libserver/session.h"
 #include "libserver/sessions.h"
-#include "libshared/net/protover.h"
 #include "libshared/net/servercmd.h"
 #include "libshared/util/authtoken.h"
 #include "libshared/util/networkaccess.h"
@@ -50,7 +49,19 @@ LoginHandler::LoginHandler(
 void LoginHandler::startLoginProcess()
 {
 	m_mandatoryLookup = m_config->getConfigBool(config::MandatoryLookup);
-	m_state = m_mandatoryLookup ? State::WaitForLookup : State::WaitForIdent;
+	m_minimumProtocolVersionString =
+		m_config->getConfigString(config::MinimumProtocolVersion);
+	if(!m_minimumProtocolVersionString.isEmpty()) {
+		m_minimumProtocolVersion = protocol::ProtocolVersion::fromString(
+			m_minimumProtocolVersionString);
+		if(!m_minimumProtocolVersion.isValid()) {
+			qWarning(
+				"Invalid minimum protocol version '%s' configured",
+				qUtf8Printable(m_minimumProtocolVersionString));
+		}
+	}
+
+	m_state = needsLookup() ? State::WaitForLookup : State::WaitForIdent;
 
 	QJsonArray flags;
 	if(m_config->getConfigInt(config::SessionCountLimit) > 1) {
@@ -207,8 +218,9 @@ void LoginHandler::handleLoginMessage(const net::Message &msg)
 		} else {
 			sendError(
 				QStringLiteral("clientLookupUnsupported"),
-				QStringLiteral("This server requires session lookups. You must "
-							   "update Drawpile for this to work."));
+				QStringLiteral(
+					"Your version of Drawpile is too old. To update, go to "
+					"drawpile.net and download a newer version."));
 		}
 
 	} else if(m_state == State::WaitForIdent) {
@@ -787,35 +799,24 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 
 	// Moderators can host under any protocol version, but everyone else has to
 	// meet the minimum version, if one is configured.
-	if(!m_client->isModerator()) {
-		QString minimumProtocolVersionString =
-			m_config->getConfigString(config::MinimumProtocolVersion);
-		if(!minimumProtocolVersionString.isEmpty()) {
-			protocol::ProtocolVersion minimumProtocolVersion =
-				protocol::ProtocolVersion::fromString(
-					minimumProtocolVersionString);
-			if(minimumProtocolVersion.isValid()) {
-				if(protocolVersion.ns() != minimumProtocolVersion.ns()) {
-					sendError(
-						QStringLiteral("protoverns"),
-						QStringLiteral("Mismatched protocol namespace, minimum "
-									   "protocol version is %1")
-							.arg(minimumProtocolVersionString));
-					return;
-				} else if(!protocolVersion.isGreaterOrEqual(
-							  minimumProtocolVersion)) {
-					sendError(
-						QStringLiteral("protoverold"),
-						QStringLiteral(
-							"Outdated client, minimum protocol version is %1")
-							.arg(minimumProtocolVersionString));
-					return;
-				}
-			} else {
-				qWarning(
-					"Invalid minimum protocol version '%s' configured",
-					qUtf8Printable(minimumProtocolVersionString));
-			}
+	if(!m_client->isModerator() && m_minimumProtocolVersion.isValid()) {
+		if(protocolVersion.ns() != m_minimumProtocolVersion.ns()) {
+			sendError(
+				QStringLiteral("protoverns"),
+				QStringLiteral("Mismatched protocol namespace, minimum "
+							   "protocol version is %1")
+					.arg(m_minimumProtocolVersionString));
+			return;
+		} else if(!protocolVersion.isGreaterOrEqual(m_minimumProtocolVersion)) {
+			sendError(
+				QStringLiteral("protoverold"),
+				QStringLiteral(
+					"Your protocol version is too old, the minimum on "
+					"this server is %1. That probably means your "
+					"version of Drawpile is too old. To update, go to "
+					"drawpile.net and download a newer version.")
+					.arg(m_minimumProtocolVersionString));
+			return;
 		}
 	}
 
@@ -1115,7 +1116,7 @@ void LoginHandler::handleStarttls()
 		QStringLiteral("Start TLS now!"), true));
 
 	m_client->startTls();
-	m_state = m_mandatoryLookup ? State::WaitForLookup : State::WaitForIdent;
+	m_state = needsLookup() ? State::WaitForLookup : State::WaitForIdent;
 }
 
 bool LoginHandler::send(const net::Message &msg)
@@ -1139,6 +1140,13 @@ void LoginHandler::sendError(
 		m_client->disconnectClient(
 			Client::DisconnectionReason::Error, "Login error", code);
 	}
+}
+
+bool LoginHandler::needsLookup() const
+{
+	return m_mandatoryLookup ||
+		   (m_minimumProtocolVersion.isValid() &&
+			m_minimumProtocolVersion.shouldSupportLookup());
 }
 
 LoginHandler::IdentIntent LoginHandler::parseIdentIntent(const QString &s)

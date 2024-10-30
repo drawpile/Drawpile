@@ -81,6 +81,7 @@ public:
 	bool isCompatible() const { return isCurrent() || isPastCompatible(); }
 
 	bool shouldHaveSystemId() const;
+	bool shouldSupportLookup() const;
 
 	/**
 	 * Get the client version series that support this

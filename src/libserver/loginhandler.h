@@ -2,14 +2,11 @@
 #ifndef DP_SERVER_LOGINHANDLER_H
 #define DP_SERVER_LOGINHANDLER_H
 #include "libshared/net/message.h"
+#include "libshared/net/protover.h"
 #include <QByteArray>
 #include <QJsonObject>
 #include <QObject>
 #include <QStringList>
-
-namespace protocol {
-class ProtocolVersion;
-}
 
 namespace net {
 struct ServerCommand;
@@ -120,6 +117,8 @@ private:
 		const QString &code, const QString &message, bool disconnect = true);
 	void extAuthGuestLogin(const QString &username, IdentIntent intent);
 
+	bool needsLookup() const;
+
 	static IdentIntent parseIdentIntent(const QString &s);
 	static QString identIntentToString(IdentIntent intent);
 	bool checkIdentIntent(
@@ -143,6 +142,8 @@ private:
 	ServerConfig *m_config;
 
 	State m_state = State::WaitForIdent;
+	QString m_minimumProtocolVersionString;
+	protocol::ProtocolVersion m_minimumProtocolVersion;
 	quint64 m_extauth_nonce = 0;
 	bool m_hostPrivilege = false;
 	bool m_exemptFromBans = false;

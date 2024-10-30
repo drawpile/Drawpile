@@ -225,14 +225,25 @@ bool DP_protocol_version_is_past_compatible(const DP_ProtocolVersion *protover)
         && protover->minor == 2;
 }
 
-bool DP_protocol_version_should_have_system_id(
-    const DP_ProtocolVersion *protover)
+static bool is_at_least_4_24_0(const DP_ProtocolVersion *protover)
 {
     return protover && DP_str_equal(protover->ns, DP_PROTOCOL_VERSION_NAMESPACE)
         && (protover->server > 4
             || (protover->server == 4
                 && (protover->major > 24
                     || (protover->major == 24 && protover->minor >= 0))));
+}
+
+bool DP_protocol_version_should_have_system_id(
+    const DP_ProtocolVersion *protover)
+{
+    return is_at_least_4_24_0(protover);
+}
+
+bool DP_protocol_version_should_support_lookup(
+    const DP_ProtocolVersion *protover)
+{
+    return is_at_least_4_24_0(protover);
 }
 
 const char *DP_protocol_version_ns(const DP_ProtocolVersion *protover)

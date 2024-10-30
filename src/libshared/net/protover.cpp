@@ -111,6 +111,11 @@ bool ProtocolVersion::shouldHaveSystemId() const
 	return DP_protocol_version_should_have_system_id(m_protocolVersion);
 }
 
+bool ProtocolVersion::shouldSupportLookup() const
+{
+	return DP_protocol_version_should_support_lookup(m_protocolVersion);
+}
+
 QString ProtocolVersion::versionName() const
 {
 	const char *name = DP_protocol_version_name(m_protocolVersion);

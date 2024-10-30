@@ -50,6 +50,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Clicking off of an annotation will no longer instantly create a new one in that spot. It will instead only deselect the annotation that was selected.
  * Fix: The Delete Empty Annotations can now be undone without undoing what happened before it as well.
  * Feature: Empty annotations are now automatically deleted when you deselect them, to avoid the common clutter of stray empty annotations across the canvas. If you really did want an empty annotation, you can hit undo and it will return.
+ * Server Feature: Setting a minimum protocol version of dp:4.24.0 now tells clients that they're using a Drawpile version too old for this server, rather than leaving them sitting at a session list where they can join no sessions.
 
 2024-08-09 Version 2.2.2-beta.3
  * Fix: Use more accurate timers for performance profiles if the platform supports it.

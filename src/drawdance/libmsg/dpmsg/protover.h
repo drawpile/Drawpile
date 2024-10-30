@@ -42,6 +42,9 @@ bool DP_protocol_version_is_past_compatible(const DP_ProtocolVersion *protover);
 bool DP_protocol_version_should_have_system_id(
     const DP_ProtocolVersion *protover);
 
+bool DP_protocol_version_should_support_lookup(
+    const DP_ProtocolVersion *protover);
+
 const char *DP_protocol_version_ns(const DP_ProtocolVersion *protover);
 
 int DP_protocol_version_server(const DP_ProtocolVersion *protover);
