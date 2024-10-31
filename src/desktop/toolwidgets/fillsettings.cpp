@@ -32,7 +32,7 @@ static const ToolProperties::RangedValue<int> expand{
 	blendMode{
 		QStringLiteral("blendMode"), DP_BLEND_MODE_NORMAL, 0,
 		DP_BLEND_MODE_MAX},
-	size{QStringLiteral("size"), 500, 10, 5000},
+	size{QStringLiteral("limit"), 5000, 10, 5000},
 	opacity{QStringLiteral("opacity"), 100, 1, 100},
 	gap{QStringLiteral("gap"), 0, 0, 32},
 	source{QStringLiteral("source"), 2, 0, 3},
