@@ -5,6 +5,7 @@
 #include "libclient/canvas/paintengine.h"
 #include "libclient/document.h"
 #include "libclient/import/canvasloaderrunnable.h"
+#include "libclient/utils/scopedoverridecursor.h"
 #include "libshared/util/paths.h"
 #include <QCoreApplication>
 #include <QDir>
@@ -260,6 +261,7 @@ QString FileWrangler::saveSelectionAs(Document *doc) const
 		&selectedFilter);
 
 	if(!filename.isEmpty()) {
+		utils::ScopedOverrideCursor waitCursor;
 		doc->saveSelection(filename);
 		return filename;
 	} else {

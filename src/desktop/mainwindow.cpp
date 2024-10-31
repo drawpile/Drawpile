@@ -3582,6 +3582,7 @@ void MainWindow::copyText()
 
 void MainWindow::paste()
 {
+	utils::ScopedOverrideCursor waitCursor;
 	const QMimeData *mimeData = Document::getClipboardData();
 	if(mimeData && mimeData->hasImage()) {
 		QPoint pastepos;
@@ -3612,6 +3613,7 @@ void MainWindow::paste()
 // clang-format on
 void MainWindow::pasteCentered()
 {
+	utils::ScopedOverrideCursor waitCursor;
 	const QMimeData *mimeData = Document::getClipboardData();
 	if(mimeData && mimeData->hasImage()) {
 		pasteImage(mimeData->imageData().value<QImage>(), nullptr, true);
@@ -3625,6 +3627,7 @@ void MainWindow::pasteFile()
 			if(img.isNull()) {
 				showErrorMessage(tr("The image could not be loaded"));
 			} else {
+				utils::ScopedOverrideCursor waitCursor;
 				pasteImage(img);
 			}
 		};
@@ -3634,11 +3637,14 @@ void MainWindow::pasteFile()
 
 void MainWindow::pasteFilePath(const QString &path)
 {
+	QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 	QImage img(path);
 	if(img.isNull()) {
+		QGuiApplication::restoreOverrideCursor();
 		showErrorMessage(tr("The image could not be loaded"));
 	} else {
 		pasteImage(img);
+		QGuiApplication::restoreOverrideCursor();
 	}
 }
 
@@ -3662,6 +3668,7 @@ void MainWindow::pasteImage(
 
 void MainWindow::dropImage(const QImage &image)
 {
+	utils::ScopedOverrideCursor waitCursor;
 	pasteImage(image);
 }
 
@@ -3700,6 +3707,7 @@ void MainWindow::clearOrDelete()
 	}
 
 	// No annotation selected: clear seleted area as usual
+	utils::ScopedOverrideCursor waitCursor;
 	m_doc->clearArea();
 }
 
