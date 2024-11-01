@@ -35,6 +35,7 @@ private:
 	class Task;
 	friend Task;
 
+	void updateOp(bool constrain, bool center, int defaultOp);
 	void stopDragging();
 	void fillAt(const QPointF &point, bool constrain, bool center);
 	void repeatFill();

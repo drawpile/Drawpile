@@ -37,6 +37,9 @@ void SelectionTool::motion(const MotionParams &params)
 
 void SelectionTool::end(const EndParams &params)
 {
+	if(m_op != -1) {
+		m_op = resolveOp(params.constrain, params.center, defaultOp());
+	}
 	endSelection(true, params.center);
 }
 

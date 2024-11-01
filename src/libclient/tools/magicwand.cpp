@@ -141,10 +141,12 @@ void MagicWandTool::motion(const MotionParams &params)
 	}
 }
 
-void MagicWandTool::end(const EndParams &)
+void MagicWandTool::end(const EndParams &params)
 {
 	m_held = false;
 	stopDragging();
+	updateOp(
+		params.constrain, params.center, m_owner.selectionParams().defaultOp);
 	if(!m_running && !m_repeat) {
 		flushPending();
 	}
@@ -193,13 +195,19 @@ void MagicWandTool::updateParameters()
 			selectionParams.source != m_pendingParams.source ||
 			selectionParams.kernel != m_pendingParams.kernel ||
 			selectionParams.continuous != m_pendingParams.continuous;
-		m_op = SelectionTool::resolveOp(
-			m_lastConstrain, m_lastCenter, selectionParams.defaultOp);
+		updateOp(m_lastConstrain, m_lastCenter, selectionParams.defaultOp);
 		m_pendingParams = selectionParams;
 		if(needsRefill) {
 			repeatFill();
 		}
 	}
+}
+
+void MagicWandTool::updateOp(bool constrain, bool center, int defaultOp)
+{
+	m_lastConstrain = constrain;
+	m_lastCenter = center;
+	m_op = SelectionTool::resolveOp(constrain, center, defaultOp);
 }
 
 void MagicWandTool::stopDragging()
@@ -217,16 +225,13 @@ void MagicWandTool::fillAt(const QPointF &point, bool constrain, bool center)
 	canvas::CanvasModel *canvas = m_owner.model();
 	if(canvas && !m_running) {
 		m_lastPoint = point;
-		m_lastConstrain = constrain;
-		m_lastCenter = center;
 		m_running = true;
 		m_cancel = false;
 
 		const ToolController::SelectionParams &selectionParams =
 			m_owner.selectionParams();
 		m_pendingParams = selectionParams;
-		m_op = SelectionTool::resolveOp(
-			constrain, center, selectionParams.defaultOp);
+		updateOp(constrain, center, selectionParams.defaultOp);
 		int activeLayerId = m_owner.activeLayer();
 		int layerId;
 		switch(selectionParams.source) {
