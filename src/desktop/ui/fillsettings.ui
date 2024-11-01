@@ -54,7 +54,7 @@
       <string>Tolerance: </string>
      </property>
      <property name="maximum">
-      <number>254</number>
+      <number>255</number>
      </property>
      <property name="blockUpdateSignalOnDrag" stdset="0">
       <bool>true</bool>

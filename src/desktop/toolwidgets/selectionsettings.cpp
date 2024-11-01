@@ -262,7 +262,7 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	magicWandLayout->addRow(m_opacitySlider);
 
 	m_toleranceSlider = new KisSliderSpinBox;
-	m_toleranceSlider->setRange(0, 254);
+	m_toleranceSlider->setRange(0, 255);
 	m_toleranceSlider->setPrefix(
 		QCoreApplication::translate("FillSettings", "Tolerance: "));
 	m_toleranceSlider->setBlockUpdateSignalOnDrag(true);
