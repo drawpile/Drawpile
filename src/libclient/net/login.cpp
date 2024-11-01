@@ -196,26 +196,26 @@ void LoginHandler::expectHello(const ServerReply &msg)
 	bool startTls = false;
 
 	for(const QJsonValue &flag : flags) {
-		if(flag == "MULTI") {
+		if(flag == QStringLiteral("MULTI")) {
 			m_multisession = true;
-		} else if(flag == "TLS") {
+		} else if(flag == QStringLiteral("TLS")) {
 			startTls = true;
-		} else if(flag == "SECURE") {
+		} else if(flag == QStringLiteral("SECURE")) {
 			// Changed in 2.1.9 (although in practice we've always done this):
 			// this flag is implied by TLS
-		} else if(flag == "PERSIST") {
+		} else if(flag == QStringLiteral("PERSIST")) {
 			m_canPersist = true;
-		} else if(flag == "NOGUEST") {
+		} else if(flag == QStringLiteral("NOGUEST")) {
 			m_mustAuth = true;
-		} else if(flag == "REPORT") {
+		} else if(flag == QStringLiteral("REPORT")) {
 			m_canReport = true;
-		} else if(flag == "AVATAR") {
+		} else if(flag == QStringLiteral("AVATAR")) {
 			m_supportsCustomAvatars = true;
-		} else if(flag == "CBANIMPEX") {
+		} else if(flag == QStringLiteral("CBANIMPEX")) {
 			m_supportsCryptBanImpEx = true;
-		} else if(flag == "MBANIMPEX") {
+		} else if(flag == QStringLiteral("MBANIMPEX")) {
 			m_supportsModBanImpEx = true;
-		} else if(flag == "LOOKUP") {
+		} else if(flag == QStringLiteral("LOOKUP")) {
 			m_supportsLookup = true;
 		} else {
 			qCWarning(lcDpLogin) << "Unknown server capability:" << flag;
