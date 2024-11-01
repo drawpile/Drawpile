@@ -65,6 +65,11 @@ public:
 		bool center;
 	};
 
+	struct ModifyParams {
+		bool constrain;
+		bool center;
+	};
+
 	struct HoverParams {
 		QPointF point;
 		qreal angle;
@@ -110,6 +115,7 @@ public:
 
 	virtual void begin(const BeginParams &params) = 0;
 	virtual void motion(const MotionParams &params) = 0;
+	virtual void modify(const ModifyParams &params) { Q_UNUSED(params); }
 	virtual void hover(const HoverParams &params) { Q_UNUSED(params); }
 	virtual void end(const EndParams &params) = 0;
 

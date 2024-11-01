@@ -766,6 +766,7 @@ void CanvasController::handleKeyPress(QKeyEvent *event)
 		return;
 	}
 
+	event->accept();
 	m_keysDown.insert(Qt::Key(key));
 
 	Qt::KeyboardModifiers modifiers = getKeyboardModifiers(event);
@@ -855,6 +856,10 @@ void CanvasController::handleKeyPress(QKeyEvent *event)
 			m_penMode = PenMode::Normal;
 			break;
 		}
+	} else {
+		CanvasShortcuts::ConstraintMatch match =
+			m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
+		emit penModify(match.toolConstraint1(), match.toolConstraint2());
 	}
 
 	updateOutline();
@@ -873,6 +878,7 @@ void CanvasController::handleKeyRelease(QKeyEvent *event)
 		return;
 	}
 
+	event->accept();
 	bool wasDragging = m_dragMode == ViewDragMode::Started;
 	if(wasDragging) {
 		CanvasShortcuts::Match dragMatch =
@@ -967,6 +973,10 @@ void CanvasController::handleKeyRelease(QKeyEvent *event)
 			m_penMode = PenMode::Normal;
 			break;
 		}
+	} else {
+		CanvasShortcuts::ConstraintMatch match =
+			m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
+		emit penModify(match.toolConstraint1(), match.toolConstraint2());
 	}
 
 	updateOutline();

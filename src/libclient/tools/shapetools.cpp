@@ -56,9 +56,10 @@ void ShapeTool::begin(const BeginParams &params)
 
 	QPointF point = params.point;
 	m_start = point;
-	m_zoom = params.zoom;
+	m_current = point;
 	m_p1 = point;
 	m_p2 = point;
+	m_zoom = params.zoom;
 	m_drawing = true;
 
 	updatePreview();
@@ -67,18 +68,16 @@ void ShapeTool::begin(const BeginParams &params)
 void ShapeTool::motion(const MotionParams &params)
 {
 	if(m_drawing) {
-		if(params.constrain) {
-			m_p2 = constraints::square(m_start, params.point);
-		} else {
-			m_p2 = params.point;
-		}
+		m_current = params.point;
+		updateShape(params.constrain, params.center);
+		updatePreview();
+	}
+}
 
-		if(params.center) {
-			m_p1 = m_start - (m_p2 - m_start);
-		} else {
-			m_p1 = m_start;
-		}
-
+void ShapeTool::modify(const ModifyParams &params)
+{
+	if(m_drawing) {
+		updateShape(params.constrain, params.center);
 		updatePreview();
 	}
 }
@@ -89,9 +88,10 @@ void ShapeTool::cancelMultipart()
 	m_drawing = false;
 }
 
-void ShapeTool::end(const EndParams &)
+void ShapeTool::end(const EndParams &params)
 {
 	if(m_drawing) {
+		updateShape(params.constrain, params.center);
 		m_drawing = false;
 
 		net::Client *client = m_owner.client();
@@ -112,6 +112,11 @@ void ShapeTool::end(const EndParams &)
 	}
 }
 
+QPointF ShapeTool::getConstrainPoint() const
+{
+	return constraints::square(m_start, m_current);
+}
+
 void ShapeTool::updatePreview()
 {
 	m_owner.setBrushEngineBrush(m_brushEngine, false);
@@ -130,28 +135,15 @@ void ShapeTool::updatePreview()
 	m_brushEngine.clearMessages();
 }
 
+void ShapeTool::updateShape(bool constrain, bool center)
+{
+	m_p2 = constrain ? getConstrainPoint() : m_current;
+	m_p1 = center ? m_start - (m_p2 - m_start) : m_start;
+}
+
 Line::Line(ToolController &owner)
 	: ShapeTool(owner, LINE, QCursor(QPixmap(":cursors/line.png"), 2, 2))
 {
-}
-
-void Line::motion(const MotionParams &params)
-{
-	if(m_drawing) {
-		if(params.constrain) {
-			m_p2 = constraints::angle(m_start, params.point);
-		} else {
-			m_p2 = params.point;
-		}
-
-		if(params.center) {
-			m_p1 = m_start - (m_p2 - m_start);
-		} else {
-			m_p1 = m_start;
-		}
-
-		updatePreview();
-	}
 }
 
 canvas::PointVector Line::pointVector() const
@@ -160,6 +152,11 @@ canvas::PointVector Line::pointVector() const
 	gen.append(m_p1);
 	gen.append(m_p2);
 	return gen.pv();
+}
+
+QPointF Line::getConstrainPoint() const
+{
+	return constraints::angle(m_start, m_current);
 }
 
 Rectangle::Rectangle(ToolController &owner)

@@ -18,7 +18,8 @@ public:
 	}
 
 	void begin(const BeginParams &params) final override;
-	void motion(const MotionParams &params) override;
+	void motion(const MotionParams &params) final override;
+	void modify(const ModifyParams &params) final override;
 	void end(const EndParams &params) final override;
 
 	void cancelMultipart() final override;
@@ -26,13 +27,16 @@ public:
 
 protected:
 	virtual canvas::PointVector pointVector() const = 0;
+	virtual QPointF getConstrainPoint() const;
 	void updatePreview();
 	QRectF rect() const { return QRectF(m_p1, m_p2).normalized(); }
 
-	QPointF m_start, m_p1, m_p2;
+	QPointF m_start, m_current, m_p1, m_p2;
 	bool m_drawing = false;
 
 private:
+	void updateShape(bool constrain, bool center);
+
 	qreal m_zoom = 1.0;
 	drawdance::BrushEngine m_brushEngine;
 };
@@ -46,10 +50,9 @@ class Line final : public ShapeTool {
 public:
 	Line(ToolController &owner);
 
-	void motion(const MotionParams &params) override;
-
 protected:
 	canvas::PointVector pointVector() const override;
+	QPointF getConstrainPoint() const override;
 };
 
 /**

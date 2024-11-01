@@ -453,6 +453,14 @@ void ToolController::continueDrawing(
 	}
 }
 
+void ToolController::modifyDrawing(bool constrain, bool center)
+{
+	Q_ASSERT(m_activeTool);
+	if(m_model) {
+		m_activeTool->modify(Tool::ModifyParams{constrain, center});
+	}
+}
+
 void ToolController::hoverDrawing(
 	const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip)
 {

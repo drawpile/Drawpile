@@ -351,6 +351,9 @@ void ViewWrapper::connectDocument(Document *doc)
 		m_controller, &CanvasController::penMove, toolCtrl,
 		&tools::ToolController::continueDrawing);
 	connect(
+		m_controller, &CanvasController::penModify, toolCtrl,
+		&tools::ToolController::modifyDrawing);
+	connect(
 		m_controller, &CanvasController::penHover, toolCtrl,
 		&tools::ToolController::hoverDrawing);
 	connect(

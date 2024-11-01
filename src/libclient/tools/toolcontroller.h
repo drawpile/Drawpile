@@ -179,6 +179,9 @@ public slots:
 		qreal ytilt, qreal rotation, bool constrain, bool center,
 		const QPointF &viewPos);
 
+	//! Modifier keys pressed during a stroke
+	void modifyDrawing(bool constrain, bool center);
+
 	//! Stylus hover (not yet drawing)
 	void hoverDrawing(
 		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip);

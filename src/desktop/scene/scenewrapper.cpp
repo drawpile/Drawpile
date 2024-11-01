@@ -364,6 +364,9 @@ void SceneWrapper::connectDocument(Document *doc)
 		m_view, &CanvasView::penMove, toolCtrl,
 		&tools::ToolController::continueDrawing);
 	connect(
+		m_view, &CanvasView::penModify, toolCtrl,
+		&tools::ToolController::modifyDrawing);
+	connect(
 		m_view, &CanvasView::penHover, toolCtrl,
 		&tools::ToolController::hoverDrawing);
 	connect(
