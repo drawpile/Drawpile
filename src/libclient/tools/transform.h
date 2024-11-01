@@ -46,6 +46,7 @@ public:
 
 	void begin(const BeginParams &params) override;
 	void motion(const MotionParams &params) override;
+	void modify(const ModifyParams &params) override;
 	void hover(const HoverParams &params) override;
 	void end(const EndParams &params) override;
 
@@ -123,41 +124,27 @@ private:
 	startDrag(const canvas::TransformModel *transform, const QPointF &point);
 
 	void continueDrag(
-		canvas::TransformModel *transform, const QPointF &point, bool constrain,
-		bool center);
+		canvas::TransformModel *transform, bool constrain, bool center);
 
 	void continueDragTransform(
-		canvas::TransformModel *transform, const QPointF &point, bool constrain,
-		bool center);
+		canvas::TransformModel *transform, bool constrain, bool center);
 
-	void continueDragDistort(
-		canvas::TransformModel *transform, const QPointF &point,
-		bool constrain);
+	void continueDragDistort(canvas::TransformModel *transform, bool constrain);
 
-	void continueDragCommon(
-		canvas::TransformModel *transform, const QPointF &point,
-		bool constrain);
+	void continueDragCommon(canvas::TransformModel *transform, bool constrain);
 
-	void dragMove(
-		canvas::TransformModel *transform, const QPointF &point,
-		bool constrain);
+	void dragMove(canvas::TransformModel *transform, bool constrain);
 
-	void dragRotate(
-		canvas::TransformModel *transform, const QPointF &point,
-		bool constrain);
+	void dragRotate(canvas::TransformModel *transform, bool constrain);
 
-	void dragShear(canvas::TransformModel *transform, const QPointF &point);
+	void dragShear(canvas::TransformModel *transform);
 
-	void dragScaleEdge(
-		canvas::TransformModel *transform, const QPointF &point, bool center);
+	void dragScaleEdge(canvas::TransformModel *transform, bool center);
 
 	void dragScaleCorner(
-		canvas::TransformModel *transform, const QPointF &point, bool constrain,
-		bool center);
+		canvas::TransformModel *transform, bool constrain, bool center);
 
-	void dragDistort(
-		canvas::TransformModel *transform, const QPointF &point,
-		bool constrain);
+	void dragDistort(canvas::TransformModel *transform, bool constrain);
 
 	QPointF getConstrainedEdgeDelta(
 		const QPointF &prevPoint, const QPointF &nextPoint,
@@ -217,6 +204,7 @@ private:
 	Handle m_hoverHandle = Handle::Invalid;
 	Handle m_dragHandle = Handle::None;
 	QPointF m_dragStartPoint;
+	QPointF m_dragCurrentPoint;
 	QPointF m_dragStartHandlePoint;
 	QPointF m_dragStartOffset;
 	TransformQuad m_dragStartQuad;

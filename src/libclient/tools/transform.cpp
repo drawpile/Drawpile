@@ -42,8 +42,18 @@ void TransformTool::motion(const MotionParams &params)
 	if(m_dragHandle != Handle::None) {
 		canvas::TransformModel *transform = getActiveTransformModel();
 		if(transform) {
-			continueDrag(
-				transform, params.point, params.constrain, params.center);
+			m_dragCurrentPoint = params.point;
+			continueDrag(transform, params.constrain, params.center);
+		}
+	}
+}
+
+void TransformTool::modify(const ModifyParams &params)
+{
+	if(m_dragHandle != Handle::None) {
+		canvas::TransformModel *transform = getActiveTransformModel();
+		if(transform) {
+			continueDrag(transform, params.constrain, params.center);
 		}
 	}
 }
@@ -59,7 +69,7 @@ void TransformTool::hover(const HoverParams &params)
 	}
 }
 
-void TransformTool::end(const EndParams &)
+void TransformTool::end(const EndParams &params)
 {
 	m_clickDetector.end();
 	canvas::TransformModel *transform = getActiveTransformModel();
@@ -87,6 +97,7 @@ void TransformTool::end(const EndParams &)
 			}
 			transform->setDstQuad(m_quadStack[m_quadStackTop]);
 		} else {
+			continueDragTransform(transform, params.constrain, params.center);
 			const TransformQuad &dstQuad = transform->dstQuad();
 			if(dstQuad != m_dragStartQuad) {
 				pushQuad(transform);
@@ -642,6 +653,7 @@ void TransformTool::startDrag(
 	m_dragHandle = getHandleAt(transform, point, m_zoom, &m_dragStartOffset);
 	if(m_dragHandle != Handle::None) {
 		m_dragStartPoint = point;
+		m_dragCurrentPoint = point;
 		m_dragStartQuad = transform->dstQuad();
 		m_dragStartHandlePoint =
 			getQuadHandlePoint(m_dragStartQuad, m_dragHandle, m_dragStartPoint);
@@ -650,16 +662,15 @@ void TransformTool::startDrag(
 }
 
 void TransformTool::continueDrag(
-	canvas::TransformModel *transform, const QPointF &point, bool constrain,
-	bool center)
+	canvas::TransformModel *transform, bool constrain, bool center)
 {
 	Mode mode = effectiveMode();
 	switch(mode) {
 	case Mode::Scale:
-		continueDragTransform(transform, point, constrain, center);
+		continueDragTransform(transform, constrain, center);
 		break;
 	case Mode::Distort:
-		continueDragDistort(transform, point, constrain);
+		continueDragDistort(transform, constrain);
 		break;
 	default:
 		qWarning("TransformTool::continueDrag: unknown mode %d", int(mode));
@@ -668,33 +679,32 @@ void TransformTool::continueDrag(
 }
 
 void TransformTool::continueDragTransform(
-	canvas::TransformModel *transform, const QPointF &point, bool constrain,
-	bool center)
+	canvas::TransformModel *transform, bool constrain, bool center)
 {
 	switch(m_dragHandle) {
 	case Handle::Top:
 	case Handle::Right:
 	case Handle::Bottom:
 	case Handle::Left:
-		dragScaleEdge(transform, point, center);
+		dragScaleEdge(transform, center);
 		break;
 	case Handle::TopLeft:
 	case Handle::TopRight:
 	case Handle::BottomRight:
 	case Handle::BottomLeft:
-		dragScaleCorner(transform, point, constrain, center);
+		dragScaleCorner(transform, constrain, center);
 		break;
 	case Handle::TopEdge:
 	case Handle::RightEdge:
 	case Handle::BottomEdge:
 	case Handle::LeftEdge:
-		dragShear(transform, point);
+		dragShear(transform);
 		break;
 	case Handle::Inside:
-		dragMove(transform, point, constrain);
+		dragMove(transform, constrain);
 		break;
 	case Handle::Outside:
-		dragRotate(transform, point, constrain);
+		dragRotate(transform, constrain);
 		break;
 	default:
 		qWarning(
@@ -704,7 +714,7 @@ void TransformTool::continueDragTransform(
 }
 
 void TransformTool::continueDragDistort(
-	canvas::TransformModel *transform, const QPointF &point, bool constrain)
+	canvas::TransformModel *transform, bool constrain)
 {
 	switch(m_dragHandle) {
 	case Handle::TopLeft:
@@ -715,19 +725,19 @@ void TransformTool::continueDragDistort(
 	case Handle::Bottom:
 	case Handle::BottomLeft:
 	case Handle::Left:
-		dragDistort(transform, point, constrain);
+		dragDistort(transform, constrain);
 		break;
 	case Handle::TopEdge:
 	case Handle::RightEdge:
 	case Handle::BottomEdge:
 	case Handle::LeftEdge:
-		dragShear(transform, point);
+		dragShear(transform);
 		break;
 	case Handle::Inside:
-		dragMove(transform, point, constrain);
+		dragMove(transform, constrain);
 		break;
 	case Handle::Outside:
-		dragRotate(transform, point, constrain);
+		dragRotate(transform, constrain);
 		break;
 	default:
 		qWarning(
@@ -736,10 +746,9 @@ void TransformTool::continueDragDistort(
 	}
 }
 
-void TransformTool::dragMove(
-	canvas::TransformModel *transform, const QPointF &point, bool constrain)
+void TransformTool::dragMove(canvas::TransformModel *transform, bool constrain)
 {
-	QPointF delta = point - m_dragStartPoint;
+	QPointF delta = m_dragCurrentPoint - m_dragStartPoint;
 	if(constrain) {
 		if(std::abs(delta.x()) < std::abs(delta.y())) {
 			delta.setX(0.0);
@@ -751,11 +760,11 @@ void TransformTool::dragMove(
 }
 
 void TransformTool::dragRotate(
-	canvas::TransformModel *transform, const QPointF &point, bool constrain)
+	canvas::TransformModel *transform, bool constrain)
 {
 	QPointF dragStartCenter = m_dragStartQuad.center();
 	qreal a1 = QLineF(dragStartCenter, m_dragStartPoint).angle();
-	qreal a2 = QLineF(dragStartCenter, point).angle();
+	qreal a2 = QLineF(dragStartCenter, m_dragCurrentPoint).angle();
 	qreal ad = a1 - a2;
 	if(constrain) {
 		constexpr qreal STEP = 15.0;
@@ -765,10 +774,9 @@ void TransformTool::dragRotate(
 		transform, rotateQuadAround(m_dragStartQuad, ad, dragStartCenter));
 }
 
-void TransformTool::dragShear(
-	canvas::TransformModel *transform, const QPointF &point)
+void TransformTool::dragShear(canvas::TransformModel *transform)
 {
-	QPointF delta = point - m_dragStartPoint;
+	QPointF delta = m_dragCurrentPoint - m_dragStartPoint;
 	QPointF topLeftDelta, topRightDelta, bottomRightDelta, bottomLeftDelta;
 	switch(m_dragHandle) {
 	case Handle::TopEdge:
@@ -818,7 +826,7 @@ void TransformTool::dragShear(
 }
 
 void TransformTool::dragScaleEdge(
-	canvas::TransformModel *transform, const QPointF &point, bool center)
+	canvas::TransformModel *transform, bool center)
 {
 	qreal angle;
 	switch(m_dragHandle) {
@@ -841,7 +849,8 @@ void TransformTool::dragScaleEdge(
 	}
 
 	QLineF axis = QLineF::fromPolar(1.0, angle).translated(m_dragStartPoint);
-	QLineF cross = QLineF::fromPolar(1.0, angle + 90.0).translated(point);
+	QLineF cross =
+		QLineF::fromPolar(1.0, angle + 90.0).translated(m_dragCurrentPoint);
 	QPointF pointOnAxis;
 	if(axis.intersects(cross, &pointOnAxis) == QLineF::NoIntersection) {
 		qWarning("TransformTool::dragScale: no point on axis");
@@ -899,8 +908,7 @@ void TransformTool::dragScaleEdge(
 }
 
 void TransformTool::dragScaleCorner(
-	canvas::TransformModel *transform, const QPointF &point, bool constrain,
-	bool center)
+	canvas::TransformModel *transform, bool constrain, bool center)
 {
 	int dragged, dependent1, dependent2, opposite;
 	switch(m_dragHandle) {
@@ -940,7 +948,7 @@ void TransformTool::dragScaleCorner(
 	QPointF dependentPoint2 = m_dragStartQuad.at(dependent2);
 	QPointF oppositePoint = m_dragStartQuad.at(opposite);
 
-	QPointF delta = point - m_dragStartPoint;
+	QPointF delta = m_dragCurrentPoint - m_dragStartPoint;
 	if(constrain) {
 		delta = getPointAlongAxis(
 					QLineF(m_dragStartHandlePoint, oppositePoint),
@@ -982,9 +990,9 @@ void TransformTool::dragScaleCorner(
 }
 
 void TransformTool::dragDistort(
-	canvas::TransformModel *transform, const QPointF &point, bool constrain)
+	canvas::TransformModel *transform, bool constrain)
 {
-	QPointF delta = point - m_dragStartPoint;
+	QPointF delta = m_dragCurrentPoint - m_dragStartPoint;
 	QPointF topLeftDelta, topRightDelta, bottomRightDelta, bottomLeftDelta;
 	switch(m_dragHandle) {
 	case Handle::TopLeft:
