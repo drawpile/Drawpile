@@ -62,6 +62,7 @@ protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
+	void updateTolerance();
 	void updateSettings();
 
 	void updateSize();
@@ -72,6 +73,7 @@ private:
 	void selectBlendMode(int blendMode);
 
 	void setButtonState(bool running, bool pending);
+	void setDragState(bool dragging, int tolerance);
 	void updateWidgets();
 
 	QWidget *m_headerWidget = nullptr;
@@ -84,6 +86,7 @@ private:
 	QButtonGroup *m_areaGroup = nullptr;
 	int m_previousMode;
 	int m_previousEraseMode;
+	int m_toleranceBeforeDrag = -1;
 	qreal m_quickAdjust1 = 0.0;
 	bool m_featureAccess = true;
 	bool m_haveSelection = false;

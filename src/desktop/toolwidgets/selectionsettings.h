@@ -60,8 +60,11 @@ private:
 	enum Area { Continuous, Similar };
 
 	void updateSize(int size);
+	void updateTolerance();
 	static bool isSizeUnlimited(int size);
 	static int calculatePixelSize(int size, bool unlimited);
+
+	void setDragState(bool dragging, int tolerance);
 
 	QWidget *m_headerWidget = nullptr;
 	QButtonGroup *m_headerGroup = nullptr;
@@ -77,6 +80,7 @@ private:
 	QButtonGroup *m_sourceGroup = nullptr;
 	QButtonGroup *m_areaGroup = nullptr;
 	QPushButton *m_startTransformButton = nullptr;
+	int m_toleranceBeforeDrag = -1;
 	bool m_isMagicWand = false;
 };
 

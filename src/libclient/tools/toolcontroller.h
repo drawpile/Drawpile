@@ -53,7 +53,7 @@ public:
 		int defaultOp = 0;
 		int size = -1;
 		qreal opacity = 1.0;
-		qreal tolerance = 0.0;
+		int tolerance = 0;
 		int expansion = 0;
 		int featherRadius = 0;
 		int gap = 0;
@@ -233,6 +233,8 @@ signals:
 	void deleteAnnotationRequested(int annotationId);
 
 	void floodFillStateChanged(bool running, bool pending);
+	void floodFillDragChanged(bool dragging, int tolerance);
+	void magicWandDragChanged(bool dragging, int tolerance);
 	void toolStateChanged(int state);
 
 	void asyncExecutionFinished(Task *task);

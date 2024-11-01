@@ -141,7 +141,7 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 		&FillSettings::updateSettings);
 	connect(
 		m_ui->tolerance, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&FillSettings::updateSettings);
+		&FillSettings::updateTolerance);
 	connect(
 		m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&FillSettings::updateSettings);
@@ -194,6 +194,10 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 		controller(), &ToolController::floodFillStateChanged, this,
 		&FillSettings::setButtonState);
 	setButtonState(false, false);
+
+	connect(
+		controller(), &ToolController::floodFillDragChanged, this,
+		&FillSettings::setDragState);
 
 	QWidget *disabledWidget = new QWidget;
 	QVBoxLayout *disabledLayout = new QVBoxLayout(disabledWidget);
@@ -259,7 +263,8 @@ void FillSettings::pushSettings()
 		static_cast<FloodFill *>(controller()->getTool(Tool::FLOODFILL));
 	int size = m_ui->size->value();
 	tool->setParameters(
-		m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()),
+		m_toleranceBeforeDrag < 0 ? m_ui->tolerance->value()
+								  : m_toleranceBeforeDrag,
 		m_ui->expandShrink->effectiveValue(), m_ui->expandShrink->kernel(),
 		m_ui->feather->value(), isSizeUnlimited(size) ? -1 : size,
 		m_ui->opacity->value() / 100.0, m_ui->gap->value(),
@@ -410,6 +415,13 @@ void FillSettings::stepAdjust1(bool increase)
 	}
 }
 
+void FillSettings::updateTolerance()
+{
+	if(m_toleranceBeforeDrag < 0) {
+		updateSettings();
+	}
+}
+
 void FillSettings::updateSettings()
 {
 	if(!m_updating) {
@@ -479,6 +491,19 @@ void FillSettings::setButtonState(bool running, bool pending)
 {
 	m_ui->applyButton->setEnabled(pending);
 	m_ui->cancelButton->setEnabled(running || pending);
+}
+
+void FillSettings::setDragState(bool dragging, int tolerance)
+{
+	if(dragging) {
+		if(m_toleranceBeforeDrag < 0) {
+			m_toleranceBeforeDrag = m_ui->tolerance->value();
+		}
+		m_ui->tolerance->setValue(tolerance);
+	} else if(m_toleranceBeforeDrag >= 0) {
+		m_ui->tolerance->setValue(m_toleranceBeforeDrag);
+		m_toleranceBeforeDrag = -1;
+	}
 }
 
 void FillSettings::updateWidgets()

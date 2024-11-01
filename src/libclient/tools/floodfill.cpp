@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "libclient/tools/floodfill.h"
-#include "libclient/canvas/blendmodes.h"
+extern "C" {
+#include <dpmsg/blend_mode.h>
+}
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/net/client.h"
+#include "libclient/tools/floodfill.h"
 #include "libclient/tools/toolcontroller.h"
 #include <QGuiApplication>
 #include <QPainter>
@@ -21,7 +23,7 @@ public:
 		int sourceLayerId, int size, int gap, int expansion,
 		DP_FloodFillKernel kernel, int featherRadius, Area area,
 		DP_ViewMode viewMode, int activeLayerId, int activeFrameIndex,
-		bool editable)
+		bool editable, bool dragging)
 		: m_tool(tool)
 		, m_cancel(cancel)
 		, m_canvasState(canvasState)
@@ -40,6 +42,7 @@ public:
 		, m_activeLayerId(activeLayerId)
 		, m_activeFrameIndex(activeFrameIndex)
 		, m_editable(editable)
+		, m_dragging(dragging)
 	{
 	}
 
@@ -60,9 +63,9 @@ public:
 				m_contextId, canvas::CanvasModel::MAIN_SELECTION_ID,
 				m_point.x(), m_point.y(), m_fillColor, m_tolerance,
 				m_sourceLayerId, size, continuous ? m_gap : 0, m_expansion,
-				m_kernel, m_featherRadius, false, continuous, !m_editable,
-				m_viewMode, m_activeLayerId, m_activeFrameIndex, m_cancel,
-				m_img, m_x, m_y);
+				m_kernel, m_featherRadius, false, continuous,
+				!m_editable && !m_dragging, m_viewMode, m_activeLayerId,
+				m_activeFrameIndex, m_cancel, m_img, m_x, m_y);
 		}
 		if(m_result != DP_FLOOD_FILL_SUCCESS &&
 		   m_result != DP_FLOOD_FILL_CANCELLED) {
@@ -104,6 +107,7 @@ private:
 	int m_y;
 	QString m_error;
 	const bool m_editable;
+	const bool m_dragging;
 };
 
 FloodFill::FloodFill(ToolController &owner)
@@ -123,6 +127,7 @@ FloodFill::FloodFill(ToolController &owner)
 
 void FloodFill::begin(const BeginParams &params)
 {
+	stopDragging();
 	if(params.right) {
 		cancelMultipart();
 	} else if(!m_running) {
@@ -132,6 +137,7 @@ void FloodFill::begin(const BeginParams &params)
 			flushPending();
 		}
 		if(shouldFill) {
+			m_dragDetector.begin(params.viewPos, params.deviceType);
 			fillAt(params.point, m_owner.activeLayer(), m_editableFills);
 		}
 	}
@@ -139,10 +145,40 @@ void FloodFill::begin(const BeginParams &params)
 
 void FloodFill::motion(const MotionParams &params)
 {
-	Q_UNUSED(params);
+	m_dragDetector.motion(params.viewPos);
+	if(m_dragDetector.isDrag()) {
+		if(m_dragging) {
+			qreal delta =
+				qRound((params.viewPos.x() - m_dragPrevPoint.x()) / 2.0);
+			m_dragPrevPoint = params.viewPos;
+
+			int prevDragTolerance = qRound(m_dragTolerance);
+			m_dragTolerance = qBound(0.0, m_dragTolerance + delta, 255.0);
+			int dragTolerance = qRound(m_dragTolerance);
+
+			if(dragTolerance != prevDragTolerance) {
+				if(m_running) {
+					m_repeat = true;
+					m_cancel = true;
+				} else if(havePending()) {
+					fillAt(m_lastPoint, lastActiveLayerId(), m_pendingEditable);
+				}
+				emit m_owner.floodFillDragChanged(true, dragTolerance);
+			}
+		} else {
+			m_dragging = true;
+			m_dragPrevPoint = params.viewPos;
+			m_dragTolerance = m_tolerance;
+			emit m_owner.floodFillDragChanged(true, m_tolerance);
+		}
+		updateCursor();
+	}
 }
 
-void FloodFill::end(const EndParams &) {}
+void FloodFill::end(const EndParams &)
+{
+	stopDragging();
+}
 
 bool FloodFill::isMultipart() const
 {
@@ -187,7 +223,7 @@ void FloodFill::setForegroundColor(const QColor &color)
 }
 
 void FloodFill::setParameters(
-	qreal tolerance, int expansion, int kernel, int featherRadius, int size,
+	int tolerance, int expansion, int kernel, int featherRadius, int size,
 	qreal opacity, int gap, Source source, int blendMode, Area area,
 	bool editableFills, bool confirmFills)
 {
@@ -200,9 +236,7 @@ void FloodFill::setParameters(
 
 	if(confirmFills != m_confirmFills) {
 		m_confirmFills = confirmFills;
-		if(havePending()) {
-			setCursor(confirmFills ? m_confirmCursor : m_pendingCursor);
-		}
+		updateCursor();
 	}
 
 	if(needsUpdate) {
@@ -230,6 +264,15 @@ int FloodFill::lastActiveLayerId() const
 {
 	return m_lastActiveLayerId > 0 ? m_lastActiveLayerId
 								   : m_owner.activeLayer();
+}
+
+void FloodFill::stopDragging()
+{
+	if(m_dragging) {
+		m_dragging = false;
+		updateCursor();
+		emit m_owner.floodFillDragChanged(false, 0);
+	}
 }
 
 void FloodFill::fillAt(const QPointF &point, int activeLayerId, bool editable)
@@ -275,10 +318,12 @@ void FloodFill::fillAt(const QPointF &point, int activeLayerId, bool editable)
 			QCoreApplication::translate("FillSettings", "Filling…"));
 		m_owner.executeAsync(new Task(
 			this, m_cancel, paintEngine->viewCanvasState(),
-			canvas->localUserId(), point, fillColor, m_tolerance, layerId,
-			m_size, m_gap, m_expansion, DP_FloodFillKernel(m_kernel),
+			canvas->localUserId(), point, fillColor,
+			(m_dragging ? qRound(m_dragTolerance) : m_tolerance) / 255.0,
+			layerId, m_size, m_gap, m_expansion, DP_FloodFillKernel(m_kernel),
 			m_featherRadius, m_area, paintEngine->viewMode(),
-			paintEngine->viewLayer(), paintEngine->viewFrame(), editable));
+			paintEngine->viewLayer(), paintEngine->viewFrame(), editable,
+			m_dragging));
 	}
 }
 
@@ -308,7 +353,7 @@ void FloodFill::floodFillFinished(Task *task)
 				m_pendingArea = task->area();
 				m_pendingColor = task->color();
 				m_pendingEditable = task->isEditable();
-				setCursor(m_confirmFills ? m_confirmCursor : m_pendingCursor);
+				updateCursor();
 			}
 		} else if(result != DP_FLOOD_FILL_CANCELLED) {
 			qWarning("Flood fill failed: %s", qUtf8Printable(task->error()));
@@ -415,7 +460,7 @@ void FloodFill::disposePending()
 		m_pendingImage = QImage();
 		previewPending();
 		setHandlesRightClick(false);
-		setCursor(m_bucketCursor);
+		updateCursor();
 		emitFloodFillStateChanged();
 	}
 }
@@ -440,6 +485,17 @@ void FloodFill::adjustPendingImage(bool adjustColor, bool adjustOpacity)
 			painter.setOpacity(opacity);
 			painter.fillRect(rect, Qt::black);
 		}
+	}
+}
+
+void FloodFill::updateCursor()
+{
+	if(m_dragging) {
+		setCursor(Qt::SplitHCursor);
+	} else if(havePending()) {
+		setCursor(m_confirmFills ? m_confirmCursor : m_pendingCursor);
+	} else {
+		setCursor(m_bucketCursor);
 	}
 }
 

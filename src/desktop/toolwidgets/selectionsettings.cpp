@@ -137,8 +137,7 @@ void SelectionSettings::pushSettings()
 	int size = m_sizeSlider->value();
 	selectionParams.size = isSizeUnlimited(size) ? -1 : size;
 	selectionParams.opacity = m_opacitySlider->value() / 100.0;
-	selectionParams.tolerance =
-		m_toleranceSlider->value() / qreal(m_toleranceSlider->maximum());
+	selectionParams.tolerance = m_toleranceSlider->value();
 	selectionParams.expansion = m_expandShrink->effectiveValue();
 	selectionParams.featherRadius = m_featherSlider->value();
 	selectionParams.gap = m_closeGapsSlider->value();
@@ -268,7 +267,7 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	m_toleranceSlider->setBlockUpdateSignalOnDrag(true);
 	connect(
 		m_toleranceSlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
-		this, &SelectionSettings::pushSettings);
+		this, &SelectionSettings::updateTolerance);
 	magicWandLayout->addRow(m_toleranceSlider);
 
 	m_expandShrink = new widgets::ExpandShrinkSpinner;
@@ -420,6 +419,10 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 
 	setActiveTool(tools::Tool::SELECTION);
 	updateSize(m_sizeSlider->value());
+	connect(
+		controller(), &ToolController::magicWandDragChanged, this,
+		&SelectionSettings::setDragState);
+
 	return widget;
 }
 
@@ -433,6 +436,13 @@ void SelectionSettings::updateSize(int size)
 	emit pixelSizeChanged(calculatePixelSize(size, unlimited));
 }
 
+void SelectionSettings::updateTolerance()
+{
+	if(m_toleranceBeforeDrag < 0) {
+		pushSettings();
+	}
+}
+
 bool SelectionSettings::isSizeUnlimited(int size)
 {
 	return size >= props::size.max;
@@ -441,6 +451,19 @@ bool SelectionSettings::isSizeUnlimited(int size)
 int SelectionSettings::calculatePixelSize(int size, bool unlimited)
 {
 	return unlimited ? 0 : size * 2 + 1;
+}
+
+void SelectionSettings::setDragState(bool dragging, int tolerance)
+{
+	if(dragging) {
+		if(m_toleranceBeforeDrag < 0) {
+			m_toleranceBeforeDrag = m_toleranceSlider->value();
+		}
+		m_toleranceSlider->setValue(tolerance);
+	} else if(m_toleranceBeforeDrag >= 0) {
+		m_toleranceSlider->setValue(m_toleranceBeforeDrag);
+		m_toleranceBeforeDrag = -1;
+	}
 }
 
 }

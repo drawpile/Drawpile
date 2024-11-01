@@ -10,7 +10,11 @@
 
 namespace tools {
 
+class DragDetector;
+
 class ClickDetector final {
+	friend class DragDetector;
+
 public:
 	void begin(const QPointF &viewPos, DeviceType deviceType)
 	{
@@ -43,8 +47,8 @@ public:
 		m_clicks = 0;
 	}
 
-	bool isClick() { return m_clicks != 0; }
-	int clicks() { return m_clicks; }
+	bool isClick() const { return m_clicks != 0; }
+	int clicks() const { return m_clicks; }
 
 private:
 	static constexpr int CLICK_TIME = 150;
@@ -56,7 +60,7 @@ private:
 			QGuiApplication::styleHints()->mouseDoubleClickInterval());
 	}
 
-	qreal getClickDistance(DeviceType deviceType)
+	static qreal getClickDistance(DeviceType deviceType)
 	{
 		int distance;
 		switch(deviceType) {
@@ -82,6 +86,34 @@ private:
 	QPointF m_startViewPos;
 	QPointF m_endViewPos;
 	unsigned int m_clicks = 0;
+};
+
+class DragDetector final {
+public:
+	void begin(const QPointF &viewPos, DeviceType deviceType)
+	{
+		m_clickDistance = ClickDetector::getClickDistance(deviceType);
+		m_timer.setRemainingTime(ClickDetector::CLICK_TIME);
+		m_startViewPos = viewPos;
+		m_dragThresholdHit = false;
+	}
+
+	void motion(const QPointF &viewPos)
+	{
+		if(!m_dragThresholdHit && !m_timer.hasExpired()) {
+			if(QLineF(m_startViewPos, viewPos).length() > m_clickDistance) {
+				m_dragThresholdHit = true;
+			}
+		}
+	}
+
+	bool isDrag() const { return m_dragThresholdHit || m_timer.hasExpired(); }
+
+private:
+	QDeadlineTimer m_timer;
+	qreal m_clickDistance = 0.0;
+	QPointF m_startViewPos;
+	bool m_dragThresholdHit = false;
 };
 
 }

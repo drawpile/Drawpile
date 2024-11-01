@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef LIBCLIENT_TOOLS_MAGICWAND_H
 #define LIBCLIENT_TOOLS_MAGICWAND_H
+#include "libclient/tools/clickdetector.h"
 #include "libclient/tools/tool.h"
 #include "libclient/tools/toolcontroller.h"
 #include <QImage>
 #include <QPoint>
+#include <QCursor>
 
 namespace tools {
 
@@ -33,6 +35,7 @@ private:
 	class Task;
 	friend Task;
 
+	void stopDragging();
 	void fillAt(const QPointF &point, bool constrain, bool center);
 	void repeatFill();
 	void floodFillFinished(Task *task);
@@ -47,13 +50,19 @@ private:
 	int m_op = -1;
 	bool m_running = false;
 	bool m_repeat = false;
+	bool m_held = false;
+	bool m_dragging = false;
 	QAtomicInt m_cancel;
 	QPointF m_lastPoint;
+	QPointF m_dragPrevPoint;
+	qreal m_dragTolerance = 0.0;
 	bool m_lastConstrain = false;
 	bool m_lastCenter = false;
 	ToolController::SelectionParams m_pendingParams;
 	QImage m_pendingImage;
 	QPoint m_pendingPos;
+	QCursor m_wandCursor;
+	DragDetector m_dragDetector;
 };
 
 }

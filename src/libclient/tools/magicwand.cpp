@@ -88,27 +88,67 @@ MagicWandTool::MagicWandTool(ToolController &owner)
 	: Tool(
 		  owner, MAGICWAND, QCursor(QPixmap(":cursors/magicwand.png"), 2, 2),
 		  true, false, false, false, false)
+	, m_wandCursor(cursor())
 {
 }
 
 void MagicWandTool::begin(const BeginParams &params)
 {
+	stopDragging();
 	if(params.right) {
+		m_held = false;
 		cancelMultipart();
 	} else if(!m_running) {
 		if(havePending()) {
 			flushPending();
 		}
+		m_held = true;
+		m_dragDetector.begin(params.viewPos, params.deviceType);
 		fillAt(params.point, params.constrain, params.center);
 	}
 }
 
 void MagicWandTool::motion(const MotionParams &params)
 {
-	Q_UNUSED(params);
+	m_dragDetector.motion(params.viewPos);
+	if(m_dragDetector.isDrag()) {
+		if(m_dragging) {
+			qreal delta =
+				qRound((params.viewPos.x() - m_dragPrevPoint.x()) / 2.0);
+			m_dragPrevPoint = params.viewPos;
+
+			int prevDragTolerance = qRound(m_dragTolerance);
+			m_dragTolerance = qBound(0.0, m_dragTolerance + delta, 255.0);
+			int dragTolerance = qRound(m_dragTolerance);
+
+			if(dragTolerance != prevDragTolerance) {
+				if(m_running) {
+					m_repeat = true;
+					m_cancel = true;
+				} else if(havePending()) {
+					fillAt(m_lastPoint, params.constrain, params.center);
+				}
+				emit m_owner.magicWandDragChanged(true, dragTolerance);
+			}
+		} else {
+			m_dragging = true;
+			m_dragPrevPoint = params.viewPos;
+			int tolerance = m_owner.selectionParams().tolerance;
+			m_dragTolerance = tolerance;
+			setCursor(Qt::SplitHCursor);
+			emit m_owner.magicWandDragChanged(true, tolerance);
+		}
+	}
 }
 
-void MagicWandTool::end(const EndParams &) {}
+void MagicWandTool::end(const EndParams &)
+{
+	m_held = false;
+	stopDragging();
+	if(!m_running && !m_repeat) {
+		flushPending();
+	}
+}
 
 bool MagicWandTool::isMultipart() const
 {
@@ -162,6 +202,15 @@ void MagicWandTool::updateParameters()
 	}
 }
 
+void MagicWandTool::stopDragging()
+{
+	if(m_dragging) {
+		m_dragging = false;
+		setCursor(m_wandCursor);
+		emit m_owner.magicWandDragChanged(false, 0);
+	}
+}
+
 void MagicWandTool::fillAt(const QPointF &point, bool constrain, bool center)
 {
 	m_repeat = false;
@@ -199,8 +248,9 @@ void MagicWandTool::fillAt(const QPointF &point, bool constrain, bool center)
 		canvas::PaintEngine *paintEngine = canvas->paintEngine();
 		m_owner.executeAsync(new Task(
 			this, m_cancel, paintEngine->viewCanvasState(), point,
-			selectionParams.size, selectionParams.tolerance, layerId,
-			selectionParams.gap, selectionParams.expansion,
+			selectionParams.size,
+			(m_dragging ? m_dragTolerance : selectionParams.tolerance) / 255.0,
+			layerId, selectionParams.gap, selectionParams.expansion,
 			DP_FloodFillKernel(selectionParams.kernel),
 			selectionParams.featherRadius, selectionParams.continuous,
 			activeLayerId, paintEngine->viewMode(), paintEngine->viewLayer(),
@@ -239,7 +289,7 @@ void MagicWandTool::floodFillFinished(Task *task)
 	setHandlesRightClick(havePending());
 	if(m_repeat) {
 		fillAt(m_lastPoint, m_lastConstrain, m_lastCenter);
-	} else if(!EDITABLE) {
+	} else if(!m_held) {
 		flushPending();
 	}
 }

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef TOOLS_FLOODFILL_H
 #define TOOLS_FLOODFILL_H
+#include "libclient/tools/clickdetector.h"
 #include "libclient/tools/tool.h"
 #include <QAtomicInt>
 #include <QCursor>
@@ -39,7 +40,7 @@ public:
 	void setForegroundColor(const QColor &color) override;
 
 	void setParameters(
-		qreal tolerance, int expansion, int kernel, int featherRadius, int size,
+		int tolerance, int expansion, int kernel, int featherRadius, int size,
 		qreal opacity, int gap, Source source, int blendMode, Area area,
 		bool editableFills, bool confirmFills);
 
@@ -49,6 +50,7 @@ private:
 
 	int lastActiveLayerId() const;
 
+	void stopDragging();
 	void fillAt(const QPointF &point, int activeLayerId, bool editable);
 	void repeatFill();
 	void floodFillFinished(Task *task);
@@ -61,9 +63,11 @@ private:
 
 	void adjustPendingImage(bool adjustColor, bool adjustOpacity);
 
+	void updateCursor();
+
 	void emitFloodFillStateChanged();
 
-	qreal m_tolerance = 0.01;
+	int m_tolerance = 0;
 	int m_expansion = 0;
 	int m_kernel;
 	int m_featherRadius = 0;
@@ -78,8 +82,11 @@ private:
 	bool m_running = false;
 	bool m_repeat = false;
 	bool m_pendingEditable = false;
+	bool m_dragging = false;
 	QAtomicInt m_cancel = false;
 	QPointF m_lastPoint;
+	QPointF m_dragPrevPoint;
+	qreal m_dragTolerance = 0.0;
 	int m_lastActiveLayerId = 0;
 	QImage m_pendingImage;
 	QPoint m_pendingPos;
@@ -91,6 +98,7 @@ private:
 	QCursor m_bucketCursor;
 	QCursor m_pendingCursor;
 	QCursor m_confirmCursor;
+	DragDetector m_dragDetector;
 };
 
 }
