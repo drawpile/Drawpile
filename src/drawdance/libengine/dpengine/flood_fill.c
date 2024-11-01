@@ -1188,7 +1188,13 @@ DP_flood_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
     init_selection(&c.parent, cs, context_id, selection_id);
 
     if (x < 0 || y < 0 || x >= c.parent.width || y >= c.parent.height
-        || DP_rect_empty(c.parent.area)) {
+        || DP_rect_empty(c.parent.area)
+        || !DP_rect_contains(c.parent.area, x, y)
+        || (c.parent.sel
+            && DP_layer_content_pixel_at(
+                   DP_selection_content_noinc(c.parent.sel), x, y)
+                       .a
+                   == 0)) {
         DP_error_set("Flood fill: initial point out of bounds");
         return DP_FLOOD_FILL_OUT_OF_BOUNDS;
     }
