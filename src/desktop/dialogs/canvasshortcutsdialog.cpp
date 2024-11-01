@@ -227,6 +227,13 @@ void CanvasShortcutsDialog::updateResult()
 		conflictDescription =
 			tr("You can't assign a shortcut to a Left Click without any "
 			   "keys since that would interfere with drawing.");
+	} else if(
+		s.type == CanvasShortcuts::KEY_COMBINATION &&
+		(s.action == CanvasShortcuts::COLOR_PICK ||
+		 s.action == CanvasShortcuts::LAYER_PICK)) {
+		conflictDescription =
+			tr("You can't assign just a key combination to this action, change "
+			   "the type to mouse button instead.");
 	} else if(!valid) {
 		conflictDescription = tr("Assign a shortcut to proceed.");
 	} else {

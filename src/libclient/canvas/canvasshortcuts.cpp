@@ -370,8 +370,9 @@ bool CanvasShortcuts::Shortcut::isValid(bool checkAction) const
 	}
 	switch(type) {
 	case KEY_COMBINATION:
-		// Key combinations must have a non-modifier key.
-		return !keys.isEmpty();
+		// Key combinations must have a non-modifier key and don't support color
+		// picking or layer picking.
+		return !keys.isEmpty() && action != COLOR_PICK && action != LAYER_PICK;
 	case MOUSE_BUTTON:
 		// Mouse button shortcuts must have a mouse button.
 		return button != Qt::NoButton;
