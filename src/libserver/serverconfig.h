@@ -103,7 +103,9 @@ namespace config {
 		// Automatically allow/disallow web sessions based on passwordedness.
 		PasswordDependentWebSession(43, "passwordDependentWebSession", "false", ConfigKey::BOOL),
 		// Respect ext-auth user's "PERSIST" flag.
-		ExtAuthPersist(44, "extauthpersist", "false", ConfigKey::BOOL);
+		ExtAuthPersist(44, "extauthpersist", "false", ConfigKey::BOOL),
+		// How long empty sessions linger after the last user left to maybe give them a chance to reconnect.
+		EmptySessionLingerTime(45, "emptySessionLingerTime", "0", ConfigKey::TIME);
 }
 
 //! Settings that are not adjustable after the server has started

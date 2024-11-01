@@ -297,7 +297,8 @@ void SessionServer::onSessionAttributeChanged(Session *session)
 		// A non-persistent session is deleted when the last user leaves
 		// A persistent session can also be deleted if it doesn't contain a
 		// snapshot point.
-		if(!session->history()->hasFlag(SessionHistory::Persistent)) {
+		if(!session->history()->hasFlag(SessionHistory::Persistent) &&
+		   m_config->getConfigTime(config::EmptySessionLingerTime) <= 0) {
 			session->log(Log()
 							 .about(Log::Level::Info, Log::Topic::Status)
 							 .message(QStringLiteral(
@@ -316,23 +317,31 @@ void SessionServer::onSessionAttributeChanged(Session *session)
 
 void SessionServer::cleanupSessions()
 {
+	qint64 emptySessionLingerTime =
+		m_config->getConfigTime(config::EmptySessionLingerTime) * 1000;
 	qint64 expirationTime =
 		m_config->getConfigTime(config::IdleTimeLimit) * 1000;
-	bool allowIdleOverride = m_config->getConfigBool(config::AllowIdleOverride);
-
-	if(expirationTime > 0) {
-		for(Session *s : m_sessions) {
-			bool isExpired =
-				s->lastEventTime() > expirationTime &&
-				(!allowIdleOverride ||
-				 !s->history()->hasFlag(SessionHistory::IdleOverride));
-			if(isExpired) {
-				s->log(Log()
-						   .about(Log::Level::Info, Log::Topic::Status)
-						   .message(QStringLiteral("Idle session expired.")));
-				s->killSession(QStringLiteral(
-					"Session terminated due to being idle too long"));
-			}
+	bool allowIdleOverride =
+		expirationTime > 0 ? m_config->getConfigBool(config::AllowIdleOverride)
+						   : false;
+	for(Session *s : m_sessions) {
+		qint64 lastEventTime = s->lastEventTime();
+		if(s->userCount() == 0 && lastEventTime > emptySessionLingerTime) {
+			s->log(Log()
+					   .about(Log::Level::Info, Log::Topic::Status)
+					   .message(QStringLiteral(
+						   "Closing lingering non-persistent session.")));
+			s->killSession(QStringLiteral(
+				"Session terminated due to being empty too long"));
+		} else if(
+			expirationTime > 0 && lastEventTime > expirationTime &&
+			(!allowIdleOverride ||
+			 !s->history()->hasFlag(SessionHistory::IdleOverride))) {
+			s->log(Log()
+					   .about(Log::Level::Info, Log::Topic::Status)
+					   .message(QStringLiteral("Idle session expired.")));
+			s->killSession(QStringLiteral(
+				"Session terminated due to being idle too long"));
 		}
 	}
 }
