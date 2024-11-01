@@ -532,6 +532,7 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::ExtAuthAvatars,
 		config::ExtAuthBanExempt,
 		config::ExtAuthGhosts,
+		config::ExtAuthPersist,
 #endif
 		config::LogPurgeDays,
 		config::AllowCustomAvatars,

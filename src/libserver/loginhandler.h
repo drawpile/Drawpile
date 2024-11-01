@@ -6,6 +6,7 @@
 #include <QByteArray>
 #include <QJsonObject>
 #include <QObject>
+#include <QSet>
 #include <QStringList>
 
 namespace net {
@@ -111,7 +112,7 @@ private:
 		const QString &username, const QString &authId,
 		const QStringList &flags, const QByteArray &avatar, bool allowMod,
 		bool allowHost, bool allowGhost, bool allowBanExempt, bool allowWeb,
-		bool allowWebSession);
+		bool allowWebSession, bool allowPersist);
 	bool send(const net::Message &msg);
 	void sendError(
 		const QString &code, const QString &message, bool disconnect = true);
@@ -132,7 +133,8 @@ private:
 
 	bool verifyUserId(long long userId);
 
-	void insertImplicitFlags(QStringList &effectiveFlags);
+	void insertImplicitFlags(QSet<QString> &effectiveFlags);
+	static QJsonArray flagSetToJson(const QSet<QString> &flags);
 
 	bool shouldAllowWebOnHost(
 		const net::ServerCommand &cmd, const Session *session) const;

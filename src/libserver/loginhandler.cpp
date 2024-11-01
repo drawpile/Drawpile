@@ -448,7 +448,8 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 						m_config->getConfigBool(config::ExtAuthGhosts),
 					extAuthBanExempt,
 					m_config->getConfigBool(config::ExtAuthWeb),
-					m_config->getConfigBool(config::ExtAuthWebSession));
+					m_config->getConfigBool(config::ExtAuthWebSession),
+					m_config->getConfigBool(config::ExtAuthPersist));
 
 			} else if(allowGuests) {
 				// No ext-auth token provided, but both guest logins and extauth
@@ -514,7 +515,8 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 		authLoginOk(
 			username, QStringLiteral("internal:%1").arg(userAccount.userId),
 			userAccount.flags, QByteArray(), true, true,
-			m_config->getConfigBool(config::EnableGhosts), true, true, true);
+			m_config->getConfigBool(config::EnableGhosts), true, true, true,
+			true);
 		break;
 	}
 }
@@ -522,36 +524,38 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 void LoginHandler::authLoginOk(
 	const QString &username, const QString &authId, const QStringList &flags,
 	const QByteArray &avatar, bool allowMod, bool allowHost, bool allowGhost,
-	bool allowBanExempt, bool allowWeb, bool allowWebSession)
+	bool allowBanExempt, bool allowWeb, bool allowWebSession, bool allowPersist)
 {
 	Q_ASSERT(!authId.isEmpty());
 
 	bool isMod = false;
 	bool wantGhost = false;
-	QStringList effectiveFlags;
+	QSet<QString> effectiveFlags;
 	for(const QString &flag : flags) {
 		if(!effectiveFlags.contains(flag)) {
-			bool shouldAppend;
+			bool shouldInsert;
 			if(flag == QStringLiteral("MOD")) {
-				shouldAppend = allowMod;
+				shouldInsert = allowMod;
 				isMod = allowMod;
 			} else if(flag == QStringLiteral("GHOST")) {
-				shouldAppend = allowGhost;
+				shouldInsert = allowGhost;
 				wantGhost = true;
 			} else if(flag == QStringLiteral("HOST")) {
-				shouldAppend = allowHost;
+				shouldInsert = allowHost;
 			} else if(flag == QStringLiteral("BANEXEMPT")) {
-				shouldAppend = allowBanExempt;
+				shouldInsert = allowBanExempt;
 			} else if(flag == QStringLiteral("WEB")) {
-				shouldAppend = allowWeb;
+				shouldInsert = allowWeb;
 			} else if(flag == QStringLiteral("WEBSESSION")) {
-				shouldAppend = allowWebSession;
+				shouldInsert = allowWebSession;
+			} else if(flag == QStringLiteral("PERSIST")) {
+				shouldInsert = allowPersist;
 			} else {
-				shouldAppend = true;
+				shouldInsert = true;
 			}
 
-			if(shouldAppend) {
-				effectiveFlags.append(flag);
+			if(shouldInsert) {
+				effectiveFlags.insert(flag);
 			}
 		}
 	}
@@ -602,8 +606,7 @@ void LoginHandler::authLoginOk(
 
 	send(net::ServerReply::makeResultLoginOk(
 		QStringLiteral("Authenticated login OK!"), QStringLiteral("identOk"),
-		QJsonArray::fromStringList(effectiveFlags), m_client->username(),
-		false));
+		flagSetToJson(effectiveFlags), m_client->username(), false));
 	announceServerInfo();
 }
 
@@ -739,15 +742,19 @@ void LoginHandler::guestLogin(
 		m_state = State::WaitForLogin;
 	}
 
-	QStringList effectiveFlags;
+	QSet<QString> effectiveFlags;
 	insertImplicitFlags(effectiveFlags);
 	m_client->setAuthFlags(effectiveFlags);
 	m_hostPrivilege = effectiveFlags.contains(QStringLiteral("HOST"));
 
+	QJsonArray jsonFlags;
+	for(const QString &flag : effectiveFlags) {
+		jsonFlags.append(flag);
+	}
+
 	send(net::ServerReply::makeResultLoginOk(
-		QStringLiteral("Guest login OK!"), QStringLiteral("identOk"),
-		QJsonArray::fromStringList(effectiveFlags), m_client->username(),
-		true));
+		QStringLiteral("Guest login OK!"), QStringLiteral("identOk"), jsonFlags,
+		m_client->username(), true));
 	announceServerInfo();
 }
 
@@ -1241,7 +1248,7 @@ bool LoginHandler::verifyUserId(long long userId)
 	return true;
 }
 
-void LoginHandler::insertImplicitFlags(QStringList &effectiveFlags)
+void LoginHandler::insertImplicitFlags(QSet<QString> &effectiveFlags)
 {
 	std::pair<QString, server::ConfigKey> implicitFlags[] = {
 		{QStringLiteral("HOST"), config::AllowGuestHosts},
@@ -1250,9 +1257,24 @@ void LoginHandler::insertImplicitFlags(QStringList &effectiveFlags)
 	};
 	for(const auto &[flag, cfg] : implicitFlags) {
 		if(!effectiveFlags.contains(flag) && m_config->getConfigBool(cfg)) {
-			effectiveFlags.append(flag);
+			effectiveFlags.insert(flag);
 		}
 	}
+	// Moderators can always persist sessions, so this flag isn't strictly
+	// necessary, but it tells the client that we're a server that supports
+	// overriding persistence even if the flag isn't set on a server level.
+	if(effectiveFlags.contains(QStringLiteral("MOD"))) {
+		effectiveFlags.insert(QStringLiteral("PERSIST"));
+	}
+}
+
+QJsonArray LoginHandler::flagSetToJson(const QSet<QString> &flags)
+{
+	QJsonArray json;
+	for(const QString &flag : flags) {
+		json.append(flag);
+	}
+	return json;
 }
 
 bool LoginHandler::shouldAllowWebOnHost(

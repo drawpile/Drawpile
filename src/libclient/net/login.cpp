@@ -57,7 +57,7 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	, m_state(EXPECT_HELLO)
 	, m_passwordState(WAIT_FOR_LOGIN_PASSWORD)
 	, m_multisession(false)
-	, m_canPersist(false)
+	, m_canAnyonePersist(false)
 	, m_canReport(false)
 	, m_needUserPassword(false)
 	, m_supportsCustomAvatars(false)
@@ -157,6 +157,12 @@ bool LoginHandler::receiveMessage(const ServerReply &msg)
 	return true;
 }
 
+bool LoginHandler::supportsPersistence() const
+{
+	return m_canAnyonePersist ||
+		   m_userFlags.contains(QStringLiteral("PERSIST"));
+}
+
 void LoginHandler::setState(State state)
 {
 	qCDebug(lcDpLogin, "Set state to %d", int(state));
@@ -190,7 +196,7 @@ void LoginHandler::expectHello(const ServerReply &msg)
 
 	m_mustAuth = false;
 	m_needUserPassword = false;
-	m_canPersist = false;
+	m_canAnyonePersist = false;
 	m_canReport = false;
 
 	bool startTls = false;
@@ -204,7 +210,7 @@ void LoginHandler::expectHello(const ServerReply &msg)
 			// Changed in 2.1.9 (although in practice we've always done this):
 			// this flag is implied by TLS
 		} else if(flag == QStringLiteral("PERSIST")) {
-			m_canPersist = true;
+			m_canAnyonePersist = true;
 		} else if(flag == QStringLiteral("NOGUEST")) {
 			m_mustAuth = true;
 		} else if(flag == QStringLiteral("REPORT")) {

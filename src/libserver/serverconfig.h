@@ -101,7 +101,9 @@ namespace config {
 		// Maximum number of users per session.
 		SessionUserLimit(42, "sessionUserLimit", "254", ConfigKey::INT),
 		// Automatically allow/disallow web sessions based on passwordedness.
-		PasswordDependentWebSession(43, "passwordDependentWebSession", "false", ConfigKey::BOOL);
+		PasswordDependentWebSession(43, "passwordDependentWebSession", "false", ConfigKey::BOOL),
+		// Respect ext-auth user's "PERSIST" flag.
+		ExtAuthPersist(44, "extauthpersist", "false", ConfigKey::BOOL);
 }
 
 //! Settings that are not adjustable after the server has started

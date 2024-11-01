@@ -5,6 +5,7 @@
 #include "libshared/net/message.h"
 #include <QAbstractSocket>
 #include <QObject>
+#include <QSet>
 
 class QHostAddress;
 class QTcpSocket;
@@ -80,8 +81,8 @@ public:
 	 * User flags come from the account system, either the built-in one or
 	 * ext-auth.
 	 */
-	QStringList authFlags() const;
-	void setAuthFlags(const QStringList &flags);
+	QSet<QString> authFlags() const;
+	void setAuthFlags(const QSet<QString> &flags);
 
 	/**
 	 * @brief Get the user name of this client

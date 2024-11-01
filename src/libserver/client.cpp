@@ -144,7 +144,7 @@ struct Client::Private {
 	QString authId;
 	QString sid;
 	QByteArray avatar;
-	QStringList flags;
+	QSet<QString> flags;
 
 	qint64 lastActive = 0;
 	qint64 lastActiveDrawing = 0;
@@ -358,12 +358,12 @@ uint8_t Client::id() const
 	return d->id;
 }
 
-void Client::setAuthFlags(const QStringList &flags)
+void Client::setAuthFlags(const QSet<QString> &flags)
 {
 	d->flags = flags;
 }
 
-QStringList Client::authFlags() const
+QSet<QString> Client::authFlags() const
 {
 	return d->flags;
 }

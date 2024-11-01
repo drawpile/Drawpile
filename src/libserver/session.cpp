@@ -477,14 +477,17 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 		}
 	}
 
-	if(conf.contains("persistent")) {
-		flags.setFlag(
-			SessionHistory::Persistent,
-			conf["persistent"].toBool() &&
-				m_config->getConfigBool(config::EnablePersistence));
-		changes
-			<< (conf["persistent"].toBool() ? "made persistent"
-											: "made nonpersistent");
+	bool changedByModeratorOrAdmin = !changedBy || changedBy->isModerator();
+	if(conf.contains(QStringLiteral("persistent")) &&
+	   (changedByModeratorOrAdmin ||
+		(changedBy &&
+		 changedBy->authFlags().contains(QStringLiteral("PERSIST"))) ||
+		m_config->getConfigBool(config::EnablePersistence))) {
+		bool persistent = conf[QStringLiteral("persistent")].toBool();
+		flags.setFlag(SessionHistory::Persistent, persistent);
+		changes.append(
+			persistent ? QStringLiteral("made persistent")
+					   : QStringLiteral("made nonpersistent"));
 	}
 
 	if(conf.contains("title")) {
@@ -492,7 +495,6 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 		changes << "changed title";
 	}
 
-	bool changedByModeratorOrAdmin = !changedBy || changedBy->isModerator();
 	if(conf.contains("maxUserCount")) {
 		int maxUsers = qBound(2, conf["maxUserCount"].toInt(), 254);
 		int prevMaxUsers = m_history->maxUsers();
@@ -1536,11 +1538,9 @@ QJsonObject Session::getDescription(bool full) const
 		{"authOnly", m_history->hasFlag(SessionHistory::AuthOnly)},
 		{"nsfm", m_history->hasFlag(SessionHistory::Nsfm)},
 		{"startTime", m_history->startTime().toString(Qt::ISODate)},
-		{"size", int(m_history->sizeInBytes())}};
-
-	if(m_config->getConfigBool(config::EnablePersistence)) {
-		o["persistent"] = m_history->hasFlag(SessionHistory::Persistent);
-	}
+		{"size", int(m_history->sizeInBytes())},
+		{"persistent", m_history->hasFlag(SessionHistory::Persistent)},
+	};
 
 	if(m_config->getConfigBool(config::AllowIdleOverride)) {
 		o["idleOverride"] = m_history->hasFlag(SessionHistory::IdleOverride);
@@ -1713,18 +1713,19 @@ JsonApiResult Session::callAuthJsonApi(
 
 	int pathLength = path.length();
 
-	if (pathLength > 1)
+	if(pathLength > 1)
 		return JsonApiNotFound();
 
-	if (pathLength == 1) {
+	if(pathLength == 1) {
 		const QString head = path.at(0);
 
-		if (head == "op") {
+		if(head == "op") {
 			if(request.contains("password")) {
-				bool status = passwordhash::check(request["password"].toString(), m_history->opwordHash());
+				bool status = passwordhash::check(
+					request["password"].toString(), m_history->opwordHash());
 				return JsonApiResult{
-						JsonApiResult::Ok,
-						QJsonDocument(QJsonObject{{"status", status}})};
+					JsonApiResult::Ok,
+					QJsonDocument(QJsonObject{{"status", status}})};
 			}
 		}
 
@@ -1734,8 +1735,7 @@ JsonApiResult Session::callAuthJsonApi(
 	if(request.contains("password")) {
 		bool status = m_history->checkPassword(request["password"].toString());
 		return JsonApiResult{
-				JsonApiResult::Ok,
-				QJsonDocument(QJsonObject{{"status", status}})};
+			JsonApiResult::Ok, QJsonDocument(QJsonObject{{"status", status}})};
 	}
 
 	return JsonApiNotFound();

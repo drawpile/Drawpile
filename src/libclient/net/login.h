@@ -172,7 +172,7 @@ public:
 	/**
 	 * @brief Does the server support session persistence?
 	 */
-	bool supportsPersistence() const { return m_canPersist; }
+	bool supportsPersistence() const;
 
 	bool supportsCryptBanImEx() const { return m_supportsCryptBanImpEx; }
 	bool supportsModBanImEx() const { return m_supportsModBanImpEx; }
@@ -527,7 +527,7 @@ private:
 
 	// Server flags
 	bool m_multisession;
-	bool m_canPersist;
+	bool m_canAnyonePersist;
 	bool m_canReport;
 	bool m_mustAuth;
 	bool m_needUserPassword;
