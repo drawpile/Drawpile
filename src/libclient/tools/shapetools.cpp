@@ -1,25 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
+#include "libclient/tools/shapetools.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
-
 #include "libclient/net/client.h"
-
 #include "libclient/tools/toolcontroller.h"
-#include "libclient/tools/shapetools.h"
 #include "libclient/tools/utils.h"
-
 #include <QPixmap>
 
 namespace tools {
 
 class PointVectorGenerator {
 public:
-	PointVectorGenerator()
-		: m_time{0}
-		, m_pv{}
-	{
-	}
+	PointVectorGenerator() {}
 
 	void append(const QPointF &point)
 	{
@@ -27,7 +19,7 @@ public:
 			// MyPaint brushes don't take kindly to unnatural delta times. Very
 			// short ones cause weird brush behavior and long ones (5 seconds+)
 			// cause them to not draw the stroke at all. So we interpolate.
-			QLineF line{m_pv.last(), point};
+			QLineF line(m_pv.last(), point);
 			int segments = qCeil(line.length() / SEGMENT_LENGTH);
 			for(int i = 1; i < segments; ++i) {
 				appendPoint(line.pointAt(1.0 / qreal(segments) * qreal(i)));
@@ -36,10 +28,7 @@ public:
 		appendPoint(point);
 	}
 
-	const canvas::PointVector &pv()
-	{
-		return m_pv;
-	}
+	const canvas::PointVector &pv() { return m_pv; }
 
 private:
 	static constexpr qreal SEGMENT_LENGTH = 10.0;
@@ -47,14 +36,14 @@ private:
 
 	void appendPoint(const QPointF &point)
 	{
-		canvas::Point cp{m_time, point, 1.0};
+		canvas::Point cp(m_time, point, 1.0);
 		if(!m_pv.isEmpty()) {
 			m_time += canvas::Point::distance(m_pv.last(), cp) * DTIME;
 		}
 		m_pv.append(cp);
 	}
 
-	long long m_time;
+	long long m_time = 0LL;
 	canvas::PointVector m_pv;
 };
 
@@ -77,20 +66,21 @@ void ShapeTool::begin(const BeginParams &params)
 
 void ShapeTool::motion(const MotionParams &params)
 {
-	if(!m_drawing)
-		return;
+	if(m_drawing) {
+		if(params.constrain) {
+			m_p2 = constraints::square(m_start, params.point);
+		} else {
+			m_p2 = params.point;
+		}
 
-	if(params.constrain)
-		m_p2 = constraints::square(m_start, params.point);
-	else
-		m_p2 = params.point;
+		if(params.center) {
+			m_p1 = m_start - (m_p2 - m_start);
+		} else {
+			m_p1 = m_start;
+		}
 
-	if(params.center)
-		m_p1 = m_start - (m_p2 - m_start);
-	else
-		m_p1 = m_start;
-
-	updatePreview();
+		updatePreview();
+	}
 }
 
 void ShapeTool::cancelMultipart()
@@ -101,26 +91,25 @@ void ShapeTool::cancelMultipart()
 
 void ShapeTool::end(const EndParams &)
 {
-	if(!m_drawing)
-		return;
+	if(m_drawing) {
+		m_drawing = false;
 
-	m_drawing = false;
+		net::Client *client = m_owner.client();
+		canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
+		drawdance::CanvasState canvasState = paintEngine->sampleCanvasState();
 
-	net::Client *client = m_owner.client();
-	canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
-	drawdance::CanvasState canvasState = paintEngine->sampleCanvasState();
+		m_owner.setBrushEngineBrush(m_brushEngine, false);
 
-	m_owner.setBrushEngineBrush(m_brushEngine, false);
+		const canvas::PointVector pv = pointVector();
+		m_brushEngine.beginStroke(client->myId(), true, m_zoom);
+		for(const canvas::Point &p : pv) {
+			m_brushEngine.strokeTo(p, canvasState);
+		}
+		m_brushEngine.endStroke(pv.last().timeMsec() + 10, canvasState, true);
 
-	const canvas::PointVector pv = pointVector();
-	m_brushEngine.beginStroke(client->myId(), true, m_zoom);
-	for(const canvas::Point &p : pv) {
-		m_brushEngine.strokeTo(p, canvasState);
+		paintEngine->clearDabsPreview();
+		m_brushEngine.sendMessagesTo(client);
 	}
-	m_brushEngine.endStroke(pv.last().timeMsec() + 10, canvasState, true);
-
-	paintEngine->clearDabsPreview();
-	m_brushEngine.sendMessagesTo(client);
 }
 
 void ShapeTool::updatePreview()
@@ -148,20 +137,21 @@ Line::Line(ToolController &owner)
 
 void Line::motion(const MotionParams &params)
 {
-	if(!m_drawing)
-		return;
+	if(m_drawing) {
+		if(params.constrain) {
+			m_p2 = constraints::angle(m_start, params.point);
+		} else {
+			m_p2 = params.point;
+		}
 
-	if(params.constrain)
-		m_p2 = constraints::angle(m_start, params.point);
-	else
-		m_p2 = params.point;
+		if(params.center) {
+			m_p1 = m_start - (m_p2 - m_start);
+		} else {
+			m_p1 = m_start;
+		}
 
-	if(params.center)
-		m_p1 = m_start - (m_p2 - m_start);
-	else
-		m_p1 = m_start;
-
-	updatePreview();
+		updatePreview();
+	}
 }
 
 canvas::PointVector Line::pointVector() const
@@ -173,7 +163,8 @@ canvas::PointVector Line::pointVector() const
 }
 
 Rectangle::Rectangle(ToolController &owner)
-	: ShapeTool(owner, RECTANGLE, QCursor(QPixmap(":cursors/rectangle.png"), 2, 2))
+	: ShapeTool(
+		  owner, RECTANGLE, QCursor(QPixmap(":cursors/rectangle.png"), 2, 2))
 {
 }
 
@@ -181,10 +172,10 @@ canvas::PointVector Rectangle::pointVector() const
 {
 	PointVectorGenerator gen;
 	gen.append(m_p1);
-	gen.append(QPointF{m_p1.x(), m_p2.y()});
+	gen.append(QPointF(m_p1.x(), m_p2.y()));
 	gen.append(m_p2);
-	gen.append(QPointF{m_p2.x(), m_p1.y()});
-	gen.append(QPointF{m_p1.x(), m_p1.y()});
+	gen.append(QPointF(m_p2.x(), m_p1.y()));
+	gen.append(QPointF(m_p1.x(), m_p1.y()));
 	return gen.pv();
 }
 
@@ -195,16 +186,16 @@ Ellipse::Ellipse(ToolController &owner)
 
 canvas::PointVector Ellipse::pointVector() const
 {
-	const auto r = rect();
-	const qreal a = r.width() / 2.0;
-	const qreal b = r.height() / 2.0;
-	const qreal cx = r.x() + a;
-	const qreal cy = r.y() + b;
+	QRectF r = rect();
+	qreal a = r.width() / 2.0;
+	qreal b = r.height() / 2.0;
+	qreal cx = r.x() + a;
+	qreal cy = r.y() + b;
 	PointVectorGenerator gen;
 
 	qreal radius = (a + b) / 2.0;
 	qreal step;
-	if (radius > 2.0) {
+	if(radius > 2.0) {
 		qreal t = 1.0 - 0.33 / radius;
 		step = std::acos(2.0 * t * t - 1.0);
 	} else {
@@ -212,9 +203,9 @@ canvas::PointVector Ellipse::pointVector() const
 	}
 
 	for(qreal t = 0.0; t < 2.0 * M_PI; t += step) {
-		gen.append(QPointF{cx + a*cos(t), cy + b*sin(t)});
+		gen.append(QPointF(cx + a * cos(t), cy + b * sin(t)));
 	}
-	gen.append(QPointF{cx+a, cy});
+	gen.append(QPointF(cx + a, cy));
 
 	return gen.pv();
 }

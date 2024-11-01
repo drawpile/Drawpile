@@ -1,11 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef TOOLS_SHAPETOOLS_H
-#define TOOLS_SHAPETOOLS_H
-
+#ifndef LIBCLIENT_TOOLS_SHAPETOOLS_H
+#define LIBCLIENT_TOOLS_SHAPETOOLS_H
 #include "libclient/drawdance/brushengine.h"
 #include "libclient/tools/tool.h"
-
 #include <QRectF>
 
 namespace tools {
@@ -16,9 +13,7 @@ namespace tools {
 class ShapeTool : public Tool {
 public:
 	ShapeTool(ToolController &owner, Type type, QCursor cursor)
-		: Tool{owner, type, cursor, true, true, false, true, true}
-		, m_drawing{false}
-		, m_brushEngine{}
+		: Tool(owner, type, cursor, true, true, false, true, true)
 	{
 	}
 
@@ -35,10 +30,10 @@ protected:
 	QRectF rect() const { return QRectF(m_p1, m_p2).normalized(); }
 
 	QPointF m_start, m_p1, m_p2;
-	bool m_drawing;
+	bool m_drawing = false;
 
 private:
-	qreal m_zoom;
+	qreal m_zoom = 1.0;
 	drawdance::BrushEngine m_brushEngine;
 };
 
