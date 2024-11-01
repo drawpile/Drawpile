@@ -821,39 +821,40 @@ void CanvasController::handleKeyPress(QKeyEvent *event)
 			resetCursor();
 			break;
 		default:
-			break;
-		}
-
-		CanvasShortcuts::Match mouseMatch = m_canvasShortcuts.matchMouseButton(
-			modifiers, m_keysDown, Qt::LeftButton);
-		switch(mouseMatch.action()) {
-		case CanvasShortcuts::TOOL_ADJUST:
-			if(!m_allowToolAdjust) {
+			CanvasShortcuts::Match mouseMatch =
+				m_canvasShortcuts.matchMouseButton(
+					modifiers, m_keysDown, Qt::LeftButton);
+			switch(mouseMatch.action()) {
+			case CanvasShortcuts::TOOL_ADJUST:
+				if(!m_allowToolAdjust) {
+					m_penMode = PenMode::Normal;
+					break;
+				}
+				Q_FALLTHROUGH();
+			case CanvasShortcuts::CANVAS_PAN:
+			case CanvasShortcuts::CANVAS_ROTATE:
+			case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+			case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
+			case CanvasShortcuts::CANVAS_ZOOM:
+				m_penMode = PenMode::Normal;
+				m_dragMode = ViewDragMode::Prepared;
+				m_dragAction = mouseMatch.action();
+				m_dragButton = mouseMatch.shortcut->button;
+				m_dragModifiers = mouseMatch.shortcut->mods;
+				m_dragInverted = mouseMatch.inverted();
+				m_dragSwapAxes = mouseMatch.swapAxes();
+				break;
+			case CanvasShortcuts::COLOR_PICK:
+				m_penMode =
+					m_allowColorPick ? PenMode::Colorpick : PenMode::Normal;
+				break;
+			case CanvasShortcuts::LAYER_PICK:
+				m_penMode = PenMode::Layerpick;
+				break;
+			default:
 				m_penMode = PenMode::Normal;
 				break;
 			}
-			Q_FALLTHROUGH();
-		case CanvasShortcuts::CANVAS_PAN:
-		case CanvasShortcuts::CANVAS_ROTATE:
-		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
-		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
-		case CanvasShortcuts::CANVAS_ZOOM:
-			m_penMode = PenMode::Normal;
-			m_dragMode = ViewDragMode::Prepared;
-			m_dragAction = mouseMatch.action();
-			m_dragButton = mouseMatch.shortcut->button;
-			m_dragModifiers = mouseMatch.shortcut->mods;
-			m_dragInverted = mouseMatch.inverted();
-			m_dragSwapAxes = mouseMatch.swapAxes();
-			break;
-		case CanvasShortcuts::COLOR_PICK:
-			m_penMode = m_allowColorPick ? PenMode::Colorpick : PenMode::Normal;
-			break;
-		case CanvasShortcuts::LAYER_PICK:
-			m_penMode = PenMode::Layerpick;
-			break;
-		default:
-			m_penMode = PenMode::Normal;
 			break;
 		}
 	} else {

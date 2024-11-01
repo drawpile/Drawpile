@@ -1592,44 +1592,41 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 			resetCursor();
 			break;
 		default:
-			break;
-		}
-	} else {
-		QGraphicsView::keyPressEvent(event);
-	}
-
-	if(m_pendown == NOTDOWN) {
-		CanvasShortcuts::Match mouseMatch = m_canvasShortcuts.matchMouseButton(
-			getKeyboardModifiers(event), m_keysDown, Qt::LeftButton);
-		switch(mouseMatch.action()) {
-		case CanvasShortcuts::TOOL_ADJUST:
-			if(!m_allowToolAdjust) {
+			CanvasShortcuts::Match mouseMatch =
+				m_canvasShortcuts.matchMouseButton(
+					getKeyboardModifiers(event), m_keysDown, Qt::LeftButton);
+			switch(mouseMatch.action()) {
+			case CanvasShortcuts::TOOL_ADJUST:
+				if(!m_allowToolAdjust) {
+					m_penmode = PenMode::Normal;
+					break;
+				}
+				Q_FALLTHROUGH();
+			case CanvasShortcuts::CANVAS_PAN:
+			case CanvasShortcuts::CANVAS_ROTATE:
+			case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+			case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
+			case CanvasShortcuts::CANVAS_ZOOM:
+				m_penmode = PenMode::Normal;
+				m_dragmode = ViewDragMode::Prepared;
+				m_dragAction = mouseMatch.action();
+				m_dragButton = mouseMatch.shortcut->button;
+				m_dragModifiers = mouseMatch.shortcut->mods;
+				m_dragInverted = mouseMatch.inverted();
+				m_dragSwapAxes = mouseMatch.swapAxes();
+				updateOutline();
+				break;
+			case CanvasShortcuts::COLOR_PICK:
+				m_penmode =
+					m_allowColorPick ? PenMode::Colorpick : PenMode::Normal;
+				break;
+			case CanvasShortcuts::LAYER_PICK:
+				m_penmode = PenMode::Layerpick;
+				break;
+			default:
 				m_penmode = PenMode::Normal;
 				break;
 			}
-			Q_FALLTHROUGH();
-		case CanvasShortcuts::CANVAS_PAN:
-		case CanvasShortcuts::CANVAS_ROTATE:
-		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
-		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
-		case CanvasShortcuts::CANVAS_ZOOM:
-			m_penmode = PenMode::Normal;
-			m_dragmode = ViewDragMode::Prepared;
-			m_dragAction = mouseMatch.action();
-			m_dragButton = mouseMatch.shortcut->button;
-			m_dragModifiers = mouseMatch.shortcut->mods;
-			m_dragInverted = mouseMatch.inverted();
-			m_dragSwapAxes = mouseMatch.swapAxes();
-			updateOutline();
-			break;
-		case CanvasShortcuts::COLOR_PICK:
-			m_penmode = m_allowColorPick ? PenMode::Colorpick : PenMode::Normal;
-			break;
-		case CanvasShortcuts::LAYER_PICK:
-			m_penmode = PenMode::Layerpick;
-			break;
-		default:
-			m_penmode = PenMode::Normal;
 			break;
 		}
 	} else {
@@ -1637,6 +1634,7 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 			m_canvasShortcuts.matchConstraints(
 				getKeyboardModifiers(event), m_keysDown);
 		emit penModify(match.toolConstraint1(), match.toolConstraint2());
+		QGraphicsView::keyPressEvent(event);
 	}
 
 	resetCursor();
