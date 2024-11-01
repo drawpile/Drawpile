@@ -1,32 +1,29 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libserver/sessionserver.h"
-#include "libserver/thinsession.h"
-#include "libserver/thinserverclient.h"
+#include "libserver/announcements.h"
+#include "libserver/filedhistory.h"
+#include "libserver/inmemoryhistory.h"
 #include "libserver/loginhandler.h"
 #include "libserver/serverconfig.h"
 #include "libserver/serverlog.h"
-#include "libserver/inmemoryhistory.h"
-#include "libserver/filedhistory.h"
 #include "libserver/templateloader.h"
-#include "libserver/announcements.h"
-
-#include <QTimer>
+#include "libserver/thinserverclient.h"
+#include "libserver/thinsession.h"
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QTimer>
 
 namespace server {
 
 SessionServer::SessionServer(ServerConfig *config, QObject *parent)
-	: QObject(parent),
-	m_config(config),
-	m_tpls(nullptr),
-	m_useFiledSessions(false)
+	: QObject(parent)
+	, m_config(config)
 {
 	m_announcements = new sessionlisting::Announcements(config, this);
 
 	QTimer *cleanupTimer = new QTimer(this);
-	connect(cleanupTimer, &QTimer::timeout, this, &SessionServer::cleanupSessions);
+	connect(
+		cleanupTimer, &QTimer::timeout, this, &SessionServer::cleanupSessions);
 	cleanupTimer->setInterval(15 * 1000);
 	cleanupTimer->start(cleanupTimer->interval());
 }
@@ -38,26 +35,33 @@ void SessionServer::setSessionDir(const QDir &dir)
 		m_useFiledSessions = true;
 		loadNewSessions();
 	} else {
-		qWarning("%s is not readable", qPrintable(dir.absolutePath()));
+		qWarning("%s is not readable", qUtf8Printable(dir.absolutePath()));
 	}
 }
 
 void SessionServer::loadNewSessions()
 {
-	if(!m_useFiledSessions)
+	if(!m_useFiledSessions) {
 		return;
+	}
 
-	auto sessionFiles = m_sessiondir.entryInfoList(QStringList() << "*.session", QDir::Files|QDir::Writable|QDir::Readable);
+	QFileInfoList sessionFiles = m_sessiondir.entryInfoList(
+		{QStringLiteral("*.session")},
+		QDir::Files | QDir::Writable | QDir::Readable);
 	for(const QFileInfo &f : sessionFiles) {
-		if(getSessionById(f.baseName(), false))
+		if(getSessionById(f.baseName(), false)) {
 			continue;
+		}
 
 		FiledHistory *fh = FiledHistory::load(f.absoluteFilePath());
 		if(fh) {
 			fh->setArchive(m_config->getConfigBool(config::ArchiveMode));
-			Session *session = new ThinSession(fh, m_config, m_announcements, this);
+			Session *session =
+				new ThinSession(fh, m_config, m_announcements, this);
 			initSession(session);
-			session->log(Log().about(Log::Level::Debug, Log::Topic::Status).message("Loaded from file."));
+			session->log(Log()
+							 .about(Log::Level::Debug, Log::Topic::Status)
+							 .message(QStringLiteral("Loaded from file.")));
 		}
 	}
 }
@@ -69,26 +73,32 @@ QJsonArray SessionServer::sessionDescriptions() const
 
 	for(const Session *s : m_sessions) {
 		descs.append(s->getDescription());
-		if(!s->idAlias().isEmpty())
-			aliases << s->idAlias();
+		if(!s->idAlias().isEmpty()) {
+			aliases.append(s->idAlias());
+		}
 	}
 
 	if(templateLoader()) {
 		// Add session templates to list, if not shadowed by live sessions
 		QJsonArray templates = templateLoader()->templateDescriptions();
 		for(const QJsonValue &v : templates) {
-			if(!aliases.contains(v.toObject().value("alias").toString()))
-				descs << v;
+			if(!aliases.contains(
+				   v.toObject().value(QStringLiteral("alias")).toString())) {
+				descs.append(v);
+			}
 		}
 	}
 
 	return descs;
 }
 
-SessionHistory *SessionServer::initHistory(const QString &id, const QString alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
+SessionHistory *SessionServer::initHistory(
+	const QString &id, const QString alias,
+	const protocol::ProtocolVersion &protocolVersion, const QString &founder)
 {
 	if(m_useFiledSessions) {
-		FiledHistory *fh = FiledHistory::startNew(m_sessiondir, id, alias, protocolVersion, founder);
+		FiledHistory *fh = FiledHistory::startNew(
+			m_sessiondir, id, alias, protocolVersion, founder);
 		fh->setArchive(m_config->getConfigBool(config::ArchiveMode));
 		return fh;
 	} else {
@@ -96,37 +106,50 @@ SessionHistory *SessionServer::initHistory(const QString &id, const QString alia
 	}
 }
 
-std::tuple<Session*, QString> SessionServer::createSession(const QString &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
+std::tuple<Session *, QString> SessionServer::createSession(
+	const QString &id, const QString &idAlias,
+	const protocol::ProtocolVersion &protocolVersion, const QString &founder)
 {
 	Q_ASSERT(!id.isNull());
 
 	if(m_sessions.size() >= m_config->getConfigInt(config::SessionCountLimit)) {
-		return std::tuple<Session*, QString> { nullptr, "closed" };
+		return std::tuple<Session *, QString>{
+			nullptr, QStringLiteral("closed")};
 	}
 
-	if(getSessionById(id, false) || (!idAlias.isEmpty() && getSessionById(idAlias, false))) {
-		return std::tuple<Session*, QString> { nullptr, "idInUse" };
+	if(getSessionById(id, false) ||
+	   (!idAlias.isEmpty() && getSessionById(idAlias, false))) {
+		return std::tuple<Session *, QString>{
+			nullptr, QStringLiteral("idInUse")};
 	}
 
-	if(protocolVersion.serverVersion() != protocol::ProtocolVersion::current().serverVersion()) {
-		return std::tuple<Session*, QString> { nullptr, "badProtocol" };
+	if(protocolVersion.serverVersion() !=
+	   protocol::ProtocolVersion::current().serverVersion()) {
+		return std::tuple<Session *, QString>{
+			nullptr, QStringLiteral("badProtocol")};
 	}
 
-	SessionHistory *history = initHistory(id, idAlias, protocolVersion, founder);
-	int userLimit = qBound(2, m_config->getConfigInt(config::SessionUserLimit), 254);
+	SessionHistory *history =
+		initHistory(id, idAlias, protocolVersion, founder);
+	int userLimit =
+		qBound(2, m_config->getConfigInt(config::SessionUserLimit), 254);
 	if(history->maxUsers() != userLimit) {
 		history->setMaxUsers(userLimit);
 	}
 
-	Session *session = new ThinSession(history, m_config, m_announcements, this);
+	Session *session =
+		new ThinSession(history, m_config, m_announcements, this);
 
 	initSession(session);
 
-	QString aka = idAlias.isEmpty() ? QString() : QStringLiteral(" (AKA %1)").arg(idAlias);
+	QString aka = idAlias.isEmpty() ? QString()
+									: QStringLiteral(" (AKA %1)").arg(idAlias);
 
-	session->log(Log()
-		.about(Log::Level::Info, Log::Topic::Status)
-		.message("Session" + aka + " created by " + founder));
+	session->log(
+		Log()
+			.about(Log::Level::Info, Log::Topic::Status)
+			.message(
+				QStringLiteral("Session %1 created by %2").arg(aka, founder)));
 
 	return std::make_tuple(session, QString());
 }
@@ -136,25 +159,29 @@ Session *SessionServer::createFromTemplate(const QString &idAlias)
 	Q_ASSERT(templateLoader());
 
 	QJsonObject desc = templateLoader()->templateDescription(idAlias);
-	if(desc.isEmpty())
+	if(desc.isEmpty()) {
 		return nullptr;
+	}
 
 	SessionHistory *history = initHistory(
-		Ulid::make().toString(),
-		idAlias,
-		protocol::ProtocolVersion::fromString(desc["protocol"].toString()),
-		desc["founder"].toString());
+		Ulid::make().toString(), idAlias,
+		protocol::ProtocolVersion::fromString(
+			desc[QStringLiteral("protocol")].toString()),
+		desc[QStringLiteral("founder")].toString());
 
 	if(!templateLoader()->init(history)) {
 		delete history;
 		return nullptr;
 	}
 
-	Session *session = new ThinSession(history, m_config, m_announcements, this);
+	Session *session =
+		new ThinSession(history, m_config, m_announcements, this);
 	initSession(session);
-	session->log(Log()
-		.about(Log::Level::Info, Log::Topic::Status)
-		.message(QStringLiteral("Session instantiated from template %1").arg(idAlias)));
+	session->log(
+		Log()
+			.about(Log::Level::Info, Log::Topic::Status)
+			.message(QStringLiteral("Session instantiated from template %1")
+						 .arg(idAlias)));
 
 	return session;
 }
@@ -163,8 +190,12 @@ void SessionServer::initSession(Session *session)
 {
 	m_sessions.append(session);
 
-	connect(session, &Session::sessionAttributeChanged, this, &SessionServer::onSessionAttributeChanged);
-	connect(session, &Session::sessionDestroyed, this, &SessionServer::removeSession, Qt::DirectConnection);
+	connect(
+		session, &Session::sessionAttributeChanged, this,
+		&SessionServer::onSessionAttributeChanged);
+	connect(
+		session, &Session::sessionDestroyed, this,
+		&SessionServer::removeSession, Qt::DirectConnection);
 
 	emit sessionCreated(session);
 	emit sessionChanged(session->getDescription());
@@ -180,8 +211,9 @@ void SessionServer::removeSession(Session *session)
 Session *SessionServer::getSessionById(const QString &id, bool load)
 {
 	for(Session *s : m_sessions) {
-		if(s->id() == id || s->idAlias() == id)
+		if(s->id() == id || s->idAlias() == id) {
 			return s;
+		}
 	}
 
 	if(load && templateLoader() && templateLoader()->exists(id)) {
@@ -194,15 +226,17 @@ Session *SessionServer::getSessionById(const QString &id, bool load)
 void SessionServer::stopAll()
 {
 	for(ThinServerClient *c : m_clients) {
-		// Note: this just sends the disconnect command, clients don't self-delete immediately
+		// Note: this just sends the disconnect command, clients don't
+		// self-delete immediately
 		c->disconnectClient(
 			Client::DisconnectionReason::Shutdown,
 			QStringLiteral("Server shutting down"),
 			QStringLiteral("SessionServer::stopAll"));
 	}
 
-	for(Session *s : m_sessions)
+	for(Session *s : m_sessions) {
 		s->killSession(QStringLiteral("Server shutting down"), false);
+	}
 }
 
 void SessionServer::messageAll(const QString &message, bool alert)
@@ -215,7 +249,8 @@ void SessionServer::messageAll(const QString &message, bool alert)
 void SessionServer::addClient(ThinServerClient *client)
 {
 	client->setParent(this);
-	client->setConnectionTimeout(m_config->getConfigTime(config::ClientTimeout) * 1000);
+	client->setConnectionTimeout(
+		m_config->getConfigTime(config::ClientTimeout) * 1000);
 
 	m_clients.append(client);
 	connect(
@@ -224,9 +259,13 @@ void SessionServer::addClient(ThinServerClient *client)
 
 	emit userCountChanged(m_clients.size());
 
-	auto *login = new LoginHandler(client, this, m_config);
-	connect(this, &SessionServer::sessionChanged, login, &LoginHandler::announceSession);
-	connect(this, &SessionServer::sessionEnded, login, &LoginHandler::announceSessionEnd);
+	LoginHandler *login = new LoginHandler(client, this, m_config);
+	connect(
+		this, &SessionServer::sessionChanged, login,
+		&LoginHandler::announceSession);
+	connect(
+		this, &SessionServer::sessionEnded, login,
+		&LoginHandler::announceSessionEnd);
 	login->startLoginProcess();
 }
 
@@ -239,8 +278,8 @@ void SessionServer::removeClient(ThinServerClient *client)
 /**
  * @brief Handle client disconnect from a session
  *
- * The session takes care of the client itself. Here, we clean up after the session
- * in case it needs to be closed.
+ * The session takes care of the client itself. Here, we clean up after the
+ * session in case it needs to be closed.
  * @param session
  */
 void SessionServer::onSessionAttributeChanged(Session *session)
@@ -249,43 +288,57 @@ void SessionServer::onSessionAttributeChanged(Session *session)
 
 	bool delSession = false;
 
-	if(session->userCount()==0 && session->state() != Session::State::Shutdown) {
-		session->log(Log().about(Log::Level::Info, Log::Topic::Status).message("Last user left."));
+	if(session->userCount() == 0 &&
+	   session->state() != Session::State::Shutdown) {
+		session->log(Log()
+						 .about(Log::Level::Info, Log::Topic::Status)
+						 .message(QStringLiteral("Last user left.")));
 
 		// A non-persistent session is deleted when the last user leaves
-		// A persistent session can also be deleted if it doesn't contain a snapshot point.
+		// A persistent session can also be deleted if it doesn't contain a
+		// snapshot point.
 		if(!session->history()->hasFlag(SessionHistory::Persistent)) {
-			session->log(Log().about(Log::Level::Info, Log::Topic::Status).message("Closing non-persistent session."));
+			session->log(Log()
+							 .about(Log::Level::Info, Log::Topic::Status)
+							 .message(QStringLiteral(
+								 "Closing non-persistent session.")));
 			delSession = true;
 		}
 	}
 
-	if(delSession)
-		session->killSession(QStringLiteral("Session terminated due to being empty"));
-	else
+	if(delSession) {
+		session->killSession(
+			QStringLiteral("Session terminated due to being empty"));
+	} else {
 		emit sessionChanged(session->getDescription());
+	}
 }
 
 void SessionServer::cleanupSessions()
 {
-	const qint64 expirationTime = m_config->getConfigTime(config::IdleTimeLimit) * 1000;
+	qint64 expirationTime =
+		m_config->getConfigTime(config::IdleTimeLimit) * 1000;
 	bool allowIdleOverride = m_config->getConfigBool(config::AllowIdleOverride);
 
-	if(expirationTime>0) {
+	if(expirationTime > 0) {
 		for(Session *s : m_sessions) {
 			bool isExpired =
 				s->lastEventTime() > expirationTime &&
 				(!allowIdleOverride ||
 				 !s->history()->hasFlag(SessionHistory::IdleOverride));
 			if(isExpired) {
-				s->log(Log().about(Log::Level::Info, Log::Topic::Status).message("Idle session expired."));
-				s->killSession(QStringLiteral("Session terminated due to being idle too long"));
+				s->log(Log()
+						   .about(Log::Level::Info, Log::Topic::Status)
+						   .message(QStringLiteral("Idle session expired.")));
+				s->killSession(QStringLiteral(
+					"Session terminated due to being idle too long"));
 			}
 		}
 	}
 }
 
-JsonApiResult SessionServer::callSessionJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+JsonApiResult SessionServer::callSessionJsonApi(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
 {
 	QString head;
 	QStringList tail;
@@ -293,33 +346,34 @@ JsonApiResult SessionServer::callSessionJsonApi(JsonApiMethod method, const QStr
 
 	if(!head.isEmpty()) {
 		Session *s = getSessionById(head, false);
-		if(s)
+		if(s) {
 			return s->callJsonApi(method, tail, request);
-		else
+		} else {
 			return JsonApiNotFound();
+		}
 	}
 
 	if(method == JsonApiMethod::Get) {
 		return {JsonApiResult::Ok, QJsonDocument(sessionDescriptions())};
-
 	} else if(method == JsonApiMethod::Update) {
-		const QString msg = request["message"].toString();
-		if(!msg.isEmpty())
+		QString msg = request[QStringLiteral("message")].toString();
+		if(!msg.isEmpty()) {
 			messageAll(msg, false);
+		}
 
-		const QString alert = request["alert"].toString();
-		if(!alert.isEmpty())
+		QString alert = request[QStringLiteral("alert")].toString();
+		if(!alert.isEmpty()) {
 			messageAll(alert, true);
+		}
 
 		return {JsonApiResult::Ok, QJsonDocument(QJsonObject())};
-
-
 	} else {
 		return JsonApiBadMethod();
 	}
 }
 
-JsonApiResult SessionServer::callUserJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+JsonApiResult SessionServer::callUserJsonApi(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
 {
 	Q_UNUSED(request)
 	if(method == JsonApiMethod::Get) {

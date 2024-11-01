@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include "libshared/net/protover.h"
 #include "libserver/jsonapi.h"
 #include "libserver/sessions.h"
-
-#include <QObject>
+#include "libshared/net/protover.h"
 #include <QDir>
+#include <QObject>
 
 namespace sessionlisting {
-	class Announcements;
+class Announcements;
 }
 
 namespace server {
@@ -24,9 +22,9 @@ class TemplateLoader;
  *
  */
 class SessionServer final : public QObject, public Sessions {
-Q_OBJECT
+	Q_OBJECT
 public:
-	SessionServer(ServerConfig *config, QObject *parent=nullptr);
+	SessionServer(ServerConfig *config, QObject *parent = nullptr);
 
 	/**
 	 * @brief Enable file backed sessions
@@ -71,7 +69,10 @@ public:
 	 * @param founder session founder username
 	 * @return the newly created session
 	 */
-	std::tuple<Session*, QString> createSession(const QString &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder) override;
+	std::tuple<Session *, QString> createSession(
+		const QString &id, const QString &idAlias,
+		const protocol::ProtocolVersion &protocolVersion,
+		const QString &founder) override;
 
 	/**
 	 * @brief Create a new session by instantiating a template
@@ -126,10 +127,14 @@ public:
 	 * @param request request body content
 	 * @return JSON API response content
 	 */
-	JsonApiResult callSessionJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+	JsonApiResult callSessionJsonApi(
+		JsonApiMethod method, const QStringList &path,
+		const QJsonObject &request);
 
 	//! Like callSessionJsonApi, but for the user list
-	JsonApiResult callUserJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+	JsonApiResult callUserJsonApi(
+		JsonApiMethod method, const QStringList &path,
+		const QJsonObject &request);
 
 signals:
 	/**
@@ -169,20 +174,22 @@ private slots:
 	void cleanupSessions();
 
 private:
-	SessionHistory *initHistory(const QString &id, const QString alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder);
+	SessionHistory *initHistory(
+		const QString &id, const QString alias,
+		const protocol::ProtocolVersion &protocolVersion,
+		const QString &founder);
 	void initSession(Session *session);
 
 	ThinServerClient *searchClientByPathUid(const QString &uid);
 
 	sessionlisting::Announcements *m_announcements;
 	ServerConfig *m_config;
-	TemplateLoader *m_tpls;
+	TemplateLoader *m_tpls = nullptr;
 	QDir m_sessiondir;
-	bool m_useFiledSessions;
+	bool m_useFiledSessions = false;
 
-	QList<Session*> m_sessions;
-	QList<ThinServerClient*> m_clients;
+	QList<Session *> m_sessions;
+	QList<ThinServerClient *> m_clients;
 };
 
 }
-
