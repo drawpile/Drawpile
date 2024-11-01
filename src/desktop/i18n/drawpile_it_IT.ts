@@ -1630,22 +1630,22 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+2"/>
         <source>&amp;Fit Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Adatta tela</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fit Canvas &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Adatta tela &amp;Larghezza</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Fit Canvas &amp;Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Adatta tela e&amp;Altezza</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Reset Canvas Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reimposta rotazione tela</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1665,22 +1665,22 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>specchia/capovolgi la tela orizzontalmente</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Capovolgi tela</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the canvas upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Capovolgi la tela sottosopra</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>specchia/capovolgi la tela verticalmente</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2033,7 +2033,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Attiva livello &amp;Visibilità</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+209"/>
@@ -2485,7 +2485,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+22"/>
         <source>Cause Crash</source>
-        <translation type="unfinished"></translation>
+        <translation>Causa arresto anomalo</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2620,22 +2620,22 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+17"/>
         <source>Expand &amp;Up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Espandi &amp;Su…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Down…</source>
-        <translation type="unfinished"></translation>
+        <translation>Espandi &amp;giù…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Left…</source>
-        <translation type="unfinished"></translation>
+        <translation>Espandi &amp;Sinistra…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Right…</source>
-        <translation type="unfinished"></translation>
+        <translation>Espandi &amp;Destra…</translation>
     </message>
     <message>
         <location line="+110"/>
@@ -2758,12 +2758,12 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+2"/>
         <source>Mirror the transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Specchia l&apos;immagine trasformata orizzontalmente</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>specchia/capovolgi l&apos;immagine trasformata orizzontalmente</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2773,12 +2773,12 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+2"/>
         <source>Flip the transformed image upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Capovolgi l&apos;immagine trasformata sotto sopra</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>mirror/flip transformed image vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>specchia/capovolgi l&apos;immagine trasformata verticalmente</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3151,52 +3151,52 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+32"/>
         <source>Cause Crash…</source>
-        <translation type="unfinished"></translation>
+        <translation>Causa arresto anomalo…</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reimposta Pennello</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta tutti i pennelli &amp;Slot</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta tutti i &amp;Pennelli</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Next Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pennello successivo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Previous Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pennello precedente</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Next Brush Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag pennello successivo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Previous Brush Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag pennello precedente</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Next Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Slot pennello successivo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Previous Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Slot pennello precedente</translation>
     </message>
     <message>
         <location line="+96"/>
@@ -4387,7 +4387,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+125"/>
         <source>Output resolution will be %1x%2 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>La risoluzione di output sarà %1x%2 pixel.</translation>
     </message>
 </context>
 <context>
@@ -4606,7 +4606,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+7"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Sovrascrivi pennello</translation>
     </message>
     <message>
         <location line="+64"/>
@@ -4631,7 +4631,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+5"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished">Copertina:</translation>
+        <translation>Miniatura:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6185,7 +6185,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+3"/>
         <source>Free Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas without snapping around 0°.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Rotazione libera della tela</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6868,22 +6868,22 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="+28"/>
         <source>Expand up</source>
-        <translation type="unfinished"></translation>
+        <translation>Espandi verso l&apos;alto</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand left</source>
-        <translation type="unfinished"></translation>
+        <translation>Espandi a sinistra</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand right</source>
-        <translation type="unfinished"></translation>
+        <translation>Espandi a destra</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand down</source>
-        <translation type="unfinished"></translation>
+        <translation>Espandi verso il basso</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -8332,7 +8332,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+5"/>
         <source>Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Tela</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -8431,7 +8431,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+6"/>
         <source>Treat as regular pen tip</source>
-        <translation type="unfinished"></translation>
+        <translation>Trattare come una normale punta di penna</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8447,7 +8447,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+4"/>
         <source>Eraser tip behavior:</source>
         <extracomment>This refers to the eraser end tablet pen, not a tooltip or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Comportamento della punta della gomma:</translation>
     </message>
 </context>
 <context>
@@ -8470,17 +8470,17 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+7"/>
         <source>Attach selected brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Attacca i pennelli selezionati</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>When enabled, changes in a brush slot will be saved to the brush itself automatically. When disabled, the brush itself only changes when you save it explicitly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se abilitato, le modifiche apportate allo slot del pennello verranno salvate automaticamente sul pennello stesso. Se disabilitato, il pennello stesso cambia solo quando lo salvi esplicitamente.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Brush slots:</source>
-        <translation type="unfinished"></translation>
+        <translation>Slot per il pennello:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8505,7 +8505,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+17"/>
         <source>Brush outline:</source>
-        <translation type="unfinished"></translation>
+        <translation>Contorno del pennello:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -8540,19 +8540,19 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+14"/>
         <source>Show sampling ring</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra anello di campionamento</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color picker:</source>
-        <translation type="unfinished"></translation>
+        <translation>Selettore colore:</translation>
     </message>
     <message numerus="yes">
         <location line="+37"/>
         <source>Show %1 brush slot(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Mostra %1 slot pennello</numerusform>
+            <numerusform>Mostra %1 slot pennelli</numerusform>
         </translation>
     </message>
     <message>
@@ -8640,57 +8640,57 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Hide docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Nascondi dock</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle color picker</source>
-        <translation type="unfinished"></translation>
+        <translation>Attiva il selettore dei colori</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>Attiva gomma</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle erase mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Attiva modalità di cancellazione</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle recolor mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Attiva modalità di ricolorazione</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>One-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tocco con un dito:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Two-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tocco con due dita:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Three-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tocco con tre dita:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Four-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tocco a quattro dita:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona il colore</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>One-finger tap and hold:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tocca e tieni premuto con un dito:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -8705,12 +8705,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Guess</source>
-        <translation type="unfinished"></translation>
+        <translation>Indovina</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>One-finger touch:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tocco con un dito:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8720,27 +8720,27 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Two-finger pinch:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pizzico con due dita:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Ruota la tela</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Free rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Tela a rotazione libera</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ratchet rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Cricchetto per ruotare la tela</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Two-finger twist:</source>
-        <translation type="unfinished"></translation>
+        <translation>Torsione a due dita:</translation>
     </message>
 </context>
 <context>
@@ -8824,7 +8824,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+71"/>
         <source>Override system scale factor</source>
-        <translation type="unfinished"></translation>
+        <translation>Sostituisci il fattore di scala del sistema</translation>
     </message>
     <message>
         <location line="-126"/>
@@ -9364,67 +9364,67 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="-571"/>
         <source>&amp;Edit Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Modifica pennello</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reimposta Pennello</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta tutti i &amp;Pennelli</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nuovo pennello</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sovrascrivi pennello</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Elimina Pennello</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Brush &amp;Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Pennello &amp;Tag</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Icon Size</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Dimensione icona</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ne&amp;w Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuovo &amp;Tag</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rena&amp;me Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Rinomina &amp;Tag</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>De&amp;lete Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina &amp;Tag</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Im&amp;port Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa &amp;Pennelli…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>E&amp;xport Tag…</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta &amp;Tag…</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9439,24 +9439,24 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+233"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Sovrascrivi pennello</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really overwrite brush &apos;%1&apos; with the current one?</source>
-        <translation type="unfinished"></translation>
+        <translation>Sovrascrivere davvero il pennello &apos;%1&apos; con quello attuale?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Sovrascrivi</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+297"/>
         <location line="+45"/>
         <source>Keep</source>
-        <translation type="unfinished"></translation>
+        <translation>Mantieni</translation>
     </message>
     <message>
         <location line="-278"/>
@@ -9496,13 +9496,13 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+105"/>
         <source>No tags</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but there&apos;s no tags to assign it to.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nessun tag</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>No brush selected</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but no brush is actually selected.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nessun pennello selezionato</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -9529,12 +9529,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="-3"/>
         <source>Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina pennello</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete brush &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Vuoi davvero eliminare il pennello &apos;%1&apos;?</translation>
     </message>
     <message>
         <location line="-410"/>
@@ -9552,32 +9552,32 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="-191"/>
         <source>New palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuova tavolozza</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Duplicate palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Tavolozza duplicata</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina tavolozza</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rename palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Rinomina tavolozza</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import palette…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa tavolozza…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export palette…</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta tavolozza…</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -9647,38 +9647,38 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../docks/colorsliders.cpp" line="+80"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>Spazio colore</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+364"/>
         <source>HSV</source>
         <extracomment>Color space HSV (hue, chroma, value)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSV</translation>
     </message>
     <message>
         <location line="-353"/>
         <location line="+329"/>
         <source>HSL</source>
         <extracomment>Color space HSL (hue, saturation, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="-318"/>
         <location line="+330"/>
         <source>HCL</source>
         <extracomment>Color space HCL (hue, chroma, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HCL</translation>
     </message>
     <message>
         <location line="-317"/>
         <source>Show all sliders at once</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra tutti i cursori contemporaneamente</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show hex input</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra input esadecimale</translation>
     </message>
     <message>
         <location line="+80"/>
@@ -9701,7 +9701,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+19"/>
         <source>RGB</source>
-        <translation type="unfinished"></translation>
+        <translation>RGB</translation>
     </message>
     <message>
         <location line="+177"/>
@@ -9772,47 +9772,47 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../docks/colorspinner.cpp" line="+77"/>
         <source>Shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Forma</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Rotating triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Triangolo rotante</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Rotating square</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadrato rotante</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Triangolo fisso</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed square</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadrato fisso</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>Spazio colore</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>HSV</source>
-        <translation type="unfinished"></translation>
+        <translation>HSV</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>HSL</source>
-        <translation type="unfinished"></translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>HCL</source>
-        <translation type="unfinished"></translation>
+        <translation>HCL</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -9832,7 +9832,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+11"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Allineamento</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9842,12 +9842,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+9"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Centrale</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Preview selected color</source>
-        <translation type="unfinished"></translation>
+        <translation>Anteprima del colore selezionato</translation>
     </message>
 </context>
 <context>
@@ -9933,7 +9933,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Attiva gruppo livelli &amp;Visibilità</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10164,18 +10164,18 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+81"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Le annotazioni sono nascoste. </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mostra</translation>
     </message>
     <message>
         <location line="+343"/>
         <source>You don&apos;t have permission to paste merged annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non hai l&apos;autorizzazione per incollare le annotazioni unite.</translation>
     </message>
 </context>
 <context>
@@ -10183,42 +10183,42 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-106"/>
         <source>&amp;Edit Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Modifica pennello…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reimposta pennello</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta tutti i pennelli &amp;Slot</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta tutti i &amp;Pennelli</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;New Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nuovo pennello…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sovrascrivi pennello</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Elimina pennello</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>De&amp;tach Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Stacca &amp;Pennello</translation>
     </message>
     <message>
         <location line="+84"/>
@@ -10299,32 +10299,32 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../toolwidgets/fillsettings.cpp" line="+74"/>
         <source>Fill tool settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostazioni dello strumento di riempimento</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Edit pending fills</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Modifica riempimenti in sospeso</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply changes in settings, color and layer to fills not yet applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Applica modifiche a impostazioni, colore e livello da riempire non ancora applicati</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Confirm fills with second click</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Conferma riempimenti con secondo clic</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lets you apply fills with a click instead of starting another fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Consente di applicare i riempimenti con un clic anziché iniziare un altro riempimento</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>You don&apos;t have permission to use the fill tool.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non hai l&apos;autorizzazione per utilizzare lo strumento di riempimento.</translation>
     </message>
     <message>
         <location line="+223"/>
@@ -10342,19 +10342,19 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../toolwidgets/lasersettings.cpp" line="+93"/>
         <source>You don&apos;t have permission to use the laser pointer.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non hai l&apos;autorizzazione per utilizzare il puntatore laser.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Laser trails are hidden. </source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Le scie laser sono nascoste. </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mostra</translation>
     </message>
 </context>
 <context>
@@ -10551,12 +10551,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+32"/>
         <source>Compressing canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Compressione della tela…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Uploading canvas %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Caricamento tela %1%</translation>
     </message>
 </context>
 <context>
@@ -10625,7 +10625,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../widgets/brushpreview.cpp" line="+18"/>
         <source>Click to edit brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Fai clic per modificare il pennello</translation>
     </message>
 </context>
 <context>
@@ -10982,12 +10982,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../widgets/dualcolorbutton.cpp" line="+31"/>
         <source>Set foreground color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta il colore di primo piano…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Set background color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta il colore di sfondo…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -11020,12 +11020,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Round expansion shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Forma di espansione rotonda</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Square kernel shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Forma del kernel quadrato</translation>
     </message>
     <message>
         <location line="+93"/>
