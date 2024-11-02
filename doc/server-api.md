@@ -153,6 +153,16 @@ To send a message to all session participants: `PUT /api/sessions/:id/`
 
 To shut down a session: `DELETE /api/sessions/:id/`
 
+To get all listings: `GET /api/sessions/:id/listing`
+
+To list a session: `POST /api/sessions/:id/listing`
+
+    {
+        "url": "http://example.com/listserver"
+    }
+
+To delist a session: `DELETE /api/sessions/:id/listing/id`
+
 To authenticate to a session: `POST /api/sessions/:id/auth`
 
     {
@@ -160,6 +170,7 @@ To authenticate to a session: `POST /api/sessions/:id/auth`
     }
 
 To authenticate to a session (opword): `POST /api/sessions/:id/auth/op`
+
     {
         "password": "the opword of the session"
     }

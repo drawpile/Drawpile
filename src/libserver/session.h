@@ -11,6 +11,7 @@
 #include <QJsonObject>
 #include <QObject>
 #include <QString>
+#include <QJsonArray>
 
 class QTimer;
 struct DP_Recorder;
@@ -495,6 +496,7 @@ private:
 		JsonApiMethod method, const QStringList &path,
 		const QJsonObject &request);
 
+	QJsonArray getListingsDescription() const;
 	QJsonObject getUserDescription(const Client *user) const;
 
 	SessionHistory *m_history;

@@ -1575,19 +1575,23 @@ QJsonObject Session::getDescription(bool full) const
 				{"online", false}};
 		}
 		o["users"] = users;
-
-		QJsonArray listings;
-		const auto announcements = m_announcements->getAnnouncements(this);
-		for(const sessionlisting::Announcement &a : announcements) {
-			listings << QJsonObject{
-				{"id", a.listingId},
-				{"url", a.apiUrl.toString()},
-			};
-		}
-		o["listings"] = listings;
+		o["listings"] = getListingsDescription();
 	}
 
 	return o;
+}
+
+QJsonArray Session::getListingsDescription() const
+{
+	QJsonArray listings;
+	const auto announcements = m_announcements->getAnnouncements(this);
+	for(const sessionlisting::Announcement &a : announcements) {
+		listings << QJsonObject{
+			{"id", a.listingId},
+			{"url", a.apiUrl.toString()},
+		};
+	}
+	return listings;
 }
 
 QJsonObject Session::getUserDescription(const Client *user) const
@@ -1684,24 +1688,50 @@ JsonApiResult Session::callListingsJsonApi(
 	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
 {
 	Q_UNUSED(request);
-	if(path.length() != 1)
+
+	int pathLength = path.length();
+
+	if(pathLength > 1)
 		return JsonApiNotFound();
-	const int id = path.at(0).toInt();
 
-	const auto announcements = m_announcements->getAnnouncements(this);
-	for(const sessionlisting::Announcement &a : announcements) {
-		if(a.listingId == id) {
-			if(method == JsonApiMethod::Delete) {
-				unlistAnnouncement(a.apiUrl.toString());
-				return JsonApiResult{
-					JsonApiResult::Ok,
-					QJsonDocument(QJsonObject{{"status", "ok"}})};
+	if(pathLength == 1) {
+		const int id = path.at(0).toInt();
 
-			} else {
-				return JsonApiBadMethod();
+		const auto announcements = m_announcements->getAnnouncements(this);
+		for(const sessionlisting::Announcement &a : announcements) {
+			if(a.listingId == id) {
+				if(method == JsonApiMethod::Delete) {
+					unlistAnnouncement(a.apiUrl.toString());
+					return JsonApiResult{
+						JsonApiResult::Ok,
+						QJsonDocument(QJsonObject{{"status", "ok"}})};
+
+				} else {
+					return JsonApiBadMethod();
+				}
 			}
 		}
+
+		return JsonApiNotFound();
 	}
+
+	if (method == JsonApiMethod::Get) {
+		return JsonApiResult{
+			JsonApiResult::Ok, QJsonDocument(getListingsDescription())};
+
+	} else if(method == JsonApiMethod::Create) {
+		if(request.contains("url")) {
+			makeAnnouncement(QUrl(request["url"].toString()));
+			return JsonApiResult{
+				JsonApiResult::Ok,
+				QJsonDocument(QJsonObject{{"status", "ok"}})};
+		} else {
+			return JsonApiErrorResult(JsonApiResult::BadRequest, QStringLiteral("Missing url"));
+		}
+	} else {
+		return JsonApiBadMethod();
+	}
+
 	return JsonApiNotFound();
 }
 
