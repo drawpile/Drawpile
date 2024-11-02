@@ -326,7 +326,8 @@ void SessionServer::cleanupSessions()
 						   : false;
 	for(Session *s : m_sessions) {
 		qint64 lastEventTime = s->lastEventTime();
-		if(s->userCount() == 0 && lastEventTime > emptySessionLingerTime) {
+		if(!s->history()->hasFlag(SessionHistory::Persistent) &&
+		   s->userCount() == 0 && lastEventTime > emptySessionLingerTime) {
 			s->log(Log()
 					   .about(Log::Level::Info, Log::Topic::Status)
 					   .message(QStringLiteral(
