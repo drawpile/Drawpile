@@ -55,6 +55,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Make mouse click canvas shortcuts not override key canvas shortcuts. Thanks incoheart for reporting.
  * Server Feature: Always allow server admins, moderators and users with the new PERSIST flag to toggle session persistence. The global persistence setting still allows anyone to toggle this. Thanks Bluestrings for suggesting.
  * Server Feature: Allow admins to specify a linger time for empty sessions, which will let even non-persistent sessions live on for that time to allow people a chance to reconnect.
+ * Server Feature: Add API endpoints to get and create session listings. Thanks Meru for contributing.
 
 2024-08-09 Version 2.2.2-beta.3
  * Fix: Use more accurate timers for performance profiles if the platform supports it.
