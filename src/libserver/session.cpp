@@ -1687,12 +1687,10 @@ JsonApiResult Session::callJsonApi(
 JsonApiResult Session::callListingsJsonApi(
 	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
 {
-	Q_UNUSED(request);
-
 	int pathLength = path.length();
-
-	if(pathLength > 1)
+	if(pathLength > 1) {
 		return JsonApiNotFound();
+	}
 
 	if(pathLength == 1) {
 		const int id = path.at(0).toInt();
@@ -1715,10 +1713,9 @@ JsonApiResult Session::callListingsJsonApi(
 		return JsonApiNotFound();
 	}
 
-	if (method == JsonApiMethod::Get) {
+	if(method == JsonApiMethod::Get) {
 		return JsonApiResult{
 			JsonApiResult::Ok, QJsonDocument(getListingsDescription())};
-
 	} else if(method == JsonApiMethod::Create) {
 		if(request.contains("url")) {
 			makeAnnouncement(QUrl(request["url"].toString()));
@@ -1726,13 +1723,12 @@ JsonApiResult Session::callListingsJsonApi(
 				JsonApiResult::Ok,
 				QJsonDocument(QJsonObject{{"status", "ok"}})};
 		} else {
-			return JsonApiErrorResult(JsonApiResult::BadRequest, QStringLiteral("Missing url"));
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, QStringLiteral("Missing url"));
 		}
 	} else {
 		return JsonApiBadMethod();
 	}
-
-	return JsonApiNotFound();
 }
 
 JsonApiResult Session::callAuthJsonApi(
