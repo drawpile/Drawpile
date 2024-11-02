@@ -146,7 +146,7 @@ void FloodFill::begin(const BeginParams &params)
 void FloodFill::motion(const MotionParams &params)
 {
 	m_dragDetector.motion(params.viewPos);
-	if(m_dragDetector.isDrag()) {
+	if(m_area != Area::Selection && m_dragDetector.isDrag()) {
 		if(m_dragging) {
 			qreal delta =
 				qRound((params.viewPos.x() - m_dragPrevPoint.x()) / 2.0);
