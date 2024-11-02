@@ -1673,7 +1673,7 @@ JsonApiResult Session::callJsonApi(
 		}
 		killSession(QStringLiteral("Session terminated by administrator"));
 		return JsonApiResult{
-			JsonApiResult::Ok, QJsonDocument(QJsonObject{{"status", "ok "}})};
+			JsonApiResult::Ok, QJsonDocument(QJsonObject{{"status", "ok"}})};
 	}
 
 	return JsonApiResult{
@@ -1695,7 +1695,7 @@ JsonApiResult Session::callListingsJsonApi(
 				unlistAnnouncement(a.apiUrl.toString());
 				return JsonApiResult{
 					JsonApiResult::Ok,
-					QJsonDocument(QJsonObject{{"status", "ok "}})};
+					QJsonDocument(QJsonObject{{"status", "ok"}})};
 
 			} else {
 				return JsonApiBadMethod();
