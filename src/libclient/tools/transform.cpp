@@ -97,7 +97,7 @@ void TransformTool::end(const EndParams &params)
 			}
 			transform->setDstQuad(m_quadStack[m_quadStackTop]);
 		} else {
-			continueDragTransform(transform, params.constrain, params.center);
+			continueDrag(transform, params.constrain, params.center);
 			const TransformQuad &dstQuad = transform->dstQuad();
 			if(dstQuad != m_dragStartQuad) {
 				pushQuad(transform);
