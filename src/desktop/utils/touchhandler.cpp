@@ -533,8 +533,10 @@ void TouchHandler::triggerTapAndHold()
 	if(m_maxTouchPoints == 1 && m_touchMode != TouchMode::Drawing) {
 		switch(m_oneFingerTapAndHoldAction) {
 		case int(desktop::settings::TouchTapAndHoldAction::ColorPickMode):
-			m_touchHeld = true;
-			emit touchColorPicked(m_touchPos);
+			if(m_allowColorPick) {
+				m_touchHeld = true;
+				emit touchColorPicked(m_touchPos);
+			}
 			break;
 		default:
 			qWarning(

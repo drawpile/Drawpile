@@ -1112,6 +1112,7 @@ void CanvasController::setToolCapabilities(
 	m_allowToolAdjust = allowToolAdjust;
 	m_toolHandlesRightClick = toolHandlesRightClick;
 	m_fractionalTool = fractionalTool;
+	m_touch->setAllowColorPick(allowColorPick);
 }
 
 void CanvasController::setToolCursor(const QCursor &toolCursor)

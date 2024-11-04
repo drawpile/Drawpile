@@ -16,6 +16,11 @@ public:
 
 	void onTabletEventReceived() { m_anyTabletEventsReceived = true; }
 
+	void setAllowColorPick(bool allowColorPick)
+	{
+		m_allowColorPick = allowColorPick;
+	}
+
 	bool isTouchDrawEnabled() const;
 	bool isTouchPanEnabled() const;
 	bool isTouchDrawOrPanEnabled() const;
@@ -75,6 +80,7 @@ private:
 	bool m_touchRotating = false;
 	bool m_touchHeld = false;
 	bool m_anyTabletEventsReceived = false;
+	bool m_allowColorPick = true;
 	int m_oneFingerTouchAction;
 	int m_twoFingerPinchAction;
 	int m_twoFingerTwistAction;
