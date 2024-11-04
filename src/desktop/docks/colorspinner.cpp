@@ -4,7 +4,6 @@
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/main.h"
-#include "desktop/widgets/colorpopup.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include <QAction>
 #include <QActionGroup>
@@ -12,9 +11,13 @@
 #include <QScopedValueRollback>
 #include <QVBoxLayout>
 #include <QtColorWidgets/swatch.hpp>
+#ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
+#	include "desktop/widgets/colorpopup.h"
+#endif
 
 namespace docks {
 
+#ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
 namespace {
 
 class PopupColorWheel : public color_widgets::ColorWheel {
@@ -39,6 +42,9 @@ private:
 };
 
 }
+#else
+using PopupColorWheel = color_widgets::ColorWheel;
+#endif
 
 struct ColorSpinnerDock::Private {
 	widgets::GroupedToolButton *menuButton = nullptr;
@@ -59,8 +65,10 @@ struct ColorSpinnerDock::Private {
 	color_widgets::Swatch *lastUsedSwatch = nullptr;
 	QColor lastUsedColor;
 	PopupColorWheel *colorwheel = nullptr;
+#ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
 	widgets::ColorPopup *popup = nullptr;
 	bool popupEnabled = false;
+#endif
 	bool updating = false;
 };
 
@@ -221,6 +229,7 @@ ColorSpinnerDock::ColorSpinnerDock(const QString &title, QWidget *parent)
 			}
 		});
 
+#ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
 	d->previewAction = menu->addAction(tr("Preview selected color"));
 	d->previewAction->setCheckable(true);
 	connect(d->previewAction, &QAction::toggled, this, [this](bool toggled) {
@@ -228,6 +237,7 @@ ColorSpinnerDock::ColorSpinnerDock(const QString &title, QWidget *parent)
 			dpApp().settings().setColorWheelPreview(toggled ? 1 : 0);
 		}
 	});
+#endif
 
 	d->menuButton = new widgets::GroupedToolButton(this);
 	d->menuButton->setIcon(QIcon::fromTheme("application-menu"));
@@ -267,9 +277,11 @@ ColorSpinnerDock::ColorSpinnerDock(const QString &title, QWidget *parent)
 	connect(
 		d->colorwheel, &color_widgets::ColorWheel::colorSelected, this,
 		&ColorSpinnerDock::colorSelected);
+#ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
 	connect(
 		d->colorwheel, &color_widgets::ColorWheel::editingFinished, this,
 		&ColorSpinnerDock::hidePreviewPopup);
+#endif
 
 	desktop::settings::Settings &settings = dpApp().settings();
 	settings.bindColorWheelShape(this, &ColorSpinnerDock::setShape);
@@ -277,7 +289,9 @@ ColorSpinnerDock::ColorSpinnerDock(const QString &title, QWidget *parent)
 	settings.bindColorWheelSpace(this, &ColorSpinnerDock::setColorSpace);
 	settings.bindColorWheelMirror(this, &ColorSpinnerDock::setMirror);
 	settings.bindColorWheelAlign(this, &ColorSpinnerDock::setAlign);
+#ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
 	settings.bindColorWheelPreview(this, &ColorSpinnerDock::setPreview);
+#endif
 }
 
 ColorSpinnerDock::~ColorSpinnerDock()
@@ -285,6 +299,7 @@ ColorSpinnerDock::~ColorSpinnerDock()
 	delete d;
 }
 
+#ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
 void ColorSpinnerDock::showPreviewPopup()
 {
 	if(d->popupEnabled) {
@@ -307,6 +322,7 @@ void ColorSpinnerDock::hidePreviewPopup()
 		d->popup->hide();
 	}
 }
+#endif
 
 void ColorSpinnerDock::setColor(const QColor &color)
 {
@@ -319,10 +335,11 @@ void ColorSpinnerDock::setColor(const QColor &color)
 	} else if(!d->lastUsedColor.isValid()) {
 		d->lastUsedColor = color;
 	}
-
+#ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
 	if(d->popup) {
 		d->popup->setSelectedColor(color);
 	}
+#endif
 }
 
 void ColorSpinnerDock::setLastUsedColors(const color_widgets::ColorPalette &pal)
@@ -393,6 +410,7 @@ void ColorSpinnerDock::setAlign(int align)
 	}
 }
 
+#ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
 void ColorSpinnerDock::setPreview(int preview)
 {
 	QScopedValueRollback<bool> guard(d->updating, true);
@@ -403,6 +421,7 @@ void ColorSpinnerDock::setPreview(int preview)
 		hidePreviewPopup();
 	}
 }
+#endif
 
 void ColorSpinnerDock::updateShapeAction()
 {
