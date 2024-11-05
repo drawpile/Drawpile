@@ -22,6 +22,72 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.2.2-beta.4" type="development" date="2024-11-06">
+      <url>https://drawpile.net/news/release-2.2.2-beta.4/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.</li>
+          <li>Feature: Allow scaling animation exports. Thanks Hopfel for animating across a giant canvas.</li>
+          <li>Fix: Allow disabling the application proxy in the network preferences and automatically detect bad proxy configurations that can't actually make connections. Thanks FishEggsThe for reporting.</li>
+          <li>Fix: Improve socket error messages, listing the error code and adding extra information on what to do if a proxy error occurs. Thanks FishEggsThe for reporting.</li>
+          <li>Fix: Center soft brushes on the cursor better, they got offset to the top-left from correcting for size discontinuity before. Thanks Meiren for reporting.</li>
+          <li>Fix: Don't mess up gridmap settings when opening brush settings dialog and initially changing a value in it. Thanks Blozzom for reporting.</li>
+          <li>Fix: Default "confirm action" to both the regular enter key as well as the one on the numpad. Thanks MachKerman for reporting.</li>
+          <li>Feature: Add settings button to color wheel, sliders and palette at the top-left of the dock. For the wheel, this allows changing the settings here now instead of having to go into the preferences. For the sliders, you can now toggle the color space here and decide whether to show all sliders and the hex input. For the palette, this just moves the menu button that used to be in the row below. Thanks MachKerman for suggesting.</li>
+          <li>Feature: Allow aligning the color wheel to the top of the dock instead of the center. Can be toggled in the dock's menu. Thanks MorrowShore for suggesting.</li>
+          <li>Fix: Scale outer color wheel ring with the size of the widget. Thanks MorrowShore for reporting.</li>
+          <li>Feature: Preview selected color on the color wheel. Can be toggled in the dock's menu. Thanks MorrowShore for suggesting.</li>
+          <li>Fix: Allow pressing the numpad enter key to apply an action and Ctrl+Equal in addition to Ctrl+Plus to zoom in. Thanks MachKerman and Sinamer for reporting.</li>
+          <li>Fix: Prevent artifacts around brush cursor when the canvas is rotated in software renderer mode. Thanks Sinamer for reporting.</li>
+          <li>Fix: Don't consider the flood fill's own preview when filling the merged image. Thanks Meru for reporting.</li>
+          <li>Server Feature: Streamed autoresets that don't interrupt the session to bring it down to a smaller size, instead the compressed state is built up in the background and replaced on the fly.</li>
+          <li>Fix: Make joining through a direct link not put the desktop client into single-session mode. Thanks Bluestrings for reporting.</li>
+          <li>Fix: Work around Huion tablets emitting mouse clicks every few pen presses and causing full-pressure strokes to be started. Thanks Blozzom, DT and and Dumb Dog Disease for reporting.</li>
+          <li>Feature: Toggle layer visibility action, available in the Layer menu. Mostly useful to let assign a keyboard shortcut to it. Thanks incoheart for suggesting.</li>
+          <li>Feature: Remember ranges set for MyPaint brushes in the settings editor, rather than implicitly fitting them to the curve. Thanks Verdrusk for suggesting.</li>
+          <li>Server Feature: Provide more session status information for administrators, such as the autoreset state.</li>
+          <li>Feature: Allow importing MyPaint brushes in old version formats instead of saying they contain invalid JSON. Thanks bunnie for suggesting.</li>
+          <li>Feature: Attach brushes to slots, showing which brush you selected and remembering changes to them. This attachment can be disabled in the tool preferences.</li>
+          <li>Feature: Allow configuring the number of brush slots in the tool settings, from 1 to 9, in addition to the everpresent eraser slot. Thanks vipperz for suggesting.</li>
+          <li>Fix: Clamp palette swatch sizes to more reasonable bounds. Thanks MachKerman for reporting.</li>
+          <li>Server Feature: Allow checking session, operator and server account passwords via the API. This can be used to password-protect recordings or similar. Thanks Meru for contributing.</li>
+          <li>Fix: Correct some UI scaling problems with brush outlines, canvas centering, dock toggling, pixel grid and transform handles. Thanks annoy for reporting.</li>
+          <li>Feature: Extended touch tap gestures, among them two-finger tap to undo, three-finger tap to redo and tap-and-hold to summon the color picker. Can be configured in the preferences under the Touch tab. Thanks InconsolableCellist and many others for suggesting.</li>
+          <li>Feature: Snap canvas rotation around 0° by default. If you don't want this, you can set the canvas shortcut or touch rotation to "free rotate canvas" instead.</li>
+          <li>Feature: Show a color preview when picking a color from the canvas. Can be toggled in the tool preferences.</li>
+          <li>Fix: In layer view mode, render the layer truly in isolation instead of applying opacities, visibilities or alpha preserve to it. Thanks MachKerman and incoheart for reporting.</li>
+          <li>Feature: Add Layer &gt; Group View to show the parent group of the current layer in isolation. Thanks Rylan for suggesting.</li>
+          <li>Fix: Save and export images according to the current view mode. Thanks incoheart for reporting.</li>
+          <li>Server Fix: Don't get announcement refreshes stuck in an infinite loop. Thanks Meru for reporting.</li>
+          <li>Fix: Make MyPaint brushes not ignore the first stroke made with them. This would also sometimes lead to a blank preview.</li>
+          <li>Feature: Allow choosing between a round and square expansion/shrinking kernel in flood fill, magic wand and when altering a selection. The latter is particularly useful for pixel art. Thanks Bigcheese and MorrowShore for suggesting.</li>
+          <li>Fix: Don't ignore double-clicks when toggling layer visibility or check state. Thanks Chryssabliss for reporting.</li>
+          <li>Feature: Put all shortcuts onto a single settings page, showing conflicts between them better. Allow searching for shortcuts by name and keybinding, as well as filtering out only conflicts. Thanks MajorCooke for suggesting parts of this.</li>
+          <li>Feature: Allow assigning keyboard shortcuts to brushes. Assigning the same shortcut to multiple brushes will toggle through them. Thanks annoy for suggesting.</li>
+          <li>Server Feature: Integrate with systemd watchdog.</li>
+          <li>Fix: Make user interface scaling not round to multiple of 100% anymore. Thanks blau, Buch, Chryssabliss and ShotgunnerFox for reporting.</li>
+          <li>Fix: Don't use system message boxes on Android, since they behave in various broken and nonsensical ways, like showing you a yes button three times.  Thanks Hopfel for reporting.</li>
+          <li>Feature: Use hardware renderer on Android by default.</li>
+          <li>Fix: Don't unnecessarily scale full-canvas animations by a single pixel.</li>
+          <li>Feature: Replace GIF export with ffmpeg's libraries, since they are also used for videos. It's way faster, generates much better palettes and supports transparent backgrounds. Thanks dAVePAGE and JJ for reporting issues in this regard.</li>
+          <li>Fix: Constrain aspect ratio of transform scaling properly, it was getting offset by the distance between the clicked point and the actual corner. Thanks Blozzom for reporting.</li>
+          <li>Feature: Allow configuring flood fill preview and confirmation behavior, defaulting to the simplest mode similar to single-user software, but still previewing fills locally first. The magic wand always works this way for now, since selections are local only anyway.</li>
+          <li>Feature: Show resize dialog when expanding canvas, to avoid accidental resizes and improve performance by doing the expansions all in one step. The keyboard shortcuts to expand the canvas work in this dialog now and also auto-repeat if you hold them down. Thanks Bluestrings and tobiasBora for suggesting things in this regard.</li>
+          <li>Fix: Indicate denied permissions by showing a message to that effect, rather than just disabling the actions and leaving you guessing. Thanks Venesio for reporting.</li>
+          <li>Fix: Clicking off of an annotation will no longer instantly create a new one in that spot. It will instead only deselect the annotation that was selected.</li>
+          <li>Fix: The Delete Empty Annotations can now be undone without undoing what happened before it as well.</li>
+          <li>Feature: Empty annotations are now automatically deleted when you deselect them, to avoid the common clutter of stray empty annotations across the canvas. If you really did want an empty annotation, you can hit undo and it will return.</li>
+          <li>Server Feature: Setting a minimum protocol version of dp:4.24.0 now tells clients that they're using a Drawpile version too old for this server, rather than leaving them sitting at a session list where they can join no sessions.</li>
+          <li>Feature: Allow clicking and dragging the fill and magic wand tools to adjust the tolerance.</li>
+          <li>Fix: Make mouse click canvas shortcuts not override key canvas shortcuts. Thanks incoheart for reporting.</li>
+          <li>Server Feature: Always allow server admins, moderators and users with the new PERSIST flag to toggle session persistence. The global persistence setting still allows anyone to toggle this. Thanks Bluestrings for suggesting.</li>
+          <li>Server Feature: Allow admins to specify a linger time for empty sessions, which will let even non-persistent sessions live on for that time to allow people a chance to reconnect.</li>
+          <li>Server Feature: Add API endpoints to get and create session listings. Thanks Meru for contributing.</li>
+          <li>Fix: Make login dialog not spill off-screen on mobile devices.</li>
+        </ul>
+      </description>
+    </release>
     <release version="2.2.2-beta.3" type="development" date="2024-08-09">
       <url>https://drawpile.net/news/release-2.2.2-beta.3/</url>
       <description>
