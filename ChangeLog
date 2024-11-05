@@ -1,4 +1,6 @@
 Unreleased Version 2.2.2-pre
+
+2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.
  * Feature: Allow scaling animation exports. Thanks Hopfel for animating across a giant canvas.
  * Fix: Allow disabling the application proxy in the network preferences and automatically detect bad proxy configurations that can't actually make connections. Thanks FishEggsThe for reporting.
