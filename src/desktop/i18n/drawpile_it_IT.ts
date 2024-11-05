@@ -4327,7 +4327,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+6"/>
         <source>Scaling:</source>
-        <translation type="unfinished">Ridimensionamento:</translation>
+        <translation>Ridimensionamento:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4581,7 +4581,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+41"/>
         <source>Brush</source>
-        <translation type="unfinished">Pennello</translation>
+        <translation>Pennello</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -4641,12 +4641,12 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+8"/>
         <source>Name:</source>
-        <translation type="unfinished">Nome:</translation>
+        <translation>Nome:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Description:</source>
-        <translation type="unfinished">Descrizione:</translation>
+        <translation>Descrizione:</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -7834,12 +7834,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>System</source>
-        <translation type="unfinished">Sistema</translation>
+        <translation>Sistema</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disabled</source>
-        <translation type="unfinished">Disabilitato</translation>
+        <translation>Disabilitato</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -8279,27 +8279,27 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+117"/>
         <source>Edit Canvas Shortcut</source>
-        <translation type="unfinished">Modifica Scorciatoia della Tela</translation>
+        <translation>Modifica Scorciatoia della Tela</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Add canvas shortcut…</source>
-        <translation type="unfinished">Aggiungi Scorciatoia per la Tela…</translation>
+        <translation>Aggiungi Scorciatoia per la Tela…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>New Canvas Shortcut</source>
-        <translation type="unfinished">Nuova Scorciatoia per la Tela</translation>
+        <translation>Nuova Scorciatoia per la Tela</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Remove selected canvas shortcut…</source>
-        <translation type="unfinished">Rimuovi scorciatoia selezionata…</translation>
+        <translation>Rimuovi scorciatoia selezionata…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove canvas shortcut</source>
-        <translation type="unfinished">Rimuovi scorciatoia</translation>
+        <translation>Rimuovi scorciatoia della Tela</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
@@ -8327,7 +8327,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+5"/>
         <source>Brushes</source>
-        <translation type="unfinished">Pennelli</translation>
+        <translation>Pennelli</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8338,7 +8338,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+8"/>
         <source>%1 (%2)</source>
         <extracomment>This is for showing search feedback in the tabs of the shortcut preferences. %1 is the original tab title, like &quot;Actions&quot; or &quot;Brushes&quot;, %2 is the number of search results in that tab.</extracomment>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -8356,12 +8356,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+0"/>
         <source>Output</source>
-        <translation type="unfinished">Output</translation>
+        <translation>Output</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Global pressure curve:</source>
-        <translation type="unfinished">Curva di pressione globale:</translation>
+        <translation>Curva di pressione globale:</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -8381,7 +8381,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+3"/>
         <source>Qt5</source>
-        <translation type="unfinished">Qt5</translation>
+        <translation>Qt5</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8401,7 +8401,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Enable pressure sensitivity</source>
-        <translation type="unfinished">Abilita sensibilità alla pressione</translation>
+        <translation>Abilita sensibilità alla pressione</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8611,12 +8611,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished">Touchscreen</translation>
+        <translation>Touchscreen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished">Gesti</translation>
+        <translation>Gesti</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8715,7 +8715,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+7"/>
         <source>Zoom</source>
-        <translation type="unfinished">Zoom</translation>
+        <translation>Zoom</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9524,7 +9524,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+3"/>
         <location line="+45"/>
         <source>Delete</source>
-        <translation type="unfinished">Cancella</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location line="-3"/>
@@ -9817,17 +9817,17 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+11"/>
         <source>Direction</source>
-        <translation type="unfinished">Direzione</translation>
+        <translation>Direzione</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ascending</source>
-        <translation type="unfinished">Ascendente</translation>
+        <translation>Ascendente</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Descending</source>
-        <translation type="unfinished">Discendente</translation>
+        <translation>Discendente</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -9837,7 +9837,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+3"/>
         <source>Top</source>
-        <translation type="unfinished">Sopra</translation>
+        <translation>Sopra</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11005,12 +11005,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../widgets/expandshrinkspinner.cpp" line="+27"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Expand</source>
-        <translation type="unfinished">Espandi</translation>
+        <translation>Espandi</translation>
     </message>
     <message>
         <location line="+2"/>
