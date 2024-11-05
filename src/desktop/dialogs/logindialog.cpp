@@ -1472,7 +1472,17 @@ void LoginDialog::adjustSize(int width, int height, bool allowShrink)
 	int newHeight = allowShrink ? height : qMax(geom.height(), height);
 	int newX = geom.x() + (geom.width() - newWidth) / 2;
 	int newY = geom.y() + (geom.height() - newHeight) / 2;
-	setGeometry(newX, newY, newWidth, newHeight);
+	QRect newGeom(newX, newY, newWidth, newHeight);
+	QScreen *screen = compat::widgetScreen(*this);
+	if(screen && !screen->availableGeometry().contains(newGeom)) {
+#ifdef SINGLE_MAIN_WINDOW
+		showFullScreen();
+#else
+		showMaximized();
+#endif
+	} else {
+		setGeometry(newGeom);
+	}
 }
 
 void LoginDialog::selectCurrentAvatar()
