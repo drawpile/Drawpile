@@ -22,6 +22,7 @@
 #include <QMessageBox>
 #include <QPointer>
 #include <QPushButton>
+#include <QScreen>
 #include <QStyle>
 #include <QTimer>
 
