@@ -62,7 +62,7 @@ jobs:
             # want svg plugins please
             packager: >-
               EXTRA_QT_PLUGINS="svg;"
-              VERSION="2.2.2-beta.4"
+              VERSION="${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '$(git describe)' }}"
               cmake --install build --config Release
             # The runner has multiple clang versions installed and CMake/Qt gets
             # confused about which one to pick for some reason, so this also
@@ -486,21 +486,21 @@ jobs:
           }
         env:
           WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
-        if: runner.os == 'Windows' && matrix.packager && !matrix.signpath
+        if: runner.os == 'Windows' && matrix.packager && (!startsWith(github.ref, 'refs/tags/') || !matrix.signpath)
 
       - name: Figure out Windows product version from build version
         run: >
           cmake
-          "-DBUILD_VERSION=2.2.2-beta.4"
+          "-DBUILD_VERSION=${{ github.ref_name }}"
           "-DOUTPUT_PATH=$env:GITHUB_ENV"
           "-DSEARCH_PATHS=${{ matrix.cross_os && format('{0};', steps.cross-deps.outputs.path) }}${{ steps.deps.outputs.path }}"
           -P ".github/scripts/build-to-product-version.cmake"
-        if: runner.os == 'Windows' && matrix.packager && matrix.signpath
+        if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
 
       - name: Install rcedit to set PE metadata on Windows
         run: |
           choco install rcedit
-        if: runner.os == 'Windows' && matrix.packager && matrix.signpath
+        if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
 
       - name: Set PE metadata of dependencies on Windows
         run: >
@@ -511,7 +511,7 @@ jobs:
           "-DPRODUCT_VERSION=$env:WINDOWS_PRODUCT_VERSION"
           "-DSEARCH_PATHS=${{ matrix.cross_os && format('{0};', steps.cross-deps.outputs.path) }}${{ steps.deps.outputs.path }}"
           -P ".github/scripts/edit-pe-metadata.cmake"
-        if: runner.os == 'Windows' && matrix.packager && matrix.signpath
+        if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
 
       - name: Generate project
         run: >
@@ -532,8 +532,16 @@ jobs:
           -DCLANG_TIDY=off
           -DDIST_BUILD=${{ matrix.packager && 'on' }}
           -DSOURCE_ASSETS=off
-          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=on
-          -DBUILD_VERSION='2.2.2-beta.4'
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=${{
+            matrix.packager
+            && startsWith(github.ref, 'refs/tags/')
+            && 'on'
+          }}
+          -DBUILD_VERSION='${{
+            matrix.packager
+            && startsWith(github.ref, 'refs/tags/')
+            && github.ref_name
+          }}'
           -DBUILD_PACKAGE_COMPONENT='${{ matrix.component }}'
           ${{ matrix.build_flags }}
 
@@ -569,7 +577,7 @@ jobs:
           "-DPRODUCT_VERSION=$env:WINDOWS_PRODUCT_VERSION"
           "-DSEARCH_PATHS=build"
           -P ".github/scripts/edit-pe-metadata.cmake"
-        if: runner.os == 'Windows' && matrix.packager && matrix.signpath
+        if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
 
       - name: Run C++ tests
         run: ctest -C ${{ matrix.build_type }} --output-on-failure
@@ -591,13 +599,13 @@ jobs:
           path: |
             Drawpile-*.msi
             Drawpile-*.zip
-        if: runner.os == 'Windows' && matrix.packager && matrix.signpath
+        if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
 
       - name: Delete unsigned artifacts
         id: signpath-delete-unsigned
         shell: bash
         run: rm -vf Drawpile-*.msi Drawpile-*.zip
-        if: runner.os == 'Windows' && matrix.packager && matrix.signpath
+        if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
 
       - name: Submit artifacts to SignPath to sign
         uses: signpath/github-action-submit-signing-request@v1
@@ -615,7 +623,7 @@ jobs:
             version: "${{ github.ref_name }}"
             productname: "Drawpile client"
             productversion: "${{ env.WINDOWS_PRODUCT_VERSION }}"
-        if: runner.os == 'Windows' && matrix.packager && matrix.signpath
+        if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
 
       - name: Delete unsigned artifacts uploaded for SignPath after signing
         uses: actions/github-script@v7
@@ -627,7 +635,7 @@ jobs:
               repo: context.repo.repo,
               artifact_id: ${{ steps.signpath-upload.outputs.artifact-id }}
             });
-        if: runner.os == 'Windows' && matrix.packager && matrix.signpath
+        if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
 
       - name: Bundle PDBs
         run: >
@@ -678,7 +686,9 @@ jobs:
     needs: test
     runs-on: ubuntu-20.04
     if: >
-      success()
+      success() && (
+          github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+          || startsWith(github.ref, 'refs/tags/'))
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -692,19 +702,37 @@ jobs:
           path: checkout
 
       - name: Collect release notes
+        if: startsWith(github.ref, 'refs/tags/')
         run: |
           echo '**Code signing policy:** <https://drawpile.net/codesigningpolicy/>' > release-description
           echo >> release-description
-          awk -v RS='' '/^[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2} Version 2.2.2-beta.4/,/^[[:digit:]]/' checkout/ChangeLog | tail '+2' >> release-description
+          awk -v RS='' '/^[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2} Version ${{ github.ref_name }}/,/^[[:digit:]]/' checkout/ChangeLog | tail '+2' >> release-description
+
+      - name: Write continuous release description
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        env:
+          RELEASE_DESCRIPTION: >
+            This release is an automatically generated snapshot of the current
+            state of development. It is continuously updated with
+            work-in-progress changes that may be broken, incomplete, or
+            incompatible with other versions of Drawpile. For downloads, take a
+            look at the Assets below.
+
+
+            Unless you really, really know what you're doing, **pick the 64bit
+            options**. 32bit is probably *not* what you want unless you have a
+            very strange device.
+        run:
+          echo "$RELEASE_DESCRIPTION" > release-description
 
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TARGET_COMMIT: ${{ github.sha }}
           RELEASE_DESCRIPTION_FILE: release-description
-          RELEASE_NAME: '2.2.2-beta.4'
-          CLOBBER_EXISTING: 'false'
-          PRERELEASE: 'true'
+          RELEASE_NAME: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'continuous' }}
+          CLOBBER_EXISTING: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          PRERELEASE: ${{ !startsWith(github.ref, 'refs/tags/') || contains(github.ref, '-') }}
         run: |
           checkout/pkg/make-github-release.sh \
             'Drawpile-Android-arm64-Qt5.15.14;Drawpile-*.apk;Android APK 64bit' \
