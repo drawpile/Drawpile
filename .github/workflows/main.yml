@@ -505,7 +505,9 @@ jobs:
       - name: Set PE metadata of dependencies on Windows
         run: >
           cmake
+          "-DFILE_DESCRIPTION=Drawpile client"
           "-DPRODUCT_NAME=Drawpile client"
+          "-DFILE_VERSION=$env:WINDOWS_PRODUCT_VERSION"
           "-DPRODUCT_VERSION=$env:WINDOWS_PRODUCT_VERSION"
           "-DSEARCH_PATHS=${{ matrix.cross_os && format('{0};', steps.cross-deps.outputs.path) }}${{ steps.deps.outputs.path }}"
           -P ".github/scripts/edit-pe-metadata.cmake"
@@ -569,7 +571,9 @@ jobs:
       - name: Set PE metadata built files on Windows
         run: >
           cmake
+          "-DFILE_DESCRIPTION=Drawpile client"
           "-DPRODUCT_NAME=Drawpile client"
+          "-DFILE_VERSION=$env:WINDOWS_PRODUCT_VERSION"
           "-DPRODUCT_VERSION=$env:WINDOWS_PRODUCT_VERSION"
           "-DSEARCH_PATHS=build"
           -P ".github/scripts/edit-pe-metadata.cmake"
