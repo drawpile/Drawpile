@@ -87,6 +87,48 @@
           <li>Fix: Make login dialog not spill off-screen on mobile devices.</li>
         </ul>
       </description>
+      <artifacts>
+        <artifact type="binary" platform="x86_64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.4/Drawpile-2.2.2-beta.4-x86_64.msi</location>
+          <checksum type="sha256">cc461bb9276d9517fa9a70bca6b42fb9c6287516104153cab3fca374541b0123</checksum>
+          <size type="download">22953984</size>
+        </artifact>
+        <artifact type="binary" platform="i386-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.4/Drawpile-2.2.2-beta.4-x86.msi</location>
+          <checksum type="sha256">f1dd1c4e275e5cf27e45469460a8095d78419f93deeaea030e3cc5127b0fd067</checksum>
+          <size type="download">19648512</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.4/Drawpile-2.2.2-beta.4-x86_64.dmg</location>
+          <checksum type="sha256">55bd045d57d6dede82a50d62f062ce7992713a536fe61b00f2ad587cab58933c</checksum>
+          <size type="download">28658561</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.4/Drawpile-2.2.2-beta.4-arm64.dmg</location>
+          <checksum type="sha256">c872016fd1aa714836a1297375838f4fede438e5e828f498eec95077be13be26</checksum>
+          <size type="download">26607923</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.4/Drawpile-2.2.2-beta.4-x86_64.AppImage</location>
+          <checksum type="sha256">7d9e636b8f019f9bf8beaab54400605dfa58d21f46ac1b211c7443dfa33d0a75</checksum>
+          <size type="download">49853632</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.4/Drawpile-2.2.2-beta.4-arm64-v8a.apk</location>
+          <checksum type="sha256">f83a035f5e06f8b840c1f9f1acb9ee7a3b83cf3707b2af7cdaef988f1caaa959</checksum>
+          <size type="download">22391978</size>
+        </artifact>
+        <artifact type="binary" platform="arm-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.4/Drawpile-2.2.2-beta.4-armeabi-v7a.apk</location>
+          <checksum type="sha256">76f0776ba23c418035047f035eb31815867e9caae676cfbb38d699eb09e4a045</checksum>
+          <size type="download">18890026</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.2-beta.4.tar.gz</location>
+          <checksum type="sha256">a42dc811dcada990839cd096d13765f078af03726990b1fbc7a544ed0d53f235</checksum>
+          <size type="download">6314228</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.2.2-beta.3" type="development" date="2024-08-09">
       <url>https://drawpile.net/news/release-2.2.2-beta.3/</url>
