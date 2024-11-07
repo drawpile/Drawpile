@@ -196,7 +196,7 @@ if(NOT EMSCRIPTEN AND LIBX264)
 	)
 
 	if(ANDROID)
-		if(TARGET_ARCH STREQUAL "arm32")
+		if(TARGET_ARCH STREQUAL "arm32" OR TARGET_ARCH STREQUAL "x86")
 			# Configure only checks if *linkage* of functions works, but not if
 			# they're actually present in any headers. This causes weird
 			# compile errors about fseeko and ftello not being present on 32
@@ -204,7 +204,8 @@ if(NOT EMSCRIPTEN AND LIBX264)
 			# doesn't matter or we don't hit that code. So we just disable the
 			# error and carry on.
 			list(APPEND x264_configure_args "--extra-cflags=-Wno-error=implicit-function-declaration")
-		elseif(TARGET_ARCH STREQUAL "x86" OR TARGET_ARCH STREQUAL "x86_64")
+		endif()
+		if(TARGET_ARCH STREQUAL "x86" OR TARGET_ARCH STREQUAL "x86_64")
 			# Configure fails to check for the nasm version properly somehow,
 			# failing even if a more recent version is found than required.
 			# We just disable assembly on this ABI then.
