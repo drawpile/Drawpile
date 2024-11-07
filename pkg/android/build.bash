@@ -61,16 +61,6 @@ check_sdk() {
         error=1
     fi
 
-    if [[ ! -d $ANDROID_NDK_DIR ]]; then
-        carp "ANDROID_NDK_DIR is not a directory: '$ANDROID_NDK_DIR'"
-        error=1
-    fi
-
-    if [[ ! -f $ANDROID_TOOLCHAIN_FILE ]]; then
-        carp "ANDROID_TOOLCHAIN_FILE is not a file: '$ANDROID_TOOLCHAIN_FILE'"
-        error=1
-    fi
-
     case $ANDROID_PLATFORM_VERSION in
         '34')
             if ! check_java_version 11 17; then
@@ -85,6 +75,18 @@ check_sdk() {
 
     if [[ $error -ne 0 ]]; then
         exit 1
+    fi
+}
+
+check_ndk() {
+    if [[ ! -d $ANDROID_NDK_DIR ]]; then
+        carp "ANDROID_NDK_DIR is not a directory: '$ANDROID_NDK_DIR'"
+        error=1
+    fi
+
+    if [[ ! -f $ANDROID_TOOLCHAIN_FILE ]]; then
+        carp "ANDROID_TOOLCHAIN_FILE is not a file: '$ANDROID_TOOLCHAIN_FILE'"
+        error=1
     fi
 }
 
@@ -132,6 +134,7 @@ setup() {
     fi
     check_sdk
     install_sdk
+    check_ndk
     build_qt
     build_ffmpeg
     build_other
@@ -176,6 +179,7 @@ check_sdk_packages() {
 
 configure() {
     check_sdk
+    check_ndk
     check_sdk_packages
     set -xe
     cmake \
