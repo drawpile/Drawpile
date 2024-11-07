@@ -792,7 +792,12 @@ elseif(ANDROID)
 	endif()
 
 	include(DrawpileFileExtensions)
-	set(ANDROID_APPLICATION_ATTRIBUTES "android:icon=\"@drawable/ic_launcher\"")
+	# Older Android versions can't deal with <resources> references for drawables.
+	if(ANDROID_MIN_SDK_VERSION GREATER_EQUAL 26)
+		set(ANDROID_APPLICATION_ATTRIBUTES "android:icon=\"@drawable/ic_launcher\"")
+	else()
+		set(ANDROID_APPLICATION_ATTRIBUTES "android:icon=\"@drawable/ic_launcher_foreground\"")
+	endif()
 	set(ANDROID_PACKAGE_NAMESPACE net.drawpile)
 	get_android_extensions(ANDROID_VIEW_INTENTS)
 
