@@ -986,7 +986,7 @@ add_resources(drawpile
 		kritadarker.colors
 		nightmode.colors
 		initialbrushpresets.db
-	DIRS palettes sounds theme
+	DIRS gamutmasks palettes sounds theme
 	BUILD_TIME_DESTINATION "${build_time_assets_dir}"
 )
 
