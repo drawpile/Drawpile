@@ -96,6 +96,9 @@ SETTING(canvasShortcuts           , CanvasShortcuts           , "settings/canvas
 #ifdef Q_OS_ANDROID
 SETTING(captureVolumeRocker       , CaptureVolumeRocker       , "settings/android/capturevolumerocker"  , true)
 #endif
+SETTING(colorCircleGamutMaskAngle , ColorCircleGamutMaskAngle , "settings/colorcircle/gamutmaskangle"   , 0)
+SETTING(colorCircleGamutMaskPath  , ColorCircleGamutMaskPath  , "settings/colorcircle/gamutmaskpath"    , QString())
+SETTING(colorCircleGamutMaskOpacity,ColorCircleGamutMaskOpacity,"settings/colorcircle/gamutmaskopacity" , 0.75)
 SETTING(colorCircleHueAngle       , ColorCircleHueAngle       , "settings/colorcircle/hueangle"         , 0)
 SETTING(colorCircleHueCount       , ColorCircleHueCount       , "settings/colorcircle/huecount"         , 16)
 SETTING(colorCircleHueLimit       , ColorCircleHueLimit       , "settings/colorcircle/huelimit"         , false)

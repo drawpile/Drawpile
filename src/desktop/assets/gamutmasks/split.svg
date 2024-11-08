@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="144pt"
+   height="144pt"
+   viewBox="0 0 144 144"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title2">Split</title>
+  <defs
+     id="defs1" />
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Split</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     id="path2"
+     fill="#ffffff"
+     fill-rule="evenodd"
+     d="M 18.1593,0 -16.831092,133.62815 52.364034,133.74594 18.1593,0"
+     style="fill:#000000"
+     transform="rotate(-48.805256,46.611831,11.661781)" />
+</svg>

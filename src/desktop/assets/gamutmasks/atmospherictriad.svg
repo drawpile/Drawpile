@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="144pt"
+   height="144pt"
+   viewBox="0 0 144 144"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title1">Atmospheric triad</title>
+  <defs
+     id="defs1" />
+  <path
+     id="shape0"
+     transform="matrix(-0.72128307767 -0.69264039867 0.69264039867 -0.72128307767 48.573597448 102.4597824)"
+     fill="#ffffff"
+     fill-rule="evenodd"
+     d="M0 0L23.3684 72L72 17.0526L0 0"
+     style="fill:#000000" />
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Atmospheric triad</dc:title>
+        <dc:source>Krita</dc:source>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

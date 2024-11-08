@@ -6,6 +6,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
+#include <QSvgRenderer>
 #include <QtColorWidgets/color_utils.hpp>
 #include <cmath>
 
@@ -94,6 +95,58 @@ void ArtisticColorWheel::setValueCount(int valueCount)
 		if(m_valueLimit) {
 			m_barCache = QPixmap();
 			m_pathCacheValid = false;
+			update();
+		}
+	}
+}
+
+void ArtisticColorWheel::setGamutMaskPath(const QString &gamutMaskPath)
+{
+	bool empty = gamutMaskPath.isEmpty();
+	if(!empty || !m_gamutMaskPath.isEmpty()) {
+		m_gamutMaskPath = gamutMaskPath;
+		delete m_gamutMask;
+
+		if(empty) {
+			m_gamutMask = nullptr;
+		} else {
+			m_gamutMask = new QSvgRenderer(gamutMaskPath);
+			if(!m_gamutMask->isValid()) {
+				qWarning(
+					"Error loading gamut mask '%s'",
+					qUtf8Printable(gamutMaskPath));
+				delete m_gamutMask;
+				m_gamutMask = nullptr;
+			}
+		}
+
+		m_wheelCache = QPixmap();
+		m_gamutMaskCache = QPixmap();
+		update();
+	}
+}
+
+void ArtisticColorWheel::setGamutMaskAngle(int gamutMaskAngle)
+{
+	qreal angle = normalizeAngle(qreal(gamutMaskAngle));
+	if(m_gamutMaskAngle != angle) {
+		m_gamutMaskAngle = angle;
+		if(m_gamutMask) {
+			m_wheelCache = QPixmap();
+			m_gamutMaskCache = QPixmap();
+			update();
+		}
+	}
+}
+
+void ArtisticColorWheel::setGamutMaskOpacity(qreal gamutMaskOpacity)
+{
+	qreal opacity = qBound(0.0, gamutMaskOpacity, 1.0);
+	if(opacity != m_gamutMaskOpacity) {
+		m_gamutMaskOpacity = opacity;
+		if(m_gamutMask) {
+			m_wheelCache = QPixmap();
+			m_gamutMaskCache = QPixmap();
 			update();
 		}
 	}
@@ -362,6 +415,31 @@ void ArtisticColorWheel::updateWheelCache(int dimension)
 		painter.setPen(Qt::NoPen);
 		painter.setRenderHint(QPainter::Antialiasing);
 		painter.drawEllipse(m_wheelCache.rect());
+
+		if(m_gamutMask) {
+			updateGamutMaskCache(m_wheelCache.size());
+			painter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+			painter.setOpacity(m_gamutMaskOpacity);
+			painter.drawPixmap(m_wheelCache.rect(), m_gamutMaskCache);
+		}
+	}
+}
+
+void ArtisticColorWheel::updateGamutMaskCache(const QSize &size)
+{
+	if(m_gamutMaskCache.isNull() || m_gamutMaskCache.size() != size) {
+		m_gamutMaskCache = QPixmap(size);
+		m_gamutMaskCache.fill(Qt::transparent);
+		QPainter painter(&m_gamutMaskCache);
+		if(m_gamutMaskAngle != 0.0) {
+			QTransform tf;
+			QPointF center = QRectF(m_gamutMaskCache.rect()).center();
+			tf.translate(center.x(), center.y());
+			tf.rotate(m_gamutMaskAngle);
+			tf.translate(-center.x(), -center.y());
+			painter.setTransform(tf);
+		}
+		m_gamutMask->render(&painter, m_gamutMaskCache.rect());
 	}
 }
 

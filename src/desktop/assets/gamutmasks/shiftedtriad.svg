@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="144pt"
+   height="144pt"
+   viewBox="0 0 144 144"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title1">Shifted triad</title>
+  <defs
+     id="defs1" />
+  <path
+     id="shape0"
+     transform="matrix(-0.6175958177 0.78649564904 -0.78649564904 -0.6175958177 101.95967409 56.827353213)"
+     fill="#ffffff"
+     fill-rule="evenodd"
+     d="M0 0.265786L64.8794 0L32.7139 84.2541L0 0.265786"
+     style="fill:#000000" />
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Shifted triad</dc:title>
+        <dc:source>Krita</dc:source>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

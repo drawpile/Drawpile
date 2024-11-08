@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="144pt"
+   height="144pt"
+   viewBox="0 0 144 144"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title1">Dominant hue with accent</title>
+  <defs
+     id="defs1" />
+  <ellipse
+     id="shape0"
+     transform="matrix(0.00022685409808 0.99999997427 -0.99999997427 0.00022685409808 138.32309417 43.963464877)"
+     rx="28.026967071"
+     ry="42.180312312"
+     cx="28.026967071"
+     cy="42.180312312"
+     fill="#ffffff"
+     fill-rule="evenodd"
+     style="fill:#000000" />
+  <circle
+     id="shape1"
+     transform="matrix(-0.99965606103 0.026225172035 -0.026225172035 -0.99965606103 31.028155103 86.017404809)"
+     r="14.4"
+     cx="14.4"
+     cy="14.4"
+     fill="#ffffff"
+     fill-rule="evenodd"
+     style="fill:#000000" />
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Dominant hue with accent</dc:title>
+        <dc:source>Krita</dc:source>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

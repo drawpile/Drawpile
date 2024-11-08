@@ -142,6 +142,12 @@ ColorCircleDock::ColorCircleDock(QWidget *parent)
 		m_wheel, &widgets::ArtisticColorWheel::setValueLimit);
 	settings.bindColorCircleValueCount(
 		m_wheel, &widgets::ArtisticColorWheel::setValueCount);
+	settings.bindColorCircleGamutMaskPath(
+		m_wheel, &widgets::ArtisticColorWheel::setGamutMaskPath);
+	settings.bindColorCircleGamutMaskAngle(
+		m_wheel, &widgets::ArtisticColorWheel::setGamutMaskAngle);
+	settings.bindColorCircleGamutMaskOpacity(
+		m_wheel, &widgets::ArtisticColorWheel::setGamutMaskOpacity);
 	settings.bindColorWheelSpace(this, &ColorCircleDock::setColorSpace);
 #ifdef DP_COLOR_CIRCLE_ENABLE_PREVIEW
 	settings.bindColorWheelPreview(this, &ColorCircleDock::setPreview);

@@ -6,6 +6,8 @@
 #include <QWidget>
 #include <QtColorWidgets/ColorWheel>
 
+class QSvgRenderer;
+
 namespace widgets {
 
 class ArtisticColorWheel : public QWidget {
@@ -31,6 +33,10 @@ public:
 	void setSaturationCount(int saturationCount);
 	void setValueLimit(bool valueLimit);
 	void setValueCount(int valueCount);
+	void setGamutMaskPath(const QString &path);
+	void setGamutMaskAngle(int gamutMaskAngle);
+	void setGamutMaskOpacity(qreal gamutMaskOpacity);
+	bool hasGamutMask() const { return m_gamutMask != nullptr; }
 
 	ColorSpace colorSpace() const { return m_colorSpace; }
 	void setColorSpace(ColorSpace colorSpace);
@@ -59,6 +65,7 @@ private:
 	void handleMouseOnWheel(qreal radius, qreal length, qreal angle);
 	void updateBarCache(const QSize &size);
 	void updateWheelCache(int dimension);
+	void updateGamutMaskCache(const QSize &size);
 	void updatePathCache(const QRectF &vr, const QRectF &wr);
 
 	qreal getHueAt(qreal angle) const;
@@ -87,9 +94,14 @@ private:
 	qreal m_hue = 0.0;
 	qreal m_saturation = 0.0;
 	qreal m_value = 0.0;
+	qreal m_gamutMaskAngle = 0.0;
+	qreal m_gamutMaskOpacity = 0.75;
 	ColorSpace m_colorSpace = ColorSpace::ColorHSV;
+	QString m_gamutMaskPath;
+	QSvgRenderer *m_gamutMask = nullptr;
 	QPixmap m_barCache;
 	QPixmap m_wheelCache;
+	QPixmap m_gamutMaskCache;
 	QPainterPath m_pathCache;
 };
 

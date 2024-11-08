@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="144pt"
+   height="144pt"
+   viewBox="0 0 144 144"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title1">Split complementary</title>
+  <defs
+     id="defs1" />
+  <path
+     id="shape0"
+     transform="matrix(-0.002446393724 0.99999700757 -0.99999700757 -0.002446393724 145.21528722 50.022326158)"
+     fill="#ffffff"
+     fill-rule="evenodd"
+     d="M0 0.227129L42.946 0L21.6545 72L0 0.227129"
+     style="fill:#000000" />
+  <path
+     id="shape01"
+     transform="matrix(-0.50213503986 -0.86478924926 0.86478919488 -0.50213500793 21.254459424 126.4350819)"
+     fill="#ffffff"
+     fill-rule="evenodd"
+     d="M0 0.228491L42.946 0L21.6545 72.4317L0 0.228491"
+     style="fill:#000000" />
+  <path
+     id="shape02"
+     transform="matrix(0.49367194163 -0.86964826329 0.86964818915 0.49367190002 -0.10506287263 54.624574195)"
+     fill="#ffffff"
+     fill-rule="evenodd"
+     d="M0 0.227129L42.946 0L21.6545 72L0 0.227129"
+     style="fill:#000000" />
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Split complementary</dc:title>
+        <dc:source>Krita</dc:source>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>
