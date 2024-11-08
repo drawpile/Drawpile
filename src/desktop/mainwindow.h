@@ -44,6 +44,7 @@ class BrushPalette;
 class InputSettings;
 class LayerList;
 class PaletteBox;
+class ColorCircleDock;
 class ColorPaletteDock;
 class ColorSpinnerDock;
 class ColorSliderDock;
@@ -397,6 +398,7 @@ private:
 	docks::ColorPaletteDock *m_dockColorPalette;
 	docks::ColorSpinnerDock *m_dockColorSpinner;
 	docks::ColorSliderDock *m_dockColorSliders;
+	docks::ColorCircleDock *m_dockColorCircle;
 	docks::Navigator *m_dockNavigator;
 	docks::OnionSkinsDock *m_dockOnionSkins;
 	docks::Timeline *m_dockTimeline;

@@ -96,6 +96,13 @@ SETTING(canvasShortcuts           , CanvasShortcuts           , "settings/canvas
 #ifdef Q_OS_ANDROID
 SETTING(captureVolumeRocker       , CaptureVolumeRocker       , "settings/android/capturevolumerocker"  , true)
 #endif
+SETTING(colorCircleHueAngle       , ColorCircleHueAngle       , "settings/colorcircle/hueangle"         , 0)
+SETTING(colorCircleHueCount       , ColorCircleHueCount       , "settings/colorcircle/huecount"         , 16)
+SETTING(colorCircleHueLimit       , ColorCircleHueLimit       , "settings/colorcircle/huelimit"         , false)
+SETTING(colorCircleSaturationCount, ColorCircleSaturationCount, "settings/colorcircle/saturationcount"  , 8)
+SETTING(colorCircleSaturationLimit, ColorCircleSaturationLimit, "settings/colorcircle/saturationlimit"  , false)
+SETTING(colorCircleValueCount     , ColorCircleValueCount     , "settings/colorcircle/valuecount"       , 10)
+SETTING(colorCircleValueLimit     , ColorCircleValueLimit     , "settings/colorcircle/valuelimit"       , false)
 SETTING(colorSlidersShowAll       , ColorSlidersShowAll       , "settings/colorsliders/showall"         , false)
 SETTING(colorSlidersShowInput     , ColorSlidersShowInput     , "settings/colorsliders/showinput"       , true)
 SETTING(colorSlidersMode          , ColorSlidersMode          , "settings/colorsliders/mode"            , 0)

@@ -83,6 +83,8 @@ target_sources(drawpile PRIVATE
 	dialogs/animationexportdialog.h
 	dialogs/animationimportdialog.cpp
 	dialogs/animationimportdialog.h
+	dialogs/artisticcolorwheeldialog.cpp
+	dialogs/artisticcolorwheeldialog.h
 	dialogs/avatarimport.cpp
 	dialogs/avatarimport.h
 	dialogs/brushexportdialog.cpp
@@ -187,6 +189,8 @@ target_sources(drawpile PRIVATE
 	docks/brushpalettedelegate.h
 	docks/brushpalettedock.cpp
 	docks/brushpalettedock.h
+	docks/colorcircle.cpp
+	docks/colorcircle.h
 	docks/colorpalette.cpp
 	docks/colorpalette.h
 	docks/colorsliders.cpp
@@ -333,6 +337,8 @@ target_sources(drawpile PRIVATE
 	view/softwarecanvas.h
 	view/viewwrapper.cpp
 	view/viewwrapper.h
+	widgets/artisticcolorwheel.cpp
+	widgets/artisticcolorwheel.h
 	widgets/brushpreview.cpp
 	widgets/brushpreview.h
 	widgets/canvasframe.cpp

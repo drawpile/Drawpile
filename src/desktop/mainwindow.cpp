@@ -25,6 +25,7 @@
 #include "desktop/dialogs/touchtestdialog.h"
 #include "desktop/dialogs/userinfodialog.h"
 #include "desktop/docks/brushpalettedock.h"
+#include "desktop/docks/colorcircle.h"
 #include "desktop/docks/colorpalette.h"
 #include "desktop/docks/colorsliders.h"
 #include "desktop/docks/colorspinner.h"
@@ -153,6 +154,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	  m_dockInput(nullptr),
 	  m_dockLayers(nullptr),
 	  m_dockColorPalette(nullptr),
+	  m_dockColorCircle(nullptr),
 	  m_dockNavigator(nullptr),
 	  m_dockOnionSkins(nullptr),
 	  m_dockTimeline(nullptr),
@@ -351,12 +353,15 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_dockToolSettings, &docks::ToolSettings::foregroundColorChanged, m_dockColorPalette, &docks::ColorPaletteDock::setColor);
 	connect(m_dockToolSettings, &docks::ToolSettings::foregroundColorChanged, m_dockColorSpinner, &docks::ColorSpinnerDock::setColor);
 	connect(m_dockToolSettings, &docks::ToolSettings::foregroundColorChanged, m_dockColorSliders, &docks::ColorSliderDock::setColor);
+	connect(m_dockToolSettings, &docks::ToolSettings::foregroundColorChanged, m_dockColorCircle, &docks::ColorCircleDock::setColor);
 	connect(m_dockToolSettings, &docks::ToolSettings::lastUsedColorsChanged, m_dockColorPalette, &docks::ColorPaletteDock::setLastUsedColors);
 	connect(m_dockToolSettings, &docks::ToolSettings::lastUsedColorsChanged, m_dockColorSpinner, &docks::ColorSpinnerDock::setLastUsedColors);
 	connect(m_dockToolSettings, &docks::ToolSettings::lastUsedColorsChanged, m_dockColorSliders, &docks::ColorSliderDock::setLastUsedColors);
+	connect(m_dockToolSettings, &docks::ToolSettings::lastUsedColorsChanged, m_dockColorCircle, &docks::ColorCircleDock::setLastUsedColors);
 	connect(m_dockColorPalette, &docks::ColorPaletteDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
 	connect(m_dockColorSpinner, &docks::ColorSpinnerDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
 	connect(m_dockColorSliders, &docks::ColorSliderDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
+	connect(m_dockColorCircle, &docks::ColorCircleDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
 
 	// Dual color button
 	connect(
@@ -1097,6 +1102,7 @@ void MainWindow::initDefaultDocks()
 	dpApp().processEvents();
 }
 
+// clang-format on
 void MainWindow::setDefaultDockSizes()
 {
 	int leftWidth = 320, leftHeight = 220;
@@ -1104,17 +1110,20 @@ void MainWindow::setDefaultDockSizes()
 	int topHeight = 300;
 	resizeDocks(
 		{m_dockToolSettings, m_dockBrushPalette, m_dockColorSpinner,
-			m_dockColorSliders, m_dockColorPalette, m_dockLayers},
-		{leftWidth, leftWidth, rightWidth, rightWidth, rightWidth,
-			rightWidth},
+		 m_dockColorSliders, m_dockColorPalette, m_dockColorCircle,
+		 m_dockLayers},
+		{leftWidth, leftWidth, rightWidth, rightWidth, rightWidth, rightWidth,
+		 rightWidth},
 		Qt::Horizontal);
 	resizeDocks(
 		{m_dockToolSettings, m_dockColorSpinner, m_dockColorSliders,
-			m_dockColorPalette, m_dockTimeline, m_dockOnionSkins},
-		{leftHeight, rightHeight, rightHeight, rightHeight, topHeight,
-			topHeight},
+		 m_dockColorPalette, m_dockColorCircle, m_dockTimeline,
+		 m_dockOnionSkins},
+		{leftHeight, rightHeight, rightHeight, rightHeight, rightHeight,
+		 topHeight, topHeight},
 		Qt::Vertical);
 }
+// clang-format off
 
 bool MainWindow::eventFilter(QObject *object, QEvent *event)
 {
@@ -5818,6 +5827,11 @@ void MainWindow::createDocks()
 	m_dockColorSliders->setObjectName("colorsliderdock");
 	m_dockColorSliders->setAllowedAreas(Qt::AllDockWidgetAreas);
 
+	//: "Circle" refers to an artistic color circle.
+	m_dockColorCircle = new docks::ColorCircleDock(tr("Circle"), this);
+	m_dockColorCircle->setObjectName("colorcircledock");
+	m_dockColorCircle->setAllowedAreas(Qt::AllDockWidgetAreas);
+
 	// Create layer list
 	m_dockLayers = new docks::LayerList(this);
 	m_dockLayers->setObjectName("LayerList");
@@ -5851,6 +5865,9 @@ void MainWindow::resetDefaultDocks()
 	m_dockColorPalette->show();
 	addDockWidget(Qt::RightDockWidgetArea, m_dockColorSliders);
 	m_dockColorSliders->show();
+	addDockWidget(Qt::RightDockWidgetArea, m_dockColorCircle);
+	m_dockColorCircle->hide(); // hidden by default
+	tabifyDockWidget(m_dockColorCircle, m_dockColorPalette);
 	tabifyDockWidget(m_dockColorPalette, m_dockColorSliders);
 	tabifyDockWidget(m_dockColorSliders, m_dockColorSpinner);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockLayers);
