@@ -145,11 +145,9 @@ struct ToolSettings::Private {
 };
 
 ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
-	: DockBase(parent)
+	: DockBase(tr("Tool Settings"), tr("Tool"), parent)
 	, d(new Private(ctrl))
 {
-	setWindowTitle(tr("Tool"));
-
 	auto titleWidget = new TitleWidget(this);
 	setTitleBarWidget(titleWidget);
 

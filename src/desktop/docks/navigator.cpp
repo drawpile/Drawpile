@@ -471,7 +471,7 @@ QPointF NavigatorView::getFocusPoint(const QPointF &eventPoint)
  * Construct the navigator dock widget.
  */
 Navigator::Navigator(QWidget *parent)
-	: DockBase(tr("Navigator"), parent), m_updating(false)
+	: DockBase(tr("Navigator"), QString(), parent), m_updating(false)
 {
 	setObjectName("navigatordock");
 

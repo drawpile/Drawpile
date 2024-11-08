@@ -12,16 +12,23 @@ namespace docks {
 class DockBase : public QDockWidget {
 	Q_OBJECT
 public:
-	explicit DockBase(QWidget *parent = nullptr);
-	explicit DockBase(const QString title, QWidget *parent = nullptr);
+	explicit DockBase(
+		const QString &fullTitle, const QString &shortTitle,
+		QWidget *parent = nullptr);
+
+	const QString &fullTitle() const { return m_fullTitle; }
 
 #ifdef Q_OS_MACOS
 private slots:
 	void addWindowDecorations(bool topLevel);
+#endif
 
 private:
+#ifdef Q_OS_MACOS
 	void initConnection();
 #endif
+
+	QString m_fullTitle;
 };
 
 }

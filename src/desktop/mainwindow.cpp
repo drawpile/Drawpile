@@ -4244,11 +4244,21 @@ void MainWindow::setupActions()
 	m_smallScreenModeActions = new QActionGroup(this);
 	m_smallScreenModeActions->setExclusive(false);
 
-	// Collect list of docks for dock menu
-	for(const auto *dw : findChildren<const QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
+	// clang-format on
+	QList<const docks::DockBase *> docks =
+		findChildren<const docks::DockBase *>(
+			QString(), Qt::FindDirectChildrenOnly);
+	std::sort(
+		docks.begin(), docks.end(),
+		[](const docks::DockBase *a, const docks::DockBase *b) {
+			return a->fullTitle().compare(b->fullTitle(), Qt::CaseInsensitive) <
+				   0;
+		});
+	for(const docks::DockBase *dw : docks) {
 		QAction *toggledockaction = dw->toggleViewAction();
 		Q_ASSERT(!dw->objectName().isEmpty());
 		Q_ASSERT(toggledockaction->objectName().isEmpty());
+		toggledockaction->setText(dw->fullTitle());
 		toggledockaction->setObjectName(
 			QStringLiteral("toggledock%1").arg(dw->objectName()));
 		toggledockmenu->addAction(toggledockaction);
@@ -4261,65 +4271,116 @@ void MainWindow::setupActions()
 		addAction(toggledockaction);
 		m_desktopModeActions->addAction(toggledockaction);
 	}
+	//clang-format off
 
 	toggledockmenu->addSeparator();
-	QAction *freezeDocks = makeAction("freezedocks", tr("Lock Docks")).noDefaultShortcut().checkable().remembered();
+	QAction *freezeDocks = makeAction("freezedocks", tr("Lock Docks"))
+							   .noDefaultShortcut()
+							   .checkable()
+							   .remembered();
 	toggledockmenu->addAction(freezeDocks);
 	m_desktopModeActions->addAction(freezeDocks);
 	connect(freezeDocks, &QAction::toggled, this, &MainWindow::setFreezeDocks);
 
-	QAction *sideTabDocks = makeAction("sidetabdocks", tr("Vertical Tabs on Sides")).noDefaultShortcut().checkable().remembered();
+	QAction *sideTabDocks =
+		makeAction("sidetabdocks", tr("Vertical Tabs on Sides"))
+			.noDefaultShortcut()
+			.checkable()
+			.remembered();
 	toggledockmenu->addAction(sideTabDocks);
 	m_desktopModeActions->addAction(sideTabDocks);
 	connect(
 		sideTabDocks, &QAction::toggled, this, &MainWindow::updateSideTabDocks);
 	updateSideTabDocks();
 
-	QAction *hideDocks = makeAction("hidedocks", tr("Hide Docks")).checkable().shortcut("tab");
+	QAction *hideDocks =
+		makeAction("hidedocks", tr("Hide Docks")).checkable().shortcut("tab");
 	toggledockmenu->addAction(hideDocks);
 	m_desktopModeActions->addAction(hideDocks);
 	connect(hideDocks, &QAction::toggled, this, &MainWindow::setDocksHidden);
 
-	QAction *hideDockTitleBars = makeAction("hidedocktitlebars", tr("Hold Shift to Arrange")).noDefaultShortcut().checkable().remembered();
+	QAction *hideDockTitleBars =
+		makeAction("hidedocktitlebars", tr("Hold Shift to Arrange"))
+			.noDefaultShortcut()
+			.checkable()
+			.remembered();
 	toggledockmenu->addAction(hideDockTitleBars);
 	m_desktopModeActions->addAction(hideDockTitleBars);
-	connect(hideDocks, &QAction::toggled, [this](){
+	connect(hideDocks, &QAction::toggled, [this]() {
 		setDockTitleBarsHidden(m_titleBarsHidden);
 	});
 
 	//
 	// File menu and toolbar
 	//
-	QAction *newdocument = makeAction("newdocument", tr("&New")).icon("document-new").shortcut(QKeySequence::New);
-	QAction *open = makeAction("opendocument", tr("&Open...")).icon("document-open").shortcut(QKeySequence::Open);
+	QAction *newdocument = makeAction("newdocument", tr("&New"))
+							   .icon("document-new")
+							   .shortcut(QKeySequence::New);
+	QAction *open = makeAction("opendocument", tr("&Open..."))
+						.icon("document-open")
+						.shortcut(QKeySequence::Open);
 #ifdef Q_OS_MACOS
-	QAction *closefile = makeAction("closedocument", tr("Close")).shortcut(QKeySequence::Close);
+	QAction *closefile =
+		makeAction("closedocument", tr("Close")).shortcut(QKeySequence::Close);
 #endif
 #ifdef __EMSCRIPTEN__
-	QAction *download = makeAction("downloaddocument", tr("&Download Image…")).icon("document-save").shortcut(QKeySequence::Save);
-	QAction *downloadsel = makeAction("downloadselection", tr("Download Selection…")).icon("select-rectangular").noDefaultShortcut();
+	QAction *download = makeAction("downloaddocument", tr("&Download Image…"))
+							.icon("document-save")
+							.shortcut(QKeySequence::Save);
+	QAction *downloadsel =
+		makeAction("downloadselection", tr("Download Selection…"))
+			.icon("select-rectangular")
+			.noDefaultShortcut();
 #else
-	QAction *save = makeAction("savedocument", tr("&Save")).icon("document-save").shortcut(QKeySequence::Save);
-	QAction *saveas = makeAction("savedocumentas", tr("Save &As...")).icon("document-save-as").shortcut(QKeySequence::SaveAs);
-	QAction *exportDocument = makeAction("exportdocument", tr("Export Image…")).icon("document-export").noDefaultShortcut();
-	QAction *savesel = makeAction("saveselection", tr("Export Selection...")).icon("select-rectangular").noDefaultShortcut();
-	QAction *autosave = makeAction("autosave", tr("Autosave")).noDefaultShortcut().checkable().disabled();
-	QAction *exportTemplate = makeAction("exporttemplate", tr("Export Session &Template...")).noDefaultShortcut();
+	QAction *save = makeAction("savedocument", tr("&Save"))
+						.icon("document-save")
+						.shortcut(QKeySequence::Save);
+	QAction *saveas = makeAction("savedocumentas", tr("Save &As..."))
+						  .icon("document-save-as")
+						  .shortcut(QKeySequence::SaveAs);
+	QAction *exportDocument = makeAction("exportdocument", tr("Export Image…"))
+								  .icon("document-export")
+								  .noDefaultShortcut();
+	QAction *savesel = makeAction("saveselection", tr("Export Selection..."))
+						   .icon("select-rectangular")
+						   .noDefaultShortcut();
+	QAction *autosave = makeAction("autosave", tr("Autosave"))
+							.noDefaultShortcut()
+							.checkable()
+							.disabled();
+	QAction *exportTemplate =
+		makeAction("exporttemplate", tr("Export Session &Template..."))
+			.noDefaultShortcut();
 #endif
-	QAction *exportAnimation = makeAction("exportanim", tr("Export &Animation…")).icon("document-save-all").noDefaultShortcut();
+	QAction *exportAnimation =
+		makeAction("exportanim", tr("Export &Animation…"))
+			.icon("document-save-all")
+			.noDefaultShortcut();
 #ifndef __EMSCRIPTEN__
-	QAction *importAnimationFrames = makeAction("importanimationframes", tr("Import Animation &Frames…")).noDefaultShortcut();
+	QAction *importAnimationFrames =
+		makeAction("importanimationframes", tr("Import Animation &Frames…"))
+			.noDefaultShortcut();
 #endif
-	QAction *importAnimationLayers = makeAction("importoldanimation", tr("Import Animation from &Layers…")).noDefaultShortcut();
-	QAction *importBrushes = makeAction("importbrushes", tr("Import &Brushes...")).noDefaultShortcut();
-	QAction *exportBrushes = makeAction("exportbrushes", tr("Export &Brushes…")).noDefaultShortcut();
+	QAction *importAnimationLayers =
+		makeAction("importoldanimation", tr("Import Animation from &Layers…"))
+			.noDefaultShortcut();
+	QAction *importBrushes =
+		makeAction("importbrushes", tr("Import &Brushes..."))
+			.noDefaultShortcut();
+	QAction *exportBrushes =
+		makeAction("exportbrushes", tr("Export &Brushes…")).noDefaultShortcut();
 
 #ifndef __EMSCRIPTEN__
-	QAction *record = makeAction("recordsession", tr("Record...")).icon("media-record").noDefaultShortcut();
+	QAction *record = makeAction("recordsession", tr("Record..."))
+						  .icon("media-record")
+						  .noDefaultShortcut();
 #endif
 	QAction *start = makeAction("start", tr("Start...")).noDefaultShortcut();
 #ifndef __EMSCRIPTEN__
-	QAction *quit = makeAction("exitprogram", tr("&Quit")).icon("application-exit").shortcut("Ctrl+Q").menuRole(QAction::QuitRole);
+	QAction *quit = makeAction("exitprogram", tr("&Quit"))
+						.icon("application-exit")
+						.shortcut("Ctrl+Q")
+						.menuRole(QAction::QuitRole);
 #endif
 
 #ifdef Q_OS_MACOS
@@ -4342,17 +4403,21 @@ void MainWindow::setupActions()
 	connect(open, SIGNAL(triggered()), this, SLOT(open()));
 #ifdef __EMSCRIPTEN__
 	connect(download, &QAction::triggered, this, &MainWindow::download);
-	connect(downloadsel, &QAction::triggered, this, &MainWindow::downloadSelection);
+	connect(
+		downloadsel, &QAction::triggered, this, &MainWindow::downloadSelection);
 #else
 	connect(save, SIGNAL(triggered()), this, SLOT(save()));
 	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
-	connect(exportDocument, &QAction::triggered, this, &MainWindow::exportImage);
-	connect(exportTemplate, &QAction::triggered, this, &MainWindow::exportTemplate);
+	connect(
+		exportDocument, &QAction::triggered, this, &MainWindow::exportImage);
+	connect(
+		exportTemplate, &QAction::triggered, this, &MainWindow::exportTemplate);
 	connect(savesel, &QAction::triggered, this, &MainWindow::saveSelection);
 
 	connect(autosave, &QAction::triggered, m_doc, &Document::setAutosave);
 	connect(m_doc, &Document::autosaveChanged, autosave, &QAction::setChecked);
-	connect(m_doc, &Document::canAutosaveChanged, autosave, &QAction::setEnabled);
+	connect(
+		m_doc, &Document::canAutosaveChanged, autosave, &QAction::setEnabled);
 
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
 #endif
@@ -4369,8 +4434,12 @@ void MainWindow::setupActions()
 	connect(
 		importAnimationLayers, &QAction::triggered, this,
 		&MainWindow::importAnimationLayers);
-	connect(importBrushes, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::importBrushes);
-	connect(exportBrushes, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::exportBrushes);
+	connect(
+		importBrushes, &QAction::triggered, m_dockBrushPalette,
+		&docks::BrushPalette::importBrushes);
+	connect(
+		exportBrushes, &QAction::triggered, m_dockBrushPalette,
+		&docks::BrushPalette::exportBrushes);
 	connect(start, &QAction::triggered, this, &MainWindow::start);
 
 #ifndef __EMSCRIPTEN__
@@ -4472,48 +4541,139 @@ void MainWindow::setupActions()
 #else
 	QKeySequence undoShortcut = QKeySequence::Undo;
 	QKeySequence undoAlternateShortcut = QKeySequence();
-#if defined(Q_OS_WIN) || defined(__EMSCRIPTEN__)
+#	if defined(Q_OS_WIN) || defined(__EMSCRIPTEN__)
 	QKeySequence redoShortcut = QKeySequence("Ctrl+Y");
 	QKeySequence redoAlternateShortcut = QKeySequence("Ctrl+Shift+Z");
-#elif defined(Q_OS_LINUX)
+#	elif defined(Q_OS_LINUX)
 	QKeySequence redoShortcut = QKeySequence("Ctrl+Shift+Z");
 	QKeySequence redoAlternateShortcut = QKeySequence("Ctrl+Y");
-#else
+#	else
 	QKeySequence redoShortcut = QKeySequence::Redo;
 	QKeySequence redoAlternateShortcut = QKeySequence();
+#	endif
 #endif
-#endif
-	QAction *undo = makeAction("undo", tr("&Undo")).icon("edit-undo").shortcut(undoShortcut, undoAlternateShortcut).autoRepeat();
-	QAction *redo = makeAction("redo", tr("&Redo")).icon("edit-redo").shortcut(redoShortcut, redoAlternateShortcut).autoRepeat();
-	QAction *copy = makeAction("copyvisible", tr("&Copy Merged")).icon("edit-copy").statusTip(tr("Copy selected area to the clipboard")).shortcut("Shift+Ctrl+C");
-	QAction *copyMerged = makeAction("copymerged", tr("Copy Without Background")).icon("edit-copy").statusTip(tr("Copy selected area, excluding the background, to the clipboard")).shortcut("Ctrl+Alt+C");
-	QAction *copylayer = makeAction("copylayer", tr("Copy From &Layer")).icon("edit-copy").statusTip(tr("Copy selected area of the current layer to the clipboard")).shortcut(QKeySequence::Copy);
-	QAction *cutlayer = makeAction("cutlayer", tr("Cu&t From Layer")).icon("edit-cut").statusTip(tr("Cut selected area of the current layer to the clipboard")).shortcut(QKeySequence::Cut);
-	QAction *paste = makeAction("paste", tr("&Paste")).icon("edit-paste").shortcut(QKeySequence::Paste);
-	QAction *pasteCentered = makeAction("paste-centered", tr("Paste in View Center")).icon("edit-paste").shortcut("Ctrl+Shift+V");
+	QAction *undo = makeAction("undo", tr("&Undo"))
+						.icon("edit-undo")
+						.shortcut(undoShortcut, undoAlternateShortcut)
+						.autoRepeat();
+	QAction *redo = makeAction("redo", tr("&Redo"))
+						.icon("edit-redo")
+						.shortcut(redoShortcut, redoAlternateShortcut)
+						.autoRepeat();
+	QAction *copy = makeAction("copyvisible", tr("&Copy Merged"))
+						.icon("edit-copy")
+						.statusTip(tr("Copy selected area to the clipboard"))
+						.shortcut("Shift+Ctrl+C");
+	QAction *copyMerged =
+		makeAction("copymerged", tr("Copy Without Background"))
+			.icon("edit-copy")
+			.statusTip(tr("Copy selected area, excluding the background, to "
+						  "the clipboard"))
+			.shortcut("Ctrl+Alt+C");
+	QAction *copylayer =
+		makeAction("copylayer", tr("Copy From &Layer"))
+			.icon("edit-copy")
+			.statusTip(
+				tr("Copy selected area of the current layer to the clipboard"))
+			.shortcut(QKeySequence::Copy);
+	QAction *cutlayer =
+		makeAction("cutlayer", tr("Cu&t From Layer"))
+			.icon("edit-cut")
+			.statusTip(
+				tr("Cut selected area of the current layer to the clipboard"))
+			.shortcut(QKeySequence::Cut);
+	QAction *paste = makeAction("paste", tr("&Paste"))
+						 .icon("edit-paste")
+						 .shortcut(QKeySequence::Paste);
+	QAction *pasteCentered =
+		makeAction("paste-centered", tr("Paste in View Center"))
+			.icon("edit-paste")
+			.shortcut("Ctrl+Shift+V");
 #ifndef SINGLE_MAIN_WINDOW
-	QAction *pickFromScreen = makeAction("pickfromscreen", tr("Pic&k From Screen")).icon("monitor").shortcut("Shift+I");
+	QAction *pickFromScreen =
+		makeAction("pickfromscreen", tr("Pic&k From Screen"))
+			.icon("monitor")
+			.shortcut("Shift+I");
 #endif
 
-	QAction *pastefile = makeAction("pastefile", tr("Paste &From File...")).icon("document-open").noDefaultShortcut();
-	QAction *deleteAnnotations = makeAction("deleteemptyannotations", tr("Delete Empty Annotations")).noDefaultShortcut();
-	QAction *resize = makeAction("resizecanvas", tr("Resi&ze Canvas...")).noDefaultShortcut();
-	QAction *canvasBackground = makeAction("canvas-background", tr("Set Session Background...")).noDefaultShortcut();
-	QAction *setLocalBackground = makeAction("set-local-background", tr("Set Local Background...")).noDefaultShortcut();
-	QAction *clearLocalBackground = makeAction("clear-local-background", tr("Clear Local Background")).noDefaultShortcut();
-	QAction *brushSettings = makeAction("brushsettings", tr("&Brush Settings")).icon("draw-brush").shortcut("F7");
-	QAction *preferences = makeAction("preferences", tr("Prefere&nces")).icon("configure").noDefaultShortcut().menuRole(QAction::PreferencesRole);
+	QAction *pastefile = makeAction("pastefile", tr("Paste &From File..."))
+							 .icon("document-open")
+							 .noDefaultShortcut();
+	QAction *deleteAnnotations =
+		makeAction("deleteemptyannotations", tr("Delete Empty Annotations"))
+			.noDefaultShortcut();
+	QAction *resize =
+		makeAction("resizecanvas", tr("Resi&ze Canvas...")).noDefaultShortcut();
+	QAction *canvasBackground =
+		makeAction("canvas-background", tr("Set Session Background..."))
+			.noDefaultShortcut();
+	QAction *setLocalBackground =
+		makeAction("set-local-background", tr("Set Local Background..."))
+			.noDefaultShortcut();
+	QAction *clearLocalBackground =
+		makeAction("clear-local-background", tr("Clear Local Background"))
+			.noDefaultShortcut();
+	QAction *brushSettings = makeAction("brushsettings", tr("&Brush Settings"))
+								 .icon("draw-brush")
+								 .shortcut("F7");
+	QAction *preferences = makeAction("preferences", tr("Prefere&nces"))
+							   .icon("configure")
+							   .noDefaultShortcut()
+							   .menuRole(QAction::PreferencesRole);
 
 #ifdef Q_OS_WIN32
 	QVector<QAction *> drivers;
-	drivers.append(makeAction("driverkistabletwindowsink", QCoreApplication::translate("dialogs::settingsdialog::Input", "KisTablet Windows Ink")).noDefaultShortcut().checkable().property("tabletdriver", int(tabletinput::Mode::KisTabletWinink)));
-	drivers.append(makeAction("driverkistabletwintab", QCoreApplication::translate("dialogs::settingsdialog::Input", "KisTablet Wintab")).noDefaultShortcut().checkable().property("tabletdriver", int(tabletinput::Mode::KisTabletWintab)));
-	drivers.append(makeAction("driverkistabletwintabrelative", QCoreApplication::translate("dialogs::settingsdialog::Input", "KisTablet Wintab Relative")).noDefaultShortcut().checkable().property("tabletdriver", int(tabletinput::Mode::KisTabletWintabRelativePenHack)));
+	drivers.append(
+		makeAction(
+			"driverkistabletwindowsink",
+			QCoreApplication::translate(
+				"dialogs::settingsdialog::Input", "KisTablet Windows Ink"))
+			.noDefaultShortcut()
+			.checkable()
+			.property("tabletdriver", int(tabletinput::Mode::KisTabletWinink)));
+	drivers.append(
+		makeAction(
+			"driverkistabletwintab",
+			QCoreApplication::translate(
+				"dialogs::settingsdialog::Input", "KisTablet Wintab"))
+			.noDefaultShortcut()
+			.checkable()
+			.property("tabletdriver", int(tabletinput::Mode::KisTabletWintab)));
+	drivers.append(
+		makeAction(
+			"driverkistabletwintabrelative",
+			QCoreApplication::translate(
+				"dialogs::settingsdialog::Input", "KisTablet Wintab Relative"))
+			.noDefaultShortcut()
+			.checkable()
+			.property(
+				"tabletdriver",
+				int(tabletinput::Mode::KisTabletWintabRelativePenHack)));
 #	if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	drivers.append(makeAction("driverqt5", QCoreApplication::translate("dialogs::settingsdialog::Input", "Qt5")).noDefaultShortcut().checkable().property("tabletdriver", int(tabletinput::Mode::Qt5)));
+	drivers.append(
+		makeAction(
+			"driverqt5", QCoreApplication::translate(
+							 "dialogs::settingsdialog::Input", "Qt5"))
+			.noDefaultShortcut()
+			.checkable()
+			.property("tabletdriver", int(tabletinput::Mode::Qt5)));
 #	else
-	drivers.append(makeAction("driverqt6windowsink", QCoreApplication::translate("dialogs::settingsdialog::Input", "Qt6 Windows Ink")).noDefaultShortcut().checkable().property("tabletdriver", int(tabletinput::Mode::Qt6Winink)));
-	drivers.append(makeAction("driverqt6wintab", QCoreApplication::translate("dialogs::settingsdialog::Input", "Qt6 Wintab")).noDefaultShortcut().checkable().property("tabletdriver", int(tabletinput::Mode::Qt6Wintab)));
+	drivers.append(
+		makeAction(
+			"driverqt6windowsink",
+			QCoreApplication::translate(
+				"dialogs::settingsdialog::Input", "Qt6 Windows Ink"))
+			.noDefaultShortcut()
+			.checkable()
+			.property("tabletdriver", int(tabletinput::Mode::Qt6Winink)));
+	drivers.append(
+		makeAction(
+			"driverqt6wintab",
+			QCoreApplication::translate(
+				"dialogs::settingsdialog::Input", "Qt6 Wintab"))
+			.noDefaultShortcut()
+			.checkable()
+			.property("tabletdriver", int(tabletinput::Mode::Qt6Wintab)));
 #	endif
 #endif
 
@@ -5814,21 +5974,19 @@ void MainWindow::createDocks()
 
 	// Create color docks
 	//: "Wheel" refers to the color wheel.
-	m_dockColorSpinner = new docks::ColorSpinnerDock(tr("Wheel"), this);
+	m_dockColorSpinner = new docks::ColorSpinnerDock(this);
 	m_dockColorSpinner->setObjectName("colorspinnerdock");
 	m_dockColorSpinner->setAllowedAreas(Qt::AllDockWidgetAreas);
 
-	m_dockColorPalette = new docks::ColorPaletteDock(tr("Palette"), this);
+	m_dockColorPalette = new docks::ColorPaletteDock(this);
 	m_dockColorPalette->setObjectName("colorpalettedock");
 	m_dockColorPalette->setAllowedAreas(Qt::AllDockWidgetAreas);
 
-	//: "Sliders" refers to the RGB and HSV sliders.
-	m_dockColorSliders = new docks::ColorSliderDock(tr("Sliders"), this);
+	m_dockColorSliders = new docks::ColorSliderDock(this);
 	m_dockColorSliders->setObjectName("colorsliderdock");
 	m_dockColorSliders->setAllowedAreas(Qt::AllDockWidgetAreas);
 
-	//: "Circle" refers to an artistic color circle.
-	m_dockColorCircle = new docks::ColorCircleDock(tr("Circle"), this);
+	m_dockColorCircle = new docks::ColorCircleDock(this);
 	m_dockColorCircle->setObjectName("colorcircledock");
 	m_dockColorCircle->setAllowedAreas(Qt::AllDockWidgetAreas);
 
@@ -5848,7 +6006,7 @@ void MainWindow::createDocks()
 	m_dockTimeline->setAllowedAreas(Qt::AllDockWidgetAreas);
 
 	// Create onion skin settings
-	m_dockOnionSkins = new docks::OnionSkinsDock(tr("Onion Skins"), this);
+	m_dockOnionSkins = new docks::OnionSkinsDock(this);
 	m_dockOnionSkins->setObjectName("onionskins");
 	m_dockOnionSkins->setAllowedAreas(Qt::AllDockWidgetAreas);
 }

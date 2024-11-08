@@ -72,8 +72,8 @@ struct ColorSpinnerDock::Private {
 	bool updating = false;
 };
 
-ColorSpinnerDock::ColorSpinnerDock(const QString &title, QWidget *parent)
-	: DockBase(title, parent)
+ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
+	: DockBase(tr("Color Wheel"), tr("Wheel"), parent)
 	, d(new Private)
 {
 	// Create title bar widget

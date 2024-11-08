@@ -14,7 +14,7 @@ namespace docks {
 class ColorPaletteDock final : public DockBase {
 	Q_OBJECT
 public:
-	ColorPaletteDock(const QString &title, QWidget *parent);
+	explicit ColorPaletteDock(QWidget *parent);
 	~ColorPaletteDock() override;
 
 public slots:

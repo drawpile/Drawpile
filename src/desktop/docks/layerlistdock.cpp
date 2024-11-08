@@ -35,7 +35,7 @@
 namespace docks {
 
 LayerList::LayerList(QWidget *parent)
-	: DockBase(tr("Layers"), parent)
+	: DockBase(tr("Layers"), QString(), parent)
 	, m_canvas(nullptr)
 	, m_selectedId(0)
 	, m_nearestToDeletedId(0)

@@ -14,7 +14,7 @@ namespace docks {
 class OnionSkinsDock final : public DockBase {
 	Q_OBJECT
 public:
-	OnionSkinsDock(const QString &title, QWidget *parent);
+	explicit OnionSkinsDock(QWidget *parent);
 	~OnionSkinsDock() override;
 
 	void triggerUpdate();

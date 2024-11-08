@@ -112,8 +112,8 @@ struct OnionSkinsDock::Private {
 	QVector<QSlider *> skinsBelowSliders = {};
 };
 
-OnionSkinsDock::OnionSkinsDock(const QString &title, QWidget *parent)
-	: DockBase{title, parent}
+OnionSkinsDock::OnionSkinsDock(QWidget *parent)
+	: DockBase(tr("Onion Skins"), QString(), parent)
 	, d{new Private}
 {
 	TitleWidget *titlebar = new TitleWidget{this};

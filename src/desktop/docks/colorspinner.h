@@ -24,7 +24,7 @@ namespace docks {
 class ColorSpinnerDock final : public DockBase {
 	Q_OBJECT
 public:
-	ColorSpinnerDock(const QString &title, QWidget *parent);
+	explicit ColorSpinnerDock(QWidget *parent);
 	~ColorSpinnerDock() override;
 
 #ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW

@@ -4,16 +4,10 @@
 
 namespace docks {
 
-DockBase::DockBase(QWidget *parent)
-	: QDockWidget{parent}
-{
-#ifdef Q_OS_MACOS
-	initConnection();
-#endif
-}
-
-DockBase::DockBase(QString title, QWidget *parent)
-	: QDockWidget{title, parent}
+DockBase::DockBase(
+	const QString &fullTitle, const QString &shortTitle, QWidget *parent)
+	: QDockWidget(shortTitle.isEmpty() ? fullTitle : shortTitle, parent)
+	, m_fullTitle(fullTitle)
 {
 #ifdef Q_OS_MACOS
 	initConnection();

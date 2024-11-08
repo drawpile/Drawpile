@@ -68,8 +68,8 @@ struct ColorSliderDock::Private {
 	bool updating = false;
 };
 
-ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
-	: DockBase(title, parent)
+ColorSliderDock::ColorSliderDock(QWidget *parent)
+	: DockBase(tr("Color Sliders"), tr("Sliders"), parent)
 	, d(new Private)
 {
 	// Create title bar widget

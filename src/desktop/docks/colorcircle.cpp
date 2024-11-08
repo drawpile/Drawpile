@@ -20,8 +20,8 @@
 
 namespace docks {
 
-ColorCircleDock::ColorCircleDock(const QString &title, QWidget *parent)
-	: DockBase(title, parent)
+ColorCircleDock::ColorCircleDock(QWidget *parent)
+	: DockBase(tr("Color Circle"), tr("Circle"), parent)
 {
 	TitleWidget *titlebar = new TitleWidget(this);
 	setTitleBarWidget(titlebar);

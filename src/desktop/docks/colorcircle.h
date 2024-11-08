@@ -33,7 +33,7 @@ namespace docks {
 class ColorCircleDock final : public DockBase {
 	Q_OBJECT
 public:
-	ColorCircleDock(const QString &title, QWidget *parent);
+	explicit ColorCircleDock(QWidget *parent);
 
 	void setColor(const QColor &color);
 	void setLastUsedColors(const color_widgets::ColorPalette &pal);

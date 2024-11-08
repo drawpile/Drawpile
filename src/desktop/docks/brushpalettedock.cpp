@@ -97,7 +97,7 @@ struct BrushPalette::Private {
 };
 
 BrushPalette::BrushPalette(QWidget *parent)
-	: DockBase(parent)
+	: DockBase(tr("Brushes"), QString(), parent)
 	, d(new Private)
 {
 	d->tagModel = dpApp().brushPresets();
@@ -107,8 +107,6 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->presetProxyModel->setSourceModel(d->presetModel);
 	d->presetProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
 	d->presetProxyModel->setFilterRole(brushes::BrushPresetModel::FilterRole);
-
-	setWindowTitle(tr("Brushes"));
 
 	TitleWidget *titleWidget = new TitleWidget(this);
 	setTitleBarWidget(titleWidget);

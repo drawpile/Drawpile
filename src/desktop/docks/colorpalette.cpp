@@ -105,8 +105,8 @@ struct ColorPaletteDock::Private {
 	}
 };
 
-ColorPaletteDock::ColorPaletteDock(const QString &title, QWidget *parent)
-	: DockBase(title, parent)
+ColorPaletteDock::ColorPaletteDock(QWidget *parent)
+	: DockBase(tr("Color Palette"), tr("Palette"), parent)
 	, d(new Private)
 {
 	TitleWidget *titlebar = new TitleWidget(this);
