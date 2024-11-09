@@ -13,9 +13,9 @@ bool isAnimationFormatSupported(AnimationFormat format)
 	switch(format) {
 #if !defined(Q_OS_ANDROID) && !defined(__EMSCRIPTEN__)
 	case AnimationFormat::Frames:
-		return true;
 #endif
 	case AnimationFormat::Zip:
+		return true;
 #ifdef DP_LIBAV
 	case AnimationFormat::Gif:
 		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_PALETTE) &&
