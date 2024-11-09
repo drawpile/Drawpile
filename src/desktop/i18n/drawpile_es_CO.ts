@@ -589,7 +589,7 @@
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Imágenes de Fotograma</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -739,13 +739,13 @@
         <location line="-97"/>
         <location line="+3"/>
         <source>Fill continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Llenar área continuoso</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill all similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Llenar colores similares</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -795,7 +795,7 @@
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cancelar la llena pendiente; nadie va a ver sus efectos</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3001,7 +3001,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Choose the current background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Elegir color del fondo actual</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6658,7 +6658,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+198"/>
         <source>You can&apos;t join this session because:</source>
-        <translation type="unfinished"></translation>
+        <translation>No puedes entrar la sesión porque:</translation>
     </message>
     <message>
         <location line="+3"/>
