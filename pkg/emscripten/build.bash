@@ -173,6 +173,7 @@ configure() {
     "$build_prefix_dir/bin/qt-cmake" \
         -DCMAKE_BUILD_TYPE="$cmake_build_type" \
         -DCMAKE_PREFIX_PATH="$build_prefix_dir" \
+        -DCMAKE_INSTALL_PREFIX="$install_dir" \
         -DCMAKE_INTERPROCEDURAL_OPTIMIZATION="$cmake_interprocedural_optimization" \
         -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ON \
         -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=BOTH \
@@ -219,6 +220,7 @@ case $BUILD_TYPE in
 esac
 
 build_dir="buildem$BUILD_TYPE"
+install_dir="installem$BUILD_TYPE"
 build_source_dir="$SCRIPT_DIR/build$BUILD_TYPE/source"
 build_prefix_dir="$SCRIPT_DIR/build$BUILD_TYPE/prefix"
 host_source_dir="$SCRIPT_DIR/buildhost/source"
