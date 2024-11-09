@@ -5154,8 +5154,8 @@ void MainWindow::setupActions()
 	//
 	// Select menu
 	//
-	// Deselect is not defined on macOS and Windows.
-#if defined(Q_OS_MACOS) || defined(Q_OS_WIN)
+	// Deselect is not defined on most systems.
+#ifndef Q_OS_LINUX
 #	define DESELECT_SHORTCUT "Ctrl+Shift+A"
 #else
 #	define DESELECT_SHORTCUT QKeySequence::Deselect
