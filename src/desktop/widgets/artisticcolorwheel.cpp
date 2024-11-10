@@ -215,11 +215,13 @@ void ArtisticColorWheel::paintEvent(QPaintEvent *event)
 	painter.setRenderHint(QPainter::Antialiasing);
 
 	QRect r = rect();
+	int minDimension = qMin(r.width(), r.height());
+	int triangleSize = minDimension >= 180 ? 64 : qRound(minDimension / 2.8125);
 	painter.setBrush(m_color);
 	painter.setPen(Qt::NoPen);
 	painter.drawConvexPolygon(QPolygon(
-		{QPoint(r.right() - 64, r.top()), r.topRight(),
-		 QPoint(r.right(), r.top() + 64)}));
+		{QPoint(r.right() - triangleSize, r.top()), r.topRight(),
+		 QPoint(r.right(), r.top() + triangleSize)}));
 
 	QRect vr = valueBarRect();
 	updateBarCache(QSize(qRound(vr.width() * dpr), qRound(vr.height() * dpr)));
