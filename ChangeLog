@@ -1,5 +1,6 @@
 Unreleased Version 2.2.2-pre
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.
+ * Fix: Make temporary tool switches by holding a key down work again. Thanks 3rd_EFNO and bunnie for reporting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

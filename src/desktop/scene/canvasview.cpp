@@ -1541,7 +1541,6 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 		return;
 	}
 
-	event->accept();
 	m_keysDown.insert(Qt::Key(event->key()));
 
 	if(m_dragmode == ViewDragMode::Started && m_dragButton != Qt::NoButton) {
@@ -1652,7 +1651,6 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 		return;
 	}
 
-	event->accept();
 	bool wasDragging = m_dragmode == ViewDragMode::Started;
 	if(wasDragging) {
 		CanvasShortcuts::Match dragMatch =

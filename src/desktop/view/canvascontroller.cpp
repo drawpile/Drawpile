@@ -766,7 +766,6 @@ void CanvasController::handleKeyPress(QKeyEvent *event)
 		return;
 	}
 
-	event->accept();
 	m_keysDown.insert(Qt::Key(key));
 
 	Qt::KeyboardModifiers modifiers = getKeyboardModifiers(event);
@@ -879,7 +878,6 @@ void CanvasController::handleKeyRelease(QKeyEvent *event)
 		return;
 	}
 
-	event->accept();
 	bool wasDragging = m_dragMode == ViewDragMode::Started;
 	if(wasDragging) {
 		CanvasShortcuts::Match dragMatch =
