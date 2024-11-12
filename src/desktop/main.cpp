@@ -9,6 +9,7 @@
 #include "desktop/utils/globalkeyeventfilter.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/recents.h"
+#include "dpcommon/platform_qt.h"
 #include "libclient/brushes/brushpresetmodel.h"
 #include "libclient/drawdance/global.h"
 #include "libclient/utils/colorscheme.h"
@@ -1125,6 +1126,7 @@ extern "C" void drawpileMain(int argc, char **argv)
 	DrawpileApp appInstance(argc, argv);
 	DrawpileApp *app = &appInstance;
 #endif
+	DP_QT_LOCALE_RESET();
 
 	compat::disableImageReaderAllocationLimit();
 	startApplication(app);

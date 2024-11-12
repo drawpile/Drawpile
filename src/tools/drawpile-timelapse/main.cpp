@@ -51,6 +51,7 @@ static QString writeDefaultLogo()
 int main(int argc, char **argv)
 {
 	QCoreApplication app(argc, argv);
+	DP_QT_LOCALE_RESET();
 	app.setOrganizationName("drawpile");
 	app.setOrganizationDomain("drawpile.net");
 	app.setApplicationName("drawpile-timelapse");

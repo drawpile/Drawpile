@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "cmake-config/config.h"
+#include "dpcommon/platform_qt.h"
 #include "libserver/jsonapi.h" // for datatype registration
 #include "thinsrv/headless/headless.h"
 #include "thinsrv/initsys.h"
@@ -56,7 +57,7 @@ int main(int argc, char *argv[])
 #else
 	app.reset(new QCoreApplication(argc, argv));
 #endif
-
+	DP_QT_LOCALE_RESET();
 
 	// Set common settings
 	QCoreApplication::setOrganizationName("drawpile");
