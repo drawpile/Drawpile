@@ -42,11 +42,6 @@ QVariant KeyFrameLayerModel::data(const QModelIndex &index, int role) const
 	return QVariant{};
 }
 
-Qt::ItemFlags KeyFrameLayerModel::flags(const QModelIndex &index) const
-{
-	return QAbstractItemModel::flags(index) & ~Qt::ItemIsSelectable;
-}
-
 int KeyFrameLayerModel::rowCount(const QModelIndex &parent) const
 {
 	if(parent.isValid()) {

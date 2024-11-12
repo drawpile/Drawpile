@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/keyframepropertiesdialog.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/groupedtoolbutton.h"
 #include "libclient/utils/keyframelayermodel.h"
 #include <QDialogButtonBox>
 #include <QFormLayout>
+#include <QHBoxLayout>
+#include <QKeyEvent>
 #include <QLineEdit>
 #include <QMouseEvent>
 #include <QPainter>
@@ -26,8 +29,11 @@ void KeyFramePropertiesDialogLayerDelegate::paint(
 	const QModelIndex &index) const
 {
 	QStyleOptionViewItem opt = setOptions(index, option);
-	painter->save();
-	drawBackground(painter, option, index);
+	if(!index.data(KeyFrameLayerModel::IsVisibleRole).toBool()) {
+		opt.state &= ~QStyle::State_Enabled;
+	}
+
+	drawBackground(painter, opt, index);
 
 	const KeyFrameLayerItem &item = index.data().value<KeyFrameLayerItem>();
 	drawIcon(
@@ -37,11 +43,7 @@ void KeyFramePropertiesDialogLayerDelegate::paint(
 		painter, revealedRect(opt.rect), m_revealedIcon,
 		item.visibility == KeyFrameLayerItem::Visibility::Revealed);
 
-	if(!index.data(KeyFrameLayerModel::IsVisibleRole).toBool()) {
-		opt.state &= ~QStyle::State_Enabled;
-	}
 	drawDisplay(painter, opt, textRect(opt.rect), item.title);
-	painter->restore();
 }
 
 bool KeyFramePropertiesDialogLayerDelegate::editorEvent(
@@ -130,12 +132,50 @@ KeyFramePropertiesDialog::KeyFramePropertiesDialog(
 	m_titleEdit = new QLineEdit;
 	layout->addRow(tr("Title:"), m_titleEdit);
 
+	QHBoxLayout *searchLayout = new QHBoxLayout;
+	searchLayout->setSpacing(0);
+	layout->addRow(searchLayout);
+
+	m_searchEdit = new QLineEdit;
+	m_searchEdit->setClearButtonEnabled(true);
+	m_searchEdit->setPlaceholderText(tr("Search…"));
+	m_searchEdit->addAction(
+		QIcon::fromTheme("edit-find"), QLineEdit::LeadingPosition);
+	searchLayout->addWidget(m_searchEdit, 1);
+	connect(
+		m_searchEdit, &QLineEdit::textChanged, this,
+		&KeyFramePropertiesDialog::updateSearch);
+
+	searchLayout->addSpacing(4);
+
+	m_searchPrevButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
+	m_searchPrevButton->setIcon(QIcon::fromTheme("arrow-up"));
+	m_searchPrevButton->setToolTip(tr("Previous"));
+	m_searchPrevButton->setEnabled(false);
+	searchLayout->addWidget(m_searchPrevButton);
+	connect(
+		m_searchPrevButton, &widgets::GroupedToolButton::clicked, this,
+		&KeyFramePropertiesDialog::selectPreviousSearchResult);
+
+	m_searchNextButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+	m_searchNextButton->setIcon(QIcon::fromTheme("arrow-down"));
+	m_searchNextButton->setToolTip(tr("Next"));
+	m_searchNextButton->setEnabled(false);
+	searchLayout->addWidget(m_searchNextButton);
+	connect(
+		m_searchNextButton, &widgets::GroupedToolButton::clicked, this,
+		&KeyFramePropertiesDialog::selectNextSearchResult);
+
 	m_layerTree = new QTreeView;
 	m_layerTree->setEnabled(false);
 	m_layerTree->setHeaderHidden(true);
 	m_layerTree->setItemDelegate(m_layerDelegate);
+	m_layerTree->setSelectionMode(QAbstractItemView::SingleSelection);
+
 	utils::bindKineticScrolling(m_layerTree);
-	layout->addRow(tr("Filter Layers:"), m_layerTree);
+	layout->addRow(m_layerTree);
 
 	m_buttons = new QDialogButtonBox{
 		QDialogButtonBox::Ok | QDialogButtonBox::Apply |
@@ -170,6 +210,108 @@ void KeyFramePropertiesDialog::setKeyFrameLayers(KeyFrameLayerModel *layerModel)
 			m_layerDelegate,
 			&KeyFramePropertiesDialogLayerDelegate::toggleVisibility,
 			layerModel, &KeyFrameLayerModel::toggleVisibility);
+	}
+}
+
+void KeyFramePropertiesDialog::keyPressEvent(QKeyEvent *event)
+{
+	if(m_searchEdit->hasFocus()) {
+		switch(event->key()) {
+		case Qt::Key_Return:
+		case Qt::Key_Enter: {
+			Qt::KeyboardModifiers mods = event->modifiers();
+			if(mods.testFlag(Qt::ControlModifier)) {
+				m_buttons->button(QDialogButtonBox::Ok)->click();
+			} else if(mods.testFlag(Qt::ShiftModifier)) {
+				selectPreviousSearchResult();
+			} else {
+				selectNextSearchResult();
+			}
+			return;
+		}
+		case Qt::Key_Down:
+		case Qt::Key_PageDown:
+			selectNextSearchResult();
+			return;
+		case Qt::Key_Up:
+		case Qt::Key_PageUp:
+			selectPreviousSearchResult();
+			return;
+		default:
+			break;
+		}
+	}
+	QDialog::keyPressEvent(event);
+}
+
+void KeyFramePropertiesDialog::showEvent(QShowEvent *event)
+{
+	QDialog::showEvent(event);
+	m_searchEdit->setFocus();
+}
+
+void KeyFramePropertiesDialog::updateSearch(const QString &text)
+{
+	QString search = text.trimmed();
+	m_searchResults.clear();
+	m_searchResultIndex = 0;
+	if(!search.isEmpty() && m_layerModel) {
+		updateSearchRecursive(
+			search, QModelIndex(), m_layerTree->currentIndex());
+	}
+
+	int resultCount = m_searchResults.size();
+	if(m_searchResultIndex >= resultCount) {
+		m_searchResultIndex = 0;
+	}
+
+	bool haveResults = resultCount != 0;
+	m_searchNextButton->setEnabled(haveResults);
+	m_searchPrevButton->setEnabled(haveResults);
+	if(haveResults) {
+		const QModelIndex idx = m_searchResults[m_searchResultIndex];
+		m_layerTree->scrollTo(idx, QTreeView::PositionAtCenter);
+		m_layerTree->setCurrentIndex(idx);
+	}
+}
+
+void KeyFramePropertiesDialog::updateSearchRecursive(
+	const QString &search, const QModelIndex &parent,
+	const QModelIndex &current)
+{
+	int count = m_layerModel->rowCount(parent);
+	for(int i = 0; i < count; ++i) {
+		QModelIndex idx = m_layerModel->index(i, 0, parent);
+		if(current.isValid() && idx == current) {
+			m_searchResultIndex = m_searchResults.count();
+		}
+
+		const KeyFrameLayerItem &item = idx.data().value<KeyFrameLayerItem>();
+		if(item.title.contains(search, Qt::CaseInsensitive)) {
+			m_searchResults.append(idx);
+		}
+
+		updateSearchRecursive(search, idx, current);
+	}
+}
+
+void KeyFramePropertiesDialog::selectPreviousSearchResult()
+{
+	int count = m_searchResults.size();
+	if(count != 0) {
+		m_searchResultIndex =
+			m_searchResultIndex > 0 ? m_searchResultIndex - 1 : count - 1;
+		m_layerTree->setCurrentIndex(m_searchResults[m_searchResultIndex]);
+	}
+}
+
+void KeyFramePropertiesDialog::selectNextSearchResult()
+{
+	int count = m_searchResults.size();
+	if(count != 0) {
+		m_searchResultIndex =
+			m_searchResultIndex < count - 1 ? m_searchResultIndex + 1 : 0;
+		m_layerTree->setCurrentIndex(m_searchResults[m_searchResultIndex]);
 	}
 }
 

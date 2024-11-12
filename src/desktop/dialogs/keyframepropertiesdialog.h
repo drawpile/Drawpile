@@ -3,6 +3,7 @@
 #define DESKTOP_DIALOGS_KEYFRAMEPROPERTIESDIALOG_H
 #include <QDialog>
 #include <QItemDelegate>
+#include <QModelIndexList>
 
 class KeyFrameLayerModel;
 class QAbstractButton;
@@ -10,6 +11,10 @@ class QDialogButtonBox;
 class QLineEdit;
 class QTreeView;
 struct KeyFrameLayerItem;
+
+namespace widgets {
+class GroupedToolButton;
+}
 
 namespace dialogs {
 
@@ -65,17 +70,31 @@ signals:
 		int trackId, int frame, const QString &title,
 		const QHash<int, bool> layerVisibility);
 
-private slots:
-	void buttonClicked(QAbstractButton *button);
+protected:
+	void keyPressEvent(QKeyEvent *event) override;
+	void showEvent(QShowEvent *event) override;
 
 private:
+	void updateSearch(const QString &text);
+	void updateSearchRecursive(
+		const QString &search, const QModelIndex &parent,
+		const QModelIndex &current);
+	void selectPreviousSearchResult();
+	void selectNextSearchResult();
+	void buttonClicked(QAbstractButton *button);
+
 	int m_trackId;
 	int m_frame;
 	KeyFrameLayerModel *m_layerModel = nullptr;
 	KeyFramePropertiesDialogLayerDelegate *m_layerDelegate;
 	QLineEdit *m_titleEdit;
+	QLineEdit *m_searchEdit;
+	widgets::GroupedToolButton *m_searchPrevButton;
+	widgets::GroupedToolButton *m_searchNextButton;
 	QTreeView *m_layerTree;
 	QDialogButtonBox *m_buttons;
+	QModelIndexList m_searchResults;
+	int m_searchResultIndex = -1;
 };
 
 }
