@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/keyframepropertiesdialog.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/utils/keyframelayermodel.h"
@@ -16,9 +15,9 @@ namespace dialogs {
 
 KeyFramePropertiesDialogLayerDelegate::KeyFramePropertiesDialogLayerDelegate(
 	QObject *parent)
-	: QItemDelegate{parent}
-	, m_hiddenIcon{QIcon::fromTheme("view-hidden")}
-	, m_revealedIcon{QIcon::fromTheme("view-visible")}
+	: QItemDelegate(parent)
+	, m_hiddenIcon(QIcon::fromTheme("view-hidden"))
+	, m_revealedIcon(QIcon::fromTheme("view-visible"))
 {
 }
 
@@ -118,21 +117,20 @@ QRect KeyFramePropertiesDialogLayerDelegate::textRect(const QRect &rect)
 
 KeyFramePropertiesDialog::KeyFramePropertiesDialog(
 	int trackId, int frame, QWidget *parent)
-	: QDialog{parent}
-	, m_trackId{trackId}
-	, m_frame{frame}
-	, m_layerModel{nullptr}
-	, m_layerDelegate{new KeyFramePropertiesDialogLayerDelegate{this}}
+	: QDialog(parent)
+	, m_trackId(trackId)
+	, m_frame(frame)
+	, m_layerDelegate(new KeyFramePropertiesDialogLayerDelegate(this))
 {
 	setWindowTitle(tr("Key Frame Properties"));
 	resize(400, 400);
 
-	QFormLayout *layout = new QFormLayout{this};
+	QFormLayout *layout = new QFormLayout(this);
 
-	m_titleEdit = new QLineEdit{this};
+	m_titleEdit = new QLineEdit;
 	layout->addRow(tr("Title:"), m_titleEdit);
 
-	m_layerTree = new QTreeView{this};
+	m_layerTree = new QTreeView;
 	m_layerTree->setEnabled(false);
 	m_layerTree->setHeaderHidden(true);
 	m_layerTree->setItemDelegate(m_layerDelegate);
@@ -185,7 +183,7 @@ void KeyFramePropertiesDialog::buttonClicked(QAbstractButton *button)
 		emit keyFramePropertiesChanged(
 			m_trackId, m_frame, m_titleEdit->text(),
 			m_layerModel ? m_layerModel->layerVisibility()
-						 : QHash<int, bool>{});
+						 : QHash<int, bool>());
 	}
 
 	if(okPressed) {

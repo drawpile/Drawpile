@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef KEYFRAMEPROPERTIESDIALOG_H
-#define KEYFRAMEPROPERTIESDIALOG_H
-
+#ifndef DESKTOP_DIALOGS_KEYFRAMEPROPERTIESDIALOG_H
+#define DESKTOP_DIALOGS_KEYFRAMEPROPERTIESDIALOG_H
 #include <QDialog>
 #include <QItemDelegate>
 
@@ -73,7 +71,7 @@ private slots:
 private:
 	int m_trackId;
 	int m_frame;
-	KeyFrameLayerModel *m_layerModel;
+	KeyFrameLayerModel *m_layerModel = nullptr;
 	KeyFramePropertiesDialogLayerDelegate *m_layerDelegate;
 	QLineEdit *m_titleEdit;
 	QTreeView *m_layerTree;
