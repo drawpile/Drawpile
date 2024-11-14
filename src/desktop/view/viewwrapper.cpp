@@ -304,11 +304,17 @@ void ViewWrapper::connectDocument(Document *doc)
 		toolCtrl, &tools::ToolController::zoomRequested, m_controller,
 		&CanvasController::zoomTo);
 	connect(
+		toolCtrl, &tools::ToolController::foregroundColorChanged, m_scene,
+		&CanvasScene::setForegroundColor);
+	connect(
 		toolCtrl, &tools::ToolController::colorUsed, m_scene,
 		&CanvasScene::setComparisonColor);
 	connect(
-		toolCtrl, &tools::ToolController::colorPickRequested, m_scene,
-		&CanvasScene::setColorPick);
+		toolCtrl, &tools::ToolController::showColorPickRequested, m_scene,
+		&CanvasScene::showColorPick);
+	connect(
+		toolCtrl, &tools::ToolController::hideColorPickRequested, m_scene,
+		&CanvasScene::hideColorPick);
 	connect(
 		toolCtrl, &tools::ToolController::maskPreviewRequested, m_scene,
 		&CanvasScene::setMaskPreview);
@@ -442,7 +448,7 @@ void ViewWrapper::connectToolSettings(docks::ToolSettings *toolSettings)
 		&docks::ToolSettings::setForegroundColor);
 	connect(
 		m_controller, &CanvasController::quickAdjust, toolSettings,
-		&docks::ToolSettings::quickAdjustCurrent1);
+		&docks::ToolSettings::quickAdjust);
 
 	tools::BrushSettings *brushSettings = toolSettings->brushSettings();
 	connect(

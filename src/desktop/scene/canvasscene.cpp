@@ -886,6 +886,14 @@ void CanvasScene::setOutlineVisibleInMode(bool visibleInMode)
 	m_outlineItem->setVisibleInMode(visibleInMode);
 }
 
+void CanvasScene::setForegroundColor(const QColor &foregroundColor)
+{
+	m_foregroundColor = foregroundColor;
+	if(m_colorPick) {
+		m_colorPick->setColor(foregroundColor);
+	}
+}
+
 void CanvasScene::setComparisonColor(const QColor &comparisonColor)
 {
 	m_comparisonColor = comparisonColor;
@@ -894,23 +902,25 @@ void CanvasScene::setComparisonColor(const QColor &comparisonColor)
 	}
 }
 
-bool CanvasScene::setColorPick(
-	int source, const QPointF &pos, const QColor &color)
+bool CanvasScene::showColorPick(int source, const QPointF &pos)
 {
-	if(ColorPickItem::shouldShow(source, m_colorPickVisibility, color)) {
-		if(m_colorPick) {
-			m_colorPick->setColor(color);
-		} else {
-			m_colorPick = new ColorPickItem(color, m_comparisonColor);
+	if(ColorPickItem::shouldShow(source, m_colorPickVisibility)) {
+		if(!m_colorPick) {
+			m_colorPick =
+				new ColorPickItem(m_foregroundColor, m_comparisonColor);
 			addItem(m_colorPick);
 		}
 		m_colorPick->updatePosition(pos);
 		return true;
 	} else {
-		delete m_colorPick;
-		m_colorPick = nullptr;
-		return false;
+		return m_colorPick;
 	}
+}
+
+void CanvasScene::hideColorPick()
+{
+	delete m_colorPick;
+	m_colorPick = nullptr;
 }
 
 void CanvasScene::setColorPickVisibility(int colorPickVisibility)

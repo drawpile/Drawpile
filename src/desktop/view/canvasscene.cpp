@@ -359,6 +359,14 @@ void CanvasScene::setOutline(
 	}
 }
 
+void CanvasScene::setForegroundColor(const QColor &foregroundColor)
+{
+	m_foregroundColor = foregroundColor;
+	if(m_colorPick) {
+		m_colorPick->setColor(foregroundColor);
+	}
+}
+
 void CanvasScene::setComparisonColor(const QColor &comparisonColor)
 {
 	m_comparisonColor = comparisonColor;
@@ -367,14 +375,38 @@ void CanvasScene::setComparisonColor(const QColor &comparisonColor)
 	}
 }
 
-bool CanvasScene::setColorPick(
-	int source, const QPointF &pos, const QColor &color)
+bool CanvasScene::showColorPick(int source, const QPointF &pos)
 {
-	if(ColorPickItem::shouldShow(source, m_colorPickVisibility, color)) {
-		if(m_colorPick) {
-			m_colorPick->setColor(color);
-		} else {
-			m_colorPick = new ColorPickItem(color, m_comparisonColor);
+	if(ColorPickItem::shouldShow(source, m_colorPickVisibility)) {
+		if(!m_colorPick) {
+			m_colorPick =
+				new ColorPickItem(m_foregroundColor, m_comparisonColor);
+			addSceneItem(m_colorPick);
+		}
+		m_colorPick->updatePosition(pos);
+		return true;
+	} else {
+		return m_colorPick;
+	}
+}
+
+void CanvasScene::hideColorPick()
+{
+	delete m_colorPick;
+	m_colorPick = nullptr;
+}
+
+void CanvasScene::setColorPickVisibility(int colorPickVisibility)
+{
+	m_colorPickVisibility = colorPickVisibility;
+}
+
+bool CanvasScene::setColorAdjust(bool visible, const QPointF &pos)
+{
+	if(visible) {
+		if(!m_colorPick) {
+			m_colorPick =
+				new ColorPickItem(m_foregroundColor, m_comparisonColor);
 			addSceneItem(m_colorPick);
 		}
 		m_colorPick->updatePosition(pos);
@@ -384,11 +416,6 @@ bool CanvasScene::setColorPick(
 		m_colorPick = nullptr;
 		return false;
 	}
-}
-
-void CanvasScene::setColorPickVisibility(int colorPickVisibility)
-{
-	m_colorPickVisibility = colorPickVisibility;
 }
 
 #ifdef HAVE_EMULATED_BITMAP_CURSOR

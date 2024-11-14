@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/canvasshortcutsdialog.h"
-#include "ui_canvasshortcutsdialog.h"
 #include "libclient/utils/canvasshortcutsmodel.h"
+#include "ui_canvasshortcutsdialog.h"
 #include <QPushButton>
 
 namespace dialogs {
@@ -42,6 +42,12 @@ CanvasShortcutsDialog::CanvasShortcutsDialog(
 	d->ui.actionCombo->addItem(tr("Pick Layer"), CanvasShortcuts::LAYER_PICK);
 	d->ui.actionCombo->addItem(
 		tr("Change Brush Size"), CanvasShortcuts::TOOL_ADJUST);
+	d->ui.actionCombo->addItem(
+		tr("Change Color Hue"), CanvasShortcuts::COLOR_H_ADJUST);
+	d->ui.actionCombo->addItem(
+		tr("Change Color Saturation"), CanvasShortcuts::COLOR_S_ADJUST);
+	d->ui.actionCombo->addItem(
+		tr("Change Color Value"), CanvasShortcuts::COLOR_V_ADJUST);
 	d->ui.actionCombo->setCurrentIndex(0);
 
 	d->ui.constraintsCombo->addItem(
@@ -200,6 +206,9 @@ void CanvasShortcutsDialog::updateAction()
 	case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 	case CanvasShortcuts::CANVAS_ZOOM:
 	case CanvasShortcuts::TOOL_ADJUST:
+	case CanvasShortcuts::COLOR_H_ADJUST:
+	case CanvasShortcuts::COLOR_S_ADJUST:
+	case CanvasShortcuts::COLOR_V_ADJUST:
 		showModifiers = true;
 		break;
 	default:

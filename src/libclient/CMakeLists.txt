@@ -132,7 +132,7 @@ target_sources(dpclient PRIVATE
 	tools/clickdetector.h
 	tools/colorpicker.cpp
 	tools/colorpicker.h
-	tools/devicetype.h
+	tools/enums.h
 	tools/floodfill.cpp
 	tools/floodfill.h
 	tools/freehand.cpp

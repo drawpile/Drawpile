@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef LIBCLIENT_TOOLS_CLICKDETECTOR_H
 #define LIBCLIENT_TOOLS_CLICKDETECTOR_H
-#include "libclient/tools/devicetype.h"
+#include "libclient/tools/enums.h"
 #include <QDeadlineTimer>
 #include <QGuiApplication>
 #include <QLineF>

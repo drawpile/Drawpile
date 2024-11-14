@@ -233,6 +233,7 @@ void ToolController::setForegroundColor(const QColor &color)
 		if(m_activeTool) {
 			m_activeTool->setForegroundColor(color);
 		}
+		emit foregroundColorChanged(color);
 	}
 }
 

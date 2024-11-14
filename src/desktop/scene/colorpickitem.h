@@ -23,7 +23,7 @@ public:
 	void setColor(const QColor &color);
 	void setComparisonColor(const QColor &comparisonColor);
 
-	static bool shouldShow(int source, int visibility, const QColor &color);
+	static bool shouldShow(int source, int visibility);
 	static int defaultVisibility();
 
 protected:

@@ -13,7 +13,7 @@
 #include "desktop/toolwidgets/selectionsettings.h"
 #include "desktop/toolwidgets/transformsettings.h"
 #include "desktop/toolwidgets/zoomsettings.h"
-#include "desktop/widgets/toolmessage.h"
+#include "libclient/tools/enums.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
 #include "libclient/tools/transform.h"
@@ -21,6 +21,7 @@
 #include <QLabel>
 #include <QStackedWidget>
 #include <QtColorWidgets/color_palette.hpp>
+#include <cmath>
 #include <utility>
 
 namespace docks {
@@ -669,6 +670,38 @@ void ToolSettings::changeForegroundColor()
 void ToolSettings::changeBackgroundColor()
 {
 	d->backgroundColorDialog->showColor(d->backgroundColor);
+}
+
+void ToolSettings::quickAdjust(int type, qreal adjustment)
+{
+	switch(type) {
+	case int(tools::QuickAdjustType::Tool):
+		quickAdjustCurrent1(adjustment);
+		break;
+	case int(tools::QuickAdjustType::ColorH):
+		requestColorAdjustment(0, adjustment, 360.0);
+		break;
+	case int(tools::QuickAdjustType::ColorS):
+		requestColorAdjustment(1, adjustment, 256.0);
+		break;
+	case int(tools::QuickAdjustType::ColorV):
+		requestColorAdjustment(2, adjustment, 256.0);
+		break;
+	default:
+		qWarning("Unknown quick adjust type %d", type);
+		break;
+	}
+}
+
+void ToolSettings::requestColorAdjustment(
+	int channel, qreal adjustment, qreal max)
+{
+	int amount = qRound(adjustment / 60.0 * max);
+	if(adjustment < 0.0) {
+		emit colorAdjustRequested(channel, qMin(-1, amount));
+	} else if(adjustment > 0.0) {
+		emit colorAdjustRequested(channel, qMax(1, amount));
+	}
 }
 
 void ToolSettings::quickAdjustCurrent1(qreal adjustment)

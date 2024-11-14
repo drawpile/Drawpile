@@ -362,6 +362,9 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_dockColorSpinner, &docks::ColorSpinnerDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
 	connect(m_dockColorSliders, &docks::ColorSliderDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
 	connect(m_dockColorCircle, &docks::ColorCircleDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
+	connect(
+		m_dockToolSettings, &docks::ToolSettings::colorAdjustRequested,
+		m_dockColorSliders, &docks::ColorSliderDock::adjustColor);
 
 	// Dual color button
 	connect(

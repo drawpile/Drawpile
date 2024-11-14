@@ -5,6 +5,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Add a search bar to the key frame properties dialog.
  * Fix: Reset locale to "C" after Qt messes it up on startup. Thanks Meru for reporting.
  * Fix: Don't use bilinear interpolation in transforms unnecessarily.
+ * Feature: Add canvas shortcuts for changing color hue, saturation/chroma and value/lightness/luminosity. Thanks Dann DecCairns for suggesting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

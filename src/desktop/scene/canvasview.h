@@ -144,7 +144,7 @@ signals:
 	void penHover(
 		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip);
 	void penUp(bool constrain, bool center);
-	void quickAdjust(qreal value);
+	void quickAdjust(int type, qreal value);
 	void coordinatesChanged(const QPointF &coordinates);
 
 	void viewRectChange(const QPolygonF &viewport);
@@ -189,8 +189,8 @@ public slots:
 	void setViewFlip(bool flip);
 	void setViewMirror(bool mirror);
 
-	bool
-	setSceneColorPick(int source, const QPointF &posf, const QColor &color);
+	bool showSceneColorPick(int source, const QPointF &posfr);
+	void hideSceneColorPick();
 
 	void setLockReasons(QFlags<view::Lock::Reason> reasons);
 	void setLockDescription(const QString &lockDescription);
@@ -271,6 +271,8 @@ private:
 
 	enum class NotificationBarState { None, Reconnect, Reset };
 
+	class SetDragParams;
+
 	void startTabletEventTimer();
 
 	// unified mouse/stylus event handlers
@@ -294,11 +296,12 @@ private:
 
 	enum class ViewDragMode { None, Prepared, Started };
 
-	//! Drag the view
+	void wheelAdjust(QWheelEvent *event, int param, bool allowed, int delta);
+	void setDrag(const SetDragParams &params);
+	void dragAdjust(int type, int delta);
 	void moveDrag(const QPoint &point);
 	void pickColor(int source, const QPointF &point, const QPointF &posf);
 	void touchColorPick(const QPointF &posf);
-	void finishTouchColorPick();
 
 	QTransform fromCanvasTransform() const;
 	QTransform toCanvasTransform() const;

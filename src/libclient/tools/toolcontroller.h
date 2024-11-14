@@ -222,9 +222,10 @@ signals:
 	void stabilizerUseBrushSampleCountChanged(bool useBrushSampleCount);
 	void actionCancelled();
 
+	void foregroundColorChanged(const QColor &color);
 	void colorUsed(const QColor &color);
-	void
-	colorPickRequested(int source, const QPointF &pos, const QColor &color);
+	void showColorPickRequested(int source, const QPointF &pos);
+	void hideColorPickRequested();
 	void panRequested(int x, int y);
 	void zoomRequested(const QRect &rect, int steps);
 	void maskPreviewRequested(const QPoint &pos, const QImage &mask);

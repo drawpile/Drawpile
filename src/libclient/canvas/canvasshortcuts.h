@@ -31,6 +31,9 @@ public:
 		CONSTRAINT,
 		CANVAS_ROTATE_DISCRETE,
 		CANVAS_ROTATE_NO_SNAP,
+		COLOR_H_ADJUST,
+		COLOR_S_ADJUST,
+		COLOR_V_ADJUST,
 		ACTION_COUNT,
 	};
 
@@ -67,12 +70,22 @@ public:
 
 	struct Match {
 		const Shortcut *shortcut;
-		Action action() { return shortcut ? shortcut->action : NO_ACTION; }
-		unsigned int flags() { return shortcut ? shortcut->flags : NORMAL; }
-		bool inverted() { return flags() & Flag::INVERTED; }
-		bool swapAxes() { return flags() & Flag::SWAP_AXES; }
 
-		bool isUnmodifiedClick(Qt::MouseButton button)
+		Action action() const
+		{
+			return shortcut ? shortcut->action : NO_ACTION;
+		}
+
+		unsigned int flags() const
+		{
+			return shortcut ? shortcut->flags : NORMAL;
+		}
+
+		bool inverted() const { return flags() & Flag::INVERTED; }
+
+		bool swapAxes() const { return flags() & Flag::SWAP_AXES; }
+
+		bool isUnmodifiedClick(Qt::MouseButton button) const
 		{
 			return shortcut && shortcut->isUnmodifiedClick(button);
 		}
@@ -80,8 +93,8 @@ public:
 
 	struct ConstraintMatch {
 		unsigned int flags;
-		bool toolConstraint1() { return flags & Flag::TOOL_CONSTRAINT1; }
-		bool toolConstraint2() { return flags & Flag::TOOL_CONSTRAINT2; }
+		bool toolConstraint1() const { return flags & Flag::TOOL_CONSTRAINT1; }
+		bool toolConstraint2() const { return flags & Flag::TOOL_CONSTRAINT2; }
 	};
 
 	CanvasShortcuts();
@@ -111,6 +124,8 @@ public:
 
 	ConstraintMatch matchConstraints(
 		Qt::KeyboardModifiers mods, const QSet<Qt::Key> &keys) const;
+
+	static bool isColorAdjustAction(Action action);
 
 private:
 	static constexpr Qt::KeyboardModifiers MODS_MASK =

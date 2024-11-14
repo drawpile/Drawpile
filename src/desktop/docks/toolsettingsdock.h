@@ -84,8 +84,8 @@ public slots:
 	//! Toggle current tool's recolor mode (if it has one)
 	void toggleRecolorMode();
 
-	//! Quick adjust current tool
-	void quickAdjustCurrent1(qreal adjustment);
+	//! Quick adjust the parameter specified by the type.
+	void quickAdjust(int type, qreal adjustment);
 
 	//! Increase or decrease size for current tool by one step
 	void stepAdjustCurrent1(bool increase);
@@ -147,10 +147,14 @@ signals:
 
 	void showMessageRequested(const QString &message);
 
+	void colorAdjustRequested(int channel, int amount);
+
 private:
 	void selectTool(tools::Tool::Type tool);
 	void startTransformMove(bool onlyMask);
 	void clearTemporaryTransform();
+	void quickAdjustCurrent1(qreal adjustment);
+	void requestColorAdjustment(int channel, qreal adjustment, qreal max);
 	static bool hasBrushCursor(tools::Tool::Type tool);
 
 	struct Private;

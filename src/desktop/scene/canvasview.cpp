@@ -13,7 +13,7 @@ extern "C" {
 #include "desktop/widgets/notifbar.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/drawdance/eventlog.h"
-#include "libclient/tools/devicetype.h"
+#include "libclient/tools/enums.h"
 #include "libclient/tools/toolstate.h"
 #include "libshared/util/qtcompat.h"
 #include <QApplication>
@@ -35,6 +35,121 @@ using libclient::settings::zoomMax;
 using libclient::settings::zoomMin;
 
 namespace widgets {
+
+class CanvasView::SetDragParams {
+public:
+	static SetDragParams fromNone()
+	{
+		return SetDragParams(
+			CanvasShortcuts::Action::NO_ACTION, Qt::NoButton, Qt::NoModifier,
+			false, false, int(ViewDragMode::None));
+	}
+
+	static SetDragParams fromKeyMatch(const CanvasShortcuts::Match &match)
+	{
+		return SetDragParams(
+			match.action(), Qt::NoButton, match.shortcut->mods,
+			match.inverted(), match.swapAxes(), -1);
+	}
+
+	static SetDragParams fromMouseMatch(const CanvasShortcuts::Match &match)
+	{
+		return SetDragParams(
+			match.action(), match.shortcut->button, match.shortcut->mods,
+			match.inverted(), match.swapAxes(), -1);
+	}
+
+	CanvasShortcuts::Action action() const { return m_action; }
+	Qt::MouseButton button() const { return m_button; }
+	Qt::KeyboardModifiers modifiers() const { return m_modifiers; }
+	bool inverted() const { return m_inverted; }
+	bool swapAxes() const { return m_swapAxes; }
+
+	bool hasPenMode() const { return m_penMode != -1; }
+	PenMode penMode() const { return PenMode(m_penMode); }
+	SetDragParams &setPenMode(PenMode penMode)
+	{
+		m_penMode = int(penMode);
+		return *this;
+	}
+
+	bool isDragConditionFulfilled() const { return m_dragCondition; }
+	SetDragParams &setDragCondition(bool dragCondition)
+	{
+		m_dragCondition = dragCondition;
+		return *this;
+	}
+	SetDragParams &setDragConditionClearDragModeOnFailure(bool dragCondition)
+	{
+		m_dragCondition = dragCondition;
+		m_clearDragModeOnFailedCondition = true;
+		return *this;
+	}
+
+	bool hasDragMode() const { return m_dragMode != -1; }
+	ViewDragMode dragMode() const { return ViewDragMode(m_dragMode); }
+	SetDragParams &setDragMode(ViewDragMode dragMode)
+	{
+		m_dragMode = int(dragMode);
+		return *this;
+	}
+
+	bool resetDragPoints() const { return m_resetDragPoints; }
+	SetDragParams &setResetDragPoints()
+	{
+		m_resetDragPoints = true;
+		return *this;
+	}
+
+	bool resetDragRotation() const { return m_resetDragRotation; }
+	SetDragParams &setResetDragRotation()
+	{
+		m_resetDragRotation = true;
+		return *this;
+	}
+
+	bool updateOutline() const { return m_updateOutline; }
+	SetDragParams &setUpdateOutline()
+	{
+		m_updateOutline = true;
+		return *this;
+	}
+
+	bool resetCursor() const { return m_resetCursor; }
+	SetDragParams &setResetCursor()
+	{
+		m_resetCursor = true;
+		return *this;
+	}
+
+private:
+	SetDragParams(
+		CanvasShortcuts::Action action, Qt::MouseButton button,
+		Qt::KeyboardModifiers modifiers, bool inverted, bool swapAxes,
+		int dragMode)
+		: m_action(action)
+		, m_button(button)
+		, m_modifiers(modifiers)
+		, m_dragMode(dragMode)
+		, m_inverted(inverted)
+		, m_swapAxes(swapAxes)
+	{
+	}
+
+	CanvasShortcuts::Action m_action;
+	Qt::MouseButton m_button;
+	Qt::KeyboardModifiers m_modifiers;
+	int m_penMode = -1;
+	int m_dragMode;
+	bool m_inverted;
+	bool m_swapAxes;
+	bool m_dragCondition = true;
+	bool m_clearDragModeOnFailedCondition = false;
+	bool m_resetDragPoints = false;
+	bool m_resetDragRotation = false;
+	bool m_updateOutline = false;
+	bool m_resetCursor = false;
+};
 
 CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent)
@@ -183,7 +298,7 @@ CanvasView::CanvasView(QWidget *parent)
 		&CanvasView::touchColorPick, Qt::DirectConnection);
 	connect(
 		m_touch, &TouchHandler::touchColorPickFinished, this,
-		&CanvasView::finishTouchColorPick, Qt::DirectConnection);
+		&CanvasView::hideSceneColorPick, Qt::DirectConnection);
 }
 
 
@@ -758,6 +873,9 @@ void CanvasView::resetCursor()
 			setViewportCursor(m_zoomcursor);
 			break;
 		case CanvasShortcuts::TOOL_ADJUST:
+		case CanvasShortcuts::COLOR_H_ADJUST:
+		case CanvasShortcuts::COLOR_S_ADJUST:
+		case CanvasShortcuts::COLOR_V_ADJUST:
 			setViewportCursor(
 				m_dragSwapAxes ? Qt::SplitVCursor : Qt::SplitHCursor);
 			break;
@@ -910,10 +1028,10 @@ void CanvasView::focusInEvent(QFocusEvent *event)
 void CanvasView::clearKeys()
 {
 	m_keysDown.clear();
-	m_dragmode = ViewDragMode::None;
-	m_penmode = PenMode::Normal;
-	updateOutline();
-	resetCursor();
+	setDrag(SetDragParams::fromNone()
+				.setPenMode(PenMode::Normal)
+				.setUpdateOutline()
+				.setResetCursor());
 }
 
 bool CanvasView::isTouchDrawEnabled() const
@@ -1114,24 +1232,31 @@ void CanvasView::penPressEvent(
 	case CanvasShortcuts::NO_ACTION:
 		break;
 	case CanvasShortcuts::TOOL_ADJUST:
-		if(!m_allowToolAdjust) {
-			break;
-		}
-		Q_FALLTHROUGH();
+		setDrag(
+			SetDragParams::fromMouseMatch(match)
+				.setDragMode(ViewDragMode::Prepared)
+				.setDragCondition(
+					m_allowToolAdjust && m_dragmode != ViewDragMode::Started)
+				.setUpdateOutline());
+		break;
+	case CanvasShortcuts::COLOR_H_ADJUST:
+	case CanvasShortcuts::COLOR_S_ADJUST:
+	case CanvasShortcuts::COLOR_V_ADJUST:
+		setDrag(SetDragParams::fromMouseMatch(match)
+					.setDragMode(ViewDragMode::Prepared)
+					.setDragCondition(
+						m_allowColorPick && m_dragmode != ViewDragMode::Started)
+					.setUpdateOutline());
+		break;
 	case CanvasShortcuts::CANVAS_PAN:
 	case CanvasShortcuts::CANVAS_ROTATE:
 	case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
 	case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 	case CanvasShortcuts::CANVAS_ZOOM:
-		if(m_dragmode != ViewDragMode::Started) {
-			m_dragmode = ViewDragMode::Prepared;
-			m_dragAction = match.action();
-			m_dragButton = match.shortcut->button;
-			m_dragModifiers = match.shortcut->mods;
-			m_dragInverted = match.inverted();
-			m_dragSwapAxes = match.swapAxes();
-			updateOutline();
-		}
+		setDrag(SetDragParams::fromMouseMatch(match)
+					.setDragMode(ViewDragMode::Prepared)
+					.setDragCondition(m_dragmode != ViewDragMode::Started)
+					.setUpdateOutline());
 		break;
 	case CanvasShortcuts::COLOR_PICK:
 		if(m_allowColorPick) {
@@ -1316,15 +1441,14 @@ void CanvasView::penReleaseEvent(
 		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
 		case CanvasShortcuts::TOOL_ADJUST:
-			m_dragmode = ViewDragMode::Prepared;
-			m_dragAction = mouseMatch.action();
-			m_dragButton = mouseMatch.shortcut->button;
-			m_dragModifiers = mouseMatch.shortcut->mods;
-			m_dragInverted = mouseMatch.inverted();
-			m_dragSwapAxes = mouseMatch.swapAxes();
+		case CanvasShortcuts::COLOR_H_ADJUST:
+		case CanvasShortcuts::COLOR_S_ADJUST:
+		case CanvasShortcuts::COLOR_V_ADJUST:
+			setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+						.setDragMode(ViewDragMode::Prepared));
 			break;
 		default:
-			m_dragmode = ViewDragMode::None;
+			setDrag(SetDragParams::fromNone());
 			break;
 		}
 
@@ -1341,8 +1465,7 @@ void CanvasView::penReleaseEvent(
 		}
 
 		if(m_pickingColor) {
-			m_scene->setColorPick(
-				int(tools::ColorPickSource::Canvas), QPointF(), QColor());
+			hideSceneColorPick();
 			m_pickingColor = false;
 		}
 
@@ -1353,23 +1476,27 @@ void CanvasView::penReleaseEvent(
 		if(!m_hoveringOverHud) {
 			switch(mouseMatch.action()) {
 			case CanvasShortcuts::TOOL_ADJUST:
-				if(!m_allowToolAdjust) {
-					m_penmode = PenMode::Normal;
-					break;
-				}
-				Q_FALLTHROUGH();
+				setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+							.setPenMode(PenMode::Normal)
+							.setDragMode(ViewDragMode::Prepared)
+							.setDragCondition(m_allowToolAdjust));
+				break;
+			case CanvasShortcuts::COLOR_H_ADJUST:
+			case CanvasShortcuts::COLOR_S_ADJUST:
+			case CanvasShortcuts::COLOR_V_ADJUST:
+				setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+							.setPenMode(PenMode::Normal)
+							.setDragMode(ViewDragMode::Prepared)
+							.setDragCondition(m_allowColorPick));
+				break;
 			case CanvasShortcuts::CANVAS_PAN:
 			case CanvasShortcuts::CANVAS_ROTATE:
 			case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
 			case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 			case CanvasShortcuts::CANVAS_ZOOM:
-				m_penmode = PenMode::Normal;
-				m_dragmode = ViewDragMode::Prepared;
-				m_dragAction = mouseMatch.action();
-				m_dragButton = mouseMatch.shortcut->button;
-				m_dragModifiers = mouseMatch.shortcut->mods;
-				m_dragInverted = mouseMatch.inverted();
-				m_dragSwapAxes = mouseMatch.swapAxes();
+				setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+							.setPenMode(PenMode::Normal)
+							.setDragMode(ViewDragMode::Prepared));
 				break;
 			case CanvasShortcuts::COLOR_PICK:
 				if(m_allowColorPick) {
@@ -1519,14 +1646,37 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 		break;
 	}
 	case CanvasShortcuts::TOOL_ADJUST:
-		event->accept();
-		if(m_allowToolAdjust) {
-			emit quickAdjust(deltaY / (30 * 4.0));
-		}
+		wheelAdjust(
+			event, int(tools::QuickAdjustType::Tool), m_allowToolAdjust,
+			deltaY);
+		break;
+	case CanvasShortcuts::COLOR_H_ADJUST:
+		wheelAdjust(
+			event, int(tools::QuickAdjustType::ColorH), m_allowColorPick,
+			deltaY);
+		break;
+	case CanvasShortcuts::COLOR_S_ADJUST:
+		wheelAdjust(
+			event, int(tools::QuickAdjustType::ColorS), m_allowColorPick,
+			deltaY);
+		break;
+	case CanvasShortcuts::COLOR_V_ADJUST:
+		wheelAdjust(
+			event, int(tools::QuickAdjustType::ColorV), m_allowColorPick,
+			deltaY);
 		break;
 	default:
 		qWarning("Unhandled mouse wheel canvas shortcut %u", match.action());
 		break;
+	}
+}
+
+void CanvasView::wheelAdjust(
+	QWheelEvent *event, int param, bool allowed, int delta)
+{
+	event->accept();
+	if(allowed) {
+		emit quickAdjust(param, qreal(delta) / 120.0);
 	}
 }
 
@@ -1555,12 +1705,10 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
 		case CanvasShortcuts::TOOL_ADJUST:
-			m_dragAction = mouseMatch.action();
-			m_dragButton = mouseMatch.shortcut->button;
-			m_dragModifiers = mouseMatch.shortcut->mods;
-			m_dragInverted = mouseMatch.inverted();
-			m_dragSwapAxes = mouseMatch.swapAxes();
-			resetCursor();
+		case CanvasShortcuts::COLOR_H_ADJUST:
+		case CanvasShortcuts::COLOR_S_ADJUST:
+		case CanvasShortcuts::COLOR_V_ADJUST:
+			setDrag(SetDragParams::fromMouseMatch(mouseMatch).setResetCursor());
 			break;
 		default:
 			break;
@@ -1578,18 +1726,14 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
 		case CanvasShortcuts::TOOL_ADJUST:
-			m_penmode = PenMode::Normal;
-			m_dragmode = ViewDragMode::Started;
-			m_dragAction = keyMatch.action();
-			m_dragButton = Qt::NoButton;
-			m_dragModifiers = keyMatch.shortcut->mods;
-			m_dragInverted = keyMatch.inverted();
-			m_dragSwapAxes = keyMatch.swapAxes();
-			m_dragLastPoint = mapFromGlobal(QCursor::pos());
-			m_dragCanvasPoint = mapToCanvas(m_dragLastPoint);
-			m_dragDiscreteRotation = 0.0;
-			m_dragSnapRotation = rotation();
-			resetCursor();
+		case CanvasShortcuts::COLOR_H_ADJUST:
+		case CanvasShortcuts::COLOR_S_ADJUST:
+		case CanvasShortcuts::COLOR_V_ADJUST:
+			setDrag(SetDragParams::fromKeyMatch(keyMatch)
+						.setDragMode(ViewDragMode::Started)
+						.setResetDragPoints()
+						.setResetDragRotation()
+						.setResetCursor());
 			break;
 		default:
 			CanvasShortcuts::Match mouseMatch =
@@ -1597,24 +1741,30 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 					getKeyboardModifiers(event), m_keysDown, Qt::LeftButton);
 			switch(mouseMatch.action()) {
 			case CanvasShortcuts::TOOL_ADJUST:
-				if(!m_allowToolAdjust) {
-					m_penmode = PenMode::Normal;
-					break;
-				}
-				Q_FALLTHROUGH();
+				setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+							.setPenMode(PenMode::Normal)
+							.setDragMode(ViewDragMode::Prepared)
+							.setDragCondition(m_allowToolAdjust)
+							.setUpdateOutline());
+				break;
+			case CanvasShortcuts::COLOR_H_ADJUST:
+			case CanvasShortcuts::COLOR_S_ADJUST:
+			case CanvasShortcuts::COLOR_V_ADJUST:
+				setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+							.setPenMode(PenMode::Normal)
+							.setDragMode(ViewDragMode::Prepared)
+							.setDragCondition(m_allowColorPick)
+							.setUpdateOutline());
+				break;
 			case CanvasShortcuts::CANVAS_PAN:
 			case CanvasShortcuts::CANVAS_ROTATE:
 			case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
 			case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 			case CanvasShortcuts::CANVAS_ZOOM:
-				m_penmode = PenMode::Normal;
-				m_dragmode = ViewDragMode::Prepared;
-				m_dragAction = mouseMatch.action();
-				m_dragButton = mouseMatch.shortcut->button;
-				m_dragModifiers = mouseMatch.shortcut->mods;
-				m_dragInverted = mouseMatch.inverted();
-				m_dragSwapAxes = mouseMatch.swapAxes();
-				updateOutline();
+				setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+							.setPenMode(PenMode::Normal)
+							.setDragMode(ViewDragMode::Prepared)
+							.setUpdateOutline());
 				break;
 			case CanvasShortcuts::COLOR_PICK:
 				m_penmode =
@@ -1666,8 +1816,11 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
 		case CanvasShortcuts::TOOL_ADJUST:
-			m_dragmode = ViewDragMode::None;
-			resetCursor();
+		case CanvasShortcuts::COLOR_H_ADJUST:
+		case CanvasShortcuts::COLOR_S_ADJUST:
+		case CanvasShortcuts::COLOR_V_ADJUST:
+			updateOutlinePos(mapToCanvas(m_dragLastPoint));
+			setDrag(SetDragParams::fromNone().setResetCursor());
 			break;
 		default:
 			break;
@@ -1686,15 +1839,13 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
 		case CanvasShortcuts::TOOL_ADJUST:
-			m_dragmode = ViewDragMode::Started;
-			m_dragAction = mouseMatch.action();
-			m_dragButton = mouseMatch.shortcut->button;
-			m_dragModifiers = mouseMatch.shortcut->mods;
-			m_dragInverted = mouseMatch.inverted();
-			m_dragSwapAxes = mouseMatch.swapAxes();
-			m_dragDiscreteRotation = 0.0;
-			m_dragSnapRotation = rotation();
-			resetCursor();
+		case CanvasShortcuts::COLOR_H_ADJUST:
+		case CanvasShortcuts::COLOR_S_ADJUST:
+		case CanvasShortcuts::COLOR_V_ADJUST:
+			setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+						.setDragMode(ViewDragMode::Started)
+						.setResetDragRotation()
+						.setResetCursor());
 			break;
 		default:
 			break;
@@ -1707,26 +1858,32 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 	if(m_dragmode == ViewDragMode::Prepared) {
 		switch(mouseMatch.action()) {
 		case CanvasShortcuts::TOOL_ADJUST:
-			if(!m_allowToolAdjust) {
-				m_dragmode = ViewDragMode::None;
-				break;
-			}
-			Q_FALLTHROUGH();
+			setDrag(
+				SetDragParams::fromMouseMatch(mouseMatch)
+					.setDragMode(ViewDragMode::Prepared)
+					.setDragConditionClearDragModeOnFailure(m_allowToolAdjust)
+					.setUpdateOutline());
+			break;
+		case CanvasShortcuts::COLOR_H_ADJUST:
+		case CanvasShortcuts::COLOR_S_ADJUST:
+		case CanvasShortcuts::COLOR_V_ADJUST:
+			setDrag(
+				SetDragParams::fromMouseMatch(mouseMatch)
+					.setDragMode(ViewDragMode::Prepared)
+					.setDragConditionClearDragModeOnFailure(m_allowColorPick)
+					.setUpdateOutline());
+			break;
 		case CanvasShortcuts::CANVAS_PAN:
 		case CanvasShortcuts::CANVAS_ROTATE:
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
 		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
-			m_dragmode = ViewDragMode::Prepared;
-			m_dragAction = mouseMatch.action();
-			m_dragButton = mouseMatch.shortcut->button;
-			m_dragModifiers = mouseMatch.shortcut->mods;
-			m_dragInverted = mouseMatch.inverted();
-			m_dragSwapAxes = mouseMatch.swapAxes();
-			updateOutline();
+			setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+						.setDragMode(ViewDragMode::Prepared)
+						.setUpdateOutline());
 			break;
 		default:
-			m_dragmode = ViewDragMode::None;
+			setDrag(SetDragParams::fromNone());
 			break;
 		}
 	}
@@ -2007,10 +2164,73 @@ void CanvasView::scrollTo(const QPointF &point)
 	});
 }
 
-/**
- * @param x x coordinate
- * @param y y coordinate
- */
+void CanvasView::setDrag(const SetDragParams &params)
+{
+	ViewDragMode prevMode = m_dragmode;
+	CanvasShortcuts::Action prevAction = m_dragAction;
+
+	if(params.hasPenMode()) {
+		m_penmode = params.penMode();
+	}
+
+	if(params.isDragConditionFulfilled()) {
+		bool shouldSetDragParams = true;
+		if(params.hasDragMode()) {
+			m_dragmode = params.dragMode();
+			if(m_dragmode == ViewDragMode::None) {
+				shouldSetDragParams = false;
+			}
+		}
+
+		if(shouldSetDragParams) {
+			m_dragAction = params.action();
+			m_dragButton = params.button();
+			m_dragModifiers = params.modifiers();
+			m_dragInverted = params.inverted();
+			m_dragSwapAxes = params.swapAxes();
+
+			if(params.resetDragPoints()) {
+				m_dragLastPoint = mapFromGlobal(QCursor::pos());
+				m_dragCanvasPoint = mapToCanvas(m_dragLastPoint);
+			}
+
+			if(params.resetDragRotation()) {
+				m_dragDiscreteRotation = 0.0;
+				m_dragSnapRotation = rotation();
+			}
+		}
+
+		if(params.updateOutline()) {
+			updateOutline();
+		}
+
+		if(params.resetCursor()) {
+			resetCursor();
+		}
+	}
+
+	if(m_dragmode == ViewDragMode::Started) {
+		if(prevMode != ViewDragMode::Started &&
+		   CanvasShortcuts::isColorAdjustAction(m_dragAction)) {
+			showSceneColorPick(
+				int(tools::ColorPickSource::Adjust), m_dragLastPoint);
+		}
+	} else if(
+		prevMode == ViewDragMode::Started &&
+		CanvasShortcuts::isColorAdjustAction(prevAction)) {
+		m_scene->hideColorPick();
+	}
+}
+
+void CanvasView::dragAdjust(int type, int delta)
+{
+	// Horizontally, dragging right (+X) is higher and left (-X) is lower,
+	// but vertically, dragging up (-Y) is higher and down (+Y) is lower.
+	// We have to invert in one of those cases to match with that logic.
+	qreal d = qreal(m_dragSwapAxes ? delta : -delta);
+	emit quickAdjust(type, qBound(-2.0, d / 10.0, 2.0));
+}
+
 void CanvasView::moveDrag(const QPoint &point)
 {
 	int deltaX = m_dragLastPoint.x() - point.x();
@@ -2067,13 +2287,16 @@ void CanvasView::moveDrag(const QPoint &point)
 		}
 		break;
 	case CanvasShortcuts::TOOL_ADJUST:
-		// Horizontally, dragging right (+X) is higher and left (-X) is lower,
-		// but vertically, dragging up (-Y) is higher and down (+Y) is lower.
-		// We have to invert in one of those cases to match with that logic.
-		if(!m_dragSwapAxes) {
-			deltaX = -deltaX;
-		}
-		emit quickAdjust(qBound(-2.0, deltaX / 10.0, 2.0));
+		dragAdjust(int(tools::QuickAdjustType::Tool), deltaX);
+		break;
+	case CanvasShortcuts::COLOR_H_ADJUST:
+		dragAdjust(int(tools::QuickAdjustType::ColorH), deltaX);
+		break;
+	case CanvasShortcuts::COLOR_S_ADJUST:
+		dragAdjust(int(tools::QuickAdjustType::ColorS), deltaX);
+		break;
+	case CanvasShortcuts::COLOR_V_ADJUST:
+		dragAdjust(int(tools::QuickAdjustType::ColorV), deltaX);
 		break;
 	default:
 		qWarning("Unhandled drag action %u", m_dragAction);
@@ -2082,28 +2305,27 @@ void CanvasView::moveDrag(const QPoint &point)
 	m_dragLastPoint = point;
 }
 
-bool CanvasView::setSceneColorPick(
-	int source, const QPointF &posf, const QColor &color)
+bool CanvasView::showSceneColorPick(int source, const QPointF &posf)
 {
-	return m_scene->setColorPick(source, mapToScene(posf.toPoint()), color);
+	return m_scene->showColorPick(source, mapToScene(posf.toPoint()));
+}
+
+void CanvasView::hideSceneColorPick()
+{
+	m_scene->hideColorPick();
+	m_pickingColor = false;
 }
 
 void CanvasView::pickColor(
 	int source, const QPointF &point, const QPointF &posf)
 {
-	QColor color = m_scene->model()->pickColor(point.x(), point.y(), 0, 0);
-	m_pickingColor = setSceneColorPick(source, posf, color);
+	m_scene->model()->pickColor(point.x(), point.y(), 0, 0);
+	m_pickingColor = showSceneColorPick(source, posf);
 }
 
 void CanvasView::touchColorPick(const QPointF &posf)
 {
 	pickColor(int(tools::ColorPickSource::Touch), mapToCanvas(posf), posf);
-}
-
-void CanvasView::finishTouchColorPick()
-{
-	m_scene->setColorPick(
-		int(tools::ColorPickSource::Touch), QPointF(), QColor());
 }
 
 void CanvasView::updateCanvasTransform(const std::function<void()> &block)

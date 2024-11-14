@@ -345,6 +345,30 @@ void ColorSliderDock::setLastUsedColors(const color_widgets::ColorPalette &pal)
 		findPaletteColor(d->lastUsedSwatch->palette(), color));
 }
 
+void ColorSliderDock::adjustColor(int channel, int amount)
+{
+	switch(channel) {
+	case 0: {
+		int mod = d->huebox->maximum() + 1;
+		int h = (d->huebox->value() + amount) % mod;
+		if(h < 0) {
+			h = mod + h;
+		}
+		d->huebox->setValue(h);
+		break;
+	}
+	case 1:
+		d->saturationbox->setValue(d->saturationbox->value() + amount);
+		break;
+	case 2:
+		d->valuebox->setValue(d->valuebox->value() + amount);
+		break;
+	default:
+		qWarning("Unknown color channel %d", channel);
+		break;
+	}
+}
+
 void ColorSliderDock::updateFromRgbSliders()
 {
 	if(!d->updating) {

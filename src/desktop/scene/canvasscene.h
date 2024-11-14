@@ -105,8 +105,10 @@ public:
 	void setOutlineSquare(bool square);
 	void setOutlineWidth(qreal width);
 	void setOutlineVisibleInMode(bool visibleInMode);
+	void setForegroundColor(const QColor &foregroundColor);
 	void setComparisonColor(const QColor &comparisonColor);
-	bool setColorPick(int source, const QPointF &pos, const QColor &color);
+	bool showColorPick(int source, const QPointF &pos);
+	void hideColorPick();
 	void setColorPickVisibility(int colorPickVisibility);
 	bool isCursorOnCanvas() const { return m_cursorOnCanvas; }
 	void setCursorOnCanvas(bool onCanvas);
@@ -221,6 +223,7 @@ private:
 
 	OutlineItem *m_outlineItem;
 	ColorPickItem *m_colorPick = nullptr;
+	QColor m_foregroundColor;
 	QColor m_comparisonColor;
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 	CursorItem *m_cursorItem;

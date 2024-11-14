@@ -329,6 +329,18 @@ CanvasShortcuts::ConstraintMatch CanvasShortcuts::matchConstraints(
 	return match;
 }
 
+bool CanvasShortcuts::isColorAdjustAction(Action action)
+{
+	switch(action) {
+	case COLOR_H_ADJUST:
+	case COLOR_S_ADJUST:
+	case COLOR_V_ADJUST:
+		return true;
+	default:
+		return false;
+	}
+}
+
 bool CanvasShortcuts::Shortcut::conflictsWith(const Shortcut &other) const
 {
 	return type == other.type && mods == other.mods && keys == other.keys &&

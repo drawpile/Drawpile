@@ -127,6 +127,7 @@ public:
 	void handleGesture(QGestureEvent *event);
 
 	void handleWheel(QWheelEvent *event);
+	void wheelAdjust(QWheelEvent *event, int param, bool allowed, int delta);
 
 	void handleKeyPress(QKeyEvent *event);
 	void handleKeyRelease(QKeyEvent *event);
@@ -187,7 +188,7 @@ signals:
 		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip);
 	void penUp(bool constrain, bool center);
 	void coordinatesChanged(const QPointF &coordinates);
-	void quickAdjust(qreal value);
+	void quickAdjust(int type, qreal value);
 	void cursorChanged(const QCursor &cursor);
 	void toggleActionActivated(int action);
 	void touchTapActionActivated(int action);
@@ -202,6 +203,8 @@ private:
 	enum class PenMode { Normal, Colorpick, Layerpick };
 	enum class PenState { Up, MouseDown, TabletDown };
 	enum class ViewDragMode { None, Prepared, Started };
+
+	class SetDragParams;
 
 	void setClearColor(const QColor clearColor);
 	void setRenderSmooth(bool renderSmooth);
@@ -232,10 +235,12 @@ private:
 	void touchReleaseEvent(long long timeMsec, const QPointF &posf);
 	void touchZoomRotate(qreal zoom, qreal rotation);
 
+	void setDrag(const SetDragParams &params);
 	void moveDrag(const QPoint &point);
+	void dragAdjust(int type, int delta);
 	void pickColor(int source, const QPointF &point, const QPointF &posf);
 	void touchColorPick(const QPointF &posf);
-	void finishTouchColorPick();
+	void hideSceneColorPick();
 
 	void resetCursor();
 	void updateOutlinePos(QPointF point);

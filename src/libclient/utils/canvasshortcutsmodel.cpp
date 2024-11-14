@@ -387,6 +387,12 @@ QString CanvasShortcutsModel::actionToString(const CanvasShortcuts::Shortcut &s)
 		}
 	case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
 		return tr("Ratchet Rotate Canvas");
+	case CanvasShortcuts::COLOR_H_ADJUST:
+		return tr("Change Color Hue");
+	case CanvasShortcuts::COLOR_S_ADJUST:
+		return tr("Change Color Saturation");
+	case CanvasShortcuts::COLOR_V_ADJUST:
+		return tr("Change Color Value");
 	default:
 		return tr("Unknown Action %1").arg(s.action);
 	}

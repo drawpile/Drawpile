@@ -21,6 +21,7 @@ public:
 public slots:
 	void setColor(const QColor &color);
 	void setLastUsedColors(const color_widgets::ColorPalette &pal);
+	void adjustColor(int channel, int amount);
 
 private slots:
 	void updateFromRgbSliders();

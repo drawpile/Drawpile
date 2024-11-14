@@ -2,7 +2,7 @@
 #ifndef LIBCLIENT_TOOLS_TOOL_H
 #define LIBCLIENT_TOOLS_TOOL_H
 #include "libclient/canvas/point.h"
-#include "libclient/tools/devicetype.h"
+#include "libclient/tools/enums.h"
 #include "libclient/tools/toolstate.h"
 #include <QCursor>
 #include <QMetaType>

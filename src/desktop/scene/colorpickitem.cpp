@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/scene/colorpickitem.h"
 #include "desktop/settings.h"
-#include "libclient/tools/devicetype.h"
+#include "libclient/tools/enums.h"
 #include <QApplication>
 #include <QPainter>
 #include <QPalette>
@@ -44,9 +44,11 @@ void ColorPickItem::setComparisonColor(const QColor &comparisonColor)
 	}
 }
 
-bool ColorPickItem::shouldShow(int source, int visibility, const QColor &color)
+bool ColorPickItem::shouldShow(int source, int visibility)
 {
-	if(color.isValid() && color.alpha() > 0) {
+	if(source == int(tools::ColorPickSource::Adjust)) {
+		return true;
+	} else {
 		switch(visibility) {
 		case int(desktop::settings::SamplingRingVisibility::Never):
 			return false;
@@ -55,8 +57,6 @@ bool ColorPickItem::shouldShow(int source, int visibility, const QColor &color)
 		default:
 			return true;
 		}
-	} else {
-		return false;
 	}
 }
 
