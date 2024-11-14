@@ -230,8 +230,7 @@ int TransformModel::getEffectiveInterpolation(int interpolation) const
 	if(interpolation != DP_MSG_TRANSFORM_REGION_MODE_NEAREST &&
 	   m_dstQuadValid) {
 		QTransform t;
-		if(QTransform::quadToQuad(
-			   QPolygonF(QRectF(m_srcBounds)), m_dstQuad.polygon(), t)) {
+		if(QTransform::quadToQuad(srcPolygon(), m_dstQuad.polygon(), t)) {
 			t.setMatrix(
 				t.m11(), t.m12(), t.m13(), t.m21(), t.m22(), t.m23(), 0.0, 0.0,
 				t.m33());
@@ -777,6 +776,22 @@ bool TransformModel::containsNullMessages(const QVector<net::Message> &msgs)
 		}
 	}
 	return false;
+}
+
+QPolygonF TransformModel::srcPolygon() const
+{
+	// QRectF::toPolygon returns an excess point, so we can't use that here.
+	// Also, using width and height is correct! Don't use bottom or right.
+	qreal x = m_srcBounds.x();
+	qreal y = m_srcBounds.y();
+	qreal w = m_srcBounds.width();
+	qreal h = m_srcBounds.height();
+	return QPolygonF({
+		QPointF(x, y),
+		QPointF(x + w, y),
+		QPointF(x + w, y + h),
+		QPointF(x, y + h),
+	});
 }
 
 bool TransformModel::isRightAngleRotationOrReflection(const QTransform &t) const

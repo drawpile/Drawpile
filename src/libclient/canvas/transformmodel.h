@@ -118,6 +118,7 @@ private:
 	QImage convertMaskToMono() const;
 	static bool containsNullMessages(const QVector<net::Message> &msgs);
 
+	QPolygonF srcPolygon() const;
 	bool isRightAngleRotationOrReflection(const QTransform &t) const;
 
 	static bool isQuadValid(const TransformQuad &quad);
