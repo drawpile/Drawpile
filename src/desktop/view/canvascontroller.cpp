@@ -1753,16 +1753,16 @@ void CanvasController::moveDrag(const QPoint &point)
 		}
 		break;
 	case CanvasShortcuts::TOOL_ADJUST:
-		dragAdjust(int(tools::QuickAdjustType::Tool), deltaX);
+		dragAdjust(int(tools::QuickAdjustType::Tool), deltaX, 1.2);
 		break;
 	case CanvasShortcuts::COLOR_H_ADJUST:
-		dragAdjust(int(tools::QuickAdjustType::ColorH), deltaX);
+		dragAdjust(int(tools::QuickAdjustType::ColorH), deltaX, 1.0);
 		break;
 	case CanvasShortcuts::COLOR_S_ADJUST:
-		dragAdjust(int(tools::QuickAdjustType::ColorS), deltaX);
+		dragAdjust(int(tools::QuickAdjustType::ColorS), deltaX, 1.0);
 		break;
 	case CanvasShortcuts::COLOR_V_ADJUST:
-		dragAdjust(int(tools::QuickAdjustType::ColorV), deltaX);
+		dragAdjust(int(tools::QuickAdjustType::ColorV), deltaX, 1.0);
 		break;
 	default:
 		qWarning("Unhandled drag action %u", m_dragAction);
@@ -1772,13 +1772,16 @@ void CanvasController::moveDrag(const QPoint &point)
 	m_dragLastPoint = point;
 }
 
-void CanvasController::dragAdjust(int type, int delta)
+void CanvasController::dragAdjust(int type, int delta, qreal acceleration)
 {
 	// Horizontally, dragging right (+X) is higher and left (-X) is lower,
 	// but vertically, dragging up (-Y) is higher and down (+Y) is lower.
 	// We have to invert in one of those cases to match with that logic.
 	qreal d = qreal(m_dragSwapAxes ? delta : -delta);
-	emit quickAdjust(type, qBound(-2.0, d / 10.0, 2.0));
+	if(acceleration != -1) {
+		d = std::copysign(std::pow(std::abs(d), acceleration), d);
+	}
+	emit quickAdjust(type, d * 0.1);
 }
 
 void CanvasController::pickColor(

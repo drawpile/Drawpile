@@ -298,7 +298,7 @@ private:
 
 	void wheelAdjust(QWheelEvent *event, int param, bool allowed, int delta);
 	void setDrag(const SetDragParams &params);
-	void dragAdjust(int type, int delta);
+	void dragAdjust(int type, int delta, qreal acceleration);
 	void moveDrag(const QPoint &point);
 	void pickColor(int source, const QPointF &point, const QPointF &posf);
 	void touchColorPick(const QPointF &posf);
