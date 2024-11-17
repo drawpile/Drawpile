@@ -106,23 +106,23 @@ jobs:
             cross_qt_args: >-
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
               "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
-              "-DANDROID_PLATFORM=$ANDROID_PLATFORM"
+              "-DANDROID_PLATFORM=$ANDROID_TARGET_PLATFORM"
               -DANDROID_ABI=arm64-v8a
             cross_ffmpeg_args: >-
               "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_TOOLCHAIN_FILE"
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
               "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
-              "-DANDROID_PLATFORM=$ANDROID_PLATFORM"
+              "-DANDROID_PLATFORM=$ANDROID_TARGET_PLATFORM"
               -DANDROID_ABI=arm64-v8a
             cross_other_args: >-
               "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_TOOLCHAIN_FILE"
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
               "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
-              "-DANDROID_PLATFORM=$ANDROID_PLATFORM"
+              "-DANDROID_PLATFORM=$ANDROID_TARGET_PLATFORM"
               -DANDROID_ABI=arm64-v8a
             build_flags: >-
               "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_TOOLCHAIN_FILE"
-              "-DANDROID_PLATFORM=$ANDROID_PLATFORM"
+              "-DANDROID_PLATFORM=$ANDROID_TARGET_PLATFORM"
               "-DANDROID_TARGET_SDK_VERSION=$ANDROID_TARGET_SDK_VERSION"
               "-DANDROID_MIN_SDK_VERSION=$ANDROID_MIN_SDK_VERSION"
               "-DANDROID_SDK_BUILD_TOOLS_REVISION=$ANDROID_BUILD_TOOLS_VERSION"
@@ -173,23 +173,23 @@ jobs:
             cross_qt_args: >-
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
               "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
-              "-DANDROID_PLATFORM=$ANDROID_PLATFORM"
+              "-DANDROID_PLATFORM=$ANDROID_TARGET_PLATFORM"
               -DANDROID_ABI=armeabi-v7a
             cross_ffmpeg_args: >-
               "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_TOOLCHAIN_FILE"
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
               "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
-              "-DANDROID_PLATFORM=$ANDROID_PLATFORM"
+              "-DANDROID_PLATFORM=$ANDROID_TARGET_PLATFORM"
               -DANDROID_ABI=armeabi-v7a
             cross_other_args: >-
               "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_TOOLCHAIN_FILE"
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
               "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
-              "-DANDROID_PLATFORM=$ANDROID_PLATFORM"
+              "-DANDROID_PLATFORM=$ANDROID_TARGET_PLATFORM"
               -DANDROID_ABI=armeabi-v7a
             build_flags: >-
               "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_TOOLCHAIN_FILE"
-              "-DANDROID_PLATFORM=$ANDROID_PLATFORM"
+              "-DANDROID_PLATFORM=$ANDROID_TARGET_PLATFORM"
               "-DANDROID_TARGET_SDK_VERSION=$ANDROID_TARGET_SDK_VERSION"
               "-DANDROID_MIN_SDK_VERSION=$ANDROID_MIN_SDK_VERSION"
               "-DANDROID_SDK_BUILD_TOOLS_REVISION=$ANDROID_BUILD_TOOLS_VERSION"
@@ -372,21 +372,33 @@ jobs:
 
       - name: Set Android environment variables
         run: |
+          # Target Android 6+ on 32 bit, Android 11+ on 64 bit. This is
+          # necessary due to mutual incompatibilities, due to older Android
+          # versions not supporting newer features on one hand and Google being
+          # obstructive against older target SDKs on newer Android on the other.
+          if [ "$ANDROID_ARCH" = 'arm32' ]; then
+            target_sdk_version=23
+            min_sdk_version=23
+          else
+            target_sdk_version=34
+            min_sdk_version=30
+          fi
           build_tools_version=34.0.0-rc3
           ndk_version=27.0.12077973
-          target_sdk_version=34
-          min_sdk_version=30
           ndk_root="$ANDROID_SDK_ROOT/ndk/$ndk_version"
           ndk_toolchain_file="$ndk_root/build/cmake/android.toolchain.cmake"
-          platform="android-$target_sdk_version"
+          platform=android-34
           echo "ANDROID_BUILD_TOOLS_VERSION=$build_tools_version" >> "$GITHUB_ENV"
           echo "ANDROID_NDK_VERSION=$ndk_version" >> "$GITHUB_ENV"
           echo "ANDROID_NDK_ROOT=$ndk_root" >> "$GITHUB_ENV"
           echo "ANDROID_NDK_TOOLCHAIN_FILE=$ndk_toolchain_file" >> "$GITHUB_ENV"
           echo "ANDROID_PLATFORM=$platform" >> "$GITHUB_ENV"
+          echo "ANDROID_TARGET_PLATFORM=android-$target_sdk_version" >> "$GITHUB_ENV"
           echo "ANDROID_TARGET_SDK_VERSION=$target_sdk_version" >> "$GITHUB_ENV"
           echo "ANDROID_MIN_SDK_VERSION=$min_sdk_version" >> "$GITHUB_ENV"
         if: matrix.cross_os == 'Android'
+        env:
+          ANDROID_ARCH: '${{ matrix.arch }}'
 
       # Qt's build toolage really likes to auto-detect Android package
       # versions, despite all attempts to specify them explicitly. So we
