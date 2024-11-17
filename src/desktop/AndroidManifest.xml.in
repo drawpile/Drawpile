@@ -1,13 +1,23 @@
 <?xml version="1.0"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="${ANDROID_PACKAGE_NAMESPACE}"
     android:installLocation="auto"
     android:versionCode="${DRAWPILE_ANDROID_VERSION_CODE}"
     android:versionName="${PROJECT_VERSION}">
-    <!-- %%INSERT_PERMISSIONS -->
+    <!-- INTERNET is required to open TCP connections. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- ACCESS_NETWORK_STATE is required by Qt somehow. Not sure what for. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- WAKE_LOCK is used to prevent the device from severing the connection to
          the server by sleeping when it is locked -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- WRITE_EXTERNAL_STORAGE only does something on older Android. -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29"
+        tools:ignore="ScopedStorage" />
     <!-- %%INSERT_FEATURES -->
     <supports-screens
         android:anyDensity="true"

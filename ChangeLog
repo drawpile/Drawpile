@@ -7,6 +7,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Don't use bilinear interpolation in transforms unnecessarily.
  * Feature: Add canvas shortcuts for changing color hue, saturation/chroma and value/lightness/luminosity. Thanks Dann DecCairns for suggesting.
  * Feature: Make size adjustment canvas shortcut depend on the speed of the drag. Thanks MorrowShore for suggesting.
+ * Fix: Remove pointless permissions on Android that Qt includes by default but aren't actually used.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.
