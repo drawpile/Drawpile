@@ -81,7 +81,9 @@ SETTING_GETSET_V(
 	V1, alphaLockCursor           , AlphaLockCursor           , "settings/alphalockcursor"              , int(view::Cursor::SameAsBrush),
 	&viewCursor::get, &viewCursor::set)
 #ifdef Q_OS_ANDROID
-SETTING(androidStylusChecked      , AndroidStylusChecked      , "settings/android/styluschecked"        , false)
+SETTING_GETSET_V(
+	V1, androidStylusChecked      , AndroidStylusChecked      , "settings/android/styluschecked"        , false,
+	any::getExactVersion, &any::set)
 #endif
 SETTING(animationExportFormat     , AnimationExportFormat     , "animationexport/format"                , int(-1))
 SETTING_GETSET_V(
