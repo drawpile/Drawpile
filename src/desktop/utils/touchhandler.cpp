@@ -101,6 +101,11 @@ void TouchHandler::handleTouchBegin(QTouchEvent *event)
 {
 	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
 	int pointsCount = points.size();
+	// Can apparently happen on Android when putting your palm on the screen.
+	if(pointsCount == 0) {
+		return;
+	}
+
 	QPointF posf = compat::touchPos(points.first());
 
 	m_touchPos = QPointF(0.0, 0.0);
@@ -164,6 +169,11 @@ void TouchHandler::handleTouchUpdate(
 {
 	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
 	int pointsCount = points.size();
+	// Can apparently happen on Android when putting your palm on the screen.
+	if(pointsCount == 0) {
+		return;
+	}
+
 	if(pointsCount > m_maxTouchPoints) {
 		m_maxTouchPoints = pointsCount;
 	}
@@ -357,9 +367,10 @@ void TouchHandler::handleTouchEnd(QTouchEvent *event, bool cancel)
 			qUtf8Printable(compat::debug(points)),
 			qulonglong(event->timestamp()));
 		flushTouchDrawBuffer();
-		emit touchReleased(
-			QDateTime::currentMSecsSinceEpoch(),
-			compat::touchPos(compat::touchPoints(*event).first()));
+		// No points can happen on Android when putting your palm on the screen.
+		QPointF posf =
+			points.isEmpty() ? m_touchPos : compat::touchPos(points.first());
+		emit touchReleased(QDateTime::currentMSecsSinceEpoch(), posf);
 	} else if(m_touchDragging) {
 		DP_EVENT_LOG(
 			"touch_%s touching=%d type=%d device=%s points=%s timestamp=%llu",
