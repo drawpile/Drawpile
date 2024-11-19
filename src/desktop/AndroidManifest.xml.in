@@ -32,14 +32,17 @@
         android:allowNativeHeapPointerTagging="false"
         android:allowBackup="true"
         android:fullBackupOnly="false"
+        android:resizeableActivity="true"
         ${ANDROID_APPLICATION_ATTRIBUTES}>
+        <meta-data android:name="android.max_aspect" android:value="2.1" />
         <activity
             android:name="${ANDROID_QT_NAMESPACE}.android.bindings.QtActivity"
             android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density"
             android:label="-- %%INSERT_APP_NAME%% --"
             android:launchMode="singleTop"
             android:screenOrientation="unspecified"
-            android:exported="true">
+            android:exported="true"
+            android:resizeableActivity="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

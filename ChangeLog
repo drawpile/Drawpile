@@ -10,6 +10,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Remove pointless permissions on Android that Qt includes by default but aren't actually used.
  * Fix: Don't default Android to fingerpaint when a pen is present.
  * Fix: Work around a crash on Android that sometimes occurs when putting your palm on the screen, which somehow leads to touch events with zero contact points. Thanks Mav for reporting.
+ * Fix: Uncap aspect ratio on older Android versions. Thanks Molderche for reporting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.
