@@ -168,6 +168,10 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 	, m_brushBlendMode(DP_BLEND_MODE_NORMAL)
 	, m_touch(new TouchHandler(this))
 	, m_toolState(int(tools::ToolState::Normal))
+#ifdef Q_OS_LINUX
+	, m_waylandWorkarounds(
+		  QGuiApplication::platformName() == QStringLiteral("wayland"))
+#endif
 {
 	desktop::settings::Settings &settings = dpApp().settings();
 	settings.bindCanvasViewBackgroundColor(
@@ -2077,6 +2081,12 @@ CanvasController::getTabletModifiers(const QTabletEvent *event) const
 	Q_UNUSED(event);
 	return getFallbackModifiers();
 #else
+#	ifdef Q_OS_LINUX
+	// Tablet event modifiers aren't reported properly on Wayland.
+	if(m_waylandWorkarounds) {
+		return getFallbackModifiers();
+	}
+#	endif
 	return event->modifiers();
 #endif
 }

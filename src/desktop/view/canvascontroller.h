@@ -422,6 +422,9 @@ private:
 	bool m_saveInProgress = false;
 
 	bool m_hoveringOverHud = false;
+#ifdef Q_OS_LINUX
+	bool m_waylandWorkarounds;
+#endif
 };
 
 }

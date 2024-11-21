@@ -2387,6 +2387,7 @@ void MainWindow::toggleTabletEventLog()
 				DP_event_log_write_meta("Drawpile: %s", cmake_config::version());
 				DP_event_log_write_meta("Qt: %s", QT_VERSION_STR);
 				DP_event_log_write_meta("OS: %s", qUtf8Printable(QSysInfo::prettyProductName()));
+				DP_event_log_write_meta("Platform: %s", qUtf8Printable(QGuiApplication::platformName()));
 				DP_event_log_write_meta("Input: %s", tabletinput::current());
 				const desktop::settings::Settings &settings = dpApp().settings();
 				DP_event_log_write_meta("Tablet enabled: %d", settings.tabletEvents());

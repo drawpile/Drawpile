@@ -194,6 +194,10 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_showTransformNotices(true)
 	, m_hoveringOverHud{false}
 	, m_renderSmooth(false)
+#ifdef Q_OS_LINUX
+	, m_waylandWorkarounds(
+		  QGuiApplication::platformName() == QStringLiteral("wayland"))
+#endif
 {
 	viewport()->setAcceptDrops(true);
 	viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
@@ -2619,6 +2623,12 @@ CanvasView::getTabletModifiers(const QTabletEvent *tabev) const
 	Q_UNUSED(tabev);
 	return getFallbackModifiers();
 #else
+#	ifdef Q_OS_LINUX
+	// Tablet event modifiers aren't reported properly on Wayland.
+	if(m_waylandWorkarounds) {
+		return getFallbackModifiers();
+	}
+#	endif
 	return tabev->modifiers();
 #endif
 }

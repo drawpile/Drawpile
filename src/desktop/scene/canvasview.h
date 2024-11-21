@@ -451,6 +451,9 @@ private:
 #ifdef __EMSCRIPTEN__
 	bool m_enableEraserOverride = false;
 #endif
+#ifdef Q_OS_LINUX
+	bool m_waylandWorkarounds;
+#endif
 };
 
 }
