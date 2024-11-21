@@ -34,7 +34,7 @@ bool SslServer::reloadCertChain()
 		return false;
 	}
 
-	if(!m_certLastMod.isNull() && fi.lastModified() < m_certLastMod) {
+	if(!m_certLastMod.isNull() && fi.lastModified() <= m_certLastMod) {
 		// Certificate file hasn't been modified
 		return true;
 	}
