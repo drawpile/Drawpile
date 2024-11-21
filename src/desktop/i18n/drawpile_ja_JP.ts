@@ -1715,12 +1715,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+1"/>
         <source>Pan</source>
-        <translation>パン</translation>
+        <translation>手のひら</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Pan canvas view</source>
-        <translation>キャンバス表示のパン</translation>
+        <translation>キャンバス表示範囲の移動</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -3532,7 +3532,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Pan</source>
-        <translation>パン</translation>
+        <translation>手のひら</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7457,7 +7457,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Pan Canvas</source>
-        <translation>キャンバス移動</translation>
+        <translation>キャンバスの移動</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8684,7 +8684,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Pan canvas</source>
-        <translation>ペンキャンバス</translation>
+        <translation>キャンバスの移動</translation>
     </message>
     <message>
         <location line="+2"/>
