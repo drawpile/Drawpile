@@ -897,31 +897,52 @@ void Session::sendUpdatedAuthList()
 		}
 	}
 
-	QJsonArray auth;
+	// The list of authenticated usernames can get so long that it doesn't fit
+	// into a single message. Keep removing users to try and make it fit.
 	const QHash<QString, QString> names = m_history->authenticatedUsernames();
-	for(auto it = names.constBegin(); it != names.constEnd(); ++it) {
-		const QString &authId = it.key();
-		QJsonObject o = {
-			{QStringLiteral("authId"), authId},
-			{QStringLiteral("username"), it.value()},
-		};
-		if(m_history->isOperator(authId)) {
-			o[QStringLiteral("op")] = true;
+	net::Message msg;
+	int requiredLevel = 0;
+	do {
+		QJsonArray auth;
+		for(auto it = names.constBegin(); it != names.constEnd(); ++it) {
+			const QString &authId = it.key();
+			bool isMod = modAuthIds.contains(authId);
+			bool isOp = m_history->isOperator(authId);
+			bool isTrusted = m_history->isTrusted(authId);
+			int level = isMod ? 3 : isOp ? 2 : isTrusted ? 1 : 0;
+			if(level >= requiredLevel) {
+				QJsonObject o = {
+					{QStringLiteral("authId"), authId},
+					{QStringLiteral("username"), it.value()},
+				};
+				if(isOp) {
+					o[QStringLiteral("op")] = true;
+				}
+				if(isTrusted) {
+					o[QStringLiteral("trusted")] = true;
+				}
+				if(isMod) {
+					o[QStringLiteral("mod")] = true;
+				}
+				auth.append(o);
+			}
 		}
-		if(m_history->isTrusted(authId)) {
-			o[QStringLiteral("trusted")] = true;
-		}
-		if(modAuthIds.contains(authId)) {
-			o[QStringLiteral("mod")] = true;
-		}
-		auth.append(o);
+		msg = net::ServerReply::makeSessionConf(
+			QJsonObject{{QStringLiteral("auth"), auth}});
+	} while(msg.isNull() && ++requiredLevel < 4);
+
+	if(requiredLevel != 0) {
+		log(Log()
+				.about(Log::Level::Warn, Log::Topic::Status)
+				.message(QStringLiteral("Auth list too large (level %1)")
+							 .arg(requiredLevel)));
 	}
 
-	net::Message msg = net::ServerReply::makeSessionConf(
-		QJsonObject{{QStringLiteral("auth"), auth}});
-	for(Client *c : m_clients) {
-		if(c->isOperator()) {
-			c->sendDirectMessage(msg);
+	if(!msg.isNull()) {
+		for(Client *c : m_clients) {
+			if(c->isOperator()) {
+				c->sendDirectMessage(msg);
+			}
 		}
 	}
 }

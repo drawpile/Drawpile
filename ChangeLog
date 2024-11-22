@@ -13,6 +13,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Uncap aspect ratio on older Android versions. Thanks Molderche for reporting.
  * Fix: Work around modifier keys not registering when using a tablet on Wayland. Thanks Absolute Goober for reporting.
  * Server Fix: Don't pointlessly reload server certificates if they didn't change. Thanks Liz for reporting.
+ * Server Fix: Work around too many authenticated users in a session, which could cause a crash. Thanks Liz for reporting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.
