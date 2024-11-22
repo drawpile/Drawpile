@@ -17,6 +17,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Don't crash when filling with feathering and a canvas-filling selection. Thanks Meru for reporting.
  * Fix: Don't carry over HUD button presses to dock UI in small screen mode. Thanks Meru for reporting.
  * Feature: Make list action buttons in settings dialog clearer, adding an edit button for canvas shortcuts. Thanks Maffi for suggesting.
+ * Fix: Work around broken transparency when copying images between canvases on Wayland. Thanks Absolute Goober for reporting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

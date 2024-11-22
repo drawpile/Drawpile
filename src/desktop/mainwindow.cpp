@@ -3593,11 +3593,13 @@ void MainWindow::copyText()
 		textedit->copy();
 }
 
+// clang-format on
 void MainWindow::paste()
 {
 	utils::ScopedOverrideCursor waitCursor;
 	const QMimeData *mimeData = Document::getClipboardData();
-	if(mimeData && mimeData->hasImage()) {
+	QImage img = Document::getClipboardImageData(mimeData);
+	if(!img.isNull()) {
 		QPoint pastepos;
 		bool pasteAtPos = false;
 
@@ -3611,25 +3613,27 @@ void MainWindow::paste()
 				qint64 pid = pos.at(2).toLongLong(&ok3);
 				qulonglong doc = pos.at(3).toULongLong(&ok4);
 				pasteAtPos = ok1 && ok2 && ok3 && ok4 &&
-					pid == qApp->applicationPid() && doc == m_doc->pasteId();
+							 pid == qApp->applicationPid() &&
+							 doc == m_doc->pasteId();
 			}
 		}
 
 		// Paste-in-place if we're the source (same process, same document)
-		if(pasteAtPos && m_canvasView->isPointVisible(pastepos))
-			pasteImage(mimeData->imageData().value<QImage>(), &pastepos, true);
-		else
-			pasteImage(mimeData->imageData().value<QImage>());
+		if(pasteAtPos && m_canvasView->isPointVisible(pastepos)) {
+			pasteImage(img, &pastepos, true);
+		} else {
+			pasteImage(img);
+		}
 	}
 }
 
-// clang-format on
 void MainWindow::pasteCentered()
 {
 	utils::ScopedOverrideCursor waitCursor;
 	const QMimeData *mimeData = Document::getClipboardData();
-	if(mimeData && mimeData->hasImage()) {
-		pasteImage(mimeData->imageData().value<QImage>(), nullptr, true);
+	QImage img = Document::getClipboardImageData(mimeData);
+	if(!img.isNull()) {
+		pasteImage(img, nullptr, true);
 	}
 }
 

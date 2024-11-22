@@ -1443,7 +1443,24 @@ bool Document::copyFromLayer(int layer)
 	if(!img.isNull() && layer == 0) {
 		fillBackground(img);
 	}
+
+#ifdef Q_OS_LINUX
+	// Copying image data from one Drawpile canvas to another is busted on
+	// Wayland, obliterating transparency. We store a PNG directly instead.
+	if(QGuiApplication::platformName() == QStringLiteral("wayland")) {
+		QByteArray bytes;
+		{
+			QBuffer buffer(&bytes);
+			buffer.open(QIODevice::WriteOnly);
+			img.save(&buffer, "PNG");
+		}
+		data->setData(QStringLiteral("image/png"), bytes);
+	} else {
+		data->setImageData(img);
+	}
+#else
 	data->setImageData(img);
+#endif
 
 	// Store also original coordinates
 	QRect bounds = m_canvas->selection()->bounds();
@@ -1682,6 +1699,22 @@ const QMimeData *Document::getClipboardData()
 #else
 	return QGuiApplication::clipboard()->mimeData();
 #endif
+}
+
+QImage Document::getClipboardImageData(const QMimeData *mimeData)
+{
+	if(mimeData) {
+		if(mimeData->hasImage()) {
+			return mimeData->imageData().value<QImage>();
+		} else if(mimeData->hasFormat(QStringLiteral("image/png"))) {
+			QImage img;
+			if(img.loadFromData(
+				   mimeData->data(QStringLiteral("image/png")), "PNG")) {
+				return img;
+			}
+		}
+	}
+	return QImage();
 }
 
 #ifdef HAVE_CLIPBOARD_EMULATION
