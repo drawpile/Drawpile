@@ -683,10 +683,8 @@ authList(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 	SessionHistory *history = session->history();
 	bool sendUpdate = false;
 
-	qDebug() << list;
 	for(const QJsonValue &value : list) {
 		QString authId = value[QStringLiteral("a")].toString();
-		qDebug() << authId;
 		if(!authId.isEmpty()) {
 			Client *target = session->getClientByAuthId(authId);
 
