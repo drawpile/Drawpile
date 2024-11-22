@@ -44,14 +44,18 @@ bool WebSocketMessageQueue::isUploading() const
 void WebSocketMessageQueue::enqueueMessages(int count, const net::Message *msgs)
 {
 	for(int i = 0; i < count; ++i) {
-		if(msgs[i].serializeWs(m_serializationBuffer)) {
-			qint64 sent = m_socket->sendBinaryMessage(m_serializationBuffer);
-			if(sent != qint64(m_serializationBuffer.size())) {
-				emit writeError();
-				break;
+		const net::Message &msg = msgs[i];
+		if(!msg.isNull()) {
+			if(msg.serializeWs(m_serializationBuffer)) {
+				qint64 sent =
+					m_socket->sendBinaryMessage(m_serializationBuffer);
+				if(sent != qint64(m_serializationBuffer.size())) {
+					emit writeError();
+					break;
+				}
+			} else {
+				qWarning("Error serializing message: %s", DP_error());
 			}
-		} else {
-			qWarning("Error serializing message: %s", DP_error());
 		}
 	}
 }

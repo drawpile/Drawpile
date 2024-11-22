@@ -671,7 +671,7 @@ QHostAddress Client::peerAddress() const
 
 void Client::sendDirectMessage(const net::Message &msg)
 {
-	if(!isAwaitingReset() || msg.isControl()) {
+	if(!msg.isNull() && (!isAwaitingReset() || msg.isControl())) {
 		d->msgqueue->send(msg);
 	}
 }
@@ -680,7 +680,7 @@ void Client::sendDirectMessages(const net::MessageList &msgs)
 {
 	if(isAwaitingReset()) {
 		for(const net::Message &msg : msgs) {
-			if(msg.isControl()) {
+			if(!msg.isNull() && msg.isControl()) {
 				d->msgqueue->send(msg);
 			}
 		}
@@ -700,6 +700,10 @@ void Client::receiveMessages()
 {
 	while(d->msgqueue->isPending()) {
 		net::Message msg = d->msgqueue->shiftPending();
+		if(msg.isNull()) {
+			continue;
+		}
+
 		d->lastActive = QDateTime::currentMSecsSinceEpoch();
 		if(msg.type() >= DP_MESSAGE_TYPE_RANGE_START_COMMAND) {
 			d->lastActiveDrawing = d->lastActive;

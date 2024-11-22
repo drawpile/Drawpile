@@ -260,7 +260,10 @@ void TcpMessageQueue::writeData()
 		if(m_sendbuffer.isEmpty() && messagesInOutbox()) {
 			// Upload buffer is empty, but there are messages in the outbox
 			Q_ASSERT(m_sentbytes == 0);
-			if(!dequeueFromOutbox().serialize(m_sendbuffer)) {
+			net::Message msg = dequeueFromOutbox();
+			if(msg.isNull()) {
+				continue;
+			} else if(!msg.serialize(m_sendbuffer)) {
 				qWarning("Error serializing message: %s", DP_error());
 				sendMore = messagesInOutbox();
 				continue;
