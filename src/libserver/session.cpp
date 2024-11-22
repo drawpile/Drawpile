@@ -887,30 +887,35 @@ void Session::sendUpdatedMuteList()
 
 void Session::sendUpdatedAuthList()
 {
-	QSet<QString> modAuthIds;
+	QHash<QString, bool> onlineAuthIds;
 	for(Client *c : m_clients) {
-		if(c->isModerator()) {
-			const QString &authId = c->authId();
-			if(!authId.isEmpty()) {
-				modAuthIds.insert(authId);
-			}
+		const QString &authId = c->authId();
+		if(!authId.isEmpty()) {
+			onlineAuthIds.insert(authId, c->isModerator());
 		}
 	}
 
 	// The list of authenticated usernames can get so long that it doesn't fit
-	// into a single message. Keep removing users to try and make it fit.
-	const QHash<QString, QString> names = m_history->authenticatedUsernames();
+	// into a single message. Keep removing users to try and make it fit. We
+	// also cap the number of "bare" offline authenticated users arbitrarily,
+	// just to avoid this issue appearing in the first place.
+	constexpr int MAX_BARE_OFFLINE_AUTH_USERS = 32;
+	const QHash<QString, QString> &names = m_history->authenticatedUsernames();
 	net::Message msg;
 	int requiredLevel = 0;
 	do {
 		QJsonArray auth;
+		int bareOfflineAuthUsers = 0;
+		int effectiveRequiredLevel = requiredLevel;
 		for(auto it = names.constBegin(); it != names.constEnd(); ++it) {
 			const QString &authId = it.key();
-			bool isMod = modAuthIds.contains(authId);
+			auto found = onlineAuthIds.constFind(authId);
+			bool isOnline = found != onlineAuthIds.constEnd();
+			bool isMod = isOnline && *found;
 			bool isOp = m_history->isOperator(authId);
 			bool isTrusted = m_history->isTrusted(authId);
 			int level = isMod ? 3 : isOp ? 2 : isTrusted ? 1 : 0;
-			if(level >= requiredLevel) {
+			if(isOnline || level >= effectiveRequiredLevel) {
 				QJsonObject o = {
 					{QStringLiteral("authId"), authId},
 					{QStringLiteral("username"), it.value()},
@@ -925,6 +930,13 @@ void Session::sendUpdatedAuthList()
 					o[QStringLiteral("mod")] = true;
 				}
 				auth.append(o);
+
+				if(level == 0 && !isOnline) {
+					++bareOfflineAuthUsers;
+					if(bareOfflineAuthUsers >= MAX_BARE_OFFLINE_AUTH_USERS) {
+						effectiveRequiredLevel = qMax(1, requiredLevel);
+					}
+				}
 			}
 		}
 		msg = net::ServerReply::makeSessionConf(
