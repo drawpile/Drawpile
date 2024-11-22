@@ -1042,14 +1042,24 @@ static void merge_mask_with_selection(float *mask, int img_x, int img_y,
                                       DP_Selection *sel)
 {
     DP_LayerContent *lc = DP_selection_content_noinc(sel);
+    int layer_width = DP_layer_content_width(lc);
+    int layer_height = DP_layer_content_height(lc);
     for (int y = 0; y < img_height; ++y) {
         for (int x = 0; x < img_width; ++x) {
             int index = y * img_width + x;
             float value = mask[index];
             if (value > 0.0f) {
-                DP_Pixel15 pixel =
-                    DP_layer_content_pixel_at(lc, x + img_x, y + img_y);
-                mask[index] = value * DP_channel15_to_float(pixel.a);
+                int layer_x = x + img_x;
+                int layer_y = y + img_y;
+                if (layer_x >= 0 && layer_x < layer_width && layer_y >= 0
+                    && layer_y < layer_height) {
+                    DP_Pixel15 pixel =
+                        DP_layer_content_pixel_at(lc, x + img_x, y + img_y);
+                    mask[index] = value * DP_channel15_to_float(pixel.a);
+                }
+                else {
+                    mask[index] = 0.0f;
+                }
             }
         }
     }
