@@ -305,11 +305,13 @@ QWidget *Shortcuts::initCanvasShortcuts(desktop::settings::Settings &settings)
 	connect(
 		m_canvasTable, &QAbstractItemView::activated, this,
 		[=](const QModelIndex &index) {
-			if(const auto *shortcut = m_canvasShortcutsModel->shortcutAt(
-				   mapFromView(m_canvasTable, index).row())) {
+			if(const CanvasShortcuts::Shortcut *shortcut =
+				   m_canvasShortcutsModel->shortcutAt(
+					   mapFromView(m_canvasTable, index).row())) {
 				execCanvasShortcutDialog(
 					m_canvasTable, shortcut, m_canvasShortcutsModel, this,
-					tr("Edit Canvas Shortcut"), [=](auto newShortcut) {
+					tr("Edit Canvas Shortcut"),
+					[=](const CanvasShortcuts::Shortcut &newShortcut) {
 						return m_canvasShortcutsModel->editShortcut(
 							*shortcut, newShortcut);
 					});
@@ -318,15 +320,31 @@ QWidget *Shortcuts::initCanvasShortcuts(desktop::settings::Settings &settings)
 	layout->addWidget(m_canvasTable, 1);
 
 	utils::EncapsulatedLayout *actions = listActions(
-		m_canvasTable, tr("Add canvas shortcut…"),
-		[=] {
+		m_canvasTable, tr("Add"), tr("Add canvas shortcut…"),
+		[this] {
 			execCanvasShortcutDialog(
 				m_canvasTable, nullptr, m_canvasShortcutsModel, this,
-				tr("New Canvas Shortcut"), [=](auto newShortcut) {
+				tr("New Canvas Shortcut"),
+				[this](const CanvasShortcuts::Shortcut &newShortcut) {
 					return m_canvasShortcutsModel->addShortcut(newShortcut);
 				});
 		},
-		tr("Remove selected canvas shortcut…"),
+		tr("Edit"), tr("Edit selected canvas shortcut…"),
+		[this] {
+			if(const CanvasShortcuts::Shortcut *shortcut =
+				   m_canvasShortcutsModel->shortcutAt(
+					   mapFromView(m_canvasTable, m_canvasTable->currentIndex())
+						   .row())) {
+				execCanvasShortcutDialog(
+					m_canvasTable, shortcut, m_canvasShortcutsModel, this,
+					tr("Edit Canvas Shortcut"),
+					[=](const CanvasShortcuts::Shortcut &newShortcut) {
+						return m_canvasShortcutsModel->editShortcut(
+							*shortcut, newShortcut);
+					});
+			}
+		},
+		tr("Remove"), tr("Remove selected canvas shortcut…"),
 		makeDefaultDeleter(
 			this, m_canvasTable, tr("Remove canvas shortcut"),
 			QT_TR_N_NOOP("Really remove %n canvas shortcut(s)?")));

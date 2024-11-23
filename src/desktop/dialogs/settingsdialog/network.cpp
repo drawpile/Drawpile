@@ -68,11 +68,11 @@ void Network::initAvatars(QVBoxLayout *layout)
 
 	layout->addWidget(avatars);
 	layout->addLayout(listActions(
-		avatars, tr("Add avatar…"),
+		avatars, tr("Add"), tr("Add avatar…"),
 		[=] {
 			AvatarImport::importAvatar(avatarsModel, this);
 		},
-		tr("Delete selected avatars…"),
+		tr("Remove"), tr("Delete selected avatars…"),
 		makeDefaultDeleter(
 			this, avatars, tr("Delete avatars"),
 			QT_TR_N_NOOP("Really delete %n avatar(s)?"))));

@@ -19,33 +19,62 @@
 namespace dialogs {
 namespace settingsdialog {
 
-template <
-	typename AddCallback, typename RemoveCallback, typename MoveUpCallback,
-	typename MoveDownCallback>
-utils::EncapsulatedLayout *listActions(
-	QAbstractItemView *view, const QString &addLabel, AddCallback addCallback,
-	const QString &removeLabel, RemoveCallback removeCallback,
-	const QString &moveUpLabel, MoveUpCallback moveUpCallback,
-	const QString &moveDownLabel, MoveDownCallback moveDownCallback,
-	bool includeMove = true)
+inline void setUpToolButton(
+	QToolButton *button, const QIcon &icon, const QString &text,
+	const QString &toolTip)
 {
-	auto *buttons = new utils::EncapsulatedLayout;
+	button->setIcon(icon);
+	button->setToolButtonStyle(
+		text.isEmpty() ? Qt::ToolButtonIconOnly : Qt::ToolButtonTextBesideIcon);
+	button->setText(text);
+	button->setToolTip(toolTip);
+}
+
+template <
+	typename AddCallback, typename EditCallback, typename RemoveCallback,
+	typename MoveUpCallback, typename MoveDownCallback>
+utils::EncapsulatedLayout *listActions(
+	QAbstractItemView *view, const QString &addText, const QString &addToolTip,
+	AddCallback addCallback, const QString &editText,
+	const QString &editToolTip, EditCallback editCallback,
+	const QString &removeText, const QString &removeToolTip,
+	RemoveCallback removeCallback, const QString &moveUpText,
+	const QString &moveUpToolTip, MoveUpCallback moveUpCallback,
+	const QString &moveDownText, const QString &moveDownToolTip,
+	MoveDownCallback moveDownCallback, bool includeEdit, bool includeMove)
+{
+	utils::EncapsulatedLayout *buttons = new utils::EncapsulatedLayout;
 	buttons->setContentsMargins(0, 0, 0, 0);
 	buttons->setSpacing(0);
 
-	auto *add =
+	widgets::GroupedToolButton *add =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
-	add->setText(addLabel);
-	add->setIcon(QIcon::fromTheme("list-add"));
+	setUpToolButton(add, QIcon::fromTheme("list-add"), addText, addToolTip);
 	QObject::connect(
 		add, &widgets::GroupedToolButton::clicked, view, addCallback);
 	buttons->addWidget(add);
 
-	auto *remove = new widgets::GroupedToolButton(
+	if(includeEdit) {
+		widgets::GroupedToolButton *edit = new widgets::GroupedToolButton(
+			widgets::GroupedToolButton::GroupCenter);
+		setUpToolButton(
+			edit, QIcon::fromTheme("edit-rename"), editText, editToolTip);
+		edit->setEnabled(view->selectionModel()->hasSelection());
+		QObject::connect(
+			view->selectionModel(), &QItemSelectionModel::selectionChanged,
+			view, [=] {
+				edit->setEnabled(view->selectionModel()->hasSelection());
+			});
+		QObject::connect(
+			edit, &widgets::GroupedToolButton::clicked, view, editCallback);
+		buttons->addWidget(edit);
+	}
+
+	widgets::GroupedToolButton *remove = new widgets::GroupedToolButton(
 		includeMove ? widgets::GroupedToolButton::GroupCenter
 					: widgets::GroupedToolButton::GroupRight);
-	remove->setText(removeLabel);
-	remove->setIcon(QIcon::fromTheme("list-remove"));
+	setUpToolButton(
+		remove, QIcon::fromTheme("list-remove"), removeText, removeToolTip);
 	remove->setEnabled(view->selectionModel()->hasSelection());
 	QObject::connect(
 		view->selectionModel(), &QItemSelectionModel::selectionChanged, view,
@@ -57,13 +86,13 @@ utils::EncapsulatedLayout *listActions(
 	buttons->addWidget(remove);
 
 	if(includeMove) {
-		auto *moveUp = new widgets::GroupedToolButton(
+		widgets::GroupedToolButton *moveUp = new widgets::GroupedToolButton(
 			widgets::GroupedToolButton::GroupCenter);
-		moveUp->setText(moveUpLabel);
-		moveUp->setIcon(QIcon::fromTheme("arrow-up"));
+		setUpToolButton(
+			moveUp, QIcon::fromTheme("arrow-up"), moveUpText, moveUpToolTip);
 		moveUp->setEnabled(view->selectionModel()->hasSelection());
-		auto updateMoveUp = [=] {
-			auto selectionModel = view->selectionModel();
+		std::function<void()> updateMoveUp = [=] {
+			QItemSelectionModel *selectionModel = view->selectionModel();
 			moveUp->setEnabled(
 				selectionModel->hasSelection() &&
 				selectionModel->selectedIndexes().size() == 1 &&
@@ -78,13 +107,14 @@ utils::EncapsulatedLayout *listActions(
 			moveUp, &widgets::GroupedToolButton::clicked, view, moveUpCallback);
 		buttons->addWidget(moveUp);
 
-		auto *moveDown = new widgets::GroupedToolButton(
+		widgets::GroupedToolButton *moveDown = new widgets::GroupedToolButton(
 			widgets::GroupedToolButton::GroupRight);
-		moveDown->setText(moveDownLabel);
-		moveDown->setIcon(QIcon::fromTheme("arrow-down"));
+		setUpToolButton(
+			moveDown, QIcon::fromTheme("arrow-down"), moveDownText,
+			moveDownToolTip);
 		moveDown->setEnabled(view->selectionModel()->hasSelection());
-		auto updateMoveDown = [=] {
-			auto selectionModel = view->selectionModel();
+		std::function<void()> updateMoveDown = [=] {
+			QItemSelectionModel *selectionModel = view->selectionModel();
 			moveDown->setEnabled(
 				selectionModel->hasSelection() &&
 				selectionModel->selectedIndexes().size() == 1 &&
@@ -106,15 +136,51 @@ utils::EncapsulatedLayout *listActions(
 	return buttons;
 }
 
-template <typename AddCallback, typename RemoveCallback>
+template <
+	typename AddCallback, typename RemoveCallback, typename MoveUpCallback,
+	typename MoveDownCallback>
 utils::EncapsulatedLayout *listActions(
-	QAbstractItemView *view, const QString &addLabel, AddCallback addCallback,
-	const QString &removeLabel, RemoveCallback removeCallback)
+	QAbstractItemView *view, const QString &addText, const QString &addToolTip,
+	AddCallback addCallback, const QString &removeText,
+	const QString &removeToolTip, RemoveCallback removeCallback,
+	const QString &moveUpText, const QString &moveUpToolTip,
+	MoveUpCallback moveUpCallback, const QString &moveDownText,
+	const QString &moveDownToolTip, MoveDownCallback moveDownCallback)
 {
 	void (*noop)() = nullptr;
 	return listActions(
-		view, addLabel, addCallback, removeLabel, removeCallback, QString{},
-		noop, QString{}, noop, false);
+		view, addText, addToolTip, addCallback, QString(), QString(), noop,
+		removeText, removeToolTip, removeCallback, moveUpText, moveUpToolTip,
+		moveUpCallback, moveDownText, moveDownToolTip, moveDownCallback, false,
+		true);
+}
+
+template <typename AddCallback, typename EditCallback, typename RemoveCallback>
+utils::EncapsulatedLayout *listActions(
+	QAbstractItemView *view, const QString &addText, const QString &addToolTip,
+	AddCallback addCallback, const QString &editText,
+	const QString &editToolTip, EditCallback editCallback,
+	const QString &removeText, const QString &removeToolTip,
+	RemoveCallback removeCallback)
+{
+	void (*noop)() = nullptr;
+	return listActions(
+		view, addText, addToolTip, addCallback, editText, editToolTip,
+		editCallback, removeText, removeToolTip, removeCallback, QString(),
+		QString(), noop, QString(), QString(), noop, true, false);
+}
+
+template <typename AddCallback, typename RemoveCallback>
+utils::EncapsulatedLayout *listActions(
+	QAbstractItemView *view, const QString &addText, const QString &addToolTip,
+	AddCallback addCallback, const QString &removeText,
+	const QString &removeToolTip, RemoveCallback removeCallback)
+{
+	void (*noop)() = nullptr;
+	return listActions(
+		view, addText, addToolTip, addCallback, QString(), QString(), noop,
+		removeText, removeToolTip, removeCallback, QString(), QString(), noop,
+		QString(), QString(), noop, false, false);
 }
 
 inline bool

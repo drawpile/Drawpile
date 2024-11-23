@@ -64,22 +64,19 @@ void Servers::initListingServers(
 		servers, Qt::ScrollBarAlwaysOff, Qt ::ScrollBarAsNeeded);
 	form->addWidget(servers, 1);
 	form->addLayout(listActions(
-		servers, tr("Add list servers…"),
+		servers, tr("Add"), tr("Add list servers…"),
 		[=] {
 			addListServer(serversModel);
 		},
-
-		tr("Remove selected list servers…"),
+		tr("Remove"), tr("Remove selected list servers…"),
 		makeDefaultDeleter(
 			this, servers, tr("Remove list servers"),
 			QT_TR_N_NOOP("Really remove %n list server(s)?")),
-
-		tr("Move up"),
+		QString(), tr("Move up"),
 		[=] {
 			moveListServer(serversModel, servers->selectionModel(), -1);
 		},
-
-		tr("Move down"),
+		QString(), tr("Move down"),
 		[=] {
 			moveListServer(serversModel, servers->selectionModel(), 1);
 		}));
@@ -124,12 +121,12 @@ void Servers::initKnownHosts(QVBoxLayout *form)
 	knownHosts->setModel(knownHostsModel);
 
 	auto *actions = listActions(
-		knownHosts, tr("Import trusted certificate…"),
+		knownHosts, tr("Add"), tr("Import trusted certificate…"),
 		[=] {
 			importCertificates(knownHostsModel);
 		},
 
-		tr("Remove selected hosts…"),
+		tr("Remove"), tr("Remove selected hosts…"),
 		makeDefaultDeleter(
 			this, knownHosts, tr("Remove known hosts"),
 			QT_TR_N_NOOP("Really remove %n known host(s)?")));
@@ -190,9 +187,9 @@ askToContinue(const QString &title, const QString &message, QWidget *parent)
 	const auto *ok =
 		box.addButton(Servers::tr("Continue"), QMessageBox::AcceptRole);
 	box.setDefaultButton(QMessageBox::Cancel);
-#ifndef __EMSCRIPTEN__
+#	ifndef __EMSCRIPTEN__
 	box.setWindowModality(Qt::WindowModal);
-#endif
+#	endif
 	box.exec();
 	return box.clickedButton() == ok;
 }
