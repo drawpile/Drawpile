@@ -2,6 +2,7 @@
 #ifndef DESKTOP_SCENE_CANVASVIEW
 #define DESKTOP_SCENE_CANVASVIEW
 #include "desktop/utils/qtguicompat.h"
+#include "desktop/utils/tabletfilter.h"
 #include "desktop/view/lock.h"
 #include "libclient/canvas/canvasshortcuts.h"
 #include "libclient/canvas/point.h"
@@ -274,6 +275,7 @@ private:
 	class SetDragParams;
 
 	void startTabletEventTimer();
+	void resetTabletFilter();
 
 	// unified mouse/stylus event handlers
 	void penPressEvent(
@@ -457,6 +459,7 @@ private:
 #ifdef Q_OS_LINUX
 	bool m_waylandWorkarounds;
 #endif
+	TabletFilter m_tabletFilter;
 };
 
 }

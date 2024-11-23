@@ -206,7 +206,12 @@ CanvasView::CanvasView(QWidget *parent)
 	setAcceptDrops(true);
 	setFrameShape(QFrame::NoFrame);
 
-	auto &settings = dpApp().settings();
+	DrawpileApp &app = dpApp();
+	connect(
+		&app, &DrawpileApp::tabletDriverChanged, this,
+		&CanvasView::resetTabletFilter, Qt::QueuedConnection);
+
+	desktop::settings::Settings &settings = app.settings();
 	settings.bindCanvasViewBackgroundColor(this, [this](QColor color) {
 		color.setAlpha(255);
 		setBackgroundBrush(color);
@@ -1024,6 +1029,8 @@ void CanvasView::enterEvent(compat::EnterEvent *event)
 		 oldfocus->inherits("QPlainTextEdit"))) {
 		setFocus(Qt::MouseFocusReason);
 	}
+
+	m_tabletFilter.reset();
 }
 
 void CanvasView::leaveEvent(QEvent *event)
@@ -1037,6 +1044,7 @@ void CanvasView::leaveEvent(QEvent *event)
 	m_scene->removeHover();
 	updateOutline();
 	resetCursor();
+	m_tabletFilter.reset();
 }
 
 void CanvasView::focusInEvent(QFocusEvent *event)
@@ -1209,6 +1217,11 @@ void CanvasView::startTabletEventTimer()
 	if(m_tabletEventTimerDelay > 0) {
 		m_tabletEventTimer.setRemainingTime(m_tabletEventTimerDelay);
 	}
+}
+
+void CanvasView::resetTabletFilter()
+{
+	m_tabletFilter.reset();
 }
 
 void CanvasView::penPressEvent(
@@ -2006,16 +2019,20 @@ bool CanvasView::viewportEvent(QEvent *event)
 		QTabletEvent *tabev = static_cast<QTabletEvent *>(event);
 		const auto tabPos = compat::tabPosF(*tabev);
 		Qt::KeyboardModifiers modifiers = getTabletModifiers(tabev);
+		bool ignore = m_tabletFilter.shouldIgnore(tabev);
 		DP_EVENT_LOG(
 			"tablet_press spontaneous=%d x=%f y=%f pressure=%f xtilt=%d "
 			"ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d "
-			"touching=%d effectivemodifiers=0x%u",
-			tabev->spontaneous(), tabPos.x(), tabPos.y(), tabev->pressure(),
-			compat::cast_6<int>(tabev->xTilt()),
+			"touching=%d effectivemodifiers=0x%u ignore=%d",
+			int(tabev->spontaneous()), tabPos.x(), tabPos.y(),
+			tabev->pressure(), compat::cast_6<int>(tabev->xTilt()),
 			compat::cast_6<int>(tabev->yTilt()),
 			qDegreesToRadians(tabev->rotation()), unsigned(tabev->buttons()),
 			unsigned(tabev->modifiers()), m_pendown, m_touch->isTouching(),
-			unsigned(modifiers));
+			unsigned(modifiers), int(ignore));
+		if(ignore) {
+			return true;
+		}
 
 		Qt::MouseButton button;
 		bool eraserOverride;
@@ -2057,16 +2074,20 @@ bool CanvasView::viewportEvent(QEvent *event)
 		const auto tabPos = compat::tabPosF(*tabev);
 		Qt::KeyboardModifiers modifiers = getTabletModifiers(tabev);
 		Qt::MouseButtons buttons = tabev->buttons();
+		bool ignore = m_tabletFilter.shouldIgnore(tabev);
 		DP_EVENT_LOG(
 			"tablet_move spontaneous=%d x=%f y=%f pressure=%f xtilt=%d "
 			"ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d "
-			"touching=%d effectivemodifiers=0x%u",
-			tabev->spontaneous(), tabPos.x(), tabPos.y(), tabev->pressure(),
-			compat::cast_6<int>(tabev->xTilt()),
+			"touching=%d effectivemodifiers=0x%u ignore=%d",
+			int(tabev->spontaneous()), tabPos.x(), tabPos.y(),
+			tabev->pressure(), compat::cast_6<int>(tabev->xTilt()),
 			compat::cast_6<int>(tabev->yTilt()),
 			qDegreesToRadians(tabev->rotation()), unsigned(buttons),
 			unsigned(tabev->modifiers()), m_pendown, m_touch->isTouching(),
-			unsigned(modifiers));
+			unsigned(modifiers), int(ignore));
+		if(ignore) {
+			return true;
+		}
 
 		if(!tabletinput::passPenEvents()) {
 			tabev->accept();
@@ -2091,12 +2112,17 @@ bool CanvasView::viewportEvent(QEvent *event)
 		QTabletEvent *tabev = static_cast<QTabletEvent *>(event);
 		const auto tabPos = compat::tabPosF(*tabev);
 		Qt::KeyboardModifiers modifiers = getTabletModifiers(tabev);
+		bool ignore = m_tabletFilter.shouldIgnore(tabev);
 		DP_EVENT_LOG(
 			"tablet_release spontaneous=%d x=%f y=%f buttons=0x%x pendown=%d "
-			"touching=%d effectivemodifiers=0x%u",
-			tabev->spontaneous(), tabPos.x(), tabPos.y(),
+			"touching=%d effectivemodifiers=0x%u ignore=%d",
+			int(tabev->spontaneous()), tabPos.x(), tabPos.y(),
 			unsigned(tabev->buttons()), m_pendown, m_touch->isTouching(),
-			unsigned(modifiers));
+			unsigned(modifiers), int(ignore));
+		if(ignore) {
+			return true;
+		}
+
 		updateCursorPos(tabPos.toPoint());
 		if(!tabletinput::passPenEvents()) {
 			tabev->accept();

@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef TABLETINPUT_H
-#define TABLETINPUT_H
-
+#ifndef DESTKOP_TABLETINPUT_H
+#define DESTKOP_TABLETINPUT_H
 #include <QMetaType>
 #include <QString>
 
 class DrawpileApp;
+
+#ifdef Q_OS_WIN
+#	define TABLETINPUT_CONSTEXPR_OR_INLINE inline
+#else
+#	define TABLETINPUT_CONSTEXPR_OR_INLINE constexpr
+#endif
 
 namespace tabletinput {
 Q_NAMESPACE
@@ -59,6 +64,11 @@ constexpr bool passPenEvents()
 	return true;
 }
 #endif
+
+TABLETINPUT_CONSTEXPR_OR_INLINE bool ignoreSpontaneous()
+{
+	return !passPenEvents();
+}
 
 }
 

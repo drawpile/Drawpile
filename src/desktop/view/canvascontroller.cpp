@@ -174,7 +174,12 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 		  QGuiApplication::platformName() == QStringLiteral("wayland"))
 #endif
 {
-	desktop::settings::Settings &settings = dpApp().settings();
+	DrawpileApp &app = dpApp();
+	connect(
+		&app, &DrawpileApp::tabletDriverChanged, this,
+		&CanvasController::resetTabletFilter, Qt::QueuedConnection);
+
+	desktop::settings::Settings &settings = app.settings();
 	settings.bindCanvasViewBackgroundColor(
 		this, &CanvasController::setClearColor);
 	settings.bindRenderSmooth(this, &CanvasController::setRenderSmooth);
@@ -561,6 +566,7 @@ void CanvasController::handleEnter()
 	m_showOutline = true;
 	m_scene->setCursorOnCanvas(true);
 	updateOutline();
+	m_tabletFilter.reset();
 }
 
 void CanvasController::handleLeave()
@@ -572,6 +578,7 @@ void CanvasController::handleLeave()
 	m_scene->removeHover();
 	updateOutline();
 	resetCursor();
+	m_tabletFilter.reset();
 }
 
 void CanvasController::handleFocusIn()
@@ -668,13 +675,18 @@ void CanvasController::handleTabletMove(QTabletEvent *event)
 		qreal yTilt = event->yTilt();
 		Qt::KeyboardModifiers modifiers = getTabletModifiers(event);
 		Qt::MouseButtons buttons = event->buttons();
+		bool ignore = m_tabletFilter.shouldIgnore(event);
 		DP_EVENT_LOG(
 			"tablet_move spontaneous=%d x=%f y=%f pressure=%f xtilt=%f "
 			"ytilt=%f rotation=%f buttons=0x%x modifiers=0x%x penstate=%d "
-			"touching=%d effectivemodifiers=0x%u",
+			"touching=%d effectivemodifiers=0x%u ignore=%d",
 			int(event->spontaneous()), posf.x(), posf.y(), pressure, xTilt,
 			yTilt, rotation, unsigned(buttons), unsigned(event->modifiers()),
-			int(m_penState), int(m_touch->isTouching()), unsigned(modifiers));
+			int(m_penState), int(m_touch->isTouching()), unsigned(modifiers),
+			int(ignore));
+		if(ignore) {
+			return;
+		}
 
 		// Under Windows Ink, some tablets report bogus zero-pressure inputs.
 		// We accept them so that they don't result in synthesized mouse events,
@@ -704,13 +716,18 @@ void CanvasController::handleTabletPress(QTabletEvent *event)
 		qreal xTilt = event->xTilt();
 		qreal yTilt = event->yTilt();
 		Qt::KeyboardModifiers modifiers = getTabletModifiers(event);
+		bool ignore = m_tabletFilter.shouldIgnore(event);
 		DP_EVENT_LOG(
 			"tablet_press spontaneous=%d x=%f y=%f pressure=%f xtilt=%f "
 			"ytilt=%f rotation=%f buttons=0x%x modifiers=0x%x penstate=%d "
-			"touching=%d effectivemodifiers=0x%u",
+			"touching=%d effectivemodifiers=0x%u ignore=%d",
 			int(event->spontaneous()), posf.x(), posf.y(), pressure, xTilt,
 			yTilt, rotation, unsigned(buttons), unsigned(event->modifiers()),
-			int(m_penState), int(m_touch->isTouching()), unsigned(modifiers));
+			int(m_penState), int(m_touch->isTouching()), unsigned(modifiers),
+			int(ignore));
+		if(ignore) {
+			return;
+		}
 
 		Qt::MouseButton button;
 		bool eraserOverride;
@@ -744,12 +761,16 @@ void CanvasController::handleTabletRelease(QTabletEvent *event)
 
 		QPointF posf = tabletPosF(event);
 		Qt::KeyboardModifiers modifiers = getTabletModifiers(event);
+		bool ignore = m_tabletFilter.shouldIgnore(event);
 		DP_EVENT_LOG(
 			"tablet_release spontaneous=%d x=%f y=%f buttons=0x%x penstate=%d "
-			"touching=%d effectivemodifiers=0x%u",
+			"touching=%d effectivemodifiers=0x%u ignore=%d",
 			int(event->spontaneous()), posf.x(), posf.y(),
 			unsigned(event->buttons()), int(m_penState),
-			int(m_touch->isTouching()), unsigned(modifiers));
+			int(m_touch->isTouching()), unsigned(modifiers), int(ignore));
+		if(ignore) {
+			return;
+		}
 
 		penReleaseEvent(
 			QDateTime::currentMSecsSinceEpoch(), posf, event->button(),
@@ -1325,6 +1346,11 @@ void CanvasController::startTabletEventTimer()
 	if(m_tabletEventTimerDelay > 0) {
 		m_tabletEventTimer.setRemainingTime(m_tabletEventTimerDelay);
 	}
+}
+
+void CanvasController::resetTabletFilter()
+{
+	m_tabletFilter.reset();
 }
 
 void CanvasController::penMoveEvent(

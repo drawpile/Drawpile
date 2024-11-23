@@ -93,6 +93,7 @@ signals:
 	void setDockTitleBarsHidden(bool hidden);
 	void focusCanvas();
 	void shortcutsChanged();
+	void tabletDriverChanged();
 
 protected:
 	bool event(QEvent *e) override;

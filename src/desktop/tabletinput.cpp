@@ -20,45 +20,12 @@ static Mode currentMode = Mode::Uninitialized;
 
 #ifdef Q_OS_WIN
 
-class SpontaneousTabletEventFilter final : public QObject {
-public:
-	explicit SpontaneousTabletEventFilter(QObject *parent)
-		: QObject{parent}
-	{
-	}
-
-protected:
-	bool eventFilter(QObject *watched, QEvent *event) override final
-	{
-		switch(event->type()) {
-		case QEvent::TabletEnterProximity:
-		case QEvent::TabletLeaveProximity:
-		case QEvent::TabletMove:
-		case QEvent::TabletPress:
-		case QEvent::TabletRelease:
-			// KisTablet uses QApplication::sendEvent, which means its events
-			// are never set to be spontaneous. We use that to filter out Qt's
-			// own tablet events, which in turn are always spontaneous.
-			if(event->spontaneous()) {
-				return false;
-			}
-			[[fallthrough]];
-		default:
-			return QObject::eventFilter(watched, event);
-		}
-	}
-};
-
 static KisTabletSupportWin8 *kisTabletSupportWin8;
-static SpontaneousTabletEventFilter *spontaneousTabletEventFilter;
+static bool shouldPassPenEvents = true;
 
 static void resetKisTablet(DrawpileApp &app)
 {
-	if(spontaneousTabletEventFilter) {
-		app.removeEventFilter(spontaneousTabletEventFilter);
-		delete spontaneousTabletEventFilter;
-		spontaneousTabletEventFilter = nullptr;
-	}
+	shouldPassPenEvents = true;
 	if(kisTabletSupportWin8) {
 		app.removeNativeEventFilter(kisTabletSupportWin8);
 		delete kisTabletSupportWin8;
@@ -67,17 +34,11 @@ static void resetKisTablet(DrawpileApp &app)
 	KisTabletSupportWin::quit();
 }
 
-static void installSpontaneousTabletEventFilter(DrawpileApp &app)
-{
-	spontaneousTabletEventFilter = new SpontaneousTabletEventFilter{&app};
-	app.installEventFilter(spontaneousTabletEventFilter);
-}
-
 static void enableKisTabletWinink(DrawpileApp &app)
 {
 	kisTabletSupportWin8 = new KisTabletSupportWin8;
 	if(kisTabletSupportWin8->init()) {
-		installSpontaneousTabletEventFilter(app);
+		shouldPassPenEvents = false;
 		app.installNativeEventFilter(kisTabletSupportWin8);
 		currentMode = Mode::KisTabletWinink;
 	} else {
@@ -87,10 +48,10 @@ static void enableKisTabletWinink(DrawpileApp &app)
 	}
 }
 
-static void enableKisTabletWintab(DrawpileApp &app, bool relativePenModeHack)
+static void enableKisTabletWintab(bool relativePenModeHack)
 {
 	if(KisTabletSupportWin::init()) {
-		installSpontaneousTabletEventFilter(app);
+		shouldPassPenEvents = false;
 		KisTabletSupportWin::enableRelativePenModeHack(relativePenModeHack);
 		if(relativePenModeHack) {
 			currentMode = Mode::KisTabletWintabRelativePenHack;
@@ -148,10 +109,10 @@ void init(DrawpileApp &app)
 			enableKisTabletWinink(app);
 			break;
 		case Mode::KisTabletWintab:
-			enableKisTabletWintab(app, false);
+			enableKisTabletWintab(false);
 			break;
 		case Mode::KisTabletWintabRelativePenHack:
-			enableKisTabletWintab(app, true);
+			enableKisTabletWintab(true);
 			break;
 #	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 		case Mode::Qt5:
@@ -171,6 +132,7 @@ void init(DrawpileApp &app)
 		case Mode::Uninitialized:
 			break;
 		}
+		emit app.tabletDriverChanged();
 	});
 #else
 	// Nothing to do on other platforms.
@@ -201,9 +163,7 @@ const char *current()
 #ifdef Q_OS_WIN
 bool passPenEvents()
 {
-	// The spontaneous event filter is installed if and only if a KisTablet
-	// input mode is currently active.
-	return !spontaneousTabletEventFilter;
+	return shouldPassPenEvents;
 }
 #endif
 

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_VIEW_CANVASCONTROLLER_H
 #define DESKTOP_VIEW_CANVASCONTROLLER_H
+#include "desktop/utils/tabletfilter.h"
 #include "desktop/view/lock.h"
 #include "libclient/canvas/canvasshortcuts.h"
 #include "libclient/canvas/point.h"
@@ -215,6 +216,7 @@ private:
 	void setShowTransformNotices(bool showTransformNotices);
 	void setTabletEventTimerDelay(int tabletEventTimerDelay);
 	void startTabletEventTimer();
+	void resetTabletFilter();
 
 	void penMoveEvent(
 		long long timeMsec, const QPointF &posf, qreal pressure, qreal xtilt,
@@ -428,6 +430,7 @@ private:
 #ifdef Q_OS_LINUX
 	bool m_waylandWorkarounds;
 #endif
+	TabletFilter m_tabletFilter;
 };
 
 }

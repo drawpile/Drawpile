@@ -316,6 +316,7 @@ target_sources(drawpile PRIVATE
 	utils/qtguicompat.h
 	utils/recents.cpp
 	utils/recents.h
+	utils/tabletfilter.h
 	utils/touchhandler.cpp
 	utils/touchhandler.h
 	utils/widgetutils.cpp
