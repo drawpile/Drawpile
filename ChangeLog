@@ -15,6 +15,7 @@ Unreleased Version 2.2.2-pre
  * Server Fix: Don't pointlessly reload server certificates if they didn't change. Thanks Liz for reporting.
  * Server Fix: Work around too many authenticated users in a session, which could cause a crash. Thanks Liz for reporting.
  * Fix: Don't crash when filling with feathering and a canvas-filling selection. Thanks Meru for reporting.
+ * Fix: Don't carry over HUD button presses to dock UI in small screen mode. Thanks Meru for reporting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

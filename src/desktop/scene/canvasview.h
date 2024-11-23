@@ -348,6 +348,8 @@ private:
 	void setRotationSnap(qreal degrees);
 	void rotateByDiscreteSteps(int steps);
 
+	bool activatePendingToggleAction();
+
 	void viewRectChanged();
 
 	QString getZoomNotice() const;
@@ -441,6 +443,7 @@ private:
 	int m_alphaLockCursorStyle;
 	qreal m_brushOutlineWidth;
 	int m_brushBlendMode;
+	int m_hudActionToActivate;
 
 	bool m_pickingColor = false;
 	bool m_scrollBarsAdjusting;

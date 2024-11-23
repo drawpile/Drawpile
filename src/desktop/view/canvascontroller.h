@@ -306,6 +306,8 @@ private:
 	void setRotationSnap(qreal degrees);
 	void rotateByDiscreteSteps(int steps);
 
+	bool activatePendingToggleAction();
+
 	void emitTransformChanged();
 	void emitViewRectChanged();
 	void emitScrollAreaChanged();
@@ -417,6 +419,7 @@ private:
 	bool m_blockNotices = false;
 	bool m_showTransformNotices = false;
 	int m_toolState;
+	int m_hudActionToActivate;
 	bool m_locked = false;
 	QString m_lockDescription;
 	bool m_saveInProgress = false;

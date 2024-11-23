@@ -189,6 +189,7 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_alphaLockCursorStyle(int(view::Cursor::SameAsBrush))
 	, m_brushOutlineWidth(1.0)
 	, m_brushBlendMode(DP_BLEND_MODE_NORMAL)
+	, m_hudActionToActivate(int(drawingboard::ToggleItem::Action::None))
 	, m_scrollBarsAdjusting{false}
 	, m_blockNotices{false}
 	, m_showTransformNotices(true)
@@ -983,6 +984,21 @@ void CanvasView::setOutlineMode(bool subpixel, bool square, bool force)
 	}
 }
 
+bool CanvasView::activatePendingToggleAction()
+{
+	if(int action = m_hudActionToActivate;
+	   action != int(drawingboard::ToggleItem::Action::None)) {
+		m_hudActionToActivate = int(drawingboard::ToggleItem::Action::None);
+		m_hoveringOverHud = false;
+		m_scene->removeHover();
+		resetCursor();
+		emit toggleActionActivated(action);
+		return true;
+	} else {
+		return false;
+	}
+}
+
 void CanvasView::viewRectChanged()
 {
 	if(m_scene) {
@@ -1200,7 +1216,8 @@ void CanvasView::penPressEvent(
 	qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button,
 	Qt::KeyboardModifiers modifiers, int deviceType, bool eraserOverride)
 {
-	if(m_pendown != NOTDOWN) {
+	if(m_pendown != NOTDOWN ||
+	   m_hudActionToActivate != int(drawingboard::ToggleItem::Action::None)) {
 		return;
 	}
 
@@ -1215,10 +1232,7 @@ void CanvasView::penPressEvent(
 		if(event) {
 			event->accept();
 		}
-		emit toggleActionActivated(int(action));
-		m_hoveringOverHud = false;
-		m_scene->removeHover();
-		resetCursor();
+		m_hudActionToActivate = int(action);
 		return;
 	}
 
@@ -1355,6 +1369,10 @@ void CanvasView::penMoveEvent(
 	qreal ytilt, qreal rotation, Qt::MouseButtons buttons,
 	Qt::KeyboardModifiers modifiers)
 {
+	if(m_hudActionToActivate != int(drawingboard::ToggleItem::Action::None)) {
+		return;
+	}
+
 	canvas::Point point =
 		mapToCanvas(timeMsec, pos, pressure, xtilt, ytilt, rotation);
 	emit coordinatesChanged(point);
@@ -1432,6 +1450,8 @@ void CanvasView::penReleaseEvent(
 	long long timeMsec, const QPointF &pos, Qt::MouseButton button,
 	Qt::KeyboardModifiers modifiers)
 {
+	activatePendingToggleAction();
+
 	canvas::Point point = mapToCanvas(timeMsec, pos, 0.0, 0.0, 0.0, 0.0);
 	m_prevpoint = point;
 	CanvasShortcuts::Match mouseMatch = m_canvasShortcuts.matchMouseButton(
@@ -1925,32 +1945,40 @@ void CanvasView::touchEvent(QTouchEvent *event)
 
 	switch(event->type()) {
 	case QEvent::TouchBegin: {
-		const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
-		int pointsCount = points.size();
-		if(pointsCount > 0) {
-			QPointF pos = compat::touchPos(points.first());
-			drawingboard::ToggleItem::Action action =
-				m_scene->checkHover(mapToScene(pos.toPoint()));
-			if(action == drawingboard::ToggleItem::Action::None) {
-				m_touch->handleTouchBegin(event);
-			} else {
-				emit toggleActionActivated(int(action));
-				m_hoveringOverHud = false;
-				m_scene->removeHover();
-				resetCursor();
+		if(m_hudActionToActivate ==
+		   int(drawingboard::ToggleItem::Action::None)) {
+			const QList<compat::TouchPoint> &points =
+				compat::touchPoints(*event);
+			int pointsCount = points.size();
+			if(pointsCount > 0) {
+				QPointF pos = compat::touchPos(points.first());
+				drawingboard::ToggleItem::Action action =
+					m_scene->checkHover(mapToScene(pos.toPoint()));
+				if(action == drawingboard::ToggleItem::Action::None) {
+					m_touch->handleTouchBegin(event);
+				} else {
+					m_hudActionToActivate = int(action);
+				}
 			}
 		}
 		break;
 	}
 	case QEvent::TouchUpdate:
-		m_touch->handleTouchUpdate(
-			event, zoom(), rotation(), devicePixelRatioF());
+		if(m_hudActionToActivate ==
+		   int(drawingboard::ToggleItem::Action::None)) {
+			m_touch->handleTouchUpdate(
+				event, zoom(), rotation(), devicePixelRatioF());
+		}
 		break;
 	case QEvent::TouchEnd:
-		m_touch->handleTouchEnd(event, false);
+		if(!activatePendingToggleAction()) {
+			m_touch->handleTouchEnd(event, false);
+		}
 		break;
 	case QEvent::TouchCancel:
-		m_touch->handleTouchEnd(event, true);
+		if(!activatePendingToggleAction()) {
+			m_touch->handleTouchEnd(event, true);
+		}
 		break;
 	default:
 		break;

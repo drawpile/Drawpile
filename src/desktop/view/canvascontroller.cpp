@@ -168,6 +168,7 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 	, m_brushBlendMode(DP_BLEND_MODE_NORMAL)
 	, m_touch(new TouchHandler(this))
 	, m_toolState(int(tools::ToolState::Normal))
+	, m_hudActionToActivate(int(drawingboard::ToggleItem::Action::None))
 #ifdef Q_OS_LINUX
 	, m_waylandWorkarounds(
 		  QGuiApplication::platformName() == QStringLiteral("wayland"))
@@ -566,6 +567,7 @@ void CanvasController::handleLeave()
 {
 	m_showOutline = false;
 	m_scene->setCursorOnCanvas(false);
+	m_hudActionToActivate = int(drawingboard::ToggleItem::Action::None);
 	m_hoveringOverHud = false;
 	m_scene->removeHover();
 	updateOutline();
@@ -758,18 +760,17 @@ void CanvasController::handleTabletRelease(QTabletEvent *event)
 void CanvasController::handleTouchBegin(QTouchEvent *event)
 {
 	event->accept();
-	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
-	int pointsCount = points.size();
-	if(pointsCount > 0) {
-		int action =
-			m_scene->checkHover(compat::touchPos(points.first()).toPoint());
-		if(action == int(drawingboard::ToggleItem::Action::None)) {
-			m_touch->handleTouchBegin(event);
-		} else {
-			emit toggleActionActivated(action);
-			m_hoveringOverHud = false;
-			m_scene->removeHover();
-			resetCursor();
+	if(m_hudActionToActivate == int(drawingboard::ToggleItem::Action::None)) {
+		const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
+		int pointsCount = points.size();
+		if(pointsCount > 0) {
+			int action =
+				m_scene->checkHover(compat::touchPos(points.first()).toPoint());
+			if(action == int(drawingboard::ToggleItem::Action::None)) {
+				m_touch->handleTouchBegin(event);
+			} else {
+				m_hudActionToActivate = action;
+			}
 		}
 	}
 }
@@ -777,13 +778,18 @@ void CanvasController::handleTouchBegin(QTouchEvent *event)
 void CanvasController::handleTouchUpdate(QTouchEvent *event)
 {
 	event->accept();
-	m_touch->handleTouchUpdate(event, zoom(), rotation(), devicePixelRatioF());
+	if(m_hudActionToActivate == int(drawingboard::ToggleItem::Action::None)) {
+		m_touch->handleTouchUpdate(
+			event, zoom(), rotation(), devicePixelRatioF());
+	}
 }
 
 void CanvasController::handleTouchEnd(QTouchEvent *event, bool cancel)
 {
 	event->accept();
-	m_touch->handleTouchEnd(event, cancel);
+	if(!activatePendingToggleAction()) {
+		m_touch->handleTouchEnd(event, cancel);
+	}
 }
 
 void CanvasController::handleGesture(QGestureEvent *event)
@@ -1325,6 +1331,10 @@ void CanvasController::penMoveEvent(
 	long long timeMsec, const QPointF &posf, qreal pressure, qreal xtilt,
 	qreal ytilt, qreal rotation, Qt::KeyboardModifiers modifiers)
 {
+	if(m_hudActionToActivate != int(drawingboard::ToggleItem::Action::None)) {
+		return;
+	}
+
 	canvas::Point point =
 		mapPenPointToCanvasF(timeMsec, posf, pressure, xtilt, ytilt, rotation);
 	emit coordinatesChanged(point);
@@ -1391,6 +1401,10 @@ void CanvasController::penPressEvent(
 	qreal ytilt, qreal rotation, Qt::MouseButton button,
 	Qt::KeyboardModifiers modifiers, int deviceType, bool eraserOverride)
 {
+	if(m_hudActionToActivate != int(drawingboard::ToggleItem::Action::None)) {
+		return;
+	}
+
 	if(m_penState == PenState::Up) {
 		bool wasHovering;
 		int action = m_scene->checkHover(posf.toPoint(), &wasHovering);
@@ -1401,10 +1415,7 @@ void CanvasController::penPressEvent(
 			resetCursor();
 		}
 		if(m_hoveringOverHud) {
-			emit toggleActionActivated(action);
-			m_hoveringOverHud = false;
-			m_scene->removeHover();
-			resetCursor();
+			m_hudActionToActivate = action;
 			return;
 		}
 
@@ -1521,6 +1532,8 @@ void CanvasController::penReleaseEvent(
 	long long timeMsec, const QPointF &posf, Qt::MouseButton button,
 	Qt::KeyboardModifiers modifiers)
 {
+	activatePendingToggleAction();
+
 	canvas::Point point =
 		mapPenPointToCanvasF(timeMsec, posf, 0.0, 0.0, 0.0, 0.0);
 	m_prevPoint = point;
@@ -2289,6 +2302,21 @@ void CanvasController::rotateByDiscreteSteps(int steps)
 
 	if(steps != 0) {
 		setRotation((qRound(m_rotation / FULL) + steps) * FULL);
+	}
+}
+
+bool CanvasController::activatePendingToggleAction()
+{
+	if(int action = m_hudActionToActivate;
+	   action != int(drawingboard::ToggleItem::Action::None)) {
+		m_hudActionToActivate = int(drawingboard::ToggleItem::Action::None);
+		m_hoveringOverHud = false;
+		m_scene->removeHover();
+		resetCursor();
+		emit toggleActionActivated(action);
+		return true;
+	} else {
+		return false;
 	}
 }
 
