@@ -570,7 +570,7 @@ void MainWindow::autoJoin(const QUrl &url, const QString &autoRecordPath)
 {
 	if(m_singleSession) {
 		m_doc->client()->setSessionUrl(url);
-		joinSession(url, autoRecordPath);
+		connectToSession(url, autoRecordPath);
 	} else {
 		dialogs::StartDialog *dlg = showStartDialog();
 		dlg->autoJoin(url, autoRecordPath);
@@ -661,23 +661,11 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	updateSelectTransformActions();
 }
 
-/**
- * This function is used to check if the current board can be replaced
- * or if a new window is needed to open other content.
- *
- * The window cannot be replaced if any of the following conditions are true:
- * - there are unsaved changes
- * - there is a network connection
- * - session recording is in progress
- * - recording playback is in progress
- * - debug dump playback is in progress
- *
- * @retval false if a new window needs to be created
- */
 bool MainWindow::canReplace() const {
-	return !(m_doc->isDirty() || m_doc->client()->isConnected() || m_doc->isRecording() || m_playbackDialog || m_dumpPlaybackDialog);
+	return !getReplacementCriteria();
 }
 
+// clang-format on
 #ifdef __EMSCRIPTEN__
 bool MainWindow::shouldPreventUnload() const
 {
@@ -691,6 +679,96 @@ void MainWindow::handleMouseLeave()
 }
 #endif
 
+MainWindow::ReplacementCriteria MainWindow::getReplacementCriteria() const
+{
+	ReplacementCriteria rc;
+	if(m_doc->isDirty()) {
+		rc.setFlag(ReplacementCriterion::Dirty);
+	}
+	if(m_doc->client()->isConnected()) {
+		rc.setFlag(ReplacementCriterion::Connected);
+	}
+	if(m_doc->isRecording()) {
+		rc.setFlag(ReplacementCriterion::Recording);
+	}
+	if(m_playbackDialog || m_dumpPlaybackDialog) {
+		rc.setFlag(ReplacementCriterion::Playback);
+	}
+	return rc;
+}
+
+void MainWindow::questionWindowReplacement(
+	const QString &title, const QString &action,
+	const std::function<void(bool)> &block)
+{
+#ifdef SINGLE_MAIN_WINDOW
+	ReplacementCriteria rc = getReplacementCriteria();
+	if(rc) {
+		QStringList effects;
+		if(rc.testFlag(ReplacementCriterion::Connected)) {
+			//: This is an effect of what will happen when closing the window.
+			//: It will potentially be put into a list with other effects.
+			effects.append(tr("disconnect you from the session"));
+		}
+		if(rc.testFlag(ReplacementCriterion::Dirty)) {
+			//: This is an effect of what will happen when closing the window.
+			//: It will potentially be put into a list with other effects.
+			effects.append(tr("lose any unsaved changes"));
+		}
+		if(rc.testFlag(ReplacementCriterion::Recording)) {
+			//: This is an effect of what will happen when closing the window.
+			//: It will potentially be put into a list with other effects.
+			effects.append(tr("stop your recording"));
+		}
+		if(rc.testFlag(ReplacementCriterion::Playback)) {
+			//: This is an effect of what will happen when closing the window.
+			//: It will potentially be put into a list with other effects.
+			effects.append(tr("discard your playback"));
+		}
+		QString message;
+		switch(effects.size()) {
+		case 1:
+			message = tr("Doing so will %1.").arg(effects[0]);
+			break;
+		case 2:
+			message =
+				tr("Doing so will %1 and %2.").arg(effects[0], effects[1]);
+			break;
+		case 3:
+			message = tr("Doing so will %1, %2 and %3.")
+						  .arg(effects[0], effects[1], effects[2]);
+			break;
+		case 4:
+			message = tr("Doing so will %1, %2, %3 and %4.")
+						  .arg(effects[0], effects[1], effects[2], effects[3]);
+			break;
+		default:
+			message = tr("Doing so will %1.")
+						  .arg(QLocale().createSeparatedList(effects));
+			break;
+		}
+		QWidget *parent = getStartDialogOrThis();
+		QMessageBox *box = utils::makeQuestion(
+			parent, title,
+			QStringLiteral("<p>%1 %2</p><p>%3</p>")
+				.arg(
+					action.toHtmlEscaped(), message.toHtmlEscaped(),
+					tr("Are you sure you want to continue?").toHtmlEscaped()));
+		box->button(QMessageBox::Yes)->setText(tr("Yes, continue"));
+		box->button(QMessageBox::No)->setText(tr("No, cancel"));
+		connect(box, &QMessageBox::accepted, parent, std::bind(block, true));
+		connect(box, &QMessageBox::rejected, parent, std::bind(block, false));
+		box->show();
+	} else {
+		block(true);
+	}
+#else
+	Q_UNUSED(title);
+	Q_UNUSED(action);
+	block(true);
+#endif
+}
+
 void MainWindow::prepareWindowReplacement()
 {
 	if(windowState().testFlag(Qt::WindowFullScreen)) {
@@ -700,6 +778,7 @@ void MainWindow::prepareWindowReplacement()
 	saveSplitterState();
 	dpApp().settings().trySubmit();
 }
+// clang-format off
 
 /**
  * The file is added to the list of recent files and the menus on all open
@@ -1594,7 +1673,7 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 
 	utils::Connections *connections = new utils::Connections(key, dlg);
 	connections->add(connect(dlg, &dialogs::StartDialog::openFile, this, &MainWindow::open));
-	connections->add(connect(dlg, &dialogs::StartDialog::openPath, this, std::bind(&MainWindow::openPath, this, _1, nullptr)));
+	connections->add(connect(dlg, &dialogs::StartDialog::openRecent, this, std::bind(&MainWindow::openRecent, this, _1, nullptr)));
 	connections->add(connect(dlg, &dialogs::StartDialog::layouts, this, &MainWindow::showLayoutsDialog));
 	connections->add(connect(dlg, &dialogs::StartDialog::preferences, this, &MainWindow::showSettings));
 	connections->add(connect(dlg, &dialogs::StartDialog::join, this, &MainWindow::joinSession));
@@ -1681,30 +1760,52 @@ void MainWindow::showNew()
 	dlg->showPage(dialogs::StartDialog::Entry::Create);
 }
 
+// clang-format on
 void MainWindow::newDocument(const QSize &size, const QColor &background)
 {
-	if(canReplace()) {
-		m_doc->loadBlank(size, background);
-	} else {
-		prepareWindowReplacement();
-		bool newProcessStarted = dpApp().runInNewProcess(
-			{QStringLiteral("--no-restore-window-position"),
-			 QStringLiteral("--blank"),
-			 QStringLiteral("%1x%2x%3")
-				 .arg(size.width())
-				 .arg(size.height())
-				 .arg(background.name(QColor::HexArgb).remove('#'))});
-		if(newProcessStarted) {
-			emit windowReplacementFailed(nullptr);
-		} else {
-			MainWindow *win = new MainWindow(false);
-			emit windowReplacementFailed(win);
-			win->m_doc->loadBlank(size, background);
-		}
-	}
+	questionWindowReplacement(
+		tr("New"),
+		tr("You're about to create a new canvas and close this window."),
+		[this, size, background](bool ok) {
+			if(ok) {
+				if(canReplace()) {
+					m_doc->loadBlank(size, background);
+				} else {
+					prepareWindowReplacement();
+					bool newProcessStarted = dpApp().runInNewProcess(
+						{QStringLiteral("--no-restore-window-position"),
+						 QStringLiteral("--blank"),
+						 QStringLiteral("%1x%2x%3")
+							 .arg(size.width())
+							 .arg(size.height())
+							 .arg(background.name(QColor::HexArgb)
+									  .remove('#'))});
+					if(newProcessStarted) {
+						emit windowReplacementFailed(nullptr);
+					} else {
+						MainWindow *win = new MainWindow(false);
+						emit windowReplacementFailed(win);
+						win->m_doc->loadBlank(size, background);
+					}
+				}
+			}
+		});
 }
 
-// clang-format on
+void MainWindow::openRecent(const QString &path, QTemporaryFile *tempFile)
+{
+	questionWindowReplacement(
+		tr("Open Recent File"),
+		tr("You're about to open a recent file and close this window."),
+		[this, path, tempFile](bool ok) {
+			if(ok) {
+				openPath(path, tempFile);
+			} else {
+				delete tempFile;
+			}
+		});
+}
+
 void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 {
 	if(!canReplace()) {
@@ -1835,8 +1936,15 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
  */
 void MainWindow::open()
 {
-	FileWrangler(getStartDialogOrThis())
-		.openMain(std::bind(&MainWindow::openPath, this, _1, _2));
+	questionWindowReplacement(
+		tr("Open"),
+		tr("You're about to open a new file and close this window."),
+		[this](bool ok) {
+			if(ok) {
+				FileWrangler(getStartDialogOrThis())
+					.openMain(std::bind(&MainWindow::openPath, this, _1, _2));
+			}
+		});
 }
 
 #ifdef __EMSCRIPTEN__
@@ -2669,6 +2777,7 @@ void MainWindow::hostSession(
 		!useremote);
 }
 
+// clang-format on
 void MainWindow::invite()
 {
 	dialogs::InviteDialog *dlg = new dialogs::InviteDialog(
@@ -2699,7 +2808,14 @@ void MainWindow::join()
 
 void MainWindow::reconnect()
 {
-	joinSession(m_doc->client()->sessionUrl(true));
+	questionWindowReplacement(
+		tr("Reconnect"),
+		tr("You're about reconnect to the session and close this window."),
+		[this](bool ok) {
+			if(ok) {
+				connectToSession(m_doc->client()->sessionUrl(true), QString());
+			}
+		});
 }
 
 void MainWindow::browse()
@@ -2707,6 +2823,7 @@ void MainWindow::browse()
 	dialogs::StartDialog *dlg = showStartDialog();
 	dlg->showPage(dialogs::StartDialog::Entry::Browse);
 }
+// clang-format off
 
 /**
  * Leave action triggered, ask for confirmation
@@ -2821,6 +2938,7 @@ void MainWindow::resetSession()
 	utils::showWindow(dlg, shouldShowDialogMaximized());
 }
 
+// clang-format on
 void MainWindow::terminateSession()
 {
 	// When hosting on the builtin server, terminating the session isn't done
@@ -2844,10 +2962,20 @@ void MainWindow::terminateSession()
 	}
 }
 
-/**
- * @param url URL
- */
-void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
+void MainWindow::joinSession(const QUrl &url, const QString &autoRecordFile)
+{
+	questionWindowReplacement(
+		tr("Join Session"),
+		tr("You're about to connect to a new session and close this window."),
+		[this, url, autoRecordFile](bool ok) {
+			if(ok) {
+				connectToSession(url, autoRecordFile);
+			}
+		});
+}
+// clang-format off
+
+void MainWindow::connectToSession(const QUrl& url, const QString &autoRecordFile)
 {
 	m_canvasView->hideDisconnectedWarning();
 	if(!canReplace()) {
@@ -2875,7 +3003,7 @@ void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 			if(m_singleSession) {
 				win->m_doc->client()->setSessionUrl(url);
 			}
-			win->joinSession(url, autoRecordFile);
+			win->connectToSession(url, autoRecordFile);
 		}
 		return;
 	}
@@ -2987,7 +3115,7 @@ void MainWindow::onServerDisconnected(
 			QUrl url = m_doc->client()->sessionUrl(true);
 
 			connect(joinbutton, &QAbstractButton::clicked, this, [this, url]() {
-				joinSession(url, QString{});
+				connectToSession(url, QString{});
 			});
 
 		}
@@ -4067,13 +4195,20 @@ void MainWindow::toggleDebugDump()
 	}
 }
 
+// clang-format on
 void MainWindow::openDebugDump()
 {
-	FileWrangler(this).openDebugDump(
-		std::bind(&MainWindow::openPath, this, _1, _2));
+	questionWindowReplacement(
+		tr("Open Debug Dump"),
+		tr("You're about to open a debug dump and close this window."),
+		[this](bool ok) {
+			if(ok) {
+				FileWrangler(this).openDebugDump(
+					std::bind(&MainWindow::openPath, this, _1, _2));
+			}
+		});
 }
 
-// clang-format on
 void MainWindow::causeCrash()
 {
 	QMessageBox *box = utils::makeQuestion(
@@ -4529,7 +4664,7 @@ void MainWindow::setupActions()
 		connect(m_recentMenu, &QMenu::triggered, this, [this](QAction *action) {
 			QVariant filepath = action->property("filepath");
 			if(filepath.isValid()) {
-				this->openPath(filepath.toString());
+				this->openRecent(filepath.toString());
 			} else {
 				dialogs::StartDialog *dlg = showStartDialog();
 				dlg->showPage(dialogs::StartDialog::Entry::Recent);

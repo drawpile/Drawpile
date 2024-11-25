@@ -346,7 +346,7 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 #ifndef __EMSCRIPTEN__
 	connect(
 		recentPage, &startdialog::Recent::openPath, this,
-		&StartDialog::openPath);
+		&StartDialog::openRecent);
 #endif
 
 	setMinimumSize(600, 350);

@@ -94,6 +94,7 @@ public:
 	MainWindow(bool restoreWindowPosition = true, bool singleSession = false);
 	~MainWindow() override;
 
+	void openRecent(const QString &path, QTemporaryFile *tempFile = nullptr);
 	void openPath(const QString &path, QTemporaryFile *tempFile = nullptr);
 	void autoJoin(const QUrl &url, const QString &autoRecordPath);
 
@@ -293,7 +294,18 @@ protected:
 private:
 	static constexpr int DESKTOP_MODE_MIN_WIDTH = 1000;
 	static constexpr int DESKTOP_MODE_MIN_HEIGHT = 600;
+	enum class ReplacementCriterion {
+		Dirty = (1 << 0),
+		Connected = (1 << 1),
+		Recording = (1 << 2),
+		Playback = (1 << 3),
+	};
+	Q_DECLARE_FLAGS(ReplacementCriteria, ReplacementCriterion)
 
+	ReplacementCriteria getReplacementCriteria() const;
+	void questionWindowReplacement(
+		const QString &title, const QString &action,
+		const std::function<void(bool)> &block);
 	void prepareWindowReplacement();
 
 	void connectStartDialog(dialogs::StartDialog *dlg);
@@ -303,6 +315,7 @@ private:
 
 	void showBrushSettingsDialog(bool openOnPresetPage);
 
+	void connectToSession(const QUrl &url, const QString &autoRecordFilename);
 	void importAnimation(int source);
 	void showAnimationExportDialog(bool fromFlipbook);
 	void exportAnimation(

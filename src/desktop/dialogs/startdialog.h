@@ -64,7 +64,7 @@ public slots:
 
 signals:
 	void openFile();
-	void openPath(const QString &path);
+	void openRecent(const QString &path);
 	void layouts();
 	void preferences();
 	void join(const QUrl &url, const QString recordingFilename);
