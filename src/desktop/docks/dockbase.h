@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef DESKTOP_DOCKBASE_H
-#define DESKTOP_DOCKBASE_H
-
+#ifndef DESKTOP_DOCKS_DOCKBASE_H
+#define DESKTOP_DOCKS_DOCKBASE_H
 #include <QDockWidget>
+
+class QTabBar;
 
 namespace docks {
 
-// Base class for all of our docks because on macOS you can't resize floating
-// docks unless you turn them into regular windows when they start floating.
 class DockBase : public QDockWidget {
 	Q_OBJECT
 public:
@@ -17,6 +15,8 @@ public:
 		QWidget *parent = nullptr);
 
 	const QString &fullTitle() const { return m_fullTitle; }
+
+	void makeTabCurrent(bool toggled);
 
 #ifdef Q_OS_MACOS
 private slots:
@@ -27,6 +27,7 @@ private:
 #ifdef Q_OS_MACOS
 	void initConnection();
 #endif
+	QTabBar *searchTab(int &outIndex);
 
 	QString m_fullTitle;
 };

@@ -4413,6 +4413,9 @@ void MainWindow::setupActions()
 			QKeySequence());
 		addAction(toggledockaction);
 		m_desktopModeActions->addAction(toggledockaction);
+		connect(
+			toggledockaction, &QAction::triggered, dw,
+			&docks::DockBase::makeTabCurrent, Qt::QueuedConnection);
 	}
 	//clang-format off
 
