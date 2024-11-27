@@ -880,32 +880,20 @@ QButtonGroup *addRadioGroup(
 	return group;
 }
 
-// TODO: This needs to update when the style changes
-static int checkBoxLabelSpacing(const QWidget *widget)
-{
-	const QStyle *style = widget->style();
-
-	// This has to be done the stupid way instead of just asking for the pixel
-	// metric because at least QCommonStyle has an off-by-one error from using
-	// `QRect::right` without correct for that being an inclusive coordinate
-	QStyleOption option;
-	int l =
-		style->subElementRect(QStyle::SE_CheckBoxIndicator, &option, nullptr)
-			.width();
-	int r = style->subElementRect(QStyle::SE_CheckBoxContents, &option, nullptr)
-				.left();
-
-	return r - l;
-}
-
 QCheckBox *addCheckable(
 	const QString &accessibleName, EncapsulatedLayout *layout, QWidget *child)
 {
 	QCheckBox *check = new QCheckBox;
 	check->setAccessibleName(accessibleName);
+	if(layout->count() > 0) {
+		QLabel *label = qobject_cast<QLabel *>(layout->itemAt(0)->widget());
+		if(label) {
+			check->setText(label->text());
+			layout->removeWidget(label);
+			delete label;
+		}
+	}
 	layout->insertWidget(0, check);
-	// TODO: This needs to update when the style changes
-	layout->insertSpacing(1, utils::checkBoxLabelSpacing(child));
 	child->setEnabled(false);
 	QObject::connect(check, &QCheckBox::toggled, child, &QWidget::setEnabled);
 	setSpacingControlType(layout, QSizePolicy::CheckBox);
