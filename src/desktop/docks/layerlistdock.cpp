@@ -35,7 +35,8 @@
 namespace docks {
 
 LayerList::LayerList(QWidget *parent)
-	: DockBase(tr("Layers"), QString(), parent)
+	: DockBase(
+		  tr("Layers"), QString(), QIcon::fromTheme("layer-visible-on"), parent)
 	, m_canvas(nullptr)
 	, m_selectedId(0)
 	, m_nearestToDeletedId(0)

@@ -73,7 +73,9 @@ struct ColorSpinnerDock::Private {
 };
 
 ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
-	: DockBase(tr("Color Wheel"), tr("Wheel"), parent)
+	: DockBase(
+		  tr("Color Wheel"), tr("Wheel"),
+		  QIcon::fromTheme("drawpile_colorwheel"), parent)
 	, d(new Private)
 {
 	// Create title bar widget

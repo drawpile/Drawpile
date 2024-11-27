@@ -97,7 +97,7 @@ struct BrushPalette::Private {
 };
 
 BrushPalette::BrushPalette(QWidget *parent)
-	: DockBase(tr("Brushes"), QString(), parent)
+	: DockBase(tr("Brushes"), QString(), QIcon::fromTheme("draw-brush"), parent)
 	, d(new Private)
 {
 	d->tagModel = dpApp().brushPresets();

@@ -146,7 +146,9 @@ struct ToolSettings::Private {
 };
 
 ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
-	: DockBase(tr("Tool Settings"), tr("Tool"), parent)
+	: DockBase(
+		  tr("Tool Settings"), tr("Tool"), QIcon::fromTheme("configure"),
+		  parent)
 	, d(new Private(ctrl))
 {
 	auto titleWidget = new TitleWidget(this);

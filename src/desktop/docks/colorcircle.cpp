@@ -21,7 +21,9 @@
 namespace docks {
 
 ColorCircleDock::ColorCircleDock(QWidget *parent)
-	: DockBase(tr("Color Circle"), tr("Circle"), parent)
+	: DockBase(
+		  tr("Color Circle"), tr("Circle"),
+		  QIcon::fromTheme("drawpile_colorcircle"), parent)
 {
 	TitleWidget *titlebar = new TitleWidget(this);
 	setTitleBarWidget(titlebar);

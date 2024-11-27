@@ -496,6 +496,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_doc->client(), &net::Client::lagMeasured, m_netstatus, &widgets::NetStatus::lagMeasured);
 
 	connect(&dpApp(), &DrawpileApp::setDockTitleBarsHidden, this, &MainWindow::setDockTitleBarsHidden);
+	// clang-format on
 	connect(&dpApp(), &DrawpileApp::focusCanvas, this, [this] {
 		if(dpApp().settings().doubleTapAltToFocusCanvas()) {
 			m_canvasView->viewWidget()->setFocus();
@@ -546,6 +547,11 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		&MainWindow::startRefitWindowDebounce);
 #endif
 	startRefitWindowDebounce();
+
+	connect(
+		this, &MainWindow::dockTabUpdateRequested, this,
+		&MainWindow::updateDockTabs, Qt::QueuedConnection);
+	emit dockTabUpdateRequested();
 }
 
 MainWindow::~MainWindow()
@@ -557,6 +563,7 @@ MainWindow::~MainWindow()
 	// Clear this out first so there will be no weird signals emitted
 	// while the document is being torn down.
 	m_canvasView->disposeScene();
+	// clang-format off
 
 	// Make sure all child dialogs are closed
 	for(auto *child : findChildren<QDialog *>(QString(), Qt::FindDirectChildrenOnly)) {
@@ -4009,6 +4016,14 @@ void MainWindow::showLayoutsDialog()
 				dlg, &dialogs::LayoutsDialog::applyState,
 				[this](const QByteArray &state) {
 					if(!m_smallScreenMode) {
+						for(const docks::DockBase *dw :
+							findChildren<const docks::DockBase *>(
+								QString(), Qt::FindDirectChildrenOnly)) {
+							QAction *action = dw->toggleViewAction();
+							if(action->isChecked()) {
+								action->trigger();
+							}
+						}
 						restoreState(state);
 						refitWindow();
 					}
@@ -4415,6 +4430,9 @@ void MainWindow::setupActions()
 		connect(
 			toggledockaction, &QAction::triggered, dw,
 			&docks::DockBase::makeTabCurrent, Qt::QueuedConnection);
+		connect(
+			dw, &docks::DockBase::tabUpdateRequested, this,
+			&MainWindow::prepareDockTabUpdate);
 	}
 	//clang-format off
 
@@ -4426,6 +4444,16 @@ void MainWindow::setupActions()
 	toggledockmenu->addAction(freezeDocks);
 	m_desktopModeActions->addAction(freezeDocks);
 	connect(freezeDocks, &QAction::toggled, this, &MainWindow::setFreezeDocks);
+
+	QAction *dockTabIcons = makeAction("docktabicons", tr("Show Icons on Tabs"))
+								.noDefaultShortcut()
+								.checked()
+								.remembered();
+	toggledockmenu->addAction(dockTabIcons);
+	m_desktopModeActions->addAction(dockTabIcons);
+	connect(
+		dockTabIcons, &QAction::toggled, this,
+		&MainWindow::prepareDockTabUpdate);
 
 	QAction *sideTabDocks =
 		makeAction("sidetabdocks", tr("Vertical Tabs on Sides"))
@@ -6377,4 +6405,44 @@ void MainWindow::refitWindow()
 		resize(compat::widgetScreen(*this)->availableSize());
 	}
 #endif
+}
+
+void MainWindow::prepareDockTabUpdate()
+{
+	if(!m_dockTabUpdatePending) {
+		m_dockTabUpdatePending = true;
+		emit dockTabUpdateRequested();
+	}
+}
+
+void MainWindow::updateDockTabs()
+{
+	m_dockTabUpdatePending = false;
+	bool showIcons =
+		m_smallScreenMode || getAction("docktabicons")->isChecked();
+
+	QHash<quintptr, docks::DockBase *> docksByTabId;
+	for(docks::DockBase *dw : findChildren<docks::DockBase *>(
+			QString(), Qt::FindDirectChildrenOnly)) {
+		dw->setShowIcons(showIcons);
+		if(!dw->isFloating()) {
+			docksByTabId.insert(
+				quintptr(qobject_cast<const QDockWidget *>(dw)), dw);
+		}
+	}
+
+	for(QTabBar *tabBar :
+		findChildren<QTabBar *>(QString(), Qt::FindDirectChildrenOnly)) {
+		int count = tabBar->count();
+		for(int i = 0; i < count; ++i) {
+			quintptr value = tabBar->tabData(i).value<quintptr>();
+			QHash<quintptr, docks::DockBase *>::iterator it =
+				docksByTabId.find(value);
+			if(it != docksByTabId.end()) {
+				tabBar->setTabIcon(
+					i, showIcons ? it.value()->tabIcon() : QIcon());
+				docksByTabId.erase(it);
+			}
+		}
+	}
 }

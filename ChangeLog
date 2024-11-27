@@ -21,6 +21,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Properly ignore system tablet events when using KisTablet drivers on Windows. Thanks Doc for reporting.
  * Feature: Warn when an action will close a relevant window on Android and in the browser. Thanks 3rd_EFNO for suggesting.
  * Fix: When enabling a dock and it gets put into a tab, that tab now gets activated.
+ * Feature: Show icons on dock tabs by default, rather than text that gets squashed. In desktop mode, this can be toggled via View > Docks > Show Icons on Tabs.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

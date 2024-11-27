@@ -8,20 +8,37 @@
 namespace docks {
 
 DockBase::DockBase(
-	const QString &fullTitle, const QString &shortTitle, QWidget *parent)
+	const QString &fullTitle, const QString &shortTitle, const QIcon &tabIcon,
+	QWidget *parent)
 	: QDockWidget(parent)
 	, m_fullTitle(fullTitle)
 	, m_shortTitle(shortTitle.isEmpty() ? fullTitle : shortTitle)
+	, m_tabIcon(tabIcon)
 {
 	setWindowTitle(m_shortTitle);
 	toggleViewAction()->setText(m_fullTitle);
 #ifdef Q_OS_MACOS
 	initConnection();
 #endif
-	connect(this, &DockBase::topLevelChanged, this, &DockBase::adjustTitle);
+	connect(
+		this, &DockBase::dockLocationChanged, this,
+		&DockBase::tabUpdateRequested);
+	connect(
+		this, &DockBase::topLevelChanged, this,
+		&DockBase::handleTopLevelChanged);
 	connect(
 		this, &DockBase::windowTitleChanged, this,
 		&DockBase::fixViewToggleActionTitle, Qt::QueuedConnection);
+}
+
+void DockBase::setShowIcons(bool showIcons)
+{
+	if(showIcons != m_showIcons) {
+		m_showIcons = showIcons;
+		if(!isFloating()) {
+			adjustTitle(false);
+		}
+	}
 }
 
 void DockBase::makeTabCurrent(bool toggled)
@@ -40,6 +57,8 @@ void DockBase::showEvent(QShowEvent *event)
 	QDockWidget::showEvent(event);
 	if(isFloating()) {
 		adjustTitle(true);
+	} else {
+		emit tabUpdateRequested();
 	}
 }
 
@@ -66,9 +85,20 @@ void DockBase::initConnection()
 }
 #endif
 
+void DockBase::handleTopLevelChanged(bool floating)
+{
+	adjustTitle(floating);
+	if(!floating) {
+		emit tabUpdateRequested();
+	}
+}
+
 void DockBase::adjustTitle(bool floating)
 {
-	setWindowTitle(floating ? m_fullTitle : m_shortTitle);
+	setWindowTitle(
+		floating	  ? m_fullTitle
+		: m_showIcons ? QString()
+					  : m_shortTitle);
 }
 
 void DockBase::fixViewToggleActionTitle(const QString &title)

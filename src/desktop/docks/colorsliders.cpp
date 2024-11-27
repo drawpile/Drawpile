@@ -69,7 +69,9 @@ struct ColorSliderDock::Private {
 };
 
 ColorSliderDock::ColorSliderDock(QWidget *parent)
-	: DockBase(tr("Color Sliders"), tr("Sliders"), parent)
+	: DockBase(
+		  tr("Color Sliders"), tr("Sliders"),
+		  QIcon::fromTheme("drawpile_colorsliders"), parent)
 	, d(new Private)
 {
 	// Create title bar widget

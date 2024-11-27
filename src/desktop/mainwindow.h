@@ -133,6 +133,7 @@ signals:
 	void smallScreenModeChanged(bool smallScreenMode);
 	void windowReplacementFailed(MainWindow *win);
 	void viewShifted(qreal deltaX, qreal deltaY);
+	void dockTabUpdateRequested();
 
 public slots:
 	// Triggerable actions
@@ -387,6 +388,9 @@ private:
 	void startRefitWindowDebounce();
 	void refitWindow();
 
+	void prepareDockTabUpdate();
+	void updateDockTabs();
+
 	bool m_singleSession;
 	bool m_smallScreenMode;
 	bool m_updatingInterfaceMode;
@@ -478,6 +482,7 @@ private:
 	bool m_notificationsMuted;
 	bool m_initialCatchup;
 	bool m_toolStateNormal;
+	bool m_dockTabUpdatePending = false;
 
 	Document *m_doc;
 	MainActions *m_ma;

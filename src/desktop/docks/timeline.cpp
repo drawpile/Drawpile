@@ -16,7 +16,7 @@
 namespace docks {
 
 Timeline::Timeline(QWidget *parent)
-	: DockBase(tr("Timeline"), QString(), parent)
+	: DockBase(tr("Timeline"), QString(), QIcon::fromTheme("keyframe"), parent)
 	, m_widget{new widgets::TimelineWidget{this}}
 	, m_frameSpinner{nullptr}
 	, m_framerateSpinner{nullptr}
