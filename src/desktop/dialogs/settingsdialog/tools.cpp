@@ -150,6 +150,19 @@ void Tools::initKeyboardShortcuts(
 	auto *focusCanvas = new QCheckBox(tr("Double-tap Alt key to focus canvas"));
 	settings.bindDoubleTapAltToFocusCanvas(focusCanvas);
 	form->addRow(nullptr, focusCanvas);
+
+	auto *temporarySwitchMs = new QSpinBox;
+	temporarySwitchMs->setRange(0, 4000);
+	settings.bindTemporaryToolSwitchMs(temporarySwitchMs);
+	//: This stands for millseconds.
+	temporarySwitchMs->setSuffix(tr("ms"));
+	auto *temporarySwitchLayout = utils::encapsulate(
+		tr("Switch tool temporarily by holding shortcut key for %1"),
+		temporarySwitchMs);
+	auto *temporarySwitch = utils::addCheckable(
+		tr("Enable brush outline"), temporarySwitchLayout, temporarySwitchMs);
+	settings.bindTemporaryToolSwitch(temporarySwitch);
+	form->addRow(nullptr, temporarySwitchLayout);
 }
 
 void Tools::initSlots(desktop::settings::Settings &settings, QFormLayout *form)

@@ -258,6 +258,7 @@ private slots:
 	void openDebugDump();
 	void causeCrash();
 
+	void updateTemporaryToolSwitch();
 	void toolChanged(tools::Tool::Type tool);
 	void updateFreehandToolButton(int brushMode);
 	void handleFreehandToolButtonClicked();
@@ -475,6 +476,7 @@ private:
 	bool m_fullscreenOldMaximized;
 #endif
 
+	int m_temporaryToolSwitchMs = -1;
 	QElapsedTimer m_toolChangeTime; // how long the user has held down the tool
 									// change button
 	ShortcutDetector *m_tempToolSwitchShortcut;

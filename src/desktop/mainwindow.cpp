@@ -534,6 +534,10 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	settings.bindInterfaceMode(this, [this](bool) {
 		updateInterfaceMode();
 	});
+	settings.bindTemporaryToolSwitch(
+		this, &MainWindow::updateTemporaryToolSwitch);
+	settings.bindTemporaryToolSwitchMs(
+		this, &MainWindow::updateTemporaryToolSwitch);
 	settings.trySubmit();
 
 	m_updatingInterfaceMode = false;
@@ -1554,8 +1558,8 @@ bool MainWindow::event(QEvent *event)
 		// the shortcut key is released. Note: for simplicity, we only support
 		// tools with single key shortcuts.
 		const QKeyEvent *e = static_cast<const QKeyEvent *>(event);
-		if(!e->isAutoRepeat()) {
-			if(m_toolChangeTime.elapsed() > 250) {
+		if(m_temporaryToolSwitchMs >= 0 && !e->isAutoRepeat()) {
+			if(m_toolChangeTime.elapsed() > m_temporaryToolSwitchMs) {
 				if(m_tempToolSwitchShortcut->isShortcutSent() &&
 				   e->modifiers() == Qt::NoModifier) {
 					// Return from temporary tool change
@@ -3572,8 +3576,6 @@ void MainWindow::setToolState(int toolState)
 	updateSelectTransformActions();
 }
 
-// clang-format off
-
 /**
  * User selected a tool
  * @param tool action representing the tool
@@ -3595,6 +3597,15 @@ void MainWindow::selectTool(QAction *tool)
 		m_toolChangeTime.start();
 	}
 }
+
+// clang-format on
+void MainWindow::updateTemporaryToolSwitch()
+{
+	const desktop::settings::Settings &settings = dpApp().settings();
+	m_temporaryToolSwitchMs =
+		settings.temporaryToolSwitch() ? settings.temporaryToolSwitchMs() : -1;
+}
+// clang-format off
 
 /**
  * @brief Handle tool change

@@ -248,6 +248,8 @@ SETTING_GETSET(tabletDriver       , TabletDriver              , "settings/input/
 SETTING_GETSET(tabletEraserAction , TabletEraserAction        , "settings/input/tableteraseraction"     , int(tabletinput::EraserAction::Default)
 	, &tabletEraserAction::get, &tabletEraserAction::set)
 SETTING(tabletEvents              , TabletEvents              , "settings/input/tabletevents"           , true)
+SETTING(temporaryToolSwitch       , TemporaryToolSwitch       , "settings/tools/temporaryswitch"        , true)
+SETTING(temporaryToolSwitchMs     , TemporaryToolSwitchMs     , "settings/tools/temporaryswitchms"      , 250)
 SETTING_GETSET_V(V2, themePalette , ThemePalette              , "settings/theme/palette"                , THEME_PALETTE_DEFAULT
 	, &any::get	      , &any::set)
 SETTING_FULL(V2, themeStyle       , ThemeStyle                , "settings/theme/style"                  , THEME_STYLE_DEFAULT
