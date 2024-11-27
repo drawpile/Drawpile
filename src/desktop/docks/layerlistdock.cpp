@@ -90,7 +90,7 @@ LayerList::LayerList(QWidget *parent)
 		this, &LayerList::opacityChanged);
 	QHBoxLayout *opacitySliderLayout = new QHBoxLayout;
 	opacitySliderLayout->setContentsMargins(
-		titleBarWidget()->layout()->contentsMargins());
+		titlebar->layout()->contentsMargins());
 	opacitySliderLayout->addWidget(m_opacitySlider);
 	rootLayout->addLayout(opacitySliderLayout);
 
@@ -214,11 +214,12 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	// Add the actions below the layer list
 	QWidget *root = widget();
 	Q_ASSERT(root);
-	Q_ASSERT(titleBarWidget());
+	Q_ASSERT(actualTitleBarWidget());
 
 	QHBoxLayout *layout = new QHBoxLayout;
 	layout->setSpacing(0);
-	layout->setContentsMargins(titleBarWidget()->layout()->contentsMargins());
+	layout->setContentsMargins(
+		actualTitleBarWidget()->layout()->contentsMargins());
 	addLayerButton(
 		root, layout, m_actions.addLayer, widgets::GroupedToolButton::GroupLeft,
 		3);

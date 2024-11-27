@@ -76,13 +76,8 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	drawdance::initCpuSupport();
 	drawdance::DrawContextPool::init();
 
-	// Dockers are hard to drag around since their title bars are full of stuff.
-	// This event filter allows for hiding the title bars by holding shift.
 	GlobalKeyEventFilter *filter = new GlobalKeyEventFilter{this};
 	installEventFilter(filter);
-	connect(
-		filter, &GlobalKeyEventFilter::setDockTitleBarsHidden, this,
-		&DrawpileApp::setDockTitleBarsHidden);
 	connect(
 		filter, &GlobalKeyEventFilter::focusCanvas, this,
 		&DrawpileApp::focusCanvas);

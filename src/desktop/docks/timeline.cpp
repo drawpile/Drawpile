@@ -148,7 +148,7 @@ void Timeline::setUpTitleWidget(
 {
 	using widgets::GroupedToolButton;
 	docks::TitleWidget *titlebar =
-		qobject_cast<docks::TitleWidget *>(titleBarWidget());
+		qobject_cast<docks::TitleWidget *>(actualTitleBarWidget());
 
 	m_frameSpinner = new QSpinBox{titlebar};
 	m_frameSpinner->setWrapping(true);

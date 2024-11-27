@@ -187,7 +187,6 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	  m_fullscreenOldMaximized(false),
 #endif
 	  m_tempToolSwitchShortcut(nullptr),
-	  m_titleBarsHidden(false),
 	  m_wasSessionLocked(false),
 	  m_notificationsMuted(false),
 	  m_initialCatchup(false),
@@ -495,7 +494,6 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_doc->client(), &net::Client::bytesSent, m_netstatus, &widgets::NetStatus::bytesSent);
 	connect(m_doc->client(), &net::Client::lagMeasured, m_netstatus, &widgets::NetStatus::lagMeasured);
 
-	connect(&dpApp(), &DrawpileApp::setDockTitleBarsHidden, this, &MainWindow::setDockTitleBarsHidden);
 	// clang-format on
 	connect(&dpApp(), &DrawpileApp::focusCanvas, this, [this] {
 		if(dpApp().settings().doubleTapAltToFocusCanvas()) {
@@ -3389,10 +3387,14 @@ void MainWindow::setFreezeDocks(bool freeze)
 	for(QToolBar *tb : findChildren<QToolBar*>(QString(), Qt::FindDirectChildrenOnly)) {
 		tb->setMovable(!freeze);
 	}
+
+	finishArrangingDocks()->setEnabled(!freeze);
 }
 
+// clang-format on
 void MainWindow::setDocksHidden(bool hidden)
 {
+	finishArrangingDocks()->setEnabled(!hidden);
 	keepCanvasPosition([this, hidden] {
 		m_viewStatusBar->setHidden(hidden);
 		if(hidden) {
@@ -3420,19 +3422,30 @@ void MainWindow::setDocksHidden(bool hidden)
 	m_dockToggles->setDisabled(hidden);
 }
 
-void MainWindow::setDockTitleBarsHidden(bool hidden)
+void MainWindow::setDockArrangeMode(bool arrange)
 {
-	QAction *freezeDocks = getAction("freezedocks");
-	QAction *hideDockTitleBars = getAction("hidedocktitlebars");
-	bool actuallyHidden = hidden && !freezeDocks->isChecked()
-		&& hideDockTitleBars->isChecked() && !m_smallScreenMode;
-	if(actuallyHidden != m_titleBarsHidden) {
-		m_titleBarsHidden = hidden;
-		for(auto *dw : findChildren<QDockWidget*>(QString(), Qt::FindDirectChildrenOnly)) {
-				dw->titleBarWidget()->setHidden(hidden);
-		}
+	for(docks::DockBase *dw : findChildren<docks::DockBase *>(
+			QString(), Qt::FindDirectChildrenOnly)) {
+		dw->setArrangeMode(arrange);
 	}
 }
+
+QAction *MainWindow::finishArrangingDocks()
+{
+	QAction *arrangeDocks = getAction("arrangedocks");
+	if(arrangeDocks->isChecked()) {
+		bool enabled = arrangeDocks->isEnabled();
+		if(!enabled) {
+			arrangeDocks->setEnabled(true);
+		}
+		arrangeDocks->trigger();
+		if(!enabled) {
+			arrangeDocks->setEnabled(false);
+		}
+	}
+	return arrangeDocks;
+}
+// clang-format off
 
 void MainWindow::updateSideTabDocks()
 {
@@ -4006,6 +4019,7 @@ void MainWindow::showLayoutsDialog()
 	if(!m_smallScreenMode) {
 		dialogs::LayoutsDialog *dlg = findChild<dialogs::LayoutsDialog *>(
 			"layoutsdialog", Qt::FindDirectChildrenOnly);
+		finishArrangingDocks();
 		if(dlg) {
 			dlg->setParent(getStartDialogOrThis());
 		} else {
@@ -4434,6 +4448,9 @@ void MainWindow::setupActions()
 		connect(
 			dw, &docks::DockBase::tabUpdateRequested, this,
 			&MainWindow::prepareDockTabUpdate);
+		connect(
+			dw, &docks::DockBase::arrangingFinished, this,
+			&MainWindow::finishArrangingDocks);
 	}
 	//clang-format off
 
@@ -4473,16 +4490,13 @@ void MainWindow::setupActions()
 	m_desktopModeActions->addAction(hideDocks);
 	connect(hideDocks, &QAction::toggled, this, &MainWindow::setDocksHidden);
 
-	QAction *hideDockTitleBars =
-		makeAction("hidedocktitlebars", tr("Hold Shift to Arrange"))
-			.noDefaultShortcut()
-			.checkable()
-			.remembered();
-	toggledockmenu->addAction(hideDockTitleBars);
-	m_desktopModeActions->addAction(hideDockTitleBars);
-	connect(hideDocks, &QAction::toggled, [this]() {
-		setDockTitleBarsHidden(m_titleBarsHidden);
-	});
+	QAction *arrangeDocks = makeAction("arrangedocks", tr("Arrange Docks"))
+								.noDefaultShortcut()
+								.checkable();
+	toggledockmenu->addAction(arrangeDocks);
+	m_desktopModeActions->addAction(arrangeDocks);
+	connect(
+		arrangeDocks, &QAction::toggled, this, &MainWindow::setDockArrangeMode);
 
 	//
 	// File menu and toolbar
@@ -6009,14 +6023,17 @@ void MainWindow::setupActions()
 			m_doc->toolCtrl(), &tools::ToolController::cancelMultipartDrawing);
 
 	QAction *focusCanvas = makeAction("focuscanvas", tr("Focus canvas")).shortcut(CTRL_KEY | Qt::Key_Tab);
-	connect(focusCanvas, &QAction::triggered, this, [this]{
+	// clang-format on
+	connect(focusCanvas, &QAction::triggered, this, [this] {
 		m_canvasView->viewWidget()->setFocus();
 	});
 
 	const QList<QAction *> globalDockActions = {
-		sideTabDocks, hideDocks, hideDockTitleBars, nullptr, layoutsAction};
-	for(auto *dw : findChildren<QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
-		if(auto *titlebar = qobject_cast<docks::TitleWidget *>(dw->titleBarWidget())) {
+		sideTabDocks, hideDocks, arrangeDocks, nullptr, layoutsAction};
+	for(docks::DockBase *dw : findChildren<docks::DockBase *>(
+			QString(), Qt::FindDirectChildrenOnly)) {
+		if(docks::TitleWidget *titlebar =
+			   qobject_cast<docks::TitleWidget *>(dw->actualTitleBarWidget())) {
 			titlebar->addGlobalDockActions(globalDockActions);
 		}
 	}
@@ -6046,7 +6063,6 @@ void MainWindow::setupActions()
 	updateInterfaceModeActions();
 }
 
-// clang-format on
 void MainWindow::setupBrushShortcuts()
 {
 	brushes::BrushPresetModel *brushPresetModel =
@@ -6300,6 +6316,7 @@ bool MainWindow::isSmallScreenModeSize(const QSize &s)
 void MainWindow::switchInterfaceMode(bool smallScreenMode)
 {
 	setUpdatesEnabled(false);
+	finishArrangingDocks();
 	saveSplitterState();
 	saveWindowState();
 	m_smallScreenMode = smallScreenMode;

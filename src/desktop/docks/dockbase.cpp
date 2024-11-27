@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/docks/dockbase.h"
+#include "desktop/widgets/groupedtoolbutton.h"
 #include <QAction>
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QMainWindow>
 #include <QTabBar>
 #include <QVariant>
@@ -48,6 +51,46 @@ void DockBase::makeTabCurrent(bool toggled)
 		QTabBar *tabBar = searchTab(i);
 		if(tabBar) {
 			tabBar->setCurrentIndex(i);
+		}
+	}
+}
+
+QWidget *DockBase::actualTitleBarWidget() const
+{
+	return m_originalTitleBarWidget ? m_originalTitleBarWidget
+									: titleBarWidget();
+}
+
+void DockBase::setArrangeMode(bool arrangeMode)
+{
+	if(arrangeMode && !m_originalTitleBarWidget) {
+		m_originalTitleBarWidget = titleBarWidget();
+		QWidget *arrangeWidget = new QWidget;
+		QHBoxLayout *arrangeLayout = new QHBoxLayout(arrangeWidget);
+		arrangeLayout->setSpacing(0);
+		arrangeLayout->setContentsMargins(2, 2, 1, 2);
+
+		QLabel *arrangeLabel = new QLabel(tr("Drag here to arrange"));
+		arrangeLabel->setAlignment(Qt::AlignCenter);
+		arrangeLayout->addWidget(arrangeLabel, 1);
+
+		widgets::GroupedToolButton *arrangeButton =
+			new widgets::GroupedToolButton(
+				widgets::GroupedToolButton::NotGrouped);
+		arrangeButton->setIcon(QIcon::fromTheme("checkbox"));
+		arrangeButton->setToolTip(tr("Finish arranging"));
+		arrangeLayout->addWidget(arrangeButton);
+		connect(
+			arrangeButton, &widgets::GroupedToolButton::clicked, this,
+			&DockBase::arrangingFinished);
+
+		setTitleBarWidget(arrangeWidget);
+	} else if(!arrangeMode && m_originalTitleBarWidget) {
+		QWidget *arrangeWidget = titleBarWidget();
+		setTitleBarWidget(m_originalTitleBarWidget);
+		m_originalTitleBarWidget = nullptr;
+		if(arrangeWidget) {
+			arrangeWidget->deleteLater();
 		}
 	}
 }

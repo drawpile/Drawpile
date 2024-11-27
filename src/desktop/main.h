@@ -90,7 +90,6 @@ signals:
 	void tabletProximityChanged(bool enter, bool eraser);
 	void eraserNear(bool near);
 #endif
-	void setDockTitleBarsHidden(bool hidden);
 	void focusCanvas();
 	void shortcutsChanged();
 	void tabletDriverChanged();

@@ -65,7 +65,7 @@
    <item>
     <widget class="QLabel" name="explanationLabel">
      <property name="text">
-      <string>Drawpile's dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</string>
+      <string>Drawpile's docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

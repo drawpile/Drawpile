@@ -266,7 +266,8 @@ private slots:
 
 	void setFreezeDocks(bool freeze);
 	void setDocksHidden(bool hidden);
-	void setDockTitleBarsHidden(bool hidden);
+	void setDockArrangeMode(bool arrange);
+	QAction *finishArrangingDocks();
 	void updateSideTabDocks();
 	void setNotificationsMuted(bool muted);
 	void setToolState(int toolState);
@@ -477,7 +478,6 @@ private:
 	QElapsedTimer m_toolChangeTime; // how long the user has held down the tool
 									// change button
 	ShortcutDetector *m_tempToolSwitchShortcut;
-	bool m_titleBarsHidden;
 	bool m_wasSessionLocked;
 	bool m_notificationsMuted;
 	bool m_initialCatchup;

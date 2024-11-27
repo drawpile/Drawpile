@@ -7,7 +7,6 @@
 
 GlobalKeyEventFilter::GlobalKeyEventFilter(QObject *parent)
 	: QObject{parent}
-	, m_wasHidden{false}
 	, m_lastAltPress{0}
 	, m_lastAltInternalTimestamp{0}
 {
@@ -16,49 +15,15 @@ GlobalKeyEventFilter::GlobalKeyEventFilter(QObject *parent)
 bool GlobalKeyEventFilter::eventFilter(QObject *watched, QEvent *event)
 {
 	switch(event->type()) {
-	case QEvent::Enter:
-	case QEvent::Leave: {
-		updateDockTitleBarsHidden(
-			QApplication::queryKeyboardModifiers().testFlag(Qt::ShiftModifier));
-		break;
-	}
 	case QEvent::KeyRelease: {
 		QKeyEvent *ke = static_cast<QKeyEvent *>(event);
 		checkCanvasFocus(ke);
-		updateDockTitleBarsHidden(
-			ke->key() != Qt::Key_Shift &&
-			ke->modifiers().testFlag(Qt::ShiftModifier));
-		break;
-	}
-	case QEvent::KeyPress:
-	case QEvent::ShortcutOverride: {
-		QKeyEvent *ke = static_cast<QKeyEvent *>(event);
-		updateDockTitleBarsHidden(
-			ke->key() == Qt::Key_Shift ||
-			ke->modifiers().testFlag(Qt::ShiftModifier));
 		break;
 	}
 	default:
 		break;
 	}
 	return QObject::eventFilter(watched, event);
-}
-
-void GlobalKeyEventFilter::updateDockTitleBarsHidden(bool hidden)
-{
-	bool actuallyHidden = hidden && !hasTextFocus();
-	if(actuallyHidden != m_wasHidden) {
-		m_wasHidden = actuallyHidden;
-		emit setDockTitleBarsHidden(actuallyHidden);
-	}
-}
-
-bool GlobalKeyEventFilter::hasTextFocus()
-{
-	QWidget *widget = QApplication::focusWidget();
-	return widget &&
-		   (widget->inherits("QLineEdit") || widget->inherits("QTextEdit") ||
-			widget->inherits("QPlainTextEdit"));
 }
 
 void GlobalKeyEventFilter::checkCanvasFocus(QKeyEvent *event)

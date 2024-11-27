@@ -22,7 +22,11 @@ public:
 
 	void makeTabCurrent(bool toggled);
 
+	QWidget *actualTitleBarWidget() const;
+	void setArrangeMode(bool arrangeMode);
+
 signals:
+	void arrangingFinished();
 	void tabUpdateRequested();
 
 protected:
@@ -42,6 +46,7 @@ private:
 	QString m_fullTitle;
 	QString m_shortTitle;
 	QIcon m_tabIcon;
+	QWidget *m_originalTitleBarWidget = nullptr;
 	bool m_showIcons = false;
 };
 
