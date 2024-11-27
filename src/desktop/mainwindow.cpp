@@ -6198,7 +6198,6 @@ void MainWindow::resetDefaultDocks()
 	addDockWidget(Qt::RightDockWidgetArea, m_dockColorSliders);
 	m_dockColorSliders->show();
 	addDockWidget(Qt::RightDockWidgetArea, m_dockColorCircle);
-	m_dockColorCircle->hide(); // hidden by default
 	tabifyDockWidget(m_dockColorCircle, m_dockColorPalette);
 	tabifyDockWidget(m_dockColorPalette, m_dockColorSliders);
 	tabifyDockWidget(m_dockColorSliders, m_dockColorSpinner);
