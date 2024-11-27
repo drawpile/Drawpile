@@ -3464,6 +3464,7 @@ void MainWindow::handleToggleAction(int action)
 			{m_dockColorSpinner, int(Action::Right)},
 			{m_dockColorSliders, int(Action::Right)},
 			{m_dockColorPalette, int(Action::Right)},
+			{m_dockColorCircle, int(Action::Right)},
 			{m_dockLayers, int(Action::Right)},
 			{m_chatbox, int(Action::Bottom)},
 		};
