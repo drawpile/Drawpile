@@ -18,18 +18,21 @@ public:
 
 	void makeTabCurrent(bool toggled);
 
-#ifdef Q_OS_MACOS
-private slots:
-	void addWindowDecorations(bool topLevel);
-#endif
+protected:
+	void showEvent(QShowEvent *event) override;
+	void hideEvent(QHideEvent *event) override;
 
 private:
 #ifdef Q_OS_MACOS
 	void initConnection();
+	void addWindowDecorations(bool topLevel);
 #endif
+	void adjustTitle(bool floating);
+	void fixViewToggleActionTitle(const QString &title);
 	QTabBar *searchTab(int &outIndex);
 
 	QString m_fullTitle;
+	QString m_shortTitle;
 };
 
 }

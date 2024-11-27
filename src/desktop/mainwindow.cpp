@@ -4401,7 +4401,6 @@ void MainWindow::setupActions()
 		QAction *toggledockaction = dw->toggleViewAction();
 		Q_ASSERT(!dw->objectName().isEmpty());
 		Q_ASSERT(toggledockaction->objectName().isEmpty());
-		toggledockaction->setText(dw->fullTitle());
 		toggledockaction->setObjectName(
 			QStringLiteral("toggledock%1").arg(dw->objectName()));
 		toggledockmenu->addAction(toggledockaction);

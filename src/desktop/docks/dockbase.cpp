@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/docks/dockbase.h"
+#include <QAction>
 #include <QMainWindow>
 #include <QTabBar>
 #include <QVariant>
@@ -13,10 +14,14 @@ DockBase::DockBase(
 	, m_shortTitle(shortTitle.isEmpty() ? fullTitle : shortTitle)
 {
 	setWindowTitle(m_shortTitle);
+	toggleViewAction()->setText(m_fullTitle);
 #ifdef Q_OS_MACOS
 	initConnection();
 #endif
 	connect(this, &DockBase::topLevelChanged, this, &DockBase::adjustTitle);
+	connect(
+		this, &DockBase::windowTitleChanged, this,
+		&DockBase::fixViewToggleActionTitle, Qt::QueuedConnection);
 }
 
 void DockBase::makeTabCurrent(bool toggled)
@@ -28,6 +33,20 @@ void DockBase::makeTabCurrent(bool toggled)
 			tabBar->setCurrentIndex(i);
 		}
 	}
+}
+
+void DockBase::showEvent(QShowEvent *event)
+{
+	QDockWidget::showEvent(event);
+	if(isFloating()) {
+		adjustTitle(true);
+	}
+}
+
+void DockBase::hideEvent(QHideEvent *event)
+{
+	QDockWidget::hideEvent(event);
+	adjustTitle(false);
 }
 
 #ifdef Q_OS_MACOS
@@ -46,6 +65,18 @@ void DockBase::initConnection()
 		&DockBase::addWindowDecorations);
 }
 #endif
+
+void DockBase::adjustTitle(bool floating)
+{
+	setWindowTitle(floating ? m_fullTitle : m_shortTitle);
+}
+
+void DockBase::fixViewToggleActionTitle(const QString &title)
+{
+	if(title != m_fullTitle) {
+		toggleViewAction()->setText(m_fullTitle);
+	}
+}
 
 QTabBar *DockBase::searchTab(int &outIndex)
 {
