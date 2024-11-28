@@ -47,6 +47,7 @@ public:
 		ClientInfo, // Structured information about client joining or hosting
 		ExtBan,     // Externally sourced bans
 		BanImpEx,	// Session ban import and export
+		AdminChat,	// Messages sent to a connected admin chat
 	};
 	Q_ENUM(Topic)
 

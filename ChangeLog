@@ -26,6 +26,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Allow configuring temporary tool switch hold time. Thanks 3rd_EFNO and pachuco for suggesting.
  * Fix: Properly pass tilt and barrel rotation values to MyPaint brushes. Thanks MorrowShore for reporting.
  * Feature: Tilt support on Android. Thanks MorrowShore and Verdrusk for suggesting.
+ * Server Feature: Allow two-way chat in web admin, letting admins talk to sessions without having to intrude on them. Thanks Bluestrings for suggesting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

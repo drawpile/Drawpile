@@ -25,6 +25,7 @@ struct JsonApiResult {
 		Ok=200,
 		BadRequest=400,
 		NotFound=404,
+		Conflict=409,
 		InternalError=505,
 		ConnectionError=-1
 	};
@@ -40,6 +41,10 @@ inline JsonApiResult JsonApiBadMethod() { return JsonApiErrorResult(JsonApiResul
 
 //! A convenience function that returns the fist path element and the remaining path
 std::tuple<QString, QStringList> popApiPath(const QStringList &path);
+
+int parseRequestInt(
+	const QJsonObject &request, const QString &key, int defaultValue,
+	int errorValue);
 
 }
 

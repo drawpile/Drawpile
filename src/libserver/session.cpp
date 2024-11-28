@@ -20,6 +20,93 @@ extern "C" {
 
 namespace server {
 
+class Session::AdminChat {
+public:
+	AdminChat(Session *session, int timeoutMs)
+	{
+		m_timer.setTimerType(Qt::CoarseTimer);
+		m_timer.setSingleShot(true);
+		m_timer.setInterval(timeoutMs);
+		connect(
+			&m_timer, &QTimer::timeout, session, &Session::timeOutAdminChat);
+		m_timer.start();
+	}
+
+	int timeoutMs() const { return m_timer.interval(); }
+
+	void restartTimer() { m_timer.start(); }
+
+	void addChatMessage(
+		Session *session, int id, const QHostAddress &ip, const QString &name,
+		const QString &message, int flags)
+	{
+		limitMessages();
+		QJsonObject o{
+			{QStringLiteral("i"), id},
+			{QStringLiteral("n"), name},
+			{QStringLiteral("m"), message},
+		};
+		if(flags != 0) {
+			o[QStringLiteral("f")] = flags;
+		}
+		m_messages.append(o);
+		session->m_config->logger()->logMessage(
+			Log()
+				.about(Log::Level::Info, Log::Topic::AdminChat)
+				.session(session->id())
+				.user(id, ip, name)
+				.message(message));
+	}
+
+	void addAdminMessage(Session *session, const QString &message)
+	{
+		limitMessages();
+		m_messages.append(QJsonObject{
+			{QStringLiteral("m"), message},
+		});
+		session->m_config->logger()->logMessage(
+			Log()
+				.about(Log::Level::Info, Log::Topic::AdminChat)
+				.session(session->id())
+				.message(message));
+	}
+
+	QJsonArray getMessages(int *inOutOffset) const
+	{
+		QJsonArray messages;
+		int count = m_messages.size();
+		int offset = qMax(0, *inOutOffset - m_offset);
+		for(int i = offset; i < count; ++i) {
+			messages.append(m_messages[i]);
+		}
+		*inOutOffset = offset + m_offset;
+		return messages;
+	}
+
+	QJsonObject getDescription() const
+	{
+		return QJsonObject{
+			{QStringLiteral("offset"), m_offset},
+			{QStringLiteral("count"), int(m_messages.size())},
+			{QStringLiteral("timeout"), m_timer.interval()},
+			{QStringLiteral("remaining"), m_timer.remainingTime()},
+		};
+	}
+
+private:
+	void limitMessages()
+	{
+		if(m_messages.size() >= 1024) {
+			m_messages.removeFirst();
+			++m_offset;
+		}
+	}
+
+	QVector<QJsonObject> m_messages;
+	QTimer m_timer;
+	int m_offset = 0;
+};
+
 static bool forceEnableNsfm(SessionHistory *history, const ServerConfig *config)
 {
 	if(config->getConfigBool(config::ForceNsfm)) {
@@ -80,6 +167,8 @@ Session::Session(
 
 Session::~Session()
 {
+	delete m_adminChat;
+	m_adminChat = nullptr;
 	emit sessionDestroyed(this);
 }
 
@@ -1015,6 +1104,11 @@ void Session::handleClientMessage(Client &client, const net::Message &msg)
 			size_t len;
 			const char *message = DP_msg_chat_message(mc, &len);
 			QString s = QString::fromUtf8(message, compat::castSize(len));
+			if(m_adminChat) {
+				m_adminChat->addChatMessage(
+					this, client.id(), client.peerAddress(), client.username(),
+					s, DP_msg_chat_oflags(mc));
+			}
 			net::Message ghostMsg = net::ServerReply::makeAlert(s);
 			if(bypass) {
 				directToAll(ghostMsg);
@@ -1022,9 +1116,19 @@ void Session::handleClientMessage(Client &client, const net::Message &msg)
 				addClientMessage(client, msg);
 			}
 			return;
-		} else if(bypass) {
-			directToAll(msg);
-			return;
+		} else {
+			if(m_adminChat) {
+				size_t len;
+				const char *message = DP_msg_chat_message(mc, &len);
+				m_adminChat->addChatMessage(
+					this, client.id(), client.peerAddress(), client.username(),
+					QString::fromUtf8(message, compat::castSize(len)),
+					DP_msg_chat_oflags(mc));
+			}
+			if(bypass) {
+				directToAll(msg);
+				return;
+			}
 		}
 		break;
 	}
@@ -1245,23 +1349,33 @@ void Session::directToAll(const net::Message &msg)
 	}
 }
 
-void Session::messageAll(const QString &message, bool alert)
+bool Session::messageAll(const QString &message, bool alert)
 {
 	if(!message.isEmpty()) {
-		directToAll(
-			alert ? net::ServerReply::makeAlert(message)
-				  : net::ServerReply::makeMessage(message));
+		net::Message msg = alert ? net::ServerReply::makeAlert(message)
+								 : net::ServerReply::makeMessage(message);
+		if(!msg.isNull()) {
+			directToAll(msg);
+		}
+		return true;
 	}
+	return false;
 }
 
-void Session::keyMessageAll(
+bool Session::keyMessageAll(
 	const QString &message, bool alert, const QString &key,
 	const QJsonObject &params)
 {
 	Q_ASSERT(!message.isEmpty());
-	directToAll(
+	net::Message msg =
 		alert ? net::ServerReply::makeKeyAlert(message, key, params)
-			  : net::ServerReply::makeKeyMessage(message, key, params));
+			  : net::ServerReply::makeKeyMessage(message, key, params);
+	if(msg.isNull()) {
+		return false;
+	} else {
+		directToAll(msg);
+		return true;
+	}
 }
 
 void Session::ensureOperatorExists()
@@ -1609,6 +1723,12 @@ QJsonObject Session::getDescription(bool full) const
 		}
 		o["users"] = users;
 		o["listings"] = getListingsDescription();
+		if(m_adminChat) {
+			o[QStringLiteral("chat")] = m_adminChat->getDescription();
+		} else {
+			// Having the "chat" key present indicates we support that feature.
+			o[QStringLiteral("chat")] = QJsonValue();
+		}
 	}
 
 	return o;
@@ -1676,10 +1796,13 @@ JsonApiResult Session::callJsonApi(
 		QStringList tail;
 		std::tie(head, tail) = popApiPath(path);
 
-		if(head == "listing")
+		if(head == QStringLiteral("listing")) {
 			return callListingsJsonApi(method, tail, request);
-		else if(head == "auth")
+		} else if(head == QStringLiteral("auth")) {
 			return callAuthJsonApi(method, tail, request);
+		} else if(head == QStringLiteral("chat")) {
+			return callChatJsonApi(method, tail, request);
+		}
 
 		int userId = head.toInt();
 		if(userId > 0) {
@@ -1694,10 +1817,29 @@ JsonApiResult Session::callJsonApi(
 	if(method == JsonApiMethod::Update) {
 		setSessionConfig(request, nullptr);
 
-		if(request.contains("message"))
-			messageAll(request["message"].toString(), false);
-		if(request.contains("alert"))
-			messageAll(request["alert"].toString(), true);
+		if(request.contains(QStringLiteral("message"))) {
+			QString message = request[QStringLiteral("message")].toString();
+			bool sent = messageAll(message, false);
+			if(!sent) {
+				return JsonApiErrorResult(
+					JsonApiResult::BadRequest,
+					QStringLiteral("Message too long"));
+			} else if(m_adminChat) {
+				m_adminChat->addAdminMessage(this, message);
+			}
+		}
+
+		if(request.contains(QStringLiteral("alert"))) {
+			QString message = request[QStringLiteral("alert")].toString();
+			bool sent = messageAll(message, true);
+			if(!sent) {
+				return JsonApiErrorResult(
+					JsonApiResult::BadRequest,
+					QStringLiteral("Alert too long"));
+			} else if(m_adminChat) {
+				m_adminChat->addAdminMessage(this, message);
+			}
+		}
 
 	} else if(method == JsonApiMethod::Delete) {
 		QString reason = request[QStringLiteral("reason")].toString().trimmed();
@@ -1798,6 +1940,177 @@ JsonApiResult Session::callAuthJsonApi(
 	}
 
 	return JsonApiNotFound();
+}
+
+JsonApiResult Session::callChatJsonApi(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	if(!path.isEmpty()) {
+		return JsonApiNotFound();
+	}
+
+	if(method == JsonApiMethod::Get) {
+		if(!m_adminChat) {
+			return JsonApiErrorResult(
+				JsonApiResult::NotFound, QStringLiteral("Chat not connected"));
+		}
+
+		m_adminChat->restartTimer();
+
+		int offset = parseRequestInt(request, QStringLiteral("offset"), 0, -1);
+		if(offset < 0) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, QStringLiteral("Invalid offset"));
+		}
+
+		QJsonArray messages = m_adminChat->getMessages(&offset);
+		return JsonApiResult{
+			JsonApiResult::Ok, QJsonDocument(QJsonObject{
+								   {QStringLiteral("offset"), offset},
+								   {QStringLiteral("messages"), messages},
+							   })};
+
+	} else if(method == JsonApiMethod::Create) {
+		if(m_adminChat) {
+			m_adminChat->restartTimer();
+			return JsonApiErrorResult(
+				JsonApiResult::Conflict,
+				QStringLiteral("Chat already connected"));
+		}
+
+		QString message =
+			request[QStringLiteral("message")].toString().trimmed();
+		if(message.isEmpty()) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, QStringLiteral("Missing message"));
+		}
+
+		constexpr int MIN_TIMEOUT = 30000;		// 30 seconds
+		constexpr int MAX_TIMEOUT = 900000;		// 15 minutes
+		constexpr int DEFAULT_TIMEOUT = 300000; // 5 minutes
+		int timeoutMs = parseRequestInt(
+			request, QStringLiteral("timeout"), DEFAULT_TIMEOUT, -1);
+		if(timeoutMs < MIN_TIMEOUT) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest,
+				QStringLiteral("Timeout too short, must be >= %1 ms")
+					.arg(MIN_TIMEOUT));
+		} else if(timeoutMs > MAX_TIMEOUT) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest,
+				QStringLiteral("Timeout too long, must be <= %1 ms")
+					.arg(MAX_TIMEOUT));
+		}
+
+		bool sent = messageAll(message, true);
+		if(!sent) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, QStringLiteral("Message too long"));
+		}
+
+		log(Log()
+				.about(Log::Level::Info, Log::Topic::Join)
+				.message(QStringLiteral("Administrator connected to chat")));
+		m_adminChat = new AdminChat(this, timeoutMs);
+		m_adminChat->addAdminMessage(this, message);
+
+		int offset = 0;
+		QJsonArray messages = m_adminChat->getMessages(&offset);
+		return JsonApiResult{
+			JsonApiResult::Ok, QJsonDocument(QJsonObject{
+								   {QStringLiteral("offset"), offset},
+								   {QStringLiteral("messages"), messages},
+							   })};
+
+	} else if(method == JsonApiMethod::Update) {
+		if(!m_adminChat) {
+			return JsonApiErrorResult(
+				JsonApiResult::NotFound, QStringLiteral("Chat not connected"));
+		}
+
+		m_adminChat->restartTimer();
+
+		QString message =
+			request[QStringLiteral("message")].toString().trimmed();
+		if(message.isEmpty()) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, QStringLiteral("Missing message"));
+		}
+
+		int offset = parseRequestInt(request, QStringLiteral("offset"), 0, -1);
+		if(offset < 0) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, QStringLiteral("Invalid offset"));
+		}
+
+		bool sent = messageAll(message, true);
+		if(!sent) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, QStringLiteral("Message too long"));
+		}
+
+		m_adminChat->addAdminMessage(this, message);
+
+		QJsonArray messages = m_adminChat->getMessages(&offset);
+		return JsonApiResult{
+			JsonApiResult::Ok, QJsonDocument(QJsonObject{
+								   {QStringLiteral("offset"), offset},
+								   {QStringLiteral("messages"), messages},
+							   })};
+
+	} else if(method == JsonApiMethod::Delete) {
+		if(!m_adminChat) {
+			return JsonApiErrorResult(
+				JsonApiResult::NotFound, QStringLiteral("Chat not connected"));
+		}
+
+		QString message =
+			request[QStringLiteral("message")].toString().trimmed();
+		if(!message.isEmpty()) {
+			bool sent = messageAll(message, true);
+			if(!sent) {
+				return JsonApiErrorResult(
+					JsonApiResult::BadRequest,
+					QStringLiteral("Message too long"));
+			}
+			m_adminChat->addAdminMessage(this, message);
+		}
+
+		int offset = parseRequestInt(request, QStringLiteral("offset"), 0, -1);
+		if(offset < 0) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, QStringLiteral("Invalid offset"));
+		}
+
+		log(Log()
+				.about(Log::Level::Info, Log::Topic::Leave)
+				.message(
+					QStringLiteral("Administrator disconnected from chat")));
+		QJsonArray messages = m_adminChat->getMessages(&offset);
+		delete m_adminChat;
+		m_adminChat = nullptr;
+
+		return JsonApiResult{
+			JsonApiResult::Ok, QJsonDocument(QJsonObject{
+								   {QStringLiteral("offset"), offset},
+								   {QStringLiteral("messages"), messages},
+							   })};
+
+	} else {
+		return JsonApiBadMethod();
+	}
+}
+
+void Session::timeOutAdminChat()
+{
+	if(m_adminChat) {
+		log(Log()
+				.about(Log::Level::Info, Log::Topic::Leave)
+				.message(QStringLiteral(
+					"Administrator disconnected from chat (timeout)")));
+		delete m_adminChat;
+		m_adminChat = nullptr;
+	}
 }
 
 void Session::log(const Log &log)

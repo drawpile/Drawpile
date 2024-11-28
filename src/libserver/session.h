@@ -8,10 +8,10 @@
 #include <QDateTime>
 #include <QElapsedTimer>
 #include <QHash>
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QObject>
 #include <QString>
-#include <QJsonArray>
 
 class QTimer;
 struct DP_Recorder;
@@ -237,14 +237,9 @@ public:
 	 */
 	void directToAll(const net::Message &msg);
 
-	/**
-	 * @brief Send a message to every user of this session
-	 * @param message
-	 * @param alert is this an alert type message?
-	 */
-	void messageAll(const QString &message, bool alert);
+	bool messageAll(const QString &message, bool alert);
 
-	void keyMessageAll(
+	bool keyMessageAll(
 		const QString &message, bool alert, const QString &key,
 		const QJsonObject &params = {});
 
@@ -443,6 +438,9 @@ protected:
 	void sendUpdatedSessionProperties();
 
 private:
+	class AdminChat;
+	friend class AdminChat;
+
 	// If someone sent a drawing command in the last 5 minutes, they are active.
 	static constexpr qint64 ACTIVE_THRESHOLD_MS = 5 * 60 * 1000;
 
@@ -496,12 +494,19 @@ private:
 		JsonApiMethod method, const QStringList &path,
 		const QJsonObject &request);
 
+	JsonApiResult callChatJsonApi(
+		JsonApiMethod method, const QStringList &path,
+		const QJsonObject &request);
+
+	void timeOutAdminChat();
+
 	QJsonArray getListingsDescription() const;
 	QJsonObject getUserDescription(const Client *user) const;
 
 	SessionHistory *m_history;
 	ServerConfig *m_config;
 	sessionlisting::Announcements *m_announcements;
+	AdminChat *m_adminChat = nullptr;
 
 	State m_state = State::Initialization;
 	int m_initUser = -1; // the user who is currently uploading init/reset data

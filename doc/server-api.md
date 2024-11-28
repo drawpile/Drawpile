@@ -201,6 +201,53 @@ To send a message to an individual user: `PUT /api/sessions/:sessionid/:userId/`
 
 Implementation: `callUserJsonApi @ src/shared/server/session.cpp`
 
+### Session chat
+
+To start chatting with a session, an initial message must be sent to it to make
+a connection. This connection must be refreshed regularly by hitting any of the
+endpoints below (they don't need to succeed), otherwise the chat connection will
+be terminated and must be reestablished with a message again. The maximum delay
+can be adjusted via the `timeout` parameter upon connection, minimum 30 seconds,
+maximum 15 minutes.
+
+Administrator messages will be sent to the chat as alerts. Connecting,
+disconnecting and messages during an admin chat also go into the server log.
+
+All of these endpoints return the same kind of response on success:
+
+    {
+        "offset": integer    (offset in the total list of messages)
+        "messages": string[] (messages since offset)
+    }
+
+The client is supposed to send `offset + messages.length` to every subsequent
+request to avoid resending the same stuff repeatedly.
+
+Connect to the chat of a session: `POST /api/sessions/:sessionid/chat/`
+
+    {
+        "timeout": integer (in milliseconds, default is 5 minutes)
+        "message": string  (required)
+    }
+
+Send a message to a connected chat: `PUT /api/sessions/:sessionid/chat/`
+
+    {
+        "offset": integer (defaults to 0)
+        "message": string (required)
+    }
+
+Retrieve chat messages: `GET /api/sessions/:sessionid/chat/`
+
+* `?offset=integer`: message offset. Defaults to 0.
+
+Disconnect a chat: `DELETE /api/sessions/:sessionid/chat/`
+
+* `?offset=integer`: message offset. Defaults to 0.
+* `?message=string`: message to send upon disconnect. Defaults to no message.
+
+Implementation: `callChatJsonApi @ src/libserver/session.cpp`
+
 ## Logged in users
 
 `GET /api/users/`

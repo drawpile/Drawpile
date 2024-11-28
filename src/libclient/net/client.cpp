@@ -499,6 +499,7 @@ Client::translateMessage(const QJsonObject &reply, const QString &fallbackKey)
 	if(keyValue.isString()) {
 		QString key = keyValue.toString();
 		QJsonObject params = reply[QStringLiteral("P")].toObject();
+
 		if(key == net::ServerReply::KEY_BANEXPORT_MODONLY) {
 			//: "Plain" meaning "not encrypted."
 			return tr("Only moderators can export plain bans.");
