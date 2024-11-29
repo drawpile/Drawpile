@@ -68,7 +68,7 @@ LayerList::LayerList(QWidget *parent)
 	connect(
 		m_blendModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, &LayerList::blendModeChanged);
-	titlebar->addCustomWidget(m_blendModeCombo, true);
+	titlebar->addCustomWidget(m_blendModeCombo, 1);
 	titlebar->addSpace(4);
 
 	QWidget *root = new QWidget{this};

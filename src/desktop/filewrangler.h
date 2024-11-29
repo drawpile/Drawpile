@@ -73,6 +73,7 @@ public:
 	void openAvatar(const ImageOpenFn &imageOpenCompleted);
 	void openBrushThumbnail(const ImageOpenFn &imageOpenCompleted);
 	void openPasteImage(const ImageOpenFn &imageOpenCompleted);
+	void openReferenceImage(const ImageOpenFn &imageOpenCompleted);
 
 	void openMain(const MainOpenFn &onOpen) const;
 	QStringList openAnimationFramesImport() const;
