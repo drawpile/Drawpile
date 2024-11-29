@@ -491,19 +491,6 @@ jobs:
           key: gradle-${{ runner.os }}-${{ matrix.arch }}+${{ matrix.cross_os }}-${{ matrix.qt }}
         if: matrix.cross_os == 'Android'
 
-      - name: Prepare local Windows signing for builds not using SignPath
-        run: |
-          if ($env:WINDOWS_CERTIFICATE) {
-            New-Item -ItemType directory -Path "$env:GITHUB_WORKSPACE/wincert"
-            Set-Content -Path "$env:GITHUB_WORKSPACE/wincert/drawpile.txt" -Value $env:WINDOWS_CERTIFICATE
-            certutil -decode "$env:GITHUB_WORKSPACE/wincert/drawpile.txt" "$env:GITHUB_WORKSPACE/wincert/drawpile.pfx"
-            Remove-Item -Path "$env:GITHUB_WORKSPACE/wincert/drawpile.txt"
-            echo "WINDOWS_PFX_PATH=$env:GITHUB_WORKSPACE/wincert/drawpile.pfx" >>$env:GITHUB_ENV
-          }
-        env:
-          WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
-        if: runner.os == 'Windows' && matrix.packager && (!startsWith(github.ref, 'refs/tags/') || !matrix.signpath)
-
       - name: Figure out Windows product version from build version
         run: >
           cmake
@@ -581,8 +568,6 @@ jobs:
           SCCACHE_DIR: ${{ steps.sccache.outputs.path }}/cache
           QT_ANDROID_KEYSTORE_ALIAS: drawpile
           QT_ANDROID_KEYSTORE_STORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
-          WINDOWS_PFX_PASS: ${{ secrets.WINDOWS_CERTIFICATE_PASS }}
-          WINDOWS_PFX_TIMESTAMP_URL: 'http://timestamp.digicert.com'
 
       - name: Set PE metadata built files on Windows
         run: >
@@ -602,9 +587,6 @@ jobs:
 
       - name: Run packaging
         run: ${{ matrix.packager }}
-        env:
-          WINDOWS_PFX_PASS: ${{ secrets.WINDOWS_CERTIFICATE_PASS }}
-          WINDOWS_PFX_TIMESTAMP_URL: 'http://timestamp.digicert.com'
         if: matrix.packager
 
       - name: Upload artifacts for SignPath to sign
