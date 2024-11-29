@@ -20,7 +20,7 @@ class TitleWidget final : public QWidget
 public:
 	explicit TitleWidget(QDockWidget *parent = nullptr);
 
-	void addCustomWidget(QWidget *widget, bool stretch=false);
+	void addCustomWidget(QWidget *widget, int stretch = 0);
 	void addSpace(int space);
 	void addStretch(int stretch=0);
 

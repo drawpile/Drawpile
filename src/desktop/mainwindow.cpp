@@ -32,6 +32,7 @@
 #include "desktop/docks/layerlistdock.h"
 #include "desktop/docks/navigator.h"
 #include "desktop/docks/onionskins.h"
+#include "desktop/docks/reference.h"
 #include "desktop/docks/timeline.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
@@ -158,6 +159,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	  m_dockNavigator(nullptr),
 	  m_dockOnionSkins(nullptr),
 	  m_dockTimeline(nullptr),
+	  m_dockReference(nullptr),
 	  m_chatbox(nullptr),
 	  m_viewLock(nullptr),
 	  m_canvasView(nullptr),
@@ -3584,8 +3586,8 @@ void MainWindow::selectTool(QAction *tool)
 {
 	// Note. Actions must be in the same order in the enum and the group
 	int idx = m_drawingtools->actions().indexOf(tool);
-	Q_ASSERT(idx>=0);
-	if(idx<0)
+	Q_ASSERT(idx >= 0);
+	if(idx < 0)
 		return;
 
 	if(m_dockToolSettings->currentTool() == idx) {
@@ -6210,6 +6212,10 @@ void MainWindow::createDocks()
 	m_dockOnionSkins = new docks::OnionSkinsDock(this);
 	m_dockOnionSkins->setObjectName("onionskins");
 	m_dockOnionSkins->setAllowedAreas(Qt::AllDockWidgetAreas);
+
+	m_dockReference = new docks::ReferenceDock(this);
+	m_dockReference->setObjectName("referencedock");
+	m_dockReference->setAllowedAreas(Qt::AllDockWidgetAreas);
 }
 
 void MainWindow::resetDefaultDocks()
@@ -6225,6 +6231,10 @@ void MainWindow::resetDefaultDocks()
 	addDockWidget(Qt::RightDockWidgetArea, m_dockColorSliders);
 	m_dockColorSliders->show();
 	addDockWidget(Qt::RightDockWidgetArea, m_dockColorCircle);
+	m_dockColorCircle->show();
+	addDockWidget(Qt::RightDockWidgetArea, m_dockReference);
+	m_dockReference->show();
+	tabifyDockWidget(m_dockReference, m_dockColorCircle);
 	tabifyDockWidget(m_dockColorCircle, m_dockColorPalette);
 	tabifyDockWidget(m_dockColorPalette, m_dockColorSliders);
 	tabifyDockWidget(m_dockColorSliders, m_dockColorSpinner);

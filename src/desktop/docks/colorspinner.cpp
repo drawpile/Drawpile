@@ -256,7 +256,7 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 
 	titlebar->addCustomWidget(d->menuButton);
 	titlebar->addSpace(4);
-	titlebar->addCustomWidget(d->lastUsedSwatch, true);
+	titlebar->addCustomWidget(d->lastUsedSwatch, 1);
 	titlebar->addSpace(4);
 
 	connect(

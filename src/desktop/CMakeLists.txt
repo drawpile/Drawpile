@@ -209,6 +209,8 @@ target_sources(drawpile PRIVATE
 	docks/navigator.h
 	docks/onionskins.cpp
 	docks/onionskins.h
+	docks/reference.cpp
+	docks/reference.h
 	docks/timeline.cpp
 	docks/timeline.h
 	docks/titlewidget.cpp
@@ -394,6 +396,8 @@ target_sources(drawpile PRIVATE
 	widgets/presetselector.h
 	widgets/recentscroll.cpp
 	widgets/recentscroll.h
+	widgets/referenceview.cpp
+	widgets/referenceview.h
 	widgets/resizerwidget.cpp
 	widgets/resizerwidget.h
 	widgets/rulerwidget.cpp

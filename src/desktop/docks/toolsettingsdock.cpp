@@ -164,7 +164,7 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	d->headerStack->addWidget(d->headerLabel);
 
 	setWidget(d->widgetStack);
-	titleWidget->addCustomWidget(d->headerStack, true);
+	titleWidget->addCustomWidget(d->headerStack, 1);
 
 	tools::BrushSettings *bs = brushSettings();
 	connect(
