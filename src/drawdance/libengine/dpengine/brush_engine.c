@@ -1361,6 +1361,9 @@ static void stroke_to_mypaint(DP_BrushEngine *be, DP_BrushPoint bp)
     MyPaintBrush *mb = be->mypaint_brush;
     MyPaintSurface2 *surface = &be->mypaint_surface2;
     float zoom = be->stroke.zoom;
+    float xtilt = bp.xtilt / 60.0f;
+    float ytilt = bp.ytilt / 60.0f;
+    float rotation = bp.rotation / 360.0f;
 
     double delta_sec;
     if (be->stroke.in_progress) {
@@ -1380,13 +1383,13 @@ static void stroke_to_mypaint(DP_BrushEngine *be, DP_BrushPoint bp)
         // you crank up the smoothing really high there and move the pen
         // really fast, you can get strokes from when your pen wasn't on the
         // tablet, which is just weird.
-        mypaint_brush_stroke_to_2(mb, surface, bp.x, bp.y, 0.0f, bp.xtilt,
-                                  bp.ytilt, 1000.0f, zoom, 0.0f, bp.rotation);
+        mypaint_brush_stroke_to_2(mb, surface, bp.x, bp.y, 0.0f, xtilt, ytilt,
+                                  1000.0f, zoom, 0.0f, rotation);
         delta_sec = 0.0;
     }
 
-    mypaint_brush_stroke_to_2(mb, surface, bp.x, bp.y, bp.pressure, bp.xtilt,
-                              bp.ytilt, delta_sec, zoom, 0.0f, bp.rotation);
+    mypaint_brush_stroke_to_2(mb, surface, bp.x, bp.y, bp.pressure, xtilt,
+                              ytilt, delta_sec, zoom, 0.0f, rotation);
 }
 
 static DP_LayerContent *search_layer(DP_CanvasState *cs, int layer_id)
