@@ -277,6 +277,7 @@ if(BASE)
 				patches/windows_clipboard_sadness.diff
 				patches/qt5androidsupport_params.diff
 				patches/android_backtrace.diff
+				patches/androidtilt-qt5.diff
 			6.7.2
 				patches/qtbug-113394.diff
 				patches/cancel_touch_on_pen.diff

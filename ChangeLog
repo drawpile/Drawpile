@@ -25,6 +25,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Replace "hold shift to arrange" with View > Docks > Arrange Docks, which doesn't require a keyboard. Thanks 3rd_EFNO for suggesting.
  * Feature: Allow configuring temporary tool switch hold time. Thanks 3rd_EFNO and pachuco for suggesting.
  * Fix: Properly pass tilt and barrel rotation values to MyPaint brushes. Thanks MorrowShore for reporting.
+ * Feature: Tilt support on Android. Thanks MorrowShore and Verdrusk for suggesting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.
