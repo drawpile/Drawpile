@@ -353,6 +353,7 @@ void Session::joinUser(Client *user, bool host)
 						 .atleast(Log::Level::Info)
 						 .omitSensitive(!mod)
 						 .omitKicksAndBans(!mod && !user->isOperator())
+						 .page(0, 1000)
 						 .get();
 	// Note: the query returns the log entries in latest first, but we send
 	// new entries to clients as they occur, so we reverse the list before
