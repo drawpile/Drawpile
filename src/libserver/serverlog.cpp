@@ -87,7 +87,7 @@ void InMemoryLog::storeMessage(const Log &entry)
 		m_history.pop_back();
 }
 
-QList<Log> InMemoryLog::getLogEntries(const QString &session, const QDateTime &after, Log::Level atleast, bool omitSensitive, int offset, int limit) const
+QList<Log> InMemoryLog::getLogEntries(const QString &session, const QDateTime &after, Log::Level atleast, bool omitSensitive, bool omitKicksAndBans, int offset, int limit) const
 {
 	QList<Log> filtered;
 
@@ -102,6 +102,10 @@ QList<Log> InMemoryLog::getLogEntries(const QString &session, const QDateTime &a
 			continue;
 
 		if(omitSensitive && l.isSensitive()) {
+			continue;
+		}
+
+		if(omitKicksAndBans && l.isKickOrBan()) {
 			continue;
 		}
 

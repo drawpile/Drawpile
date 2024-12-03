@@ -307,22 +307,6 @@ void Session::joinUser(Client *user, bool host)
 
 	m_pastClients.remove(user->id());
 
-	// Send session log history to the new client
-	{
-		QList<Log> log = m_config->logger()
-							 ->query()
-							 .session(id())
-							 .atleast(Log::Level::Info)
-							 .omitSensitive(!user->isModerator())
-							 .get();
-		// Note: the query returns the log entries in latest first, but we send
-		// new entries to clients as they occur, so we reverse the list before
-		// sending it
-		for(int i = log.size() - 1; i >= 0; --i) {
-			user->sendDirectMessage(makeLogMessage(log.at(i)));
-		}
-	}
-
 	if(host) {
 		Q_ASSERT(m_state == State::Initialization);
 		m_initUser = user->id();
@@ -360,6 +344,22 @@ void Session::joinUser(Client *user, bool host)
 	}
 
 	ensureOperatorExists();
+
+	// Send session log history to the new client
+	bool mod = user->isModerator();
+	QList<Log> log = m_config->logger()
+						 ->query()
+						 .session(id())
+						 .atleast(Log::Level::Info)
+						 .omitSensitive(!mod)
+						 .omitKicksAndBans(!mod && !user->isOperator())
+						 .get();
+	// Note: the query returns the log entries in latest first, but we send
+	// new entries to clients as they occur, so we reverse the list before
+	// sending it
+	for(int i = log.size() - 1; i >= 0; --i) {
+		user->sendDirectMessage(makeLogMessage(log.at(i)));
+	}
 
 	const QString welcomeMessage =
 		m_config->getConfigString(config::WelcomeMessage);
@@ -784,6 +784,7 @@ QVector<uint8_t> Session::updateOwnership(
 
 	if(sendUpdate && needsUpdate) {
 		sendUpdatedAuthList();
+		sendUpdatedBanlist(true);
 	}
 
 	return truelist;
@@ -928,21 +929,62 @@ void Session::sendUpdatedSessionProperties()
 	emit sessionAttributeChanged(this);
 }
 
-void Session::sendUpdatedBanlist()
+void Session::sendUpdatedBanlist(bool clearForNonOperators)
 {
-	// Normal users don't get to see the actual IP addresses
-	net::Message normalVersion(net::ServerReply::makeSessionConf(
-		{{QStringLiteral("banlist"), m_history->banlist().toJson(false)}}));
+	// Normal users don't get to see the actual IP addresses, but moderators and
+	// local users do, since they have access to the server itself anyway.
+	class LazyBanList {
+	public:
+		const net::Message &get(SessionHistory *history, bool sensitive)
+		{
+			if(sensitive) {
+				if(m_sensitiveMsg.isNull()) {
+					m_sensitiveMsg = make(history, true);
+					// Theoretically the ban list could be so large that the
+					// full information doesn't fit into a message, but the
+					// condensed version does. Try to fall back in that case.
+					if(m_sensitiveMsg.isNull()) {
+						m_sensitiveMsg = get(history, false);
+					}
+				}
+				return m_sensitiveMsg;
+			} else {
+				if(m_normalMsg.isNull()) {
+					m_normalMsg = make(history, false);
+				}
+				return m_normalMsg;
+			}
+		}
 
-	// But moderators and local users do
-	net::Message modVersion(net::ServerReply::makeSessionConf(
-		{{QStringLiteral("banlist"), m_history->banlist().toJson(true)}}));
+		const net::Message &getBlank()
+		{
+			if(m_blankMsg.isNull()) {
+				m_blankMsg = net::ServerReply::makeSessionConf(
+					{{QStringLiteral("banlist"), QJsonArray()}});
+			}
+			return m_blankMsg;
+		}
+
+	private:
+		net::Message make(SessionHistory *history, bool showSensitive)
+		{
+			return net::ServerReply::makeSessionConf(
+				{{QStringLiteral("banlist"),
+				  history->banlist().toJson(showSensitive)}});
+		}
+
+		net::Message m_normalMsg;
+		net::Message m_sensitiveMsg;
+		net::Message m_blankMsg;
+	} banlist;
 
 	for(Client *c : m_clients) {
-		if(c->isModerator() || c->peerAddress().isLoopback()) {
-			c->sendDirectMessage(modVersion);
-		} else {
-			c->sendDirectMessage(normalVersion);
+		bool mod = c->isModerator();
+		if(mod || c->isOperator()) {
+			c->sendDirectMessage(
+				banlist.get(m_history, mod || c->peerAddress().isLoopback()));
+		} else if(clearForNonOperators) {
+			c->sendDirectMessage(banlist.getBlank());
 		}
 	}
 }

@@ -311,7 +311,7 @@ public:
 		bool sendUpdate = true);
 
 	//! Send refreshed ban list to all logged in users
-	void sendUpdatedBanlist();
+	void sendUpdatedBanlist(bool clearForNonOperators = false);
 
 	//! Send refreshed session announcement list to all logged in users
 	void sendUpdatedAnnouncementList();

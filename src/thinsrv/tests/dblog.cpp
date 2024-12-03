@@ -50,7 +50,7 @@ private slots:
 private:
 	int logEntryCount()
 	{
-		return logger->getLogEntries(QString(), QDateTime(), Log::Level::Debug, false, 0, 0).size();
+		return logger->getLogEntries(QString(), QDateTime(), Log::Level::Debug, false, false, 0, 0).size();
 	}
 
 	QScopedPointer<Database> m_db;

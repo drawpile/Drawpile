@@ -414,6 +414,16 @@
       </attribute>
       <layout class="QVBoxLayout">
        <item>
+        <widget class="QLabel" name="banLabel">
+         <property name="text">
+          <string>Only operators can manage bans.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QTableView" name="banlistView">
          <property name="selectionMode">
           <enum>QAbstractItemView::SingleSelection</enum>
