@@ -477,7 +477,7 @@ Client *Session::getClientByUsername(const QString &username)
 	return nullptr;
 }
 
-void Session::addBan(
+bool Session::addBan(
 	const Client *target, const QString &bannedBy, const Client *client)
 {
 	Q_ASSERT(target);
@@ -488,10 +488,13 @@ void Session::addBan(
 						.about(Log::Level::Info, Log::Topic::Ban)
 						.message("Banned by " + bannedBy));
 		sendUpdatedBanlist();
+		return true;
+	} else {
+		return false;
 	}
 }
 
-void Session::addPastBan(
+bool Session::addPastBan(
 	const PastClient &target, const QString &bannedBy, const Client *client)
 {
 	Q_ASSERT(target.id > 0);
@@ -503,7 +506,23 @@ void Session::addPastBan(
 				.about(Log::Level::Info, Log::Topic::Ban)
 				.message("Banned by " + bannedBy));
 		sendUpdatedBanlist();
+		return true;
+	} else {
+		return false;
 	}
+}
+
+bool Session::isBanned(const Client *target) const
+{
+	return m_history->banlist().isBanned(
+		target->username(), target->peerAddress(), target->authId(),
+		target->sid());
+}
+
+bool Session::isPastBanned(const PastClient &target) const
+{
+	return m_history->banlist().isBanned(
+		target.username, target.peerAddress, target.authId, target.sid);
 }
 
 void Session::removeBan(int entryId, const QString &removedBy)

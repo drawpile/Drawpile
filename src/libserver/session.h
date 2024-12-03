@@ -165,13 +165,16 @@ public:
 	/**
 	 * @brief Add an in-session IP ban for the given client
 	 */
-	void addBan(
+	bool addBan(
 		const Client *target, const QString &bannedBy,
 		const Client *client = nullptr);
 
-	void addPastBan(
+	bool addPastBan(
 		const PastClient &target, const QString &bannedBy,
 		const Client *client = nullptr);
+
+	bool isBanned(const Client *target) const;
+	bool isPastBanned(const PastClient &target) const;
 
 	/**
 	 * @brief Remove a session specific IP ban

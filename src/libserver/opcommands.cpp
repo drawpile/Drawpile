@@ -228,67 +228,95 @@ getClient(Session *session, const QJsonValue &idOrName, Client *&outClient)
 CmdResult
 kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
-	if(args.size() != 1)
-		return CmdResult::err("Expected one argument: user ID or name");
+	if(args.size() != 1) {
+		return CmdResult::err(
+			QStringLiteral("Expected one argument: user ID or name"));
+	}
 
-	const bool ban = kwargs["ban"].toBool();
+	bool ban = kwargs[QStringLiteral("ban")].toBool();
+	Session *session = client->session();
 
-	if(ban && client->session()->hasPastClientWithId(args.at(0).toInt())) {
+	if(ban && session->hasPastClientWithId(args.at(0).toInt())) {
 		// Retroactive ban
-		const auto target =
-			client->session()->getPastClientById(args.at(0).toInt());
-		if(target.isBannable) {
-			client->session()->addPastBan(target, client->username(), client);
-			client->session()->keyMessageAll(
-				target.username + " banned by " + client->username(), false,
-				net::ServerReply::KEY_BAN,
+		const Session::PastClient &target =
+			session->getPastClientById(args.at(0).toInt());
+		if(session->isPastBanned(target)) {
+			return CmdResult::err(
+				QStringLiteral("%1 is already banned.").arg(target.username));
+		} else if(!target.isBannable) {
+			return CmdResult::err(
+				QStringLiteral("%1 cannot be banned.").arg(target.username));
+		} else if(!session->addPastBan(target, client->username(), client)) {
+			return CmdResult::err(
+				QStringLiteral("Error banning %1.").arg(target.username));
+		} else {
+			session->keyMessageAll(
+				QStringLiteral("%1 banned by %2")
+					.arg(target.username, client->username()),
+				false, net::ServerReply::KEY_BAN,
 				{{QStringLiteral("target"), target.username},
 				 {QStringLiteral("by"), client->username()}});
 			return CmdResult::ok();
-		} else {
-			return CmdResult::err(target.username + " cannot be banned.");
 		}
 	}
 
 	Client *target;
-	CmdResult result = getClient(client->session(), args.at(0), target);
+	CmdResult result = getClient(session, args.at(0), target);
 	if(!result.success()) {
 		return result;
 	}
 
-	if(target == client)
-		return CmdResult::err("cannot kick self");
+	if(target == client) {
+		return CmdResult::err(QStringLiteral("cannot kick self"));
+	}
 
-	if(target->isModerator())
-		return CmdResult::err("cannot kick moderators");
+	if(target->isModerator()) {
+		return CmdResult::err(QStringLiteral("cannot kick moderators"));
+	}
 
 	if(client->isDeputy()) {
-		if(target->isOperator() || target->isTrusted())
-			return CmdResult::err("cannot kick trusted users");
+		if(target->isOperator()) {
+			return CmdResult::err(QStringLiteral("cannot kick operators"));
+		} else if(target->isTrusted()) {
+			return CmdResult::err(QStringLiteral("cannot kick trusted users"));
+		}
 	}
 
-	if(ban) {
-		client->session()->keyMessageAll(
-			target->username() + " banned by " + client->username(), false,
-			net::ServerReply::KEY_BAN,
-			{{QStringLiteral("target"), target->username()},
-			 {QStringLiteral("by"), client->username()}});
+	bool alreadyBanned = ban && session->isBanned(target);
+	bool banFailed = false;
+	if(ban && !alreadyBanned) {
+		if(session->addBan(target, client->username(), client)) {
+			session->keyMessageAll(
+				QStringLiteral("%1 banned by %2")
+					.arg(target->username(), client->username()),
+				false, net::ServerReply::KEY_BAN,
+				{{QStringLiteral("target"), target->username()},
+				 {QStringLiteral("by"), client->username()}});
+		} else {
+			banFailed = true;
+		}
 		target->disconnectClient(
-			Client::DisconnectionReason::Kick, client->username(),
-			QStringLiteral("via op command"));
-		client->session()->addBan(target, client->username(), client);
+			Client::DisconnectionReason::Kick, client->username(), QString());
 	} else {
 		target->disconnectClient(
-			Client::DisconnectionReason::Kick, client->username(),
-			QStringLiteral("via op command"));
-		client->session()->keyMessageAll(
-			target->username() + " kicked by " + client->username(), false,
-			net::ServerReply::KEY_KICK,
+			Client::DisconnectionReason::Kick, client->username(), QString());
+		session->keyMessageAll(
+			QStringLiteral("%1 kicked by %2")
+				.arg(target->username(), client->username()),
+			false, net::ServerReply::KEY_KICK,
 			{{QStringLiteral("target"), target->username()},
 			 {QStringLiteral("by"), client->username()}});
 	}
 
-	return CmdResult::ok();
+	if(alreadyBanned) {
+		return CmdResult::err(
+			QStringLiteral("%1 is already banned.").arg(target->username()));
+	} else if(banFailed) {
+		return CmdResult::err(
+			QStringLiteral("Error banning %1.").arg(target->username()));
+	} else {
+		return CmdResult::ok();
+	}
 }
 
 CmdResult
