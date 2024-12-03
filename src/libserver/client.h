@@ -221,7 +221,7 @@ public:
 	 * @brief Send a message from the server directly to this user
 	 * @param message
 	 */
-	void sendSystemChat(const QString &message, bool alert = false);
+	bool sendSystemChat(const QString &message, bool alert = false);
 
 	bool isWebSocket() const;
 

@@ -364,8 +364,10 @@ void Session::joinUser(Client *user, bool host)
 
 	const QString welcomeMessage =
 		m_config->getConfigString(config::WelcomeMessage);
-	if(!welcomeMessage.isEmpty()) {
-		user->sendSystemChat(welcomeMessage);
+	if(!welcomeMessage.isEmpty() && !user->sendSystemChat(welcomeMessage)) {
+		user->log(Log()
+					  .about(Log::Level::Error, Log::Topic::Status)
+					  .message(QStringLiteral("Welcome message too long")));
 	}
 
 	// Make sure everyone is up to date

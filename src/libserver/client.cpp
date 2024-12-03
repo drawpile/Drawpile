@@ -689,11 +689,16 @@ void Client::sendDirectMessages(const net::MessageList &msgs)
 	}
 }
 
-void Client::sendSystemChat(const QString &message, bool alert)
+bool Client::sendSystemChat(const QString &message, bool alert)
 {
-	d->msgqueue->send(
-		alert ? net::ServerReply::makeAlert(message)
-			  : net::ServerReply::makeMessage(message));
+	net::Message msg = alert ? net::ServerReply::makeAlert(message)
+							 : net::ServerReply::makeMessage(message);
+	if(msg.isNull()) {
+		return false;
+	} else {
+		d->msgqueue->send(msg);
+		return true;
+	}
 }
 
 void Client::receiveMessages()
