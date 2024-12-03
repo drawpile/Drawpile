@@ -806,12 +806,24 @@ void Client::disconnectClient(
 		pr = net::MessageQueue::GracefulDisconnect::Shutdown;
 		break;
 	}
-	log(Log()
-			.about(Log::Level::Info, topic)
-			.message(
-				details.isEmpty()
-					? message
-					: QStringLiteral("%1 (%2)").arg(message, details)));
+
+	QString logMessage;
+	if(reason == DisconnectionReason::Kick) {
+		if(details.isEmpty()) {
+			logMessage = QStringLiteral("Kicked by %1").arg(message);
+		} else {
+			logMessage =
+				QStringLiteral("Kicked by %1 (%2)").arg(message, details);
+		}
+	} else {
+		if(details.isEmpty()) {
+			logMessage = message;
+		} else {
+			logMessage = QStringLiteral("%1 (%2)").arg(message, details);
+		}
+	}
+
+	log(Log().about(Log::Level::Info, topic).message(logMessage));
 
 	emit loggedOff(this);
 	d->msgqueue->sendDisconnect(pr, message);

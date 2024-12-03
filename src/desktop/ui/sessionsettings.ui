@@ -428,6 +428,9 @@
          <property name="selectionMode">
           <enum>QAbstractItemView::SingleSelection</enum>
          </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
          <attribute name="verticalHeaderVisible">
           <bool>false</bool>
          </attribute>
