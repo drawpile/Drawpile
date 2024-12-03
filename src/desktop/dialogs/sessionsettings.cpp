@@ -441,6 +441,7 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 		op ? tr("This list shows only registered users.")
 		   : tr("Only operators can see this list."));
 	updateAuthListCheckboxes();
+	updateBanImportExportState();
 }
 
 QComboBox *SessionSettingsDialog::featureBox(DP_Feature f)
