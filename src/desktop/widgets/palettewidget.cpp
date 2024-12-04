@@ -201,6 +201,7 @@ void PaletteWidget::editCurrentColor()
 {
 	if(m_dialogsel < -1 && m_selection >= 0) {
 		m_dialogsel = m_selection;
+		dialogs::applyColorDialogSettings(m_colordlg);
 		m_colordlg->setColor(m_colorPalette.colorAt(m_selection));
 		m_colordlg->show();
 	}
