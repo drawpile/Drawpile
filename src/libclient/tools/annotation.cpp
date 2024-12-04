@@ -243,7 +243,7 @@ void Annotation::end(const EndParams &)
 			net::makeUndoPointMessage(contextId),
 			msg,
 		};
-		m_owner.client()->sendMessages(DP_ARRAY_LENGTH(messages), messages);
+		m_owner.client()->sendCommands(DP_ARRAY_LENGTH(messages), messages);
 	}
 
 	m_selectedId = 0;

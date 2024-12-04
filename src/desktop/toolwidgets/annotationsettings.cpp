@@ -513,7 +513,7 @@ void AnnotationSettings::removeAnnotation()
 		net::makeUndoPointMessage(contextId),
 		net::makeAnnotationDeleteMessage(contextId, selected()),
 	};
-	client->sendMessages(DP_ARRAY_LENGTH(messages), messages);
+	client->sendCommands(DP_ARRAY_LENGTH(messages), messages);
 }
 
 void AnnotationSettings::bake()
@@ -550,7 +550,7 @@ void AnnotationSettings::bake()
 	};
 	net::makePutImageMessages(
 		msgs, contextId, layer, DP_BLEND_MODE_NORMAL, rect.x(), rect.y(), img);
-	client->sendMessages(msgs.count(), msgs.data());
+	client->sendCommands(msgs.count(), msgs.data());
 }
 
 void AnnotationSettings::updateWidgets()

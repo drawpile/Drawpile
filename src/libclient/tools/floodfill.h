@@ -35,6 +35,7 @@ public:
 	void undoMultipart() override;
 	void cancelMultipart() override;
 	void dispose() override;
+	void flushPreviewedActions() override;
 	bool usesBrushColor() const override { return true; }
 	void setActiveLayer(int layerId) override;
 	void setForegroundColor(const QColor &color) override;

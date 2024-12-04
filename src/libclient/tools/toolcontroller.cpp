@@ -163,6 +163,11 @@ void ToolController::deselectDeletedAnnotation(int annotationId)
 	}
 }
 
+void ToolController::flushPreviewedActions()
+{
+	m_activeTool->flushPreviewedActions();
+}
+
 Tool::Type ToolController::activeTool() const
 {
 	Q_ASSERT(m_activeTool);

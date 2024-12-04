@@ -492,7 +492,7 @@ bool TransformTool::checkAndSend(
 				}
 			}
 		}
-		client->sendMessages(count, msgs.constData());
+		client->sendCommands(count, msgs.constData());
 	}
 	return true;
 }

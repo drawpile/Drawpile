@@ -82,7 +82,7 @@ void BrushEngine::sendMessagesTo(net::Client *client)
 {
 	Q_ASSERT(client);
 	flushDabs();
-	client->sendMessages(m_messages.count(), m_messages.constData());
+	client->sendCommands(m_messages.count(), m_messages.constData());
 	clearMessages();
 }
 

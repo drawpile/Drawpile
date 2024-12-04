@@ -404,10 +404,10 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		&widgets::ViewStatusBar::setLatency);
 
 	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendMessage);
-	connect(m_dockTimeline, &docks::Timeline::timelineEditCommands, m_doc->client(), &net::Client::sendMessages);
+	connect(m_dockTimeline, &docks::Timeline::timelineEditCommands, m_doc->client(), &net::Client::sendCommands);
 
 	connect(m_serverLogDialog, &dialogs::ServerLogDialog::opCommand, m_doc->client(), &net::Client::sendMessage);
-	connect(m_dockLayers, &docks::LayerList::layerCommands, m_doc->client(), &net::Client::sendMessages);
+	connect(m_dockLayers, &docks::LayerList::layerCommands, m_doc->client(), &net::Client::sendCommands);
 
 	connect(m_doc->client(), &net::Client::userInfoRequested, this, &MainWindow::sendUserInfo);
 	connect(m_doc->client(), &net::Client::currentBrushRequested, this, &MainWindow::sendCurrentBrush);
@@ -3878,7 +3878,7 @@ void MainWindow::clearOrDelete()
 				net::makeUndoPointMessage(contextId),
 				net::makeAnnotationDeleteMessage(contextId, a),
 			};
-			client->sendMessages(DP_ARRAY_LENGTH(messages), messages);
+			client->sendCommands(DP_ARRAY_LENGTH(messages), messages);
 			return;
 		}
 	}

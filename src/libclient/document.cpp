@@ -146,6 +146,9 @@ Document::Document(
 	connect(
 		m_toolctrl, &tools::ToolController::deleteAnnotationRequested, this,
 		&Document::deleteAnnotation);
+	connect(
+		m_client, &net::Client::commandsAboutToSend, m_toolctrl,
+		&tools::ToolController::flushPreviewedActions, Qt::DirectConnection);
 }
 
 void Document::initCanvas()
@@ -598,7 +601,7 @@ void Document::onMoveLayerRequested(
 		qWarning("Can't move layer: %s", DP_error());
 	} else {
 		net::Message messages[] = {net::makeUndoPointMessage(contextId), msg};
-		m_client->sendMessages(DP_ARRAY_LENGTH(messages), messages);
+		m_client->sendCommands(DP_ARRAY_LENGTH(messages), messages);
 	}
 }
 
@@ -1038,7 +1041,7 @@ void Document::sendResizeCanvas(int top, int right, int bottom, int left)
 			net::makeUndoPointMessage(contextId),
 			net::makeCanvasResizeMessage(contextId, top, right, bottom, left),
 		};
-		m_client->sendMessages(DP_ARRAY_LENGTH(msgs), msgs);
+		m_client->sendCommands(DP_ARRAY_LENGTH(msgs), msgs);
 	}
 }
 
@@ -1075,7 +1078,7 @@ void Document::sendCanvasBackground(const QColor &color)
 			net::makeUndoPointMessage(contextId),
 			net::makeCanvasBackgroundMessage(contextId, color),
 		};
-		m_client->sendMessages(DP_ARRAY_LENGTH(msgs), msgs);
+		m_client->sendCommands(DP_ARRAY_LENGTH(msgs), msgs);
 	}
 }
 
@@ -1343,7 +1346,7 @@ void Document::selectNone()
 			net::makeSelectionClearMessage(
 				contextId, canvas::CanvasModel::MAIN_SELECTION_ID),
 		};
-		m_client->sendMessages(2, msgs);
+		m_client->sendCommands(2, msgs);
 	}
 }
 
@@ -1420,7 +1423,7 @@ void Document::selectOp(int op, const QRect &bounds, const QImage &mask)
 		bounds.y(), bounds.width(), bounds.height(), mask);
 	if(!msgs.isEmpty()) {
 		msgs.prepend(net::makeUndoPointMessage(contextId));
-		m_client->sendMessages(msgs.size(), msgs.constData());
+		m_client->sendCommands(msgs.size(), msgs.constData());
 	}
 }
 
@@ -1644,7 +1647,7 @@ void Document::fillArea(const QColor &color, DP_BlendMode mode, float opacity)
 	}
 
 	m_messageBuffer.prepend(net::makeUndoPointMessage(contextId));
-	m_client->sendMessages(m_messageBuffer.size(), m_messageBuffer.constData());
+	m_client->sendCommands(m_messageBuffer.size(), m_messageBuffer.constData());
 	m_messageBuffer.clear();
 }
 
@@ -1655,7 +1658,7 @@ void Document::deleteAnnotation(int annotationId)
 		net::makeUndoPointMessage(contextId),
 		net::makeAnnotationDeleteMessage(contextId, annotationId),
 	};
-	m_client->sendMessages(2, msgs);
+	m_client->sendCommands(2, msgs);
 }
 
 void Document::removeEmptyAnnotations()
@@ -1679,7 +1682,7 @@ void Document::removeEmptyAnnotations()
 
 	if(!m_messageBuffer.isEmpty()) {
 		m_messageBuffer.prepend(net::makeUndoPointMessage(contextId));
-		m_client->sendMessages(
+		m_client->sendCommands(
 			m_messageBuffer.size(), m_messageBuffer.constData());
 	}
 	m_messageBuffer.clear();

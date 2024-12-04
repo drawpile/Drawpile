@@ -208,6 +208,9 @@ public slots:
 
 	void deselectDeletedAnnotation(int annotationId);
 
+	//! Used to finish fills when merging layers or similar.
+	void flushPreviewedActions();
+
 signals:
 	void toolCapabilitiesChanged(
 		bool allowColorPick, bool allowToolAdjust, bool allowRightClick,

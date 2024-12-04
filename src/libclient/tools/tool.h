@@ -138,6 +138,9 @@ public:
 	//! Called before destruction, get rid of whatever necessary.
 	virtual void dispose() {}
 
+	//! Called before commands are sent. Used to flush fill previews.
+	virtual void flushPreviewedActions() {}
+
 	//! Does this tool update the color swatch when used?
 	virtual bool usesBrushColor() const { return false; }
 

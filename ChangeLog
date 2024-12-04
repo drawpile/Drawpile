@@ -29,6 +29,7 @@ Unreleased Version 2.2.2-pre
  * Server Feature: Allow two-way chat in web admin, letting admins talk to sessions without having to intrude on them. Thanks Bluestrings for suggesting.
  * Server Fix: Don't transmit ban lists and logs to non-operators. Thanks Ryngtail for reporting.
  * Fix: Always show color dialogs in HSV color space, since they don't behave correctly in other spaces. Thanks Meru for reporting.
+ * Fix: Apply pending fills when manipulating layers. Thanks MorrowShore for reporting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

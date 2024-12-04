@@ -195,6 +195,12 @@ int Client::uploadQueueBytes() const
 }
 
 
+void Client::sendCommands(int count, const net::Message *msgs)
+{
+	emit commandsAboutToSend();
+	sendMessages(count, msgs);
+}
+
 void Client::sendMessage(const net::Message &msg)
 {
 	sendMessages(1, &msg);

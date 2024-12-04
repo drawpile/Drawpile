@@ -121,7 +121,7 @@ void SelectionTool::endSelection(bool click, bool onlyMask)
 										: endDeselection(contextId);
 			if(!msgs.isEmpty()) {
 				msgs.prepend(net::makeUndoPointMessage(contextId));
-				client->sendMessages(msgs.size(), msgs.constData());
+				client->sendCommands(msgs.size(), msgs.constData());
 			}
 		}
 		m_op = -1;

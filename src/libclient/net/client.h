@@ -195,6 +195,15 @@ public:
 
 public slots:
 	/**
+	 * @brief Send drawing command messages, finishing anything pending before.
+	 *
+	 * This is used to e.g. finish non-editable pending fills before doing any
+	 * other actions, since the user expects them to occur in the order they
+	 * issued them.
+	 */
+	void sendCommands(int count, const net::Message *msgs);
+
+	/**
 	 * @brief Send a single message to the server
 	 *
 	 * Just a convenience method around sendMessages.
@@ -261,6 +270,7 @@ signals:
 	void bytesReceived(int);
 	void bytesSent(int);
 	void lagMeasured(qint64);
+	void commandsAboutToSend();
 	void autoresetQueried(int maxSize, const QString &payload);
 	void autoresetRequested(
 		int maxSize, const QString &correlator, const QString &stream);

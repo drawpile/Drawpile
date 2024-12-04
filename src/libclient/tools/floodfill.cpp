@@ -210,6 +210,13 @@ void FloodFill::dispose()
 	}
 }
 
+void FloodFill::flushPreviewedActions()
+{
+	if(havePending() && !m_pendingEditable) {
+		flushPending();
+	}
+}
+
 void FloodFill::setActiveLayer(int layerId)
 {
 	Q_UNUSED(layerId);
@@ -445,12 +452,14 @@ void FloodFill::flushPending()
 				msgs, contextId, m_owner.activeLayer(),
 				m_pendingEditable ? m_blendMode : m_originalBlendMode,
 				m_pendingPos.x(), m_pendingPos.y(), m_pendingImage);
+			disposePending();
 			if(!msgs.isEmpty()) {
 				msgs.prepend(net::makeUndoPointMessage(contextId));
-				client->sendMessages(msgs.size(), msgs.constData());
+				client->sendCommands(msgs.size(), msgs.constData());
 			}
+		} else {
+			disposePending();
 		}
-		disposePending();
 	}
 }
 
