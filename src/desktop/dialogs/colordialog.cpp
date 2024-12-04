@@ -11,7 +11,6 @@ void applyColorDialogSettings(color_widgets::ColorDialog *dlg)
 	auto &settings = dpApp().settings();
 	settings.bindColorWheelShape(dlg, &color_widgets::ColorDialog::setWheelShape);
 	settings.bindColorWheelAngle(dlg, &color_widgets::ColorDialog::setWheelRotating);
-	settings.bindColorWheelSpace(dlg, &color_widgets::ColorDialog::setColorSpace);
 	settings.bindColorWheelMirror(dlg, &color_widgets::ColorDialog::setWheelMirrored);
 }
 
