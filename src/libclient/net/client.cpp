@@ -571,6 +571,26 @@ Client::translateMessage(const QJsonObject &reply, const QString &fallbackKey)
 		} else if(key == net::ServerReply::KEY_RESET_PREPARE) {
 			return tr("Preparing for session reset! Please wait, the session "
 					  "should be available again shortly…");
+		} else if(key == net::ServerReply::KEY_RESET_PREPARE_BY) {
+			// %1 is the name of the operator resetting the canvas.
+			return tr("Preparing for session reset by %1! Please wait, the "
+					  "session should be available again shortly…")
+				.arg(params[QStringLiteral("name")].toString());
+		} else if(key == net::ServerReply::KEY_RESET_PREPARE_CURRENT) {
+			// %1 is the name of the operator reverting the canvas.
+			return tr("%1 is compressing the canvas! Please wait, the session "
+					  "should be available again shortly…")
+				.arg(params[QStringLiteral("name")].toString());
+		} else if(key == net::ServerReply::KEY_RESET_PREPARE_EXTERNAL) {
+			// %1 is the name of the operator replacing the canvas.
+			return tr("%1 is replacing the canvas! Please wait, the session "
+					  "should be available again shortly…")
+				.arg(params[QStringLiteral("name")].toString());
+		} else if(key == net::ServerReply::KEY_RESET_PREPARE_PAST) {
+			// %1 is the name of the operator reverting the canvas.
+			return tr("%1 is reverting the canvas to a previous state! Please "
+					  "wait, the session should be available again shortly…")
+				.arg(params[QStringLiteral("name")].toString());
 		} else if(key == net::ServerReply::KEY_TERMINATE_SESSION) {
 			//: %1 is the name of the moderator.
 			return tr("Session terminated by moderator (%1).")

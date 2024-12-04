@@ -389,12 +389,13 @@ CmdResult
 resetSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
 	Q_UNUSED(args);
-	Q_UNUSED(kwargs);
 
-	if(client->session()->state() != Session::State::Running)
-		return CmdResult::err("Unable to reset in this state");
+	if(client->session()->state() != Session::State::Running) {
+		return CmdResult::err(QStringLiteral("Unable to reset in this state"));
+	}
 
-	client->session()->resetSession(client->id());
+	client->session()->resetSession(
+		client->id(), kwargs[QStringLiteral("type")].toString());
 	return CmdResult::ok();
 }
 

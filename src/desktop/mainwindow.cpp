@@ -2935,7 +2935,7 @@ void MainWindow::resetSession()
 				net::MessageList snapshot = dlg->getResetImage();
 				canvas->amendSnapshotMetadata(
 					snapshot, true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS);
-				m_doc->sendResetSession(snapshot);
+				m_doc->sendResetSession(snapshot, dlg->getResetImageType());
 			}
 			dlg->deleteLater();
 		});

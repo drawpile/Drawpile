@@ -1007,7 +1007,8 @@ void Document::sendOpword(const QString &opword)
  * If the document is in offline mode, this will immediately reset the current
  * canvas.
  */
-void Document::sendResetSession(const net::MessageList &resetImage)
+void Document::sendResetSession(
+	const net::MessageList &resetImage, const QString &type)
 {
 	if(!m_client->isConnected()) {
 		if(resetImage.isEmpty()) {
@@ -1030,7 +1031,12 @@ void Document::sendResetSession(const net::MessageList &resetImage)
 	}
 
 	m_resetstate = resetImage;
-	m_client->sendMessage(net::ServerCommand::make("reset-session"));
+	QJsonObject kwargs;
+	if(!type.isEmpty()) {
+		kwargs[QStringLiteral("type")] = type;
+	}
+	m_client->sendMessage(
+		net::ServerCommand::make("reset-session", QJsonArray(), kwargs));
 }
 
 void Document::sendResizeCanvas(int top, int right, int bottom, int left)

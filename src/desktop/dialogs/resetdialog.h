@@ -26,6 +26,7 @@ public:
 	void setCanReset(bool canReset);
 
 	net::MessageList getResetImage() const;
+	QString getResetImageType() const;
 	bool isExternalResetImage() const;
 
 signals:

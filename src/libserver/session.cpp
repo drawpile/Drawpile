@@ -267,9 +267,6 @@ void Session::switchState(State newstate)
 
 		m_resetstream.clear();
 		m_resetstreamsize = 0;
-		directToAll(net::ServerReply::makeKeyAlertReset(
-			QStringLiteral("Preparing for session reset!"),
-			QStringLiteral("prepare"), net::ServerReply::KEY_RESET_PREPARE));
 	}
 
 	m_state = newstate;
@@ -1369,15 +1366,48 @@ void Session::handleInitCancel(int ctxId)
 	abortReset();
 }
 
-void Session::resetSession(int resetter)
+void Session::resetSession(int resetter, const QString &type)
 {
 	Q_ASSERT(m_state == State::Running);
-	Q_ASSERT(getClientById(resetter));
-
 	m_initUser = resetter;
 	switchState(State::Reset);
 
-	getClientById(resetter)->sendDirectMessage(net::ServerReply::makeReset(
+	Client *client = getClientById(resetter);
+	Q_ASSERT(client);
+	QString name = client->username();
+	QJsonObject params = {{QStringLiteral("name"), name}};
+	if(type == QStringLiteral("current")) {
+		directToAll(net::ServerReply::makeKeyAlertReset(
+			QStringLiteral("%1 is compressing the canvas! Please wait, the "
+						   "session should be available again shortly…")
+				.arg(name),
+			QStringLiteral("prepare"),
+			net::ServerReply::KEY_RESET_PREPARE_CURRENT, params));
+	} else if(type == QStringLiteral("past")) {
+		directToAll(net::ServerReply::makeKeyAlertReset(
+			QStringLiteral(
+				"%1 is reverting the canvas to a previous state! Please wait, "
+				"the session should be available again shortly…")
+				.arg(name),
+			QStringLiteral("prepare"), net::ServerReply::KEY_RESET_PREPARE_PAST,
+			params));
+	} else if(type == QStringLiteral("external")) {
+		directToAll(net::ServerReply::makeKeyAlertReset(
+			QStringLiteral("%1 is replacing the canvas! Please wait, the "
+						   "session should be available again shortly…")
+				.arg(name),
+			QStringLiteral("prepare"),
+			net::ServerReply::KEY_RESET_PREPARE_EXTERNAL, params));
+	} else {
+		directToAll(net::ServerReply::makeKeyAlertReset(
+			QStringLiteral("Preparing for session reset by %1! Please wait, "
+						   "the session should be available again shortly…")
+				.arg(name),
+			QStringLiteral("prepare"), net::ServerReply::KEY_RESET_PREPARE_BY,
+			params));
+	}
+
+	client->sendDirectMessage(net::ServerReply::makeReset(
 		QStringLiteral("Prepared to receive session data"),
 		QStringLiteral("init")));
 }

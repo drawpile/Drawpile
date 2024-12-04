@@ -269,7 +269,9 @@ public slots:
 	void sendFeatureAccessLevelChange(const uint8_t[DP_FEATURE_COUNT]);
 	void sendLockSession(bool lock = true);
 	void sendOpword(const QString &opword);
-	void sendResetSession(const net::MessageList &resetImage = {});
+	void sendResetSession(
+		const net::MessageList &resetImage = {},
+		const QString &type = QString());
 	void sendResizeCanvas(int top, int right, int bottom, int left);
 	void sendUnban(int entryId);
 	void sendAnnounce(const QString &url);

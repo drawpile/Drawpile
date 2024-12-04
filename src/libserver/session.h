@@ -277,7 +277,7 @@ public:
 	State state() const { return m_state; }
 
 	// Resetting related functions, called via opcommands
-	void resetSession(int resetter);
+	void resetSession(int resetter, const QString &type);
 	virtual void readyToAutoReset(
 		const AutoResetResponseParams &params, const QString &payload) = 0;
 	void handleInitBegin(int ctxId);

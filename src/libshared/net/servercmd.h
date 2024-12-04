@@ -73,6 +73,10 @@ struct ServerReply {
 	static constexpr char KEY_RESET_CANCEL[] = "resetcancel";
 	static constexpr char KEY_RESET_FAILED[] = "resetfailed";
 	static constexpr char KEY_RESET_PREPARE[] = "resetprepare";
+	static constexpr char KEY_RESET_PREPARE_BY[] = "resetprepareby";
+	static constexpr char KEY_RESET_PREPARE_CURRENT[] = "resetpreparecurrent";
+	static constexpr char KEY_RESET_PREPARE_EXTERNAL[] = "resetprepareexternal";
+	static constexpr char KEY_RESET_PREPARE_PAST[] = "resetpreparepast";
 	static constexpr char KEY_TERMINATE_SESSION[] = "terminatesession";
 	static constexpr char KEY_TERMINATE_SESSION_ADMIN[] =
 		"terminatesessionadmin";

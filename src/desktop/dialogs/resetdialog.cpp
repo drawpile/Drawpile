@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/resetdialog.h"
 #include "desktop/filewrangler.h"
-#include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/utils/images.h"
@@ -21,10 +20,12 @@ using std::placeholders::_2;
 
 namespace {
 
+enum class Type { Current, Past, External };
+
 struct ResetPoint {
 	drawdance::CanvasState canvasState;
 	QPixmap thumbnail;
-	bool external;
+	Type type;
 };
 
 QVector<ResetPoint> makeResetPoints(const canvas::PaintEngine *pe)
@@ -39,7 +40,7 @@ QVector<ResetPoint> makeResetPoints(const canvas::PaintEngine *pe)
 					drawdance::CanvasState::inc(
 						DP_snapshot_canvas_state_noinc(s)),
 					QPixmap{},
-					false,
+					Type::Past,
 				});
 			}
 		});
@@ -52,8 +53,10 @@ QVector<ResetPoint> makeResetPoints(const canvas::PaintEngine *pe)
 		resetPoints.append(ResetPoint{
 			currentCanvasState,
 			QPixmap{},
-			false,
+			Type::Current,
 		});
+	} else {
+		resetPoints[lastIndex].type = Type::Current;
 	}
 
 	return resetPoints;
@@ -204,7 +207,7 @@ void ResetDialog::onOpenSuccess(const drawdance::CanvasState &canvasState)
 		d->compatibilityMode ? canvasState.makeBackwardCompatible()
 							 : canvasState,
 		QPixmap(),
-		true,
+		Type::External,
 	});
 	d->ui->snapshotSlider->setMaximum(d->resetPoints.size());
 	d->ui->snapshotSlider->setValue(0);
@@ -230,9 +233,23 @@ net::MessageList ResetDialog::getResetImage() const
 	return resetImage;
 }
 
+QString ResetDialog::getResetImageType() const
+{
+	switch(d->resetPoints[d->selection].type) {
+	case Type::Current:
+		return QStringLiteral("current");
+	case Type::Past:
+		return QStringLiteral("past");
+	case Type::External:
+		return QStringLiteral("external");
+	default:
+		return QString();
+	}
+}
+
 bool ResetDialog::isExternalResetImage() const
 {
-	return d->resetPoints[d->selection].external;
+	return d->resetPoints[d->selection].type == Type::External;
 }
 
 }
