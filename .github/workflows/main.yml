@@ -724,8 +724,8 @@ jobs:
         if: "!startsWith(github.ref, 'refs/tags/')"
         env:
           RELEASE_DESCRIPTION: >
-            This release is an automatically generated snapshot of the current
-            state of development. It is continuously updated with
+            This "alpha" release is an automatically generated snapshot of the
+            current state of development. It is continuously updated with
             work-in-progress changes that may be broken, incomplete, or
             incompatible with other versions of Drawpile. For downloads, take a
             look at the Assets below.
@@ -742,7 +742,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TARGET_COMMIT: ${{ github.sha }}
           RELEASE_DESCRIPTION_FILE: release-description
-          RELEASE_NAME: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'continuous' }}
+          RELEASE_NAME: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'continuous alpha' }}
           CLOBBER_EXISTING: ${{ !startsWith(github.ref, 'refs/tags/') }}
           PRERELEASE: ${{ !startsWith(github.ref, 'refs/tags/') || contains(github.ref, '-') }}
         run: |
