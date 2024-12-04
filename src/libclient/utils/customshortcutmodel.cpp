@@ -300,11 +300,7 @@ void CustomShortcutModel::registerCustomizableAction(
 	const QKeySequence &defaultShortcut,
 	const QKeySequence &defaultAlternateShortcut, const QString &searchText)
 {
-	if(m_customizableActions.contains(name)) {
-		qWarning(
-			"Attempt to re-register existing shortcut %s",
-			qUtf8Printable(name));
-	} else {
+	if(!m_customizableActions.contains(name)) {
 		m_customizableActions.insert(
 			name, {name, title, searchText, icon, defaultShortcut,
 				   defaultAlternateShortcut, QKeySequence(), QKeySequence()});
