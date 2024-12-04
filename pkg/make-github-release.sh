@@ -98,9 +98,15 @@ else
     prerelease_arg=
 fi
 
+if [[ -n $RELEASE_TITLE ]]; then
+    title="$RELEASE_TITLE"
+else
+    title="$RELEASE_NAME"
+fi
+
 run_gh release create \
     --target "$TARGET_COMMIT" \
-    --title "$RELEASE_NAME" \
+    --title "$title" \
     --notes "$release_description" \
     --draft \
     $prerelease_arg \

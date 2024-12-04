@@ -742,7 +742,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TARGET_COMMIT: ${{ github.sha }}
           RELEASE_DESCRIPTION_FILE: release-description
-          RELEASE_NAME: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'continuous alpha' }}
+          RELEASE_NAME: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'continuous' }}
+          RELEASE_TITLE: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'continuous alpha' }}
           CLOBBER_EXISTING: ${{ !startsWith(github.ref, 'refs/tags/') }}
           PRERELEASE: ${{ !startsWith(github.ref, 'refs/tags/') || contains(github.ref, '-') }}
         run: |
