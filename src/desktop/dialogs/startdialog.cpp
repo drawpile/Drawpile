@@ -311,6 +311,9 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 		&StartDialog::addListServerUrl);
 
 	connect(
+		hostPage, &startdialog::Host::hideLinks, this,
+		&StartDialog::hideLinks);
+	connect(
 		hostPage, &startdialog::Host::showButtons, this,
 		&StartDialog::showHostButtons);
 	connect(
@@ -318,15 +321,15 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 		&QWidget::setEnabled);
 	connect(
 		hostPage, &startdialog::Host::host, this, &StartDialog::hostRequested);
-	connect(
-		this, &StartDialog::hostSessionEnabled, hostPage,
-		&startdialog::Host::setHostEnabled);
+	// connect(
+	// 	this, &StartDialog::hostSessionEnabled, hostPage,
+	// 	&startdialog::Host::setHostEnabled);
 	connect(
 		this, &StartDialog::hostPageEnabled, this,
 		[this, hostPage](bool enabled) {
 			hostPage->setEnabled(enabled);
 			if(m_currentPage == hostPage) {
-				hostPage->updateHostEnabled();
+				// hostPage->updateHostEnabled();
 			}
 		});
 	connect(

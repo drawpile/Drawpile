@@ -485,6 +485,97 @@ bool KineticScroller::isKineticScrollingEnabled(
 }
 
 
+// TODO: This needs to update when the style changes
+static int indentSize(QWidget *widget)
+{
+	QStyle *style = widget->style();
+	QStyleOption option;
+	return style->subElementRect(QStyle::SE_CheckBoxContents, &option, nullptr)
+		.left();
+}
+
+FormNote::FormNote(
+	const QString &text, bool indent, const QIcon &icon, bool link)
+	: QWidget()
+	, m_text(text)
+	, m_icon(icon)
+	, m_link(link)
+	, m_indent(indent ? indentSize(this) : 0)
+{
+	setContentsMargins(0, 0, 0, 0);
+	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	if(m_link) {
+		setCursor(Qt::PointingHandCursor);
+	}
+}
+
+QSize FormNote::sizeHint() const
+{
+	return QSize(m_indent + m_iconSize + m_width, m_height);
+}
+
+QSize FormNote::minimumSizeHint() const
+{
+	return QSize(1, m_height);
+}
+
+void FormNote::paintEvent(QPaintEvent *event)
+{
+	Q_UNUSED(event);
+	QPainter painter(this);
+
+	if(m_link) {
+		QFont font = painter.font();
+		font.setUnderline(true);
+		painter.setFont(font);
+	} else {
+		painter.setOpacity(0.7);
+	}
+
+	if(!m_icon.isNull()) {
+		m_icon.paint(&painter, QRect(0, 0, m_iconSize, m_iconSize));
+	}
+
+	painter.setPen(palette().color(QPalette::Text));
+	painter.drawText(
+		QRect(m_indent + m_iconSize, 0, m_width, m_height), m_text);
+}
+
+void FormNote::resizeEvent(QResizeEvent *event)
+{
+	if(!m_icon.isNull()) {
+		m_iconSize =
+			style()->pixelMetric(QStyle::PM_SmallIconSize, nullptr, this);
+		m_indent = style()->pixelMetric(
+			QStyle::PM_LayoutHorizontalSpacing, nullptr, this);
+	}
+	int width = event->size().width() - m_indent - m_iconSize;
+	QSize size = QFontMetrics(font())
+					 .boundingRect(
+						 QRect(0, 0, width <= 0 ? 0xffff : width, 0xffff),
+						 Qt::TextWordWrap, m_text)
+					 .size();
+	if(size != QSize(m_width, m_height)) {
+		m_width = size.width();
+		m_height = qMax(m_iconSize, size.height());
+		setFixedHeight(m_height);
+	}
+}
+
+void FormNote::mousePressEvent(QMouseEvent *event)
+{
+	if(m_link && event->button() == Qt::LeftButton) {
+		event->accept();
+		emit linkClicked();
+	}
+}
+
+void FormNote::mouseDoubleClickEvent(QMouseEvent *event)
+{
+	mousePressEvent(event);
+}
+
+
 void showWindow(QWidget *widget, bool maximized, bool isMainWindow)
 {
 	// On platforms with a single main window (Android, Emscripten), we want to
@@ -742,15 +833,6 @@ EncapsulatedLayout *encapsulate(const QString &label, QWidget *child)
 	return layout;
 }
 
-// TODO: This needs to update when the style changes
-static int indentSize(QWidget *widget)
-{
-	QStyle *style = widget->style();
-	QStyleOption option;
-	return style->subElementRect(QStyle::SE_CheckBoxContents, &option, nullptr)
-		.left();
-}
-
 EncapsulatedLayout *indent(QWidget *child)
 {
 	EncapsulatedLayout *layout = new EncapsulatedLayout;
@@ -760,77 +842,12 @@ EncapsulatedLayout *indent(QWidget *child)
 	return layout;
 }
 
-// QLabel refuses to behave, it will just take up excessive vertical space when
-// word wrap is enabled despite telling it not to. So we make our own widget
-// that just draws some slightly opaque, wrapped text sanely.
-class Note final : public QWidget {
-public:
-	Note(const QString &text, bool indent, const QIcon &icon)
-		: QWidget()
-		, m_text(text)
-		, m_indent(indent ? indentSize(this) : 0)
-		, m_icon(icon)
-	{
-		setContentsMargins(0, 0, 0, 0);
-		setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-	}
-
-	QSize sizeHint() const override
-	{
-		return QSize(m_indent + m_iconSize + m_width, m_height);
-	}
-
-	QSize minimumSizeHint() const override { return QSize(1, m_height); }
-
-protected:
-	void paintEvent(QPaintEvent *) override
-	{
-		QPainter painter(this);
-		painter.setOpacity(0.7);
-		if(!m_icon.isNull()) {
-			m_icon.paint(&painter, QRect(0, 0, m_iconSize, m_iconSize));
-		}
-		painter.setPen(palette().color(QPalette::Text));
-		painter.drawText(
-			QRect(m_indent + m_iconSize, 0, m_width, m_height), m_text);
-	}
-
-	void resizeEvent(QResizeEvent *event) override
-	{
-		if(!m_icon.isNull()) {
-			m_iconSize =
-				style()->pixelMetric(QStyle::PM_SmallIconSize, nullptr, this);
-			m_indent = style()->pixelMetric(
-				QStyle::PM_LayoutHorizontalSpacing, nullptr, this);
-		}
-		int width = event->size().width() - m_indent - m_iconSize;
-		QSize size = QFontMetrics(font())
-						 .boundingRect(
-							 QRect(0, 0, width <= 0 ? 0xffff : width, 0xffff),
-							 Qt::TextWordWrap, m_text)
-						 .size();
-		if(size != QSize(m_width, m_height)) {
-			m_width = size.width();
-			m_height = qMax(m_iconSize, size.height());
-			setFixedHeight(m_height);
-		}
-	}
-
-private:
-	QString m_text;
-	int m_indent;
-	QIcon m_icon;
-	int m_iconSize = 0;
-	int m_width = 1;
-	int m_height = 1;
-};
-
-QWidget *
+FormNote *
 formNote(const QString &text, QSizePolicy::ControlType type, const QIcon &icon)
 {
-	return new Note(
+	return new FormNote(
 		text, type == QSizePolicy::CheckBox || type == QSizePolicy::RadioButton,
-		icon);
+		icon, false);
 }
 
 void setSpacingControlType(

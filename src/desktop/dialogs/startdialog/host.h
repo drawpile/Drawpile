@@ -1,24 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DESKTOP_DIALOGS_STARTDIALOG_HOST_H
 #define DESKTOP_DIALOGS_STARTDIALOG_HOST_H
-
 #include "desktop/dialogs/startdialog/page.h"
-#include <QWidget>
 
-class QButtonGroup;
-class QCheckBox;
-class QComboBox;
-class QFormLayout;
-class QLabel;
-class QLineEdit;
-
-namespace sessionlisting {
-class ListServerModel;
-}
+class QStackedWidget;
+class QTabBar;
 
 namespace dialogs {
 namespace startdialog {
+
+namespace host {
+class Listing;
+class Session;
+}
 
 class Host final : public Page {
 	Q_OBJECT
@@ -27,11 +21,8 @@ public:
 	void activate() final override;
 	void accept() final override;
 
-public slots:
-	void setHostEnabled(bool enabled);
-	void updateHostEnabled();
-
 signals:
+	void hideLinks();
 	void showButtons();
 	void enableHost(bool enabled);
 	void host(
@@ -40,42 +31,13 @@ signals:
 		const QString &remoteAddress);
 	void switchToJoinPageRequested();
 
-private slots:
-	void generatePassword();
-	void updateNsfmBasedOnTitle();
-	void updateListServers();
-	void updateRemoteHosts();
-	void updateAdvancedSectionVisible(bool visible);
-
 private:
-	static constexpr int USE_LOCAL = 0;
-	static constexpr int USE_REMOTE = 1;
+	void switchToListingTab();
 
-	bool canHost() const;
-
-	bool hasValidTitle(
-		bool *outMissingTitle = nullptr, bool *outUrlInTitle = nullptr) const;
-
-	QString getRemoteAddress() const;
-
-	QWidget *m_notes;
-	QLabel *m_titleNote;
-	QLabel *m_urlInTitleNote;
-	QLabel *m_passwordNote;
-	QLabel *m_localHostNote;
-	QLineEdit *m_titleEdit;
-	QLineEdit *m_passwordEdit;
-	QCheckBox *m_nsfmBox;
-	QCheckBox *m_announceBox;
-	QButtonGroup *m_useGroup;
-	QComboBox *m_remoteHostCombo;
-	QCheckBox *m_advancedBox;
-	QFormLayout *m_advancedSection;
-	QLabel *m_idAliasLabel;
-	QLineEdit *m_idAliasEdit;
-	QComboBox *m_listServerCombo;
-	bool m_allowNsfm = true;
-	sessionlisting::ListServerModel *m_listServerModel;
+	QTabBar *m_tabs;
+	QStackedWidget *m_stack;
+	host::Session *m_sessionPage;
+	host::Listing *m_listingPage;
 };
 
 }

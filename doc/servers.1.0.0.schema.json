@@ -1,0 +1,158 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://schema.drawpile.net/servers.1.0.0.schema.json",
+    "title": "Drawpile Servers",
+    "description": "A description for the capabilities of a set of Drawpile servers. Should be served from `/.well-known/drawpile/servers.json`.",
+    "type": "object",
+    "properties": {
+        "$id": {
+            "type": "string",
+            "description": "URL to this file, must be under /.well-known/drawpile/servers.json, optionally with query parameters afterwards.",
+            "pattern": "/.well-known/drawpile/servers.json([?#].*)?$"
+        },
+        "version": {
+            "const": "1.0.0",
+            "description": "Version number of this file, 1.0.0 for this schema."
+        },
+        "title": {
+            "type": "string",
+            "description": "A name for this set of servers."
+        },
+        "description": {
+            "type": "string",
+            "description": "A description for this set of servers. Will be interpreted in Qt's HTML subset. Should contain a link to rules."
+        },
+        "drawpile": {
+            "type": "array",
+            "description": "Drawpile servers in this set of servers. All hosts must be under the same parent domain.",
+            "items": {
+                "type": "object",
+                "description": "A Drawpile server in this set.",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "A name for this Drawpile server."
+                    },
+                    "host": {
+                        "type": "string",
+                        "description": "Hostname or IP address of this server."
+                    },
+                    "port": {
+                        "type": "integer",
+                        "description": "TCP port of the server, defaults to 27750 if missing.",
+                        "minimum": 1,
+                        "maximum": 65535
+                    },
+                    "ext_auth_url": {
+                        "type": "string",
+                        "description": "External authentication used by this server, only informational"
+                    },
+                    "allowed_list_servers": {
+                        "type": "array",
+                        "description": "Allow list of list server URLs. If missing, all servers are allowed.",
+                        "items": {
+                            "type": "string",
+                            "description": "An allowed list server URL."
+                        }
+                    },
+                    "join_policy": {
+                        "type": "array",
+                        "description": "Who can join sessions. This is an array for forward-compatibility, the client will use the first value it understands.",
+                        "items": {
+                            "enum": [
+                                "any",
+                                "account_required",
+                                "permission_required"
+                            ],
+                            "description": "any: anyone can join; account_required: internal or external account required to join; permission_required: account with special permissions required to join"
+                        }
+                    },
+                    "host_policy": {
+                        "type": "array",
+                        "description": "Who can host sessions. This is an array for forward-compatibility, the client will use the first value it understands.",
+                        "items": {
+                            "enum": [
+                                "any",
+                                "account_required",
+                                "permission_required",
+                                "none"
+                            ],
+                            "description": "any: anyone can host; account_required: internal or external account required to host; permission_required: account with special permissions required to host; none: nobody can host"
+                        }
+                    },
+                    "persistence_policy": {
+                        "type": "array",
+                        "description": "Who can make sessions persistent. This is an array for forward-compatibility, the client will use the first value it understands.",
+                        "items": {
+                            "enum": [
+                                "any",
+                                "account_required",
+                                "permission_required",
+                                "none"
+                            ],
+                            "description": "any: anyone can make sessions persistent; account_required: internal or external account required to make sessions persistent; permission_required: account with special permissions required to make sessions persistent; none: nobody can make sessions persistent"
+                        }
+                    },
+                    "nsfm_policy": {
+                        "type": "array",
+                        "description": "How this server handles sessions that are not suitable for minors (NSFM). This is an array for forward-compatibility, the client will use the first value it understands.",
+                        "items": {
+                            "enum": [
+                                "allowed",
+                                "only",
+                                "forbidden"
+                            ],
+                            "description": "allowed: allowed if those sessions are marked NSFM; only: this server only allows NSFM sessions and they will automatically be marked as such; forbidden: no NSFM sessions allowed on this server"
+                        }
+                    },
+                    "browser_policy": {
+                        "type": "array",
+                        "description": "How this server handles joining via browser. This is an array for forward-compatibility, the client will use the first value it understands.",
+                        "items": {
+                            "enum": [
+                                "any",
+                                "only_passworded",
+                                "account_required",
+                                "permission_required",
+                                "none"
+                            ],
+                            "description": "any: all sessions can be joined via browser; only_passworded: only sessions with a password can be joined via browser; account_required: need internal or external account to join via browser; permission_required: need an account with special permissions to join via browser; none: joining via browser is not available"
+                        }
+                    }
+                },
+                "required": [
+                    "host",
+                    "join_policy",
+                    "host_policy",
+                    "persistence_policy",
+                    "nsfm_policy",
+                    "browser_policy"
+                ]
+            }
+        },
+        "listing": {
+            "type": "array",
+            "description": "Listing servers in this set of servers.",
+            "items": {
+                "type": "object",
+                "description": "A list server in his set.",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "A name for this listing server."
+                    },
+                    "url": {
+                        "type": "string",
+                        "description": "Listings URL, where the client can fetch sessions."
+                    }
+                },
+                "required": [
+                    "url"
+                ]
+            }
+        }
+    },
+    "required": [
+        "version"
+    ]
+}

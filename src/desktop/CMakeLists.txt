@@ -169,6 +169,10 @@ target_sources(drawpile PRIVATE
 	dialogs/startdialog/create.h
 	dialogs/startdialog/host.cpp
 	dialogs/startdialog/host.h
+	dialogs/startdialog/host/listing.cpp
+	dialogs/startdialog/host/listing.h
+	dialogs/startdialog/host/session.cpp
+	dialogs/startdialog/host/session.h
 	dialogs/startdialog/join.cpp
 	dialogs/startdialog/join.h
 	dialogs/startdialog/links.cpp
