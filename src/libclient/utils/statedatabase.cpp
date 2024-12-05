@@ -16,7 +16,7 @@ bool StateDatabase::Query::exec(const QString &sql, const QVariantList &params)
 	return db::exec(m_query, sql, params);
 }
 
-bool StateDatabase::Query::prepare(QString &sql)
+bool StateDatabase::Query::prepare(const QString &sql)
 {
 	m_preparedSql = sql;
 	return db::prepare(m_query, sql);
@@ -90,6 +90,7 @@ StateDatabase::StateDatabase(QObject *parent)
 		qry, "create table if not exists state (\n"
 			 "	key text primary key not null,\n"
 			 "	value)");
+	executeMigrations(qry);
 }
 
 
@@ -120,6 +121,44 @@ bool StateDatabase::put(const QString &key, const QVariant &value)
 bool StateDatabase::remove(const QString &key)
 {
 	return query().remove(key);
+}
+
+void StateDatabase::executeMigrations(QSqlQuery &qry)
+{
+	QVector<std::function<bool(StateDatabase *, QSqlQuery &)>> migrations = {
+		&StateDatabase::executeMigration1HostPresets,
+	};
+
+	int migrationCount = migrations.size();
+	QString selectMigrationsSql =
+		QStringLiteral("select migration_id from migrations\n"
+					   "order by migration_id desc limit 1");
+	QString insertMigrationsSql =
+		QStringLiteral("insert into migrations (migration_id) values (?)");
+
+	if(utils::db::exec(qry, selectMigrationsSql)) {
+		int lastMigrationId = qry.next() ? qry.value(0).toInt() : 0;
+		for(int i = lastMigrationId; i < migrationCount; ++i) {
+			bool ok = db::tx(m_db, [&] {
+				return migrations[i](this, qry) &&
+					   db::exec(qry, insertMigrationsSql, {i + 1});
+			});
+			if(!ok) {
+				qWarning("Migration %d failed", i);
+				break;
+			}
+		}
+	}
+}
+
+bool StateDatabase::executeMigration1HostPresets(QSqlQuery &qry)
+{
+	return db::exec(
+		qry, QStringLiteral("create table host_presets (\n"
+							"	id integer primary key not null,\n"
+							"	version integer not null,\n"
+							"	title text not null,\n"
+							"	data blob not null)"));
 }
 
 }

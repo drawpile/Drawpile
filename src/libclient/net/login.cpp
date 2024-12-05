@@ -711,6 +711,11 @@ void LoginHandler::sendHostCommand()
 	setState(EXPECT_LOGIN_OK);
 }
 
+void LoginHandler::sendInitialState()
+{
+	m_server->sendMessages(m_initialState.count(), m_initialState.constData());
+}
+
 void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 {
 	Q_ASSERT(m_mode != Mode::HostRemote);
@@ -856,9 +861,9 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 	}
 
 	if(msg.reply["state"] == "join" || msg.reply["state"] == "host") {
-		m_address.setPath("/" + msg.reply["join"].toObject()["id"].toString());
-
-		QJsonValue join = msg.reply["join"];
+		QJsonObject join = msg.reply[QStringLiteral("join")].toObject();
+		QString sessionId = join[QStringLiteral("id")].toString();
+		m_address.setPath(QStringLiteral("/") + sessionId);
 		int userid = join["user"].toInt();
 
 		if(userid < 1 || userid > 254) {
@@ -883,23 +888,56 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 		if(m_mode != Mode::Join) {
 			QJsonObject kwargs;
 
-			if(!m_title.isEmpty())
-				kwargs["title"] = m_title;
+			if(m_title.isEmpty()) {
+				kwargs[QStringLiteral("title")] =
+					QStringLiteral("%1 Drawpile").arg(m_address.userName());
+				kwargs[QStringLiteral("autotitle")] = true;
+			} else {
+				kwargs[QStringLiteral("title")] = m_title;
+			}
 
-			if(m_nsfm)
-				kwargs["nsfm"] = true;
+			if(!m_operatorPassword.isEmpty()) {
+				kwargs[QStringLiteral("opword")] = m_operatorPassword;
+			}
+			if(m_nsfm) {
+				kwargs[QStringLiteral("nsfm")] = true;
+			}
+			if(m_keepChat) {
+				kwargs[QStringLiteral("preserveChat")] = true;
+			}
+			if(m_deputies) {
+				kwargs[QStringLiteral("deputies")] = true;
+			}
 
 			send("sessionconf", {}, kwargs);
 
-			if(!m_announceUrl.isEmpty())
-				m_server->sendMessage(
-					ServerCommand::makeAnnounce(m_announceUrl));
+			for(const QString &announceUrl : m_announceUrls) {
+				m_server->sendMessage(ServerCommand::makeAnnounce(announceUrl));
+			}
 
-			// Upload initial session content
+			int authImportCount = m_authToImport.size();
+			int authImportDone = 0;
+			while(authImportDone < authImportCount) {
+				QJsonArray auth;
+				while(auth.size() < 100 && authImportDone < authImportCount) {
+					auth.append(m_authToImport[authImportDone++]);
+				}
+				send(QStringLiteral("auth-list"), {QJsonValue(auth)});
+			}
+
+			for(const QString &bans : m_bansToImport) {
+				send(QStringLiteral("import-bans"), {bans});
+			}
+
+			// Upload initial session content. For builtin sessions, there
+			// should only be a feature access levels and an undo depth message
+			// to apply those from the host dialog.
 			if(m_mode == Mode::HostRemote) {
-				m_server->sendMessages(
-					m_initialState.count(), m_initialState.constData());
+				sendInitialState();
 				send("init-complete");
+			} else if(m_mode == Mode::HostBuiltin) {
+				Q_ASSERT(m_initialState.size() == 2);
+				sendInitialState();
 			}
 		}
 

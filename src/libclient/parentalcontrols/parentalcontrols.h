@@ -51,6 +51,7 @@ QString defaultWordList();
  * always return false
  */
 bool isNsfmTitle(const QString &title);
+bool isNsfmAlias(const QString &alias);
 
 /**
  * @brief Get the current parental controls level

@@ -53,6 +53,8 @@ inline QString writablePath(const QString &dirOrFileName, const QString &filenam
  */
 QString extractBasename(QString filename);
 
+bool slurp(const QString &path, QByteArray &outBytes, QString &outError);
+
 }
 }
 

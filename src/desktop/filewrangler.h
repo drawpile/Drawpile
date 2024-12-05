@@ -61,6 +61,7 @@ public:
 		SESSION_BANS,
 		AUTH_LIST,
 		LOG_FILE,
+		SESSION_SETTINGS,
 	};
 
 	FileWrangler(QWidget *parent);
@@ -83,6 +84,7 @@ public:
 
 	void openSessionBans(const BytesOpenFn &onOpen) const;
 	void openAuthList(const BytesOpenFn &onOpen) const;
+	void openSessionSettings(const BytesOpenFn &onOpen) const;
 
 	void openCanvasState(
 		const CanvasStateOpenBeginFn &onBegin,
@@ -128,6 +130,7 @@ public:
 	void saveBrushPack(const PathSaveFn &onSave) const;
 	bool saveSessionBans(const QByteArray &bytes, QString *outError) const;
 	bool saveAuthList(const QByteArray &bytes, QString *outError) const;
+	bool saveSessionSettings(const QByteArray &bytes, QString *outError) const;
 	bool saveLogFile(
 		const QString &defaultName, const QByteArray &bytes,
 		QString *outError) const;

@@ -209,7 +209,7 @@ static bool write_index_history(DP_BuildIndexEntryContext *e)
 
     // The state of the permissions at this point.
     if (!DP_acl_state_reset_image_build(
-            e->acls, 0, DP_ACL_STATE_RESET_IMAGE_RECORDING_FLAGS,
+            e->acls, 0, DP_ACL_STATE_RESET_IMAGE_RECORDING_FLAGS, NULL,
             write_reset_image_message, e)) {
         return false;
     }

@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libshared/util/paths.h"
+#include "libshared/util/qtcompat.h"
 #include <QCoreApplication>
 #include <QDebug>
 #include <QDir>
+#include <QFile>
 #include <cmake-config/config.h>
 #ifdef Q_OS_ANDROID
 #	include <QRegularExpression>
@@ -132,6 +133,45 @@ QString extractBasename(QString filename)
 	}
 #endif
 	return title;
+}
+
+bool slurp(const QString &path, QByteArray &outBytes, QString &outError)
+{
+	QFile file(path);
+	if(!file.open(QIODevice::ReadOnly)) {
+		outError = file.errorString();
+		return false;
+	}
+
+	qint64 size = file.size();
+	if(size < 0) {
+		outError = file.errorString();
+		file.close();
+		return false;
+	}
+
+	if(size >= std::numeric_limits<compat::sizetype>::max()) {
+		file.close();
+		outError = QCoreApplication::translate(
+			"utils::paths", "File size out of bounds");
+		return false;
+	}
+
+	outBytes.resize(size);
+	qint64 read = file.read(outBytes.data(), size);
+	if(read == -1) {
+		outError = file.errorString();
+		file.close();
+		return false;
+	} else if(read != size) {
+		file.close();
+		outError = QCoreApplication::translate(
+			"utils::paths", "Could not read entire file");
+		return false;
+	} else {
+		file.close();
+		return true;
+	}
 }
 
 }

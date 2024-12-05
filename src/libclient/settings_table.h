@@ -1,7 +1,16 @@
 #include "libclient/settings_table_macros.h"
 
-#define CHECKER_COLOR1_DEFAULT QColor(100, 100, 100)
-#define CHECKER_COLOR2_DEFAULT QColor(135, 135, 135)
+#ifndef CHECKER_COLOR1_DEFAULT
+#   define CHECKER_COLOR1_DEFAULT QColor(100, 100, 100)
+#endif
+
+#ifndef CHECKER_COLOR2_DEFAULT
+#   define CHECKER_COLOR2_DEFAULT QColor(135, 135, 135)
+#endif
+
+#ifndef ENGINE_UNDO_LIMIT_DEFAULT
+#	define ENGINE_UNDO_LIMIT_DEFAULT 60
+#endif
 
 #ifndef SNAPSHOT_COUNT_DEFAULT
 #   if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
@@ -26,7 +35,7 @@ SETTING(parentalControlsTags        , ParentalControlsTags        , "pc/tagwords
 SETTING(engineFrameRate             , EngineFrameRate             , "settings/paintengine/fps"              , 60)
 SETTING(engineSnapshotCount         , EngineSnapshotCount         , "settings/paintengine/snapshotcount"    , SNAPSHOT_COUNT_DEFAULT)
 SETTING(engineSnapshotInterval      , EngineSnapshotInterval      , "settings/paintengine/snapshotinterval" , 10)
-SETTING(engineUndoDepth             , EngineUndoDepth             , "settings/paintengine/undodepthlimit"   , DP_UNDO_DEPTH_DEFAULT)
+SETTING(engineUndoDepth             , EngineUndoDepth             , "settings/paintengine/undodepthlimit"   , ENGINE_UNDO_LIMIT_DEFAULT)
 SETTING(listServers                 , ListServers                 , "listservers"                           , QVector<QVariantMap>())
 SETTING(serverAutoReset             , ServerAutoReset             , "settings/server/autoreset"             , true)
 SETTING(serverPrivateUserList       , ServerPrivateUserList       , "settings/server/privateUserList"       , false)

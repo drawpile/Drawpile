@@ -118,6 +118,10 @@ const char *DP_access_tier_name(int tier);
 
 const char *DP_feature_enum_name(int feature);
 
+const char *DP_feature_name(int feature);
+
+int DP_feature_access_tier_default(int feature, int fallback);
+
 
 bool DP_user_bit_get(const uint8_t *users, uint8_t user_id);
 void DP_user_bit_set(uint8_t *users, uint8_t user_id);
@@ -181,10 +185,10 @@ uint8_t DP_acl_state_handle(DP_AclState *acls, DP_Message *msg,
 
 DP_Message *DP_acl_state_msg_feature_access_all_new(unsigned int context_id);
 
-bool DP_acl_state_reset_image_build(DP_AclState *acls, unsigned int context_id,
-                                    unsigned int include_flags,
-                                    bool (*push_message)(void *, DP_Message *),
-                                    void *user);
+bool DP_acl_state_reset_image_build(
+    DP_AclState *acls, unsigned int context_id, unsigned int include_flags,
+    DP_AccessTier (*override_feature_tier)(void *, DP_Feature, DP_AccessTier),
+    bool (*push_message)(void *, DP_Message *), void *user);
 
 
 #endif

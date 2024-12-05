@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_DIALOGS_STARTDIALOG_H
 #define DESKTOP_DIALOGS_STARTDIALOG_H
+#include "desktop/utils/hostparams.h"
 #include <QDialog>
 #include <QVector>
 #ifndef __EMSCRIPTEN__
@@ -68,10 +69,7 @@ signals:
 	void layouts();
 	void preferences();
 	void join(const QUrl &url, const QString recordingFilename);
-	void host(
-		const QString &title, const QString &password, const QString &alias,
-		bool nsfm, const QString &announcementUrl,
-		const QString &remoteAddress);
+	void host(const HostParams &params);
 	void create(const QSize &size, const QColor &backgroundColor);
 	void joinAddressSet(const QString &address);
 	void hostSessionEnabled(bool enabled);
@@ -84,6 +82,11 @@ private slots:
 	void addListServer();
 	void addListServerUrl(const QUrl &url);
 	void toggleRecording(bool checked);
+	void triggerReset();
+	void triggerLoad();
+	void triggerSave();
+	void triggerImport();
+	void triggerExport();
 #ifndef __EMSCRIPTEN__
 	void updateCheckForUpdatesButton(bool inProgress);
 #endif
@@ -96,10 +99,7 @@ private slots:
 	void okClicked();
 	void followLink(const QString &fragment);
 	void joinRequested(const QUrl &url);
-	void hostRequested(
-		const QString &title, const QString &password, const QString &alias,
-		bool nsfm, const QString &announcementUrl,
-		const QString &remoteAddress);
+	void hostRequested(const HostParams &params);
 	void rememberLastPage(int i);
 #ifndef __EMSCRIPTEN__
 	void initialUpdateDelayFinished();
@@ -124,8 +124,9 @@ private:
 	QStackedWidget *m_stack;
 	QFrame *m_linksSeparator;
 	startdialog::Links *m_links;
-	QAbstractButton *m_addServerButton;
-	QAbstractButton *m_recordButton;
+	QPushButton *m_addServerButton;
+	QPushButton *m_recordButton;
+	QPushButton *m_saveLoadButton;
 #ifndef __EMSCRIPTEN__
 	QAbstractButton *m_checkForUpdatesButton;
 #endif

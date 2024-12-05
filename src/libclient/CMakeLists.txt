@@ -189,6 +189,8 @@ target_sources(dpclient PRIVATE
 	utils/debouncetimer.h
 	utils/funstuff.cpp
 	utils/funstuff.h
+	utils/hostpresetmodel.cpp
+	utils/hostpresetmodel.h
 	utils/html.cpp
 	utils/html.h
 	utils/html_gen.cpp

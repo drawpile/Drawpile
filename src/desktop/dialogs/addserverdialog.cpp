@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/addserverdialog.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/imageresourcetextbrowser.h"
 #include "libclient/utils/listservermodel.h"
 #include "libshared/util/networkaccess.h"
 #include "ui_addserverdialog.h"
-
 #include <QIcon>
 #include <QImage>
 #include <QPixmap>
@@ -16,31 +15,9 @@
 
 namespace dialogs {
 
-class FaviconTextBrowser : public QTextBrowser {
-public:
-	FaviconTextBrowser(QImage &favicon)
-		: QTextBrowser{}
-		, m_favicon(favicon)
-	{
-	}
-
-protected:
-	QVariant loadResource(int type, const QUrl &name) override
-	{
-		if(type == QTextDocument::ImageResource && name == QUrl{"favicon"}) {
-			return m_favicon;
-		} else {
-			return QTextBrowser::loadResource(type, name);
-		}
-	}
-
-private:
-	QImage &m_favicon;
-};
-
 struct AddServerDialog::Private {
 	Ui::AddServerDialog ui;
-	FaviconTextBrowser *browser;
+	widgets::ImageResourceTextBrowser *browser;
 	QAbstractButton *okButton;
 	QAbstractButton *cancelButton;
 	bool httpFallbackAttempted = false;
@@ -60,7 +37,7 @@ AddServerDialog::AddServerDialog(QWidget *parent)
 	, d{new Private}
 {
 	d->ui.setupUi(this);
-	d->browser = new FaviconTextBrowser{d->favicon};
+	d->browser = new widgets::ImageResourceTextBrowser;
 	utils::bindKineticScrolling(d->browser);
 	d->ui.resultLayout->addWidget(d->browser);
 	d->okButton = d->ui.buttons->button(QDialogButtonBox::Ok);
@@ -275,6 +252,7 @@ void AddServerDialog::fetchFavicon()
 void AddServerDialog::handleFaviconReceived(const QImage &favicon)
 {
 	d->favicon = favicon;
+	d->browser->setImage(QStringLiteral("favicon"), d->favicon);
 	QString resultText =
 		QStringLiteral(
 			"<table>"
@@ -283,13 +261,13 @@ void AddServerDialog::handleFaviconReceived(const QImage &favicon)
 			"			     valign=\"middle\">"
 			"		     <img src=\"favicon\" width=\"64\" height=\"64\">"
 			"		 </td>"
-			"		 <td><h1 style=\"pre-wrap\">%1</h1></td>"
+			"		 <td><h1 style=\"white-space:pre-wrap;\">%1</h1></td>"
 			"    </tr>"
 			"	 <tr>"
-			"	     <td><code style=\"pre-wrap\">%2</code></td>"
+			"	     <td><code style=\"white-space:pre-wrap;\">%2</code></td>"
 			"	 </tr>"
 			"     <tr>"
-			"	     <td colspan=\"2\" style=\"pre-wrap\"><hr>%3</td>"
+			"	     <td colspan=\"2\" style=\"white-space:pre-wrap;\"><hr>%3</td>"
 			"     </tr>"
 			"</table>")
 			.arg(

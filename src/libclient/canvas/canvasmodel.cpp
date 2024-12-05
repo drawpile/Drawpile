@@ -314,21 +314,29 @@ void CanvasModel::onLaserTrail(int userId, int persistence, uint32_t color)
 }
 
 net::MessageList CanvasModel::generateSnapshot(
-	bool includePinnedMessage, unsigned int aclIncludeFlags) const
+	bool includePinnedMessage, unsigned int aclIncludeFlags,
+	int overrideUndoLimit, const QHash<int, int> *overrideTiers) const
 {
 	net::MessageList snapshot;
 	m_paintengine->historyCanvasState().toResetImage(snapshot, 0);
-	amendSnapshotMetadata(snapshot, includePinnedMessage, aclIncludeFlags);
+	amendSnapshotMetadata(
+		snapshot, includePinnedMessage, aclIncludeFlags, overrideUndoLimit,
+		overrideTiers);
 	return snapshot;
 }
 
 int CanvasModel::amendSnapshotMetadata(
 	net::MessageList &snapshot, bool includePinnedMessage,
-	unsigned int aclIncludeFlags) const
+	unsigned int aclIncludeFlags, int overrideUndoLimit,
+	const QHash<int, int> *overrideTiers) const
 {
 	int prepended = 1;
-	snapshot.prepend(
-		net::makeUndoDepthMessage(0, m_paintengine->undoDepthLimit()));
+	snapshot.prepend(net::makeUndoDepthMessage(
+		0, qBound(
+			   DP_CANVAS_HISTORY_UNDO_DEPTH_MIN,
+			   overrideUndoLimit < 0 ? m_paintengine->undoDepthLimit()
+									 : overrideUndoLimit,
+			   DP_CANVAS_HISTORY_UNDO_DEPTH_MAX)));
 
 	if(includePinnedMessage && !m_pinnedMessage.isEmpty()) {
 		++prepended;
@@ -342,7 +350,7 @@ int CanvasModel::amendSnapshotMetadata(
 	}
 
 	m_paintengine->aclState().toResetImage(
-		snapshot, m_localUserId, aclIncludeFlags);
+		snapshot, m_localUserId, aclIncludeFlags, overrideTiers);
 
 	return prepended;
 }

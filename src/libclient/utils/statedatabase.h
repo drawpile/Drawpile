@@ -24,7 +24,7 @@ public:
 		Query &operator=(Query &&) = delete;
 
 		bool exec(const QString &sql, const QVariantList &params = {});
-		bool prepare(QString &sql);
+		bool prepare(const QString &sql);
 		bool execPrepared();
 		void bindValue(int pos, const QVariant &val);
 		bool next();
@@ -60,6 +60,9 @@ public:
 	bool remove(const QString &key);
 
 private:
+	void executeMigrations(QSqlQuery &qry);
+	bool executeMigration1HostPresets(QSqlQuery &qry);
+
 	mutable QRecursiveMutex m_mutex;
 	QSqlDatabase m_db;
 };

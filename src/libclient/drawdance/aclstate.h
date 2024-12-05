@@ -5,6 +5,7 @@ extern "C" {
 #include <dpmsg/acl.h>
 }
 #include "libclient/net/message.h"
+#include <QHash>
 #include <QtGlobal>
 #include <functional>
 
@@ -41,14 +42,22 @@ public:
 	uint8_t handle(const net::Message &msg, bool overrideAcls = false);
 
 	void toResetImage(
-		net::MessageList &msgs, uint8_t userId,
-		unsigned int includeFlags) const;
+		net::MessageList &msgs, uint8_t userId, unsigned int includeFlags,
+		const QHash<int, int> *overrideTiers = nullptr) const;
 
 private:
+	struct ResetImageParams {
+		net::MessageList &msgs;
+		const QHash<int, int> *overrideTiers;
+	};
+
 	AclState(DP_AclState *data);
 
 	static void
 	onLayerAcl(void *user, int layerId, const DP_LayerAcl *layerAcl);
+
+	static DP_AccessTier overrideFeatureTier(
+		void *user, DP_Feature feature, DP_AccessTier originalTier);
 
 	static bool pushMessage(void *user, DP_Message *msg);
 

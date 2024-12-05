@@ -56,6 +56,7 @@ typedef struct DP_AccessTierAttributes {
 typedef struct DP_FeatureAttributes {
     const char *enum_name;
     const char *name;
+    DP_AccessTier default_tier;
 } DP_FeatureAttributes;
 
 static const DP_AccessTierAttributes access_tier_attributes[] = {
@@ -66,19 +67,29 @@ static const DP_AccessTierAttributes access_tier_attributes[] = {
 };
 
 static DP_FeatureAttributes feature_attributes[] = {
-    [DP_FEATURE_PUT_IMAGE] = {"DP_FEATURE_PUT_IMAGE", "put_image"},
-    [DP_FEATURE_REGION_MOVE] = {"DP_FEATURE_REGION_MOVE", "region_move"},
-    [DP_FEATURE_RESIZE] = {"DP_FEATURE_RESIZE", "resize"},
-    [DP_FEATURE_BACKGROUND] = {"DP_FEATURE_BACKGROUND", "background"},
-    [DP_FEATURE_EDIT_LAYERS] = {"DP_FEATURE_EDIT_LAYERS", "edit_layers"},
-    [DP_FEATURE_OWN_LAYERS] = {"DP_FEATURE_OWN_LAYERS", "own_layers"},
+    [DP_FEATURE_PUT_IMAGE] = {"DP_FEATURE_PUT_IMAGE", "put_image",
+                              DP_ACCESS_TIER_GUEST},
+    [DP_FEATURE_REGION_MOVE] = {"DP_FEATURE_REGION_MOVE", "region_move",
+                                DP_ACCESS_TIER_GUEST},
+    [DP_FEATURE_RESIZE] = {"DP_FEATURE_RESIZE", "resize",
+                           DP_ACCESS_TIER_OPERATOR},
+    [DP_FEATURE_BACKGROUND] = {"DP_FEATURE_BACKGROUND", "background",
+                               DP_ACCESS_TIER_OPERATOR},
+    [DP_FEATURE_EDIT_LAYERS] = {"DP_FEATURE_EDIT_LAYERS", "edit_layers",
+                                DP_ACCESS_TIER_OPERATOR},
+    [DP_FEATURE_OWN_LAYERS] = {"DP_FEATURE_OWN_LAYERS", "own_layers",
+                               DP_ACCESS_TIER_GUEST},
     [DP_FEATURE_CREATE_ANNOTATION] = {"DP_FEATURE_CREATE_ANNOTATION",
-                                      "create_annotation"},
-    [DP_FEATURE_LASER] = {"DP_FEATURE_LASER", "laser"},
-    [DP_FEATURE_UNDO] = {"DP_FEATURE_UNDO", "undo"},
-    [DP_FEATURE_METADATA] = {"DP_FEATURE_METADATA", "metadata"},
-    [DP_FEATURE_TIMELINE] = {"DP_FEATURE_TIMELINE", "timeline"},
-    [DP_FEATURE_MYPAINT] = {"DP_FEATURE_MYPAINT", "mypaint"},
+                                      "create_annotation",
+                                      DP_ACCESS_TIER_GUEST},
+    [DP_FEATURE_LASER] = {"DP_FEATURE_LASER", "laser", DP_ACCESS_TIER_GUEST},
+    [DP_FEATURE_UNDO] = {"DP_FEATURE_UNDO", "undo", DP_ACCESS_TIER_GUEST},
+    [DP_FEATURE_METADATA] = {"DP_FEATURE_METADATA", "metadata",
+                             DP_ACCESS_TIER_OPERATOR},
+    [DP_FEATURE_TIMELINE] = {"DP_FEATURE_TIMELINE", "timeline",
+                             DP_ACCESS_TIER_GUEST},
+    [DP_FEATURE_MYPAINT] = {"DP_FEATURE_MYPAINT", "mypaint",
+                            DP_ACCESS_TIER_GUEST},
 };
 
 int DP_access_tier_clamp(int tier)
@@ -133,6 +144,18 @@ const char *DP_feature_enum_name(int feature)
 {
     const DP_FeatureAttributes *attributes = feature_at(feature);
     return attributes ? attributes->enum_name : NULL;
+}
+
+const char *DP_feature_name(int feature)
+{
+    const DP_FeatureAttributes *attributes = feature_at(feature);
+    return attributes ? attributes->name : NULL;
+}
+
+int DP_feature_access_tier_default(int feature, int fallback)
+{
+    const DP_FeatureAttributes *attributes = feature_at(feature);
+    return attributes ? (int)attributes->default_tier : fallback;
 }
 
 
@@ -237,20 +260,11 @@ DP_AccessTier DP_user_acls_tier(const DP_UserAcls *users, uint8_t user_id)
 
 static DP_FeatureTiers null_feature_tiers(void)
 {
-    return (DP_FeatureTiers){{
-        DP_ACCESS_TIER_GUEST,
-        DP_ACCESS_TIER_GUEST,
-        DP_ACCESS_TIER_OPERATOR,
-        DP_ACCESS_TIER_OPERATOR,
-        DP_ACCESS_TIER_OPERATOR,
-        DP_ACCESS_TIER_GUEST,
-        DP_ACCESS_TIER_GUEST,
-        DP_ACCESS_TIER_GUEST,
-        DP_ACCESS_TIER_GUEST,
-        DP_ACCESS_TIER_OPERATOR,
-        DP_ACCESS_TIER_GUEST,
-        DP_ACCESS_TIER_GUEST,
-    }};
+    DP_FeatureTiers feature_tiers;
+    for (int i = 0; i < DP_FEATURE_COUNT; ++i) {
+        feature_tiers.tiers[i] = feature_attributes[i].default_tier;
+    }
+    return feature_tiers;
 }
 
 static DP_AclState null_acl_state(void)
@@ -1170,10 +1184,10 @@ static bool reset_image_push_users(
     return push_message(user, user_acl_message);
 }
 
-bool DP_acl_state_reset_image_build(DP_AclState *acls, unsigned int context_id,
-                                    unsigned int include_flags,
-                                    bool (*push_message)(void *, DP_Message *),
-                                    void *user)
+bool DP_acl_state_reset_image_build(
+    DP_AclState *acls, unsigned int context_id, unsigned int include_flags,
+    DP_AccessTier (*override_feature_tier)(void *, DP_Feature, DP_AccessTier),
+    bool (*push_message)(void *, DP_Message *), void *user)
 {
     DP_ASSERT(acls);
     DP_ASSERT(push_message);
@@ -1196,8 +1210,16 @@ bool DP_acl_state_reset_image_build(DP_AclState *acls, unsigned int context_id,
         }
     }
 
+    DP_AccessTier tiers[DP_FEATURE_COUNT];
+    for (int i = 0; i < DP_FEATURE_COUNT; ++i) {
+        DP_AccessTier tier = acls->feature.tiers[i];
+        tiers[i] = override_feature_tier
+                     ? override_feature_tier(user, (DP_Feature)i, tier)
+                     : tier;
+    }
+
     DP_Message *feature_access_levels_msg = DP_msg_feature_access_levels_new(
-        context_id, set_feature_tiers, DP_FEATURE_COUNT, acls->feature.tiers);
+        context_id, set_feature_tiers, DP_FEATURE_COUNT, tiers);
     if (!push_message(user, feature_access_levels_msg)) {
         return false;
     }

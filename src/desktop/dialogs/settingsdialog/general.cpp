@@ -238,10 +238,10 @@ void General::initTheme(
 void General::initUndo(desktop::settings::Settings &settings, QFormLayout *form)
 {
 	auto *undoLimit = new QSpinBox;
-	undoLimit->setRange(1, 255);
+	undoLimit->setRange(3, 255);
 	settings.bindEngineUndoDepth(undoLimit);
 	auto *undoLimitLayout =
-		utils::encapsulate(tr("Use %1 undo levels by default"), undoLimit);
+		utils::encapsulate(tr("%1 offline undo levels by default"), undoLimit);
 	undoLimitLayout->setControlTypes(QSizePolicy::CheckBox);
 	form->addRow(tr("Session history:"), undoLimitLayout);
 }

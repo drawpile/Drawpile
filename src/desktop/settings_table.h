@@ -1,8 +1,12 @@
 #include "libclient/settings_table_macros.h"
 
-#define CANVAS_VIEW_BACKGROUND_COLOR_DEFAULT QColor(100, 100, 100)
+#ifndef CANVAS_VIEW_BACKGROUND_COLOR_DEFAULT
+#	define CANVAS_VIEW_BACKGROUND_COLOR_DEFAULT QColor(100, 100, 100)
+#endif
 
-#define DEBOUNCE_DELAY_MS_DEFAULT 250
+#ifndef DEBOUNCE_DELAY_MS_DEFAULT
+#	define DEBOUNCE_DELAY_MS_DEFAULT 250
+#endif
 
 #ifndef GLOBAL_PRESSURE_CURVE_DEFAULT
 #	ifdef __EMSCRIPTEN__
@@ -52,12 +56,8 @@
 #	endif
 #endif
 
-#ifndef UPDATE_CHECK_DEFAULT
-#	if DISABLE_UPDATE_CHECK_DEFAULT
-#		define UPDATE_CHECK_DEFAULT false
-#	else
-#		define UPDATE_CHECK_DEFAULT true
-#	endif
+#ifndef SESSION_UNDO_LIMIT_DEFAULT
+#	define SESSION_UNDO_LIMIT_DEFAULT 60
 #endif
 
 #ifndef THEME_PALETTE_DEFAULT
@@ -73,6 +73,14 @@
 #		define THEME_STYLE_DEFAULT QString()
 #	else
 #		define THEME_STYLE_DEFAULT QString("Fusion")
+#	endif
+#endif
+
+#ifndef UPDATE_CHECK_DEFAULT
+#	if DISABLE_UPDATE_CHECK_DEFAULT
+#		define UPDATE_CHECK_DEFAULT false
+#	else
+#		define UPDATE_CHECK_DEFAULT true
 #	endif
 #endif
 
@@ -157,14 +165,22 @@ SETTING(lastBrowseSortColumn      , LastBrowseSortColumn      , "history/browses
 SETTING(lastBrowseSortDirection   , LastBrowseSortDirection   , "history/browsesortdirection"           , 0)
 SETTING(lastFileOpenPath          , LastFileOpenPath          , "window/lastpath"                       , QString())
 SETTING(lastFileOpenPaths         , LastFileOpenPaths         , "window/lastpaths"                      , QVariantMap())
-SETTING(lastHostRemote            , LastHostRemote            , "history/hostremote"                    , true)
+SETTING(lastHostServer            , LastHostServer            , "history/hostserver"                    , 0)
+SETTING(lastHostType              , LastHostType              , "history/hosttype"                      , 0)
 SETTING(lastIdAlias               , LastIdAlias               , "history/idalias"                       , QString())
 SETTING(lastJoinAddress           , LastJoinAddress           , "history/joinaddress"                   , QString())
-SETTING(lastListingServer         , LastListingServer         , "history/listingserver"                 , -1)
+SETTING(lastKeepChat              , LastKeepChat              , "history/keepchat"                      , false)
+SETTING(lastListingUrls           , LastListingUrls           , "history/listingurls"                   , QStringList())
 SETTING(lastNsfm                  , LastNsfm                  , "history/nsfm"                          , false)
 SETTING(lastPalette               , LastPalette               , "history/lastpalette"                   , 0)
-SETTING(lastSessionTitle          , LastSessionTitle          , "history/sessiontitle"                  , QString())
+SETTING(lastSessionAuthList       , LastSessionAuthList       , "history/sessionauthlist"               , QByteArray())
+SETTING(lastSessionAutomatic      , LastSessionAutomatic      , "history/sessionautomatic"              , true)
+SETTING(lastSessionBanList        , LastSessionBanList        , "history/sessionbanlist"                , QByteArray())
+SETTING(lastSessionOpPassword     , LastSessionOpPassword     , "history/sessionoppassword"             , QString())
 SETTING(lastSessionPassword       , LastSessionPassword       , "history/sessionpassword"               , QString())
+SETTING(lastSessionPermissions    , LastSessionPermissions    , "history/sessionpermissions"            , QVariantMap())
+SETTING(lastSessionTitle          , LastSessionTitle          , "history/sessiontitle"                  , QString())
+SETTING(lastSessionUndoDepth      , LastSessionUndoDepth      , "history/sessionundodepth"              , 60)
 SETTING(lastStartDialogPage       , LastStartDialogPage       , "history/laststartdialogpage"           , -1)
 SETTING(lastStartDialogSize       , LastStartDialogSize       , "history/laststartdialogsize"           , QSize())
 SETTING(lastStartDialogDateTime   , LastStartDialogDateTime   , "history/laststartdialogdatetime"       , QString())
@@ -243,7 +259,7 @@ SETTING(showInviteDialogOnHost    , ShowInviteDialogOnHost    , "invites/showdia
 SETTING(showNsfmWarningOnJoin     , ShowNsfmWarningOnJoin     , "pc/shownsfmwarningonjoin"              , true)
 SETTING(showTransformNotices      , ShowTransformNotices      , "settings/showtransformnotices"         , true)
 SETTING(showTrayIcon              , ShowTrayIcon              , "ui/trayicon"                           , true)
-SETTING(soundVolume               , SoundVolume               , "notifications/volume"                  , 60)
+SETTING(soundVolume               , SoundVolume               , "notifications/volume"                  , SESSION_UNDO_LIMIT_DEFAULT)
 SETTING_GETSET(tabletDriver       , TabletDriver              , "settings/input/tabletdriver"           , tabletinput::Mode::KisTabletWinink
 	, &tabletDriver::get, &tabletDriver::set)
 SETTING_GETSET(tabletEraserAction , TabletEraserAction        , "settings/input/tableteraseraction"     , int(tabletinput::EraserAction::Default)

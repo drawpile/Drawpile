@@ -8310,6 +8310,12 @@ extern "C" {
     pub fn DP_feature_enum_name(feature: ::std::os::raw::c_int) -> *const ::std::os::raw::c_char;
 }
 extern "C" {
+    pub fn DP_feature_access_tier_default(
+        feature: ::std::os::raw::c_int,
+        fallback: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn DP_user_bit_get(users: *const u8, user_id: u8) -> bool;
 }
 extern "C" {
@@ -8416,6 +8422,13 @@ extern "C" {
         acls: *mut DP_AclState,
         context_id: ::std::os::raw::c_uint,
         include_flags: ::std::os::raw::c_uint,
+        override_feature_tier: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: *mut ::std::os::raw::c_void,
+                arg2: DP_Feature,
+                arg3: DP_AccessTier,
+            ) -> DP_AccessTier,
+        >,
         push_message: ::std::option::Option<
             unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void, arg2: *mut DP_Message) -> bool,
         >,

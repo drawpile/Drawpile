@@ -99,6 +99,18 @@ void FileWrangler::openAuthList(const BytesOpenFn &onOpen) const
 		utils::fileFormatFilterList(utils::FileFormatOption::AuthList), onOpen);
 }
 
+void FileWrangler::openSessionSettings(const BytesOpenFn &onOpen) const
+{
+	openBytesContent(
+		tr("Import Session Settings"), LastPath::SESSION_SETTINGS,
+		{tr("All Supported Files (%1)")
+			 .arg(QStringLiteral("*.dphost *.dpbans *.dproles")),
+		 tr("Session Settings (%1)").arg("*.dphost"),
+		 tr("Session Bans (%1)").arg(QStringLiteral("*.dpbans")),
+		 tr("Session Roles (%1)").arg(QStringLiteral("*.dproles"))},
+		onOpen);
+}
+
 void FileWrangler::openCanvasState(
 	const CanvasStateOpenBeginFn &onBegin,
 	const CanvasStateOpenSuccessFn &onSuccess,
@@ -503,6 +515,15 @@ bool FileWrangler::saveAuthList(
 		bytes, outError);
 }
 
+bool FileWrangler::saveSessionSettings(
+	const QByteArray &bytes, QString *outError) const
+{
+	return saveBytesContent(
+		tr("Export Session Settings"), LastPath::AUTH_LIST,
+		QStringLiteral(".dphost"), QStringLiteral("session.dphost"),
+		{tr("Session Settings (%1)").arg("*.dphost")}, bytes, outError);
+}
+
 bool FileWrangler::saveLogFile(
 	const QString &defaultName, const QByteArray &bytes,
 	QString *outError) const
@@ -726,6 +747,8 @@ QString FileWrangler::getLastPathKey(LastPath type)
 		return QStringLiteral("authlist");
 	case LastPath::LOG_FILE:
 		return QStringLiteral("logfile");
+	case LastPath::SESSION_SETTINGS:
+		return QStringLiteral("sessionsettings");
 	}
 	return QStringLiteral("unknown");
 }
@@ -826,8 +849,8 @@ void FileWrangler::openBytesContent(
 #ifdef __EMSCRIPTEN__
 	OpenFn fileOpenCompleted =
 		[parent = parentWidget(),
-		 onOpen](const QString &, const QByteArray &fileContent) {
-			onOpen(nullptr, &fileContent);
+		 onOpen](const QString &fileName, const QByteArray &fileContent) {
+			onOpen(&fileName, &fileContent);
 		};
 #else
 	OpenFn fileOpenCompleted = [parent = parentWidget(),

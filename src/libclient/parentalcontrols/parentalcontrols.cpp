@@ -50,5 +50,10 @@ bool isNsfmTitle(const QString &title)
 	return false;
 }
 
+bool isNsfmAlias(const QString &alias)
+{
+	return isNsfmTitle(alias);
+}
+
 }
 

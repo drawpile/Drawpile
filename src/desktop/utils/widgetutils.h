@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QScroller>
 #include <QSizePolicy>
+#include <QWidget>
 #include <optional>
 
 class QAbstractScrollArea;
@@ -122,6 +123,37 @@ private:
 };
 // SPDX-SnippetEnd
 
+// QLabel refuses to behave, it will just take up excessive vertical space when
+// word wrap is enabled despite telling it not to. So we make our own widget.
+class FormNote final : public QWidget {
+	Q_OBJECT
+public:
+	FormNote(
+		const QString &text, bool indent = false, const QIcon &icon = QIcon(),
+		bool link = false);
+
+	QSize sizeHint() const override;
+	QSize minimumSizeHint() const override;
+
+signals:
+	void linkClicked();
+
+protected:
+	void paintEvent(QPaintEvent *event) override;
+	void resizeEvent(QResizeEvent *event) override;
+	void mousePressEvent(QMouseEvent *event) override;
+	void mouseDoubleClickEvent(QMouseEvent *event) override;
+
+private:
+	const QString m_text;
+	const QIcon m_icon;
+	const bool m_link;
+	int m_indent;
+	int m_iconSize = 0;
+	int m_width = 1;
+	int m_height = 1;
+};
+
 void showWindow(
 	QWidget *widget, bool maximized = false, bool isMainWindow = false);
 
@@ -158,7 +190,7 @@ EncapsulatedLayout *encapsulate(const QString &label, QWidget *child);
 
 EncapsulatedLayout *indent(QWidget *child);
 
-QWidget *formNote(
+FormNote *formNote(
 	const QString &text, QSizePolicy::ControlType type = QSizePolicy::Label,
 	const QIcon &icon = QIcon());
 
@@ -211,6 +243,8 @@ QMessageBox *showWarning(
 QMessageBox *showCritical(
 	QWidget *parent, const QString &title, const QString &text,
 	const QString &informativeText = QString());
+
+bool openOrQuestionUrl(QWidget *parent, const QUrl &url);
 
 QString makeActionShortcutText(QString text, const QKeySequence &shortcut);
 

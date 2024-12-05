@@ -1,412 +1,254 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/startdialog/host.h"
-#include "desktop/main.h"
-#include "desktop/utils/qtguicompat.h"
-#include "desktop/utils/recents.h"
+#include "desktop/dialogs/startdialog/host/bans.h"
+#include "desktop/dialogs/startdialog/host/dialogs.h"
+#include "desktop/dialogs/startdialog/host/files.h"
+#include "desktop/dialogs/startdialog/host/listing.h"
+#include "desktop/dialogs/startdialog/host/permissions.h"
+#include "desktop/dialogs/startdialog/host/roles.h"
+#include "desktop/dialogs/startdialog/host/session.h"
+#include "desktop/filewrangler.h"
 #include "desktop/utils/widgetutils.h"
-#include "libclient/net/server.h"
-#include "libclient/utils/listservermodel.h"
-#include "libclient/utils/sessionidvalidator.h"
-#include <QButtonGroup>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QDesktopServices>
-#include <QFormLayout>
-#include <QFrame>
-#include <QGridLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPalette>
-#include <QPushButton>
-#include <QRadioButton>
-#include <QRandomGenerator>
+#include "libshared/util/paths.h"
+#include <QIcon>
 #include <QScrollArea>
+#include <QStackedWidget>
+#include <QTabBar>
 #include <QVBoxLayout>
 
 namespace dialogs {
 namespace startdialog {
 
 Host::Host(QWidget *parent)
-	: Page{parent}
+	: Page(parent)
 {
-	QVBoxLayout *widgetLayout = new QVBoxLayout;
-	widgetLayout->setContentsMargins(0, 0, 0, 0);
-	setLayout(widgetLayout);
+	qRegisterMetaType<HostParams>();
+	setContentsMargins(0, 0, 0, 0);
 
-	m_notes = new QWidget;
-	m_notes->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-	widgetLayout->addWidget(m_notes);
-
-	QVBoxLayout *notesLayout = new QVBoxLayout;
-	notesLayout->setContentsMargins(0, 0, 0, 0);
-	m_notes->setLayout(notesLayout);
-
-	QHBoxLayout *iconLayout = new QHBoxLayout;
-	iconLayout->setContentsMargins(0, 0, 0, 0);
-	notesLayout->addLayout(iconLayout);
-
-	iconLayout->addWidget(
-		utils::makeIconLabel(QIcon::fromTheme("dialog-warning"), m_notes));
-
-	QVBoxLayout *labelsLayout = new QVBoxLayout;
-	labelsLayout->setContentsMargins(0, 0, 0, 0);
-	iconLayout->addLayout(labelsLayout);
-
-	m_titleNote = new QLabel;
-	m_titleNote->setWordWrap(true);
-	m_titleNote->setTextFormat(Qt::PlainText);
-	m_titleNote->setText(tr("A session title is required."));
-	labelsLayout->addWidget(m_titleNote);
-
-	m_urlInTitleNote = new QLabel;
-	m_urlInTitleNote->setWordWrap(true);
-	m_urlInTitleNote->setTextFormat(Qt::RichText);
-	m_urlInTitleNote->setText(tr(
-		"Invalid session title. If you want to join a session using an invite "
-		"link, <a href=\"#\">click here to go to the Join page</a>."));
-	connect(
-		m_urlInTitleNote, &QLabel::linkActivated, this,
-		&Host::switchToJoinPageRequested);
-	labelsLayout->addWidget(m_urlInTitleNote);
-
-	m_passwordNote = new QLabel;
-	m_passwordNote->setWordWrap(true);
-	m_passwordNote->setTextFormat(Qt::RichText);
-	m_passwordNote->setText(
-		tr("Without a password set, anyone can join your session! If you want "
-		   "to host a private session, choose a password or "
-		   "<a href=\"#\">generate one</a>."));
-	connect(
-		m_passwordNote, &QLabel::linkActivated, this, &Host::generatePassword);
-	labelsLayout->addWidget(m_passwordNote);
-
-	m_localHostNote = new QLabel;
-	m_localHostNote->setWordWrap(true);
-	m_localHostNote->setTextFormat(Qt::RichText);
-	m_localHostNote->setText(
-		tr("Hosting on your computer requires additional setup! "
-		   "<a href=\"#\">Click here for instructions.</a>"));
-	connect(m_localHostNote, &QLabel::linkActivated, this, [] {
-		QDesktopServices::openUrl(
-			QStringLiteral("https://drawpile.net/localhosthelp"));
-	});
-	labelsLayout->addWidget(m_localHostNote);
-
-	utils::addFormSpacer(notesLayout);
-	notesLayout->addWidget(utils::makeSeparator());
-
-	QScrollArea *scrollArea = new QScrollArea;
-	scrollArea->setFrameStyle(QFrame::NoFrame);
-	utils::bindKineticScrolling(scrollArea);
-	widgetLayout->addWidget(scrollArea);
-
-	QWidget *scroll = new QWidget;
-	scroll->setContentsMargins(0, 0, 0, 0);
-	scrollArea->setWidget(scroll);
-	scrollArea->setWidgetResizable(true);
-
-	QVBoxLayout *layout = new QVBoxLayout;
-	layout->setAlignment(Qt::AlignTop);
+	QVBoxLayout *layout = new QVBoxLayout(this);
 	layout->setContentsMargins(0, 0, 0, 0);
-	scroll->setLayout(layout);
-	utils::addFormSpacer(layout);
 
-	QFormLayout *generalSection = utils::addFormSection(layout);
-	m_titleEdit = new QLineEdit;
-	m_titleEdit->setMaxLength(100);
-	m_titleEdit->setToolTip(tr("The title is shown in the application title "
-							   "bar and in the session selection dialog"));
-	generalSection->addRow(tr("Title:"), m_titleEdit);
-	connect(
-		m_titleEdit, &QLineEdit::textChanged, this, &Host::updateHostEnabled);
-	connect(
-		m_titleEdit, &QLineEdit::textChanged, this,
-		&Host::updateNsfmBasedOnTitle);
+	m_tabs = new QTabBar;
+	m_tabs->setExpanding(false);
+	m_tabs->setDrawBase(false);
+	layout->addWidget(m_tabs);
 
-	QHBoxLayout *passwordLayout = new QHBoxLayout;
-	passwordLayout->setContentsMargins(0, 0, 0, 0);
+	m_stack = new QStackedWidget;
+	m_stack->setContentsMargins(0, 0, 0, 0);
+	layout->addWidget(m_stack, 1);
 
-	m_passwordEdit = new QLineEdit;
-	m_passwordEdit->setToolTip(
-		tr("Optional. If left blank, no password will be needed "
-		   "to join this session."));
-	connect(
-		m_passwordEdit, &QLineEdit::textChanged, this,
-		&Host::updateHostEnabled);
-	passwordLayout->addWidget(m_passwordEdit, 1);
+	m_sessionPage = new host::Session;
+	m_tabs->addTab(QIcon::fromTheme("network-server"), tr("Session"));
+	m_stack->addWidget(m_sessionPage);
 
-	QPushButton *generatePasswordButton = new QPushButton(tr("Generate"));
-	generatePasswordButton->setToolTip(tr("Generates a random password."));
-	connect(
-		generatePasswordButton, &QAbstractButton::clicked, this,
-		&Host::generatePassword);
-	passwordLayout->addWidget(generatePasswordButton);
+	m_listingPage = new host::Listing;
+	m_tabs->addTab(QIcon::fromTheme("edit-find"), tr("Listing"));
+	m_stack->addWidget(m_listingPage);
 
-	generalSection->addRow(tr("Password:"), passwordLayout);
+	m_permissionsPage = new host::Permissions;
+	m_tabs->addTab(QIcon::fromTheme("object-locked"), tr("Permissions"));
+	m_stack->addWidget(m_permissionsPage);
 
-	m_nsfmBox = new QCheckBox{tr("Not suitable for minors (NSFM)")};
-	m_nsfmBox->setToolTip(
-		tr("Marks the session as having age-restricted content."));
-	generalSection->addRow(nullptr, m_nsfmBox);
+	m_rolesPage = new host::Roles;
+	m_tabs->addTab(QIcon::fromTheme("user-group-new"), tr("Roles"));
+	m_stack->addWidget(m_rolesPage);
+
+	m_bansPage = new host::Bans;
+	m_tabs->addTab(QIcon::fromTheme("drawpile_ban"), tr("Bans"));
+	m_stack->addWidget(m_bansPage);
 
 	utils::addFormSeparator(layout);
 
-	QHBoxLayout *remoteLayout = new QHBoxLayout;
-	layout->addLayout(remoteLayout);
-
-	QRadioButton *useRemoteRadio = new QRadioButton{tr("Host at:")};
-	useRemoteRadio->setToolTip(tr("Use an external dedicated server"));
-	remoteLayout->addWidget(useRemoteRadio);
-
-	QRadioButton *useLocalRadio = new QRadioButton{tr("Host on this computer")};
-	useLocalRadio->setToolTip(tr("Use Drawpile's built-in server"));
-	layout->addWidget(useLocalRadio);
-#ifndef DP_HAVE_BUILTIN_SERVER
-	useLocalRadio->setEnabled(false);
-#	if defined(Q_OS_ANDROID)
-	QString notAvailableMessage =
-		tr("The built-in server is not available on Android.");
-#	elif defined(__EMSCRIPTEN__)
-	QString notAvailableMessage =
-		tr("The built-in server is not available in the browser.");
-#	else
-	QString notAvailableMessage = tr("The built-in server is not available on "
-									 "this installation of Drawpile.");
-#	endif
-	layout->addWidget(
-		utils::formNote(notAvailableMessage, QSizePolicy::RadioButton));
-	utils::addFormSpacer(layout);
-#endif
-
-	m_useGroup = new QButtonGroup{this};
-	m_useGroup->addButton(useLocalRadio, USE_LOCAL);
-	m_useGroup->addButton(useRemoteRadio, USE_REMOTE);
 	connect(
-		m_useGroup,
-		QOverload<QAbstractButton *, bool>::of(&QButtonGroup::buttonToggled),
-		this, &Host::updateHostEnabled);
-
-	m_remoteHostCombo = new QComboBox;
-	m_remoteHostCombo->setSizePolicy(
-		QSizePolicy::Expanding, QSizePolicy::Fixed);
-	m_remoteHostCombo->setEditable(true);
-	m_remoteHostCombo->setInsertPolicy(QComboBox::NoInsert);
-	remoteLayout->addWidget(m_remoteHostCombo);
+		m_tabs, &QTabBar::currentChanged, m_stack,
+		&QStackedWidget::setCurrentIndex);
 	connect(
-		useRemoteRadio, &QAbstractButton::toggled, m_remoteHostCombo,
-		&QWidget::setEnabled);
-	m_remoteHostCombo->setEnabled(m_useGroup->checkedId() == USE_REMOTE);
-
-	utils::addFormSeparator(layout);
-
-	m_advancedBox = new QCheckBox(tr("Enable advanced options"));
-	layout->addWidget(m_advancedBox);
+		m_sessionPage, &host::Session::personalChanged, m_listingPage,
+		&host::Listing::setPersonal);
 	connect(
-		m_advancedBox, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox), this,
-		[this](compat::CheckBoxState state) {
-			updateAdvancedSectionVisible(state != Qt::Unchecked);
-		});
-
-	m_advancedSection = utils::addFormSection(layout);
-
-	m_idAliasLabel = new QLabel(tr("ID Alias:"));
-	m_idAliasEdit = new QLineEdit;
-	m_idAliasEdit->setValidator(new SessionIdAliasValidator{this});
-	m_idAliasEdit->setToolTip(
-		tr("An optional user friendly ID for the session"));
-	m_advancedSection->addRow(m_idAliasLabel, m_idAliasEdit);
-
-	m_announceBox = new QCheckBox{tr("List at:")};
-	m_announceBox->setToolTip(tr("Announce the session at a public list"));
-	m_listServerCombo = new QComboBox;
-	m_listServerCombo->setSizePolicy(
-		QSizePolicy::Expanding, QSizePolicy::Fixed);
-	m_advancedSection->addRow(m_announceBox, m_listServerCombo);
+		m_sessionPage, &host::Session::requestTitleEdit, this,
+		&Host::startEditingTitle);
 	connect(
-		m_announceBox, &QAbstractButton::toggled, m_listServerCombo,
-		&QWidget::setEnabled);
-	m_listServerCombo->setEnabled(m_announceBox->isChecked());
-
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindLastSessionTitle(m_titleEdit);
-	settings.bindLastSessionPassword(m_passwordEdit);
-	settings.bindLastIdAlias(m_idAliasEdit);
-	settings.bindLastAnnounce(m_announceBox);
-
-	m_listServerModel =
-		new sessionlisting::ListServerModel{settings, false, this};
-	m_listServerCombo->setModel(m_listServerModel);
-	settings.bindListServers(this, &Host::updateListServers);
-
-	settings.bindLastListingServer(m_listServerCombo, std::nullopt);
-	settings.bindLastNsfm(m_nsfmBox);
-	settings.bindParentalControlsLevel(
-		this, [this](parentalcontrols::Level level) {
-			m_allowNsfm = level < parentalcontrols::Level::NoJoin;
-			m_nsfmBox->setEnabled(m_allowNsfm);
-			m_nsfmBox->setVisible(m_allowNsfm);
-			if(!m_allowNsfm) {
-				updateNsfmBasedOnTitle();
-			}
-		});
-	settings.bindLastHostRemote(m_useGroup);
-
-	connect(
-		&dpApp().recents(), &utils::Recents::recentHostsChanged, this,
-		&Host::updateRemoteHosts);
-	updateRemoteHosts();
-
-	settings.bindHostEnableAdvanced(m_advancedBox);
-	settings.bindHostEnableAdvanced(this, &Host::updateAdvancedSectionVisible);
-
-#ifndef DP_HAVE_BUILTIN_SERVER
-	useRemoteRadio->setChecked(true);
-#endif
-
-	updateListServers();
-	updateHostEnabled();
+		m_listingPage, &host::Listing::requestNsfmBasedOnListing, m_sessionPage,
+		&host::Session::setNsfmBasedOnListing);
+	m_listingPage->setPersonal(m_sessionPage->isPersonal());
 }
 
 void Host::activate()
 {
+	emit hideLinks();
 	emit showButtons();
-	updateHostEnabled();
 }
 
 void Host::accept()
 {
-	if(canHost()) {
-		bool advanced = m_advancedBox->isChecked();
-		emit host(
-			m_titleEdit->text().trimmed(), m_passwordEdit->text().trimmed(),
-			advanced ? m_idAliasEdit->text() : QString(),
-			m_nsfmBox->isChecked(),
-			advanced && m_announceBox->isChecked()
-				? m_listServerCombo->currentData().toString()
-				: QString{},
-			m_useGroup->checkedId() == USE_LOCAL ? QString{}
-												 : getRemoteAddress());
-	}
-}
-
-void Host::setHostEnabled(bool enabled)
-{
-	setEnabled(enabled);
-	updateHostEnabled();
-}
-
-void Host::updateHostEnabled()
-{
-	utils::ScopedUpdateDisabler disabler(this);
-	bool missingTitle, urlInTitle;
-	hasValidTitle(&missingTitle, &urlInTitle);
-	bool isPublic = m_passwordEdit->text().isEmpty();
-	bool isLocal = m_useGroup->checkedId() == USE_LOCAL;
-	m_titleNote->setVisible(missingTitle);
-	m_urlInTitleNote->setVisible(urlInTitle);
-	m_passwordNote->setVisible(isPublic);
-	m_localHostNote->setVisible(isLocal);
-	m_notes->setVisible(missingTitle || urlInTitle || isPublic || isLocal);
-	emit enableHost(canHost());
-}
-
-void Host::generatePassword()
-{
-	// Passwords are just a mechanism to facilitate invite-only sessions.
-	// They're not secret and are meant to be shared with anyone who wants to
-	// join the session, so we don't need cryptographic security for them.
-	QString characters = QStringLiteral("abcdefghijklmnopqrstuvwxyz0123456789");
-	QString password;
-	int length = QRandomGenerator::global()->bounded(8, 12);
-	for(int i = 0; i < length; ++i) {
-		password.append(characters[QRandomGenerator::global()->bounded(
-			0, characters.length())]);
-	}
-	dpApp().settings().setLastSessionPassword(password);
-}
-
-void Host::updateNsfmBasedOnTitle()
-{
-	bool nsfmTitle = parentalcontrols::isNsfmTitle(m_titleEdit->text());
-	if(nsfmTitle) {
-		m_nsfmBox->setChecked(true);
-	} else if(!m_nsfmBox->isEnabled()) {
-		m_nsfmBox->setChecked(false);
-	}
-}
-
-void Host::updateListServers()
-{
-	m_listServerModel->reload();
-	if(m_listServerCombo->count() == 0) {
-		m_announceBox->setChecked(false);
-		m_announceBox->setEnabled(false);
+	QStringList errors;
+	HostParams params;
+	m_sessionPage->host(
+		errors, params.password, params.nsfm, params.keepChat, params.address,
+		params.rememberAddress);
+	m_listingPage->host(
+		m_sessionPage->isNsfmAllowed(), errors, params.title, params.alias,
+		params.announcementUrls);
+	m_permissionsPage->host(
+		params.undoLimit, params.featurePermissions, params.deputies);
+	m_rolesPage->host(params.operatorPassword, params.auth);
+	m_bansPage->host(params.bans);
+	int errorCount = errors.size();
+	if(errorCount == 0) {
+		emit host(params);
 	} else {
-		m_announceBox->setEnabled(true);
-		if(m_listServerCombo->currentIndex() == -1) {
-			m_listServerCombo->setCurrentIndex(0);
+		QString joinedErrors;
+		for(const QString &error : errors) {
+			joinedErrors.append(
+				QStringLiteral("<li>%1</li>").arg(error.toHtmlEscaped()));
 		}
+		utils::showCritical(
+			this, tr("Host Error"),
+			QStringLiteral("<p>%1</p><ul>%2</ul>")
+				.arg(
+					tr("Invalid input(s), please correct the following:",
+					   nullptr, errorCount)
+						.toHtmlEscaped(),
+					joinedErrors));
 	}
 }
 
-void Host::updateRemoteHosts()
+void Host::triggerReset()
 {
-	utils::ScopedUpdateDisabler diabler{m_remoteHostCombo};
-	m_remoteHostCombo->clear();
+	host::ResetDialog *dlg = new host::ResetDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	connect(
+		dlg, &host::ResetDialog::resetRequested, this, &Host::resetCategory);
+	utils::showWindow(dlg);
+}
 
-	QVector<utils::Recents::Host> rhs = dpApp().recents().getHosts();
-	QString editText;
-	for(const utils::Recents::Host &rh : rhs) {
-		QString value = rh.toString();
-		m_remoteHostCombo->addItem(value);
-		if(editText.isEmpty() && rh.hosted) {
-			editText = value;
-		}
-	}
+void Host::triggerLoad()
+{
+	host::LoadDialog *dlg = new host::LoadDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	connect(dlg, &host::LoadDialog::loadRequested, this, &Host::loadCategory);
+	connect(dlg, &host::LoadDialog::resetRequested, this, &Host::resetCategory);
+	utils::showWindow(dlg);
+}
 
-	if(editText.isEmpty()) {
-		m_remoteHostCombo->setEditText("pub.drawpile.net");
-	} else {
-		m_remoteHostCombo->setEditText(editText);
+void Host::triggerSave()
+{
+	host::SaveDialog *dlg = new host::SaveDialog(
+		m_sessionPage->save(), m_listingPage->save(), m_permissionsPage->save(),
+		m_rolesPage->save(), m_bansPage->save(), this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	utils::showWindow(dlg);
+}
+
+void Host::triggerImport()
+{
+	FileWrangler(this).openSessionSettings(
+		[this](const QString *path, const QByteArray *bytes) {
+			host::SessionSettingsImporter importer;
+			connect(
+				&importer, &host::SessionSettingsImporter::importFinished, this,
+				&Host::onImportFinished);
+			connect(
+				&importer, &host::SessionSettingsImporter::importFailed, this,
+				&Host::onImportFailed);
+
+			if(bytes) {
+				importer.importSessionSettings(
+					path ? *path : QString(), *bytes);
+			} else if(path) {
+				QByteArray content;
+				QString error;
+				if(utils::paths::slurp(*path, content, error)) {
+					importer.importSessionSettings(*path, content);
+				} else {
+					onImportFailed(tr("Failed to read file: %1").arg(error));
+				}
+			} else {
+				onImportFailed(tr("No file or content received."));
+			}
+		});
+}
+
+void Host::triggerExport()
+{
+	host::ExportDialog *dlg = new host::ExportDialog(
+		m_sessionPage->save(), m_listingPage->save(), m_permissionsPage->save(),
+		m_rolesPage->save(), m_bansPage->save(), this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	utils::showWindow(dlg);
+}
+
+void Host::startEditingTitle()
+{
+	m_tabs->setCurrentIndex(1);
+	m_listingPage->startEditingTitle();
+}
+
+void Host::loadCategory(
+	int category, const QJsonObject &json, bool replaceAnnouncements,
+	bool replaceAuth, bool replaceBans)
+{
+	switch(category) {
+	case int(host::Categories::Session):
+		m_sessionPage->load(json);
+		break;
+	case int(host::Categories::Listing):
+		m_listingPage->load(json, replaceAnnouncements);
+		break;
+	case int(host::Categories::Permissions):
+		m_permissionsPage->load(json);
+		break;
+	case int(host::Categories::Roles):
+		m_rolesPage->load(json, replaceAuth);
+		break;
+	case int(host::Categories::Bans):
+		m_bansPage->load(json, replaceBans);
+		break;
+	default:
+		qWarning("Host::loadCategory: unknown category %d", category);
+		break;
 	}
 }
 
-void Host::updateAdvancedSectionVisible(bool visible)
+void Host::resetCategory(
+	int category, bool replaceAnnouncements, bool replaceAuth, bool replaceBans)
 {
-	utils::ScopedUpdateDisabler disabler(this);
-	m_idAliasLabel->setVisible(visible);
-	m_idAliasEdit->setVisible(visible);
-	m_announceBox->setVisible(visible);
-	m_listServerCombo->setVisible(visible);
-}
-
-bool Host::canHost() const
-{
-	return isEnabled() && hasValidTitle() &&
-		   (m_allowNsfm || !m_nsfmBox->isChecked()) &&
-		   (m_useGroup->checkedId() == USE_LOCAL ||
-			!m_remoteHostCombo->currentText().trimmed().isEmpty());
-}
-
-bool Host::hasValidTitle(bool *outMissingTitle, bool *outUrlInTitle) const
-{
-	QString title = m_titleEdit->text().trimmed();
-	bool missingTitle = title.isEmpty();
-	bool urlInTitle = !missingTitle && title.contains(QStringLiteral("://"));
-	if(outMissingTitle) {
-		*outMissingTitle = missingTitle;
+	switch(category) {
+	case int(host::Categories::Session):
+		m_sessionPage->reset();
+		break;
+	case int(host::Categories::Listing):
+		m_listingPage->reset(replaceAnnouncements);
+		break;
+	case int(host::Categories::Permissions):
+		m_permissionsPage->reset();
+		break;
+	case int(host::Categories::Roles):
+		m_rolesPage->reset(replaceAuth);
+		break;
+	case int(host::Categories::Bans):
+		m_bansPage->reset(replaceBans);
+		break;
+	default:
+		qWarning("Host::resetCategory: unknown category %d", category);
+		break;
 	}
-	if(outUrlInTitle) {
-		*outUrlInTitle = urlInTitle;
-	}
-	return !missingTitle && !urlInTitle;
 }
 
-QString Host::getRemoteAddress() const
+void Host::onImportFinished(const QJsonObject &json)
 {
-	QString remoteAddress = m_remoteHostCombo->currentText();
-	return net::Server::addSchemeToUserSuppliedAddress(remoteAddress);
+	host::ImportDialog *dlg = new host::ImportDialog(json, this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	connect(dlg, &host::ImportDialog::loadRequested, this, &Host::loadCategory);
+	utils::showWindow(dlg);
+}
+
+void Host::onImportFailed(const QString &error)
+{
+	utils::showCritical(
+		this, tr("Import Failed"), tr("Could not import session settings."),
+		error);
 }
 
 }

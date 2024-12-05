@@ -3,6 +3,7 @@
 #define CANVASMODEL_H
 #include "libclient/drawdance/paintengine.h"
 #include "libclient/net/message.h"
+#include <QHash>
 #include <QObject>
 #include <QPointer>
 
@@ -65,12 +66,15 @@ public:
 	QString pinnedMessage() const { return m_pinnedMessage; }
 
 	net::MessageList generateSnapshot(
-		bool includePinnedMessage, unsigned int aclIncludeFlags) const;
+		bool includePinnedMessage, unsigned int aclIncludeFlags,
+		int overrideUndoLimit = -1,
+		const QHash<int, int> *overrideTiers = nullptr) const;
 
 	// Returns the number of messages prepended, the rest are appended.
 	int amendSnapshotMetadata(
 		net::MessageList &snapshot, bool includePinnedMessage,
-		unsigned int aclIncludeFlags) const;
+		unsigned int aclIncludeFlags, int overrideUndoLimit = -1,
+		const QHash<int, int> *overrideTiers = nullptr) const;
 
 	uint8_t localUserId() const { return m_localUserId; }
 

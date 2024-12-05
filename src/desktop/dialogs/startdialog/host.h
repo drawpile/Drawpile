@@ -1,81 +1,60 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DESKTOP_DIALOGS_STARTDIALOG_HOST_H
 #define DESKTOP_DIALOGS_STARTDIALOG_HOST_H
-
 #include "desktop/dialogs/startdialog/page.h"
-#include <QWidget>
+#include "desktop/utils/hostparams.h"
 
-class QButtonGroup;
-class QCheckBox;
-class QComboBox;
-class QFormLayout;
-class QLabel;
-class QLineEdit;
-
-namespace sessionlisting {
-class ListServerModel;
-}
+class QJsonObject;
+class QStackedWidget;
+class QTabBar;
 
 namespace dialogs {
 namespace startdialog {
+
+namespace host {
+class Bans;
+class Listing;
+class Permissions;
+class Roles;
+class Session;
+}
 
 class Host final : public Page {
 	Q_OBJECT
 public:
 	Host(QWidget *parent = nullptr);
-	void activate() final override;
-	void accept() final override;
-
-public slots:
-	void setHostEnabled(bool enabled);
-	void updateHostEnabled();
+	void activate() override;
+	void accept() override;
+	void triggerReset();
+	void triggerLoad();
+	void triggerSave();
+	void triggerImport();
+	void triggerExport();
 
 signals:
+	void hideLinks();
 	void showButtons();
-	void enableHost(bool enabled);
-	void host(
-		const QString &title, const QString &password, const QString &alias,
-		bool nsfm, const QString &announcementUrl,
-		const QString &remoteAddress);
+	void host(const HostParams &params);
 	void switchToJoinPageRequested();
 
-private slots:
-	void generatePassword();
-	void updateNsfmBasedOnTitle();
-	void updateListServers();
-	void updateRemoteHosts();
-	void updateAdvancedSectionVisible(bool visible);
-
 private:
-	static constexpr int USE_LOCAL = 0;
-	static constexpr int USE_REMOTE = 1;
+	void startEditingTitle();
+	void loadCategory(
+		int category, const QJsonObject &json, bool replaceAnnouncements,
+		bool replaceAuth, bool replaceBans);
+	void resetCategory(
+		int category, bool replaceAnnouncements, bool replaceAuth,
+		bool replaceBans);
+	void onImportFinished(const QJsonObject &json);
+	void onImportFailed(const QString &error);
 
-	bool canHost() const;
-
-	bool hasValidTitle(
-		bool *outMissingTitle = nullptr, bool *outUrlInTitle = nullptr) const;
-
-	QString getRemoteAddress() const;
-
-	QWidget *m_notes;
-	QLabel *m_titleNote;
-	QLabel *m_urlInTitleNote;
-	QLabel *m_passwordNote;
-	QLabel *m_localHostNote;
-	QLineEdit *m_titleEdit;
-	QLineEdit *m_passwordEdit;
-	QCheckBox *m_nsfmBox;
-	QCheckBox *m_announceBox;
-	QButtonGroup *m_useGroup;
-	QComboBox *m_remoteHostCombo;
-	QCheckBox *m_advancedBox;
-	QFormLayout *m_advancedSection;
-	QLabel *m_idAliasLabel;
-	QLineEdit *m_idAliasEdit;
-	QComboBox *m_listServerCombo;
-	bool m_allowNsfm = true;
-	sessionlisting::ListServerModel *m_listServerModel;
+	QTabBar *m_tabs;
+	QStackedWidget *m_stack;
+	host::Session *m_sessionPage;
+	host::Listing *m_listingPage;
+	host::Permissions *m_permissionsPage;
+	host::Roles *m_rolesPage;
+	host::Bans *m_bansPage;
 };
 
 }

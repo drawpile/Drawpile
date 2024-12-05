@@ -59,10 +59,13 @@ uint8_t AclState::handle(const net::Message &msg, bool overrideAcls)
 }
 
 void AclState::toResetImage(
-	net::MessageList &msgs, uint8_t userId, unsigned int includeFlags) const
+	net::MessageList &msgs, uint8_t userId, unsigned int includeFlags,
+	const QHash<int, int> *overrideTiers) const
 {
+	ResetImageParams params = {msgs, overrideTiers};
 	DP_acl_state_reset_image_build(
-		m_data, userId, includeFlags, pushMessage, &msgs);
+		m_data, userId, includeFlags,
+		overrideTiers ? overrideFeatureTier : nullptr, pushMessage, &params);
 }
 
 AclState::AclState(DP_AclState *data)
@@ -75,9 +78,26 @@ void AclState::onLayerAcl(void *user, int layerId, const DP_LayerAcl *layerAcl)
 	(*static_cast<AclState::EachLayerFn *>(user))(layerId, layerAcl);
 }
 
+DP_AccessTier AclState::overrideFeatureTier(
+	void *user, DP_Feature feature, DP_AccessTier originalTier)
+{
+	const QHash<int, int> &overrideTiers =
+		*static_cast<ResetImageParams *>(user)->overrideTiers;
+	QHash<int, int>::const_iterator found =
+		overrideTiers.constFind(int(feature));
+	if(found != overrideTiers.constEnd()) {
+		int tier = found.value();
+		if(tier >= 0 && tier < DP_ACCESS_TIER_COUNT) {
+			return DP_AccessTier(tier);
+		}
+	}
+	return originalTier;
+}
+
 bool AclState::pushMessage(void *user, DP_Message *msg)
 {
-	static_cast<net::MessageList *>(user)->append(net::Message::noinc(msg));
+	static_cast<ResetImageParams *>(user)->msgs.append(
+		net::Message::noinc(msg));
 	return true;
 }
 

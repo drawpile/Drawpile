@@ -5,6 +5,7 @@ extern "C" {
 #include <dpengine/load_enums.h>
 }
 #include "desktop/dialogs/flipbook.h"
+#include "desktop/utils/hostparams.h"
 #include "libclient/canvas/acl.h"
 #include "libclient/drawdance/canvasstate.h"
 #include "libclient/tools/tool.h"
@@ -99,10 +100,7 @@ public:
 	void openPath(const QString &path, QTemporaryFile *tempFile = nullptr);
 	void autoJoin(const QUrl &url, const QString &autoRecordPath);
 
-	void hostSession(
-		const QString &title, const QString &password, const QString &alias,
-		bool nsfm, const QString &announcementUrl,
-		const QString &remoteAddress);
+	void hostSession(const HostParams &params);
 
 	//! Connect to a host and join a session if full URL is provided.
 	void

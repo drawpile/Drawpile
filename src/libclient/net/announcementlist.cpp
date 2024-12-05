@@ -4,16 +4,16 @@
 
 namespace net {
 
+AnnouncementListModel::AnnouncementListModel(QObject *parent)
+	: AnnouncementListModel({}, parent)
+{
+}
+
 AnnouncementListModel::AnnouncementListModel(
 	const QVector<QVariantMap> &data, QObject *parent)
 	: QAbstractTableModel(parent)
 {
-	// Get list of known servers (url -> {icon, name})
-	QVector<sessionlisting::ListServer> servers =
-		sessionlisting::ListServerModel::listServers(data, true);
-	for(const sessionlisting::ListServer &s : servers) {
-		m_knownServers[s.url] = QPair<QIcon, QString>(s.icon, s.name);
-	}
+	loadKnownServers(data);
 }
 
 QVariant AnnouncementListModel::data(const QModelIndex &index, int role) const
@@ -49,6 +49,19 @@ int AnnouncementListModel::columnCount(const QModelIndex &parent) const
 	return parent.isValid() ? 0 : 1;
 }
 
+void AnnouncementListModel::setAnnouncements(const QStringList &urls)
+{
+	beginResetModel();
+	m_announcements.clear();
+	m_announcements.reserve(urls.size());
+	for(const QString &url : urls) {
+		if(!m_announcements.contains(url)) {
+			m_announcements.append(url);
+		}
+	}
+	endResetModel();
+}
+
 void AnnouncementListModel::addAnnouncement(const QString &url)
 {
 	// Check if the announcement is listed already
@@ -72,7 +85,7 @@ void AnnouncementListModel::removeAnnouncement(const QString &url)
 	for(int pos = 0; pos < m_announcements.count(); ++pos) {
 		if(m_announcements.at(pos) == url) {
 			beginRemoveRows(QModelIndex(), pos, pos);
-			m_announcements.remove(pos);
+			m_announcements.removeAt(pos);
 			endRemoveRows();
 			break;
 		}
@@ -86,6 +99,26 @@ void AnnouncementListModel::clear()
 		beginRemoveRows(QModelIndex(), 0, size - 1);
 		m_announcements.clear();
 		endRemoveRows();
+	}
+}
+
+void AnnouncementListModel::setKnownServers(const QVector<QVariantMap> &data)
+{
+	loadKnownServers(data);
+	int count = m_announcements.size();
+	if(count != 0) {
+		emit dataChanged(createIndex(0, 0), createIndex(count - 1, 0));
+	}
+}
+
+void AnnouncementListModel::loadKnownServers(const QVector<QVariantMap> &data)
+{
+	// Get list of known servers (url -> {icon, name})
+	QVector<sessionlisting::ListServer> servers =
+		sessionlisting::ListServerModel::listServers(data, true);
+	m_knownServers.clear();
+	for(const sessionlisting::ListServer &s : servers) {
+		m_knownServers[s.url] = QPair<QIcon, QString>(s.icon, s.name);
 	}
 }
 

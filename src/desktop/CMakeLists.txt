@@ -174,6 +174,22 @@ target_sources(drawpile PRIVATE
 	dialogs/startdialog/create.h
 	dialogs/startdialog/host.cpp
 	dialogs/startdialog/host.h
+	dialogs/startdialog/host/bans.cpp
+	dialogs/startdialog/host/bans.h
+	dialogs/startdialog/host/categories.cpp
+	dialogs/startdialog/host/categories.h
+	dialogs/startdialog/host/dialogs.cpp
+	dialogs/startdialog/host/dialogs.h
+	dialogs/startdialog/host/files.cpp
+	dialogs/startdialog/host/files.h
+	dialogs/startdialog/host/listing.cpp
+	dialogs/startdialog/host/listing.h
+	dialogs/startdialog/host/permissions.cpp
+	dialogs/startdialog/host/permissions.h
+	dialogs/startdialog/host/roles.cpp
+	dialogs/startdialog/host/roles.h
+	dialogs/startdialog/host/session.cpp
+	dialogs/startdialog/host/session.h
 	dialogs/startdialog/join.cpp
 	dialogs/startdialog/join.h
 	dialogs/startdialog/links.cpp
@@ -316,6 +332,7 @@ target_sources(drawpile PRIVATE
 	utils/connections.h
 	utils/globalkeyeventfilter.cpp
 	utils/globalkeyeventfilter.h
+	utils/hostparams.h
 	utils/listserverdelegate.cpp
 	utils/listserverdelegate.h
 	utils/mandatoryfields.cpp
@@ -370,6 +387,8 @@ target_sources(drawpile PRIVATE
 	widgets/flipbookview.h
 	widgets/groupedtoolbutton.cpp
 	widgets/groupedtoolbutton.h
+	widgets/imageresourcetextbrowser.cpp
+	widgets/imageresourcetextbrowser.h
 	widgets/keysequenceedit.cpp
 	widgets/keysequenceedit.h
 	widgets/kis_curve_widget_p.h

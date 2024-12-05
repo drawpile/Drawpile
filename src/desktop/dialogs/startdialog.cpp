@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/startdialog.h"
 #include "cmake-config/config.h"
 #include "desktop/dialogs/addserverdialog.h"
@@ -14,6 +13,7 @@
 #include "desktop/main.h"
 #include "desktop/utils/recents.h"
 #include "desktop/utils/widgetutils.h"
+#include <QAction>
 #include <QButtonGroup>
 #include <QDate>
 #include <QDateTime>
@@ -21,6 +21,7 @@
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QIcon>
+#include <QMenu>
 #include <QMetaEnum>
 #include <QPalette>
 #include <QPushButton>
@@ -195,6 +196,36 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 	m_addServerButton->hide();
 	buttonLayout->addWidget(m_addServerButton);
 
+	m_saveLoadButton =
+		new QPushButton(QIcon::fromTheme("document-import"), tr("Save/Load"));
+	m_saveLoadButton->hide();
+	buttonLayout->addWidget(m_saveLoadButton);
+
+	QMenu *saveLoadMenu = new QMenu(m_saveLoadButton);
+	m_saveLoadButton->setMenu(saveLoadMenu);
+
+	QAction *resetAction = saveLoadMenu->addAction(
+		QIcon::fromTheme("view-refresh"), tr("Reload defaults…"));
+	connect(resetAction, &QAction::triggered, this, &StartDialog::triggerReset);
+
+	QAction *loadAction = saveLoadMenu->addAction(
+		QIcon::fromTheme("document-open"), tr("Load settings…"));
+	connect(loadAction, &QAction::triggered, this, &StartDialog::triggerLoad);
+
+	QAction *saveAction = saveLoadMenu->addAction(
+		QIcon::fromTheme("document-save-as"), tr("Save settings…"));
+	connect(saveAction, &QAction::triggered, this, &StartDialog::triggerSave);
+
+	QAction *importAction = saveLoadMenu->addAction(
+		QIcon::fromTheme("document-import"), tr("Import from file…"));
+	connect(
+		importAction, &QAction::triggered, this, &StartDialog::triggerImport);
+
+	QAction *exportAction = saveLoadMenu->addAction(
+		QIcon::fromTheme("document-export"), tr("Export to file…"));
+	connect(
+		exportAction, &QAction::triggered, this, &StartDialog::triggerExport);
+
 #ifndef __EMSCRIPTEN__
 	m_checkForUpdatesButton = new QPushButton{
 		QIcon::fromTheme("update-none"), tr("Check for Updates")};
@@ -262,14 +293,14 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 	mainLayout->insertWidget(menuFirst ? mainLayout->count() : 0, m_links);
 
 	connect(
-		m_addServerButton, &QAbstractButton::clicked, this,
+		m_addServerButton, &QPushButton::clicked, this,
 		&StartDialog::addListServer);
 	connect(
-		m_recordButton, &QAbstractButton::toggled, this,
+		m_recordButton, &QPushButton::toggled, this,
 		&StartDialog::toggleRecording);
 #ifndef __EMSCRIPTEN__
 	connect(
-		m_checkForUpdatesButton, &QAbstractButton::clicked, this,
+		m_checkForUpdatesButton, &QPushButton::clicked, this,
 		&StartDialog::checkForUpdates);
 #endif
 	connect(
@@ -311,24 +342,15 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 		&StartDialog::addListServerUrl);
 
 	connect(
+		hostPage, &startdialog::Host::hideLinks, this, &StartDialog::hideLinks);
+	connect(
 		hostPage, &startdialog::Host::showButtons, this,
 		&StartDialog::showHostButtons);
 	connect(
-		hostPage, &startdialog::Host::enableHost, m_okButton,
-		&QWidget::setEnabled);
-	connect(
 		hostPage, &startdialog::Host::host, this, &StartDialog::hostRequested);
 	connect(
-		this, &StartDialog::hostSessionEnabled, hostPage,
-		&startdialog::Host::setHostEnabled);
-	connect(
-		this, &StartDialog::hostPageEnabled, this,
-		[this, hostPage](bool enabled) {
-			hostPage->setEnabled(enabled);
-			if(m_currentPage == hostPage) {
-				hostPage->updateHostEnabled();
-			}
-		});
+		this, &StartDialog::hostPageEnabled, hostPage,
+		&startdialog::Host::setEnabled);
 	connect(
 		hostPage, &startdialog::Host::switchToJoinPageRequested, this, [this] {
 			showPage(Entry::Join);
@@ -494,6 +516,51 @@ void StartDialog::toggleRecording(bool checked)
 	}
 }
 
+void StartDialog::triggerReset()
+{
+	startdialog::Host *hostPage =
+		qobject_cast<startdialog::Host *>(m_currentPage);
+	if(hostPage) {
+		hostPage->triggerReset();
+	}
+}
+
+void StartDialog::triggerLoad()
+{
+	startdialog::Host *hostPage =
+		qobject_cast<startdialog::Host *>(m_currentPage);
+	if(hostPage) {
+		hostPage->triggerLoad();
+	}
+}
+
+void StartDialog::triggerSave()
+{
+	startdialog::Host *hostPage =
+		qobject_cast<startdialog::Host *>(m_currentPage);
+	if(hostPage) {
+		hostPage->triggerSave();
+	}
+}
+
+void StartDialog::triggerImport()
+{
+	startdialog::Host *hostPage =
+		qobject_cast<startdialog::Host *>(m_currentPage);
+	if(hostPage) {
+		hostPage->triggerImport();
+	}
+}
+
+void StartDialog::triggerExport()
+{
+	startdialog::Host *hostPage =
+		qobject_cast<startdialog::Host *>(m_currentPage);
+	if(hostPage) {
+		hostPage->triggerExport();
+	}
+}
+
 #ifndef __EMSCRIPTEN__
 void StartDialog::updateCheckForUpdatesButton(bool inProgress)
 {
@@ -554,6 +621,9 @@ void StartDialog::showHostButtons()
 {
 	m_okButton->setText(tr("Host"));
 	m_okButton->show();
+	m_okButton->setEnabled(true);
+	m_saveLoadButton->show();
+	m_saveLoadButton->setEnabled(true);
 }
 
 void StartDialog::showCreateButtons()
@@ -606,14 +676,12 @@ void StartDialog::joinRequested(const QUrl &url)
 	}
 }
 
-void StartDialog::hostRequested(
-	const QString &title, const QString &password, const QString &alias,
-	bool nsfm, const QString &announcementUrl, const QString &remoteAddress)
+void StartDialog::hostRequested(const HostParams &params)
 {
-	if(!remoteAddress.isEmpty()) {
-		addRecentHost(remoteAddress, false);
+	if(params.rememberAddress && !params.address.isEmpty()) {
+		addRecentHost(params.address, false);
 	}
-	emit host(title, password, alias, nsfm, announcementUrl, remoteAddress);
+	emit host(params);
 }
 
 void StartDialog::rememberLastPage(int i)
@@ -675,6 +743,7 @@ void StartDialog::entryToggled(startdialog::Page *page, bool checked)
 		m_links->show();
 		m_addServerButton->hide();
 		m_recordButton->hide();
+		m_saveLoadButton->hide();
 #ifndef __EMSCRIPTEN__
 		m_checkForUpdatesButton->hide();
 #endif
@@ -683,6 +752,7 @@ void StartDialog::entryToggled(startdialog::Page *page, bool checked)
 		m_closeButton->hide();
 		m_addServerButton->setEnabled(false);
 		m_recordButton->setEnabled(false);
+		m_saveLoadButton->setEnabled(false);
 		m_okButton->setEnabled(false);
 		m_currentPage = page;
 		m_stack->setCurrentWidget(page);

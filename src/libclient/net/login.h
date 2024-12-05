@@ -107,19 +107,25 @@ public:
 	 */
 	void setInitialState(const net::MessageList &msgs)
 	{
-		Q_ASSERT(m_mode == Mode::HostRemote);
+		Q_ASSERT(m_mode != Mode::Join);
 		m_initialState = msgs;
 	}
 
+	void setOperatorPassword(const QString &operatorPassword)
+	{
+		Q_ASSERT(m_mode != Mode::Join);
+		m_operatorPassword = operatorPassword;
+	}
+
 	/**
-	 * @brief Set session announcement URL
+	 * @brief Set session announcement URLs
 	 *
 	 * Only for host mode.
 	 */
-	void setAnnounceUrl(const QString &url)
+	void setAnnounceUrls(const QStringList &urls)
 	{
 		Q_ASSERT(m_mode != Mode::Join);
-		m_announceUrl = url;
+		m_announceUrls = urls;
 	}
 
 	/**
@@ -131,6 +137,30 @@ public:
 	{
 		Q_ASSERT(m_mode != Mode::Join);
 		m_nsfm = nsfm;
+	}
+
+	void setKeepChat(bool keepChat)
+	{
+		Q_ASSERT(m_mode != Mode::Join);
+		m_keepChat = keepChat;
+	}
+
+	void setDeputies(bool deputies)
+	{
+		Q_ASSERT(m_mode != Mode::Join);
+		m_deputies = deputies;
+	}
+
+	void setAuthToImport(const QJsonArray &authToImport)
+	{
+		Q_ASSERT(m_mode != Mode::Join);
+		m_authToImport = authToImport;
+	}
+
+	void setBansToImport(const QStringList &bansToImport)
+	{
+		Q_ASSERT(m_mode != Mode::Join);
+		m_bansToImport = bansToImport;
 	}
 
 	/**
@@ -461,6 +491,7 @@ private:
 	void showPasswordDialog(const QString &title, const QString &text);
 	void expectSessionDescriptionHost(const ServerReply &msg);
 	void sendHostCommand();
+	void sendInitialState();
 	void expectSessionDescriptionJoin(const ServerReply &msg);
 	LoginSession updateSession(const QJsonObject &js);
 	bool checkSession(const LoginSession &session, bool fail);
@@ -501,8 +532,13 @@ private:
 	QString m_sessionPassword;
 	QString m_sessionAlias;
 	QString m_title;
-	QString m_announceUrl;
-	bool m_nsfm;
+	QString m_operatorPassword;
+	QStringList m_announceUrls;
+	QStringList m_bansToImport;
+	QJsonArray m_authToImport;
+	bool m_nsfm = false;
+	bool m_keepChat = false;
+	bool m_deputies = false;
 	net::MessageList m_initialState;
 
 	// Settings for joining

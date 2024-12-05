@@ -3,6 +3,7 @@
 #define LIBCLIENT_NET_ANNOUNCEMENTLIST_H
 #include <QAbstractTableModel>
 #include <QIcon>
+#include <QStringList>
 #include <QVector>
 
 namespace net {
@@ -13,13 +14,18 @@ namespace net {
 class AnnouncementListModel final : public QAbstractTableModel {
 	Q_OBJECT
 public:
-	AnnouncementListModel(
+	explicit AnnouncementListModel(QObject *parent = nullptr);
+	explicit AnnouncementListModel(
 		const QVector<QVariantMap> &data, QObject *parent = nullptr);
 
 	QVariant
 	data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+
+	const QStringList &announcements() const { return m_announcements; }
+
+	void setAnnouncements(const QStringList &urls);
 
 	/**
 	 * @brief Add or update a listed announcement
@@ -40,8 +46,12 @@ public:
 	//! Clear the whole list
 	void clear();
 
+	void setKnownServers(const QVector<QVariantMap> &data);
+
 private:
-	QVector<QString> m_announcements;
+	void loadKnownServers(const QVector<QVariantMap> &data);
+
+	QStringList m_announcements;
 	QHash<QString, QPair<QIcon, QString>> m_knownServers;
 };
 

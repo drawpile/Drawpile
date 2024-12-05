@@ -1030,7 +1030,7 @@ static bool start_recording(DP_PaintEngine *pe, DP_RecorderType type,
             DP_local_state_reset_image_build(pe->local_state, pe->main_dc,
                                              record_initial_message, r)
             && DP_acl_state_reset_image_build(
-                pe->acls, 0, DP_ACL_STATE_RESET_IMAGE_RECORDING_FLAGS,
+                pe->acls, 0, DP_ACL_STATE_RESET_IMAGE_RECORDING_FLAGS, NULL,
                 record_initial_message, r);
         if (!reset_image_ok) {
             DP_warn("Error build recorder reset image");

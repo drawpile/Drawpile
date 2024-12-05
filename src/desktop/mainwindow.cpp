@@ -2723,16 +2723,21 @@ void MainWindow::host()
 	dlg->showPage(dialogs::StartDialog::Entry::Host);
 }
 
-void MainWindow::hostSession(
-	const QString &title, const QString &password, const QString &alias,
-	bool nsfm, const QString &announcementUrl, const QString &remoteAddress)
+void MainWindow::hostSession(const HostParams &params)
 {
+	if(m_doc->client()->isConnected()) {
+		showErrorMessage(tr("You're already connected to a session! Disconnect "
+							"first to host one."));
+		return;
+	}
+
 	if(!m_doc->canvas()) {
 		showErrorMessage(tr("No canvas to host! Create one or open a file."));
 		return;
 	}
 
-	const bool useremote = !remoteAddress.isEmpty();
+	QString remoteAddress = params.address;
+	bool useremote = !remoteAddress.isEmpty();
 	QUrl address;
 
 	if(useremote) {
@@ -2783,23 +2788,47 @@ void MainWindow::hostSession(
 		return;
 #endif
 	}
-	// clang-format off
 
 	// Connect to server
 	net::LoginHandler *login = new net::LoginHandler(
-		useremote ? net::LoginHandler::Mode::HostRemote : net::LoginHandler::Mode::HostBuiltin,
-		address,
-		this);
+		useremote ? net::LoginHandler::Mode::HostRemote
+				  : net::LoginHandler::Mode::HostBuiltin,
+		address, this);
 	login->setUserId(m_doc->canvas()->localUserId());
-	login->setSessionAlias(alias);
-	login->setPassword(password);
-	login->setTitle(title);
-	login->setAnnounceUrl(announcementUrl);
-	login->setNsfm(nsfm);
+	login->setSessionAlias(params.alias);
+	login->setPassword(params.password);
+	login->setTitle(params.title);
+	login->setOperatorPassword(params.operatorPassword);
+	login->setAnnounceUrls(params.announcementUrls);
+	login->setNsfm(params.nsfm);
+	login->setKeepChat(params.keepChat);
+	login->setDeputies(params.deputies);
+	login->setAuthToImport(params.auth);
+	login->setBansToImport(params.bans);
 	if(useremote) {
 		utils::ScopedOverrideCursor waitCursor;
 		login->setInitialState(m_doc->canvas()->generateSnapshot(
-			true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS));
+			true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS,
+			params.undoLimit, &params.featurePermissions));
+	} else {
+		uint8_t features[DP_FEATURE_COUNT];
+		for(int feature = 0; feature < DP_FEATURE_COUNT; ++feature) {
+			QHash<int, int>::const_iterator found =
+				params.featurePermissions.constFind(feature);
+			int effectiveTier = DP_feature_access_tier_default(
+				feature, int(DP_ACCESS_TIER_OPERATOR));
+			if(found != params.featurePermissions.constEnd()) {
+				int tier = found.value();
+				if(tier >= 0 && tier < DP_ACCESS_TIER_COUNT) {
+					effectiveTier = tier;
+				}
+			}
+			features[feature] = effectiveTier;
+		}
+		login->setInitialState({
+			net::makeFeatureAccessLevelsMessage(0, DP_FEATURE_COUNT, features),
+			net::makeUndoDepthMessage(0, params.undoLimit),
+		});
 	}
 
 	utils::showWindow(
@@ -2811,7 +2840,6 @@ void MainWindow::hostSession(
 		!useremote);
 }
 
-// clang-format on
 void MainWindow::invite()
 {
 	dialogs::InviteDialog *dlg = new dialogs::InviteDialog(
