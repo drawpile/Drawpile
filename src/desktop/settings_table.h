@@ -157,6 +157,7 @@ SETTING(lastBrowseSortDirection   , LastBrowseSortDirection   , "history/browses
 SETTING(lastFileOpenPath          , LastFileOpenPath          , "window/lastpath"                       , QString())
 SETTING(lastFileOpenPaths         , LastFileOpenPaths         , "window/lastpaths"                      , QVariantMap())
 SETTING(lastHostRemote            , LastHostRemote            , "history/hostremote"                    , true)
+SETTING(lastHostType              , LastHostType              , "history/hosttype"                      , 0)
 SETTING(lastIdAlias               , LastIdAlias               , "history/idalias"                       , QString())
 SETTING(lastJoinAddress           , LastJoinAddress           , "history/joinaddress"                   , QString())
 SETTING(lastListingServer         , LastListingServer         , "history/listingserver"                 , -1)
