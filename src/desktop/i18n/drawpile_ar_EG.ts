@@ -574,7 +574,7 @@
     <message>
         <location line="-253"/>
         <source>Add Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>إضافة الصورة الرمزية…</translation>
     </message>
     <message>
         <location line="+14"/>
