@@ -74,7 +74,7 @@
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuntematon virhe.</translation>
     </message>
 </context>
 <context>
