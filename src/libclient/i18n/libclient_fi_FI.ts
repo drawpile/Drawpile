@@ -20,7 +20,7 @@
         <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ristiriita</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -31,12 +31,12 @@
     <message>
         <location line="+85"/>
         <source>Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Harja</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shortcut</source>
-        <translation type="unfinished">Pikanäppäin</translation>
+        <translation>Pikanäppäin</translation>
     </message>
 </context>
 <context>
@@ -49,7 +49,7 @@
     <message>
         <location line="+2"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ei tuettu muoto.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -94,12 +94,12 @@
     <message>
         <location line="+76"/>
         <source>Shortcut</source>
-        <translation type="unfinished">Pikanäppäin</translation>
+        <translation>Pikanäppäin</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation type="unfinished">Toiminto</translation>
+        <translation>Toiminto</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -122,7 +122,7 @@
         <location line="+6"/>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
-        <translation type="unfinished">%1t %2m {1:?} {2?}</translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -698,22 +698,22 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+40"/>
         <source>Normal</source>
-        <translation type="unfinished">Normaali</translation>
+        <translation>Normaali</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recolor</source>
-        <translation type="unfinished">Väritä</translation>
+        <translation>Väritä uudelleen</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished">Taakse</translation>
+        <translation>Taakse</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Multiply</source>
-        <translation type="unfinished">Kerro</translation>
+        <translation>Kerro</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -728,42 +728,42 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Divide</source>
-        <translation type="unfinished">Jaa</translation>
+        <translation>Jaa</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Burn</source>
-        <translation type="unfinished">Varjosta</translation>
+        <translation>Varjosta</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dodge</source>
-        <translation type="unfinished">Lisävalota</translation>
+        <translation>Väistää</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Darken</source>
-        <translation type="unfinished">Tummenna</translation>
+        <translation>Tummenna</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Lighten</source>
-        <translation type="unfinished">Vaalenna</translation>
+        <translation>Vaalenna</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Subtract</source>
-        <translation type="unfinished">Vähennä</translation>
+        <translation>Vähennä</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Add</source>
-        <translation type="unfinished">Lisää</translation>
+        <translation>Lisää</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished">Pyyhi</translation>
+        <translation>Pyyhi</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -798,12 +798,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Hue</source>
-        <translation type="unfinished">Sävy</translation>
+        <translation>Sävy</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Saturation</source>
-        <translation type="unfinished">Kylläisyys</translation>
+        <translation>Kylläisyys</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -813,7 +813,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Color</source>
-        <translation type="unfinished">Väri</translation>
+        <translation>Väri</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -826,7 +826,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="+1367"/>
         <source>Default</source>
-        <translation type="unfinished">Oletus</translation>
+        <translation>Oletus</translation>
     </message>
 </context>
 <context>
@@ -854,7 +854,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+198"/>
         <source>Default</source>
-        <translation type="unfinished">Oletus</translation>
+        <translation>Oletus</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -991,12 +991,12 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/userlist.cpp" line="+64"/>
         <source>Moderator</source>
-        <translation type="unfinished">Moderaattori</translation>
+        <translation>Moderaattori</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished">Operaattori</translation>
+        <translation>Operaattori</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1011,37 +1011,37 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Online</source>
-        <translation type="unfinished">Paikalla</translation>
+        <translation>Verkossa</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation type="unfinished">Poissa</translation>
+        <translation>Ei-verkossa</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>User</source>
-        <translation type="unfinished">Käyttäjä</translation>
+        <translation>Käyttäjä</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Type</source>
-        <translation type="unfinished">Tyyppi</translation>
+        <translation>Tyyppi</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Status</source>
-        <translation type="unfinished">Status</translation>
+        <translation>Tila</translation>
     </message>
     <message>
         <location line="+182"/>
         <source>Server</source>
-        <translation type="unfinished">Palvelin</translation>
+        <translation>Palvelin</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>User #%1</source>
-        <translation type="unfinished">Käyttäjä #%1</translation>
+        <translation>Käyttäjä #%1</translation>
     </message>
 </context>
 <context>
@@ -1064,12 +1064,12 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation type="unfinished">Moderaattori</translation>
+        <translation>Moderaattori</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation type="unfinished">Operaattori</translation>
+        <translation>Operaattori</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1079,7 +1079,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation type="unfinished">Käyttäjä</translation>
+        <translation>Käyttäjä</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1099,12 +1099,12 @@ Select a regular layer instead.</source>
         <location line="-13"/>
         <location line="+15"/>
         <source>User</source>
-        <translation type="unfinished">Käyttäjä</translation>
+        <translation>Käyttäjä</translation>
     </message>
     <message>
         <location line="-13"/>
         <source>IP address</source>
-        <translation type="unfinished">IP osoite</translation>
+        <translation>IP-osoite</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1115,7 +1115,7 @@ Select a regular layer instead.</source>
         <location line="+2"/>
         <location line="+11"/>
         <source>Banned by</source>
-        <translation type="unfinished">Porttikiellon antaja</translation>
+        <translation>Porttikiellon antaja</translation>
     </message>
 </context>
 <context>
@@ -1301,7 +1301,7 @@ Select a regular layer instead.</source>
         <location filename="../net/login.cpp" line="+121"/>
         <location line="+529"/>
         <source>Invalid state</source>
-        <translation type="unfinished">Epäkelpo tila</translation>
+        <translation>Epäkelpo tila</translation>
     </message>
     <message>
         <location line="-481"/>
@@ -1311,12 +1311,12 @@ Select a regular layer instead.</source>
         <location line="+176"/>
         <location line="+47"/>
         <source>Incompatible server</source>
-        <translation type="unfinished">Epäyhteensopiva palvelin</translation>
+        <translation>Epäyhteensopiva palvelin</translation>
     </message>
     <message>
         <location line="-724"/>
         <source>Server is for a different Drawpile version!</source>
-        <translation type="unfinished">Palvelin on tarkoitettu eri Drawpile versiolle!</translation>
+        <translation>Palvelin on tarkoitettu eri Drawpile versiolle!</translation>
     </message>
     <message>
         <location line="+84"/>
@@ -1341,28 +1341,28 @@ Select a regular layer instead.</source>
     <message>
         <location line="+38"/>
         <source>This server does not allow guest logins</source>
-        <translation type="unfinished">Tämä palvelin ei salli vieraskirjautumisia</translation>
+        <translation>Tämä palvelin ei salli vierassisäänkirjautumisia</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
-        <translation type="unfinished">Salasana vaaditaan tunnukselle &quot;%1&quot;</translation>
+        <translation>Salasana tarvitaan sisäänkirjautumiseen &quot;%1&quot;:na</translation>
     </message>
     <message>
         <location line="+74"/>
         <location line="+7"/>
         <source>Auth server error: %1</source>
-        <translation type="unfinished">Kirjautumispalvelimen virhe: %1</translation>
+        <translation>Todennuspalvelinvirhe: %1</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Group membership needed</source>
-        <translation type="unfinished">Ryhmän jäsenyys vaadittu</translation>
+        <translation>Ryhmän jäsenyys vaadittu</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unexpected ext-auth response: %1</source>
-        <translation type="unfinished">Odottamaton vastaus tunnistautumispalvelimelta. %1</translation>
+        <translation>Odottamaton ext-auth:n vastaus: %1</translation>
     </message>
     <message>
         <location line="+86"/>
@@ -1372,12 +1372,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+22"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
-        <translation type="unfinished">Virhe palvelimen asetuksissa: ext-auth URL on väärin</translation>
+        <translation>Palvelimen määritysvirhe: virheellinen ext-auth:n URL</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Unsupported ext-auth URL scheme</source>
-        <translation type="unfinished">Tätä ext-auth protokollaa ei tueta</translation>
+        <translation>Ei tueta ext-auth:n URL-mallia</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -1392,17 +1392,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+66"/>
         <source>New version</source>
-        <translation type="unfinished">Uusi versio</translation>
+        <translation>Uusi versio</translation>
     </message>
     <message>
         <location line="-45"/>
         <source>Session not yet started!</source>
-        <translation type="unfinished">Istuntoa ei ole vielä aloitettu!</translation>
+        <translation>Istuntoa ei vielä aloitettu!</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Blocked by parental controls</source>
-        <translation type="unfinished">Estetty lapsilukon toimesta</translation>
+        <translation>Estetty lapsilukon toimesta</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -1424,7 +1424,7 @@ Select a regular layer instead.</source>
         <location line="+32"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
-        <translation type="unfinished">Sopimaton SSL sertifikaatti palvelimelle %1</translation>
+        <translation>Virheellinen SSL-varmenne isännälle %1</translation>
     </message>
     <message>
         <location line="-789"/>
@@ -1444,52 +1444,52 @@ Select a regular layer instead.</source>
     <message>
         <location line="+64"/>
         <source>Cancelled</source>
-        <translation type="unfinished">Peruutettu</translation>
+        <translation>Peruttu</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Session not found!</source>
-        <translation type="unfinished">Istuntoa ei löytynyt!</translation>
+        <translation>Istuntoa ei löytynyt!</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Invalid username!</source>
-        <translation type="unfinished">Käyttäjätunnus ei kelpaa!</translation>
+        <translation>Virheellinen käyttäjänimi!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This username has been locked</source>
-        <translation type="unfinished">Tämä käyttäjänimi on lukittu</translation>
+        <translation>Tämä käyttäjänimi on lukittu</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Username already taken!</source>
-        <translation type="unfinished">Käyttäjänimi on jo käytössä!</translation>
+        <translation>Käyttäjänimi jo käytössä!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session is closed!</source>
-        <translation type="unfinished">Istunto on suljettu!</translation>
+        <translation>Istunto on suljettu!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server is full!</source>
-        <translation type="unfinished">Palvelin on täynnä!</translation>
+        <translation>Palvelin on täynnä!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hosting not authorized</source>
-        <translation type="unfinished">Ei isännöintioikeutta</translation>
+        <translation>Ei isännöintioikeutta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation type="unfinished">Sinulla on porttikielto tähän istuntoon!</translation>
+        <translation>Sinulla on porttikielto tähän istuntoon!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session alias is reserved!</source>
-        <translation type="unfinished">Alias on varattu!</translation>
+        <translation>Istunnon alias on varattu!</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1517,7 +1517,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/loginsessions.cpp" line="+48"/>
         <source>(untitled)</source>
-        <translation type="unfinished">(nimetön)</translation>
+        <translation>(nimetön)</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -1585,17 +1585,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+68"/>
         <source>Title</source>
-        <translation type="unfinished">Otsikko</translation>
+        <translation>Otsikko</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Started by</source>
-        <translation type="unfinished">Aloittaja</translation>
+        <translation>Aloittanut</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Users</source>
-        <translation type="unfinished">Käyttäjiä</translation>
+        <translation>Käyttäjiät</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1680,7 +1680,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+75"/>
         <source>Received invalid data</source>
-        <translation type="unfinished">Vastaanotettiin virheellistä dataa</translation>
+        <translation>Virheellisiä tietoja vastaanotettu</translation>
     </message>
     <message>
         <location line="+51"/>
