@@ -31,6 +31,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Always show color dialogs in HSV color space, since they don't behave correctly in other spaces. Thanks Meru for reporting.
  * Fix: Apply pending fills when manipulating layers. Thanks MorrowShore for reporting.
  * Server Feature: Show better messages when a session reset happens, specifying if it's compressing, reverting or replacing the canvas. Thanks MorrowShore for suggesting.
+ * Feature: Reference image dock. Allows opening images in a separate dock and picking colors from them. Thanks 3rd_EFNO and leandro2222 for suggesting parts of this.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

@@ -32,6 +32,7 @@
 #include "desktop/docks/layerlistdock.h"
 #include "desktop/docks/navigator.h"
 #include "desktop/docks/onionskins.h"
+#include "desktop/docks/reference.h"
 #include "desktop/docks/timeline.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
@@ -158,6 +159,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	  m_dockNavigator(nullptr),
 	  m_dockOnionSkins(nullptr),
 	  m_dockTimeline(nullptr),
+	  m_dockReference(nullptr),
 	  m_chatbox(nullptr),
 	  m_viewLock(nullptr),
 	  m_canvasView(nullptr),
@@ -361,6 +363,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_dockColorSpinner, &docks::ColorSpinnerDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
 	connect(m_dockColorSliders, &docks::ColorSliderDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
 	connect(m_dockColorCircle, &docks::ColorCircleDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
+	connect(m_dockReference, &docks::ReferenceDock::colorPicked, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
 	connect(
 		m_dockToolSettings, &docks::ToolSettings::colorAdjustRequested,
 		m_dockColorSliders, &docks::ColorSliderDock::adjustColor);
@@ -1197,21 +1200,21 @@ void MainWindow::initDefaultDocks()
 void MainWindow::setDefaultDockSizes()
 {
 	int leftWidth = 320, leftHeight = 220;
-	int rightWidth = 260, rightHeight = 200;
+	int rightWidth = 260, rightHeight = 220;
 	int topHeight = 300;
 	resizeDocks(
 		{m_dockToolSettings, m_dockBrushPalette, m_dockColorSpinner,
 		 m_dockColorSliders, m_dockColorPalette, m_dockColorCircle,
-		 m_dockLayers},
+		 m_dockReference, m_dockLayers},
 		{leftWidth, leftWidth, rightWidth, rightWidth, rightWidth, rightWidth,
-		 rightWidth},
+		 rightWidth, rightWidth},
 		Qt::Horizontal);
 	resizeDocks(
 		{m_dockToolSettings, m_dockColorSpinner, m_dockColorSliders,
-		 m_dockColorPalette, m_dockColorCircle, m_dockTimeline,
+		 m_dockColorPalette, m_dockColorCircle, m_dockReference, m_dockTimeline,
 		 m_dockOnionSkins},
 		{leftHeight, rightHeight, rightHeight, rightHeight, rightHeight,
-		 topHeight, topHeight},
+		 rightHeight, topHeight, topHeight},
 		Qt::Vertical);
 }
 // clang-format off
@@ -3482,6 +3485,7 @@ void MainWindow::handleToggleAction(int action)
 			{m_dockColorSliders, int(Action::Right)},
 			{m_dockColorPalette, int(Action::Right)},
 			{m_dockColorCircle, int(Action::Right)},
+			{m_dockReference, int(Action::Right)},
 			{m_dockLayers, int(Action::Right)},
 			{m_chatbox, int(Action::Bottom)},
 		};
@@ -6213,6 +6217,10 @@ void MainWindow::createDocks()
 	m_dockOnionSkins = new docks::OnionSkinsDock(this);
 	m_dockOnionSkins->setObjectName("onionskins");
 	m_dockOnionSkins->setAllowedAreas(Qt::AllDockWidgetAreas);
+
+	m_dockReference = new docks::ReferenceDock(this);
+	m_dockReference->setObjectName("referencedock");
+	m_dockReference->setAllowedAreas(Qt::AllDockWidgetAreas);
 }
 
 void MainWindow::resetDefaultDocks()
@@ -6228,6 +6236,10 @@ void MainWindow::resetDefaultDocks()
 	addDockWidget(Qt::RightDockWidgetArea, m_dockColorSliders);
 	m_dockColorSliders->show();
 	addDockWidget(Qt::RightDockWidgetArea, m_dockColorCircle);
+	m_dockColorCircle->show();
+	addDockWidget(Qt::RightDockWidgetArea, m_dockReference);
+	m_dockReference->show();
+	tabifyDockWidget(m_dockReference, m_dockColorCircle);
 	tabifyDockWidget(m_dockColorCircle, m_dockColorPalette);
 	tabifyDockWidget(m_dockColorPalette, m_dockColorSliders);
 	tabifyDockWidget(m_dockColorSliders, m_dockColorSpinner);

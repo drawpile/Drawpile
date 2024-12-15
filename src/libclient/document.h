@@ -304,6 +304,7 @@ public slots:
 	void addServerLogEntry(const QString &log);
 
 	static const QMimeData *getClipboardData();
+	static bool clipboardHasImageData();
 	static QImage getClipboardImageData(const QMimeData *mimeData);
 
 private slots:

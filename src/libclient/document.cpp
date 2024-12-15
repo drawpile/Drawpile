@@ -1710,6 +1710,13 @@ const QMimeData *Document::getClipboardData()
 #endif
 }
 
+bool Document::clipboardHasImageData()
+{
+	const QMimeData *mimeData = getClipboardData();
+	return mimeData && (mimeData->hasImage() ||
+						mimeData->hasFormat(QStringLiteral("image/png")));
+}
+
 QImage Document::getClipboardImageData(const QMimeData *mimeData)
 {
 	if(mimeData) {

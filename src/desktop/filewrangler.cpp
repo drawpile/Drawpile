@@ -144,6 +144,11 @@ void FileWrangler::openPasteImage(const ImageOpenFn &imageOpenCompleted)
 	openImageFileContent(tr("Paste File"), imageOpenCompleted);
 }
 
+void FileWrangler::openReferenceImage(const ImageOpenFn &imageOpenCompleted)
+{
+	openImageFileContent(tr("Reference Image"), imageOpenCompleted);
+}
+
 
 #ifndef __EMSCRIPTEN__
 QStringList FileWrangler::getImportCertificatePaths(const QString &title) const

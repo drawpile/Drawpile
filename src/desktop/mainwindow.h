@@ -50,6 +50,7 @@ class ColorSpinnerDock;
 class ColorSliderDock;
 class Navigator;
 class OnionSkinsDock;
+class ReferenceDock;
 class Timeline;
 }
 
@@ -421,6 +422,7 @@ private:
 	docks::Navigator *m_dockNavigator;
 	docks::OnionSkinsDock *m_dockOnionSkins;
 	docks::Timeline *m_dockTimeline;
+	docks::ReferenceDock *m_dockReference;
 	QToolBar *m_toolBarFile;
 	QToolBar *m_toolBarEdit;
 	QToolBar *m_toolBarDraw;
