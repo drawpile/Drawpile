@@ -7,7 +7,6 @@
 #include <QTransform>
 
 class QColor;
-class QGraphicsPixmapItem;
 class QGraphicsView;
 class QImage;
 class QMimeData;
@@ -63,6 +62,8 @@ protected:
 	void scrollContentsBy(int dx, int dy) override;
 
 private:
+	class ReferenceItem;
+
 	static constexpr qreal SCROLL_RATIO = -1.0 / 30.0;
 
 	void pickColorAt(const QPointF &posf);
@@ -96,7 +97,7 @@ private:
 	InteractionMode
 	getInteractionModeFor(Qt::KeyboardModifiers mods, bool invert) const;
 
-	QGraphicsPixmapItem *m_item = nullptr;
+	ReferenceItem *m_item = nullptr;
 	QPointF m_pos;
 	qreal m_zoom = 1.0;
 	QRectF m_posBounds;

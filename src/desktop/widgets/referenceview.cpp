@@ -6,7 +6,7 @@
 #include <QDragMoveEvent>
 #include <QDropEvent>
 #include <QFileInfo>
-#include <QGraphicsPixmapItem>
+#include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QGuiApplication>
 #include <QImage>
@@ -14,6 +14,7 @@
 #include <QKeyEvent>
 #include <QMimeData>
 #include <QMouseEvent>
+#include <QPainter>
 #include <QPixmap>
 #include <QResizeEvent>
 #include <QScopedValueRollback>
@@ -21,6 +22,105 @@
 #include <QWheelEvent>
 
 namespace widgets {
+
+class ReferenceView::ReferenceItem : public QGraphicsItem {
+public:
+	ReferenceItem(const QImage &img)
+		: m_pixmap(QPixmap::fromImage(img))
+		, m_bounds(img.rect())
+	{
+	}
+
+	int type() const override { return UserType + 99; }
+
+	QRectF boundingRect() const override { return m_bounds; }
+
+	const QPixmap &pixmap() const { return m_pixmap; }
+	QSizeF pixmapSizeF() const { return m_bounds.size(); }
+
+	void paint(
+		QPainter *painter, const QStyleOptionGraphicsItem *option,
+		QWidget *widget = nullptr) override
+	{
+		Q_UNUSED(option);
+		Q_UNUSED(widget);
+		qreal scale = transform().m11();
+		painter->drawPixmap(m_pixmap.rect(), getPixmapForScale(scale));
+	}
+
+private:
+	static constexpr qreal MIPMAP_LEVEL1 = 0.5;
+	static constexpr qreal MIPMAP_LEVEL2 = 0.25;
+	static constexpr qreal MIPMAP_LEVEL3 = 0.125;
+	static constexpr qreal MIPMAP_LEVEL4 = 0.0625;
+	static constexpr qreal MIPMAP_FUDGE = 1.1;
+
+	const QPixmap &getPixmapForScale(qreal scale)
+	{
+		if(scale < MIPMAP_LEVEL4 * MIPMAP_FUDGE) {
+			return getMipmap4();
+		} else if(scale < MIPMAP_LEVEL3 * MIPMAP_FUDGE) {
+			return getMipmap3();
+		} else if(scale < MIPMAP_LEVEL2 * MIPMAP_FUDGE) {
+			return getMipmap2();
+		} else if(scale < MIPMAP_LEVEL1 * MIPMAP_FUDGE) {
+			return getMipmap1();
+		} else {
+			return m_pixmap;
+		}
+	}
+
+	const QPixmap &getMipmap4()
+	{
+		if(m_mipmap4.isNull()) {
+			makeMipmap(m_mipmap4, getMipmap3(), MIPMAP_LEVEL4);
+		}
+		return m_mipmap4;
+	}
+
+	const QPixmap &getMipmap3()
+	{
+		if(m_mipmap3.isNull()) {
+			makeMipmap(m_mipmap3, getMipmap2(), MIPMAP_LEVEL3);
+		}
+		return m_mipmap3;
+	}
+
+	const QPixmap &getMipmap2()
+	{
+		if(m_mipmap2.isNull()) {
+			makeMipmap(m_mipmap2, getMipmap1(), MIPMAP_LEVEL2);
+		}
+		return m_mipmap2;
+	}
+
+	const QPixmap &getMipmap1()
+	{
+		if(m_mipmap1.isNull()) {
+			makeMipmap(m_mipmap1, m_pixmap, MIPMAP_LEVEL1);
+		}
+		return m_mipmap1;
+	}
+
+	void makeMipmap(QPixmap &dst, const QPixmap &src, qreal scale) const
+	{
+		dst = QPixmap(
+			qMax(1, qRound(m_bounds.width() * scale)),
+			qMax(1, qRound(m_bounds.height() * scale)));
+		dst.fill(Qt::transparent);
+		QPainter painter(&dst);
+		painter.setCompositionMode(QPainter::CompositionMode_Source);
+		painter.setRenderHint(QPainter::SmoothPixmapTransform);
+		painter.drawPixmap(dst.rect(), src);
+	}
+
+	const QPixmap m_pixmap;
+	const QRectF m_bounds;
+	QPixmap m_mipmap1;
+	QPixmap m_mipmap2;
+	QPixmap m_mipmap3;
+	QPixmap m_mipmap4;
+};
 
 ReferenceView::ReferenceView(QWidget *parent)
 	: QGraphicsView(parent)
@@ -51,8 +151,8 @@ void ReferenceView::setImage(const QImage &img)
 	}
 
 	QPixmap pixmap;
-	if(!img.isNull() && !(pixmap = QPixmap::fromImage(img)).isNull()) {
-		m_item = new QGraphicsPixmapItem(pixmap);
+	if(!img.isNull()) {
+		m_item = new ReferenceItem(img);
 		m_item->setTransformOriginPoint(pixmap.rect().center());
 		scene()->addItem(m_item);
 	}
@@ -127,7 +227,7 @@ void ReferenceView::zoomToFit()
 	if(m_item) {
 		QWidget *vp = viewport();
 		qreal dpr = devicePixelRatioF();
-		QRectF r = QRectF(QPointF(), QSizeF(m_item->pixmap().size()) / dpr);
+		QRectF r = QRectF(QPointF(), m_item->pixmapSizeF() / dpr);
 		qreal xScale = qreal(vp->width()) / r.width();
 		qreal yScale = qreal(vp->height()) / r.height();
 		qreal scale = qMin(xScale, yScale);
@@ -317,7 +417,7 @@ void ReferenceView::pickColorAt(const QPointF &posf)
 {
 	if(m_item) {
 		QPoint point = mapToCanvasF(posf).toPoint();
-		QPixmap pixmap = m_item->pixmap();
+		const QPixmap &pixmap = m_item->pixmap();
 		if(pixmap.rect().contains(point)) {
 			QColor color = pixmap.copy(QRect(point.x(), point.y(), 1, 1))
 							   .toImage()
@@ -403,7 +503,7 @@ void ReferenceView::updatePosBounds()
 {
 	if(m_item) {
 		QTransform matrix = calculateCanvasTransformFrom(QPointF(), m_zoom);
-		QRectF cr(QPointF(), QSizeF(m_item->pixmap().size()));
+		QRectF cr(QPointF(), m_item->pixmapSizeF());
 		QRectF vr(viewport()->rect());
 		m_posBounds = matrix.map(cr)
 						  .boundingRect()
@@ -426,10 +526,6 @@ void ReferenceView::updateRenderHints()
 {
 	bool smooth = m_zoom <= 1.99 || qAbs(m_zoom - 1.0) < 0.01;
 	setRenderHint(QPainter::SmoothPixmapTransform, smooth);
-	if(m_item) {
-		m_item->setTransformationMode(
-			smooth ? Qt::SmoothTransformation : Qt::FastTransformation);
-	}
 }
 
 void ReferenceView::updateScrollBars()
