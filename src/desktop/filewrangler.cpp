@@ -766,7 +766,8 @@ void FileWrangler::openImageFileContent(
 	};
 #endif
 	showOpenFileContentDialog(
-		title, LastPath::IMAGE, utils::fileFormatFilterList(utils::OpenImages),
+		title, LastPath::IMAGE,
+		utils::fileFormatFilterList(utils::OpenImages | utils::QtImagesOnly),
 		fileOpenCompleted);
 }
 
