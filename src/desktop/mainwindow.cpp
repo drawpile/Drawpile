@@ -3800,14 +3800,17 @@ void MainWindow::pasteCentered()
 void MainWindow::pasteFile()
 {
 	if(m_doc->checkPermission(DP_FEATURE_PUT_IMAGE)) {
-		FileWrangler::ImageOpenFn imageOpenCompleted = [this](QImage &img) {
-			if(img.isNull()) {
-				showErrorMessage(tr("The image could not be loaded"));
-			} else {
-				utils::ScopedOverrideCursor waitCursor;
-				pasteImage(img);
-			}
-		};
+		FileWrangler::ImageOpenFn imageOpenCompleted =
+			[this](QImage &img, const QString &error) {
+				if(img.isNull()) {
+					showErrorMessage(
+						//: %1 is an error message.
+						tr("The image could not be loaded: %1.").arg(error));
+				} else {
+					utils::ScopedOverrideCursor waitCursor;
+					pasteImage(img);
+				}
+			};
 		FileWrangler(this).openPasteImage(imageOpenCompleted);
 	}
 }

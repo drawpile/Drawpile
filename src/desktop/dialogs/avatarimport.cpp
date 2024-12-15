@@ -51,10 +51,13 @@ void AvatarImport::importAvatar(
 	AvatarListModel *avatarList, QPointer<QWidget> parentWindow)
 {
 	FileWrangler::ImageOpenFn imageOpenCompleted = [avatarList, parentWindow](
-								 QImage &img) {
+													   QImage &img,
+													   const QString &error) {
 		if(img.isNull()) {
 			QMessageBox::warning(
-				parentWindow, tr("Import Avatar"), tr("Couldn't read image"));
+				parentWindow, tr("Import Avatar"),
+				//: %1 is an error message.
+				tr("Couldn't read image: %1.").arg(error));
 			return;
 		}
 

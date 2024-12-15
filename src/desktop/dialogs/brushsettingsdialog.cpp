@@ -1423,12 +1423,13 @@ void BrushSettingsDialog::requestShortcutChange()
 
 void BrushSettingsDialog::choosePresetThumbnailFile()
 {
-	FileWrangler::ImageOpenFn imageOpenCompleted = [this](QImage &img) {
-		QPixmap pixmap;
-		if(!img.isNull() && pixmap.convertFromImage(img)) {
-			showPresetThumbnail(pixmap);
-		}
-	};
+	FileWrangler::ImageOpenFn imageOpenCompleted =
+		[this](QImage &img, const QString &) {
+			QPixmap pixmap;
+			if(!img.isNull() && pixmap.convertFromImage(img)) {
+				showPresetThumbnail(pixmap);
+			}
+		};
 	FileWrangler(this).openBrushThumbnail(imageOpenCompleted);
 }
 

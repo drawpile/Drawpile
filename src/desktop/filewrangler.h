@@ -32,7 +32,7 @@ public:
 	using OpenFn = std::function<void(const QString &)>;
 #endif
 
-	using ImageOpenFn = std::function<void(QImage &)>;
+	using ImageOpenFn = std::function<void(QImage &, const QString &)>;
 
 	// Gives just a path or, on Emscripten, a symbolic path and a temporary
 	// file. The callee is responsible for calling delete on the latter.

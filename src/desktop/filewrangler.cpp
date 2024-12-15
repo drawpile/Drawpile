@@ -7,6 +7,7 @@
 #include "libclient/import/canvasloaderrunnable.h"
 #include "libclient/utils/scopedoverridecursor.h"
 #include "libshared/util/paths.h"
+#include <QBuffer>
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileDialog>
@@ -755,14 +756,28 @@ void FileWrangler::openImageFileContent(
 	OpenFn fileOpenCompleted =
 		[imageOpenCompleted](const QString &, const QByteArray &fileContent) {
 			QImage img;
-			img.loadFromData(fileContent);
-			imageOpenCompleted(img);
+			QString error;
+			{
+				QBuffer buf;
+				buf.setData(fileContent);
+				QImageReader reader(&buf);
+				if(!reader.read(&img)) {
+					error = reader.errorString();
+				}
+			}
+			imageOpenCompleted(img, error);
 		};
 #else
 	OpenFn fileOpenCompleted = [imageOpenCompleted](const QString &fileName) {
 		QImage img;
-		img.load(fileName);
-		imageOpenCompleted(img);
+		QString error;
+		{
+			QImageReader reader(fileName);
+			if(!reader.read(&img)) {
+				error = reader.errorString();
+			}
+		}
+		imageOpenCompleted(img, error);
 	};
 #endif
 	showOpenFileContentDialog(
