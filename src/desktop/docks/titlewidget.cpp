@@ -55,11 +55,12 @@ TitleWidget::TitleWidget(QDockWidget *parent) : QWidget(parent)
 	}
 }
 
-void TitleWidget::addCustomWidget(QWidget *widget, bool stretch)
+void TitleWidget::addCustomWidget(QWidget *widget, int stretch)
 {
 	m_layout->insertWidget(m_layout->count() - 1, widget);
-	if(stretch)
-		m_layout->setStretchFactor(widget, 1);
+	if(stretch > 0) {
+		m_layout->setStretchFactor(widget, stretch);
+	}
 }
 
 void TitleWidget::addSpace(int space)

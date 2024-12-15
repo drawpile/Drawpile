@@ -497,7 +497,7 @@ Navigator::Navigator(QWidget *parent)
 	m_zoomSlider->setValue(100.0);
 	m_zoomSlider->setSuffix("%");
 	m_zoomSlider->setFocusPolicy(Qt::ClickFocus);
-	titlebar->addCustomWidget(m_zoomSlider, true);
+	titlebar->addCustomWidget(m_zoomSlider, 1);
 
 	connect(m_view, &NavigatorView::focusMoved, this, &Navigator::focusMoved);
 	connect(m_view, &NavigatorView::wheelZoom, this, &Navigator::wheelZoom);

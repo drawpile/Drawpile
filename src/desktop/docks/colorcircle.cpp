@@ -103,7 +103,7 @@ ColorCircleDock::ColorCircleDock(QWidget *parent)
 
 	titlebar->addCustomWidget(menuButton);
 	titlebar->addSpace(4);
-	titlebar->addCustomWidget(m_lastUsedSwatch, true);
+	titlebar->addCustomWidget(m_lastUsedSwatch, 1);
 	titlebar->addSpace(4);
 
 	connect(
