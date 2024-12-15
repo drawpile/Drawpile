@@ -13,7 +13,7 @@ namespace tools {
 class ShapeTool : public Tool {
 public:
 	ShapeTool(ToolController &owner, Type type, QCursor cursor)
-		: Tool(owner, type, cursor, true, true, false, true, true)
+		: Tool(owner, type, cursor, true, true, false, true, false, true)
 	{
 	}
 

@@ -10,7 +10,7 @@ namespace tools {
 ColorPicker::ColorPicker(ToolController &owner)
 	: Tool(
 		  owner, PICKER, QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29),
-		  false, true, false, true, false)
+		  false, true, false, true, false, false)
 {
 }
 

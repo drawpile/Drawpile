@@ -10,7 +10,7 @@ namespace tools {
 LaserPointer::LaserPointer(ToolController &owner)
 	: Tool(
 		  owner, LASERPOINTER, QCursor(QPixmap(":cursors/arrow.png"), 0, 0),
-		  false, true, false, false, false)
+		  false, true, false, false, false, false)
 	, m_persistence(1)
 	, m_drawing(false)
 {

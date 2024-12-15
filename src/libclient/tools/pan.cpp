@@ -9,7 +9,7 @@ namespace tools {
 PanTool::PanTool(ToolController &owner)
 	: Tool(
 		  owner, PAN, QCursor(Qt::OpenHandCursor), true, false, false, true,
-		  false)
+		  false, false)
 {
 }
 

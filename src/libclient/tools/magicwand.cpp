@@ -87,7 +87,7 @@ private:
 MagicWandTool::MagicWandTool(ToolController &owner)
 	: Tool(
 		  owner, MAGICWAND, QCursor(QPixmap(":cursors/magicwand.png"), 2, 2),
-		  true, false, false, false, false)
+		  true, false, false, false, false, false)
 	, m_wandCursor(cursor())
 {
 }

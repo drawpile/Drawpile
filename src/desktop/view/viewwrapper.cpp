@@ -22,7 +22,7 @@
 #include "libclient/tools/toolcontroller.h"
 #include <functional>
 
-using std::placeholders::_5;
+using std::placeholders::_6;
 
 namespace view {
 
@@ -333,7 +333,7 @@ void ViewWrapper::connectDocument(Document *doc)
 		&tools::ToolController::offsetActiveTool);
 	connect(
 		toolCtrl, &tools::ToolController::toolCapabilitiesChanged, m_scene,
-		std::bind(&view::CanvasScene::setSelectionIgnored, m_scene, _5));
+		std::bind(&view::CanvasScene::setSelectionIgnored, m_scene, _6));
 	m_scene->setSelectionIgnored(toolCtrl->activeToolIgnoresSelections());
 
 	connect(
@@ -348,7 +348,8 @@ void ViewWrapper::connectDocument(Document *doc)
 		toolCtrl->activeToolAllowColorPick(),
 		toolCtrl->activeToolAllowToolAdjust(),
 		toolCtrl->activeToolHandlesRightClick(),
-		toolCtrl->activeToolIsFractional());
+		toolCtrl->activeToolIsFractional(),
+		toolCtrl->activeToolSupportsPressure());
 
 	connect(
 		m_controller, &CanvasController::penDown, toolCtrl,

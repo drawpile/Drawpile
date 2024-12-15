@@ -91,6 +91,7 @@ public:
 
 	//! Enable/disable tablet event handling
 	void setTabletEnabled(bool enable) { m_enableTablet = enable; }
+	void setIgnoreMouse(bool ignoreMouse) { m_ignoreMouse = ignoreMouse; }
 
 	//! Enable/disable touch gestures
 	void setTouchUseGestureEvents(bool touchUseGestureEvents);
@@ -228,7 +229,7 @@ public slots:
 	void setToolCursor(const QCursor &cursor);
 	void setToolCapabilities(
 		bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick,
-		bool fractionalTool);
+		bool fractionalTool, bool toolSupportsPressure);
 
 	void setBrushCursorStyle(int style);
 	void setEraseCursorStyle(int style);
@@ -360,6 +361,11 @@ private:
 	void showTransformNotice(const QString &text);
 	void updateLockNotice();
 
+	bool shouldIgnoreMouse() const
+	{
+		return m_ignoreMouse && m_toolSupportsPressure;
+	}
+
 	Qt::KeyboardModifiers getKeyboardModifiers(const QKeyEvent *keyev) const;
 	Qt::KeyboardModifiers getMouseModifiers(const QMouseEvent *mouseev) const;
 	Qt::KeyboardModifiers getTabletModifiers(const QTabletEvent *tabev) const;
@@ -387,6 +393,7 @@ private:
 	bool m_allowToolAdjust;
 	bool m_toolHandlesRightClick;
 	bool m_fractionalTool;
+	bool m_toolSupportsPressure = false;
 	PenMode m_penmode;
 	QDeadlineTimer m_tabletEventTimer;
 	int m_tabletEventTimerDelay;
@@ -430,6 +437,7 @@ private:
 
 	bool m_useGestureEvents = false;
 	bool m_enableTablet;
+	bool m_ignoreMouse = false;
 	bool m_locked;
 	QString m_lockDescription;
 	int m_toolState;

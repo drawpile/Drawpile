@@ -13,7 +13,7 @@ namespace tools {
 Freehand::Freehand(ToolController &owner, bool isEraser)
 	: Tool(
 		  owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor, true, true,
-		  false, false, true)
+		  false, false, true, true)
 	, m_pollTimer{}
 	, m_brushEngine{std::bind(&Freehand::pollControl, this, _1)}
 	, m_drawing(false)

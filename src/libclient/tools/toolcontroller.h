@@ -81,6 +81,7 @@ public:
 	bool activeToolAllowToolAdjust() const;
 	bool activeToolHandlesRightClick() const;
 	bool activeToolIsFractional() const;
+	bool activeToolSupportsPressure() const;
 	bool activeToolIgnoresSelections() const;
 
 	void setActiveLayer(uint16_t id);
@@ -214,7 +215,7 @@ public slots:
 signals:
 	void toolCapabilitiesChanged(
 		bool allowColorPick, bool allowToolAdjust, bool allowRightClick,
-		bool fractionalTool, bool ignoresSelections);
+		bool fractionalTool, bool supportsPressure, bool ignoresSelections);
 	void toolCursorChanged(const QCursor &cursor);
 	void activeLayerChanged(int layerId);
 	void activeAnnotationChanged(uint16_t annotationId);

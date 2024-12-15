@@ -100,6 +100,11 @@ void Tablet::initTablet(
 	settings.bindTabletEvents(pressure);
 	form->addRow(tr("Pen pressure:"), pressure);
 
+	auto *ignoreMouse =
+		new QCheckBox(tr("Ignore mouse when using freehand tool"));
+	settings.bindIgnoreMouse(ignoreMouse);
+	form->addRow(nullptr, ignoreMouse);
+
 	auto *smoothing = new KisSliderSpinBox;
 	smoothing->setMaximum(libclient::settings::maxSmoothing);
 	smoothing->setPrefix(tr("Global smoothing: "));

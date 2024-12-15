@@ -114,7 +114,7 @@ FloodFill::FloodFill(ToolController &owner)
 	: Tool(
 		  owner, FLOODFILL,
 		  QCursor(QPixmap(QStringLiteral(":cursors/bucket.png")), 2, 29), true,
-		  true, false, false, false)
+		  true, false, false, false, false)
 	, m_kernel(int(DP_FLOOD_FILL_KERNEL_ROUND))
 	, m_blendMode(DP_BLEND_MODE_NORMAL)
 	, m_originalBlendMode(m_blendMode)

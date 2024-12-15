@@ -252,6 +252,7 @@ CanvasView::CanvasView(QWidget *parent)
 	settings.bindTabletEvents(this, &widgets::CanvasView::setTabletEnabled);
 	settings.bindTouchGestures(
 		this, &widgets::CanvasView::setTouchUseGestureEvents);
+	settings.bindIgnoreMouse(this, &widgets::CanvasView::setIgnoreMouse);
 	settings.bindRenderSmooth(this, &widgets::CanvasView::setRenderSmooth);
 	settings.bindRenderUpdateFull(
 		this, &widgets::CanvasView::setRenderUpdateFull);
@@ -854,12 +855,13 @@ void CanvasView::setToolCursor(const QCursor &cursor)
 
 void CanvasView::setToolCapabilities(
 	bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick,
-	bool fractionalTool)
+	bool fractionalTool, bool toolSupportsPressure)
 {
 	m_allowColorPick = allowColorPick;
 	m_allowToolAdjust = allowToolAdjust;
 	m_toolHandlesRightClick = toolHandlesRightClick;
 	m_fractionalTool = fractionalTool;
+	m_toolSupportsPressure = toolSupportsPressure;
 	m_touch->setAllowColorPick(allowColorPick);
 }
 
@@ -1367,7 +1369,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 	updateCursorPos(mousePos);
 
 	if((m_enableTablet && isSynthetic(event)) || isSyntheticTouch(event) ||
-	   touching || !m_tabletEventTimer.hasExpired()) {
+	   touching || shouldIgnoreMouse() || !m_tabletEventTimer.hasExpired()) {
 		return;
 	}
 
@@ -1443,7 +1445,7 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 	updateCursorPos(mousePos);
 
 	if((m_enableTablet && isSynthetic(event)) || isSyntheticTouch(event) ||
-	   m_pendown == TABLETDOWN || touching ||
+	   m_pendown == TABLETDOWN || touching || shouldIgnoreMouse() ||
 	   (m_pendown && !m_tabletEventTimer.hasExpired())) {
 		return;
 	}
@@ -1603,7 +1605,7 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 	updateCursorPos(mousePos);
 
 	if((m_enableTablet && isSynthetic(event)) || isSyntheticTouch(event) ||
-	   touching || !m_tabletEventTimer.hasExpired()) {
+	   touching || shouldIgnoreMouse() || !m_tabletEventTimer.hasExpired()) {
 		return;
 	}
 

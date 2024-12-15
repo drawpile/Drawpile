@@ -16,7 +16,7 @@ void Tool::setHandlesRightClick(bool handlesRightClick)
 		if(isActiveTool()) {
 			emit m_owner.toolCapabilitiesChanged(
 				m_allowColorPick, m_allowToolAdjust, m_handlesRightClick,
-				m_fractional, m_ignoresSelections);
+				m_fractional, m_supportsPressure, m_ignoresSelections);
 		}
 	}
 }

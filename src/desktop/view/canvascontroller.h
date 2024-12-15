@@ -139,7 +139,7 @@ public:
 	void setPointerTracking(bool pointerTracking);
 	void setToolCapabilities(
 		bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick,
-		bool fractionalTool);
+		bool fractionalTool, bool toolSupportsPressure);
 	void setToolCursor(const QCursor &toolCursor);
 	void setBrushBlendMode(int brushBlendMode);
 
@@ -210,6 +210,7 @@ private:
 	void setClearColor(const QColor clearColor);
 	void setRenderSmooth(bool renderSmooth);
 	void setTabletEnabled(bool tabletEnabled);
+	void setIgnoreMouse(bool ignoreMouse);
 	void setSerializedPressureCurve(const QString &serializedPressureCurve);
 	void setOutlineWidth(qreal outlineWidth);
 	void setCanvasShortcuts(QVariantMap canvasShortcuts);
@@ -265,6 +266,11 @@ private:
 	QPointF wheelPosF(QWheelEvent *event) const;
 	static bool isSynthetic(QMouseEvent *event);
 	static bool isSyntheticTouch(QMouseEvent *event);
+
+	bool shouldIgnoreMouse() const
+	{
+		return m_ignoreMouse && m_toolSupportsPressure;
+	}
 
 	Qt::KeyboardModifiers getKeyboardModifiers(const QKeyEvent *event) const;
 	Qt::KeyboardModifiers getMouseModifiers(const QMouseEvent *event) const;
@@ -338,6 +344,7 @@ private:
 	QColor m_clearColor;
 	bool m_renderSmooth = false;
 	bool m_tabletEnabled = true;
+	bool m_ignoreMouse = false;
 	KisCubicCurve m_pressureCurve;
 	bool m_pixelGrid = true;
 	bool m_pointerTracking = false;
@@ -387,6 +394,7 @@ private:
 	bool m_allowToolAdjust = false;
 	bool m_toolHandlesRightClick = false;
 	bool m_fractionalTool = false;
+	bool m_toolSupportsPressure = false;
 
 #ifdef __EMSCRIPTEN__
 	bool m_enableEraserOverride = false;

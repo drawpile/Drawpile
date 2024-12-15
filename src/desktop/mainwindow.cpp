@@ -2511,6 +2511,7 @@ void MainWindow::toggleTabletEventLog()
 				DP_event_log_write_meta("Input: %s", tabletinput::current());
 				const desktop::settings::Settings &settings = dpApp().settings();
 				DP_event_log_write_meta("Tablet enabled: %d", settings.tabletEvents());
+				DP_event_log_write_meta("Ignore mouse: %d", settings.ignoreMouse());
 				DP_event_log_write_meta("Tablet eraser action: %d", settings.tabletEraserAction());
 				DP_event_log_write_meta("One-finger touch action: %d", settings.oneFingerTouch());
 				DP_event_log_write_meta("Two-finger pinch action: %d", settings.twoFingerPinch());

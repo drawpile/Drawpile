@@ -184,6 +184,7 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 		this, &CanvasController::setClearColor);
 	settings.bindRenderSmooth(this, &CanvasController::setRenderSmooth);
 	settings.bindTabletEvents(this, &CanvasController::setTabletEnabled);
+	settings.bindIgnoreMouse(this, &CanvasController::setIgnoreMouse);
 	settings.bindBrushOutlineWidth(this, &CanvasController::setOutlineWidth);
 	settings.bindGlobalPressureCurve(
 		this, &CanvasController::setSerializedPressureCurve);
@@ -609,6 +610,7 @@ void CanvasController::handleMouseMove(QMouseEvent *event)
 
 	if((!m_tabletEnabled || !isSynthetic(event)) && !isSyntheticTouch(event) &&
 	   m_penState != PenState::TabletDown && !touching &&
+	   !shouldIgnoreMouse() &&
 	   (m_penState == PenState::Up || m_tabletEventTimer.hasExpired())) {
 		if(m_penState != PenState::Up && buttons == Qt::NoButton) {
 			handleMouseRelease(event);
@@ -633,7 +635,7 @@ void CanvasController::handleMousePress(QMouseEvent *event)
 		int(m_penState), int(touching), qulonglong(event->timestamp()));
 
 	if(((!m_tabletEnabled || !isSynthetic(event))) &&
-	   !isSyntheticTouch(event) && !touching &&
+	   !isSyntheticTouch(event) && !touching && !shouldIgnoreMouse() &&
 	   m_tabletEventTimer.hasExpired()) {
 		event->accept();
 		penPressEvent(
@@ -655,7 +657,7 @@ void CanvasController::handleMouseRelease(QMouseEvent *event)
 		int(m_penState), int(touching), qulonglong(event->timestamp()));
 
 	if((!m_tabletEnabled || !isSynthetic(event)) && !isSyntheticTouch(event) &&
-	   !touching) {
+	   !touching && !shouldIgnoreMouse()) {
 		event->accept();
 		penReleaseEvent(
 			QDateTime::currentMSecsSinceEpoch(), posf, event->button(),
@@ -1175,6 +1177,11 @@ void CanvasController::setTabletEnabled(bool tabletEnabled)
 	m_tabletEnabled = tabletEnabled;
 }
 
+void CanvasController::setIgnoreMouse(bool ignoreMouse)
+{
+	m_ignoreMouse = ignoreMouse;
+}
+
 void CanvasController::setSerializedPressureCurve(
 	const QString &serializedPressureCurve)
 {
@@ -1276,12 +1283,13 @@ void CanvasController::setPointerTracking(bool pointerTracking)
 
 void CanvasController::setToolCapabilities(
 	bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick,
-	bool fractionalTool)
+	bool fractionalTool, bool toolSupportsPressure)
 {
 	m_allowColorPick = allowColorPick;
 	m_allowToolAdjust = allowToolAdjust;
 	m_toolHandlesRightClick = toolHandlesRightClick;
 	m_fractionalTool = fractionalTool;
+	m_toolSupportsPressure = toolSupportsPressure;
 	m_touch->setAllowColorPick(allowColorPick);
 }
 

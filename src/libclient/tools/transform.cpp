@@ -15,7 +15,7 @@ namespace tools {
 TransformTool::TransformTool(ToolController &owner)
 	: Tool(
 		  owner, TRANSFORM, QCursor(Qt::PointingHandCursor), false, false,
-		  false, true, false)
+		  false, true, false, false)
 {
 }
 

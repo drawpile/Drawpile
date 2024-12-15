@@ -19,7 +19,7 @@
 #include "libclient/tools/toolcontroller.h"
 #include <functional>
 
-using std::placeholders::_5;
+using std::placeholders::_6;
 
 namespace drawingboard {
 
@@ -346,7 +346,7 @@ void SceneWrapper::connectDocument(Document *doc)
 	connect(
 		toolCtrl, &tools::ToolController::toolCapabilitiesChanged, m_scene,
 		std::bind(
-			&drawingboard::CanvasScene::setSelectionIgnored, m_scene, _5));
+			&drawingboard::CanvasScene::setSelectionIgnored, m_scene, _6));
 	m_scene->setSelectionIgnored(toolCtrl->activeToolIgnoresSelections());
 
 	connect(
@@ -361,7 +361,8 @@ void SceneWrapper::connectDocument(Document *doc)
 		toolCtrl->activeToolAllowColorPick(),
 		toolCtrl->activeToolAllowToolAdjust(),
 		toolCtrl->activeToolHandlesRightClick(),
-		toolCtrl->activeToolIsFractional());
+		toolCtrl->activeToolIsFractional(),
+		toolCtrl->activeToolSupportsPressure());
 
 	connect(
 		m_view, &CanvasView::penDown, toolCtrl,

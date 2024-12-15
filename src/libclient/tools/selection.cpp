@@ -9,7 +9,7 @@
 namespace tools {
 
 SelectionTool::SelectionTool(ToolController &owner, Type type, QCursor cursor)
-	: Tool(owner, type, cursor, true, false, false, true, false)
+	: Tool(owner, type, cursor, true, false, false, true, false, false)
 {
 }
 

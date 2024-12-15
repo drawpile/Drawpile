@@ -10,7 +10,7 @@ namespace tools {
 ZoomTool::ZoomTool(ToolController &owner)
 	: Tool(
 		  owner, ZOOM, QCursor(QPixmap(":cursors/zoom.png"), 8, 8), true, false,
-		  true, false, false)
+		  true, false, false, false)
 {
 }
 

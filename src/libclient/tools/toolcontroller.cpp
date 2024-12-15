@@ -134,7 +134,7 @@ void ToolController::setActiveTool(Tool::Type tool)
 		emit toolCapabilitiesChanged(
 			activeToolAllowColorPick(), activeToolAllowToolAdjust(),
 			activeToolHandlesRightClick(), activeToolIsFractional(),
-			activeToolIgnoresSelections());
+			activeToolSupportsPressure(), activeToolIgnoresSelections());
 		emit toolCursorChanged(activeToolCursor());
 		emit toolNoticeRequested(QString());
 	}
@@ -202,6 +202,12 @@ bool ToolController::activeToolIsFractional() const
 {
 	Q_ASSERT(m_activeTool);
 	return m_activeTool->isFractional();
+}
+
+bool ToolController::activeToolSupportsPressure() const
+{
+	Q_ASSERT(m_activeTool);
+	return m_activeTool->supportsPressure();
 }
 
 bool ToolController::activeToolIgnoresSelections() const
