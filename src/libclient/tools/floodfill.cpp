@@ -150,13 +150,13 @@ void FloodFill::motion(const MotionParams &params)
 		if(m_dragging) {
 			qreal delta =
 				qRound((params.viewPos.x() - m_dragPrevPoint.x()) / 2.0);
-			m_dragPrevPoint = params.viewPos;
 
 			int prevDragTolerance = qRound(m_dragTolerance);
 			m_dragTolerance = qBound(0.0, m_dragTolerance + delta, 255.0);
 			int dragTolerance = qRound(m_dragTolerance);
 
 			if(dragTolerance != prevDragTolerance) {
+				m_dragPrevPoint = params.viewPos;
 				if(m_running) {
 					m_repeat = true;
 					m_cancel = true;
