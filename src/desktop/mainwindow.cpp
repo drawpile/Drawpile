@@ -3919,17 +3919,22 @@ void MainWindow::resizeCanvas(int expandDirection)
 		paintEngine->renderPixmap().scaled(300, 300, Qt::KeepAspectRatio));
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
-	// Preset crop from selection if one exists
-	if(canvas->selection()->isValid()) {
-		dlg->setBounds(canvas->selection()->bounds());
+	if(const canvas::TransformModel *transform = canvas->transform();
+	   transform->isActive()) {
+		dlg->setBounds(
+			transform->dstQuad().boundingRect().toAlignedRect(), false);
+	} else if(canvas::SelectionModel *sel = canvas->selection();
+			  sel->isValid()) {
+		dlg->setBounds(sel->bounds(), true);
 	}
 
 	dlg->initialExpand(expandDirection);
 
 	connect(dlg, &QDialog::accepted, this, [this, dlg]() {
 		if(m_doc->checkPermission(DP_FEATURE_RESIZE)) {
-			if(m_doc->canvas()->selection()) {
-				m_doc->selectNone();
+			canvas::SelectionModel *sel = m_doc->canvas()->selection();
+			if(sel->isValid() && sel->bounds().contains(dlg->newBounds())) {
+				m_doc->selectNone(false);
 			}
 			dialogs::ResizeVector r = dlg->resizeVector();
 			if(!r.isZero()) {
@@ -5448,7 +5453,9 @@ void MainWindow::setupActions()
 	m_putimagetools->addAction(stamp);
 
 	connect(selectall, &QAction::triggered, m_doc, &Document::selectAll);
-	connect(selectnone, &QAction::triggered, m_doc, &Document::selectNone);
+	connect(
+		selectnone, &QAction::triggered, m_doc,
+		std::bind(&Document::selectNone, m_doc, true));
 	connect(selectinvert, &QAction::triggered, m_doc, &Document::selectInvert);
 	connect(
 		selectlayerbounds, &QAction::triggered, m_doc,

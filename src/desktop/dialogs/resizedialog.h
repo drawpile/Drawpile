@@ -30,11 +30,12 @@ public:
 
 	void setBackgroundColor(const QColor &bgColor);
 	void setPreviewImage(const QImage &image);
-	void setBounds(const QRect &rect);
+	void setBounds(const QRect &rect, bool clamp);
 	void initialExpand(int expandDirection);
 
 	QSize newSize() const;
 	QPoint newOffset() const;
+	QRect newBounds() const;
 	ResizeVector resizeVector() const;
 
 public slots:

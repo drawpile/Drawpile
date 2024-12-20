@@ -33,6 +33,7 @@ Unreleased Version 2.2.2-pre
  * Server Feature: Show better messages when a session reset happens, specifying if it's compressing, reverting or replacing the canvas. Thanks MorrowShore for suggesting.
  * Feature: Reference image dock. Allows opening images in a separate dock and picking colors from them. Thanks 3rd_EFNO and leandro2222 for suggesting parts of this.
  * Fix: Make clicking and dragging fill and magic wand tools work at all zoom levels and drag speeds.
+ * Feature: Make the canvas resize dialog fit to a floating transform, if present. This allows you to paste an image larger than the canvas and then resize to fit. Thanks Meru for suggesting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

@@ -1342,10 +1342,10 @@ void Document::selectAll()
 	selectAllOp(DP_MSG_SELECTION_PUT_OP_REPLACE);
 }
 
-void Document::selectNone()
+void Document::selectNone(bool finishTransform)
 {
-	if(!m_toolctrl->transformTool()->handleDeselect() && m_canvas &&
-	   m_canvas->selection()->isValid()) {
+	if(!m_toolctrl->transformTool()->handleDeselect(finishTransform) &&
+	   m_canvas && m_canvas->selection()->isValid()) {
 		unsigned int contextId = m_client->myId();
 		net::Message msgs[] = {
 			net::makeUndoPointMessage(contextId),
@@ -1369,7 +1369,7 @@ void Document::selectLayerBounds()
 		QRect bounds =
 			m_canvas->paintEngine()->viewCanvasState().layerBounds(layerId);
 		if(bounds.isEmpty()) {
-			selectNone();
+			selectNone(true);
 		} else {
 			selectOp(DP_MSG_SELECTION_PUT_OP_REPLACE, bounds);
 		}
@@ -1384,7 +1384,7 @@ void Document::selectLayerContents()
 void Document::selectMask(const QImage &img, int x, int y)
 {
 	if(img.isNull()) {
-		selectNone();
+		selectNone(true);
 	} else {
 		selectOp(
 			DP_MSG_SELECTION_PUT_OP_REPLACE,
@@ -1400,7 +1400,7 @@ void Document::selectLayer(bool includeMask)
 			m_canvas->paintEngine()->viewCanvasState();
 		QRect bounds = canvasState.layerBounds(layerId);
 		if(bounds.isEmpty()) {
-			selectNone();
+			selectNone(true);
 		} else {
 			selectOp(
 				DP_MSG_SELECTION_PUT_OP_REPLACE, bounds,

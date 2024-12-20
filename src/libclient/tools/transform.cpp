@@ -212,16 +212,17 @@ void TransformTool::clearTemporary()
 	m_toolToReturnTo = Tool::Type::_LASTTOOL;
 }
 
-bool TransformTool::handleDeselect()
+bool TransformTool::handleDeselect(bool finish)
 {
 	canvas::TransformModel *transform = getActiveTransformModel();
 	if(transform) {
 		transform->setDeselectOnApply(true);
-		finishMultipart();
-		return true;
-	} else {
-		return false;
+		if(finish) {
+			finishMultipart();
+			return true;
+		}
 	}
+	return false;
 }
 
 void TransformTool::setMode(Mode mode)

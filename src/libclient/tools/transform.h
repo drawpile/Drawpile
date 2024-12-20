@@ -63,7 +63,7 @@ public:
 		Tool::Type toolToReturnTo, const QRect &srcBounds, const QImage &image);
 	void clearTemporary();
 
-	bool handleDeselect();
+	bool handleDeselect(bool finish);
 
 	void setMode(Mode mode);
 

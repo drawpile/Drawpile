@@ -285,7 +285,7 @@ public slots:
 	void redo();
 
 	void selectAll();
-	void selectNone();
+	void selectNone(bool finishTransform);
 	void selectInvert();
 	void selectLayerBounds();
 	void selectLayerContents();
