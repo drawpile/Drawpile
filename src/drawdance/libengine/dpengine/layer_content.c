@@ -1813,11 +1813,26 @@ static void fill_rect(DP_TransientLayerContent *tlc, unsigned int context_id,
     uint16_t opacity = pixel.a;
     bool blend_blank = can_blend_blank_pixel(blend_mode, opacity, pixel);
 
+    if (left < 0) {
+        left = 0;
+    }
+    if (top < 0) {
+        top = 0;
+    }
+    int width = tlc->width;
+    if (right >= width) {
+        right = width - 1;
+    }
+    int height = tlc->height;
+    if (bottom >= height) {
+        bottom = height - 1;
+    }
+
     int tx_min = left / DP_TILE_SIZE;
     int tx_max = (right - 1) / DP_TILE_SIZE;
     int ty_min = top / DP_TILE_SIZE;
     int ty_max = (bottom - 1) / DP_TILE_SIZE;
-    int xtiles = DP_tile_counts_round(tlc->width, tlc->height).x;
+    int xtiles = DP_tile_counts_round(width, height).x;
 
     for (int ty = ty_min; ty <= ty_max; ++ty) {
         int cy = ty * DP_TILE_SIZE;
