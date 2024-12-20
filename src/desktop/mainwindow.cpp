@@ -3589,17 +3589,17 @@ void MainWindow::selectTool(QAction *tool)
 {
 	// Note. Actions must be in the same order in the enum and the group
 	int idx = m_drawingtools->actions().indexOf(tool);
-	Q_ASSERT(idx>=0);
-	if(idx<0)
-		return;
-
-	if(m_dockToolSettings->currentTool() == idx) {
-		if(dpApp().settings().toolToggle())
-			m_dockToolSettings->setPreviousTool();
-		m_tempToolSwitchShortcut->reset();
-	} else {
-		m_dockToolSettings->setTool(tools::Tool::Type(idx));
-		m_toolChangeTime.start();
+	Q_ASSERT(idx >= 0);
+	Q_ASSERT(idx < int(tools::Tool::Type::_LASTTOOL));
+	if(idx >= 0 && idx < int(tools::Tool::Type::_LASTTOOL)) {
+		if(m_dockToolSettings->currentTool() == idx) {
+			if(dpApp().settings().toolToggle())
+				m_dockToolSettings->setPreviousTool();
+			m_tempToolSwitchShortcut->reset();
+		} else {
+			m_dockToolSettings->setTool(tools::Tool::Type(idx));
+			m_toolChangeTime.start();
+		}
 	}
 }
 
