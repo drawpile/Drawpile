@@ -2081,7 +2081,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+1"/>
         <source>Forever</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>계속</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -2181,7 +2181,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-1658"/>
         <source>Disconnected</source>
-        <translation type="unfinished"></translation>
+        <translation>연결 끊김</translation>
     </message>
     <message>
         <location line="+1"/>
