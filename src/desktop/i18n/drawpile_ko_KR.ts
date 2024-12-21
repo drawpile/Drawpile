@@ -1588,7 +1588,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+31"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>오류</translation>
     </message>
     <message>
         <location line="+454"/>
