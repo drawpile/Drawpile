@@ -1792,7 +1792,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Import Animation from &amp;Layers…</source>
-        <translation>&amp;레이어 로부터 애니메이션 불러오기…</translation>
+        <translation>&amp;레이어로부터 애니메이션 불러오기…</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1946,32 +1946,32 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Zoom Out From Center</source>
-        <translation type="unfinished"></translation>
+        <translation>중앙에서 축소</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation>확대 초기화</translation>
+        <translation>확대 &amp;초기화</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset Zoom At Center</source>
-        <translation type="unfinished"></translation>
+        <translation>중앙에서 확대 초기화</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Fit Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 &amp;맞추기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fit Canvas &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 %너비 맞추기</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Fit Canvas &amp;Height</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 &amp;높이 맞추기</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1981,47 +1981,47 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+8"/>
         <source>Rotate Canvas Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>시계 역방향으로 캔버스 회전</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Mirror Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 좌우 반전</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror the canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>수평으로 캔버스 좌우 반전</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>수평으로 캔버스 좌우 반전/세로 반전</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 세로 반전</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the canvas upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 위-아래 세로 반전</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>수직으로 캔버스 좌우 반전/세로 반전</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Hide From Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>커서에서 가리기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show &amp;Rulers</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;자 보이기</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2041,41 +2041,41 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+111"/>
         <source>Group View</source>
-        <translation type="unfinished"></translation>
+        <translation>그룹 표시</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show only the current parent layer group</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 상위 레이어 그룹만 표시</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Stay Time</source>
-        <translation type="unfinished"></translation>
+        <translation>지연 시간</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>1 Second</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1초</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>10 Seconds</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>10초</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Minute</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1분</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Hour</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1시간</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2086,7 +2086,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+41"/>
         <source>Clear Fill Source</source>
-        <translation type="unfinished"></translation>
+        <translation>채우기 원본 지우기</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2116,42 +2116,42 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+40"/>
         <source>Mirror the transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>수평으로 변형된 이미지 좌우 반전</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>수평으로 변형된 이미지 좌우 반전/세로 반전</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Flip the transformed image upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>위-아래로 변형된 이미지 세로 반전</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>mirror/flip transformed image vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>수직으로 변형된 이미지 좌우 반전/세로 반전</translation>
     </message>
     <message>
         <location line="+117"/>
         <source>Create Layers on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 키 프레임에 레이어 생성</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>다음 키 프레임에 레이어 생성</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>이전 키 프레임에 레이어 생성</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Create Layers on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>키 프레임에 레이어 생성</translation>
     </message>
     <message>
         <location line="-674"/>
@@ -2186,7 +2186,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>You&apos;ve been disconnected from the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>서버에서 연결이 끊어졌습니다.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2526,12 +2526,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation>키프레임을 현재 레이어로 설정</translation>
+        <translation>키 프레임을 현재 레이어로 설정</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Blank Key Frame</source>
-        <translation>빈 키프레임 설정</translation>
+        <translation>빈 키 프레임 설정</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7880,7 +7880,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Disconnected</source>
-        <translation type="unfinished"></translation>
+        <translation>연결 끊어짐</translation>
     </message>
     <message>
         <location line="+27"/>
