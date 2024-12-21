@@ -1757,12 +1757,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>&amp;Download Image…</source>
-        <translation>이미지 다운로드</translation>
+        <translation>이미지 &amp;다운로드…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Download Selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역 다운로드…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1782,17 +1782,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Export &amp;Animation…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;애니메이션 내보내기…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Import Animation &amp;Frames…</source>
-        <translation type="unfinished"></translation>
+        <translation>애니메이션 &amp;프레임 불러오기…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Import Animation from &amp;Layers…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;레이어 로부터 애니메이션 불러오기…</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1941,7 +1941,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+170"/>
         <source>Zoom In On Center</source>
-        <translation type="unfinished"></translation>
+        <translation>중앙으로 확대</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1951,7 +1951,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>확대 &amp;초기화</translation>
     </message>
     <message>
         <location line="+1"/>
