@@ -1131,7 +1131,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+13"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -1351,32 +1351,32 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+131"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>잘라내기, 붙여넣기, 채우기, 삭제 권한이 없습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to resize the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 크기 조정 권한이 없습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 배경 변경 권한이 없습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to create annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>어노테이션 생성 권한이 없습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to undo or redo.</source>
-        <translation type="unfinished"></translation>
+        <translation>실행 취소 또는 다시 실행 권한이 없습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>권한이 없습니다.</translation>
     </message>
     <message>
         <location line="+222"/>
@@ -1391,7 +1391,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+21"/>
         <source>Image saving failed</source>
-        <translation type="unfinished"></translation>
+        <translation>이미지 저장 실패</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1411,7 +1411,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Download complete, click on &quot;Save&quot; to save your file.</source>
-        <translation type="unfinished"></translation>
+        <translation>다운로드 완료, 파일을 저장하기 위해 &quot;Save&quot;를 클릭하세요.</translation>
     </message>
     <message>
         <location line="+67"/>
@@ -1477,7 +1477,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+22"/>
         <source>Error downloading profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>프로필 다운로드 중 오류가 발생했습니다.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1492,7 +1492,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+22"/>
         <source>Error downloading tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>타블렛 이벤트 로그 다운로드 중 오류가 발생했습니다.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1604,7 +1604,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+50"/>
         <source>Altering selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 영역 변경…</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -1675,12 +1675,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+22"/>
         <source>Cause Crash</source>
-        <translation type="unfinished"></translation>
+        <translation>크래시 원인</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Do you really want to crash Drawpile? This will terminate the program and you will lose any unsaved data!</source>
-        <translation type="unfinished"></translation>
+        <translation>정말 Drawpile를 크래시하시겠습니까? 저장되지 않은 데이터를 잃고 프로그램이 종료됩니다!</translation>
     </message>
     <message>
         <location line="+19"/>
