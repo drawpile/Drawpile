@@ -1951,7 +1951,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation>확대 &amp;초기화</translation>
+        <translation>확대 초기화</translation>
     </message>
     <message>
         <location line="+1"/>
