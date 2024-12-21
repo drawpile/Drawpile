@@ -4399,7 +4399,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+18"/>
         <source>Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>프레임</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6072,7 +6072,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/canvasshortcutsdialog.cpp" line="+24"/>
         <source>Key Combination</source>
-        <translation type="unfinished"></translation>
+        <translation>키 조합</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6082,7 +6082,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>마우스 휠</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6097,7 +6097,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 회전</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6129,7 +6129,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 크기 변경</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6295,7 +6295,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>알 수 없음</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -7369,7 +7369,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+9"/>
         <location line="+7"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>알 수 없음</translation>
     </message>
     <message>
         <location line="-22"/>
@@ -9250,12 +9250,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/brushpalettedock.cpp" line="+111"/>
         <source>Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>검색</translation>
     </message>
     <message>
         <location line="+548"/>
