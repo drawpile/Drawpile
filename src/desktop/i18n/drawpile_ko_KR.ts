@@ -83,7 +83,7 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+64"/>
         <source>Brush type</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 타입</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -574,12 +574,12 @@
     <message>
         <location line="-253"/>
         <source>Add Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>아바타 추가</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Import Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>애니메이션 프레임 불러오기</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -589,57 +589,57 @@
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation type="unfinished"></translation>
+        <translation>프레임 이미지</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Import Animation from Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어로부터 애니메이션 불러오기</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">레이어드 이미지</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 불러오기</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Error opening temporary file for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1에 대한 임시 파일을 여는 중 오류가 발생했습니다.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation>이미지 열기</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Set Brush Preset Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>브러시 프리셋 썸네일 설정</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Paste File</source>
-        <translation type="unfinished"></translation>
+        <translation>파일 붙여넣기</translation>
     </message>
     <message>
         <location line="+167"/>
         <source>Export Frames in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>ZIP으로 프레임 내보내기</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBM 동영상 내보내기</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>애니메이션 WEBP 내보내기</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -710,7 +710,7 @@
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+139"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>크기 제한: 제한 없음</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="-298"/>
@@ -756,63 +756,63 @@
         <location line="+18"/>
         <location line="+3"/>
         <source>Fill continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>연속 영역 채우기</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill all similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>모든 유사한 색 채우기</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill entire selection</source>
-        <translation type="unfinished"></translation>
+        <translation>모든 선택 영역 채우기</translation>
     </message>
     <message>
         <location line="+78"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+59"/>
         <source>Merged image</source>
-        <translation type="unfinished"></translation>
+        <translation>이미지 합치기</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+13"/>
         <source>Merged without background</source>
-        <translation type="unfinished"></translation>
+        <translation>배경을 제외하고 합치기</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+15"/>
         <source>Current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 레이어</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill source layer</source>
-        <translation type="unfinished"></translation>
+        <translation>채우기 원본 레이어</translation>
     </message>
     <message>
         <location line="+96"/>
         <location line="+3"/>
         <source>Apply the pending fill, making it visible for everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>모두가 볼 수 있도록 보류 중인 채우기를 적용하기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>적용하기</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation type="unfinished"></translation>
+        <translation>다른 사람에게 효과가 보이지 않도록 보류 중인 채우기를 취소하기</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -823,7 +823,7 @@
         <location line="-336"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-113"/>
         <source>Size Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>크기 제한: </translation>
     </message>
     <message>
         <location line="+279"/>
@@ -11332,7 +11332,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location filename="../widgets/viewstatus.cpp" line="+73"/>
         <source>Canvas Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 회전</translation>
     </message>
     <message>
         <location line="+43"/>
