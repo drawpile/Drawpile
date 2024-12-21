@@ -738,7 +738,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-2"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>불투명도: </translation>
     </message>
     <message>
         <location line="+174"/>
