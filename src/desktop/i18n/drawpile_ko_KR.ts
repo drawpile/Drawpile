@@ -823,7 +823,7 @@
         <location line="-336"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-113"/>
         <source>Size Limit: </source>
-        <translation>크기 제한: </translation>
+        <translation>크기 제한 </translation>
     </message>
     <message>
         <location line="+279"/>
@@ -1406,7 +1406,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+35"/>
         <source>Download Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>다운로드 완료</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1757,7 +1757,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>&amp;Download Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>이미지 다운로드</translation>
     </message>
     <message>
         <location line="+1"/>
