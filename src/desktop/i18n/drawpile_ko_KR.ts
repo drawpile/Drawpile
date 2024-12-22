@@ -4271,7 +4271,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>출력</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9773,7 +9773,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Operators</source>
-        <translation type="unfinished">관리자</translation>
+        <translation>관리자</translation>
     </message>
     <message>
         <location line="+1"/>
