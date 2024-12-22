@@ -2649,6 +2649,12 @@ extern "C" {
     pub fn DP_layer_content_height(lc: *mut DP_LayerContent) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn DP_layer_content_tile_at_index_noinc(
+        lc: *mut DP_LayerContent,
+        i: ::std::os::raw::c_int,
+    ) -> *mut DP_Tile;
+}
+extern "C" {
     pub fn DP_layer_content_tile_at_noinc(
         lc: *mut DP_LayerContent,
         x: ::std::os::raw::c_int,
@@ -2796,7 +2802,18 @@ extern "C" {
     ) -> *mut DP_TransientLayerContent;
 }
 extern "C" {
+    pub fn DP_layer_content_has_sublayers(lc: *mut DP_LayerContent) -> bool;
+}
+extern "C" {
     pub fn DP_layer_content_merge_sublayers(lc: *mut DP_LayerContent) -> *mut DP_LayerContent;
+}
+extern "C" {
+    pub fn DP_layer_content_flatten_tile(
+        lc: *mut DP_LayerContent,
+        tile_index: ::std::os::raw::c_int,
+        censored: bool,
+        include_sublayers: bool,
+    ) -> *mut DP_Tile;
 }
 extern "C" {
     pub fn DP_layer_content_flatten_tile_to(
@@ -2862,6 +2879,12 @@ extern "C" {
     pub fn DP_transient_layer_content_height(
         tlc: *mut DP_TransientLayerContent,
     ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_transient_layer_content_tile_at_index_noinc(
+        tlc: *mut DP_TransientLayerContent,
+        i: ::std::os::raw::c_int,
+    ) -> *mut DP_Tile;
 }
 extern "C" {
     pub fn DP_transient_layer_content_tile_at_noinc(
@@ -3148,6 +3171,14 @@ extern "C" {
         include_sublayers: bool,
         pass_through_censored: bool,
     );
+}
+extern "C" {
+    pub fn DP_layer_group_flatten_tile(
+        lg: *mut DP_LayerGroup,
+        lp: *mut DP_LayerProps,
+        tile_index: ::std::os::raw::c_int,
+        include_sublayers: bool,
+    ) -> *mut DP_TransientTile;
 }
 extern "C" {
     pub fn DP_layer_group_flatten_tile_to(
@@ -5989,6 +6020,10 @@ pub const DP_PLAYER_MINOR_INCOMPATIBILITY: DP_PlayerCompatibility = 1;
 pub const DP_PLAYER_BACKWARD_COMPATIBLE: DP_PlayerCompatibility = 2;
 pub const DP_PLAYER_INCOMPATIBLE: DP_PlayerCompatibility = 3;
 pub type DP_PlayerCompatibility = ::std::os::raw::c_uint;
+pub const DP_PLAYER_PASS_CLIENT_PLAYBACK: DP_PlayerPass = 0;
+pub const DP_PLAYER_PASS_FEATURE_ACCESS: DP_PlayerPass = 1;
+pub const DP_PLAYER_PASS_ALL: DP_PlayerPass = 2;
+pub type DP_PlayerPass = ::std::os::raw::c_uint;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct DP_PlayerIndexEntry {
@@ -6140,6 +6175,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_player_acl_override_set(player: *mut DP_Player, override_: bool);
+}
+extern "C" {
+    pub fn DP_player_pass_set(player: *mut DP_Player, pass: DP_PlayerPass);
 }
 extern "C" {
     pub fn DP_player_recording_path(player: *mut DP_Player) -> *const ::std::os::raw::c_char;

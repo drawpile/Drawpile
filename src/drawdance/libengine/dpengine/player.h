@@ -57,6 +57,16 @@ typedef enum DP_PlayerCompatibility {
     DP_PLAYER_INCOMPATIBLE,
 } DP_PlayerCompatibility;
 
+typedef enum DP_PlayerPass {
+    // Client playback, doesn't pass any server or control messages through, as
+    // well as excluding any messages that manipulate the ACL state.
+    DP_PLAYER_PASS_CLIENT_PLAYBACK,
+    // Also passes through feature access messages, for e.g. session templates.
+    DP_PLAYER_PASS_FEATURE_ACCESS,
+    // Passes everything through.
+    DP_PLAYER_PASS_ALL,
+} DP_PlayerPass;
+
 typedef struct DP_PlayerIndexEntry {
     long long message_index;
     size_t message_offset;
@@ -86,6 +96,8 @@ DP_PlayerCompatibility DP_player_compatibility(DP_Player *player);
 bool DP_player_compatible(DP_Player *player);
 
 void DP_player_acl_override_set(DP_Player *player, bool override);
+
+void DP_player_pass_set(DP_Player *player, DP_PlayerPass pass);
 
 const char *DP_player_recording_path(DP_Player *player);
 

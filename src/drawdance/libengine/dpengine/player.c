@@ -57,6 +57,7 @@ struct DP_Player {
     long long position;
     DP_ProtocolVersion *protover;
     bool acl_override;
+    unsigned char pass;
     bool input_error;
     bool end;
     DP_PlayerIndex index;
@@ -158,6 +159,7 @@ static DP_Player *make_player(DP_PlayerType type, char *recording_path,
                           0,
                           protover,
                           false,
+                          DP_PLAYER_PASS_CLIENT_PLAYBACK,
                           false,
                           false,
                           {DP_BUFFERED_INPUT_NULL, 0, NULL, 0}};
@@ -241,6 +243,7 @@ static DP_Player *new_debug_dump_player(DP_Input *input)
                           0,
                           NULL,
                           false,
+                          DP_PLAYER_PASS_CLIENT_PLAYBACK,
                           false,
                           false,
                           {DP_BUFFERED_INPUT_NULL, 0, NULL, 0}};
@@ -391,6 +394,12 @@ void DP_player_acl_override_set(DP_Player *player, bool override)
     player->acl_override = override;
 }
 
+void DP_player_pass_set(DP_Player *player, DP_PlayerPass pass)
+{
+    DP_ASSERT(player);
+    player->pass = (unsigned char)pass;
+}
+
 const char *DP_player_recording_path(DP_Player *player)
 {
     DP_ASSERT(player);
@@ -517,7 +526,8 @@ static DP_PlayerResult step_message(DP_Player *player, DP_Message **out_msg)
     return result;
 }
 
-static bool emit_message(DP_Message *msg, DP_Message **out_msg)
+static bool emit_message(DP_Message *msg, DP_Message **out_msg,
+                         unsigned char pass)
 {
     // When playing back a recording, we are a single user in offline mode, so
     // don't allow anything to escape that would mess up the real ACL state,
@@ -535,23 +545,41 @@ static bool emit_message(DP_Message *msg, DP_Message **out_msg)
     case DP_MSG_PRIVATE_CHAT:
     case DP_MSG_MARKER:
     case DP_MSG_USER_ACL:
-    case DP_MSG_FEATURE_ACCESS_LEVELS:
     case DP_MSG_DATA:
-        return false;
+        if (pass < (unsigned char)DP_PLAYER_PASS_ALL) {
+            return false;
+        }
+        else {
+            break;
+        }
+    // Feature access levels are relevant for session templates, so they have an
+    // extra pass-through level that allows them through.
+    case DP_MSG_FEATURE_ACCESS_LEVELS:
+        if (pass < (unsigned char)DP_PLAYER_PASS_FEATURE_ACCESS) {
+            return false;
+        }
+        else {
+            break;
+        }
     // Layer ACL messages have a tier, which we want to retain, and a user
     // component, which we do not. So extract the former and leave the latter.
-    case DP_MSG_LAYER_ACL: {
-        DP_MsgLayerAcl *mla = DP_message_internal(msg);
-        *out_msg = DP_msg_layer_acl_new(
-            DP_message_context_id(msg), DP_msg_layer_acl_id(mla),
-            DP_msg_layer_acl_flags(mla), NULL, 0, NULL);
-        DP_message_decref(msg);
-        return true;
-    }
+    case DP_MSG_LAYER_ACL:
+        if (pass < (unsigned char)DP_PLAYER_PASS_ALL) {
+            DP_MsgLayerAcl *mla = DP_message_internal(msg);
+            *out_msg = DP_msg_layer_acl_new(
+                DP_message_context_id(msg), DP_msg_layer_acl_id(mla),
+                DP_msg_layer_acl_flags(mla), NULL, 0, NULL);
+            DP_message_decref(msg);
+            return true;
+        }
+        else {
+            break;
+        }
     default:
-        *out_msg = msg;
-        return true;
+        break;
     }
+    *out_msg = msg;
+    return true;
 }
 
 static DP_PlayerResult step_valid_message(DP_Player *player,
@@ -570,7 +598,7 @@ static DP_PlayerResult step_valid_message(DP_Player *player,
                     DP_message_type_enum_name_unprefixed(DP_message_type(msg)),
                     DP_message_context_id(msg));
             }
-            else if (emit_message(msg, out_msg)) {
+            else if (emit_message(msg, out_msg, player->pass)) {
                 return result;
             }
             DP_message_decref(msg);
