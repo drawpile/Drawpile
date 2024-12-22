@@ -37,6 +37,7 @@ Unreleased Version 2.2.2-pre
  * Server Fix: Don't filter out feature access messages when loading session templates, so that permissions can actually get set properly from them.
  * Feature: Add --pass/-p option to dprectool, to allow configuring which messages are passed through when converting. The default is to pass all messages through, rather than just messages relevant for the client.
  * Server Feature: Treat invalid password and opword hashes in session templates as plain passwords. This still issues a warning, since those kinds of passwords should really be specified by prefixing them with "plain;".
+ * Server Fix: Make template sessions not appear with a blank title and settings when first joining them.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

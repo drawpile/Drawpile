@@ -19,6 +19,7 @@ ThinSession::ThinSession(
 	history->setSizeLimit(config->getConfigSize(config::SessionSizeLimit));
 	history->setAutoResetThreshold(
 		config->getConfigSize(config::AutoresetThreshold));
+	sendUpdatedSessionProperties();
 	resetLastStatusUpdate();
 	m_autoResetTimer->setTimerType(Qt::VeryCoarseTimer);
 	m_autoResetTimer->setInterval(AUTORESET_RESPONSE_DELAY_MSECS);
