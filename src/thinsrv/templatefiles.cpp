@@ -157,6 +157,7 @@ QJsonObject TemplateFiles::templateFileDescription(
 		{"hasPassword", !getHeaderString(header, "password").isEmpty()},
 		{"title", getHeaderString(header, "title")},
 		{"nsfm", getHeaderBool(header, "nsfm")},
+		{"authOnly", getHeaderBool(header, "authOnly")},
 		{"allowWeb", getHeaderBool(header, "allowWeb")},
 	};
 
@@ -239,6 +240,8 @@ bool TemplateFiles::init(SessionHistory *session) const
 		flags |= SessionHistory::PreserveChat;
 	if(getHeaderBool(header, "deputies"))
 		flags |= SessionHistory::Deputies;
+	if(getHeaderBool(header, "authOnly"))
+		flags |= SessionHistory::AuthOnly;
 	if(getHeaderBool(header, "idleOverride"))
 		flags |= SessionHistory::IdleOverride;
 	if(getHeaderBool(header, "allowWeb"))

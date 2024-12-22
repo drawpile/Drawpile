@@ -39,6 +39,7 @@ Unreleased Version 2.2.2-pre
  * Server Feature: Treat invalid password and opword hashes in session templates as plain passwords. This still issues a warning, since those kinds of passwords should really be specified by prefixing them with "plain;".
  * Server Fix: Make template sessions not appear with a blank title and settings when first joining them.
  * Server Fix: Properly include web socket allowance in template session listings.
+ * Server Feature: Allow authOnly option in session templates.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.
