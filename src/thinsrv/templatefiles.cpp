@@ -6,6 +6,7 @@ extern "C" {
 }
 #include "libserver/sessionhistory.h"
 #include "libshared/net/protover.h"
+#include "libshared/util/passwordhash.h"
 #include "libshared/util/validators.h"
 #include "thinsrv/templatefiles.h"
 #include <QFileSystemWatcher>
@@ -198,8 +199,29 @@ bool TemplateFiles::init(SessionHistory *session) const
 		protocol::ProtocolVersion::fromString(
 			getHeaderString(header, "version")) == session->protocolVersion());
 	session->setMaxUsers(getHeaderMaxUserCount(header));
-	session->setPasswordHash(getHeaderString(header, "password").toUtf8());
-	session->setOpwordHash(getHeaderString(header, "opword").toUtf8());
+
+	QByteArray password = getHeaderString(header, "password").toUtf8();
+	if(!password.isEmpty()) {
+		if(passwordhash::isValidHash(password)) {
+			session->setPasswordHash(password);
+		} else {
+			qWarning("Invalid password hash in template, assuming it's a plain "
+					 "password");
+			session->setPassword(password);
+		}
+	}
+
+	QByteArray opword = getHeaderString(header, "opword").toUtf8();
+	if(!opword.isEmpty()) {
+		if(passwordhash::isValidHash(opword)) {
+			session->setOpwordHash(opword);
+		} else {
+			qWarning("Invalid opword hash in template, assuming it's a plain "
+					 "password");
+			session->setOpword(opword);
+		}
+	}
+
 	session->setTitle(getHeaderString(header, "title"));
 
 	QString announce = getHeaderString(header, "announce");
