@@ -189,6 +189,7 @@ bool TemplateFiles::init(SessionHistory *session) const
 		return false;
 	}
 
+	DP_player_pass_set(player, DP_PLAYER_PASS_FEATURE_ACCESS);
 	JSON_Value *header_value = DP_player_header(player);
 	JSON_Object *header = json_value_get_object(header_value);
 
