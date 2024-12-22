@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use crate::{
     dp_error_anyhow, json_object_get_string, json_value_get_object, msg::Message, DP_Input,
-    DP_Message, DP_Player, DP_PlayerCompatibility, DP_PlayerType, DP_file_input_new_from_path,
-    DP_file_input_new_from_stdin, DP_player_acl_override_set, DP_player_compatibility,
-    DP_player_compatible, DP_player_free, DP_player_header, DP_player_new, DP_player_step,
-    DP_player_type, JSON_Value, DP_PLAYER_RECORDING_END, DP_PLAYER_SUCCESS,
+    DP_Message, DP_Player, DP_PlayerCompatibility, DP_PlayerPass, DP_PlayerType,
+    DP_file_input_new_from_path, DP_file_input_new_from_stdin, DP_player_acl_override_set,
+    DP_player_compatibility, DP_player_compatible, DP_player_free, DP_player_header, DP_player_new,
+    DP_player_pass_set, DP_player_step, DP_player_type, JSON_Value, DP_PLAYER_RECORDING_END,
+    DP_PLAYER_SUCCESS,
 };
 use anyhow::{anyhow, Result};
 use std::{
@@ -111,6 +112,10 @@ impl Player {
 
     pub fn set_acl_override(&mut self, acl_override: bool) {
         unsafe { DP_player_acl_override_set(self.player, acl_override) }
+    }
+
+    pub fn set_pass(&mut self, pass: DP_PlayerPass) {
+        unsafe { DP_player_pass_set(self.player, pass) }
     }
 
     pub fn step(&mut self) -> Result<Option<Message>> {

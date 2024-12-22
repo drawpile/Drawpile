@@ -4,8 +4,9 @@ use drawdance::{
     dp_cmake_config_version,
     engine::{Player, Recorder},
     msg::Message,
-    DP_MessageType, DP_PlayerType, DP_RecorderType, DP_PLAYER_BACKWARD_COMPATIBLE,
-    DP_PLAYER_COMPATIBLE, DP_PLAYER_MINOR_INCOMPATIBILITY, DP_PLAYER_TYPE_BINARY,
+    DP_MessageType, DP_PlayerPass, DP_PlayerType, DP_RecorderType, DP_PLAYER_BACKWARD_COMPATIBLE,
+    DP_PLAYER_COMPATIBLE, DP_PLAYER_MINOR_INCOMPATIBILITY, DP_PLAYER_PASS_ALL,
+    DP_PLAYER_PASS_CLIENT_PLAYBACK, DP_PLAYER_PASS_FEATURE_ACCESS, DP_PLAYER_TYPE_BINARY,
     DP_PLAYER_TYPE_GUESS, DP_PLAYER_TYPE_TEXT, DP_PROTOCOL_VERSION, DP_RECORDER_TYPE_BINARY,
     DP_RECORDER_TYPE_TEXT,
 };
@@ -117,6 +118,40 @@ impl FromStr for OutputFormat {
     }
 }
 
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default)]
+pub enum Pass {
+    #[default]
+    All,
+    Template,
+    Client,
+}
+
+impl Pass {
+    fn to_player_type(self) -> DP_PlayerPass {
+        match self {
+            Self::All => DP_PLAYER_PASS_ALL,
+            Self::Template => DP_PLAYER_PASS_FEATURE_ACCESS,
+            Self::Client => DP_PLAYER_PASS_CLIENT_PLAYBACK,
+        }
+    }
+}
+
+impl std::str::FromStr for Pass {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "all" => Ok(Self::All),
+            "template" => Ok(Self::Template),
+            "client" => Ok(Self::Client),
+            _ => Err(format!(
+                "invalid pass option, should be one of 'all', 'template' or \
+                'client'"
+            )),
+        }
+    }
+}
+
 #[no_mangle]
 pub extern "C" fn dprectool_main() -> c_int {
     drawdance::init();
@@ -138,6 +173,12 @@ pub extern "C" fn dprectool_main() -> c_int {
         /// that they didn't have permission to draw on. The Drawpile client
         /// would also filter these out when playing back a recording.
         optional -A,--acl
+        /// Specifies which messages are passed through when converting. One of
+        /// 'all' (the default) to pass through all messages, 'template' to pass
+        /// through only messages that are relevant for session templates and
+        /// 'client' to pass through only messages that are relevant for
+        /// playback in the client.
+        optional -p,--pass pass: Pass
         /// Print message frequency table and exit.
         optional --msg-freq
         /// Input recording file.
@@ -175,8 +216,9 @@ pub extern "C" fn dprectool_main() -> c_int {
     }
 
     let acl_override = !flags.acl;
+    let pass = flags.pass.unwrap_or_default();
     if flags.msg_freq {
-        return match print_message_frequency(input_format, input_path, acl_override) {
+        return match print_message_frequency(input_format, input_path, acl_override, pass) {
             Ok(_) => 0,
             Err(e) => {
                 eprintln!("{}", e);
@@ -204,6 +246,7 @@ pub extern "C" fn dprectool_main() -> c_int {
         output_path,
         output_path_is_default,
         acl_override,
+        pass,
     ) {
         Ok(_) => 0,
         Err(e) => {
@@ -251,9 +294,11 @@ fn print_message_frequency(
     input_format: InputFormat,
     input_path: String,
     acl_override: bool,
+    pass: Pass,
 ) -> Result<()> {
     let mut player = make_player(input_format, input_path).and_then(Player::check_compatible)?;
     player.set_acl_override(acl_override);
+    player.set_pass(pass.to_player_type());
 
     let mut total = MessageCount::default();
     let mut types: HashMap<DP_MessageType, MessageCount> = HashMap::new();
@@ -293,6 +338,7 @@ fn convert_recording(
     output_path: String,
     output_path_is_default: bool,
     acl_override: bool,
+    pass: Pass,
 ) -> Result<()> {
     let mut player = make_player(input_format, input_path).and_then(Player::check_compatible)?;
 
@@ -304,6 +350,7 @@ fn convert_recording(
     }?;
 
     player.set_acl_override(acl_override);
+    player.set_pass(pass.to_player_type());
     while let Some(msg) = player.step()? {
         if !recorder.push_noinc(msg) {
             break;

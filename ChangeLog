@@ -35,6 +35,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Make clicking and dragging fill and magic wand tools work at all zoom levels and drag speeds.
  * Feature: Make the canvas resize dialog fit to a floating transform, if present. This allows you to paste an image larger than the canvas and then resize to fit. Thanks Meru for suggesting.
  * Server Fix: Don't filter out feature access messages when loading session templates, so that permissions can actually get set properly from them.
+ * Feature: Add --pass/-p option to dprectool, to allow configuring which messages are passed through when converting. The default is to pass all messages through, rather than just messages relevant for the client.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.
