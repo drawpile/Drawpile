@@ -5,7 +5,6 @@
 #include <QDateTime>
 #include <QDir>
 #include <QHash>
-#include <QJsonObject>
 #include <QObject>
 
 class QFileSystemWatcher;
@@ -16,7 +15,7 @@ class TemplateFiles final : public QObject, public TemplateLoader {
 public:
 	explicit TemplateFiles(const QDir &dir, QObject *parent = nullptr);
 
-	QJsonArray templateDescriptions() const override;
+	QVector<QJsonObject> templateDescriptions() const override;
 	QJsonObject templateDescription(const QString &alias) const override;
 	bool exists(const QString &alias) const override;
 

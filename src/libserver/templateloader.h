@@ -2,9 +2,10 @@
 
 #ifndef DP_SERVER_TPLLOADER_H
 #define DP_SERVER_TPLLOADER_H
+#include <QJsonObject>
+#include <QVector>
 
 class QJsonArray;
-class QJsonObject;
 class QString;
 
 namespace server {
@@ -37,7 +38,7 @@ public:
 	 *   - id (templates are identified by alias only)
 	 *   - startTime (templates are not live sessions)
 	 */
-	virtual QJsonArray templateDescriptions() const = 0;
+	virtual QVector<QJsonObject> templateDescriptions() const = 0;
 
 	/**
 	 * @brief Get the description for a specific template

@@ -69,22 +69,32 @@ void SessionServer::loadNewSessions()
 QJsonArray SessionServer::sessionDescriptions() const
 {
 	QJsonArray descs;
-	QStringList aliases;
+	QSet<QString> aliases;
 
 	for(const Session *s : m_sessions) {
 		descs.append(s->getDescription());
 		if(!s->idAlias().isEmpty()) {
-			aliases.append(s->idAlias());
+			aliases.insert(s->idAlias());
 		}
 	}
 
-	if(templateLoader()) {
+	const TemplateLoader *loader = templateLoader();
+#ifdef HAVE_WEBSOCKETS
+	bool supportsWebSockets = m_config->internalConfig().webSocket;
+#else
+	bool supportsWebSockets = false;
+#endif
+	if(loader) {
 		// Add session templates to list, if not shadowed by live sessions
-		QJsonArray templates = templateLoader()->templateDescriptions();
-		for(const QJsonValue &v : templates) {
-			if(!aliases.contains(
-				   v.toObject().value(QStringLiteral("alias")).toString())) {
-				descs.append(v);
+		QVector<QJsonObject> templates = loader->templateDescriptions();
+		for(QJsonObject &o : templates) {
+			QString alias = o.value(QStringLiteral("alias")).toString();
+			if(!aliases.contains(alias)) {
+				aliases.insert(alias);
+				if(!supportsWebSockets) {
+					o.remove(QStringLiteral("allowWeb"));
+				}
+				descs.append(o);
 			}
 		}
 	}

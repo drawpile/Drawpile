@@ -57,15 +57,15 @@ void TemplateFiles::scanDirectory()
 	m_templates = templates;
 }
 
-QJsonArray TemplateFiles::templateDescriptions() const
+QVector<QJsonObject> TemplateFiles::templateDescriptions() const
 {
-	QJsonArray a;
+	QVector<QJsonObject> descriptions;
 	for(const Template &t : m_templates) {
-		if(!t.description.isEmpty())
-			a << t.description;
+		if(!t.description.isEmpty()) {
+			descriptions.append(t.description);
+		}
 	}
-
-	return a;
+	return descriptions;
 }
 
 QJsonObject TemplateFiles::templateDescription(const QString &alias) const
@@ -157,6 +157,7 @@ QJsonObject TemplateFiles::templateFileDescription(
 		{"hasPassword", !getHeaderString(header, "password").isEmpty()},
 		{"title", getHeaderString(header, "title")},
 		{"nsfm", getHeaderBool(header, "nsfm")},
+		{"allowWeb", getHeaderBool(header, "allowWeb")},
 	};
 
 	DP_player_free(player);
