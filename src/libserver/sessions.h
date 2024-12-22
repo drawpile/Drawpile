@@ -6,6 +6,7 @@
 #include <tuple>
 
 class QJsonArray;
+class QJsonObject;
 class QString;
 
 namespace protocol {
@@ -36,6 +37,16 @@ public:
 	 * @return session or nullptr if session was not active or couldn't be loaded
 	 */
 	virtual Session *getSessionById(const QString &id, bool loadTemplate) = 0;
+
+	/**
+	 * Get a session's description by a session ID or alias.
+	 *
+	 * @param idOrAlias A session ID, session alias or template alias.
+	 * @param loadTemplate Whether the session may be loaded from a template.
+	 * @return The session's description or an empty object if not found.
+	 */
+	virtual QJsonObject getSessionDescriptionByIdOrAlias(
+		const QString &idOrAlias, bool loadTemplate) = 0;
 
 	/**
 	 * Create a new session

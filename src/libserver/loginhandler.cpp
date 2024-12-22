@@ -302,9 +302,13 @@ void LoginHandler::handleLookupMessage(const net::ServerCommand &cmd)
 				QStringLiteral("Empty join lookup OK!"), QJsonObject());
 
 		} else {
-			Session *session =
-				m_sessions->getSessionById(sessionIdOrAlias, false);
-			if(!session) {
+			QJsonObject description =
+				m_sessions->getSessionDescriptionByIdOrAlias(
+					sessionIdOrAlias, true);
+			QString id;
+			if(description.isEmpty() ||
+			   (id = description.value(QStringLiteral("id")).toString())
+				   .isEmpty()) {
 				sendError(
 					"lookupFailed",
 					QStringLiteral(
@@ -312,9 +316,9 @@ void LoginHandler::handleLookupMessage(const net::ServerCommand &cmd)
 						"invite link has changed"));
 				return;
 			}
-			m_lookup = session->id();
+			m_lookup = id;
 			msg = net::ServerReply::makeResultJoinLookup(
-				QStringLiteral("Join lookup OK!"), session->getDescription());
+				QStringLiteral("Join lookup OK!"), description);
 		}
 
 	} else {

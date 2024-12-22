@@ -44,6 +44,9 @@ public:
 
 	Session *getSessionById(const QString &id, bool loadTemplate) override;
 
+	QJsonObject getSessionDescriptionByIdOrAlias(
+		const QString &idOrAlias, bool loadTemplate) override;
+
 	std::tuple<Session *, QString> createSession(
 		const QString &id, const QString &alias,
 		const protocol::ProtocolVersion &protocolVersion,
@@ -63,6 +66,7 @@ private slots:
 
 private:
 	ServerConfig *initConfig();
+	bool matchesSession(const QString &idOrAlias) const;
 
 	canvas::PaintEngine *m_paintEngine;
 	ServerConfig *m_config;

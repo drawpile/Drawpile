@@ -3,6 +3,7 @@
 #include "libserver/sessions.h"
 #include "libshared/net/protover.h"
 #include <QDir>
+#include <QHash>
 #include <QObject>
 
 namespace sessionlisting {
@@ -94,6 +95,9 @@ public:
 	 * @return session or null if not found
 	 */
 	Session *getSessionById(const QString &id, bool load) override;
+
+	QJsonObject getSessionDescriptionByIdOrAlias(
+		const QString &idOrAlias, bool loadTemplate) override;
 
 	/**
 	 * @brief Get the total number of connected users
@@ -190,6 +194,7 @@ private:
 
 	QList<Session *> m_sessions;
 	QList<ThinServerClient *> m_clients;
+	QHash<QString, QString> m_nextTemplateIds;
 };
 
 }

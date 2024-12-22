@@ -38,9 +38,15 @@ QJsonArray BuiltinServer::sessionDescriptions() const
 Session *BuiltinServer::getSessionById(const QString &id, bool loadTemplate)
 {
 	Q_UNUSED(loadTemplate);
-	bool matchesSession = !id.isEmpty() && m_session &&
-						  (m_session->id() == id || m_session->idAlias() == id);
-	return matchesSession ? m_session : nullptr;
+	return matchesSession(id) ? m_session : nullptr;
+}
+
+QJsonObject BuiltinServer::getSessionDescriptionByIdOrAlias(
+	const QString &idOrAlias, bool loadTemplate)
+{
+	Q_UNUSED(loadTemplate);
+	return matchesSession(idOrAlias) ? m_session->getDescription()
+									 : QJsonObject();
 }
 
 std::tuple<Session *, QString> BuiltinServer::createSession(
@@ -167,4 +173,11 @@ ServerConfig *BuiltinServer::initConfig()
 	config->setConfigInt(config::SessionCountLimit, 1);
 	return config;
 }
+
+bool BuiltinServer::matchesSession(const QString &idOrAlias) const
+{
+	return !idOrAlias.isEmpty() && m_session &&
+		   (m_session->id() == idOrAlias || m_session->idAlias() == idOrAlias);
+}
+
 }

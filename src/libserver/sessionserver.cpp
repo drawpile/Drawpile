@@ -173,8 +173,13 @@ Session *SessionServer::createFromTemplate(const QString &idAlias)
 		return nullptr;
 	}
 
+	QString id = m_nextTemplateIds.take(idAlias);
+	if(id.isEmpty()) {
+		id = Ulid::make().toString();
+	}
+
 	SessionHistory *history = initHistory(
-		Ulid::make().toString(), idAlias,
+		id, idAlias,
 		protocol::ProtocolVersion::fromString(
 			desc[QStringLiteral("protocol")].toString()),
 		desc[QStringLiteral("founder")].toString());
@@ -226,11 +231,57 @@ Session *SessionServer::getSessionById(const QString &id, bool load)
 		}
 	}
 
-	if(load && templateLoader() && templateLoader()->exists(id)) {
-		return createFromTemplate(id);
+	if(load) {
+		const TemplateLoader *loader = templateLoader();
+		if(loader) {
+			if(loader->exists(id)) {
+				return createFromTemplate(id);
+			} else {
+				for(QHash<QString, QString>::key_value_iterator
+						it = m_nextTemplateIds.keyValueBegin(),
+						end = m_nextTemplateIds.keyValueEnd();
+					it != end; ++it) {
+					if(it->second == id) {
+						QString alias = it->first;
+						if(loader->exists(alias)) {
+							return createFromTemplate(alias);
+						} else {
+							m_nextTemplateIds.remove(alias);
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	return nullptr;
+}
+
+QJsonObject SessionServer::getSessionDescriptionByIdOrAlias(
+	const QString &idOrAlias, bool loadTemplate)
+{
+	for(Session *s : m_sessions) {
+		if(s->id() == idOrAlias || s->idAlias() == idOrAlias) {
+			return s->getDescription();
+		}
+	}
+
+	if(loadTemplate) {
+		const TemplateLoader *loader = templateLoader();
+		if(loader && loader->exists(idOrAlias)) {
+			QString id = m_nextTemplateIds.value(idOrAlias);
+			if(id.isEmpty()) {
+				id = Ulid::make().toString();
+				m_nextTemplateIds.insert(idOrAlias, id);
+			}
+			QJsonObject description = loader->templateDescription(idOrAlias);
+			description.insert(QStringLiteral("id"), id);
+			return description;
+		}
+	}
+
+	return QJsonObject();
 }
 
 void SessionServer::stopAll()
