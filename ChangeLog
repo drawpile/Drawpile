@@ -42,6 +42,7 @@ Unreleased Version 2.2.2-pre
  * Server Feature: Allow authOnly option in session templates.
  * Server Fix: Allow joining a non-instantiated templated session via a direct link to its alias, rather than telling the user that the session isn't up.
  * Server Fix: Properly start recordings for sessions instantiated from a template.
+ * Fix: Try to retain dock arrangements after resizing the window, the Windows on-screen keyboard squashing the application or rotating a device/monitor. They should no longer remain squished to a smaller size after resizing the window back. Thanks vipperz for reporting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

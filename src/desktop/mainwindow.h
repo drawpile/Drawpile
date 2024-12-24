@@ -388,6 +388,9 @@ private:
 	void switchInterfaceMode(bool smallScreenMode);
 	bool shouldShowDialogMaximized() const;
 
+	void startIntendedDockStateDebounce();
+	void updateIntendedDockState();
+	void restoreIntendedDockState();
 	void startRefitWindowDebounce();
 	void refitWindow();
 
@@ -402,6 +405,7 @@ private:
 
 	QTimer m_saveWindowDebounce;
 	QTimer m_saveSplitterDebounce;
+	QTimer m_intendedDockStateDebounce;
 #ifdef SINGLE_MAIN_WINDOW
 	QTimer m_refitWindowDebounce;
 	bool m_refitting = false;
@@ -429,6 +433,7 @@ private:
 	QWidget *m_smallScreenSpacer;
 	QAction *m_freehandAction;
 	QToolButton *m_freehandButton;
+	QByteArray m_intendedDockState;
 	QByteArray m_hiddenDockState;
 	widgets::ChatBox *m_chatbox;
 	widgets::DualColorButton *m_dualColorButton;
@@ -487,6 +492,7 @@ private:
 	bool m_initialCatchup;
 	bool m_toolStateNormal;
 	bool m_dockTabUpdatePending = false;
+	bool m_updatingDockState = false;
 
 	Document *m_doc;
 	MainActions *m_ma;

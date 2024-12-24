@@ -203,8 +203,10 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 
 	m_saveSplitterDebounce.setSingleShot(true);
 	m_saveWindowDebounce.setSingleShot(true);
+	m_intendedDockStateDebounce.setSingleShot(true);
 	m_saveSplitterDebounce.setInterval(DEBOUNCE_MS);
 	m_saveWindowDebounce.setInterval(DEBOUNCE_MS);
+	m_intendedDockStateDebounce.setInterval(DEBOUNCE_MS);
 #ifdef SINGLE_MAIN_WINDOW
 	m_refitWindowDebounce.setSingleShot(true);
 	m_refitWindowDebounce.setInterval(DEBOUNCE_MS);
@@ -557,6 +559,11 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		this, &MainWindow::dockTabUpdateRequested, this,
 		&MainWindow::updateDockTabs, Qt::QueuedConnection);
 	emit dockTabUpdateRequested();
+
+	connect(
+		&m_intendedDockStateDebounce, &QTimer::timeout, this,
+		&MainWindow::updateIntendedDockState);
+	QTimer::singleShot(DEBOUNCE_MS, this, &MainWindow::updateIntendedDockState);
 }
 
 MainWindow::~MainWindow()
@@ -1230,6 +1237,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 	case QEvent::Resize:
 	case QEvent::Close:
 		m_saveWindowDebounce.start();
+		startIntendedDockStateDebounce();
 		startRefitWindowDebounce();
 		break;
 	case QEvent::Shortcut: {
@@ -1451,8 +1459,10 @@ void MainWindow::fillAreaWithBlendMode(int blendMode)
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
+	QScopedValueRollback<bool> rollback(m_updatingDockState, true);
 	QMainWindow::resizeEvent(event);
 	updateInterfaceMode();
+	restoreIntendedDockState();
 }
 // clang-format off
 
@@ -4055,6 +4065,9 @@ void MainWindow::showLayoutsDialog()
 				dlg, &dialogs::LayoutsDialog::applyState,
 				[this](const QByteArray &state) {
 					if(!m_smallScreenMode) {
+						QScopedValueRollback<bool> rollback(
+							m_updatingDockState, true);
+						m_intendedDockState = state;
 						for(const docks::DockBase *dw :
 							findChildren<const docks::DockBase *>(
 								QString(), Qt::FindDirectChildrenOnly)) {
@@ -6435,6 +6448,34 @@ bool MainWindow::shouldShowDialogMaximized() const
 #else
 	return m_smallScreenMode && isMaximized();
 #endif
+}
+
+void MainWindow::startIntendedDockStateDebounce()
+{
+	if(!m_updatingDockState && !m_smallScreenMode &&
+	   m_hiddenDockState.isEmpty()) {
+		m_intendedDockStateDebounce.start();
+	} else {
+		m_intendedDockStateDebounce.stop();
+	}
+}
+
+void MainWindow::updateIntendedDockState()
+{
+	m_intendedDockStateDebounce.stop();
+	if(!m_updatingDockState && !m_smallScreenMode &&
+	   m_hiddenDockState.isEmpty()) {
+		m_intendedDockState = saveState();
+	}
+}
+
+void MainWindow::restoreIntendedDockState()
+{
+	Q_ASSERT(m_updatingDockState);
+	if(!m_smallScreenMode && m_hiddenDockState.isEmpty() &&
+	   !m_intendedDockState.isEmpty()) {
+		restoreState(m_intendedDockState);
+	}
 }
 
 void MainWindow::startRefitWindowDebounce()
