@@ -1155,6 +1155,7 @@ void MainWindow::restoreSettings(const desktop::settings::Settings &settings)
 {
 	// Restore dock, toolbar and view states
 	if(const auto lastWindowState = settings.lastWindowState(); !lastWindowState.isEmpty()) {
+		deactivateAllDocks();
 		restoreState(settings.lastWindowState());
 	} else {
 		initDefaultDocks();
@@ -4068,14 +4069,7 @@ void MainWindow::showLayoutsDialog()
 						QScopedValueRollback<bool> rollback(
 							m_updatingDockState, true);
 						m_intendedDockState = state;
-						for(const docks::DockBase *dw :
-							findChildren<const docks::DockBase *>(
-								QString(), Qt::FindDirectChildrenOnly)) {
-							QAction *action = dw->toggleViewAction();
-							if(action->isChecked()) {
-								action->trigger();
-							}
-						}
+						deactivateAllDocks();
 						restoreState(state);
 						refitWindow();
 					}
@@ -6497,6 +6491,17 @@ void MainWindow::refitWindow()
 		resize(compat::widgetScreen(*this)->availableSize());
 	}
 #endif
+}
+
+void MainWindow::deactivateAllDocks()
+{
+	for(const docks::DockBase *dw : findChildren<const docks::DockBase *>(
+			QString(), Qt::FindDirectChildrenOnly)) {
+		QAction *action = dw->toggleViewAction();
+		if(action->isChecked()) {
+			action->trigger();
+		}
+	}
 }
 
 void MainWindow::prepareDockTabUpdate()

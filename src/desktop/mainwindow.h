@@ -394,6 +394,7 @@ private:
 	void startRefitWindowDebounce();
 	void refitWindow();
 
+	void deactivateAllDocks();
 	void prepareDockTabUpdate();
 	void updateDockTabs();
 
