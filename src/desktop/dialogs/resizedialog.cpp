@@ -24,15 +24,20 @@ ResizeDialog::ResizeDialog(
 	m_ui->resizer->setOriginalSize(oldsize);
 	m_ui->resizer->setTargetSize(oldsize);
 
-	std::tuple<QToolButton *, const QAction *, QString> buttonActions[] = {
-		{m_ui->expandUp, expandUpAction, tr("Expand up")},
-		{m_ui->expandLeft, expandLeftAction, tr("Expand left")},
-		{m_ui->expandRight, expandRightAction, tr("Expand right")},
-		{m_ui->expandDown, expandDownAction, tr("Expand down")},
-	};
-	for(const auto &[button, action, text] : buttonActions) {
+	std::tuple<QToolButton *, const QAction *, QIcon, QString> buttonActions[] =
+		{
+			{m_ui->expandUp, expandUpAction,
+			 QIcon::fromTheme("drawpile_expandup"), tr("Expand up")},
+			{m_ui->expandLeft, expandLeftAction,
+			 QIcon::fromTheme("drawpile_expandleft"), tr("Expand left")},
+			{m_ui->expandRight, expandRightAction,
+			 QIcon::fromTheme("drawpile_expandright"), tr("Expand right")},
+			{m_ui->expandDown, expandDownAction,
+			 QIcon::fromTheme("drawpile_expanddown"), tr("Expand down")},
+		};
+	for(const auto &[button, action, icon, text] : buttonActions) {
 		m_ui->grid->setAlignment(button, Qt::AlignCenter);
-		QAction *buttonAction = new QAction(action->icon(), text, this);
+		QAction *buttonAction = new QAction(icon, text, this);
 		buttonAction->setToolTip(
 			utils::makeActionShortcutText(action->text(), action->shortcut()));
 		buttonAction->setShortcuts(action->shortcuts());
