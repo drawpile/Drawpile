@@ -547,6 +547,14 @@ int Session::activeDrawingUserCount(qint64 ms) const
 	return count;
 }
 
+void Session::setRecordingFile(const QString &filename)
+{
+	m_recordingFile = filename;
+	if(m_state == State::Running && !m_recorder && !m_recordingFile.isEmpty()) {
+		restartRecording();
+	}
+}
+
 bool Session::isClosed() const
 {
 	return m_closed || userCount() >= m_history->maxUsers() ||

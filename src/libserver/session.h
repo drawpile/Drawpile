@@ -85,13 +85,13 @@ public:
 	/**
 	 * @brief Set the name of the recording file to create
 	 *
-	 * The recording will be created after a snapshot point has been created.
+	 * Recording will start immediately if the session is in a running state and
+	 * no other recording is already running. Otherwise it will start after the
+	 * next reset.
+	 *
 	 * @param filename path to output file
 	 */
-	void setRecordingFile(const QString &filename)
-	{
-		m_recordingFile = filename;
-	}
+	void setRecordingFile(const QString &filename);
 
 	/**
 	 * @brief Is the session closed to new users?
