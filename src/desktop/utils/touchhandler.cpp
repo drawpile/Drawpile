@@ -235,11 +235,15 @@ void TouchHandler::handleTouchUpdate(
 	} else {
 		m_touchMode = TouchMode::Moving;
 
-		QPointF startCenter, lastCenter;
+		QPointF startCenter, deltaCenter;
 		for(const compat::TouchPoint &tp : compat::touchPoints(*event)) {
 			QPointF startPos = compat::touchStartPos(tp);
 			startCenter += startPos;
-			lastCenter += compat::touchLastPos(tp);
+			// On some Android devices, stationary points during multitouch
+			// report garbage values for their last points. So we ignore those.
+			if(!compat::touchIsStationary(tp)) {
+				deltaCenter += compat::touchLastPos(tp) - compat::touchPos(tp);
+			}
 			// This might be a tap gesture. Don't start a drag until there's
 			// been sufficient movement on any of the fingers.
 			if(!m_touchDragging &&
@@ -261,7 +265,7 @@ void TouchHandler::handleTouchUpdate(
 
 		m_tapAndHoldTimer->stop();
 		startCenter /= pointsCount;
-		lastCenter /= pointsCount;
+		deltaCenter /= pointsCount;
 		QPointF center = m_touchPos;
 
 		DP_EVENT_LOG(
@@ -290,11 +294,9 @@ void TouchHandler::handleTouchUpdate(
 		bool havePan = havePinchOrTwist ||
 					   (isTouchDrawOrPanEnabled() &&
 						(haveMultiTouch || !compat::isTouchPad(event)));
-		if(havePan) {
+		if(havePan && !deltaCenter.isNull()) {
 			m_touching = true;
-			qreal dx = center.x() - lastCenter.x();
-			qreal dy = center.y() - lastCenter.y();
-			emit touchScrolledBy(-dx, -dy);
+			emit touchScrolledBy(deltaCenter.x(), deltaCenter.y());
 		}
 
 		// Scaling and rotation with two fingers

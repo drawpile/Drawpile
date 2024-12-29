@@ -174,6 +174,11 @@ inline auto touchPos(const QEventPoint &event)
 	return event.position();
 }
 
+inline bool touchIsStationary(const QEventPoint &event)
+{
+	return event.state() == QEventPoint::Stationary;
+}
+
 inline auto dragMovePos(const QDragMoveEvent &event)
 {
 	return event.position().toPoint();
@@ -280,6 +285,11 @@ inline auto touchLastPos(const QTouchEvent::TouchPoint &event)
 inline auto touchPos(const QTouchEvent::TouchPoint &event)
 {
 	return event.pos();
+}
+
+inline bool touchIsStationary(const QTouchEvent::TouchPoint &event)
+{
+	return event.state() == Qt::TouchPointStationary;
 }
 
 inline auto dragMovePos(const QDragMoveEvent &event)
