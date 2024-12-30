@@ -1410,58 +1410,6 @@ DP_CanvasState *DP_ops_annotation_delete(DP_CanvasState *cs, int annotation_id)
 }
 
 
-/*
-DP_CanvasStateChange DP_ops_draw_dabs(DP_CanvasState *cs, int sublayer_id,
-                                      int sublayer_blend_mode,
-                                      int sublayer_opacity,
-                                      DP_PaintDrawDabsParams *params)
-{
-    DP_ASSERT(params);
-    DP_ASSERT(sublayer_id >= 0);
-    DP_ASSERT(sublayer_id == 0 || sublayer_blend_mode >= 0);
-    DP_ASSERT(sublayer_id == 0 || sublayer_blend_mode < DP_BLEND_MODE_COUNT);
-    DP_ASSERT(sublayer_id == 0 || sublayer_opacity >= 0);
-    DP_ASSERT(sublayer_id == 0 || sublayer_opacity <= DP_BIT15);
-
-    DP_DrawContext *dc = params->draw_context;
-    if (!search_layer("Draw dabs", cs, params->draw_context, 1,
-                      params->layer_id, ALLOW_LAYERS, NULL)) {
-        return DP_canvas_state_change_null();
-    }
-
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-    DP_TransientLayerContent *tlc = get_transient_content(tcs, dc, 1);
-
-    DP_TransientLayerContent *target;
-    if (sublayer_id == 0) {
-        target = tlc;
-    }
-    else {
-        DP_LayerPropsList *lpl =
-            DP_transient_layer_content_sub_props_noinc(tlc);
-        int sublayer_index = DP_layer_props_list_index_by_id(lpl, sublayer_id);
-        if (sublayer_index < 0) {
-            DP_TransientLayerProps *tlp;
-            DP_transient_layer_content_list_transient_sublayer(tlc, sublayer_id,
-                                                               &target, &tlp);
-            // Only set these once, when the sublayer is created. They should
-            // always be the same values for a single sublayer anyway.
-            DP_transient_layer_props_blend_mode_set(tlp, sublayer_blend_mode);
-            DP_transient_layer_props_opacity_set(
-                tlp, DP_int_to_uint16(sublayer_opacity));
-        }
-        else {
-            DP_transient_layer_content_list_transient_sublayer_at(
-                tlc, sublayer_index, &target, NULL);
-        }
-    }
-
-    DP_UserCursor uc = DP_paint_draw_dabs(params, target);
-
-    return (DP_CanvasStateChange){DP_transient_canvas_state_persist(tcs), uc};
-}
-*/
-
 DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
                                  DP_UserCursors *ucs_or_null,
                                  bool (*next)(void *, DP_PaintDrawDabsParams *),
