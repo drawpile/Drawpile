@@ -2197,7 +2197,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Mirror Canvas</source>
-        <translation>キャンバスをミラー</translation>
+        <translation>キャンバスを左右反転</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2212,7 +2212,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Flip Canvas</source>
-        <translation>キャンバスを反転</translation>
+        <translation>キャンバスを上下反転</translation>
     </message>
     <message>
         <location line="+2"/>
