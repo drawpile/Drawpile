@@ -1424,6 +1424,12 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
     DP_TransientLayerContent *sub_tlc = NULL;
     int last_layer_id = -1;
     int last_sublayer_id = -1;
+    int errors = 0;
+    enum {
+        DP_DRAW_DABS_ERROR_BLEND_MODE,
+        DP_DRAW_DABS_ERROR_LAYER_ID,
+    } last_error_type;
+    int last_error_arg;
 
     DP_PaintDrawDabsParams params;
     while (next(user, &params)) {
@@ -1433,6 +1439,9 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
 
         int blend_mode = params.blend_mode;
         if (!DP_blend_mode_valid_for_brush(blend_mode)) {
+            ++errors;
+            last_error_type = DP_DRAW_DABS_ERROR_BLEND_MODE;
+            last_error_arg = blend_mode;
             DP_debug("Draw dabs: blend mode %s not applicable to brushes",
                      DP_blend_mode_enum_name_unprefixed(blend_mode));
             continue;
@@ -1450,6 +1459,9 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
                 tlc = DP_layer_routes_entry_transient_content(lre, tcs);
             }
             else {
+                ++errors;
+                last_error_type = DP_DRAW_DABS_ERROR_LAYER_ID;
+                last_error_arg = layer_id;
                 DP_debug("Draw dabs: bad layer id %d", layer_id);
                 continue;
             }
@@ -1490,6 +1502,35 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
         }
 
         DP_paint_draw_dabs(dc, ucs_or_null, &params, target);
+    }
+
+    switch (errors) {
+    case 0:
+        break;
+    case 1:
+        switch (last_error_type) {
+        case DP_DRAW_DABS_ERROR_BLEND_MODE:
+            DP_error_set("Draw dabs: blend mode %s not applicable to brushes",
+                         DP_blend_mode_enum_name_unprefixed(last_error_arg));
+            break;
+        case DP_DRAW_DABS_ERROR_LAYER_ID:
+            DP_error_set("Draw dabs: bad layer id %d", last_error_arg);
+            break;
+        }
+        break;
+    default:
+        switch (last_error_type) {
+        case DP_DRAW_DABS_ERROR_BLEND_MODE:
+            DP_error_set("Draw dabs: %d errors, last one is: blend mode %s not "
+                         "applicable to brushes",
+                         errors,
+                         DP_blend_mode_enum_name_unprefixed(last_error_arg));
+            break;
+        case DP_DRAW_DABS_ERROR_LAYER_ID:
+            DP_error_set("Draw dabs: %d errors, last one is: bad layer id %d",
+                         errors, last_error_arg);
+            break;
+        }
     }
 
     return tcs ? DP_transient_canvas_state_persist(tcs) : NULL;
