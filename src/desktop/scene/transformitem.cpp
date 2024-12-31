@@ -95,7 +95,7 @@ void TransformItem::paint(
 		painter->setOpacity(m_dragging ? 0.5 : 1.0);
 		painter->drawPolygon(m_quad.polygon());
 
-		if(!m_dragging) {
+		if(!m_dragging && m_mode != int(tools::TransformTool::Mode::Move)) {
 			if(!m_valid) {
 				pen.setColor(Qt::white);
 				painter->setPen(pen);

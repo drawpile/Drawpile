@@ -72,6 +72,7 @@ private:
 	void updateEnabled();
 	void updateEnabledFrom(canvas::CanvasModel *canvas);
 	void updateHandles(int mode);
+	void showHandles();
 
 	void updateBlendMode(int index);
 	void selectBlendMode(int blendMode);
@@ -92,6 +93,7 @@ private:
 	widgets::GroupedToolButton *m_accurateButton = nullptr;
 	widgets::GroupedToolButton *m_pseudoFastButton = nullptr;
 	QButtonGroup *m_interpolationGroup = nullptr;
+	widgets::GroupedToolButton *m_showHandlesButton = nullptr;
 	widgets::GroupedToolButton *m_scaleButton = nullptr;
 	widgets::GroupedToolButton *m_distortButton = nullptr;
 	QButtonGroup *m_handlesGroup = nullptr;
@@ -100,6 +102,7 @@ private:
 	QPushButton *m_applyButton = nullptr;
 	QPushButton *m_cancelButton = nullptr;
 	view::CanvasWrapper *m_canvasView = nullptr;
+	bool m_handleButtonsVisible = true;
 };
 
 }

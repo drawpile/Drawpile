@@ -151,7 +151,8 @@ signals:
 
 private:
 	void selectTool(tools::Tool::Type tool);
-	void startTransformMove(bool onlyMask);
+	void startSelection(int type);
+	void startTransformMove(bool onlyMask, bool startMove, bool quickMove);
 	void clearTemporaryTransform();
 	void quickAdjustCurrent1(qreal adjustment);
 	void requestColorAdjustment(int channel, qreal adjustment, qreal max);

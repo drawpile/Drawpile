@@ -10,20 +10,32 @@ namespace tools {
 
 SelectionTool::SelectionTool(ToolController &owner, Type type, QCursor cursor)
 	: Tool(owner, type, cursor, true, false, false, true, false, false)
+	, m_originalCursor(cursor)
 {
 }
 
 void SelectionTool::begin(const BeginParams &params)
 {
 	m_clickDetector.begin(params.viewPos, params.deviceType);
+	m_zoom = params.zoom;
+	bool atEdge;
 	if(params.right) {
 		m_op = -1;
+	} else if(
+		!m_forceSelect && !params.constrain && !params.center && quickDrag() &&
+		(isInsideSelection(params.point, &atEdge) || atEdge)) {
+		m_op = -1;
+		m_startPoint = params.point;
+		m_lastPoint = params.point;
+		m_owner.requestTransformMove(params, atEdge, true);
 	} else {
 		m_params = m_owner.selectionParams();
 		m_op = resolveOp(params.constrain, params.center, defaultOp());
 		m_startPoint = params.point;
+		m_lastPoint = params.point;
 		beginSelection(params.point);
 	}
+	setCursor(m_originalCursor);
 }
 
 void SelectionTool::motion(const MotionParams &params)
@@ -31,14 +43,22 @@ void SelectionTool::motion(const MotionParams &params)
 	m_clickDetector.motion(params.viewPos);
 	if(m_op != -1) {
 		m_op = resolveOp(params.constrain, params.center, defaultOp());
+		m_lastPoint = params.point;
 		continueSelection(params.point);
 	}
+}
+
+void SelectionTool::hover(const HoverParams &params)
+{
+	m_zoom = params.zoom;
+	updateCursor(params.point);
 }
 
 void SelectionTool::end(const EndParams &params)
 {
 	if(m_op != -1) {
 		m_op = resolveOp(params.constrain, params.center, defaultOp());
+		updateCursor(m_lastPoint);
 	}
 	endSelection(true, params.center);
 }
@@ -95,6 +115,12 @@ int SelectionTool::resolveOp(bool constrain, bool center, int defaultOp)
 	return op == defaultOp ? DP_MSG_SELECTION_PUT_OP_REPLACE : op;
 }
 
+bool SelectionTool::quickDrag() const
+{
+	return m_owner.selectionParams().dragMode !=
+		   int(ToolController::SelectionDragMode::Select);
+}
+
 void SelectionTool::updateSelectionPreview(const QPainterPath &path) const
 {
 	emit m_owner.pathPreviewRequested(path);
@@ -105,14 +131,28 @@ void SelectionTool::removeSelectionPreview() const
 	updateSelectionPreview(QPainterPath());
 }
 
+void SelectionTool::updateCursor(const QPointF &point)
+{
+	bool atEdge;
+	if(m_op == -1 && quickDrag() &&
+	   (isInsideSelection(point, &atEdge) || atEdge)) {
+		setCursor(atEdge ? m_moveMaskCursor : m_moveContentCursor);
+	} else {
+		setCursor(m_originalCursor);
+	}
+}
+
 void SelectionTool::endSelection(bool click, bool onlyMask)
 {
 	m_clickDetector.end();
 	if(m_op != -1) {
 		bool isClick = click && m_clickDetector.isClick();
-		if(isClick && isInsideSelection(startPoint())) {
+		bool atEdge = false;
+		if(isClick &&
+		   (quickDrag() ? isInsideSelection(startPoint(), &atEdge) || atEdge
+						: isInsideSelection(startPoint()))) {
 			cancelSelection();
-			emit m_owner.transformRequested(onlyMask);
+			emit m_owner.transformRequested(onlyMask || atEdge, false, false);
 		} else {
 			net::Client *client = m_owner.client();
 			uint8_t contextId = client->myId();
@@ -135,7 +175,7 @@ net::MessageList SelectionTool::endDeselection(uint8_t contextId)
 		contextId, canvas::CanvasModel::MAIN_SELECTION_ID)};
 }
 
-bool SelectionTool::isInsideSelection(const QPointF &point) const
+bool SelectionTool::isInsideSelection(const QPointF &point, bool *atEdge) const
 {
 	canvas::CanvasModel *canvas = m_owner.model();
 	if(canvas) {
@@ -143,9 +183,30 @@ bool SelectionTool::isInsideSelection(const QPointF &point) const
 		if(selection->isValid()) {
 			QPoint p = point.toPoint();
 			const QRect &bounds = selection->bounds();
-			return bounds.contains(p) &&
-				   qAlpha(selection->mask().pixel(p - bounds.topLeft())) != 0;
+			const QImage &mask = selection->mask();
+			bool inside = bounds.contains(p) &&
+						  qAlpha(mask.pixel(p - bounds.topLeft())) != 0;
+			if(atEdge) {
+				qreal length = m_zoom <= 0.0 ? EDGE_SLOP : EDGE_SLOP / m_zoom;
+				bool edgeFound = false;
+				for(int angle = 0; angle < 360; angle += 45) {
+					QPoint q =
+						(point + QLineF::fromPolar(length, qreal(angle)).p2())
+							.toPoint();
+					if(q != p && (bounds.contains(q) &&
+								  qAlpha(mask.pixel(q - bounds.topLeft())) !=
+									  0) != inside) {
+						edgeFound = true;
+						break;
+					}
+				}
+				*atEdge = edgeFound;
+			}
+			return inside;
 		}
+	}
+	if(atEdge) {
+		*atEdge = false;
 	}
 	return false;
 }

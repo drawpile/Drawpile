@@ -605,4 +605,68 @@ void ToolController::notifyAsyncExecutionFinished(Task *task)
 	task->deleteLater();
 }
 
+void ToolController::requestSelect(const Tool::BeginParams &params, int type)
+{
+	m_hotSwapParams = params;
+	emit selectRequested(type);
+}
+
+void ToolController::beginRectangleSelection()
+{
+	RectangleSelection *rs =
+		static_cast<RectangleSelection *>(m_toolbox[Tool::SELECTION]);
+	if(m_activeTool == rs) {
+		rs->setForceSelect(true);
+		startDrawingFromHotSwapParams();
+		rs->setForceSelect(false);
+	} else {
+		qWarning(
+			"beginRectangleSelection: rectangle selection tool is not active");
+	}
+}
+
+void ToolController::beginPolygonSelection()
+{
+	PolygonSelection *ps =
+		static_cast<PolygonSelection *>(m_toolbox[Tool::POLYGONSELECTION]);
+	if(m_activeTool == ps) {
+		ps->setForceSelect(true);
+		startDrawingFromHotSwapParams();
+		ps->setForceSelect(false);
+	} else {
+		qWarning("beginPolygonSelection: polygon selection tool is not active");
+	}
+}
+
+void ToolController::requestTransformMove(
+	const Tool::BeginParams &params, bool maskOnly, bool quickMove)
+{
+	m_hotSwapParams = params;
+	emit transformRequested(maskOnly, true, quickMove);
+}
+
+void ToolController::beginTransformMove(bool applyOnEnd)
+{
+	TransformTool *tt = transformTool();
+	if(m_activeTool == tt) {
+		tt->setForceMove(true);
+		tt->setApplyOnEnd(applyOnEnd);
+		startDrawingFromHotSwapParams();
+		tt->setForceMove(false);
+	} else {
+		qWarning("beginTransformMove: transform tool is not active");
+	}
+}
+
+void ToolController::startDrawingFromHotSwapParams()
+{
+	const canvas::Point &point = m_hotSwapParams.point;
+	startDrawing(
+		point.timeMsec(), point, point.pressure(), point.xtilt(), point.ytilt(),
+		point.rotation(), m_hotSwapParams.right, m_hotSwapParams.angle,
+		m_hotSwapParams.zoom, m_hotSwapParams.mirror, m_hotSwapParams.flip,
+		m_hotSwapParams.constrain, m_hotSwapParams.center,
+		m_hotSwapParams.viewPos, int(m_hotSwapParams.deviceType), false);
+}
+
 }

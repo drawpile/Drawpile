@@ -234,6 +234,9 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 		this, &ToolSettings::setBackgroundColor);
 
 	connect(
+		d->ctrl, &tools::ToolController::selectRequested, this,
+		&ToolSettings::startSelection, Qt::QueuedConnection);
+	connect(
 		d->ctrl, &tools::ToolController::transformRequested, this,
 		&ToolSettings::startTransformMove, Qt::QueuedConnection);
 	connect(
@@ -519,20 +522,42 @@ void ToolSettings::setLastUsedColor(int i)
 
 void ToolSettings::startTransformMoveActiveLayer()
 {
-	startTransformMove(false);
+	startTransformMove(false, false, false);
 }
 
 void ToolSettings::startTransformMoveMask()
 {
-	startTransformMove(true);
+	startTransformMove(true, false, false);
 }
 
-void ToolSettings::startTransformMove(bool onlyMask)
+void ToolSettings::startSelection(int type)
+{
+	setToolTemporary(tools::Tool::Type(type));
+	switch(d->ctrl->activeTool()) {
+	case tools::Tool::SELECTION:
+		d->ctrl->beginRectangleSelection();
+		break;
+	case tools::Tool::POLYGONSELECTION:
+		d->ctrl->beginPolygonSelection();
+		break;
+	default:
+		qWarning("ToolSettings::startSelection: active tool is not selection");
+		break;
+	}
+}
+
+void ToolSettings::startTransformMove(
+	bool onlyMask, bool startMove, bool quickMove)
 {
 	tools::Tool::Type toolToReturnTo = d->currentTool;
+	QCursor outsideMoveCursor = d->ctrl->activeToolCursor();
 	setToolTemporary(tools::Tool::TRANSFORM);
 	if(d->ctrl->activeTool() == tools::Tool::TRANSFORM) {
-		d->ctrl->transformTool()->beginTemporaryMove(toolToReturnTo, onlyMask);
+		d->ctrl->transformTool()->beginTemporaryMove(
+			toolToReturnTo, onlyMask, quickMove, outsideMoveCursor);
+		if(startMove) {
+			d->ctrl->beginTransformMove(onlyMask && quickMove);
+		}
 	} else {
 		qWarning(
 			"ToolSettings::startTransformMove: active tool is not transform");

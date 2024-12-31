@@ -33,7 +33,8 @@ static const ToolProperties::RangedValue<int> expand{
 	gap{QStringLiteral("gap"), 0, 0, 32},
 	source{QStringLiteral("source"), 2, 0, 2},
 	area{QStringLiteral("area"), 0, 0, 1},
-	kernel{QStringLiteral("kernel"), 0, 0, 1};
+	kernel{QStringLiteral("kernel"), 0, 0, 1},
+	dragMode{QStringLiteral("dragmode"), 1, 0, 1};
 static const ToolProperties::RangedValue<double> tolerance{
 	QStringLiteral("tolerance"), 0.0, 0.0, 1.0};
 }
@@ -61,6 +62,10 @@ ToolProperties SelectionSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
 	cfg.setValue(props::antialias, m_antiAliasCheckBox->isChecked());
+	cfg.setValue(
+		props::dragMode, int(m_dragModeCheckBox->isChecked()
+								 ? ToolController::SelectionDragMode::Move
+								 : ToolController::SelectionDragMode::Select));
 	cfg.setValue(props::size, m_sizeSlider->value());
 	cfg.setValue(props::opacity, m_opacitySlider->value());
 	cfg.setValue(
@@ -79,7 +84,9 @@ ToolProperties SelectionSettings::saveToolSettings()
 void SelectionSettings::restoreToolSettings(const ToolProperties &cfg)
 {
 	m_antiAliasCheckBox->setChecked(cfg.value(props::antialias));
-	m_sizeSlider->setValue(cfg.value(props::size));
+	m_dragModeCheckBox->setChecked(
+		cfg.value(props::dragMode) !=
+		int(ToolController::SelectionDragMode::Select));
 	m_opacitySlider->setValue(cfg.value(props::opacity));
 	m_toleranceSlider->setValue(
 		cfg.value(props::tolerance) * m_toleranceSlider->maximum());
@@ -133,6 +140,10 @@ void SelectionSettings::pushSettings()
 {
 	ToolController::SelectionParams selectionParams;
 	selectionParams.antiAlias = m_antiAliasCheckBox->isChecked();
+	selectionParams.dragMode =
+		int(m_dragModeCheckBox->isChecked()
+				? ToolController::SelectionDragMode::Move
+				: ToolController::SelectionDragMode::Select);
 	selectionParams.defaultOp = m_headerGroup->checkedId();
 	int size = m_sizeSlider->value();
 	selectionParams.size = isSizeUnlimited(size) ? -1 : size;
@@ -227,6 +238,14 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 		m_antiAliasCheckBox, &QCheckBox::clicked, this,
 		&SelectionSettings::pushSettings);
 	selectionLayout->addWidget(m_antiAliasCheckBox);
+
+	m_dragModeCheckBox = new QCheckBox(tr("Drag to move"));
+	m_dragModeCheckBox->setStatusTip(
+		tr("Allow dragging the selection for a quick move operation."));
+	connect(
+		m_dragModeCheckBox, &QCheckBox::clicked, this,
+		&SelectionSettings::pushSettings);
+	selectionLayout->addWidget(m_dragModeCheckBox);
 
 	m_magicWandContainer = new QWidget;
 	QFormLayout *magicWandLayout = new QFormLayout(m_magicWandContainer);

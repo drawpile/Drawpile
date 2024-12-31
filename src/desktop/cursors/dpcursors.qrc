@@ -12,6 +12,7 @@
         <file>line.png</file>
         <file>magicwand.png</file>
         <file>move.png</file>
+        <file>move-mask.png</file>
         <file>rectangle.png</file>
         <file>rotate.png</file>
         <file>rotate-discrete.png</file>

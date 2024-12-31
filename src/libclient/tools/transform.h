@@ -22,7 +22,7 @@ namespace tools {
 class TransformTool final : public Tool {
 public:
 	static constexpr int HANDLE_SIZE = 25;
-	enum class Mode { Scale, Distort };
+	enum class Mode { Scale, Distort, Move };
 	enum class Handle {
 		Invalid = -1,
 		None = 0,
@@ -58,16 +58,21 @@ public:
 
 	void offsetActiveTool(int x, int y) override;
 
-	void beginTemporaryMove(Tool::Type toolToReturnTo, bool onlyMask);
+	void beginTemporaryMove(
+		Tool::Type toolToReturnTo, bool onlyMask, bool quickMove,
+		const QCursor &outsideMoveCursor);
 	void beginTemporaryPaste(
 		Tool::Type toolToReturnTo, const QRect &srcBounds, const QImage &image);
 	void clearTemporary();
 
 	bool handleDeselect(bool finish);
 
+	Mode mode() const { return m_mode; }
 	void setMode(Mode mode);
 
 	void setFeatureAccess(bool canTransform) { m_canTransform = canTransform; }
+	void setForceMove(bool forceMove) { m_forceMove = forceMove; }
+	void setApplyOnEnd(bool applyOnEnd) { m_applyOnEnd = applyOnEnd; }
 
 	void mirror();
 	void flip();
@@ -83,7 +88,8 @@ private:
 
 	bool isTransformActive() const;
 	canvas::TransformModel *getActiveTransformModel() const;
-	canvas::TransformModel *tryBeginMove(bool firstClick, bool onlyMask);
+	canvas::TransformModel *
+	tryBeginMove(bool firstClick, bool onlyMask, Mode mode);
 	void tryBeginPaste(const QRect &srcBounds, const QImage &image);
 	void endTransform(canvas::TransformModel *transform, bool applied);
 
@@ -103,6 +109,8 @@ private:
 
 	QCursor getDistortHandleCursor(
 		const canvas::TransformModel *transform, Handle handle) const;
+
+	QCursor getMoveHandleCursor(Handle handle) const;
 
 	QCursor getCommonHandleCursor(
 		const canvas::TransformModel *transform, Handle handle) const;
@@ -178,10 +186,13 @@ private:
 	static QPointF getQuadHandlePoint(
 		const TransformQuad &quad, Handle handle, const QPointF &targetPoint);
 
+	void hotSwapToSelection(Tool::Type tool);
 	void returnToPreviousTool();
 
 	QCursor m_moveCursor =
 		QCursor(QPixmap(QStringLiteral(":/cursors/move.png")), 12, 12);
+	QCursor m_moveMaskCursor =
+		QCursor(QPixmap(QStringLiteral(":/cursors/move-mask.png")), 7, 7);
 	QCursor m_rotateCursor =
 		QCursor(QPixmap(QStringLiteral(":/cursors/rotate.png")), 16, 16);
 	QCursor m_shearCursorH =
@@ -192,6 +203,7 @@ private:
 		QCursor(QPixmap(QStringLiteral(":/cursors/shear-bdiag.png")), 13, 13);
 	QCursor m_shearCursorDiagF =
 		QCursor(QPixmap(QStringLiteral(":/cursors/shear-fdiag.png")), 13, 13);
+	QCursor m_outsideMoveCursor = Qt::ArrowCursor;
 	QVector<TransformQuad> m_quadStack;
 	int m_quadStackTop = -1;
 	Mode m_mode = Mode::Scale;
@@ -199,6 +211,8 @@ private:
 	bool m_canTransform = true;
 	bool m_swapDiagonal = false;
 	bool m_firstClick = false;
+	bool m_forceMove = false;
+	bool m_applyOnEnd = false;
 	qreal m_angle = 0.0;
 	qreal m_zoom = 1.0;
 	Handle m_hoverHandle = Handle::Invalid;

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/toolwidgets/transformsettings.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/view/canvaswrapper.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
@@ -97,7 +98,10 @@ void TransformSettings::pushSettings()
 {
 	controller()->setTransformParams(
 		m_previewGroup->checkedId() != 0, m_interpolationGroup->checkedId());
-	tool()->setMode(tools::TransformTool::Mode(m_handlesGroup->checkedId()));
+	TransformTool *tt = tool();
+	if(tt->mode() != tools::TransformTool::Mode::Move) {
+		tt->setMode(tools::TransformTool::Mode(m_handlesGroup->checkedId()));
+	}
 }
 
 QWidget *TransformSettings::createUiWidget(QWidget *parent)
@@ -221,6 +225,18 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
 		&TransformSettings::pushSettings);
 
+	m_showHandlesButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped);
+	m_showHandlesButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+	m_showHandlesButton->setText(tr("Show"));
+	m_showHandlesButton->setStatusTip(
+		tr("Show transform handles instead of just moving"));
+	m_showHandlesButton->setToolTip(m_showHandlesButton->statusTip());
+	m_showHandlesButton->hide();
+	connect(
+		m_showHandlesButton, &widgets::GroupedToolButton::clicked, this,
+		&TransformSettings::showHandles);
+
 	m_scaleButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
 	m_scaleButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
@@ -243,6 +259,7 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 	QHBoxLayout *handlesLayout = new QHBoxLayout;
 	handlesLayout->setContentsMargins(0, 0, 0, 0);
 	handlesLayout->setSpacing(0);
+	handlesLayout->addWidget(m_showHandlesButton);
 	handlesLayout->addWidget(m_scaleButton);
 	handlesLayout->addWidget(m_distortButton);
 	//: Refers to the handles on the corners and edges of a transform. Which are
@@ -407,7 +424,23 @@ void TransformSettings::updateHandles(int mode)
 	if(button) {
 		QSignalBlocker blocker(m_handlesGroup);
 		button->setChecked(true);
+		if(!m_handleButtonsVisible) {
+			m_handleButtonsVisible = true;
+			m_showHandlesButton->hide();
+			m_scaleButton->show();
+			m_distortButton->show();
+		}
+	} else if(m_handleButtonsVisible) {
+		m_handleButtonsVisible = false;
+		m_scaleButton->hide();
+		m_distortButton->hide();
+		m_showHandlesButton->show();
 	}
+}
+
+void TransformSettings::showHandles()
+{
+	tool()->setMode(TransformTool::Mode::Scale);
 }
 
 void TransformSettings::updateBlendMode(int index)

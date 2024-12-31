@@ -28,11 +28,24 @@ void TransformTool::begin(const BeginParams &params)
 	m_invertMode = params.right;
 	canvas::TransformModel *transform = getActiveTransformModel();
 	if(!transform) {
-		transform = tryBeginMove(true, false);
+		transform = tryBeginMove(true, false, Mode::Scale);
 	}
 	updateHoverHandle(transform, params.point);
 	if(transform) {
-		startDrag(transform, params.point);
+		if(!m_forceMove && m_mode == Mode::Move &&
+		   m_hoverHandle == Handle::Outside) {
+			if(m_toolToReturnTo == Tool::SELECTION ||
+			   m_toolToReturnTo == Tool::POLYGONSELECTION) {
+				int type = int(m_toolToReturnTo);
+				m_toolToReturnTo = Tool::_LASTTOOL;
+				finishMultipart();
+				m_owner.requestSelect(params, type);
+			} else {
+				finishMultipart();
+			}
+		} else {
+			startDrag(transform, params.point);
+		}
 	}
 }
 
@@ -75,8 +88,8 @@ void TransformTool::end(const EndParams &params)
 	canvas::TransformModel *transform = getActiveTransformModel();
 	if(transform && isDragging()) {
 		int clicks = m_clickDetector.clicks();
-		bool finish = false;
-		if(clicks > 0) {
+		bool finish = m_applyOnEnd;
+		if(!finish && clicks > 0) {
 			// If this is the click that started the transform, don't act on it.
 			if(m_firstClick) {
 				m_doubleClickHandle = Handle::None;
@@ -109,6 +122,7 @@ void TransformTool::end(const EndParams &params)
 		}
 
 		m_firstClick = false;
+		m_applyOnEnd = false;
 		m_dragHandle = Handle::None;
 		m_invertMode = false;
 		emitStateChange(transform, m_hoverHandle);
@@ -192,11 +206,14 @@ void TransformTool::offsetActiveTool(int x, int y)
 	}
 }
 
-void TransformTool::beginTemporaryMove(Tool::Type toolToReturnTo, bool onlyMask)
+void TransformTool::beginTemporaryMove(
+	Tool::Type toolToReturnTo, bool onlyMask, bool quickMove,
+	const QCursor &outsideMoveCursor)
 {
+	m_outsideMoveCursor = outsideMoveCursor;
 	if(!isTransformActive()) {
 		m_toolToReturnTo = toolToReturnTo;
-		tryBeginMove(false, onlyMask);
+		tryBeginMove(false, onlyMask, quickMove ? Mode::Move : Mode::Scale);
 	}
 }
 
@@ -352,10 +369,16 @@ void TransformTool::stamp()
 TransformTool::Mode TransformTool::effectiveMode() const
 {
 	if(m_invertMode) {
-		return m_mode == Mode::Scale ? Mode::Distort : Mode::Scale;
-	} else {
-		return m_mode;
+		switch(m_mode) {
+		case Mode::Scale:
+			return Mode::Distort;
+		case Mode::Distort:
+			return Mode::Scale;
+		default:
+			break;
+		}
 	}
+	return m_mode;
 }
 
 bool TransformTool::isTransformActive() const
@@ -377,7 +400,7 @@ canvas::TransformModel *TransformTool::getActiveTransformModel() const
 }
 
 canvas::TransformModel *
-TransformTool::tryBeginMove(bool firstClick, bool onlyMask)
+TransformTool::tryBeginMove(bool firstClick, bool onlyMask, Mode mode)
 {
 	Q_ASSERT(!isTransformActive());
 	Q_ASSERT(m_quadStack.isEmpty());
@@ -411,7 +434,7 @@ TransformTool::tryBeginMove(bool firstClick, bool onlyMask)
 	transform->beginFromCanvas(
 		selection->bounds(), selection->mask(),
 		onlyMask ? 0 : m_owner.activeLayer());
-	m_mode = Mode::Scale;
+	m_mode = mode;
 	m_firstClick = firstClick;
 	m_hoverHandle = Handle::Invalid;
 	m_dragHandle = Handle::None;
@@ -440,6 +463,7 @@ void TransformTool::tryBeginPaste(const QRect &srcBounds, const QImage &image)
 	transform->beginFloating(srcBounds, image);
 	m_mode = Mode::Scale;
 	m_firstClick = false;
+	m_applyOnEnd = false;
 	m_hoverHandle = Handle::Invalid;
 	m_dragHandle = Handle::None;
 	m_quadStack.clear();
@@ -532,6 +556,8 @@ QCursor TransformTool::getHandleCursor(
 			return getTransformHandleCursor(transform, handle);
 		case Mode::Distort:
 			return getDistortHandleCursor(transform, handle);
+		case Mode::Move:
+			return getMoveHandleCursor(handle);
 		default:
 			qWarning(
 				"TransformTool::getHandleCursor: unknown mode %d", int(mode));
@@ -580,6 +606,15 @@ QCursor TransformTool::getDistortHandleCursor(
 		return Qt::PointingHandCursor;
 	default:
 		return getCommonHandleCursor(transform, handle);
+	}
+}
+
+QCursor TransformTool::getMoveHandleCursor(Handle handle) const
+{
+	if(handle == Handle::Inside) {
+		return m_applyOnEnd ? m_moveMaskCursor : m_moveCursor;
+	} else {
+		return m_outsideMoveCursor;
 	}
 }
 
@@ -653,7 +688,9 @@ TransformTool::getCursorQuad(const canvas::TransformModel *transform) const
 void TransformTool::startDrag(
 	const canvas::TransformModel *transform, const QPointF &point)
 {
-	m_dragHandle = getHandleAt(transform, point, m_zoom, &m_dragStartOffset);
+	m_dragHandle =
+		m_forceMove ? Handle::Inside
+					: getHandleAt(transform, point, m_zoom, &m_dragStartOffset);
 	if(m_dragHandle != Handle::None) {
 		m_dragStartPoint = point;
 		m_dragCurrentPoint = point;
@@ -674,6 +711,11 @@ void TransformTool::continueDrag(
 		break;
 	case Mode::Distort:
 		continueDragDistort(transform, constrain);
+		break;
+	case Mode::Move:
+		if(m_dragHandle == Handle::Inside) {
+			dragMove(transform, constrain);
+		}
 		break;
 	default:
 		qWarning("TransformTool::continueDrag: unknown mode %d", int(mode));
@@ -1125,46 +1167,50 @@ TransformTool::Handle TransformTool::getHandleAt(
 	Handle closestHandle = Handle::None;
 	QPointF offset;
 	if(transform && zoom > 0.0) {
-		qreal closestDistance;
 		const TransformQuad &quad = transform->dstQuad();
-		checkHandleAt(
-			point, zoom, closestHandle, closestDistance, offset,
-			Handle::TopLeft, quad.topLeft());
-		checkHandleAt(
-			point, zoom, closestHandle, closestDistance, offset, Handle::Top,
-			quad.top());
-		checkHandleAt(
-			point, zoom, closestHandle, closestDistance, offset,
-			Handle::TopRight, quad.topRight());
-		checkHandleAt(
-			point, zoom, closestHandle, closestDistance, offset, Handle::Right,
-			quad.right());
-		checkHandleAt(
-			point, zoom, closestHandle, closestDistance, offset,
-			Handle::BottomRight, quad.bottomRight());
-		checkHandleAt(
-			point, zoom, closestHandle, closestDistance, offset, Handle::Bottom,
-			quad.bottom());
-		checkHandleAt(
-			point, zoom, closestHandle, closestDistance, offset,
-			Handle::BottomLeft, quad.bottomLeft());
-		checkHandleAt(
-			point, zoom, closestHandle, closestDistance, offset, Handle::Left,
-			quad.left());
-		if(closestHandle == Handle::None) {
-			checkHandleEdgeAt(
+		if(m_mode != Mode::Move) {
+			qreal closestDistance;
+			checkHandleAt(
 				point, zoom, closestHandle, closestDistance, offset,
-				Handle::TopEdge, QLineF(quad.topLeft(), quad.topRight()));
-			checkHandleEdgeAt(
+				Handle::TopLeft, quad.topLeft());
+			checkHandleAt(
 				point, zoom, closestHandle, closestDistance, offset,
-				Handle::RightEdge, QLineF(quad.topRight(), quad.bottomRight()));
-			checkHandleEdgeAt(
+				Handle::Top, quad.top());
+			checkHandleAt(
 				point, zoom, closestHandle, closestDistance, offset,
-				Handle::BottomEdge,
-				QLineF(quad.bottomRight(), quad.bottomLeft()));
-			checkHandleEdgeAt(
+				Handle::TopRight, quad.topRight());
+			checkHandleAt(
 				point, zoom, closestHandle, closestDistance, offset,
-				Handle::LeftEdge, QLineF(quad.bottomLeft(), quad.topLeft()));
+				Handle::Right, quad.right());
+			checkHandleAt(
+				point, zoom, closestHandle, closestDistance, offset,
+				Handle::BottomRight, quad.bottomRight());
+			checkHandleAt(
+				point, zoom, closestHandle, closestDistance, offset,
+				Handle::Bottom, quad.bottom());
+			checkHandleAt(
+				point, zoom, closestHandle, closestDistance, offset,
+				Handle::BottomLeft, quad.bottomLeft());
+			checkHandleAt(
+				point, zoom, closestHandle, closestDistance, offset,
+				Handle::Left, quad.left());
+			if(closestHandle == Handle::None) {
+				checkHandleEdgeAt(
+					point, zoom, closestHandle, closestDistance, offset,
+					Handle::TopEdge, QLineF(quad.topLeft(), quad.topRight()));
+				checkHandleEdgeAt(
+					point, zoom, closestHandle, closestDistance, offset,
+					Handle::RightEdge,
+					QLineF(quad.topRight(), quad.bottomRight()));
+				checkHandleEdgeAt(
+					point, zoom, closestHandle, closestDistance, offset,
+					Handle::BottomEdge,
+					QLineF(quad.bottomRight(), quad.bottomLeft()));
+				checkHandleEdgeAt(
+					point, zoom, closestHandle, closestDistance, offset,
+					Handle::LeftEdge,
+					QLineF(quad.bottomLeft(), quad.topLeft()));
+			}
 		}
 		if(closestHandle == Handle::None) {
 			closestHandle =

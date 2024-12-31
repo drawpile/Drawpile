@@ -46,10 +46,12 @@ class ToolController final : public QObject {
 
 	Q_OBJECT
 public:
+	enum class SelectionDragMode { Select, Move };
 	enum class SelectionSource { Merged, MergedWithoutBackground, Layer };
 
 	struct SelectionParams {
 		bool antiAlias = true;
+		int dragMode = int(SelectionDragMode::Move);
 		int defaultOp = 0;
 		int size = -1;
 		qreal opacity = 1.0;
@@ -166,6 +168,16 @@ public:
 	 */
 	void executeAsync(Task *task);
 
+	void requestSelect(const Tool::BeginParams &params, int type);
+
+	void beginRectangleSelection();
+	void beginPolygonSelection();
+
+	void requestTransformMove(
+		const Tool::BeginParams &params, bool maskOnly, bool quickMove);
+
+	void beginTransformMove(bool applyOnEnd);
+
 public slots:
 	//! Start a new stroke
 	void startDrawing(
@@ -234,7 +246,8 @@ signals:
 	void zoomRequested(const QRect &rect, int steps);
 	void maskPreviewRequested(const QPoint &pos, const QImage &mask);
 	void pathPreviewRequested(const QPainterPath &path);
-	void transformRequested(bool maskOnly);
+	void selectRequested(int type);
+	void transformRequested(bool maskOnly, bool startMove, bool quickMove);
 	void toolSwitchRequested(tools::Tool::Type tool);
 	void showMessageRequested(const QString &message);
 	void toolNoticeRequested(const QString &text);
@@ -258,6 +271,7 @@ private slots:
 private:
 	void registerTool(Tool *tool);
 	void updateSmoothing();
+	void startDrawingFromHotSwapParams();
 
 	Tool *m_toolbox[Tool::_LASTTOOL];
 	net::Client *m_client;
@@ -285,6 +299,7 @@ private:
 	bool m_transformPreviewAccurate;
 	int m_transformInterpolation;
 	int m_transformPreviewIdsUsed;
+	Tool::BeginParams m_hotSwapParams;
 	SelectionParams m_selectionParams;
 
 	QThreadPool m_threadPool;

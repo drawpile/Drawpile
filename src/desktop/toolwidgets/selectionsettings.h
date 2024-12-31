@@ -7,6 +7,7 @@ class KisSliderSpinBox;
 class QAction;
 class QButtonGroup;
 class QCheckBox;
+class QComboBox;
 class QLabel;
 class QPushButton;
 
@@ -70,6 +71,7 @@ private:
 	QButtonGroup *m_headerGroup = nullptr;
 	QWidget *m_selectionContainer = nullptr;
 	QCheckBox *m_antiAliasCheckBox = nullptr;
+	QCheckBox *m_dragModeCheckBox = nullptr;
 	QWidget *m_magicWandContainer = nullptr;
 	KisSliderSpinBox *m_sizeSlider = nullptr;
 	KisSliderSpinBox *m_opacitySlider = nullptr;
