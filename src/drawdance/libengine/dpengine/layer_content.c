@@ -1820,12 +1820,12 @@ static void fill_rect(DP_TransientLayerContent *tlc, unsigned int context_id,
         top = 0;
     }
     int width = tlc->width;
-    if (right >= width) {
-        right = width - 1;
+    if (right > width) {
+        right = width;
     }
     int height = tlc->height;
-    if (bottom >= height) {
-        bottom = height - 1;
+    if (bottom > height) {
+        bottom = height;
     }
 
     int tx_min = left / DP_TILE_SIZE;
