@@ -458,7 +458,7 @@ void ToolController::continueDrawing(
 	const QPointF &viewPos)
 {
 	Q_ASSERT(m_activeTool);
-	if(m_model) {
+	if(m_model && m_drawing) {
 		m_activeTool->motion(Tool::MotionParams{
 			canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation),
 			viewPos, constrain, center});
