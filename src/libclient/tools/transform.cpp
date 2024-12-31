@@ -87,8 +87,10 @@ void TransformTool::end(const EndParams &params)
 						m_mode == Mode::Scale ? Mode::Distort : Mode::Scale;
 				} else if(
 					m_dragHandle == Handle::Outside &&
-					m_doubleClickHandle == Handle::Outside && clicks > 1) {
-					// User double-clicked outside of the transform, apply it.
+					((m_doubleClickHandle == Handle::Outside && clicks > 1) ||
+					 m_invertMode)) {
+					// User double-clicked or right-clicked outside of the
+					// transform, apply it.
 					finish = true;
 				} else {
 					// User clicked somewhere else, just disregard that.
