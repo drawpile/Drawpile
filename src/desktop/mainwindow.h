@@ -135,6 +135,7 @@ signals:
 	void windowReplacementFailed(MainWindow *win);
 	void viewShifted(qreal deltaX, qreal deltaY);
 	void dockTabUpdateRequested();
+	void intendedDockStateRestoreRequested();
 
 public slots:
 	// Triggerable actions
@@ -406,7 +407,8 @@ private:
 
 	QTimer m_saveWindowDebounce;
 	QTimer m_saveSplitterDebounce;
-	QTimer m_intendedDockStateDebounce;
+	QTimer m_updateIntendedDockStateDebounce;
+	QTimer m_restoreIntendedDockStateDebounce;
 #ifdef SINGLE_MAIN_WINDOW
 	QTimer m_refitWindowDebounce;
 	bool m_refitting = false;

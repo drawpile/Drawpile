@@ -203,10 +203,12 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 
 	m_saveSplitterDebounce.setSingleShot(true);
 	m_saveWindowDebounce.setSingleShot(true);
-	m_intendedDockStateDebounce.setSingleShot(true);
+	m_updateIntendedDockStateDebounce.setSingleShot(true);
+	m_restoreIntendedDockStateDebounce.setSingleShot(true);
 	m_saveSplitterDebounce.setInterval(DEBOUNCE_MS);
 	m_saveWindowDebounce.setInterval(DEBOUNCE_MS);
-	m_intendedDockStateDebounce.setInterval(DEBOUNCE_MS);
+	m_updateIntendedDockStateDebounce.setInterval(DEBOUNCE_MS);
+	m_restoreIntendedDockStateDebounce.setInterval(50);
 #ifdef SINGLE_MAIN_WINDOW
 	m_refitWindowDebounce.setSingleShot(true);
 	m_refitWindowDebounce.setInterval(DEBOUNCE_MS);
@@ -561,8 +563,13 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	emit dockTabUpdateRequested();
 
 	connect(
-		&m_intendedDockStateDebounce, &QTimer::timeout, this,
+		&m_updateIntendedDockStateDebounce, &QTimer::timeout, this,
 		&MainWindow::updateIntendedDockState);
+	connect(
+		&m_restoreIntendedDockStateDebounce, &QTimer::timeout, this,
+		&MainWindow::restoreIntendedDockState);
+	m_updateIntendedDockStateDebounce.stop();
+	m_restoreIntendedDockStateDebounce.stop();
 	QTimer::singleShot(DEBOUNCE_MS, this, &MainWindow::updateIntendedDockState);
 }
 
@@ -1464,6 +1471,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 	QMainWindow::resizeEvent(event);
 	updateInterfaceMode();
 	restoreIntendedDockState();
+	m_restoreIntendedDockStateDebounce.start();
 }
 // clang-format off
 
@@ -6448,15 +6456,15 @@ void MainWindow::startIntendedDockStateDebounce()
 {
 	if(!m_updatingDockState && !m_smallScreenMode &&
 	   m_hiddenDockState.isEmpty()) {
-		m_intendedDockStateDebounce.start();
+		m_updateIntendedDockStateDebounce.start();
 	} else {
-		m_intendedDockStateDebounce.stop();
+		m_updateIntendedDockStateDebounce.stop();
 	}
 }
 
 void MainWindow::updateIntendedDockState()
 {
-	m_intendedDockStateDebounce.stop();
+	m_updateIntendedDockStateDebounce.stop();
 	if(!m_updatingDockState && !m_smallScreenMode &&
 	   m_hiddenDockState.isEmpty()) {
 		m_intendedDockState = saveState();
@@ -6465,7 +6473,8 @@ void MainWindow::updateIntendedDockState()
 
 void MainWindow::restoreIntendedDockState()
 {
-	Q_ASSERT(m_updatingDockState);
+	QScopedValueRollback<bool> rollback(m_updatingDockState, true);
+	m_restoreIntendedDockStateDebounce.stop();
 	if(!m_smallScreenMode && m_hiddenDockState.isEmpty() &&
 	   !m_intendedDockState.isEmpty()) {
 		restoreState(m_intendedDockState);
