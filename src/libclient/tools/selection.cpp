@@ -16,7 +16,11 @@ SelectionTool::SelectionTool(ToolController &owner, Type type, QCursor cursor)
 
 void SelectionTool::begin(const BeginParams &params)
 {
-	m_clickDetector.begin(params.viewPos, params.deviceType);
+	if(m_forceSelect) {
+		m_clickDetector.clear();
+	} else {
+		m_clickDetector.begin(params.viewPos, params.deviceType);
+	}
 	m_zoom = params.zoom;
 	bool atEdge;
 	if(params.right) {
