@@ -181,23 +181,50 @@ bool SelectionTool::isInsideSelection(const QPointF &point, bool *atEdge) const
 	if(canvas) {
 		canvas::SelectionModel *selection = canvas->selection();
 		if(selection->isValid()) {
-			QPoint p = point.toPoint();
 			const QRect &bounds = selection->bounds();
 			const QImage &mask = selection->mask();
-			bool inside = bounds.contains(p) &&
-						  qAlpha(mask.pixel(p - bounds.topLeft())) != 0;
+			QPoint boundsPos = bounds.topLeft();
+			auto isInside = [&](const QPoint &pos) {
+				return bounds.contains(pos) &&
+					   qAlpha(mask.pixel(pos - boundsPos)) != 0;
+			};
+
+			QPoint p = point.toPoint();
+			bool inside = isInside(p);
 			if(atEdge) {
 				qreal length = m_zoom <= 0.0 ? EDGE_SLOP : EDGE_SLOP / m_zoom;
 				bool edgeFound = false;
-				for(int angle = 0; angle < 360; angle += 45) {
+				auto compareAtAngle = [&](int a) {
 					QPoint q =
-						(point + QLineF::fromPolar(length, qreal(angle)).p2())
+						(point + QLineF::fromPolar(length, qreal(a)).p2())
 							.toPoint();
-					if(q != p && (bounds.contains(q) &&
-								  qAlpha(mask.pixel(q - bounds.topLeft())) !=
-									  0) != inside) {
-						edgeFound = true;
-						break;
+					return q != p && isInside(q) != inside;
+				};
+				// Determine if we're at an edge by sampling points around the
+				// cursor. If we're inside the selection and find a point
+				// outside of it or vice-versa, we consider it an edge. An
+				// exception here is if the cursor is inside the selection and
+				// there's two points opposite of each other that are outside,
+				// this must be a very narrow selection and isn't an edge.
+				if(inside) {
+					for(int angle = 0; angle < 180; angle += 45) {
+						if(compareAtAngle(angle)) {
+							if(compareAtAngle(angle + 180)) {
+								edgeFound = false;
+								break;
+							} else {
+								edgeFound = true;
+							}
+						} else if(compareAtAngle(angle + 180)) {
+							edgeFound = true;
+						}
+					}
+				} else {
+					for(int angle = 0; angle < 360; angle += 45) {
+						if(compareAtAngle(angle)) {
+							edgeFound = true;
+							break;
+						}
 					}
 				}
 				*atEdge = edgeFound;
