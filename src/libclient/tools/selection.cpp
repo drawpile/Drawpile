@@ -16,11 +16,7 @@ SelectionTool::SelectionTool(ToolController &owner, Type type, QCursor cursor)
 
 void SelectionTool::begin(const BeginParams &params)
 {
-	if(m_forceSelect) {
-		m_clickDetector.clear();
-	} else {
-		m_clickDetector.begin(params.viewPos, params.deviceType);
-	}
+	m_clickDetector.begin(params.viewPos, params.deviceType);
 	m_zoom = params.zoom;
 	bool atEdge;
 	if(params.right) {
@@ -37,6 +33,7 @@ void SelectionTool::begin(const BeginParams &params)
 		m_op = resolveOp(params.constrain, params.center, defaultOp());
 		m_startPoint = params.point;
 		m_lastPoint = params.point;
+		m_wasForceSelect = m_forceSelect;
 		beginSelection(params.point);
 	}
 	setCursor(m_originalCursor);
@@ -138,7 +135,7 @@ void SelectionTool::removeSelectionPreview() const
 void SelectionTool::updateCursor(const QPointF &point)
 {
 	bool atEdge;
-	if(m_op == -1 && quickDrag() &&
+	if(m_op == -1 && !m_forceSelect && !m_wasForceSelect && quickDrag() &&
 	   (isInsideSelection(point, &atEdge) || atEdge)) {
 		setCursor(atEdge ? m_moveMaskCursor : m_moveContentCursor);
 	} else {
@@ -152,7 +149,7 @@ void SelectionTool::endSelection(bool click, bool onlyMask)
 	if(m_op != -1) {
 		bool isClick = click && m_clickDetector.isClick();
 		bool atEdge = false;
-		if(isClick &&
+		if(isClick && !m_wasForceSelect &&
 		   (quickDrag() ? isInsideSelection(startPoint(), &atEdge) || atEdge
 						: isInsideSelection(startPoint()))) {
 			cancelSelection();

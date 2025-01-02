@@ -70,6 +70,7 @@ private:
 		QCursor(QPixmap(QStringLiteral(":/cursors/move-mask.png")), 7, 7);
 	int m_op = -1;
 	bool m_forceSelect = false;
+	bool m_wasForceSelect = false;
 	ToolController::SelectionParams m_params;
 	QPointF m_startPoint;
 	QPointF m_lastPoint;
