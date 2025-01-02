@@ -263,7 +263,21 @@ jobs:
             collect_symbols: false
             signpath: false
             sccache_triplet: aarch64-apple-darwin
-            packager: cpack --verbose --config build/CPackConfig.cmake -C Release
+            # The runner is really flaky at this step, retry it a few times.
+            packager: |
+              attempts=0
+              limit=3
+              while : ; do
+                cpack --verbose --config build/CPackConfig.cmake -C Release && break
+                attempts=$((attempts+1))
+                if [ "$attempts" -lt "$limit" ]; then
+                  echo "Packing attempt $attempts/$limit failed, retrying..."
+                  sleep 3
+                else
+                  echo "Packing attempt $attempts/$limit failed, bailing out."
+                  exit 1
+                fi
+              done
 
           - os: windows-latest
             cross_os: ''
