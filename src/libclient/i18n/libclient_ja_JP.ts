@@ -244,7 +244,7 @@
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation>軸を交換</translation>
+        <translation>軸を反転</translation>
     </message>
 </context>
 <context>
