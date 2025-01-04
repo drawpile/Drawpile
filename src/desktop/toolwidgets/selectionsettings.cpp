@@ -87,6 +87,7 @@ void SelectionSettings::restoreToolSettings(const ToolProperties &cfg)
 	m_dragModeCheckBox->setChecked(
 		cfg.value(props::dragMode) !=
 		int(ToolController::SelectionDragMode::Select));
+	m_sizeSlider->setValue(cfg.value(props::size));
 	m_opacitySlider->setValue(cfg.value(props::opacity));
 	m_toleranceSlider->setValue(
 		cfg.value(props::tolerance) * m_toleranceSlider->maximum());
