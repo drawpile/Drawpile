@@ -46,6 +46,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Work around Android devices reporting way too huge motions when panning with two fingers. Thanks quandaledingle44 for reporting.
  * Feature: Right-clicking outside of a transform now applies it. Thanks MorrowShore for suggesting.
  * Feature: Allow dragging selections to quickly move their contents without having to double-click to deselect and dragging the edge to move the selection itself without its contents. Thanks Blozzom, Lungy, MorrowShore, SadColor and Zheida for suggesting and testing.
+ * Fix: Don't mark the canvas as saved if it was only exported.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

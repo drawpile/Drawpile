@@ -338,7 +338,7 @@ private slots:
 private:
 	void saveCanvasState(
 		const drawdance::CanvasState &canvasState, bool isCurrentState,
-		const QString &path, DP_SaveImageType type);
+		bool exported, const QString &path, DP_SaveImageType type);
 	QImage selectionToImage();
 	void setCurrentPath(const QString &path, DP_SaveImageType type);
 	void setSessionPersistent(bool p);

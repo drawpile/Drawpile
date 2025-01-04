@@ -863,7 +863,7 @@ void Document::autosaveNow()
 		return;
 
 	saveCanvasState(
-		m_canvas->paintEngine()->viewCanvasState(), true, currentPath(),
+		m_canvas->paintEngine()->viewCanvasState(), true, false, currentPath(),
 		currentType());
 }
 
@@ -883,19 +883,19 @@ void Document::saveCanvasStateAs(
 	if(!exported) {
 		setCurrentPath(path, type);
 	}
-	saveCanvasState(canvasState, isCurrentState, path, type);
+	saveCanvasState(canvasState, isCurrentState, exported, path, type);
 }
 
 void Document::saveCanvasState(
 	const drawdance::CanvasState &canvasState, bool isCurrentState,
-	const QString &path, DP_SaveImageType type)
+	bool exported, const QString &path, DP_SaveImageType type)
 {
 	Q_ASSERT(!m_saveInProgress);
 	m_saveInProgress = true;
 
 	CanvasSaverRunnable *saver = new CanvasSaverRunnable(
 		canvasState, type, path, m_canvas ? m_canvas->paintEngine() : nullptr);
-	if(isCurrentState) {
+	if(isCurrentState && (!exported || type == DP_SAVE_IMAGE_ORA)) {
 		unmarkDirty();
 	}
 	connect(
