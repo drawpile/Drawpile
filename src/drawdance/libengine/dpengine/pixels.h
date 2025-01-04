@@ -86,6 +86,7 @@ uint16_t DP_channel8_to_15(uint8_t c);
 uint8_t DP_channel15_to_8(uint16_t c);
 float DP_channel8_to_float(uint8_t c);
 float DP_channel15_to_float(uint16_t c);
+float DP_channel15_to_float_round8(uint16_t c);
 uint8_t DP_channel_float_to_8(float c);
 uint16_t DP_channel_float_to_15(float c);
 
@@ -95,7 +96,7 @@ DP_UPixel15 DP_upixel8_to_15(DP_UPixel8 pixel);
 DP_UPixel8 DP_upixel15_to_8(DP_UPixel15 pixel);
 DP_UPixelFloat DP_upixel8_to_float(DP_UPixel8 pixel);
 DP_UPixelFloat DP_upixel15_to_float(DP_UPixel15 pixel);
-DP_UPixelFloat DP_upixel15_to_float_round(DP_UPixel15 pixel);
+DP_UPixelFloat DP_upixel15_to_float_round8(DP_UPixel15 pixel);
 DP_UPixel8 DP_upixel_float_to_8(DP_UPixelFloat pixel);
 
 void DP_pixels8_to_15(DP_Pixel15 *dst, const DP_Pixel8 *src, int count);

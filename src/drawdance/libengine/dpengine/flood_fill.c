@@ -198,7 +198,7 @@ static DP_Tile *source_merge_tile(DP_FloodFillContext *c, int tile_index)
 
 static DP_UPixelFloat source_to_color(DP_Pixel15 pixel)
 {
-    return DP_upixel15_to_float(DP_pixel15_unpremultiply(pixel));
+    return DP_upixel15_to_float_round8(DP_pixel15_unpremultiply(pixel));
 }
 
 static bool source_should_flood(DP_Pixel15 pixel,
@@ -208,7 +208,7 @@ static bool source_should_flood(DP_Pixel15 pixel,
     // TODO: we could use better functions for color distance than this.
     // Guess if we're supposed to fill a transparent-ish pixel.
     if (reference_color.a < 0.05f) {
-        float a = DP_channel15_to_float(pixel.a);
+        float a = DP_channel15_to_float_round8(pixel.a);
         return a * a <= tolerance_squared;
     }
     else {

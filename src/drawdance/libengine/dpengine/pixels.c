@@ -339,6 +339,11 @@ float DP_channel15_to_float(uint16_t c)
     return DP_uint16_to_float(c) / BIT15_FLOAT;
 }
 
+float DP_channel15_to_float_round8(uint16_t c)
+{
+    return floorf(DP_uint16_to_float(c) / BIT15_FLOAT * 255.0f + 0.5f) / 255.0f;
+}
+
 uint8_t DP_channel_float_to_8(float c)
 {
     return DP_float_to_uint8(c * 255.0f + 0.5f);
@@ -406,6 +411,16 @@ DP_UPixelFloat DP_upixel15_to_float(DP_UPixel15 pixel)
         .g = DP_channel15_to_float(pixel.g),
         .r = DP_channel15_to_float(pixel.r),
         .a = DP_channel15_to_float(pixel.a),
+    };
+}
+
+DP_UPixelFloat DP_upixel15_to_float_round8(DP_UPixel15 pixel)
+{
+    return (DP_UPixelFloat){
+        .b = DP_channel15_to_float_round8(pixel.b),
+        .g = DP_channel15_to_float_round8(pixel.g),
+        .r = DP_channel15_to_float_round8(pixel.r),
+        .a = DP_channel15_to_float_round8(pixel.a),
     };
 }
 
