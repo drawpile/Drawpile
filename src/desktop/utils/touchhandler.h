@@ -90,6 +90,7 @@ private:
 	int m_fourFingerTapAction;
 	int m_oneFingerTapAndHoldAction;
 	int m_maxTouchPoints = 0;
+	int m_lastPointsCount = 0;
 	TouchMode m_touchMode = TouchMode::Unknown;
 	QVector<QPair<long long, QPointF>> m_touchDrawBuffer;
 	QPointF m_touchStartPos;

@@ -164,19 +164,9 @@ inline auto touchStartPos(const QEventPoint &event)
 	return event.pressPosition();
 }
 
-inline auto touchLastPos(const QEventPoint &event)
-{
-	return event.lastPosition();
-}
-
 inline auto touchPos(const QEventPoint &event)
 {
 	return event.position();
-}
-
-inline bool touchIsStationary(const QEventPoint &event)
-{
-	return event.state() == QEventPoint::Stationary;
 }
 
 inline auto dragMovePos(const QDragMoveEvent &event)
@@ -277,19 +267,9 @@ inline auto touchStartPos(const QTouchEvent::TouchPoint &event)
 	return event.startPos();
 }
 
-inline auto touchLastPos(const QTouchEvent::TouchPoint &event)
-{
-	return event.lastPos();
-}
-
 inline auto touchPos(const QTouchEvent::TouchPoint &event)
 {
 	return event.pos();
-}
-
-inline bool touchIsStationary(const QTouchEvent::TouchPoint &event)
-{
-	return event.state() == Qt::TouchPointStationary;
 }
 
 inline auto dragMovePos(const QDragMoveEvent &event)

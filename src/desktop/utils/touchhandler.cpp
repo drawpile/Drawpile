@@ -101,6 +101,7 @@ void TouchHandler::handleTouchBegin(QTouchEvent *event)
 {
 	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
 	int pointsCount = points.size();
+	m_lastPointsCount = pointsCount;
 	// Can apparently happen on Android when putting your palm on the screen.
 	if(pointsCount == 0) {
 		return;
@@ -169,6 +170,8 @@ void TouchHandler::handleTouchUpdate(
 {
 	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
 	int pointsCount = points.size();
+	bool pointsCountSame = pointsCount == m_lastPointsCount;
+	m_lastPointsCount = pointsCount;
 	// Can apparently happen on Android when putting your palm on the screen.
 	if(pointsCount == 0) {
 		return;
@@ -182,6 +185,7 @@ void TouchHandler::handleTouchUpdate(
 		m_tapAndHoldTimer->stop();
 	}
 
+	QPointF lastTouchPos = m_touchPos;
 	m_touchPos = QPointF(0.0, 0.0);
 	for(const compat::TouchPoint &tp : compat::touchPoints(*event)) {
 		m_touchPos += compat::touchPos(tp);
@@ -235,15 +239,10 @@ void TouchHandler::handleTouchUpdate(
 	} else {
 		m_touchMode = TouchMode::Moving;
 
-		QPointF startCenter, deltaCenter;
+		QPointF startCenter;
 		for(const compat::TouchPoint &tp : compat::touchPoints(*event)) {
 			QPointF startPos = compat::touchStartPos(tp);
 			startCenter += startPos;
-			// On some Android devices, stationary points during multitouch
-			// report garbage values for their last points. So we ignore those.
-			if(!compat::touchIsStationary(tp)) {
-				deltaCenter += compat::touchLastPos(tp) - compat::touchPos(tp);
-			}
 			// This might be a tap gesture. Don't start a drag until there's
 			// been sufficient movement on any of the fingers.
 			if(!m_touchDragging &&
@@ -265,7 +264,6 @@ void TouchHandler::handleTouchUpdate(
 
 		m_tapAndHoldTimer->stop();
 		startCenter /= pointsCount;
-		deltaCenter /= pointsCount;
 		QPointF center = m_touchPos;
 
 		DP_EVENT_LOG(
@@ -294,9 +292,10 @@ void TouchHandler::handleTouchUpdate(
 		bool havePan = havePinchOrTwist ||
 					   (isTouchDrawOrPanEnabled() &&
 						(haveMultiTouch || !compat::isTouchPad(event)));
-		if(havePan && !deltaCenter.isNull()) {
+		if(QPointF delta; havePan && pointsCountSame &&
+						  !(delta = lastTouchPos - m_touchPos).isNull()) {
 			m_touching = true;
-			emit touchScrolledBy(deltaCenter.x(), deltaCenter.y());
+			emit touchScrolledBy(delta.x(), delta.y());
 		}
 
 		// Scaling and rotation with two fingers
