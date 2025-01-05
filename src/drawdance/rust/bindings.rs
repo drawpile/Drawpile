@@ -1421,6 +1421,9 @@ extern "C" {
     pub fn DP_channel15_to_float(c: u16) -> f32;
 }
 extern "C" {
+    pub fn DP_channel15_to_float_round8(c: u16) -> f32;
+}
+extern "C" {
     pub fn DP_channel_float_to_8(c: f32) -> u8;
 }
 extern "C" {
@@ -1445,7 +1448,7 @@ extern "C" {
     pub fn DP_upixel15_to_float(pixel: DP_UPixel15) -> DP_UPixelFloat;
 }
 extern "C" {
-    pub fn DP_upixel15_to_float_round(pixel: DP_UPixel15) -> DP_UPixelFloat;
+    pub fn DP_upixel15_to_float_round8(pixel: DP_UPixel15) -> DP_UPixelFloat;
 }
 extern "C" {
     pub fn DP_upixel_float_to_8(pixel: DP_UPixelFloat) -> DP_UPixel8;
@@ -7792,6 +7795,32 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_image_write_webp(img: *mut DP_Image, output: *mut DP_Output) -> bool;
+}
+pub const DP_IMAGE_SCALE_INTERPOLATION_BILINEAR: DP_ImageScaleInterpolation = 0;
+pub const DP_IMAGE_SCALE_INTERPOLATION_BICUBIC: DP_ImageScaleInterpolation = 1;
+pub const DP_IMAGE_SCALE_INTERPOLATION_BICUBLIN: DP_ImageScaleInterpolation = 2;
+pub const DP_IMAGE_SCALE_INTERPOLATION_GAUSS: DP_ImageScaleInterpolation = 3;
+pub const DP_IMAGE_SCALE_INTERPOLATION_SINC: DP_ImageScaleInterpolation = 4;
+pub const DP_IMAGE_SCALE_INTERPOLATION_LANCZOS: DP_ImageScaleInterpolation = 5;
+pub const DP_IMAGE_SCALE_INTERPOLATION_SPLINE: DP_ImageScaleInterpolation = 6;
+pub type DP_ImageScaleInterpolation = ::std::os::raw::c_uint;
+extern "C" {
+    pub fn DP_image_scale_sws_pixels(
+        pixels: *const DP_Pixel8,
+        src_height: ::std::os::raw::c_int,
+        src_width: ::std::os::raw::c_int,
+        width: ::std::os::raw::c_int,
+        height: ::std::os::raw::c_int,
+        interpolation: DP_ImageScaleInterpolation,
+    ) -> *mut DP_Image;
+}
+extern "C" {
+    pub fn DP_image_scale_sws(
+        img: *mut DP_Image,
+        width: ::std::os::raw::c_int,
+        height: ::std::os::raw::c_int,
+        interpolation: DP_ImageScaleInterpolation,
+    ) -> *mut DP_Image;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

@@ -3,7 +3,8 @@ use anyhow::{anyhow, Result};
 use drawdance::{
     dp_cmake_config_version,
     engine::{Image, PaintEngine, Player},
-    DP_UPixel8, DP_PLAYER_TYPE_GUESS, DP_PROTOCOL_VERSION,
+    DP_ImageScaleInterpolation, DP_UPixel8, Interpolation, DP_PLAYER_TYPE_GUESS,
+    DP_PROTOCOL_VERSION,
 };
 use regex::Regex;
 use std::{
@@ -340,6 +341,10 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
         /// croppings depending on resolution of the form
         /// "CANVAS_WIDTH:CANVAS_HEIGHT=X:Y:WIDTH:HEIGHT".
         optional -x,--crop crop: Crop
+        /// Interpolation to use when scaling images. One of 'bilinear' (the
+        /// default), 'bicubic', 'bicublin', 'gauss', 'sinc', 'lanczos' or
+        /// 'spline'.
+        optional -I,--interpolation interpolation: Interpolation
         /// Input recording file(s).
         repeated input: String
     };
@@ -368,6 +373,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
         return 2;
     }
 
+    let interpolation = flags.interpolation.unwrap_or_default();
     let logo_location = flags.logo_location.unwrap_or_default();
     let logo_path = flags.logo_path.unwrap_or_else(|| {
         unsafe { CStr::from_ptr(default_logo_path) }
@@ -471,6 +477,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
         eprintln!();
         eprintln!("dimensions:\n    {}", flags.dimensions.to_arg());
         eprintln!("interval:\n    {} msec", interval);
+        eprintln!("interpolation:\n    {}", interpolation);
         if logo_enabled {
             eprintln!("logo location:\n    {}", logo_location);
             eprintln!("logo path:\n    {}", logo_path);
@@ -525,6 +532,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
             flash,
             linger_time,
             &flags.crop,
+            interpolation,
         )
     } else if flags.out == "-" {
         timelapse(
@@ -539,6 +547,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
             flash,
             linger_time,
             &flags.crop,
+            interpolation,
         )
     } else {
         make_timelapse_raw(
@@ -553,6 +562,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
             flash,
             linger_time,
             &flags.crop,
+            interpolation,
         )
     };
 
@@ -577,6 +587,7 @@ fn make_timelapse_command(
     flash: Option<u32>,
     linger_time: f64,
     crop: &Option<Crop>,
+    interpolation: Interpolation,
 ) -> Result<()> {
     let mut child = match command.spawn() {
         Ok(c) => c,
@@ -604,6 +615,7 @@ fn make_timelapse_command(
         flash,
         linger_time,
         crop,
+        interpolation,
     )?;
     drop(pipe);
     let status = child.wait()?;
@@ -626,6 +638,7 @@ fn make_timelapse_raw(
     flash: Option<u32>,
     linger_time: f64,
     crop: &Option<Crop>,
+    interpolation: Interpolation,
 ) -> Result<()> {
     let mut f = File::create(path)?;
     timelapse(
@@ -640,6 +653,7 @@ fn make_timelapse_raw(
         flash,
         linger_time,
         crop,
+        interpolation,
     )?;
     Ok(())
 }
@@ -675,6 +689,7 @@ fn timelapse(
     flash: Option<u32>,
     linger_time: f64,
     crop: &Option<Crop>,
+    interpolation: Interpolation,
 ) -> Result<()> {
     let mut ctx = TimelapseContext {
         writer,
@@ -691,6 +706,7 @@ fn timelapse(
             width,
             height,
             crop,
+            interpolation,
         )?;
     }
 
@@ -720,6 +736,7 @@ fn timelapse_recording(
     width: usize,
     height: usize,
     crop: &Option<Crop>,
+    interpolation: Interpolation,
 ) -> Result<()> {
     let mut player = make_player(input_path).and_then(Player::check_compatible)?;
     player.set_acl_override(acl_override);
@@ -738,7 +755,7 @@ fn timelapse_recording(
         }?;
 
         pe.render();
-        match to_image(&mut pe, width, height, crop) {
+        match to_image(&mut pe, width, height, crop, interpolation) {
             Ok((img, area)) => {
                 last_area = area;
                 ctx.push(img)?;
@@ -758,15 +775,28 @@ fn to_image(
     width: usize,
     height: usize,
     crop: &Option<Crop>,
+    interpolation: Interpolation,
 ) -> Result<(Image, Option<CropArea>)> {
     if let Some(ref c) = crop {
         let area = c.get_area(pe.render_width(), pe.render_height());
         Ok((
-            pe.to_scaled_image_crop(width, height, true, area.x, area.y, area.width, area.height)?,
+            pe.to_scaled_image_crop(
+                width,
+                height,
+                true,
+                area.x,
+                area.y,
+                area.width,
+                area.height,
+                interpolation.to_scale_interpolation(),
+            )?,
             Some(*area),
         ))
     } else {
-        Ok((pe.to_scaled_image(width, height, true)?, None))
+        Ok((
+            pe.to_scaled_image(width, height, true, interpolation.to_scale_interpolation())?,
+            None,
+        ))
     }
 }
 

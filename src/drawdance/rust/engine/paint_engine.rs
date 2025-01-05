@@ -1,11 +1,11 @@
 use super::{AclState, DrawContext, Image, Player};
 use crate::{
     dp_error_anyhow, msg::Message, DP_AnnotationList, DP_CanvasState, DP_DocumentMetadata,
-    DP_LayerPropsList, DP_Message, DP_PaintEngine, DP_Pixel8, DP_PlayerResult, DP_Rect,
-    DP_SelectionSet, DP_Timeline, DP_affected_area_in_bounds, DP_affected_area_make,
-    DP_canvas_state_decref, DP_message_type, DP_paint_engine_free_join, DP_paint_engine_handle_inc,
-    DP_paint_engine_new_inc, DP_paint_engine_playback_begin, DP_paint_engine_playback_play,
-    DP_paint_engine_playback_skip_by, DP_paint_engine_playback_step,
+    DP_ImageScaleInterpolation, DP_LayerPropsList, DP_Message, DP_PaintEngine, DP_Pixel8,
+    DP_PlayerResult, DP_Rect, DP_SelectionSet, DP_Timeline, DP_affected_area_in_bounds,
+    DP_affected_area_make, DP_canvas_state_decref, DP_message_type, DP_paint_engine_free_join,
+    DP_paint_engine_handle_inc, DP_paint_engine_new_inc, DP_paint_engine_playback_begin,
+    DP_paint_engine_playback_play, DP_paint_engine_playback_skip_by, DP_paint_engine_playback_step,
     DP_paint_engine_render_everything, DP_paint_engine_reveal_censored_set, DP_paint_engine_tick,
     DP_paint_engine_view_canvas_state_inc, DP_save, DP_MSG_INTERVAL, DP_MSG_UNDO,
     DP_PAINT_ENGINE_FILTER_MESSAGE_FLAG_NO_TIME, DP_PLAYER_RECORDING_END, DP_PLAYER_SUCCESS,
@@ -371,7 +371,13 @@ impl PaintEngine {
         Image::new_from_pixels(self.render_width, self.render_height, &self.render_image)
     }
 
-    pub fn to_scaled_image(&mut self, width: usize, height: usize, expand: bool) -> Result<Image> {
+    pub fn to_scaled_image(
+        &mut self,
+        width: usize,
+        height: usize,
+        expand: bool,
+        interpolation: DP_ImageScaleInterpolation,
+    ) -> Result<Image> {
         Image::new_from_pixels_scaled(
             self.render_width,
             self.render_height,
@@ -379,7 +385,7 @@ impl PaintEngine {
             width,
             height,
             expand,
-            &mut self.main_dc,
+            interpolation,
         )
     }
 
@@ -392,6 +398,7 @@ impl PaintEngine {
         crop_y: usize,
         crop_width: usize,
         crop_height: usize,
+        interpolation: DP_ImageScaleInterpolation,
     ) -> Result<Image> {
         let img = self
             .to_image()?
@@ -403,7 +410,7 @@ impl PaintEngine {
             width,
             height,
             expand,
-            &mut self.main_dc,
+            interpolation,
         )
     }
 

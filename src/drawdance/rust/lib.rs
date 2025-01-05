@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #![allow(non_camel_case_types)]
 #![allow(clippy::unseparated_literal_suffix)]
-use std::ffi::{c_char, CStr, CString};
+use std::{
+    ffi::{c_char, CStr, CString},
+    fmt::Display,
+    str::FromStr,
+};
 
 include!("bindings.rs");
 
@@ -39,4 +43,68 @@ pub fn dp_cmake_config_version() -> String {
         .to_str()
         .unwrap_or_default()
         .to_owned()
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default)]
+pub enum Interpolation {
+    #[default]
+    Bilinear,
+    Bicubic,
+    Bicublin,
+    Gauss,
+    Sinc,
+    Lanczos,
+    Spline,
+}
+
+impl Interpolation {
+    pub fn to_scale_interpolation(self) -> DP_ImageScaleInterpolation {
+        match self {
+            Self::Bilinear => DP_IMAGE_SCALE_INTERPOLATION_BILINEAR,
+            Self::Bicubic => DP_IMAGE_SCALE_INTERPOLATION_BICUBIC,
+            Self::Bicublin => DP_IMAGE_SCALE_INTERPOLATION_BICUBLIN,
+            Self::Gauss => DP_IMAGE_SCALE_INTERPOLATION_GAUSS,
+            Self::Sinc => DP_IMAGE_SCALE_INTERPOLATION_SINC,
+            Self::Lanczos => DP_IMAGE_SCALE_INTERPOLATION_LANCZOS,
+            Self::Spline => DP_IMAGE_SCALE_INTERPOLATION_SPLINE,
+        }
+    }
+}
+
+impl Display for Interpolation {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Bilinear => "bilinear",
+                Self::Bicubic => "bicubic",
+                Self::Bicublin => "bicublin",
+                Self::Gauss => "gauss",
+                Self::Sinc => "sinc",
+                Self::Lanczos => "lanczos",
+                Self::Spline => "spline",
+            }
+        )
+    }
+}
+
+impl FromStr for Interpolation {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "bilinear" => Ok(Self::Bilinear),
+            "bicubic" => Ok(Self::Bicubic),
+            "bicublin" => Ok(Self::Bicublin),
+            "gauss" => Ok(Self::Gauss),
+            "sinc" => Ok(Self::Sinc),
+            "lanczos" => Ok(Self::Lanczos),
+            "spline" => Ok(Self::Spline),
+            _ => Err(format!(
+                "invalid interpolation '{s}', should be one of 'bilinear', \
+                'bicubic', 'bicublin', 'gauss', 'sinc', 'lanczos' or 'spline'"
+            )),
+        }
+    }
 }

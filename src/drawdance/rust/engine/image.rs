@@ -1,9 +1,8 @@
-use super::DrawContext;
 use crate::{
-    dp_error_anyhow, DP_Image, DP_Output, DP_Quad, DP_UPixel8, DP_blend_color8_to,
-    DP_file_output_new_from_path, DP_image_free, DP_image_height, DP_image_new,
-    DP_image_new_subimage, DP_image_pixels, DP_image_transform_pixels, DP_image_width,
-    DP_image_write_jpeg, DP_image_write_png, DP_output_free, DP_MSG_TRANSFORM_REGION_MODE_BILINEAR,
+    dp_error_anyhow, DP_Image, DP_ImageScaleInterpolation, DP_Output, DP_UPixel8,
+    DP_blend_color8_to, DP_file_output_new_from_path, DP_image_free, DP_image_height, DP_image_new,
+    DP_image_new_subimage, DP_image_pixels, DP_image_scale_sws_pixels, DP_image_width,
+    DP_image_write_jpeg, DP_image_write_png, DP_output_free,
 };
 use anyhow::{anyhow, Result};
 use core::slice;
@@ -11,7 +10,7 @@ use std::{
     ffi::{c_int, CString},
     io::{self},
     mem::size_of,
-    ptr::{self, copy_nonoverlapping},
+    ptr::copy_nonoverlapping,
 };
 
 pub struct Image {
@@ -54,7 +53,7 @@ impl Image {
         scale_width: usize,
         scale_height: usize,
         expand: bool,
-        dc: &mut DrawContext,
+        interpolation: DP_ImageScaleInterpolation,
     ) -> Result<Self> {
         if width == 0 || height == 0 {
             return Err(anyhow!("Empty source image"));
@@ -87,30 +86,14 @@ impl Image {
             ((width as f64 * yratio) as usize, scale_height)
         };
 
-        let right = c_int::try_from(target_width - 1)?;
-        let bottom = c_int::try_from(target_height - 1)?;
-        let dst_quad = DP_Quad {
-            x1: 0,
-            y1: 0,
-            x2: right,
-            y2: 0,
-            x3: right,
-            y3: bottom,
-            x4: 0,
-            y4: bottom,
-        };
-
         let image = unsafe {
-            DP_image_transform_pixels(
+            DP_image_scale_sws_pixels(
+                pixels.as_ptr().cast(),
                 c_int::try_from(width)?,
                 c_int::try_from(height)?,
-                pixels.as_ptr().cast(),
-                dc.as_ptr(),
-                &dst_quad,
-                DP_MSG_TRANSFORM_REGION_MODE_BILINEAR as i32,
-                false,
-                ptr::null_mut(),
-                ptr::null_mut(),
+                c_int::try_from(target_width)?,
+                c_int::try_from(target_height)?,
+                interpolation,
             )
         };
         if image.is_null() {

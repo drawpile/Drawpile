@@ -3,7 +3,7 @@ use anyhow::Result;
 use drawdance::{
     dp_cmake_config_version,
     engine::{PaintEngine, Player},
-    DP_PLAYER_TYPE_GUESS, DP_PROTOCOL_VERSION,
+    Interpolation, DP_PLAYER_TYPE_GUESS, DP_PROTOCOL_VERSION,
 };
 use std::{
     ffi::{c_int, CStr, OsStr},
@@ -124,6 +124,10 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
         /// transparent or black, depending on the output format. This option is
         /// not supported for the output ora format.
         optional -S,--fixedsize
+        /// Interpolation to use when scaling images. One of 'bilinear' (the
+        /// default), 'bicubic', 'bicublin', 'gauss', 'sinc', 'lanczos' or
+        /// 'spline'.
+        optional -I,--interpolation interpolation: Interpolation
         /// Input recording file(s).
         repeated input: String
     };
@@ -240,6 +244,7 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
         flags.maxsize,
         flags.fixedsize,
         format,
+        flags.interpolation.unwrap_or_default(),
         &out_pattern,
     ) {
         Ok(_) => 0,
@@ -267,6 +272,7 @@ fn dump_recordings(
     max_size: Option<ImageSize>,
     fixed_size: bool,
     format: OutputFormat,
+    interpolation: Interpolation,
     out_pattern: &str,
 ) -> Result<()> {
     let mut index = 1;
@@ -280,6 +286,7 @@ fn dump_recordings(
             max_size,
             fixed_size,
             format,
+            interpolation,
             out_pattern,
         )?;
     }
@@ -295,6 +302,7 @@ fn dump_recording(
     max_size: Option<ImageSize>,
     fixed_size: bool,
     format: OutputFormat,
+    interpolation: Interpolation,
     out_pattern: &str,
 ) -> Result<()> {
     let mut player = make_player(input_path).and_then(Player::check_compatible)?;
@@ -317,7 +325,7 @@ fn dump_recording(
         match format {
             OutputFormat::Ora => pe.write_ora(&path)?,
             OutputFormat::Png | OutputFormat::Jpg | OutputFormat::Jpeg => {
-                write_flat_image(&mut pe, max_size, fixed_size, format, &path)?;
+                write_flat_image(&mut pe, max_size, fixed_size, format, interpolation, &path)?;
             }
             OutputFormat::Guess => panic!("Unhandled output format"),
         }
@@ -350,15 +358,16 @@ fn write_flat_image(
     max_size: Option<ImageSize>,
     fixed_size: bool,
     format: OutputFormat,
+    interpolation: Interpolation,
     path: &str,
 ) -> Result<()> {
     let result = if let Some(ImageSize { width, height }) = max_size {
         if fixed_size {
-            pe.to_scaled_image(width, height, true)
+            pe.to_scaled_image(width, height, true, interpolation.to_scale_interpolation())
         } else if pe.render_width() <= width && pe.render_height() < height {
             pe.to_image()
         } else {
-            pe.to_scaled_image(width, height, false)
+            pe.to_scaled_image(width, height, false, interpolation.to_scale_interpolation())
         }
     } else {
         pe.to_image()
