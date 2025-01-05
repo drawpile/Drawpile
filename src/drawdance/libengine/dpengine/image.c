@@ -21,6 +21,7 @@
  */
 #include "image.h"
 #include "compress.h"
+#include "draw_context.h"
 #include "image_transform.h"
 #include "paint.h"
 #include <dpcommon/binary.h>
@@ -30,6 +31,9 @@
 #include <dpcommon/input.h>
 #include <dpcommon/output.h>
 #include <dpmsg/messages.h>
+#ifdef DP_LIBSWSCALE
+#    include <libswscale/swscale.h>
+#endif
 
 
 struct DP_Image {
@@ -424,21 +428,99 @@ bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
     }
 }
 
-DP_Image *DP_image_scale(DP_Image *img, DP_DrawContext *dc, int width,
-                         int height, int interpolation)
+#ifdef DP_LIBSWSCALE
+static int
+get_sws_flags_from_interpolation(DP_ImageScaleInterpolation interpolation)
 {
-    DP_ASSERT(img);
+    switch (interpolation) {
+    case DP_IMAGE_SCALE_INTERPOLATION_FAST_BILINEAR:
+        return SWS_FAST_BILINEAR;
+    case DP_IMAGE_SCALE_INTERPOLATION_BILINEAR:
+        return SWS_BILINEAR;
+    case DP_IMAGE_SCALE_INTERPOLATION_BICUBIC:
+        return SWS_BILINEAR;
+    case DP_IMAGE_SCALE_INTERPOLATION_EXPERIMENTAL:
+        return SWS_X;
+    case DP_IMAGE_SCALE_INTERPOLATION_NEAREST:
+        return SWS_POINT;
+    case DP_IMAGE_SCALE_INTERPOLATION_AREA:
+        return SWS_AREA;
+    case DP_IMAGE_SCALE_INTERPOLATION_BICUBLIN:
+        return SWS_BICUBLIN;
+    case DP_IMAGE_SCALE_INTERPOLATION_GAUSS:
+        return SWS_GAUSS;
+    case DP_IMAGE_SCALE_INTERPOLATION_SINC:
+        return SWS_SINC;
+    case DP_IMAGE_SCALE_INTERPOLATION_LANCZOS:
+        return SWS_LANCZOS;
+    case DP_IMAGE_SCALE_INTERPOLATION_SPLINE:
+        return SWS_SPLINE;
+    default:
+        DP_warn("Unknown interpolation %d", (int)interpolation);
+        return SWS_BILINEAR;
+    }
+}
+#endif
+
+DP_Image *DP_image_scale_pixels(int src_width, int src_height,
+                                const DP_Pixel8 *src_pixels, DP_DrawContext *dc,
+                                int width, int height, int interpolation)
+{
+    DP_ASSERT(src_pixels);
     DP_ASSERT(dc);
     if (width > 0 && height > 0) {
-        int src_width = DP_image_width(img);
-        int src_height = DP_image_height(img);
+        if (interpolation < 0) {
+#ifdef DP_LIBSWSCALE
+            struct SwsContext *sws_context = DP_draw_context_sws_context(
+                dc, src_width, src_height, width, height,
+                get_sws_flags_from_interpolation(interpolation));
+            if (sws_context) {
+                const uint8_t *src_data = (const uint8_t *)src_pixels;
+                const int src_stride = src_width * 4;
+
+                DP_Image *dst = DP_image_new(width, height);
+                uint8_t *dst_data = (uint8_t *)DP_image_pixels(dst);
+                const int dst_stride = width * 4;
+
+                sws_scale(sws_context, &src_data, &src_stride, 0, src_height,
+                          &dst_data, &dst_stride);
+
+                return dst;
+            }
+            else if (interpolation == DP_IMAGE_SCALE_INTERPOLATION_NEAREST) {
+                DP_warn("Failed to allocate sws scaling context, falling back "
+                        "to nearest-neighbor transform");
+                interpolation = DP_MSG_TRANSFORM_REGION_MODE_NEAREST;
+            }
+            else {
+                DP_warn("Failed to allocate sws scaling context, falling back "
+                        "to bilinear transform");
+                interpolation = DP_MSG_TRANSFORM_REGION_MODE_BILINEAR;
+            }
+#else
+            switch (interpolation) {
+            case DP_IMAGE_SCALE_INTERPOLATION_FAST_BILINEAR:
+            case DP_IMAGE_SCALE_INTERPOLATION_BILINEAR:
+                interpolation = DP_MSG_TRANSFORM_REGION_MODE_BILINEAR;
+                break;
+            case DP_IMAGE_SCALE_INTERPOLATION_NEAREST:
+                interpolation = DP_MSG_TRANSFORM_REGION_MODE_NEAREST;
+                break;
+            default:
+                DP_warn("Libswscale not compiled in, falling back to bilinear "
+                        "transform");
+                interpolation = DP_MSG_TRANSFORM_REGION_MODE_BILINEAR;
+                break;
+            }
+#endif
+        }
         DP_Transform tf = DP_transform_scale(
             DP_transform_identity(),
             DP_int_to_double(width) / DP_int_to_double(src_width),
             DP_int_to_double(height) / DP_int_to_double(src_height));
         DP_Image *result = DP_image_new(width, height);
-        if (DP_image_transform_draw(src_width, src_height, DP_image_pixels(img),
-                                    dc, result, tf, interpolation)) {
+        if (DP_image_transform_draw(src_width, src_height, src_pixels, dc,
+                                    result, tf, interpolation)) {
             return result;
         }
         else {
@@ -450,6 +532,16 @@ DP_Image *DP_image_scale(DP_Image *img, DP_DrawContext *dc, int width,
         DP_error_set("Can't scale to zero dimensions");
         return NULL;
     }
+}
+
+DP_Image *DP_image_scale(DP_Image *img, DP_DrawContext *dc, int width,
+                         int height, int interpolation)
+{
+    DP_ASSERT(img);
+    DP_ASSERT(dc);
+    return DP_image_scale_pixels(DP_image_width(img), DP_image_height(img),
+                                 DP_image_pixels(img), dc, width, height,
+                                 interpolation);
 }
 
 bool DP_image_same_pixel(DP_Image *img, DP_Pixel8 *out_pixel)

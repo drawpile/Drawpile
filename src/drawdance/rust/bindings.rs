@@ -2323,6 +2323,18 @@ pub const DP_IMAGE_FILE_TYPE_JPEG: DP_ImageFileType = 2;
 pub const DP_IMAGE_FILE_TYPE_WEBP: DP_ImageFileType = 3;
 pub const DP_IMAGE_FILE_TYPE_UNKNOWN: DP_ImageFileType = 0;
 pub type DP_ImageFileType = ::std::os::raw::c_uint;
+pub const DP_IMAGE_SCALE_INTERPOLATION_FAST_BILINEAR: DP_ImageScaleInterpolation = -1;
+pub const DP_IMAGE_SCALE_INTERPOLATION_BILINEAR: DP_ImageScaleInterpolation = -2;
+pub const DP_IMAGE_SCALE_INTERPOLATION_BICUBIC: DP_ImageScaleInterpolation = -3;
+pub const DP_IMAGE_SCALE_INTERPOLATION_EXPERIMENTAL: DP_ImageScaleInterpolation = -4;
+pub const DP_IMAGE_SCALE_INTERPOLATION_NEAREST: DP_ImageScaleInterpolation = -5;
+pub const DP_IMAGE_SCALE_INTERPOLATION_AREA: DP_ImageScaleInterpolation = -6;
+pub const DP_IMAGE_SCALE_INTERPOLATION_BICUBLIN: DP_ImageScaleInterpolation = -7;
+pub const DP_IMAGE_SCALE_INTERPOLATION_GAUSS: DP_ImageScaleInterpolation = -8;
+pub const DP_IMAGE_SCALE_INTERPOLATION_SINC: DP_ImageScaleInterpolation = -9;
+pub const DP_IMAGE_SCALE_INTERPOLATION_LANCZOS: DP_ImageScaleInterpolation = -10;
+pub const DP_IMAGE_SCALE_INTERPOLATION_SPLINE: DP_ImageScaleInterpolation = -11;
+pub type DP_ImageScaleInterpolation = ::std::os::raw::c_int;
 pub type DP_ImageGetPixelFn = ::std::option::Option<
     unsafe extern "C" fn(
         user: *mut ::std::os::raw::c_void,
@@ -2430,6 +2442,17 @@ extern "C" {
         max_height: ::std::os::raw::c_int,
         out_thumb: *mut *mut DP_Image,
     ) -> bool;
+}
+extern "C" {
+    pub fn DP_image_scale_pixels(
+        src_width: ::std::os::raw::c_int,
+        src_height: ::std::os::raw::c_int,
+        src_pixels: *const DP_Pixel8,
+        dc: *mut DP_DrawContext,
+        width: ::std::os::raw::c_int,
+        height: ::std::os::raw::c_int,
+        interpolation: ::std::os::raw::c_int,
+    ) -> *mut DP_Image;
 }
 extern "C" {
     pub fn DP_image_scale(
@@ -7795,32 +7818,6 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_image_write_webp(img: *mut DP_Image, output: *mut DP_Output) -> bool;
-}
-pub const DP_IMAGE_SCALE_INTERPOLATION_BILINEAR: DP_ImageScaleInterpolation = 0;
-pub const DP_IMAGE_SCALE_INTERPOLATION_BICUBIC: DP_ImageScaleInterpolation = 1;
-pub const DP_IMAGE_SCALE_INTERPOLATION_BICUBLIN: DP_ImageScaleInterpolation = 2;
-pub const DP_IMAGE_SCALE_INTERPOLATION_GAUSS: DP_ImageScaleInterpolation = 3;
-pub const DP_IMAGE_SCALE_INTERPOLATION_SINC: DP_ImageScaleInterpolation = 4;
-pub const DP_IMAGE_SCALE_INTERPOLATION_LANCZOS: DP_ImageScaleInterpolation = 5;
-pub const DP_IMAGE_SCALE_INTERPOLATION_SPLINE: DP_ImageScaleInterpolation = 6;
-pub type DP_ImageScaleInterpolation = ::std::os::raw::c_uint;
-extern "C" {
-    pub fn DP_image_scale_sws_pixels(
-        pixels: *const DP_Pixel8,
-        src_height: ::std::os::raw::c_int,
-        src_width: ::std::os::raw::c_int,
-        width: ::std::os::raw::c_int,
-        height: ::std::os::raw::c_int,
-        interpolation: DP_ImageScaleInterpolation,
-    ) -> *mut DP_Image;
-}
-extern "C" {
-    pub fn DP_image_scale_sws(
-        img: *mut DP_Image,
-        width: ::std::os::raw::c_int,
-        height: ::std::os::raw::c_int,
-        interpolation: DP_ImageScaleInterpolation,
-    ) -> *mut DP_Image;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

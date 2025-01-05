@@ -3,8 +3,7 @@ use anyhow::{anyhow, Result};
 use drawdance::{
     dp_cmake_config_version,
     engine::{Image, PaintEngine, Player},
-    DP_ImageScaleInterpolation, DP_UPixel8, Interpolation, DP_PLAYER_TYPE_GUESS,
-    DP_PROTOCOL_VERSION,
+    DP_UPixel8, Interpolation, DP_PLAYER_TYPE_GUESS, DP_PROTOCOL_VERSION,
 };
 use regex::Regex;
 use std::{
@@ -341,9 +340,9 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
         /// croppings depending on resolution of the form
         /// "CANVAS_WIDTH:CANVAS_HEIGHT=X:Y:WIDTH:HEIGHT".
         optional -x,--crop crop: Crop
-        /// Interpolation to use when scaling images. One of 'bilinear' (the
-        /// default), 'bicubic', 'bicublin', 'gauss', 'sinc', 'lanczos' or
-        /// 'spline'.
+        /// Interpolation to use when scaling images. One of 'fastbilinear' (the
+        /// default), 'bilinear', 'bicubic', 'experimental', 'nearest', 'area',
+        /// 'bicublin', 'gauss', 'sinc', 'lanczos' or 'spline'.
         optional -I,--interpolation interpolation: Interpolation
         /// Input recording file(s).
         repeated input: String

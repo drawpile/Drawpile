@@ -48,8 +48,12 @@ pub fn dp_cmake_config_version() -> String {
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default)]
 pub enum Interpolation {
     #[default]
+    FastBilinear,
     Bilinear,
     Bicubic,
+    Experimental,
+    Nearest,
+    Area,
     Bicublin,
     Gauss,
     Sinc,
@@ -60,8 +64,12 @@ pub enum Interpolation {
 impl Interpolation {
     pub fn to_scale_interpolation(self) -> DP_ImageScaleInterpolation {
         match self {
+            Self::FastBilinear => DP_IMAGE_SCALE_INTERPOLATION_FAST_BILINEAR,
             Self::Bilinear => DP_IMAGE_SCALE_INTERPOLATION_BILINEAR,
             Self::Bicubic => DP_IMAGE_SCALE_INTERPOLATION_BICUBIC,
+            Self::Experimental => DP_IMAGE_SCALE_INTERPOLATION_EXPERIMENTAL,
+            Self::Nearest => DP_IMAGE_SCALE_INTERPOLATION_NEAREST,
+            Self::Area => DP_IMAGE_SCALE_INTERPOLATION_AREA,
             Self::Bicublin => DP_IMAGE_SCALE_INTERPOLATION_BICUBLIN,
             Self::Gauss => DP_IMAGE_SCALE_INTERPOLATION_GAUSS,
             Self::Sinc => DP_IMAGE_SCALE_INTERPOLATION_SINC,
@@ -77,8 +85,12 @@ impl Display for Interpolation {
             f,
             "{}",
             match self {
+                Self::FastBilinear => "fastbilinear",
                 Self::Bilinear => "bilinear",
                 Self::Bicubic => "bicubic",
+                Self::Experimental => "experimental",
+                Self::Nearest => "nearest",
+                Self::Area => "area",
                 Self::Bicublin => "bicublin",
                 Self::Gauss => "gauss",
                 Self::Sinc => "sinc",
@@ -94,16 +106,21 @@ impl FromStr for Interpolation {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
+            "fastbilinear" => Ok(Self::FastBilinear),
             "bilinear" => Ok(Self::Bilinear),
             "bicubic" => Ok(Self::Bicubic),
+            "experimental" => Ok(Self::Experimental),
+            "nearest" => Ok(Self::Nearest),
+            "area" => Ok(Self::Area),
             "bicublin" => Ok(Self::Bicublin),
             "gauss" => Ok(Self::Gauss),
             "sinc" => Ok(Self::Sinc),
             "lanczos" => Ok(Self::Lanczos),
             "spline" => Ok(Self::Spline),
             _ => Err(format!(
-                "invalid interpolation '{s}', should be one of 'bilinear', \
-                'bicubic', 'bicublin', 'gauss', 'sinc', 'lanczos' or 'spline'"
+                "invalid interpolation '{s}', should be one of 'fastbilinear', \
+                'bilinear', 'bicubic', 'experimental', 'nearest', 'area', \
+                'bicublin', 'gauss', 'sinc', 'lanczos' or 'spline'"
             )),
         }
     }

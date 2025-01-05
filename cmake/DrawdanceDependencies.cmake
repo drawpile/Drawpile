@@ -10,16 +10,12 @@ if(CLIENT OR TOOLS)
     if(NOT EMSCRIPTEN)
         find_package(PkgConfig QUIET)
         if(PKGCONFIG_FOUND)
-            pkg_check_modules(LIBAV IMPORTED_TARGET GLOBAL
-                libavcodec
-                libavfilter
-                libavformat
-                libavutil
+            pkg_check_modules(LIBSWSCALE IMPORTED_TARGET GLOBAL
                 libswscale
             )
-            if(TARGET PkgConfig::LIBAV)
+            if(TARGET PkgConfig::LIBSWSCALE)
                 include(CMakePrintHelpers)
-                cmake_print_properties(TARGETS PkgConfig::LIBAV PROPERTIES
+                cmake_print_properties(TARGETS PkgConfig::LIBSWSCALE PROPERTIES
                     INTERFACE_COMPILE_DEFINITIONS
                     INTERFACE_COMPILE_FEATURES
                     INTERFACE_COMPILE_OPTIONS
@@ -32,11 +28,37 @@ if(CLIENT OR TOOLS)
                     INTERFACE_LINK_OPTIONS
                     INTERFACE_SYSTEM_INCLUDE_DIRECTORIES
                 )
-                add_library(LIBAV::LIBAV ALIAS PkgConfig::LIBAV)
+                add_library(LIBAV::LIBSWSCALE ALIAS PkgConfig::LIBSWSCALE)
+
+                pkg_check_modules(LIBAV IMPORTED_TARGET GLOBAL
+                    libavcodec
+                    libavfilter
+                    libavformat
+                    libavutil
+                )
+                if(TARGET PkgConfig::LIBAV)
+                    cmake_print_properties(TARGETS PkgConfig::LIBAV PROPERTIES
+                        INTERFACE_COMPILE_DEFINITIONS
+                        INTERFACE_COMPILE_FEATURES
+                        INTERFACE_COMPILE_OPTIONS
+                        INTERFACE_INCLUDE_DIRECTORIES
+                        INTERFACE_LINK_DEPENDS
+                        INTERFACE_LINK_DIRECTORIES
+                        INTERFACE_LINK_LIBRARIES
+                        INTERFACE_LINK_LIBRARIES_DIRECT
+                        INTERFACE_LINK_LIBRARIES_DIRECT_EXCLUDE
+                        INTERFACE_LINK_OPTIONS
+                        INTERFACE_SYSTEM_INCLUDE_DIRECTORIES
+                    )
+                    target_link_libraries(
+                        PkgConfig::LIBAV INTERFACE LIBAV::LIBSWSCALE)
+                    add_library(LIBAV::LIBAV ALIAS PkgConfig::LIBAV)
+                endif()
             endif()
         else()
             message(WARNING "PkgConfig NOT FOUND")
         endif()
+        add_feature_info("Image scaling via libav" "TARGET LIBAV::LIBSWSCALE" "")
         add_feature_info("Video export via libav" "TARGET LIBAV::LIBAV" "")
     endif()
 

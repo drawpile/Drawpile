@@ -124,9 +124,9 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
         /// transparent or black, depending on the output format. This option is
         /// not supported for the output ora format.
         optional -S,--fixedsize
-        /// Interpolation to use when scaling images. One of 'bilinear' (the
-        /// default), 'bicubic', 'bicublin', 'gauss', 'sinc', 'lanczos' or
-        /// 'spline'.
+        /// Interpolation to use when scaling images. One of 'fastbilinear' (the
+        /// default), 'bilinear', 'bicubic', 'experimental', 'nearest', 'area',
+        /// 'bicublin', 'gauss', 'sinc', 'lanczos' or 'spline'.
         optional -I,--interpolation interpolation: Interpolation
         /// Input recording file(s).
         repeated input: String

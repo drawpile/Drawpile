@@ -98,6 +98,11 @@ target_link_libraries(dpengine PUBLIC
     "Qt${QT_VERSION_MAJOR}::Core"
 )
 
+if(TARGET LIBAV::LIBSWSCALE)
+    target_link_libraries(dpengine PUBLIC LIBAV::LIBSWSCALE)
+    target_compile_definitions(dpengine PUBLIC DP_LIBSWSCALE=1)
+endif()
+
 if(TESTS)
     add_library(dptest_engine INTERFACE)
     target_link_libraries(dptest_engine INTERFACE dptest dpengine)

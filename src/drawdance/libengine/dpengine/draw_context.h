@@ -125,5 +125,12 @@ void DP_draw_context_layer_indexes_pop(DP_DrawContext *dc);
 // Get the contents of the layer index list.
 int *DP_draw_context_layer_indexes(DP_DrawContext *dc, int *out_count);
 
+#ifdef DP_LIBSWSCALE
+struct SwsContext *DP_draw_context_sws_context(DP_DrawContext *dc,
+                                               int src_width, int src_height,
+                                               int dst_width, int dst_height,
+                                               int flags);
+#endif
+
 
 #endif

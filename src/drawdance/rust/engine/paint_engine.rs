@@ -386,6 +386,7 @@ impl PaintEngine {
             height,
             expand,
             interpolation,
+            &mut self.main_dc,
         )
     }
 
@@ -411,6 +412,7 @@ impl PaintEngine {
             height,
             expand,
             interpolation,
+            &mut self.main_dc,
         )
     }
 

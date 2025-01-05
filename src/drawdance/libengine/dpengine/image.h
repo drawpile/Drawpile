@@ -40,6 +40,20 @@ typedef enum DP_ImageFileType {
     DP_IMAGE_FILE_TYPE_UNKNOWN = DP_IMAGE_FILE_TYPE_GUESS,
 } DP_ImageFileType;
 
+typedef enum DP_ImageScaleInterpolation {
+    DP_IMAGE_SCALE_INTERPOLATION_FAST_BILINEAR = -1,
+    DP_IMAGE_SCALE_INTERPOLATION_BILINEAR = -2,
+    DP_IMAGE_SCALE_INTERPOLATION_BICUBIC = -3,
+    DP_IMAGE_SCALE_INTERPOLATION_EXPERIMENTAL = -4,
+    DP_IMAGE_SCALE_INTERPOLATION_NEAREST = -5,
+    DP_IMAGE_SCALE_INTERPOLATION_AREA = -6,
+    DP_IMAGE_SCALE_INTERPOLATION_BICUBLIN = -7,
+    DP_IMAGE_SCALE_INTERPOLATION_GAUSS = -8,
+    DP_IMAGE_SCALE_INTERPOLATION_SINC = -9,
+    DP_IMAGE_SCALE_INTERPOLATION_LANCZOS = -10,
+    DP_IMAGE_SCALE_INTERPOLATION_SPLINE = -11,
+} DP_ImageScaleInterpolation;
+
 typedef struct DP_Image DP_Image;
 
 typedef DP_Pixel8 (*DP_ImageGetPixelFn)(void *user, int x, int y);
@@ -96,6 +110,10 @@ DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
 // | false        | NULL       | thumbnail generation failed      |
 bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
                         int max_height, DP_Image **out_thumb) DP_MUST_CHECK;
+
+DP_Image *DP_image_scale_pixels(int src_width, int src_height,
+                                const DP_Pixel8 *src_pixels, DP_DrawContext *dc,
+                                int width, int height, int interpolation);
 
 DP_Image *DP_image_scale(DP_Image *img, DP_DrawContext *dc, int width,
                          int height, int interpolation);

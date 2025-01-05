@@ -1,7 +1,7 @@
 use crate::{
     dp_error_anyhow, DP_Image, DP_ImageScaleInterpolation, DP_Output, DP_UPixel8,
     DP_blend_color8_to, DP_file_output_new_from_path, DP_image_free, DP_image_height, DP_image_new,
-    DP_image_new_subimage, DP_image_pixels, DP_image_scale_sws_pixels, DP_image_width,
+    DP_image_new_subimage, DP_image_pixels, DP_image_scale_pixels, DP_image_width,
     DP_image_write_jpeg, DP_image_write_png, DP_output_free,
 };
 use anyhow::{anyhow, Result};
@@ -12,6 +12,8 @@ use std::{
     mem::size_of,
     ptr::copy_nonoverlapping,
 };
+
+use super::DrawContext;
 
 pub struct Image {
     image: *mut DP_Image,
@@ -54,6 +56,7 @@ impl Image {
         scale_height: usize,
         expand: bool,
         interpolation: DP_ImageScaleInterpolation,
+        dc: &mut DrawContext,
     ) -> Result<Self> {
         if width == 0 || height == 0 {
             return Err(anyhow!("Empty source image"));
@@ -87,10 +90,11 @@ impl Image {
         };
 
         let image = unsafe {
-            DP_image_scale_sws_pixels(
-                pixels.as_ptr().cast(),
+            DP_image_scale_pixels(
                 c_int::try_from(width)?,
                 c_int::try_from(height)?,
+                pixels.as_ptr().cast(),
+                dc.as_ptr(),
                 c_int::try_from(target_width)?,
                 c_int::try_from(target_height)?,
                 interpolation,

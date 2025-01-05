@@ -31,6 +31,9 @@
 #include "tile.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#ifdef DP_LIBSWSCALE
+#    include <libswscale/swscale.h>
+#endif
 
 
 struct DP_DrawContext {
@@ -61,6 +64,9 @@ struct DP_DrawContext {
     // through malloc, so it's always going to be maximally aligned.
     size_t pool_size;
     void *pool;
+#ifdef DP_LIBSWSCALE
+    struct SwsContext *sws_context;
+#endif
 };
 
 
@@ -69,12 +75,18 @@ DP_DrawContext *DP_draw_context_new(void)
     DP_DrawContext *dc = DP_malloc_simd(sizeof(*dc));
     dc->pool_size = 0;
     dc->pool = NULL;
+#ifdef DP_LIBSWSCALE
+    dc->sws_context = NULL;
+#endif
     return dc;
 }
 
 void DP_draw_context_free(DP_DrawContext *dc)
 {
     if (dc) {
+#ifdef DP_LIBSWSCALE
+        sws_freeContext(dc->sws_context);
+#endif
         DP_free(dc->pool);
         DP_free_simd(dc);
     }
@@ -293,3 +305,16 @@ int *DP_draw_context_layer_indexes(DP_DrawContext *dc, int *out_count)
     }
     return indexes + 1;
 }
+
+#ifdef DP_LIBSWSCALE
+struct SwsContext *DP_draw_context_sws_context(DP_DrawContext *dc,
+                                               int src_width, int src_height,
+                                               int dst_width, int dst_height,
+                                               int flags)
+{
+    DP_ASSERT(dc);
+    return dc->sws_context = sws_getCachedContext(
+               dc->sws_context, src_width, src_height, AV_PIX_FMT_BGRA,
+               dst_width, dst_height, AV_PIX_FMT_BGRA, flags, NULL, NULL, NULL);
+}
+#endif
