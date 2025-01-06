@@ -1376,7 +1376,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anda tidak memiliki izin untuk melakukan itu.</translation>
     </message>
     <message>
         <location line="+222"/>
