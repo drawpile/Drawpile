@@ -392,7 +392,7 @@
     <message>
         <location line="+6"/>
         <source>History Size:</source>
-        <translation>Ukuran Sejarah:</translation>
+        <translation>Ukuran Riwayat:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -406,7 +406,7 @@
     <message>
         <location line="-56"/>
         <source>Local Fork Present:</source>
-        <translation type="unfinished"></translation>
+        <translation>Adanya Cabang Lokal:</translation>
     </message>
     <message>
         <location line="+7"/>
