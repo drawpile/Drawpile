@@ -1753,7 +1753,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>&amp;Download Image…</source>
-        <translation>Unduh Gambar</translation>
+        <translation>&amp;Unduh Gambar…</translation>
     </message>
     <message>
         <location line="+1"/>
