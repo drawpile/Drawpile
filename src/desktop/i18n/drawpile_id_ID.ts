@@ -1376,12 +1376,12 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation>Anda tidak memiliki izin untuk melakukan itu.</translation>
+        <translation>Anda tidak mempunyai izin untuk melakukan itu.</translation>
     </message>
     <message>
         <location line="+222"/>
         <source>Opening file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Membuka berkas…</translation>
     </message>
     <message>
         <location line="+168"/>
@@ -1391,7 +1391,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+21"/>
         <source>Image saving failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Penyimpanan gambar gagal</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1411,7 +1411,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+1"/>
         <source>Download complete, click on &quot;Save&quot; to save your file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pengunduhan selesai, tekan &quot;Simpan&quot; untuk menyimpan berkasmu.</translation>
     </message>
     <message>
         <location line="+67"/>
