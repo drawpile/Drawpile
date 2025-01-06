@@ -372,12 +372,12 @@
     <message>
         <location line="+7"/>
         <source>Single Step</source>
-        <translation>Langkah Tunggal</translation>
+        <translation>Langkah Sekali</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Next Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Setelan Ulang Berikutnya</translation>
     </message>
     <message>
         <location line="+13"/>
