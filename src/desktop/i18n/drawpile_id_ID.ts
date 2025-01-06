@@ -1335,7 +1335,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="-753"/>
         <source>There are unsaved changes. Save them before exiting?</source>
-        <translation>Ada perubahan yang tidak disadari. Simpan sebelum keluar?</translation>
+        <translation>Ada perubahan yang belum tersimpan. Simpan sebelum keluar?</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1351,27 +1351,27 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
         <location line="+131"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Anda tidak mempunyai izin untuk memotong, menempelkan, mengisi, ataupun menghapus.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to resize the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anda tidak mempunyai izin untuk mengubah ukuran kanvas.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anda tidak mempunyai izin untuk mengubah latar belakang sesi.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to create annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anda tidak mempunyai izin untuk membuat anotasi.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to undo or redo.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anda tidak mempunyai izin untuk mengurungkan atau mengulangi.</translation>
     </message>
     <message>
         <location line="+4"/>
