@@ -1467,7 +1467,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+3"/>
         <source>Couldn&apos;t start recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidak bisa mulai rekaman.</translation>
     </message>
     <message>
         <location line="+3"/>
