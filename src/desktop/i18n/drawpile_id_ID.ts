@@ -1467,42 +1467,42 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+3"/>
         <source>Couldn&apos;t start recording.</source>
-        <translation>Tidak bisa mulai rekaman.</translation>
+        <translation>Tidak dapat memulai rekaman.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kegagalan tidak diketahui.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Error downloading profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal mengunduh profil.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error closing profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal menutup profil.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error opening profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal membuka profil.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Error downloading tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal mengunduh laporan kejadian tablet.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error closing tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal menutup laporan kejadian tablet.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Error opening tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal membuka laporan kejadian tablet.</translation>
     </message>
     <message>
         <location line="+185"/>
