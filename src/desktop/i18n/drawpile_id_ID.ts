@@ -1318,7 +1318,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="-27"/>
         <source>You are still connected to a drawing session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anda masih terhubung ke sesi menggambar.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1335,7 +1335,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="-753"/>
         <source>There are unsaved changes. Save them before exiting?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ada perubahan yang tidak disadari. Simpan sebelum keluar?</translation>
     </message>
     <message>
         <location line="+5"/>
