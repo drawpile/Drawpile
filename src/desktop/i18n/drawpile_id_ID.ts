@@ -1451,7 +1451,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+5"/>
         <source>Stop Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>Berhenti Merekam</translation>
     </message>
     <message>
         <location line="+3"/>
