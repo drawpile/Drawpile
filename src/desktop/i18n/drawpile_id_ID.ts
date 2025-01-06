@@ -93,7 +93,7 @@
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation>Kunci alfa (mode warna)</translation>
+        <translation>Kunci alpha (mode warnai ulang)</translation>
     </message>
     <message>
         <location line="+14"/>
