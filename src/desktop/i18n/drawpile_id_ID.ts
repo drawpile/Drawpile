@@ -1799,29 +1799,29 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+2"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Keluar</translation>
     </message>
     <message>
         <location line="+63"/>
         <location filename="../widgets/macmenu.cpp" line="-12"/>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Berkas</translation>
     </message>
     <message>
         <location line="+5"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Open &amp;Recent</source>
-        <translation type="unfinished"></translation>
+        <translation>Buka &amp;Terakhir</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>&amp;Import</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Impor</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&amp;Export</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ekspor</translation>
     </message>
     <message>
         <location line="+17"/>
