@@ -1250,7 +1250,7 @@ Sub-rentang: [%3, %4]</translation>
         <location line="+129"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
-            <numerusform>Anda memiliki gambar %n dengan perubahan yang tidak terukur. Apakah Anda ingin meninjau perubahan ini sebelum berhenti?</numerusform>
+            <numerusform>Anda memiliki %n gambar dengan perubahan yang belum tersimpan. Apakah anda ingin meninjau perubahan ini sebelum keluar?</numerusform>
         </translation>
     </message>
     <message>
