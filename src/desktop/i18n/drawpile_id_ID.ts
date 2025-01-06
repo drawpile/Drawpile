@@ -1896,7 +1896,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Set Local Background...</source>
-        <translation>Mengatur Latar Belakang Lokal...</translation>
+        <translation>Atur Latar Belakang Lokal...</translation>
     </message>
     <message>
         <location line="+1"/>
