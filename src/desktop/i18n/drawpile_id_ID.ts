@@ -1256,7 +1256,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+1"/>
         <source>If you don&apos;t review your documents, all changes will be lost</source>
-        <translation type="unfinished"></translation>
+        <translation>Jika Anda tidak meninjau dokumen Anda, semua perubahan akan hilang</translation>
     </message>
     <message>
         <location line="+1"/>
