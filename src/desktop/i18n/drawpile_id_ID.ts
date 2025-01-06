@@ -1947,7 +1947,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Atur Ulang Pembesaran</translation>
     </message>
     <message>
         <location line="+1"/>
