@@ -933,7 +933,7 @@
     <message>
         <location line="+45"/>
         <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anda hosting sesi secara lokal, sehingga Drawpile harus menemukan alamat IP Anda yang terlihat secara eksternal untuk memberi Anda tautan undangan. Untuk informasi lebih lanjut, periksa &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt; halaman bantuan di hosting&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+32"/>
