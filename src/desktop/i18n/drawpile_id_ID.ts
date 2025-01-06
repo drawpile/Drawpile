@@ -644,7 +644,7 @@
     <message>
         <location line="+43"/>
         <source>Save Image Series</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan Seri Gambar</translation>
     </message>
     <message>
         <location line="+99"/>
@@ -659,7 +659,7 @@
     <message>
         <location line="+10"/>
         <source>Export Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Peran Ekspor</translation>
     </message>
     <message>
         <location line="+39"/>
