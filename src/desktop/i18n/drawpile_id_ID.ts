@@ -75,7 +75,7 @@
     <message>
         <location filename="../ui/avatarimport.ui" line="+14"/>
         <source>Crop Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Potong avatar</translation>
     </message>
 </context>
 <context>
