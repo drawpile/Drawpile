@@ -1846,7 +1846,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
-        <translation>Copy area yang dipilih, termasuk latar belakang, ke clipboard</translation>
+        <translation>Salin area yang dipilih, termasuk latar belakang, ke papan klip</translation>
     </message>
     <message>
         <location line="+1"/>
