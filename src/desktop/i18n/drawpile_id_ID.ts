@@ -1594,7 +1594,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
         <location line="+454"/>
         <location line="+13"/>
         <source>The image could not be loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Gambar tidak bisa dimuat</translation>
     </message>
     <message>
         <location line="+245"/>
@@ -1696,7 +1696,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Tablet Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>Input tablet:</translation>
     </message>
     <message>
         <location line="+2"/>
