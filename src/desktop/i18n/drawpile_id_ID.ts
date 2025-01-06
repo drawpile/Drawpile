@@ -1701,7 +1701,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Primary screen:</source>
-        <translation type="unfinished"></translation>
+        <translation>Layar utama:</translation>
     </message>
     <message>
         <location line="+1"/>
