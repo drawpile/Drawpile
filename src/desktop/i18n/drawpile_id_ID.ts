@@ -1773,7 +1773,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Autosave</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan otomatis</translation>
     </message>
     <message>
         <location line="+3"/>
