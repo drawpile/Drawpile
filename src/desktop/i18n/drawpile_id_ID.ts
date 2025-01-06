@@ -738,19 +738,19 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-2"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Opasitas: </translation>
     </message>
     <message>
         <location line="+174"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+158"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode:</translation>
     </message>
     <message>
         <location line="-289"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-146"/>
         <source>Tolerance: </source>
-        <translation type="unfinished"></translation>
+        <translation>Toleransi: </translation>
     </message>
     <message>
         <location line="+18"/>
@@ -823,7 +823,7 @@
         <location line="-336"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-113"/>
         <source>Size Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>Batas Ukuran </translation>
     </message>
     <message>
         <location line="+279"/>
@@ -842,12 +842,12 @@
     <message>
         <location line="+28"/>
         <source>Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Atur Ulang Pembesaran</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Segarkan</translation>
     </message>
     <message>
         <location line="+53"/>
