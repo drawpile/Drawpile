@@ -1876,7 +1876,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Paste &amp;From File...</source>
-        <translation type="unfinished"></translation>
+        <translation>Paste &amp;Dari File...</translation>
     </message>
     <message>
         <location line="+1"/>
