@@ -971,7 +971,9 @@
         <source>Toggle between full range and subrange.
 Full range: [%1, %2]
 Subrange: [%3, %4]</source>
-        <translation type="unfinished"></translation>
+        <translation>Beralih antara rentang penuh dan subrange.
+Kisaran penuh: [%1, %2
+%3, %4</translation>
     </message>
     <message>
         <location line="+175"/>
