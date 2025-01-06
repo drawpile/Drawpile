@@ -1176,7 +1176,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+11"/>
         <source>Don&apos;t use any of these accounts.</source>
-        <translation>Jangan menggunakan akun ini.</translation>
+        <translation>Jangan menggunakan akun-akun ini.</translation>
     </message>
     <message>
         <location line="+3"/>
