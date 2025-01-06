@@ -1280,8 +1280,8 @@ Sub-rentang: [%3, %4]</translation>
         <location line="+1"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
-        <translation>Server menjalankan ruang sejarah dan sesi telah berkembang terlalu besar untuk secara otomatis mengatur ulang! (Limit adalah %1 MB)
-Sederhanakan kanvas dan ulang secara manual sebelum ruang berjalan.</translation>
+        <translation>Server segera kehabisan ruang riwayat dan sesi telah berkembang terlalu besar untuk mengatur ulang secara otomatis! (Batas adalah %1 MB)
+Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</translation>
     </message>
     <message>
         <location line="+300"/>
@@ -1292,7 +1292,7 @@ Sederhanakan kanvas dan ulang secara manual sebelum ruang berjalan.</translation
         <location line="+99"/>
         <location line="+1987"/>
         <source>Untitled</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidak bernama</translation>
     </message>
     <message>
         <location line="-1513"/>
