@@ -1507,7 +1507,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+185"/>
         <source>No canvas to host! Create one or open a file.</source>
-        <translation>Tidak ada kanvas untuk tuan rumah! Buat satu atau buka file.</translation>
+        <translation>Tidak ada kanvas untuk dihosting! Buat satu atau buka file.</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -1517,7 +1517,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+18"/>
         <source>Host Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Hosting Sesi</translation>
     </message>
     <message>
         <location line="+95"/>
