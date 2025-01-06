@@ -2162,7 +2162,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Recolor Selection</source>
-        <translation>Seleksi warna</translation>
+        <translation>Warnai Ulang Pilihan</translation>
     </message>
     <message>
         <location line="+3"/>
