@@ -1891,7 +1891,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Set Session Background...</source>
-        <translation type="unfinished"></translation>
+        <translation>Mengatur Latar Belakang Sesi ...</translation>
     </message>
     <message>
         <location line="+1"/>
