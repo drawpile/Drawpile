@@ -179,7 +179,7 @@
     <message>
         <location line="+9"/>
         <source>Type</source>
-        <translation>Tipe</translation>
+        <translation>Jenis</translation>
     </message>
     <message>
         <location line="+22"/>
