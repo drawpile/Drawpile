@@ -1542,7 +1542,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+39"/>
         <source>Become Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Menjadi Operator</translation>
     </message>
     <message>
         <location line="+1"/>
