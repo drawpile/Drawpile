@@ -1522,7 +1522,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+95"/>
         <source>Really leave the session?</source>
-        <translation type="unfinished"></translation>
+        <translation>Benar-benar meninggalkan sesi?</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1537,7 +1537,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+10"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
-        <translation type="unfinished"></translation>
+        <translation>Masih belum ada data! Silahkan tunggu sampai selesai transmisi!</translation>
     </message>
     <message>
         <location line="+39"/>
