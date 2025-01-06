@@ -2071,13 +2071,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+1"/>
         <source>1 Hour</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Jam</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Forever</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>Selamanya</translation>
     </message>
     <message>
         <location line="+41"/>
