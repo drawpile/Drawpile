@@ -266,7 +266,7 @@
     <message>
         <location line="-43"/>
         <source>Serial number:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nomor Seri</translation>
     </message>
     <message>
         <location line="+26"/>
