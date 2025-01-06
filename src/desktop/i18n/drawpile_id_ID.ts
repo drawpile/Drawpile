@@ -497,7 +497,7 @@
     <message>
         <location line="+8"/>
         <source>Import Roles</source>
-        <translation>Peran impor</translation>
+        <translation>Impor Peran</translation>
     </message>
     <message>
         <location line="+120"/>
