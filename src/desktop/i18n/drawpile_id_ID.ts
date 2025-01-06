@@ -1836,7 +1836,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ulangi</translation>
     </message>
     <message>
         <location line="+1"/>
