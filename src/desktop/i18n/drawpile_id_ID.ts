@@ -1542,7 +1542,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+39"/>
         <source>Become Operator</source>
-        <translation>Menjadi Operator</translation>
+        <translation>Jadi Operator</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1552,13 +1552,13 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+61"/>
         <source>Terminate session</source>
-        <translation type="unfinished"></translation>
+        <translation>Akhiri sesi</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+2417"/>
         <source>Terminate</source>
-        <translation type="unfinished"></translation>
+        <translation>Akhiri</translation>
     </message>
     <message>
         <location line="-2273"/>
