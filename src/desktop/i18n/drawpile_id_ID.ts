@@ -1851,7 +1851,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Copy selected area of the current layer to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Salin area yang dipilih dari lapisan saat ini ke clipboard</translation>
     </message>
     <message>
         <location line="+1"/>
