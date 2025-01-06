@@ -1126,7 +1126,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+158"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter</translation>
     </message>
     <message>
         <location line="+13"/>
