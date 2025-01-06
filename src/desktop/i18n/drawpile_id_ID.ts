@@ -1231,7 +1231,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+7"/>
         <source>View new</source>
-        <translation type="unfinished"></translation>
+        <translation>Lihat baru</translation>
     </message>
     <message>
         <location line="+7"/>
