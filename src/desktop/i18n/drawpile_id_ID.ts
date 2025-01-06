@@ -62,12 +62,12 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation>Masukkan daftar URL server:</translation>
+        <translation>Masukkan URL daftar server:</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
-        <translation>Anda dapat menemukan beberapa daftar server di &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/komunitas&lt;/a&gt;</translation>
+        <translation>Anda dapat menemukan beberapa daftar server di &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -75,7 +75,7 @@
     <message>
         <location filename="../ui/avatarimport.ui" line="+14"/>
         <source>Crop Avatar</source>
-        <translation>Potong avatar</translation>
+        <translation>Pangkas Avatar</translation>
     </message>
 </context>
 <context>
@@ -244,13 +244,13 @@
     <message>
         <location line="+63"/>
         <source>MD5 fingerprint:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sidik jari MD5:</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+14"/>
         <source>Organization unit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Unit organisasi:</translation>
     </message>
     <message>
         <location line="-7"/>
