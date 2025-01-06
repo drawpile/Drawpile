@@ -1731,7 +1731,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Hold Shift to Arrange</source>
-        <translation>Tahan Pergeseran untuk Mengatur</translation>
+        <translation>Tahan Shift untuk Mengatur</translation>
     </message>
     <message>
         <location line="+10"/>
