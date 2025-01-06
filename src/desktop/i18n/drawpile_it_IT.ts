@@ -8304,9 +8304,9 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Rimuovere davvero la scorciatoia di %n tela?</numerusform>
-            <numerusform>Rimuovere davvero le scorciatoie di %n tela?</numerusform>
+            <numerusform>Rimuovere davvero le scorciatoie di %n tele?</numerusform>
         </translation>
     </message>
     <message>
