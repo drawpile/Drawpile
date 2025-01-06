@@ -1691,12 +1691,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+18"/>
         <source>Settings File:</source>
-        <translation type="unfinished"></translation>
+        <translation>Berkas Pengaturan:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet Input:</source>
-        <translation>Input tablet:</translation>
+        <translation>Masukan tablet:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1706,7 +1706,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>%1x%2px² (%3x%4mm²)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%2px² (%3x%4mm²)</translation>
     </message>
     <message>
         <location line="+141"/>
