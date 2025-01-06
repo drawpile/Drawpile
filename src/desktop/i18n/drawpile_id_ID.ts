@@ -1211,7 +1211,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="-574"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation>Tampilkan sesi tidak cocok untuk minor (NSFM)</translation>
+        <translation>Tampilkan sesi tidak cocok untuk anak-anak/minor (Konten Sensitif/NSFM)</translation>
     </message>
     <message>
         <location line="+86"/>
