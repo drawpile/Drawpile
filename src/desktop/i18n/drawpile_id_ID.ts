@@ -664,7 +664,7 @@
     <message>
         <location line="+39"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Format PSD kurang mendukung anotasi, garis waktu animasi dan beberapa mode campuran. Jika Anda ingin mereka disimpan dengan benar, Anda harus menyimpan file ORA.</translation>
     </message>
     <message>
         <location line="+3"/>
