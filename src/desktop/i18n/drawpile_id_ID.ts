@@ -1297,7 +1297,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="-1513"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;The shortcut &apos;%1&apos; sedang ambigu, pertandingan:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
     <message>
         <location line="+5"/>
