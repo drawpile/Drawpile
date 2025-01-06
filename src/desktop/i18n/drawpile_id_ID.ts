@@ -1426,7 +1426,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+19"/>
         <source>Session template saved</source>
-        <translation type="unfinished"></translation>
+        <translation>Template sesi disimpan</translation>
     </message>
     <message>
         <location line="+2"/>
