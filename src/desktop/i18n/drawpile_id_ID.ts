@@ -1131,7 +1131,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+13"/>
         <source>NSFM</source>
-        <translation type="unfinished">Konten Sensitif</translation>
+        <translation>Konten Sensitif/NSFM</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -1146,7 +1146,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+183"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation>&lt;p&gt; Sesi ini telah menunjukkan bahwa kontennya adalah &lt;em&gt; tidak cocok untuk anak-anak &lt;/em&gt; (NSFM). &lt;/p&gt;&lt;p&gt;&lt;strong&gt;Anda harus berusia lebih dari 18 dan diperbolehkan untuk mengkonsumsi konten dewasa untuk melanjutkan. &lt;/strong&gt;&lt;/p&gt;&lt;p&gt; Apakah Anda yakin Anda ingin bergabung sesi ini?&lt;/p&gt;</translation>
+        <translation>&lt;p&gt; Sesi ini telah memberitahu bahwa kontennya &lt;em&gt; tidak cocok untuk anak-anak &lt;/em&gt; (Konten Sensitif/NSFM). &lt;/p&gt;&lt;p&gt;&lt;strong&gt;Anda harus berusia lebih dari 18 dan diperbolehkan untuk mengkonsumsi konten dewasa untuk melanjutkan. &lt;/strong&gt;&lt;/p&gt;&lt;p&gt; Apakah anda yakin ingin bergabung sesi ini?&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
