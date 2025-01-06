@@ -464,7 +464,7 @@
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Jenis:</translation>
     </message>
 </context>
 <context>
