@@ -669,7 +669,7 @@
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Format yang dipilih akan menyimpan gambar gabungan. Jika Anda ingin mempertahankan lapisan, anotasi dan garis waktu animasi, Anda harus menyimpan file ORA.</translation>
     </message>
     <message>
         <location line="+24"/>
