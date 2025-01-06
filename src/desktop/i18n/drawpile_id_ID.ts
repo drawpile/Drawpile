@@ -538,38 +538,38 @@
     <message>
         <location line="+35"/>
         <source>Performance Profile</source>
-        <translation>Profil</translation>
+        <translation>Profil Performa</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tablet Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Laporan Kejadian Tablet</translation>
     </message>
     <message>
         <location line="+159"/>
         <source>Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>File Laporan</translation>
     </message>
     <message>
         <location line="-187"/>
         <location line="+36"/>
         <source>Export MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekspor Video MP4</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export WebM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekspor Video WebM</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Custom FFmpeg Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekspor Video Kustom FFmpeg</translation>
     </message>
     <message>
         <location line="-77"/>
         <source>Save Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan Frame Animasi</translation>
     </message>
     <message>
         <location line="-253"/>
