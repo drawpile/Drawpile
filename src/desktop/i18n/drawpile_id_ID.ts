@@ -1866,7 +1866,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Paste in View Center</source>
-        <translation>Tempel di View Center</translation>
+        <translation>Tempel di Tengah Penglihatan</translation>
     </message>
     <message>
         <location line="+2"/>
