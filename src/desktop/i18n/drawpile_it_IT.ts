@@ -8312,12 +8312,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+7"/>
         <source>Restore Canvas Shortcut Defaults</source>
-        <translation type="unfinished">Ripristina le Impostazioni Predefinite delle Scorciatoie</translation>
+        <translation>Ripristina le Impostazioni Predefinite delle Scorciatoie della tela</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really restore all canvas shortcuts to their default values?</source>
-        <translation type="unfinished">Ripristinare davvero tutte le scorciatoie dell&apos;area di disegno ai loro valori predefiniti?</translation>
+        <translation>Ripristina davvero tutte le scorciatoie della tela ai valori predefiniti?</translation>
     </message>
     <message>
         <location line="+95"/>
@@ -8346,7 +8346,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/tablet.cpp" line="+30"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished">Tablet Tester</translation>
+        <translation>Tester per tablet</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -8411,22 +8411,22 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+4"/>
         <source>Global smoothing: </source>
-        <translation type="unfinished">Smussatura globale: </translation>
+        <translation>Levigatura globale: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">Lisciatura:</translation>
+        <translation>Levigatura:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Apply global smoothing to mouse</source>
-        <translation type="unfinished">Applicare lo smussamento globale al mouse</translation>
+        <translation>Applica la levigatura globale al mouse</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Compensate jagged curves</source>
-        <translation type="unfinished">Compensa le curve dentellate</translation>
+        <translation>Compensa le curve frastagliate</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8441,7 +8441,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished">Cancellazione con pennello corrente</translation>
+        <translation>Cancella con il pennello corrente</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8601,12 +8601,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/touch.cpp" line="+25"/>
         <source>Touch Tester</source>
-        <translation type="unfinished">Tester del Touch</translation>
+        <translation>Tester del Touch</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Touch mode:</source>
-        <translation type="unfinished">Modalità Touch:</translation>
+        <translation>Modalità touch:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8630,12 +8630,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="-82"/>
         <source>Undo</source>
-        <translation type="unfinished">Annulla</translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Redo</source>
-        <translation type="unfinished">Avanti</translation>
+        <translation>Rifare</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8700,7 +8700,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Pan canvas</source>
-        <translation type="unfinished">Panoramica della Tela</translation>
+        <translation>Panoramica tela</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11015,7 +11015,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Shrink</source>
-        <translation type="unfinished">Dividi</translation>
+        <translation>Restringi</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11030,12 +11030,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+93"/>
         <source>Shrink: </source>
-        <translation type="unfinished">Dividere: </translation>
+        <translation>Restringere: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Expand: </source>
-        <translation type="unfinished">Espansione: </translation>
+        <translation>Espandere: </translation>
     </message>
 </context>
 <context>
