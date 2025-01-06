@@ -1406,7 +1406,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+35"/>
         <source>Download Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Pengunduhan Selesai</translation>
     </message>
     <message>
         <location line="+1"/>
