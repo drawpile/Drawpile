@@ -1345,7 +1345,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+2"/>
         <source>Discard</source>
-        <translation type="unfinished"></translation>
+        <translation>Singkirkan</translation>
     </message>
     <message>
         <location line="+131"/>
