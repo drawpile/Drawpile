@@ -2157,7 +2157,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+492"/>
         <source>Fill Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Arsir Pilihan</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2172,7 +2172,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-413"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sunting</translation>
     </message>
     <message>
         <location line="-1658"/>
