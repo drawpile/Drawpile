@@ -1886,7 +1886,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Resi&amp;ze Canvas...</source>
-        <translation type="unfinished"></translation>
+        <translation>Resi&amp;ze Kanvas...</translation>
     </message>
     <message>
         <location line="+1"/>
