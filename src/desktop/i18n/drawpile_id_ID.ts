@@ -513,17 +513,17 @@
     <message>
         <location line="+24"/>
         <source>Save Pre-Reset Image</source>
-        <translation>Simpan Gambar Pre-Reset</translation>
+        <translation>Simpan Gambar Pra-Setelan Ulang</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Save Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan Seleksi</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Record Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Rekam Sesi</translation>
     </message>
     <message>
         <location line="+7"/>
