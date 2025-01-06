@@ -1537,7 +1537,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+10"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
-        <translation>Masih belum ada data! Silahkan tunggu sampai selesai transmisi!</translation>
+        <translation>Masih ada data belum terkirim! Silahkan tunggu sampai selesai transmisi!</translation>
     </message>
     <message>
         <location line="+39"/>
