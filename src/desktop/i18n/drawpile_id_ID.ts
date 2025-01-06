@@ -1097,7 +1097,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation>Docker Drawpile dapat diatur secara bebas dan dikombinasikan dengan menahan Pergeseran dan menyeretnya di bagian atas. Anda dapat menyimpan dan mengembalikan pengaturan favorit Anda di sini. Pastikan pengaturan Anda sesuai dengan resolusi Anda, jika ada beberapa kontrol dapat didorong dari layar.</translation>
     </message>
 </context>
 <context>
