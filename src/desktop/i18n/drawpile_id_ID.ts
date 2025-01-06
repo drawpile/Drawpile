@@ -2202,7 +2202,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Canvas Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Latar belakang kanvas</translation>
     </message>
     <message>
         <location line="+13"/>
