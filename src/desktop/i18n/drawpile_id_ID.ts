@@ -988,7 +988,7 @@ Kisaran penuh: [%1, %2
     <message>
         <location line="+2"/>
         <source>Step &amp;down</source>
-        <translation type="unfinished"></translation>
+        <translation>Langkah &amp;turun</translation>
     </message>
 </context>
 <context>
@@ -1006,7 +1006,7 @@ Kisaran penuh: [%1, %2
     <message>
         <location line="+7"/>
         <source>s</source>
-        <translation type="unfinished"></translation>
+        <translation>s</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1019,7 +1019,7 @@ Kisaran penuh: [%1, %2
     <message>
         <location filename="../ui/layerproperties.ui" line="+17"/>
         <source>Layer Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Properti Lapisan</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1029,7 +1029,7 @@ Kisaran penuh: [%1, %2
     <message>
         <location line="+10"/>
         <source>Opacity:</source>
-        <translation type="unfinished"></translation>
+        <translation>Opasitas:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1044,7 +1044,7 @@ Kisaran penuh: [%1, %2
     <message>
         <location line="+10"/>
         <source>Visibility:</source>
-        <translation type="unfinished"></translation>
+        <translation>Visibilitas:</translation>
     </message>
     <message>
         <location line="+7"/>
