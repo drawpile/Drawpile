@@ -2307,12 +2307,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+15"/>
         <source>&amp;Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Layar Penuh</translation>
     </message>
     <message>
         <location line="+78"/>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Tampilan</translation>
     </message>
     <message>
         <location line="+11"/>
