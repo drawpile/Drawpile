@@ -961,7 +961,7 @@
     <message>
         <location line="+1"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Atur Ulang</translation>
     </message>
 </context>
 <context>
