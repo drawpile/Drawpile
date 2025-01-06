@@ -1266,7 +1266,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+2"/>
         <source>Discard changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Buang perubahan</translation>
     </message>
 </context>
 <context>
