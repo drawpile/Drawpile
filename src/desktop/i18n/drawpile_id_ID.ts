@@ -1151,12 +1151,12 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+26"/>
         <source>Show this warning again next time</source>
-        <translation>Tampilkan peringatan ini lagi waktu berikutnya</translation>
+        <translation>Tampilkan peringatan ini lagi di waktu berikutnya</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>Continue without account</source>
-        <translation type="unfinished"></translation>
+        <translation>Lanjutkan tanpa akun</translation>
     </message>
     <message>
         <location line="+36"/>
