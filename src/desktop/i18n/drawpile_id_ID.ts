@@ -1151,7 +1151,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+26"/>
         <source>Show this warning again next time</source>
-        <translation type="unfinished"></translation>
+        <translation>Tampilkan peringatan ini lagi waktu berikutnya</translation>
     </message>
     <message>
         <location line="+67"/>
