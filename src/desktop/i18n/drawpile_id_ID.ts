@@ -938,12 +938,12 @@
     <message>
         <location line="+32"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Dapatkan alamat IP yang terlihat secara eksternal</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Show this dialog when hosting a session</source>
-        <translation type="unfinished"></translation>
+        <translation>Tampilkan dialog ini ketika hosting sesi</translation>
     </message>
     <message>
         <location line="+7"/>
