@@ -862,7 +862,7 @@
     <message>
         <location line="+17"/>
         <source>Frame:</source>
-        <translation type="unfinished"></translation>
+        <translation>Frame:</translation>
     </message>
     <message>
         <location line="+20"/>
