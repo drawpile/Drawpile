@@ -1216,12 +1216,12 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+86"/>
         <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
-        <translation>Masukkan kata sandi &lt;b&gt; &lt;/b&gt;, &lt;i&gt; tidak &lt;/i&gt; kata sandi akun Anda.</translation>
+        <translation>Masukkan &lt;b&gt;kata sandi sesi&lt;/b&gt;, &lt;i&gt;bukan&lt;/i&gt; kata sandi akun anda.</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Catching up...</source>
-        <translation type="unfinished"></translation>
+        <translation>Menyusul...</translation>
     </message>
     <message>
         <location line="+50"/>
