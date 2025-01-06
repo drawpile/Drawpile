@@ -1831,7 +1831,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+50"/>
         <source>&amp;Undo</source>
-        <translation>&amp;Batalkan</translation>
+        <translation>&amp;Urungkan</translation>
     </message>
     <message>
         <location line="+1"/>
