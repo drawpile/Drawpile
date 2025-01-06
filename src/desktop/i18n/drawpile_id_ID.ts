@@ -948,7 +948,7 @@
     <message>
         <location line="+7"/>
         <source>You can find this dialog again under &lt;i&gt;Session ▸ Invite…&lt;/i&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Anda dapat menemukan dialog ini lagi di bawah &lt;i&gt;Session ▸ Invite ... &lt;/i&gt;</translation>
     </message>
 </context>
 <context>
@@ -956,7 +956,7 @@
     <message>
         <location filename="../widgets/kis_curve_widget.cpp" line="+46"/>
         <source>Remove point</source>
-        <translation type="unfinished"></translation>
+        <translation>Hapus titik</translation>
     </message>
     <message>
         <location line="+1"/>
