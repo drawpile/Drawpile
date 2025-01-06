@@ -1512,7 +1512,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+19"/>
         <source>Invalid address</source>
-        <translation type="unfinished"></translation>
+        <translation>Alamat tidak valid</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1527,12 +1527,12 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+1"/>
         <source>Leave</source>
-        <translation type="unfinished"></translation>
+        <translation>Tinggalkan</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Stay</source>
-        <translation type="unfinished"></translation>
+        <translation>Menetap</translation>
     </message>
     <message>
         <location line="+10"/>
