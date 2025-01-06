@@ -1573,12 +1573,12 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+135"/>
         <source>Session blocked by parental controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesi diblokir oleh kontrol orang tua</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Undo Limit... (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Batasan Undo ... (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
