@@ -1737,13 +1737,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+10"/>
         <location filename="../widgets/macmenu.cpp" line="-169"/>
         <source>&amp;New</source>
-        <translation>&amp;Baru</translation>
+        <translation>Ba&amp;ru</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Open...</source>
-        <translation>&amp;Buka...</translation>
+        <translation>B&amp;uka...</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1753,7 +1753,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>&amp;Download Image…</source>
-        <translation>&amp;Unduh Gambar…</translation>
+        <translation>Unduh &amp;Gambar…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1768,7 +1768,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Save &amp;As...</source>
-        <translation>Simpan &amp;Sebagai...</translation>
+        <translation>Simpan S&amp;ebagai...</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1783,7 +1783,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Import Animation &amp;Frames…</source>
-        <translation>Impor Frame &amp;Animasi…</translation>
+        <translation>Impor &amp;Frame Animasi…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1831,12 +1831,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+50"/>
         <source>&amp;Undo</source>
-        <translation>&amp;Urungkan</translation>
+        <translation>U&amp;rungkan</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Redo</source>
-        <translation>&amp;Ulangi</translation>
+        <translation>U&amp;langi</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1871,7 +1871,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Pic&amp;k From Screen</source>
-        <translation>Pil&amp;ih Dari Layar</translation>
+        <translation>&amp;Pilih Dari Layar</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1886,7 +1886,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Resi&amp;ze Canvas...</source>
-        <translation>Ub&amp;ah Ukuran Kanvas...</translation>
+        <translation>Ubah Ukuran &amp;Kanvas...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1901,38 +1901,38 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Clear Local Background</source>
-        <translation>Latar Belakang Lokal yang Jelas</translation>
+        <translation>Hapus Latar Belakang Lokal</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Brush Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Se&amp;telan Kuas</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Prefere&amp;nces</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Setelan</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Expand &amp;Up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Perluas Ke&amp;atas…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Down…</source>
-        <translation type="unfinished"></translation>
+        <translation>Perluas Ke&amp;bawah…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Left…</source>
-        <translation type="unfinished"></translation>
+        <translation>Perluas ke Ki&amp;ri…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Right…</source>
-        <translation type="unfinished"></translation>
+        <translation>Perluas ke Ka&amp;nan…</translation>
     </message>
     <message>
         <location line="+170"/>
