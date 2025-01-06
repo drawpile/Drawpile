@@ -1901,7 +1901,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Clear Local Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Latar Belakang Lokal yang Jelas</translation>
     </message>
     <message>
         <location line="+1"/>
