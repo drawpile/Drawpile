@@ -2059,7 +2059,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+1"/>
         <source>10 Seconds</source>
         <comment>user pointer stay time</comment>
-        <translation>10 detik</translation>
+        <translation>10 Detik</translation>
     </message>
     <message>
         <location line="+1"/>
