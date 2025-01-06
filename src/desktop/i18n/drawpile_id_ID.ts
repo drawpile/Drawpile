@@ -1568,7 +1568,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+2"/>
         <source>Join</source>
-        <translation type="unfinished"></translation>
+        <translation>Gabung</translation>
     </message>
     <message>
         <location line="+135"/>
