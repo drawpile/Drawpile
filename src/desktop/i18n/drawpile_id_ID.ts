@@ -1039,7 +1039,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+10"/>
         <source>Blending Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode Campuran:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1064,7 +1064,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+7"/>
         <source>Default for new users</source>
-        <translation type="unfinished"></translation>
+        <translation>Default untuk pengguna baru</translation>
     </message>
     <message>
         <location line="+7"/>
