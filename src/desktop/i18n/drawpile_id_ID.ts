@@ -513,7 +513,7 @@
     <message>
         <location line="+24"/>
         <source>Save Pre-Reset Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan Gambar Pre-Reset</translation>
     </message>
     <message>
         <location line="+17"/>
