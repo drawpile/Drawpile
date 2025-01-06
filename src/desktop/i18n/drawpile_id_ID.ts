@@ -2177,7 +2177,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-1658"/>
         <source>Disconnected</source>
-        <translation type="unfinished"></translation>
+        <translation>Terputus</translation>
     </message>
     <message>
         <location line="+1"/>
