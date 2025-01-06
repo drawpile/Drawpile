@@ -1881,7 +1881,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Delete Empty Annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>Hapus Annotasi Kosong</translation>
     </message>
     <message>
         <location line="+1"/>
