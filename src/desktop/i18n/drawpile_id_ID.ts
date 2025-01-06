@@ -1236,7 +1236,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+7"/>
         <source>Replace pinned certificate</source>
-        <translation>Ganti sertifikat pinned</translation>
+        <translation>Ganti sertifikat yang tersematkan</translation>
     </message>
 </context>
 <context>
@@ -1244,7 +1244,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location filename="../widgets/macmenu.cpp" line="+66"/>
         <source>Minimize</source>
-        <translation type="unfinished"></translation>
+        <translation>Perkecil</translation>
     </message>
     <message numerus="yes">
         <location line="+129"/>
