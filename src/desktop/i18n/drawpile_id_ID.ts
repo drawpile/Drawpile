@@ -421,17 +421,17 @@
     <message>
         <location line="+14"/>
         <source>Local Fork Start:</source>
-        <translation>Mulai Fork Lokal:</translation>
+        <translation>Mulainya Cabang Lokal:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>History Offset:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ofset Riwayat:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Local Fork Fallbehind:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tertinggalnya Cabang Lokal:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -441,17 +441,17 @@
     <message>
         <location line="+11"/>
         <source>Hide Entries Without State</source>
-        <translation type="unfinished"></translation>
+        <translation>Sembunyikan Entri Tanpa Ketetapan</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Hide Gone Entries</source>
-        <translation type="unfinished"></translation>
+        <translation>Sembunykan Entri Hilang</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Local Fork</source>
-        <translation type="unfinished"></translation>
+        <translation>Cabang Lokal</translation>
     </message>
 </context>
 <context>
@@ -487,12 +487,12 @@
     <message>
         <location line="+30"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished"></translation>
+        <translation>Buka Simpanan Debug</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Import Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Impor Larangan Sesi</translation>
     </message>
     <message>
         <location line="+8"/>
