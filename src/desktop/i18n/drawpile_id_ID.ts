@@ -971,9 +971,9 @@
         <source>Toggle between full range and subrange.
 Full range: [%1, %2]
 Subrange: [%3, %4]</source>
-        <translation>Beralih antara rentang penuh dan subrange.
-Kisaran penuh: [%1, %2
-%3, %4</translation>
+        <translation>Beralih antara rentangan penuh dan sub-rentang.
+Rentangan penuh: [%1, %2]
+Sub-rentang: [%3, %4]</translation>
     </message>
     <message>
         <location line="+175"/>
@@ -983,7 +983,7 @@ Kisaran penuh: [%1, %2
     <message>
         <location line="+10"/>
         <source>&amp;Step up</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Langkah naik</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1001,7 +1001,7 @@ Kisaran penuh: [%1, %2
     <message>
         <location line="+87"/>
         <source>Track hovering pointer</source>
-        <translation type="unfinished"></translation>
+        <translation>Lacak panah menggambang</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1011,7 +1011,7 @@ Kisaran penuh: [%1, %2
     <message>
         <location line="+3"/>
         <source>Trail: </source>
-        <translation type="unfinished"></translation>
+        <translation>Jejak: </translation>
     </message>
 </context>
 <context>
@@ -1049,12 +1049,12 @@ Kisaran penuh: [%1, %2
     <message>
         <location line="+7"/>
         <source>Visible to you</source>
-        <translation type="unfinished"></translation>
+        <translation>Terlihat untukmu</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Censor content</source>
-        <translation type="unfinished"></translation>
+        <translation>Sensor konten</translation>
     </message>
     <message>
         <location line="+23"/>
