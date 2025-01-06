@@ -271,7 +271,7 @@
     <message>
         <location line="+26"/>
         <source>Issued to</source>
-        <translation type="unfinished"></translation>
+        <translation>Diterbitkan untuk</translation>
     </message>
     <message>
         <location line="+53"/>
