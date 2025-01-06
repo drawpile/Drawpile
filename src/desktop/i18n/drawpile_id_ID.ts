@@ -1826,7 +1826,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>File Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Alat File</translation>
     </message>
     <message>
         <location line="+50"/>
