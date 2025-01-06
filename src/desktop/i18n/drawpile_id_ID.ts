@@ -1547,7 +1547,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+1"/>
         <source>Enter operator password</source>
-        <translation type="unfinished"></translation>
+        <translation>Masukkan kata sandi operator</translation>
     </message>
     <message>
         <location line="+61"/>
@@ -1563,7 +1563,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="-2273"/>
         <source>Would you like to join the session instead?</source>
-        <translation type="unfinished"></translation>
+        <translation>Apakah Anda ingin bergabung dengan sesi bukan?</translation>
     </message>
     <message>
         <location line="+2"/>
