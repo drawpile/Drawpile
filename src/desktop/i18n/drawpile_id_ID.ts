@@ -1583,12 +1583,12 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+1"/>
         <source>Change the session&apos;s undo limit, current limit is %1.</source>
-        <translation>Mengubah batas takdo sesi, batas saat ini adalah %1.</translation>
+        <translation>Ubah batas urung sesi, batas saat ini adalah %1.</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal</translation>
     </message>
     <message>
         <location line="+454"/>
@@ -1599,34 +1599,34 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+245"/>
         <source>User #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Pengguna #%1</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Altering selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Mengubah seleksi…</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Stop Tablet Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Hentikan Laporan Kejadian Tablet</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1370"/>
         <source>Tablet Event Log...</source>
-        <translation type="unfinished"></translation>
+        <translation>Laporan Kejadian Tablet...</translation>
     </message>
     <message>
         <location line="-1366"/>
         <source>Stop Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Hentikan Profil</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+1367"/>
         <source>Profile...</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil...</translation>
     </message>
     <message>
         <location line="-1356"/>
@@ -1681,12 +1681,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+19"/>
         <source>About Drawpile</source>
-        <translation type="unfinished"></translation>
+        <translation>Tentang Drawpile</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A collaborative drawing program.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sebuah program menggambar kolaboratif.</translation>
     </message>
     <message>
         <location line="+18"/>
