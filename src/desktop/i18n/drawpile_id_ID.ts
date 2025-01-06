@@ -319,7 +319,7 @@
     <message>
         <location line="+37"/>
         <source>Value</source>
-        <translation>Nilai</translation>
+        <translation>Nada</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -329,7 +329,7 @@
     <message>
         <location line="+7"/>
         <source>Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -342,22 +342,22 @@
     <message>
         <location filename="../ui/dumpplayback.ui" line="+14"/>
         <source>Play Debug Dump</source>
-        <translation type="unfinished"></translation>
+        <translation>Memutar Simpanan Debug</translation>
     </message>
     <message>
         <location line="+6"/>
         <source> ms</source>
-        <translation type="unfinished"></translation>
+        <translation> ms</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Playback Delay: </source>
-        <translation type="unfinished"></translation>
+        <translation>Penundaan Pemutaran: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Play/Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Putar/Jeda</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -367,7 +367,7 @@
     <message>
         <location line="+10"/>
         <source>Previous Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Setelan Ulang Sebelumnya</translation>
     </message>
     <message>
         <location line="+7"/>
