@@ -923,7 +923,7 @@
     <message>
         <location line="+9"/>
         <source>&lt;strong&gt;Note:&lt;/strong&gt; changing the session password will cause the link to stop working! If someone else changes the password, you have to reconnect for this dialog to update.</source>
-        <translation>&lt;strong&gt;Catatan: &lt;/strong&gt; mengubah kata sandi sesi akan menyebabkan tautan untuk berhenti bekerja! Jika orang lain mengubah kata sandi, Anda harus menghubungkan kembali untuk dialog ini untuk memperbarui.</translation>
+        <translation>&lt;strong&gt;Catatan: &lt;/strong&gt; mengubah kata sandi sesi akan menyebabkan tautan untuk berhenti bekerja! Jika orang lainnya mengubah kata sandi, maka anda harus menghubungkan kembali agar dialog ini dapat diperbarui.</translation>
     </message>
     <message>
         <location line="+29"/>
