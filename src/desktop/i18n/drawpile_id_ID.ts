@@ -1871,7 +1871,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Pic&amp;k Dari Layar</translation>
     </message>
     <message>
         <location line="+3"/>
