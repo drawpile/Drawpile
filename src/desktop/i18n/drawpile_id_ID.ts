@@ -1773,27 +1773,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Autosave</source>
-        <translation>Simpan otomatis</translation>
+        <translation>Simpan Otomatis</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Export &amp;Animation…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekspor &amp;Animasi…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Import Animation &amp;Frames…</source>
-        <translation type="unfinished"></translation>
+        <translation>Impor Frame &amp;Animasi…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Import Animation from &amp;Layers…</source>
-        <translation type="unfinished"></translation>
+        <translation>Impor Animasi dari &amp;Lapisan…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Start...</source>
-        <translation type="unfinished"></translation>
+        <translation>Mulai...</translation>
     </message>
     <message>
         <location line="+2"/>
