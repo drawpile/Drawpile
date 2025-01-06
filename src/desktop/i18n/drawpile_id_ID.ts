@@ -1436,7 +1436,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+55"/>
         <source>Saving animation...</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabungan animasi...</translation>
     </message>
     <message>
         <location line="+82"/>
