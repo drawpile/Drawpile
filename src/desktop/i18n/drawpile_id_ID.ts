@@ -847,17 +847,17 @@
     <message>
         <location line="-17"/>
         <source>Refresh</source>
-        <translation>Segarkan</translation>
+        <translation type="unfinished">Segarkan</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Rewind</source>
-        <translation type="unfinished"></translation>
+        <translation>Mundur</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Putar</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -890,7 +890,7 @@
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation type="unfinished"></translation>
+        <translation>Tandai petak utuh</translation>
     </message>
 </context>
 <context>
@@ -908,7 +908,7 @@
     <message>
         <location line="+35"/>
         <source>Web link</source>
-        <translation type="unfinished"></translation>
+        <translation>Tautan web</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -918,7 +918,7 @@
     <message>
         <location line="+10"/>
         <source>Include password</source>
-        <translation>Termasuk kata sandi</translation>
+        <translation>Sertakan kata sandi</translation>
     </message>
     <message>
         <location line="+9"/>
