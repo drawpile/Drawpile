@@ -1421,7 +1421,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+5"/>
         <source>Compatibility Mode</source>
-        <translation>Modus kompabilitas</translation>
+        <translation>Mode Kompabilitas</translation>
     </message>
     <message>
         <location line="+19"/>
