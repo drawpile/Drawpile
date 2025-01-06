@@ -392,7 +392,7 @@
     <message>
         <location line="+6"/>
         <source>History Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukuran Sejarah:</translation>
     </message>
     <message>
         <location line="+7"/>
