@@ -1578,7 +1578,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+36"/>
         <source>Undo Limit... (%1)</source>
-        <translation>Batasan Undo ... (%1)</translation>
+        <translation>Batas Urungan ... (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
