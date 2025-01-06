@@ -659,7 +659,7 @@
     <message>
         <location line="+10"/>
         <source>Export Roles</source>
-        <translation>Peran Ekspor</translation>
+        <translation>Ekspor Peran</translation>
     </message>
     <message>
         <location line="+39"/>
