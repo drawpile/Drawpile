@@ -2102,7 +2102,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+36"/>
         <source>Select &amp;All</source>
-        <translation>Pilih Semu&amp;a</translation>
+        <translation>Pilih &amp;Semua</translation>
     </message>
     <message>
         <location line="+3"/>
