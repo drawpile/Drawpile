@@ -1768,7 +1768,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Save &amp;As...</source>
-        <translation>Simp&amp;an Sebagai...</translation>
+        <translation>Simpan &amp;Sebagai...</translation>
     </message>
     <message>
         <location line="+3"/>
