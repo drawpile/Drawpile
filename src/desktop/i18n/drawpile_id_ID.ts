@@ -382,7 +382,7 @@
     <message>
         <location line="+13"/>
         <source>Position: </source>
-        <translation type="unfinished"></translation>
+        <translation>Posisi: </translation>
     </message>
     <message>
         <location line="+11"/>
