@@ -1436,17 +1436,17 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+55"/>
         <source>Saving animation...</source>
-        <translation>Tabungan animasi...</translation>
+        <translation>Menyimpan animasi...</translation>
     </message>
     <message>
         <location line="+82"/>
         <source>Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Jeda</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Putar</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1457,7 +1457,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
         <location line="+3"/>
         <location line="+2044"/>
         <source>Record...</source>
-        <translation type="unfinished"></translation>
+        <translation>Rekam...</translation>
     </message>
     <message>
         <location line="-2002"/>
