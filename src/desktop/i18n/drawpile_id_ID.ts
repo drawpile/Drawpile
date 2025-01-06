@@ -624,7 +624,7 @@
     <message>
         <location line="+5"/>
         <source>Paste File</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempelkan Berkas</translation>
     </message>
     <message>
         <location line="+167"/>
@@ -649,7 +649,7 @@
     <message>
         <location line="+99"/>
         <source>Export Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekspor Kuas</translation>
     </message>
     <message>
         <location line="+10"/>
