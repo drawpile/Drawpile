@@ -2065,7 +2065,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+1"/>
         <source>1 Minute</source>
         <comment>user pointer stay time</comment>
-        <translation>1 menit</translation>
+        <translation>1 Menit</translation>
     </message>
     <message>
         <location line="+1"/>
