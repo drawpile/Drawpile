@@ -1186,7 +1186,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+43"/>
         <source>Log in with the selected account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Masuk dengan akun yang dipilih.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1206,7 +1206,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+22"/>
         <source>Don&apos;t ask again unless the rules change</source>
-        <translation type="unfinished"></translation>
+        <translation>Jangan bertanya lagi kecuali perubahan aturan</translation>
     </message>
     <message>
         <location line="-574"/>
