@@ -1064,7 +1064,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+7"/>
         <source>Default for new users</source>
-        <translation>Default untuk pengguna baru</translation>
+        <translation>Bawaan untuk pengguna baru</translation>
     </message>
     <message>
         <location line="+7"/>
