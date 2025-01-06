@@ -1426,12 +1426,12 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+19"/>
         <source>Session template saved</source>
-        <translation>Template sesi disimpan</translation>
+        <translation>Template sesi tersimpan</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export session template</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidak bisa mengekspor template sesi</translation>
     </message>
     <message>
         <location line="+55"/>
