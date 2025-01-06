@@ -2157,7 +2157,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+492"/>
         <source>Fill Selection</source>
-        <translation>Arsir Pilihan</translation>
+        <translation>Isi Pilihan</translation>
     </message>
     <message>
         <location line="+2"/>
