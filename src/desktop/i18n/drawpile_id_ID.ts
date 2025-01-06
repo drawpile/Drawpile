@@ -1274,7 +1274,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location filename="../mainwindow.cpp" line="+318"/>
         <source>Server out of space</source>
-        <translation type="unfinished"></translation>
+        <translation>Server di luar ruang</translation>
     </message>
     <message>
         <location line="+1"/>
