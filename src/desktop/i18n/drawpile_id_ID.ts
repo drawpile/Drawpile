@@ -1297,17 +1297,17 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="-1513"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
-        <translation>&lt;p&gt;The shortcut &apos;%1&apos; sedang ambigu, pertandingan:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
+        <translation>&lt;p&gt;Pintasan &apos;%1&apos; bersifat ambigu, pintasan berpapasan dengan:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Ambiguous Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Pintasan Ambigu</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>Perbaiki</translation>
     </message>
     <message>
         <location line="+182"/>
@@ -1323,7 +1323,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+6"/>
         <source>Exit anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>Keluar saja</translation>
     </message>
     <message>
         <location line="+2"/>
