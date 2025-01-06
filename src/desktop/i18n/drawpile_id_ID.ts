@@ -1256,12 +1256,12 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+1"/>
         <source>If you don&apos;t review your documents, all changes will be lost</source>
-        <translation>Jika Anda tidak meninjau dokumen Anda, semua perubahan akan hilang</translation>
+        <translation>Jika anda tidak meninjau dokumen, maka semua perubahan akan hilang</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Review changes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Tinjau perubahan...</translation>
     </message>
     <message>
         <location line="+2"/>
