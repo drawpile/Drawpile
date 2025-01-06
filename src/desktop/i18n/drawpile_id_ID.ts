@@ -88,7 +88,7 @@
     <message>
         <location line="+26"/>
         <source>Pick initial color from layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih warna awal dari lapisan</translation>
     </message>
     <message>
         <location line="+14"/>
