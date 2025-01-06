@@ -1249,8 +1249,8 @@ Sub-rentang: [%3, %4]</translation>
     <message numerus="yes">
         <location line="+129"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Anda memiliki gambar %n dengan perubahan yang tidak terukur. Apakah Anda ingin meninjau perubahan ini sebelum berhenti?</numerusform>
         </translation>
     </message>
     <message>
