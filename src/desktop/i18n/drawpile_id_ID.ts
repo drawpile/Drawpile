@@ -1161,12 +1161,12 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+36"/>
         <source>Log in with server account</source>
-        <translation type="unfinished"></translation>
+        <translation>Masuk dengan akun server</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Continue with this account, but change the avatar, username or password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lanjutkan dengan akun ini, tetapi ubah avatar, username atau password.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1176,7 +1176,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+11"/>
         <source>Don&apos;t use any of these accounts.</source>
-        <translation type="unfinished"></translation>
+        <translation>Jangan menggunakan akun ini.</translation>
     </message>
     <message>
         <location line="+3"/>
