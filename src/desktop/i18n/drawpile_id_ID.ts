@@ -83,7 +83,7 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+64"/>
         <source>Brush type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipe kuas</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -98,12 +98,12 @@
     <message>
         <location line="+14"/>
         <source>Eraser mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode penghapus</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Direct drawing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode gambar langsung</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -113,7 +113,7 @@
     <message>
         <location line="+3"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ukuran: </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -123,12 +123,12 @@
     <message>
         <location line="+13"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Opasitas: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>Kekasaran: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -136,22 +136,22 @@
         <location line="+14"/>
         <location line="+33"/>
         <source>Pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Sensitivitas tekanan</translation>
     </message>
     <message>
         <location line="-16"/>
         <source>Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>Corengan: </translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished"></translation>
+        <translation>Pengambilan Warna: 1/</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Spacing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Jarak: </translation>
     </message>
     <message>
         <location line="+19"/>
@@ -161,12 +161,12 @@
     <message>
         <location line="+22"/>
         <source>Stabilizer: </source>
-        <translation type="unfinished"></translation>
+        <translation>Stabilisasi: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Penghalusan: </translation>
     </message>
 </context>
 <context>
@@ -174,17 +174,17 @@
     <message>
         <location filename="../ui/canvasshortcutsdialog.ui" line="+14"/>
         <source>Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Pintasan Kanvas</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipe</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Pintasan</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -195,22 +195,22 @@
     <message>
         <location line="-26"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Membalikkan arah masukan. Contohnya, menggulir keatas untuk memperbesar daripada memperkecil.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>Terbalik</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation type="unfinished"></translation>
+        <translation>Merubah arah horizontal dan vertikal. Contohnya, menggerakkan panah keatas dan kebawah untuk merubah ukuran kuas daripada menggerakkannya ke kiri dan ke kanan.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Tukar Sumbu</translation>
     </message>
 </context>
 <context>
@@ -218,7 +218,7 @@
     <message>
         <location filename="../ui/certificateview.ui" line="+24"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Info</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -229,7 +229,7 @@
     <message>
         <location line="-100"/>
         <source>SHA1 fingerprint:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sidik jari SHA1:</translation>
     </message>
     <message>
         <location line="+23"/>
