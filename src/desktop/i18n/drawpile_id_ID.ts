@@ -1416,7 +1416,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+67"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
-        <translation>Sesi ini dihosting dengan versi lama Drawpile, beberapa fitur yang lebih baru tidak akan tersedia. Versi Drawpile lainnya akan melihat hasil yang berbeda, reset sesi dapat menyebabkan perubahan tiba-tiba.</translation>
+        <translation>Sesi ini dihosting dengan versi lama Drawpile, beberapa fitur terbaru tidak akan tersedia. Versi Drawpile lainnya akan melihat hasil yang berbeda, pengaturan ulang sesi dapat menyebabkan perubahan tiba-tiba.</translation>
     </message>
     <message>
         <location line="+5"/>
