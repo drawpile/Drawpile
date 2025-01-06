@@ -416,7 +416,7 @@
     <message>
         <location line="+7"/>
         <source>Local Fork Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukuran garpu lokal:</translation>
     </message>
     <message>
         <location line="+14"/>
