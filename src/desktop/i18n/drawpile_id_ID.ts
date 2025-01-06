@@ -1856,7 +1856,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Cut selected area of the current layer to the clipboard</source>
-        <translation>Potong area yang dipilih dari lapisan saat ini ke clipboard</translation>
+        <translation>Potong area yang dipilih dari lapisan saat ini ke papan klip</translation>
     </message>
     <message>
         <location line="+1"/>
