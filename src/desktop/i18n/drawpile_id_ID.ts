@@ -1216,7 +1216,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+86"/>
         <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Masukkan kata sandi &lt;b&gt; &lt;/b&gt;, &lt;i&gt; tidak &lt;/i&gt; kata sandi akun Anda.</translation>
     </message>
     <message>
         <location line="+36"/>
