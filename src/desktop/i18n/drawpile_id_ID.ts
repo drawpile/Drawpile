@@ -1758,7 +1758,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Download Selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Unduh Pilihan</translation>
     </message>
     <message>
         <location line="+2"/>
