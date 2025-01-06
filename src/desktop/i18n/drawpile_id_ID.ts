@@ -1462,7 +1462,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="-2002"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Format tidak didukung.</translation>
     </message>
     <message>
         <location line="+3"/>
