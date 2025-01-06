@@ -421,7 +421,7 @@
     <message>
         <location line="+14"/>
         <source>Local Fork Start:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mulai Fork Lokal:</translation>
     </message>
     <message>
         <location line="+7"/>
