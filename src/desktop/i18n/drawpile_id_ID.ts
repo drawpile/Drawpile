@@ -261,7 +261,7 @@
         <location line="+14"/>
         <location line="+50"/>
         <source>Common name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nama umum:</translation>
     </message>
     <message>
         <location line="-43"/>
