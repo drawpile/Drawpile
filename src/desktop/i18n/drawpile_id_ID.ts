@@ -281,12 +281,12 @@
     <message>
         <location line="+13"/>
         <source>Fingerprints</source>
-        <translation type="unfinished"></translation>
+        <translation>Sidik jari</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Rincian</translation>
     </message>
 </context>
 <context>
@@ -299,17 +299,17 @@
     <message>
         <location line="+41"/>
         <source>Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Saturasi</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Warna</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Hex</source>
-        <translation type="unfinished"></translation>
+        <translation>Hex</translation>
     </message>
     <message>
         <location line="+7"/>
