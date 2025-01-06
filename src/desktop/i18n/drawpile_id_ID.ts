@@ -2032,7 +2032,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+8"/>
         <source>&amp;Fit to Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesuaikan dengan layar</translation>
     </message>
     <message>
         <location line="+111"/>
