@@ -943,7 +943,7 @@
     <message>
         <location line="+37"/>
         <source>Show this dialog when hosting a session</source>
-        <translation>Tampilkan dialog ini ketika hosting sesi</translation>
+        <translation>Tampilkan dialog ini ketika meng-hosting sesi</translation>
     </message>
     <message>
         <location line="+7"/>
