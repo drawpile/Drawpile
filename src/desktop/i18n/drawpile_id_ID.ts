@@ -1236,7 +1236,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+7"/>
         <source>Replace pinned certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Ganti sertifikat pinned</translation>
     </message>
 </context>
 <context>
