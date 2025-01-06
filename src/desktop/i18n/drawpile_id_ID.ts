@@ -1841,7 +1841,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Copy selected area to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Salin area yang dipilih ke clipboard</translation>
     </message>
     <message>
         <location line="+1"/>
