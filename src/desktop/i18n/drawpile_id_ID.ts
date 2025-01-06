@@ -1206,7 +1206,7 @@ Sub-rentang: [%3, %4]</translation>
     <message>
         <location line="+22"/>
         <source>Don&apos;t ask again unless the rules change</source>
-        <translation>Jangan bertanya lagi kecuali perubahan aturan</translation>
+        <translation>Jangan bertanya lagi kecuali aturan dirubah</translation>
     </message>
     <message>
         <location line="-574"/>
