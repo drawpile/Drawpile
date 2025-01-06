@@ -574,12 +574,12 @@
     <message>
         <location line="-253"/>
         <source>Add Avatar</source>
-        <translation>Tambah avatar…</translation>
+        <translation>Tambah Avatar</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Import Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Impor Frame Animasi</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -589,37 +589,37 @@
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Gambar-Gambar Frame</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Import Animation from Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Impor Animasi dari Lapisan</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Gambar Berlapis</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Impor Kuas</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Error opening temporary file for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error membuka berkas temporer untuk %1.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Buka Gambar</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Set Brush Preset Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>Atur Pratinjau Preset Kuas</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -629,17 +629,17 @@
     <message>
         <location line="+167"/>
         <source>Export Frames in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekspor Frame dalam ZIP</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekspor Video WEBM</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekspor WEBP Beranimasi</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -654,7 +654,7 @@
     <message>
         <location line="+10"/>
         <source>Export Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekspor Larangan Sesi</translation>
     </message>
     <message>
         <location line="+10"/>
