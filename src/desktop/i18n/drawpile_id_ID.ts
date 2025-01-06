@@ -276,7 +276,7 @@
     <message>
         <location line="+53"/>
         <source>Validity period</source>
-        <translation type="unfinished"></translation>
+        <translation>Periode validitas</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -372,7 +372,7 @@
     <message>
         <location line="+7"/>
         <source>Single Step</source>
-        <translation type="unfinished"></translation>
+        <translation>Langkah Tunggal</translation>
     </message>
     <message>
         <location line="+7"/>
