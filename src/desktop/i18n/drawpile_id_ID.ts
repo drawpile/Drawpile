@@ -1583,7 +1583,7 @@ Sederhanakan kanvas dan atur ulang secara manual sebelum ruang kehabisan.</trans
     <message>
         <location line="+1"/>
         <source>Change the session&apos;s undo limit, current limit is %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mengubah batas takdo sesi, batas saat ini adalah %1.</translation>
     </message>
     <message>
         <location line="+31"/>
