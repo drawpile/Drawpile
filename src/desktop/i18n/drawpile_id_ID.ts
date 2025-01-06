@@ -528,7 +528,7 @@
     <message>
         <location line="+7"/>
         <source>Save Session Template</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan Template Sesi</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -538,7 +538,7 @@
     <message>
         <location line="+35"/>
         <source>Performance Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil</translation>
     </message>
     <message>
         <location line="+7"/>
