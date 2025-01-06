@@ -928,7 +928,7 @@
     <message>
         <location line="+29"/>
         <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation>Anda hosting sesi secara lokal. Jika orang lain tidak bisa bergabung sesi Anda, lihatlah &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt; halaman bantuan pada hosting&lt;/a&gt;.</translation>
+        <translation>Anda meng-hosting sesi secara lokal. Jika orang lain tidak bisa bergabung sesi Anda, lihatlah &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt; halaman bantuan pada hosting&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+45"/>
