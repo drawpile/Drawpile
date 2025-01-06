@@ -664,17 +664,17 @@
     <message>
         <location line="+39"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
-        <translation>Format PSD tidak mempunyai dukungan anotasi, garis waktu animasi dan beberapa mode campuran. Jika anda menginginkannya tersimpan dengan benar, anda harus menyimpannya dengan file ORA.</translation>
+        <translation>Format PSD tidak mempunyai dukungan anotasi, garis waktu animasi dan beberapa mode campuran. Jika anda menginginkannya tersimpan dengan benar, maka anda harus menyimpannya dengan file ORA.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save an ORA file.</source>
-        <translation>Format yang dipilih akan menyimpan gambar gabungan. Jika Anda ingin mempertahankan lapisan, anotasi dan garis waktu animasi, Anda harus menyimpan file ORA.</translation>
+        <translation>Format yang dipilih akan menyimpannya sebagai gambar gabungan. Jika anda ingin mempertahankan lapisan, anotasi dan garis waktu animasi, maka anda harus menyimpannya dengan file ORA.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Save as Selected Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan Sebagai Format yang Dipilih</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -690,13 +690,13 @@
         <location line="+70"/>
         <location line="+5"/>
         <source>Untitled</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidak Bernama</translation>
     </message>
     <message>
         <location line="+102"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>TidakBernama%1</translation>
     </message>
 </context>
 <context>
@@ -705,12 +705,12 @@
         <location filename="../ui/fillsettings.ui" line="+330"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+291"/>
         <source>Feather: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kehalusan: </translation>
     </message>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+139"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Batas Ukuran: Tidak Terbatas</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="-298"/>
@@ -756,63 +756,63 @@
         <location line="+18"/>
         <location line="+3"/>
         <source>Fill continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>Isi area berkelanjutan</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill all similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Isi semua warna sejenis</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill entire selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Isi seluruh pilihan</translation>
     </message>
     <message>
         <location line="+78"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+59"/>
         <source>Merged image</source>
-        <translation type="unfinished"></translation>
+        <translation>Gambar gabungan</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+13"/>
         <source>Merged without background</source>
-        <translation type="unfinished"></translation>
+        <translation>Tergabung tanpa latar belakang</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+15"/>
         <source>Current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Lapisan saat ini</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill source layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Isi lapisan asal</translation>
     </message>
     <message>
         <location line="+96"/>
         <location line="+3"/>
         <source>Apply the pending fill, making it visible for everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>Terapkan isian yang tertunda, membuatnya terlihat untuk semua orang</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Terapkan</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation type="unfinished"></translation>
+        <translation>Batalkan isian yang tertunda, tanpa orang lain melihatnya</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -829,7 +829,7 @@
         <location line="+279"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+62"/>
         <source>Close Gaps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Tutup Celah: </translation>
     </message>
 </context>
 <context>
@@ -837,7 +837,7 @@
     <message>
         <location filename="../ui/flipbook.ui" line="+14"/>
         <source>Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Buku flip</translation>
     </message>
     <message>
         <location line="+28"/>
