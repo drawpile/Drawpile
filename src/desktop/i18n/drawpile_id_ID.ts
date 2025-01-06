@@ -1737,13 +1737,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+10"/>
         <location filename="../widgets/macmenu.cpp" line="-169"/>
         <source>&amp;New</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Baru</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Buka...</translation>
     </message>
     <message>
         <location line="+2"/>
