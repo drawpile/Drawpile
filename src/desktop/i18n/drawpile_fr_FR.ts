@@ -83,7 +83,7 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+64"/>
         <source>Brush type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type de pinceau</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -574,7 +574,7 @@
     <message>
         <location line="-253"/>
         <source>Add Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter un avatar</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -594,7 +594,7 @@
     <message>
         <location line="+10"/>
         <source>Import Animation from Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer une animation à partir des calques</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -604,12 +604,12 @@
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer des pinceaux</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Error opening temporary file for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur lors de l&apos;ouverture du fichier temporaire de %1.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -624,7 +624,7 @@
     <message>
         <location line="+5"/>
         <source>Paste File</source>
-        <translation type="unfinished"></translation>
+        <translation>Coller le fichier</translation>
     </message>
     <message>
         <location line="+167"/>
@@ -745,13 +745,13 @@
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill all similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplir toute les couleurs similaires</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill entire selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplir toute la sélection</translation>
     </message>
     <message>
         <location line="+78"/>
@@ -772,7 +772,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+15"/>
         <source>Current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Calque courant</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -784,12 +784,12 @@
         <location line="+96"/>
         <location line="+3"/>
         <source>Apply the pending fill, making it visible for everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>Appliquer le remplissage en attente, le rendre visible pour tout le monde</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Appliquer</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -806,7 +806,7 @@
         <location line="-336"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-113"/>
         <source>Size Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>Limite de taille: </translation>
     </message>
     <message>
         <location line="+279"/>
@@ -817,7 +817,7 @@
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+127"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite de taille: Infinie</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="-260"/>
@@ -1131,7 +1131,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+13"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">NAAM</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -1339,12 +1339,12 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+103"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cette session est hégergée avec une ancienne version de Drawpile, certaine nouvelle fonctionnalités ne seront pas disponible. Les autres versions de Drawpile verront des résultats différents, les réinitialisations de la session peuvent causer des changements abruptes.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Compatibility Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode de compatibilité</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -1369,7 +1369,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+50"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Format non supporté.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1379,7 +1379,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur inconnue.</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -1511,32 +1511,32 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+1230"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Vous n&apos;avez pas la permission de couper, coller, remplir ou effacer.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to resize the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vous n&apos;avez pas la permission de redimensionner le canvas</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous n&apos;avez pas la permission de modifier l&apos;arrière-plan de la session.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to create annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous n&apos;avez pas la permission de créer des annotations.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to undo or redo.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous n&apos;avez pas la permission d&apos;annuler ou de rétablir.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous n&apos;avez pas la permission de faire cette action.</translation>
     </message>
     <message>
         <location line="+1193"/>
@@ -1721,7 +1721,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+0"/>
         <source>Show only the current parent layer group</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer seulement le groupe de calque parent courant</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -1732,25 +1732,25 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+4"/>
         <source>1 Second</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Seconde</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>10 Seconds</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>10 Secondes</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Minute</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Minute</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Hour</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Heure</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1851,7 +1851,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+0"/>
         <source>Show only the current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer seulement le calque courant</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1866,7 +1866,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+73"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouveau groupe de calque</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2077,12 +2077,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+27"/>
         <source>Developer Tools</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Outils de développement</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>System Information…</source>
-        <translation type="unfinished"></translation>
+        <translation>Information système…</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -2152,7 +2152,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+148"/>
         <source>Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Palette</translation>
     </message>
     <message>
         <location line="-3827"/>
@@ -2187,12 +2187,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+51"/>
         <source>Hosting on this computer is not available</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;hébergement sur cet ordinateur n&apos;est pas disponible</translation>
     </message>
     <message>
         <location line="+80"/>
         <source>Really leave and terminate the session?</source>
-        <translation type="unfinished"></translation>
+        <translation>Voulez-vous vraiment partir et terminer la session?</translation>
     </message>
     <message>
         <location line="+236"/>
@@ -2202,12 +2202,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>You&apos;ve been disconnected from the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous avez été déconnecté du serveur.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Connection Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Connexion échoué</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2217,12 +2217,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+41"/>
         <source>You&apos;ve been disconnected from the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous avez été déconnecté de cette session.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Déconnecté: %1</translation>
     </message>
     <message>
         <location line="+150"/>
@@ -2242,7 +2242,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+712"/>
         <source>User #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilisateur #%1</translation>
     </message>
     <message>
         <location line="+50"/>
