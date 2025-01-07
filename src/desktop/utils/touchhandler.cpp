@@ -99,35 +99,26 @@ bool TouchHandler::isTouchPinchOrTwistEnabled() const
 
 void TouchHandler::handleTouchBegin(QTouchEvent *event)
 {
-	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
-	int pointsCount = points.size();
-	m_lastPointsCount = pointsCount;
+	m_touchState.begin(event);
 	// Can apparently happen on Android when putting your palm on the screen.
-	if(pointsCount == 0) {
+	if(m_touchState.isEmpty()) {
 		return;
 	}
-
-	QPointF posf = compat::touchPos(points.first());
-
-	m_touchPos = QPointF(0.0, 0.0);
-	for(const compat::TouchPoint &tp : compat::touchPoints(*event)) {
-		m_touchPos += compat::touchPos(tp);
-	}
-	m_touchPos /= pointsCount;
 
 	m_touchDrawBuffer.clear();
 	m_touchDragging = false;
 	m_touchRotating = false;
 	m_touchHeld = false;
-	m_maxTouchPoints = pointsCount;
 	m_tapTimer.setRemainingTime(TAP_MAX_DELAY_MS);
-	if(isTouchDrawEnabled() && pointsCount == 1 && !compat::isTouchPad(event)) {
+	if(isTouchDrawEnabled() && m_touchState.isSingleTouch() &&
+	   !compat::isTouchPad(event)) {
+		QPointF posf = m_touchState.currentCenter();
 		DP_EVENT_LOG(
 			"touch_draw_begin x=%f y=%f touching=%d type=%d device=%s "
 			"points=%s timestamp=%llu",
 			posf.x(), posf.y(), int(m_touching), compat::touchDeviceType(event),
 			qUtf8Printable(compat::touchDeviceName(event)),
-			qUtf8Printable(compat::debug(points)),
+			qUtf8Printable(compat::debug(compat::touchPoints(*event))),
 			qulonglong(event->timestamp()));
 		if(isTouchPanEnabled() || isTouchPinchOrTwistEnabled() ||
 		   m_oneFingerTapAction !=
@@ -151,12 +142,12 @@ void TouchHandler::handleTouchBegin(QTouchEvent *event)
 			"timestamp=%llu",
 			int(m_touching), compat::touchDeviceType(event),
 			qUtf8Printable(compat::touchDeviceName(event)),
-			qUtf8Printable(compat::debug(points)),
+			qUtf8Printable(compat::debug(compat::touchPoints(*event))),
 			qulonglong(event->timestamp()));
 		m_touchMode = TouchMode::Moving;
 	}
 
-	if(pointsCount == 1 && m_touchMode != TouchMode::Drawing &&
+	if(m_touchState.isSingleTouch() && m_touchMode != TouchMode::Drawing &&
 	   m_oneFingerTapAndHoldAction !=
 		   int(desktop::settings::TouchTapAndHoldAction::Nothing)) {
 		m_tapAndHoldTimer->start();
@@ -168,35 +159,28 @@ void TouchHandler::handleTouchBegin(QTouchEvent *event)
 void TouchHandler::handleTouchUpdate(
 	QTouchEvent *event, qreal zoom, qreal rotation, qreal dpr)
 {
-	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
-	int pointsCount = points.size();
-	bool pointsCountSame = pointsCount == m_lastPointsCount;
-	m_lastPointsCount = pointsCount;
+	m_touchState.update(event);
+
+	bool spotsChanged = m_touchState.isSpotsChanged();
+	if(spotsChanged) {
+		m_touchStartsValid = false;
+	}
+
 	// Can apparently happen on Android when putting your palm on the screen.
-	if(pointsCount == 0) {
+	if(m_touchState.isEmpty()) {
 		return;
 	}
 
-	if(pointsCount > m_maxTouchPoints) {
-		m_maxTouchPoints = pointsCount;
-	}
-
-	if(pointsCount != 1) {
+	bool singleTouch = m_touchState.isSingleTouch();
+	if(!singleTouch) {
 		m_tapAndHoldTimer->stop();
 	}
 
-	QPointF lastTouchPos = m_touchPos;
-	m_touchPos = QPointF(0.0, 0.0);
-	for(const compat::TouchPoint &tp : compat::touchPoints(*event)) {
-		m_touchPos += compat::touchPos(tp);
-	}
-	m_touchPos /= pointsCount;
-
 	if(m_touchHeld) {
-		emit touchColorPicked(m_touchPos);
+		emit touchColorPicked(m_touchState.currentCenter());
 	} else if(
 		isTouchDrawEnabled() &&
-		((pointsCount == 1 && m_touchMode == TouchMode::Unknown) ||
+		((singleTouch && m_touchMode == TouchMode::Unknown) ||
 		 m_touchMode == TouchMode::Drawing) &&
 		!compat::isTouchPad(event)) {
 		QPointF posf = compat::touchPos(compat::touchPoints(*event).first());
@@ -205,7 +189,7 @@ void TouchHandler::handleTouchUpdate(
 			"points=%s timestamp=%llu",
 			posf.x(), posf.y(), int(m_touching), compat::touchDeviceType(event),
 			qUtf8Printable(compat::touchDeviceName(event)),
-			qUtf8Printable(compat::debug(points)),
+			qUtf8Printable(compat::debug(compat::touchPoints(*event))),
 			qulonglong(event->timestamp()));
 		int bufferCount = m_touchDrawBuffer.size();
 		if(bufferCount == 0) {
@@ -238,18 +222,7 @@ void TouchHandler::handleTouchUpdate(
 		}
 	} else {
 		m_touchMode = TouchMode::Moving;
-
-		QPointF startCenter;
-		for(const compat::TouchPoint &tp : compat::touchPoints(*event)) {
-			QPointF startPos = compat::touchStartPos(tp);
-			startCenter += startPos;
-			// This might be a tap gesture. Don't start a drag until there's
-			// been sufficient movement on any of the fingers.
-			if(!m_touchDragging &&
-			   squareDist(startPos - compat::touchPos(tp)) > TAP_SLOP_SQUARED) {
-				m_touchDragging = true;
-			}
-		}
+		const QList<TouchSpot> &spots = m_touchState.spots();
 
 		if(!m_touchDragging) {
 			if(m_tapTimer.hasExpired()) {
@@ -257,28 +230,39 @@ void TouchHandler::handleTouchUpdate(
 				// this is clearly no longer a tap, but some longer gesture.
 				m_touchDragging = true;
 			} else {
-				// Maybe still a tap gesture, wait for more movement.
-				return;
+				// This might be a tap gesture. Don't start a drag until there's
+				// been sufficient movement on any of the fingers.
+				for(const TouchSpot &spot : spots) {
+					if(squareDist(spot.first - spot.current) >
+					   TAP_SLOP_SQUARED) {
+						m_touchDragging = true;
+						break;
+					}
+				}
+				if(!m_touchDragging) {
+					// Maybe still a tap gesture, wait for more movement.
+					return;
+				}
 			}
 		}
 
 		m_tapAndHoldTimer->stop();
-		startCenter /= pointsCount;
-		QPointF center = m_touchPos;
 
+		QPointF center = m_touchState.currentCenter();
 		DP_EVENT_LOG(
-			"touch_update x=%f y=%f touching=%d type=%d device=%s "
-			"points=%s "
+			"touch_update x=%f y=%f touching=%d type=%d device=%s points=%s "
 			"timestamp=%llu",
 			center.x(), center.y(), int(m_touching),
 			compat::touchDeviceType(event),
 			qUtf8Printable(compat::touchDeviceName(event)),
-			qUtf8Printable(compat::debug(points)),
+			qUtf8Printable(compat::debug(compat::touchPoints(*event))),
 			qulonglong(event->timestamp()));
 
-		if(!m_touching) {
+		if(!m_touchStartsValid) {
 			m_touchStartZoom = zoom;
 			m_touchStartRotate = rotation;
+			m_touchStartsValid = true;
+			m_touchRotating = false;
 		}
 
 		// We want to pan with one finger if one-finger pan is enabled and
@@ -287,13 +271,14 @@ void TouchHandler::handleTouchUpdate(
 		// we got here with one finger, we've come out of a multitouch
 		// operation and aren't going to be drawing until all fingers leave
 		// the surface anyway, so panning is the only sensible option.
-		bool haveMultiTouch = pointsCount >= 2;
+		bool haveMultiTouch = m_touchState.isMultiTouch();
 		bool havePinchOrTwist = haveMultiTouch && isTouchPinchOrTwistEnabled();
 		bool havePan = havePinchOrTwist ||
 					   (isTouchDrawOrPanEnabled() &&
 						(haveMultiTouch || !compat::isTouchPad(event)));
-		if(QPointF delta; havePan && pointsCountSame &&
-						  !(delta = lastTouchPos - m_touchPos).isNull()) {
+		if(QPointF delta;
+		   havePan && !spotsChanged &&
+		   !(delta = m_touchState.previousCenter() - center).isNull()) {
 			m_touching = true;
 			emit touchScrolledBy(delta.x(), delta.y());
 		}
@@ -301,30 +286,28 @@ void TouchHandler::handleTouchUpdate(
 		// Scaling and rotation with two fingers
 		if(havePinchOrTwist) {
 			m_touching = true;
-			qreal startAvgDist = 0.0;
+			qreal anchorAvgDist = 0.0;
 			qreal avgDist = 0.0;
-			for(const compat::TouchPoint &tp : compat::touchPoints(*event)) {
-				startAvgDist +=
-					squareDist(compat::touchStartPos(tp) - startCenter);
-				avgDist += squareDist(compat::touchPos(tp) - center);
+			QPointF anchorCenter = m_touchState.anchorCenter();
+			for(const TouchSpot &spot : spots) {
+				anchorAvgDist += squareDist(spot.anchor - anchorCenter);
+				avgDist += squareDist(spot.current - center);
 			}
-			startAvgDist = sqrt(startAvgDist);
+			anchorAvgDist = sqrt(anchorAvgDist);
 
 			qreal touchZoom = zoom;
 			if(isTouchPinchEnabled()) {
 				avgDist = sqrt(avgDist);
-				qreal dZoom = avgDist / startAvgDist;
+				qreal dZoom = avgDist / anchorAvgDist;
 				touchZoom = m_touchStartZoom * dZoom;
 			}
 
 			qreal touchRotation = rotation;
 			if(isTouchTwistEnabled()) {
-				QLineF l1(
-					compat::touchStartPos(points.first()),
-					compat::touchStartPos(points.last()));
-				QLineF l2(
-					compat::touchPos(points.first()),
-					compat::touchPos(points.last()));
+				const TouchSpot &spot1 = spots.first();
+				const TouchSpot &spot2 = spots.last();
+				QLineF l1(spot1.anchor, spot2.anchor);
+				QLineF l2(spot1.current, spot2.current);
 				qreal dAngle = l1.angle() - l2.angle();
 
 				// Require a small nudge to activate rotation to avoid
@@ -332,7 +315,7 @@ void TouchHandler::handleTouchUpdate(
 				// rotate when touch points start out far enough from each
 				// other. Initial angle measurement is inaccurate when
 				// touchpoints are close together.
-				if(startAvgDist * dpr > 80.0 &&
+				if(anchorAvgDist * dpr > 80.0 &&
 				   (qAbs(dAngle) > 3.0 || m_touchRotating)) {
 					m_touchRotating = true;
 					touchRotation =
@@ -369,8 +352,8 @@ void TouchHandler::handleTouchEnd(QTouchEvent *event, bool cancel)
 			qulonglong(event->timestamp()));
 		flushTouchDrawBuffer();
 		// No points can happen on Android when putting your palm on the screen.
-		QPointF posf =
-			points.isEmpty() ? m_touchPos : compat::touchPos(points.first());
+		QPointF posf = points.isEmpty() ? m_touchState.currentCenter()
+										: compat::touchPos(points.first());
 		emit touchReleased(QDateTime::currentMSecsSinceEpoch(), posf);
 	} else if(m_touchDragging) {
 		DP_EVENT_LOG(
@@ -381,22 +364,23 @@ void TouchHandler::handleTouchEnd(QTouchEvent *event, bool cancel)
 			qUtf8Printable(compat::debug(points)),
 			qulonglong(event->timestamp()));
 	} else {
+		int maxTouchPoints = m_touchState.maxTouchPoints();
 		DP_EVENT_LOG(
 			"touch_tap_%s maxTouchPoints=%d touching=%d type=%d device=%s "
 			"points=%s timestamp=%llu",
-			cancel ? "cancel" : "end", m_maxTouchPoints, int(m_touching),
+			cancel ? "cancel" : "end", maxTouchPoints, int(m_touching),
 			compat::touchDeviceType(event),
 			qUtf8Printable(compat::touchDeviceName(event)),
 			qUtf8Printable(compat::debug(points)),
 			qulonglong(event->timestamp()));
 		if(!cancel) {
-			if(m_maxTouchPoints == 1) {
+			if(maxTouchPoints == 1) {
 				emitTapAction(m_oneFingerTapAction);
-			} else if(m_maxTouchPoints == 2) {
+			} else if(maxTouchPoints == 2) {
 				emitTapAction(m_twoFingerTapAction);
-			} else if(m_maxTouchPoints == 3) {
+			} else if(maxTouchPoints == 3) {
 				emitTapAction(m_threeFingerTapAction);
-			} else if(m_maxTouchPoints >= 4) {
+			} else if(maxTouchPoints >= 4) {
 				emitTapAction(m_fourFingerTapAction);
 			}
 		}
@@ -499,6 +483,126 @@ void TouchHandler::handleGesture(
 	}
 }
 
+
+void TouchHandler::TouchState::clear()
+{
+	m_spotsById.clear();
+	m_currentCenter = QPointF(0.0, 0.0);
+	m_previousCenter = QPointF(0.0, 0.0);
+	m_anchorCenter = QPointF(0.0, 0.0);
+	m_maxTouchPoints = 0;
+	m_anchorCenterValid = true;
+	m_previousCenterValid = true;
+	m_spotsChanged = true;
+}
+
+void TouchHandler::TouchState::begin(QTouchEvent *event)
+{
+	clear();
+	update(event);
+}
+
+void TouchHandler::TouchState::update(QTouchEvent *event)
+{
+	const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
+	compat::sizetype pointsCount = points.size();
+	m_spotsChanged = pointsCount != m_spots.size();
+	// Can apparently happen on Android when putting your palm on the screen.
+	if(pointsCount == 0) {
+		m_spotsById.clear();
+		m_currentCenter = QPointF(0.0, 0.0);
+		m_previousCenter = QPointF(0.0, 0.0);
+		m_anchorCenter = QPointF(0.0, 0.0);
+		m_previousCenterValid = true;
+		m_anchorCenterValid = true;
+	} else {
+		if(pointsCount > m_maxTouchPoints) {
+			m_maxTouchPoints = pointsCount;
+		}
+
+		for(TouchSpot &spot : m_spotsById) {
+			spot.state = TouchSpot::Gone;
+		}
+
+		m_currentCenter = QPointF(0.0, 0.0);
+		for(const compat::TouchPoint &tp : points) {
+			QPointF pos = compat::touchPos(tp);
+			QPointF start = compat::touchStartPos(tp);
+			m_currentCenter += pos;
+
+			int id = compat::touchId(tp);
+			TouchSpot &spot = m_spotsById[id];
+			if(spot.state == TouchSpot::Initial) {
+				spot.previous = pos;
+				spot.first = start;
+				m_spotsChanged = true;
+			} else {
+				spot.previous = spot.current;
+				if(spot.first != start) {
+					spot.first = start;
+					m_spotsChanged = true;
+				}
+			}
+			spot.current = pos;
+			spot.state = TouchSpot::Active;
+		}
+		m_currentCenter /= qreal(pointsCount);
+
+		QHash<int, TouchSpot>::iterator it = m_spotsById.begin();
+		QHash<int, TouchSpot>::iterator end = m_spotsById.end();
+		while(it != end) {
+			if(it->state == TouchSpot::Gone) {
+				it = m_spotsById.erase(it);
+				m_spotsChanged = true;
+			} else {
+				++it;
+			}
+		}
+
+		m_spots.clear();
+		m_spots.reserve(pointsCount);
+		for(const compat::TouchPoint &tp : points) {
+			TouchSpot &spot = m_spotsById[tp.id()];
+			if(m_spotsChanged) {
+				spot.anchor = spot.current;
+			}
+			m_spots.append(spot);
+		}
+
+		if(m_spotsChanged) {
+			m_anchorCenterValid = false;
+		}
+		m_previousCenterValid = false;
+	}
+}
+
+const QPointF &TouchHandler::TouchState::previousCenter()
+{
+	if(!m_previousCenterValid) {
+		m_previousCenterValid = true;
+		m_previousCenter = QPointF(0.0, 0.0);
+		for(const TouchSpot &spot : m_spotsById) {
+			m_previousCenter += spot.previous;
+		}
+		m_previousCenter /= qreal(m_spotsById.size());
+	}
+	return m_previousCenter;
+}
+
+const QPointF &TouchHandler::TouchState::anchorCenter()
+{
+	if(!m_anchorCenterValid) {
+		m_anchorCenterValid = true;
+		m_anchorCenter = QPointF(0.0, 0.0);
+		for(const TouchSpot &spot : m_spotsById) {
+			m_anchorCenter += spot.anchor;
+		}
+		m_anchorCenter /= qreal(m_spotsById.size());
+	}
+	return m_anchorCenter;
+}
+
+
 void TouchHandler::setOneFingerTouchAction(int oneFingerTouchAction)
 {
 	m_oneFingerTouchAction = oneFingerTouchAction;
@@ -542,12 +646,13 @@ void TouchHandler::setOneFingerTapAndHoldAction(int oneFingerTapAndHoldAction)
 void TouchHandler::triggerTapAndHold()
 {
 	m_tapAndHoldTimer->stop();
-	if(m_maxTouchPoints == 1 && m_touchMode != TouchMode::Drawing) {
+	if(m_touchState.maxTouchPoints() == 1 &&
+	   m_touchMode != TouchMode::Drawing) {
 		switch(m_oneFingerTapAndHoldAction) {
 		case int(desktop::settings::TouchTapAndHoldAction::ColorPickMode):
 			if(m_allowColorPick) {
 				m_touchHeld = true;
-				emit touchColorPicked(m_touchPos);
+				emit touchColorPicked(m_touchState.currentCenter());
 			}
 			break;
 		default:

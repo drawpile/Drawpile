@@ -2,6 +2,7 @@
 #ifndef DESKTOP_UTILS_TOUCHHANDLER_H
 #define DESKTOP_UTILS_TOUCHHANDLER_H
 #include <QDeadlineTimer>
+#include <QHash>
 #include <QObject>
 #include <QPointF>
 
@@ -55,6 +56,42 @@ private:
 
 	enum class TouchMode { Unknown, Drawing, Moving };
 
+	struct TouchSpot {
+		enum { Initial, Active, Gone } state = Initial;
+		QPointF current;
+		QPointF previous;
+		QPointF anchor;
+		QPointF first;
+	};
+
+	class TouchState {
+	public:
+		void clear();
+		void begin(QTouchEvent *event);
+		void update(QTouchEvent *event);
+
+		bool isEmpty() const { return m_spotsById.isEmpty(); }
+		bool isSingleTouch() const { return m_spotsById.size() == 1; }
+		bool isMultiTouch() const { return m_spotsById.size() > 1; }
+		bool isSpotsChanged() const { return m_spotsChanged; }
+		int maxTouchPoints() const { return m_maxTouchPoints; }
+		const QList<TouchSpot> &spots() { return m_spots; }
+		const QPointF &currentCenter() const { return m_currentCenter; }
+		const QPointF &previousCenter();
+		const QPointF &anchorCenter();
+
+	private:
+		QHash<int, TouchSpot> m_spotsById;
+		QList<TouchSpot> m_spots;
+		QPointF m_currentCenter;
+		QPointF m_previousCenter;
+		QPointF m_anchorCenter;
+		int m_maxTouchPoints = 0;
+		bool m_previousCenterValid = true;
+		bool m_anchorCenterValid = true;
+		bool m_spotsChanged = true;
+	};
+
 	static qreal squareDist(const QPointF &p)
 	{
 		return p.x() * p.x() + p.y() * p.y();
@@ -77,6 +114,7 @@ private:
 
 	bool m_touching = false;
 	bool m_touchDragging = false;
+	bool m_touchStartsValid = false;
 	bool m_touchRotating = false;
 	bool m_touchHeld = false;
 	bool m_anyTabletEventsReceived = false;
@@ -89,14 +127,11 @@ private:
 	int m_threeFingerTapAction;
 	int m_fourFingerTapAction;
 	int m_oneFingerTapAndHoldAction;
-	int m_maxTouchPoints = 0;
-	int m_lastPointsCount = 0;
 	TouchMode m_touchMode = TouchMode::Unknown;
 	QVector<QPair<long long, QPointF>> m_touchDrawBuffer;
-	QPointF m_touchStartPos;
+	TouchState m_touchState;
 	qreal m_touchStartZoom = 0.0;
 	qreal m_touchStartRotate = 0.0;
-	QPointF m_touchPos;
 	QPointF m_gestureStartPos;
 	qreal m_gestureStartZoom = 0.0;
 	qreal m_gestureStartRotation = 0.0;

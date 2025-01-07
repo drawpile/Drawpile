@@ -159,6 +159,11 @@ inline const QList<TouchPoint> &touchPoints(const QTouchEvent &event)
 	return event.points();
 }
 
+inline auto touchId(const QEventPoint &event)
+{
+	return event.id();
+}
+
 inline auto touchStartPos(const QEventPoint &event)
 {
 	return event.pressPosition();
@@ -260,6 +265,11 @@ inline auto styleName(const QStyle &style)
 inline const QList<TouchPoint> &touchPoints(const QTouchEvent &event)
 {
 	return event.touchPoints();
+}
+
+inline auto touchId(const QTouchEvent::TouchPoint &event)
+{
+	return event.id();
 }
 
 inline auto touchStartPos(const QTouchEvent::TouchPoint &event)
