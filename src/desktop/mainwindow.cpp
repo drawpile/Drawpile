@@ -804,22 +804,24 @@ void MainWindow::prepareWindowReplacement()
 	saveSplitterState();
 	dpApp().settings().trySubmit();
 }
-// clang-format off
 
 /**
  * The file is added to the list of recent files and the menus on all open
  * mainwindows are updated.
  * @param file filename to add
  */
-void MainWindow::addRecentFile(const QString& file)
+void MainWindow::addRecentFile(const QString &file)
 {
 #ifdef __EMSCRIPTEN__
 	Q_UNUSED(file);
 #else
-	utils::Recents &recents = dpApp().recents();
-	recents.addFile(file);
+	if(!file.isEmpty()) {
+		utils::Recents &recents = dpApp().recents();
+		recents.addFile(file);
+	}
 #endif
 }
+// clang-format off
 
 /**
  * Set window title according to currently open file and session

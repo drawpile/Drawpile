@@ -49,6 +49,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Don't mark the canvas as saved if it was only exported.
  * Fix: Round colors to 8 bits in fill and magic wand tools so that they don't get snagged on color differences too small to see on screen. Thanks vipperz for reporting.
  * Feature: Add -I/--interpolation option to the drawpile-cmd and drawpile-timelapse commands, to allow using better scaling than bilinear if appropriate. Thanks Saphiros for causing this.
+ * Fix: Don't add blank filenames to recent files list. Thanks Aries Raenidaez for reporting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.
