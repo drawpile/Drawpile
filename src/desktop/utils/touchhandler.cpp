@@ -538,7 +538,7 @@ void TouchHandler::TouchState::update(QTouchEvent *event)
 				m_spotsChanged = true;
 			} else {
 				spot.previous = spot.current;
-				if(spot.first != start) {
+				if(QLineF(spot.first, start).length() > TOUCH_START_SLOP) {
 					spot.first = start;
 					m_spotsChanged = true;
 				}

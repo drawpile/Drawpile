@@ -53,6 +53,12 @@ private:
 	static constexpr int TAP_MAX_DELAY_MS = 1000;
 	static constexpr int TAP_AND_HOLD_DELAY_MS = 400;
 	static constexpr int DRAW_BUFFER_COUNT = 20;
+	// On Android with UI scaling set to something other than 100%, the start
+	// values jitter by very large amounts. It goes up to around 1.1 at most
+	// from testing no matter the scaling, so 1.5 should hopefully be a safe
+	// value. Since the point of this is to detect a user lifting their finger
+	// and placing them in a different spot, this delta shouldn't cause issues.
+	static constexpr qreal TOUCH_START_SLOP = 1.5;
 
 	enum class TouchMode { Unknown, Drawing, Moving };
 
