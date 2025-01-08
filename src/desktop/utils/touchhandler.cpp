@@ -174,6 +174,10 @@ void TouchHandler::handleTouchUpdate(
 	bool singleTouch = m_touchState.isSingleTouch();
 	if(!singleTouch) {
 		m_tapAndHoldTimer->stop();
+		if(m_touchHeld) {
+			m_touchHeld = false;
+			emit touchColorPickFinished();
+		}
 	}
 
 	if(m_touchHeld) {
