@@ -21,7 +21,7 @@
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished">Вилучити</translation>
+        <translation>Видалити</translation>
     </message>
 </context>
 <context>
@@ -83,7 +83,7 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+64"/>
         <source>Brush type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип пензля</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -342,7 +342,7 @@
     <message>
         <location filename="../ui/dumpplayback.ui" line="+14"/>
         <source>Play Debug Dump</source>
-        <translation type="unfinished"></translation>
+        <translation>Грати в Debug Dump</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -357,27 +357,27 @@
     <message>
         <location line="+16"/>
         <source>Play/Pause</source>
-        <translation type="unfinished">Пуск/Пауза</translation>
+        <translation>Відтворення/Пауза</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Jump</source>
-        <translation type="unfinished">Перестрибнути</translation>
+        <translation>Стрибок</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Previous Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Попереднє скидання</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Single Step</source>
-        <translation type="unfinished"></translation>
+        <translation>Один крок</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Next Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Далі Скинути</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -406,7 +406,7 @@
     <message>
         <location line="-56"/>
         <source>Local Fork Present:</source>
-        <translation type="unfinished"></translation>
+        <translation>Присутній місцевий форк:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -416,12 +416,12 @@
     <message>
         <location line="+7"/>
         <source>Local Fork Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Локальний розмір вилки:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Local Fork Start:</source>
-        <translation type="unfinished"></translation>
+        <translation>Локальний початок розгалуження:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -431,7 +431,7 @@
     <message>
         <location line="+14"/>
         <source>Local Fork Fallbehind:</source>
-        <translation type="unfinished"></translation>
+        <translation>Локальна історія хвороби:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -451,7 +451,7 @@
     <message>
         <location line="+10"/>
         <source>Local Fork</source>
-        <translation type="unfinished"></translation>
+        <translation>Місцева розвилка</translation>
     </message>
 </context>
 <context>
@@ -459,12 +459,12 @@
     <message>
         <location filename="../ui/filetypedialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished">Назва:</translation>
+        <translation>Ім&apos;я:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished">Тип:</translation>
+        <translation>Тип:</translation>
     </message>
 </context>
 <context>
@@ -472,7 +472,7 @@
     <message>
         <location filename="../filewrangler.cpp" line="+150"/>
         <source>Certificates (%1)</source>
-        <translation type="unfinished">сертифікати (%1)</translation>
+        <translation>Сертифікати (%1)</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -487,7 +487,7 @@
     <message>
         <location line="+30"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрийте дамп налагодження</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -503,7 +503,7 @@
         <location line="+120"/>
         <location line="+313"/>
         <source>Save Image</source>
-        <translation type="unfinished">Збереження зображення</translation>
+        <translation type="unfinished">Save Image</translation>
     </message>
     <message>
         <location line="-313"/>
@@ -523,7 +523,7 @@
     <message>
         <location line="+18"/>
         <source>Record Session</source>
-        <translation type="unfinished">Запис сеансу</translation>
+        <translation>Запис сеансу</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -538,17 +538,17 @@
     <message>
         <location line="+35"/>
         <source>Performance Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Профіль продуктивності</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tablet Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Журнал подій планшета</translation>
     </message>
     <message>
         <location line="+159"/>
         <source>Log File</source>
-        <translation type="unfinished">Файл журналу</translation>
+        <translation>Файл журналу</translation>
     </message>
     <message>
         <location line="-187"/>
@@ -589,7 +589,7 @@
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Рамка зображень</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -599,7 +599,7 @@
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Багатошарові зображення</translation>
     </message>
     <message>
         <location line="+15"/>
