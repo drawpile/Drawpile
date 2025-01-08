@@ -503,7 +503,7 @@
         <location line="+120"/>
         <location line="+313"/>
         <source>Save Image</source>
-        <translation type="unfinished">Save Image</translation>
+        <translation>Зберегти зображення</translation>
     </message>
     <message>
         <location line="-313"/>
@@ -604,7 +604,7 @@
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпорт пензлів</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -614,12 +614,12 @@
     <message>
         <location line="+12"/>
         <source>Open Image</source>
-        <translation type="unfinished">Відкриття зображення</translation>
+        <translation>Відкрийте зображення</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Set Brush Preset Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>Установити мініатюру попереднього налаштування пензля</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -690,7 +690,7 @@
         <location line="+70"/>
         <location line="+5"/>
         <source>Untitled</source>
-        <translation type="unfinished">Без назви</translation>
+        <translation>Без назви</translation>
     </message>
     <message>
         <location line="+102"/>
@@ -705,7 +705,7 @@
         <location filename="../ui/fillsettings.ui" line="+330"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+291"/>
         <source>Feather: </source>
-        <translation type="unfinished"></translation>
+        <translation>Перо: </translation>
     </message>
     <message>
         <location line="-298"/>
@@ -715,7 +715,7 @@
         <location line="+51"/>
         <location line="+12"/>
         <source>px</source>
-        <translation type="unfinished">пк</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -727,45 +727,45 @@
         <location line="-135"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-115"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-2"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Непрозорість: </translation>
+        <translation>Непрозорість: </translation>
     </message>
     <message>
         <location line="-97"/>
         <location line="+3"/>
         <source>Fill continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>Заповнити суцільну область</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill all similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Залийте всі схожі кольори</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill entire selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Заповнити весь вибір</translation>
     </message>
     <message>
         <location line="+78"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+71"/>
         <source>Merged image</source>
-        <translation type="unfinished"></translation>
+        <translation>Об’єднане зображення</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+13"/>
         <source>Merged without background</source>
-        <translation type="unfinished"></translation>
+        <translation>Об’єднано без фону</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -778,52 +778,52 @@
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill source layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Заповнити вихідний шар</translation>
     </message>
     <message>
         <location line="+96"/>
         <location line="+3"/>
         <source>Apply the pending fill, making it visible for everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>Застосуйте заливку, що очікує на розгляд, щоб її бачили всі</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Застосувати</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation type="unfinished"></translation>
+        <translation>Скасуйте незавершену заливку, щоб ніхто інший не побачив її наслідків</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished">Скасувати</translation>
+        <translation>Скасувати</translation>
     </message>
     <message>
         <location line="-336"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-113"/>
         <source>Size Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>Обмеження розміру: </translation>
     </message>
     <message>
         <location line="+279"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+62"/>
         <source>Close Gaps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Закрити прогалини: </translation>
     </message>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+127"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Обмеження розміру: необмежено</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="-260"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-163"/>
         <source>Tolerance: </source>
-        <translation type="unfinished"></translation>
+        <translation>Толерантність: </translation>
     </message>
     <message>
         <location line="+289"/>
@@ -857,12 +857,12 @@
     <message>
         <location line="+23"/>
         <source>Play</source>
-        <translation type="unfinished">Пуск</translation>
+        <translation>Почати</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Frame:</source>
-        <translation type="unfinished">Кадр:</translation>
+        <translation>Кадр:</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -890,7 +890,7 @@
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначте цілі плитки</translation>
     </message>
 </context>
 <context>
@@ -938,7 +938,7 @@
     <message>
         <location line="+32"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished">Отримати видиму ззовні IP-адресу</translation>
+        <translation>Отримайте зовнішню видиму IP-адресу</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -971,22 +971,24 @@
         <source>Toggle between full range and subrange.
 Full range: [%1, %2]
 Subrange: [%3, %4]</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемикання між повним і піддіапазоном.
+Повний діапазон: [%1, %2]
+Піддіапазон: [%3, %4]</translation>
     </message>
     <message>
         <location line="+175"/>
         <source>&amp;Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Виберіть усі</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&amp;Step up</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Крок вище</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Step &amp;down</source>
-        <translation type="unfinished"></translation>
+        <translation>Крок &amp;вниз</translation>
     </message>
 </context>
 <context>
@@ -1009,7 +1011,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+10"/>
         <source>Trail: </source>
-        <translation type="unfinished"></translation>
+        <translation>Стежка: </translation>
     </message>
 </context>
 <context>
@@ -1027,7 +1029,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+10"/>
         <source>Opacity:</source>
-        <translation type="unfinished">Непрозорість:</translation>
+        <translation>Непрозорість:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1075,12 +1077,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/layoutsdialog.ui" line="+14"/>
         <source>Layouts</source>
-        <translation type="unfinished"></translation>
+        <translation>Макети</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Save</source>
-        <translation type="unfinished">Зберегти</translation>
+        <translation>Зберегти</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1090,12 +1092,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Delete</source>
-        <translation type="unfinished">Вилучити</translation>
+        <translation>Видалити</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation>Докери Drawpile можна вільно розташовувати та комбінувати, утримуючи Shift і перетягуючи їх угору. Тут ви можете зберігати та відновлювати улюблені аранжування. Переконайтеся, що ваше розташування відповідає вашій роздільній здатності, інакше деякі елементи керування можуть бути винесені за межі екрана.</translation>
     </message>
 </context>
 <context>
@@ -1355,7 +1357,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+40"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Цей сеанс проводився за допомогою старішої версії Drawpile, деякі новіші функції будуть недоступні. Інші версії Drawpile отримають інші результати, скидання сесії може призвести до різких змін.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1609,12 +1611,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+195"/>
         <source>Zoom In On Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Збільшити по центру</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Out From Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Віддалення від центру</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1624,67 +1626,67 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Reset Zoom At Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути масштаб по центру</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Fit Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Припасувати полотно</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fit Canvas &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Припасувати &amp;ширину полотна</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Fit Canvas &amp;Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Fit Полотно &amp;Висота</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Reset Canvas Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Скинути обертання полотна</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Rotate Canvas Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Поверніть полотно проти годинникової стрілки</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Mirror Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Дзеркальне полотно</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror the canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Віддзеркаліть полотно горизонтально</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>дзеркало/перевертання полотна по горизонталі</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевернути полотно</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the canvas upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Переверніть полотно догори ногами</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>дзеркало/перевертання полотна вертикально</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Hide From Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Приховати від курсору</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1694,32 +1696,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Show Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати &amp;маску виділення</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Toggle selection display between a mask and an outline</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемикання відображення виділення між маскою та контуром</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&amp;Fit to Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;За розміром екрана</translation>
     </message>
     <message>
         <location line="+111"/>
         <source>Group View</source>
-        <translation type="unfinished"></translation>
+        <translation>Перегляд групи</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show only the current parent layer group</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати лише поточну групу батьківського шару</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Stay Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Час перебування</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1754,22 +1756,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+41"/>
         <source>Clear Fill Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистити джерело заповнення</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Toggle Layer Check State</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Переключити стан перевірки шару</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Check All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Перевірити всі</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Uncheck All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Зніміть позначку з усіх</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -1839,7 +1841,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+0"/>
         <source>Show all layers normally</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати всі шари нормально</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1854,7 +1856,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Frame View</source>
-        <translation type="unfinished"></translation>
+        <translation>Рамковий вид</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -1884,7 +1886,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-1860"/>
         <source>Reason:</source>
-        <translation type="unfinished">Причина:</translation>
+        <translation>Причина:</translation>
     </message>
     <message>
         <location line="+245"/>
@@ -1899,22 +1901,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+404"/>
         <source>Freehand (erase mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation>Від руки (режим стирання, натисніть, щоб скинути)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (erase mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Пензель від руки (режим стирання)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Freehand (alpha lock mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation>Від руки (режим альфа-блокування, натисніть, щоб скинути)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (alpha lock mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Інструмент пензля від руки (режим альфа-блокування)</translation>
     </message>
     <message>
         <location line="+807"/>
@@ -2032,7 +2034,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнути &amp;видимість шару</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+209"/>
@@ -2047,22 +2049,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+6"/>
         <source>Create Layers on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Створення шарів на поточному ключовому кадрі</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Створіть шари на наступному ключовому кадрі</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Створення шарів на попередньому ключовому кадрі</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Create Layers on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Створення шарів на ключовому кадрі</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -2102,127 +2104,127 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+7"/>
         <source>Prevent changes to the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Запобігання змінам полотна</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>&amp;Select</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Виберіть</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select rectangular area</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть прямокутну область</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Lasso Select</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Вибір ласо</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select a free-form area</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть область довільної форми</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Magic Wand Select</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Чарівна паличка Виберіть</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select areas with similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Виділіть області схожих кольорів</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Transform Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Інструмент трансформації</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Transform selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Трансформувати виділення</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Пан</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Pan canvas view</source>
-        <translation type="unfinished"></translation>
+        <translation>Панорама полотна</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Developer Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Інструменти розробника</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>System Information…</source>
-        <translation type="unfinished"></translation>
+        <translation>Інформація про систему…</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Set Artificial Lag...</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити штучну затримку...</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Artifical Disconnect...</source>
-        <translation type="unfinished"></translation>
+        <translation>Штучне роз&apos;єднання...</translation>
     </message>
     <message>
         <location line="-22"/>
         <source>Open Debug Dump...</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити дамп налагодження...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Statistics…</source>
-        <translation type="unfinished"></translation>
+        <translation>Статистика…</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Toggle Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемкнути режим стирання</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Toggle Recolor Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнути режим перефарбування</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Choose the current foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть поточний колір переднього плану</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Choose the current background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть поточний колір фону</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Swap current foreground and background color with each other</source>
-        <translation type="unfinished"></translation>
+        <translation>Поміняти поточні кольори переднього плану та фону один на одного</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set foreground color to black and background color to white</source>
-        <translation type="unfinished"></translation>
+        <translation>Установіть колір переднього плану на чорний, а колір фону на білий</translation>
     </message>
     <message>
         <location line="+168"/>
         <source>Could not write log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося записати файл журналу: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Could not read log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося прочитати журнал: %1</translation>
     </message>
     <message>
         <location line="+97"/>
