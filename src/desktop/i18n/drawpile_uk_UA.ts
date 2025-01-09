@@ -2229,12 +2229,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+97"/>
         <source>Focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Фокусне полотно</translation>
     </message>
     <message>
         <location line="+144"/>
         <source>Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Палітра</translation>
     </message>
     <message>
         <location line="-943"/>
@@ -2244,48 +2244,48 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-3669"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Комбінація клавіш &quot;%1&quot; неоднозначна, вона відповідає:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Ambiguous Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Неоднозначний ярлик</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>Виправити</translation>
     </message>
     <message>
         <location line="+349"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ви не маєте дозволу вирізати, вставляти, заповнювати чи видаляти.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to resize the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви не маєте дозволу змінювати розмір полотна.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви не маєте дозволу змінювати фон сеансу.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to create annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви не маєте дозволу на створення анотацій.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to undo or redo.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви не маєте дозволу на скасування чи повторення.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви не маєте на це дозволу.</translation>
     </message>
     <message>
         <location line="+222"/>
@@ -2295,17 +2295,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+189"/>
         <source>Image saving failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося зберегти зображення</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Download Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження завершено</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Download complete, click on &quot;Save&quot; to save your file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження завершено, натисніть «Зберегти», щоб зберегти файл.</translation>
     </message>
     <message>
         <location line="+283"/>
@@ -2315,160 +2315,160 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Couldn&apos;t start recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося розпочати запис.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невідома помилка.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Error downloading profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка завантаження профілю.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error closing profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка закриття профілю.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error opening profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка відкриття профілю.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Error downloading tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка завантаження журналу подій планшета.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error closing tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка закриття журналу подій планшета.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Error opening tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка відкриття журналу подій планшета.</translation>
     </message>
     <message>
         <location line="+236"/>
         <source>Hosting on this computer is not available</source>
-        <translation type="unfinished"></translation>
+        <translation>Хостинг на цьому комп&apos;ютері недоступний</translation>
     </message>
     <message>
         <location line="+80"/>
         <source>Really leave and terminate the session?</source>
-        <translation type="unfinished"></translation>
+        <translation>Справді залишити та завершити сеанс?</translation>
     </message>
     <message>
         <location line="+236"/>
         <source>Disconnected</source>
-        <translation type="unfinished">Роз&apos;єднано</translation>
+        <translation>Відключено</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;ve been disconnected from the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви були відключені від сервера.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Connection Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка підключення</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Could not establish a connection to the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося встановити з&apos;єднання з сервером.</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>You&apos;ve been disconnected from the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви були відключені від сеансу.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Відключено: %1</translation>
     </message>
     <message>
         <location line="+150"/>
         <source>Undo Limit... (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Скасувати обмеження... (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change the session&apos;s undo limit, current limit is %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити ліміт скасування сеансу, поточний ліміт становить %1.</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Error</source>
-        <translation type="unfinished">Помилка</translation>
+        <translation>Помилка</translation>
     </message>
     <message>
         <location line="+712"/>
         <source>User #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Користувач #%1</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Altering selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Зміна вибору…</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Stop Tablet Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Зупинка журналу подій планшета</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1370"/>
         <source>Tablet Event Log...</source>
-        <translation type="unfinished"></translation>
+        <translation>Журнал подій планшета...</translation>
     </message>
     <message>
         <location line="-1366"/>
         <source>Stop Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Зупинити профіль</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+1367"/>
         <source>Profile...</source>
-        <translation type="unfinished"></translation>
+        <translation>Профіль...</translation>
     </message>
     <message>
         <location line="-1356"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити штучну затримку... (наразі %1 мс)</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Set Artificial Lag</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити штучне відставання</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Artificial lag in milliseconds (0 to disable):</source>
-        <translation type="unfinished"></translation>
+        <translation>Штучна затримка в мілісекундах (0 для вимкнення):</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Artificial Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Штучне роз’єднання</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Simulate a disconnect after this many seconds:</source>
-        <translation type="unfinished"></translation>
+        <translation>Імітуйте відключення через стільки секунд:</translation>
     </message>
     <message>
         <location line="+15"/>
         <location line="+1312"/>
         <source>Record Debug Dumps</source>
-        <translation type="unfinished"></translation>
+        <translation>Записуйте дампи налагодження</translation>
     </message>
     <message>
         <location line="-1311"/>
@@ -2477,280 +2477,284 @@ Simplify the canvas and reset manually before space runs out.</source>
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
 
 Are you sure youwant to start recording debug dumps?</source>
-        <translation type="unfinished"></translation>
+        <translation>Дампи налагодження записуватимуть локальні та віддалені команди малювання. Їх можна використовувати для вирішення проблем з мережею, але не більше. Якщо ви хочете зробити звичайний запис, натомість скористайтеся «Файл» &gt; «Запис...».
+
+Запис дампа налагодження починається під час наступного скидання полотна, і файли буде збережено в %1
+
+Ви впевнені, що хочете розпочати запис дампів налагодження?</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Cause Crash</source>
-        <translation type="unfinished"></translation>
+        <translation>Причина аварії</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Do you really want to crash Drawpile? This will terminate the program and you will lose any unsaved data!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви дійсно хочете завершити роботу Drawpile? Це призведе до завершення програми, і ви втратите всі незбережені дані!</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Settings File:</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл налаштувань:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>Вхід для планшета:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Primary screen:</source>
-        <translation type="unfinished"></translation>
+        <translation>Основний екран:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1x%2px² (%3x%4mm²)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%2 пкс² (%3x%4мм²)</translation>
     </message>
     <message>
         <location line="+141"/>
         <source>Toggle Dock %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемкнути док %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Lock Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Замкові доки</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Vertical Tabs on Sides</source>
-        <translation type="unfinished"></translation>
+        <translation>Вертикальні виступи з боків</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Hold Shift to Arrange</source>
-        <translation type="unfinished"></translation>
+        <translation>Утримуйте Shift, щоб упорядкувати</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>&amp;Download Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Завантажити зображення…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Download Selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантажити вибірку…</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Export &amp;Animation…</source>
-        <translation type="unfinished"></translation>
+        <translation>Експорт &amp;анімації…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Import Animation &amp;Frames…</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпорт &amp;рамок анімації…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Import Animation from &amp;Layers…</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпортувати анімацію з &amp;шарів…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Start...</source>
-        <translation type="unfinished"></translation>
+        <translation>Почніть...</translation>
     </message>
     <message>
         <location line="+91"/>
         <source>&amp;Import</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Імпорт</translation>
     </message>
     <message>
         <location line="+77"/>
         <source>&amp;Copy Merged</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Копія об&apos;єднана</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy Without Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Копія без фону</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy From &amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Копіювати з &amp;шару</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cu&amp;t From Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Вирізати з шару</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Paste in View Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставити в центр перегляду</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть з екрана</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set Session Background...</source>
-        <translation type="unfinished"></translation>
+        <translation>Установити фон сеансу...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Local Background...</source>
-        <translation type="unfinished"></translation>
+        <translation>Установити локальний фон...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Clear Local Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистити локальний фон</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Brush Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Параметри пензля</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Expand &amp;Up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Розгорнути &amp;вгору…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Down…</source>
-        <translation type="unfinished"></translation>
+        <translation>Розгорнути &amp;вниз…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Left…</source>
-        <translation type="unfinished"></translation>
+        <translation>Розгорнути &amp;ліворуч…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Right…</source>
-        <translation type="unfinished"></translation>
+        <translation>Розгорнути &amp;вправо…</translation>
     </message>
     <message>
         <location line="+110"/>
         <source>Canvas Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Полотно фону</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Tablet Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Драйвер планшета</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>&amp;Layouts...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Макети...</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Move Canvas Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемістити полотно вліво</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемістити полотно вправо</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемістити полотно вгору</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемістити полотно вниз</translation>
     </message>
     <message>
         <location line="+195"/>
         <source>Layer View Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим перегляду шару</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-9"/>
         <location filename="../mainwindow.cpp" line="+64"/>
         <source>Merge Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Об&apos;єднати шар</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Layer Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>Властивості шару…</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+3"/>
         <source>Set as Fill Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Установити як джерело заповнення</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Select Above</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть Вище</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Select Below</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть Нижче</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>&amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Шар</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>&amp;Invert Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Інвертувати виділення</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select Layer &amp;Bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть «Межі шару»</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Layer to Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Шар для виділення</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Expand/Shrink/Feather Selection</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Розгорнути/Зменшити/Розтушувати вибір</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>&amp;Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Трансформувати</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Transform the selection, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Трансформуйте виділення, потім увімкніть інструменти назад</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Transform Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Трансформувати виділення та маску</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Трансформуйте лише саму маску виділення, потім увімкніть інструменти назад</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Mirror Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Дзеркальне перетворення</translation>
     </message>
     <message>
         <location line="+2"/>
