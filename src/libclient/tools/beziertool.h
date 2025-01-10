@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef TOOLS_BEZIER_H
-#define TOOLS_BEZIER_H
-
-#include "libclient/tools/tool.h"
+#ifndef LIBCLIENT_TOOLS_BEZIERTOOL_H
+#define LIBCLIENT_TOOLS_BEZIERTOOL_H
 #include "libclient/drawdance/brushengine.h"
+#include "libclient/tools/tool.h"
 
 namespace tools {
 

@@ -1,25 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
+#include "libclient/tools/beziertool.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
-
 #include "libclient/net/client.h"
-
 #include "libclient/tools/toolcontroller.h"
-#include "libclient/tools/beziertool.h"
-
-#include <QPixmap>
 #include <QLineF>
+#include <QPixmap>
 
 namespace tools {
 
-using canvas::PointVector;
 using canvas::Point;
+using canvas::PointVector;
 
 static constexpr long long DELTA_MSEC = 10;
 
 BezierTool::BezierTool(ToolController &owner)
-	: Tool(owner, BEZIER, QCursor(QPixmap(":cursors/curve.png"), 2, 2), true, true, false, true, false, true)
+	: Tool(
+		  owner, BEZIER, QCursor(QPixmap(":cursors/curve.png"), 2, 2), true,
+		  true, false, true, false, true)
 	, m_brushEngine{}
 {
 }
@@ -31,7 +29,7 @@ void BezierTool::begin(const BeginParams &params)
 
 	QPointF point = params.point;
 	if(m_rightButton) {
-		if(m_points.size()>2) {
+		if(m_points.size() > 2) {
 			m_points.pop_back();
 			m_points.last() = {point, QPointF()};
 			m_beginPoint = point;
@@ -42,7 +40,7 @@ void BezierTool::begin(const BeginParams &params)
 
 	} else {
 		if(m_points.isEmpty()) {
-			m_points << ControlPoint { point, QPointF() };
+			m_points << ControlPoint{point, QPointF()};
 		}
 
 		m_beginPoint = point;
@@ -83,14 +81,16 @@ void BezierTool::hover(const HoverParams &params)
 
 void BezierTool::end(const EndParams &)
 {
-	const int s = m_points.size();
+	int s = m_points.size();
 
-	if(m_rightButton || s==0)
+	if(m_rightButton || s == 0) {
 		return;
+	}
 
-	m_points << ControlPoint { m_points.last().point, QPointF() };
-	if(s > 1 && Point::intSame(m_points.at(s-1).cp, QPointF()))
+	m_points << ControlPoint{m_points.last().point, QPointF()};
+	if(s > 1 && Point::intSame(m_points.at(s - 1).cp, QPointF())) {
 		finishMultipart();
+	}
 
 	setHandlesRightClick(!m_points.isEmpty());
 }
@@ -104,14 +104,16 @@ void BezierTool::finishMultipart()
 
 		net::Client *client = m_owner.client();
 		const uint8_t contextId = client->myId();
-		drawdance::CanvasState canvasState = m_owner.model()->paintEngine()->sampleCanvasState();
+		drawdance::CanvasState canvasState =
+			m_owner.model()->paintEngine()->sampleCanvasState();
 
 		const PointVector pv = calculateBezierCurve();
 		m_brushEngine.beginStroke(contextId, true, m_zoom);
 		for(const canvas::Point &p : pv) {
 			m_brushEngine.strokeTo(p, canvasState);
 		}
-		m_brushEngine.endStroke(pv.last().timeMsec() + DELTA_MSEC, canvasState, true);
+		m_brushEngine.endStroke(
+			pv.last().timeMsec() + DELTA_MSEC, canvasState, true);
 
 		m_brushEngine.sendMessagesTo(client);
 	}
@@ -130,8 +132,7 @@ void BezierTool::undoMultipart()
 		m_points.pop_back();
 		if(m_points.size() <= 1) {
 			cancelMultipart();
-		}
-		else {
+		} else {
 			m_points.last().cp = QPointF();
 			updatePreview();
 		}
@@ -143,20 +144,17 @@ PointVector BezierTool::calculateBezierCurve() const
 	long long timeMsec = 0;
 
 	PointVector pv;
-	if(m_points.isEmpty())
+	if(m_points.isEmpty()) {
 		return pv;
-	if(m_points.size()==1) {
+	} else if(m_points.size() == 1) {
 		pv << Point(timeMsec, m_points.first().point, 1);
 		return pv;
 	}
 
-	for(int i=1;i<m_points.size();++i) {
+	for(int i = 1; i < m_points.size(); ++i) {
 		const QPointF points[4] = {
-			m_points[i-1].point,
-			m_points[i-1].point - m_points[i-1].cp,
-			m_points[i].point + m_points[i].cp,
-			m_points[i].point
-		};
+			m_points[i - 1].point, m_points[i - 1].point - m_points[i - 1].cp,
+			m_points[i].point + m_points[i].cp, m_points[i].point};
 
 		qreal distance = cubicBezierDistance(points);
 		float stepSize = distance > 0.0 ? float(5.0 / distance) : 1.0f;
@@ -187,26 +185,26 @@ qreal BezierTool::cubicBezierDistance(const QPointF points[4])
 
 QPointF BezierTool::cubicBezierPoint(const QPointF points[4], float t)
 {
-	const float t1 = 1-t;
-	const float Ax = t1*points[0].x() + t*points[1].x();
-	const float Ay = t1*points[0].y() + t*points[1].y();
-	const float Bx = t1*points[1].x() + t*points[2].x();
-	const float By = t1*points[1].y() + t*points[2].y();
-	const float Cx = t1*points[2].x() + t*points[3].x();
-	const float Cy = t1*points[2].y() + t*points[3].y();
+	const float t1 = 1 - t;
+	const float Ax = t1 * points[0].x() + t * points[1].x();
+	const float Ay = t1 * points[0].y() + t * points[1].y();
+	const float Bx = t1 * points[1].x() + t * points[2].x();
+	const float By = t1 * points[1].y() + t * points[2].y();
+	const float Cx = t1 * points[2].x() + t * points[3].x();
+	const float Cy = t1 * points[2].y() + t * points[3].y();
 
-	const float Dx = t1*Ax + t*Bx;
-	const float Dy = t1*Ay + t*By;
-	const float Ex = t1*Bx + t*Cx;
-	const float Ey = t1*By + t*Cy;
+	const float Dx = t1 * Ax + t * Bx;
+	const float Dy = t1 * Ay + t * By;
+	const float Ex = t1 * Bx + t * Cx;
+	const float Ey = t1 * By + t * Cy;
 
-	return QPointF(t1*Dx + t*Ex, t1*Dy + t*Ey);
+	return QPointF(t1 * Dx + t * Ex, t1 * Dy + t * Ey);
 }
 
 void BezierTool::updatePreview()
 {
 	const PointVector pv = calculateBezierCurve();
-	if(pv.size()<=1)
+	if(pv.size() <= 1)
 		return;
 
 	m_owner.setBrushEngineBrush(m_brushEngine, false);
@@ -217,11 +215,11 @@ void BezierTool::updatePreview()
 	for(const canvas::Point &p : pv) {
 		m_brushEngine.strokeTo(p, canvasState);
 	}
-	m_brushEngine.endStroke(pv.last().timeMsec() + DELTA_MSEC, canvasState, false);
+	m_brushEngine.endStroke(
+		pv.last().timeMsec() + DELTA_MSEC, canvasState, false);
 
 	paintEngine->previewDabs(m_owner.activeLayer(), m_brushEngine.messages());
 	m_brushEngine.clearMessages();
 }
 
 }
-
