@@ -20,50 +20,63 @@ void SelectionTool::begin(const BeginParams &params)
 {
 	m_clickDetector.begin(params.viewPos, params.deviceType);
 	m_zoom = params.zoom;
+	m_lastPoint = params.point;
 	bool atEdge;
 	if(params.right) {
 		m_op = -1;
+		setCursor(
+			getCursor(resolveOp(params.constrain, params.center, defaultOp())));
 	} else if(
 		!m_forceSelect && !params.constrain && !params.center && quickDrag() &&
 		(isInsideSelection(params.point, &atEdge) || atEdge)) {
 		m_op = -1;
 		m_startPoint = params.point;
-		m_lastPoint = params.point;
 		m_owner.requestTransformMove(params, atEdge, true);
+		setCursor(
+			getCursor(resolveOp(params.constrain, params.center, defaultOp())));
 	} else {
-		m_params = m_owner.selectionParams();
 		m_op = resolveOp(params.constrain, params.center, defaultOp());
 		m_startPoint = params.point;
-		m_lastPoint = params.point;
 		m_wasForceSelect = m_forceSelect;
 		beginSelection(params.point);
+		setCursor(getCursor(m_op));
 	}
-	setCursor(originalCursor());
 }
 
 void SelectionTool::motion(const MotionParams &params)
 {
 	m_clickDetector.motion(params.viewPos);
+	m_lastPoint = params.point;
 	if(m_op != -1) {
 		m_op = resolveOp(params.constrain, params.center, defaultOp());
-		m_lastPoint = params.point;
 		continueSelection(params.point);
 	}
+	updateCursor(params.point, params.constrain, params.center);
+}
+
+void SelectionTool::modify(const ModifyParams &params)
+{
+	if(m_op != -1) {
+		m_op = resolveOp(params.constrain, params.center, defaultOp());
+		continueSelection(m_lastPoint);
+	}
+	updateCursor(m_lastPoint, params.constrain, params.center);
 }
 
 void SelectionTool::hover(const HoverParams &params)
 {
 	m_zoom = params.zoom;
-	updateCursor(params.point);
+	m_lastPoint = params.point;
+	updateCursor(params.point, params.constrain, params.center);
 }
 
 void SelectionTool::end(const EndParams &params)
 {
 	if(m_op != -1) {
 		m_op = resolveOp(params.constrain, params.center, defaultOp());
-		updateCursor(m_lastPoint);
 	}
 	endSelection(true, params.center);
+	updateCursor(m_lastPoint, params.constrain, params.center);
 }
 
 void SelectionTool::finishMultipart()
@@ -134,14 +147,17 @@ void SelectionTool::removeSelectionPreview() const
 	updateSelectionPreview(QPainterPath());
 }
 
-void SelectionTool::updateCursor(const QPointF &point)
+void SelectionTool::updateCursor(
+	const QPointF &point, bool constrain, bool center)
 {
 	bool atEdge;
-	if(m_op == -1 && !m_forceSelect && !m_wasForceSelect && quickDrag() &&
+	if(!constrain && !center && m_op == -1 && !m_forceSelect &&
+	   !m_wasForceSelect && quickDrag() &&
 	   (isInsideSelection(point, &atEdge) || atEdge)) {
 		setCursor(atEdge ? Cursors::moveMask() : Cursors::move());
 	} else {
-		setCursor(originalCursor());
+		setCursor(getCursor(
+			m_op == -1 ? resolveOp(constrain, center, defaultOp()) : m_op));
 	}
 }
 
@@ -247,18 +263,27 @@ RectangleSelection::RectangleSelection(ToolController &owner)
 {
 }
 
-const QCursor &RectangleSelection::originalCursor() const
+const QCursor &RectangleSelection::getCursor(int effectiveOp) const
 {
-	return Cursors::selectRectangle();
+	switch(effectiveOp) {
+	case DP_MSG_SELECTION_PUT_OP_UNITE:
+		return Cursors::selectRectangleUnite();
+	case DP_MSG_SELECTION_PUT_OP_INTERSECT:
+		return Cursors::selectRectangleIntersect();
+	case DP_MSG_SELECTION_PUT_OP_EXCLUDE:
+		return Cursors::selectRectangleExclude();
+	default:
+		return Cursors::selectRectangle();
+	}
 }
 
-void RectangleSelection::beginSelection(const canvas::Point &point)
+void RectangleSelection::beginSelection(const QPointF &point)
 {
 	m_end = point;
 	updateRectangleSelectionPreview();
 }
 
-void RectangleSelection::continueSelection(const canvas::Point &point)
+void RectangleSelection::continueSelection(const QPointF &point)
 {
 	m_end = point;
 	updateRectangleSelectionPreview();
@@ -351,12 +376,21 @@ PolygonSelection::PolygonSelection(ToolController &owner)
 {
 }
 
-const QCursor &PolygonSelection::originalCursor() const
+const QCursor &PolygonSelection::getCursor(int effectiveOp) const
 {
-	return Cursors::selectLasso();
+	switch(effectiveOp) {
+	case DP_MSG_SELECTION_PUT_OP_UNITE:
+		return Cursors::selectLassoUnite();
+	case DP_MSG_SELECTION_PUT_OP_INTERSECT:
+		return Cursors::selectLassoIntersect();
+	case DP_MSG_SELECTION_PUT_OP_EXCLUDE:
+		return Cursors::selectLassoExclude();
+	default:
+		return Cursors::selectLasso();
+	}
 }
 
-void PolygonSelection::beginSelection(const canvas::Point &point)
+void PolygonSelection::beginSelection(const QPointF &point)
 {
 	if(antiAlias()) {
 		m_polygonF.clear();
@@ -368,10 +402,10 @@ void PolygonSelection::beginSelection(const canvas::Point &point)
 	updatePolygonSelectionPreview();
 }
 
-void PolygonSelection::continueSelection(const canvas::Point &point)
+void PolygonSelection::continueSelection(const QPointF &point)
 {
 	if(antiAlias()) {
-		if(!point.intSame(m_polygonF.last())) {
+		if(!canvas::Point::intSame(point, m_polygonF.last())) {
 			m_polygonF.append(point);
 			updatePolygonSelectionPreview();
 		}

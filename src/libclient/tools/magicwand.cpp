@@ -8,6 +8,8 @@
 #include <QCoreApplication>
 #include <QPainter>
 
+using utils::Cursors;
+
 namespace tools {
 
 class MagicWandTool::Task final : public ToolController::Task {
@@ -87,8 +89,8 @@ private:
 
 MagicWandTool::MagicWandTool(ToolController &owner)
 	: Tool(
-		  owner, MAGICWAND, utils::Cursors::magicWand(), true, false, false,
-		  false, false, false)
+		  owner, MAGICWAND, Cursors::magicWand(), true, false, false, false,
+		  false, false)
 {
 }
 
@@ -106,6 +108,7 @@ void MagicWandTool::begin(const BeginParams &params)
 		m_dragDetector.begin(params.viewPos, params.deviceType);
 		fillAt(params.point, params.constrain, params.center);
 	}
+	updateCursor(params.constrain, params.center);
 }
 
 void MagicWandTool::motion(const MotionParams &params)
@@ -139,6 +142,22 @@ void MagicWandTool::motion(const MotionParams &params)
 			emit m_owner.magicWandDragChanged(true, tolerance);
 		}
 	}
+	updateCursor(params.constrain, params.center);
+}
+
+void MagicWandTool::modify(const ModifyParams &params)
+{
+	if(m_op != -1) {
+		updateOp(
+			params.constrain, params.center,
+			m_owner.selectionParams().defaultOp);
+	}
+	updateCursor(params.constrain, params.center);
+}
+
+void MagicWandTool::hover(const HoverParams &params)
+{
+	updateCursor(params.constrain, params.center);
 }
 
 void MagicWandTool::end(const EndParams &params)
@@ -150,6 +169,7 @@ void MagicWandTool::end(const EndParams &params)
 	if(!m_running && !m_repeat) {
 		flushPending();
 	}
+	updateCursor(params.constrain, params.center);
 }
 
 bool MagicWandTool::isMultipart() const
@@ -208,6 +228,28 @@ void MagicWandTool::updateOp(bool constrain, bool center, int defaultOp)
 	m_lastConstrain = constrain;
 	m_lastCenter = center;
 	m_op = SelectionTool::resolveOp(constrain, center, defaultOp);
+}
+
+void MagicWandTool::updateCursor(bool constrain, bool center)
+{
+	setCursor(getCursor(
+		m_op == -1 ? SelectionTool::resolveOp(
+						 constrain, center, m_owner.selectionParams().defaultOp)
+				   : m_op));
+}
+
+const QCursor &MagicWandTool::getCursor(int effectiveOp) const
+{
+	switch(effectiveOp) {
+	case DP_MSG_SELECTION_PUT_OP_UNITE:
+		return Cursors::magicWandUnite();
+	case DP_MSG_SELECTION_PUT_OP_INTERSECT:
+		return Cursors::magicWandIntersect();
+	case DP_MSG_SELECTION_PUT_OP_EXCLUDE:
+		return Cursors::magicWandExclude();
+	default:
+		return Cursors::magicWand();
+	}
 }
 
 void MagicWandTool::stopDragging()

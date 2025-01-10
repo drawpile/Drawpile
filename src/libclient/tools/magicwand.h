@@ -15,6 +15,8 @@ public:
 
 	void begin(const BeginParams &params) override;
 	void motion(const MotionParams &params) override;
+	void modify(const ModifyParams &params) override;
+	void hover(const HoverParams &params) override;
 	void end(const EndParams &params) override;
 	bool isMultipart() const override;
 	void finishMultipart() override;
@@ -35,6 +37,8 @@ private:
 	friend Task;
 
 	void updateOp(bool constrain, bool center, int defaultOp);
+	void updateCursor(bool constrain, bool center);
+	const QCursor &getCursor(int effectiveOp) const;
 	void stopDragging();
 	void fillAt(const QPointF &point, bool constrain, bool center);
 	void repeatFill();

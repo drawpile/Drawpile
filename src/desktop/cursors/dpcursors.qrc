@@ -11,13 +11,22 @@
         <file>eraser.png</file>
         <file>line.png</file>
         <file>magicwand.png</file>
+        <file>magicwand-exclude.png</file>
+        <file>magicwand-intersect.png</file>
+        <file>magicwand-unite.png</file>
         <file>move.png</file>
         <file>move-mask.png</file>
         <file>rectangle.png</file>
         <file>rotate.png</file>
         <file>rotate-discrete.png</file>
         <file>select-lasso.png</file>
+        <file>select-lasso-exclude.png</file>
+        <file>select-lasso-intersect.png</file>
+        <file>select-lasso-unite.png</file>
         <file>select-rectangle.png</file>
+        <file>select-rectangle-exclude.png</file>
+        <file>select-rectangle-intersect.png</file>
+        <file>select-rectangle-unite.png</file>
         <file>shear-bdiag.png</file>
         <file>shear-fdiag.png</file>
         <file>shear-h.png</file>
