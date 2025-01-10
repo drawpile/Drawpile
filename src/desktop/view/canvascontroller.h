@@ -186,7 +186,8 @@ signals:
 		const QPointF &viewPos);
 	void penModify(bool constrain, bool center);
 	void penHover(
-		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip);
+		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip,
+		bool constrain, bool center);
 	void penUp(bool constrain, bool center);
 	void coordinatesChanged(const QPointF &coordinates);
 	void quickAdjust(int type, qreal value);
@@ -318,6 +319,7 @@ private:
 	void emitTransformChanged();
 	void emitViewRectChanged();
 	void emitScrollAreaChanged();
+	void emitPenModify(Qt::KeyboardModifiers modifiers);
 
 	QRect canvasRect() const;
 	QRectF canvasRectF() const;

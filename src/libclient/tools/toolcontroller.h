@@ -197,7 +197,8 @@ public slots:
 
 	//! Stylus hover (not yet drawing)
 	void hoverDrawing(
-		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip);
+		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip,
+		bool constrain, bool center);
 
 	//! End a stroke
 	void endDrawing(bool constrain, bool center);

@@ -76,6 +76,8 @@ public:
 		qreal zoom;
 		bool mirror;
 		bool flip;
+		bool constrain;
+		bool center;
 	};
 
 	struct EndParams {

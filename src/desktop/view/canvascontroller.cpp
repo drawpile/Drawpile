@@ -983,6 +983,9 @@ void CanvasController::handleKeyPress(QKeyEvent *event)
 							.setPenMode(PenMode::Normal)
 							.setDragMode(ViewDragMode::Prepared)
 							.setDragCondition(m_allowToolAdjust));
+				if(!m_allowToolAdjust) {
+					emitPenModify(modifiers);
+				}
 				break;
 			case CanvasShortcuts::COLOR_H_ADJUST:
 			case CanvasShortcuts::COLOR_S_ADJUST:
@@ -991,6 +994,9 @@ void CanvasController::handleKeyPress(QKeyEvent *event)
 							.setPenMode(PenMode::Normal)
 							.setDragMode(ViewDragMode::Prepared)
 							.setDragCondition(m_allowColorPick));
+				if(!m_allowColorPick) {
+					emitPenModify(modifiers);
+				}
 				break;
 			case CanvasShortcuts::CANVAS_PAN:
 			case CanvasShortcuts::CANVAS_ROTATE:
@@ -1010,14 +1016,13 @@ void CanvasController::handleKeyPress(QKeyEvent *event)
 				break;
 			default:
 				m_penMode = PenMode::Normal;
+				emitPenModify(modifiers);
 				break;
 			}
 			break;
 		}
 	} else {
-		CanvasShortcuts::ConstraintMatch match =
-			m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
-		emit penModify(match.toolConstraint1(), match.toolConstraint2());
+		emitPenModify(modifiers);
 	}
 
 	updateOutline();
@@ -1133,12 +1138,11 @@ void CanvasController::handleKeyRelease(QKeyEvent *event)
 			break;
 		default:
 			m_penMode = PenMode::Normal;
+			emitPenModify(modifiers);
 			break;
 		}
 	} else {
-		CanvasShortcuts::ConstraintMatch match =
-			m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
-		emit penModify(match.toolConstraint1(), match.toolConstraint2());
+		emitPenModify(modifiers);
 	}
 
 	updateOutline();
@@ -1369,9 +1373,11 @@ void CanvasController::penMoveEvent(
 	} else {
 		if(m_fractionalTool || !m_prevPoint.intSame(point)) {
 			if(m_penState == PenState::Up) {
+				CanvasShortcuts::ConstraintMatch match =
+					m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
 				emit penHover(
 					point, m_rotation, m_zoom / devicePixelRatioF(), m_mirror,
-					m_flip);
+					m_flip, match.toolConstraint1(), match.toolConstraint2());
 				if(m_pointerTracking && m_canvasModel) {
 					emit pointerMove(point);
 				}
@@ -2378,6 +2384,13 @@ void CanvasController::emitScrollAreaChanged()
 			emit scrollAreaChanged(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		}
 	}
+}
+
+void CanvasController::emitPenModify(Qt::KeyboardModifiers modifiers)
+{
+	CanvasShortcuts::ConstraintMatch match =
+		m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
+	emit penModify(match.toolConstraint1(), match.toolConstraint2());
 }
 
 QRect CanvasController::canvasRect() const

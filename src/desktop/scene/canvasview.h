@@ -144,7 +144,8 @@ signals:
 		const QPointF &viewPos);
 	void penModify(bool constrain, bool center);
 	void penHover(
-		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip);
+		const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip,
+		bool constrain, bool center);
 	void penUp(bool constrain, bool center);
 	void quickAdjust(int type, qreal value);
 	void coordinatesChanged(const QPointF &coordinates);
@@ -325,6 +326,7 @@ private:
 	static void mirrorFlip(QTransform &matrix, bool mirror, bool flip);
 
 	void emitViewTransformed();
+	void emitPenModify(Qt::KeyboardModifiers modifiers);
 	bool isRotationInverted() const;
 
 	void updateOutlinePos(QPointF point);

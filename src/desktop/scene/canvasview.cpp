@@ -1376,11 +1376,11 @@ void CanvasView::penMoveEvent(
 
 	} else {
 		if(m_fractionalTool || !m_prevpoint.intSame(point)) {
+			CanvasShortcuts::ConstraintMatch match =
+				m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
 			if(m_pendown) {
 				m_pointervelocity = point.distance(m_prevpoint);
 				m_pointerdistance += m_pointervelocity;
-				CanvasShortcuts::ConstraintMatch match =
-					m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
 				onPenMove(
 					point, buttons.testFlag(Qt::RightButton),
 					match.toolConstraint1(), match.toolConstraint2(), pos);
@@ -1388,7 +1388,7 @@ void CanvasView::penMoveEvent(
 			} else {
 				emit penHover(
 					point, m_rotate, m_zoom / devicePixelRatioF(), m_mirror,
-					m_flip);
+					m_flip, match.toolConstraint1(), match.toolConstraint2());
 				if(m_pointertracking && m_scene->hasImage()) {
 					emit pointerMoved(point);
 				}
@@ -1764,6 +1764,9 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 							.setDragMode(ViewDragMode::Prepared)
 							.setDragCondition(m_allowToolAdjust)
 							.setUpdateOutline());
+				if(!m_allowToolAdjust) {
+					emitPenModify(getKeyboardModifiers(event));
+				}
 				break;
 			case CanvasShortcuts::COLOR_H_ADJUST:
 			case CanvasShortcuts::COLOR_S_ADJUST:
@@ -1773,6 +1776,9 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 							.setDragMode(ViewDragMode::Prepared)
 							.setDragCondition(m_allowColorPick)
 							.setUpdateOutline());
+				if(!m_allowColorPick) {
+					emitPenModify(getKeyboardModifiers(event));
+				}
 				break;
 			case CanvasShortcuts::CANVAS_PAN:
 			case CanvasShortcuts::CANVAS_ROTATE:
@@ -1793,15 +1799,13 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 				break;
 			default:
 				m_penmode = PenMode::Normal;
+				emitPenModify(getKeyboardModifiers(event));
 				break;
 			}
 			break;
 		}
 	} else {
-		CanvasShortcuts::ConstraintMatch match =
-			m_canvasShortcuts.matchConstraints(
-				getKeyboardModifiers(event), m_keysDown);
-		emit penModify(match.toolConstraint1(), match.toolConstraint2());
+		emitPenModify(getKeyboardModifiers(event));
 		QGraphicsView::keyPressEvent(event);
 	}
 
@@ -1916,13 +1920,11 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 			break;
 		default:
 			m_penmode = PenMode::Normal;
+			emitPenModify(getKeyboardModifiers(event));
 			break;
 		}
 	} else {
-		CanvasShortcuts::ConstraintMatch match =
-			m_canvasShortcuts.matchConstraints(
-				getKeyboardModifiers(event), m_keysDown);
-		emit penModify(match.toolConstraint1(), match.toolConstraint2());
+		emitPenModify(getKeyboardModifiers(event));
 	}
 
 	resetCursor();
@@ -2487,6 +2489,13 @@ void CanvasView::mirrorFlip(QTransform &matrix, bool mirror, bool flip)
 void CanvasView::emitViewTransformed()
 {
 	emit viewTransformed(zoom(), rotation());
+}
+
+void CanvasView::emitPenModify(Qt::KeyboardModifiers modifiers)
+{
+	CanvasShortcuts::ConstraintMatch match =
+		m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
+	emit penModify(match.toolConstraint1(), match.toolConstraint2());
 }
 
 bool CanvasView::isRotationInverted() const

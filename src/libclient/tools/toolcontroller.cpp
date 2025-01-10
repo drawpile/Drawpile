@@ -474,12 +474,13 @@ void ToolController::modifyDrawing(bool constrain, bool center)
 }
 
 void ToolController::hoverDrawing(
-	const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip)
+	const QPointF &point, qreal angle, qreal zoom, bool mirror, bool flip,
+	bool constrain, bool center)
 {
 	Q_ASSERT(m_activeTool);
 	if(m_model) {
-		m_activeTool->hover(
-			Tool::HoverParams{point, angle, zoom, mirror, flip});
+		m_activeTool->hover(Tool::HoverParams{
+			point, angle, zoom, mirror, flip, constrain, center});
 	}
 }
 
