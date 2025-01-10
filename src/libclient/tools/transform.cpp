@@ -5,10 +5,12 @@
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
+#include "libclient/utils/cursors.h"
 #include <QCoreApplication>
-#include <QCursor>
 #include <QPair>
 #include <cmath>
+
+using utils::Cursors;
 
 namespace tools {
 
@@ -612,7 +614,7 @@ QCursor TransformTool::getDistortHandleCursor(
 QCursor TransformTool::getMoveHandleCursor(Handle handle) const
 {
 	if(handle == Handle::Inside) {
-		return m_applyOnEnd ? m_moveMaskCursor : m_moveCursor;
+		return m_applyOnEnd ? Cursors::moveMask() : Cursors::move();
 	} else {
 		return m_outsideMoveCursor;
 	}
@@ -631,9 +633,9 @@ QCursor TransformTool::getCommonHandleCursor(
 	case Handle::LeftEdge:
 		return getShearCursor(getCursorQuad(transform).leftEdgeAngle());
 	case Handle::Inside:
-		return m_moveCursor;
+		return Cursors::move();
 	case Handle::Outside:
-		return m_rotateCursor;
+		return Cursors::rotate();
 	default:
 		qWarning(
 			"TransformTool::getCommonHandleCursor: invalid handle %d",
@@ -652,8 +654,8 @@ QCursor TransformTool::getArrowCursor(qreal angle) const
 QCursor TransformTool::getShearCursor(qreal angle) const
 {
 	return getAngleCursor(
-		angle, m_shearCursorH, m_shearCursorV, m_shearCursorDiagB,
-		m_shearCursorDiagF);
+		angle, Cursors::shearH(), Cursors::shearV(), Cursors::shearDiagB(),
+		Cursors::shearDiagF());
 }
 
 QCursor TransformTool::getAngleCursor(

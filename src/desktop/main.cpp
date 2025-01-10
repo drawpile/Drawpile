@@ -32,6 +32,7 @@
 #include <QTranslator>
 #include <QUrl>
 #include <QWidget>
+#include <libclient/utils/cursors.h>
 #include <memory>
 #if defined(Q_OS_MACOS)
 #	include "desktop/utils/macui.h"
@@ -75,6 +76,7 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	drawdance::initLogging();
 	drawdance::initCpuSupport();
 	drawdance::DrawContextPool::init();
+	utils::Cursors::init();
 
 	GlobalKeyEventFilter *filter = new GlobalKeyEventFilter{this};
 	installEventFilter(filter);

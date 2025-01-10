@@ -189,20 +189,6 @@ private:
 	void hotSwapToSelection(Tool::Type tool);
 	void returnToPreviousTool();
 
-	QCursor m_moveCursor =
-		QCursor(QPixmap(QStringLiteral(":/cursors/move.png")), 12, 12);
-	QCursor m_moveMaskCursor =
-		QCursor(QPixmap(QStringLiteral(":/cursors/move-mask.png")), 7, 7);
-	QCursor m_rotateCursor =
-		QCursor(QPixmap(QStringLiteral(":/cursors/rotate.png")), 16, 16);
-	QCursor m_shearCursorH =
-		QCursor(QPixmap(QStringLiteral(":/cursors/shear-h.png")), 12, 12);
-	QCursor m_shearCursorV =
-		QCursor(QPixmap(QStringLiteral(":/cursors/shear-v.png")), 12, 12);
-	QCursor m_shearCursorDiagB =
-		QCursor(QPixmap(QStringLiteral(":/cursors/shear-bdiag.png")), 13, 13);
-	QCursor m_shearCursorDiagF =
-		QCursor(QPixmap(QStringLiteral(":/cursors/shear-fdiag.png")), 13, 13);
 	QCursor m_outsideMoveCursor = Qt::ArrowCursor;
 	QVector<TransformQuad> m_quadStack;
 	int m_quadStackTop = -1;

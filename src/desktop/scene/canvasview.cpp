@@ -15,6 +15,7 @@ extern "C" {
 #include "libclient/drawdance/eventlog.h"
 #include "libclient/tools/enums.h"
 #include "libclient/tools/toolstate.h"
+#include "libclient/utils/cursors.h"
 #include "libshared/util/qtcompat.h"
 #include <QApplication>
 #include <QDateTime>
@@ -33,6 +34,7 @@ extern "C" {
 
 using libclient::settings::zoomMax;
 using libclient::settings::zoomMin;
+using utils::Cursors;
 
 namespace widgets {
 
@@ -225,29 +227,6 @@ CanvasView::CanvasView(QWidget *parent)
 	connect(
 		m_notificationBar, &NotificationBar::closeButtonClicked, this,
 		&CanvasView::dismissNotificationBar);
-
-	m_trianglerightcursor =
-		QCursor(QPixmap(":/cursors/triangle-right.png"), 14, 14);
-	m_triangleleftcursor =
-		QCursor(QPixmap(":/cursors/triangle-left.png"), 14, 14);
-	m_colorpickcursor = QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29);
-	m_layerpickcursor = QCursor(QPixmap(":/cursors/layerpicker.png"), 2, 29);
-	m_zoomcursor = QCursor(QPixmap(":/cursors/zoom.png"), 8, 8);
-	m_rotatecursor = QCursor(QPixmap(":/cursors/rotate.png"), 16, 16);
-	m_rotatediscretecursor =
-		QCursor(QPixmap(":/cursors/rotate-discrete.png"), 16, 16);
-	m_checkCursor = QCursor(QPixmap(":/cursors/check.png"), 16, 16);
-	m_erasercursor = QCursor(QPixmap(":/cursors/eraser.png"), 2, 2);
-
-	// Generate the minimalistic dot cursor
-	{
-		QPixmap dot(8, 8);
-		dot.fill(Qt::transparent);
-		QPainter p(&dot);
-		p.setPen(Qt::white);
-		p.drawPoint(0, 0);
-		m_dotcursor = QCursor(dot, 0, 0);
-	}
 
 	settings.bindTabletEvents(this, &widgets::CanvasView::setTabletEnabled);
 	settings.bindTouchGestures(
@@ -876,13 +855,13 @@ void CanvasView::resetCursor()
 			break;
 		case CanvasShortcuts::CANVAS_ROTATE:
 		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
-			setViewportCursor(m_rotatecursor);
+			setViewportCursor(Cursors::rotate());
 			break;
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
-			setViewportCursor(m_rotatediscretecursor);
+			setViewportCursor(Cursors::rotateDiscrete());
 			break;
 		case CanvasShortcuts::CANVAS_ZOOM:
-			setViewportCursor(m_zoomcursor);
+			setViewportCursor(Cursors::zoom());
 			break;
 		case CanvasShortcuts::TOOL_ADJUST:
 		case CanvasShortcuts::COLOR_H_ADJUST:
@@ -907,10 +886,10 @@ void CanvasView::resetCursor()
 	case PenMode::Normal:
 		break;
 	case PenMode::Colorpick:
-		setViewportCursor(m_colorpickcursor);
+		setViewportCursor(Cursors::colorPick());
 		return;
 	case PenMode::Layerpick:
-		setViewportCursor(m_layerpickcursor);
+		setViewportCursor(Cursors::layerPick());
 		return;
 	}
 
@@ -925,7 +904,7 @@ void CanvasView::resetCursor()
 	if(m_toolcursor.shape() == Qt::CrossCursor) {
 		switch(getCurrentCursorStyle()) {
 		case int(view::Cursor::Dot):
-			setViewportCursor(m_dotcursor);
+			setViewportCursor(Cursors::dot());
 			break;
 		case int(view::Cursor::Cross):
 			setViewportCursor(Qt::CrossCursor);
@@ -934,16 +913,16 @@ void CanvasView::resetCursor()
 			setViewportCursor(Qt::ArrowCursor);
 			break;
 		case int(view::Cursor::TriangleLeft):
-			setViewportCursor(m_triangleleftcursor);
+			setViewportCursor(Cursors::triangleLeft());
 			break;
 		case int(view::Cursor::TriangleRight):
-			setViewportCursor(m_trianglerightcursor);
+			setViewportCursor(Cursors::triangleRight());
 			break;
 		case int(view::Cursor::Eraser):
-			setViewportCursor(m_erasercursor);
+			setViewportCursor(Cursors::eraser());
 			break;
 		default:
-			setViewportCursor(m_trianglerightcursor);
+			setViewportCursor(Cursors::triangleRight());
 			break;
 		}
 	} else {

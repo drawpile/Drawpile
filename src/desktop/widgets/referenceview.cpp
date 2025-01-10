@@ -2,6 +2,7 @@
 #include "desktop/widgets/referenceview.h"
 #include "desktop/utils/qtguicompat.h"
 #include "libclient/settings.h"
+#include "libclient/utils/cursors.h"
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
 #include <QDropEvent>
@@ -124,10 +125,6 @@ private:
 
 ReferenceView::ReferenceView(QWidget *parent)
 	: QGraphicsView(parent)
-#ifndef HAVE_EMULATED_BITMAP_CURSOR
-	, m_colorpickcursor(
-		  QPixmap(QStringLiteral(":/cursors/colorpicker.png")), 2, 29)
-#endif
 {
 	setAcceptDrops(true);
 	setFrameShape(NoFrame);
@@ -563,7 +560,7 @@ void ReferenceView::updateCursor(Qt::KeyboardModifiers mods)
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 			setCursor(Qt::CrossCursor);
 #else
-			setCursor(m_colorpickcursor);
+			setCursor(utils::Cursors::colorPick());
 #endif
 		}
 	} else {

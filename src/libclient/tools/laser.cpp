@@ -3,14 +3,14 @@
 #include "libclient/net/client.h"
 #include "libclient/net/message.h"
 #include "libclient/tools/toolcontroller.h"
-#include <QPixmap>
+#include "libclient/utils/cursors.h"
 
 namespace tools {
 
 LaserPointer::LaserPointer(ToolController &owner)
 	: Tool(
-		  owner, LASERPOINTER, QCursor(QPixmap(":cursors/arrow.png"), 0, 0),
-		  false, true, false, false, false, false)
+		  owner, LASERPOINTER, utils::Cursors::arrow(), false, true, false,
+		  false, false, false)
 	, m_persistence(1)
 	, m_drawing(false)
 {

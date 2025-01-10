@@ -8,9 +8,11 @@ extern "C" {
 #include "libclient/net/client.h"
 #include "libclient/tools/floodfill.h"
 #include "libclient/tools/toolcontroller.h"
+#include "libclient/utils/cursors.h"
 #include <QGuiApplication>
 #include <QPainter>
-#include <QPixmap>
+
+using utils::Cursors;
 
 namespace tools {
 
@@ -112,16 +114,11 @@ private:
 
 FloodFill::FloodFill(ToolController &owner)
 	: Tool(
-		  owner, FLOODFILL,
-		  QCursor(QPixmap(QStringLiteral(":cursors/bucket.png")), 2, 29), true,
-		  true, false, false, false, false)
+		  owner, FLOODFILL, Cursors::bucket(), true, true, false, false, false,
+		  false)
 	, m_kernel(int(DP_FLOOD_FILL_KERNEL_ROUND))
 	, m_blendMode(DP_BLEND_MODE_NORMAL)
 	, m_originalBlendMode(m_blendMode)
-	, m_bucketCursor(cursor())
-	, m_pendingCursor(
-		  QPixmap(QStringLiteral(":cursors/bucketcheck.png")), 2, 29)
-	, m_confirmCursor(QPixmap(QStringLiteral(":cursors/check.png")))
 {
 }
 
@@ -502,9 +499,9 @@ void FloodFill::updateCursor()
 	if(m_dragging) {
 		setCursor(Qt::SplitHCursor);
 	} else if(havePending()) {
-		setCursor(m_confirmFills ? m_confirmCursor : m_pendingCursor);
+		setCursor(m_confirmFills ? Cursors::check() : Cursors::bucketCheck());
 	} else {
-		setCursor(m_bucketCursor);
+		setCursor(Cursors::bucket());
 	}
 }
 

@@ -4,8 +4,8 @@
 #include "libclient/canvas/paintengine.h"
 #include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
+#include "libclient/utils/cursors.h"
 #include <QLineF>
-#include <QPixmap>
 
 namespace tools {
 
@@ -16,8 +16,8 @@ static constexpr long long DELTA_MSEC = 10;
 
 BezierTool::BezierTool(ToolController &owner)
 	: Tool(
-		  owner, BEZIER, QCursor(QPixmap(":cursors/curve.png"), 2, 2), true,
-		  true, false, true, false, true)
+		  owner, BEZIER, utils::Cursors::curve(), true, true, false, true,
+		  false, true)
 	, m_brushEngine{}
 {
 }

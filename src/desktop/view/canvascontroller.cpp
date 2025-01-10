@@ -14,6 +14,7 @@ extern "C" {
 #include "libclient/drawdance/eventlog.h"
 #include "libclient/tools/enums.h"
 #include "libclient/tools/toolstate.h"
+#include "libclient/utils/cursors.h"
 #include <QDateTime>
 #include <QGestureEvent>
 #include <QKeyEvent>
@@ -27,6 +28,7 @@ extern "C" {
 
 using libclient::settings::zoomMax;
 using libclient::settings::zoomMin;
+using utils::Cursors;
 
 namespace view {
 
@@ -148,19 +150,6 @@ private:
 CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 	: QObject(parent)
 	, m_scene(scene)
-	, m_dotCursor(generateDotCursor())
-	, m_triangleRightCursor(
-		  QCursor(QPixmap(":/cursors/triangle-right.png"), 14, 14))
-	, m_triangleLeftCursor(
-		  QCursor(QPixmap(":/cursors/triangle-left.png"), 14, 14))
-	, m_eraserCursor(QCursor(QPixmap(":/cursors/eraser.png"), 2, 2))
-	, m_colorPickCursor(QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29))
-	, m_layerPickCursor(QCursor(QPixmap(":/cursors/layerpicker.png"), 2, 29))
-	, m_zoomCursor(QCursor(QPixmap(":/cursors/zoom.png"), 8, 8))
-	, m_rotateCursor(QCursor(QPixmap(":/cursors/rotate.png"), 16, 16))
-	, m_rotateDiscreteCursor(
-		  QCursor(QPixmap(":/cursors/rotate-discrete.png"), 16, 16))
-	, m_checkCursor(QCursor(QPixmap(":/cursors/check.png"), 16, 16))
 	, m_currentCursor(Qt::BlankCursor)
 	, m_brushCursorStyle(int(Cursor::TriangleRight))
 	, m_eraseCursorStyle(int(Cursor::SameAsBrush))
@@ -1865,13 +1854,13 @@ void CanvasController::resetCursor()
 			break;
 		case CanvasShortcuts::CANVAS_ROTATE:
 		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
-			setViewportCursor(m_rotateCursor);
+			setViewportCursor(Cursors::rotate());
 			break;
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
-			setViewportCursor(m_rotateDiscreteCursor);
+			setViewportCursor(Cursors::rotateDiscrete());
 			break;
 		case CanvasShortcuts::CANVAS_ZOOM:
-			setViewportCursor(m_zoomCursor);
+			setViewportCursor(Cursors::zoom());
 			break;
 		case CanvasShortcuts::TOOL_ADJUST:
 		case CanvasShortcuts::COLOR_H_ADJUST:
@@ -1896,10 +1885,10 @@ void CanvasController::resetCursor()
 	case PenMode::Normal:
 		break;
 	case PenMode::Colorpick:
-		setViewportCursor(m_colorPickCursor);
+		setViewportCursor(Cursors::colorPick());
 		return;
 	case PenMode::Layerpick:
-		setViewportCursor(m_layerPickCursor);
+		setViewportCursor(Cursors::layerPick());
 		return;
 	}
 
@@ -1914,7 +1903,7 @@ void CanvasController::resetCursor()
 	if(m_toolCursor.shape() == Qt::CrossCursor) {
 		switch(getCurrentCursorStyle()) {
 		case int(view::Cursor::Dot):
-			setViewportCursor(m_dotCursor);
+			setViewportCursor(Cursors::dot());
 			break;
 		case int(view::Cursor::Cross):
 			setViewportCursor(Qt::CrossCursor);
@@ -1923,16 +1912,16 @@ void CanvasController::resetCursor()
 			setViewportCursor(Qt::ArrowCursor);
 			break;
 		case int(view::Cursor::TriangleLeft):
-			setViewportCursor(m_triangleLeftCursor);
+			setViewportCursor(Cursors::triangleLeft());
 			break;
 		case int(view::Cursor::TriangleRight):
-			setViewportCursor(m_triangleRightCursor);
+			setViewportCursor(Cursors::triangleRight());
 			break;
 		case int(view::Cursor::Eraser):
-			setViewportCursor(m_eraserCursor);
+			setViewportCursor(Cursors::eraser());
 			break;
 		default:
-			setViewportCursor(m_triangleRightCursor);
+			setViewportCursor(Cursors::triangleRight());
 			break;
 		}
 	} else {
@@ -2032,16 +2021,6 @@ void CanvasController::changeOutline(const std::function<void()> &block)
 	if(isVisible || wasVisible != isVisible) {
 		emit outlineChanged();
 	}
-}
-
-QCursor CanvasController::generateDotCursor()
-{
-	QPixmap dot(8, 8);
-	dot.fill(Qt::transparent);
-	QPainter p(&dot);
-	p.setPen(Qt::white);
-	p.drawPoint(0, 0);
-	return QCursor(dot, 0, 0);
 }
 
 void CanvasController::setViewportCursor(const QCursor &cursor)

@@ -3,14 +3,16 @@
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/selectionmodel.h"
 #include "libclient/net/client.h"
+#include "libclient/utils/cursors.h"
 #include <QPainter>
 #include <QPainterPath>
+
+using utils::Cursors;
 
 namespace tools {
 
 SelectionTool::SelectionTool(ToolController &owner, Type type, QCursor cursor)
 	: Tool(owner, type, cursor, true, false, false, true, false, false)
-	, m_originalCursor(cursor)
 {
 }
 
@@ -36,7 +38,7 @@ void SelectionTool::begin(const BeginParams &params)
 		m_wasForceSelect = m_forceSelect;
 		beginSelection(params.point);
 	}
-	setCursor(m_originalCursor);
+	setCursor(originalCursor());
 }
 
 void SelectionTool::motion(const MotionParams &params)
@@ -137,9 +139,9 @@ void SelectionTool::updateCursor(const QPointF &point)
 	bool atEdge;
 	if(m_op == -1 && !m_forceSelect && !m_wasForceSelect && quickDrag() &&
 	   (isInsideSelection(point, &atEdge) || atEdge)) {
-		setCursor(atEdge ? m_moveMaskCursor : m_moveContentCursor);
+		setCursor(atEdge ? Cursors::moveMask() : Cursors::move());
 	} else {
-		setCursor(m_originalCursor);
+		setCursor(originalCursor());
 	}
 }
 
@@ -241,10 +243,13 @@ bool SelectionTool::isInsideSelection(const QPointF &point, bool *atEdge) const
 
 
 RectangleSelection::RectangleSelection(ToolController &owner)
-	: SelectionTool(
-		  owner, SELECTION,
-		  QCursor(QPixmap(":cursors/select-rectangle.png"), 2, 2))
+	: SelectionTool(owner, SELECTION, Cursors::selectRectangle())
 {
+}
+
+const QCursor &RectangleSelection::originalCursor() const
+{
+	return Cursors::selectRectangle();
 }
 
 void RectangleSelection::beginSelection(const canvas::Point &point)
@@ -342,10 +347,13 @@ QRectF RectangleSelection::getRectF() const
 
 
 PolygonSelection::PolygonSelection(ToolController &owner)
-	: SelectionTool(
-		  owner, POLYGONSELECTION,
-		  QCursor(QPixmap(":cursors/select-lasso.png"), 2, 29))
+	: SelectionTool(owner, POLYGONSELECTION, Cursors::selectLasso())
 {
+}
+
+const QCursor &PolygonSelection::originalCursor() const
+{
+	return Cursors::selectLasso();
 }
 
 void PolygonSelection::beginSelection(const canvas::Point &point)

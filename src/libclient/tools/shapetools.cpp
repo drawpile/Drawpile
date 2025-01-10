@@ -5,7 +5,7 @@
 #include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/utils.h"
-#include <QPixmap>
+#include "libclient/utils/cursors.h"
 
 namespace tools {
 
@@ -142,7 +142,7 @@ void ShapeTool::updateShape(bool constrain, bool center)
 }
 
 Line::Line(ToolController &owner)
-	: ShapeTool(owner, LINE, QCursor(QPixmap(":cursors/line.png"), 2, 2))
+	: ShapeTool(owner, LINE, utils::Cursors::line())
 {
 }
 
@@ -160,8 +160,7 @@ QPointF Line::getConstrainPoint() const
 }
 
 Rectangle::Rectangle(ToolController &owner)
-	: ShapeTool(
-		  owner, RECTANGLE, QCursor(QPixmap(":cursors/rectangle.png"), 2, 2))
+	: ShapeTool(owner, RECTANGLE, utils::Cursors::rectangle())
 {
 }
 
@@ -177,7 +176,7 @@ canvas::PointVector Rectangle::pointVector() const
 }
 
 Ellipse::Ellipse(ToolController &owner)
-	: ShapeTool(owner, ELLIPSE, QCursor(QPixmap(":cursors/ellipse.png"), 2, 2))
+	: ShapeTool(owner, ELLIPSE, utils::Cursors::ellipse())
 {
 }
 

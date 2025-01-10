@@ -3,14 +3,15 @@
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/tools/enums.h"
 #include "libclient/tools/toolcontroller.h"
+#include "libclient/utils/cursors.h"
 #include <QPixmap>
 
 namespace tools {
 
 ColorPicker::ColorPicker(ToolController &owner)
 	: Tool(
-		  owner, PICKER, QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29),
-		  false, true, false, true, false, false)
+		  owner, PICKER, utils::Cursors::colorPick(), false, true, false, true,
+		  false, false)
 {
 }
 

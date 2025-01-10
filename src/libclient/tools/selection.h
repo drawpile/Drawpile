@@ -5,7 +5,6 @@
 #include "libclient/tools/clickdetector.h"
 #include "libclient/tools/tool.h"
 #include "libclient/tools/toolcontroller.h"
-#include <QCursor>
 #include <QPolygon>
 #include <QPolygonF>
 #include <QRect>
@@ -49,6 +48,7 @@ protected:
 	void updateSelectionPreview(const QPainterPath &path) const;
 	void removeSelectionPreview() const;
 
+	virtual const QCursor &originalCursor() const = 0;
 	virtual void beginSelection(const canvas::Point &point) = 0;
 	virtual void continueSelection(const canvas::Point &point) = 0;
 	virtual void offsetSelection(const QPoint &offset) = 0;
@@ -63,11 +63,6 @@ private:
 	net::MessageList endDeselection(uint8_t contextId);
 	bool isInsideSelection(const QPointF &point, bool *atEdge = nullptr) const;
 
-	QCursor m_originalCursor;
-	QCursor m_moveContentCursor =
-		QCursor(QPixmap(QStringLiteral(":/cursors/move.png")), 12, 12);
-	QCursor m_moveMaskCursor =
-		QCursor(QPixmap(QStringLiteral(":/cursors/move-mask.png")), 7, 7);
 	int m_op = -1;
 	bool m_forceSelect = false;
 	bool m_wasForceSelect = false;
@@ -83,6 +78,7 @@ public:
 	RectangleSelection(ToolController &owner);
 
 protected:
+	virtual const QCursor &originalCursor() const override;
 	void beginSelection(const canvas::Point &point) override;
 	void continueSelection(const canvas::Point &point) override;
 	void offsetSelection(const QPoint &offset) override;
@@ -102,6 +98,7 @@ public:
 	PolygonSelection(ToolController &owner);
 
 protected:
+	virtual const QCursor &originalCursor() const override;
 	void beginSelection(const canvas::Point &point) override;
 	void continueSelection(const canvas::Point &point) override;
 	void offsetSelection(const QPoint &offset) override;

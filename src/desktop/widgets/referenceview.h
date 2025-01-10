@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_WIDGETS_REFERENCEVIEW_H
 #define DESKTOP_WIDGETS_REFERENCEVIEW_H
-#include <QCursor>
 #include <QGraphicsView>
 #include <QPointF>
 #include <QTransform>
@@ -101,9 +100,6 @@ private:
 	QPointF m_pos;
 	qreal m_zoom = 1.0;
 	QRectF m_posBounds;
-#ifndef HAVE_EMULATED_BITMAP_CURSOR
-	QCursor m_colorpickcursor;
-#endif
 	InteractionMode m_interactionMode = InteractionMode::Pick;
 	InteractionMode m_activeInteractionMode = InteractionMode::None;
 	QPointF m_dragLastPoint;

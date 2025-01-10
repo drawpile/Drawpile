@@ -418,10 +418,7 @@ private:
 
 	int m_outlineSize;
 	bool m_showoutline, m_subpixeloutline, m_forceoutline;
-	QCursor m_dotcursor, m_trianglerightcursor, m_triangleleftcursor;
-	QCursor m_colorpickcursor, m_layerpickcursor, m_zoomcursor, m_rotatecursor;
-	QCursor m_rotatediscretecursor, m_erasercursor, m_toolcursor;
-	QCursor m_checkCursor;
+	QCursor m_toolcursor;
 
 	QPointF m_pos;		// Canvas position
 	qreal m_zoom;		// View zoom in percents

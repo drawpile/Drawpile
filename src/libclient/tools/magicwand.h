@@ -6,7 +6,6 @@
 #include "libclient/tools/toolcontroller.h"
 #include <QImage>
 #include <QPoint>
-#include <QCursor>
 
 namespace tools {
 
@@ -62,7 +61,6 @@ private:
 	ToolController::SelectionParams m_pendingParams;
 	QImage m_pendingImage;
 	QPoint m_pendingPos;
-	QCursor m_wandCursor;
 	DragDetector m_dragDetector;
 };
 

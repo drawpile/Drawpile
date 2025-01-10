@@ -254,7 +254,6 @@ private:
 	qreal getOutlineWidth() const;
 	void changeOutline(const std::function<void()> &block);
 
-	static QCursor generateDotCursor();
 	void setViewportCursor(const QCursor &cursor);
 	int getCurrentCursorStyle() const;
 	void setBrushCursorStyle(int brushCursorStyle);
@@ -372,16 +371,6 @@ private:
 	qreal m_outlineWidth = 1.0;
 	QPointF m_outlinePos;
 
-	QCursor m_dotCursor;
-	QCursor m_triangleRightCursor;
-	QCursor m_triangleLeftCursor;
-	QCursor m_eraserCursor;
-	QCursor m_colorPickCursor;
-	QCursor m_layerPickCursor;
-	QCursor m_zoomCursor;
-	QCursor m_rotateCursor;
-	QCursor m_rotateDiscreteCursor;
-	QCursor m_checkCursor;
 	QCursor m_toolCursor;
 	QCursor m_currentCursor;
 

@@ -1,16 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/tools/zoom.h"
 #include "libclient/tools/toolcontroller.h"
-#include <QCursor>
+#include "libclient/utils/cursors.h"
 #include <QPainterPath>
-#include <QPixmap>
 
 namespace tools {
 
 ZoomTool::ZoomTool(ToolController &owner)
 	: Tool(
-		  owner, ZOOM, QCursor(QPixmap(":cursors/zoom.png"), 8, 8), true, false,
-		  true, false, false, false)
+		  owner, ZOOM, utils::Cursors::zoom(), true, false, true, false, false,
+		  false)
 {
 }
 

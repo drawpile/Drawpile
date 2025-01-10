@@ -4,6 +4,7 @@
 #include "libclient/canvas/paintengine.h"
 #include "libclient/net/client.h"
 #include "libclient/tools/selection.h"
+#include "libclient/utils/cursors.h"
 #include <QCoreApplication>
 #include <QPainter>
 
@@ -86,9 +87,8 @@ private:
 
 MagicWandTool::MagicWandTool(ToolController &owner)
 	: Tool(
-		  owner, MAGICWAND, QCursor(QPixmap(":cursors/magicwand.png"), 2, 2),
-		  true, false, false, false, false, false)
-	, m_wandCursor(cursor())
+		  owner, MAGICWAND, utils::Cursors::magicWand(), true, false, false,
+		  false, false, false)
 {
 }
 
@@ -214,7 +214,7 @@ void MagicWandTool::stopDragging()
 {
 	if(m_dragging) {
 		m_dragging = false;
-		setCursor(m_wandCursor);
+		setCursor(utils::Cursors::magicWand());
 		emit m_owner.magicWandDragChanged(false, 0);
 	}
 }

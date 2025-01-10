@@ -4,7 +4,6 @@
 #include "libclient/tools/clickdetector.h"
 #include "libclient/tools/tool.h"
 #include <QAtomicInt>
-#include <QCursor>
 #include <QImage>
 #include <QPoint>
 
@@ -96,9 +95,6 @@ private:
 	int m_originalLayerId = 0;
 	int m_originalBlendMode;
 	qreal m_originalOpacity;
-	QCursor m_bucketCursor;
-	QCursor m_pendingCursor;
-	QCursor m_confirmCursor;
 	DragDetector m_dragDetector;
 };
 
