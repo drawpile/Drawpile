@@ -431,7 +431,7 @@ DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
             DP_TransientTile *tt = DP_transient_tile_merge_nullable(
                 tt_or_null,
                 censored ? DP_tile_censored_noinc() : (DP_Tile *)gtt,
-                vmr.opacity, DP_layer_props_blend_mode(lp));
+                vmr.opacity, vmr.blend_mode);
             DP_transient_tile_decref(gtt);
             return tt;
         }

@@ -407,17 +407,19 @@ DP_TransientTile *DP_layer_list_entry_flatten_tile_to(
                                               parent_opacity, include_sublayers,
                                               pass_through_censored, vmc);
     }
-    else if (DP_view_mode_context_should_flatten(vmc, lp, parent_opacity)) {
-        uint16_t opacity =
-            DP_fix15_mul(parent_opacity, DP_layer_props_opacity(lp));
-        int blend_mode = DP_layer_props_blend_mode(lp);
-        bool censored = pass_through_censored || DP_layer_props_censored(lp);
-        return DP_layer_content_flatten_tile_to(lle->content, tile_index, tt,
-                                                opacity, blend_mode, censored,
-                                                include_sublayers);
-    }
     else {
-        return tt;
+        DP_ViewModeResult vmr =
+            DP_view_mode_context_apply(vmc, lp, parent_opacity);
+        if (vmr.visible) {
+            bool censored =
+                pass_through_censored || DP_layer_props_censored(lp);
+            return DP_layer_content_flatten_tile_to(
+                lle->content, tile_index, tt, vmr.opacity, vmr.blend_mode,
+                censored, include_sublayers);
+        }
+        else {
+            return tt;
+        }
     }
 }
 

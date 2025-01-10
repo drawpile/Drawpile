@@ -82,6 +82,7 @@ typedef struct DP_ViewModeResult {
     bool visible;
     bool isolated;
     uint16_t opacity;
+    int blend_mode;
     DP_ViewModeContext child_vmc;
 } DP_ViewModeResult;
 
@@ -143,10 +144,6 @@ DP_ViewModeContext DP_view_mode_context_root_at(
 DP_ViewModeResult DP_view_mode_context_apply(const DP_ViewModeContext *vmc,
                                              DP_LayerProps *lp,
                                              uint16_t parent_opacity);
-
-bool DP_view_mode_context_should_flatten(const DP_ViewModeContext *vmc,
-                                         DP_LayerProps *lp,
-                                         uint16_t parent_opacity);
 
 
 void DP_view_mode_get_layers_visible_in_frame(DP_CanvasState *cs,

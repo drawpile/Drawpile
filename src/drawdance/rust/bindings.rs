@@ -5522,6 +5522,7 @@ pub struct DP_ViewModeResult {
     pub visible: bool,
     pub isolated: bool,
     pub opacity: u16,
+    pub blend_mode: ::std::os::raw::c_int,
     pub child_vmc: DP_ViewModeContext,
 }
 #[test]
@@ -5566,6 +5567,16 @@ fn bindgen_test_layout_DP_ViewModeResult() {
             stringify!(DP_ViewModeResult),
             "::",
             stringify!(opacity)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).blend_mode) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_ViewModeResult),
+            "::",
+            stringify!(blend_mode)
         )
     );
     assert_eq!(
@@ -5745,13 +5756,6 @@ extern "C" {
         lp: *mut DP_LayerProps,
         parent_opacity: u16,
     ) -> DP_ViewModeResult;
-}
-extern "C" {
-    pub fn DP_view_mode_context_should_flatten(
-        vmc: *const DP_ViewModeContext,
-        lp: *mut DP_LayerProps,
-        parent_opacity: u16,
-    ) -> bool;
 }
 extern "C" {
     pub fn DP_view_mode_get_layers_visible_in_frame(

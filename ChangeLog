@@ -52,6 +52,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Don't add blank filenames to recent files list. Thanks Aries Raenidaez for reporting.
  * Fix: Don't reset zoom and rotation when lifting and replacing one of two fingers in a pinch or twist operation. Thanks Partack for reporting.
  * Fix: Stop tap-and-hold color picking when another finger is added.
+ * Fix: Use Normal blending in Layer View and Group View modes. Thanks Meru for reporting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.
