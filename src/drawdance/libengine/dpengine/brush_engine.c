@@ -92,6 +92,9 @@ struct DP_BrushEngine {
     struct {
         unsigned int context_id;
         float zoom;
+        float angle_rad;
+        bool mirror;
+        bool flip;
         bool in_progress;
         long long last_time_msec;
     } stroke;
@@ -763,7 +766,7 @@ DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
          add_dab_mypaint_pigment,
          get_color_mypaint_pigment,
          NULL},
-        {0, 1.0f, false, 0},
+        {0, 1.0f, 0.0f, false, false, false, 0},
         {false,
          0,
          0,
@@ -1061,7 +1064,8 @@ void DP_brush_engine_dabs_flush(DP_BrushEngine *be)
 
 
 void DP_brush_engine_stroke_begin(DP_BrushEngine *be, unsigned int context_id,
-                                  bool push_undo_point, float zoom)
+                                  bool push_undo_point, bool mirror, bool flip,
+                                  float zoom, float angle)
 {
     DP_ASSERT(be);
     DP_ASSERT(!be->stroke.in_progress);
@@ -1071,6 +1075,11 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be, unsigned int context_id,
 
     be->stroke.context_id = context_id;
     be->stroke.zoom = zoom;
+    // We currently only use the view angle for MyPaint brushes, which take it
+    // as radians (and then convert it back to degrees again internally.)
+    be->stroke.angle_rad = DP_double_to_float(angle * M_PI / 180.0);
+    be->stroke.mirror = mirror;
+    be->stroke.flip = flip;
     if (push_undo_point) {
         be->push_message(be->user, DP_msg_undo_point_new(context_id));
     }
@@ -1361,8 +1370,9 @@ static void stroke_to_mypaint(DP_BrushEngine *be, DP_BrushPoint bp)
     MyPaintBrush *mb = be->mypaint_brush;
     MyPaintSurface2 *surface = &be->mypaint_surface2;
     float zoom = be->stroke.zoom;
-    float xtilt = bp.xtilt / 60.0f;
-    float ytilt = bp.ytilt / 60.0f;
+    float angle = be->stroke.angle_rad;
+    float xtilt = bp.xtilt / (be->stroke.mirror ? -60.0f : 60.0f);
+    float ytilt = bp.ytilt / (be->stroke.flip ? -60.0f : 60.0f);
     float rotation = bp.rotation / 360.0f;
 
     double delta_sec;
@@ -1384,12 +1394,12 @@ static void stroke_to_mypaint(DP_BrushEngine *be, DP_BrushPoint bp)
         // really fast, you can get strokes from when your pen wasn't on the
         // tablet, which is just weird.
         mypaint_brush_stroke_to_2(mb, surface, bp.x, bp.y, 0.0f, xtilt, ytilt,
-                                  1000.0f, zoom, 0.0f, rotation);
+                                  1000.0f, zoom, angle, rotation);
         delta_sec = 0.0;
     }
 
     mypaint_brush_stroke_to_2(mb, surface, bp.x, bp.y, bp.pressure, xtilt,
-                              ytilt, delta_sec, zoom, 0.0f, rotation);
+                              ytilt, delta_sec, zoom, angle, rotation);
 }
 
 static DP_LayerContent *search_layer(DP_CanvasState *cs, int layer_id)

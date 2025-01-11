@@ -18,7 +18,6 @@ BezierTool::BezierTool(ToolController &owner)
 	: Tool(
 		  owner, BEZIER, utils::Cursors::curve(), true, true, false, true,
 		  false, true)
-	, m_brushEngine{}
 {
 }
 
@@ -26,6 +25,9 @@ void BezierTool::begin(const BeginParams &params)
 {
 	m_rightButton = params.right;
 	m_zoom = params.zoom;
+	m_angle = params.angle;
+	m_mirror = params.mirror;
+	m_flip = params.flip;
 
 	QPointF point = params.point;
 	if(m_rightButton) {
@@ -108,7 +110,8 @@ void BezierTool::finishMultipart()
 			m_owner.model()->paintEngine()->sampleCanvasState();
 
 		const PointVector pv = calculateBezierCurve();
-		m_brushEngine.beginStroke(contextId, true, m_zoom);
+		m_brushEngine.beginStroke(
+			contextId, true, m_mirror, m_flip, m_zoom, m_angle);
 		for(const canvas::Point &p : pv) {
 			m_brushEngine.strokeTo(p, canvasState);
 		}
@@ -211,7 +214,7 @@ void BezierTool::updatePreview()
 
 	canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
 	drawdance::CanvasState canvasState = paintEngine->sampleCanvasState();
-	m_brushEngine.beginStroke(0, false, m_zoom);
+	m_brushEngine.beginStroke(0, false, m_mirror, m_flip, m_zoom, m_angle);
 	for(const canvas::Point &p : pv) {
 		m_brushEngine.strokeTo(p, canvasState);
 	}

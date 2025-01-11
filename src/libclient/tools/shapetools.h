@@ -38,6 +38,9 @@ private:
 	void updateShape(bool constrain, bool center);
 
 	qreal m_zoom = 1.0;
+	qreal m_angle = 0.0;
+	bool m_mirror = false;
+	bool m_flip = false;
 	drawdance::BrushEngine m_brushEngine;
 };
 

@@ -37,8 +37,11 @@ private:
 	drawdance::BrushEngine m_brushEngine;
 	QVector<ControlPoint> m_points;
 	QPointF m_beginPoint;
-	bool m_rightButton;
-	qreal m_zoom;
+	bool m_rightButton = false;
+	bool m_mirror = false;
+	bool m_flip = false;
+	qreal m_zoom = 1.0;
+	qreal m_angle = 0.0;
 };
 
 }

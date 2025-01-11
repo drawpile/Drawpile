@@ -27,10 +27,13 @@ private:
 
 	QTimer m_pollTimer;
 	drawdance::BrushEngine m_brushEngine;
-	bool m_drawing;
-	bool m_firstPoint;
+	bool m_drawing = false;
+	bool m_firstPoint = false;
+	bool m_mirror = false;
+	bool m_flip = false;
 	canvas::Point m_start;
-	qreal m_zoom;
+	qreal m_zoom = 1.0;
+	qreal m_angle = 0.0;
 };
 
 }

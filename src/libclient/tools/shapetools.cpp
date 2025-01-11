@@ -60,6 +60,9 @@ void ShapeTool::begin(const BeginParams &params)
 	m_p1 = point;
 	m_p2 = point;
 	m_zoom = params.zoom;
+	m_angle = params.angle;
+	m_mirror = params.mirror;
+	m_flip = params.flip;
 	m_drawing = true;
 
 	updatePreview();
@@ -101,7 +104,8 @@ void ShapeTool::end(const EndParams &params)
 		m_owner.setBrushEngineBrush(m_brushEngine, false);
 
 		const canvas::PointVector pv = pointVector();
-		m_brushEngine.beginStroke(client->myId(), true, m_zoom);
+		m_brushEngine.beginStroke(
+			client->myId(), true, m_mirror, m_flip, m_zoom, m_angle);
 		for(const canvas::Point &p : pv) {
 			m_brushEngine.strokeTo(p, canvasState);
 		}
@@ -125,7 +129,7 @@ void ShapeTool::updatePreview()
 
 	const canvas::PointVector pv = pointVector();
 	Q_ASSERT(pv.count() > 1);
-	m_brushEngine.beginStroke(0, false, m_zoom);
+	m_brushEngine.beginStroke(0, false, m_mirror, m_flip, m_zoom, m_angle);
 	for(const canvas::Point &p : pv) {
 		m_brushEngine.strokeTo(p, canvasState);
 	}

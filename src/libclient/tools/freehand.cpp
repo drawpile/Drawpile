@@ -14,9 +14,7 @@ Freehand::Freehand(ToolController &owner, bool isEraser)
 	: Tool(
 		  owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor, true, true,
 		  false, false, true, true)
-	, m_pollTimer{}
-	, m_brushEngine{std::bind(&Freehand::pollControl, this, _1)}
-	, m_drawing(false)
+	, m_brushEngine(std::bind(&Freehand::pollControl, this, _1))
 {
 	m_pollTimer.setSingleShot(false);
 	m_pollTimer.setTimerType(Qt::PreciseTimer);
@@ -45,6 +43,9 @@ void Freehand::begin(const BeginParams &params)
 	// before the StylusPress event.
 	m_start = params.point;
 	m_zoom = params.zoom;
+	m_angle = params.angle;
+	m_mirror = params.mirror;
+	m_flip = params.flip;
 }
 
 void Freehand::motion(const MotionParams &params)
@@ -57,7 +58,8 @@ void Freehand::motion(const MotionParams &params)
 
 	if(m_firstPoint) {
 		m_firstPoint = false;
-		m_brushEngine.beginStroke(m_owner.client()->myId(), true, m_zoom);
+		m_brushEngine.beginStroke(
+			m_owner.client()->myId(), true, m_mirror, m_flip, m_zoom, m_angle);
 		m_start.setPressure(qMin(m_start.pressure(), params.point.pressure()));
 		m_brushEngine.strokeTo(m_start, canvasState);
 	}
@@ -75,7 +77,9 @@ void Freehand::end(const EndParams &)
 
 		if(m_firstPoint) {
 			m_firstPoint = false;
-			m_brushEngine.beginStroke(m_owner.client()->myId(), true, m_zoom);
+			m_brushEngine.beginStroke(
+				m_owner.client()->myId(), true, m_mirror, m_flip, m_zoom,
+				m_angle);
 			m_brushEngine.strokeTo(m_start, canvasState);
 		}
 

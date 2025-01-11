@@ -46,10 +46,12 @@ void BrushEngine::flushDabs()
 }
 
 void BrushEngine::beginStroke(
-	unsigned int contextId, bool pushUndoPoint, float zoom)
+	unsigned int contextId, bool pushUndoPoint, bool mirror, bool flip,
+	float zoom, float angle)
 {
 	m_messages.clear();
-	DP_brush_engine_stroke_begin(m_data, contextId, pushUndoPoint, zoom);
+	DP_brush_engine_stroke_begin(
+		m_data, contextId, pushUndoPoint, mirror, flip, zoom, angle);
 }
 
 void BrushEngine::strokeTo(

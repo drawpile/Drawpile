@@ -49,7 +49,9 @@ public:
 
 	void clearMessages() { m_messages.clear(); }
 
-	void beginStroke(unsigned int contextId, bool pushUndoPoint, float zoom);
+	void beginStroke(
+		unsigned int contextId, bool pushUndoPoint, bool mirror, bool flip,
+		float zoom, float angle);
 
 	void strokeTo(const canvas::Point &point, const drawdance::CanvasState &cs);
 
