@@ -297,8 +297,8 @@ protected:
 	bool event(QEvent *event) override;
 
 private:
-	static constexpr int DESKTOP_MODE_MIN_WIDTH = 1000;
-	static constexpr int DESKTOP_MODE_MIN_HEIGHT = 600;
+	static constexpr int DESKTOP_MODE_MIN_WIDTH = 1200;
+	static constexpr int DESKTOP_MODE_MIN_HEIGHT = 700;
 	enum class ReplacementCriterion {
 		Dirty = (1 << 0),
 		Connected = (1 << 1),
