@@ -504,7 +504,7 @@ void showWindow(QWidget *widget, bool maximized, bool isMainWindow)
 	// native UI works. This wrapper takes care of that very common switch.
 #ifdef Q_OS_ANDROID
 	Q_UNUSED(maximized);
-	widget->showFullScreen();
+	widget->showMaximized();
 #else
 	if(maximized) {
 		widget->showMaximized();

@@ -56,6 +56,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Show different cursors for selection replace, unite, exclude and intersect operations. Thanks MorrowShore for suggesting.
  * Fix: Take canvas rotation, mirror and flip into account with regards to pen tilt inputs.
  * Fix: Adjust minimum resolution for desktop-screen mode to be a bit larger, to avoid getting a cut-off desktop UI on some phones.
+ * Fix: Don't cut off the bottom of dialogs on some Android phones. Thanks Anonymous, Bluestrings and Molderche for reporting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

@@ -1476,11 +1476,7 @@ void LoginDialog::adjustSize(int width, int height, bool allowShrink)
 	QRect newGeom(newX, newY, newWidth, newHeight);
 	QScreen *screen = compat::widgetScreen(*this);
 	if(screen && !screen->availableGeometry().contains(newGeom)) {
-#ifdef SINGLE_MAIN_WINDOW
-		showFullScreen();
-#else
 		showMaximized();
-#endif
 	} else {
 		setGeometry(newGeom);
 	}
