@@ -623,14 +623,15 @@ void CanvasController::handleMousePress(QMouseEvent *event)
 		unsigned(event->modifiers()), unsigned(event->source()),
 		int(m_penState), int(touching), qulonglong(event->timestamp()));
 
+	Qt::MouseButton button = event->button();
 	if(((!m_tabletEnabled || !isSynthetic(event))) &&
 	   !isSyntheticTouch(event) && !touching && !shouldIgnoreMouse() &&
-	   m_tabletEventTimer.hasExpired()) {
+	   (button != Qt::LeftButton || m_tabletEventTimer.hasExpired())) {
 		event->accept();
 		penPressEvent(
 			QDateTime::currentMSecsSinceEpoch(), posf, 1.0, 0.0, 0.0, 0.0,
-			event->button(), getMouseModifiers(event),
-			int(tools::DeviceType::Mouse), false);
+			button, getMouseModifiers(event), int(tools::DeviceType::Mouse),
+			false);
 	}
 }
 

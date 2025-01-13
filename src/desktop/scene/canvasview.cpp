@@ -1347,15 +1347,17 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 
 	updateCursorPos(mousePos);
 
+	Qt::MouseButton button = event->button();
 	if((m_enableTablet && isSynthetic(event)) || isSyntheticTouch(event) ||
-	   touching || shouldIgnoreMouse() || !m_tabletEventTimer.hasExpired()) {
+	   touching || shouldIgnoreMouse() ||
+	   (button == Qt::LeftButton && !m_tabletEventTimer.hasExpired())) {
 		return;
 	}
 
 	penPressEvent(
 		event, QDateTime::currentMSecsSinceEpoch(), mousePos, 1.0, 0.0, 0.0,
-		0.0, event->button(), getMouseModifiers(event),
-		int(tools::DeviceType::Mouse), false);
+		0.0, button, getMouseModifiers(event), int(tools::DeviceType::Mouse),
+		false);
 }
 
 void CanvasView::penMoveEvent(
