@@ -17,28 +17,32 @@ env:
 
 jobs:
   test:
-    name: ${{ matrix.cross_os || matrix.os }} ${{ matrix.arch }}${{ matrix.component && format(' {0}', matrix.component) }} Qt ${{ matrix.qt }}${{ matrix.cross_os && format(' on {0}', matrix.os) }}
+    name: ${{ matrix.cross_os || matrix.os }}${{ matrix.android_sdk_versions && format('-{0}', matrix.android_sdk_versions) }} ${{ matrix.arch }}${{ matrix.component && format(' {0}', matrix.component) }} Qt ${{ matrix.qt }}${{ matrix.cross_os && format(' on {0}', matrix.os) }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       # We want to build the following:
-      # - Android arm32 APK
-      # - Android arm64 APK
+      # - Android arm32 APK for EOL Android versions
+      # - Android arm64 APK for EOL Android versions
+      # - Android arm64 APK for current Android versions
       # - Linux x86_64 AppImage
       # - macOS x86_64 Disk Image
       # - macOS arm64 Disk Image
       # - Windows x86_64 Installer and ZIP including only the client
       # - Windows x86_64 ZIP including server and command-line tools
       # - Windows x86 Installer and ZIP including only the client
-      # Android targets are cross-compiled from Linux. We use the oldest Ubuntu
-      # version available for compatibility reasons, since glibc is not included
-      # in the AppImage. On Windows, the server and command-line tools are split
-      # off into their own package because Windows Defender randomly misdetects
-      # the executables as something bad. This can be fixed by submitting the
-      # executables to Microsoft and they seem to remove the bogus detection
-      # pretty quickly, but having them separated means we don't need to make
-      # client releases dependent on them getting around to that when it's only
-      # a secondary executable that's causing it.
+      # Android targets are cross-compiled from Linux. The dichotomy between EOL
+      # and current versions is because current Androids artificially refuse to
+      # install packages built against older SDK targets, but building against
+      # newer SDK targets breaks older Androids with link errors. We use the
+      # oldest Ubuntu version available for compatibility reasons, since glibc
+      # is not included in the AppImage. On Windows, the server and command-line
+      # tools are split off into their own package because Windows Defender
+      # randomly misdetects the executables as something bad. This can be fixed
+      # by submitting the executables to Microsoft and they seem to remove the
+      # bogus detection pretty quickly, but having them separated means we don't
+      # need to make client releases dependent on them getting around to that
+      # when it's only a secondary executable that's causing it.
       matrix:
         # There's ways to deduplicate these includes, but any mistake causes
         # utterly confounding errors, so just explicitly specify each target.
@@ -48,6 +52,7 @@ jobs:
             component: ''
             qt: 5.15.14
             arch: x86_64
+            android_sdk_versions: ''
             sccache_triplet: x86_64-unknown-linux-musl
             build_flags: -DINITSYS=systemd -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
             build_type: Release
@@ -98,6 +103,75 @@ jobs:
             component: ''
             qt: 5.15.14
             arch: arm64
+            android_sdk_versions: '30-34'
+            sccache_triplet: x86_64-unknown-linux-musl
+            build_type: Release
+            collect_symbols: false
+            signpath: false
+            packager: cmake --install build --config Release --prefix .
+            cross_qt_args: >-
+              "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+              "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
+              "-DANDROID_PLATFORM=$ANDROID_TARGET_PLATFORM"
+              -DANDROID_ABI=arm64-v8a
+            cross_ffmpeg_args: >-
+              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_TOOLCHAIN_FILE"
+              "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+              "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
+              "-DANDROID_PLATFORM=$ANDROID_TARGET_PLATFORM"
+              -DANDROID_ABI=arm64-v8a
+            cross_other_args: >-
+              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_TOOLCHAIN_FILE"
+              "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+              "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
+              "-DANDROID_PLATFORM=$ANDROID_TARGET_PLATFORM"
+              -DANDROID_ABI=arm64-v8a
+            build_flags: >-
+              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_TOOLCHAIN_FILE"
+              "-DANDROID_PLATFORM=$ANDROID_TARGET_PLATFORM"
+              "-DANDROID_TARGET_SDK_VERSION=$ANDROID_TARGET_SDK_VERSION"
+              "-DANDROID_MIN_SDK_VERSION=$ANDROID_MIN_SDK_VERSION"
+              "-DANDROID_SDK_BUILD_TOOLS_REVISION=$ANDROID_BUILD_TOOLS_VERSION"
+              -DANDROID_ABI=arm64-v8a
+              -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=on
+              -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=BOTH
+              -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH
+              -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=BOTH
+            # The runner has multiple clang versions installed and CMake/Qt gets
+            # confused about which one to pick for some reason, so this also
+            # sets Clang_ROOT during the Qt build
+            qt_pre_build: >
+              sudo apt-get update &&
+              sudo apt-get install --no-install-recommends
+              libatspi2.0-dev libmtdev-dev libts-dev libgtk-3-dev
+              libgl1-mesa-dev libglu1-mesa-dev libxi-dev libdrm-dev
+              libgbm-dev libgl-dev libgles-dev libegl-dev libegl1-mesa-dev
+              libxext-dev libxfixes-dev libxrender-dev libx11-dev
+              libxcb1-dev libx11-xcb-dev libxcb-glx0-dev libxcb-util0-dev
+              libxkbcommon-dev libxkbcommon-x11-dev libxcb-keysyms1-dev
+              libxcb-image0-dev libxcb-shm0-dev libxcb-icccm4-dev
+              libxcb-sync-dev libxcb-xfixes0-dev libxcb-shape0-dev
+              libxcb-randr0-dev libxcb-render0-dev libxcb-render-util0-dev
+              libxcb-util-dev libinput-dev libvulkan-dev
+              libxcb-xinerama0-dev libxcb-xkb-dev libxcb-xinput-dev libclang-12-dev
+              libasound2-dev libpulse-dev libcups2-dev libssl-dev
+              libfontconfig1-dev &&
+              echo "Clang_ROOT=/usr/lib/llvm-12" >> $GITHUB_ENV
+            ffmpeg_pre_build: >
+              sudo apt-get update &&
+              sudo apt-get install --no-install-recommends
+              yasm
+            other_pre_build: >
+              sudo apt-get update &&
+              sudo apt-get install --no-install-recommends
+              libsecret-1-dev
+
+          - os: ubuntu-20.04
+            cross_os: Android
+            component: ''
+            qt: 5.15.14
+            arch: arm64
+            android_sdk_versions: '23-23'
             sccache_triplet: x86_64-unknown-linux-musl
             build_type: Release
             collect_symbols: false
@@ -165,6 +239,7 @@ jobs:
             component: ''
             qt: 5.15.14
             arch: arm32
+            android_sdk_versions: '23-23'
             sccache_triplet: x86_64-unknown-linux-musl
             build_type: Release
             collect_symbols: false
@@ -232,6 +307,7 @@ jobs:
             component: ''
             qt: 6.7.2
             arch: x86_64
+            android_sdk_versions: ''
             build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
             build_type: Release
             collect_symbols: false
@@ -258,6 +334,7 @@ jobs:
             component: ''
             qt: 6.7.2
             arch: arm64
+            android_sdk_versions: ''
             build_flags: -DBUILD_PACKAGE_SUFFIX=arm64 -G Ninja
             build_type: Release
             collect_symbols: false
@@ -284,6 +361,7 @@ jobs:
             component: ''
             qt: 5.15.14
             arch: x86_64
+            android_sdk_versions: ''
             sccache_triplet: x86_64-pc-windows-msvc
             build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
             build_type: RelWithDebInfo
@@ -309,6 +387,7 @@ jobs:
             component: 'Tools'
             qt: 5.15.14
             arch: x86_64
+            android_sdk_versions: ''
             sccache_triplet: x86_64-pc-windows-msvc
             build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
             build_type: RelWithDebInfo
@@ -332,6 +411,7 @@ jobs:
           - os: windows-latest
             qt: 5.15.14
             arch: x86
+            android_sdk_versions: ''
             sccache_triplet: x86_64-pc-windows-msvc
             build_flags: -DCARGO_TRIPLE=i686-pc-windows-msvc -DBUILD_PACKAGE_SUFFIX=x86 -G Ninja
             build_type: RelWithDebInfo
@@ -400,17 +480,9 @@ jobs:
 
       - name: Set Android environment variables
         run: |
-          # Target Android 6+ on 32 bit, Android 11+ on 64 bit. This is
-          # necessary due to mutual incompatibilities, due to older Android
-          # versions not supporting newer features on one hand and Google being
-          # obstructive against older target SDKs on newer Android on the other.
-          if [ "$ANDROID_ARCH" = 'arm32' ]; then
-            target_sdk_version=23
-            min_sdk_version=23
-          else
-            target_sdk_version=34
-            min_sdk_version=30
-          fi
+          min_sdk_version="$(echo "$ANDROID_SDK_VERSIONS" | cut -f1 -d-)"
+          target_sdk_version="$(echo "$ANDROID_SDK_VERSIONS" | cut -f2 -d-)"
+          echo "SDK=$ANDROID_SDK_VERSIONS min=$min_sdk_version target=$target_sdk_version"
           build_tools_version=34.0.0-rc3
           ndk_version=27.0.12077973
           ndk_root="$ANDROID_SDK_ROOT/ndk/$ndk_version"
@@ -426,7 +498,7 @@ jobs:
           echo "ANDROID_MIN_SDK_VERSION=$min_sdk_version" >> "$GITHUB_ENV"
         if: matrix.cross_os == 'Android'
         env:
-          ANDROID_ARCH: '${{ matrix.arch }}'
+          ANDROID_SDK_VERSIONS: '${{ matrix.android_sdk_versions }}'
 
       # Qt's build toolage really likes to auto-detect Android package
       # versions, despite all attempts to specify them explicitly. So we
@@ -489,7 +561,7 @@ jobs:
         id: cross-deps
         with:
           build_type: ${{ matrix.build_type }}
-          cache_key: ${{ matrix.build_type != 'Release' && format('{0}-', matrix.build_type) || '' }}${{ runner.os }}+${{ matrix.cross_os }}-${{ matrix.arch }}
+          cache_key: ${{ matrix.build_type != 'Release' && format('{0}-', matrix.build_type) || '' }}${{ runner.os }}+${{ matrix.cross_os }}${{ matrix.android_sdk_versions && format('-{0}', matrix.android_sdk_versions) }}-${{ matrix.arch }}
           path: .github/cross-deps
           target_arch: "${{ matrix.arch }}"
           qt: ${{ matrix.qt }}
@@ -506,7 +578,7 @@ jobs:
         id: sccache
         with:
           triplet: ${{ matrix.sccache_triplet }}
-          cache_key: ${{ matrix.build_type != 'Release' && format('{0}-', matrix.build_type) || '' }}${{ runner.os }}${{ matrix.component }}-${{ matrix.arch }}${{ matrix.cross_os && format('+{0}', matrix.cross_os) }}-${{ matrix.qt }}
+          cache_key: ${{ matrix.build_type != 'Release' && format('{0}-', matrix.build_type) || '' }}${{ runner.os }}${{ matrix.component }}-${{ matrix.arch }}${{ matrix.cross_os && format('+{0}', matrix.cross_os) }}${{ matrix.android_sdk_versions && format('-{0}', matrix.android_sdk_versions) }}-${{ matrix.qt }}
 
       - name: Cache gradle
         uses: actions/cache@v4
@@ -674,7 +746,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: matrix.packager
         with:
-          name: Drawpile${{ matrix.component && format('-{0}', matrix.component) }}-${{ matrix.cross_os || runner.os }}-${{ matrix.arch }}-Qt${{ matrix.qt }}
+          name: Drawpile${{ matrix.component && format('-{0}', matrix.component) }}-${{ matrix.cross_os || runner.os }}${{ matrix.android_sdk_versions && format('-{0}', matrix.android_sdk_versions) }}-${{ matrix.arch }}-Qt${{ matrix.qt }}
           path: |
             Drawpile-*.AppImage
             Drawpile-*.apk
@@ -687,7 +759,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: Logs${{ matrix.component && format('-{0}', matrix.component) }}-${{ matrix.cross_os || runner.os }}-${{ matrix.arch }}-Qt${{ matrix.qt }}
+          name: Logs${{ matrix.component && format('-{0}', matrix.component) }}-${{ matrix.cross_os || runner.os }}${{ matrix.android_sdk_versions && format('-{0}', matrix.android_sdk_versions) }}-${{ matrix.arch }}-Qt${{ matrix.qt }}
           path: |
             **/*.log
             **/*.wxs
@@ -762,7 +834,8 @@ jobs:
           PRERELEASE: ${{ !startsWith(github.ref, 'refs/tags/') || contains(github.ref, '-') }}
         run: |
           checkout/pkg/make-github-release.sh \
-            'Drawpile-Android-arm64-Qt5.15.14;Drawpile-*.apk;Android APK 64bit' \
+            'Drawpile-Android-30-34-arm64-Qt5.15.14;Drawpile-*.apk;Android APK 64bit' \
+            'Drawpile-Android-23-23-arm64-Qt5.15.14;Drawpile-*.apk;Android APK 64bit for end of life systems - only use if you have Android 10 or older' \
             'Drawpile-Linux-x86_64-Qt5.15.14;Drawpile-*.AppImage;Linux AppImage 64bit' \
             'Drawpile-macOS-x86_64-Qt6.7.2;Drawpile-*.dmg;macOS Disk Image for Intel' \
             'Drawpile-macOS-arm64-Qt6.7.2;Drawpile-*.dmg;macOS Disk Image for Apple Silicon' \
@@ -770,6 +843,6 @@ jobs:
             'Drawpile-Windows-x86_64-Qt5.15.14;Drawpile-*.zip;Windows Portable ZIP 64bit' \
             'Drawpile-Windows-x86_64-Qt5.15.14;DrawpileSymbols-*.zip;Debug Symbols for Windows 64bit - does not include Drawpile' \
             'Drawpile-Tools-Windows-x86_64-Qt5.15.14;Drawpile-*.zip;Windows Server and Tools Portable ZIP 64bit - does not include Drawpile' \
-            'Drawpile-Android-arm32-Qt5.15.14;Drawpile-*.apk;Android APK 32bit - do not use, you want 64bit' \
+            'Drawpile-Android-23-23-arm32-Qt5.15.14;Drawpile-*.apk;Android APK 32bit - do not use, you want 64bit' \
             'Drawpile-Windows-x86-Qt5.15.14;Drawpile-*.msi;Windows Installer 32bit - do not use, you want 64bit' \
             'Drawpile-Windows-x86-Qt5.15.14;Drawpile-*.zip;Windows Portable ZIP 32bit - do not use, you want 64bit'

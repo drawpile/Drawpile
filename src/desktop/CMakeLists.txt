@@ -733,7 +733,7 @@ elseif(ANDROID)
 	# This directory will get translations and other generated files added to it
 	# so it cannot be just a symlink to the source assets directory
 	file(MAKE_DIRECTORY "${build_time_assets_dir}")
-	set(output_apk "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<TARGET_PROPERTY:drawpile,OUTPUT_NAME>-${PROJECT_VERSION}-${ANDROID_ABI}.apk")
+	set(output_apk "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<TARGET_PROPERTY:drawpile,OUTPUT_NAME>-${PROJECT_VERSION}-${ANDROID_MIN_SDK_VERSION}-${ANDROID_TARGET_SDK_VERSION}-${ANDROID_ABI}.apk")
 	include(GetSharedLibs)
 	get_shared_libs(android_extra_libs drawpile)
 
