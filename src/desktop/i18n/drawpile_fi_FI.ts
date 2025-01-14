@@ -294,8 +294,7 @@
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.ui" line="+19"/>
         <source>Select Color</source>
-        <translation>
-Valitse väri</translation>
+        <translation>Valitse väri</translation>
     </message>
     <message>
         <location line="+41"/>
