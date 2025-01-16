@@ -1,5 +1,10 @@
 find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Sql)
 
+add_compile_definitions(
+    WIN32_LEAN_AND_MEAN
+    NOMINMAX
+)
+
 add_library(dpshared)
 
 target_sources(dpshared PRIVATE

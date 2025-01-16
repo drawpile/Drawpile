@@ -68,6 +68,15 @@ if(TARGET LIBAV::LIBAV)
     target_compile_definitions(dpimpex PUBLIC DP_LIBAV=1)
 endif()
 
+# We only need the WAV reading function on Windows to interact with the
+# ridiculous PlaySound API that doesn't support setting a volume.
+if(WIN32)
+    target_sources(dpimpex PRIVATE
+        dpimpex/wav.h
+        dpimpex/wav.c
+    )
+endif()
+
 if(TESTS)
     add_library(dptest_impex)
     target_sources(dptest_impex PRIVATE

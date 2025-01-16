@@ -16,14 +16,7 @@ namespace notification {
 Notifications::Notifications(QObject *parent)
 	: QObject(parent)
 	, m_lastSoundMsec(QDateTime::currentMSecsSinceEpoch())
-	, m_player(new QMediaPlayer(this))
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-	, m_audioOutput(new QAudioOutput(m_player))
-#endif
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-	m_player->setAudioOutput(m_audioOutput);
-#endif
 }
 
 void Notifications::preview(
@@ -154,22 +147,10 @@ bool Notifications::isFlashEnabled(
 
 void Notifications::playSound(Event event, int volume)
 {
-	Sound sound = getSound(event);
-	if(isSoundValid(sound)) {
-		m_player->stop();
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-		m_player->setSource(sound);
-		m_audioOutput->setVolume(qreal(volume) / 100.0);
-#else
-		m_player->setMedia(sound);
-		m_player->setVolume(volume);
-#endif
-		m_player->setPosition(0);
-		m_player->play();
-	}
+	m_soundPlayer.playSound(getSound(event), volume);
 }
 
-Notifications::Sound Notifications::getSound(Event event)
+QString Notifications::getSound(Event event)
 {
 	int key = int(event);
 	if(m_sounds.contains(key)) {
@@ -202,39 +183,25 @@ Notifications::Sound Notifications::getSound(Event event)
 
 		if(filename.isEmpty()) {
 			qWarning("Sound effect %d not defined", int(event));
-			m_sounds[key] = Sound();
-			return Sound();
+			m_sounds[key] = QString();
+			return QString();
 		}
 
 		QString path = utils::paths::locateDataFile(filename);
 		if(path.isEmpty()) {
 			qWarning("Sound file '%s' not found", qUtf8Printable(filename));
-			m_sounds[key] = Sound();
-			return Sound();
+			m_sounds[key] = QString();
+			return QString();
 		}
 
-		Sound sound(QUrl::fromLocalFile(path));
-		m_sounds[key] = sound;
-		return sound;
+		m_sounds[key] = path;
+		return path;
 	}
 }
 
 bool Notifications::isPlayerAvailable()
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-	return m_player->playbackState() != QMediaPlayer::PlayingState;
-#else
-	return m_player->state() != QMediaPlayer::PlayingState;
-#endif
-}
-
-bool Notifications::isSoundValid(const Sound &sound)
-{
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-	return sound.isValid();
-#else
-	return !sound.isNull();
-#endif
+	return !m_soundPlayer.isPlaying();
 }
 
 bool Notifications::isHighPriority(Event event)

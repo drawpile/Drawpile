@@ -1,3 +1,8 @@
+add_compile_definitions(
+    WIN32_LEAN_AND_MEAN
+    NOMINMAX
+)
+
 add_library(dpserver)
 
 target_sources(dpserver PRIVATE

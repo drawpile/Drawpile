@@ -3,15 +3,10 @@
 #define NOTIFICATIONS_H
 #include <QHash>
 #include <QObject>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#	include <QUrl>
-#else
-#	include <QMediaContent>
-#endif
+#include <QUrl>
+#include <desktop/utils/soundplayer.h>
 
 class MainWindow;
-class QAudioOutput;
-class QMediaPlayer;
 class QWidget;
 
 namespace desktop {
@@ -41,12 +36,6 @@ public:
 	void trigger(QWidget *widget, Event event, const QString &message);
 
 private:
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-	using Sound = QUrl;
-#else
-	using Sound = QMediaContent;
-#endif
-
 	static constexpr qint64 SOUND_DELAY_MSEC = 1500;
 
 	void notify(
@@ -64,19 +53,15 @@ private:
 	isFlashEnabled(const desktop::settings::Settings &settings, Event event);
 
 	void playSound(Event event, int volume);
-	Sound getSound(Event event);
+	QString getSound(Event event);
 
 	bool isPlayerAvailable();
-	static bool isSoundValid(const Sound &sound);
 	static bool isHighPriority(Event event);
 	static bool isEmittedDuringCatchup(Event event);
 
 	qint64 m_lastSoundMsec;
-	QHash<int, Sound> m_sounds;
-	QMediaPlayer *m_player;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-	QAudioOutput *m_audioOutput;
-#endif
+	QHash<int, QString> m_sounds;
+	SoundPlayer m_soundPlayer;
 };
 
 }

@@ -1,5 +1,10 @@
 find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Gui)
 
+add_compile_definitions(
+    WIN32_LEAN_AND_MEAN
+    NOMINMAX
+)
+
 add_library(dpclient)
 
 target_sources(dpclient PRIVATE

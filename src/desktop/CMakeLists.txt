@@ -7,6 +7,11 @@ endif()
 find_package(QtColorWidgets QUIET)
 find_package(${QT_PACKAGE_NAME}Keychain QUIET)
 
+add_compile_definitions(
+    WIN32_LEAN_AND_MEAN
+    NOMINMAX
+)
+
 set(gui_identifier net.drawpile.DrawpileClient)
 
 if(ANDROID)
@@ -318,6 +323,7 @@ target_sources(drawpile PRIVATE
 	utils/qtguicompat.h
 	utils/recents.cpp
 	utils/recents.h
+	utils/soundplayer.h
 	utils/tabletfilter.h
 	utils/touchhandler.cpp
 	utils/touchhandler.h
@@ -494,6 +500,14 @@ if(WIN32 AND QT_VERSION_MAJOR VERSION_EQUAL 6)
 	# TODO: Check this is doing the right thing
 	target_include_directories(drawpile SYSTEM PRIVATE
 		"${Qt6Gui_PRIVATE_INCLUDE_DIRS}")
+endif()
+
+if(WIN32)
+	target_sources(drawpile PRIVATE utils/soundplayer_win32.cpp)
+elseif(QT_VERSION_MAJOR VERSION_LESS 6)
+	target_sources(drawpile PRIVATE utils/soundplayer_qt5.cpp)
+else()
+	target_sources(drawpile PRIVATE utils/soundplayer_qt6.cpp)
 endif()
 
 if(DISABLE_UPDATE_CHECK_DEFAULT)

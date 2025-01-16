@@ -661,6 +661,7 @@ struct StartupOptions {
 	QString startPage;
 	bool singleSession = false;
 	bool restoreWindowPosition = false;
+	bool playTestSound = false;
 	QString autoRecordPath;
 	QString joinUrl;
 	QString openPath;

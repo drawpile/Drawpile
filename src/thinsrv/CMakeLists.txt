@@ -1,6 +1,11 @@
 find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Sql)
 find_package(libmicrohttpd QUIET)
 
+add_compile_definitions(
+    WIN32_LEAN_AND_MEAN
+    NOMINMAX
+)
+
 set(srvname "drawpile-srv")
 set(srvlib "${srvname}lib")
 
