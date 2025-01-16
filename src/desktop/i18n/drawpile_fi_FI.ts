@@ -464,7 +464,7 @@
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished">Tyyppi</translation>
+        <translation>Tyyppi:</translation>
     </message>
 </context>
 <context>
@@ -3768,7 +3768,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location line="+6"/>
         <source>Cut, Paste &amp; Fill:</source>
-        <translation>Leikkaa, liitä ja täytä</translation>
+        <translation>Leikkaa, liitä ja täytä:</translation>
     </message>
     <message>
         <location line="+70"/>
@@ -9084,7 +9084,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Use an external dedicated server</source>
-        <translation type="unfinished">Etä:</translation>
+        <translation>Käytä ulkoista omistettua palvelinta</translation>
     </message>
 </context>
 <context>
