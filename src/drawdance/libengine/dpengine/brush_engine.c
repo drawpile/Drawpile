@@ -1365,15 +1365,46 @@ static void stroke_to_classic(
 }
 
 
+static void tilt_to_mypaint(float xtilt, float ytilt, float angle, bool mirror,
+                            bool flip, float *out_xtilt, float *out_ytilt)
+{
+    if (xtilt == 0.0f && ytilt == 0.0f) {
+        *out_xtilt = 0.0f;
+        *out_ytilt = 0.0f;
+    }
+    else {
+        float x, y;
+        if (angle == 0.0f) {
+            x = xtilt;
+            y = ytilt;
+        }
+        else {
+            float orientation = atan2f(ytilt, xtilt);
+            float magnitude = hypotf(xtilt, ytilt);
+            if (mirror == flip) {
+                orientation -= angle;
+            }
+            else {
+                orientation += angle;
+            }
+            x = cosf(orientation) * magnitude;
+            y = sinf(orientation) * magnitude;
+        }
+        *out_xtilt = CLAMP(x, -60.0f, 60.0f) / (mirror ? -60.0f : 60.0f);
+        *out_ytilt = CLAMP(y, -60.0f, 60.0f) / (flip ? -60.0f : 60.0f);
+    }
+}
+
 static void stroke_to_mypaint(DP_BrushEngine *be, DP_BrushPoint bp)
 {
     MyPaintBrush *mb = be->mypaint_brush;
     MyPaintSurface2 *surface = &be->mypaint_surface2;
     float zoom = be->stroke.zoom;
     float angle = be->stroke.angle_rad;
-    float xtilt = bp.xtilt / (be->stroke.mirror ? -60.0f : 60.0f);
-    float ytilt = bp.ytilt / (be->stroke.flip ? -60.0f : 60.0f);
     float rotation = bp.rotation / 360.0f;
+    float xtilt, ytilt;
+    tilt_to_mypaint(bp.xtilt, bp.ytilt, angle, be->stroke.mirror,
+                    be->stroke.flip, &xtilt, &ytilt);
 
     double delta_sec;
     if (be->stroke.in_progress) {
