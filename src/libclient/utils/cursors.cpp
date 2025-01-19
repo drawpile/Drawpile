@@ -8,7 +8,7 @@ namespace utils {
 Cursors *Cursors::instance;
 
 Cursors::Cursors()
-	: m_arrow(QPixmap(":cursors/arrow.png"))
+	: m_arrow(QPixmap(":cursors/arrow.png"), 1, 1)
 	, m_bucket(QPixmap(QStringLiteral(":cursors/bucket.png")), 2, 29)
 	, m_bucketCheck(QPixmap(QStringLiteral(":cursors/bucketcheck.png")), 2, 29)
 	, m_check(QCursor(QPixmap(QStringLiteral(":/cursors/check.png")), 16, 16))
