@@ -59,6 +59,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Don't cut off the bottom of dialogs on some Android phones. Thanks Anonymous, Bluestrings and Molderche for reporting.
  * Fix: Work around Gaomon tablets reporting pen buttons as mouse inputs. They were getting ignored because of an earlier Huion bug workaround.
  * Fix: Replace sound playback implementation on Windows to avoid mysterious crashes on some systems. Thanks Anonymous for reporting.
+ * Fix: Properly put an undo point before layer property changes. Thanks Maffi for reporting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

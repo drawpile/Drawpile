@@ -238,7 +238,10 @@ void LayerProperties::emitChanges()
 			net::makeDefaultLayerMessage(m_user, makeDefault ? m_item.id : 0));
 	}
 
-	emit layerCommands(messages.count(), messages.constData());
+	if(!messages.isEmpty()) {
+		messages.prepend(net::makeUndoPointMessage(m_user));
+		emit layerCommands(messages.count(), messages.constData());
+	}
 }
 
 void LayerProperties::addBlendModesTo(QStandardItemModel *model)
