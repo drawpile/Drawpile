@@ -56,14 +56,14 @@ Roles::Roles(QWidget *parent)
 	m_authListModel = new net::AuthListModel(this);
 	m_authListModel->setIsOperator(true);
 
-	QSortFilterProxyModel *authListSortModel = new QSortFilterProxyModel(this);
-	authListSortModel->setDynamicSortFilter(true);
-	authListSortModel->setSourceModel(m_authListModel);
-	authListSortModel->setSortCaseSensitivity(Qt::CaseInsensitive);
-	authListSortModel->sort(0);
+	m_authListProxyModel = new QSortFilterProxyModel(this);
+	m_authListProxyModel->setDynamicSortFilter(true);
+	m_authListProxyModel->setSourceModel(m_authListModel);
+	m_authListProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+	m_authListProxyModel->sort(0);
 
 	m_authListTable = new QTableView;
-	m_authListTable->setModel(authListSortModel);
+	m_authListTable->setModel(m_authListProxyModel);
 	m_authListTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 	m_authListTable->setSelectionMode(QAbstractItemView::SingleSelection);
 	authListLayout->addWidget(m_authListTable);
@@ -195,7 +195,7 @@ QModelIndex Roles::getSelectedAuthListEntry()
 		QModelIndexList selected =
 			m_authListTable->selectionModel()->selectedRows();
 		if(selected.size() == 1) {
-			return selected.at(0);
+			return m_authListProxyModel->mapToSource(selected.at(0));
 		}
 	}
 	return QModelIndex();

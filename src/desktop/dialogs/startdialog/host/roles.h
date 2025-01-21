@@ -9,6 +9,7 @@
 class QCheckBox;
 class QLabel;
 class QLineEdit;
+class QSortFilterProxyModel;
 class QTableView;
 
 namespace net {
@@ -50,6 +51,7 @@ private:
 	QLabel *m_noAuthListLabel;
 	QWidget *m_authListWidget;
 	net::AuthListModel *m_authListModel;
+	QSortFilterProxyModel *m_authListProxyModel;
 	QTableView *m_authListTable;
 	QCheckBox *m_opBox;
 	QCheckBox *m_trustedBox;
