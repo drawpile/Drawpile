@@ -30,7 +30,7 @@ QWidget *InspectorSettings::createUiWidget(QWidget *parent)
 	m_ui = new Ui_InspectorSettings;
 	m_ui->setupUi(widget);
 	connect(
-		m_ui->showTilesBox, &QAbstractButton::toggled, this,
+		m_ui->showTilesBox, &QCheckBox::clicked, this,
 		&InspectorSettings::pushSettings);
 	return widget;
 }
