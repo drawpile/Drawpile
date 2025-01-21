@@ -5598,7 +5598,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Posterize</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Спростити набір кольорів</translation>
     </message>
     <message>
         <location line="+2"/>
