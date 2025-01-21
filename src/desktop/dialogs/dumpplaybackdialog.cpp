@@ -22,10 +22,10 @@ struct DumpPlaybackDialog::Private {
 
 	static const QString &undoToString(DP_Undo undo)
 	{
-		static QString undoDone{tr("done")};
-		static QString undoUndone{tr("undone")};
-		static QString undoGone{tr("gone")};
-		static QString undoUnknown{tr("unknown")};
+		static QString undoDone{QStringLiteral("done")};
+		static QString undoUndone{QStringLiteral("undone")};
+		static QString undoGone{QStringLiteral("gone")};
+		static QString undoUnknown{QStringLiteral("unknown")};
 		switch(undo) {
 		case DP_UNDO_DONE:
 			return undoDone;
@@ -42,14 +42,16 @@ struct DumpPlaybackDialog::Private {
 	{
 		switch(aa->domain) {
 		case DP_AFFECTED_DOMAIN_USER_ATTRS:
-			return tr("local user");
+			return QStringLiteral("local user");
 		case DP_AFFECTED_DOMAIN_LAYER_ATTRS:
-			return tr("properties of layer %1").arg(aa->affected_id);
+			return QStringLiteral("properties of layer %1")
+				.arg(aa->affected_id);
 		case DP_AFFECTED_DOMAIN_ANNOTATIONS:
-			return tr("annotation %1").arg(aa->affected_id);
+			return QStringLiteral("annotation %1").arg(aa->affected_id);
 		case DP_AFFECTED_DOMAIN_PIXELS: {
 			DP_Rect bounds = aa->bounds;
-			return tr("pixels on layer %1, from (%2, %3) to (%4, %5)")
+			return QStringLiteral(
+					   "pixels on layer %1, from (%2, %3) to (%4, %5)")
 				.arg(aa->affected_id)
 				.arg(DP_rect_left(bounds))
 				.arg(DP_rect_top(bounds))
@@ -57,19 +59,21 @@ struct DumpPlaybackDialog::Private {
 				.arg(DP_rect_bottom(bounds));
 		}
 		case DP_AFFECTED_DOMAIN_CANVAS_BACKGROUND:
-			return tr("canvas background");
+			return QStringLiteral("canvas background");
 		case DP_AFFECTED_DOMAIN_DOCUMENT_METADATA:
-			return tr("document metadata type %1").arg(aa->affected_id);
+			return QStringLiteral("document metadata type %1")
+				.arg(aa->affected_id);
 		case DP_AFFECTED_DOMAIN_TIMELINE:
-			return tr("timeline frame %1").arg(aa->affected_id);
+			return QStringLiteral("timeline frame %1").arg(aa->affected_id);
 		case DP_AFFECTED_DOMAIN_SELECTIONS:
-			return tr("selection %1 of user %2")
+			return QStringLiteral("selection %1 of user %2")
 				.arg(aa->affected_id & 0xff)
 				.arg((aa->affected_id >> 8) & 0xff);
 		case DP_AFFECTED_DOMAIN_EVERYTHING:
-			return tr("everything");
+			return QStringLiteral("everything");
 		default:
-			return tr("unknown domain %1").arg(static_cast<int>(aa->domain));
+			return QStringLiteral("unknown domain %1")
+				.arg(static_cast<int>(aa->domain));
 		}
 	}
 };
@@ -92,13 +96,15 @@ DumpPlaybackDialog::DumpPlaybackDialog(
 
 	d->ui.historyTable->setColumnCount(4);
 	d->ui.historyTable->setHorizontalHeaderLabels(
-		{tr("Type"), tr("User"), tr("Undo"), tr("State")});
+		{QStringLiteral("Type"), QStringLiteral("User"), QStringLiteral("Undo"),
+		 QStringLiteral("State")});
 	d->ui.historyTable->horizontalHeader()->setStretchLastSection(true);
 	d->ui.historyTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
 	d->ui.forkTable->setColumnCount(3);
 	d->ui.forkTable->setHorizontalHeaderLabels(
-		{tr("Type"), tr("User"), tr("Affected Area")});
+		{QStringLiteral("Type"), QStringLiteral("User"),
+		 QStringLiteral("Affected Area")});
 	d->ui.forkTable->horizontalHeader()->setStretchLastSection(true);
 	d->ui.forkTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
@@ -338,7 +344,8 @@ void DumpPlaybackDialog::updateStatus(
 	d->ui.historyCount->setText(QString::number(historyCount));
 	d->ui.historyOffset->setText(QString::number(historyOffset));
 	bool forkPresent = forkCount != 0;
-	d->ui.forkPresent->setText(forkPresent ? tr("Yes") : tr("No"));
+	d->ui.forkPresent->setText(
+		forkPresent ? QStringLiteral("Yes") : QStringLiteral("No"));
 	d->ui.forkCount->setText(QString::number(forkCount));
 	d->ui.forkStart->setText(QString::number(forkStart));
 	d->ui.forkFallbehind->setText(QString::number(forkFallbehind));

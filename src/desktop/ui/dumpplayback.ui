@@ -11,16 +11,16 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Play Debug Dump</string>
+   <string notr="true">Play Debug Dump</string>
   </property>
   <layout class="QGridLayout">
    <item row="3" column="0" colspan="4">
     <widget class="KisSliderSpinBox" name="delaySpinner">
      <property name="suffix">
-      <string> ms</string>
+      <string notr="true"> ms</string>
      </property>
      <property name="prefix">
-      <string>Playback Delay: </string>
+      <string notr="true">Playback Delay: </string>
      </property>
      <property name="minimum">
       <number>0</number>
@@ -36,14 +36,14 @@
    <item row="0" column="1">
     <widget class="QPushButton" name="playPauseButton">
      <property name="text">
-      <string>Play/Pause</string>
+      <string notr="true">Play/Pause</string>
      </property>
     </widget>
    </item>
    <item row="2" column="3">
     <widget class="QPushButton" name="jumpButton">
      <property name="text">
-      <string>Jump</string>
+      <string notr="true">Jump</string>
      </property>
     </widget>
    </item>
@@ -53,21 +53,21 @@
    <item row="0" column="0">
     <widget class="QPushButton" name="previousResetButton">
      <property name="text">
-      <string>Previous Reset</string>
+      <string notr="true">Previous Reset</string>
      </property>
     </widget>
    </item>
    <item row="0" column="2">
     <widget class="QPushButton" name="singleStepButton">
      <property name="text">
-      <string>Single Step</string>
+      <string notr="true">Single Step</string>
      </property>
     </widget>
    </item>
    <item row="0" column="3">
     <widget class="QPushButton" name="nextResetButton">
      <property name="text">
-      <string>Next Reset</string>
+      <string notr="true">Next Reset</string>
      </property>
     </widget>
    </item>
@@ -80,7 +80,7 @@
       <enum>QAbstractSpinBox::NoButtons</enum>
      </property>
      <property name="prefix">
-      <string>Position: </string>
+      <string notr="true">Position: </string>
      </property>
     </widget>
    </item>
@@ -91,90 +91,90 @@
      </property>
      <widget class="QWidget" name="statusTab">
       <attribute name="title">
-       <string>Status</string>
+       <string notr="true">Status</string>
       </attribute>
       <layout class="QFormLayout">
        <item row="0" column="0">
         <widget class="QLabel" name="historyCountLabel">
          <property name="text">
-          <string>History Size:</string>
+          <string notr="true">History Size:</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
         <widget class="QLabel" name="historyCount">
          <property name="text">
-          <string>0</string>
+          <string notr="true">0</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
         <widget class="QLabel" name="historyOffset">
          <property name="text">
-          <string>0</string>
+          <string notr="true">0</string>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="forkPresentLabel">
          <property name="text">
-          <string>Local Fork Present:</string>
+          <string notr="true">Local Fork Present:</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
         <widget class="QLabel" name="forkPresent">
          <property name="text">
-          <string>No</string>
+          <string notr="true">No</string>
          </property>
         </widget>
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="forkCountLabel">
          <property name="text">
-          <string>Local Fork Size:</string>
+          <string notr="true">Local Fork Size:</string>
          </property>
         </widget>
        </item>
        <item row="3" column="1">
         <widget class="QLabel" name="forkCount">
          <property name="text">
-          <string>0</string>
+          <string notr="true">0</string>
          </property>
         </widget>
        </item>
        <item row="4" column="0">
         <widget class="QLabel" name="forkStartLabel">
          <property name="text">
-          <string>Local Fork Start:</string>
+          <string notr="true">Local Fork Start:</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="historyOffsetLabel">
          <property name="text">
-          <string>History Offset:</string>
+          <string notr="true">History Offset:</string>
          </property>
         </widget>
        </item>
        <item row="4" column="1">
         <widget class="QLabel" name="forkStart">
          <property name="text">
-          <string>0</string>
+          <string notr="true">0</string>
          </property>
         </widget>
        </item>
        <item row="5" column="0">
         <widget class="QLabel" name="forkFallbehindLabel">
          <property name="text">
-          <string>Local Fork Fallbehind:</string>
+          <string notr="true">Local Fork Fallbehind:</string>
          </property>
         </widget>
        </item>
        <item row="5" column="1">
         <widget class="QLabel" name="forkFallbehind">
          <property name="text">
-          <string>0</string>
+          <string notr="true">0</string>
          </property>
         </widget>
        </item>
@@ -182,7 +182,7 @@
      </widget>
      <widget class="QWidget" name="historyTab">
       <attribute name="title">
-       <string>History</string>
+       <string notr="true">History</string>
       </attribute>
       <layout class="QVBoxLayout">
        <item>
@@ -193,14 +193,14 @@
          <item>
           <widget class="QCheckBox" name="hideWithoutState">
            <property name="text">
-            <string>Hide Entries Without State</string>
+            <string notr="true">Hide Entries Without State</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="hideGoneEntries">
            <property name="text">
-            <string>Hide Gone Entries</string>
+            <string notr="true">Hide Gone Entries</string>
            </property>
           </widget>
          </item>
@@ -210,7 +210,7 @@
      </widget>
      <widget class="QWidget" name="forkTab">
       <attribute name="title">
-       <string>Local Fork</string>
+       <string notr="true">Local Fork</string>
       </attribute>
       <layout class="QVBoxLayout">
        <item>
