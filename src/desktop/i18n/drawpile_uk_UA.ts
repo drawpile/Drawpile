@@ -2759,197 +2759,197 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Mirror the transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Віддзеркаліть перетворене зображення горизонтально</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>віддзеркалити/відобразити перетворене зображення по горизонталі</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Flip Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Перевернути трансформацію</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the transformed image upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Переверніть трансформоване зображення догори ногами</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>mirror/flip transformed image vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>дзеркально/перевернути трансформоване зображення по вертикалі</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Rotate Transform Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Повернути трансформацію за годинниковою стрілкою</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Rotate Transform &amp;Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Повернути трансформацію &amp;проти годинникової стрілки</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Shrink Transform to &amp;Fit View</source>
-        <translation type="unfinished"></translation>
+        <translation>Зменшити трансформацію до &amp;відповідного вигляду</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Stamp Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Трансформація штампа</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Selectio&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation>Вибір</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Change Frame Count...</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити кількість кадрів...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change Frame Rate (FPS)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити частоту кадрів (FPS)...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Установіть «Ключовий кадр» на поточний шар</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Blank Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити порожній ключовий кадр</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cut Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Вирізати ключовий кадр</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Копіювати ключовий кадр</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Paste Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставити ключовий кадр</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key Frame Properties...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ключові властивості кадру...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити ключовий кадр</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Increase Key Frame Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Збільшити експозицію ключового кадру</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Decrease Key Frame Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Зменшити експозицію ключового кадру</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>New Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Новий трек</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Visible</source>
-        <translation type="unfinished"></translation>
+        <translation>Доріжка видима</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Onion Skin</source>
-        <translation type="unfinished"></translation>
+        <translation>Відстежити шкірку цибулі</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Дубльований трек</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейменувати трек</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити трек</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Наступний ключовий кадр</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Попередній ключовий кадр</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Above</source>
-        <translation type="unfinished"></translation>
+        <translation>Доріжка вище</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Below</source>
-        <translation type="unfinished"></translation>
+        <translation>Доріжка нижче</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Create Group on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Створити групу на поточному ключовому кадрі</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Group on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Створити групу на наступному ключовому кадрі</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Group on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Створити групу на попередньому ключовому кадрі</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate to Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Дублювати до наступного ключового кадру</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate to Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Дублювати до попереднього ключового кадру</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>&amp;Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Анімація</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Create Group on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Створити групу на ключовому кадрі</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Duplicate Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Дубльований ключовий кадр</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -3152,105 +3152,105 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+32"/>
         <source>Cause Crash…</source>
-        <translation type="unfinished"></translation>
+        <translation>Причина аварії…</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Скинути кисть</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути всі щітки &amp;слоти</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути всі &amp;пензлі</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Next Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Наступна кисть</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Previous Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Попередній пензель</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Next Brush Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Наступний тег пензля</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Previous Brush Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Попередній тег пензля</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Next Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Наступний слот для пензля</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Previous Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Попередній слот пензля</translation>
     </message>
     <message>
         <location line="+96"/>
         <source>Touch Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Торкніться Тестер</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Missing Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Відсутній файл журналу</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл журналу не існує, чи потрібно ввімкнути реєстрацію в налаштуваннях?</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+5"/>
         <source>Error Saving Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка збереження файлу журналу</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Brush slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Слот для пензля #%1</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Swap With Brush Slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Поміняти місцями на слот для пензля #%1</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Swatch Color %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Зразок кольору %1</translation>
     </message>
     <message>
         <location line="+164"/>
         <source>Wheel</source>
         <extracomment>&quot;Wheel&quot; refers to the color wheel.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Колесо</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Sliders</source>
         <extracomment>&quot;Sliders&quot; refers to the RGB and HSV sliders.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Повзунки</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Onion Skins</source>
-        <translation type="unfinished"></translation>
+        <translation>Лушпиння цибулі</translation>
     </message>
     <message>
         <location line="-438"/>
@@ -3325,7 +3325,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../utils/widgetutils.cpp" line="+1045"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -3343,22 +3343,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Tiles:</source>
-        <translation type="unfinished"></translation>
+        <translation>Плитка:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Tile Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Пам&apos;ять плитки:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Contexts:</source>
-        <translation type="unfinished"></translation>
+        <translation>Контексти:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Context Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Пам&apos;ять контексту:</translation>
     </message>
     <message>
         <location line="-86"/>
@@ -3386,37 +3386,37 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-34"/>
         <source>Rewind to Beginning</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемотати на початок</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Skip Backward</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейти назад</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Next Stroke</source>
-        <translation type="unfinished"></translation>
+        <translation>Наступний удар</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Skip Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>Пропустити вперед</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Playback Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Швидкість відтворення: </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+79"/>
         <source>Building an index will let you quickly skip to any part of your recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>Створення індексу дозволить швидко переходити до будь-якої частини запису.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -3524,17 +3524,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Selection (Magic Wand)</source>
-        <translation type="unfinished"></translation>
+        <translation>Вибір (Чарівна паличка)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>Трансформувати</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Пан</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3557,7 +3557,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+50"/>
         <source>You must be an operator to reset the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви повинні бути оператором, щоб скинути сеанс.</translation>
     </message>
 </context>
 <context>
@@ -3688,17 +3688,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Idle timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Час простою:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>X seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>X секунд</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Disable idle timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>Вимкнути тайм-аут простою</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -3738,7 +3738,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Allow joining from the web browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Дозволити приєднання з веб-браузера</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -3753,7 +3753,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+70"/>
         <source>Laser Pointer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Лазерна указка:</translation>
     </message>
     <message>
         <location line="+61"/>
@@ -3763,29 +3763,29 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+18"/>
         <source>Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Заборони</translation>
     </message>
     <message>
         <location line="+18"/>
         <location line="+82"/>
         <source>Import</source>
-        <translation type="unfinished">Імпорт</translation>
+        <translation>Імпорт</translation>
     </message>
     <message>
         <location line="-71"/>
         <location line="+82"/>
         <source>Export</source>
-        <translation type="unfinished">Експортувати</translation>
+        <translation>Експорт</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Add listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати список</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove selected listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити вибраний список</translation>
     </message>
     <message>
         <location line="-330"/>
@@ -3795,12 +3795,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-160"/>
         <source>This session contains age-restricted content</source>
-        <translation type="unfinished"></translation>
+        <translation>Цей сеанс містить вміст із віковими обмеженнями</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Не підходить для неповнолітніх (NSFM)</translation>
     </message>
     <message>
         <location line="+174"/>
@@ -3851,17 +3851,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+98"/>
         <source>Metadata:</source>
-        <translation type="unfinished"></translation>
+        <translation>Метадані:</translation>
     </message>
     <message>
         <location line="-10"/>
         <source>Timeline:</source>
-        <translation type="unfinished"></translation>
+        <translation>Хронологія:</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>MyPaint Brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Пензлі MyPaint:</translation>
     </message>
     <message>
         <location line="+64"/>
@@ -3871,12 +3871,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Ролі</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Operator</source>
-        <translation type="unfinished">Оператор</translation>
+        <translation>Оператор</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3945,67 +3945,67 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/userinfodialog.ui" line="+14"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Діалог</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Qt Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Версія Qt:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Application Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Версія програми:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">Згладжування:</translation>
+        <translation>Згладжування:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Tablet Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>Вхід для планшета:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Pen Pressure:</source>
-        <translation type="unfinished"></translation>
+        <translation>Тиск пера:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Id:</source>
-        <translation type="unfinished"></translation>
+        <translation>ID:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Touch Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Сенсорний режим:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>dp:x.y.z</source>
-        <translation type="unfinished"></translation>
+        <translation>dp:x.y.z</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Operating System:</source>
-        <translation type="unfinished"></translation>
+        <translation>Операційна система:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Name:</source>
-        <translation type="unfinished">Назва:</translation>
+        <translation>Ім&apos;я:</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Protocol Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Версія протоколу:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Global Pressure Curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>Глобальна крива тиску:</translation>
     </message>
 </context>
 <context>
@@ -4038,7 +4038,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+14"/>
         <source>Format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Формат:</translation>
     </message>
     <message>
         <location line="+72"/>
@@ -4063,17 +4063,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+14"/>
         <source>Path to ffmpeg:</source>
-        <translation type="unfinished"></translation>
+        <translation>Шлях до ffmpeg:</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Custom Arguments:</source>
-        <translation type="unfinished"></translation>
+        <translation>Спеціальні аргументи:</translation>
     </message>
 </context>
 <context>
@@ -4089,7 +4089,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette.cpp" line="+422"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>Без назви</translation>
     </message>
 </context>
 <context>
@@ -4097,12 +4097,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_model.cpp" line="+55"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>Без назви</translation>
     </message>
     <message>
         <location line="+75"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2 кольори)</translation>
     </message>
 </context>
 <context>
@@ -4110,81 +4110,82 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_widget.ui" line="+64"/>
         <source>Open a new palette from file</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрийте нову палітру з файлу</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Create a new palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Створіть нову палітру</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Duplicate the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Дублюйте поточну палітру</translation>
     </message>
     <message>
         <location line="+84"/>
         <source>Delete the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити поточну палітру</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Revert changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Повернути зміни до поточної палітри</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Save changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Збережіть зміни в поточній палітрі</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Add a color to the palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Додайте колір до палітри</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove the selected color from the palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Видаліть вибраний колір з палітри</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_widget.cpp" line="+181"/>
         <location line="+15"/>
         <source>New Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Нова палітра</translation>
     </message>
     <message>
         <location line="-14"/>
         <location line="+15"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Ім&apos;я</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>GIMP Palettes (*.gpl)</source>
-        <translation type="unfinished"></translation>
+        <translation>Палітри GIMP (*.gpl)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Palette Image (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Зображення палітри (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>All Files (*)</source>
-        <translation type="unfinished">усі файли (*)</translation>
+        <translation>усі файли (*)</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+13"/>
         <source>Open Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрийте палітру</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to load the palette file
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося завантажити файл палітри
+%1</translation>
     </message>
 </context>
 <context>
@@ -4192,17 +4193,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/gradient_editor.cpp" line="+321"/>
         <source>Add Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Додайте колір</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Remove Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити колір</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Edit Color...</source>
-        <translation type="unfinished"></translation>
+        <translation>Редагувати колір...</translation>
     </message>
 </context>
 <context>
@@ -4210,7 +4211,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/gradient_list_model.cpp" line="+215"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2 кольори)</translation>
     </message>
 </context>
 <context>
@@ -4218,12 +4219,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/swatch.cpp" line="+855"/>
         <source>Clear Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Прозорий колір</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -4231,7 +4232,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/abusereport.cpp" line="+17"/>
         <source>Report</source>
-        <translation type="unfinished">Звіт</translation>
+        <translation>Звіт</translation>
     </message>
 </context>
 <context>
@@ -4239,27 +4240,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/addserverdialog.cpp" line="+153"/>
         <source>&lt;strong&gt;Error:&lt;/strong&gt; %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Помилка:&lt;/strong&gt; %1</translation>
     </message>
     <message>
         <location line="+106"/>
         <source>Retrieving %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>Отримання %1...</translation>
     </message>
     <message>
         <location line="+73"/>
         <source>Check</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірте</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Add</source>
-        <translation type="unfinished">Додати</translation>
+        <translation>додати</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Checking %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірка %1...</translation>
     </message>
 </context>
 <context>
@@ -4267,127 +4268,127 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/animationexportdialog.cpp" line="+29"/>
         <source>Export Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Експорт анімації</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Вихід</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Frames as PNGs</source>
-        <translation type="unfinished"></translation>
+        <translation>Рамки як PNG</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frames as PNGs in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>Рамки як PNG у ZIP</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>Анімований GIF</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>Анімований WEBP</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 відео</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Відео WEBM</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Формат:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loops:</source>
-        <translation type="unfinished"></translation>
+        <translation>Петлі:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>Гладкий</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Scaling:</source>
-        <translation type="unfinished"></translation>
+        <translation>Масштабування:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>Введення</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Діапазон кадрів:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source> FPS</source>
-        <translation type="unfinished"> кд/с</translation>
+        <translation> FPS</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Частота кадрів:</translation>
+        <translation>Частота кадрів:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Crop X:</source>
-        <translation type="unfinished"></translation>
+        <translation>Обрізати X:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Crop Y:</source>
-        <translation type="unfinished"></translation>
+        <translation>Обрізати Y:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Reset</source>
-        <translation type="unfinished">Скинути</translation>
+        <translation>Скинути</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Reset inputs to the whole canvas and timeline</source>
-        <translation type="unfinished"></translation>
+        <translation>Скидання вхідних даних для всього полотна та шкали часу</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Set from Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Набір із Flipbook</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set inputs to what is being previewed in the flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановіть вхідні дані для того, що попередньо переглядається у фліпбуці</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Export</source>
-        <translation type="unfinished">Експортувати</translation>
+        <translation>Експорт</translation>
     </message>
     <message>
         <location line="+125"/>
         <source>Output resolution will be %1x%2 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вихідна роздільна здатність становитиме %1x%2 пікселів.</translation>
     </message>
 </context>
 <context>
@@ -4395,108 +4396,108 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/animationimportdialog.cpp" line="+43"/>
         <source>Import Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпорт анімації</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Рамки</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Import a series of images as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпортуйте серію зображень як кадри шкали часу.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Importing animation frames is not supported in the web browser version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпорт кадрів анімації не підтримується у версії Drawpile для веб-браузера.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Canvas Background:</source>
-        <translation type="unfinished">Тло полотна:</translation>
+        <translation>Фон полотна:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Add</source>
-        <translation type="unfinished">Додати</translation>
+        <translation>Додати</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Remove</source>
-        <translation type="unfinished">Вилучити</translation>
+        <translation>Видалити</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Sort</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортувати</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Numeric Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Числове за зростанням</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Numeric Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Числове спадання</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alphabetic Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Алфавітний за зростанням</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alphabetic Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Алфавітний за спаданням</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Layers</source>
-        <translation type="unfinished">Шари</translation>
+        <translation>Шари</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import the layers of an ORA or PSD file as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпортуйте шари файлу ORA або PSD як кадри шкали часу.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>File to Import:</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл для імпорту:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Key frame length:</source>
         <extracomment>How many frames each imported key frame gets in the timeline.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Довжина ключового кадру:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source> FPS</source>
-        <translation type="unfinished"> кд/с</translation>
+        <translation> FPS</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Частота кадрів:</translation>
+        <translation>Частота кадрів:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import</source>
-        <translation type="unfinished">Імпорт</translation>
+        <translation>Імпорт</translation>
     </message>
     <message numerus="yes">
         <location line="+88"/>
         <source> frame(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform> кадр</numerusform>
             <numerusform> кадри</numerusform>
             <numerusform> кадрів</numerusform>
@@ -4514,17 +4515,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../dialogs/avatarimport.cpp" line="+57"/>
         <location line="+6"/>
         <source>Import Avatar</source>
-        <translation type="unfinished">Імпортування аватару</translation>
+        <translation>Імпортування аватару</translation>
     </message>
     <message>
         <location line="-6"/>
         <source>Couldn&apos;t read image</source>
-        <translation type="unfinished">Не вдалося прочитати зображення</translation>
+        <translation>Не вдалося прочитати зображення</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Picture is too small</source>
-        <translation type="unfinished">Зображення є надто малим</translation>
+        <translation>Зображення є надто малим</translation>
     </message>
 </context>
 <context>
@@ -4532,23 +4533,23 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/brushexportdialog.cpp" line="+46"/>
         <source>Export Brushes</source>
-        <translation type="unfinished">Експортувати пензлі</translation>
+        <translation>Експортувати пензлі</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Export</source>
         <extracomment>This text on a button, so it&apos;s a verb, not a noun.</extracomment>
-        <translation type="unfinished">Експортувати</translation>
+        <translation>Експорт</translation>
     </message>
     <message>
         <location line="+164"/>
         <source>Brush Export</source>
-        <translation type="unfinished">Експорт пензлів</translation>
+        <translation>Експорт пензлів</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <source>%n brush(es) exported.</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>експортовано %n пензель.</numerusform>
             <numerusform>експортовано %n пензлі.</numerusform>
             <numerusform>експортовано %n пензлів.</numerusform>
@@ -4562,7 +4563,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message numerus="yes">
         <location line="+7"/>
         <source>%n error(s) encountered.</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Виникла %n помилка.</numerusform>
             <numerusform>Виникло %n помилки.</numerusform>
             <numerusform>Виникло %n помилок.</numerusform>
@@ -4579,111 +4580,111 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+83"/>
         <source>No shortcut assigned</source>
-        <translation type="unfinished"></translation>
+        <translation>Ярлик не призначено</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Brush</source>
-        <translation type="unfinished">Пензель</translation>
+        <translation>Кисть</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Brush metadata settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметри метаданих пензля.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальний</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Core brush settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштування основної щітки.</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Save as New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти як новий пензель</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Пензель перезапису</translation>
     </message>
     <message>
         <location line="+64"/>
         <source>Change…</source>
-        <translation type="unfinished"></translation>
+        <translation>Зміна…</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Shortcut:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ярлик:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Choose File…</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть файл…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Will be resized to 64x64 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Розмір буде змінено до 64x64 пікселів.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished">Піктограма:</translation>
+        <translation>Мініатюра:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Add Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати мітку:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Name:</source>
-        <translation type="unfinished">Назва:</translation>
+        <translation>Ім&apos;я:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Description:</source>
-        <translation type="unfinished">Опис:</translation>
+        <translation>Опис:</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Brush is not attached.</source>
-        <translation type="unfinished"></translation>
+        <translation>Щітка не кріпиться.</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Brush Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип пензля:</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+422"/>
         <source>Round Pixel Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Кругла піксельна кисть</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Square Pixel Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Квадратний піксельний пензель</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Soft Round Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>М&apos;яка кругла кисть</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>MyPaint Brush</source>
-        <translation type="unfinished">Пензель MyPaint</translation>
+        <translation>MyPaint Кисть</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -4694,37 +4695,37 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+14"/>
         <source>Paint Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим малювання:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Build-Up/Direct</source>
-        <translation type="unfinished"></translation>
+        <translation>Нарощування/Пряме</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Wash/Indirect</source>
-        <translation type="unfinished"></translation>
+        <translation>Промивання/непряме</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим стирання</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Pick Initial Color from Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть початковий колір із шару</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Lock Alpha (Recolor Mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Блокування альфа (режим перефарбування)</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Spacing: </source>
-        <translation type="unfinished">Відстань: </translation>
+        <translation>Інтервал: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4735,22 +4736,22 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+42"/>
         <location line="+29"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="-267"/>
         <source>Stabilization Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим стабілізації:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Time-Based Stabilizer</source>
-        <translation type="unfinished"></translation>
+        <translation>Стабілізатор на основі часу</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Середнє згладжування</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -4765,24 +4766,24 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+31"/>
         <source>Size: </source>
-        <translation type="unfinished">Розмір: </translation>
+        <translation>Розмір: </translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+17"/>
         <source>px</source>
-        <translation type="unfinished">пк</translation>
+        <translation>пк</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Minimum Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Мінімальний розмір: </translation>
     </message>
     <message>
         <location line="+10"/>
         <location line="+419"/>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Розмір</translation>
     </message>
     <message>
         <location line="-419"/>
@@ -4790,275 +4791,275 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+59"/>
         <location line="+71"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>Введення</translation>
     </message>
     <message>
         <location line="-158"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Непрозорість: </translation>
+        <translation>Непрозорість: </translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Minimum Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Мінімальна непрозорість: </translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+362"/>
         <source>Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Непрозорість</translation>
     </message>
     <message>
         <location line="-331"/>
         <source>Hardness: </source>
-        <translation type="unfinished">Жорсткість: </translation>
+        <translation>Твердість: </translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Minimum Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>Мінімальна твердість: </translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+308"/>
         <source>Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Твердість</translation>
     </message>
     <message>
         <location line="-277"/>
         <source>Smudging: </source>
-        <translation type="unfinished">Розмазування: </translation>
+        <translation>Розмазування: </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished">Підбір кольору: 1/</translation>
+        <translation>Збір кольору: 1/</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Minimum Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>Мінімум розмазування: </translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+241"/>
         <source>Smudging</source>
-        <translation type="unfinished"></translation>
+        <translation>Розмазування</translation>
     </message>
     <message>
         <location line="-217"/>
         <source>No dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Ніякої динаміки</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Динаміка тиску</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Динаміка швидкості</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Динаміка дистанції</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальна швидкість: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальна відстань: </translation>
     </message>
     <message>
         <location line="+9"/>
         <location line="+19"/>
         <location line="+36"/>
         <source>Apply to All</source>
-        <translation type="unfinished"></translation>
+        <translation>Застосувати до всіх</translation>
     </message>
     <message>
         <location line="-53"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановіть максимальну швидкість для розміру, непрозорості, твердості та розмазування одночасно.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальна швидкість, встановлена для всіх налаштувань цього пензля.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Одразу встановіть максимальну відстань для розміру, непрозорості, жорсткості та розмазування.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальна відстань, встановлена для всіх параметрів у цьому пензлі.</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Set this curve for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановіть цю криву одночасно для розміру, непрозорості, жорсткості та розмазування.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Curve set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Набір кривих для всіх налаштувань цього пензля.</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Value: </source>
-        <translation type="unfinished"></translation>
+        <translation>Значення: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>No brush dynamics.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ніякої динаміки пензля.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Not available in Indirect/Wash mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Недоступно в режимі Indirect/Wash.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Dynamics not available in Indirect/Wash mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Динаміка недоступна в режимі Indirect/Wash.</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>The radius of the brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Радіус кисті.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Opaqueness of the brush, 0% is transparent, 100% fully opaque.</source>
-        <translation type="unfinished"></translation>
+        <translation>Непрозорість кисті, 0% прозора, 100% повністю непрозора.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Edge hardness, 0% is blurry, 100% is sharp.</source>
-        <translation type="unfinished"></translation>
+        <translation>Жорсткість країв, 0% розмиті, 100% різкі.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blending of colors on the layer being drawn on.</source>
-        <translation type="unfinished"></translation>
+        <translation>Змішування кольорів на шарі, на якому малюється.</translation>
     </message>
     <message>
         <location line="+175"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>Уповільнює інсульт, щоб стабілізувати його з часом. Високі значення дають дуже плавні лінії, але малювати вони будуть повільно. Коли ви зупините рух, лінія наздожене ваш курсор. Також застосовується згладжування планшета з налаштувань введення.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation>Просто усереднює кількість вхідних даних. Відчувається швидше, ніж стабілізатор на основі часу, але не такий плавний і не наздожене ваш курсор, коли ви зупинитесь. Перевизначає згладжування планшета з налаштувань введення.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown stabilization mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невідомий режим стабілізації.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Synchronizing stabilization settings with brushes is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронізація налаштувань стабілізації з пензлями вимкнена.</translation>
     </message>
     <message>
         <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+12"/>
         <source>Pressure</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Тиск</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fine speed</source>
         <comment>mypaintinput</comment>
         <extracomment>&quot;fine&quot; refers to the accuracy and update frequency of the speed value, as in &quot;fine grained&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Хороша швидкість</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Gross speed</source>
         <comment>mypaintinput</comment>
         <extracomment>changes more smoothly but is less accurate than &quot;Fine speed&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Повна швидкість</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Random</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Випадковий</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Інсульт</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Direction</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Напрямок</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination/Tilt</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Схилення/Нахил</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Ascension</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Вознесіння</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Custom</source>
         <comment>mypaintinput</comment>
         <extracomment>the input is the output of the &quot;Custom input&quot; setting</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Користувацька</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Direction 360</source>
         <comment>mypaintinput</comment>
         <extracomment>refers to the direction of the stroke</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Напрямок 360</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Attack Angle</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Кут атаки</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination/Tilt X</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Схилення/Нахил X</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination/Tilt Y</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Схилення/Нахил Y</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap X</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>GridMap X</translation>
     </message>
     <message>
         <location line="+2"/>
