@@ -28,6 +28,9 @@ namespace widgets {
 class GroupedToolButtonStyle final : public QProxyStyle {
 public:
 	static constexpr int SWATCH_HEIGHT = 5;
+	static constexpr int SWATCH_FOREGROUND_HEIGHT = 4;
+	static constexpr int SWATCH_BACKGROUND_HEIGHT =
+		SWATCH_HEIGHT - SWATCH_FOREGROUND_HEIGHT;
 
 	static GroupedToolButtonStyle *instance()
 	{
@@ -169,8 +172,18 @@ void GroupedToolButton::setGroupPosition(
 
 void GroupedToolButton::setColorSwatch(const QColor &colorSwatch)
 {
-	m_colorSwatch = colorSwatch;
-	update();
+	if(colorSwatch != m_colorSwatch) {
+		m_colorSwatch = colorSwatch;
+		update();
+	}
+}
+
+void GroupedToolButton::setBackgroundSwatch(const QColor &backgroundSwatch)
+{
+	if(backgroundSwatch != m_backgroundSwatch) {
+		m_backgroundSwatch = backgroundSwatch;
+		update();
+	}
 }
 
 void GroupedToolButton::paintEvent(QPaintEvent *)
@@ -182,12 +195,9 @@ void GroupedToolButton::paintEvent(QPaintEvent *)
 	painter.drawComplexControl(QStyle::CC_ToolButton, opt);
 
 	if(m_colorSwatch.isValid()) {
-		int swatchHeight = GroupedToolButtonStyle::SWATCH_HEIGHT;
-		QRect swatchRect(
-			opt.rect.x(), opt.rect.bottom() - swatchHeight, opt.rect.width(),
-			swatchHeight);
-		painter.fillRect(swatchRect, m_colorSwatch);
-		opt.rect.setHeight(opt.rect.height() - swatchHeight);
+		paintColorSwatch(painter, opt, m_colorSwatch, m_backgroundSwatch);
+	} else if(m_backgroundSwatch.isValid()) {
+		paintColorSwatch(painter, opt, m_backgroundSwatch, QColor());
 	}
 
 	// Separators
@@ -205,6 +215,26 @@ void GroupedToolButton::paintEvent(QPaintEvent *)
 		painter.setPen(opt.palette.color(QPalette::Dark));
 		painter.drawLine(x, y1, x, y2);
 	}
+}
+
+void GroupedToolButton::paintColorSwatch(
+	QStylePainter &painter, QStyleOptionToolButton &opt,
+	const QColor &foreground, const QColor &background)
+{
+	int swatchHeight = GroupedToolButtonStyle::SWATCH_HEIGHT;
+	int foregroundHeight = GroupedToolButtonStyle::SWATCH_FOREGROUND_HEIGHT;
+	int backgroundHeight = GroupedToolButtonStyle::SWATCH_BACKGROUND_HEIGHT;
+	bool haveBackground = background.isValid();
+	int x = opt.rect.x();
+	int y = opt.rect.bottom();
+	int w = opt.rect.width();
+	int hf = haveBackground ? foregroundHeight : swatchHeight;
+	painter.fillRect(QRect(x, y - hf, w, hf), foreground);
+	if(haveBackground) {
+		painter.fillRect(
+			QRect(x, y - swatchHeight, w, backgroundHeight), background);
+	}
+	opt.rect.setHeight(opt.rect.height() - swatchHeight);
 }
 
 }

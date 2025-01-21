@@ -124,6 +124,7 @@ struct Preset : brushes::Preset {
 
 struct Slot {
 	brushes::ActiveBrush brush;
+	QColor backgroundColor;
 	Preset preset;
 	widgets::GroupedToolButton *button;
 };
@@ -189,6 +190,8 @@ struct BrushSettings::Private {
 
 	brushes::ActiveBrush &brushAt(int i) { return slotAt(i).brush; }
 
+	QColor &backgroundColorAt(int i) { return slotAt(i).backgroundColor; }
+
 	Preset &presetAt(int i) { return slotAt(i).preset; }
 
 	widgets::GroupedToolButton *buttonAt(int i) { return slotAt(i).button; }
@@ -196,6 +199,8 @@ struct BrushSettings::Private {
 	Slot &currentSlot() { return slotAt(current); }
 
 	brushes::ActiveBrush &currentBrush() { return currentSlot().brush; }
+
+	QColor &currentBackgroundColor() { return currentSlot().backgroundColor; }
 
 	Preset &currentPreset() { return currentSlot().preset; }
 
@@ -678,6 +683,8 @@ void BrushSettings::setShareBrushSlotColor(bool sameColor)
 	for(int i = 0; i < TOTAL_SLOT_COUNT; ++i) {
 		Slot &slot = d->slotAt(i);
 		slot.button->setColorSwatch(sameColor ? QColor() : slot.brush.qColor());
+		slot.button->setBackgroundSwatch(
+			sameColor ? QColor() : slot.backgroundColor);
 	}
 }
 
@@ -869,6 +876,7 @@ void BrushSettings::selectBrushSlot(int i)
 
 	if(!d->shareBrushSlotColor) {
 		emit colorChanged(d->currentBrush().qColor());
+		emit backgroundColorChanged(d->currentBackgroundColor());
 	}
 
 	updateUi();
@@ -1583,6 +1591,11 @@ ToolProperties BrushSettings::saveToolSettings()
 				QStringLiteral("preset%1").arg(cfgIndex), 0},
 			preset.valid && (preset.attached || preset.reattach) ? preset.id
 																 : 0);
+
+		cfg.setValue(
+			ToolProperties::Value<QColor>{
+				QStringLiteral("bg%1").arg(cfgIndex), QColor(Qt::white)},
+			d->backgroundColorAt(i));
 	}
 
 	return cfg;
@@ -1593,6 +1606,7 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 	for(int i = 0; i < TOTAL_SLOT_COUNT; ++i) {
 		brushes::ActiveBrush &brush = d->brushAt(i);
 		Preset &preset = d->presetAt(i);
+		QColor &backgroundColor = d->backgroundColorAt(i);
 
 		int cfgIndex = translateBrushSlotConfigIndex(i);
 		QByteArray brushData = cfg.value(ToolProperties::Value<QByteArray>{
@@ -1620,8 +1634,12 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 			preset.overwrite = true;
 		}
 
+		backgroundColor = cfg.value(ToolProperties::Value<QColor>{
+			QStringLiteral("bg%1").arg(cfgIndex), QColor(Qt::white)});
+
 		if(!d->shareBrushSlotColor) {
 			d->buttonAt(i)->setColorSwatch(brush.qColor());
+			d->buttonAt(i)->setBackgroundSwatch(backgroundColor);
 		}
 	}
 
@@ -1673,17 +1691,33 @@ void BrushSettings::setForeground(const QColor &color)
 {
 	if(color != d->currentBrush().qColor()) {
 		if(d->shareBrushSlotColor) {
-			for(int i = 0; i < TOTAL_SLOT_COUNT; ++i)
+			for(int i = 0; i < TOTAL_SLOT_COUNT; ++i) {
 				d->brushAt(i).setQColor(color);
-
+			}
 		} else {
 			Q_ASSERT(d->current >= 0 && d->current < TOTAL_SLOT_COUNT);
 			Slot &slot = d->currentSlot();
 			slot.brush.setQColor(color);
 			slot.button->setColorSwatch(color);
 		}
-
 		d->ui.preview->setBrush(d->currentBrush());
+		pushSettings();
+	}
+}
+
+void BrushSettings::setBackground(const QColor &color)
+{
+	if(color != d->currentBackgroundColor()) {
+		if(d->shareBrushSlotColor) {
+			for(int i = 0; i < TOTAL_SLOT_COUNT; ++i) {
+				d->backgroundColorAt(i) = color;
+			}
+		} else {
+			Q_ASSERT(d->current >= 0 && d->current < TOTAL_SLOT_COUNT);
+			Slot &slot = d->currentSlot();
+			slot.backgroundColor = color;
+			slot.button->setBackgroundSwatch(color);
+		}
 		pushSettings();
 	}
 }

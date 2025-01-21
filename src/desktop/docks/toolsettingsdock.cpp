@@ -171,6 +171,9 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 		bs, &tools::BrushSettings::colorChanged, this,
 		&ToolSettings::setForegroundColor);
 	connect(
+		bs, &tools::BrushSettings::backgroundColorChanged, this,
+		&ToolSettings::setBackgroundColor);
+	connect(
 		bs, &tools::BrushSettings::pixelSizeChanged, this, [this](int size) {
 			if(hasBrushCursor(d->currentTool)) {
 				emit sizeChanged(size);
@@ -251,6 +254,7 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	// with regards to tool slot colors, causing them to flicker when switching.
 	auto &settings = dpApp().settings();
 	setForegroundColor(settings.lastToolColor());
+	setBackgroundColor(settings.lastToolBackgroundColor());
 	selectTool(settings.lastTool());
 }
 
@@ -279,6 +283,7 @@ void ToolSettings::saveSettings()
 	auto &settings = dpApp().settings();
 	settings.setToolset(toolset);
 	settings.setLastToolColor(foregroundColor());
+	settings.setLastToolBackgroundColor(backgroundColor());
 	settings.setLastTool(currentTool());
 }
 
@@ -680,6 +685,8 @@ void ToolSettings::setBackgroundColor(const QColor &color)
 {
 	if(color.isValid() && color != d->backgroundColor) {
 		d->backgroundColor = color;
+
+		d->currentSettings()->setBackground(color);
 
 		if(d->backgroundColorDialog->isVisible()) {
 			d->backgroundColorDialog->setColor(color);

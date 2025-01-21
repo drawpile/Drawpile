@@ -185,6 +185,7 @@ SETTING(lastStartDialogPage       , LastStartDialogPage       , "history/laststa
 SETTING(lastStartDialogSize       , LastStartDialogSize       , "history/laststartdialogsize"           , QSize())
 SETTING(lastStartDialogDateTime   , LastStartDialogDateTime   , "history/laststartdialogdatetime"       , QString())
 SETTING(lastTool                  , LastTool                  , "tools/tool"                            , tools::Tool::Type::FREEHAND)
+SETTING(lastToolBackgroundColor   , LastToolBackgroundColor   , "tools/backgroundcolor"                 , QColor(Qt::white))
 SETTING(lastToolColor             , LastToolColor             , "tools/color"                           , QColor(Qt::black))
 SETTING(lastUsername              , LastUsername              , "history/username"                      , QString())
 SETTING(lastWindowActions         , LastWindowActions         , "window/actions"                        , (QMap<QString, bool>()))

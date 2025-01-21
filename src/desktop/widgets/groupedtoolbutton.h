@@ -6,6 +6,8 @@
 
 class QEvent;
 class QPaintEvent;
+class QStyleOptionToolButton;
+class QStylePainter;
 class QWidget;
 
 namespace widgets {
@@ -40,12 +42,20 @@ public:
 	void setColorSwatch(const QColor &colorSwatch);
 	QColor colorSwatch() const { return m_colorSwatch; }
 
+	void setBackgroundSwatch(const QColor &backgroundSwatch);
+	QColor backgroundSwatch() const { return m_backgroundSwatch; }
+
 protected:
 	void paintEvent(QPaintEvent *event) override;
 
 private:
+	static void paintColorSwatch(
+		QStylePainter &painter, QStyleOptionToolButton &opt,
+		const QColor &foreground, const QColor &background);
+
 	GroupPosition m_groupPosition;
 	QColor m_colorSwatch;
+	QColor m_backgroundSwatch;
 };
 
 }

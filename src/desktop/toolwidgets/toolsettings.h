@@ -64,6 +64,9 @@ public:
 	//! Set the foreground color
 	virtual void setForeground(const QColor &color) { Q_UNUSED(color); }
 
+	//! Set the background color
+	virtual void setBackground(const QColor &color) { Q_UNUSED(color); }
+
 	/**
 	 * @brief Quick adjust a tool parameter
 	 *

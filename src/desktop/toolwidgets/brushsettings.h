@@ -38,6 +38,7 @@ public:
 
 	void setActiveTool(tools::Tool::Type tool) override;
 	void setForeground(const QColor &color) override;
+	void setBackground(const QColor &color) override;
 	void quickAdjust1(qreal adjustment) override;
 	void stepAdjust1(bool increase) override;
 
@@ -104,6 +105,7 @@ public slots:
 signals:
 	void presetIdChanged(int presetId);
 	void colorChanged(const QColor &color);
+	void backgroundColorChanged(const QColor &color);
 	void eraseModeChanged(bool erase);
 	void subpixelModeChanged(bool subpixel, bool square);
 	void blendModeChanged(int blendMode);
