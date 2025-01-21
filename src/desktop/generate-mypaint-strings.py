@@ -30,6 +30,10 @@ def generate_function(
     print(f"\tswitch({param_name}) {{")
     for i, value in enumerate(values):
         print(f"\tcase {i}:")
+        print(
+            "\t\t//: This text comes from the MyPaint brush engine. "
+            + "You can skip translating it if it's too difficult."
+        )
         comment = value.get(comment_key)
         if comment:
             for comment_line in comment.splitlines():

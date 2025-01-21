@@ -10,45 +10,63 @@ QString BrushSettingsDialog::getMyPaintInputTitle(int input)
 {
 	switch(input) {
 	case 0:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Pressure", "mypaintinput");
 	case 1:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		//: "fine" refers to the accuracy and update frequency of the speed value, as in "fine grained"
 		return tr("Fine speed", "mypaintinput");
 	case 2:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		//: changes more smoothly but is less accurate than "Fine speed"
 		return tr("Gross speed", "mypaintinput");
 	case 3:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Random", "mypaintinput");
 	case 4:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Stroke", "mypaintinput");
 	case 5:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Direction", "mypaintinput");
 	case 6:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Declination/Tilt", "mypaintinput");
 	case 7:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Ascension", "mypaintinput");
 	case 8:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		//: the input is the output of the "Custom input" setting
 		return tr("Custom", "mypaintinput");
 	case 9:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		//: refers to the direction of the stroke
 		return tr("Direction 360", "mypaintinput");
 	case 10:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Attack Angle", "mypaintinput");
 	case 11:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Declination/Tilt X", "mypaintinput");
 	case 12:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Declination/Tilt Y", "mypaintinput");
 	case 13:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("GridMap X", "mypaintinput");
 	case 14:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("GridMap Y", "mypaintinput");
 	case 15:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		//: refers to canvas zoom
 		return tr("Zoom Level", "mypaintinput");
 	case 16:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Barrel Rotation", "mypaintinput");
 	case 17:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Base Brush Radius", "mypaintinput");
 	default:
 		return tr("Unknown Input", "mypaintinput");
@@ -59,40 +77,58 @@ QString BrushSettingsDialog::getMyPaintInputDescription(int input)
 {
 	switch(input) {
 	case 0:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("The pressure reported by the tablet. Usually between 0.0 and 1.0, but it may get larger when a pressure gain is used. If you use the mouse, it will be 0.5 when a button is pressed and 0.0 otherwise.", "mypaintinput");
 	case 1:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("How fast you currently move. This can change very quickly. Try 'print input values' from the 'help' menu to get a feeling for the range; negative values are rare but possible for very low speed.", "mypaintinput");
 	case 2:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Same as fine speed, but changes slower. Also look at the 'gross speed filter' setting.", "mypaintinput");
 	case 3:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Fast random noise, changing at each evaluation. Evenly distributed between 0 and 1.", "mypaintinput");
 	case 4:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the 'stroke duration' and 'stroke hold time' settings.", "mypaintinput");
 	case 5:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.", "mypaintinput");
 	case 6:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Declination of stylus tilt. 0 when stylus is parallel to tablet and 90.0 when it's perpendicular to tablet.", "mypaintinput");
 	case 7:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Right ascension of stylus tilt. 0 when stylus working end points to you, +90 when rotated 90 degrees clockwise, -90 when rotated 90 degrees counterclockwise.", "mypaintinput");
 	case 8:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("This is a user defined input. Look at the 'custom input' setting for details.", "mypaintinput");
 	case 9:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("The angle of the stroke, from 0 to 360 degrees.", "mypaintinput");
 	case 10:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("The difference, in degrees, between the angle the stylus is pointing and the angle of the stroke movement.\nThe range is +/-180.0.\n0.0 means the stroke angle corresponds to the angle of the stylus.\n90 means the stroke angle is perpendicular to the angle of the stylus.\n180 means the angle of the stroke is directly opposite the angle of the stylus.", "mypaintinput");
 	case 11:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Declination of stylus tilt on X-Axis. 90/-90 when stylus is parallel to tablet and 0 when it's perpendicular to tablet.", "mypaintinput");
 	case 12:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Declination of stylus tilt on Y-Axis. 90/-90 when stylus is parallel to tablet and 0 when it's perpendicular to tablet.", "mypaintinput");
 	case 13:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("The X coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the X axis. Similar to \"Stroke\". Can be used to add paper texture by modifying opacity, etc.\nThe brush size should be considerably smaller than the grid scale for best results.", "mypaintinput");
 	case 14:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("The Y coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the Y axis. Similar to \"Stroke\". Can be used to add paper texture by modifying opacity, etc.\nThe brush size should be considerably smaller than the grid scale for best results.", "mypaintinput");
 	case 15:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("The current zoom level of the canvas view.\nLogarithmic: 0.0 is 100%, 0.69 is 200%, -1.38 is 25%\nFor the Radius setting, using a value of -4.15 makes the brush size roughly constant, relative to the level of zoom.", "mypaintinput");
 	case 16:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Barrel rotation of stylus.\n0 when not twisted\n+90 when twisted clockwise 90 degrees\n-90 when twisted counterclockwise 90 degrees", "mypaintinput");
 	case 17:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("The base brush radius allows you to change the behavior of a brush as you make it bigger or smaller.\nYou can even cancel out dab size increase and adjust something else to make a brush bigger.\nTake note of \"Dabs per basic radius\" and \"Dabs per actual radius\", which behave much differently.", "mypaintinput");
 	default:
 		return QString{};
@@ -103,132 +139,196 @@ QString BrushSettingsDialog::getMyPaintSettingTitle(int setting)
 {
 	switch(setting) {
 	case 0:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Opacity", "mypaintsetting");
 	case 1:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Opacity multiply", "mypaintsetting");
 	case 2:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Opacity linearize", "mypaintsetting");
 	case 3:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Radius", "mypaintsetting");
 	case 4:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Hardness", "mypaintsetting");
 	case 5:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Pixel feather", "mypaintsetting");
 	case 6:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Dabs per basic radius", "mypaintsetting");
 	case 7:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Dabs per actual radius", "mypaintsetting");
 	case 8:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Dabs per second", "mypaintsetting");
 	case 9:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Radius by random", "mypaintsetting");
 	case 10:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Fine speed filter", "mypaintsetting");
 	case 11:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Gross speed filter", "mypaintsetting");
 	case 12:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Fine speed gamma", "mypaintsetting");
 	case 13:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Gross speed gamma", "mypaintsetting");
 	case 14:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Jitter", "mypaintsetting");
 	case 15:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Offset by speed", "mypaintsetting");
 	case 16:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Offset by speed filter", "mypaintsetting");
 	case 17:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Slow position tracking", "mypaintsetting");
 	case 18:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Slow tracking per dab", "mypaintsetting");
 	case 19:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Tracking noise", "mypaintsetting");
 	case 20:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Color hue", "mypaintsetting");
 	case 21:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Color saturation", "mypaintsetting");
 	case 22:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Color value", "mypaintsetting");
 	case 23:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Save color", "mypaintsetting");
 	case 24:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Change color hue", "mypaintsetting");
 	case 25:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Change color lightness (HSL)", "mypaintsetting");
 	case 26:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Change color satur. (HSL)", "mypaintsetting");
 	case 27:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Change color value (HSV)", "mypaintsetting");
 	case 28:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Change color satur. (HSV)", "mypaintsetting");
 	case 29:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Smudge", "mypaintsetting");
 	case 30:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Smudge length", "mypaintsetting");
 	case 31:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Smudge radius", "mypaintsetting");
 	case 32:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Eraser", "mypaintsetting");
 	case 33:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Stroke threshold", "mypaintsetting");
 	case 34:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Stroke duration", "mypaintsetting");
 	case 35:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Stroke hold time", "mypaintsetting");
 	case 36:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Custom input", "mypaintsetting");
 	case 37:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Custom input filter", "mypaintsetting");
 	case 38:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Elliptical dab: ratio", "mypaintsetting");
 	case 39:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Elliptical dab: angle", "mypaintsetting");
 	case 40:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Direction filter", "mypaintsetting");
 	case 41:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Lock alpha", "mypaintsetting");
 	case 42:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Colorize", "mypaintsetting");
 	case 43:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Snap to pixel", "mypaintsetting");
 	case 44:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Pressure gain", "mypaintsetting");
 	case 45:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("GridMap Scale", "mypaintsetting");
 	case 46:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("GridMap Scale X", "mypaintsetting");
 	case 47:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("GridMap Scale Y", "mypaintsetting");
 	case 48:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Smudge length multiplier", "mypaintsetting");
 	case 49:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Smudge bucket", "mypaintsetting");
 	case 50:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Smudge transparency", "mypaintsetting");
 	case 51:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Offset Y", "mypaintsetting");
 	case 52:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Offset X", "mypaintsetting");
 	case 53:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Angular Offset: Direction", "mypaintsetting");
 	case 54:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Angular Offset: Ascension", "mypaintsetting");
 	case 55:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Angular Offset: View", "mypaintsetting");
 	case 56:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Angular Offset Mirrored: Direction", "mypaintsetting");
 	case 57:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Angular Offset Mirrored: Ascension", "mypaintsetting");
 	case 58:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Angular Offset Mirrored: View", "mypaintsetting");
 	case 59:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Angular Offsets Adjustment", "mypaintsetting");
 	case 60:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Offsets Multiplier", "mypaintsetting");
 	case 61:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Posterize", "mypaintsetting");
 	case 62:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Posterization levels", "mypaintsetting");
 	case 63:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		//: The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.
 		return tr("Pigment", "mypaintsetting");
 	default:
@@ -240,132 +340,196 @@ QString BrushSettingsDialog::getMyPaintSettingDescription(int setting)
 {
 	switch(setting) {
 	case 0:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("0 means brush is transparent, 1 fully visible\n(also known as alpha or opacity)", "mypaintsetting");
 	case 1:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("This gets multiplied with opaque. You should only change the pressure input of this setting. Use 'opaque' instead to make opacity depend on speed.\nThis setting is responsible to stop painting when there is zero pressure. This is just a convention, the behaviour is identical to 'opaque'.", "mypaintsetting");
 	case 2:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Correct the nonlinearity introduced by blending multiple dabs on top of each other. This correction should get you a linear (\"natural\") pressure response when pressure is mapped to opaque_multiply, as it is usually done. 0.9 is good for standard strokes, set it smaller if your brush scatters a lot, or higher if you use dabs_per_second.\n0.0 the opaque value above is for the individual dabs\n1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke", "mypaintsetting");
 	case 3:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Basic brush radius (logarithmic)\n 0.7 means 2 pixels\n 3.0 means 20 pixels", "mypaintsetting");
 	case 4:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Hard brush-circle borders (setting to zero will draw nothing). To reach the maximum hardness, you need to disable Pixel feather.", "mypaintsetting");
 	case 5:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("This setting decreases the hardness when necessary to prevent a pixel staircase effect (aliasing) by making the dab more blurred.\n 0.0 disable (for very strong erasers and pixel brushes)\n 1.0 blur one pixel (good value)\n 5.0 notable blur, thin strokes will disappear", "mypaintsetting");
 	case 6:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)", "mypaintsetting");
 	case 7:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Same as above, but the radius actually drawn is used, which can change dynamically", "mypaintsetting");
 	case 8:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Dabs to draw each second, no matter how far the pointer moves", "mypaintsetting");
 	case 9:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Alter the radius randomly each dab. You can also do this with the by_random input on the radius setting. If you do it here, there are two differences:\n1) the opaque value will be corrected such that a big-radius dabs is more transparent\n2) it will not change the actual radius seen by dabs_per_actual_radius", "mypaintsetting");
 	case 10:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("How slow the input fine speed is following the real speed\n0.0 change immediately as your speed changes (not recommended, but try it)", "mypaintsetting");
 	case 11:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Same as 'fine speed filter', but note that the range is different", "mypaintsetting");
 	case 12:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("This changes the reaction of the 'fine speed' input to extreme physical speed. You will see the difference best if 'fine speed' is mapped to the radius.\n-8.0 very fast speed does not increase 'fine speed' much more\n+8.0 very fast speed increases 'fine speed' a lot\nFor very slow speed the opposite happens.", "mypaintsetting");
 	case 13:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Same as 'fine speed gamma' for gross speed", "mypaintsetting");
 	case 14:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Add a random offset to the position where each dab is drawn\n 0.0 disabled\n 1.0 standard deviation is one basic radius away\n<0.0 negative values produce no jitter", "mypaintsetting");
 	case 15:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Change position depending on pointer speed\n= 0 disable\n> 0 draw where the pointer moves to\n< 0 draw where the pointer comes from", "mypaintsetting");
 	case 16:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("How slow the offset goes back to zero when the cursor stops moving", "mypaintsetting");
 	case 17:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.", "mypaintsetting");
 	case 18:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Similar as above but at brushdab level (ignoring how much time has passed if brushdabs do not depend on time)", "mypaintsetting");
 	case 19:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with 'slow tracking'", "mypaintsetting");
 	case 20:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Color hue", "mypaintsetting");
 	case 21:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Color saturation", "mypaintsetting");
 	case 22:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Color value (brightness, intensity)", "mypaintsetting");
 	case 23:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("When selecting a brush, the color can be restored to the color that the brush was saved with.\n 0.0 do not modify the active color when selecting this brush\n 0.5 change active color towards brush color\n 1.0 set the active color to the brush color when selected", "mypaintsetting");
 	case 24:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Change color hue.\n-0.1 small clockwise color hue shift\n 0.0 disable\n 0.5 counterclockwise hue shift by 180 degrees", "mypaintsetting");
 	case 25:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Change the color lightness using the HSL color model.\n-1.0 blacker\n 0.0 disable\n 1.0 whiter", "mypaintsetting");
 	case 26:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Change the color saturation using the HSL color model.\n-1.0 more grayish\n 0.0 disable\n 1.0 more saturated", "mypaintsetting");
 	case 27:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Change the color value (brightness, intensity) using the HSV color model. HSV changes are applied before HSL.\n-1.0 darker\n 0.0 disable\n 1.0 brigher", "mypaintsetting");
 	case 28:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Change the color saturation using the HSV color model. HSV changes are applied before HSL.\n-1.0 more grayish\n 0.0 disable\n 1.0 more saturated", "mypaintsetting");
 	case 29:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Paint with the smudge color instead of the brush color. The smudge color is slowly changed to the color you are painting on.\n 0.0 do not use the smudge color\n 0.5 mix the smudge color with the brush color\n 1.0 use only the smudge color", "mypaintsetting");
 	case 30:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("This controls how fast the smudge color becomes the color you are painting on.\n0.0 immediately update the smudge color (requires more CPU cycles because of the frequent color checks)\n0.5 change the smudge color steadily towards the canvas color\n1.0 never change the smudge color", "mypaintsetting");
 	case 31:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("This modifies the radius of the circle where color is picked up for smudging.\n 0.0 use the brush radius\n-0.7 half the brush radius (fast, but not always intuitive)\n+0.7 twice the brush radius\n+1.6 five times the brush radius (slow performance)", "mypaintsetting");
 	case 32:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("how much this tool behaves like an eraser\n 0.0 normal painting\n 1.0 standard eraser\n 0.5 pixels go towards 50% transparency", "mypaintsetting");
 	case 33:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.", "mypaintsetting");
 	case 34:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("How far you have to move until the stroke input reaches 1.0. This value is logarithmic (negative values will not invert the process).", "mypaintsetting");
 	case 35:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("This defines how long the stroke input stays at 1.0. After that it will reset to 0.0 and start growing again, even if the stroke is not yet finished.\n2.0 means twice as long as it takes to go from 0.0 to 1.0\n9.9 or higher stands for infinite", "mypaintsetting");
 	case 36:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Set the custom input to this value. If it is slowed down, move it towards this value (see below). The idea is that you make this input depend on a mixture of pressure/speed/whatever, and then make other settings depend on this 'custom input' instead of repeating this combination everywhere you need it.\nIf you make it change 'by random' you can generate a slow (smooth) random input.", "mypaintsetting");
 	case 37:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("How slow the custom input actually follows the desired value (the one above). This happens at brushdab level (ignoring how much time has passed, if brushdabs do not depend on time).\n0.0 no slowdown (changes apply instantly)", "mypaintsetting");
 	case 38:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Aspect ratio of the dabs; must be >= 1.0, where 1.0 means a perfectly round dab.", "mypaintsetting");
 	case 39:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Angle by which elliptical dabs are tilted\n 0.0 horizontal dabs\n 45.0 45 degrees, turned clockwise\n 180.0 horizontal again", "mypaintsetting");
 	case 40:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("A low value will make the direction input adapt more quickly, a high value will make it smoother", "mypaintsetting");
 	case 41:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Do not modify the alpha channel of the layer (paint only where there is paint already)\n 0.0 normal painting\n 0.5 half of the paint gets applied normally\n 1.0 alpha channel fully locked", "mypaintsetting");
 	case 42:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Colorize the target layer, setting its hue and saturation from the active brush color while retaining its value and alpha.", "mypaintsetting");
 	case 43:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Snap brush dab's center and its radius to pixels. Set this to 1.0 for a thin pixel brush.", "mypaintsetting");
 	case 44:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("This changes how hard you have to press. It multiplies tablet pressure by a constant factor.", "mypaintsetting");
 	case 45:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Changes the overall scale that the GridMap brush input operates on.\nLogarithmic (same scale as brush radius).\nA scale of 0 will make the grid 256x256 pixels.", "mypaintsetting");
 	case 46:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Changes the scale that the GridMap brush input operates on - affects X axis only.\nThe range is 0-5x.\nThis allows you to stretch or compress the GridMap pattern.", "mypaintsetting");
 	case 47:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Changes the scale that the GridMap brush input operates on - affects Y axis only.\nThe range is 0-5x.\nThis allows you to stretch or compress the GridMap pattern.", "mypaintsetting");
 	case 48:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Logarithmic multiplier for the \"Smudge length\" value.\nUseful to correct for high-definition/large brushes with lots of dabs.\nThe longer the smudge length the more a color will spread and will also boost performance dramatically, as the canvas is sampled less often", "mypaintsetting");
 	case 49:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("There are 256 buckets that each can hold a color picked up from the canvas.\nYou can control which bucket to use to improve variability and realism of the brush.\nEspecially useful with the \"Custom input\" setting to correlate buckets with other settings such as offsets.", "mypaintsetting");
 	case 50:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Control how much transparency is picked up and smudged, similar to lock alpha.\n1.0 will not move any transparency.\n0.5 will move only 50% transparency and above.\n0.0 will have no effect.\nNegative values do the reverse", "mypaintsetting");
 	case 51:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Moves the dabs up or down based on canvas coordinates.", "mypaintsetting");
 	case 52:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Moves the dabs left or right based on canvas coordinates.", "mypaintsetting");
 	case 53:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Follows the stroke direction to offset the dabs to one side.", "mypaintsetting");
 	case 54:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Follows the tilt direction to offset the dabs to one side. Requires Tilt.", "mypaintsetting");
 	case 55:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Follows the view orientation to offset the dabs to one side.", "mypaintsetting");
 	case 56:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Follows the stroke direction to offset the dabs, but to both sides of the stroke.", "mypaintsetting");
 	case 57:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Follows the tilt direction to offset the dabs, but to both sides of the stroke. Requires Tilt.", "mypaintsetting");
 	case 58:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Follows the view orientation to offset the dabs, but to both sides of the stroke.", "mypaintsetting");
 	case 59:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Change the Angular Offset angle from the default, which is 90 degrees.", "mypaintsetting");
 	case 60:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Logarithmic multiplier for X, Y, and Angular Offset settings.", "mypaintsetting");
 	case 61:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Strength of posterization, reducing number of colors based on the \"Posterization levels\" setting, while retaining alpha.", "mypaintsetting");
 	case 62:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		return tr("Number of posterization levels (divided by 100).\n0.05 = 5 levels, 0.2 = 20 levels, etc.\nValues above 0.5 may not be noticeable.", "mypaintsetting");
 	case 63:
+		//: This text comes from the MyPaint brush engine. You can skip translating it if it's too difficult.
 		//: If this string is difficult to translate, feel free to change it to something more descriptive. Just try to be succinct and consistent.
 		return tr("Subtractive spectral color mixing mode.\n0.0 no spectral mixing\n1.0 only spectral mixing", "mypaintsetting");
 	default:
