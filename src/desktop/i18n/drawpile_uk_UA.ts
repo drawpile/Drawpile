@@ -5072,85 +5072,85 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>Zoom Level</source>
         <comment>mypaintinput</comment>
         <extracomment>refers to canvas zoom</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Рівень масштабування</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Barrel Rotation</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Обертання бочки</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Base Brush Radius</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Базовий радіус пензля</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Input</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Невідомий вхід</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>The pressure reported by the tablet. Usually between 0.0 and 1.0, but it may get larger when a pressure gain is used. If you use the mouse, it will be 0.5 when a button is pressed and 0.0 otherwise.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Тиск, який повідомляє планшет. Зазвичай між 0,0 і 1,0, але воно може бути більшим, якщо використовується посилення тиску. Якщо ви використовуєте мишу, значення буде 0,5 під час натискання кнопки та 0,0 в іншому випадку.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Як швидко ви зараз рухаєтеся. Це може змінитися дуже швидко. Спробуйте «надрукувати введені значення» з меню «Довідка», щоб зрозуміти діапазон; негативні значення зустрічаються рідко, але можливі для дуже низьких швидкостей.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Те саме, що й висока швидкість, але змінюється повільніше. Також подивіться на параметр «фільтр загальної швидкості».</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fast random noise, changing at each evaluation. Evenly distributed between 0 and 1.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Швидкий випадковий шум, що змінюється при кожній оцінці. Рівномірно розподілені між 0 і 1.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the &apos;stroke duration&apos; and &apos;stroke hold time&apos; settings.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Цей вхід повільно переходить від нуля до одиниці, поки ви малюєте штрих. Його також можна налаштувати на періодичне повернення до нуля під час руху. Подивіться на параметри «тривалість удару» та «час утримання удару».</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Кут нахилу, град. Значення залишатиметься між 0,0 і 180,0, фактично ігноруючи повороти на 180 градусів.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination of stylus tilt. 0 when stylus is parallel to tablet and 90.0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Схилення нахилу стилуса. 0, коли стилус розташований паралельно планшету, і 90,0, коли він перпендикулярний планшету.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right ascension of stylus tilt. 0 when stylus working end points to you, +90 when rotated 90 degrees clockwise, -90 when rotated 90 degrees counterclockwise.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Пряме сходження нахилу стилуса. 0, коли робочий кінець стилуса вказує на вас, +90, коли повернуто на 90 градусів за годинниковою стрілкою, -90, коли повернуто на 90 градусів проти годинникової стрілки.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Це визначений користувачем вхід. Подивіться на налаштування «користувацьке введення», щоб дізнатися більше.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The angle of the stroke, from 0 to 360 degrees.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Кут ходу від 0 до 360 градусів.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5160,33 +5160,39 @@ The range is +/-180.0.
 90 means the stroke angle is perpendicular to the angle of the stylus.
 180 means the angle of the stroke is directly opposite the angle of the stylus.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Різниця в градусах між кутом наведення стилуса та кутом руху штриха. 
+Діапазон +/-180,0. 
+0,0 означає, що кут штриха відповідає куту стилуса. 
+90 означає, що кут ходу перпендикулярний до кута стилуса. 
+180 означає, що кут штриха прямо протилежний куту стилуса.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination of stylus tilt on X-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Відхилення нахилу стилуса на осі X. 90/-90, коли стилус розташований паралельно планшету, і 0, коли він перпендикулярний планшету.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination of stylus tilt on Y-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Відхилення нахилу стилуса по осі Y. 90/-90, коли стилус розташований паралельно планшету, і 0, коли він перпендикулярний планшету.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The X coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the X axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Координата X на сітці розміром 256 пікселів. Це обертатиметься навколо 0-256 під час переміщення курсору по осі X. Схожий на «Інсульт». Можна використовувати для додавання текстури паперу шляхом зміни прозорості тощо. 
+Для найкращих результатів розмір пензля має бути значно меншим за масштаб сітки.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The Y coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the Y axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Координата Y на сітці розміром 256 пікселів. Це обертатиметься навколо 0-256 під час переміщення курсору по осі Y. Схожий на «Інсульт». Можна використовувати для додавання текстури паперу шляхом зміни прозорості тощо. 
+Для найкращих результатів розмір пензля має бути значно меншим за масштаб сітки.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5194,7 +5200,9 @@ The brush size should be considerably smaller than the grid scale for best resul
 Logarithmic: 0.0 is 100%, 0.69 is 200%, -1.38 is 25%
 For the Radius setting, using a value of -4.15 makes the brush size roughly constant, relative to the level of zoom.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Поточний рівень масштабування полотна. 
+Логарифмічний: 0,0 — 100%, 0,69 — 200%, -1,38 — 25% 
+Для параметра «Радіус» використання значення -4,15 робить розмір пензля приблизно постійним відносно рівня масштабування.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5203,7 +5211,10 @@ For the Radius setting, using a value of -4.15 makes the brush size roughly cons
 +90 when twisted clockwise 90 degrees
 -90 when twisted counterclockwise 90 degrees</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Обертання ствола стилуса.
+0 коли не скручений
++90 при повороті за годинниковою стрілкою на 90 градусів
+-90 при повороті проти годинникової стрілки на 90 градусів</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5211,345 +5222,347 @@ For the Radius setting, using a value of -4.15 makes the brush size roughly cons
 You can even cancel out dab size increase and adjust something else to make a brush bigger.
 Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&quot;, which behave much differently.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Базовий радіус пензля дозволяє змінювати поведінку пензля, коли ви його збільшуєте або зменшуєте. 
+Ви навіть можете скасувати збільшення розміру мазка та налаштувати щось інше, щоб збільшити пензель. 
+Зверніть увагу на «Маскування за основним радіусом» і «Маскування за фактичним радіусом», які поводяться по-різному.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Opacity</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Непрозорість</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Opacity multiply</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Непрозорість множиться</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Opacity linearize</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Лінеаризувати непрозорість</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Радіус</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hardness</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Твердість</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pixel feather</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Піксельне перо</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per basic radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Мазки на основний радіус</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per actual radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Мазки на фактичний радіус</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per second</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Помазків за секунду</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Radius by random</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Радіус випадковим чином</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fine speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Фільтр тонкої швидкості</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Gross speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Фільтр загальної швидкості</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fine speed gamma</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Висока гамма швидкості</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Gross speed gamma</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Гамма загальної швидкості</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Jitter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Джиттер</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset by speed</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Компенсація швидкістю</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset by speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Зсув фільтром швидкості</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slow position tracking</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Повільне відстеження позиції</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slow tracking per dab</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Повільне відстеження за мазком</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tracking noise</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Відстеження шуму</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+137"/>
         <source>Color hue</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Колірний відтінок</translation>
     </message>
     <message>
         <location line="-135"/>
         <location line="+137"/>
         <source>Color saturation</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Насиченість кольору</translation>
     </message>
     <message>
         <location line="-135"/>
         <source>Color value</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Значення кольору</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save color</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти колір</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change color hue</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Зміна відтінку кольору</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change color lightness (HSL)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Зміна яскравості кольору (HSL)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change color satur. (HSL)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Зміна насиченого кольору. (HSL)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change color value (HSV)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Змінити значення кольору (HSV)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change color satur. (HSV)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Зміна насиченого кольору. (HSV)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Розмазати</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge length</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Довжина плями</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Радіус плями</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Eraser</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Гумка</translation>
+        <translation>Гумка</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke threshold</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Поріг інсульту</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke duration</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Тривалість інсульту</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke hold time</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Час утримання ходу</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Custom input</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Спеціальне введення</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Custom input filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Спеціальний фільтр введення</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Elliptical dab: ratio</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Еліптичний мазок: співвідношення</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Elliptical dab: angle</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Еліптичний мазок: кут</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Direction filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Фільтр напрямку</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Lock alpha</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Блокування альфа</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Colorize</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Розфарбувати</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Snap to pixel</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Прив’язка до пікселя</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure gain</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Збільшення тиску</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap Scale</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Масштаб GridMap</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap Scale X</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Масштаб GridMap X</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap Scale Y</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Масштаб GridMap Y</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge length multiplier</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Множник довжини плями</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge bucket</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Відро для розмазування</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge transparency</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Розмазати прозорість</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset Y</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Зсув Y</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset X</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Зсув X</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset: Direction</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Кутове зміщення: напрямок</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset: Ascension</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Кутове зміщення: сходження</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset: View</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Кутове зміщення: вид</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5604,21 +5617,23 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Unknown Setting</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Невідоме налаштування</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>0 means brush is transparent, 1 fully visible
 (also known as alpha or opacity)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>0 означає, що кисть прозора, 1 повністю видно
+(також відомий як альфа або непрозорість)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This gets multiplied with opaque. You should only change the pressure input of this setting. Use &apos;opaque&apos; instead to make opacity depend on speed.
 This setting is responsible to stop painting when there is zero pressure. This is just a convention, the behaviour is identical to &apos;opaque&apos;.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Це множиться на непрозорий. Ви повинні змінити лише вхідний тиск цього параметра. Натомість використовуйте «opaque», щоб зробити непрозорість залежною від швидкості. 
+Цей параметр відповідає за припинення фарбування, коли тиск нульовий. Це лише домовленість, поведінка ідентична «непрозорому».</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5626,7 +5641,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
 0.0 the opaque value above is for the individual dabs
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Виправте нелінійність, змішавши кілька мазків один на одного. Ця корекція має отримати лінійну («природну») відповідь на тиск, коли тиск зіставляється з opaque_multiply, як це зазвичай робиться. 0,9 підходить для стандартних штрихів, встановіть його менше, якщо ваш пензель сильно розсіюється, або вище, якщо ви використовуєте dabs_per_second. 
+0,0 значення непрозорості вище для окремих мазків 
+1.0 значення непрозорості вище для останнього мазка пензля, припускаючи, що кожен піксель отримує (dabs_per_radius*2) мазків пензля в середньому під час штриха</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5634,13 +5651,15 @@ This setting is responsible to stop painting when there is zero pressure. This i
  0.7 means 2 pixels
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Базовий радіус пензля (логарифмічний)
+ 0,7 означає 2 пікселі
+ 3.0 означає 20 пікселів</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hard brush-circle borders (setting to zero will draw nothing). To reach the maximum hardness, you need to disable Pixel feather.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Жорсткі межі кіл пензля (установлення на нуль нічого не намалює). Щоб досягти максимальної жорсткості, потрібно вимкнути піксельне перо.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5649,25 +5668,28 @@ This setting is responsible to stop painting when there is zero pressure. This i
  1.0 blur one pixel (good value)
  5.0 notable blur, thin strokes will disappear</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Цей параметр зменшує жорсткість, якщо це необхідно, щоб запобігти ефекту піксельних сходів (згладжування), роблячи мазок більш розмитим. 
+ 0.0 вимкнено (для дуже сильних гумок і піксельних пензлів) 
+ 1.0 розмиття одного пікселя (гарне значення) 
+ 5.0 помітне розмиття, тонкі штрихи зникнуть</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Скільки мазків потрібно намалювати, поки вказівник переміщується на один радіус пензля (точніше: базове значення радіуса)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Те саме, що й вище, але використовується фактично намальований радіус, який може динамічно змінюватися</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs to draw each second, no matter how far the pointer moves</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Малювання щосекунди, незалежно від того, наскільки далеко переміститься вказівник</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5675,20 +5697,23 @@ This setting is responsible to stop painting when there is zero pressure. This i
 1) the opaque value will be corrected such that a big-radius dabs is more transparent
 2) it will not change the actual radius seen by dabs_per_actual_radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Довільно змінюйте радіус кожного мазка. Ви також можете зробити це за допомогою параметра by_random у налаштуванні радіуса. Якщо ви зробите це тут, є дві відмінності: 
+1) значення непрозорості буде виправлено таким чином, що мазки з великим радіусом будуть більш прозорими 
+2) це не змінить фактичний радіус, видимий dabs_per_actual_radius</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How slow the input fine speed is following the real speed
 0.0 change immediately as your speed changes (not recommended, but try it)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Наскільки повільно вхідна точна швидкість відповідає реальній швидкості
+0.0 змінюватися відразу, коли змінюється ваша швидкість (не рекомендується, але спробуйте)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as &apos;fine speed filter&apos;, but note that the range is different</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Те саме, що «фільтр тонкої швидкості», але зауважте, що діапазон відрізняється</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5697,13 +5722,16 @@ This setting is responsible to stop painting when there is zero pressure. This i
 +8.0 very fast speed increases &apos;fine speed&apos; a lot
 For very slow speed the opposite happens.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Це змінює реакцію введення «високої швидкості» на екстремальну фізичну швидкість. Ви побачите різницю найкраще, якщо «точну швидкість» зіставити з радіусом. 
+-8.0 дуже висока швидкість не збільшує «високу швидкість» набагато більше 
++8,0 дуже висока швидкість значно збільшує «високу швидкість». 
+Для дуже низької швидкості відбувається навпаки.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as &apos;fine speed gamma&apos; for gross speed</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Те саме, що «точна гамма швидкості» для загальної швидкості</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5712,7 +5740,10 @@ For very slow speed the opposite happens.</source>
  1.0 standard deviation is one basic radius away
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Додайте випадкове зміщення до позиції, де намальовано кожен штрих
+ 0.0 вимкнено
+ Стандартне відхилення 1,0 становить один базовий радіус
+Від&apos;ємні значення &lt;0,0 не викликають тремтіння</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5721,37 +5752,40 @@ For very slow speed the opposite happens.</source>
 &gt; 0 draw where the pointer moves to
 &lt; 0 draw where the pointer comes from</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Змінюйте положення залежно від швидкості покажчика
+= 0 вимкнути
+&gt; 0 намалюйте куди перемістить вказівник
+&lt; 0 намалюйте місце, звідки походить покажчик</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How slow the offset goes back to zero when the cursor stops moving</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Як повільно зсув повертається до нуля, коли курсор припиняє рухатися</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Швидкість відстеження покажчика уповільнення. 0 вимикає його, вищі значення усувають більше тремтіння під час переміщення курсору. Корисно для малювання гладких комічних контурів.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Similar as above but at brushdab level (ignoring how much time has passed if brushdabs do not depend on time)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Подібно до вищезазначеного, але на рівні мазків (не враховуючи, скільки часу минуло, якщо мазки не залежать від часу)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Додайте випадковість вказівника миші; це зазвичай генерує багато маленьких ліній у випадкових напрямках; можливо, спробуйте це разом із &quot;повільним відстеженням&quot;</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color value (brightness, intensity)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Значення кольору (яскравість, інтенсивність)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5760,7 +5794,10 @@ For very slow speed the opposite happens.</source>
  0.5 change active color towards brush color
  1.0 set the active color to the brush color when selected</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Під час вибору пензля колір можна відновити до кольору, з яким було збережено пензель. 
+ 0.0 не змінювати активний колір під час вибору цього пензля 
+ 0,5 змінює активний колір на колір пензля 
+ 1.0 встановіть активним кольором колір пензля, якщо його вибрано</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5769,7 +5806,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  0.5 counterclockwise hue shift by 180 degrees</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Зміна відтінку кольору.
+-0,1 малий зсув колірного відтінку за годинниковою стрілкою
+ 0.0 вимкнути
+ 0,5 проти годинникової стрілки, зсув відтінку на 180 градусів</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5778,7 +5818,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 whiter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Змініть яскравість кольору за допомогою колірної моделі HSL.
+-1,0 чорніше
+ 0.0 вимкнути
+ 1,0 біліше</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5787,7 +5830,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Змініть насиченість кольору за допомогою колірної моделі HSL.
+-1,0 більш сіруватий
+ 0.0 вимкнути
+ 1,0 більш насичений</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5796,7 +5842,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 brigher</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Змініть значення кольору (яскравість, інтенсивність) за допомогою колірної моделі HSV. Зміни HSV застосовуються перед HSL.
+-1,0 темніше
+ 0.0 вимкнути
+ 1.0 яскравіше</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5805,7 +5854,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Змініть насиченість кольору за допомогою колірної моделі HSV. Зміни HSV застосовуються перед HSL.
+-1,0 більш сіруватий
+ 0.0 вимкнути
+ 1,0 більш насиченим</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5814,7 +5866,10 @@ For very slow speed the opposite happens.</source>
  0.5 mix the smudge color with the brush color
  1.0 use only the smudge color</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Малюйте кольором розмазування замість кольору пензля. Колір плями повільно змінюється на колір, на якому ви малюєте. 
+ 0.0 не використовувати колір розмазування 
+ 0,5 змішайте колір розмазування з кольором пензля 
+ 1.0 використовуйте лише колір плями</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5823,7 +5878,10 @@ For very slow speed the opposite happens.</source>
 0.5 change the smudge color steadily towards the canvas color
 1.0 never change the smudge color</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Це визначає, як швидко колір плями стає кольором, на якому ви малюєте. 
+0.0 негайно оновити колір плям (потрібно більше циклів ЦП через часті перевірки кольорів) 
+0,5 плавно змінює колір плями до кольору полотна 
+1.0 ніколи не змінюйте колір плями</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5833,7 +5891,11 @@ For very slow speed the opposite happens.</source>
 +0.7 twice the brush radius
 +1.6 five times the brush radius (slow performance)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Це змінює радіус кола, де колір вибирається для розмазування. 
+ 0,0 використовувати радіус пензля 
+-0,7 половини радіуса пензля (швидко, але не завжди інтуїтивно зрозуміло) 
++0,7 подвоєного радіуса пензля 
++1,6 у п’ять разів більше радіуса пензля (повільна продуктивність)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5842,19 +5904,22 @@ For very slow speed the opposite happens.</source>
  1.0 standard eraser
  0.5 pixels go towards 50% transparency</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>наскільки цей інструмент поводиться як ластик
+ 0,0 звичайне фарбування
+ 1.0 стандартна гумка
+ 0,5 пікселя йдуть до 50% прозорості</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Який тиск необхідний для початку інсульту. Це впливає лише на введення обведення. MyPaint не потребує мінімального тиску, щоб почати малювати.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How far you have to move until the stroke input reaches 1.0. This value is logarithmic (negative values will not invert the process).</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Як далеко ви маєте рухатися, поки вхідний сигнал досягне 1,0. Це значення є логарифмічним (від’ємні значення не інвертують процес).</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5862,27 +5927,31 @@ For very slow speed the opposite happens.</source>
 2.0 means twice as long as it takes to go from 0.0 to 1.0
 9.9 or higher stands for infinite</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Це визначає, як довго введення штриха залишається рівним 1,0. Після цього він скинеться до 0,0 і знову почне рости, навіть якщо штрих ще не завершено. 
+2.0 означає вдвічі більше часу, ніж потрібно для переходу від 0.0 до 1.0 
+9.9 або вище означає нескінченність</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set the custom input to this value. If it is slowed down, move it towards this value (see below). The idea is that you make this input depend on a mixture of pressure/speed/whatever, and then make other settings depend on this &apos;custom input&apos; instead of repeating this combination everywhere you need it.
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Установіть це значення для спеціального введення. Якщо він уповільнений, перемістіть його до цього значення (див. нижче). Ідея полягає в тому, що ви робите цей вхід залежним від суміші тиску/швидкості/що завгодно, а потім робите інші параметри залежними від цього &quot;спеціального введення&quot; замість того, щоб повторювати цю комбінацію скрізь, де вам це потрібно. 
+Якщо ви змінюєте його «випадковим чином», ви можете генерувати повільний (плавний) випадковий вхід.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How slow the custom input actually follows the desired value (the one above). This happens at brushdab level (ignoring how much time has passed, if brushdabs do not depend on time).
 0.0 no slowdown (changes apply instantly)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Наскільки повільно користувацький ввід фактично відповідає потрібному значенню (наведеному вище). Це відбувається на рівні мазків (не враховуючи, скільки часу минуло, якщо мазки не залежать від часу). 
+0,0 без уповільнення (зміни застосовуються миттєво)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Aspect ratio of the dabs; must be &gt;= 1.0, where 1.0 means a perfectly round dab.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Співвідношення сторін мазків; має бути &gt;= 1,0, де 1,0 означає ідеально круглий мазок.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5891,13 +5960,16 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  45.0 45 degrees, turned clockwise
  180.0 horizontal again</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Кут нахилу еліптичних мазків
+ 0,0 горизонтальних мазків
+ 45,0 45 градусів, повернуто за годинниковою стрілкою
+ 180,0 знову по горизонталі</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A low value will make the direction input adapt more quickly, a high value will make it smoother</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Низьке значення змусить вхідний напрямок адаптуватися швидше, високе значення зробить його плавнішим</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5906,25 +5978,28 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  0.5 half of the paint gets applied normally
  1.0 alpha channel fully locked</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Не змінюйте альфа-канал шару (малюйте лише там, де вже є фарба)
+ 0,0 звичайне фарбування
+ Нормально наноситься 0,5 половини фарби
+ Альфа-канал 1.0 повністю заблокований</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Colorize the target layer, setting its hue and saturation from the active brush color while retaining its value and alpha.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Розфарбуйте цільовий шар, встановивши його відтінок і насиченість від активного кольору пензля, зберігаючи його значення та альфа-версію.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Snap brush dab&apos;s center and its radius to pixels. Set this to 1.0 for a thin pixel brush.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Прив’яжіть центр мазка пензля та його радіус до пікселів. Встановіть значення 1,0 для тонкого піксельного пензля.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This changes how hard you have to press. It multiplies tablet pressure by a constant factor.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Це змінює силу натискання. Він множить тиск таблетки на постійний коефіцієнт.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5932,7 +6007,9 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
 Logarithmic (same scale as brush radius).
 A scale of 0 will make the grid 256x256 pixels.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Змінює загальний масштаб, у якому працює введення пензля GridMap.
+Логарифмічний (такий самий масштаб, що й радіус пензля).
+Шкала 0 зробить сітку 256x256 пікселів.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5940,7 +6017,9 @@ A scale of 0 will make the grid 256x256 pixels.</source>
 The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Змінює масштаб, у якому працює введення пензля GridMap – впливає лише на вісь X.
+Діапазон 0-5x.
+Це дозволяє розтягнути або стиснути шаблон GridMap.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5948,7 +6027,9 @@ This allows you to stretch or compress the GridMap pattern.</source>
 The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Змінює масштаб, у якому працює введення пензля GridMap – впливає лише на вісь Y.
+Діапазон 0-5x.
+Це дозволяє розтягнути або стиснути шаблон GridMap.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5956,7 +6037,9 @@ This allows you to stretch or compress the GridMap pattern.</source>
 Useful to correct for high-definition/large brushes with lots of dabs.
 The longer the smudge length the more a color will spread and will also boost performance dramatically, as the canvas is sampled less often</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Логарифмічний множник для значення «Довжина плями».
+Корисно для корекції високої чіткості/великих пензлів із великою кількістю мазків.
+Чим довша довжина плями, тим сильніше поширюватиметься колір, а також вибухне</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5964,7 +6047,9 @@ The longer the smudge length the more a color will spread and will also boost pe
 You can control which bucket to use to improve variability and realism of the brush.
 Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Є 256 відер, кожне з яких може вмістити колір, зібраний з полотна. 
+Ви можете контролювати, яке відро використовувати для покращення варіативності та реалістичності пензля. 
+Особливо корисно з параметром «Користувацьке введення», щоб співвіднести сегменти з іншими параметрами, наприклад зсувами.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5974,73 +6059,77 @@ Especially useful with the &quot;Custom input&quot; setting to correlate buckets
 0.0 will have no effect.
 Negative values do the reverse</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Контролюйте, скільки прозорості підбирається та розмивається, подібно до альфа-версії блокування. 
+1.0 не буде переміщати прозорість. 
+0,5 перемістить лише 50% прозорості та вище. 
+0,0 не матиме ефекту. 
+Від’ємні значення діють навпаки</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Moves the dabs up or down based on canvas coordinates.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Переміщує мазки вгору або вниз залежно від координат полотна.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Moves the dabs left or right based on canvas coordinates.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Переміщує мазки ліворуч або праворуч залежно від координат полотна.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the stroke direction to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Дотримується напрямку штриха, щоб змістити мазки в одну сторону.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the tilt direction to offset the dabs to one side. Requires Tilt.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Дотримується напрямку нахилу, щоб змістити мазки в одну сторону. Потрібен нахил.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the view orientation to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Слідкує за орієнтацією перегляду, щоб змістити мазки в одну сторону.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the stroke direction to offset the dabs, but to both sides of the stroke.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Слідкує за напрямком штриха, щоб змістити мазки, але з обох боків штриха.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the tilt direction to offset the dabs, but to both sides of the stroke. Requires Tilt.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Слідкує за напрямком нахилу, щоб змістити мазки, але з обох сторін штриха. Потрібен нахил.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the view orientation to offset the dabs, but to both sides of the stroke.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Слідкує за орієнтацією перегляду, щоб зсунути мазки, але з обох сторін штриха.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change the Angular Offset angle from the default, which is 90 degrees.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Змініть кут кутового зміщення від значення за замовчуванням, яке становить 90 градусів.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Logarithmic multiplier for X, Y, and Angular Offset settings.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Логарифмічний множник для параметрів X, Y і кутового зсуву.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Інтенсивність постеризації, зменшення кількості кольорів на основі параметра «Рівні постеризації» зі збереженням альфа-версії.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6048,7 +6137,9 @@ Negative values do the reverse</source>
 0.05 = 5 levels, 0.2 = 20 levels, etc.
 Values above 0.5 may not be noticeable.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Кількість рівнів постеризації (поділена на 100).
+0,05 = 5 рівнів, 0,2 = 20 рівнів і т.д.
+Значення вище 0,5 можуть бути непомітними.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6057,7 +6148,9 @@ Values above 0.5 may not be noticeable.</source>
 1.0 only spectral mixing</source>
         <comment>mypaintsetting</comment>
         <extracomment>If this string is difficult to translate, feel free to change it to something more descriptive. Just try to be succinct and consistent.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Режим субтрактивного спектрального змішування кольорів.
+0,0 немає спектрального змішування
+1.0 тільки спектральне змішування</translation>
     </message>
 </context>
 <context>
@@ -6065,119 +6158,119 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/canvasshortcutsdialog.cpp" line="+24"/>
         <source>Key Combination</source>
-        <translation type="unfinished"></translation>
+        <translation>Комбінація клавіш</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mouse Button</source>
-        <translation type="unfinished"></translation>
+        <translation>Кнопка миші</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Колесо миші</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Constraint Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Ключ обмеження</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Хлібне полотно</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Обернути полотно</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Free Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas without snapping around 0°.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вільне обертання полотна</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas in 15° steps.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ratchet Обернути полотно</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Збільшити Canvas</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть колір</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pick Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть шар</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити розмір пензля</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Інструмент обмеження</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Центральний інструмент</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Інструмент «Обмеження та центр»</translation>
     </message>
     <message>
         <location line="+98"/>
         <source>A regular key combination on the canvas without further mouse or pen inputs. Example: holding Space to pan, without having to click as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>Звичайна комбінація клавіш на полотні без додаткового введення мишею чи пером. Приклад: утримуйте пробіл, щоб панорамувати, не клацаючи також.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Pressing a mouse or pen button, optionally while also holding down keys. Putting the pen down is like a left click. Example: holding space and pressing left click to pan.</source>
-        <translation type="unfinished"></translation>
+        <translation>Натискання кнопки миші або пера, за бажанням, утримуючи клавіші. Опускання пера схоже на клацання лівою кнопкою миші. Приклад: утримуйте пробіл і натисніть ліву кнопку миші для панорамування.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Turning the mouse wheel or some input device that acts like one, optionally while also holding down keys. Example: scrolling to zoom the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Повертання коліщатка миші або іншого пристрою введення, який діє як такий, необов’язково, утримуючи клавіші. Приклад: прокручування для збільшення масштабу полотна.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Keys to hold down to make rectangle, line or selection tools behave differently. Constrain means to e.g. keep the aspect ratio, center means to e.g. center shapes around the origin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Клавіші, які потрібно утримувати, щоб змінити поведінку інструментів прямокутника, лінії або виділення. Обмежити означає, наприклад, зберегти співвідношення сторін, центр означає, наприклад, центрувати фігури навколо початку координат.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Unknown type %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невідомий тип %1.</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>&lt;b&gt;Conflict:&lt;/b&gt; the existing shortcut for &apos;%1&apos; will be overwritten if you proceed.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Конфлікт:&lt;/b&gt; існуючий ярлик для «%1» буде перезаписано, якщо ви продовжите.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can&apos;t assign a shortcut to a Left Click without any keys since that would interfere with drawing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви не можете призначити ярлик лівому клацанню без будь-яких клавіш, оскільки це заважало б малюванню.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Assign a shortcut to proceed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Призначте ярлик, щоб продовжити.</translation>
     </message>
 </context>
 <context>
@@ -6185,7 +6278,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/certificateview.cpp" line="+25"/>
         <source>SSL Certificate for %1</source>
-        <translation type="unfinished">Сертифікат SSL для %1</translation>
+        <translation>Сертифікат SSL для %1</translation>
     </message>
 </context>
 <context>
@@ -6193,79 +6286,79 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/curvepresetdialog.cpp" line="+32"/>
         <source>Use</source>
-        <translation type="unfinished"></translation>
+        <translation>Використання</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished">Скасувати</translation>
+        <translation>Скасувати</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+71"/>
         <source>Rename</source>
-        <translation type="unfinished">Перейменувати</translation>
+        <translation>Перейменувати</translation>
     </message>
     <message>
         <location line="-68"/>
         <source>Delete</source>
-        <translation type="unfinished">Вилучити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Save</source>
-        <translation type="unfinished">Зберегти</translation>
+        <translation>Зберегти</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Save Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти криву</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+15"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Ім&apos;я</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Rename Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейменувати криву</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Delete Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити криву</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete curve &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Справді видалити криву &quot;%1&quot;?</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Smooth Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Згладити</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smooth In</source>
-        <translation type="unfinished"></translation>
+        <translation>Гладкий в</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>Гладкий</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Linear</source>
-        <translation type="unfinished"></translation>
+        <translation>Лінійний</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Current (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation>Поточний (незбережений)</translation>
     </message>
 </context>
 <context>
@@ -6273,109 +6366,109 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/dumpplaybackdialog.cpp" line="+25"/>
         <source>done</source>
-        <translation type="unfinished"></translation>
+        <translation>зроблено</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>undone</source>
-        <translation type="unfinished"></translation>
+        <translation>скасовано</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>gone</source>
-        <translation type="unfinished"></translation>
+        <translation>пішов</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>невідомий</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>local user</source>
-        <translation type="unfinished"></translation>
+        <translation>локальний користувач</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>properties of layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>властивості шару %1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>annotation %1</source>
-        <translation type="unfinished"></translation>
+        <translation>анотація %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>pixels on layer %1, from (%2, %3) to (%4, %5)</source>
-        <translation type="unfinished"></translation>
+        <translation>пікселів на шарі %1, від (%2, %3) до (%4, %5)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>canvas background</source>
-        <translation type="unfinished"></translation>
+        <translation>фон полотна</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>document metadata type %1</source>
-        <translation type="unfinished"></translation>
+        <translation>тип метаданих документа %1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>timeline frame %1</source>
-        <translation type="unfinished"></translation>
+        <translation>кадр часової шкали %1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>selection %1 of user %2</source>
-        <translation type="unfinished"></translation>
+        <translation>вибір %1 користувача %2</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>everything</source>
-        <translation type="unfinished"></translation>
+        <translation>усе</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>unknown domain %1</source>
-        <translation type="unfinished"></translation>
+        <translation>невідомий домен %1</translation>
     </message>
     <message>
         <location line="+23"/>
         <location line="+6"/>
         <source>Type</source>
-        <translation type="unfinished">Тип</translation>
+        <translation>Тип</translation>
     </message>
     <message>
         <location line="-6"/>
         <location line="+6"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Користувач</translation>
     </message>
     <message>
         <location line="-6"/>
         <source>Undo</source>
-        <translation type="unfinished">Скасувати</translation>
+        <translation>Скасувати</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>State</source>
-        <translation type="unfinished"></translation>
+        <translation>Держава</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Affected Area</source>
-        <translation type="unfinished"></translation>
+        <translation>Уражена область</translation>
     </message>
     <message>
         <location line="+240"/>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>Так</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>No</source>
-        <translation type="unfinished">Ні</translation>
+        <translation>Ні</translation>
     </message>
 </context>
 <context>
@@ -6383,12 +6476,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+157"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>% (%1 FPS)</source>
-        <translation type="unfinished"></translation>
+        <translation>% (%1 FPS)</translation>
     </message>
 </context>
 <context>
@@ -6396,7 +6489,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="+106"/>
         <source>Invite link copied to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>Посилання на запрошення скопійовано в буфер обміну.</translation>
     </message>
 </context>
 <context>
@@ -6404,17 +6497,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/keyframepropertiesdialog.cpp" line="+127"/>
         <source>Key Frame Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Ключові властивості кадру</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Title:</source>
-        <translation type="unfinished">Заголовок:</translation>
+        <translation>Назва:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Filter Layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Шари фільтрів:</translation>
     </message>
 </context>
 <context>
@@ -6422,17 +6515,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/layerproperties.cpp" line="+52"/>
         <source>New Layer Group</source>
-        <translation type="unfinished">Нова група шарів</translation>
+        <translation>Нова група шарів</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>New Layer</source>
-        <translation type="unfinished">Створити шар</translation>
+        <translation>Новий шар</translation>
     </message>
     <message>
         <location line="+101"/>
         <source>Pass Through</source>
-        <translation type="unfinished"></translation>
+        <translation>Пройти через</translation>
     </message>
 </context>
 <context>
@@ -6440,92 +6533,92 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/layoutsdialog.cpp" line="+122"/>
         <source>Current (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation>Поточний (незбережений)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (new)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (новий)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (deleted)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (видалено)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (renamed from %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (перейменовано з %2)</translation>
     </message>
     <message>
         <location line="+138"/>
         <source>Undelete</source>
-        <translation type="unfinished"></translation>
+        <translation>Відновити видалення</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete</source>
-        <translation type="unfinished">Вилучити</translation>
+        <translation>Видалити</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Layout Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва макета:</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>За замовчуванням</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Default Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Анімація за замовчуванням</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>FireAlpaca-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>FireAlpaca-esque</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Горизонтальний</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Hyena</source>
-        <translation type="unfinished"></translation>
+        <translation>Гієна</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Krita-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita-esque</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>MediBang-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>У стилі MediBang</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Mink</source>
-        <translation type="unfinished"></translation>
+        <translation>Норка</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Paint.NET-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>У стилі Paint.NET</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>SAI-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>В стилі SAI</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Spider</source>
-        <translation type="unfinished"></translation>
+        <translation>Павук</translation>
     </message>
 </context>
 <context>
@@ -6533,181 +6626,181 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/logindialog.cpp" line="+168"/>
         <source>Report...</source>
-        <translation type="unfinished">Звіт…</translation>
+        <translation>Звіт...</translation>
     </message>
     <message>
         <location line="+157"/>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation>Прийняти</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Log in with server account</source>
-        <translation type="unfinished">Увійти з обліковим записом сервера</translation>
+        <translation>Увійдіть за допомогою облікового запису сервера</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>Введіть пароль облікового запису. Якщо у вас немає облікового запису, ви повинні його зареєструвати. Цей сервер не надає інформації про те, як це зробити.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Введіть пароль облікового запису. Якщо у вас немає облікового запису, ви повинні зареєструвати його на %1.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Це ім’я користувача належить до зареєстрованого облікового запису. Якщо це не ваш обліковий запис, скасуйте та повторіть спробу з іншим ім’ям.</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Close</source>
-        <translation type="unfinished">Закрити</translation>
+        <translation>Закрити</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Decline</source>
-        <translation type="unfinished"></translation>
+        <translation>Відхилити</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+12"/>
         <location line="+12"/>
         <source>Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Правила</translation>
     </message>
     <message>
         <location line="-16"/>
         <location line="+22"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Назад</translation>
     </message>
     <message>
         <location line="+198"/>
         <source>You can&apos;t join this session because:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви не можете приєднатися до цього сеансу, оскільки:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown reason.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невідома причина.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Can&apos;t join session</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдається приєднатися до сесії</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>Remove Account</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити обліковий запис</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really forget this account? This will only remove it from your recent account list, it won&apos;t delete the account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Справді забути цей обліковий запис? Це лише видалить його зі списку нещодавніх облікових записів, але не видалить обліковий запис.</translation>
     </message>
     <message>
         <location line="+48"/>
         <location line="+161"/>
         <source>Enter the name you want to use.</source>
-        <translation type="unfinished"></translation>
+        <translation>Введіть ім&apos;я, яке ви хочете використовувати.</translation>
     </message>
     <message>
         <location line="-99"/>
         <source>Server Rules for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Правила сервера для %1</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Log in with %1 account</source>
-        <translation type="unfinished"></translation>
+        <translation>Увійдіть за допомогою облікового запису %1</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Введіть ім&apos;я, яке ви хочете використовувати. Перегляньте %1 для отримання додаткової інформації про цей сервер.</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>Це ім’я користувача не належить обліковому запису на цьому сервері. Це не ваш обліковий запис drawpile.net!</translation>
     </message>
     <message>
         <location line="+546"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>Введіть ім&apos;я користувача та пароль для свого облікового запису на цьому сервері. Це не ваш обліковий запис drawpile.net!</translation>
     </message>
     <message>
         <location line="-630"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви можете продовжити без облікового запису. Якщо ви все одно хочете зареєструвати його, ви можете зробити це на %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>An account is required. You can register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Потрібен обліковий запис. Ви можете зареєструвати його на %1.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You can continue without an account. The server doesn&apos;t provide any information on how to register one either.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви можете продовжити без облікового запису. Сервер також не надає жодної інформації про те, як його зареєструвати.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>An account is required, but the server doesn&apos;t provide any information on how to register one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Потрібен обліковий запис, але сервер не надає жодної інформації про те, як його зареєструвати.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>See %1 for more information about this server. To register an account, visit %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Перегляньте %1 для отримання додаткової інформації про цей сервер. Щоб зареєструвати обліковий запис, відвідайте %2.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Перегляньте %1 для отримання додаткової інформації про цей сервер.</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>This username belongs to an account, pick a different one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Це ім’я користувача належить до облікового запису, виберіть інший.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>The %1 authentication is not working.</source>
-        <translation type="unfinished"></translation>
+        <translation>Автентифікація %1 не працює.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This username doesn&apos;t belong an account on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Це ім’я користувача не належить обліковому запису на %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Це ім’я користувача належить до облікового запису сервера, ви не можете використовувати його для входу через %1 на цьому сервері.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>This username belongs to some other login method, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Це ім’я користувача належить до іншого методу входу, ви не можете використовувати його для входу через %1 на цьому сервері.</translation>
     </message>
     <message>
         <location line="+534"/>
         <source>Enter the username and password for your %1 account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Введіть ім’я користувача та пароль для свого облікового запису %1.</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Log in with &apos;%1&apos; credentials</source>
-        <translation type="unfinished"></translation>
+        <translation>Увійдіть за допомогою облікових даних «%1»</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log in with &apos;%1&apos; credentials (INSECURE CONNECTION!)</source>
-        <translation type="unfinished"></translation>
+        <translation>Увійдіть за допомогою облікових даних «%1» (НЕБЕЗПЕЧНЕ З’ЄДНАННЯ!)</translation>
     </message>
 </context>
 <context>
@@ -6715,7 +6808,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/netstats.cpp" line="+77"/>
         <source>not connected</source>
-        <translation type="unfinished">не з’єднано</translation>
+        <translation>не підключено</translation>
     </message>
 </context>
 <context>
@@ -6723,22 +6816,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="+32"/>
         <source>Playback</source>
-        <translation type="unfinished">Відтворення</translation>
+        <translation>Відтворення</translation>
     </message>
     <message>
         <location line="+144"/>
         <source>Building index...</source>
-        <translation type="unfinished"></translation>
+        <translation>Індекс будівлі...</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Index building failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося створити індекс.</translation>
     </message>
     <message>
         <location line="+165"/>
         <source>Video error</source>
-        <translation type="unfinished">Помилка відео</translation>
+        <translation>Помилка відео</translation>
     </message>
 </context>
 <context>
@@ -6746,32 +6839,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/resetdialog.cpp" line="+129"/>
         <source>Reset Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути сеанс</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>New</source>
-        <translation type="unfinished">Створити</translation>
+        <translation>Новий</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Open...</source>
-        <translation type="unfinished">Відкрити…</translation>
+        <translation>Відкритий...</translation>
     </message>
     <message>
         <location line="+71"/>
         <source>Error opening file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка відкриття файлу: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error opening file: %1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка відкриття файлу: %1 (%2)</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Reset</source>
-        <translation type="unfinished">Скинути</translation>
+        <translation>Скинути</translation>
     </message>
 </context>
 <context>
@@ -6779,42 +6872,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="+28"/>
         <source>Expand up</source>
-        <translation type="unfinished"></translation>
+        <translation>Розгорнути вгору</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand left</source>
-        <translation type="unfinished"></translation>
+        <translation>Розгорніть ліворуч</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand right</source>
-        <translation type="unfinished"></translation>
+        <translation>Розгорніть праворуч</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand down</source>
-        <translation type="unfinished"></translation>
+        <translation>Розгорнути вниз</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Resize</source>
-        <translation type="unfinished">Змінити розмір</translation>
+        <translation>Змінити розмір</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Центр</translation>
     </message>
     <message>
         <location line="+92"/>
         <source>Error</source>
-        <translation type="unfinished">Помилка</translation>
+        <translation>Помилка</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Size is too large</source>
-        <translation type="unfinished"></translation>
+        <translation>Розмір завеликий</translation>
     </message>
 </context>
 <context>
@@ -6822,25 +6915,25 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/selectionalterdialog.cpp" line="+40"/>
         <source>px</source>
-        <translation type="unfinished">пк</translation>
+        <translation>пкс</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Feather: </source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Перо: </translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Shrink and feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Термоусадка та перо з краю полотна</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Перо з краю канви</translation>
     </message>
 </context>
 <context>
@@ -6848,20 +6941,20 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location filename="../dialogs/sessionsettings.cpp" line="+356"/>
         <source>Imported %n session ban(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Імпортована заборона на %n сеанс.</numerusform>
+            <numerusform>Імпортовано %n заборон сеансів.</numerusform>
+            <numerusform>Імпортовано %n заборон сеансів.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>%1 %n was/were not imported because it was/they were invalid or duplicates.</source>
         <extracomment>%1 is the &quot;Imported %n session ban(s).&quot; message.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1 %n було/не було імпортовано, оскільки воно/вони були недійсні або дублікатат.</numerusform>
+            <numerusform>%1 %n було/не було імпортовано, оскільки воно/вони були недійсними або дублікатами.</numerusform>
+            <numerusform>%1 %n було/не було імпортовано, оскільки воно/вони були недійсними або дублікатами.</numerusform>
         </translation>
     </message>
     <message>
@@ -6869,222 +6962,222 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+471"/>
         <location line="+12"/>
         <source>Session Ban Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Заборона імпорту сесії</translation>
     </message>
     <message>
         <location line="-469"/>
         <source>Session Ban Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Заборона сеансу експорту</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error saving bans: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка збереження заборон: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Session Ban Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка заборони сесії</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>This list shows only registered users.</source>
-        <translation type="unfinished"></translation>
+        <translation>У цьому списку показані лише зареєстровані користувачі.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only operators can see this list.</source>
-        <translation type="unfinished"></translation>
+        <translation>Тільки оператори можуть бачити цей список.</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Operators</source>
-        <translation type="unfinished">Оператори</translation>
+        <translation>Оператори</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trusted</source>
-        <translation type="unfinished">Надійний</translation>
+        <translation>Довірений</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Registered</source>
-        <translation type="unfinished">З реєстрацією</translation>
+        <translation>Зареєстрований</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Everyone</source>
-        <translation type="unfinished">Будь-хто</translation>
+        <translation>Всі</translation>
     </message>
     <message>
         <location line="+77"/>
         <source>yes</source>
         <comment>password</comment>
-        <translation type="unfinished">так</translation>
+        <translation>так</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>no</source>
         <comment>password</comment>
-        <translation type="unfinished">ні</translation>
+        <translation>ні</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>change</source>
         <comment>password</comment>
-        <translation type="unfinished">змінити</translation>
+        <translation>змінити</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>assign</source>
         <comment>password</comment>
-        <translation type="unfinished">призначити</translation>
+        <translation>призначити</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>never</source>
         <extracomment>&quot;Idle timeout: never&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ніколи</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>disabled by moderator</source>
         <extracomment>&quot;Idle timeout: disabled by moderator&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>вимкнено модератором</translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n hour(s)</source>
         <extracomment>Idle timeout hours. May be joined with minutes and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n година</numerusform>
+            <numerusform>%n години</numerusform>
+            <numerusform>%n годин</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n minute(s)</source>
         <extracomment>Idle timeout minutes. May be joined with hours and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n хвилина</numerusform>
+            <numerusform>%n хвилин</numerusform>
+            <numerusform>%n хвилин</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n second(s)</source>
         <extracomment>Idle timeout seconds. May be joined with hours and minutes.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n секунда</numerusform>
+            <numerusform>%n секунд</numerusform>
+            <numerusform>%n секунд</numerusform>
         </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>, </source>
         <extracomment>This string joins the hours, minutes and seconds for the idle time.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>, </translation>
     </message>
     <message>
         <location line="+122"/>
         <location line="+18"/>
         <source>Set a new password or leave blank to remove.</source>
-        <translation type="unfinished">Встановіть новий пароль або не заповнюйте, щоб вилучити пароль.</translation>
+        <translation>Встановіть новий пароль або залиште поле порожнім, щоб видалити.</translation>
     </message>
     <message>
         <location line="-16"/>
         <source>Set a password for the session.</source>
-        <translation type="unfinished">Встановіть пароль для сеансу.</translation>
+        <translation>Встановіть пароль для сеансу.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session Password</source>
-        <translation type="unfinished">Пароль сеансу</translation>
+        <translation>Пароль сеансу</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Set a password for gaining operator status.</source>
-        <translation type="unfinished">Встановіть пароль для отримання стану оператора.</translation>
+        <translation>Встановіть пароль для отримання стану оператора.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Operator Password</source>
-        <translation type="unfinished">Пароль оператора</translation>
+        <translation>Пароль оператора</translation>
     </message>
     <message>
         <location line="+31"/>
         <location line="+118"/>
         <source>Error opening &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка відкриття &quot;%1&quot;: %2</translation>
     </message>
     <message>
         <location line="-87"/>
         <source>This server does not support importing encrypted bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Цей сервер не підтримує імпорт зашифрованих заборон.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>This server does not support importing plain bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Цей сервер не підтримує імпорт звичайних заборон.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>File does not appear to contain any ban data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Здається, файл не містить жодних даних про заборону.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Choose Ban Export Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть Тип заборони експорту</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Since you are a moderator, you can export bans encrypted or plain. Encrypted bans can only be imported on this server. Which format do you want to export?</source>
-        <translation type="unfinished"></translation>
+        <translation>Оскільки ви модератор, ви можете експортувати заборони в зашифрованому або простому вигляді. Зашифровані заборони можна імпортувати лише на цьому сервері. Який формат ви хочете експортувати?</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>Зашифровано</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Plain</source>
-        <translation type="unfinished"></translation>
+        <translation>Рівнина</translation>
     </message>
     <message>
         <location line="+47"/>
         <location line="+12"/>
         <location line="+98"/>
         <source>Role Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпорт ролі</translation>
     </message>
     <message>
         <location line="-97"/>
         <source>File does not contain a valid role export.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл не містить дійсний експорт ролі.</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Error saving roles: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка збереження ролей: %1</translation>
     </message>
     <message numerus="yes">
         <location line="+61"/>
         <source>%n role(s) imported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n імпортована роль.</numerusform>
+            <numerusform>%n імпортованих ролей.</numerusform>
+            <numerusform>%n імпортованих ролей.</numerusform>
         </translation>
     </message>
     <message>
         <location line="-61"/>
         <source>Role Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Експорт ролі</translation>
     </message>
 </context>
 <context>
@@ -7092,17 +7185,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/sessionundodepthlimitdialog.cpp" line="+21"/>
         <source>Change Session Undo Depth Limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити обмеження глибини скасування сеансу</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Undo Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ліміт скасування: </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Choose a new undo limit for this session, the current limit is %1. Undos are shared between all participants. Changing the limit will start the undo stack anew, you won&apos;t be able to undo before the point where you changed it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть новий ліміт скасування для цього сеансу, поточний ліміт становить %1. Скасування спільні для всіх учасників. Зміна ліміту запустить стек скасувань заново, ви не зможете скасувати до моменту, де ви його змінили.</translation>
     </message>
 </context>
 <context>
@@ -7110,57 +7203,57 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="+34"/>
         <source>Preferences</source>
-        <translation type="unfinished">Налаштування</translation>
+        <translation>Налаштування</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальний</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>User Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>Інтерфейс користувача</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet</source>
-        <translation type="unfinished"></translation>
+        <translation>Планшет</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touch</source>
-        <translation type="unfinished"></translation>
+        <translation>Дотик</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Інструменти</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network</source>
-        <translation type="unfinished">Мережа</translation>
+        <translation>Мережа</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Сповіщення</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Servers</source>
-        <translation type="unfinished"></translation>
+        <translation>Сервери</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Shortcuts</source>
-        <translation type="unfinished">Скорочення</translation>
+        <translation>Ярлики</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Parental Controls</source>
-        <translation type="unfinished">Батьківський контроль</translation>
+        <translation>Батьківський контроль</translation>
     </message>
 </context>
 <context>
@@ -7168,62 +7261,62 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog.cpp" line="+74"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>Почніть</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>Welcome</source>
-        <translation type="unfinished"></translation>
+        <translation>Ласкаво просимо</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>News and updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Новини та оновлення</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Join Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Приєднатися до сесії</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Connect to a drawing session directly</source>
-        <translation type="unfinished"></translation>
+        <translation>Підключіться безпосередньо до сеансу малювання</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Browse Sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Огляд сеансів</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Browse publicly listed drawing sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Перегляньте загальнодоступні сеанси малювання</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Host Session</source>
-        <translation type="unfinished">Запуск сеансу</translation>
+        <translation>Організація сесії</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Share your canvas with others</source>
-        <translation type="unfinished">Поділитися своїм полотном з іншими</translation>
+        <translation>Поділіться своїм полотном з іншими</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>New Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Нове полотно</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Create a new, empty canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Створіть нове порожнє полотно</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Open File</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити файл</translation>
     </message>
     <message>
         <location line="+0"/>
