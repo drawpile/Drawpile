@@ -127,12 +127,18 @@ NetStatus::NetStatus(QWidget *parent)
 
 void NetStatus::setHaveJoinPassword(bool haveJoinPassword)
 {
-	m_haveJoinPassword = haveJoinPassword;
+	if(haveJoinPassword != m_haveJoinPassword) {
+		m_haveJoinPassword = haveJoinPassword;
+		emit joinPasswordChanged();
+	}
 }
 
 void NetStatus::setJoinPassword(const QString &joinPassword)
 {
-	m_joinPassword = joinPassword;
+	if(joinPassword != m_joinPassword) {
+		m_joinPassword = joinPassword;
+		emit joinPasswordChanged();
+	}
 }
 
 /**

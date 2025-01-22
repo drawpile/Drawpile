@@ -251,6 +251,7 @@ signals:
 	void needSnapshot();
 	void sessionResetted();
 	void sessionConfChange(const QJsonObject &config);
+	void sessionPasswordChanged(const QString &password);
 	void sessionOutOfSpace();
 
 	void serverConnected(const QString &address, int port);

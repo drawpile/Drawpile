@@ -489,13 +489,20 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_doc->client(), &net::Client::serverDisconnecting, m_netstatus, &widgets::NetStatus::hostDisconnecting);
 	connect(m_doc, &Document::serverDisconnected, m_netstatus, &widgets::NetStatus::hostDisconnected);
 	connect(m_sessionSettings, &dialogs::SessionSettingsDialog::joinPasswordChanged, m_netstatus, &widgets::NetStatus::setJoinPassword);
-	connect(m_doc, &Document::sessionPasswordChanged, m_netstatus, &widgets::NetStatus::setHaveJoinPassword);
+	// clang-format on
+	connect(
+		m_doc, &Document::sessionHasPasswordChanged, m_netstatus,
+		&widgets::NetStatus::setHaveJoinPassword);
+	connect(
+		m_doc, &Document::sessionPasswordChanged, m_netstatus,
+		&widgets::NetStatus::setJoinPassword);
 	connect(
 		m_doc, &Document::sessionOutOfSpaceChanged, this,
 		&MainWindow::updateLockWidget);
 	connect(
 		m_doc, &Document::preparingResetChanged, this,
 		&MainWindow::updateLockWidget);
+	// clang-format off
 
 	connect(m_doc->client(), SIGNAL(bytesReceived(int)), m_netstatus, SLOT(bytesReceived(int)));
 	connect(m_doc->client(), &net::Client::bytesSent, m_netstatus, &widgets::NetStatus::bytesSent);

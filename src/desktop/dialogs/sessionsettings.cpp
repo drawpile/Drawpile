@@ -136,7 +136,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		m_doc, &Document::sessionAllowWebChanged, this,
 		&SessionSettingsDialog::updateAllowWebCheckbox);
 	connect(
-		m_doc, &Document::sessionPasswordChanged, this,
+		m_doc, &Document::sessionHasPasswordChanged, this,
 		[this](bool hasPassword) {
 			m_ui->sessionPassword->setProperty("haspass", hasPassword);
 			updatePasswordLabel(m_ui->sessionPassword);

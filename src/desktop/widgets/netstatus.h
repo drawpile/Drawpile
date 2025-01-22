@@ -43,6 +43,7 @@ public:
 	}
 
 signals:
+	void joinPasswordChanged();
 	void remoteAddressDiscovered();
 
 public slots:

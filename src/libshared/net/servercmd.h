@@ -104,6 +104,7 @@ struct ServerReply {
 		OutOfSpace,		  // session is out of space, block local drawing
 		StreamStart,	  // streamed session reset start marker
 		StreamProgress,	  // streamed session reset progress control message
+		PasswordChange,	  // session password changed
 	} type;
 	QString message;
 	QJsonObject reply;
@@ -209,6 +210,8 @@ struct ServerReply {
 	static net::Message makeResultGarbage();
 
 	static net::Message makeSessionConf(const QJsonObject &config);
+
+	static net::Message makePasswordChange(const QString &password);
 
 	static net::Message makeSizeLimitWarning(int size, int maxSize);
 

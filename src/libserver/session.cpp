@@ -654,8 +654,11 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 		changes << "changed autoreset threshold";
 	}
 
-	if(conf.contains("password")) {
-		m_history->setPassword(conf["password"].toString());
+	bool changePassword = conf.contains(QStringLiteral("password"));
+	QString newPassword;
+	if(changePassword) {
+		newPassword = conf["password"].toString();
+		m_history->setPassword(newPassword);
 		changes << "changed password";
 	}
 
@@ -740,15 +743,19 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 
 	if(!changes.isEmpty()) {
 		sendUpdatedSessionProperties();
-		QString logmsg = changes.join(", ");
-		logmsg[0] = logmsg[0].toUpper();
+		if(changePassword) {
+			directToAll(net::ServerReply::makePasswordChange(newPassword));
+		}
 
+		QString logmsg = changes.join(QStringLiteral(", "));
+		logmsg[0] = logmsg[0].toUpper();
 		Log l =
 			Log().about(Log::Level::Info, Log::Topic::Status).message(logmsg);
-		if(changedBy)
+		if(changedBy) {
 			changedBy->log(l);
-		else
+		} else {
 			log(l);
+		}
 	}
 }
 

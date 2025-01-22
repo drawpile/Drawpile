@@ -184,6 +184,8 @@ ServerReply ServerReply::fromJson(const QJsonDocument &doc)
 		r.type = ServerReply::ReplyType::StreamStart;
 	} else if(typestr == QStringLiteral("sprogress")) {
 		r.type = ServerReply::ReplyType::StreamProgress;
+	} else if(typestr == QStringLiteral("passwordchange")) {
+		r.type = ServerReply::ReplyType::PasswordChange;
 	} else {
 		r.type = ServerReply::ReplyType::Unknown;
 	}
@@ -535,6 +537,13 @@ net::Message ServerReply::makeSessionConf(const QJsonObject &config)
 	return make(
 		{{QStringLiteral("type"), QStringLiteral("sessionconf")},
 		 {QStringLiteral("config"), config}});
+}
+
+net::Message ServerReply::makePasswordChange(const QString &password)
+{
+	return make(
+		{{QStringLiteral("type"), QStringLiteral("passwordchange")},
+		 {QStringLiteral("password"), password}});
 }
 
 net::Message ServerReply::makeSizeLimitWarning(int size, int maxSize)

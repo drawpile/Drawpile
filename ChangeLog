@@ -66,6 +66,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Scroll to the brush in question when creating or overwriting one.
  * Feature: Allow editing brush names, descriptions and thumbnails when using detached slots.
  * Fix: Make next/previous brush and tag shortcuts work when using detached slots.
+ * Server Feature: Inform clients of session password changes so that they can update their invite links.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

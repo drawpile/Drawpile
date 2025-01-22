@@ -495,6 +495,10 @@ void Client::handleServerReply(const ServerReply &msg, int handledMessageIndex)
 	case ServerReply::ReplyType::StreamProgress:
 		emit streamResetProgressed(reply[QStringLiteral("cancel")].toBool());
 		break;
+	case ServerReply::ReplyType::PasswordChange:
+		emit sessionPasswordChanged(
+			reply.value(QStringLiteral("password")).toString());
+		break;
 	}
 }
 

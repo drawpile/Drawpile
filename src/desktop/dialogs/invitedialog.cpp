@@ -42,18 +42,8 @@ InviteDialog::InviteDialog(
 	d->linkTypeGroup->addButton(d->ui.directLinkRadio, int(LinkType::Direct));
 	settings.bindInviteLinkType(d->linkTypeGroup);
 	settings.bindInviteLinkType(this, &InviteDialog::updateInviteLink);
-
-	if(d->joinPassword.isEmpty()) {
-		d->ui.includePasswordBox->setEnabled(false);
-		d->ui.includePasswordExplanationLabel->hide();
-	} else {
-		settings.bindInviteIncludePassword(d->ui.includePasswordBox);
-		settings.bindInviteIncludePassword(
-			d->ui.includePasswordExplanationLabel, &QWidget::setVisible);
-		settings.bindInviteIncludePassword(
-			this, &InviteDialog::updateInviteLink);
-	}
-
+	settings.bindInviteIncludePassword(d->ui.includePasswordBox);
+	settings.bindInviteIncludePassword(this, &InviteDialog::updateInviteLink);
 	settings.bindShowInviteDialogOnHost(d->ui.showOnHostBox);
 
 	connect(
@@ -64,6 +54,9 @@ InviteDialog::InviteDialog(
 	connect(
 		d->ui.ipButton, &QAbstractButton::clicked, this,
 		&InviteDialog::discoverAddress);
+	connect(
+		netStatus, &widgets::NetStatus::joinPasswordChanged, this,
+		&InviteDialog::updatePage);
 	connect(
 		netStatus, &widgets::NetStatus::remoteAddressDiscovered, this,
 		&InviteDialog::updatePage);
@@ -116,14 +109,11 @@ void InviteDialog::discoverAddress()
 
 void InviteDialog::updatePage()
 {
-	int pageIndex;
-	if(d->netStatus->haveRemoteAddress()) {
-		pageIndex = URL_PAGE_INDEX;
-		updateInviteLink();
-	} else {
-		pageIndex = IP_PAGE_INDEX;
-	}
-	d->ui.pages->setCurrentIndex(pageIndex);
+	d->joinPassword = d->netStatus->joinPassword();
+	d->ui.includePasswordBox->setEnabled(!d->joinPassword.isEmpty());
+	updateInviteLink();
+	d->ui.pages->setCurrentIndex(
+		d->netStatus->haveRemoteAddress() ? URL_PAGE_INDEX : IP_PAGE_INDEX);
 }
 
 void InviteDialog::updateInviteLink()

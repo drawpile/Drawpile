@@ -230,7 +230,8 @@ signals:
 	void sessionClosedChanged(bool closed);
 	void sessionAuthOnlyChanged(bool closed);
 	void sessionAllowWebChanged(bool allowWeb, bool canAlter);
-	void sessionPasswordChanged(bool passwordProtected);
+	void sessionHasPasswordChanged(bool passwordProtected);
+	void sessionPasswordChanged(const QString &password);
 	void sessionOpwordChanged(bool opword);
 	void sessionNsfmChanged(bool nsfm);
 	void sessionForceNsfmChanged(bool forceNsfm);

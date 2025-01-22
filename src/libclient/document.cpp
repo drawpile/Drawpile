@@ -115,6 +115,9 @@ Document::Document(
 		m_client, &net::Client::sessionConfChange, this,
 		&Document::onSessionConfChanged);
 	connect(
+		m_client, &net::Client::sessionPasswordChanged, this,
+		&Document::sessionPasswordChanged);
+	connect(
 		m_client, &net::Client::autoresetQueried, this,
 		&Document::onAutoresetQueried);
 	connect(
@@ -677,7 +680,7 @@ void Document::setSessionPasswordProtected(bool pp)
 {
 	if(m_sessionPasswordProtected != pp) {
 		m_sessionPasswordProtected = pp;
-		emit sessionPasswordChanged(pp);
+		emit sessionHasPasswordChanged(pp);
 	}
 }
 
