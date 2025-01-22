@@ -62,6 +62,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Properly put an undo point before layer property changes. Thanks Maffi for reporting.
  * Feature: Raise default undo limit to 60 instead of 30.
  * Feature: Expand the Host tab in the start dialog, allowing setting up sessions in advance and separating personal from public sessions better.
+ * Fix: Scroll to the brush in question when creating or overwriting one.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

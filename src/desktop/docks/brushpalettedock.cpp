@@ -378,6 +378,7 @@ void BrushPalette::newPreset()
 	if(opt.has_value()) {
 		int presetId = opt->id;
 		setSelectedPresetId(presetId);
+		d->presetListView->forceScrollTo(d->presetListView->currentIndex());
 		if(presetId != d->brushSettings->currentPresetId()) {
 			d->brushSettings->setCurrentBrushPreset(opt.value());
 		}
@@ -424,6 +425,8 @@ void BrushPalette::overwriteCurrentPreset(QWidget *parent)
 					d->brushSettings->currentPresetDescription(),
 					d->brushSettings->currentPresetThumbnail(),
 					d->brushSettings->currentBrush());
+				d->presetListView->forceScrollTo(
+					d->presetListView->currentIndex());
 			}
 		}
 	});
