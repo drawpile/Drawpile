@@ -606,9 +606,26 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 					   : QStringLiteral("made nonpersistent"));
 	}
 
-	if(conf.contains("title")) {
-		m_history->setTitle(conf["title"].toString().mid(0, 100));
-		changes << "changed title";
+	bool changeFounder =
+		changedByModeratorOrAdmin && conf.contains(QStringLiteral("founder"));
+	if(changeFounder) {
+		m_history->setFounderName(
+			conf.value(QStringLiteral("founder")).toString());
+		changes << QStringLiteral("changed founder");
+	}
+
+	if((changeFounder && flags.testFlag(SessionHistory::AutoTitle)) ||
+	   conf.value(QString("autotitle")).toBool()) {
+		flags.setFlag(SessionHistory::AutoTitle, true);
+		m_history->setTitle(QStringLiteral("%1 Drawpile")
+								.arg(m_history->founderName())
+								.mid(0, 100));
+		changes << QStringLiteral("changed autotitle");
+	} else if(conf.contains(QStringLiteral("title"))) {
+		flags.setFlag(SessionHistory::AutoTitle, false);
+		m_history->setTitle(
+			conf.value(QStringLiteral("title")).toString().mid(0, 100));
+		changes << QStringLiteral("changed title");
 	}
 
 	if(conf.contains("maxUserCount")) {
@@ -719,11 +736,6 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 									 "password is set")
 					: QStringLiteral("disabled WebSocket connections because "
 									 "no password is set"));
-	}
-
-	if(changedByModeratorOrAdmin && conf.contains(QStringLiteral("founder"))) {
-		m_history->setFounderName(conf[QStringLiteral("founder")].toString());
-		changes << "changed founder";
 	}
 
 	if(!changes.isEmpty()) {
@@ -923,6 +935,8 @@ void Session::sendUpdatedSessionProperties()
 		{QStringLiteral("persistent"),
 		 m_history->hasFlag(SessionHistory::Persistent)},
 		{QStringLiteral("title"), m_history->title()},
+		{QStringLiteral("autotitle"),
+		 m_history->hasFlag(SessionHistory::AutoTitle)},
 		{QStringLiteral("maxUserCount"), m_history->maxUsers()},
 		{QStringLiteral("resetThreshold"),
 		 int(m_history->autoResetThreshold())},
@@ -1774,41 +1788,51 @@ QJsonObject Session::getDescription(bool full) const
 	// The basic description contains just the information
 	// needed for the login session listing
 	QJsonObject o{
-		{"id", id()},
-		{"alias", idAlias()},
-		{"protocol", m_history->protocolVersion().asString()},
-		{"userCount", userCount()},
-		{"activeDrawingUserCount", activeDrawingUserCount(ACTIVE_THRESHOLD_MS)},
-		{"maxUserCount", m_history->maxUsers()},
-		{"founder", m_history->founderName()},
-		{"title", m_history->title()},
-		{"hasPassword", !m_history->passwordHash().isEmpty()},
-		{"closed", isClosed()},
-		{"authOnly", m_history->hasFlag(SessionHistory::AuthOnly)},
-		{"nsfm", m_history->hasFlag(SessionHistory::Nsfm)},
-		{"startTime", m_history->startTime().toString(Qt::ISODate)},
-		{"size", int(m_history->sizeInBytes())},
-		{"persistent", m_history->hasFlag(SessionHistory::Persistent)},
+		{QStringLiteral("id"), id()},
+		{QStringLiteral("alias"), idAlias()},
+		{QStringLiteral("protocol"), m_history->protocolVersion().asString()},
+		{QStringLiteral("userCount"), userCount()},
+		{QStringLiteral("activeDrawingUserCount"),
+		 activeDrawingUserCount(ACTIVE_THRESHOLD_MS)},
+		{QStringLiteral("maxUserCount"), m_history->maxUsers()},
+		{QStringLiteral("founder"), m_history->founderName()},
+		{QStringLiteral("title"), m_history->title()},
+		{QStringLiteral("autotitle"),
+		 m_history->hasFlag(SessionHistory::AutoTitle)},
+		{QStringLiteral("hasPassword"), !m_history->passwordHash().isEmpty()},
+		{QStringLiteral("closed"), isClosed()},
+		{QStringLiteral("authOnly"),
+		 m_history->hasFlag(SessionHistory::AuthOnly)},
+		{QStringLiteral("nsfm"), m_history->hasFlag(SessionHistory::Nsfm)},
+		{QStringLiteral("startTime"),
+		 m_history->startTime().toString(Qt::ISODate)},
+		{QStringLiteral("size"), int(m_history->sizeInBytes())},
+		{QStringLiteral("persistent"),
+		 m_history->hasFlag(SessionHistory::Persistent)},
 	};
 
 	if(m_config->getConfigBool(config::AllowIdleOverride)) {
-		o["idleOverride"] = m_history->hasFlag(SessionHistory::IdleOverride);
+		o[QStringLiteral("idleOverride")] =
+			m_history->hasFlag(SessionHistory::IdleOverride);
 	}
 
 #ifdef HAVE_WEBSOCKETS
 	if(m_config->internalConfig().webSocket) {
-		o["allowWeb"] = m_history->hasFlag(SessionHistory::AllowWeb);
+		o[QStringLiteral("allowWeb")] =
+			m_history->hasFlag(SessionHistory::AllowWeb);
 	}
 #endif
 
 	if(full) {
 		// Full descriptions includes detailed info for server admins.
-		o["maxSize"] = int(m_history->sizeLimit());
-		o["resetThreshold"] = int(m_history->autoResetThreshold());
+		o[QStringLiteral("maxSize")] = int(m_history->sizeLimit());
+		o[QStringLiteral("resetThreshold")] =
+			int(m_history->autoResetThreshold());
 		o[QStringLiteral("effectiveResetThreshold")] =
 			int(m_history->effectiveAutoResetThreshold());
-		o["deputies"] = m_history->hasFlag(SessionHistory::Deputies);
-		o["hasOpword"] = !m_history->opwordHash().isEmpty();
+		o[QStringLiteral("deputies")] =
+			m_history->hasFlag(SessionHistory::Deputies);
+		o[QStringLiteral("hasOpword")] = !m_history->opwordHash().isEmpty();
 
 		QJsonArray users;
 		for(const Client *user : m_clients) {
@@ -1817,14 +1841,14 @@ QJsonObject Session::getDescription(bool full) const
 		for(auto u = m_pastClients.constBegin(); u != m_pastClients.constEnd();
 			++u) {
 			users << QJsonObject{
-				{"id", u->id},
-				{"name", u->username},
-				{"ip", u->peerAddress.toString()},
-				{"s", u->sid},
-				{"online", false}};
+				{QStringLiteral("id"), u->id},
+				{QStringLiteral("name"), u->username},
+				{QStringLiteral("ip"), u->peerAddress.toString()},
+				{QStringLiteral("s"), u->sid},
+				{QStringLiteral("online"), false}};
 		}
-		o["users"] = users;
-		o["listings"] = getListingsDescription();
+		o[QStringLiteral("users")] = users;
+		o[QStringLiteral("listings")] = getListingsDescription();
 		if(m_adminChat) {
 			o[QStringLiteral("chat")] = m_adminChat->getDescription();
 		} else {

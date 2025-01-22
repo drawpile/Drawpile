@@ -78,6 +78,7 @@ public:
 		AuthOnly = 0x10,
 		IdleOverride = 0x20,
 		AllowWeb = 0x40,
+		AutoTitle = 0x80,
 	};
 	Q_DECLARE_FLAGS(Flags, Flag)
 

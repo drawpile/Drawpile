@@ -362,6 +362,8 @@ bool FiledHistory::load()
 					flags |= IdleOverride;
 				} else if(f == QStringLiteral("allowweb")) {
 					flags |= AllowWeb;
+				} else if(f == QStringLiteral("autotitle")) {
+					flags |= AutoTitle;
 				} else {
 					qWarning()
 						<< id() << "unknown flag:" << QString::fromUtf8(f);
@@ -680,6 +682,9 @@ void FiledHistory::setFlags(Flags f)
 		}
 		if(f.testFlag(AllowWeb)) {
 			fstr.append(QStringLiteral("allowweb"));
+		}
+		if(f.testFlag(AutoTitle)) {
+			fstr.append(QStringLiteral("autotitle"));
 		}
 		writeStringToJournal(QStringLiteral("FLAGS %1\n").arg(fstr.join(' ')));
 	}
