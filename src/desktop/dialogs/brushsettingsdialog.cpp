@@ -12,6 +12,8 @@
 #include <QComboBox>
 #include <QDialogButtonBox>
 #include <QFormLayout>
+#include <QGraphicsItem>
+#include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QHBoxLayout>
@@ -19,7 +21,6 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
-#include <QPixmap>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QScopedValueRollback>
@@ -34,7 +35,7 @@ namespace dialogs {
 
 namespace {
 
-class ShortcutLineEdit : public QLineEdit {
+class ShortcutLineEdit final : public QLineEdit {
 public:
 	ShortcutLineEdit(QPushButton *button)
 		: QLineEdit()
@@ -59,6 +60,200 @@ private:
 
 }
 
+
+BrushPresetForm::BrushPresetForm(QWidget *parent)
+	: QWidget(parent)
+{
+	QFormLayout *attachedLayout = new QFormLayout;
+	setLayout(attachedLayout);
+
+	m_presetShortcutButton = new QPushButton(tr("Change…"));
+	connect(
+		m_presetShortcutButton, &QPushButton::clicked, this,
+		&BrushPresetForm::requestShortcutChange);
+
+	m_presetShortcutEdit = new ShortcutLineEdit(m_presetShortcutButton);
+	m_presetShortcutEdit->setAlignment(Qt::AlignCenter);
+	m_presetShortcutEdit->setReadOnly(true);
+	m_presetShortcutEdit->setEnabled(false);
+
+	QHBoxLayout *shortcutLayout = new QHBoxLayout;
+	shortcutLayout->setContentsMargins(0, 0, 0, 0);
+	shortcutLayout->addWidget(m_presetShortcutEdit);
+	shortcutLayout->addWidget(m_presetShortcutButton);
+	attachedLayout->addRow(tr("Shortcut:"), shortcutLayout);
+
+	utils::addFormSpacer(attachedLayout);
+
+	QGridLayout *thumbnailLayout = new QGridLayout;
+
+	m_presetThumbnailView = new QGraphicsView;
+	m_presetThumbnailView->setFixedSize(64, 64);
+	m_presetThumbnailView->setFrameShape(QFrame::NoFrame);
+	m_presetThumbnailView->setFrameShadow(QFrame::Plain);
+	m_presetThumbnailView->setLineWidth(0);
+	thumbnailLayout->addWidget(m_presetThumbnailView, 0, 0, 2, 1);
+
+	QGraphicsScene *scene = new QGraphicsScene(m_presetThumbnailView);
+	m_presetThumbnailView->setScene(scene);
+
+	m_presetThumbnailButton =
+		new QPushButton(QIcon::fromTheme("document-open"), tr("Choose File…"));
+	thumbnailLayout->addWidget(m_presetThumbnailButton, 0, 1);
+	connect(
+		m_presetThumbnailButton, &QPushButton::clicked, this,
+		&BrushPresetForm::choosePresetThumbnailFile);
+
+	QLabel *presetThumbnailLabel =
+		new QLabel(tr("Will be resized to 64x64 pixels."));
+	presetThumbnailLabel->setAlignment(Qt::AlignCenter);
+	presetThumbnailLabel->setWordWrap(true);
+	thumbnailLayout->addWidget(presetThumbnailLabel, 1, 1);
+
+	attachedLayout->addRow(tr("Thumbnail:"), thumbnailLayout);
+
+	m_presetLabelEdit = new QLineEdit;
+	attachedLayout->addRow(tr("Add Label:"), m_presetLabelEdit);
+	connect(
+		m_presetLabelEdit, &QLineEdit::textChanged, this,
+		&BrushPresetForm::renderPresetThumbnail);
+
+	utils::addFormSpacer(attachedLayout);
+
+	m_presetNameEdit = new QLineEdit;
+	attachedLayout->addRow(tr("Name:"), m_presetNameEdit);
+	connect(
+		m_presetNameEdit, &QLineEdit::textChanged, this,
+		&BrushPresetForm::presetNameChanged);
+
+	m_presetDescriptionEdit = new QPlainTextEdit;
+	attachedLayout->addRow(tr("Description:"), m_presetDescriptionEdit);
+	connect(
+		m_presetDescriptionEdit, &QPlainTextEdit::textChanged, this,
+		&BrushPresetForm::emitPresetDescriptionChanged);
+}
+
+QString BrushPresetForm::presetName() const
+{
+	return m_presetNameEdit->text();
+}
+
+void BrushPresetForm::setPresetName(const QString &presetName)
+{
+	if(presetName != m_presetNameEdit->text()) {
+		QSignalBlocker blocker(m_presetNameEdit);
+		m_presetNameEdit->setText(presetName);
+		emit presetNameChanged(presetName);
+	}
+}
+
+QString BrushPresetForm::presetDescription() const
+{
+	return m_presetDescriptionEdit->toPlainText();
+}
+
+void BrushPresetForm::setPresetDescription(const QString &presetDescription)
+{
+	if(presetDescription != m_presetDescriptionEdit->toPlainText()) {
+		QSignalBlocker blocker(m_presetDescriptionEdit);
+		m_presetDescriptionEdit->setPlainText(presetDescription);
+		emit presetDescriptionChanged(presetDescription);
+	}
+}
+
+QPixmap BrushPresetForm::presetThumbnail() const
+{
+	QGraphicsScene *scene = m_presetThumbnailView->scene();
+	for(QGraphicsItem *item : scene->items()) {
+		QGraphicsPixmapItem *pixmapItem =
+			qgraphicsitem_cast<QGraphicsPixmapItem *>(item);
+		if(pixmapItem) {
+			return pixmapItem->pixmap();
+		}
+	}
+	return QPixmap();
+}
+
+void BrushPresetForm::setPresetThumbnail(const QPixmap &presetThumbnail)
+{
+	if(presetThumbnail.cacheKey() != m_presetThumbnail.cacheKey()) {
+		QSignalBlocker blocker(m_presetLabelEdit);
+		m_presetLabelEdit->clear();
+		showPresetThumbnail(presetThumbnail);
+	}
+}
+
+void BrushPresetForm::setPresetShortcut(const QKeySequence &presetShortcut)
+{
+	QString text = presetShortcut.toString(QKeySequence::NativeText);
+	m_presetShortcutEdit->setText(
+		text.isEmpty() ? tr("No shortcut assigned") : text);
+}
+
+void BrushPresetForm::setChangeShortcutEnabled(bool enabled)
+{
+	m_presetShortcutButton->setEnabled(enabled);
+}
+
+void BrushPresetForm::choosePresetThumbnailFile()
+{
+	FileWrangler::ImageOpenFn imageOpenCompleted =
+		[this](QImage &img, const QString &) {
+			QPixmap pixmap;
+			if(!img.isNull() && pixmap.convertFromImage(img)) {
+				showPresetThumbnail(pixmap);
+			}
+		};
+	FileWrangler(this).openBrushThumbnail(imageOpenCompleted);
+}
+
+void BrushPresetForm::showPresetThumbnail(const QPixmap &thumbnail)
+{
+	m_presetThumbnail = thumbnail;
+	m_scaledPresetThumbnail =
+		thumbnail.size() == QSize(64, 64)
+			? thumbnail
+			: thumbnail.scaled(
+				  64, 64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	renderPresetThumbnail();
+}
+
+void BrushPresetForm::renderPresetThumbnail()
+{
+	QGraphicsScene *scene = m_presetThumbnailView->scene();
+	scene->clear();
+	scene->setSceneRect(QRect(0, 0, 64, 64));
+	QString label = m_presetLabelEdit->text();
+	if(label.trimmed().isEmpty()) {
+		scene->addPixmap(m_scaledPresetThumbnail);
+		emit presetThumbnailChanged(m_scaledPresetThumbnail);
+	} else {
+		QPixmap thumbnail = applyPresetThumbnailLabel(label);
+		scene->addPixmap(thumbnail);
+		emit presetThumbnailChanged(thumbnail);
+	}
+}
+
+QPixmap BrushPresetForm::applyPresetThumbnailLabel(const QString &label)
+{
+	QPixmap thumbnail = m_scaledPresetThumbnail;
+	QPainter painter(&thumbnail);
+	qreal h = thumbnail.height();
+	qreal y = h * 3.0 / 4.0;
+	QRectF rect(0, y, thumbnail.width(), h - y);
+	painter.fillRect(rect, palette().window());
+	painter.setPen(palette().windowText().color());
+	painter.drawText(
+		rect, label, QTextOption(Qt::AlignHCenter | Qt::AlignBaseline));
+	return thumbnail;
+}
+
+void BrushPresetForm::emitPresetDescriptionChanged()
+{
+	emit presetDescriptionChanged(m_presetDescriptionEdit->toPlainText());
+}
+
+
 struct BrushSettingsDialog::Private {
 	struct MyPaintPage {
 		KisDoubleSliderSpinBox *baseValueSpinner;
@@ -71,17 +266,7 @@ struct BrushSettingsDialog::Private {
 	QPushButton *overwriteBrushButton;
 	QListWidget *categoryWidget;
 	QStackedWidget *stackedWidget;
-	QWidget *presetAttachedWidget;
-	QWidget *presetDetachedWidget;
-	QPushButton *presetThumbnailButton;
-	QGraphicsView *presetThumbnailView;
-	QPixmap presetThumbnail;
-	QPixmap scaledPresetThumbnail;
-	QLineEdit *presetLabelEdit;
-	QLineEdit *presetNameEdit;
-	QPlainTextEdit *presetDescriptionEdit;
-	ShortcutLineEdit *presetShortcutEdit;
-	QPushButton *presetShortcutButton;
+	BrushPresetForm *brushPresetForm;
 	QComboBox *brushTypeCombo;
 	QLabel *brushModeLabel;
 	QComboBox *brushModeCombo;
@@ -140,6 +325,7 @@ BrushSettingsDialog::BrushSettingsDialog(QWidget *parent)
 	buildDialogUi();
 	d->lastShape = DP_BRUSH_SHAPE_COUNT;
 	d->useBrushSampleCount = true;
+	setPresetAttached(false, 0);
 }
 
 BrushSettingsDialog::~BrushSettingsDialog()
@@ -175,50 +361,30 @@ int BrushSettingsDialog::presetId() const
 void BrushSettingsDialog::setPresetAttached(bool presetAttached, int presetId)
 {
 	utils::ScopedUpdateDisabler disabler(this);
-	if(presetAttached && !d->presetAttached) {
-		d->presetDetachedWidget->hide();
-		d->presetAttachedWidget->show();
-	} else if(!presetAttached && d->presetAttached) {
-		d->presetAttachedWidget->hide();
-		d->presetDetachedWidget->show();
-	}
 	d->presetId = presetId;
 	d->presetAttached = presetAttached;
-	d->presetAttachedWidget->setEnabled(presetAttached);
+	d->overwriteBrushButton->setEnabled(presetId > 0);
+	d->brushPresetForm->setChangeShortcutEnabled(presetId > 0);
 }
 
 void BrushSettingsDialog::setPresetName(const QString &presetName)
 {
-	if(presetName != d->presetNameEdit->text()) {
-		QSignalBlocker blocker(d->presetNameEdit);
-		d->presetNameEdit->setText(presetName);
-		emit presetNameChanged(presetName);
-	}
+	d->brushPresetForm->setPresetName(presetName);
 }
 
 void BrushSettingsDialog::setPresetDescription(const QString &presetDescription)
 {
-	if(presetDescription != d->presetDescriptionEdit->toPlainText()) {
-		QSignalBlocker blocker(d->presetDescriptionEdit);
-		d->presetDescriptionEdit->setPlainText(presetDescription);
-		emit presetDescriptionChanged(presetDescription);
-	}
+	d->brushPresetForm->setPresetDescription(presetDescription);
 }
 
 void BrushSettingsDialog::setPresetThumbnail(const QPixmap &presetThumbnail)
 {
-	if(presetThumbnail.cacheKey() != d->presetThumbnail.cacheKey()) {
-		QSignalBlocker blocker(d->presetLabelEdit);
-		d->presetLabelEdit->clear();
-		showPresetThumbnail(presetThumbnail);
-	}
+	d->brushPresetForm->setPresetThumbnail(presetThumbnail);
 }
 
 void BrushSettingsDialog::setPresetShortcut(const QKeySequence &presetShortcut)
 {
-	QString text = presetShortcut.toString(QKeySequence::NativeText);
-	d->presetShortcutEdit->setText(
-		text.isEmpty() ? tr("No shortcut assigned") : text);
+	d->brushPresetForm->setPresetShortcut(presetShortcut);
 }
 
 void BrushSettingsDialog::setForceEraseMode(bool forceEraseMode)
@@ -377,104 +543,24 @@ void BrushSettingsDialog::buildDialogUi()
 
 QWidget *BrushSettingsDialog::buildPresetPageUi()
 {
-	QScrollArea *scroll = new QScrollArea(this);
-	QWidget *widget = new QWidget;
-	scroll->setWidget(widget);
-	scroll->setWidgetResizable(true);
-	utils::bindKineticScrolling(scroll);
-
-	QVBoxLayout *layout = new QVBoxLayout;
-	widget->setLayout(layout);
-
-	d->presetAttachedWidget = new QWidget;
-	d->presetAttachedWidget->setContentsMargins(0, 0, 0, 0);
-	layout->addWidget(d->presetAttachedWidget);
-
-	QFormLayout *attachedLayout = new QFormLayout;
-	attachedLayout->setContentsMargins(0, 0, 0, 0);
-	d->presetAttachedWidget->setLayout(attachedLayout);
-
-	d->presetShortcutButton = new QPushButton(tr("Change…"));
+	d->brushPresetForm = new BrushPresetForm;
 	connect(
-		d->presetShortcutButton, &QPushButton::clicked, this,
+		d->brushPresetForm, &BrushPresetForm::requestShortcutChange, this,
 		&BrushSettingsDialog::requestShortcutChange);
-
-	d->presetShortcutEdit = new ShortcutLineEdit(d->presetShortcutButton);
-	d->presetShortcutEdit->setAlignment(Qt::AlignCenter);
-	d->presetShortcutEdit->setReadOnly(true);
-	d->presetShortcutEdit->setEnabled(false);
-
-	QHBoxLayout *shortcutLayout = new QHBoxLayout;
-	shortcutLayout->setContentsMargins(0, 0, 0, 0);
-	shortcutLayout->addWidget(d->presetShortcutEdit);
-	shortcutLayout->addWidget(d->presetShortcutButton);
-	attachedLayout->addRow(tr("Shortcut:"), shortcutLayout);
-
-	utils::addFormSpacer(attachedLayout);
-
-	QGridLayout *thumbnailLayout = new QGridLayout;
-
-	d->presetThumbnailView = new QGraphicsView;
-	d->presetThumbnailView->setFixedSize(64, 64);
-	d->presetThumbnailView->setFrameShape(QFrame::NoFrame);
-	d->presetThumbnailView->setFrameShadow(QFrame::Plain);
-	d->presetThumbnailView->setLineWidth(0);
-	thumbnailLayout->addWidget(d->presetThumbnailView, 0, 0, 2, 1);
-
-	QGraphicsScene *scene = new QGraphicsScene(d->presetThumbnailView);
-	d->presetThumbnailView->setScene(scene);
-
-	d->presetThumbnailButton =
-		new QPushButton(QIcon::fromTheme("document-open"), tr("Choose File…"));
-	thumbnailLayout->addWidget(d->presetThumbnailButton, 0, 1);
 	connect(
-		d->presetThumbnailButton, &QPushButton::clicked, this,
-		&BrushSettingsDialog::choosePresetThumbnailFile);
-
-	QLabel *presetThumbnailLabel =
-		new QLabel(tr("Will be resized to 64x64 pixels."));
-	presetThumbnailLabel->setAlignment(Qt::AlignCenter);
-	presetThumbnailLabel->setWordWrap(true);
-	thumbnailLayout->addWidget(presetThumbnailLabel, 1, 1);
-
-	attachedLayout->addRow(tr("Thumbnail:"), thumbnailLayout);
-
-	d->presetLabelEdit = new QLineEdit;
-	attachedLayout->addRow(tr("Add Label:"), d->presetLabelEdit);
-	connect(
-		d->presetLabelEdit, &QLineEdit::textChanged, this,
-		&BrushSettingsDialog::renderPresetThumbnail);
-
-	utils::addFormSpacer(attachedLayout);
-
-	d->presetNameEdit = new QLineEdit;
-	attachedLayout->addRow(tr("Name:"), d->presetNameEdit);
-	connect(
-		d->presetNameEdit, &QLineEdit::textChanged, this,
+		d->brushPresetForm, &BrushPresetForm::presetNameChanged, this,
 		&BrushSettingsDialog::presetNameChanged);
-
-	d->presetDescriptionEdit = new QPlainTextEdit;
-	attachedLayout->addRow(tr("Description:"), d->presetDescriptionEdit);
 	connect(
-		d->presetDescriptionEdit, &QPlainTextEdit::textChanged, this, [this]() {
-			emit presetDescriptionChanged(
-				d->presetDescriptionEdit->toPlainText());
-		});
+		d->brushPresetForm, &BrushPresetForm::presetDescriptionChanged, this,
+		&BrushSettingsDialog::presetDescriptionChanged);
+	connect(
+		d->brushPresetForm, &BrushPresetForm::presetThumbnailChanged, this,
+		&BrushSettingsDialog::presetThumbnailChanged);
 
-	d->presetDetachedWidget = new QWidget;
-	d->presetDetachedWidget->setContentsMargins(0, 0, 0, 0);
-	d->presetDetachedWidget->hide();
-	layout->addWidget(d->presetDetachedWidget);
-
-	QVBoxLayout *detachedLayout = new QVBoxLayout;
-	detachedLayout->setContentsMargins(0, 0, 0, 0);
-	d->presetDetachedWidget->setLayout(detachedLayout);
-
-	QLabel *detachedLabel = new QLabel(tr("Brush is not attached."));
-	detachedLabel->setWordWrap(true);
-	detachedLayout->addWidget(detachedLabel);
-	detachedLayout->addStretch();
-
+	QScrollArea *scroll = new QScrollArea(this);
+	scroll->setWidgetResizable(true);
+	scroll->setWidget(d->brushPresetForm);
+	utils::bindKineticScrolling(scroll);
 	return scroll;
 }
 
@@ -1416,62 +1502,7 @@ bool BrushSettingsDialog::disableIndirectMyPaintInputs(int setting)
 
 void BrushSettingsDialog::requestShortcutChange()
 {
-	if(d->presetAttached) {
-		emit shortcutChangeRequested(d->presetId);
-	}
-}
-
-void BrushSettingsDialog::choosePresetThumbnailFile()
-{
-	FileWrangler::ImageOpenFn imageOpenCompleted =
-		[this](QImage &img, const QString &) {
-			QPixmap pixmap;
-			if(!img.isNull() && pixmap.convertFromImage(img)) {
-				showPresetThumbnail(pixmap);
-			}
-		};
-	FileWrangler(this).openBrushThumbnail(imageOpenCompleted);
-}
-
-void BrushSettingsDialog::showPresetThumbnail(const QPixmap &thumbnail)
-{
-	d->presetThumbnail = thumbnail;
-	d->scaledPresetThumbnail =
-		thumbnail.size() == QSize(64, 64)
-			? thumbnail
-			: thumbnail.scaled(
-				  64, 64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-	renderPresetThumbnail();
-}
-
-void BrushSettingsDialog::renderPresetThumbnail()
-{
-	QGraphicsScene *scene = d->presetThumbnailView->scene();
-	scene->clear();
-	scene->setSceneRect(QRect(0, 0, 64, 64));
-	QString label = d->presetLabelEdit->text();
-	if(label.trimmed().isEmpty()) {
-		scene->addPixmap(d->scaledPresetThumbnail);
-		emit presetThumbnailChanged(d->scaledPresetThumbnail);
-	} else {
-		QPixmap thumbnail = applyPresetThumbnailLabel(label);
-		scene->addPixmap(thumbnail);
-		emit presetThumbnailChanged(thumbnail);
-	}
-}
-
-QPixmap BrushSettingsDialog::applyPresetThumbnailLabel(const QString &label)
-{
-	QPixmap thumbnail = d->scaledPresetThumbnail;
-	QPainter painter(&thumbnail);
-	qreal h = thumbnail.height();
-	qreal y = h * 3.0 / 4.0;
-	QRectF rect(0, y, thumbnail.width(), h - y);
-	painter.fillRect(rect, palette().window());
-	painter.setPen(palette().windowText().color());
-	painter.drawText(
-		rect, label, QTextOption(Qt::AlignHCenter | Qt::AlignBaseline));
-	return thumbnail;
+	emit shortcutChangeRequested(d->presetId);
 }
 
 }

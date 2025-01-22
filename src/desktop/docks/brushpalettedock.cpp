@@ -295,7 +295,7 @@ void BrushPalette::connectBrushSettings(tools::BrushSettings *brushSettings)
 	d->brushSettings = brushSettings;
 	connect(
 		brushSettings, &tools::BrushSettings::presetIdChanged, this,
-		&BrushPalette::setSelectedPresetId);
+		&BrushPalette::setSelectedPresetIdFromBrushSettings);
 	connect(
 		brushSettings, &tools::BrushSettings::newBrushRequested, this,
 		&BrushPalette::newPreset);
@@ -333,17 +333,10 @@ void BrushPalette::newPreset()
 
 	const brushes::ActiveBrush brush = d->brushSettings->currentBrush();
 
-	QString name, description;
-	QPixmap thumbnail;
-	if(d->brushSettings->currentPresetId() > 0) {
-		name = d->brushSettings->currentPresetName();
-		description = d->brushSettings->currentPresetDescription();
-		thumbnail = d->brushSettings->currentPresetThumbnail();
-	} else {
-		name = tr("New Brush");
-		description = QStringLiteral("");
-		thumbnail = brush.presetThumbnail();
-	}
+	QString name = d->brushSettings->currentPresetName();
+	QString description = d->brushSettings->currentPresetDescription();
+	QPixmap thumbnail = d->brushSettings->currentPresetThumbnail();
+	d->brushSettings->clearCurrentDetachedPresetChanges();
 
 	int tagId = d->currentTag.isAssignable() ? d->currentTag.id : 0;
 
@@ -416,10 +409,7 @@ void BrushPalette::overwriteCurrentPreset(QWidget *parent)
 	box->setDefaultButton(QMessageBox::No);
 	connect(box, &QMessageBox::finished, this, [this, presetId](int result) {
 		if(result == QMessageBox::Yes) {
-			if(!d->brushSettings->isCurrentPresetAttached()) {
-				d->presetModel->updatePresetBrush(
-					presetId, d->brushSettings->currentBrush());
-			} else if(d->brushSettings->currentPresetId() == presetId) {
+			if(d->brushSettings->currentPresetId() == presetId) {
 				d->presetModel->updatePreset(
 					presetId, d->brushSettings->currentPresetName(),
 					d->brushSettings->currentPresetDescription(),
@@ -592,6 +582,13 @@ void BrushPalette::tagIndexChanged(int row)
 	d->deleteTagAction->setEnabled(d->currentTag.isEditable());
 	d->presetModel->setTagIdToFilter(d->currentTag.id);
 	d->tagModel->setState(SELECTED_TAG_ID_KEY, d->currentTag.id);
+}
+
+void BrushPalette::setSelectedPresetIdFromBrushSettings(
+	int presetId, bool attached)
+{
+	Q_UNUSED(attached);
+	setSelectedPresetId(presetId);
 }
 
 void BrushPalette::setSelectedPresetId(int presetId)
@@ -801,7 +798,8 @@ void BrushPalette::applyToBrushSettings(const QModelIndex &proxyIndex)
 	brushes::Preset preset =
 		sourceIndex.data(brushes::BrushPresetModel::PresetRole)
 			.value<brushes::Preset>();
-	if(preset.id > 0 && preset.id != d->brushSettings->currentPresetId()) {
+	if(preset.id > 0 && (!d->brushSettings->isCurrentPresetAttached() ||
+						 preset.id != d->brushSettings->currentPresetId())) {
 		d->brushSettings->setCurrentBrushPreset(preset);
 	}
 }

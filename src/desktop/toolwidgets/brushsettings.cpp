@@ -43,7 +43,13 @@ struct Preset : brushes::Preset {
 		return preset;
 	}
 
-	static Preset makeAttached(const brushes::Preset p)
+	static Preset makeReattachable(const brushes::Preset &p)
+	{
+		Preset preset = {p, true, false, true, false};
+		return preset;
+	}
+
+	static Preset makeAttached(const brushes::Preset &p)
 	{
 		Preset preset = {p, true, true, false, false};
 		preset.changedBrush = {};
@@ -51,21 +57,18 @@ struct Preset : brushes::Preset {
 	}
 
 	bool isAttached() const { return valid && attached; }
-	int effectiveId() const { return isAttached() ? id : 0; }
 
 	bool changeName(const QString &name)
 	{
-		if(isAttached()) {
-			if(name == originalName) {
-				if(changedName.has_value()) {
-					changedName = {};
-					return true;
-				}
-			} else {
-				if(!changedName.has_value() || name != changedName.value()) {
-					changedName = name;
-					return true;
-				}
+		if(name == originalName) {
+			if(changedName.has_value()) {
+				changedName = {};
+				return true;
+			}
+		} else {
+			if(!changedName.has_value() || name != changedName.value()) {
+				changedName = name;
+				return true;
 			}
 		}
 		return false;
@@ -73,18 +76,16 @@ struct Preset : brushes::Preset {
 
 	bool changeDescription(const QString &description)
 	{
-		if(isAttached()) {
-			if(description == originalDescription) {
-				if(changedDescription.has_value()) {
-					changedDescription = {};
-					return true;
-				}
-			} else {
-				if(!changedDescription.has_value() ||
-				   description != changedDescription.value()) {
-					changedDescription = description;
-					return true;
-				}
+		if(description == originalDescription) {
+			if(changedDescription.has_value()) {
+				changedDescription = {};
+				return true;
+			}
+		} else {
+			if(!changedDescription.has_value() ||
+			   description != changedDescription.value()) {
+				changedDescription = description;
+				return true;
 			}
 		}
 		return false;
@@ -92,19 +93,17 @@ struct Preset : brushes::Preset {
 
 	bool changeThumbnail(const QPixmap &thumbnail)
 	{
-		if(isAttached()) {
-			qint64 cacheKey = thumbnail.cacheKey();
-			if(cacheKey == originalThumbnail.cacheKey()) {
-				if(changedThumbnail.has_value()) {
-					changedThumbnail = {};
-					return true;
-				}
-			} else {
-				if(!changedThumbnail.has_value() ||
-				   cacheKey != changedThumbnail->cacheKey()) {
-					changedThumbnail = thumbnail;
-					return true;
-				}
+		qint64 cacheKey = thumbnail.cacheKey();
+		if(cacheKey == originalThumbnail.cacheKey()) {
+			if(changedThumbnail.has_value()) {
+				changedThumbnail = {};
+				return true;
+			}
+		} else {
+			if(!changedThumbnail.has_value() ||
+			   cacheKey != changedThumbnail->cacheKey()) {
+				changedThumbnail = thumbnail;
+				return true;
 			}
 		}
 		return false;
@@ -112,12 +111,10 @@ struct Preset : brushes::Preset {
 
 	void changeBrush(const brushes::ActiveBrush &brush, bool inEraserSlot)
 	{
-		if(isAttached()) {
-			if(originalBrush.equalPreset(brush, inEraserSlot)) {
-				changedBrush = {};
-			} else {
-				changedBrush = brush;
-			}
+		if(originalBrush.equalPreset(brush, inEraserSlot)) {
+			changedBrush = {};
+		} else {
+			changedBrush = brush;
 		}
 	}
 };
@@ -308,7 +305,8 @@ void BrushSettings::connectBrushPresets(brushes::BrushPresetModel *brushPresets)
 		brushPresets, &brushes::BrushPresetModel::presetRemoved, this,
 		&BrushSettings::handlePresetRemoved);
 
-	emit presetIdChanged(d->currentPreset().effectiveId());
+	const Preset &preset = d->currentPreset();
+	emit presetIdChanged(preset.id, preset.attached);
 }
 
 QWidget *BrushSettings::createUiWidget(QWidget *parent)
@@ -711,7 +709,7 @@ void BrushSettings::setBrushPresetsAttach(bool brushPresetsAttach)
 				}
 				preset.changeBrush(d->brushAt(i), i == ERASER_SLOT_INDEX);
 				if(d->current == i) {
-					emit presetIdChanged(preset.effectiveId());
+					emit presetIdChanged(preset.id, preset.attached);
 					if(preset.attached) {
 						d->ui.preview->setPreset(
 							preset.effectiveThumbnail(), preset.hasChanges());
@@ -719,7 +717,7 @@ void BrushSettings::setBrushPresetsAttach(bool brushPresetsAttach)
 					}
 				}
 			} else if(d->current == i) {
-				emit presetIdChanged(0);
+				emit presetIdChanged(0, false);
 			}
 			preset.reattach = false;
 		}
@@ -774,16 +772,17 @@ void BrushSettings::setBrushPresetInSlot(const brushes::Preset &p, int i)
 	if(p.id <= 0) {
 		preset = Preset::makeDetached(brush);
 		if(isCurrent) {
-			emit presetIdChanged(0);
+			emit presetIdChanged(0, false);
 		}
 	} else if(d->presetsAttach) {
 		preset = Preset::makeAttached(p);
 		preset.changeBrush(brush, i == ERASER_SLOT_INDEX);
 		if(isCurrent) {
-			emit presetIdChanged(p.id);
+			emit presetIdChanged(p.id, true);
 		}
 	} else {
-		preset = Preset::makeDetached(p.originalBrush, true, p.id);
+		preset = Preset::makeReattachable(p);
+		emit presetIdChanged(p.id, false);
 	}
 	if(isCurrent) {
 		updateMenuActions();
@@ -828,7 +827,7 @@ brushes::ActiveBrush BrushSettings::currentBrush() const
 
 int BrushSettings::currentPresetId() const
 {
-	return d->currentPreset().effectiveId();
+	return d->currentPreset().id;
 }
 
 const QString &BrushSettings::currentPresetName() const
@@ -849,6 +848,16 @@ const QPixmap &BrushSettings::currentPresetThumbnail() const
 bool BrushSettings::isCurrentPresetAttached() const
 {
 	return d->currentPreset().attached;
+}
+
+void BrushSettings::clearCurrentDetachedPresetChanges() const
+{
+	Preset &preset = d->currentPreset();
+	if(preset.valid && !preset.attached) {
+		preset.changedName = {};
+		preset.changedDescription = {};
+		preset.changedThumbnail = {};
+	}
 }
 
 int BrushSettings::currentBrushSlot() const
@@ -888,7 +897,7 @@ void BrushSettings::selectBrushSlot(int i)
 
 	const Preset &preset = d->currentPreset();
 	updateMenuActions();
-	emit presetIdChanged(preset.effectiveId());
+	emit presetIdChanged(preset.id, preset.attached);
 	updateChangesInCurrentBrushPreset();
 }
 
@@ -1059,7 +1068,7 @@ void BrushSettings::swapWithSlot(int i)
 		const Preset &preset = d->currentPreset();
 		changePresetBrush(d->currentBrush());
 		updateMenuActions();
-		emit presetIdChanged(preset.effectiveId());
+		emit presetIdChanged(preset.id, preset.attached);
 	}
 }
 
@@ -1810,7 +1819,7 @@ void BrushSettings::detachCurrentSlot()
 		preset.attached = false;
 		d->ui.preview->clearPreset();
 		updateMenuActions();
-		emit presetIdChanged(0);
+		emit presetIdChanged(preset.id, false);
 	}
 }
 

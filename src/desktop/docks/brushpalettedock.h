@@ -56,6 +56,7 @@ signals:
 
 private slots:
 	void tagIndexChanged(int proxyRow);
+	void setSelectedPresetIdFromBrushSettings(int presetId, bool attached);
 	void setSelectedPresetId(int presetId);
 	void prepareTagAssignmentMenu();
 	void presetsReset();

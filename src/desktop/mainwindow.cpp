@@ -2574,21 +2574,19 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
 			m_dockToolSettings->brushSettings();
 		brushes::BrushPresetModel *presetModel =
 			dpApp().brushPresets()->presetModel();
-		std::function<void(int)> updatePreset = [brushSettings, presetModel,
-												 dlg](int presetId) {
-			bool attached = presetId > 0;
-			dlg->setPresetAttached(attached, presetId);
-			if(attached) {
+		std::function<void(int, bool)> updatePreset =
+			[brushSettings, presetModel, dlg](int presetId, bool attached) {
 				QSignalBlocker blocker(dlg);
+				dlg->setPresetAttached(attached, presetId);
 				dlg->setPresetName(brushSettings->currentPresetName());
 				dlg->setPresetDescription(
 					brushSettings->currentPresetDescription());
 				dlg->setPresetThumbnail(
 					brushSettings->currentPresetThumbnail());
 				dlg->setPresetShortcut(
-					presetModel->getShortcutForPresetId(presetId));
-			}
-		};
+					presetId > 0 ? presetModel->getShortcutForPresetId(presetId)
+								 : QKeySequence());
+			};
 		connect(
 			brushSettings, &tools::BrushSettings::presetIdChanged, dlg,
 			updatePreset);
@@ -2608,7 +2606,9 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
 		connect(
 			brushSettings, &tools::BrushSettings::eraseModeChanged, dlg,
 			&dialogs::BrushSettingsDialog::setForceEraseMode);
-		updatePreset(brushSettings->currentPresetId());
+		updatePreset(
+			brushSettings->currentPresetId(),
+			brushSettings->isCurrentPresetAttached());
 		dlg->setForceEraseMode(brushSettings->isCurrentEraserSlot());
 
 		tools::ToolController *toolCtrl = m_doc->toolCtrl();
@@ -2649,7 +2649,7 @@ void MainWindow::showBrushSettingsDialog(bool openOnPresetPage)
 				showSettings()->initiateBrushShortcutChange(presetId);
 			});
 
-		if(openOnPresetPage && dlg->isPresetAttached()) {
+		if(openOnPresetPage) {
 			dlg->showPresetPage();
 		} else {
 			dlg->showGeneralPage();

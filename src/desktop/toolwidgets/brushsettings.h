@@ -67,6 +67,7 @@ public:
 	const QString &currentPresetDescription() const;
 	const QPixmap &currentPresetThumbnail() const;
 	bool isCurrentPresetAttached() const;
+	void clearCurrentDetachedPresetChanges() const;
 
 	int currentBrushSlot() const;
 	bool isCurrentEraserSlot() const;
@@ -103,7 +104,7 @@ public slots:
 	void changeCurrentPresetThumbnail(const QPixmap &thumbnail);
 
 signals:
-	void presetIdChanged(int presetId);
+	void presetIdChanged(int presetId, bool attached);
 	void colorChanged(const QColor &color);
 	void backgroundColorChanged(const QColor &color);
 	void eraseModeChanged(bool erase);

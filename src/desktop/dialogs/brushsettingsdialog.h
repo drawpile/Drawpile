@@ -4,16 +4,62 @@
 #include "desktop/widgets/mypaintinput.h"
 #include "libclient/brushes/brush.h"
 #include <QDialog>
+#include <QPixmap>
 #include <mypaint-brush-settings.h>
 
 class KisSliderSpinBox;
 class QComboBox;
+class QGraphicsView;
 class QKeySequence;
+class QLineEdit;
 class QListWidgetItem;
+class QPlainTextEdit;
 class QPushButton;
 class QVBoxLayout;
 
 namespace dialogs {
+
+class BrushPresetForm final : public QWidget {
+	Q_OBJECT
+public:
+	explicit BrushPresetForm(QWidget *parent = nullptr);
+
+	QString presetName() const;
+	void setPresetName(const QString &presetName);
+
+	QString presetDescription() const;
+	void setPresetDescription(const QString &presetName);
+
+	QPixmap presetThumbnail() const;
+	void setPresetThumbnail(const QPixmap &presetThumbnail);
+
+	void setPresetShortcut(const QKeySequence &presetShortcut);
+
+	void setChangeShortcutEnabled(bool enabled);
+
+signals:
+	void requestShortcutChange();
+	void presetNameChanged(const QString &name);
+	void presetDescriptionChanged(const QString &name);
+	void presetThumbnailChanged(const QPixmap &thumbnail);
+
+private:
+	void choosePresetThumbnailFile();
+	void showPresetThumbnail(const QPixmap &thumbnail);
+	void renderPresetThumbnail();
+	QPixmap applyPresetThumbnailLabel(const QString &label);
+	void emitPresetDescriptionChanged();
+
+	QPushButton *m_presetShortcutButton;
+	QLineEdit *m_presetShortcutEdit;
+	QGraphicsView *m_presetThumbnailView;
+	QPushButton *m_presetThumbnailButton;
+	QLineEdit *m_presetLabelEdit;
+	QLineEdit *m_presetNameEdit;
+	QPlainTextEdit *m_presetDescriptionEdit;
+	QPixmap m_presetThumbnail;
+	QPixmap m_scaledPresetThumbnail;
+};
 
 class BrushSettingsDialog final : public QDialog {
 	Q_OBJECT
@@ -128,10 +174,6 @@ private:
 	static QString getMyPaintSettingDescription(int setting);
 
 	void requestShortcutChange();
-	void choosePresetThumbnailFile();
-	void showPresetThumbnail(const QPixmap &thumbnail);
-	void renderPresetThumbnail();
-	QPixmap applyPresetThumbnailLabel(const QString &label);
 };
 
 }
