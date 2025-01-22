@@ -20,6 +20,7 @@
 #include <QListView>
 #include <QMenu>
 #include <QMessageBox>
+#include <QScopedValueRollback>
 #include <QSortFilterProxyModel>
 #include <QTemporaryFile>
 #include <QTextBrowser>
@@ -94,6 +95,7 @@ struct BrushPalette::Private {
 
 	int selectedPresetId = 0;
 	int lastSelectedPresetId = 0;
+	bool navigationInProgress = false;
 };
 
 BrushPalette::BrushPalette(QWidget *parent)
@@ -527,6 +529,7 @@ void BrushPalette::exportBrushes()
 
 void BrushPalette::selectNextPreset()
 {
+	QScopedValueRollback<bool> rollback(d->navigationInProgress, true);
 	int rowCount = d->presetProxyModel->rowCount();
 	if(rowCount > 0) {
 		QModelIndex currentIdx = d->presetListView->currentIndex();
@@ -542,6 +545,7 @@ void BrushPalette::selectNextPreset()
 
 void BrushPalette::selectPreviousPreset()
 {
+	QScopedValueRollback<bool> rollback(d->navigationInProgress, true);
 	int rowCount = d->presetProxyModel->rowCount();
 	if(rowCount > 0) {
 		QModelIndex currentIdx = d->presetListView->currentIndex();
@@ -557,6 +561,7 @@ void BrushPalette::selectPreviousPreset()
 
 void BrushPalette::selectNextTag()
 {
+	QScopedValueRollback<bool> rollback(d->navigationInProgress, true);
 	int index = d->tagComboBox->currentIndex() + 1;
 	if(index < d->tagComboBox->count()) {
 		d->tagComboBox->setCurrentIndex(index);
@@ -567,6 +572,7 @@ void BrushPalette::selectNextTag()
 
 void BrushPalette::selectPreviousTag()
 {
+	QScopedValueRollback<bool> rollback(d->navigationInProgress, true);
 	int index = d->tagComboBox->currentIndex() - 1;
 	if(index >= 0) {
 		d->tagComboBox->setCurrentIndex(index);
@@ -658,7 +664,8 @@ void BrushPalette::presetCurrentIndexChanged(
 	if(selected) {
 		d->selectedPresetId = presetId;
 		d->lastSelectedPresetId = presetId;
-		if(d->brushSettings && d->brushSettings->brushPresetsAttach()) {
+		if(d->brushSettings && (d->navigationInProgress ||
+								d->brushSettings->brushPresetsAttach())) {
 			applyToBrushSettings(current);
 		}
 	}
