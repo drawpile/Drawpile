@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DRAWDANCE_GLOBAL_H
 #define DRAWDANCE_GLOBAL_H
-#include <QMutex>
 #include <QStack>
+#include <QVector>
 
 typedef struct DP_DrawContext DP_DrawContext;
+typedef struct DP_Mutex DP_Mutex;
 
 namespace drawdance {
 
@@ -67,7 +68,7 @@ private:
 
     DrawContextPoolStatistics instanceStatistics();
 
-    QMutex m_mutex;
+    DP_Mutex *m_mutex;
     QStack<DP_DrawContext *> m_available;
     QVector<DP_DrawContext *> m_contexts;
 };

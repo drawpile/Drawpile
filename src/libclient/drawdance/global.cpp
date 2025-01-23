@@ -2,6 +2,7 @@
 extern "C" {
 #include <dpcommon/common.h>
 #include <dpcommon/cpu.h>
+#include <dpcommon/threading.h>
 #include <dpengine/draw_context.h>
 }
 #include "libclient/drawdance/global.h"
@@ -120,31 +121,34 @@ DrawContextPool::~DrawContextPool()
 	for(DP_DrawContext *dc : m_available) {
 		DP_draw_context_free(dc);
 	}
+	DP_mutex_free(m_mutex);
 }
 
 DrawContext DrawContextPool::acquireContext()
 {
-	QMutexLocker locker{&m_mutex};
 	DP_DrawContext *dc;
+	DP_MUTEX_MUST_LOCK(m_mutex);
 	if(m_available.isEmpty()) {
 		dc = DP_draw_context_new();
 		m_contexts.append(dc);
 	} else {
 		dc = m_available.pop();
 	}
+	DP_MUTEX_MUST_UNLOCK(m_mutex);
 	return DrawContext{dc, this};
 }
 
 void DrawContextPool::releaseContext(DP_DrawContext *dc)
 {
 	Q_ASSERT(dc);
-	QMutexLocker locker{&m_mutex};
+	DP_MUTEX_MUST_LOCK(m_mutex);
 	m_available.push(dc);
+	DP_MUTEX_MUST_UNLOCK(m_mutex);
 }
 
 DrawContextPoolStatistics DrawContextPool::instanceStatistics()
 {
-	QMutexLocker locker{&m_mutex};
+	DP_MUTEX_MUST_LOCK(m_mutex);
 	int contextsTotal = m_contexts.size();
 	int contextsUsed = contextsTotal - m_available.size();
 
@@ -160,14 +164,13 @@ DrawContextPoolStatistics DrawContextPool::instanceStatistics()
 		bytesAvailable += dcs.static_bytes + dcs.pool_bytes;
 	}
 
+	DP_MUTEX_MUST_UNLOCK(m_mutex);
 	return DrawContextPoolStatistics{
 		contextsUsed, contextsTotal, bytesTotal - bytesAvailable, bytesTotal};
 }
 
 DrawContextPool::DrawContextPool()
-	: m_mutex{}
-	, m_available{}
-	, m_contexts{}
+	: m_mutex(DP_mutex_new())
 {
 }
 
