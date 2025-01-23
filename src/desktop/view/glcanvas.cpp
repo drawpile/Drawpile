@@ -177,14 +177,16 @@ struct GlCanvas::Private {
 	{
 		GLint logLength;
 		f->glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
-		if(logLength > 0) {
-			QByteArray buffer(logLength, '\0');
+		if(logLength > 1) {
+			QByteArray buffer(logLength + 1, '\0');
 			GLsizei bufferLength;
 			f->glGetProgramInfoLog(
 				program, logLength, &bufferLength, buffer.data());
-			qCWarning(
-				lcDpGlCanvas, "Program info log: %.*s", int(bufferLength),
-				buffer.constData());
+			if(bufferLength > 0) {
+				qCWarning(
+					lcDpGlCanvas, "Program info log: %.*s", int(bufferLength),
+					buffer.constData());
+			}
 		}
 	}
 
