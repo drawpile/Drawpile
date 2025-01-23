@@ -65,36 +65,35 @@ void LoginHandler::startLoginProcess()
 
 	QJsonArray flags;
 	if(m_config->getConfigInt(config::SessionCountLimit) > 1) {
-		flags << "MULTI";
+		flags << QStringLiteral("MULTI");
 	}
 	if(m_config->getConfigBool(config::EnablePersistence)) {
-		flags << "PERSIST";
+		flags << QStringLiteral("PERSIST");
 	}
 	if(m_client->hasSslSupport()) {
-		flags << "TLS"
-			  << "SECURE";
+		flags << QStringLiteral("TLS") << QStringLiteral("SECURE");
 		m_state = State::WaitForSecure;
 	}
 	bool allowGuests = m_config->getConfigBool(config::AllowGuests) &&
 					   (!m_client->isWebSocket() ||
 						m_config->getConfigBool(config::AllowGuestWeb));
 	if(!allowGuests) {
-		flags << "NOGUEST";
+		flags << QStringLiteral("NOGUEST");
 	}
 	if(m_config->internalConfig().reportUrl.isValid() &&
 	   m_config->getConfigBool(config::AbuseReport)) {
-		flags << "REPORT";
+		flags << QStringLiteral("REPORT");
 	}
 	if(m_config->getConfigBool(config::AllowCustomAvatars)) {
-		flags << "AVATAR";
+		flags << QStringLiteral("AVATAR");
 	}
 #ifdef HAVE_LIBSODIUM
 	if(!m_config->internalConfig().cryptKey.isEmpty()) {
-		flags << "CBANIMPEX";
+		flags << QStringLiteral("CBANIMPEX");
 	}
 #endif
-	flags << "MBANIMPEX" // Moderators can always export bans.
-		  << "LOOKUP";	 // This server supports lookups.
+	flags << QStringLiteral("MBANIMPEX") // Moderators can always export bans.
+		  << QStringLiteral("LOOKUP");	 // This server supports lookups.
 
 	QJsonObject methods;
 	bool allowGuestHosts =
