@@ -928,24 +928,41 @@ JsonApiResult MultiServer::accountsJsonApi(JsonApiMethod method, const QStringLi
 		return JsonApiBadMethod();
 }
 
-JsonApiResult MultiServer::logJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+JsonApiResult MultiServer::logJsonApi(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
 {
-	if(!path.isEmpty())
+	if(!path.isEmpty()) {
 		return JsonApiNotFound();
-	if(method != JsonApiMethod::Get)
+	}
+
+	if(method != JsonApiMethod::Get) {
 		return JsonApiBadMethod();
+	}
 
-	auto q = m_config->logger()->query();
-	q.page(request.value("page").toInt(), 100);
+	ServerLogQuery q = m_config->logger()->query();
+	q.page(parseRequestInt(request, QStringLiteral("page"), 0, 0), 100);
 
-	if(request.contains("session"))
-		q.session(request.value("session").toString());
+	if(request.contains(QStringLiteral("session"))) {
+		q.session(request.value(QStringLiteral("session")).toString());
+	}
 
-	if(request.contains("after")) {
-		QDateTime after = QDateTime::fromString(request.value("after").toString(), Qt::ISODate);
-		if(!after.isValid())
-			return JsonApiErrorResult(JsonApiResult::BadRequest, "Invalid timestamp");
-		q.after(after);
+	if(request.contains(QStringLiteral("user"))) {
+		q.user(request.value(QStringLiteral("user")).toString());
+	}
+
+	if(request.contains(QStringLiteral("contains"))) {
+		q.messageContains(request.value(QStringLiteral("contains")).toString());
+	}
+
+	if(request.contains(QStringLiteral("after"))) {
+		QDateTime after = QDateTime::fromString(
+			request.value(QStringLiteral("after")).toString(), Qt::ISODate);
+		if(after.isValid()) {
+			q.after(after);
+		} else {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, QStringLiteral("Invalid timestamp"));
+		}
 	}
 
 	QJsonArray out;
@@ -953,7 +970,7 @@ JsonApiResult MultiServer::logJsonApi(JsonApiMethod method, const QStringList &p
 		out.append(log.toJson());
 	}
 
-	return JsonApiResult { JsonApiResult::Ok, QJsonDocument(out) };
+	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(out)};
 }
 
 JsonApiResult MultiServer::extbansJsonApi(

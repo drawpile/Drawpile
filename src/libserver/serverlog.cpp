@@ -100,7 +100,8 @@ void InMemoryLog::storeMessage(const Log &entry)
 }
 
 QList<Log> InMemoryLog::getLogEntries(
-	const QString &session, const QDateTime &after, Log::Level atleast,
+	const QString &session, const QString &user,
+	const QString &messageSubstring, const QDateTime &after, Log::Level atleast,
 	bool omitSensitive, bool omitKicksAndBans, int offset, int limit) const
 {
 	QList<Log> filtered;
@@ -109,7 +110,11 @@ QList<Log> InMemoryLog::getLogEntries(
 			break;
 		}
 
-		if(!session.isEmpty() && session != l.session()) {
+		if(omitSensitive && l.isSensitive()) {
+			continue;
+		}
+
+		if(omitKicksAndBans && l.isKickOrBan()) {
 			continue;
 		}
 
@@ -117,11 +122,17 @@ QList<Log> InMemoryLog::getLogEntries(
 			continue;
 		}
 
-		if(omitSensitive && l.isSensitive()) {
+		if(!session.isEmpty() &&
+		   l.session().compare(session, Qt::CaseInsensitive) != 0) {
 			continue;
 		}
 
-		if(omitKicksAndBans && l.isKickOrBan()) {
+		if(!user.isEmpty() && l.user().contains(user, Qt::CaseInsensitive)) {
+			continue;
+		}
+
+		if(!messageSubstring.isEmpty() &&
+		   l.message().contains(messageSubstring, Qt::CaseInsensitive)) {
 			continue;
 		}
 

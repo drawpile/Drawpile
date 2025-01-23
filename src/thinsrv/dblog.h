@@ -13,9 +13,10 @@ public:
 	bool initDb();
 
 	QList<Log> getLogEntries(
-		const QString &session, const QDateTime &after, Log::Level atleast,
-		bool omitSensitive, bool omitKicksAndBans, int offset,
-		int limit) const override;
+		const QString &session, const QString &user,
+		const QString &messageSubstring, const QDateTime &after,
+		Log::Level atleast, bool omitSensitive, bool omitKicksAndBans,
+		int offset, int limit) const override;
 
 	/**
 	 * @brief Delete all log entries older than the given number of days

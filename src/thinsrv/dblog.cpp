@@ -20,7 +20,8 @@ bool DbLog::initDb()
 }
 
 QList<Log> DbLog::getLogEntries(
-	const QString &session, const QDateTime &after, Log::Level atleast,
+	const QString &session, const QString &user,
+	const QString &messageSubstring, const QDateTime &after, Log::Level atleast,
 	bool omitSensitive, bool omitKicksAndBans, int offset, int limit) const
 {
 	QString sql = QStringLiteral(
@@ -28,9 +29,20 @@ QList<Log> DbLog::getLogEntries(
 		"serverlog WHERE 1 = 1");
 	QVariantList params;
 	if(!session.isEmpty()) {
-		sql += QStringLiteral(" AND session = ?");
+		sql += QStringLiteral(" AND LOWER(session) = LOWER(?)");
 		params << session;
 	}
+
+	if(!user.isEmpty()) {
+		sql += QStringLiteral(" AND INSTR(LOWER(user), LOWER(?))");
+		params << user;
+	}
+
+	if(!messageSubstring.isEmpty()) {
+		sql += QStringLiteral(" AND INSTR(LOWER(message), LOWER(?))");
+		params << messageSubstring;
+	}
+
 	if(after.isValid()) {
 		sql += QStringLiteral(" AND timestamp >= ?");
 		params << after.addMSecs(1000).toString(Qt::ISODate);
@@ -72,6 +84,7 @@ QList<Log> DbLog::getLogEntries(
 			"Database log query error: %s",
 			qUtf8Printable(q.lastError().text()));
 	}
+	qDebug("exec: %s", qUtf8Printable(q.executedQuery()));
 
 	QList<Log> results;
 	while(q.next()) {

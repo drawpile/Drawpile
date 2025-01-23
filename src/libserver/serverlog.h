@@ -165,16 +165,24 @@ class ServerLogQuery {
 public:
 	ServerLogQuery(const ServerLog &log)
 		: m_log(log)
-		, m_offset(0)
-		, m_limit(0)
-		, m_atleast(Log::Level::Debug)
-		, m_omitSensitive(true)
 	{
 	}
 
 	ServerLogQuery &session(const QString &id)
 	{
 		m_session = id;
+		return *this;
+	}
+
+	ServerLogQuery &user(const QString &user)
+	{
+		m_user = user;
+		return *this;
+	}
+
+	ServerLogQuery &messageContains(const QString &messageSubstring)
+	{
+		m_messageSubstring = messageSubstring;
 		return *this;
 	}
 
@@ -214,11 +222,13 @@ public:
 private:
 	const ServerLog &m_log;
 	QString m_session;
-	int m_offset;
-	int m_limit;
-	Log::Level m_atleast;
+	QString m_user;
+	QString m_messageSubstring;
+	int m_offset = 0;
+	int m_limit = 0;
+	Log::Level m_atleast = Log::Level::Debug;
 	QDateTime m_after;
-	bool m_omitSensitive;
+	bool m_omitSensitive = true;
 	bool m_omitKicksAndBans = false;
 };
 
@@ -248,6 +258,8 @@ public:
 	 * @brief Get all available log messages that match the given filters
 	 *
 	 * @param session get only log entries for this session
+	 * @param user only entries with this user
+	 * @param messageSubstring only entries that contain this message substring
 	 * @param after get messages whose timestamp is greater than this
 	 * @param atleast minimum log level
 	 * @param offset ignore first *offset* messages
@@ -256,9 +268,10 @@ public:
 	 * @param omitKicksAndBans leave out kick and (un)ban messages from the log
 	 */
 	virtual QList<Log> getLogEntries(
-		const QString &session, const QDateTime &after, Log::Level atleast,
-		bool omitSensitive, bool omitKicksAndBans, int offset,
-		int limit) const = 0;
+		const QString &session, const QString &user,
+		const QString &messageSubstring, const QDateTime &after,
+		Log::Level atleast, bool omitSensitive, bool omitKicksAndBans,
+		int offset, int limit) const = 0;
 
 	/**
 	 * @brief Return a query builder
@@ -276,8 +289,8 @@ private:
 inline QList<Log> ServerLogQuery::get() const
 {
 	return m_log.getLogEntries(
-		m_session, m_after, m_atleast, m_omitSensitive, m_omitKicksAndBans,
-		m_offset, m_limit);
+		m_session, m_user, m_messageSubstring, m_after, m_atleast,
+		m_omitSensitive, m_omitKicksAndBans, m_offset, m_limit);
 }
 
 void Log::to(ServerLog *logger)
@@ -303,9 +316,10 @@ public:
 	void setHistoryLimit(int limit);
 
 	QList<Log> getLogEntries(
-		const QString &session, const QDateTime &after, Log::Level atleast,
-		bool omitSensitive, bool omitKicksAndBans, int offset,
-		int limit) const override;
+		const QString &session, const QString &user,
+		const QString &messageSubstring, const QDateTime &after,
+		Log::Level atleast, bool omitSensitive, bool omitKicksAndBans,
+		int offset, int limit) const override;
 
 protected:
 	void storeMessage(const Log &entry) override;
