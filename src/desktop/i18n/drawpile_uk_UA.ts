@@ -3544,7 +3544,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Inspector</source>
-        <translation>Інспектор</translation>
+        <translation>Інспекторі</translation>
     </message>
 </context>
 <context>
@@ -3595,7 +3595,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+32"/>
         <source>Inspect</source>
-        <translation>Інспектор</translation>
+        <translation>Інспектори</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -7321,91 +7321,91 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Open an image file</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрийте файл зображення</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Recent Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Останні файли</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reopen a recently used file</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторно відкрити нещодавно використаний файл</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Layouts</source>
-        <translation type="unfinished"></translation>
+        <translation>Макети</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Choose application layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть макет програми</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preferences</source>
-        <translation type="unfinished">Налаштування</translation>
+        <translation>Уподобання</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Change application settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити налаштування програми</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Record</source>
-        <translation type="unfinished">Запис</translation>
+        <translation>Запис</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Add Server</source>
-        <translation type="unfinished">Додати сервер</translation>
+        <translation>Додати сервер</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Check for Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірте наявність оновлень</translation>
     </message>
     <message>
         <location line="+302"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірка…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Last check: today.</source>
-        <translation type="unfinished"></translation>
+        <translation>Остання перевірка: сьогодні.</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>Last check: %n day(s) ago.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Остання перевірка: %n день тому.</numerusform>
+            <numerusform>Остання перевірка: %n днів тому.</numerusform>
+            <numerusform>Остання перевірка: %n днів тому.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Last check: never.</source>
-        <translation type="unfinished"></translation>
+        <translation>Остання перевірка: ніколи.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Join</source>
-        <translation type="unfinished">Долучитися</translation>
+        <translation>Приєднуйтесь</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Host</source>
-        <translation type="unfinished">Вузол</translation>
+        <translation>Хост</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Create</source>
-        <translation type="unfinished">Створити</translation>
+        <translation>Створити</translation>
     </message>
 </context>
 <context>
@@ -7413,12 +7413,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/systeminfodialog.cpp" line="+27"/>
         <source>System Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Інформація про систему</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Копія</translation>
     </message>
 </context>
 <context>
@@ -7426,22 +7426,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/touchtestdialog.cpp" line="+214"/>
         <source>Enable touch</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнути дотик</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enable gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнути жести</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Error Saving Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка збереження журналу</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Touch test log could not be saved: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Журнал перевірки дотику не вдалося зберегти: %1</translation>
     </message>
 </context>
 <context>
@@ -7449,7 +7449,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-236"/>
         <source>Touch here.</source>
-        <translation type="unfinished"></translation>
+        <translation>Торкніться тут.</translation>
     </message>
 </context>
 <context>
@@ -7457,7 +7457,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/userinfodialog.cpp" line="+31"/>
         <source>Refresh</source>
-        <translation type="unfinished">Оновити</translation>
+        <translation>Оновити</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -7469,32 +7469,32 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+9"/>
         <location line="+7"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Невідомий</translation>
     </message>
     <message>
         <location line="-22"/>
         <source>Draw</source>
-        <translation type="unfinished"></translation>
+        <translation>Малювати</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Хлібне полотно</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Do Nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Нічого не робити</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнено</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Вимкнено</translation>
     </message>
 </context>
 <context>
@@ -7502,53 +7502,53 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/videoexportdialog.cpp" line="+31"/>
         <source>Image Series</source>
-        <translation type="unfinished"></translation>
+        <translation>Серія зображень</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 відео</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>WebM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Відео WebM</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Custom FFmpeg Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Спеціальна команда FFmpeg</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Original</source>
-        <translation type="unfinished">Оригінал</translation>
+        <translation>Оригінал</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Custom:</source>
-        <translation type="unfinished">Нетипове:</translation>
+        <translation>Спеціальні:</translation>
     </message>
     <message>
         <location line="+80"/>
         <source>Executables</source>
         <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Виконувані файли</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Choose ffmpeg path</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть шлях ffmpeg</translation>
     </message>
     <message>
         <location line="+107"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірка…</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Not found. %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не знайдено. %1</translation>
     </message>
 </context>
 <context>
@@ -7556,185 +7556,185 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/general.cpp" line="+58"/>
         <source>When enabled, save every %1 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>Якщо ввімкнено, зберігати кожні %1 хвилин</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autosave:</source>
-        <translation type="unfinished"></translation>
+        <translation>Автозбереження:</translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+144"/>
         <location line="+15"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>Система</translation>
     </message>
     <message>
         <location line="-148"/>
         <source>Language:</source>
-        <translation type="unfinished">Мова:</translation>
+        <translation>Мова:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Language changes apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Зміни мови застосовуються після перезапуску Drawpile.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>%1 (%2) / %3 (%4)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2) / %3 (%4)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Write debugging log to file</source>
-        <translation type="unfinished"></translation>
+        <translation>Записати журнал налагодження у файл</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Logging:</source>
-        <translation type="unfinished">Журналювання:</translation>
+        <translation>Лісозаготівля:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Qt Graphics View</source>
         <extracomment>One of the canvas renderer options. &quot;Qt&quot; is a software framework.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Графічний вигляд Qt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hardware (experimental)</source>
         <extracomment>One of the canvas renderer options. Hardware meaning it uses the GPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Апаратне забезпечення (експериментальне)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Software (experimental)</source>
         <extracomment>One of the canvas renderer options. Software meaning it uses the CPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Програмне забезпечення (експериментальне)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Default</source>
         <extracomment>One of the canvas renderer options.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>За замовчуванням</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Renderer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Рендерер:</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Unknown</source>
         <comment>CanvasImplementation</comment>
         <extracomment>Refers to an unknown canvas renderer, should never happen.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Невідомий</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Current renderer: %1. Changes apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Поточний рендерер: %1. Зміни застосовуються після перезапуску Drawpile.</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Keep %1 canvas snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберігати %1 знімок полотна</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas snapshots:</source>
-        <translation type="unfinished"></translation>
+        <translation>Знімки полотна:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Take one snapshot every %1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Робіть один знімок кожні %1 секунд</translation>
     </message>
     <message>
         <location line="-138"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
-        <translation type="unfinished"></translation>
+        <translation>Автозбереження можна ввімкнути для поточного файлу в меню Файл ▸ Автозбереження.</translation>
     </message>
     <message>
         <location line="+106"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <translation type="unfinished"></translation>
+        <translation>Інтерполювати, коли перегляд масштабовано або повернуто</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Prevent jitter at certain zoom and rotation levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Запобігайте тремтінню на певних рівнях масштабування та обертання</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнення цих параметрів може вплинути на продуктивність деяких систем.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Snapshots can be restored from the Session ▸ Reset… menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Знімки можна відновити з меню Сеанс ▸ Скинути….</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Style:</source>
-        <translation type="unfinished"></translation>
+        <translation>Стиль:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Світло</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Темний</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Krita Bright</source>
-        <translation type="unfinished"></translation>
+        <translation>Яскравий впав</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Темний Впало</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Krita Darker</source>
-        <translation type="unfinished"></translation>
+        <translation>Темніше впала</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Qt Fusion</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt Fusion</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hotdog Stand</source>
-        <translation type="unfinished"></translation>
+        <translation>Підставка для хот-догів</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Color scheme:</source>
-        <translation type="unfinished"></translation>
+        <translation>Колірна схема:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Use %1 undo levels by default</source>
-        <translation type="unfinished"></translation>
+        <translation>За замовчуванням використовуйте рівні скасування %1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session history:</source>
-        <translation type="unfinished">Журнал сеансу:</translation>
+        <translation>Історія сесії:</translation>
     </message>
 </context>
 <context>
@@ -7742,32 +7742,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../mainwindow.cpp" line="-1164"/>
         <source>KisTablet Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Windows Ink</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>KisTablet Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Wintab</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>KisTablet Wintab Relative</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Wintab Відносна</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Qt5</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt5</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Qt6 Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Qt6 Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Wintab</translation>
     </message>
 </context>
 <context>
@@ -7775,120 +7775,120 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/network.cpp" line="+85"/>
         <source>Hide user list in announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>Приховати список користувачів в оголошеннях</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Builtin server:</source>
-        <translation type="unfinished"></translation>
+        <translation>Вбудований сервер:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Host on port %1 if available</source>
-        <translation type="unfinished"></translation>
+        <translation>Розмістіть порт %1, якщо доступний</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Automatically check for updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматично перевіряти наявність оновлень</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Updates:</source>
-        <translation type="unfinished"></translation>
+        <translation>Оновлення:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Allow insecure local storage</source>
-        <translation type="unfinished"></translation>
+        <translation>Дозволити незахищене локальне зберігання</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Password security:</source>
-        <translation type="unfinished"></translation>
+        <translation>Безпека пароля:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>With this enabled, Drawpile may save passwords in an unencrypted format. Disabling it will forget any insecurely stored passwords.</source>
-        <translation type="unfinished"></translation>
+        <translation>Якщо це ввімкнено, Drawpile може зберігати паролі в незашифрованому форматі. Вимкнувши його, ви забудете всі ненадійно збережені паролі.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Connection quality:</source>
-        <translation type="unfinished"></translation>
+        <translation>Якість з&apos;єднання:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Good</source>
-        <translation type="unfinished"></translation>
+        <translation>Добре</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Poor</source>
-        <translation type="unfinished"></translation>
+        <translation>Бідний</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Network timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Час очікування мережі:</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>%1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 секунд</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Network proxy:</source>
-        <translation type="unfinished"></translation>
+        <translation>Мережевий проксі:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>Система</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Вимкнено</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Receive delay:</source>
-        <translation type="unfinished"></translation>
+        <translation>Затримка отримання:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The higher the value, the smoother strokes from other users come in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Чим вище значення, тим плавніші штрихи від інших користувачів.</translation>
     </message>
     <message>
         <location line="-102"/>
         <source>Chat avatars:</source>
-        <translation type="unfinished"></translation>
+        <translation>Аватари чату:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Add avatar…</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати аватар…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Delete selected avatars…</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити вибрані аватари…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete avatars</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити аватари</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really delete %n avatar(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Справді видалити %n аватар?</numerusform>
+            <numerusform>Справді видалити %n аватарів?</numerusform>
+            <numerusform>Справді видалити %n аватарів?</numerusform>
         </translation>
     </message>
 </context>
@@ -7897,142 +7897,142 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/notifications.cpp" line="+40"/>
         <source>Event</source>
-        <translation type="unfinished"></translation>
+        <translation>Подія</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>What triggered this notification</source>
-        <translation type="unfinished"></translation>
+        <translation>Що викликало це сповіщення</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Play sound</source>
-        <translation type="unfinished"></translation>
+        <translation>Відтворення звуку</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Play a sound effect when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Відтворення звукового ефекту, коли ця подія відбувається.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>Спливаюче вікно</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pop up a speech bubble in the corner when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Коли ця подія станеться, з’явиться спливаюча підказка в кутку.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flash taskbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Панель завдань Flash</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Flash the Drawpile window in the taskbar when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Під час цієї події на панелі завдань спалахне вікно Drawpile.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bounce dock</source>
-        <translation type="unfinished"></translation>
+        <translation>Відмовний док</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Bounce Drawpile&apos;s icon in the dock when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Відбивати піктограму Drawpile у доці, коли відбувається ця подія.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Demand attention</source>
-        <translation type="unfinished"></translation>
+        <translation>Вимагайте уваги</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark Drawpile&apos;s window as requiring attention. How exactly this looks depends on your system.</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначте вікно Drawpile як таке, що вимагає уваги. Як саме це виглядає, залежить від вашої системи.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Попередній перегляд</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trigger this event so you can see what happens.</source>
-        <translation type="unfinished"></translation>
+        <translation>Запустіть цю подію, щоб ви могли побачити, що відбувається.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Chat message</source>
-        <translation type="unfinished"></translation>
+        <translation>Повідомлення в чаті</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Private message</source>
-        <translation type="unfinished"></translation>
+        <translation>Приватне повідомлення</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>User left</source>
-        <translation type="unfinished"></translation>
+        <translation>Користувач залишився</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Disconnected</source>
-        <translation type="unfinished">Роз&apos;єднано</translation>
+        <translation>Відключено</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Preview event</source>
-        <translation type="unfinished"></translation>
+        <translation>Попередній перегляд події</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Sound volume:</source>
-        <translation type="unfinished"></translation>
+        <translation>Гучність звуку:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Use private message notification for mentions</source>
-        <translation type="unfinished"></translation>
+        <translation>Використовуйте приватні повідомлення для згадок</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mentions:</source>
-        <translation type="unfinished"></translation>
+        <translation>Згадки:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Additional triggers go here, one per line.</source>
-        <translation type="unfinished"></translation>
+        <translation>Тут розміщено додаткові тригери, по одному на рядок.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your username always counts as a mention. You can add additional trigger words or phrases that you want to count as well, such as other nicknames. One word or phrase per line, case doesn&apos;t matter.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ваше ім’я користувача завжди зараховується як згадка. Ви можете додати додаткові тригерні слова або фрази, які ви також хочете підрахувати, наприклад інші псевдоніми. Одне слово чи фраза на рядок, регістр не має значення.</translation>
     </message>
     <message>
         <location line="-83"/>
         <source>User joined</source>
-        <translation type="unfinished"></translation>
+        <translation>Користувач приєднався</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Canvas locked</source>
-        <translation type="unfinished">Полотно заблоковано</translation>
+        <translation>Полотно заблоковано</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished">Полотно розблоковано</translation>
+        <translation>Полотно розблоковано</translation>
     </message>
 </context>
 <context>
@@ -8040,113 +8040,113 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+57"/>
         <source>Consider sessions whose titles contain these keywords NSFM.</source>
-        <translation type="unfinished"></translation>
+        <translation>Розглянемо сесії, заголовки яких містять ці ключові слова NSFM.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Keywords:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ключові слова:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Filter mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим фільтра:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Unrestricted</source>
-        <translation type="unfinished"></translation>
+        <translation>Без обмежень</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove NSFM sessions from listings</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити сесії NSFM зі списків</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Prevent joining NSFM sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Заборонити приєднання до сеансів NSFM</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Prevent joining NSFM sessions and disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Запобігти приєднанню до сеансів NSFM і відключитися</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings, but can still be joined by following a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сеанси NSFM будуть приховані в списках серверів, але до них все одно можна приєднатися, перейшовши за прямим посиланням.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сеанси NSFM будуть приховані в списках серверів, і до них неможливо приєднатися.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined. Connected sessions that change their title or NSFM flag will automatically disconnect.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сесії NSFM будуть приховані в списках серверів, і до них неможливо приєднатися. Підключені сеанси, які змінюють назву або позначку NSFM, автоматично від’єднаються.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disallow uncensoring of layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Заборонити скасування цензури шарів</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Warn when joining NSFM sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Попереджати під час приєднання до сесій NSFM</translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+28"/>
         <source>Lock</source>
-        <translation type="unfinished">Заблокувати</translation>
+        <translation>Замок</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Hide settings when locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Приховати налаштування під час блокування</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Parental controls are currently locked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Батьківський контроль наразі заблоковано.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Unlock</source>
-        <translation type="unfinished">Розблокувати</translation>
+        <translation>Розблокувати</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>These settings configure the handling of sessions that are marked not suitable for minors (NSFM) and of layers that have been censored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ці параметри налаштовують обробку сеансів, позначених як непридатні для неповнолітніх (NSFM), і шарів, які були піддані цензурі.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Parental controls are currently managed by the operating system.</source>
-        <translation type="unfinished"></translation>
+        <translation>Батьківським контролем наразі керує операційна система.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Unlock Parental Controls</source>
-        <translation type="unfinished">Розблокувати батьківський контроль</translation>
+        <translation>Розблокуйте батьківський контроль</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lock Parental Controls</source>
-        <translation type="unfinished">Застосувати батьківський контроль</translation>
+        <translation>Заблокувати батьківський контроль</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Enter password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Введіть пароль:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished">Помилковий пароль.</translation>
+        <translation>Помилковий пароль.</translation>
     </message>
 </context>
 <context>
@@ -8154,109 +8154,109 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/servers.cpp" line="+112"/>
         <source>Known hosts:</source>
-        <translation type="unfinished"></translation>
+        <translation>Відомі господарі:</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Import trusted certificate…</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпорт надійного сертифіката…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove selected hosts…</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити вибрані хости…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove known hosts</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити відомі хости</translation>
     </message>
     <message>
         <location line="-84"/>
         <source>List servers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Список серверів:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Add list servers…</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати сервери списку…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove selected list servers…</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити вибрані сервери списку…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove list servers</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити сервери списку</translation>
     </message>
     <message numerus="yes">
         <location line="+61"/>
         <source>Really remove %n known host(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Справді видалити %n відомий хост?</numerusform>
+            <numerusform>Справді видалити %n відомих хостів?</numerusform>
+            <numerusform>Справді видалити %n відомих хостів?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="-60"/>
         <source>Really remove %n list server(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Справді видалити %n сервер списку?</numerusform>
+            <numerusform>Справді видалити %n список серверів?</numerusform>
+            <numerusform>Справді видалити %n список серверів?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Move up</source>
-        <translation type="unfinished"></translation>
+        <translation>Рухатися вгору</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Move down</source>
-        <translation type="unfinished"></translation>
+        <translation>Рухатися вниз</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Pin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Закріпити</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+81"/>
         <source>Pin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Закріпити вибрані сертифікати</translation>
     </message>
     <message>
         <location line="-64"/>
         <source>Unpin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Відкріпити</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+64"/>
         <source>Unpin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкріпити вибрані сертифікати</translation>
     </message>
     <message>
         <location line="-34"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Продовжити</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Import certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпортні сертифікати</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Could not save changes to known hosts: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося зберегти зміни до відомих хостів: %1</translation>
     </message>
 </context>
 <context>
@@ -8264,12 +8264,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/shortcutfilterinput.cpp" line="+18"/>
         <source>Search…</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошук…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show conflicts only</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати лише конфлікти</translation>
     </message>
 </context>
 <context>
@@ -8277,83 +8277,83 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+194"/>
         <source>Restore Shortcut Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Відновити ярлики за замовчуванням</translation>
     </message>
     <message>
         <location line="-4"/>
         <location line="+145"/>
         <source>Restore defaults…</source>
-        <translation type="unfinished"></translation>
+        <translation>Відновити налаштування за замовчуванням…</translation>
     </message>
     <message>
         <location line="-140"/>
         <source>Really restore all shortcuts to their default values?</source>
-        <translation type="unfinished"></translation>
+        <translation>Справді відновити всі ярлики до стандартних значень?</translation>
     </message>
     <message>
         <location line="+117"/>
         <source>Edit Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Ярлик «Редагувати полотно»</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Add canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати ярлик полотна…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>New Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Новий ярлик Canvas</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Remove selected canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити вибраний ярлик полотна…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove canvas shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити ярлик canvas</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Справді видалити %n ярлик canvas?</numerusform>
+            <numerusform>Справді видалити %n ярликів полотна?</numerusform>
+            <numerusform>Справді видалити %n ярликів полотна?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Restore Canvas Shortcut Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Відновити стандартні налаштування ярлика Canvas</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really restore all canvas shortcuts to their default values?</source>
-        <translation type="unfinished"></translation>
+        <translation>Справді відновити всі ярлики полотна до стандартних значень?</translation>
     </message>
     <message>
         <location line="+95"/>
         <source>Actions</source>
-        <translation type="unfinished"></translation>
+        <translation>Дії</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Brushes</source>
-        <translation type="unfinished">Пензлі</translation>
+        <translation>Щітки</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Полотно</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 (%2)</source>
         <extracomment>This is for showing search feedback in the tabs of the shortcut preferences. %1 is the original tab title, like &quot;Actions&quot; or &quot;Brushes&quot;, %2 is the number of search results in that tab.</extracomment>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -8361,108 +8361,108 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/tablet.cpp" line="+30"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished">Тестування планшета</translation>
+        <translation>Тестер планшетів</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Tablet</source>
-        <translation type="unfinished"></translation>
+        <translation>Планшет</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Вихід</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Global pressure curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>Глобальна крива тиску:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>KisTablet Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>KisTablet Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Wintab</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>KisTablet Wintab Relative</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Wintab Відносна</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Qt5</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt5</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Qt6 Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Qt6 Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Wintab</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Tablet driver:</source>
-        <translation type="unfinished"></translation>
+        <translation>Драйвер планшета:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Enable pressure sensitivity</source>
-        <translation type="unfinished">Увімкнути чутливість до тиску</translation>
+        <translation>Увімкнути чутливість до тиску</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pen pressure:</source>
-        <translation type="unfinished"></translation>
+        <translation>Тиск пера:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Global smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Глобальне згладжування: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">Згладжування:</translation>
+        <translation>Згладжування:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Apply global smoothing to mouse</source>
-        <translation type="unfinished"></translation>
+        <translation>Застосуйте глобальне згладжування до миші</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Compensate jagged curves</source>
-        <translation type="unfinished"></translation>
+        <translation>Компенсуйте нерівні криві</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Treat as regular pen tip</source>
-        <translation type="unfinished"></translation>
+        <translation>Розглядайте як звичайний кінчик ручки</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключіться на слот для гумки</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Витріть поточною кистю</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser tip behavior:</source>
         <extracomment>This refers to the eraser end tablet pen, not a tooltip or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Поведінка кінчика гумки:</translation>
     </message>
 </context>
 <context>
@@ -8470,146 +8470,146 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/tools.cpp" line="+146"/>
         <source>Toggle between previous and current tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемикання між попереднім і поточним інструментом</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Keyboard shortcuts:</source>
-        <translation type="unfinished"></translation>
+        <translation>Комбінації клавіш:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Double-tap Alt key to focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Двічі торкніться клавіші Alt, щоб сфокусувати полотно</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Attach selected brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Прикріпіть вибрані кисті</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>When enabled, changes in a brush slot will be saved to the brush itself automatically. When disabled, the brush itself only changes when you save it explicitly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Якщо ввімкнено, зміни в слоті пензля будуть автоматично збережені в самому пензлі. Якщо вимкнено, сам пензель змінюється лише тоді, коли ви явно зберігаєте його.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Brush slots:</source>
-        <translation type="unfinished"></translation>
+        <translation>Слоти для щіток:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Share one color across all brush slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Розділіть один колір для всіх слотів пензля</translation>
     </message>
     <message>
         <location line="-95"/>
         <source>px</source>
-        <translation type="unfinished">пк</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show a %1 outline around the brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Покажіть %1 контур навколо пензля</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Enable brush outline</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнути контур пензля</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Brush outline:</source>
-        <translation type="unfinished"></translation>
+        <translation>Контур пензля:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Same as brush cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Те саме, що курсор пензля</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Dot</source>
-        <translation type="unfinished">Крапка</translation>
+        <translation>Крапка</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Crosshair</source>
-        <translation type="unfinished">Схрещення</translation>
+        <translation>Перехрестя</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Arrow</source>
-        <translation type="unfinished">Стрілка</translation>
+        <translation>Стрілка</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right-handed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Правий трикутник</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Left-handed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Лівосторонній трикутник</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Show sampling ring</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати кільце відбору проб</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color picker:</source>
-        <translation type="unfinished"></translation>
+        <translation>Вибір кольору:</translation>
     </message>
     <message numerus="yes">
         <location line="+37"/>
         <source>Show %1 brush slot(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Показати слот пензля %1</numerusform>
+            <numerusform>Показати щілини пензля %1</numerusform>
+            <numerusform>Показати щілини пензля %1</numerusform>
         </translation>
     </message>
     <message>
         <location line="-123"/>
         <source>Color space:</source>
-        <translation type="unfinished"></translation>
+        <translation>Колірний простір:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>HSV (Hue–Saturation–Value)</source>
-        <translation type="unfinished"></translation>
+        <translation>HSV (відтінок–насиченість–значення)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>HSL (Hue–Saturation–Lightness)</source>
-        <translation type="unfinished"></translation>
+        <translation>HSL (відтінок–насиченість–світлота)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>HCL (Hue–Chroma–Luminance)</source>
-        <translation type="unfinished"></translation>
+        <translation>HCL (Відтінок–колірність–яскравість)</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Eraser</source>
-        <translation type="unfinished">Гумка</translation>
+        <translation>Гумка</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Brush cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Курсор пензля:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Eraser cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Курсор-гумка:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Alpha lock cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Курсор Alpha Lock:</translation>
     </message>
 </context>
 <context>
@@ -8617,22 +8617,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/touch.cpp" line="+25"/>
         <source>Touch Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Торкніться Тестер</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Touch mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Сенсорний режим:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished"></translation>
+        <translation>Сенсорний екран</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>Жести</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8641,122 +8641,122 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+13"/>
         <location line="+9"/>
         <source>No action</source>
-        <translation type="unfinished"></translation>
+        <translation>Ніяких дій</translation>
     </message>
     <message>
         <location line="-82"/>
         <source>Undo</source>
-        <translation type="unfinished">Скасувати</translation>
+        <translation>Скасувати</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Redo</source>
-        <translation type="unfinished">Повторити</translation>
+        <translation>Повторити</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hide docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Сховати доки</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle color picker</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемкнути вибір кольору</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемкнути ластик</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle erase mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемкнути режим стирання</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle recolor mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнути режим перефарбування</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>One-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Дотик одним пальцем:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Two-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Дотик двома пальцями:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Three-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Натискання трьома пальцями:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Four-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Дотик чотирма пальцями:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть колір</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>One-finger tap and hold:</source>
-        <translation type="unfinished"></translation>
+        <translation>Натисніть і утримуйте одним пальцем:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Draw</source>
-        <translation type="unfinished"></translation>
+        <translation>Малювати</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pan canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Полотняний хліб</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Guess</source>
-        <translation type="unfinished"></translation>
+        <translation>Вгадай</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>One-finger touch:</source>
-        <translation type="unfinished"></translation>
+        <translation>Дотик одним пальцем:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Zoom</source>
-        <translation type="unfinished">Масштаб</translation>
+        <translation>Збільшити</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Two-finger pinch:</source>
-        <translation type="unfinished"></translation>
+        <translation>Щипки двома пальцями:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Обертати полотно</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Free rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Вільне обертання полотна</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ratchet rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Храповий поворот полотна</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Two-finger twist:</source>
-        <translation type="unfinished"></translation>
+        <translation>Поворот двома пальцями:</translation>
     </message>
 </context>
 <context>
@@ -8764,183 +8764,183 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+206"/>
         <source>Override system font size</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевизначити системний розмір шрифту</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Font size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Розмір шрифту: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>pt</source>
-        <translation type="unfinished"></translation>
+        <translation>пт</translation>
     </message>
     <message>
         <location line="-170"/>
         <source>Interface mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим інтерфейсу:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>Динамічний</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Робочий стіл</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+161"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Вимкнено</translation>
     </message>
     <message>
         <location line="-160"/>
         <source>On left-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетягніть лівою кнопкою миші</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On middle-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>При клацанні середньою кнопкою миші перетягніть</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On right-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетягніть правою кнопкою миші</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On touch drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетягування на дотик</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Kinetic scrolling:</source>
-        <translation type="unfinished"></translation>
+        <translation>Кінетична прокрутка:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Threshold: </source>
-        <translation type="unfinished"></translation>
+        <translation>Поріг: </translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hide scroll bars</source>
-        <translation type="unfinished"></translation>
+        <translation>Приховати смуги прокрутки</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Background color behind the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Колір фону за полотном</translation>
     </message>
     <message>
         <location line="+71"/>
         <source>Override system scale factor</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевизначити коефіцієнт масштабування системи</translation>
     </message>
     <message>
         <location line="-126"/>
         <source>Small screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Маленький екран</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>First checker color</source>
-        <translation type="unfinished"></translation>
+        <translation>Перший колір шашки</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Second checker color</source>
-        <translation type="unfinished"></translation>
+        <translation>Другий колір шашки</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Colors behind canvas:</source>
-        <translation type="unfinished"></translation>
+        <translation>Кольори за полотном:</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Zoom, rotate, mirror and flip notices</source>
-        <translation type="unfinished"></translation>
+        <translation>Масштабування, обертання, дзеркальне відображення та гортання сповіщень</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>On-canvas notices:</source>
-        <translation type="unfinished"></translation>
+        <translation>Повідомлення на полотні:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show scroll bars on canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати смуги прокрутки на полотні</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Miscellaneous:</source>
-        <translation type="unfinished"></translation>
+        <translation>Різне:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Prompt when creating layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Підказка при створенні шарів</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Ask before deleting layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Запитувати перед видаленням шарів</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Scaling:</source>
-        <translation type="unfinished"></translation>
+        <translation>Масштабування:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Scale factor: </source>
-        <translation type="unfinished"></translation>
+        <translation>Коефіцієнт масштабу: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Font size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Розмір шрифту:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Vertical sync:</source>
-        <translation type="unfinished"></translation>
+        <translation>Вертикальна синхронізація:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнено</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>Система</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>%1px</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 пікс</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1pt</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 пт</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Changes apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Зміни застосовуються після перезапуску Drawpile. Поточний коефіцієнт масштабування – %1%, розмір шрифту – %2.</translation>
     </message>
 </context>
 <context>
@@ -8948,107 +8948,107 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/browse.cpp" line="+61"/>
         <source>You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви ще не додали жодного сервера. Деякі з них можна знайти на &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>To add the public Drawpile server, &lt;a href=&quot;#&quot;&gt;click here&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Щоб додати публічний сервер Drawpile, &lt;a href=&quot;#&quot;&gt;натисніть тут&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Filter</source>
-        <translation type="unfinished">Фільтр</translation>
+        <translation>Фільтр</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Closed</source>
-        <translation type="unfinished"></translation>
+        <translation>Зачинено</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show sessions that don&apos;t let new users join</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати сеанси, до яких не допускаються нові користувачі</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Password</source>
-        <translation type="unfinished">Пароль</translation>
+        <translation>Пароль</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that require a password to join</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати сеанси, для приєднання яких потрібен пароль</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished">NSFM</translation>
+        <translation>NSFM</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished">Показати сеанси з вмістом, який не підходить для неповнолітніх (NSFM)</translation>
+        <translation>Показати сеанси, неприйнятні для неповнолітніх (NSFM)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Inactive</source>
-        <translation type="unfinished"></translation>
+        <translation>Неактивний</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that have zero actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати сеанси, у яких немає активних користувачів</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Duplicates</source>
-        <translation type="unfinished"></translation>
+        <translation>Дублікати</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that are listed on multiple servers</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати сеанси, які перераховані на кількох серверах</translation>
     </message>
     <message>
         <location line="+158"/>
         <source>Loading...</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження...</translation>
     </message>
     <message>
         <location line="-95"/>
         <source>Join</source>
-        <translation type="unfinished">Долучитися</translation>
+        <translation>Приєднуйтесь</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Copy session URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Копіювати URL-адресу сеансу</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy title</source>
-        <translation type="unfinished"></translation>
+        <translation>Скопіюйте назву</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Copy server</source>
-        <translation type="unfinished"></translation>
+        <translation>Сервер копіювання</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy owner</source>
-        <translation type="unfinished"></translation>
+        <translation>Власник копії</translation>
     </message>
     <message>
         <location line="+92"/>
         <source>Nothing here yet!</source>
-        <translation type="unfinished"></translation>
+        <translation>Тут ще нічого немає!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Read the message at the top on how to add a server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Прочитайте повідомлення вгорі про те, як додати сервер.</translation>
     </message>
 </context>
 <context>
@@ -9057,27 +9057,27 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/startdialog/create.cpp" line="+26"/>
         <location line="+7"/>
         <source>px</source>
-        <translation type="unfinished">пк</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Width:</source>
-        <translation type="unfinished">Ширина:</translation>
+        <translation>Ширина:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Height:</source>
-        <translation type="unfinished">Висота:</translation>
+        <translation>Висота:</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Canvas background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Колір фону полотна</translation>
     </message>
     <message>
         <location line="-33"/>
         <source>Background:</source>
-        <translation type="unfinished">Тло:</translation>
+        <translation>Фон:</translation>
     </message>
 </context>
 <context>
@@ -9085,122 +9085,122 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host.cpp" line="+118"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
-        <translation type="unfinished">Заголовок буде показано на смужці заголовка та у вікні вибору сеансу</translation>
+        <translation>Заголовок відображається в рядку заголовка програми та в діалоговому вікні вибору сеансу</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Title:</source>
-        <translation type="unfinished">Заголовок:</translation>
+        <translation>Назва:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Optional. If left blank, no password will be needed to join this session.</source>
-        <translation type="unfinished">Необов&apos;язковий. Якщо не вказувати, для долучення до сеансу не доведеться вказувати пароль.</translation>
+        <translation>Додатково. Якщо залишити порожнім, пароль для приєднання до цього сеансу не потрібен.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Generate</source>
-        <translation type="unfinished"></translation>
+        <translation>Генерувати</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Generates a random password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Генерує випадковий пароль.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Password:</source>
-        <translation type="unfinished">Пароль:</translation>
+        <translation>Пароль:</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>The built-in server is not available on Android.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вбудований сервер недоступний на Android.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The built-in server is not available in the browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вбудований сервер недоступний у браузері.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The built-in server is not available on this installation of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вбудований сервер недоступний у цій установці Drawpile.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Enable advanced options</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнути розширені параметри</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>An optional user friendly ID for the session</source>
-        <translation type="unfinished">Необов&apos;язковий зручний для читання ідентифікатор сеансу</translation>
+        <translation>Додатковий зручний ідентифікатор для сеансу</translation>
     </message>
     <message>
         <location line="-4"/>
         <source>ID Alias:</source>
-        <translation type="unfinished"></translation>
+        <translation>ID псевдоніма:</translation>
     </message>
     <message>
         <location line="-154"/>
         <source>A session title is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Потрібна назва сесії.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session title. If you want to join a session using an invite link, &lt;a href=&quot;#&quot;&gt;click here to go to the Join page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Недійсна назва сесії. Якщо ви хочете приєднатися до сеансу за посиланням із запрошенням, &lt;a href=&quot;#&quot;&gt;клацніть тут, щоб перейти на сторінку приєднання&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Будь-хто може приєднатися до вашого сеансу без встановлення пароля! Якщо ви хочете організувати приватний сеанс, виберіть пароль або &lt;a href=&quot;#&quot;&gt;згенеруйте його&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Хостинг на вашому комп&apos;ютері вимагає додаткового налаштування! &lt;a href=&quot;#&quot;&gt;Натисніть тут, щоб отримати інструкції.&lt;/a&gt;</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Не підходить для неповнолітніх (NSFM)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Marks the session as having age-restricted content.</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначає сеанс як вміст із віковим обмеженням.</translation>
     </message>
     <message>
         <location line="+70"/>
         <source>List at:</source>
-        <translation type="unfinished">Список:</translation>
+        <translation>Список за адресою:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Announce the session at a public list</source>
-        <translation type="unfinished">Оголошувати сеанс у відкритому списку</translation>
+        <translation>Оголосити сесію в публічному списку</translation>
     </message>
     <message>
         <location line="-59"/>
         <source>Host on this computer</source>
-        <translation type="unfinished"></translation>
+        <translation>Хост на цьому комп&apos;ютері</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Use Drawpile&apos;s built-in server</source>
-        <translation type="unfinished">Вбудований сервер Drawpile</translation>
+        <translation>Використовуйте вбудований сервер Drawpile</translation>
     </message>
     <message>
         <location line="-5"/>
         <source>Host at:</source>
-        <translation type="unfinished"></translation>
+        <translation>Хост на:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Use an external dedicated server</source>
-        <translation type="unfinished">Використовувати спеціалізований зовнішній сервер</translation>
+        <translation>Використовуйте зовнішній виділений сервер</translation>
     </message>
 </context>
 <context>
@@ -9208,12 +9208,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/join.cpp" line="+26"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt; or &lt;strong&gt;IP address&lt;/strong&gt;:</source>
-        <translation type="unfinished"></translation>
+        <translation>Введіть &lt;strong&gt;URL-адресу сеансу&lt;/strong&gt;, &lt;strong&gt;ім’я хоста&lt;/strong&gt; або &lt;strong&gt;IP-адресу&lt;/strong&gt;:</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Recent:</source>
-        <translation type="unfinished"></translation>
+        <translation>Останні:</translation>
     </message>
 </context>
 <context>
@@ -9221,62 +9221,62 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="+28"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Довідка</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s help pages in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрийте довідкові сторінки Drawpile у своєму браузері</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштування планшета</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s tablet setup and troubleshooting help page</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрийте сторінку довідки щодо налаштування та усунення несправностей Drawpile</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Communities</source>
-        <translation type="unfinished"></translation>
+        <translation>Спільноти</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s communities page in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрийте сторінку спільнот Drawpile у своєму браузері</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discord</source>
-        <translation type="unfinished"></translation>
+        <translation>Розбрат</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Join the Drawpile Discord server</source>
-        <translation type="unfinished"></translation>
+        <translation>Приєднайтеся до сервера Drawpile Discord</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation>libera.chat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Join the #drawpile chatroom on libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Приєднуйтеся до чату #drawpile на libera.chat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GitHub</source>
-        <translation type="unfinished"></translation>
+        <translation>GitHub</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s GitHub page in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрийте сторінку GitHub від Drawpile у своєму браузері</translation>
     </message>
 </context>
 <context>
@@ -9284,37 +9284,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/updatenotice.cpp" line="+60"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Оновлення</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>Відхилити</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hide this notification</source>
-        <translation type="unfinished"></translation>
+        <translation>Сховати це сповіщення</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>A new version of Drawpile is available!</source>
-        <translation type="unfinished"></translation>
+        <translation>Доступна нова версія Drawpile!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Update to Drawpile version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Оновлення до версії Drawpile %1</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сторінка завантаження для Drawpile %1 мала відкритися у вашому браузері. Якщо ні, відвідайте &lt;strong&gt;drawpile.net&lt;/strong&gt; вручну.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The download page for Drawpile %1 could not be opened, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося відкрити сторінку завантаження для Drawpile %1, відвідайте &lt;strong&gt;drawpile.net&lt;/strong&gt; вручну.</translation>
     </message>
 </context>
 <context>
@@ -9322,37 +9322,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/welcome.cpp" line="+50"/>
         <source>Standalone Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Автономний режим</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You are running the web browser version of Drawpile in standalone mode. It will &lt;strong&gt;not&lt;/strong&gt; automatically save what you draw, so save often!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви використовуєте версію Drawpile у веб-браузері в автономному режимі. Він &lt;strong&gt;не&lt;/strong&gt; автоматично збереже те, що ви малюєте, тому зберігайте частіше!</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Welcome to Drawpile!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ласкаво просимо до Drawpile!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layouts&quot;&gt;Layout&lt;/a&gt; for the application.</source>
-        <translation type="unfinished"></translation>
+        <translation>Перегляньте &lt;a href=&quot;#preferences&quot;&gt;Налаштування&lt;/a&gt;, щоб налаштувати речі на свій смак. Ви також можете вибрати інший &lt;a href=&quot;#layouts&quot;&gt;Макет&lt;/a&gt; для програми.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
-        <translation type="unfinished"></translation>
+        <translation>Якщо у вас є посилання для запрошення на сеанс малювання, ви можете &lt;a href=&quot;#join&quot;&gt;приєднатися&lt;/a&gt; безпосередньо. Крім того, ви можете &lt;a href=&quot;#browse&quot;&gt;переглядати&lt;/a&gt; загальнодоступні сесії або просто створити &lt;a href=&quot;#create&quot;&gt;нове полотно&lt;/a&gt;, щоб малювати самостійно.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</source>
-        <translation type="unfinished"></translation>
+        <translation>Якщо у вас виникли проблеми, подивіться на сторінки довідки за посиланням праворуч. Якщо вони не відповідають на ваше запитання, ви можете приєднатися до сервера Discord і запитати, зазвичай є люди, які можуть допомогти!</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Next time, you&apos;ll see news and updates on this page.</source>
-        <translation type="unfinished"></translation>
+        <translation>Наступного разу ви побачите новини та оновлення на цій сторінці.</translation>
     </message>
 </context>
 <context>
@@ -9360,152 +9360,152 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/brushpalettedock.cpp" line="+111"/>
         <source>Brushes</source>
-        <translation type="unfinished">Пензлі</translation>
+        <translation>Щітки</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Пошук</translation>
     </message>
     <message>
         <location line="+548"/>
         <source>New Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Новий тег</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Delete Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити тег</translation>
     </message>
     <message>
         <location line="-571"/>
         <source>&amp;Edit Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Пензель редагування</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Скинути кисть</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути всі &amp;пензлі</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Нова кисть</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Пензель перезапису</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Видалити кисть</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Brush &amp;Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Теги пензля</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Icon Size</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Розмір значка</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ne&amp;w Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Новий&amp;новий тег</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rena&amp;me Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейменувати тег</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>De&amp;lete Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви&amp;далити тег</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Im&amp;port Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ім&amp;порт пензлів…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>E&amp;xport Tag…</source>
-        <translation type="unfinished"></translation>
+        <translation>Експорт тег…</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Export Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Експорт пензля…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%1</translation>
     </message>
     <message>
         <location line="+233"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Пензель перезапису</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really overwrite brush &apos;%1&apos; with the current one?</source>
-        <translation type="unfinished"></translation>
+        <translation>Справді перезаписати пензель &quot;%1&quot; поточним?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Перезаписати</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+297"/>
         <location line="+45"/>
         <source>Keep</source>
-        <translation type="unfinished"></translation>
+        <translation>Тримайте</translation>
     </message>
     <message>
         <location line="-278"/>
         <source>Brush Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпорт пензля</translation>
     </message>
     <message numerus="yes">
         <location line="+11"/>
         <source>%n brush(es) imported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n пензла імпортовано.</numerusform>
+            <numerusform>%n пензлів імпортовано.</numerusform>
+            <numerusform>%n пензлів імпортовано.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+13"/>
         <source>%n tag(s) imported: %1</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n імпортований тег: %1</numerusform>
+            <numerusform>%n імпортовані теги: %1</numerusform>
+            <numerusform>%n імпортовані теги: %1</numerusform>
         </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>0 tags imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>0 імпортованих тегів.</translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
         <source>%n error(s) encountered.</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Виникла %n помилка.</numerusform>
             <numerusform>Виникло %n помилки.</numerusform>
             <numerusform>Виникло %n помилок.</numerusform>
@@ -9515,50 +9515,50 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+105"/>
         <source>No tags</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but there&apos;s no tags to assign it to.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Без тегів</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>No brush selected</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but no brush is actually selected.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Кисть не вибрано</translation>
     </message>
     <message>
         <location line="+39"/>
         <location line="+15"/>
         <source>Tag name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва тегу:</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Edit Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Редагувати тег</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Really delete tag &apos;%1&apos;? This will not delete the brushes within.</source>
-        <translation type="unfinished"></translation>
+        <translation>Справді видалити тег &quot;%1&quot;? Це не видалить пензлі всередині.</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+45"/>
         <source>Delete</source>
-        <translation type="unfinished">Вилучити</translation>
+        <translation>Видалити</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити кисть</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete brush &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Справді видалити пензель &quot;%1&quot;?</translation>
     </message>
     <message>
         <location line="-410"/>
         <source>New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Нова кисть</translation>
     </message>
 </context>
 <context>
@@ -9566,99 +9566,99 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorpalette.cpp" line="+311"/>
         <source>Delete</source>
-        <translation type="unfinished">Вилучити</translation>
+        <translation>Видалити</translation>
     </message>
     <message>
         <location line="-191"/>
         <source>New palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Нова палітра</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Duplicate palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Дублікат палітри</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити палітру</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rename palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейменувати палітру</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import palette…</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпортувати палітру…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export palette…</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати палітру…</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Add column</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати стовпець</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove column</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити стовпець</translation>
     </message>
     <message>
         <location line="+98"/>
         <location line="+50"/>
         <source>New Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Нова палітра</translation>
     </message>
     <message>
         <location line="-50"/>
         <location line="+50"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Ім&apos;я</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Import palette</source>
-        <translation type="unfinished">Імпортувати палітру</translation>
+        <translation>Імпортувати палітру</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Palettes (%1)</source>
-        <translation type="unfinished">палітри (%1)</translation>
+        <translation>Палітри (%1)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>All files (*)</source>
-        <translation type="unfinished">усі файли (*)</translation>
+        <translation>Усі файли (*)</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Export palette</source>
-        <translation type="unfinished">Експортування палітри</translation>
+        <translation>Експортування палітри</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>GIMP palette (%1)</source>
-        <translation type="unfinished">палітра GIMP (%1)</translation>
+        <translation>Палітра GIMP (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error</source>
-        <translation type="unfinished">Помилка</translation>
+        <translation>Помилка</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Couldn&apos;t save file</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося зберегти файл</translation>
     </message>
     <message>
         <location line="-61"/>
         <source>Delete palette &quot;%1&quot;?</source>
-        <translation type="unfinished">Вилучити палітру «%1»?</translation>
+        <translation>Видалити палітру &quot;%1&quot;?</translation>
     </message>
 </context>
 <context>
@@ -9666,124 +9666,124 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorsliders.cpp" line="+80"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>Колірний простір</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+364"/>
         <source>HSV</source>
         <extracomment>Color space HSV (hue, chroma, value)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSV</translation>
     </message>
     <message>
         <location line="-353"/>
         <location line="+329"/>
         <source>HSL</source>
         <extracomment>Color space HSL (hue, saturation, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="-318"/>
         <location line="+330"/>
         <source>HCL</source>
         <extracomment>Color space HCL (hue, chroma, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HCL</translation>
     </message>
     <message>
         <location line="-317"/>
         <source>Show all sliders at once</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати всі повзунки одночасно</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show hex input</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати шістнадцяткове введення</translation>
     </message>
     <message>
         <location line="+80"/>
         <source>R</source>
         <extracomment>The &quot;Red&quot; R of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>R</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>G</source>
         <extracomment>The &quot;Green&quot; G of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>G</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>B</source>
         <extracomment>The &quot;Blue&quot; B of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>B</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>RGB</source>
-        <translation type="unfinished"></translation>
+        <translation>RGB</translation>
     </message>
     <message>
         <location line="+177"/>
         <source>H</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Hue&quot; H of HSL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>S</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Saturation&quot; S of HSL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>S</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>L</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Lightness&quot; L HSL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>H</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Hue&quot; H of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>C</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Chroma&quot; C of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>C</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>L</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Luma&quot; L of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>H</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Hue&quot; H of HSV.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>S</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Saturation&quot; S of HSV.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>S</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>V</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Value&quot; V of HSV.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>V</translation>
     </message>
 </context>
 <context>
@@ -9791,82 +9791,82 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorspinner.cpp" line="+77"/>
         <source>Shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Форма</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Rotating triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Обертовий трикутник</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Rotating square</source>
-        <translation type="unfinished"></translation>
+        <translation>Обертовий квадрат</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Фіксований трикутник</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed square</source>
-        <translation type="unfinished"></translation>
+        <translation>Фіксований квадрат</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>Колірний простір</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>HSV</source>
-        <translation type="unfinished"></translation>
+        <translation>HSV</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>HSL</source>
-        <translation type="unfinished"></translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>HCL</source>
-        <translation type="unfinished"></translation>
+        <translation>HCL</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Direction</source>
-        <translation type="unfinished"></translation>
+        <translation>Напрямок</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Висхідний</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Спускається</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Вирівнювання</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top</source>
-        <translation type="unfinished">Вгору</translation>
+        <translation>Топ</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Центр</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Preview selected color</source>
-        <translation type="unfinished"></translation>
+        <translation>Попередній перегляд вибраного кольору</translation>
     </message>
 </context>
 <context>
@@ -9874,42 +9874,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/layeraclmenu.cpp" line="+24"/>
         <source>Lock this layer</source>
-        <translation type="unfinished">Заблокувати цей шар</translation>
+        <translation>Заблокувати цей шар</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Censor</source>
-        <translation type="unfinished">Цензор</translation>
+        <translation>Цензор</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Access tier:</source>
-        <translation type="unfinished">Рівень доступу:</translation>
+        <translation>Рівень доступу:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operators</source>
-        <translation type="unfinished">Оператори</translation>
+        <translation>Оператори</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Trusted</source>
-        <translation type="unfinished">Надійний</translation>
+        <translation>Надійний</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Registered</source>
-        <translation type="unfinished">З реєстрацією</translation>
+        <translation>З реєстрацією</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Everyone</source>
-        <translation type="unfinished">Будь-хто</translation>
+        <translation>Будь-хто</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Exclusive access:</source>
-        <translation type="unfinished">Ексклюзивний доступ:</translation>
+        <translation>Ексклюзивний доступ:</translation>
     </message>
 </context>
 <context>
@@ -9917,82 +9917,82 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-329"/>
         <source>Layers</source>
-        <translation type="unfinished">Шари</translation>
+        <translation>Шари</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Непрозорість: </translation>
+        <translation>Непрозорість: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+266"/>
         <source>Duplicate Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Створити групу шарів</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Merge Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Об’єднати групу шарів</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Layer Group Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>Властивості групи шарів…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити групу шарів</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнути &amp;видимість групи шарів</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Check Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірте групу шарів</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Зніміть позначку з групи шарів</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Check Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірте шар</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Зніміть прапорець із шару</translation>
     </message>
     <message>
         <location line="+1011"/>
         <source>Layer</source>
-        <translation type="unfinished">Шар</translation>
+        <translation>Шар</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Група</translation>
     </message>
     <message>
         <location line="-433"/>
         <source>Delete Layer?</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити шар?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete the layer &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Справді видалити шар &quot;%1&quot;?</translation>
     </message>
 </context>
 <context>
@@ -10000,17 +10000,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/navigator.cpp" line="+474"/>
         <source>Navigator</source>
-        <translation type="unfinished">Навігатор</translation>
+        <translation>Навігатор</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Show Cursors</source>
-        <translation type="unfinished">Показати курсори</translation>
+        <translation>Показати курсори</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Realtime Update</source>
-        <translation type="unfinished">Оновлення у режимі реального часу</translation>
+        <translation>Оновлення в реальному часі</translation>
     </message>
 </context>
 <context>
@@ -10018,37 +10018,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/onionskins.cpp" line="+136"/>
         <source>Frames: </source>
-        <translation type="unfinished"></translation>
+        <translation>Рамки: </translation>
     </message>
     <message>
         <location line="-10"/>
         <source>Tint Below</source>
-        <translation type="unfinished"></translation>
+        <translation>Відтінок нижче</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Wrap</source>
-        <translation type="unfinished"></translation>
+        <translation>Обгортка</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tint Above</source>
-        <translation type="unfinished"></translation>
+        <translation>Відтінок вище</translation>
     </message>
     <message>
         <location line="+109"/>
         <source>-%1</source>
-        <translation type="unfinished"></translation>
+        <translation>-%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>+%1</source>
-        <translation type="unfinished"></translation>
+        <translation>+%1</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Opacity: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Непрозорість: %1%</translation>
     </message>
 </context>
 <context>
@@ -10056,12 +10056,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/timeline.cpp" line="+19"/>
         <source>Timeline</source>
-        <translation type="unfinished"></translation>
+        <translation>Хронологія</translation>
     </message>
     <message>
         <location line="+181"/>
         <source> FPS</source>
-        <translation type="unfinished"> кд/с</translation>
+        <translation> FPS</translation>
     </message>
 </context>
 <context>
@@ -10069,17 +10069,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/titlewidget.cpp" line="+36"/>
         <source>Docked</source>
-        <translation type="unfinished"></translation>
+        <translation>Пристикований</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dockable by Dragging</source>
-        <translation type="unfinished"></translation>
+        <translation>Закріплюється перетягуванням</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished">Закрити</translation>
+        <translation>Закрити</translation>
     </message>
 </context>
 <context>
@@ -10087,7 +10087,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+14"/>
         <source>Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Інструмент</translation>
     </message>
 </context>
 <context>
@@ -10095,7 +10095,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../scene/canvasscene.cpp" line="+325"/>
         <source>Restoring canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Відновлення полотна…</translation>
     </message>
 </context>
 <context>
@@ -10103,32 +10103,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../tabletinput.cpp" line="+186"/>
         <source>Qt tablet input</source>
-        <translation type="unfinished"></translation>
+        <translation>Введення Qt планшета</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Windows Ink input</source>
-        <translation type="unfinished"></translation>
+        <translation>Введення KisTablet Windows Ink</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Wintab input</source>
-        <translation type="unfinished"></translation>
+        <translation>Введення KisTablet Wintab</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Wintab input with relative pen mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Введення KisTablet Wintab із режимом відносного пера</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Qt6 Windows Ink input</source>
-        <translation type="unfinished"></translation>
+        <translation>Введення Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Qt6 Wintab input</source>
-        <translation type="unfinished"></translation>
+        <translation>Введення Qt6 Wintab</translation>
     </message>
 </context>
 <context>
@@ -10136,65 +10136,65 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/annotationsettings.cpp" line="+59"/>
         <source>Protect</source>
-        <translation type="unfinished"></translation>
+        <translation>Захищати</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Merge</source>
-        <translation type="unfinished">Об&apos;єднати</translation>
+        <translation>Об’єднати</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Delete</source>
-        <translation type="unfinished">Вилучити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Left</source>
-        <translation type="unfinished">Ліворуч</translation>
+        <translation>Ліворуч</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+20"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Центр</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Justify</source>
-        <translation type="unfinished">За шириною</translation>
+        <translation>Обґрунтуйте</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right</source>
-        <translation type="unfinished">Праворуч</translation>
+        <translation>Направо</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Top</source>
-        <translation type="unfinished">Вгору</translation>
+        <translation>Вверх</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Bottom</source>
-        <translation type="unfinished">Вниз</translation>
+        <translation>Вкінець</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Анотації приховані. </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Показати</translation>
     </message>
     <message>
         <location line="+343"/>
         <source>You don&apos;t have permission to paste merged annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви не маєте дозволу вставляти об’єднані анотації.</translation>
     </message>
 </context>
 <context>
@@ -10202,97 +10202,97 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-106"/>
         <source>&amp;Edit Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Редагувати пензель…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Скинути пензель</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути всі щітки &amp;слоти</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути всі &amp;пензлі</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;New Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Нова кисть…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Пензель перезапису</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Видалити кисть</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>De&amp;tach Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Від&apos;єднати пензлик</translation>
     </message>
     <message>
         <location line="+84"/>
         <source>Time-Based Stabilizer</source>
-        <translation type="unfinished"></translation>
+        <translation>Стабілізатор на основі часу</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Середнє згладжування</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Slows down the stroke and stabilizes it over time. Can produce very smooth results, but may feel sluggish.</source>
-        <translation type="unfinished"></translation>
+        <translation>Уповільнює інсульт і стабілізує його з часом. Може дати дуже гладкі результати, але може здатися млявим.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Simply averages inputs to get a smoother result. Faster than the time-based stabilizer, but not as smooth.</source>
-        <translation type="unfinished"></translation>
+        <translation>Просто усереднює вхідні дані, щоб отримати плавніший результат. Швидше, ніж стабілізатор на основі часу, але не так гладко.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Finish Strokes</source>
-        <translation type="unfinished"></translation>
+        <translation>Готові штрихи</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Draws stabilized strokes to the end, rather than cutting them off.</source>
-        <translation type="unfinished"></translation>
+        <translation>Малює стабілізовані штрихи до кінця, а не обрізає їх.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Synchronize With Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронізувати з пензлем</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Makes the stabilizer a brush setting, like in MyPaint, rather than an independent setting, like in Krita.</source>
-        <translation type="unfinished"></translation>
+        <translation>Робить стабілізатор параметром пензля, як у MyPaint, а не незалежним параметром, як у Krita.</translation>
     </message>
     <message>
         <location line="+161"/>
         <source>This session is hosted with Drawpile 2.1, MyPaint brushes are unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Цей сеанс розміщено за допомогою Drawpile 2.1, пензлі MyPaint недоступні.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This session is hosted with Drawpile 2.1, Indirect/Wash Mode with opacity dynamics is unavailable. &lt;a href=&quot;#inc&quot;&gt;Click here to switch to Direct/Build-Up Mode&lt;/a&gt; or &lt;a href=&quot;#opa&quot;&gt;here to disable opacity dynamics&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Цей сеанс розміщено за допомогою Drawpile 2.1, режим Indirect/Wash із динамікою непрозорості недоступний. &lt;a href=&quot;#inc&quot;&gt;Натисніть тут, щоб переключитися в режим Direct/Build-Up&lt;/a&gt; або &lt;a href=&quot;#opa&quot;&gt;тут, щоб вимкнути динаміку непрозорості&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="-5"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви не маєте дозволу на використання пензлів MyPaint.</translation>
     </message>
 </context>
 <context>
@@ -10300,17 +10300,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/colorpickersettings.cpp" line="+90"/>
         <source>Pick from screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть з екрана</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Size: </source>
-        <translation type="unfinished">Розмір: </translation>
+        <translation>Розмір: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Pick from current layer only</source>
-        <translation type="unfinished">Вибирати лише з поточного шару</translation>
+        <translation>Вибирати лише з поточного шару</translation>
     </message>
 </context>
 <context>
@@ -10318,42 +10318,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/fillsettings.cpp" line="+74"/>
         <source>Fill tool settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Заповнити налаштування інструменту</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Edit pending fills</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Редагувати незавершені заливки</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply changes in settings, color and layer to fills not yet applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Застосуйте зміни в налаштуваннях, кольорі та шарі до ще не застосованих заливок</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Confirm fills with second click</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Підтвердьте заповнення другим клацанням</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lets you apply fills with a click instead of starting another fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Дозволяє застосовувати заливки одним клацанням миші замість того, щоб починати іншу заливку</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>You don&apos;t have permission to use the fill tool.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви не маєте дозволу використовувати інструмент заповнення.</translation>
     </message>
     <message>
         <location line="+223"/>
         <source>Size Limit: Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Обмеження розміру: вибір</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Обмеження розміру: необмежено</translation>
     </message>
 </context>
 <context>
@@ -10361,19 +10361,19 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/lasersettings.cpp" line="+93"/>
         <source>You don&apos;t have permission to use the laser pointer.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви не маєте дозволу на використання лазерної указки.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Laser trails are hidden. </source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Лазерні сліди приховані. </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Показати</translation>
     </message>
 </context>
 <context>
@@ -10381,42 +10381,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-242"/>
         <source>Replace selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Замінити виділення</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Add to selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати до вибору</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Intersect with selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетинаються з виділенням</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove from selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити з вибору</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Anti-aliasing</source>
-        <translation type="unfinished"></translation>
+        <translation>Згладжування</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smoothe out selection edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Згладьте краї виділення</translation>
     </message>
     <message>
         <location line="+162"/>
         <source>Select continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть суцільну область</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Select similar color</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть подібний колір</translation>
     </message>
 </context>
 <context>
@@ -10424,119 +10424,119 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/transformsettings.cpp" line="+139"/>
         <source>Fast</source>
-        <translation type="unfinished"></translation>
+        <translation>Швидко</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Quick preview not taking into account layering, opacity or anything else</source>
-        <translation type="unfinished"></translation>
+        <translation>Швидкий попередній перегляд без урахування шарів, непрозорості чи будь-чого іншого</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Accurate</source>
-        <translation type="unfinished"></translation>
+        <translation>Точний</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preview the transform exactly how will look when applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Попередньо перегляньте трансформацію, як саме вона виглядатиме після застосування</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Too many layers selected for accurate preview, only fast preview is available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вибрано забагато шарів для точного перегляду, доступний лише швидкий попередній перегляд.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Preview:</source>
-        <translation type="unfinished"></translation>
+        <translation>Попередній перегляд:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Nearest</source>
-        <translation type="unfinished"></translation>
+        <translation>Найближчий</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Nearest-neighbor interpolation, no smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Інтерполяція найближчого сусіда, без згладжування</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Bilinear</source>
-        <translation type="unfinished"></translation>
+        <translation>Білінійний</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smoothed interpolation</source>
-        <translation type="unfinished"></translation>
+        <translation>Згладжена інтерполяція</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Sampling:</source>
         <extracomment>Refers to the transform interpolation, but &quot;interpolation&quot; is uncomfortably long in English, it causes a lot of blank space and the tool settings to get wider. Try to take that into account if possible.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Відбір проб:</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Масштаб</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shows scaling handles on corners and edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Показує маркери масштабування по кутах і краях</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Distort</source>
-        <translation type="unfinished"></translation>
+        <translation>Спотворювати</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shows distortion handles on corners and edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Показує маркери викривлення на кутах і краях</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Handles:</source>
         <extracomment>Refers to the handles on the corners and edges of a transform. Which are either arrows to scale the transformation or squares to distort it.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ручки:</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Mode:</source>
-        <translation type="unfinished">Режим:</translation>
+        <translation>Режим:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Непрозорість: </translation>
+        <translation>Непрозорість: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Застосувати</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply the transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>Застосуйте трансформацію</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished">Скасувати</translation>
+        <translation>Скасувати</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cancel the transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>Скасувати трансформацію</translation>
     </message>
 </context>
 <context>
@@ -10544,12 +10544,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/zoomsettings.cpp" line="+21"/>
         <source>Normal Size</source>
-        <translation type="unfinished">Звичайний розмір</translation>
+        <translation>Нормальний розмір</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fit To Window</source>
-        <translation type="unfinished">Вмістити у вікно</translation>
+        <translation>Припасувати до вікна</translation>
     </message>
 </context>
 <context>
@@ -10557,7 +10557,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../utils/recents.cpp" line="+413"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>Більше…</translation>
     </message>
 </context>
 <context>
@@ -10565,17 +10565,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../view/canvasscene.cpp" line="+540"/>
         <source>Restoring canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Відновлення полотна…</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Compressing canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Стискання полотна…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Uploading canvas %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження полотна %1%</translation>
     </message>
 </context>
 <context>
@@ -10583,7 +10583,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../view/canvasview.cpp" line="+134"/>
         <source>Save As…</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти як…</translation>
     </message>
 </context>
 <context>
@@ -10591,52 +10591,52 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../view/lock.cpp" line="+29"/>
         <source>Out of space, use Session &gt; Reset to fix this</source>
-        <translation type="unfinished"></translation>
+        <translation>Немає місця, скористайтеся «Сеанс» &gt; «Скинути», щоб виправити це</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Reset in progress</source>
-        <translation type="unfinished"></translation>
+        <translation>Виконується скидання</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Полотно заблоковано</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>User is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Користувач заблокований</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Layer is a group</source>
-        <translation type="unfinished"></translation>
+        <translation>Шар - це група</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Шар заблоковано</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is censored</source>
-        <translation type="unfinished"></translation>
+        <translation>Шар піддається цензурі</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Шар приховано</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is not visible in this frame</source>
-        <translation type="unfinished"></translation>
+        <translation>У цьому кадрі шар не видно</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Tool is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Інструмент заблоковано</translation>
     </message>
 </context>
 <context>
@@ -10644,7 +10644,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/brushpreview.cpp" line="+18"/>
         <source>Click to edit brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Натисніть, щоб редагувати пензель</translation>
     </message>
 </context>
 <context>
@@ -10652,42 +10652,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/canvasshortcutedit.cpp" line="+269"/>
         <source>Cancel</source>
-        <translation type="unfinished">Скасувати</translation>
+        <translation>Скасувати</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set...</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити...</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Press a key combination. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Натисніть комбінацію клавіш. Натисніть Escape, щоб скасувати.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Click the desired mouse button into the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Натисніть потрібну кнопку миші у полі вище, необов’язково, утримуючи клавіші. Натисніть Escape, щоб скасувати.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Turn the mouse wheel or click into in the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Поверніть коліщатко миші або клацніть у полі вище, необов’язково, утримуючи клавіші. Натисніть Escape, щоб скасувати.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Hold down the desired key combination and click into the field above. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Утримуйте потрібну комбінацію клавіш і клацніть у полі вище. Натисніть Escape, щоб скасувати.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Unknown shortcut type %1. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невідомий тип ярлика %1. Натисніть Escape, щоб скасувати.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Press the Set button to assign a shortcut.</source>
-        <translation type="unfinished"></translation>
+        <translation>Натисніть кнопку «Установити», щоб призначити ярлик.</translation>
     </message>
 </context>
 <context>
@@ -10696,72 +10696,72 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../scene/canvasview.cpp" line="+233"/>
         <location filename="../view/canvasview.cpp" line="-30"/>
         <source>Reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторне підключення</translation>
     </message>
     <message>
         <location line="+21"/>
         <location filename="../view/canvasview.cpp" line="+21"/>
         <source>Do you want to save the canvas as it was before the reset? Since this is a Drawpile 2.1 session, it may have desynchronized!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви хочете зберегти полотно таким, яким воно було до скидання? Оскільки це сесія Drawpile 2.1, можливо, вона десинхронізована!</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../view/canvasview.cpp" line="+5"/>
         <source>Do you want to save the canvas as it was before the reset?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви хочете зберегти полотно таким, яким воно було до скидання?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save As…</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти як…</translation>
     </message>
     <message>
         <location line="+375"/>
         <location filename="../view/canvascontroller.cpp" line="+353"/>
         <source>Vertical flip: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Вертикальний переворот: УВІМК</translation>
     </message>
     <message>
         <location line="+0"/>
         <location filename="../view/canvascontroller.cpp" line="+2"/>
         <source>Vertical flip: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Вертикальний переворот: ВИМК</translation>
     </message>
     <message>
         <location line="+18"/>
         <location filename="../view/canvascontroller.cpp" line="+19"/>
         <source>Horizontal mirror: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Горизонтальне дзеркало: УВІМК</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../view/canvascontroller.cpp" line="+2"/>
         <source>Horizontal mirror: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Горизонтальне дзеркало: ВИМК</translation>
     </message>
     <message>
         <location line="+1649"/>
         <location filename="../view/canvascontroller.cpp" line="+1791"/>
         <source>Zoom: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Збільшити: %1%</translation>
     </message>
     <message>
         <location line="+5"/>
         <location filename="../view/canvascontroller.cpp" line="+6"/>
         <source>Rotation: %1°</source>
-        <translation type="unfinished"></translation>
+        <translation>Обертання: %1°</translation>
     </message>
     <message>
         <location line="+30"/>
         <location filename="../view/canvascontroller.cpp" line="+34"/>
         <source>Downloading…</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження…</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../view/canvascontroller.cpp" line="+3"/>
         <source>Saving…</source>
-        <translation type="unfinished"></translation>
+        <translation>Збереження…</translation>
     </message>
 </context>
 <context>
@@ -10769,22 +10769,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatbox.cpp" line="+45"/>
         <source>Invite</source>
-        <translation type="unfinished">Запросити</translation>
+        <translation>Запросити</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session</source>
-        <translation type="unfinished">Сеанс</translation>
+        <translation>Сеанс</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Chat</source>
-        <translation type="unfinished">Спілкування</translation>
+        <translation>Чат</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show chat options</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати параметри чату</translation>
     </message>
 </context>
 <context>
@@ -10792,97 +10792,97 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatwidget.cpp" line="+164"/>
         <source>Public</source>
-        <translation type="unfinished">Відкритий</translation>
+        <translation>Громадський</translation>
     </message>
     <message>
         <location line="+71"/>
         <source>Mute notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Вимкнути сповіщення</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Toggle notifications for this window</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемкнути сповіщення для цього вікна</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>Chat (recorded)...</source>
-        <translation type="unfinished">Спілкування (записане)...</translation>
+        <translation>Чат (запис)...</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Chat...</source>
-        <translation type="unfinished">Спілкування…</translation>
+        <translation>Чат...</translation>
     </message>
     <message>
         <location line="+310"/>
         <source>%1 joined the session</source>
-        <translation type="unfinished">%1 долучився(-лася) до сеансу</translation>
+        <translation>%1 приєднався до сесії</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>%1 left the session</source>
-        <translation type="unfinished">%1 полишив(-ла) сеанс</translation>
+        <translation>%1 залишив сесію</translation>
     </message>
     <message>
         <location line="+166"/>
         <source>/!: only operators are allowed to send shouts.</source>
-        <translation type="unfinished"></translation>
+        <translation>/!: тільки операторам дозволено надсилати крики.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/!: can only shout in a public chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>/!: можна тільки кричати в публічному чаті.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/!: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/!: текст не подано.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>/alert: only operators are allowed to send alerts.</source>
-        <translation type="unfinished"></translation>
+        <translation>/alert: лише операторам дозволено надсилати сповіщення.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/alert: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/попередження: текст не надано.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>/me: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/я: текст не надано.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>/pin: only operators are allowed to pin.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: лише операторам дозволено закріплювати.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/pin: can only pin in a public chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: можна закріпити лише в публічному чаті.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/pin: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: текст не подано.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>/unpin: only operators are allowed to unpin.</source>
-        <translation type="unfinished"></translation>
+        <translation>/unpin: лише операторам дозволено відкріплювати.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/unpin: can only unpin in a public chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>/unpin: можна відкріпити лише в публічному чаті.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>/roll: invalid dice roll description.</source>
-        <translation type="unfinished"></translation>
+        <translation>/roll: недійсний опис кидка кубика.</translation>
     </message>
     <message>
         <location line="+49"/>
@@ -10896,32 +10896,40 @@ Values above 0.5 may not be noticeable.</source>
 /me &lt;text&gt; - send action-type message
 /roll &lt;dice&gt; - roll dice, e.g. 1d6 for a six-sided die</source>
         <extracomment>Don&apos;t translate the commands, only their descriptions!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Доступні клієнтські команди: 
+/help - показати це повідомлення 
+/clear - очистити вікно чату 
+/! &lt;text&gt; - зробити оголошення (тільки для операторів) 
+/alert &lt;текст&gt; - надіслати сповіщення високого пріоритету (лише для операторів) 
+/pin &lt;текст&gt; - закріпити повідомлення у верхній частині вікна чату (лише для операторів) 
+/unpin - видалити закріплене повідомлення (лише для операторів) 
+/me &lt;текст&gt; - відправити повідомлення типу дії 
+/roll &lt;dice&gt; - кидати кубики, напр. 1d6 для шестигранної плашки</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Unknown command: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Невідома команда: %1</translation>
     </message>
     <message>
         <location line="-711"/>
         <source>Clear</source>
-        <translation type="unfinished">Спорожнити</translation>
+        <translation>Очистити</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Compact mode</source>
-        <translation type="unfinished">Компактний режим</translation>
+        <translation>Компактний режим</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Detach</source>
-        <translation type="unfinished"></translation>
+        <translation>Від&apos;єднати</translation>
     </message>
     <message>
         <location line="-2"/>
         <source>Attach</source>
-        <translation type="unfinished"></translation>
+        <translation>Прикріпити</translation>
     </message>
 </context>
 <context>
@@ -10929,7 +10937,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatwindow.cpp" line="+12"/>
         <source>Chat</source>
-        <translation type="unfinished">Спілкування</translation>
+        <translation>Чат</translation>
     </message>
 </context>
 <context>
@@ -10937,7 +10945,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/colorbutton.cpp" line="+42"/>
         <source>Select a color</source>
-        <translation type="unfinished">Виберіть колір</translation>
+        <translation>Виберіть колір</translation>
     </message>
 </context>
 <context>
@@ -10945,47 +10953,47 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/curvewidget.cpp" line="+110"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Копія</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Copies this curve to the clipboard. You can paste it into another setting or into the chat to share it with other users.</source>
-        <translation type="unfinished"></translation>
+        <translation>Копіює цю криву в буфер обміну. Ви можете вставити його в інше налаштування або в чат, щоб поділитися ним з іншими користувачами.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставити</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pastes a copied curve from the clipboard, overwriting what is there currently.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставляє скопійовану криву з буфера обміну, перезаписуючи поточну.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Presets…</source>
-        <translation type="unfinished"></translation>
+        <translation>Предустановки…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save and load curve presets.</source>
-        <translation type="unfinished"></translation>
+        <translation>Збережіть і завантажте попередні налаштування кривих.</translation>
     </message>
     <message>
         <location line="+85"/>
         <source>Curve copied to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>Криву скопійовано в буфер обміну.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Curve pasted from clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>Криву вставлено з буфера обміну.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Clipboard does not appear to contain a curve.</source>
-        <translation type="unfinished"></translation>
+        <translation>Буфер обміну не містить кривої.</translation>
     </message>
 </context>
 <context>
@@ -10993,22 +11001,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/dualcolorbutton.cpp" line="+31"/>
         <source>Set foreground color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Установити колір переднього плану…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Set background color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Установити колір тла…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Reset colors to black and white</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути кольори до чорно-білих</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Swap foreground and background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Поміняйте місцями колір переднього плану та фону</translation>
     </message>
 </context>
 <context>
@@ -11016,37 +11024,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/expandshrinkspinner.cpp" line="+27"/>
         <source>px</source>
-        <translation type="unfinished">пк</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>Розгорнути</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shrink</source>
-        <translation type="unfinished"></translation>
+        <translation>Скорочення</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Round expansion shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Кругла форма розширення</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Square kernel shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Квадратна форма ядра</translation>
     </message>
     <message>
         <location line="+93"/>
         <source>Shrink: </source>
-        <translation type="unfinished"></translation>
+        <translation>Скорочення: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Expand: </source>
-        <translation type="unfinished"></translation>
+        <translation>Розгорнути: </translation>
     </message>
 </context>
 <context>
@@ -11054,17 +11062,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/mypaintinput.cpp" line="+137"/>
         <source>Output Range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Вихідний діапазон: </translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Input Minimum: </source>
-        <translation type="unfinished"></translation>
+        <translation>Мінімум вхідних даних: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Input Maximum: </source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальний вхід: </translation>
     </message>
 </context>
 <context>
@@ -11072,102 +11080,102 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/netstatus.cpp" line="+58"/>
         <source>Copy address to clipboard</source>
-        <translation type="unfinished">Копіювати адресу до буфера</translation>
+        <translation>Скопіювати адресу в буфер обміну</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Copy session URL to clipboard</source>
-        <translation type="unfinished">Копіювати адресу сеансу до буфера</translation>
+        <translation>Скопіюйте URL-адресу сеансу в буфер обміну</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished">Отримати видиму ззовні IP-адресу</translation>
+        <translation>Отримайте зовнішню видиму IP-адресу</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Hide address</source>
-        <translation type="unfinished">Приховати адресу</translation>
+        <translation>Приховати адресу</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Statistics</source>
-        <translation type="unfinished">Статистика</translation>
+        <translation>Статистика</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Show certificate</source>
-        <translation type="unfinished">Показати сертифікат</translation>
+        <translation>Показати сертифікат</translation>
     </message>
     <message>
         <location line="+80"/>
         <source>Self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Самопідписаний сертифікат</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Known self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Відомий самопідписаний сертифікат</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Pinned self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Закріплений самопідписаний сертифікат</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Valid certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Дійсний сертифікат</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Pinned valid certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Закріплений дійсний сертифікат</translation>
     </message>
     <message>
         <location line="+167"/>
         <source>not connected</source>
-        <translation type="unfinished">не з’єднано</translation>
+        <translation>не підключено</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Connecting...</source>
-        <translation type="unfinished">З&apos;єднання…</translation>
+        <translation>З&apos;єднання…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Connecting to %1...</source>
-        <translation type="unfinished">З&apos;єднання з %1...</translation>
+        <translation>З&apos;єднання з %1...</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Connected</source>
-        <translation type="unfinished">З&apos;єднано</translation>
+        <translation>З&apos;єднано</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Host: %1</source>
-        <translation type="unfinished">Вузол: %1</translation>
+        <translation>Хост: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Logging out...</source>
-        <translation type="unfinished">Виходимо…</translation>
+        <translation>Вихід...</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Notice</source>
-        <translation type="unfinished">Зауваження</translation>
+        <translation>Повідомлення</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile&apos;s help page for workarounds.</source>
-        <translation type="unfinished">Ваш надавач послуг інтернету використовує Carrier Grade NAT. Це робить неможливим для інших користувачів встановлювати безпосереднє з&apos;єднання із вашим комп&apos;ютером. Обхідні маневри описано на сторінці довідки щодо Drawpile.</translation>
+        <translation>Ваш Інтернет-провайдер використовує NAT операторського рівня. Це унеможливлює пряме підключення інших до вас. Перегляньте довідкову сторінку Drawpile, щоб знайти обхідні шляхи.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished">Більше не показувати</translation>
+        <translation>Більше не показувати</translation>
     </message>
 </context>
 <context>
@@ -11175,12 +11183,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/notifbar.cpp" line="+123"/>
         <source>Dismiss (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Відхилити (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>Відхилити</translation>
     </message>
 </context>
 <context>
@@ -11188,22 +11196,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="+41"/>
         <source>Add</source>
-        <translation type="unfinished">Додати</translation>
+        <translation>Додати</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Modify</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished">Вилучити</translation>
+        <translation>Видалити</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set palette color</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити колір палітри</translation>
     </message>
     <message>
         <location line="+202"/>
@@ -11211,7 +11219,10 @@ Values above 0.5 may not be noticeable.</source>
 Green: %2
 Blue: %3
 Hex: %4</source>
-        <translation type="unfinished"></translation>
+        <translation>Червоний: %1
+Зелений: %2
+Синій: %3
+Шістнадцятковий: %4</translation>
     </message>
 </context>
 <context>
@@ -11219,22 +11230,22 @@ Hex: %4</source>
     <message>
         <location filename="../widgets/presetselector.cpp" line="+28"/>
         <source>Presets</source>
-        <translation type="unfinished">Набори</translation>
+        <translation>Предустановки</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Навантаження</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished">Зберегти</translation>
+        <translation>Зберегти</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Delete</source>
-        <translation type="unfinished">Вилучити</translation>
+        <translation>Вилучити</translation>
     </message>
 </context>
 <context>
@@ -11242,17 +11253,17 @@ Hex: %4</source>
     <message>
         <location filename="../widgets/recentscroll.cpp" line="+28"/>
         <source>No recent files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Немає останніх файлів.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>No recent hosts.</source>
-        <translation type="unfinished"></translation>
+        <translation>Немає останніх хостів.</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>Remove</source>
-        <translation type="unfinished">Вилучити</translation>
+        <translation>Видалити</translation>
     </message>
 </context>
 <context>
@@ -11260,104 +11271,106 @@ Hex: %4</source>
     <message>
         <location filename="../widgets/timelinewidget.cpp" line="+608"/>
         <source>Blank key frame (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Порожній ключовий кадр (дублікат)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blank key frame %1 (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Порожній ключовий кадр %1 (дублікат)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blank key frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Порожній ключовий кадр</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blank key frame %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Порожній ключовий кадр %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Key frame on %1 (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ключовий кадр на %1 (дублікат)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key frame %1 on %2 (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ключовий кадр %1 на %2 (дублікат)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Key frame on %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ключовий кадр на %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key frame %1 on %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Ключовий кадр %1 на %2</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Toggle visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемкнути видимість</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle onion skin</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити шкірку цибулі</translation>
     </message>
     <message>
         <location line="+129"/>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
-        <translation type="unfinished"></translation>
+        <translation>Треків ще немає.
+Додайте один за допомогою кнопки ＋ вище
+або через Анімація ▸ Нова доріжка.</translation>
     </message>
     <message>
         <location line="+558"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Трек</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейменувати трек</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Track Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва доріжки</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Change Frame Count</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити кількість кадрів</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frame Count (key frames beyond this point will be deleted)</source>
-        <translation type="unfinished"></translation>
+        <translation>Кількість кадрів (ключові кадри за межами цієї точки будуть видалені)</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Change Framerate</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити частоту кадрів</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Frames Per Second (FPS)</source>
-        <translation type="unfinished"></translation>
+        <translation>Кількість кадрів в секунду (FPS)</translation>
     </message>
     <message>
         <location line="+330"/>
         <source>Set Key Frame to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Установіть для ключового кадру значення %1</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Установіть «Ключовий кадр» на поточний шар</translation>
     </message>
 </context>
 <context>
@@ -11365,82 +11378,82 @@ or via Animation ▸ New Track.</source>
     <message>
         <location filename="../chat/useritemdelegate.cpp" line="+167"/>
         <source>Operator</source>
-        <translation type="unfinished">Оператор</translation>
+        <translation>Оператор</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished">Надійний</translation>
+        <translation>Довірений</translation>
     </message>
     <message>
         <location line="-138"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Оператор</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Довірений</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Замок</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Вимкнути звук</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished">С&amp;касувати</translation>
+        <translation>&amp;Скасувати</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished">Повт&amp;орити</translation>
+        <translation>Повт&amp;орити</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Kick</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Удар ногою</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Kick &amp;&amp; Ba&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation>Удар &amp;&amp; Ba&amp;n</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Private Message</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Приватне повідомлення</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show User &amp;Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати &amp;інформацію про користувача</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Take Current &amp;Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Візьміть Current &amp; Brush</translation>
     </message>
     <message>
         <location line="+107"/>
         <source>Moderator</source>
-        <translation type="unfinished">Модератор</translation>
+        <translation>Модератор</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Bot</source>
-        <translation type="unfinished">Низ</translation>
+        <translation>Бот</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Registered</source>
-        <translation type="unfinished">З реєстрацією</translation>
+        <translation>Зареєстрований</translation>
     </message>
 </context>
 <context>
@@ -11448,12 +11461,12 @@ or via Animation ▸ New Track.</source>
     <message>
         <location filename="../widgets/viewstatus.cpp" line="+73"/>
         <source>Canvas Rotation</source>
-        <translation type="unfinished">Обертання полотна</translation>
+        <translation>Обертання полотна</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Zoom</source>
-        <translation type="unfinished">Масштаб</translation>
+        <translation>Масштаб</translation>
     </message>
 </context>
 </TS>
