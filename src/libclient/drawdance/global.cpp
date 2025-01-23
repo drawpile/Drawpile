@@ -1,20 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 extern "C" {
 #include <dpcommon/common.h>
 #include <dpcommon/cpu.h>
 #include <dpengine/draw_context.h>
 }
-
 #include "libclient/drawdance/global.h"
 #include <QLoggingCategory>
 
 namespace drawdance {
 
 #ifdef __GNUC__
-#define PRINTF_LIKE [[gnu::format(printf, 5, 0)]]
+#	define PRINTF_LIKE [[gnu::format(printf, 5, 0)]]
 #else
-#define PRINTF_LIKE
+#	define PRINTF_LIKE
 #endif
 
 PRINTF_LIKE static void logMessage(
@@ -61,10 +59,9 @@ void initLogging()
 	DP_log_fn_set(logMessage, &category);
 }
 
-
 void initCpuSupport()
 {
-    DP_cpu_support_init();
+	DP_cpu_support_init();
 }
 
 

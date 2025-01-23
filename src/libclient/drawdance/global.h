@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DRAWDANCE_GLOBAL_H
 #define DRAWDANCE_GLOBAL_H
-
 #include <QMutex>
 #include <QStack>
 
