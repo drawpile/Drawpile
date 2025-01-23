@@ -155,6 +155,7 @@ private slots:
 	void handleBadData(int len, int type, int contextId);
 
 private:
+	void receiveMessages();
 	void loginSuccess();
 	void loginFailure(const QString &message, const QString &errorcode);
 
@@ -172,6 +173,8 @@ private:
 	bool m_supportsModBanImpEx = false;
 	bool m_supportsAbuseReports = false;
 	bool m_compatibilityMode = false;
+	bool m_canReceive = true;
+	bool m_receiveMore = false;
 };
 
 

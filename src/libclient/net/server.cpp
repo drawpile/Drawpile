@@ -281,6 +281,28 @@ void Server::connectMessageQueue(MessageQueue *mq)
 
 void Server::handleMessage()
 {
+	// In the browser at least it's possible that we get a message received
+	// signal while we're already handling messages. It doesn't seem to be a
+	// multithreading issue, since it's all on the main thread, so presumably
+	// it's asynchronous code where the WebSocket handler somehow manages to
+	// slide in at a point where other code yielded execution somehow. We'll
+	// just work around this by setting a flag while we're receiving and if we
+	// get a nested receive signal, we set another flag that we got more.
+	if(m_canReceive) {
+		m_canReceive = false;
+		do {
+			m_receiveMore = false;
+			receiveMessages();
+		} while(m_receiveMore);
+		m_canReceive = true;
+	} else {
+		m_receiveMore = true;
+	}
+}
+
+void Server::receiveMessages()
+{
+	Q_ASSERT(m_receiveBuffer.isEmpty());
 	messageQueue()->receive(m_receiveBuffer);
 	int count = m_receiveBuffer.count();
 	if(count != 0) {

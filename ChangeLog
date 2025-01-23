@@ -67,6 +67,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Allow editing brush names, descriptions and thumbnails when using detached slots.
  * Fix: Make next/previous brush and tag shortcuts work when using detached slots.
  * Server Feature: Inform clients of session password changes so that they can update their invite links.
+ * Fix: Work around the web browser receiving messages while the application is handling messages already. This could cause nonsensical errors like "incompatible server" or "invalid state" or outright crashes during login.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.
