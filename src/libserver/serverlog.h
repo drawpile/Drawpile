@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef DP_SRV_SERVERLOG_H
-#define DP_SRV_SERVERLOG_H
-
+#ifndef LIBSERVER_SERVERLOG_H
+#define LIBSERVER_SERVERLOG_H
+#include "libshared/util/ulid.h"
 #include <QDateTime>
 #include <QHostAddress>
-
-#include "libshared/util/ulid.h"
 
 class QJsonObject;
 
@@ -29,32 +26,45 @@ public:
 	Q_ENUM(Level)
 
 	enum class Topic {
-		Join,       // user joined a session
-		Leave,      // user left a session
-		Kick,       // user was kicked
-		Ban,        // user was banned
-		Unban,      // a ban was lifted
-		Op,         // user was granted OP
-		Deop,       // OP status was removed
-		Mute,       // User was muted
-		Unmute,     // User was unmuted
-		Trust,      // User was tagged as trusted
-		Untrust,    // User's trusted tag was removed
-		BadData,    // Received an invalid message from a client
-		RuleBreak,  // User tried to use a command they're not allowed to
-		PubList,    // Session announcement
-		Status,     // General stuff
+		Join,		// user joined a session
+		Leave,		// user left a session
+		Kick,		// user was kicked
+		Ban,		// user was banned
+		Unban,		// a ban was lifted
+		Op,			// user was granted OP
+		Deop,		// OP status was removed
+		Mute,		// User was muted
+		Unmute,		// User was unmuted
+		Trust,		// User was tagged as trusted
+		Untrust,	// User's trusted tag was removed
+		BadData,	// Received an invalid message from a client
+		RuleBreak,	// User tried to use a command they're not allowed to
+		PubList,	// Session announcement
+		Status,		// General stuff
 		ClientInfo, // Structured information about client joining or hosting
-		ExtBan,     // Externally sourced bans
+		ExtBan,		// Externally sourced bans
 		BanImpEx,	// Session ban import and export
 		AdminChat,	// Messages sent to a connected admin chat
 	};
 	Q_ENUM(Topic)
 
-	Log() : m_timestamp(QDateTime::currentDateTimeUtc()), m_level(Level::Warn), m_topic(Topic::Status) { }
-	Log(const QDateTime &ts, const QString &sessionId, const QString &user, Level level, Topic topic, const QString message)
-		: m_timestamp(ts), m_session(sessionId), m_user(user), m_level(level), m_topic(topic), m_message(message)
-		{ }
+	Log()
+		: m_timestamp(QDateTime::currentDateTimeUtc())
+		, m_level(Level::Warn)
+		, m_topic(Topic::Status)
+	{
+	}
+
+	Log(const QDateTime &ts, const QString &sessionId, const QString &user,
+		Level level, Topic topic, const QString message)
+		: m_timestamp(ts)
+		, m_session(sessionId)
+		, m_user(user)
+		, m_level(level)
+		, m_topic(topic)
+		, m_message(message)
+	{
+	}
 
 	//! Get the entry timestamp
 	QDateTime timestamp() const { return m_timestamp; }
@@ -62,7 +72,8 @@ public:
 	//! Get the session ID (blank if not pertinent to any session)
 	QString session() const { return m_session; }
 
-	//! Get the user info triplet (ID;IP;name) or empty if not pertinent to any user
+	//! Get the user info triplet (ID;IP;name) or empty if not pertinent to any
+	//! user
 	QString user() const { return m_user; }
 
 	//! Get the log entry severity level
@@ -75,12 +86,39 @@ public:
 	QString message() const { return m_message; }
 
 	bool isSensitive() const { return m_topic == Topic::ClientInfo; }
-	bool isKickOrBan() const { return m_topic == Topic::Kick || m_topic == Topic::Ban || m_topic == Topic::Unban; }
+	bool isKickOrBan() const
+	{
+		return m_topic == Topic::Kick || m_topic == Topic::Ban ||
+			   m_topic == Topic::Unban;
+	}
 
-	Log &about(Level l, Topic t) { m_level=l; m_topic=t; return *this; }
-	Log &user(uint8_t id, const QHostAddress &ip, const QString &name) { m_user = QStringLiteral("%1;%2;%3").arg(int(id)).arg(ip.toString()).arg(name); return *this; }
-	Log &session(const QString &id) { m_session=id; return *this; }
-	Log &message(const QString &msg) { m_message=msg; return *this; }
+	Log &about(Level l, Topic t)
+	{
+		m_level = l;
+		m_topic = t;
+		return *this;
+	}
+
+	Log &user(uint8_t id, const QHostAddress &ip, const QString &name)
+	{
+		m_user = QStringLiteral("%1;%2;%3")
+					 .arg(int(id))
+					 .arg(ip.toString())
+					 .arg(name);
+		return *this;
+	}
+
+	Log &session(const QString &id)
+	{
+		m_session = id;
+		return *this;
+	}
+
+	Log &message(const QString &msg)
+	{
+		m_message = msg;
+		return *this;
+	}
 
 	inline void to(ServerLog *logger);
 
@@ -88,12 +126,12 @@ public:
 	 * @brief Get the log message as a string
 	 * @param abridged if true, the timestamp and log level are omitted
 	 */
-	QString toString(bool abridged=false) const;
+	QString toString(bool abridged = false) const;
 
 	enum JsonOption {
 		NoOptions = 0,
 		NoPrivateData = 0x01,
-		NoSession = 0x02
+		NoSession = 0x02,
 	};
 	Q_DECLARE_FLAGS(JsonOptions, JsonOption)
 
@@ -105,7 +143,7 @@ public:
 	 *
 	 * @param noPrivateData if true, private data (user IP address) is omitted
 	 */
-	QJsonObject toJson(JsonOptions options=NoOptions) const;
+	QJsonObject toJson(JsonOptions options = NoOptions) const;
 
 private:
 	QDateTime m_timestamp;
@@ -125,16 +163,52 @@ class ServerLog;
  */
 class ServerLogQuery {
 public:
-	ServerLogQuery(const ServerLog &log) : m_log(log), m_offset(0), m_limit(0), m_atleast(Log::Level::Debug), m_omitSensitive(true) { }
+	ServerLogQuery(const ServerLog &log)
+		: m_log(log)
+		, m_offset(0)
+		, m_limit(0)
+		, m_atleast(Log::Level::Debug)
+		, m_omitSensitive(true)
+	{
+	}
 
-	ServerLogQuery &session(const QString &id) { m_session = id; return *this; }
-	ServerLogQuery &page(int page, int entriesPerPage) { m_offset = page*entriesPerPage; m_limit=entriesPerPage; return *this; }
-	ServerLogQuery &after(const QDateTime &ts) { m_after = ts; return *this; }
-	ServerLogQuery &atleast(Log::Level level) { m_atleast = level; return *this; }
-	ServerLogQuery &omitSensitive(bool omitSensitive) { m_omitSensitive = omitSensitive; return *this; }
-	ServerLogQuery &omitKicksAndBans(bool omitKicksAndBans) { m_omitKicksAndBans = omitKicksAndBans; return *this; }
+	ServerLogQuery &session(const QString &id)
+	{
+		m_session = id;
+		return *this;
+	}
 
-	bool isFiltered() const { return !m_session.isNull() || m_offset>0 || m_limit>0; }
+	ServerLogQuery &page(int page, int entriesPerPage)
+	{
+		m_offset = page * entriesPerPage;
+		m_limit = entriesPerPage;
+		return *this;
+	}
+
+	ServerLogQuery &after(const QDateTime &ts)
+	{
+		m_after = ts;
+		return *this;
+	}
+
+	ServerLogQuery &atleast(Log::Level level)
+	{
+		m_atleast = level;
+		return *this;
+	}
+
+	ServerLogQuery &omitSensitive(bool omitSensitive)
+	{
+		m_omitSensitive = omitSensitive;
+		return *this;
+	}
+
+	ServerLogQuery &omitKicksAndBans(bool omitKicksAndBans)
+	{
+		m_omitKicksAndBans = omitKicksAndBans;
+		return *this;
+	}
+
 	QList<Log> get() const;
 
 private:
@@ -151,10 +225,13 @@ private:
 /**
  * @brief Abstract base class for server logger implementations
  */
-class ServerLog
-{
+class ServerLog {
 public:
-	ServerLog() : m_silent(false) { }
+	ServerLog()
+		: m_silent(false)
+	{
+	}
+
 	virtual ~ServerLog() = default;
 
 	//! Don't log messages to stderr
@@ -178,7 +255,10 @@ public:
 	 * @param omitSensitive leave out messages with sensitive data, like IPs
 	 * @param omitKicksAndBans leave out kick and (un)ban messages from the log
 	 */
-	virtual QList<Log> getLogEntries(const QString &session, const QDateTime &after, Log::Level atleast, bool omitSensitive, bool omitKicksAndBans, int offset, int limit) const = 0;
+	virtual QList<Log> getLogEntries(
+		const QString &session, const QDateTime &after, Log::Level atleast,
+		bool omitSensitive, bool omitKicksAndBans, int offset,
+		int limit) const = 0;
 
 	/**
 	 * @brief Return a query builder
@@ -193,28 +273,39 @@ private:
 	bool m_silent;
 };
 
-inline QList<Log> ServerLogQuery::get() const {
-	return m_log.getLogEntries(m_session, m_after, m_atleast, m_omitSensitive, m_omitKicksAndBans, m_offset, m_limit);
+inline QList<Log> ServerLogQuery::get() const
+{
+	return m_log.getLogEntries(
+		m_session, m_after, m_atleast, m_omitSensitive, m_omitKicksAndBans,
+		m_offset, m_limit);
 }
 
 void Log::to(ServerLog *logger)
 {
-	if(logger)
+	if(logger) {
 		logger->logMessage(*this);
-	else
-		qWarning("logger(null): %s", qPrintable(toString()));
+	} else {
+		qWarning("logger(null): %s", qUtf8Printable(toString()));
+	}
 }
 
 /**
- * @brief A simple ServerLog implementation that keeps the latest messages in memory
+ * @brief A simple ServerLog implementation that keeps the latest messages in
+ * memory
  */
-class InMemoryLog : public ServerLog
-{
+class InMemoryLog : public ServerLog {
 public:
-	InMemoryLog() : m_limit(1000) { }
+	InMemoryLog()
+		: m_limit(1000)
+	{
+	}
+
 	void setHistoryLimit(int limit);
 
-	QList<Log> getLogEntries(const QString &session, const QDateTime &after, Log::Level atleast, bool omitSensitive, bool omitKicksAndBans, int offset, int limit) const override;
+	QList<Log> getLogEntries(
+		const QString &session, const QDateTime &after, Log::Level atleast,
+		bool omitSensitive, bool omitKicksAndBans, int offset,
+		int limit) const override;
 
 protected:
 	void storeMessage(const Log &entry) override;
