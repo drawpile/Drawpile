@@ -211,7 +211,6 @@ private:
 	void setClearColor(const QColor clearColor);
 	void setRenderSmooth(bool renderSmooth);
 	void setTabletEnabled(bool tabletEnabled);
-	void setIgnoreMouse(bool ignoreMouse);
 	void setSerializedPressureCurve(const QString &serializedPressureCurve);
 	void setOutlineWidth(qreal outlineWidth);
 	void setCanvasShortcuts(QVariantMap canvasShortcuts);
@@ -266,11 +265,6 @@ private:
 	QPointF wheelPosF(QWheelEvent *event) const;
 	static bool isSynthetic(QMouseEvent *event);
 	static bool isSyntheticTouch(QMouseEvent *event);
-
-	bool shouldIgnoreMouse() const
-	{
-		return m_ignoreMouse && m_toolSupportsPressure;
-	}
 
 	Qt::KeyboardModifiers getKeyboardModifiers(const QKeyEvent *event) const;
 	Qt::KeyboardModifiers getMouseModifiers(const QMouseEvent *event) const;
@@ -345,7 +339,6 @@ private:
 	QColor m_clearColor;
 	bool m_renderSmooth = false;
 	bool m_tabletEnabled = true;
-	bool m_ignoreMouse = false;
 	KisCubicCurve m_pressureCurve;
 	bool m_pixelGrid = true;
 	bool m_pointerTracking = false;

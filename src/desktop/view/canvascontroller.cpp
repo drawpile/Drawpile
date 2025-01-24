@@ -173,7 +173,6 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 		this, &CanvasController::setClearColor);
 	settings.bindRenderSmooth(this, &CanvasController::setRenderSmooth);
 	settings.bindTabletEvents(this, &CanvasController::setTabletEnabled);
-	settings.bindIgnoreMouse(this, &CanvasController::setIgnoreMouse);
 	settings.bindBrushOutlineWidth(this, &CanvasController::setOutlineWidth);
 	settings.bindGlobalPressureCurve(
 		this, &CanvasController::setSerializedPressureCurve);
@@ -599,7 +598,6 @@ void CanvasController::handleMouseMove(QMouseEvent *event)
 
 	if((!m_tabletEnabled || !isSynthetic(event)) && !isSyntheticTouch(event) &&
 	   m_penState != PenState::TabletDown && !touching &&
-	   !shouldIgnoreMouse() &&
 	   (m_penState == PenState::Up || m_tabletEventTimer.hasExpired())) {
 		if(m_penState != PenState::Up && buttons == Qt::NoButton) {
 			handleMouseRelease(event);
@@ -625,7 +623,7 @@ void CanvasController::handleMousePress(QMouseEvent *event)
 
 	Qt::MouseButton button = event->button();
 	if(((!m_tabletEnabled || !isSynthetic(event))) &&
-	   !isSyntheticTouch(event) && !touching && !shouldIgnoreMouse() &&
+	   !isSyntheticTouch(event) && !touching &&
 	   (button != Qt::LeftButton || m_tabletEventTimer.hasExpired())) {
 		event->accept();
 		penPressEvent(
@@ -647,7 +645,7 @@ void CanvasController::handleMouseRelease(QMouseEvent *event)
 		int(m_penState), int(touching), qulonglong(event->timestamp()));
 
 	if((!m_tabletEnabled || !isSynthetic(event)) && !isSyntheticTouch(event) &&
-	   !touching && !shouldIgnoreMouse()) {
+	   !touching) {
 		event->accept();
 		penReleaseEvent(
 			QDateTime::currentMSecsSinceEpoch(), posf, event->button(),
@@ -1169,11 +1167,6 @@ void CanvasController::setRenderSmooth(bool renderSmooth)
 void CanvasController::setTabletEnabled(bool tabletEnabled)
 {
 	m_tabletEnabled = tabletEnabled;
-}
-
-void CanvasController::setIgnoreMouse(bool ignoreMouse)
-{
-	m_ignoreMouse = ignoreMouse;
 }
 
 void CanvasController::setSerializedPressureCurve(

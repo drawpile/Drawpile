@@ -91,7 +91,6 @@ public:
 
 	//! Enable/disable tablet event handling
 	void setTabletEnabled(bool enable) { m_enableTablet = enable; }
-	void setIgnoreMouse(bool ignoreMouse) { m_ignoreMouse = ignoreMouse; }
 
 	//! Enable/disable touch gestures
 	void setTouchUseGestureEvents(bool touchUseGestureEvents);
@@ -363,11 +362,6 @@ private:
 	void showTransformNotice(const QString &text);
 	void updateLockNotice();
 
-	bool shouldIgnoreMouse() const
-	{
-		return m_ignoreMouse && m_toolSupportsPressure;
-	}
-
 	Qt::KeyboardModifiers getKeyboardModifiers(const QKeyEvent *keyev) const;
 	Qt::KeyboardModifiers getMouseModifiers(const QMouseEvent *mouseev) const;
 	Qt::KeyboardModifiers getTabletModifiers(const QTabletEvent *tabev) const;
@@ -436,7 +430,6 @@ private:
 
 	bool m_useGestureEvents = false;
 	bool m_enableTablet;
-	bool m_ignoreMouse = false;
 	bool m_locked;
 	QString m_lockDescription;
 	int m_toolState;
