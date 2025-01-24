@@ -8,6 +8,7 @@ extern "C" {
 #include "libclient/utils/keyframelayermodel.h"
 #include "libshared/util/qtcompat.h"
 #include <QAbstractItemModel>
+#include <QColor>
 #include <QHash>
 #include <QMimeData>
 #include <QSet>
@@ -35,6 +36,12 @@ struct LayerListItem {
 
 	//! Blending mode
 	DP_BlendMode blend;
+
+	//! Sketch mode opacity
+	float sketchOpacity;
+
+	//! Sketch mode tint
+	QColor sketchTint;
 
 	//! Layer hidden flag (local only)
 	bool hidden;
@@ -100,6 +107,7 @@ public:
 		IsCensoredInTreeRole,
 		IsFillSourceRole,
 		CheckStateRole,
+		IsSketchModeRole,
 	};
 
 	enum CheckState {

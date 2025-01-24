@@ -3529,6 +3529,8 @@ const char *DP_msg_local_change_type_variant_name(unsigned int value)
         return "TrackVisibility";
     case DP_MSG_LOCAL_CHANGE_TYPE_TRACK_ONION_SKIN:
         return "TrackOnionSkin";
+    case DP_MSG_LOCAL_CHANGE_TYPE_LAYER_SKETCH:
+        return "LayerSketch";
     default:
         return NULL;
     }

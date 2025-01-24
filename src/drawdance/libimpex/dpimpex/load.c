@@ -408,6 +408,17 @@ static DP_TransientLayerProps *ora_make_layer_props(DP_XmlElement *element,
         DP_transient_layer_props_censored_set(tlp, true);
     }
 
+    float sketch_opacity;
+    if (ora_read_float_attribute(element, DRAWPILE_NAMESPACE, "sketch-opacity",
+                                 0.0f, 1.0f, &sketch_opacity)
+        && sketch_opacity > 0.0f) {
+        DP_transient_layer_props_sketch_opacity_set(
+            tlp, DP_float_to_uint16(sketch_opacity * (float)DP_BIT15 + 0.5f));
+        DP_transient_layer_props_sketch_tint_set(
+            tlp, ora_read_color_attribute(element, DRAWPILE_NAMESPACE,
+                                          "sketch-tint"));
+    }
+
     return tlp;
 }
 

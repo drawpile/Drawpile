@@ -340,6 +340,7 @@ LocalChange:
               - OnionSkins
               - TrackVisibility
               - TrackOnionSkin
+              - LayerSketch
         - body bytes
 
 # Command messages (opaque)

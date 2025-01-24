@@ -103,6 +103,16 @@ bool LayerProps::isolated() const
     return DP_layer_props_isolated(m_data);
 }
 
+uint16_t LayerProps::sketchOpacity() const
+{
+    return DP_layer_props_sketch_opacity(m_data);
+}
+
+uint32_t LayerProps::sketchTint() const
+{
+    return DP_layer_props_sketch_tint(m_data);
+}
+
 bool LayerProps::isGroup(drawdance::LayerPropsList *outChildren)
 {
     DP_LayerPropsList *children = DP_layer_props_children_noinc(m_data);

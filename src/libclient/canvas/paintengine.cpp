@@ -350,6 +350,13 @@ void PaintEngine::setLayerVisibility(int layerId, bool hidden)
 	receiveMessages(false, 1, &msg);
 }
 
+void PaintEngine::setLayerSketch(int layerId, uint16_t opacity, const QColor &tint)
+{
+	net::Message msg =
+		net::makeLocalChangeLayerSketchMessage(layerId, opacity, tint);
+	receiveMessages(false, 1, &msg);
+}
+
 void PaintEngine::setTrackVisibility(int trackId, bool hidden)
 {
 	net::Message msg =

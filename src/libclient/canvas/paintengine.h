@@ -153,6 +153,7 @@ public:
 	void setLocalDrawingInProgress(bool localDrawingInProgress);
 
 	void setLayerVisibility(int layerId, bool hidden);
+	void setLayerSketch(int layerId, uint16_t opacity, const QColor &tint);
 	void setTrackVisibility(int trackId, bool hidden);
 	void setTrackOnionSkin(int trackId, bool onionSkin);
 

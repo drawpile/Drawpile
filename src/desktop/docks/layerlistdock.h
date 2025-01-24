@@ -8,6 +8,7 @@ extern "C" {
 #include "desktop/docks/dockbase.h"
 #include "desktop/view/lock.h"
 #include "libclient/net/message.h"
+#include <QColor>
 #include <QSet>
 #include <QVector>
 
@@ -50,6 +51,7 @@ public:
 		QAction *properties = nullptr;
 		QAction *del = nullptr;
 		QAction *toggleVisibility = nullptr;
+		QAction *toggleSketch = nullptr;
 		QAction *setFillSource = nullptr;
 		QAction *clearFillSource = nullptr;
 		QAction *keyFrameSetLayer = nullptr;
@@ -119,7 +121,9 @@ private slots:
 	void censorSelected(bool censor);
 	void disableAutoselectAny();
 	void toggleLayerVisibility();
+	void toggleLayerSketch();
 	void setLayerVisibility(int layerId, bool visible);
+	void setLayerSketch(int layerId, int opacityPercent, const QColor &tint);
 	void
 	changeLayerAcl(bool lock, DP_AccessTier tier, QVector<uint8_t> exclusive);
 
@@ -145,7 +149,7 @@ private:
 	void addLayerOrGroupFromPrompt(
 		int selectedId, bool group, const QString &title, int opacityPercent,
 		int blendMode, bool isolated, bool censored, bool defaultLayer,
-		bool visible);
+		bool visible, int sketchOpacityPercent, const QColor &sketchTint);
 	void addLayerOrGroup(
 		bool group, bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset);
 	int makeAddLayerOrGroupCommands(
@@ -172,6 +176,9 @@ private:
 	dialogs::LayerProperties *makeLayerPropertiesDialog(
 		const QString &dialogObjectName, const QModelIndex &index);
 
+	void showSketchTintColorPicker();
+	void setUpdateSketchTint(const QColor &tint);
+
 	bool isGroupSelected() const;
 	QModelIndex currentSelection() const;
 	void selectLayerIndex(QModelIndex index, bool scrollTo = false);
@@ -194,6 +201,7 @@ private:
 	int m_frame;
 
 	bool m_noupdate;
+	bool m_sketchMode = false;
 
 	QMenu *m_contextMenu;
 	LayerAclMenu *m_aclmenu;
@@ -201,10 +209,14 @@ private:
 	QTimer *m_debounceTimer;
 	int m_updateBlendModeIndex;
 	int m_updateOpacity;
+	int m_updateSketchOpacity = -1;
+	QColor m_updateSketchTint;
 
 	widgets::GroupedToolButton *m_lockButton;
 	QComboBox *m_blendModeCombo;
 	KisSliderSpinBox *m_opacitySlider;
+	widgets::GroupedToolButton *m_sketchButton;
+	widgets::GroupedToolButton *m_sketchTintButton;
 	QTreeView *m_view;
 
 	Actions m_actions;

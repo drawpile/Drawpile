@@ -801,3 +801,11 @@ void DP_transient_tile_brush_apply_posterize(DP_TransientTile *tt,
     DP_posterize_mask(tt->pixels + y * DP_TILE_SIZE + x, posterize_num, mask,
                       opacity, w, h, skip, DP_TILE_SIZE - w);
 }
+
+void DP_transient_tile_tint(DP_TransientTile *tt, DP_UPixel8 tint)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    DP_tint_pixels(tt->pixels, DP_TILE_LENGTH, tint);
+}

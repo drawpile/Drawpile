@@ -399,13 +399,14 @@ void DP_layer_list_merge_to_flat_image(DP_LayerList *ll, DP_LayerPropsList *lpl,
 
 DP_TransientTile *DP_layer_list_entry_flatten_tile_to(
     DP_LayerListEntry *lle, DP_LayerProps *lp, int tile_index,
-    DP_TransientTile *tt, uint16_t parent_opacity, bool include_sublayers,
-    bool pass_through_censored, const DP_ViewModeContext *vmc)
+    DP_TransientTile *tt, uint16_t parent_opacity, DP_UPixel8 parent_tint,
+    bool include_sublayers, bool pass_through_censored,
+    const DP_ViewModeContext *vmc)
 {
     if (lle->is_group) {
-        return DP_layer_group_flatten_tile_to(lle->group, lp, tile_index, tt,
-                                              parent_opacity, include_sublayers,
-                                              pass_through_censored, vmc);
+        return DP_layer_group_flatten_tile_to(
+            lle->group, lp, tile_index, tt, parent_opacity, parent_tint,
+            include_sublayers, pass_through_censored, vmc);
     }
     else {
         DP_ViewModeResult vmr =
@@ -415,7 +416,8 @@ DP_TransientTile *DP_layer_list_entry_flatten_tile_to(
                 pass_through_censored || DP_layer_props_censored(lp);
             return DP_layer_content_flatten_tile_to(
                 lle->content, tile_index, tt, vmr.opacity, vmr.blend_mode,
-                censored, include_sublayers);
+                vmr.tint.a == 0 ? parent_tint : vmr.tint, censored,
+                include_sublayers);
         }
         else {
             return tt;
@@ -423,12 +425,11 @@ DP_TransientTile *DP_layer_list_entry_flatten_tile_to(
     }
 }
 
-DP_TransientTile *
-DP_layer_list_flatten_tile_to(DP_LayerList *ll, DP_LayerPropsList *lpl,
-                              int tile_index, DP_TransientTile *tt_or_null,
-                              uint16_t parent_opacity, bool include_sublayers,
-                              bool pass_through_censored,
-                              const DP_ViewModeContext *vmc)
+DP_TransientTile *DP_layer_list_flatten_tile_to(
+    DP_LayerList *ll, DP_LayerPropsList *lpl, int tile_index,
+    DP_TransientTile *tt_or_null, uint16_t parent_opacity,
+    DP_UPixel8 parent_tint, bool include_sublayers, bool pass_through_censored,
+    const DP_ViewModeContext *vmc)
 {
     DP_ASSERT(ll);
     DP_ASSERT(DP_atomic_get(&ll->refcount) > 0);
@@ -442,8 +443,8 @@ DP_layer_list_flatten_tile_to(DP_LayerList *ll, DP_LayerPropsList *lpl,
         DP_LayerListEntry *lle = &ll->elements[i];
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
         tt = DP_layer_list_entry_flatten_tile_to(
-            lle, lp, tile_index, tt, parent_opacity, include_sublayers,
-            pass_through_censored, vmc);
+            lle, lp, tile_index, tt, parent_opacity, parent_tint,
+            include_sublayers, pass_through_censored, vmc);
     }
     return tt;
 }

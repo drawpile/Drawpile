@@ -139,7 +139,8 @@ pub const DP_MSG_LOCAL_CHANGE_TYPE_ACTIVE_FRAME: u32 = 4;
 pub const DP_MSG_LOCAL_CHANGE_TYPE_ONION_SKINS: u32 = 5;
 pub const DP_MSG_LOCAL_CHANGE_TYPE_TRACK_VISIBILITY: u32 = 6;
 pub const DP_MSG_LOCAL_CHANGE_TYPE_TRACK_ONION_SKIN: u32 = 7;
-pub const DP_MSG_LOCAL_CHANGE_NUM_TYPE: u32 = 8;
+pub const DP_MSG_LOCAL_CHANGE_TYPE_LAYER_SKETCH: u32 = 8;
+pub const DP_MSG_LOCAL_CHANGE_NUM_TYPE: u32 = 9;
 pub const DP_MSG_LOCAL_CHANGE_BODY_MIN_SIZE: u32 = 0;
 pub const DP_MSG_LOCAL_CHANGE_BODY_MAX_SIZE: u32 = 65534;
 pub const DP_MSG_UNDO_POINT_STATIC_LENGTH: u32 = 0;
@@ -1519,6 +1520,13 @@ extern "C" {
     );
 }
 extern "C" {
+    pub fn DP_tint_pixels(
+        dst: *mut DP_Pixel15,
+        pixel_count: ::std::os::raw::c_int,
+        tint: DP_UPixel8,
+    );
+}
+extern "C" {
     pub fn DP_blend_tile(
         dst: *mut DP_Pixel15,
         src: *const DP_Pixel15,
@@ -2848,6 +2856,7 @@ extern "C" {
         tt_or_null: *mut DP_TransientTile,
         opacity: u16,
         blend_mode: ::std::os::raw::c_int,
+        tint: DP_UPixel8,
         censored: bool,
         include_sublayers: bool,
     ) -> *mut DP_TransientTile;
@@ -3213,6 +3222,7 @@ extern "C" {
         tile_index: ::std::os::raw::c_int,
         tt_or_null: *mut DP_TransientTile,
         parent_opacity: u16,
+        parent_tint: DP_UPixel8,
         include_sublayers: bool,
         pass_through_censored: bool,
         vmc: *const DP_ViewModeContext,
@@ -3384,6 +3394,7 @@ extern "C" {
         tile_index: ::std::os::raw::c_int,
         tt: *mut DP_TransientTile,
         parent_opacity: u16,
+        parent_tint: DP_UPixel8,
         include_sublayers: bool,
         pass_through_censored: bool,
         vmc: *const DP_ViewModeContext,
@@ -3396,6 +3407,7 @@ extern "C" {
         tile_index: ::std::os::raw::c_int,
         tt_or_null: *mut DP_TransientTile,
         parent_opacity: u16,
+        parent_tint: DP_UPixel8,
         include_sublayers: bool,
         pass_through_censored: bool,
         vmc: *const DP_ViewModeContext,
@@ -3570,6 +3582,18 @@ extern "C" {
     pub fn DP_layer_props_opacity(lp: *mut DP_LayerProps) -> u16;
 }
 extern "C" {
+    pub fn DP_layer_props_sketch_opacity(lp: *mut DP_LayerProps) -> u16;
+}
+extern "C" {
+    pub fn DP_layer_props_effective_opacity(lp: *mut DP_LayerProps) -> u16;
+}
+extern "C" {
+    pub fn DP_layer_props_sketch_tint(lp: *mut DP_LayerProps) -> u32;
+}
+extern "C" {
+    pub fn DP_layer_props_effective_tint(lp: *mut DP_LayerProps) -> u32;
+}
+extern "C" {
     pub fn DP_layer_props_blend_mode(lp: *mut DP_LayerProps) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -3646,6 +3670,12 @@ extern "C" {
     pub fn DP_transient_layer_props_opacity(tlp: *mut DP_TransientLayerProps) -> u16;
 }
 extern "C" {
+    pub fn DP_transient_layer_props_sketch_opacity(tlp: *mut DP_TransientLayerProps) -> u16;
+}
+extern "C" {
+    pub fn DP_transient_layer_props_sketch_tint(tlp: *mut DP_TransientLayerProps) -> u32;
+}
+extern "C" {
     pub fn DP_transient_layer_props_blend_mode(
         tlp: *mut DP_TransientLayerProps,
     ) -> ::std::os::raw::c_int;
@@ -3687,6 +3717,18 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_transient_layer_props_opacity_set(tlp: *mut DP_TransientLayerProps, opacity: u16);
+}
+extern "C" {
+    pub fn DP_transient_layer_props_sketch_opacity_set(
+        tlp: *mut DP_TransientLayerProps,
+        sketch_opacity: u16,
+    );
+}
+extern "C" {
+    pub fn DP_transient_layer_props_sketch_tint_set(
+        tlp: *mut DP_TransientLayerProps,
+        sketch_tint: u32,
+    );
 }
 extern "C" {
     pub fn DP_transient_layer_props_blend_mode_set(
@@ -5523,6 +5565,7 @@ pub struct DP_ViewModeResult {
     pub isolated: bool,
     pub opacity: u16,
     pub blend_mode: ::std::os::raw::c_int,
+    pub tint: DP_UPixel8,
     pub child_vmc: DP_ViewModeContext,
 }
 #[test]
@@ -5531,7 +5574,7 @@ fn bindgen_test_layout_DP_ViewModeResult() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<DP_ViewModeResult>(),
-        32usize,
+        40usize,
         concat!("Size of: ", stringify!(DP_ViewModeResult))
     );
     assert_eq!(
@@ -5580,8 +5623,18 @@ fn bindgen_test_layout_DP_ViewModeResult() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).child_vmc) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).tint) as usize - ptr as usize },
         8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_ViewModeResult),
+            "::",
+            stringify!(tint)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).child_vmc) as usize - ptr as usize },
+        16usize,
         concat!(
             "Offset of field: ",
             stringify!(DP_ViewModeResult),
@@ -5846,6 +5899,69 @@ pub struct DP_MsgLocalChange {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct DP_LocalLayerState {
+    pub layer_id: ::std::os::raw::c_int,
+    pub hidden: bool,
+    pub sketch_opacity: u16,
+    pub sketch_tint: u32,
+}
+#[test]
+fn bindgen_test_layout_DP_LocalLayerState() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_LocalLayerState> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_LocalLayerState>(),
+        12usize,
+        concat!("Size of: ", stringify!(DP_LocalLayerState))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_LocalLayerState>(),
+        4usize,
+        concat!("Alignment of ", stringify!(DP_LocalLayerState))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).layer_id) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_LocalLayerState),
+            "::",
+            stringify!(layer_id)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).hidden) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_LocalLayerState),
+            "::",
+            stringify!(hidden)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).sketch_opacity) as usize - ptr as usize },
+        6usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_LocalLayerState),
+            "::",
+            stringify!(sketch_opacity)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).sketch_tint) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_LocalLayerState),
+            "::",
+            stringify!(sketch_tint)
+        )
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct DP_LocalTrackState {
     pub track_id: ::std::os::raw::c_int,
     pub hidden: bool,
@@ -5917,13 +6033,13 @@ extern "C" {
     pub fn DP_local_state_free(ls: *mut DP_LocalState);
 }
 extern "C" {
-    pub fn DP_local_state_hidden_layer_ids(
+    pub fn DP_local_state_layer_states(
         ls: *mut DP_LocalState,
         out_count: *mut ::std::os::raw::c_int,
-    ) -> *const ::std::os::raw::c_int;
+    ) -> *const DP_LocalLayerState;
 }
 extern "C" {
-    pub fn DP_local_state_hidden_layer_id_count(ls: *mut DP_LocalState) -> ::std::os::raw::c_int;
+    pub fn DP_local_state_layer_state_count(ls: *mut DP_LocalState) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn DP_local_state_background_tile_noinc(ls: *mut DP_LocalState) -> *mut DP_Tile;
@@ -6009,6 +6125,13 @@ extern "C" {
     pub fn DP_local_state_msg_track_onion_skin_new(
         track_id: ::std::os::raw::c_int,
         onion_skin: bool,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_local_state_msg_layer_sketch_new(
+        layer_id: ::std::os::raw::c_int,
+        opacity: u16,
+        tint: u32,
     ) -> *mut DP_Message;
 }
 pub const DP_LOAD_RESULT_SUCCESS: DP_LoadResult = 0;
@@ -7489,6 +7612,9 @@ extern "C" {
         skip: ::std::os::raw::c_int,
     );
 }
+extern "C" {
+    pub fn DP_transient_tile_tint(tt: *mut DP_TransientTile, tint: DP_UPixel8);
+}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct DP_Track {
@@ -8308,6 +8434,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_feature_enum_name(feature: ::std::os::raw::c_int) -> *const ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn DP_feature_name(feature: ::std::os::raw::c_int) -> *const ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn DP_feature_access_tier_default(

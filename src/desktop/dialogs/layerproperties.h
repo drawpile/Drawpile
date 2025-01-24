@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef LAYERPROPERTIES_H
 #define LAYERPROPERTIES_H
+#include "desktop/utils/qtguicompat.h"
 #include "libclient/canvas/layerlist.h"
 #include <QDialog>
+#include <QIcon>
 
 class QComboBox;
 class QStandardItemModel;
@@ -45,14 +47,20 @@ signals:
 	void addLayerOrGroupRequested(
 		int selectedId, bool group, const QString &title, int opacityPercent,
 		int blendMode, bool isolated, bool censored, bool defaultLayer,
-		bool visible);
+		bool visible, int sketchOpacityPercent, const QColor &sketchTint);
 	void layerCommands(int count, const net::Message *msgs);
 	void visibilityChanged(int layerId, bool visible);
+	void sketchModeChanged(int layerId, int opacityPercent, const QColor &tint);
 
 protected:
 	virtual void showEvent(QShowEvent *event) override;
 
 private:
+	void updateSketchMode(compat::CheckBoxState state);
+	void showSketchTintColorPicker();
+	void setSketchTintTo(const QColor &color);
+	void setSketchParamsFromSettings();
+	void saveSketchParametersToSettings(int opacityPercent, const QColor &tint);
 	void apply();
 	void emitChanges();
 	static void addBlendModesTo(QStandardItemModel *model);

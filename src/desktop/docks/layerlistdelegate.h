@@ -53,13 +53,15 @@ private:
 		const QRect &rect, QPainter *painter,
 		const QStyleOptionViewItem &option, int checkState) const;
 
-	void drawFillGlyph(const QRect &rect, QPainter *painter) const;
+	void
+	drawGlyph(const QIcon &icon, const QRect &rect, QPainter *painter) const;
 
 	QIcon m_visibleIcon;
 	QIcon m_groupIcon;
 	QIcon m_censoredIcon;
 	QIcon m_hiddenIcon;
 	QIcon m_groupHiddenIcon;
+	QIcon m_sketchIcon;
 	QIcon m_fillIcon;
 	QIcon m_forbiddenIcon;
 	bool m_justToggledVisibility = false;

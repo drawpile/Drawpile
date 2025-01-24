@@ -587,6 +587,13 @@ Message makeLocalChangeTrackOnionSkinMessage(int trackId, bool onionSkin)
 		DP_local_state_msg_track_onion_skin_new(trackId, onionSkin));
 }
 
+Message makeLocalChangeLayerSketchMessage(
+	int layerId, uint16_t opacity, const QColor &tint)
+{
+	return Message::noinc(
+		DP_local_state_msg_layer_sketch_new(layerId, opacity, tint.rgba()));
+}
+
 static void setClassicDabs(int count, DP_ClassicDab *out, void *user)
 {
 	const DP_ClassicDab *cds = static_cast<const DP_ClassicDab *>(user);

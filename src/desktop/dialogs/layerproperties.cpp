@@ -1,11 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/layerproperties.h"
+#include "desktop/dialogs/colordialog.h"
+#include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/net/message.h"
 #include "ui_layerproperties.h"
+#include <QPainter>
+#include <QPixmap>
 #include <QPushButton>
 #include <QStandardItemModel>
+#include <QStyle>
+#include <functional>
 
 namespace dialogs {
 
@@ -15,9 +21,42 @@ LayerProperties::LayerProperties(uint8_t localUser, QWidget *parent)
 {
 	m_ui = new Ui_LayerProperties;
 	m_ui->setupUi(this);
-	utils::setWidgetRetainSizeWhenHidden(m_ui->blendMode, true);
+
+	m_ui->sketchTintPreview->setDisplayMode(
+		color_widgets::ColorPreview::AllAlpha);
+	m_ui->sketchTintPreview->setCursor(Qt::PointingHandCursor);
+
+	m_ui->sketchTintNoneButton->setGroupPosition(
+		widgets::GroupedToolButton::GroupLeft);
+	m_ui->sketchTintNoneButton->setIcon(
+		utils::makeColorIconFor(this, Qt::transparent));
+
+	m_ui->sketchTintBlueButton->setGroupPosition(
+		widgets::GroupedToolButton::GroupCenter);
+	m_ui->sketchTintBlueButton->setIcon(
+		utils::makeColorIconFor(this, LAYER_SKETCH_TINT_DEFAULT));
+
+	m_ui->sketchTintChangeButton->setGroupPosition(
+		widgets::GroupedToolButton::GroupRight);
 
 	connect(m_ui->title, &QLineEdit::returnPressed, this, &QDialog::accept);
+	connect(
+		m_ui->sketchMode, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox), this,
+		&LayerProperties::updateSketchMode);
+	connect(
+		m_ui->sketchTintPreview, &color_widgets::ColorPreview::clicked, this,
+		&LayerProperties::showSketchTintColorPicker);
+	connect(
+		m_ui->sketchTintNoneButton, &widgets::GroupedToolButton::clicked, this,
+		std::bind(&LayerProperties::setSketchTintTo, this, Qt::transparent));
+	connect(
+		m_ui->sketchTintBlueButton, &widgets::GroupedToolButton::clicked, this,
+		std::bind(
+			&LayerProperties::setSketchTintTo, this,
+			LAYER_SKETCH_TINT_DEFAULT));
+	connect(
+		m_ui->sketchTintChangeButton, &widgets::GroupedToolButton::clicked,
+		this, &LayerProperties::showSketchTintColorPicker);
 	connect(
 		m_ui->buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
 	connect(
@@ -31,6 +70,7 @@ LayerProperties::LayerProperties(uint8_t localUser, QWidget *parent)
 			}
 		});
 	connect(this, &QDialog::accepted, this, &LayerProperties::apply);
+	updateSketchMode(Qt::Unchecked);
 }
 
 LayerProperties::~LayerProperties()
@@ -43,9 +83,9 @@ void LayerProperties::setNewLayerItem(
 {
 	m_item = {
 		0,	   QString(), 1.0f,	 DP_BLEND_MODE_NORMAL,
-		false, false,	  false, group,
-		group, 0,		  0,	 0,
-		0,
+		0.0f,  QColor(),  false, false,
+		false, group,	  group, 0,
+		0,	   0,		  0,
 	};
 	m_selectedId = selectedId;
 	m_wasDefault = false;
@@ -54,6 +94,7 @@ void LayerProperties::setNewLayerItem(
 	m_ui->opacitySlider->setValue(100);
 	m_ui->visible->setChecked(true);
 	m_ui->censored->setChecked(false);
+	setSketchParamsFromSettings();
 	m_ui->defaultLayer->setChecked(false);
 	m_ui->createdByLabel->hide();
 	m_ui->createdBy->hide();
@@ -78,6 +119,14 @@ void LayerProperties::setLayerItem(
 	m_ui->opacitySlider->setValue(qRound(item.opacity * 100.0f));
 	m_ui->visible->setChecked(!item.hidden);
 	m_ui->censored->setChecked(item.actuallyCensored());
+	if(item.sketchOpacity <= 0.0f) {
+		setSketchParamsFromSettings();
+	} else {
+		m_ui->sketchMode->setChecked(true);
+		m_ui->sketchOpacitySlider->setValue(
+			qRound(item.sketchOpacity * 100.0f));
+		m_ui->sketchTintPreview->setColor(item.sketchTint);
+	}
 	m_ui->defaultLayer->setChecked(isDefault);
 	m_ui->createdBy->setText(creator);
 	updateBlendMode(
@@ -176,16 +225,66 @@ void LayerProperties::showEvent(QShowEvent *event)
 	m_ui->title->selectAll();
 }
 
+void LayerProperties::updateSketchMode(compat::CheckBoxState state)
+{
+	bool visible = state != Qt::Unchecked;
+	m_ui->sketchOpacityLabel->setVisible(visible);
+	m_ui->sketchOpacitySlider->setVisible(visible);
+	m_ui->sketchTintLabel->setVisible(visible);
+	m_ui->sketchTintWidget->setVisible(visible);
+}
+
+void LayerProperties::showSketchTintColorPicker()
+{
+	color_widgets::ColorDialog *dlg = dialogs::newDeleteOnCloseColorDialog(
+		m_ui->sketchTintPreview->color(), this);
+	dlg->setAlphaEnabled(true);
+	connect(
+		dlg, &color_widgets::ColorDialog::colorSelected,
+		m_ui->sketchTintPreview, &color_widgets::ColorPreview::setColor);
+	dlg->show();
+}
+
+void LayerProperties::setSketchTintTo(const QColor &color)
+{
+	m_ui->sketchTintPreview->setColor(color);
+}
+
+void LayerProperties::setSketchParamsFromSettings()
+{
+	const desktop::settings::Settings &settings = dpApp().settings();
+	m_ui->sketchMode->setChecked(false);
+	m_ui->sketchOpacitySlider->setValue(settings.layerSketchOpacityPercent());
+	m_ui->sketchTintPreview->setColor(settings.layerSketchTint());
+}
+
+void LayerProperties::saveSketchParametersToSettings(
+	int opacityPercent, const QColor &tint)
+{
+	if(opacityPercent > 0) {
+		desktop::settings::Settings &settings = dpApp().settings();
+		settings.setLayerSketchOpacityPercent(opacityPercent);
+		settings.setLayerSketchTint(tint);
+	}
+}
+
 void LayerProperties::apply()
 {
 	if(m_item.id == 0) {
 		int blendModeData = m_ui->blendMode->currentData().toInt();
+		int sketchOpacity = m_ui->sketchMode->isChecked()
+								? m_ui->sketchOpacitySlider->value()
+								: 0;
+		QColor sketchTint =
+			sketchOpacity <= 0 ? QColor() : m_ui->sketchTintPreview->color();
+		saveSketchParametersToSettings(sketchOpacity, sketchTint);
 		emit addLayerOrGroupRequested(
 			m_selectedId, m_item.group, m_ui->title->text(),
 			m_ui->opacitySlider->value(),
 			blendModeData == -1 ? DP_BLEND_MODE_NORMAL : blendModeData,
 			m_item.group && blendModeData != -1, m_ui->censored->isChecked(),
-			m_ui->defaultLayer->isChecked(), m_ui->visible->isChecked());
+			m_ui->defaultLayer->isChecked(), m_ui->visible->isChecked(),
+			sketchOpacity, sketchTint);
 	} else {
 		emitChanges();
 	}
@@ -230,6 +329,18 @@ void LayerProperties::emitChanges()
 
 	if(m_ui->visible->isChecked() != (!m_item.hidden)) {
 		emit visibilityChanged(m_item.id, m_ui->visible->isChecked());
+	}
+
+	int oldSketchOpacity = qRound(m_item.sketchOpacity * 100.0);
+	int sketchOpacity =
+		m_ui->sketchMode->isChecked() ? m_ui->sketchOpacitySlider->value() : 0;
+	QColor oldSketchTint = m_item.sketchTint;
+	QColor sketchTint =
+		sketchOpacity <= 0 ? QColor() : m_ui->sketchTintPreview->color();
+	if(sketchOpacity != oldSketchOpacity ||
+	   (sketchOpacity > 0 && oldSketchTint != sketchTint)) {
+		saveSketchParametersToSettings(sketchOpacity, sketchTint);
+		emit sketchModeChanged(m_item.id, sketchOpacity, sketchTint);
 	}
 
 	bool makeDefault = m_ui->defaultLayer->isChecked();
