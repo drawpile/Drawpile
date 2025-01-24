@@ -33,12 +33,14 @@
 struct DP_LayerProps {
     DP_Atomic refcount;
     const bool transient;
-    const int id;
-    const uint16_t opacity;
-    int blend_mode;
     const bool hidden;
     const bool censored;
     const bool isolated;
+    const uint16_t opacity;
+    const uint16_t sketch_opacity;
+    const uint32_t sketch_tint;
+    const int id;
+    const int blend_mode;
     DP_Text *const title;
     struct {
         DP_LayerPropsList *const children;
@@ -48,12 +50,14 @@ struct DP_LayerProps {
 struct DP_TransientLayerProps {
     DP_Atomic refcount;
     bool transient;
-    int id;
-    uint16_t opacity;
-    int blend_mode;
     bool hidden;
     bool censored;
     bool isolated;
+    uint16_t opacity;
+    uint16_t sketch_opacity;
+    uint32_t sketch_tint;
+    int id;
+    int blend_mode;
     DP_Text *title;
     union {
         DP_LayerPropsList *children;
@@ -66,12 +70,14 @@ struct DP_TransientLayerProps {
 struct DP_LayerProps {
     DP_Atomic refcount;
     bool transient;
-    int id;
-    uint16_t opacity;
-    int blend_mode;
     bool hidden;
     bool censored;
     bool isolated;
+    uint16_t opacity;
+    uint16_t sketch_opacity;
+    uint32_t sketch_tint;
+    int id;
+    int blend_mode;
     DP_Text *title;
     union {
         DP_LayerPropsList *children;
@@ -141,6 +147,35 @@ uint16_t DP_layer_props_opacity(DP_LayerProps *lp)
     return lp->opacity;
 }
 
+uint16_t DP_layer_props_sketch_opacity(DP_LayerProps *lp)
+{
+    DP_ASSERT(lp);
+    DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
+    return lp->sketch_opacity;
+}
+
+uint16_t DP_layer_props_effective_opacity(DP_LayerProps *lp)
+{
+    DP_ASSERT(lp);
+    DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
+    uint16_t sketch_opacity = lp->sketch_opacity;
+    return sketch_opacity == 0 ? lp->opacity : sketch_opacity;
+}
+
+uint32_t DP_layer_props_sketch_tint(DP_LayerProps *lp)
+{
+    DP_ASSERT(lp);
+    DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
+    return lp->sketch_tint;
+}
+
+uint32_t DP_layer_props_effective_tint(DP_LayerProps *lp)
+{
+    DP_ASSERT(lp);
+    DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
+    return lp->sketch_opacity == 0 ? 0 : lp->sketch_tint;
+}
+
 int DP_layer_props_blend_mode(DP_LayerProps *lp)
 {
     DP_ASSERT(lp);
@@ -197,7 +232,9 @@ bool DP_layer_props_differ(DP_LayerProps *lp, DP_LayerProps *prev_lp)
             || lp->blend_mode != prev_lp->blend_mode
             || lp->hidden != prev_lp->hidden
             || lp->censored != prev_lp->censored
-            || lp->isolated != prev_lp->isolated);
+            || lp->isolated != prev_lp->isolated
+            || lp->sketch_opacity != prev_lp->sketch_opacity
+            || lp->sketch_tint != prev_lp->sketch_tint);
 }
 
 
@@ -207,12 +244,14 @@ static DP_TransientLayerProps *alloc_transient_layer_props(DP_LayerProps *lp)
     *tlp = (DP_TransientLayerProps){
         DP_ATOMIC_INIT(1),
         true,
-        lp->id,
-        lp->opacity,
-        lp->blend_mode,
         lp->hidden,
         lp->censored,
         lp->isolated,
+        lp->opacity,
+        lp->sketch_opacity,
+        lp->sketch_tint,
+        lp->id,
+        lp->blend_mode,
         DP_text_incref_nullable(lp->title),
         {NULL},
     };
@@ -268,12 +307,14 @@ DP_transient_layer_props_new_init_with_transient_children_noinc(
     *tlp = (DP_TransientLayerProps){
         DP_ATOMIC_INIT(1),
         true,
-        layer_id,
-        DP_BIT15,
-        DP_BLEND_MODE_NORMAL,
         false,
         false,
         tlpl_or_null != NULL,
+        DP_BIT15,
+        0,
+        0,
+        layer_id,
+        DP_BLEND_MODE_NORMAL,
         NULL,
         {.transient_children = tlpl_or_null},
     };
@@ -333,6 +374,22 @@ uint16_t DP_transient_layer_props_opacity(DP_TransientLayerProps *tlp)
     DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
     DP_ASSERT(tlp->transient);
     return DP_layer_props_opacity((DP_LayerProps *)tlp);
+}
+
+uint16_t DP_transient_layer_props_sketch_opacity(DP_TransientLayerProps *tlp)
+{
+    DP_ASSERT(tlp);
+    DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
+    DP_ASSERT(tlp->transient);
+    return DP_layer_props_sketch_opacity((DP_LayerProps *)tlp);
+}
+
+uint32_t DP_transient_layer_props_sketch_tint(DP_TransientLayerProps *tlp)
+{
+    DP_ASSERT(tlp);
+    DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
+    DP_ASSERT(tlp->transient);
+    return DP_layer_props_sketch_tint((DP_LayerProps *)tlp);
 }
 
 int DP_transient_layer_props_blend_mode(DP_TransientLayerProps *tlp)
@@ -429,6 +486,24 @@ void DP_transient_layer_props_opacity_set(DP_TransientLayerProps *tlp,
     DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
     DP_ASSERT(tlp->transient);
     tlp->opacity = opacity;
+}
+
+void DP_transient_layer_props_sketch_opacity_set(DP_TransientLayerProps *tlp,
+                                                 uint16_t sketch_opacity)
+{
+    DP_ASSERT(tlp);
+    DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
+    DP_ASSERT(tlp->transient);
+    tlp->sketch_opacity = sketch_opacity;
+}
+
+void DP_transient_layer_props_sketch_tint_set(DP_TransientLayerProps *tlp,
+                                              uint32_t sketch_tint)
+{
+    DP_ASSERT(tlp);
+    DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
+    DP_ASSERT(tlp->transient);
+    tlp->sketch_tint = sketch_tint;
 }
 
 void DP_transient_layer_props_blend_mode_set(DP_TransientLayerProps *tlp,

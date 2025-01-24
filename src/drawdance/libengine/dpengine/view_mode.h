@@ -83,6 +83,7 @@ typedef struct DP_ViewModeResult {
     bool isolated;
     uint16_t opacity;
     int blend_mode;
+    DP_UPixel8 tint;
     DP_ViewModeContext child_vmc;
 } DP_ViewModeResult;
 

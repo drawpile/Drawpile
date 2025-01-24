@@ -248,6 +248,9 @@ bool openOrQuestionUrl(QWidget *parent, const QUrl &url);
 
 QString makeActionShortcutText(QString text, const QKeySequence &shortcut);
 
+QIcon makeColorIcon(int size, const QColor &color);
+QIcon makeColorIconFor(const QWidget *parent, const QColor &color);
+
 }
 
 #endif

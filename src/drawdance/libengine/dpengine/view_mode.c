@@ -363,25 +363,28 @@ bool DP_view_mode_filter_excludes_everything(const DP_ViewModeFilter *vmf)
 
 static DP_ViewModeResult make_result(bool visible, bool isolated,
                                      uint16_t opacity, int blend_mode,
+                                     uint32_t tint,
                                      DP_ViewModeContext child_vmc)
 {
-    return (DP_ViewModeResult){visible, isolated, opacity, blend_mode,
-                               child_vmc};
+    return (DP_ViewModeResult){
+        visible,  isolated, opacity, blend_mode, (DP_UPixel8){.color = tint},
+        child_vmc};
 }
 
 static DP_ViewModeResult apply_layer(int layer_id, DP_LayerProps *lp)
 {
     if (DP_layer_props_id(lp) == layer_id) {
-        return make_result(true, DP_layer_props_isolated(lp),
-                           DP_layer_props_opacity(lp), DP_BLEND_MODE_NORMAL,
-                           make_normal_context());
+        return make_result(
+            true, DP_layer_props_isolated(lp),
+            DP_layer_props_effective_opacity(lp), DP_BLEND_MODE_NORMAL,
+            DP_layer_props_effective_tint(lp), make_normal_context());
     }
     else if (DP_layer_props_children_noinc(lp)) {
-        return make_result(true, false, DP_BIT15, DP_BLEND_MODE_NORMAL,
+        return make_result(true, false, DP_BIT15, DP_BLEND_MODE_NORMAL, 0,
                            make_layer_context(layer_id));
     }
     else {
-        return make_result(false, false, 0, DP_BLEND_MODE_NORMAL,
+        return make_result(false, false, 0, DP_BLEND_MODE_NORMAL, 0,
                            make_nothing_context());
     }
 }
@@ -403,19 +406,20 @@ static bool is_hidden_in_frame(DP_LayerProps *lp, DP_ViewModeTrack *vmt)
 }
 
 static DP_ViewModeResult apply_frame(int internal_type, int track_index,
-                                     DP_ViewModeBuffer *vmb, DP_LayerProps *lp)
+                                     DP_ViewModeBuffer *vmb, DP_LayerProps *lp,
+                                     uint16_t effective_opacity)
 {
     DP_ASSERT(track_index >= 0);
     DP_ASSERT(track_index < vmb->count);
     DP_ViewModeTrack *vmt = &vmb->tracks[track_index];
     if (vmt->layer_id == 0 || is_hidden_in_frame(lp, vmt)) {
-        return make_result(false, false, 0, DP_BLEND_MODE_NORMAL,
+        return make_result(false, false, 0, DP_BLEND_MODE_NORMAL, 0,
                            make_nothing_context());
     }
     else {
-        return make_result(true, DP_layer_props_isolated(lp),
-                           DP_layer_props_opacity(lp),
+        return make_result(true, DP_layer_props_isolated(lp), effective_opacity,
                            DP_layer_props_blend_mode(lp),
+                           DP_layer_props_effective_tint(lp),
                            make_frame_context(internal_type, track_index, vmb));
     }
 }
@@ -427,12 +431,12 @@ static DP_ViewModeResult apply_callback(DP_ViewModeCallback *callback,
     if (callback->is_visible(callback->user, lp)) {
         return make_result(
             true, DP_layer_props_isolated(lp),
-            DP_fix15_mul(parent_opacity, DP_layer_props_opacity(lp)),
-            DP_layer_props_blend_mode(lp),
+            DP_fix15_mul(parent_opacity, DP_layer_props_effective_opacity(lp)),
+            DP_layer_props_blend_mode(lp), DP_layer_props_effective_tint(lp),
             (DP_ViewModeContext){TYPE_CALLBACK, {.callback = callback}});
     }
     else {
-        return make_result(false, false, 0, DP_BLEND_MODE_NORMAL,
+        return make_result(false, false, 0, DP_BLEND_MODE_NORMAL, 0,
                            make_nothing_context());
     }
 }
@@ -527,7 +531,7 @@ static bool is_effectively_visible(DP_LayerProps *lp, uint16_t parent_opacity,
                                    uint16_t *out_effective_opacity)
 {
     if (parent_opacity > 0) {
-        uint16_t opacity = DP_layer_props_opacity(lp);
+        uint16_t opacity = DP_layer_props_effective_opacity(lp);
         if (opacity > 0 && !DP_layer_props_hidden(lp)) {
             *out_effective_opacity = DP_fix15_mul(parent_opacity, opacity);
             return true;
@@ -548,12 +552,14 @@ DP_ViewModeResult DP_view_mode_context_apply(const DP_ViewModeContext *vmc,
         return is_effectively_visible(lp, parent_opacity, &effective_opacity)
                  ? make_result(true, DP_layer_props_isolated(lp),
                                effective_opacity, DP_layer_props_blend_mode(lp),
+                               DP_layer_props_effective_tint(lp),
                                make_normal_context())
                  : make_result(false, false, 0, DP_BLEND_MODE_NORMAL,
+                               DP_layer_props_effective_tint(lp),
                                make_nothing_context());
     }
     case TYPE_NOTHING:
-        return make_result(false, false, 0, DP_BLEND_MODE_NORMAL,
+        return make_result(false, false, 0, DP_BLEND_MODE_NORMAL, 0,
                            make_nothing_context());
     case TYPE_LAYER:
         return apply_layer(vmc->layer_id, lp);
@@ -561,13 +567,14 @@ DP_ViewModeResult DP_view_mode_context_apply(const DP_ViewModeContext *vmc,
         uint16_t effective_opacity;
         return is_effectively_visible(lp, parent_opacity, &effective_opacity)
                  ? apply_frame(TYPE_FRAME_MANUAL, vmc->frame.track_index,
-                               vmc->frame.vmb, lp)
-                 : make_result(false, false, 0, DP_BLEND_MODE_NORMAL,
+                               vmc->frame.vmb, lp, effective_opacity)
+                 : make_result(false, false, 0, DP_BLEND_MODE_NORMAL, 0,
                                make_nothing_context());
     }
     case TYPE_FRAME_RENDER:
         return apply_frame(TYPE_FRAME_RENDER, vmc->frame.track_index,
-                           vmc->frame.vmb, lp);
+                           vmc->frame.vmb, lp,
+                           DP_layer_props_effective_opacity(lp));
     case TYPE_CALLBACK:
         return apply_callback(vmc->callback, lp, parent_opacity);
     default:

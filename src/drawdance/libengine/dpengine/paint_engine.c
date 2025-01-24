@@ -1496,7 +1496,8 @@ static void set_local_layer_props_recursive(
         // undone by the hidden layers processing that comes after this step.
         bool needs_show = DP_layer_props_hidden(lp);
         bool needs_reveal = reveal_censored && DP_layer_props_censored(lp);
-        if (needs_show || needs_reveal) {
+        bool needs_unsketch = DP_layer_props_sketch_opacity(lp) != 0;
+        if (needs_show || needs_reveal || needs_unsketch) {
             int index_count;
             int *indexes = DP_draw_context_layer_indexes(dc, &index_count);
             DP_TransientLayerProps *tlp =
@@ -1509,6 +1510,9 @@ static void set_local_layer_props_recursive(
                 DP_transient_layer_props_censored_set(tlp, false);
                 censored_layer_revealed(user, DP_layer_props_id(lp));
             }
+            if (needs_unsketch) {
+                DP_transient_layer_props_sketch_opacity_set(tlp, 0);
+            }
         }
 
         DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
@@ -1520,20 +1524,25 @@ static void set_local_layer_props_recursive(
     DP_draw_context_layer_indexes_pop(dc);
 }
 
-static void set_hidden_layer_props(DP_PaintEngine *pe,
+static void set_local_layer_states(DP_LocalState *ls,
                                    DP_TransientCanvasState *tcs)
 {
     int count;
-    const int *hidden_layer_ids =
-        DP_local_state_hidden_layer_ids(pe->local_state, &count);
-    DP_LayerRoutes *lr = DP_transient_canvas_state_layer_routes_noinc(tcs);
-    for (int i = 0; i < count; ++i) {
-        DP_LayerRoutesEntry *lre =
-            DP_layer_routes_search(lr, hidden_layer_ids[i]);
-        if (lre) {
-            DP_TransientLayerProps *tlp =
-                DP_layer_routes_entry_transient_props(lre, tcs);
-            DP_transient_layer_props_hidden_set(tlp, true);
+    const DP_LocalLayerState *llss = DP_local_state_layer_states(ls, &count);
+    if (count != 0) {
+        DP_LayerRoutes *lr = DP_transient_canvas_state_layer_routes_noinc(tcs);
+        for (int i = 0; i < count; ++i) {
+            const DP_LocalLayerState *lls = &llss[i];
+            DP_LayerRoutesEntry *lre =
+                DP_layer_routes_search(lr, lls->layer_id);
+            if (lre) {
+                DP_TransientLayerProps *tlp =
+                    DP_layer_routes_entry_transient_props(lre, tcs);
+                DP_transient_layer_props_hidden_set(tlp, lls->hidden);
+                DP_transient_layer_props_sketch_opacity_set(
+                    tlp, lls->sketch_opacity);
+                DP_transient_layer_props_sketch_tint_set(tlp, lls->sketch_tint);
+            }
         }
     }
 }
@@ -1552,7 +1561,7 @@ static DP_CanvasState *set_local_layer_props(
         DP_transient_canvas_state_layer_props_noinc(tcs),
         censored_layer_revealed, user);
 
-    set_hidden_layer_props(pe, tcs);
+    set_local_layer_states(pe->local_state, tcs);
 
     // We remember the root layer props list for later and then jam it into
     // subsequent canvas states. That'll make them diff correctly instead of

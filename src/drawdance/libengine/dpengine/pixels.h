@@ -167,6 +167,8 @@ void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
                      const DP_Pixel15 *DP_RESTRICT src, int pixel_count,
                      uint16_t opacity, int blend_mode);
 
+void DP_tint_pixels(DP_Pixel15 *dst, int pixel_count, DP_UPixel8 tint);
+
 // Needs big SIMD alignment of dst and src, max_align_t is not enough! Only the
 // pixels of tiles are properly aligned, really.
 void DP_blend_tile(DP_Pixel15 *DP_RESTRICT dst,

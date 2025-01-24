@@ -293,6 +293,14 @@ static BGRA15 to_bgra(DP_Pixel15 pixel)
     };
 }
 
+static BGRA15 to_ubgra(DP_UPixel15 pixel)
+{
+    return (BGRA15){
+        .bgr = to_ubgr(pixel),
+        .a = to_fix(pixel.a),
+    };
+}
+
 static DP_Pixel15 from_bgra(BGRA15 bgra)
 {
     return (DP_Pixel15){
@@ -2270,6 +2278,37 @@ void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
     }
 }
 
+void DP_tint_pixels(DP_Pixel15 *dst, int pixel_count, DP_UPixel8 tint)
+{
+    if (tint.a == 255) {
+        DP_UPixel15 t = DP_upixel8_to_15(tint);
+        for (int i = 0; i < pixel_count; ++i) {
+            BGRA15 bgra = to_ubgra(DP_pixel15_unpremultiply(dst[i]));
+            dst[i] = from_ubgra((BGRA15){
+                .b = t.b,
+                .g = t.g,
+                .r = t.r,
+                .a = fix15_mul(bgra.a, BIT15_FIX - lum(bgra.bgr)),
+            });
+        }
+    }
+    else if (tint.a > 0) {
+        DP_UPixel15 t = DP_upixel8_to_15(tint);
+        Fix15 ta1 = BIT15_FIX - t.a;
+        for (int i = 0; i < pixel_count; ++i) {
+            BGRA15 bgra = to_ubgra(DP_pixel15_unpremultiply(dst[i]));
+            Fix15 l = lum(bgra.bgr);
+            Fix15 l1 = BIT15_FIX - l;
+            dst[i] = from_ubgra((BGRA15){
+                .b = fix15_sumprods(bgra.b, l, t.b, l1),
+                .g = fix15_sumprods(bgra.g, l, t.g, l1),
+                .r = fix15_sumprods(bgra.r, l, t.r, l1),
+                .a = fix15_sumprods(bgra.a, ta1, fix15_mul(bgra.a, l1), t.a),
+            });
+        }
+    }
+}
+
 void DP_blend_tile(DP_Pixel15 *DP_RESTRICT dst,
                    const DP_Pixel15 *DP_RESTRICT src, uint16_t opacity,
                    int blend_mode)
@@ -2386,10 +2425,14 @@ void DP_blend_pixels8(DP_Pixel8 *DP_RESTRICT dst,
         unsigned int sa1 = 255u - DP_pixel8_mul(s.a, opacity);
         if (sa1 != 255u) {
             dst[i] = (DP_Pixel8){
-                .b = (uint8_t)(DP_pixel8_mul(s.b, opacity) + DP_pixel8_mul(d.b, sa1)),
-                .g = (uint8_t)(DP_pixel8_mul(s.g, opacity) + DP_pixel8_mul(d.g, sa1)),
-                .r = (uint8_t)(DP_pixel8_mul(s.r, opacity) + DP_pixel8_mul(d.r, sa1)),
-                .a = (uint8_t)(DP_pixel8_mul(s.a, opacity) + DP_pixel8_mul(d.a, sa1)),
+                .b = (uint8_t)(DP_pixel8_mul(s.b, opacity)
+                               + DP_pixel8_mul(d.b, sa1)),
+                .g = (uint8_t)(DP_pixel8_mul(s.g, opacity)
+                               + DP_pixel8_mul(d.g, sa1)),
+                .r = (uint8_t)(DP_pixel8_mul(s.r, opacity)
+                               + DP_pixel8_mul(d.r, sa1)),
+                .a = (uint8_t)(DP_pixel8_mul(s.a, opacity)
+                               + DP_pixel8_mul(d.a, sa1)),
             };
         }
     }

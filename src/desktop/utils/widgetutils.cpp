@@ -20,10 +20,12 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPair>
+#include <QPixmap>
 #include <QRadioButton>
 #include <QResizeEvent>
 #include <QScreen>
 #include <QScrollBar>
+#include <QStyle>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -1094,6 +1096,28 @@ bool openOrQuestionUrl(QWidget *parent, const QUrl &url)
 		box->show();
 	}
 	return true;
+}
+
+QIcon makeColorIcon(int size, const QColor &color) {
+	int half = size / 2;
+	QPixmap pixmap(size, size);
+	pixmap.fill(color);
+	if(color.alpha() != 255) {
+		QPainter painter{&pixmap};
+		painter.setCompositionMode(QPainter::CompositionMode_DestinationOver);
+		painter.fillRect(0, 0, half, half, Qt::gray);
+		painter.fillRect(half, 0, half, half, Qt::white);
+		painter.fillRect(0, half, half, half, Qt::white);
+		painter.fillRect(half, half, half, half, Qt::gray);
+	}
+	return QIcon(pixmap);
+}
+
+QIcon makeColorIconFor(const QWidget *parent, const QColor &color)
+{
+	Q_ASSERT(parent);
+	return makeColorIcon(
+		parent->style()->pixelMetric(QStyle::PM_ButtonIconSize), color);
 }
 
 }

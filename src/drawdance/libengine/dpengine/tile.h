@@ -227,5 +227,7 @@ void DP_transient_tile_brush_apply_posterize(DP_TransientTile *tt,
                                              uint16_t opacity, int x, int y,
                                              int w, int h, int skip);
 
+void DP_transient_tile_tint(DP_TransientTile *tt, DP_UPixel8 tint);
+
 
 #endif

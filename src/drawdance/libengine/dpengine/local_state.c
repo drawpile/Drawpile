@@ -19,32 +19,39 @@
 #define INT_SIZE     sizeof(int32_t)
 
 struct DP_LocalState {
-    DP_Vector hidden_layer_ids;
+    DP_Vector layer_states;
+    DP_Vector track_states;
     DP_Tile *background_tile;
     bool background_opaque;
     DP_ViewMode view_mode;
     int active_layer_id;
     int active_frame_index;
     DP_OnionSkins *onion_skins;
-    DP_Vector track_states;
     DP_LocalStateViewInvalidatedFn view_invalidated;
     void *user;
 };
 
 
-static void apply_hidden_layers_recursive(DP_Vector *hidden_layers,
-                                          DP_LayerPropsList *lpl)
+static void apply_layer_states_recursive(DP_Vector *layer_states,
+                                         DP_LayerPropsList *lpl)
 {
     int count = DP_layer_props_list_count(lpl);
     for (int i = 0; i < count; ++i) {
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
-        if (DP_layer_props_hidden(lp)) {
-            int layer_id = DP_layer_props_id(lp);
-            DP_VECTOR_PUSH_TYPE(hidden_layers, int, layer_id);
+        bool hidden = DP_layer_props_hidden(lp);
+        uint16_t sketch_opacity = DP_layer_props_sketch_opacity(lp);
+        if (hidden || sketch_opacity != 0) {
+            DP_LocalLayerState lls = {
+                DP_layer_props_id(lp),
+                hidden,
+                sketch_opacity,
+                sketch_opacity == 0 ? 0 : DP_layer_props_sketch_tint(lp),
+            };
+            DP_VECTOR_PUSH_TYPE(layer_states, DP_LocalLayerState, lls);
         }
         DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
         if (child_lpl) {
-            apply_hidden_layers_recursive(hidden_layers, child_lpl);
+            apply_layer_states_recursive(layer_states, child_lpl);
         }
     }
 }
@@ -69,20 +76,20 @@ DP_local_state_new(DP_CanvasState *cs_or_null,
 {
     DP_LocalState *ls = DP_malloc(sizeof(*ls));
     *ls = (DP_LocalState){DP_VECTOR_NULL,
+                          DP_VECTOR_NULL,
                           NULL,
                           false,
                           DP_VIEW_MODE_NORMAL,
                           0,
                           0,
                           NULL,
-                          DP_VECTOR_NULL,
                           view_invalidated,
                           user};
-    DP_VECTOR_INIT_TYPE(&ls->hidden_layer_ids, int, 8);
+    DP_VECTOR_INIT_TYPE(&ls->layer_states, DP_LocalLayerState, 8);
     DP_VECTOR_INIT_TYPE(&ls->track_states, DP_LocalTrackState, 8);
     if (cs_or_null) {
         DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs_or_null);
-        apply_hidden_layers_recursive(&ls->hidden_layer_ids, lpl);
+        apply_layer_states_recursive(&ls->layer_states, lpl);
         apply_track_states(&ls->track_states,
                            DP_canvas_state_timeline_noinc(cs_or_null));
     }
@@ -92,27 +99,28 @@ DP_local_state_new(DP_CanvasState *cs_or_null,
 void DP_local_state_free(DP_LocalState *ls)
 {
     if (ls) {
-        DP_vector_dispose(&ls->track_states);
         DP_onion_skins_free(ls->onion_skins);
-        DP_vector_dispose(&ls->hidden_layer_ids);
+        DP_vector_dispose(&ls->track_states);
+        DP_vector_dispose(&ls->layer_states);
         DP_free(ls);
     }
 }
 
 
-const int *DP_local_state_hidden_layer_ids(DP_LocalState *ls, int *out_count)
+const DP_LocalLayerState *DP_local_state_layer_states(DP_LocalState *ls,
+                                                      int *out_count)
 {
     DP_ASSERT(ls);
     if (out_count) {
-        *out_count = DP_size_to_int(ls->hidden_layer_ids.used);
+        *out_count = DP_size_to_int(ls->layer_states.used);
     }
-    return ls->hidden_layer_ids.elements;
+    return ls->layer_states.elements;
 }
 
-int DP_local_state_hidden_layer_id_count(DP_LocalState *ls)
+int DP_local_state_layer_state_count(DP_LocalState *ls)
 {
     DP_ASSERT(ls);
-    return DP_size_to_int(ls->hidden_layer_ids.used);
+    return DP_size_to_int(ls->layer_states.used);
 }
 
 DP_Tile *DP_local_state_background_tile_noinc(DP_LocalState *ls)
@@ -182,11 +190,6 @@ bool DP_local_state_track_visible(DP_LocalState *ls, int track_id)
 }
 
 
-static bool is_hidden_layer_id(void *element, void *user)
-{
-    return *(int *)element == *(int *)user;
-}
-
 static void notify_view_invalidated(DP_LocalState *ls, bool check_all,
                                     int layer_id)
 {
@@ -196,17 +199,40 @@ static void notify_view_invalidated(DP_LocalState *ls, bool check_all,
     }
 }
 
+static bool is_layer_state(void *element, void *user)
+{
+    return (*(DP_LocalLayerState *)element).layer_id == *(int *)user;
+}
+
 static void set_layer_visibility(DP_LocalState *ls, int layer_id, bool hidden)
 {
-    DP_Vector *hidden_layer_ids = &ls->hidden_layer_ids;
-    int index = DP_vector_search_index(hidden_layer_ids, sizeof(int),
-                                       is_hidden_layer_id, &layer_id);
-    if (hidden && index == -1) {
-        DP_VECTOR_PUSH_TYPE(hidden_layer_ids, int, layer_id);
-        notify_view_invalidated(ls, false, layer_id);
+    DP_Vector *layer_states = &ls->layer_states;
+    int index = DP_vector_search_index(layer_states, sizeof(DP_LocalLayerState),
+                                       is_layer_state, &layer_id);
+    if (hidden) {
+        if (index == -1) {
+            DP_LocalLayerState lls = {layer_id, hidden, 0, 0};
+            DP_VECTOR_PUSH_TYPE(layer_states, DP_LocalLayerState, lls);
+            notify_view_invalidated(ls, false, layer_id);
+        }
+        else {
+            DP_LocalLayerState *lls =
+                &DP_VECTOR_AT_TYPE(layer_states, DP_LocalLayerState, index);
+            if (!lls->hidden) {
+                lls->hidden = true;
+                notify_view_invalidated(ls, false, layer_id);
+            }
+        }
     }
     else if (!hidden && index != -1) {
-        DP_VECTOR_REMOVE_TYPE(hidden_layer_ids, int, index);
+        DP_LocalLayerState *lls =
+            &DP_VECTOR_AT_TYPE(layer_states, DP_LocalLayerState, index);
+        if (lls->sketch_opacity == 0) {
+            DP_VECTOR_REMOVE_TYPE(layer_states, DP_LocalLayerState, index);
+        }
+        else {
+            lls->hidden = false;
+        }
         notify_view_invalidated(ls, false, layer_id);
     }
 }
@@ -358,6 +384,13 @@ static uint16_t read_uint16(const unsigned char *body, size_t *in_out_read)
     return value;
 }
 
+static uint32_t read_uint32(const unsigned char *body, size_t *in_out_read)
+{
+    uint32_t value = DP_read_bigendian_uint32(body + *in_out_read);
+    *in_out_read += sizeof(uint32_t);
+    return value;
+}
+
 static DP_UPixel15 read_upixel(const unsigned char *body, size_t *in_out_read)
 {
     uint32_t value = DP_read_bigendian_uint32(body + *in_out_read);
@@ -492,14 +525,70 @@ static void handle_track_onion_skin(DP_LocalState *ls, DP_MsgLocalChange *mlc)
     }
 }
 
+static void set_layer_sketch(DP_LocalState *ls, int layer_id, uint16_t opacity,
+                             uint32_t tint)
+{
+    DP_Vector *layer_states = &ls->layer_states;
+    int index = DP_vector_search_index(layer_states, sizeof(DP_LocalLayerState),
+                                       is_layer_state, &layer_id);
+    bool enabled = opacity != 0;
+    if (enabled) {
+        if (index == -1) {
+            DP_LocalLayerState lls = {layer_id, false, opacity, tint};
+            DP_VECTOR_PUSH_TYPE(layer_states, DP_LocalLayerState, lls);
+            notify_view_invalidated(ls, false, layer_id);
+        }
+        else {
+            DP_LocalLayerState *lls =
+                &DP_VECTOR_AT_TYPE(layer_states, DP_LocalLayerState, index);
+            if (opacity != lls->sketch_opacity || tint != lls->sketch_tint) {
+                lls->sketch_opacity = opacity;
+                lls->sketch_tint = tint;
+                notify_view_invalidated(ls, false, layer_id);
+            }
+        }
+    }
+    else if (!enabled && index != -1) {
+        DP_LocalLayerState *lls =
+            &DP_VECTOR_AT_TYPE(layer_states, DP_LocalLayerState, index);
+        if (!lls->hidden) {
+            DP_VECTOR_REMOVE_TYPE(layer_states, DP_LocalLayerState, index);
+        }
+        else {
+            lls->sketch_opacity = 0;
+            lls->sketch_tint = 0;
+        }
+        notify_view_invalidated(ls, false, layer_id);
+    }
+}
+
+static void handle_layer_sketch(DP_LocalState *ls, DP_MsgLocalChange *mlc)
+{
+    size_t size;
+    const unsigned char *body = DP_msg_local_change_body(mlc, &size);
+    size_t required_size =
+        sizeof(int32_t) + sizeof(uint16_t) + sizeof(uint32_t);
+    if (size != required_size) {
+        DP_warn("Wrong size for local layer sketch change: wanted %zu, got %zu",
+                required_size, size);
+        return;
+    }
+
+    size_t read = 0;
+    int layer_id = read_int(body, &read);
+    uint16_t opacity = read_uint16(body, &read);
+    uint32_t tint = read_uint32(body, &read);
+    DP_ASSERT(read == required_size);
+    set_layer_sketch(ls, layer_id, opacity, tint);
+}
+
 static void handle_internal(DP_LocalState *ls, DP_MsgInternal *mi)
 {
     if (DP_msg_internal_type(mi) == DP_MSG_INTERNAL_TYPE_RESET_TO_STATE) {
         set_background_tile(ls, NULL);
-        while (ls->hidden_layer_ids.used != 0) {
-            set_layer_visibility(
-                ls, DP_VECTOR_FIRST_TYPE(&ls->hidden_layer_ids, int), false);
-        }
+        ls->layer_states.used = 0;
+        ls->track_states.used = 0;
+        notify_view_invalidated(ls, true, 0);
     }
 }
 
@@ -531,6 +620,9 @@ static void handle_local_change(DP_LocalState *ls, DP_DrawContext *dc,
         break;
     case DP_MSG_LOCAL_CHANGE_TYPE_TRACK_ONION_SKIN:
         handle_track_onion_skin(ls, mlc);
+        break;
+    case DP_MSG_LOCAL_CHANGE_TYPE_LAYER_SKETCH:
+        handle_layer_sketch(ls, mlc);
         break;
     default:
         DP_warn("Unknown local change type %d", type);
@@ -575,13 +667,24 @@ bool DP_local_state_reset_image_build(DP_LocalState *ls, DP_DrawContext *dc,
     DP_ASSERT(ls);
     DP_ASSERT(fn);
 
-    int layer_id_count;
-    const int *layer_ids = DP_local_state_hidden_layer_ids(ls, &layer_id_count);
-    for (int i = 0; i < layer_id_count; ++i) {
-        DP_Message *msg =
-            DP_local_state_msg_layer_visibility_new(layer_ids[i], true);
-        if (!fn(user, msg)) {
-            return false;
+    int lls_count;
+    const DP_LocalLayerState *llss =
+        DP_local_state_layer_states(ls, &lls_count);
+    for (int i = 0; i < lls_count; ++i) {
+        const DP_LocalLayerState *lls = &llss[i];
+        if (lls->hidden) {
+            DP_Message *msg =
+                DP_local_state_msg_layer_visibility_new(lls->layer_id, true);
+            if (!fn(user, msg)) {
+                return false;
+            }
+        }
+        if (lls->sketch_opacity != 0) {
+            DP_Message *msg = DP_local_state_msg_layer_sketch_new(
+                lls->layer_id, lls->sketch_opacity, lls->sketch_tint);
+            if (!fn(user, msg)) {
+                return false;
+            }
         }
     }
 
@@ -763,4 +866,18 @@ DP_Message *DP_local_state_msg_track_onion_skin_new(int track_id,
 {
     return make_id_bool_message(DP_MSG_LOCAL_CHANGE_TYPE_TRACK_ONION_SKIN,
                                 track_id, onion_skin);
+}
+
+DP_Message *DP_local_state_msg_layer_sketch_new(int layer_id, uint16_t opacity,
+                                                uint32_t tint)
+{
+    unsigned char body[sizeof(int32_t) + sizeof(uint16_t) + sizeof(uint32_t)];
+    size_t written = 0;
+    written +=
+        DP_write_bigendian_int32(DP_int_to_int32(layer_id), body + written);
+    written += DP_write_bigendian_uint16(opacity, body + written);
+    written += DP_write_bigendian_uint32(tint, body + written);
+    DP_ASSERT(written == sizeof(body));
+    return DP_msg_local_change_new(0, DP_MSG_LOCAL_CHANGE_TYPE_LAYER_SKETCH,
+                                   set_body, written, body);
 }

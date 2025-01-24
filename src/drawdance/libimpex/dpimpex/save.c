@@ -438,6 +438,14 @@ static void ora_write_layer_props_xml(DP_SaveOraContext *c, DP_Output *output,
     if (DP_layer_props_censored(lp)) {
         DP_OUTPUT_PRINT_LITERAL(output, " drawpile:censored=\"true\"");
     }
+
+    uint16_t sketch_opacity = DP_layer_props_sketch_opacity(lp);
+    if (sketch_opacity != 0) {
+        ORA_APPEND_ATTR(c, output, "drawpile:sketch-opacity", "%.4f",
+                        DP_uint16_to_double(sketch_opacity) / (double)DP_BIT15);
+        ORA_APPEND_ATTR(c, output, "drawpile:sketch-tint", "#%08x",
+                        DP_uint32_to_uint(DP_layer_props_sketch_tint(lp)));
+    }
 }
 
 static void ora_write_layers_xml(DP_SaveOraContext *c, DP_Output *output,

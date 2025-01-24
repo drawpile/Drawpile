@@ -36,6 +36,8 @@ public:
     bool hidden() const;
     bool censored() const;
     bool isolated() const;
+    uint16_t sketchOpacity() const;
+    uint32_t sketchTint() const;
 
     bool isGroup(drawdance::LayerPropsList *outChildren);
 

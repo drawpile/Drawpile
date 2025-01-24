@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/docks/layerlistdock.h"
+#include "desktop/dialogs/colordialog.h"
 #include "desktop/dialogs/layerproperties.h"
 #include "desktop/docks/layeraclmenu.h"
 #include "desktop/docks/layerlistdelegate.h"
@@ -78,6 +79,16 @@ LayerList::LayerList(QWidget *parent)
 	root->setLayout(rootLayout);
 	setWidget(root);
 
+	m_sketchButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped);
+	m_sketchButton->setIcon(QIcon::fromTheme("draw-freehand"));
+	m_sketchButton->setToolTip(tr("Toggle sketch mode (only visible to you)"));
+	m_sketchButton->setStatusTip(m_sketchButton->toolTip());
+	m_sketchButton->setCheckable(true);
+	connect(
+		m_sketchButton, &widgets::GroupedToolButton::clicked, this,
+		&LayerList::toggleLayerSketch);
+
 	m_opacitySlider = new KisSliderSpinBox{this};
 	m_opacitySlider->setRange(0, 100);
 	m_opacitySlider->setPrefix(tr("Opacity: "));
@@ -88,9 +99,22 @@ LayerList::LayerList(QWidget *parent)
 	connect(
 		m_opacitySlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		this, &LayerList::opacityChanged);
+
+	m_sketchTintButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+	m_sketchTintButton->setToolTip(tr("Change sketch tint"));
+	m_sketchTintButton->setStatusTip(m_sketchButton->toolTip());
+	m_sketchTintButton->setEnabled(false);
+	m_sketchTintButton->setVisible(false);
+	connect(
+		m_sketchTintButton, &widgets::GroupedToolButton::clicked, this,
+		&LayerList::showSketchTintColorPicker);
+
 	QHBoxLayout *opacitySliderLayout = new QHBoxLayout;
 	opacitySliderLayout->setContentsMargins(
 		titlebar->layout()->contentsMargins());
+	opacitySliderLayout->addWidget(m_sketchButton);
+	opacitySliderLayout->addWidget(m_sketchTintButton);
 	opacitySliderLayout->addWidget(m_opacitySlider);
 	rootLayout->addLayout(opacitySliderLayout);
 
@@ -248,6 +272,7 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	m_contextMenu->addAction(m_actions.del);
 	m_contextMenu->addAction(m_actions.properties);
 	m_contextMenu->addAction(m_actions.toggleVisibility);
+	m_contextMenu->addAction(m_actions.toggleSketch);
 	m_contextMenu->addSeparator();
 	m_contextMenu->addAction(m_actions.setFillSource);
 	m_contextMenu->addAction(m_actions.clearFillSource);
@@ -295,6 +320,9 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	connect(
 		m_actions.toggleVisibility, &QAction::triggered, this,
 		&LayerList::toggleLayerVisibility);
+	connect(
+		m_actions.toggleSketch, &QAction::triggered, this,
+		&LayerList::toggleLayerSketch);
 	connect(
 		m_actions.del, &QAction::triggered, this, &LayerList::deleteSelected);
 	connect(
@@ -355,6 +383,8 @@ void LayerList::updateActionLabels()
 		setActionLabel(
 			m_actions.toggleVisibility, tr("Toggle Layer Group &Visibility"));
 		setActionLabel(
+			m_actions.toggleVisibility, tr("Toggle Layer Group &Sketch Mode"));
+		setActionLabel(
 			m_actions.layerCheckToggle,
 			check ? tr("Check Layer Group") : tr("Uncheck Layer Group"));
 	} else {
@@ -374,6 +404,10 @@ void LayerList::updateActionLabels()
 			m_actions.toggleVisibility,
 			QCoreApplication::translate(
 				"MainWindow", "Toggle Layer &Visibility"));
+		setActionLabel(
+			m_actions.toggleSketch,
+			QCoreApplication::translate(
+				"MainWindow", "Toggle Layer &Sketch Mode"));
 		setActionLabel(
 			m_actions.layerCheckToggle,
 			check ? tr("Check Layer") : tr("Uncheck Layer"));
@@ -413,7 +447,8 @@ void LayerList::updateLockedControls()
 
 	m_lockButton->setEnabled(enabled);
 	m_blendModeCombo->setEnabled(enabled);
-	m_opacitySlider->setEnabled(enabled);
+	m_opacitySlider->setEnabled(m_selectedId != 0 && (m_sketchMode || enabled));
+	m_sketchButton->setEnabled(m_selectedId != 0);
 
 	if(hasEditActions) {
 		m_actions.duplicate->setEnabled(enabled);
@@ -421,6 +456,7 @@ void LayerList::updateLockedControls()
 		m_actions.merge->setEnabled(enabled && canMergeCurrent());
 		m_actions.properties->setEnabled(enabled);
 		m_actions.toggleVisibility->setEnabled(enabled);
+		m_actions.toggleSketch->setEnabled(m_selectedId != 0);
 		m_actions.setFillSource->setEnabled(m_selectedId != 0);
 	}
 
@@ -541,9 +577,33 @@ void LayerList::toggleLayerVisibility()
 	}
 }
 
+void LayerList::toggleLayerSketch()
+{
+	QModelIndex index = currentSelection();
+	if(index.isValid()) {
+		canvas::LayerListItem layer =
+			index.data().value<canvas::LayerListItem>();
+		if(layer.sketchOpacity <= 0.0f) {
+			const desktop::settings::Settings &settings = dpApp().settings();
+			setLayerSketch(
+				layer.id, settings.layerSketchOpacityPercent(),
+				settings.layerSketchTint());
+		} else {
+			setLayerSketch(layer.id, 0, QColor());
+		}
+	}
+}
+
 void LayerList::setLayerVisibility(int layerId, bool visible)
 {
 	m_canvas->paintEngine()->setLayerVisibility(layerId, !visible);
+}
+
+void LayerList::setLayerSketch(
+	int layerId, int opacityPercent, const QColor &tint)
+{
+	m_canvas->paintEngine()->setLayerSketch(
+		layerId, qRound(opacityPercent / 100.0 * DP_BIT15), tint);
 }
 
 void LayerList::changeLayerAcl(
@@ -571,7 +631,7 @@ void LayerList::addOrPromptLayerOrGroup(bool group)
 void LayerList::addLayerOrGroupFromPrompt(
 	int selectedId, bool group, const QString &title, int opacityPercent,
 	int blendMode, bool isolated, bool censored, bool defaultLayer,
-	bool visible)
+	bool visible, int sketchOpacityPercent, const QColor &sketchTint)
 {
 	QVector<net::Message> msgs;
 	msgs.reserve(2);
@@ -598,6 +658,9 @@ void LayerList::addLayerOrGroupFromPrompt(
 		emit layerCommands(int(msgs.size()), msgs.constData());
 		if(!visible) {
 			setLayerVisibility(layerId, false);
+		}
+		if(sketchOpacityPercent > 0) {
+			setLayerSketch(layerId, sketchOpacityPercent, sketchTint);
 		}
 	}
 }
@@ -1118,6 +1181,9 @@ dialogs::LayerProperties *LayerList::makeLayerPropertiesDialog(
 			dlg, &dialogs::LayerProperties::visibilityChanged, this,
 			&LayerList::setLayerVisibility);
 		connect(
+			dlg, &dialogs::LayerProperties::sketchModeChanged, this,
+			&LayerList::setLayerSketch);
+		connect(
 			m_canvas->layerlist(), &canvas::LayerListModel::modelReset, dlg,
 			[this, dlg]() {
 				QModelIndex newIndex =
@@ -1150,6 +1216,33 @@ dialogs::LayerProperties *LayerList::makeLayerPropertiesDialog(
 	dlg->setCompatibilityMode(m_canvas->isCompatibilityMode());
 
 	return dlg;
+}
+
+void LayerList::showSketchTintColorPicker()
+{
+	if(m_sketchMode) {
+		QModelIndex index = currentSelection();
+		if(index.isValid()) {
+			canvas::LayerListItem layer =
+				index.data().value<canvas::LayerListItem>();
+			if(layer.sketchOpacity > 0.0f) {
+				color_widgets::ColorDialog *dlg =
+					dialogs::newDeleteOnCloseColorDialog(
+						layer.sketchTint, this);
+				dlg->setAlphaEnabled(true);
+				connect(
+					dlg, &color_widgets::ColorDialog::colorSelected, this,
+					&LayerList::setUpdateSketchTint);
+				dlg->show();
+			}
+		}
+	}
+}
+
+void LayerList::setUpdateSketchTint(const QColor &tint)
+{
+	m_updateSketchTint = tint;
+	triggerUpdate();
 }
 
 void LayerList::showContextMenu(const QPoint &pos)
@@ -1283,11 +1376,26 @@ void LayerList::updateUiFromSelection()
 	m_noupdate = true;
 	m_selectedId = layer.id;
 
+	m_sketchMode = layer.sketchOpacity > 0.0f;
+	m_sketchButton->setChecked(m_sketchMode);
+	m_sketchButton->setGroupPosition(
+		m_sketchMode ? widgets::GroupedToolButton::GroupLeft
+					 : widgets::GroupedToolButton::NotGrouped);
+	m_sketchTintButton->setEnabled(m_sketchMode);
+	m_sketchTintButton->setVisible(m_sketchMode);
+	if(m_sketchMode) {
+		m_sketchTintButton->setIcon(
+			utils::makeColorIconFor(this, layer.sketchTint));
+	}
+
 	m_aclmenu->setCensored(layer.actuallyCensored());
 	dialogs::LayerProperties::updateBlendMode(
 		m_blendModeCombo, layer.blend, layer.group, layer.isolated,
 		m_canvas->isCompatibilityMode());
-	m_opacitySlider->setValue(layer.opacity * 100.0 + 0.5);
+	m_opacitySlider->setPrefix(m_sketchMode ? tr("Sketch:") : tr("Opacity:"));
+	m_opacitySlider->setValue(
+		(m_sketchMode ? layer.sketchOpacity : layer.opacity) * 100.0 + 0.5);
+	m_opacitySlider->setMinimum(m_sketchMode ? 1 : 0);
 
 	layerLockStatusChanged(layer.id);
 	updateActionLabels();
@@ -1329,52 +1437,85 @@ void LayerList::blendModeChanged(int index)
 
 void LayerList::opacityChanged(int value)
 {
-	if(m_noupdate) {
-		return;
+	if(m_selectedId != 0 && !m_noupdate) {
+		if(m_sketchMode) {
+			m_updateSketchOpacity = value;
+		} else {
+			m_updateOpacity = value;
+		}
+		m_debounceTimer->start();
 	}
-	m_updateOpacity = value;
-	m_debounceTimer->start();
 }
 
 void LayerList::triggerUpdate()
 {
-	QModelIndex index = m_canvas->layerlist()->layerIndex(m_selectedId);
-	if(!index.isValid()) {
-		return;
+	m_debounceTimer->stop();
+	QModelIndex index = currentSelection();
+	if(index.isValid()) {
+		const canvas::LayerListItem &layer =
+			index.data().value<canvas::LayerListItem>();
+
+		if(m_updateBlendModeIndex != -1 || m_updateOpacity != -1) {
+			DP_BlendMode mode;
+			bool isolated;
+			if(m_updateBlendModeIndex == -1) {
+				mode = layer.blend;
+				isolated = layer.isolated;
+			} else {
+				int blendModeData =
+					m_blendModeCombo->itemData(m_updateBlendModeIndex).toInt();
+				mode = blendModeData == -1 ? layer.blend
+										   : DP_BlendMode(blendModeData);
+				isolated = layer.group && blendModeData != -1;
+			}
+
+			float opacity;
+			if(m_updateOpacity == -1) {
+				opacity = layer.opacity;
+			} else {
+				opacity = m_updateOpacity / 100.0f;
+			}
+
+			uint8_t flags =
+				(layer.actuallyCensored() ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR
+										  : 0) |
+				(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0);
+
+			net::Message msg = net::makeLayerAttributesMessage(
+				m_canvas->localUserId(), layer.id, 0, flags,
+				opacity * 255.0f + 0.5f, mode);
+
+			emit layerCommands(1, &msg);
+		}
+
+		if(m_updateSketchOpacity != -1 || m_updateSketchTint.isValid()) {
+			if(m_sketchMode) {
+				desktop::settings::Settings &settings = dpApp().settings();
+
+				int sketchOpacity;
+				if(m_updateSketchOpacity != -1) {
+					sketchOpacity = m_updateSketchOpacity;
+					settings.setLayerSketchOpacityPercent(sketchOpacity);
+				} else {
+					sketchOpacity = layer.sketchOpacity * 100.0 + 0.5;
+				}
+
+				QColor sketchTint;
+				if(m_updateSketchTint.isValid()) {
+					sketchTint = m_updateSketchTint;
+					settings.setLayerSketchTint(sketchTint);
+				} else {
+					sketchTint = layer.sketchTint;
+				}
+
+				setLayerSketch(layer.id, sketchOpacity, sketchTint);
+			}
+		}
 	}
-	const canvas::LayerListItem &layer =
-		index.data().value<canvas::LayerListItem>();
-
-	DP_BlendMode mode;
-	bool isolated;
-	if(m_updateBlendModeIndex == -1) {
-		mode = layer.blend;
-		isolated = layer.isolated;
-	} else {
-		int blendModeData =
-			m_blendModeCombo->itemData(m_updateBlendModeIndex).toInt();
-		mode = blendModeData == -1 ? layer.blend : DP_BlendMode(blendModeData);
-		isolated = layer.group && blendModeData != -1;
-		m_updateBlendModeIndex = -1;
-	}
-
-	float opacity;
-	if(m_updateOpacity == -1) {
-		opacity = layer.opacity;
-	} else {
-		opacity = m_updateOpacity / 100.0f;
-		m_updateOpacity = -1;
-	}
-
-	uint8_t flags =
-		(layer.actuallyCensored() ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
-		(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0);
-
-	net::Message msg = net::makeLayerAttributesMessage(
-		m_canvas->localUserId(), layer.id, 0, flags, opacity * 255.0f + 0.5f,
-		mode);
-
-	emit layerCommands(1, &msg);
+	m_updateBlendModeIndex = -1;
+	m_updateOpacity = -1;
+	m_updateSketchOpacity = -1;
+	m_updateSketchTint = QColor();
 }
 
 QString LayerList::getBaseName(bool group)

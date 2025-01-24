@@ -17,6 +17,7 @@ LayerListDelegate::LayerListDelegate(QObject *parent)
 	, m_censoredIcon(QIcon(":/icons/censored.svg"))
 	, m_hiddenIcon(QIcon::fromTheme("layer-visible-off"))
 	, m_groupHiddenIcon(QIcon::fromTheme("drawpile_folderhidden"))
+	, m_sketchIcon(QIcon::fromTheme("draw-freehand"))
 	, m_fillIcon(QIcon::fromTheme("tag"))
 	, m_forbiddenIcon(QIcon::fromTheme("cards-block"))
 {
@@ -43,9 +44,9 @@ void LayerListDelegate::paint(
 
 	QRect textRect = opt.rect;
 
-	QRect opacityGlyphRect = getOpacityGlyphRect(option);
+	QRect glyphRect = getOpacityGlyphRect(option);
 	drawOpacityGlyph(
-		opacityGlyphRect, painter, layer.opacity, layer.hidden,
+		glyphRect, painter, layer.opacity, layer.hidden,
 		layer.actuallyCensored(), layer.group);
 
 	int checkState = index.data(canvas::LayerListModel::CheckStateRole).toInt();
@@ -55,16 +56,23 @@ void LayerListDelegate::paint(
 		textRect.setRight(checkRect.left());
 	}
 
-	if(index.data(canvas::LayerListModel::IsFillSourceRole).toBool()) {
-		QRect fillGlyphRect(
-			opacityGlyphRect.topRight() +
+	if(index.data(canvas::LayerListModel::IsSketchModeRole).toBool()) {
+		glyphRect = QRect(
+			glyphRect.topRight() +
 				QPoint(0, opt.rect.height() / 2 - GLYPH_SIZE / 2),
 			QSize(GLYPH_SIZE, GLYPH_SIZE));
-		drawFillGlyph(fillGlyphRect, painter);
-		textRect.setLeft(fillGlyphRect.right());
-	} else {
-		textRect.setLeft(opacityGlyphRect.right());
+		drawGlyph(m_sketchIcon, glyphRect, painter);
 	}
+
+	if(index.data(canvas::LayerListModel::IsFillSourceRole).toBool()) {
+		glyphRect = QRect(
+			glyphRect.topRight() +
+				QPoint(0, opt.rect.height() / 2 - GLYPH_SIZE / 2),
+			QSize(GLYPH_SIZE, GLYPH_SIZE));
+		drawGlyph(m_fillIcon, glyphRect, painter);
+	}
+
+	textRect.setLeft(glyphRect.right());
 
 	if(index.data(canvas::LayerListModel::IsDefaultRole).toBool()) {
 		opt.font.setUnderline(true);
@@ -233,14 +241,14 @@ void LayerListDelegate::drawSelectionCheckBox(
 	}
 }
 
-void LayerListDelegate::drawFillGlyph(
-	const QRect &rect, QPainter *painter) const
+void LayerListDelegate::drawGlyph(
+	const QIcon &icon, const QRect &rect, QPainter *painter) const
 {
 	QRect r(
 		int(rect.left() + rect.width() / 2 - ICON_SIZE / 2),
 		int(rect.top() + rect.height() / 2 - ICON_SIZE / 2), ICON_SIZE,
 		ICON_SIZE);
-	m_fillIcon.paint(painter, r);
+	icon.paint(painter, r);
 }
 
 }

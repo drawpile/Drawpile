@@ -14,6 +14,13 @@ typedef struct DP_Tile DP_Tile;
 
 typedef struct DP_LocalState DP_LocalState;
 
+typedef struct DP_LocalLayerState {
+    int layer_id;
+    bool hidden;
+    uint16_t sketch_opacity;
+    uint32_t sketch_tint;
+} DP_LocalLayerState;
+
 typedef struct DP_LocalTrackState {
     int track_id;
     bool hidden;
@@ -30,9 +37,10 @@ DP_local_state_new(DP_CanvasState *cs_or_null,
 
 void DP_local_state_free(DP_LocalState *ls);
 
-const int *DP_local_state_hidden_layer_ids(DP_LocalState *ls, int *out_count);
+const DP_LocalLayerState *DP_local_state_layer_states(DP_LocalState *ls,
+                                                      int *out_count);
 
-int DP_local_state_hidden_layer_id_count(DP_LocalState *ls);
+int DP_local_state_layer_state_count(DP_LocalState *ls);
 
 DP_Tile *DP_local_state_background_tile_noinc(DP_LocalState *ls);
 
@@ -79,6 +87,9 @@ DP_Message *DP_local_state_msg_track_visibility_new(int track_id, bool hidden);
 
 DP_Message *DP_local_state_msg_track_onion_skin_new(int track_id,
                                                     bool onion_skin);
+
+DP_Message *DP_local_state_msg_layer_sketch_new(int layer_id, uint16_t opacity,
+                                                uint32_t tint);
 
 
 #endif

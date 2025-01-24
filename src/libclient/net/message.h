@@ -176,6 +176,8 @@ Message makeLocalChangeActiveFrameMessage(int frameIndex);
 Message makeLocalChangeOnionSkinsMessage(const DP_OnionSkins *oss);
 Message makeLocalChangeTrackVisibilityMessage(int trackId, bool hidden);
 Message makeLocalChangeTrackOnionSkinMessage(int trackId, bool onionSkin);
+Message makeLocalChangeLayerSketchMessage(
+	int layerId, uint16_t opacity, const QColor &tint);
 
 Message makeMessageBackwardCompatible(const Message &msg);
 

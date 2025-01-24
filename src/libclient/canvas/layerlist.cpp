@@ -134,6 +134,8 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 		return int(
 			m_checkMode ? m_checkStates.value(item.id, Unchecked)
 						: NotApplicable);
+	case IsSketchModeRole:
+		return item.sketchOpacity > 0.0f;
 	}
 
 	return QVariant();
@@ -338,6 +340,8 @@ static LayerListItem makeItem(
 		lp.title(),
 		float(lp.opacity()) / float(DP_BIT15),
 		DP_BlendMode(lp.blendMode()),
+		float(lp.sketchOpacity()) / float(DP_BIT15),
+		QColor::fromRgba(lp.sketchTint()),
 		lp.hidden(),
 		lp.censored(),
 		revealedLayers.contains(id),
@@ -1063,9 +1067,9 @@ LayerListItem LayerListItem::null()
 {
 	return LayerListItem{
 		0,	   QString(), 1.0f,	 DP_BLEND_MODE_NORMAL,
-		false, false,	  false, false,
-		false, 0,		  0,	 0,
-		0,
+		0.0f,  QColor(),  false, false,
+		false, false,	  false, 0,
+		0,	   0,		  0,
 	};
 }
 

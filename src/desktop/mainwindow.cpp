@@ -4001,23 +4001,6 @@ void MainWindow::resizeCanvas(int expandDirection)
 }
 // clang-format off
 
-static QIcon makeBackgroundColorIcon(QColor &color)
-{
-	static constexpr int SIZE = 16;
-	static constexpr int HALF = SIZE / 2;
-	QPixmap pixmap{SIZE, SIZE};
-	pixmap.fill(color);
-	if(color.alpha() != 255) {
-		QPainter painter{&pixmap};
-		painter.setCompositionMode(QPainter::CompositionMode_DestinationOver);
-		painter.fillRect(0, 0, HALF, HALF, Qt::gray);
-		painter.fillRect(HALF, 0, HALF, HALF, Qt::white);
-		painter.fillRect(0, HALF, HALF, HALF, Qt::white);
-		painter.fillRect(HALF, HALF, HALF, HALF, Qt::gray);
-	}
-	return pixmap;
-}
-
 void MainWindow::updateBackgroundActions()
 {
 	QAction *canvasBackground = getAction("canvas-background");
@@ -4030,11 +4013,11 @@ void MainWindow::updateBackgroundActions()
 
 		canvas::PaintEngine *paintEngine = canvas->paintEngine();
 		QColor sessionColor = paintEngine->historyBackgroundColor();
-		canvasBackground->setIcon(makeBackgroundColorIcon(sessionColor));
+		canvasBackground->setIcon(utils::makeColorIcon(16, sessionColor));
 
 		QColor localColor;
 		if(paintEngine->localBackgroundColor(localColor)) {
-			setLocalBackground->setIcon(makeBackgroundColorIcon(localColor));
+			setLocalBackground->setIcon(utils::makeColorIcon(16, localColor));
 			clearLocalBackground->setEnabled(true);
 		} else {
 			setLocalBackground->setIcon(QIcon{});
@@ -5376,6 +5359,7 @@ void MainWindow::setupActions()
 	QAction *layerProperties = makeAction("layerproperties", tr("Layer Properties…")).icon("configure").noDefaultShortcut();
 	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer")).icon("trash-empty").noDefaultShortcut();
 	QAction *layerVisibilityToggle = makeAction("layervisibilitytoggle", tr("Toggle Layer &Visibility")).icon("view-visible").noDefaultShortcut();
+	QAction *layerSketchToggle = makeAction("layersketchtoggle", tr("Toggle Layer &Sketch Mode")).icon("draw-freehand").noDefaultShortcut();
 	QAction *layerSetFillSource = makeAction("layersetfillsource", tr("Set as Fill Source")).icon("tag").noDefaultShortcut();
 	QAction *layerClearFillSource = makeAction("layerclearfillsource", tr("Clear Fill Source")).icon("tag-delete").noDefaultShortcut();
 
@@ -5401,6 +5385,7 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerDelete);
 	layerMenu->addAction(layerProperties);
 	layerMenu->addAction(layerVisibilityToggle);
+	layerMenu->addAction(layerSketchToggle);
 	layerMenu->addAction(layerSetFillSource);
 	layerMenu->addAction(layerClearFillSource);
 
@@ -5659,7 +5644,7 @@ void MainWindow::setupActions()
 	animationMenu->addAction(trackBelow);
 
 	m_currentdoctools->addAction(showFlipbook);
-	m_dockLayers->setLayerEditActions({layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, layerVisibilityToggle, layerSetFillSource, layerClearFillSource, keyFrameSetLayer, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, layerKeyFrameGroup, layerCheckToggle, layerCheckAll, layerUncheckAll});
+	m_dockLayers->setLayerEditActions({layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, layerVisibilityToggle, layerSketchToggle, layerSetFillSource, layerClearFillSource, keyFrameSetLayer, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, layerKeyFrameGroup, layerCheckToggle, layerCheckAll, layerUncheckAll});
 	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, keyFrameExposureIncrease, keyFrameExposureDecrease, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, keyFrameNext, keyFramePrev, trackAbove, trackBelow, animationLayerMenu, animationGroupMenu, animationDuplicateMenu}, layerViewNormal, layerViewCurrentFrame, showFlipbook);
 
 	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);

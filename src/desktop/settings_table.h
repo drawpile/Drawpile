@@ -32,6 +32,10 @@
 #	endif
 #endif
 
+#ifndef LAYER_SKETCH_TINT_DEFAULT
+#	define LAYER_SKETCH_TINT_DEFAULT QColor(62, 140, 236)
+#endif
+
 #ifndef ONE_FINGER_TOUCH_DEFAULT
 #	if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
 #		define ONE_FINGER_TOUCH_DEFAULT desktop::settings::OneFingerTouchAction::Guess
@@ -194,6 +198,8 @@ SETTING(lastWindowPosition        , LastWindowPosition        , "window/pos"    
 SETTING(lastWindowSize            , LastWindowSize            , "window/size"                           , (QSize(800, 600)))
 SETTING(lastWindowState           , LastWindowState           , "window/state"                          , QByteArray())
 SETTING(lastWindowViewState       , LastWindowViewState       , "window/viewstate"                      , QByteArray())
+SETTING(layerSketchOpacityPercent , LayerSketchOpacityPercent , "layers/sketchopacitypercent"           , 75)
+SETTING(layerSketchTint           , LayerSketchTint           , "layers/sketchtint"                     , LAYER_SKETCH_TINT_DEFAULT)
 SETTING(layouts                   , Layouts                   , "layouts"                               , QVector<QVariantMap>())
 SETTING(mentionEnabled            , MentionEnabled            , "settings/mentions/enabled"             , true)
 SETTING(mentionTriggerList        , MentionTriggerList        , "settings/mentions/triggerlist"         , QString())

@@ -396,15 +396,14 @@ DP_TransientTile *DP_layer_group_flatten_tile(DP_LayerGroup *lg,
     DP_ViewModeContext vmc = DP_view_mode_context_make_default();
     return DP_layer_list_flatten_tile_to(
         lg->children, DP_layer_props_children_noinc(lp), tile_index, NULL,
-        DP_BIT15, include_sublayers, false, &vmc);
+        DP_BIT15, (DP_UPixel8){.color = 0}, include_sublayers, false, &vmc);
 }
 
-DP_TransientTile *
-DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
-                               int tile_index, DP_TransientTile *tt_or_null,
-                               uint16_t parent_opacity, bool include_sublayers,
-                               bool pass_through_censored,
-                               const DP_ViewModeContext *vmc)
+DP_TransientTile *DP_layer_group_flatten_tile_to(
+    DP_LayerGroup *lg, DP_LayerProps *lp, int tile_index,
+    DP_TransientTile *tt_or_null, uint16_t parent_opacity,
+    DP_UPixel8 parent_tint, bool include_sublayers, bool pass_through_censored,
+    const DP_ViewModeContext *vmc)
 {
     DP_ASSERT(lg);
     DP_ASSERT(DP_atomic_get(&lg->refcount) > 0);
@@ -425,9 +424,15 @@ DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
         // Flatten the group into a temporary layer with full opacity, then
         // merge the result with the group's blend mode and opacity.
         DP_TransientTile *gtt = DP_layer_list_flatten_tile_to(
-            lg->children, lpl, tile_index, NULL, DP_BIT15, include_sublayers,
-            false, &vmr.child_vmc);
+            lg->children, lpl, tile_index, NULL, DP_BIT15,
+            (DP_UPixel8){.color = 0}, include_sublayers, false, &vmr.child_vmc);
         if (gtt) {
+            if (vmr.tint.a != 0) {
+                DP_transient_tile_tint(gtt, vmr.tint);
+            }
+            else if (parent_tint.a != 0) {
+                DP_transient_tile_tint(gtt, vmr.tint);
+            }
             DP_TransientTile *tt = DP_transient_tile_merge_nullable(
                 tt_or_null,
                 censored ? DP_tile_censored_noinc() : (DP_Tile *)gtt,
@@ -443,7 +448,7 @@ DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
         // Flatten the containing layers one by one, disregarding the blend
         // mode, but taking the opacity into account individually.
         return DP_layer_list_flatten_tile_to(
-            lg->children, lpl, tile_index, tt_or_null, vmr.opacity,
+            lg->children, lpl, tile_index, tt_or_null, vmr.opacity, vmr.tint,
             include_sublayers, censored, &vmr.child_vmc);
     }
 }
