@@ -1,9 +1,9 @@
-black==24.4.2
-click==8.1.7
-Jinja2==3.1.4
-MarkupSafe==2.1.5
+black==24.10.0
+click==8.1.8
+Jinja2==3.1.5
+MarkupSafe==3.0.2
 mypy-extensions==1.0.0
-packaging==24.0
+packaging==24.2
 pathspec==0.12.1
-platformdirs==4.2.1
-PyYAML==6.0.1
+platformdirs==4.3.6
+PyYAML==6.0.2
