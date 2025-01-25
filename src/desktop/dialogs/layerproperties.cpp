@@ -239,6 +239,7 @@ void LayerProperties::showSketchTintColorPicker()
 	color_widgets::ColorDialog *dlg = dialogs::newDeleteOnCloseColorDialog(
 		m_ui->sketchTintPreview->color(), this);
 	dlg->setAlphaEnabled(true);
+	dlg->setPreviewDisplayMode(color_widgets::ColorPreview::AllAlpha);
 	connect(
 		dlg, &color_widgets::ColorDialog::colorSelected,
 		m_ui->sketchTintPreview, &color_widgets::ColorPreview::setColor);
