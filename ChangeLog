@@ -69,6 +69,7 @@ Unreleased Version 2.2.2-pre
  * Server Feature: Inform clients of session password changes so that they can update their invite links.
  * Fix: Work around the web browser receiving messages while the application is handling messages already. This could cause nonsensical errors like "incompatible server" or "invalid state" or outright crashes during login.
  * Server Feature: Allow filtering server logs via the web admin API. Thanks Bluestrings for suggesting.
+ * Fix: Properly save background color of annotations in ORA files.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

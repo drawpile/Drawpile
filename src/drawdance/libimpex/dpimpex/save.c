@@ -535,7 +535,7 @@ static void ora_write_annotations_xml(DP_SaveOraContext *c, DP_Output *output,
             ORA_APPEND_ATTR(c, output, "w", "%d", DP_annotation_width(a));
             ORA_APPEND_ATTR(c, output, "h", "%d", DP_annotation_height(a));
             ORA_APPEND_ATTR(
-                c, output, "bg", "#%x",
+                c, output, "bg", "#%08x",
                 DP_uint32_to_uint(DP_annotation_background_color(a)));
 
             const char *valign =
