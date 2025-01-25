@@ -481,26 +481,42 @@ DP_LayerRoutesEntry *DP_layer_routes_entry_parent(DP_LayerRoutesEntry *lre)
     return lre->parent_lre;
 }
 
-uint16_t DP_layer_routes_entry_parent_opacity(DP_LayerRoutesEntry *lre,
-                                              DP_CanvasState *cs)
+void DP_layer_routes_entry_parent_opacity_tint(DP_LayerRoutesEntry *lre,
+                                               DP_CanvasState *cs,
+                                               uint16_t *out_parent_opacity,
+                                               DP_UPixel8 *out_parent_tint)
 {
     DP_ASSERT(lre);
     DP_ASSERT(cs);
+    DP_ASSERT(out_parent_opacity);
+    DP_ASSERT(out_parent_tint);
 
     int *indexes = lre->indexes;
     int group_indexes_count = lre->index_count - 1;
     DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
     uint16_t parent_opacity = DP_BIT15;
+    DP_UPixel8 parent_tint = {0};
 
     for (int i = 0; i < group_indexes_count; ++i) {
         int group_index = indexes[i];
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, group_index);
         lpl = DP_layer_props_children_noinc(lp);
-        parent_opacity =
-            DP_fix15_mul(parent_opacity, DP_layer_props_opacity(lp));
+        uint16_t sketch_opacity = DP_layer_props_sketch_opacity(lp);
+        if (sketch_opacity == 0) {
+            parent_opacity =
+                DP_fix15_mul(parent_opacity, DP_layer_props_opacity(lp));
+        }
+        else {
+            parent_opacity = DP_fix15_mul(parent_opacity, sketch_opacity);
+            uint32_t tint = DP_layer_props_sketch_tint(lp);
+            if (tint != 0) {
+                parent_tint.color = tint;
+            }
+        }
     }
 
-    return parent_opacity;
+    *out_parent_opacity = parent_opacity;
+    *out_parent_tint = parent_tint;
 }
 
 

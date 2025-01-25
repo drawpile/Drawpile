@@ -94,7 +94,7 @@ typedef struct DP_ViewModePick {
 
 typedef struct DP_OnionSkin {
     uint16_t opacity;
-    DP_UPixel15 tint;
+    DP_UPixel8 tint;
 } DP_OnionSkin;
 
 typedef struct DP_OnionSkins DP_OnionSkins;
@@ -140,7 +140,8 @@ bool DP_view_mode_context_excludes_everything(const DP_ViewModeContext *vmc);
 DP_ViewModeContext DP_view_mode_context_root_at(
     const DP_ViewModeContextRoot *vmcr, DP_CanvasState *cs, int index,
     DP_LayerListEntry **out_lle, DP_LayerProps **out_lp,
-    const DP_OnionSkin **out_os, uint16_t *out_parent_opacity);
+    const DP_OnionSkin **out_os, uint16_t *out_parent_opacity,
+    DP_UPixel8 *out_parent_tint);
 
 DP_ViewModeResult DP_view_mode_context_apply(const DP_ViewModeContext *vmc,
                                              DP_LayerProps *lp,
@@ -184,10 +185,10 @@ const DP_OnionSkin *DP_onion_skins_skin_above_at(const DP_OnionSkins *oss,
                                                  int index);
 
 void DP_onion_skins_skin_below_at_set(DP_OnionSkins *oss, int index,
-                                      uint16_t opacity, DP_UPixel15 tint);
+                                      uint16_t opacity, DP_UPixel8 tint);
 
 void DP_onion_skins_skin_above_at_set(DP_OnionSkins *oss, int index,
-                                      uint16_t opacity, DP_UPixel15 tint);
+                                      uint16_t opacity, DP_UPixel8 tint);
 
 
 #endif

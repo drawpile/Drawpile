@@ -32,6 +32,7 @@ typedef struct DP_LayerListEntry DP_LayerListEntry;
 typedef struct DP_LayerProps DP_LayerProps;
 typedef struct DP_LayerPropsList DP_LayerPropsList;
 typedef struct DP_Message DP_Message;
+typedef union DP_UPixel8 DP_UPixel8;
 
 #ifdef DP_NO_STRICT_ALIASING
 typedef struct DP_TransientCanvasState DP_TransientCanvasState;
@@ -109,8 +110,10 @@ void DP_layer_routes_entry_children(DP_LayerRoutesEntry *lre,
 
 DP_LayerRoutesEntry *DP_layer_routes_entry_parent(DP_LayerRoutesEntry *lre);
 
-uint16_t DP_layer_routes_entry_parent_opacity(DP_LayerRoutesEntry *lre,
-                                              DP_CanvasState *cs);
+void DP_layer_routes_entry_parent_opacity_tint(DP_LayerRoutesEntry *lre,
+                                               DP_CanvasState *cs,
+                                               uint16_t *out_parent_opacity,
+                                               DP_UPixel8 *out_parent_tint);
 
 DP_TransientLayerContent *
 DP_layer_routes_entry_indexes_transient_content(int index_count, int *indexes,

@@ -1563,11 +1563,9 @@ flatten_onion_skin(int tile_index, DP_TransientTile *tt, DP_LayerListEntry *lle,
         DP_fix15_mul(parent_opacity, os->opacity), (DP_UPixel8){.color = 0},
         include_sublayers, false, vmc);
 
-    DP_UPixel15 tint = os->tint;
+    DP_UPixel8 tint = os->tint;
     if (tint.a != 0) {
-        DP_transient_tile_brush_apply(skin_tt, tint, DP_BLEND_MODE_RECOLOR,
-                                      DP_tile_opaque_mask(), tint.a, 0, 0,
-                                      DP_TILE_SIZE, DP_TILE_SIZE, 0);
+        DP_transient_tile_tint(skin_tt, tint);
     }
 
     if (tt) {
@@ -1594,8 +1592,9 @@ DP_TransientTile *DP_canvas_state_flatten_tile_to(DP_CanvasState *cs,
         DP_LayerProps *lp;
         const DP_OnionSkin *os;
         uint16_t parent_opacity;
+        DP_UPixel8 parent_tint;
         DP_ViewModeContext vmc = DP_view_mode_context_root_at(
-            &vmcr, cs, i, &lle, &lp, &os, &parent_opacity);
+            &vmcr, cs, i, &lle, &lp, &os, &parent_opacity, &parent_tint);
         if (!DP_view_mode_context_excludes_everything(&vmc)) {
             if (os) {
                 tt = flatten_onion_skin(tile_index, tt, lle, lp, parent_opacity,
@@ -1603,8 +1602,8 @@ DP_TransientTile *DP_canvas_state_flatten_tile_to(DP_CanvasState *cs,
             }
             else {
                 tt = DP_layer_list_entry_flatten_tile_to(
-                    lle, lp, tile_index, tt, parent_opacity,
-                    (DP_UPixel8){.color = 0}, include_sublayers, false, &vmc);
+                    lle, lp, tile_index, tt, parent_opacity, parent_tint,
+                    include_sublayers, false, &vmc);
             }
         }
     }

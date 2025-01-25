@@ -472,7 +472,8 @@ bool DP_view_mode_context_excludes_everything(const DP_ViewModeContext *vmc)
 DP_ViewModeContext DP_view_mode_context_root_at(
     const DP_ViewModeContextRoot *vmcr, DP_CanvasState *cs, int index,
     DP_LayerListEntry **out_lle, DP_LayerProps **out_lp,
-    const DP_OnionSkin **out_os, uint16_t *out_parent_opacity)
+    const DP_OnionSkin **out_os, uint16_t *out_parent_opacity,
+    DP_UPixel8 *out_parent_tint)
 {
     DP_ASSERT(vmcr);
     DP_ASSERT(cs);
@@ -496,8 +497,8 @@ DP_ViewModeContext DP_view_mode_context_root_at(
                 *out_lle = DP_layer_routes_entry_layer(lre, cs);
                 *out_lp = DP_layer_routes_entry_props(lre, cs);
                 *out_os = vmt->onion_skin;
-                *out_parent_opacity =
-                    DP_layer_routes_entry_parent_opacity(lre, cs);
+                DP_layer_routes_entry_parent_opacity_tint(
+                    lre, cs, out_parent_opacity, out_parent_tint);
                 return make_frame_context(internal_type, index, vmb);
             }
             else {
@@ -515,6 +516,7 @@ DP_ViewModeContext DP_view_mode_context_root_at(
         *out_lp = DP_layer_props_list_at_noinc(lpl, index);
         *out_os = NULL;
         *out_parent_opacity = DP_BIT15;
+        *out_parent_tint = (DP_UPixel8){0};
         DP_ViewModeContext vmc;
         vmc.internal_type = internal_type;
         if (internal_type == TYPE_CALLBACK) {
@@ -926,29 +928,21 @@ const DP_OnionSkin *DP_onion_skins_skin_above_at(const DP_OnionSkins *oss,
 }
 
 void DP_onion_skins_skin_below_at_set(DP_OnionSkins *oss, int index,
-                                      uint16_t opacity, DP_UPixel15 tint)
+                                      uint16_t opacity, DP_UPixel8 tint)
 {
     DP_ASSERT(oss);
     DP_ASSERT(index >= 0);
     DP_ASSERT(index < oss->count_below);
     DP_ASSERT(opacity <= DP_BIT15);
-    DP_ASSERT(tint.b <= DP_BIT15);
-    DP_ASSERT(tint.g <= DP_BIT15);
-    DP_ASSERT(tint.r <= DP_BIT15);
-    DP_ASSERT(tint.a <= DP_BIT15);
     oss->skins[index] = (DP_OnionSkin){opacity, tint};
 }
 
 void DP_onion_skins_skin_above_at_set(DP_OnionSkins *oss, int index,
-                                      uint16_t opacity, DP_UPixel15 tint)
+                                      uint16_t opacity, DP_UPixel8 tint)
 {
     DP_ASSERT(oss);
     DP_ASSERT(index >= 0);
     DP_ASSERT(index < oss->count_above);
     DP_ASSERT(opacity <= DP_BIT15);
-    DP_ASSERT(tint.b <= DP_BIT15);
-    DP_ASSERT(tint.g <= DP_BIT15);
-    DP_ASSERT(tint.r <= DP_BIT15);
-    DP_ASSERT(tint.a <= DP_BIT15);
     oss->skins[oss->count_below + index] = (DP_OnionSkin){opacity, tint};
 }

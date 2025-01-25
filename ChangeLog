@@ -71,6 +71,7 @@ Unreleased Version 2.2.2-pre
  * Server Feature: Allow filtering server logs via the web admin API. Thanks Bluestrings for suggesting.
  * Fix: Properly save background color of annotations in ORA files.
  * Feature: Allow toggling a "sketch mode" on layers, which will change the opacity and/or tint the layer locally. The exact look of this can be configured in the layer properties. Thanks abrasivetroop and leandro2222 for suggesting.
+ * Feature: Use the sketch mode tinting for onion skins as well, since it gives better results when there's colored areas involved.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

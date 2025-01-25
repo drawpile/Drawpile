@@ -350,7 +350,8 @@ void PaintEngine::setLayerVisibility(int layerId, bool hidden)
 	receiveMessages(false, 1, &msg);
 }
 
-void PaintEngine::setLayerSketch(int layerId, uint16_t opacity, const QColor &tint)
+void PaintEngine::setLayerSketch(
+	int layerId, uint16_t opacity, const QColor &tint)
 {
 	net::Message msg =
 		net::makeLocalChangeLayerSketchMessage(layerId, opacity, tint);
@@ -399,16 +400,16 @@ void PaintEngine::setOnionSkins(
 
 	for(int i = 0; i < countBelow; ++i) {
 		const QPair<float, QColor> &skin = skinsBelow[i];
+		DP_UPixel8 tint = {skin.second.rgba()};
 		DP_onion_skins_skin_below_at_set(
-			oss, i, DP_channel_float_to_15(skin.first),
-			DP_upixel15_from_color(skin.second.rgba()));
+			oss, i, DP_channel_float_to_15(skin.first), tint);
 	}
 
 	for(int i = 0; i < countAbove; ++i) {
 		const QPair<float, QColor> &skin = skinsAbove[i];
+		DP_UPixel8 tint = {skin.second.rgba()};
 		DP_onion_skins_skin_above_at_set(
-			oss, i, DP_channel_float_to_15(skin.first),
-			DP_upixel15_from_color(skin.second.rgba()));
+			oss, i, DP_channel_float_to_15(skin.first), tint);
 	}
 
 	net::Message msg = net::makeLocalChangeOnionSkinsMessage(oss);

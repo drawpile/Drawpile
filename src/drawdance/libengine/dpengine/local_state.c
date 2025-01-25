@@ -391,11 +391,11 @@ static uint32_t read_uint32(const unsigned char *body, size_t *in_out_read)
     return value;
 }
 
-static DP_UPixel15 read_upixel(const unsigned char *body, size_t *in_out_read)
+static DP_UPixel8 read_upixel(const unsigned char *body, size_t *in_out_read)
 {
     uint32_t value = DP_read_bigendian_uint32(body + *in_out_read);
     *in_out_read += sizeof(uint32_t);
-    return DP_upixel8_to_15((DP_UPixel8){value});
+    return (DP_UPixel8){value};
 }
 
 static void handle_onion_skins(DP_LocalState *ls, DP_MsgLocalChange *mlc)
@@ -432,12 +432,12 @@ static void handle_onion_skins(DP_LocalState *ls, DP_MsgLocalChange *mlc)
         oss = DP_onion_skins_new(wrap, count_below, count_above);
         for (int i = 0; i < count_below; ++i) {
             uint16_t opacity = read_uint16(body, &read);
-            DP_UPixel15 tint = read_upixel(body, &read);
+            DP_UPixel8 tint = read_upixel(body, &read);
             DP_onion_skins_skin_below_at_set(oss, i, opacity, tint);
         }
         for (int i = 0; i < count_above; ++i) {
             uint16_t opacity = read_uint16(body, &read);
-            DP_UPixel15 tint = read_upixel(body, &read);
+            DP_UPixel8 tint = read_upixel(body, &read);
             DP_onion_skins_skin_above_at_set(oss, i, opacity, tint);
         }
     }
@@ -831,15 +831,13 @@ static void set_onion_skins(DP_UNUSED size_t size, unsigned char *out,
     for (int i = 0; i < count_below; ++i) {
         const DP_OnionSkin *os = DP_onion_skins_skin_below_at(oss, i);
         written += DP_write_bigendian_uint16(os->opacity, out + written);
-        written += DP_write_bigendian_uint32(DP_upixel15_to_8(os->tint).color,
-                                             out + written);
+        written += DP_write_bigendian_uint32(os->tint.color, out + written);
     }
 
     for (int i = 0; i < count_above; ++i) {
         const DP_OnionSkin *os = DP_onion_skins_skin_above_at(oss, i);
         written += DP_write_bigendian_uint16(os->opacity, out + written);
-        written += DP_write_bigendian_uint32(DP_upixel15_to_8(os->tint).color,
-                                             out + written);
+        written += DP_write_bigendian_uint32(os->tint.color, out + written);
     }
 
     DP_ASSERT(written == size);
