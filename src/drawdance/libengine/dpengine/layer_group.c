@@ -431,7 +431,7 @@ DP_TransientTile *DP_layer_group_flatten_tile_to(
                 DP_transient_tile_tint(gtt, vmr.tint);
             }
             else if (parent_tint.a != 0) {
-                DP_transient_tile_tint(gtt, vmr.tint);
+                DP_transient_tile_tint(gtt, parent_tint);
             }
             DP_TransientTile *tt = DP_transient_tile_merge_nullable(
                 tt_or_null,
@@ -448,8 +448,9 @@ DP_TransientTile *DP_layer_group_flatten_tile_to(
         // Flatten the containing layers one by one, disregarding the blend
         // mode, but taking the opacity into account individually.
         return DP_layer_list_flatten_tile_to(
-            lg->children, lpl, tile_index, tt_or_null, vmr.opacity, vmr.tint,
-            include_sublayers, censored, &vmr.child_vmc);
+            lg->children, lpl, tile_index, tt_or_null, vmr.opacity,
+            vmr.tint.a == 0 ? parent_tint : vmr.tint, include_sublayers,
+            censored, &vmr.child_vmc);
     }
 }
 
