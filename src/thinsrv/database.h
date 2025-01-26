@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef SERVER_CFG_DATABASE_H
-#define SERVER_CFG_DATABASE_H
-
+#ifndef THINSRV_DATABASE_H
+#define THINSRV_DATABASE_H
 #include "libserver/serverconfig.h"
 
 class QSqlQuery;
@@ -16,11 +14,10 @@ class ExtBans;
  *
  *
  */
-class Database final : public ServerConfig
-{
+class Database final : public ServerConfig {
 	Q_OBJECT
 public:
-	explicit Database(QObject *parent=nullptr);
+	explicit Database(QObject *parent = nullptr);
 	~Database() override;
 
 	Q_INVOKABLE bool openFile(const QString &path);
@@ -33,7 +30,8 @@ public:
 	BanResult isAddressBanned(const QHostAddress &addr) const override;
 	BanResult isSystemBanned(const QString &sid) const override;
 	BanResult isUserBanned(long long userId) const override;
-	RegisteredUser getUserAccount(const QString &username, const QString &password) const override;
+	RegisteredUser getUserAccount(
+		const QString &username, const QString &password) const override;
 	bool hasAnyUserAccounts() const override;
 	ServerLog *logger() const override;
 
@@ -62,7 +60,9 @@ public:
 
 	//! Get a JSON representation of registered user accounts
 	QJsonArray getAccountList() const;
-	QJsonObject addAccount(const QString &username, const QString &password, bool locked, const QStringList &flags);
+	QJsonObject addAccount(
+		const QString &username, const QString &password, bool locked,
+		const QStringList &flags);
 	QJsonObject updateAccount(int id, const QJsonObject &update);
 	bool deleteAccount(int id);
 

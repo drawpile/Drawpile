@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libserver/serverconfig.h"
-
-#include <QRegularExpression>
 #include <QJsonObject>
+#include <QRegularExpression>
 
 namespace server {
 
@@ -23,7 +21,7 @@ int ServerConfig::getConfigTime(ConfigKey key) const
 	const QString val = getConfigString(key);
 
 	const int t = parseTimeString(val);
-	Q_ASSERT(t>=0);
+	Q_ASSERT(t >= 0);
 	return t;
 }
 
@@ -33,7 +31,7 @@ int ServerConfig::getConfigSize(ConfigKey key) const
 	const QString val = getConfigString(key);
 
 	const int s = parseSizeString(val);
-	Q_ASSERT(s>=0);
+	Q_ASSERT(s >= 0);
 	return s;
 }
 
@@ -51,17 +49,22 @@ bool ServerConfig::getConfigBool(ConfigKey key) const
 {
 	Q_ASSERT(key.type == ConfigKey::BOOL);
 	const QString val = getConfigString(key).toLower();
-	return val == "1" || val == "true";
+	return val == QStringLiteral("1") || val == QStringLiteral("true");
 }
 
 QVariant ServerConfig::getConfigVariant(ConfigKey key) const
 {
 	switch(key.type) {
-	case ConfigKey::STRING: return getConfigString(key);
-	case ConfigKey::TIME: return getConfigTime(key);
-	case ConfigKey::SIZE: return getConfigSize(key);
-	case ConfigKey::INT: return getConfigInt(key);
-	case ConfigKey::BOOL: return getConfigBool(key);
+	case ConfigKey::STRING:
+		return getConfigString(key);
+	case ConfigKey::TIME:
+		return getConfigTime(key);
+	case ConfigKey::SIZE:
+		return getConfigSize(key);
+	case ConfigKey::INT:
+		return getConfigInt(key);
+	case ConfigKey::BOOL:
+		return getConfigBool(key);
 	}
 	return QVariant(); // Shouldn't happen
 }
@@ -75,20 +78,23 @@ bool ServerConfig::setConfigString(ConfigKey key, const QString &value)
 		// no type specific validation for these
 		break;
 	case ConfigKey::SIZE:
-		if(parseSizeString(value)<0)
+		if(parseSizeString(value) < 0) {
 			return false;
+		}
 		break;
 	case ConfigKey::TIME:
-		if(parseTimeString(value)<0)
+		if(parseTimeString(value) < 0) {
 			return false;
+		}
 		break;
 	case ConfigKey::INT: {
 		bool ok;
 		value.toInt(&ok);
-		if(!ok)
+		if(!ok) {
 			return false;
-		break;
 		}
+		break;
+	}
 	}
 
 	// TODO key specific validation
@@ -100,14 +106,17 @@ bool ServerConfig::setConfigString(ConfigKey key, const QString &value)
 
 void ServerConfig::setConfigInt(ConfigKey key, int value)
 {
-	Q_ASSERT(key.type == ConfigKey::INT || key.type == ConfigKey::SIZE || key.type==ConfigKey::TIME);
+	Q_ASSERT(
+		key.type == ConfigKey::INT || key.type == ConfigKey::SIZE ||
+		key.type == ConfigKey::TIME);
 	setConfigString(key, QString::number(value));
 }
 
 void ServerConfig::setConfigBool(ConfigKey key, bool value)
 {
 	Q_ASSERT(key.type == ConfigKey::BOOL);
-	setConfigString(key, value ? QStringLiteral("true") : QStringLiteral("false"));
+	setConfigString(
+		key, value ? QStringLiteral("true") : QStringLiteral("false"));
 }
 
 bool ServerConfig::setExternalBanEnabled(int id, bool enabled)
@@ -127,7 +136,8 @@ QJsonArray ServerConfig::getExternalBans() const
 		bans.append(QJsonObject{
 			{QStringLiteral("id"), ban.id},
 			{QStringLiteral("ips"), banIpRangesToJson(ban.ips, true)},
-			{QStringLiteral("ipsexcluded"), banIpRangesToJson(ban.ipsExcluded, false)},
+			{QStringLiteral("ipsexcluded"),
+			 banIpRangesToJson(ban.ipsExcluded, false)},
 			{QStringLiteral("system"), banSystemToJson(ban.system)},
 			{QStringLiteral("users"), banUsersToJson(ban.users)},
 			{QStringLiteral("expires"), formatDateTime(ban.expires)},
@@ -195,15 +205,12 @@ BanResult ServerConfig::isUserBanned(long long userId) const
 	return BanResult::notBanned();
 }
 
-RegisteredUser ServerConfig::getUserAccount(const QString &username, const QString &password) const
+RegisteredUser ServerConfig::getUserAccount(
+	const QString &username, const QString &password) const
 {
 	Q_UNUSED(password);
-	return RegisteredUser {
-		RegisteredUser::NotFound,
-		username,
-		QStringList(),
-		nullptr
-	};
+	return RegisteredUser{
+		RegisteredUser::NotFound, username, QStringList(), nullptr};
 }
 
 bool ServerConfig::hasAnyUserAccounts() const
@@ -213,36 +220,42 @@ bool ServerConfig::hasAnyUserAccounts() const
 
 int ServerConfig::parseTimeString(const QString &str)
 {
-	const QRegularExpression re("\\A(\\d+(?:\\.\\d+)?)\\s*([dhms]?)\\z");
-	const auto m = re.match(str.toLower());
-	if(!m.hasMatch())
+	static const QRegularExpression re(
+		QStringLiteral("\\A(\\d+(?:\\.\\d+)?)\\s*([dhms]?)\\z"));
+	QRegularExpressionMatch m = re.match(str.toLower());
+	if(!m.hasMatch()) {
 		return -1;
+	}
 
 	float t = m.captured(1).toFloat();
-	if(m.captured(2)=="d")
-		t *= 24*60*60;
-	else if(m.captured(2)=="h")
-		t *= 60*60;
-	else if(m.captured(2)=="m")
+	if(m.captured(2) == QStringLiteral("d")) {
+		t *= 24 * 60 * 60;
+	} else if(m.captured(2) == QStringLiteral("h")) {
+		t *= 60 * 60;
+	} else if(m.captured(2) == QStringLiteral("m")) {
 		t *= 60;
+	}
 
 	return t;
 }
 
 int ServerConfig::parseSizeString(const QString &str)
 {
-	const QRegularExpression re("\\A(\\d+(?:\\.\\d+)?)\\s*(gb|mb|kb|b)?\\z");
-	const auto m = re.match(str.toLower());
-	if(!m.hasMatch())
+	static const QRegularExpression re(
+		QStringLiteral("\\A(\\d+(?:\\.\\d+)?)\\s*(gb|mb|kb|b)?\\z"));
+	QRegularExpressionMatch m = re.match(str.toLower());
+	if(!m.hasMatch()) {
 		return -1;
+	}
 
 	float s = m.captured(1).toFloat();
-	if(m.captured(2)=="gb")
-		s *= 1024*1024*1024;
-	else if(m.captured(2)=="mb")
-		s *= 1024*1024;
-	else if(m.captured(2)=="kb")
+	if(m.captured(2) == QStringLiteral("gb")) {
+		s *= 1024 * 1024 * 1024;
+	} else if(m.captured(2) == QStringLiteral("mb")) {
+		s *= 1024 * 1024;
+	} else if(m.captured(2) == QStringLiteral("kb")) {
 		s *= 1024;
+	}
 
 	return s;
 }
@@ -380,7 +393,7 @@ BanResult ServerConfig::makeBanResult(
 	}
 	return {
 		reaction,	ban.reason, ban.expires, cause, QStringLiteral("extban"),
-		sourceType, ban.id, isExemptable};
+		sourceType, ban.id,		isExemptable};
 }
 
 QJsonArray ServerConfig::banIpRangesToJson(
@@ -401,8 +414,8 @@ QJsonArray ServerConfig::banIpRangesToJson(
 	return json;
 }
 
-QJsonArray ServerConfig::banSystemToJson(
-	const QVector<BanSystemIdentifier> &system)
+QJsonArray
+ServerConfig::banSystemToJson(const QVector<BanSystemIdentifier> &system)
 {
 	QJsonArray json;
 	for(const BanSystemIdentifier &s : system) {

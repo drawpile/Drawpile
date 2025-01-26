@@ -1,31 +1,32 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "thinsrv/database.h"
-#include "thinsrv/dblog.h"
-#include "thinsrv/extbans.h"
+#include "libserver/serverlog.h"
 #include "libshared/util/database.h"
 #include "libshared/util/passwordhash.h"
-#include "libshared/util/validators.h"
-#include "libserver/serverlog.h"
 #include "libshared/util/qtcompat.h"
+#include "libshared/util/validators.h"
+#include "thinsrv/dblog.h"
+#include "thinsrv/extbans.h"
 
-#include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlError>
-#include <QVariant>
-#include <QUrl>
-#include <QRegularExpression>
 #include <QDateTime>
 #include <QHostAddress>
-#include <QJsonObject>
 #include <QJsonArray>
+#include <QJsonObject>
+#include <QRegularExpression>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
 #include <QTimer>
+#include <QUrl>
+#include <QVariant>
 
 namespace server {
 
 struct Database::Private {
 	QSqlDatabase db;
-	ServerLog *logger;
+	InMemoryLog *memlog;
+	DbLog *dblog;
 };
 
 static bool initDatabase(QSqlDatabase db)
@@ -33,75 +34,82 @@ static bool initDatabase(QSqlDatabase db)
 	QSqlQuery q(db);
 
 	// Settings key/value table
-	if(!q.exec(
-		"CREATE TABLE IF NOT EXISTS settings (key PRIMARY KEY, value);"
-		))
+	if(!utils::db::exec(
+		   q, QStringLiteral("CREATE TABLE IF NOT EXISTS settings (key PRIMARY "
+							 "KEY, value)"))) {
 		return false;
+	}
 
 	// Listing server URL whitelist (regular expressions)
-	if(!q.exec(
-		"CREATE TABLE IF NOT EXISTS listingservers (url);"
-		))
+	if(!utils::db::exec(
+		   q,
+		   QStringLiteral("CREATE TABLE IF NOT EXISTS listingservers (url)"))) {
 		return false;
+	}
 
 	// List of serverwide IP address bans
-	if(!q.exec(
-		"CREATE TABLE IF NOT EXISTS ipbans (ip, subnet, expires, comment, added);"
-		))
+	if(!utils::db::exec(
+		   q, QStringLiteral("CREATE TABLE IF NOT EXISTS ipbans ("
+							 "ip, subnet, expires, comment, added)"))) {
 		return false;
+	}
 
 	// List of serverwide system bans
-	if(!utils::db::exec(q, QStringLiteral(
-		"CREATE TABLE IF NOT EXISTS systembans ("
-			"id INTEGER PRIMARY KEY NOT NULL,"
-			"sid TEXT NOT NULL,"
-			"reaction TEXT NOT NULL DEFAULT 'normal',"
-			"expires TEXT NOT NULL,"
-			"comment TEXT,"
-			"reason TEXT,"
-			"added TEXT NOT NULL);"
-		)))
+	if(!utils::db::exec(
+		   q, QStringLiteral("CREATE TABLE IF NOT EXISTS systembans ("
+							 "id INTEGER PRIMARY KEY NOT NULL,"
+							 "sid TEXT NOT NULL,"
+							 "reaction TEXT NOT NULL DEFAULT 'normal',"
+							 "expires TEXT NOT NULL,"
+							 "comment TEXT,"
+							 "reason TEXT,"
+							 "added TEXT NOT NULL)"))) {
 		return false;
+	}
 
 	// List of serverwide external user bans
-	if(!utils::db::exec(q, QStringLiteral(
-		"CREATE TABLE IF NOT EXISTS userbans ("
-			"id INTEGER PRIMARY KEY NOT NULL,"
-			"userid INTEGER NOT NULL,"
-			"reaction TEXT NOT NULL DEFAULT 'normal',"
-			"expires TEXT NOT NULL,"
-			"comment TEXT,"
-			"reason TEXT,"
-			"added TEXT NOT NULL);"
-		)))
+	if(!utils::db::exec(
+		   q, QStringLiteral("CREATE TABLE IF NOT EXISTS userbans ("
+							 "id INTEGER PRIMARY KEY NOT NULL,"
+							 "userid INTEGER NOT NULL,"
+							 "reaction TEXT NOT NULL DEFAULT 'normal',"
+							 "expires TEXT NOT NULL,"
+							 "comment TEXT,"
+							 "reason TEXT,"
+							 "added TEXT NOT NULL)"))) {
 		return false;
+	}
 
 	// Registered user accounts
-	if(!q.exec(
-		"CREATE TABLE IF NOT EXISTS users ("
-			"username UNIQUE," // the username
-			"password,"        // hashed password
-			"locked,"          // is this username locked/banned
-			"flags"            // comma separated list of extra features (e.g. "mod")
-			");"
-		))
+	if(!utils::db::exec(
+		   q,
+		   QStringLiteral(
+			   "CREATE TABLE IF NOT EXISTS users ("
+			   "username UNIQUE," // the username
+			   "password,"		  // hashed password
+			   "locked,"		  // is this username locked/banned
+			   "flags)" // comma separated list of extra features (e.g. "mod")
+			   ))) {
 		return false;
+	}
 
 	// Disabling of external, imported bans
-	if(!utils::db::exec(q, QStringLiteral(
-		"CREATE TABLE IF NOT EXISTS disabledextbans ("
-			"id INTEGER PRIMARY KEY NOT NULL);"
-		)))
+	if(!utils::db::exec(
+		   q, QStringLiteral("CREATE TABLE IF NOT EXISTS disabledextbans ("
+							 "id INTEGER PRIMARY KEY NOT NULL)"))) {
 		return false;
+	}
 
 	return true;
 }
 
 Database::Database(QObject *parent)
-	: ServerConfig(parent), d(new Private)
+	: ServerConfig(parent)
+	, d(new Private)
 {
 	// Temporary logger until DB log is ready
-	d->logger = new InMemoryLog;
+	d->memlog = new InMemoryLog;
+	d->dblog = nullptr;
 
 	// Periodic task scheduler
 	QTimer *dailyTimer = new QTimer(this);
@@ -114,21 +122,22 @@ Database::Database(QObject *parent)
 
 Database::~Database()
 {
-	delete d->logger;
+	delete d->dblog;
+	delete d->memlog;
 	delete d;
 }
 
 bool Database::openFile(const QString &path)
 {
-	d->db = QSqlDatabase::addDatabase("QSQLITE");
+	d->db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"));
 	d->db.setDatabaseName(path);
 	if(!d->db.open()) {
-		qCritical("Unable to open database: %s", qPrintable(path));
+		qCritical("Unable to open database: %s", qUtf8Printable(path));
 		return false;
 	}
 
 	if(!initDatabase(d->db)) {
-		qCritical("Database initialization failed: %s", qPrintable(path));
+		qCritical("Database initialization failed: %s", qUtf8Printable(path));
 		return false;
 	}
 
@@ -137,11 +146,13 @@ bool Database::openFile(const QString &path)
 		qWarning("Couldn't initialize database log!");
 		delete dblog;
 	} else {
-		delete d->logger;
-		d->logger = dblog;
+		delete d->memlog;
+		delete d->dblog;
+		d->memlog = nullptr;
+		d->dblog = dblog;
 	}
 
-	qDebug("Opened configuration database: %s", qPrintable(path));
+	qDebug("Opened configuration database: %s", qUtf8Printable(path));
 
 	// Purge old log entries on startup
 	dailyTasks();
@@ -179,10 +190,9 @@ void Database::setConfigValue(ConfigKey key, const QString &value)
 void Database::setConfigValueByName(const QString &name, const QString &value)
 {
 	QSqlQuery q(d->db);
-	q.prepare("INSERT OR REPLACE INTO settings VALUES (?, ?)");
-	q.bindValue(0, name);
-	q.bindValue(1, value);
-	q.exec();
+	utils::db::exec(
+		q, QStringLiteral("INSERT OR REPLACE INTO settings VALUES (?, ?)"),
+		{name, value});
 }
 
 QString Database::getConfigValue(const ConfigKey key, bool &found) const
@@ -193,10 +203,10 @@ QString Database::getConfigValue(const ConfigKey key, bool &found) const
 QString Database::getConfigValueByName(const QString &name, bool &found) const
 {
 	QSqlQuery q(d->db);
-	q.prepare("SELECT value FROM settings WHERE key=?");
-	q.bindValue(0, name);
-	q.exec();
-	if(q.next()) {
+	if(utils::db::exec(
+		   q, QStringLiteral("SELECT value FROM settings WHERE key = ?"),
+		   {name}) &&
+	   q.next()) {
 		found = true;
 		return q.value(0).toString();
 	} else {
@@ -207,25 +217,31 @@ QString Database::getConfigValueByName(const QString &name, bool &found) const
 
 bool Database::isAllowedAnnouncementUrl(const QUrl &url) const
 {
-	if(!url.isValid())
+	if(!url.isValid()) {
 		return false;
+	}
 
 	// If whitelisting is not enabled, allow all URLs
-	if(!getConfigBool(config::AnnounceWhiteList))
+	if(!getConfigBool(config::AnnounceWhiteList)) {
 		return true;
+	}
 
 	const QString urlStr = url.toString();
 
 	QSqlQuery q(d->db);
-	q.exec("SELECT url FROM listingservers");
-	while(q.next()) {
-		const QString serverUrl = q.value(0).toString();
-		const QRegularExpression re(serverUrl);
-		if(!re.isValid()) {
-			qWarning("Invalid listingserver whitelist regexp: %s", qPrintable(serverUrl));
-		} else {
-			if(re.match(urlStr).hasMatch())
-				return true;
+	if(utils::db::exec(q, QStringLiteral("SELECT url FROM listingservers"))) {
+		while(q.next()) {
+			const QString serverUrl = q.value(0).toString();
+			const QRegularExpression re(serverUrl);
+			if(!re.isValid()) {
+				qWarning(
+					"Invalid listingserver whitelist regexp: %s",
+					qUtf8Printable(serverUrl));
+			} else {
+				if(re.match(urlStr).hasMatch()) {
+					return true;
+				}
+			}
 		}
 	}
 
@@ -236,36 +252,42 @@ QStringList Database::listServerWhitelist() const
 {
 	QStringList list;
 	QSqlQuery q(d->db);
-	q.exec("SELECT url FROM listingservers");
-	while(q.next()) {
-		list << q.value(0).toString();
+	if(utils::db::exec(q, QStringLiteral("SELECT url FROM listingservers"))) {
+		while(q.next()) {
+			list.append(q.value(0).toString());
+		}
 	}
 	return list;
 }
 
 void Database::updateListServerWhitelist(const QStringList &whitelist)
 {
-	QSqlQuery q(d->db);
-	q.exec("BEGIN TRANSACTION");
-	q.exec("DELETE FROM listingservers");
-	if(!whitelist.isEmpty()) {
-		q.prepare("INSERT INTO listingservers VALUES (?)");
-		q.addBindValue(whitelist);
-		if(!q.execBatch()) {
-			qWarning("Error inserting whitelist");
-			q.exec("ROLLBACK");
-			return;
+	utils::db::tx(d->db, [this, &whitelist] {
+		QSqlQuery q(d->db);
+		if(!utils::db::exec(q, QStringLiteral("DELETE FROM listingservers"))) {
+			return false;
 		}
-	}
-	q.exec("COMMIT");
+
+		if(whitelist.isEmpty()) {
+			return true;
+		} else {
+			QString sql =
+				QStringLiteral("INSERT INTO listingservers VALUES (?)");
+			if(!utils::db::prepare(q, sql)) {
+				return false;
+			}
+			q.addBindValue(whitelist);
+			return utils::db::execBatch(q, sql);
+		}
+	});
 }
 
 BanResult Database::isAddressBanned(const QHostAddress &addr) const
 {
 	QSqlQuery q(d->db);
-	bool ok = utils::db::exec(q, QStringLiteral(
-		"SELECT rowid, ip, subnet, expires FROM ipbans\n"
-		"WHERE expires > datetime('now')"));
+	bool ok = utils::db::exec(
+		q, QStringLiteral("SELECT rowid, ip, subnet, expires FROM ipbans\n"
+						  "WHERE expires > datetime('now')"));
 	if(ok) {
 		while(q.next()) {
 			QHostAddress ip(q.value(1).toString());
@@ -344,9 +366,11 @@ QJsonArray Database::getIpBanlist() const
 {
 	QJsonArray result;
 	QSqlQuery q(d->db);
-	q.exec("SELECT rowid, ip, subnet, expires, comment, added FROM ipbans");
-
-	while(q.next()) {
+	bool ok = utils::db::exec(
+		q,
+		QStringLiteral(
+			"SELECT rowid, ip, subnet, expires, comment, added FROM ipbans"));
+	while(ok && q.next()) {
 		result.append(ipBanResultToJson(q));
 	}
 	return result;
@@ -378,13 +402,20 @@ QJsonArray Database::getUserBanlist() const
 	return result;
 }
 
-QJsonObject Database::addIpBan(const QHostAddress &ip, int subnet, const QDateTime &expiration, const QString &comment)
+QJsonObject Database::addIpBan(
+	const QHostAddress &ip, int subnet, const QDateTime &expiration,
+	const QString &comment)
 {
 	QSqlQuery q(d->db);
-	q.prepare("SELECT rowid, ip, subnet, expires, comment, added FROM ipbans WHERE ip=? AND subnet=?");
-	q.bindValue(0, ip.toString());
-	q.bindValue(1, subnet);
-	q.exec();
+	QString ipstr = ip.toString();
+	if(!utils::db::exec(
+		   q,
+		   QStringLiteral("SELECT rowid, ip, subnet, expires, comment, added "
+						  "FROM ipbans WHERE ip = ? AND subnet = ?"),
+		   {ipstr, subnet})) {
+		return {};
+	}
+
 	if(q.next()) {
 		// Matching entry already in database
 		return ipBanResultToJson(q);
@@ -392,17 +423,18 @@ QJsonObject Database::addIpBan(const QHostAddress &ip, int subnet, const QDateTi
 		QString datestr = formatDateTime(expiration);
 		QString now = formatDateTime(QDateTime::currentDateTime());
 
-		q.prepare("INSERT INTO ipbans (ip, subnet, expires, comment, added) VALUES (?, ?, ?, ?, ?)");
-		q.bindValue(0, ip.toString());
-		q.bindValue(1, subnet);
-		q.bindValue(2, datestr);
-		q.bindValue(3, comment);
-		q.bindValue(4, now);
-		q.exec();
+		if(!utils::db::exec(
+			   q,
+			   QStringLiteral(
+				   "INSERT INTO ipbans (ip, subnet, expires, comment, added) "
+				   "VALUES (?, ?, ?, ?, ?)"),
+			   {ipstr, subnet, datestr, comment, now})) {
+			return {};
+		}
 
 		QJsonObject b;
 		b["id"] = q.lastInsertId().toInt();
-		b["ip"] = ip.toString();
+		b["ip"] = ipstr;
 		b["subnet"] = subnet;
 		b["expires"] = datestr;
 		b["comment"] = comment;
@@ -474,10 +506,10 @@ QJsonObject Database::addUserBan(
 bool Database::deleteIpBan(int entryId)
 {
 	QSqlQuery q(d->db);
-	q.prepare("DELETE FROM ipbans WHERE rowid=?");
-	q.bindValue(0, entryId);
-	q.exec();
-	return q.numRowsAffected()>0;
+	return utils::db::exec(
+			   q, QStringLiteral("DELETE FROM ipbans WHERE rowid = ?"),
+			   {entryId}) &&
+		   q.numRowsAffected() > 0;
 }
 
 bool Database::deleteSystemBan(int entryId)
@@ -501,89 +533,81 @@ bool Database::deleteUserBan(int entryId)
 QJsonObject Database::ipBanResultToJson(const QSqlQuery &q)
 {
 	QJsonObject b;
-	b["id"] = q.value(0).toInt();
-	b["ip"] = q.value(1).toString();
-	b["subnet"] = q.value(2).toInt();
-	b["expires"] = q.value(3).toString();
-	b["comment"] = q.value(4).toString();
-	b["added"] = q.value(5).toString();
+	b[QStringLiteral("id")] = q.value(0).toInt();
+	b[QStringLiteral("ip")] = q.value(1).toString();
+	b[QStringLiteral("subnet")] = q.value(2).toInt();
+	b[QStringLiteral("expires")] = q.value(3).toString();
+	b[QStringLiteral("comment")] = q.value(4).toString();
+	b[QStringLiteral("added")] = q.value(5).toString();
 	return b;
 }
 
 QJsonObject Database::systemBanResultToJson(const QSqlQuery &q)
 {
 	QJsonObject b;
-	b["id"] = q.value(0).toInt();
-	b["sid"] = q.value(1).toString();
-	b["expires"] = q.value(2).toString();
-	b["reaction"] = q.value(3).toString();
-	b["reason"] = q.value(4).toString();
-	b["comment"] = q.value(5).toString();
-	b["added"] = q.value(6).toString();
+	b[QStringLiteral("id")] = q.value(0).toInt();
+	b[QStringLiteral("sid")] = q.value(1).toString();
+	b[QStringLiteral("expires")] = q.value(2).toString();
+	b[QStringLiteral("reaction")] = q.value(3).toString();
+	b[QStringLiteral("reason")] = q.value(4).toString();
+	b[QStringLiteral("comment")] = q.value(5).toString();
+	b[QStringLiteral("added")] = q.value(6).toString();
 	return b;
 }
 
 QJsonObject Database::userBanResultToJson(const QSqlQuery &q)
 {
 	QJsonObject b;
-	b["id"] = q.value(0).toInt();
-	b["userId"] = double(q.value(1).toLongLong());
-	b["expires"] = q.value(2).toString();
-	b["reaction"] = q.value(3).toString();
-	b["reason"] = q.value(4).toString();
-	b["comment"] = q.value(5).toString();
-	b["added"] = q.value(6).toString();
+	b[QStringLiteral("id")] = q.value(0).toInt();
+	b[QStringLiteral("userId")] = double(q.value(1).toLongLong());
+	b[QStringLiteral("expires")] = q.value(2).toString();
+	b[QStringLiteral("reaction")] = q.value(3).toString();
+	b[QStringLiteral("reason")] = q.value(4).toString();
+	b[QStringLiteral("comment")] = q.value(5).toString();
+	b[QStringLiteral("added")] = q.value(6).toString();
 	return b;
 }
 
 ServerLog *Database::logger() const
 {
-	return d->logger;
+	if(d->dblog) {
+		return d->dblog;
+	} else {
+		return d->memlog;
+	}
 }
 
-RegisteredUser Database::getUserAccount(const QString &username, const QString &password) const
+RegisteredUser
+Database::getUserAccount(const QString &username, const QString &password) const
 {
 	QSqlQuery q(d->db);
-	q.prepare("SELECT rowid, password, locked, flags FROM users WHERE username=?");
-	q.bindValue(0, username);
-	q.exec();
-	if(q.next()) {
+	if(utils::db::exec(
+		   q,
+		   QStringLiteral("SELECT rowid, password, locked, flags FROM users "
+						  "WHERE username = ?"),
+		   {username}) &&
+	   q.next()) {
 		const int rowid = q.value(0).toInt();
 		const QByteArray passwordHash = q.value(1).toByteArray();
 		const int locked = q.value(2).toInt();
-		const QStringList flags = q.value(3).toString().split(',', compat::SkipEmptyParts);
+		const QStringList flags =
+			q.value(3).toString().split(',', compat::SkipEmptyParts);
 
 		if(locked) {
-			return RegisteredUser {
-				RegisteredUser::Banned,
-				username,
-				QStringList(),
-				QString()
-			};
+			return RegisteredUser{
+				RegisteredUser::Banned, username, QStringList(), QString()};
 		}
 
 		if(!passwordhash::check(password, passwordHash)) {
-			return RegisteredUser {
-				RegisteredUser::BadPass,
-				username,
-				QStringList(),
-				QString()
-			};
+			return RegisteredUser{
+				RegisteredUser::BadPass, username, QStringList(), QString()};
 		}
 
-		return RegisteredUser {
-			RegisteredUser::Ok,
-			username,
-			flags,
-			QString::number(rowid)
-		};
+		return RegisteredUser{
+			RegisteredUser::Ok, username, flags, QString::number(rowid)};
 	} else {
-		return RegisteredUser {
-			RegisteredUser::NotFound,
-			username,
-			QStringList(),
-			QString()
-		};
+		return RegisteredUser{
+			RegisteredUser::NotFound, username, QStringList(), QString()};
 	}
 }
 
@@ -597,10 +621,10 @@ bool Database::hasAnyUserAccounts() const
 static QJsonObject userQueryToJson(const QSqlQuery &q)
 {
 	QJsonObject o;
-	o["id"] = q.value(0).toInt();
-	o["username"] = q.value(1).toString();
-	o["locked"] = q.value(2).toBool();
-	o["flags"] = q.value(3).toString();
+	o[QStringLiteral("id")] = q.value(0).toInt();
+	o[QStringLiteral("username")] = q.value(1).toString();
+	o[QStringLiteral("locked")] = q.value(2).toBool();
+	o[QStringLiteral("flags")] = q.value(3).toString();
 	return o;
 }
 
@@ -608,30 +632,37 @@ QJsonArray Database::getAccountList() const
 {
 	QJsonArray list;
 	QSqlQuery q(d->db);
-	q.exec("SELECT rowid, username, locked, flags FROM users");
-	while(q.next()) {
-		list << userQueryToJson(q);
+	if(utils::db::exec(
+		   q, QStringLiteral(
+				  "SELECT rowid, username, locked, flags FROM users"))) {
+		while(q.next()) {
+			list.append(userQueryToJson(q));
+		}
 	}
 	return list;
 }
 
-QJsonObject Database::addAccount(const QString &username, const QString &password, bool locked, const QStringList &flags)
+QJsonObject Database::addAccount(
+	const QString &username, const QString &password, bool locked,
+	const QStringList &flags)
 {
-	if(!validateUsername(username))
+	if(!validateUsername(username)) {
 		return QJsonObject();
+	}
 
 	QSqlQuery q(d->db);
-	q.prepare("INSERT INTO users (username, password, locked, flags) VALUES (?, ?, ?, ?)");
-	q.bindValue(0, username);
-	q.bindValue(1, passwordhash::hash(password));
-	q.bindValue(2, locked);
-	q.bindValue(3, flags.join(','));
-	if(q.exec()) {
-		q.exec("SELECT rowid, username, locked, flags FROM users WHERE rowid IN (SELECT last_insert_rowid())");
-		if(q.next())
-			return userQueryToJson(q);
+	if(utils::db::exec(
+		   q,
+		   QStringLiteral(
+			   "INSERT INTO users (username, password, locked, flags) "
+			   "VALUES (?, ?, ?, ?)"),
+		   {username, passwordhash::hash(password), locked, flags.join(',')}) &&
+	   utils::db::exec(
+		   q, QStringLiteral("SELECT rowid, username, locked, flags FROM users "
+							 "WHERE rowid IN (SELECT last_insert_rowid())")) &&
+	   q.next()) {
+		return userQueryToJson(q);
 	}
-	qWarning("Error adding user account: %s", qPrintable(q.lastError().text()));
 	return QJsonObject();
 }
 
@@ -640,64 +671,67 @@ QJsonObject Database::updateAccount(int id, const QJsonObject &update)
 	QStringList updates;
 	QVariantList params;
 
-	if(validateUsername(update["username"].toString())) {
-		updates << "username=?";
-		params << update["username"].toString();
+	QString username = update.value(QStringLiteral("username")).toString();
+	if(validateUsername(username)) {
+		updates.append(QStringLiteral("username = ?"));
+		params.append(username);
 	}
 
-	if(!update["password"].toString().isEmpty()) {
-		updates << "password=?";
-		params << passwordhash::hash(update["password"].toString());
+	QString password = update.value(QStringLiteral("password")).toString();
+	if(!password.isEmpty()) {
+		updates.append(QStringLiteral("password = ?"));
+		params.append(passwordhash::hash(password));
 	}
 
-	if(update.contains("locked")) {
-		updates << "locked=?";
-		params << update["locked"].toBool();
+	if(update.contains(QStringLiteral("locked"))) {
+		updates.append(QStringLiteral("locked = ?"));
+		params.append(update.value(QStringLiteral("locked")).toBool());
 	}
 
-	if(update.contains("flags")) {
-		updates << "flags=?";
-		params << update["flags"].toString();
+	if(update.contains(QStringLiteral("flags"))) {
+		updates.append(QStringLiteral("flags = ?"));
+		params.append(update.value(QStringLiteral("flags")).toString());
 	}
 
 	QSqlQuery q(d->db);
-
 	if(!updates.isEmpty()) {
-		QString sql = QString("UPDATE users SET %1 WHERE rowid=?").arg(updates.join(','));
-		q.prepare(sql);
-		for(int i=0;i<params.size();++i)
-			q.bindValue(i, params[i]);
-		q.bindValue(params.size(), id);
-		if(!q.exec())
+		QString sql = QStringLiteral("UPDATE users SET %1 WHERE rowid = ?")
+						  .arg(updates.join(','));
+		params.append(id);
+		if(!utils::db::exec(q, sql, params)) {
 			return QJsonObject();
+		}
 	}
 
-	q.prepare("SELECT rowid, username, locked, flags FROM users WHERE rowid=?");
-	q.bindValue(0, id);
-	q.exec();
-	if(q.next())
+	if(utils::db::exec(
+		   q,
+		   QStringLiteral("SELECT rowid, username, locked, flags "
+						  "FROM users WHERE rowid = ?"),
+		   {id}) &&
+	   q.next()) {
 		return userQueryToJson(q);
-	qWarning("Error updating user account %d: %s", id, qPrintable(q.lastError().text()));
-	return QJsonObject();
+	} else {
+		return QJsonObject();
+	}
 }
 
 bool Database::deleteAccount(int userId)
 {
 	QSqlQuery q(d->db);
-	q.prepare("DELETE FROM users WHERE rowid=?");
-	q.bindValue(0, userId);
-	q.exec();
-	return q.numRowsAffected()>0;
+	return utils::db::exec(
+			   q, QStringLiteral("DELETE FROM users WHERE rowid = ?"),
+			   {userId}) &&
+		   q.numRowsAffected() > 0;
 }
 
 void Database::dailyTasks()
 {
 	// Purge old Database log entries
-	DbLog *dblog = dynamic_cast<DbLog*>(d->logger);
-	if(dblog) {
-		const int purged = dblog->purgeLogs(getConfigInt(config::LogPurgeDays));
-		if(purged > 0)
+	if(d->dblog) {
+		int purged = d->dblog->purgeLogs(getConfigInt(config::LogPurgeDays));
+		if(purged > 0) {
 			qInfo("Purged %d old log entries", purged);
+		}
 	}
 }
 

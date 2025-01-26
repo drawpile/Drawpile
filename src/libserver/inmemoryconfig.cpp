@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libserver/inmemoryconfig.h"
 #include "libserver/serverlog.h"
 
 namespace server {
 
 InMemoryConfig::InMemoryConfig(QObject *parent)
-	: ServerConfig(parent), m_logger(new InMemoryLog)
+	: ServerConfig(parent)
+	, m_logger(new InMemoryLog)
 {
 }
 
@@ -17,12 +17,13 @@ InMemoryConfig::~InMemoryConfig()
 
 QString InMemoryConfig::getConfigValue(const ConfigKey key, bool &found) const
 {
-	if(m_config.count(key.index)==0) {
+	QHash<int, QString>::const_iterator it = m_config.constFind(key.index);
+	if(it == m_config.constEnd()) {
 		found = false;
 		return QString();
 	} else {
 		found = true;
-		return m_config[key.index];
+		return *it;
 	}
 }
 

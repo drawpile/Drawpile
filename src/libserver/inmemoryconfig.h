@@ -1,19 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef INMEMORYCONFIG_H
-#define INMEMORYCONFIG_H
-
+#ifndef LIBSERVER_INMEMORYCONFIG_H
+#define LIBSERVER_INMEMORYCONFIG_H
 #include "libserver/serverconfig.h"
+#include <QHash>
 
 namespace server {
 
 class ServerLog;
 
-class InMemoryConfig final : public ServerConfig
-{
+class InMemoryConfig final : public ServerConfig {
 	Q_OBJECT
 public:
-	explicit InMemoryConfig(QObject *parent=nullptr);
+	explicit InMemoryConfig(QObject *parent = nullptr);
 	~InMemoryConfig() override;
 
 	ServerLog *logger() const override { return m_logger; }

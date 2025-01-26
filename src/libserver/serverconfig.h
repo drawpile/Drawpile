@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef SERVERCONFIG_H
-#define SERVERCONFIG_H
-
-#include <QObject>
-#include <QString>
-#include <QHash>
-#include <QUrl>
+#ifndef LIBSERVER_SERVERCONFIG_H
+#define LIBSERVER_SERVERCONFIG_H
 #include <QDateTime>
+#include <QHash>
 #include <QHostAddress>
 #include <QJsonArray>
+#include <QObject>
+#include <QString>
+#include <QUrl>
 
 class QHostAddress;
 
@@ -21,15 +19,28 @@ class ConfigKey {
 public:
 	enum Type {
 		STRING, // A string value
-		TIME,   // Time in seconds, converted from a time definition string
-		SIZE,   // (File) size in bytes, converted from a size definition string
-		INT,    // Integer
-		BOOL    // Boolean (true|1)
+		TIME,	// Time in seconds, converted from a time definition string
+		SIZE,	// (File) size in bytes, converted from a size definition string
+		INT,	// Integer
+		BOOL	// Boolean (true|1)
 	};
 
-	ConfigKey() : index(0), name(nullptr), defaultValue(nullptr), type(STRING) { }
-	constexpr ConfigKey(int index_, const char *name_, const char *defaultValue_, Type type_)
-		: index(index_), name(name_), defaultValue(defaultValue_), type(type_) { }
+	ConfigKey()
+		: index(0)
+		, name(nullptr)
+		, defaultValue(nullptr)
+		, type(STRING)
+	{
+	}
+
+	constexpr ConfigKey(
+		int index_, const char *name_, const char *defaultValue_, Type type_)
+		: index(index_)
+		, name(name_)
+		, defaultValue(defaultValue_)
+		, type(type_)
+	{
+	}
 
 	const int index;
 	const char *name;
@@ -38,97 +49,136 @@ public:
 };
 
 namespace config {
-	static const ConfigKey
-		ClientTimeout(0, "clientTimeout", "60", ConfigKey::TIME),            // Connection ping timeout for clients
-		SessionSizeLimit(1, "sessionSizeLimit", "99mb", ConfigKey::SIZE),    // Session history size limit in bytes
-		SessionCountLimit(2, "sessionCountLimit", "25", ConfigKey::INT),     // Maximum number of active sessions (int)
-		EnablePersistence(3, "persistence", "false", ConfigKey::BOOL),       // Enable session persistence (bool)
-		AllowGuestHosts(4, "allowGuestHosts", "true", ConfigKey::BOOL),      // Allow guests (or users without the HOST flag) to host sessions
-		IdleTimeLimit(5, "idleTimeLimit", "0", ConfigKey::TIME),             // Session idle time limit in seconds (int)
-		ServerTitle(6, "serverTitle", "", ConfigKey::STRING),                // Server title (string)
-		WelcomeMessage(7, "welcomeMessage", "", ConfigKey::STRING),          // Message sent to a user when they join a session (string)
-		AnnounceWhiteList(8, "announceWhitelist", "false", ConfigKey::BOOL), // Should the announcement server whitelist be used (bool)
-		PrivateUserList(9, "privateUserList", "false", ConfigKey::BOOL),     // Don't include user list in announcement
-		AllowGuests(10, "allowGuests", "true", ConfigKey::BOOL),             // Allow unauthenticated users
-		ArchiveMode(11, "archive", "false", ConfigKey::BOOL),                // Don't delete terminated session files
-		UseExtAuth(12, "extauth", "false", ConfigKey::BOOL),                 // Enable external authentication
-		ExtAuthKey(13, "extauthkey", "", ConfigKey::STRING),                 // ExtAuth signature verification key
-		ExtAuthGroup(14, "extauthgroup", "", ConfigKey::STRING),             // ExtAuth user group (leave blank for default set)
-		ExtAuthFallback(15, "extauthfallback", "true", ConfigKey::BOOL),     // Fall back to guest logins if ext auth server is unreachable
-		ExtAuthMod(16, "extauthmod", "true", ConfigKey::BOOL),               // Respect ext-auth user's "MOD" flag
-		ExtAuthHost(17, "extauthhost", "true", ConfigKey::BOOL),             // Respect ext-auth user's "HOST" flag
-		AbuseReport(18, "abusereport", "false", ConfigKey::BOOL),            // Enable abuse report (server address must have been set)
-		ReportToken(19, "reporttoken", "", ConfigKey::STRING),               // Abuse report backend server authorization token
-		LogPurgeDays(20, "logpurgedays", "0", ConfigKey::INT),               // Automatically purge log entries older than this many days (DB log only)
-		AutoresetThreshold(21, "autoResetThreshold", "15mb", ConfigKey::SIZE), // Default autoreset threshold in bytes
-		AllowCustomAvatars(22, "customAvatars", "true", ConfigKey::BOOL),      // Allow users to set a custom avatar when logging in
-		ExtAuthAvatars(23, "extAuthAvatars", "true", ConfigKey::BOOL),         // Use avatars received from ext-auth server (unless a custom avatar has been set)
-		ForceNsfm(24, "forceNsfm", "false", ConfigKey::BOOL),                  // Force NSFM flag to be set on all sessions
-		// URL to source an external ban list from.
-		ExtBansUrl(25, "extBansUrl", "", ConfigKey::STRING),
-		// How often to refresh the external ban list (minimum 1 minute.)
-		ExtBansCheckInterval(26, "extBansCheckInterval", "900", ConfigKey::TIME),
-		// Last URL used to fetch bans. Internal value used for caching.
-		ExtBansCacheUrl(27, "extBansCacheUrl", "", ConfigKey::STRING),
-		// Last cache key from external bans. Internal value used for caching.
-		ExtBansCacheKey(28, "extBansCacheKey", "", ConfigKey::STRING),
-		// Last external bans response. Internal value used for caching.
-		ExtBansCacheResponse(29, "extBansCacheResponse", "", ConfigKey::STRING),
-		// Respect ext-auth user's "BANEXEMPT" flag.
-		ExtAuthBanExempt(30, "extauthbanexempt", "false", ConfigKey::BOOL),
-		// Allow mods to disable the idle timer for individual sessions.
-		AllowIdleOverride(31, "allowIdleOverride", "true", ConfigKey::BOOL),
-		// Url to show users when logging in.
-		LoginInfoUrl(32, "loginInfoUrl", "", ConfigKey::STRING),
-		// Allow mods to join as ghost users, to avoid disrupting sessions.
-		EnableGhosts(33, "enableGhosts", "false", ConfigKey::BOOL),
-		// Respect ext-auth user's "GHOST" flag.
-		ExtAuthGhosts(34, "extauthghosts", "false", ConfigKey::BOOL),
-		// Rules to show to connecting clients.
-		RuleText(35, "ruleText", "", ConfigKey::STRING),
-		// Minimum required protocol version for hosting sessions.
-		MinimumProtocolVersion(36, "minimumProtocolVersion", "", ConfigKey::STRING),
-		// Require clients to join sessions through a direct link.
-		MandatoryLookup(37, "mandatoryLookup", "false", ConfigKey::BOOL),
-		// Allow guests to join via WebSockets.
-		AllowGuestWeb(38, "allowGuestWeb", "true", ConfigKey::BOOL),
-		// Respect ext-auth user's "WEB" flag.
-		ExtAuthWeb(39, "extauthweb", "false", ConfigKey::BOOL),
-		// Allow guests to toggle the web setting in sessions.
-		AllowGuestWebSession(40, "allowGuestWebSession", "true", ConfigKey::BOOL),
-		// Respect ext-auth user's "WEBSESSION" flag.
-		ExtAuthWebSession(41, "extauthwebsession", "false", ConfigKey::BOOL),
-		// Maximum number of users per session.
-		SessionUserLimit(42, "sessionUserLimit", "254", ConfigKey::INT),
-		// Automatically allow/disallow web sessions based on passwordedness.
-		PasswordDependentWebSession(43, "passwordDependentWebSession", "false", ConfigKey::BOOL),
-		// Respect ext-auth user's "PERSIST" flag.
-		ExtAuthPersist(44, "extauthpersist", "false", ConfigKey::BOOL),
-		// How long empty sessions linger after the last user left to maybe give them a chance to reconnect.
-		EmptySessionLingerTime(45, "emptySessionLingerTime", "0", ConfigKey::TIME);
+static const ConfigKey
+	// Connection ping timeout for clients
+	ClientTimeout(0, "clientTimeout", "60", ConfigKey::TIME),
+	// Session history size limit in bytes
+	SessionSizeLimit(1, "sessionSizeLimit", "99mb", ConfigKey::SIZE),
+	// Maximum number of active sessions (int)
+	SessionCountLimit(2, "sessionCountLimit", "25", ConfigKey::INT),
+	// Enable session persistence (bool)
+	EnablePersistence(3, "persistence", "false", ConfigKey::BOOL),
+	// Allow guests (or users without the HOST flag) to host sessions
+	AllowGuestHosts(4, "allowGuestHosts", "true", ConfigKey::BOOL),
+	// Session idle time limit in seconds (int)
+	IdleTimeLimit(5, "idleTimeLimit", "0", ConfigKey::TIME),
+	// Server title (string)
+	ServerTitle(6, "serverTitle", "", ConfigKey::STRING),
+	// Message sent to a user when they join a session (string)
+	WelcomeMessage(7, "welcomeMessage", "", ConfigKey::STRING),
+	// Should the announcement server whitelist be used (bool)
+	AnnounceWhiteList(8, "announceWhitelist", "false", ConfigKey::BOOL),
+	// Don't include user list in announcement
+	PrivateUserList(9, "privateUserList", "false", ConfigKey::BOOL),
+	// Allow unauthenticated users
+	AllowGuests(10, "allowGuests", "true", ConfigKey::BOOL),
+	// Don't delete terminated session files
+	ArchiveMode(11, "archive", "false", ConfigKey::BOOL),
+	// Enable external authentication
+	UseExtAuth(12, "extauth", "false", ConfigKey::BOOL),
+	// ExtAuth signature verification key
+	ExtAuthKey(13, "extauthkey", "", ConfigKey::STRING),
+	// ExtAuth user group (leave blank for default set)
+	ExtAuthGroup(14, "extauthgroup", "", ConfigKey::STRING),
+	// Fall back to guest logins if ext auth server is unreachable
+	ExtAuthFallback(15, "extauthfallback", "true", ConfigKey::BOOL),
+	// Respect ext-auth user's "MOD" flag
+	ExtAuthMod(16, "extauthmod", "true", ConfigKey::BOOL),
+	// Respect ext-auth user's "HOST" flag
+	ExtAuthHost(17, "extauthhost", "true", ConfigKey::BOOL),
+	// Enable abuse report (server address must have been set)
+	AbuseReport(18, "abusereport", "false", ConfigKey::BOOL),
+	// Abuse report backend server authorization token
+	ReportToken(19, "reporttoken", "", ConfigKey::STRING),
+	// Automatically purge log entries older than this many days (DB log only)
+	LogPurgeDays(20, "logpurgedays", "0", ConfigKey::INT),
+	// Default autoreset threshold in bytes
+	AutoresetThreshold(21, "autoResetThreshold", "15mb", ConfigKey::SIZE),
+	// Allow users to set a custom avatar when logging in
+	AllowCustomAvatars(22, "customAvatars", "true", ConfigKey::BOOL),
+	// Use avatars received from ext-auth server (unless a custom avatar has
+	// been set)
+	ExtAuthAvatars(23, "extAuthAvatars", "true", ConfigKey::BOOL),
+	ForceNsfm(
+		24, "forceNsfm", "false",
+		ConfigKey::BOOL), // Force NSFM flag to be set on all sessions
+	// URL to source an external ban list from.
+	ExtBansUrl(25, "extBansUrl", "", ConfigKey::STRING),
+	// How often to refresh the external ban list (minimum 1 minute.)
+	ExtBansCheckInterval(26, "extBansCheckInterval", "900", ConfigKey::TIME),
+	// Last URL used to fetch bans. Internal value used for caching.
+	ExtBansCacheUrl(27, "extBansCacheUrl", "", ConfigKey::STRING),
+	// Last cache key from external bans. Internal value used for caching.
+	ExtBansCacheKey(28, "extBansCacheKey", "", ConfigKey::STRING),
+	// Last external bans response. Internal value used for caching.
+	ExtBansCacheResponse(29, "extBansCacheResponse", "", ConfigKey::STRING),
+	// Respect ext-auth user's "BANEXEMPT" flag.
+	ExtAuthBanExempt(30, "extauthbanexempt", "false", ConfigKey::BOOL),
+	// Allow mods to disable the idle timer for individual sessions.
+	AllowIdleOverride(31, "allowIdleOverride", "true", ConfigKey::BOOL),
+	// Url to show users when logging in.
+	LoginInfoUrl(32, "loginInfoUrl", "", ConfigKey::STRING),
+	// Allow mods to join as ghost users, to avoid disrupting sessions.
+	EnableGhosts(33, "enableGhosts", "false", ConfigKey::BOOL),
+	// Respect ext-auth user's "GHOST" flag.
+	ExtAuthGhosts(34, "extauthghosts", "false", ConfigKey::BOOL),
+	// Rules to show to connecting clients.
+	RuleText(35, "ruleText", "", ConfigKey::STRING),
+	// Minimum required protocol version for hosting sessions.
+	MinimumProtocolVersion(36, "minimumProtocolVersion", "", ConfigKey::STRING),
+	// Require clients to join sessions through a direct link.
+	MandatoryLookup(37, "mandatoryLookup", "false", ConfigKey::BOOL),
+	// Allow guests to join via WebSockets.
+	AllowGuestWeb(38, "allowGuestWeb", "true", ConfigKey::BOOL),
+	// Respect ext-auth user's "WEB" flag.
+	ExtAuthWeb(39, "extauthweb", "false", ConfigKey::BOOL),
+	// Allow guests to toggle the web setting in sessions.
+	AllowGuestWebSession(40, "allowGuestWebSession", "true", ConfigKey::BOOL),
+	// Respect ext-auth user's "WEBSESSION" flag.
+	ExtAuthWebSession(41, "extauthwebsession", "false", ConfigKey::BOOL),
+	// Maximum number of users per session.
+	SessionUserLimit(42, "sessionUserLimit", "254", ConfigKey::INT),
+	// Automatically allow/disallow web sessions based on passwordedness.
+	PasswordDependentWebSession(
+		43, "passwordDependentWebSession", "false", ConfigKey::BOOL),
+	// Respect ext-auth user's "PERSIST" flag.
+	ExtAuthPersist(44, "extauthpersist", "false", ConfigKey::BOOL),
+	// How long empty sessions linger after the last user left to maybe give
+	// them a chance to reconnect.
+	EmptySessionLingerTime(45, "emptySessionLingerTime", "0", ConfigKey::TIME);
 }
 
 //! Settings that are not adjustable after the server has started
 struct InternalConfig {
-	QString localHostname; // Hostname of this server to use in session announcements
-	int realPort = 27750;  // The port the server is listening on
-	int announcePort = 0;  // The port to use in session announcements
-	QUrl extAuthUrl;       // URL of the external authentication server
-	QUrl reportUrl;        // Abuse report handler backend URL
-	QByteArray cryptKey;   // Key used to encrypt session ban exports
+	// Hostname of this server to use in session announcements
+	QString localHostname;
+	// The port the server is listening on
+	int realPort = 27750;
+	// The port to use in session announcements
+	int announcePort = 0;
+	// URL of the external authentication server
+	QUrl extAuthUrl;
+	// Abuse report handler backend URL
+	QUrl reportUrl;
+	// Key used to encrypt session ban exports
+	QByteArray cryptKey;
 #ifdef HAVE_WEBSOCKETS
-	bool webSocket = false; // Are we listening for WebSocket connections?
+	// Are we listening for WebSocket connections?
+	bool webSocket = false;
 #endif
 
-	int getAnnouncePort() const { return announcePort > 0 ? announcePort : realPort; }
+	int getAnnouncePort() const
+	{
+		return announcePort > 0 ? announcePort : realPort;
+	}
 };
 
 struct RegisteredUser {
 	enum Status {
 		NotFound, // User with this name not found
 		BadPass,  // Supplied password did not match
-		Banned,   // This username is banned
-		Ok        // Can log in
+		Banned,	  // This username is banned
+		Ok		  // Can log in
 	};
 
 	Status status;
@@ -197,11 +247,13 @@ struct ExtBan {
  * The default storage implementation is a simple in-memory key/value map.
  * Deriving classes can implement persistent storage of settings.
  */
-class ServerConfig : public QObject
-{
+class ServerConfig : public QObject {
 	Q_OBJECT
 public:
-	explicit ServerConfig(QObject *parent=nullptr) : QObject(parent) {}
+	explicit ServerConfig(QObject *parent = nullptr)
+		: QObject(parent)
+	{
+	}
 
 	void setInternalConfig(const InternalConfig &cfg) { m_internalCfg = cfg; }
 	const InternalConfig &internalConfig() const { return m_internalCfg; }
@@ -216,7 +268,8 @@ public:
 
 	/**
 	 * @brief Set a configuration value
-	 * The default implementation sets the value to the in-memory nonpersistent store.
+	 * The default implementation sets the value to the in-memory nonpersistent
+	 * store.
 	 *
 	 * @param key
 	 * @param value
@@ -250,7 +303,8 @@ public:
 	 *
 	 * The default implementation always returns NotFound
 	 */
-	virtual RegisteredUser getUserAccount(const QString &username, const QString &password) const;
+	virtual RegisteredUser
+	getUserAccount(const QString &username, const QString &password) const;
 
 	virtual bool hasAnyUserAccounts() const;
 
@@ -287,8 +341,8 @@ protected:
 	/**
 	 * @brief Get the configuration value for the given key
 	 *
-	 * The default implementation gets the value from the in-memory nonpersistent
-	 * store.
+	 * The default implementation gets the value from the in-memory
+	 * nonpersistent store.
 	 * @param key
 	 * @param found
 	 * @return
@@ -330,11 +384,11 @@ private:
 		const ExtBan &ban, const QString &cause, const QString &sourceType,
 		BanReaction reaction, bool isExemptable);
 
-	static QJsonArray banIpRangesToJson(
-		const QVector<BanIpRange> &ranges, bool includeReaction);
+	static QJsonArray
+	banIpRangesToJson(const QVector<BanIpRange> &ranges, bool includeReaction);
 
-	static QJsonArray banSystemToJson(
-		const QVector<BanSystemIdentifier> &system);
+	static QJsonArray
+	banSystemToJson(const QVector<BanSystemIdentifier> &system);
 
 	static QJsonArray banUsersToJson(const QVector<BanUser> &users);
 
@@ -345,11 +399,17 @@ private:
 
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69210
 namespace diagnostic_marker_private {
-	class [[maybe_unused]] AbstractServerConfigMarker : ServerConfig
+class [[maybe_unused]] AbstractServerConfigMarker : ServerConfig {
+	inline RegisteredUser
+	getUserAccount(const QString &, const QString &) const override
 	{
-		inline RegisteredUser getUserAccount(const QString &, const QString &) const override { return RegisteredUser(); }
-		inline bool isAllowedAnnouncementUrl(const QUrl &) const override { return false; }
-	};
+		return RegisteredUser();
+	}
+	inline bool isAllowedAnnouncementUrl(const QUrl &) const override
+	{
+		return false;
+	}
+};
 }
 
 }
