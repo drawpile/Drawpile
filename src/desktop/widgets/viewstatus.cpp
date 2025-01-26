@@ -76,20 +76,21 @@ ViewStatus::ViewStatus(QWidget *parent)
 	m_angleBox->setEditable(true);
 	m_angleBox->setToolTip(tr("Canvas Rotation"));
 
+	// Trailing spaces so that these always emit editTextChanged.
 	m_angleBox->addItems({
-		QStringLiteral("-135°"),
-		QStringLiteral("-90°"),
-		QStringLiteral("-45°"),
-		QStringLiteral("0°"),
-		QStringLiteral("45°"),
-		QStringLiteral("90°"),
-		QStringLiteral("135°"),
-		QStringLiteral("180°"),
+		QStringLiteral("-135° "),
+		QStringLiteral("-90° "),
+		QStringLiteral("-45° "),
+		QStringLiteral("0° "),
+		QStringLiteral("45° "),
+		QStringLiteral("90° "),
+		QStringLiteral("135 °"),
+		QStringLiteral("180 °"),
 	});
 	m_angleBox->setEditText(QStringLiteral("0°"));
 
 	m_angleBox->lineEdit()->setValidator(new QRegularExpressionValidator(
-		QRegularExpression("-?[0-9]{0,3}°?"), this));
+		QRegularExpression("\\A\\s*-?[0-9]{0,3}°?\\s*"), this));
 	connect(
 		m_angleBox, &QComboBox::editTextChanged, this,
 		&ViewStatus::angleBoxChanged);
