@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef VIEWSTATUS_H
-#define VIEWSTATUS_H
-
+#ifndef DESKTOP_WIDGETS_VIEWSTATUS_H
+#define DESKTOP_WIDGETS_VIEWSTATUS_H
 #include <QWidget>
 
 class QComboBox;
@@ -14,11 +12,10 @@ class GroupedToolButton;
 class KisAngleGauge;
 class ZoomSlider;
 
-class ViewStatus final : public QWidget
-{
+class ViewStatus final : public QWidget {
 	Q_OBJECT
 public:
-	ViewStatus(QWidget *parent=nullptr);
+	ViewStatus(QWidget *parent = nullptr);
 
 	void setActions(
 		QAction *flip, QAction *mirror, QAction *rotationReset,
@@ -45,9 +42,12 @@ private:
 	ZoomSlider *m_zoomSlider;
 	KisAngleGauge *m_compass;
 	QComboBox *m_angleBox;
-	bool m_updating;
-	widgets::GroupedToolButton *m_viewFlip, *m_viewMirror, *m_rotationReset, *m_zoomPreset;
+	widgets::GroupedToolButton *m_viewFlip;
+	widgets::GroupedToolButton *m_viewMirror;
+	widgets::GroupedToolButton *m_rotationReset;
+	widgets::GroupedToolButton *m_zoomPreset;
 	QMenu *m_zoomsMenu;
+	bool m_updating = false;
 };
 
 }
