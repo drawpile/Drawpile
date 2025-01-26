@@ -308,6 +308,12 @@ public:
 
 	virtual bool hasAnyUserAccounts() const;
 
+	virtual bool supportsAdminSectionLocks() const;
+	virtual bool isAdminSectionLocked(const QString &section) const;
+	virtual bool checkAdminSectionLockPassword(const QString &password) const;
+	virtual bool setAdminSectionsLocked(
+		const QSet<QString> &sections, const QString &password);
+
 	/**
 	 * @brief Get the configured logger instance
 	 */

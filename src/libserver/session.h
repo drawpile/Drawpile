@@ -363,11 +363,12 @@ public:
 	 * @param method query method
 	 * @param path path components
 	 * @param request request body content
+	 * @param sectionLocked if this section is locked for writing
 	 * @return JSON API response content
 	 */
 	JsonApiResult callJsonApi(
 		JsonApiMethod method, const QStringList &path,
-		const QJsonObject &request);
+		const QJsonObject &request, bool sectionLocked);
 
 	/**
 	 * @brief Write a session related log entry.

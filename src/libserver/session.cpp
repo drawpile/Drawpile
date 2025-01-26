@@ -1922,7 +1922,8 @@ bool Session::importBans(
 }
 
 JsonApiResult Session::callJsonApi(
-	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request,
+	bool sectionLocked)
 {
 	if(!path.isEmpty()) {
 		QString head;
@@ -1988,8 +1989,9 @@ JsonApiResult Session::callJsonApi(
 			JsonApiResult::Ok, QJsonDocument(QJsonObject{{"status", "ok"}})};
 	}
 
-	return JsonApiResult{
-		JsonApiResult::Ok, QJsonDocument(getDescription(true))};
+	QJsonObject body = getDescription(true);
+	body.insert(QStringLiteral("_locked"), sectionLocked);
+	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(body)};
 }
 
 JsonApiResult Session::callListingsJsonApi(

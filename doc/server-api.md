@@ -32,6 +32,8 @@ Returns server status information:
 Returns a list of server settings:
 
     {
+        "_locked": boolean           (see Admin section locks - this not a setting)
+
         "clientTimeout": seconds     (connection timeout)
         "sessionSizeLimit": bytes    (maximum session size, or 0 for unlimited)
         "sessionCountLimit": integer (maximum number of active sessions)
@@ -72,28 +74,31 @@ See also `src/srver/serverconfig.h` for the most up to date list of supported se
 
 ## Sessions
 
-Get a list of active sessions: `GET /api/sessions/`
+Get a list of active sessions: `GET /api/sessions/?v=2` (without the `?v=2` query parameter you just get the sessions array at top-level)
 
 Returns:
 
-    [
-        {
-            "id": "uuid"             (unique session ID)
-            "alias": "alias"         (ID alias, if set)
-            "protocol": "xx:1.2.3"   (protocol version)
-            "userCount": integer     (number of users)
-            "maxUserCount": integer  (maximum number of users)
-            "founder": "username"    (name of the user who created the session)
-            "title": "string"        (session title)
-            "persistent": boolean    (is persistence activated. Only included if feature is enabled serverwide)
-            "hasPassword": boolean   (is the session password protected)
-            "closed": boolean        (is the session closed to new users)
-            "authOnly": boolean      (are only registered users allowed)
-            "nsfm": boolean          (does this session contain age restricted content)
-            "startTime": "timestamp" ()
-            "size": bytes            (session history size)
-        }, ...
-    ]
+    {
+        "_locked": boolean (see Admin section locks)
+        "sessions": [
+            {
+                "id": "uuid"             (unique session ID)
+                "alias": "alias"         (ID alias, if set)
+                "protocol": "xx:1.2.3"   (protocol version)
+                "userCount": integer     (number of users)
+                "maxUserCount": integer  (maximum number of users)
+                "founder": "username"    (name of the user who created the session)
+                "title": "string"        (session title)
+                "persistent": boolean    (is persistence activated. Only included if feature is enabled serverwide)
+                "hasPassword": boolean   (is the session password protected)
+                "closed": boolean        (is the session closed to new users)
+                "authOnly": boolean      (are only registered users allowed)
+                "nsfm": boolean          (does this session contain age restricted content)
+                "startTime": "timestamp" ()
+                "size": bytes            (session history size)
+            }, ...
+        ]
+    }
 
 Implementation: `callSessionJsonApi @ src/libserver/sessionserver.cpp`
 
@@ -101,6 +106,7 @@ Get detailed information about a session: `GET /api/sessions/:id/`
 
     {
         *same fields as above
+        "_locked": boolean      (see Admin section locks)
         "maxSize": bytes        (maximum allowed size of the session)
         "resetThreshold": bytes (autoreset threshold)
         "deputies": boolean     (are trusted users allowed to kick non-trusted users)
@@ -250,40 +256,46 @@ Implementation: `callChatJsonApi @ src/libserver/session.cpp`
 
 ## Logged in users
 
-`GET /api/users/`
+`GET /api/users/?v=2`
 
-Returns a list of logged in users:
+Returns a list of logged in users (without the `?v=2` query parameter you just get the users array at top-level):
 
-    [
-        {
-            "session": "session ID" (if empty, this user hasn't joined any session yet)
-            "id": integer           (unique only within the session),
-            "name": "user name",
-            "ip": "IP address",
-            "auth": boolean         (is authenticated),
-            "op": boolean           (is session owner),
-            "muted": boolean        (is blocked from chat),
-            "mod": boolean          (is a moderator),
-            "tls": boolean          (is using a secure connection)
-        }
-    ]
+    {
+        "_locked": boolean (see Admin section locks)
+        "users": [
+            {
+                "session": "session ID" (if empty, this user hasn't joined any session yet)
+                "id": integer           (unique only within the session),
+                "name": "user name",
+                "ip": "IP address",
+                "auth": boolean         (is authenticated),
+                "op": boolean           (is session owner),
+                "muted": boolean        (is blocked from chat),
+                "mod": boolean          (is a moderator),
+                "tls": boolean          (is using a secure connection)
+            }
+        ]
+    }
 
 Implementation: `callUserJsonApi @ src/shared/server/sessionserver.cpp`
 
 ## User accounts
 
-`GET /api/accounts/`
+`GET /api/accounts/?v=2`
 
-Returns a list of registered user accounts:
+Returns a list of registered user accounts (without the `?v=2` query parameter you just get the accounts array at top-level):
 
-    [
-        {
-            "id": integer              (internal account ID number)
-            "username": "username"
-            "locked": boolean          (is this account locked)
-            "flags": "flag1,flag2"     (comma separated list of flags)
-        }, ...
-    ]
+    {
+        "_locked": boolean (see Admin section locks)
+        "accounts": [
+            {
+                "id": integer              (internal account ID number)
+                "username": "username"
+                "locked": boolean          (is this account locked)
+                "flags": "flag1,flag2"     (comma separated list of flags)
+            }, ...
+        ]
+    }
 
 Possible user flags are:
 
@@ -333,20 +345,23 @@ Implementation: `accountsJsonApi @ src/server/multiserver.cpp`
 
 ## Banlist
 
-`GET /api/banlist/`
+`GET /api/banlist/?v=2`
 
-Returns a list of serverwide IP bans:
+Returns a list of serverwide IP bans (without the `?v=2` query parameter you just get the accounts array at top-level):
 
-    [
-        {
-            "id": ban entry ID number,
-            "ip": "banned IP address",
-            "subnet": "subnet mask (0 means no mask, just the individual address is banned)",
-            "expires": "ban expiration date",
-            "comment": "Freeform comment about the ban",
-            "added": "date when the ban was added"
-        }
-    ]
+    {
+        "_locked": boolean (see Admin section locks)
+        "bans": [
+            {
+                "id": ban entry ID number,
+                "ip": "banned IP address",
+                "subnet": "subnet mask (0 means no mask, just the individual address is banned)",
+                "expires": "ban expiration date",
+                "comment": "Freeform comment about the ban",
+                "added": "date when the ban was added"
+            }
+        ]
+    }
 
 To add a ban, make a `POST` request to `/api/banlist/`:
 
@@ -368,6 +383,7 @@ Implementation: `banlistJsonApi @ src/server/multiserver.cpp`
 Returns:
 
     {
+        "_locked": boolean (see Admin section locks)
         "enabled": boolean
         "whitelist": [
             "regexp",
@@ -428,3 +444,42 @@ Possible topics are:
  * Status: general status messages
 
 Implementation: `logJsonApi @ src/server/multiserver.cpp`
+
+
+## Admin section locks
+
+You can lock sections for editing. This will block all non-GET and non-HEAD requests from executing. This helps avoid accidentally changing settings you didn't mean to. You can also optionally set an unlock password, which can be used sorta as a user account substitute. Relevant endpoints return a `_locked` field in their response to indicate if that section is locked.
+
+`GET /api/locks/`
+
+Show the state of admin section locks.
+
+    {
+        "supported": boolean (if locks are supported, true when using a config database)
+        "password": boolean  (whether an unlock password is set)
+        "sections": {
+            "accounts": boolean             (accounts endpoints)
+            "bans": boolean                 (internal ban endpoints)
+            "extbans": boolean              (external ban endpoints)
+            "listserverwhitelist": boolean  (listing whitelist endpoints)
+            "server": boolean               (server settings endpoint)
+            "sessions": boolean             (session and users endpoints)
+        }
+    }
+
+`PUT /api/locks`
+
+Change admin section locks.
+
+    {
+        "password": string   (password to use or set)
+        "sections": []string (section names from above to lock)
+    }
+
+When sections is non-empty, this will lock the given sections and set the password, if any. If they are empty, it will clear the locked sections and password. If a password is set, it will be checked against the given password and return an error if they don't match.
+
+If you lock yourself out and forget the password, you can clear the password hash in the database file manually. You need write access to that file on the server machine, it's not something you can do via the HTTP interface. To do this, run the following:
+
+    sqlite3 PATH_TO_DATABASE "delete from settings where key = '_lock_admin_hash'"
+
+You need to have `sqlite3` installed, usually this is available in package managers under that name. `PATH_TO_DATABASE` is the path to your drawpile-srv settings database file, the one you specify via `-d` or `--database` on startup.

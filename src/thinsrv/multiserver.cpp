@@ -459,27 +459,47 @@ JsonApiResult MultiServer::callJsonApi(
 	std::tie(head, tail) = popApiPath(path);
 
 	if(head == QStringLiteral("server")) {
-		return serverJsonApi(method, tail, request);
+		return callJsonApiCheckLock(
+			method, tail, request, QStringLiteral("server"),
+			&MultiServer::serverJsonApi);
 	} else if(head == QStringLiteral("status")) {
 		return statusJsonApi(method, tail, request);
 	} else if(head == QStringLiteral("sessions")) {
-		return m_sessions->callSessionJsonApi(method, tail, request);
+		return callJsonApiCheckLock(
+			method, tail, request, QStringLiteral("sessions"),
+			&MultiServer::sessionsJsonApi);
 	} else if(head == QStringLiteral("users")) {
-		return m_sessions->callUserJsonApi(method, tail, request);
+		return callJsonApiCheckLock(
+			method, tail, request, QStringLiteral("sessions"),
+			&MultiServer::usersJsonApi);
 	} else if(head == QStringLiteral("banlist")) {
-		return banlistJsonApi(method, tail, request);
+		return callJsonApiCheckLock(
+			method, tail, request, QStringLiteral("bans"),
+			&MultiServer::banlistJsonApi);
 	} else if(head == QStringLiteral("systembans")) {
-		return systembansJsonApi(method, tail, request);
+		return callJsonApiCheckLock(
+			method, tail, request, QStringLiteral("bans"),
+			&MultiServer::systembansJsonApi);
 	} else if(head == QStringLiteral("userbans")) {
-		return userbansJsonApi(method, tail, request);
+		return callJsonApiCheckLock(
+			method, tail, request, QStringLiteral("bans"),
+			&MultiServer::userbansJsonApi);
 	} else if(head == QStringLiteral("listserverwhitelist")) {
-		return listserverWhitelistJsonApi(method, tail, request);
+		return callJsonApiCheckLock(
+			method, tail, request, QStringLiteral("listserverwhitelist"),
+			&MultiServer::listserverWhitelistJsonApi);
 	} else if(head == QStringLiteral("accounts")) {
-		return accountsJsonApi(method, tail, request);
+		return callJsonApiCheckLock(
+			method, tail, request, QStringLiteral("accounts"),
+			&MultiServer::accountsJsonApi);
 	} else if(head == QStringLiteral("log")) {
 		return logJsonApi(method, tail, request);
 	} else if(head == QStringLiteral("extbans")) {
-		return extbansJsonApi(method, tail, request);
+		return callJsonApiCheckLock(
+			method, tail, request, QStringLiteral("extbans"),
+			&MultiServer::extbansJsonApi);
+	} else if(head == QStringLiteral("locks")) {
+		return locksJsonApi(method, tail, request);
 	} else {
 		return JsonApiNotFound();
 	}
@@ -493,8 +513,25 @@ void MultiServer::callJsonApiAsync(
 	emit jsonApiResult(requestId, result);
 }
 
+JsonApiResult MultiServer::callJsonApiCheckLock(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request,
+	const QString &section,
+	const std::function<JsonApiResult(
+		MultiServer *, JsonApiMethod, const QStringList &, const QJsonObject &,
+		bool)> &fn)
+{
+	bool sectionLocked = m_config->isAdminSectionLocked(section);
+	if(method == JsonApiMethod::Get || !sectionLocked) {
+		return fn(this, method, path, request, sectionLocked);
+	} else {
+		return JsonApiErrorResult(
+			JsonApiResult::Forbidden, QStringLiteral("This section is locked"));
+	}
+}
+
 JsonApiResult MultiServer::serverJsonApi(
-	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request,
+	bool sectionLocked)
 {
 	if(!path.isEmpty()) {
 		return JsonApiNotFound();
@@ -591,6 +628,7 @@ JsonApiResult MultiServer::serverJsonApi(
 	}
 #endif
 
+	result.insert(QStringLiteral("_locked"), sectionLocked);
 	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(result)};
 }
 
@@ -621,8 +659,23 @@ JsonApiResult MultiServer::statusJsonApi(
 	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(result)};
 }
 
+JsonApiResult MultiServer::sessionsJsonApi(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request,
+	bool sectionLocked)
+{
+	return m_sessions->callSessionJsonApi(method, path, request, sectionLocked);
+}
+
+JsonApiResult MultiServer::usersJsonApi(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request,
+	bool sectionLocked)
+{
+	return m_sessions->callUserJsonApi(method, path, request, sectionLocked);
+}
+
 JsonApiResult MultiServer::banlistJsonApi(
-	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request,
+	bool sectionLocked)
 {
 	// Database is needed to manipulate the banlist
 	Database *db = qobject_cast<Database *>(m_config);
@@ -649,8 +702,16 @@ JsonApiResult MultiServer::banlistJsonApi(
 	}
 
 	if(method == JsonApiMethod::Get) {
-		return JsonApiResult{
-			JsonApiResult::Ok, QJsonDocument(db->getIpBanlist())};
+		QJsonDocument body;
+		if(parseRequestInt(request, QStringLiteral("v"), 0, 0) <= 1) {
+			body.setArray(db->getIpBanlist());
+		} else {
+			body.setObject({
+				{QStringLiteral("bans"), db->getIpBanlist()},
+				{QStringLiteral("_locked"), sectionLocked},
+			});
+		}
+		return JsonApiResult{JsonApiResult::Ok, body};
 
 	} else if(method == JsonApiMethod::Create) {
 		QHostAddress ip{request["ip"].toString()};
@@ -680,7 +741,8 @@ JsonApiResult MultiServer::banlistJsonApi(
 }
 
 JsonApiResult MultiServer::systembansJsonApi(
-	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request,
+	bool sectionLocked)
 {
 	Database *db = qobject_cast<Database *>(m_config);
 	if(!db) {
@@ -705,8 +767,16 @@ JsonApiResult MultiServer::systembansJsonApi(
 	}
 
 	if(method == JsonApiMethod::Get) {
-		return JsonApiResult{
-			JsonApiResult::Ok, QJsonDocument(db->getSystemBanlist())};
+		QJsonDocument body;
+		if(parseRequestInt(request, QStringLiteral("v"), 0, 0) <= 1) {
+			body.setArray(db->getSystemBanlist());
+		} else {
+			body.setObject({
+				{QStringLiteral("bans"), db->getSystemBanlist()},
+				{QStringLiteral("_locked"), sectionLocked},
+			});
+		}
+		return JsonApiResult{JsonApiResult::Ok, body};
 
 	} else if(method == JsonApiMethod::Create) {
 		QString sid = request["sid"].toString();
@@ -747,7 +817,8 @@ JsonApiResult MultiServer::systembansJsonApi(
 }
 
 JsonApiResult MultiServer::userbansJsonApi(
-	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request,
+	bool sectionLocked)
 {
 	Database *db = qobject_cast<Database *>(m_config);
 	if(!db) {
@@ -772,8 +843,16 @@ JsonApiResult MultiServer::userbansJsonApi(
 	}
 
 	if(method == JsonApiMethod::Get) {
-		return JsonApiResult{
-			JsonApiResult::Ok, QJsonDocument(db->getUserBanlist())};
+		QJsonDocument body;
+		if(parseRequestInt(request, QStringLiteral("v"), 0, 0) <= 1) {
+			body.setArray(db->getUserBanlist());
+		} else {
+			body.setObject({
+				{QStringLiteral("bans"), db->getUserBanlist()},
+				{QStringLiteral("_locked"), sectionLocked},
+			});
+		}
+		return JsonApiResult{JsonApiResult::Ok, body};
 
 	} else if(method == JsonApiMethod::Create) {
 		QJsonValue rawUserId = request["userId"];
@@ -815,7 +894,8 @@ JsonApiResult MultiServer::userbansJsonApi(
 }
 
 JsonApiResult MultiServer::listserverWhitelistJsonApi(
-	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request,
+	bool sectionLocked)
 {
 	// Database is needed to manipulate the whitelist
 	Database *db = qobject_cast<Database *>(m_config);
@@ -829,7 +909,7 @@ JsonApiResult MultiServer::listserverWhitelistJsonApi(
 
 	if(method == JsonApiMethod::Update) {
 		QStringList whitelist;
-		for(const auto &v : request["whitelist"].toArray()) {
+		for(const auto &v : request[QStringLiteral("whitelist")].toArray()) {
 			const QString str = v.toString();
 			if(str.isEmpty()) {
 				continue;
@@ -842,24 +922,30 @@ JsonApiResult MultiServer::listserverWhitelistJsonApi(
 			}
 			whitelist << str;
 		}
-		if(!request["enabled"].isUndefined()) {
+		if(!request[QStringLiteral("enabled")].isUndefined()) {
 			db->setConfigBool(
-				config::AnnounceWhiteList, request["enabled"].toBool());
+				config::AnnounceWhiteList,
+				request[QStringLiteral("enabled")].toBool());
 		}
-		if(!request["whitelist"].isUndefined()) {
+		if(!request[QStringLiteral("whitelist")].isUndefined()) {
 			db->updateListServerWhitelist(whitelist);
 		}
 	}
 
 	const QJsonObject o{
-		{"enabled", db->getConfigBool(config::AnnounceWhiteList)},
-		{"whitelist", QJsonArray::fromStringList(db->listServerWhitelist())}};
+		{QStringLiteral("enabled"),
+		 db->getConfigBool(config::AnnounceWhiteList)},
+		{QStringLiteral("whitelist"),
+		 QJsonArray::fromStringList(db->listServerWhitelist())},
+		{QStringLiteral("_locked"), sectionLocked},
+	};
 
 	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(o)};
 }
 
 JsonApiResult MultiServer::accountsJsonApi(
-	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request,
+	bool sectionLocked)
 {
 	// Database is needed to manipulate account list
 	Database *db = qobject_cast<Database *>(m_config);
@@ -871,14 +957,16 @@ JsonApiResult MultiServer::accountsJsonApi(
 		QString head = path.at(0);
 
 		if(method == JsonApiMethod::Create) {
-			if(head == "auth" && request.contains("username") &&
-			   request.contains("password")) {
+			if(head == QStringLiteral("auth") &&
+			   request.contains(QStringLiteral("username")) &&
+			   request.contains(QStringLiteral("password"))) {
 				RegisteredUser user = db->getUserAccount(
-					request["username"].toString(),
-					request["password"].toString());
+					request[QStringLiteral("username")].toString(),
+					request[QStringLiteral("password")].toString());
 				return JsonApiResult{
 					JsonApiResult::Ok,
-					QJsonDocument(QJsonObject{{"status", user.status}})};
+					QJsonDocument(
+						QJsonObject{{QStringLiteral("status"), user.status}})};
 			}
 
 			return JsonApiNotFound();
@@ -893,8 +981,8 @@ JsonApiResult MultiServer::accountsJsonApi(
 		} else if(method == JsonApiMethod::Delete) {
 			if(db->deleteAccount(head.toInt())) {
 				QJsonObject body;
-				body["status"] = "ok";
-				body["deleted"] = head.toInt();
+				body[QStringLiteral("status")] = QStringLiteral("ok");
+				body[QStringLiteral("deleted")] = head.toInt();
 				return JsonApiResult{JsonApiResult::Ok, QJsonDocument(body)};
 			} else {
 				return JsonApiNotFound();
@@ -908,26 +996,35 @@ JsonApiResult MultiServer::accountsJsonApi(
 		return JsonApiNotFound();
 
 	if(method == JsonApiMethod::Get) {
-		return JsonApiResult{
-			JsonApiResult::Ok, QJsonDocument(db->getAccountList())};
+		QJsonDocument body;
+		if(parseRequestInt(request, QStringLiteral("v"), 0, 0) <= 1) {
+			body.setArray(db->getAccountList());
+		} else {
+			body.setObject({
+				{QStringLiteral("accounts"), db->getAccountList()},
+				{QStringLiteral("_locked"), sectionLocked},
+			});
+		}
+		return JsonApiResult{JsonApiResult::Ok, body};
 
 	} else if(method == JsonApiMethod::Create) {
-		QString username = request["username"].toString();
-		QString password = request["password"].toString();
-		bool locked = request["locked"].toBool();
-		QString flags = request["flags"].toString();
+		QString username = request[QStringLiteral("username")].toString();
+		QString password = request[QStringLiteral("password")].toString();
+		bool locked = request[QStringLiteral("locked")].toBool();
+		QString flags = request[QStringLiteral("flags")].toString();
 		if(username.isEmpty()) {
 			return JsonApiErrorResult(
-				JsonApiResult::BadRequest, "Username required");
+				JsonApiResult::BadRequest, QStringLiteral("Username required"));
 		}
 		if(password.isEmpty()) {
 			return JsonApiErrorResult(
-				JsonApiResult::BadRequest, "Password required");
+				JsonApiResult::BadRequest, QStringLiteral("Password required"));
 		}
 		QJsonObject o =
 			db->addAccount(username, password, locked, flags.split(','));
 		if(o.isEmpty()) {
-			return JsonApiErrorResult(JsonApiResult::BadRequest, "Error");
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, QStringLiteral("Error"));
 		}
 		return JsonApiResult{JsonApiResult::Ok, QJsonDocument(o)};
 
@@ -982,9 +1079,9 @@ JsonApiResult MultiServer::logJsonApi(
 }
 
 JsonApiResult MultiServer::extbansJsonApi(
-	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request,
+	bool sectionLocked)
 {
-	Q_UNUSED(request);
 	int pathLength = path.length();
 	if(pathLength == 0) {
 		if(method == JsonApiMethod::Get || method == JsonApiMethod::Delete) {
@@ -1007,6 +1104,7 @@ JsonApiResult MultiServer::extbansJsonApi(
 				 }},
 				{QStringLiteral("bans"), m_config->getExternalBans()},
 				{QStringLiteral("status"), m_extBans->status()},
+				{QStringLiteral("_locked"), sectionLocked},
 			};
 			return JsonApiResult{JsonApiResult::Ok, QJsonDocument(out)};
 		} else {
@@ -1075,6 +1173,85 @@ JsonApiResult MultiServer::extbansJsonApi(
 	} else {
 		return JsonApiNotFound();
 	}
+}
+
+JsonApiResult MultiServer::locksJsonApi(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	if(!path.isEmpty()) {
+		return JsonApiNotFound();
+	}
+
+	bool supported = m_config->supportsAdminSectionLocks();
+	QSet<QString> availableSections = {
+		QStringLiteral("accounts"), QStringLiteral("bans"),
+		QStringLiteral("extbans"),	QStringLiteral("listserverwhitelist"),
+		QStringLiteral("server"),	QStringLiteral("sessions"),
+	};
+
+	if(method == JsonApiMethod::Update && supported) {
+		QString password = request.value(QStringLiteral("password")).toString();
+		if(m_config->checkAdminSectionLockPassword(password)) {
+			QSet<QString> sectionsToLock;
+			for(const QJsonValue sectionValue :
+				request.value(QStringLiteral("sections")).toArray()) {
+				QString section = sectionValue.toString();
+				if(availableSections.contains(section)) {
+					sectionsToLock.insert(section);
+				}
+			}
+			bool unlock = sectionsToLock.isEmpty();
+			if(m_config->setAdminSectionsLocked(
+				   sectionsToLock, unlock ? QString() : password)) {
+				QString message;
+				if(unlock) {
+					message = QStringLiteral("Admin sections unlocked");
+				} else {
+					QStringList sortedSections(
+						sectionsToLock.constBegin(), sectionsToLock.constEnd());
+					sortedSections.sort();
+					message =
+						QStringLiteral(
+							"Admin sections locked (with%1 password): %2")
+							.arg(
+								password.isEmpty() ? QStringLiteral("out")
+												   : QString(),
+								sortedSections.join(QStringLiteral(", ")));
+				}
+				m_sessions->config()->logger()->logMessage(
+					Log()
+						.about(Log::Level::Info, Log::Topic::Status)
+						.message(message));
+			} else {
+				return JsonApiErrorResult(
+					JsonApiResult::InternalError,
+					QStringLiteral("Database error"));
+			}
+		} else {
+			m_sessions->config()->logger()->logMessage(
+				Log()
+					.about(Log::Level::Error, Log::Topic::Status)
+					.message(QStringLiteral(
+						"Incorrect admin section unlock password entered")));
+			return JsonApiErrorResult(
+				JsonApiResult::Forbidden, QStringLiteral("Incorrect password"));
+		}
+	} else if(method != JsonApiMethod::Get) {
+		return JsonApiBadMethod();
+	}
+
+	QJsonObject lockedSections;
+	for(const QString &section : availableSections) {
+		lockedSections.insert(section, m_config->isAdminSectionLocked(section));
+	}
+	return JsonApiResult{
+		JsonApiResult::Ok,
+		QJsonDocument(QJsonObject{
+			{QStringLiteral("supported"), supported},
+			{QStringLiteral("sections"), lockedSections},
+			{QStringLiteral("password"),
+			 !m_config->checkAdminSectionLockPassword(QString())},
+		})};
 }
 
 }

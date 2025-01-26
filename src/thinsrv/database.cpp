@@ -618,6 +618,61 @@ bool Database::hasAnyUserAccounts() const
 		   q.next();
 }
 
+bool Database::supportsAdminSectionLocks() const
+{
+	return true;
+}
+
+bool Database::isAdminSectionLocked(const QString &section) const
+{
+	QSqlQuery q(d->db);
+	return utils::db::exec(
+			   q, QStringLiteral("SELECT 1 FROM settings WHERE key = ?"),
+			   {QStringLiteral("_lock_admin_section_%1").arg(section)}) &&
+		   q.next();
+}
+
+bool Database::checkAdminSectionLockPassword(const QString &password) const
+{
+	QSqlQuery q(d->db);
+	if(utils::db::exec(
+		   q,
+		   QStringLiteral(
+			   "SELECT value FROM settings WHERE key = '_lock_admin_hash'"))) {
+		QByteArray hash = q.next() ? q.value(0).toByteArray() : QByteArray();
+		return !passwordhash::isValidHash(hash) ||
+			   (!password.isEmpty() && passwordhash::check(password, hash));
+	} else {
+		return false;
+	}
+}
+
+bool Database::setAdminSectionsLocked(
+	const QSet<QString> &sections, const QString &password)
+{
+	QVariantList keys;
+	for(const QString &section : sections) {
+		keys.append(QStringLiteral("_lock_admin_section_%1").arg(section));
+	}
+	return utils::db::tx(d->db, [&] {
+		QSqlQuery q(d->db);
+		QString batchSql =
+			QStringLiteral("INSERT INTO settings (key, value) VALUES (?, 1)");
+		return utils::db::exec(
+				   q, QStringLiteral("DELETE FROM settings "
+									 "WHERE INSTR(key, '_lock_admin_') = 1")) &&
+			   (sections.isEmpty() || (utils::db::prepare(q, batchSql) &&
+									   utils::db::bindValue(q, 0, keys) &&
+									   utils::db::execBatch(q, batchSql))) &&
+			   (password.isEmpty() ||
+				utils::db::exec(
+					q,
+					QStringLiteral("INSERT INTO settings (key, value) "
+								   "VALUES ('_lock_admin_hash', ?)"),
+					{passwordhash::hash(password)}));
+	});
+}
+
 static QJsonObject userQueryToJson(const QSqlQuery &q)
 {
 	QJsonObject o;

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libserver/inmemoryconfig.h"
 #include "libserver/serverlog.h"
+#include "libshared/util/passwordhash.h"
 
 namespace server {
 

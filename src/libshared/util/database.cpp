@@ -135,6 +135,12 @@ bool prepare(QSqlQuery &query, const QString &sql)
 	}
 }
 
+bool bindValue(QSqlQuery &query, int i, const QVariant &value)
+{
+	query.bindValue(i, value);
+	return true;
+}
+
 bool execPrepared(QSqlQuery &query, const QString &sql)
 {
 	if(query.exec()) {
@@ -154,8 +160,8 @@ bool execBatch(QSqlQuery &query, const QString &sql)
 		return true;
 	} else {
 		qWarning(
-			lcDpDatabase, "Error executing batch '%s': %s",
-			qUtf8Printable(sql), qUtf8Printable(query.lastError().text()));
+			lcDpDatabase, "Error executing batch '%s': %s", qUtf8Printable(sql),
+			qUtf8Printable(query.lastError().text()));
 		return false;
 	}
 }

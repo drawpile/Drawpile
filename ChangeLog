@@ -73,6 +73,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Allow toggling a "sketch mode" on layers, which will change the opacity and/or tint the layer locally. The exact look of this can be configured in the layer properties. Thanks abrasivetroop and leandro2222 for suggesting.
  * Feature: Use the sketch mode tinting for onion skins as well, since it gives better results when there's colored areas involved.
  * Fix: Properly update rotation when choosing an angle from the drop-down in the status bar when the angle is fractionally off the chosen angle. Thanks annoy for reporting.
+ * Server Feature: Allow locking admin API sections to prevent changes on them, optionally with a password that needs to be entered to unlock them.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

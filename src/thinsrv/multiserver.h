@@ -139,31 +139,46 @@ private:
 
 	void newClient(ThinServerClient *client);
 
+	JsonApiResult callJsonApiCheckLock(
+		JsonApiMethod method, const QStringList &path,
+		const QJsonObject &request, const QString &section,
+		const std::function<JsonApiResult(
+			MultiServer *, JsonApiMethod, const QStringList &,
+			const QJsonObject &, bool)> &fn);
 	JsonApiResult serverJsonApi(
 		JsonApiMethod method, const QStringList &path,
-		const QJsonObject &request);
+		const QJsonObject &request, bool sectionLocked);
 	JsonApiResult statusJsonApi(
 		JsonApiMethod method, const QStringList &path,
 		const QJsonObject &request);
+	JsonApiResult sessionsJsonApi(
+		JsonApiMethod method, const QStringList &path,
+		const QJsonObject &request, bool sectionLocked);
+	JsonApiResult usersJsonApi(
+		JsonApiMethod method, const QStringList &path,
+		const QJsonObject &request, bool sectionLocked);
 	JsonApiResult banlistJsonApi(
 		JsonApiMethod method, const QStringList &path,
-		const QJsonObject &request);
+		const QJsonObject &request, bool sectionLocked);
 	JsonApiResult systembansJsonApi(
 		JsonApiMethod method, const QStringList &path,
-		const QJsonObject &request);
+		const QJsonObject &request, bool sectionLocked);
 	JsonApiResult userbansJsonApi(
 		JsonApiMethod method, const QStringList &path,
-		const QJsonObject &request);
+		const QJsonObject &request, bool sectionLocked);
 	JsonApiResult listserverWhitelistJsonApi(
 		JsonApiMethod method, const QStringList &path,
-		const QJsonObject &request);
+		const QJsonObject &request, bool sectionLocked);
 	JsonApiResult accountsJsonApi(
 		JsonApiMethod method, const QStringList &path,
-		const QJsonObject &request);
+		const QJsonObject &request, bool sectionLocked);
 	JsonApiResult logJsonApi(
 		JsonApiMethod method, const QStringList &path,
 		const QJsonObject &request);
 	JsonApiResult extbansJsonApi(
+		JsonApiMethod method, const QStringList &path,
+		const QJsonObject &request, bool sectionLocked);
+	JsonApiResult locksJsonApi(
 		JsonApiMethod method, const QStringList &path,
 		const QJsonObject &request);
 

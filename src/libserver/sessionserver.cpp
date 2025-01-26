@@ -409,7 +409,8 @@ void SessionServer::cleanupSessions()
 }
 
 JsonApiResult SessionServer::callSessionJsonApi(
-	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request,
+	bool sectionLocked)
 {
 	QString head;
 	QStringList tail;
@@ -418,14 +419,23 @@ JsonApiResult SessionServer::callSessionJsonApi(
 	if(!head.isEmpty()) {
 		Session *s = getSessionById(head, false);
 		if(s) {
-			return s->callJsonApi(method, tail, request);
+			return s->callJsonApi(method, tail, request, sectionLocked);
 		} else {
 			return JsonApiNotFound();
 		}
 	}
 
 	if(method == JsonApiMethod::Get) {
-		return {JsonApiResult::Ok, QJsonDocument(sessionDescriptions())};
+		QJsonDocument body;
+		if(parseRequestInt(request, QStringLiteral("v"), 0, 0) <= 1) {
+			body.setArray(sessionDescriptions());
+		} else {
+			body.setObject({
+				{QStringLiteral("sessions"), sessionDescriptions()},
+				{QStringLiteral("_locked"), sectionLocked},
+			});
+		}
+		return JsonApiResult{JsonApiResult::Ok, body};
 	} else if(method == JsonApiMethod::Update) {
 		QString msg = request[QStringLiteral("message")].toString();
 		if(!msg.isEmpty()) {
@@ -444,9 +454,9 @@ JsonApiResult SessionServer::callSessionJsonApi(
 }
 
 JsonApiResult SessionServer::callUserJsonApi(
-	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request,
+	bool sectionLocked)
 {
-	Q_UNUSED(request)
 	if(method == JsonApiMethod::Get) {
 		switch(path.size()) {
 		case 0: {
@@ -454,12 +464,23 @@ JsonApiResult SessionServer::callUserJsonApi(
 			for(const ThinServerClient *c : m_clients) {
 				userlist.append(c->description());
 			}
-			return {JsonApiResult::Ok, QJsonDocument(userlist)};
+			QJsonDocument body;
+			if(parseRequestInt(request, QStringLiteral("v"), 0, 0) <= 1) {
+				body.setArray(userlist);
+			} else {
+				body.setObject({
+					{QStringLiteral("users"), userlist},
+					{QStringLiteral("_locked"), sectionLocked},
+				});
+			}
+			return JsonApiResult{JsonApiResult::Ok, body};
 		}
 		case 1: {
 			ThinServerClient *c = searchClientByPathUid(path[0]);
 			if(c) {
-				return {JsonApiResult::Ok, QJsonDocument(c->description())};
+				QJsonObject body = c->description();
+				body.insert(QStringLiteral("_locked"), sectionLocked);
+				return {JsonApiResult::Ok, QJsonDocument()};
 			} else {
 				return JsonApiNotFound();
 			}

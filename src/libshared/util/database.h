@@ -19,6 +19,8 @@ QSqlDatabase sqlite(
 
 bool prepare(QSqlQuery &query, const QString &sql);
 
+bool bindValue(QSqlQuery &query, int i, const QVariant &value);
+
 bool execPrepared(QSqlQuery &query, const QString &sql);
 
 bool execBatch(QSqlQuery &query, const QString &sql);

@@ -218,6 +218,31 @@ bool ServerConfig::hasAnyUserAccounts() const
 	return false;
 }
 
+bool ServerConfig::supportsAdminSectionLocks() const
+{
+	return false;
+}
+
+bool ServerConfig::isAdminSectionLocked(const QString &section) const
+{
+	Q_UNUSED(section);
+	return false;
+}
+
+bool ServerConfig::checkAdminSectionLockPassword(const QString &password) const
+{
+	Q_UNUSED(password);
+	return true;
+}
+
+bool ServerConfig::setAdminSectionsLocked(
+	const QSet<QString> &sections, const QString &password)
+{
+	Q_UNUSED(sections);
+	Q_UNUSED(password);
+	return false;
+}
+
 int ServerConfig::parseTimeString(const QString &str)
 {
 	static const QRegularExpression re(

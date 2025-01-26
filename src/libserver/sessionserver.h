@@ -129,16 +129,17 @@ public:
 	 * @param method query method
 	 * @param path path components
 	 * @param request request body content
+	 * @param sectionLocked if this section is locked for writing
 	 * @return JSON API response content
 	 */
 	JsonApiResult callSessionJsonApi(
 		JsonApiMethod method, const QStringList &path,
-		const QJsonObject &request);
+		const QJsonObject &request, bool sectionLocked);
 
 	//! Like callSessionJsonApi, but for the user list
 	JsonApiResult callUserJsonApi(
 		JsonApiMethod method, const QStringList &path,
-		const QJsonObject &request);
+		const QJsonObject &request, bool sectionLocked);
 
 signals:
 	/**

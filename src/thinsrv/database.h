@@ -33,6 +33,11 @@ public:
 	RegisteredUser getUserAccount(
 		const QString &username, const QString &password) const override;
 	bool hasAnyUserAccounts() const override;
+	bool supportsAdminSectionLocks() const override;
+	bool isAdminSectionLocked(const QString &section) const override;
+	bool checkAdminSectionLockPassword(const QString &password) const override;
+	bool setAdminSectionsLocked(
+		const QSet<QString> &sections, const QString &password) override;
 	ServerLog *logger() const override;
 
 	//! Get the list server URL whitelist
