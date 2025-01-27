@@ -3,6 +3,7 @@
 #define THINSRV_DBLOG_H
 #include "libserver/serverlog.h"
 #include <QSqlDatabase>
+#include <QSqlQuery>
 
 namespace server {
 
@@ -29,7 +30,11 @@ protected:
 	void storeMessage(const Log &entry) override;
 
 private:
+	static const QString INSERT_SQL;
+
 	QSqlDatabase m_db;
+	QSqlQuery m_insertQuery;
+	bool m_insertQueryPrepared = false;
 };
 
 }
