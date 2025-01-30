@@ -591,6 +591,7 @@ JsonApiResult MultiServer::serverJsonApi(
 #endif
 		config::SessionUserLimit,
 		config::EmptySessionLingerTime,
+		config::RequireMatchingHost,
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 
@@ -611,16 +612,21 @@ JsonApiResult MultiServer::serverJsonApi(
 	}
 
 	// Hide values for disabled features
-	if(!m_config->internalConfig().reportUrl.isValid()) {
+	const InternalConfig &icfg = m_config->internalConfig();
+	if(icfg.normalizedHostname.isEmpty()) {
+		result.remove(config::RequireMatchingHost.name);
+	}
+
+	if(!icfg.reportUrl.isValid()) {
 		result.remove(config::AbuseReport.name);
 	}
 
-	if(!m_config->internalConfig().extAuthUrl.isValid()) {
+	if(!icfg.extAuthUrl.isValid()) {
 		result.remove(config::UseExtAuth.name);
 	}
 
 #ifdef HAVE_WEBSOCKETS
-	if(!m_config->internalConfig().webSocket) {
+	if(!icfg.webSocket) {
 		result.remove(config::AllowGuestWeb.name);
 		result.remove(config::ExtAuthWeb.name);
 		result.remove(config::AllowGuestWebSession.name);

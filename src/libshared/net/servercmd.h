@@ -181,6 +181,9 @@ struct ServerReply {
 	static net::Message
 	makeStreamedResetProgress(uint8_t contextId, bool cancel);
 
+	static net::Message
+	makeResultClientInfo(const QString &message, bool browser);
+
 	static net::Message makeResultHostLookup(const QString &message);
 
 	static net::Message

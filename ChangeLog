@@ -75,6 +75,8 @@ Unreleased Version 2.2.2-pre
  * Fix: Properly update rotation when choosing an angle from the drop-down in the status bar when the angle is fractionally off the chosen angle. Thanks annoy for reporting.
  * Server Feature: Allow locking admin API sections to prevent changes on them, optionally with a password that needs to be entered to unlock them.
  * Server Feature: Only treat WebSocket connections from browsers (based on the presence of an Origin header) as requiring extra permissions, to allow desktop and mobile clients to connect via WebSockets without being subjected to extra restrictions.
+ * Server Feature: Allow hosting passworded sessions via the browser if password-dependent sessions are enabled, rather than refusing hosting altogether.
+ * Server Feature: Allow restricting connections to the correct host name as passed with --local-host. Enabling this requires an updated client, since older ones don't transmit the hostname.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

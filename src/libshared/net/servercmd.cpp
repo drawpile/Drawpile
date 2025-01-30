@@ -432,6 +432,16 @@ ServerReply::makeStreamedResetProgress(uint8_t contextId, bool cancel)
 	return net::makeServerCommandMessage(contextId, QJsonDocument{data});
 }
 
+net::Message
+ServerReply::makeResultClientInfo(const QString &message, bool browser)
+{
+	return make(
+		{{QStringLiteral("type"), QStringLiteral("result")},
+		 {QStringLiteral("message"), message},
+		 {QStringLiteral("cinfo"),
+		  QJsonObject({{QStringLiteral("browser"), browser}})}});
+}
+
 net::Message ServerReply::makeResultHostLookup(const QString &message)
 {
 	return make(

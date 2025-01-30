@@ -18,8 +18,17 @@
 
 namespace server {
 
+namespace {
+static QString clientInfoKeys[] = {
+	QStringLiteral("app_version"), QStringLiteral("protocol_version"),
+	QStringLiteral("qt_version"),  QStringLiteral("os"),
+	QStringLiteral("s"),		   QStringLiteral("m"),
+};
+}
+
 Sessions::~Sessions() {}
 
+// Logs client info on destruction, to make sure we got it somewhere.
 class LoginHandler::ClientInfoLogGuard {
 public:
 	ClientInfoLogGuard(LoginHandler *loginHandler, const QJsonObject &info)
@@ -29,6 +38,18 @@ public:
 	}
 
 	~ClientInfoLogGuard() { m_loginHandler->logClientInfo(m_info); }
+
+	const QJsonObject &info() const { return m_info; }
+
+	const QString appVersion() const
+	{
+		return m_info.value(QStringLiteral("app_version")).toString();
+	}
+
+	const QString sid() const
+	{
+		return m_info.value(QStringLiteral("s")).toString();
+	}
 
 private:
 	LoginHandler *m_loginHandler;
@@ -48,6 +69,8 @@ LoginHandler::LoginHandler(
 
 void LoginHandler::startLoginProcess()
 {
+	m_requireMatchingHost =
+		m_config->getConfigBool(config::RequireMatchingHost);
 	m_mandatoryLookup = m_config->getConfigBool(config::MandatoryLookup);
 	m_minimumProtocolVersionString =
 		m_config->getConfigString(config::MinimumProtocolVersion);
@@ -61,8 +84,6 @@ void LoginHandler::startLoginProcess()
 		}
 	}
 
-	m_state = needsLookup() ? State::WaitForLookup : State::WaitForIdent;
-
 	QJsonArray flags;
 	if(m_config->getConfigInt(config::SessionCountLimit) > 1) {
 		flags << QStringLiteral("MULTI");
@@ -73,10 +94,15 @@ void LoginHandler::startLoginProcess()
 	if(m_client->hasSslSupport()) {
 		flags << QStringLiteral("TLS") << QStringLiteral("SECURE");
 		m_state = State::WaitForSecure;
+	} else {
+		m_state = m_requireMatchingHost ? State::WaitForClientInfo
+				  : needsLookup()		? State::WaitForLookup
+										: State::WaitForIdent;
 	}
-	bool allowGuests = m_config->getConfigBool(config::AllowGuests) &&
-					   (!m_client->isBrowser() ||
-						m_config->getConfigBool(config::AllowGuestWeb));
+	bool browser = m_client->isBrowser();
+	bool allowGuests =
+		m_config->getConfigBool(config::AllowGuests) &&
+		(!browser || m_config->getConfigBool(config::AllowGuestWeb));
 	if(!allowGuests) {
 		flags << QStringLiteral("NOGUEST");
 	}
@@ -93,16 +119,31 @@ void LoginHandler::startLoginProcess()
 	}
 #endif
 	flags << QStringLiteral("MBANIMPEX") // Moderators can always export bans.
-		  << QStringLiteral("LOOKUP");	 // This server supports lookups.
+		  << QStringLiteral("LOOKUP")	 // This server supports lookups.
+		  << QStringLiteral("CINFO");	 // Supports client info messages.
 
 	QJsonObject methods;
-	bool allowGuestHosts =
-		m_config->getConfigBool(config::AllowGuestHosts) &&
-		(!m_client->isBrowser() ||
-		 m_config->getConfigBool(config::AllowGuestWebSession));
+	bool allowGuestHosts = m_config->getConfigBool(config::AllowGuestHosts);
+	HostPrivilege guestHost = HostPrivilege::None;
 	if(allowGuests) {
 		QJsonArray guestActions = {QStringLiteral("join")};
+		// Guest host permissions are a bit more complicated for the browser. It
+		// only gets general host permission if guests can manipulate the web
+		// allowance setting. If web session allowance is based on passwords,
+		// the browser can only host passworded sessions.
 		if(allowGuestHosts) {
+			if(browser) {
+				if(m_config->getConfigBool(config::AllowGuestWebSession)) {
+					guestHost = HostPrivilege::Any;
+				} else if(m_config->getConfigBool(
+							  config::PasswordDependentWebSession)) {
+					guestHost = HostPrivilege::Passworded;
+				}
+			} else {
+				guestHost = HostPrivilege::Any;
+			}
+		}
+		if(guestHost != HostPrivilege::None) {
 			guestActions.append(QStringLiteral("host"));
 		}
 		methods[QStringLiteral("guest")] = QJsonObject{{
@@ -124,6 +165,18 @@ void LoginHandler::startLoginProcess()
 	const QUrl extAuthUrl = m_config->internalConfig().extAuthUrl;
 	if(extAuthUrl.isValid() && m_config->getConfigBool(config::UseExtAuth)) {
 		QJsonArray extauthActions = {QStringLiteral("join")};
+		switch(guestHost) {
+		case HostPrivilege::Any:
+		case HostPrivilege::Passworded:
+			extauthActions.append(QStringLiteral("host"));
+			break;
+		default:
+			if(m_config->getConfigBool(config::ExtAuthHost) &&
+			   (!browser ||
+				m_config->getConfigBool(config::ExtAuthWebSession))) {
+				extauthActions.append(QStringLiteral("host"));
+			}
+		}
 		if(allowGuestHosts || m_config->getConfigBool(config::ExtAuthHost)) {
 			extauthActions.append(QStringLiteral("host"));
 		}
@@ -210,9 +263,21 @@ void LoginHandler::handleLoginMessage(const net::Message &msg)
 			sendError("tlsRequired", "TLS required");
 		}
 
+	} else if(m_state == State::WaitForClientInfo) {
+		if(cmd.cmd == QStringLiteral("cinfo")) {
+			handleClientInfoMessage(cmd);
+		} else {
+			sendError(
+				QStringLiteral("clientInfoUnsupported"),
+				QStringLiteral(
+					"Your version of Drawpile is too old. To update, go to "
+					"drawpile.net and download a newer version."));
+		}
+
 	} else if(m_state == State::WaitForLookup) {
-		// Client must either look up a session to join or want to host.
-		if(cmd.cmd == QStringLiteral("lookup")) {
+		if(cmd.cmd == QStringLiteral("cinfo")) {
+			handleClientInfoMessage(cmd);
+		} else if(cmd.cmd == QStringLiteral("lookup")) {
 			handleLookupMessage(cmd);
 		} else {
 			sendError(
@@ -224,7 +289,9 @@ void LoginHandler::handleLoginMessage(const net::Message &msg)
 
 	} else if(m_state == State::WaitForIdent) {
 		// Wait for user identification before moving on to session listing
-		if(cmd.cmd == QStringLiteral("lookup")) {
+		if(cmd.cmd == QStringLiteral("cinfo")) {
+			handleClientInfoMessage(cmd);
+		} else if(cmd.cmd == QStringLiteral("lookup")) {
 			handleLookupMessage(cmd);
 		} else if(cmd.cmd == "ident") {
 			handleIdentMessage(cmd);
@@ -235,6 +302,7 @@ void LoginHandler::handleLoginMessage(const net::Message &msg)
 					.message(
 						"Invalid login command (while waiting for ident): " +
 						cmd.cmd));
+			m_state = State::Ignore;
 			m_client->disconnectClient(
 				Client::DisconnectionReason::Error, "invalid message", cmd.cmd);
 		}
@@ -252,6 +320,7 @@ void LoginHandler::handleLoginMessage(const net::Message &msg)
 								  "Invalid login command (while waiting for "
 								  "join/host): " +
 								  cmd.cmd));
+			m_state = State::Ignore;
 			m_client->disconnectClient(
 				Client::DisconnectionReason::Error, "invalid message", cmd.cmd);
 		}
@@ -271,12 +340,79 @@ static QStringList jsonArrayToStringList(const QJsonArray &a)
 }
 #endif
 
+void LoginHandler::handleClientInfoMessage(const net::ServerCommand &cmd)
+{
+	if(!m_clientInfo.isEmpty()) {
+		sendError(
+			QStringLiteral("cinfoAlreadyDone"),
+			QStringLiteral("Client info already done"));
+		return;
+	}
+
+	if(cmd.args.size() != 2 || !cmd.args[0].isString() ||
+	   !cmd.args[1].isObject()) {
+		sendError(
+			QStringLiteral("syntax"),
+			QStringLiteral("Expected host name and client info object"));
+		return;
+	}
+
+	ClientInfoLogGuard clientInfoLogGuard(
+		this, extractClientInfo(cmd.args[1].toObject(), false));
+
+	static QRegularExpression versionRe(
+		QStringLiteral("\\A([0-9]+)\\.([0-9+])\\.([0-9]+)"));
+	QString clientVersion = clientInfoLogGuard.appVersion();
+	if(!versionRe.match(clientVersion).hasMatch()) {
+		sendError(
+			QStringLiteral("badversion"),
+			QStringLiteral("Invalid client version"));
+		return;
+	}
+
+	if(!verifySystemId(clientInfoLogGuard.sid(), true)) {
+		return;
+	}
+
+	QString expectedHost = m_config->internalConfig().normalizedHostname;
+	if(!expectedHost.isEmpty()) {
+		QString host = cmd.args[0].toString();
+		if(expectedHost.compare(host, Qt::CaseInsensitive) != 0) {
+			m_client->log(
+				Log()
+					.about(
+						m_requireMatchingHost ? Log::Level::Error
+											  : Log::Level::Warn,
+						Log::Topic::RuleBreak)
+					.message(
+						QStringLiteral(
+							"Client host name '%1' is not our host name '%2'")
+							.arg(host, expectedHost)));
+			if(m_requireMatchingHost) {
+				sendError(
+					QStringLiteral("mismatchedHostName"),
+					QStringLiteral("Invalid host name."));
+				return;
+			}
+		}
+	}
+
+	if(m_state == State::WaitForClientInfo) {
+		m_state = needsLookup() ? State::WaitForLookup : State::WaitForIdent;
+	}
+
+	m_clientInfo = clientInfoLogGuard.info();
+	send(net::ServerReply::makeResultClientInfo(
+		QStringLiteral("Client info OK!"), m_client->isBrowser()));
+}
+
 void LoginHandler::handleLookupMessage(const net::ServerCommand &cmd)
 {
 	if(!m_lookup.isNull()) {
 		sendError(
 			QStringLiteral("lookupAlreadyDone"),
 			QStringLiteral("Session lookup already done"));
+		return;
 	}
 
 	compat::sizetype argc = cmd.args.size();
@@ -594,11 +730,11 @@ void LoginHandler::authLoginOk(
 	m_client->setAuthFlags(effectiveFlags);
 
 	m_client->setModerator(isMod, isGhost);
-	if(!avatar.isEmpty())
+	if(!avatar.isEmpty()) {
 		m_client->setAvatar(avatar);
-	m_hostPrivilege =
-		effectiveFlags.contains(QStringLiteral("HOST")) &&
-		(!m_client->isWebSocket() || effectiveFlags.contains("WEBSESSION"));
+	}
+
+	m_hostPrivilege = getHostPrivilege(effectiveFlags);
 
 	if(m_client->triggerBan(true)) {
 		m_state = State::Ignore;
@@ -748,7 +884,7 @@ void LoginHandler::guestLogin(
 	QSet<QString> effectiveFlags;
 	insertImplicitFlags(effectiveFlags);
 	m_client->setAuthFlags(effectiveFlags);
-	m_hostPrivilege = effectiveFlags.contains(QStringLiteral("HOST"));
+	m_hostPrivilege = getHostPrivilege(effectiveFlags);
 
 	QJsonArray jsonFlags;
 	for(const QString &flag : effectiveFlags) {
@@ -777,8 +913,11 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 {
 	Q_ASSERT(!m_client->username().isEmpty());
 
-	// Logs client info on destruction, to make sure we got it somewhere.
-	ClientInfoLogGuard clientInfoLogGuard(this, extractClientInfo(cmd));
+	ClientInfoLogGuard clientInfoLogGuard(
+		this, extractClientInfo(cmd.kwargs, true));
+	if(!compareClientInfo(clientInfoLogGuard.info())) {
+		return;
+	}
 
 	// Basic validation
 	if(!m_lookup.isEmpty()) {
@@ -788,7 +927,21 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 		return;
 	}
 
-	if(!m_hostPrivilege) {
+	QString password = cmd.kwargs.value(QStringLiteral("password")).toString();
+	switch(m_hostPrivilege) {
+	case HostPrivilege::Any:
+		break;
+	case HostPrivilege::Passworded:
+		if(password.isEmpty()) {
+			sendError(
+				QStringLiteral("passwordedHost"),
+				QStringLiteral("You're not allowed to host sessions without a "
+							   "session password"));
+			return;
+		}
+		break;
+	default:
+		Q_ASSERT(m_hostPrivilege == HostPrivilege::None);
 		sendError("unauthorizedHost", "Hosting not authorized");
 		return;
 	}
@@ -830,7 +983,8 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 		}
 	}
 
-	if(!verifySystemId(cmd, protocolVersion)) {
+	if(!verifySystemId(
+		   clientInfoLogGuard.sid(), protocolVersion.shouldHaveSystemId())) {
 		return;
 	}
 
@@ -878,8 +1032,9 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 		return;
 	}
 
-	if(cmd.kwargs["password"].isString())
-		session->history()->setPassword(cmd.kwargs["password"].toString());
+	if(!password.isEmpty()) {
+		session->history()->setPassword(password);
+	}
 
 	if(shouldAllowWebOnHost(cmd, session)) {
 		session->history()->setFlag(SessionHistory::AllowWeb);
@@ -907,8 +1062,11 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 {
 	Q_ASSERT(!m_client->username().isEmpty());
 
-	// Logs client info on destruction.
-	ClientInfoLogGuard clientInfoLogGuard(this, extractClientInfo(cmd));
+	ClientInfoLogGuard clientInfoLogGuard(
+		this, extractClientInfo(cmd.kwargs, true));
+	if(!compareClientInfo(clientInfoLogGuard.info())) {
+		return;
+	}
 
 	if(cmd.args.size() != 1) {
 		sendError("syntax", "Expected session ID");
@@ -944,7 +1102,9 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 		return;
 	}
 
-	if(!verifySystemId(cmd, session->history()->protocolVersion())) {
+	if(!verifySystemId(
+		   clientInfoLogGuard.sid(),
+		   session->history()->protocolVersion().shouldHaveSystemId())) {
 		return;
 	}
 
@@ -1043,17 +1203,13 @@ void LoginHandler::checkClientCapabilities(const net::ServerCommand &cmd)
 	}
 }
 
-QJsonObject LoginHandler::extractClientInfo(const net::ServerCommand &cmd)
+QJsonObject
+LoginHandler::extractClientInfo(const QJsonObject &o, bool checkAuthenticated)
 {
 	QJsonObject info;
-	QString keys[] = {
-		QStringLiteral("app_version"), QStringLiteral("protocol_version"),
-		QStringLiteral("qt_version"),  QStringLiteral("os"),
-		QStringLiteral("s"),		   QStringLiteral("m"),
-	};
-	for(const QString &key : keys) {
-		if(cmd.kwargs.contains(key)) {
-			QJsonValue value = cmd.kwargs[key];
+	for(const QString &key : clientInfoKeys) {
+		if(o.contains(key)) {
+			QJsonValue value = o.value(key);
 			if(value.isString()) {
 				QString s = value.toString().trimmed();
 				if(!s.isEmpty()) {
@@ -1065,18 +1221,40 @@ QJsonObject LoginHandler::extractClientInfo(const net::ServerCommand &cmd)
 	}
 
 	info[QStringLiteral("address")] = m_client->peerAddress().toString();
-	if(m_client->isAuthenticated()) {
+	if(checkAuthenticated && m_client->isAuthenticated()) {
 		info[QStringLiteral("auth_id")] = m_client->authId();
 	}
 
 	return info;
 }
 
+bool LoginHandler::compareClientInfo(const QJsonObject &info)
+{
+	if(!m_clientInfo.isEmpty()) {
+		for(const QString &key : clientInfoKeys) {
+			if(info.value(key) != m_clientInfo.value(key)) {
+				m_client->log(
+					Log()
+						.about(Log::Level::Error, Log::Topic::RuleBreak)
+						.message(QStringLiteral("Mismatched client info '%1'")
+									 .arg(key)));
+				m_state = State::Ignore;
+				m_client->disconnectClient(
+					Client::DisconnectionReason::Error, "invalid message",
+					QStringLiteral("mismatched client info"));
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 void LoginHandler::logClientInfo(const QJsonObject &info)
 {
-	bool infoChanged = m_lastClientInfo.isEmpty() || info != m_lastClientInfo;
+	bool infoChanged =
+		m_lastLoggedClientInfo.isEmpty() || info != m_lastLoggedClientInfo;
 	if(infoChanged) {
-		m_lastClientInfo = info;
+		m_lastLoggedClientInfo = info;
 	}
 
 	Session *session = m_client->session();
@@ -1088,7 +1266,7 @@ void LoginHandler::logClientInfo(const QJsonObject &info)
 	if(infoChanged || sessionChanged) {
 		m_client->log(Log()
 						  .about(Log::Level::Info, Log::Topic::ClientInfo)
-						  .message(QJsonDocument(m_lastClientInfo)
+						  .message(QJsonDocument(m_lastLoggedClientInfo)
 									   .toJson(QJsonDocument::Compact)));
 	}
 }
@@ -1126,7 +1304,9 @@ void LoginHandler::handleStarttls()
 		QStringLiteral("Start TLS now!"), true));
 
 	m_client->startTls();
-	m_state = needsLookup() ? State::WaitForLookup : State::WaitForIdent;
+	m_state = m_requireMatchingHost ? State::WaitForClientInfo
+			  : needsLookup()		? State::WaitForLookup
+									: State::WaitForIdent;
 }
 
 bool LoginHandler::send(const net::Message &msg)
@@ -1206,16 +1386,15 @@ bool LoginHandler::checkIdentIntent(
 	}
 }
 
-bool LoginHandler::verifySystemId(
-	const net::ServerCommand &cmd, const protocol::ProtocolVersion &protover)
+bool LoginHandler::verifySystemId(const QString &sid, bool required)
 {
-	QString sid = cmd.kwargs[QStringLiteral("s")].toString();
 	m_client->setSid(sid);
 	if(sid.isEmpty()) {
-		if(protover.shouldHaveSystemId()) {
+		if(required) {
 			m_client->log(Log()
 							  .about(Log::Level::Error, Log::Topic::RuleBreak)
 							  .message(QStringLiteral("Missing required sid")));
+			m_state = State::Ignore;
 			m_client->disconnectClient(
 				Client::DisconnectionReason::Error, "invalid message",
 				QStringLiteral("missing required sid"));
@@ -1225,6 +1404,7 @@ bool LoginHandler::verifySystemId(
 		m_client->log(Log()
 						  .about(Log::Level::Error, Log::Topic::RuleBreak)
 						  .message(QStringLiteral("Invalid sid %1").arg(sid)));
+		m_state = State::Ignore;
 		m_client->disconnectClient(
 			Client::DisconnectionReason::Error, "invalid message",
 			QStringLiteral("invalid sid"));
@@ -1278,6 +1458,37 @@ QJsonArray LoginHandler::flagSetToJson(const QSet<QString> &flags)
 		json.append(flag);
 	}
 	return json;
+}
+
+LoginHandler::HostPrivilege
+LoginHandler::getHostPrivilege(const QSet<QString> &effectiveFlags) const
+{
+	if(effectiveFlags.contains(QStringLiteral("HOST"))) {
+		if(m_client->isBrowser()) {
+			if(effectiveFlags.contains(QStringLiteral("WEBSESSION"))) {
+				return HostPrivilege::Any;
+			} else if(m_config->getConfigBool(
+						  config::PasswordDependentWebSession)) {
+				return HostPrivilege::Passworded;
+			}
+		} else {
+			return HostPrivilege::Any;
+		}
+	}
+	return HostPrivilege::None;
+}
+
+bool LoginHandler::haveHostPrivilege(bool passworded) const
+{
+	switch(m_hostPrivilege) {
+	case HostPrivilege::Passworded:
+		return passworded;
+	case HostPrivilege::Any:
+		return true;
+	default:
+		Q_ASSERT(m_hostPrivilege == HostPrivilege::None);
+		return false;
+	}
 }
 
 bool LoginHandler::shouldAllowWebOnHost(

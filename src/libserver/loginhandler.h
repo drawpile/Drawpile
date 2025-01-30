@@ -84,23 +84,28 @@ private:
 
 	enum class State {
 		WaitForSecure,
+		WaitForClientInfo,
 		WaitForLookup,
 		WaitForIdent,
 		WaitForLogin,
 		Ignore,
 	};
 	enum class IdentIntent { Invalid, Unknown, Guest, Auth, ExtAuth };
+	enum class HostPrivilege { None, Passworded, Any };
 
 	class ClientInfoLogGuard;
 	friend class ClientInfoLogGuard;
 
 	void announceServerInfo();
+	void handleClientInfoMessage(const net::ServerCommand &cmd);
 	void handleLookupMessage(const net::ServerCommand &cmd);
 	void handleIdentMessage(const net::ServerCommand &cmd);
 	void handleHostMessage(const net::ServerCommand &cmd);
 	void handleJoinMessage(const net::ServerCommand &cmd);
 	void checkClientCapabilities(const net::ServerCommand &cmd);
-	QJsonObject extractClientInfo(const net::ServerCommand &cmd);
+	QJsonObject
+	extractClientInfo(const QJsonObject &o, bool checkAuthenticated);
+	bool compareClientInfo(const QJsonObject &info);
 	void logClientInfo(const QJsonObject &info);
 	void handleAbuseReport(const net::ServerCommand &cmd);
 	void handleStarttls();
@@ -125,9 +130,7 @@ private:
 	bool checkIdentIntent(
 		IdentIntent intent, IdentIntent actual, bool extAuthFallback = false);
 
-	bool verifySystemId(
-		const net::ServerCommand &cmd,
-		const protocol::ProtocolVersion &protver);
+	bool verifySystemId(const QString &sid, bool required);
 
 	static bool isValidSid(const QString &sid);
 
@@ -136,6 +139,8 @@ private:
 	void insertImplicitFlags(QSet<QString> &effectiveFlags);
 	static QJsonArray flagSetToJson(const QSet<QString> &flags);
 
+	HostPrivilege getHostPrivilege(const QSet<QString> &effectiveFlags) const;
+	bool haveHostPrivilege(bool passworded) const;
 	bool shouldAllowWebOnHost(
 		const net::ServerCommand &cmd, const Session *session) const;
 
@@ -147,15 +152,16 @@ private:
 	QString m_minimumProtocolVersionString;
 	protocol::ProtocolVersion m_minimumProtocolVersion;
 	quint64 m_extauth_nonce = 0;
-	bool m_hostPrivilege = false;
+	HostPrivilege m_hostPrivilege = HostPrivilege::None;
 	bool m_exemptFromBans = false;
 	bool m_complete = false;
+	bool m_requireMatchingHost;
 	bool m_mandatoryLookup;
 	QString m_lookup;
 	int m_authPasswordAttempts = 0;
 	int m_sessionPasswordAttempts = 0;
-
-	QJsonObject m_lastClientInfo;
+	QJsonObject m_clientInfo;
+	QJsonObject m_lastLoggedClientInfo;
 	Session *m_lastClientSession = nullptr;
 };
 

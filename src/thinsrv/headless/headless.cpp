@@ -325,7 +325,7 @@ bool start() {
 
 	// Set internal server config
 	InternalConfig icfg;
-	icfg.localHostname = parser.value(localAddr);
+	icfg.setLocalHostname(parser.value(localAddr));
 #ifdef HAVE_LIBSODIUM
 	QString extAuthUrl = parser.value(extAuthOption);
 	if(!extAuthUrl.isEmpty()) {

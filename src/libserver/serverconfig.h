@@ -145,13 +145,18 @@ static const ConfigKey
 	ExtAuthPersist(44, "extauthpersist", "false", ConfigKey::BOOL),
 	// How long empty sessions linger after the last user left to maybe give
 	// them a chance to reconnect.
-	EmptySessionLingerTime(45, "emptySessionLingerTime", "0", ConfigKey::TIME);
+	EmptySessionLingerTime(45, "emptySessionLingerTime", "0", ConfigKey::TIME),
+	// Require host name given by clients in the cinfo message to match
+	// InternalConfig::localHostname.
+	RequireMatchingHost(46, "requireMatchingHost", "false", ConfigKey::BOOL);
 }
 
 //! Settings that are not adjustable after the server has started
 struct InternalConfig {
 	// Hostname of this server to use in session announcements
 	QString localHostname;
+	// Fully-encoded hostname for the sake of matching it
+	QString normalizedHostname;
 	// The port the server is listening on
 	int realPort = 27750;
 	// The port to use in session announcements
@@ -170,6 +175,14 @@ struct InternalConfig {
 	int getAnnouncePort() const
 	{
 		return announcePort > 0 ? announcePort : realPort;
+	}
+
+	void setLocalHostname(const QString &host)
+	{
+		localHostname = host;
+		QUrl url;
+		url.setHost(host.toCaseFolded(), QUrl::TolerantMode);
+		normalizedHostname = url.host(QUrl::FullyDecoded);
 	}
 };
 

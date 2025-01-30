@@ -77,7 +77,7 @@ void LocalServer::startServer()
 		m_server->setSslCertFile(QString(), QString(), SslServer::Algorithm::Guess);
 
 	InternalConfig icfg = m_server->config()->internalConfig();
-	icfg.localHostname = cfg.value("local-address").toString();
+	icfg.setLocalHostname(cfg.value("local-address").toString());
 #ifdef HAVE_LIBSODIUM
 	icfg.extAuthUrl = cfg.value("extauth").toString();
 #endif

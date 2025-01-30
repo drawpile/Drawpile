@@ -54,19 +54,6 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	: QObject(parent)
 	, m_mode(mode)
 	, m_address(url)
-	, m_state(EXPECT_HELLO)
-	, m_passwordState(WAIT_FOR_LOGIN_PASSWORD)
-	, m_multisession(false)
-	, m_canAnyonePersist(false)
-	, m_canReport(false)
-	, m_needUserPassword(false)
-	, m_supportsCustomAvatars(false)
-	, m_supportsCryptBanImpEx(false)
-	, m_supportsModBanImpEx(false)
-	, m_supportsLookup(false)
-	, m_supportsExtAuthAvatars(false)
-	, m_compatibilityMode(false)
-	, m_isGuest(true)
 {
 	m_sessions = new LoginSessionModel(this);
 
@@ -101,12 +88,13 @@ bool LoginHandler::receiveMessage(const ServerReply &msg)
 	// Overall, the login process is:
 	// 1. wait for server greeting
 	// 2. Upgrade to secure connection (if available)
-	// 3. Lookup session (if joining directly)
-	// 4. Authenticate user (or do guest login)
-	// 5. wait for session list
-	// 6. wait for user to finish typing join password if needed
-	// 7. send host/join command
-	// 8. wait for OK
+	// 3. Send client info (if supported)
+	// 4. Look up session (if supported)
+	// 5. Authenticate user (or do guest login)
+	// 6. wait for session list
+	// 7. wait for user to finish typing join password if needed
+	// 8. send host/join command
+	// 9. wait for OK
 
 	if(msg.type == ServerReply::ReplyType::Error) {
 		// The server disconnects us right after sending the error message
@@ -129,6 +117,9 @@ bool LoginHandler::receiveMessage(const ServerReply &msg)
 		break;
 	case EXPECT_STARTTLS:
 		expectStartTls(msg);
+		break;
+	case EXPECT_CLIENT_INFO_OK:
+		expectClientInfoOk(msg);
 		break;
 	case EXPECT_LOOKUP_OK:
 		expectLookupOk(msg);
@@ -223,6 +214,8 @@ void LoginHandler::expectHello(const ServerReply &msg)
 			m_supportsModBanImpEx = true;
 		} else if(flag == QStringLiteral("LOOKUP")) {
 			m_supportsLookup = true;
+		} else if(flag == QStringLiteral("CINFO")) {
+			m_supportsClientInfo = true;
 		} else {
 			qCWarning(lcDpLogin) << "Unknown server capability:" << flag;
 		}
@@ -297,7 +290,7 @@ void LoginHandler::expectHello(const ServerReply &msg)
 			return;
 		}
 
-		lookUpSession();
+		sendClientInfo();
 	}
 }
 
@@ -323,6 +316,35 @@ void LoginHandler::sendSessionPassword(const QString &password)
 		// shouldn't happen...
 		qCWarning(
 			lcDpLogin, "sendSessionPassword() in invalid state (%d)", m_state);
+	}
+}
+
+void LoginHandler::sendClientInfo()
+{
+	if(m_supportsClientInfo) {
+		setState(EXPECT_CLIENT_INFO_OK);
+		send(
+			QStringLiteral("cinfo"),
+			{m_address.host(QUrl::ComponentFormattingOption::FullyDecoded)
+				 .toCaseFolded(),
+			 makeClientInfo()});
+	} else {
+		lookUpSession();
+	}
+}
+
+void LoginHandler::expectClientInfoOk(const ServerReply &msg)
+{
+	if(msg.type == ServerReply::ReplyType::Result &&
+	   msg.reply.contains(QStringLiteral("cinfo"))) {
+		QJsonObject cinfo = msg.reply.value(QStringLiteral("cinfo")).toObject();
+		QJsonValue browserValue = cinfo.value(QStringLiteral("browser"));
+		if(browserValue.isBool()) {
+			m_server->setBrowser(browserValue.toBool());
+		}
+		lookUpSession();
+	} else {
+		failLogin(tr("Failed to retrieve server info"));
 	}
 }
 
@@ -695,7 +717,7 @@ void LoginHandler::expectSessionDescriptionHost(const ServerReply &msg)
 
 void LoginHandler::sendHostCommand()
 {
-	QJsonObject kwargs = makeClientInfoKwargs();
+	QJsonObject kwargs = makeClientInfo();
 
 	if(!m_sessionAlias.isEmpty())
 		kwargs["alias"] = m_sessionAlias;
@@ -986,7 +1008,7 @@ void LoginHandler::confirmJoinSelectedSession()
 
 void LoginHandler::sendJoinCommand()
 {
-	QJsonObject kwargs = makeClientInfoKwargs();
+	QJsonObject kwargs = makeClientInfo();
 	if(!m_joinPassword.isEmpty()) {
 		kwargs["password"] = m_joinPassword;
 	}
@@ -1159,7 +1181,7 @@ void LoginHandler::acceptServerCertificate()
 void LoginHandler::continueTls()
 {
 	// STARTTLS is the very first command that must be sent, if sent at all
-	lookUpSession();
+	sendClientInfo();
 }
 
 void LoginHandler::cancelLogin()
@@ -1219,6 +1241,12 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 	} else if(code == QStringLiteral("lookupRequired")) {
 		error = tr(
 			"This server only allows joining sessions through a direct link.");
+	} else if(code == QStringLiteral("mismatchedHostName")) {
+		error = tr("Invalid host name.");
+	} else if(code == QStringLiteral("passwordedHost")) {
+		error = tr("You're not allowed to host public sessions here, only "
+				   "personal sessions are allowed. You can switch from public "
+				   "to personal in the Session tab.");
 	} else {
 		error = msg;
 	}
@@ -1345,7 +1373,7 @@ bool LoginHandler::looksLikeSelfSignedCertificate(
 }
 #endif
 
-QJsonObject LoginHandler::makeClientInfoKwargs()
+QJsonObject LoginHandler::makeClientInfo()
 {
 	// Android reports "linux" as the kernel type, which is not helpful.
 #if defined(Q_OS_ANDROID)

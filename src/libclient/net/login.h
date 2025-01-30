@@ -462,6 +462,7 @@ private:
 	enum State {
 		EXPECT_HELLO,
 		EXPECT_STARTTLS,
+		EXPECT_CLIENT_INFO_OK,
 		EXPECT_LOOKUP_OK,
 		WAIT_FOR_LOGIN_PASSWORD,
 		WAIT_FOR_EXTAUTH,
@@ -481,6 +482,8 @@ private:
 	void expectNothing();
 	void expectHello(const ServerReply &msg);
 	void expectStartTls(const ServerReply &msg);
+	void sendClientInfo();
+	void expectClientInfoOk(const ServerReply &msg);
 	void lookUpSession();
 	void expectLookupOk(const ServerReply &msg);
 	void presentRules();
@@ -510,7 +513,7 @@ private:
 	static bool looksLikeSelfSignedCertificate(
 		const QSslCertificate &cert, const QList<QSslError> &errors);
 #endif
-	static QJsonObject makeClientInfoKwargs();
+	static QJsonObject makeClientInfo();
 	static QString getSid();
 	static QString generateTamperSid();
 	static QString generateSid();
@@ -536,9 +539,6 @@ private:
 	QStringList m_announceUrls;
 	QStringList m_bansToImport;
 	QJsonArray m_authToImport;
-	bool m_nsfm = false;
-	bool m_keepChat = false;
-	bool m_deputies = false;
 	net::MessageList m_initialState;
 
 	// Settings for joining
@@ -551,29 +551,38 @@ private:
 
 	// Process state
 	Server *m_server;
-	State m_state;
-	State m_passwordState;
+	State m_state = EXPECT_HELLO;
+	State m_passwordState = WAIT_FOR_LOGIN_PASSWORD;
 	LoginSessionModel *m_sessions;
-	bool m_messageReceived = false;
 
 	QString m_selectedId;
 	QStringList m_sessionFlags;
 
 	QFileInfo m_certFile;
 
+	bool m_nsfm = false;
+	bool m_keepChat = false;
+	bool m_deputies = false;
+	bool m_messageReceived = false;
+#ifdef __EMSCRIPTEN__
+	bool m_inBrowserAuth = false;
+#endif
+
 	// Server flags
-	bool m_multisession;
-	bool m_canAnyonePersist;
-	bool m_canReport;
-	bool m_mustAuth;
-	bool m_needUserPassword;
-	bool m_supportsCustomAvatars;
-	bool m_supportsCryptBanImpEx;
-	bool m_supportsModBanImpEx;
-	bool m_supportsLookup;
-	bool m_supportsExtAuthAvatars;
-	bool m_compatibilityMode;
-	bool m_needSessionPassword;
+	bool m_multisession = false;
+	bool m_canAnyonePersist = false;
+	bool m_canReport = false;
+	bool m_mustAuth = false;
+	bool m_needUserPassword = false;
+	bool m_supportsCustomAvatars = false;
+	bool m_supportsCryptBanImpEx = false;
+	bool m_supportsModBanImpEx = false;
+	bool m_supportsClientInfo = false;
+	bool m_supportsLookup = false;
+	bool m_supportsExtAuthAvatars = false;
+	bool m_compatibilityMode = false;
+	bool m_needSessionPassword = false;
+	bool m_isGuest = true;
 
 	QString m_ruleText;
 	QString m_loginInfo;
@@ -583,11 +592,6 @@ private:
 
 	// User flags
 	QStringList m_userFlags;
-	bool m_isGuest;
-
-#ifdef __EMSCRIPTEN__
-	bool m_inBrowserAuth = false;
-#endif
 };
 }
 
