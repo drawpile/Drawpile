@@ -83,7 +83,7 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+64"/>
         <source>Brush type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo de pincel</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -787,18 +787,18 @@
         <location line="+96"/>
         <location line="+3"/>
         <source>Apply the pending fill, making it visible for everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplicar o preenchimento pendente, fazendo-o visível para todos</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplicar</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancelar o preenchimento pendente, sem que outros vejam seus efeitos</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1514,32 +1514,32 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <location line="+1230"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Você não tem permissão para cortar, colar, preencher ou deletar.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to resize the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Você não tem permissão para redimensionar a tela.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation type="unfinished"></translation>
+        <translation>Você não tem permissão para mudar o plano de fundo da sessão.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to create annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Você não tem permissão para criar anotações.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to undo or redo.</source>
-        <translation type="unfinished"></translation>
+        <translation>Você não tem permissão para desfazer ou refazer.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>Você não tem permissão para fazer isso.</translation>
     </message>
     <message>
         <location line="+1193"/>
@@ -1603,7 +1603,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+50"/>
         <source>&amp;Undo</source>
-        <translation>Desfa&amp;zer</translation>
+        <translation>&amp;Desfazer</translation>
     </message>
     <message>
         <location line="+1"/>
