@@ -1178,9 +1178,9 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 	}
 
 	QString error;
-	if(code == "notFound")
+	if(code == QStringLiteral("notFound")) {
 		error = tr("Session not found!");
-	else if(code == "badPassword") {
+	} else if(code == QStringLiteral("badPassword")) {
 		if(m_passwordState == WAIT_FOR_LOGIN_PASSWORD &&
 		   m_loginIntent != LoginMethod::Guest) {
 			emit badLoginPassword(
@@ -1193,34 +1193,35 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 		} else {
 			error = msg;
 		}
-	} else if(code == "badUsername")
+	} else if(code == QStringLiteral("badUsername")) {
 		error = tr("Invalid username!");
-	else if(code == "bannedName")
+	} else if(code == QStringLiteral("bannedName")) {
 		error = tr("This username has been locked");
-	else if(code == "nameInUse")
+	} else if(code == QStringLiteral("nameInUse")) {
 		error = tr("Username already taken!");
-	else if(code == "closed")
+	} else if(code == QStringLiteral("closed")) {
 		error = m_mode == Mode::Join ? tr("Session is closed!")
 									 : tr("Server is full!");
-	else if(code == "unauthorizedHost")
+	} else if(code == QStringLiteral("unauthorizedHost")) {
 		error = tr("Hosting not authorized");
-	else if(code == "banned")
+	} else if(code == QStringLiteral("banned")) {
 		error = tr("You have been banned from this session!");
-	else if(code == "idInUse")
+	} else if(code == QStringLiteral("idInUse")) {
 		error = tr("Session alias is reserved!");
-	else if(code == "protoverold")
+	} else if(code == QStringLiteral("protoverold")) {
 		error = QStringLiteral("%1\n\n%2")
 					.arg(
 						msg, tr("This usually means that your Drawpile version "
 								"is too old. Do you need to update?"));
-	else if(code == "lookupFailed")
+	} else if(code == QStringLiteral("lookupFailed")) {
 		error = tr("Session not found, it may have ended or its invite link "
 				   "has changed");
-	else if(code == "lookupRequired")
+	} else if(code == QStringLiteral("lookupRequired")) {
 		error = tr(
 			"This server only allows joining sessions through a direct link.");
-	else
+	} else {
 		error = msg;
+	}
 
 	failLogin(error, code);
 }
