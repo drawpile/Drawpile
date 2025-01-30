@@ -42,11 +42,6 @@ TcpServer::TcpServer(int timeoutSecs, int proxyMode, Client *client)
 	connectMessageQueue(m_msgqueue);
 }
 
-bool TcpServer::isWebSocket() const
-{
-	return false;
-}
-
 bool TcpServer::hasSslSupport() const
 {
 	return true;
@@ -121,6 +116,11 @@ bool TcpServer::loginIgnoreTlsErrors(const QList<QSslError> &ignore)
 {
 	m_socket->ignoreSslErrors(ignore);
 	return true;
+}
+
+bool TcpServer::isWebSocket() const
+{
+	return false;
 }
 
 }

@@ -15,8 +15,8 @@ public:
 		QTcpSocket *tcpSocket, ServerLog *logger, QObject *parent = nullptr);
 #ifdef HAVE_WEBSOCKETS
 	ThinServerClient(
-		QWebSocket *webSocket, const QHostAddress &ip, ServerLog *logger,
-		QObject *parent = nullptr);
+		QWebSocket *webSocket, const QHostAddress &ip, bool browser,
+		ServerLog *logger, QObject *parent = nullptr);
 #endif
 	~ThinServerClient() override;
 

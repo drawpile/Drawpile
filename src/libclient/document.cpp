@@ -640,7 +640,7 @@ void Document::setSessionAllowWeb(bool allowWeb)
 	// this setting. If they're connected via WebSocket themselves, they
 	// can't turn it off, since it would lock themselves out of rejoining.
 	bool canAlterAllowWeb = m_client->canManageWebSession() &&
-							(!m_client->isWebSocket() || !m_sessionAllowWeb);
+							(!m_client->isBrowser() || !m_sessionAllowWeb);
 	emit sessionAllowWebChanged(m_sessionAllowWeb, canAlterAllowWeb);
 }
 

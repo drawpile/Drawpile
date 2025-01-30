@@ -89,7 +89,7 @@ public:
 	 */
 	bool isLoggedIn() const { return m_server && m_server->isLoggedIn(); }
 
-	bool isWebSocket() const { return m_server && m_server->isWebSocket(); }
+	bool isBrowser() const { return m_server && m_server->isBrowser(); }
 
 	/**
 	 * @brief Is the user logged in as an authenticated user?

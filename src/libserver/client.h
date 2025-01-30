@@ -223,7 +223,7 @@ public:
 	 */
 	bool sendSystemChat(const QString &message, bool alert = false);
 
-	bool isWebSocket() const;
+	bool isBrowser() const;
 
 	/**
 	 * @brief Does this client socket support SSL connections?
@@ -328,8 +328,8 @@ protected:
 		QObject *parent);
 #ifdef HAVE_WEBSOCKETS
 	Client(
-		QWebSocket *webSocket, const QHostAddress &ip, ServerLog *logger,
-		bool decodeOpaque, QObject *parent);
+		QWebSocket *webSocket, const QHostAddress &ip, bool isBrowser,
+		ServerLog *logger, bool decodeOpaque, QObject *parent);
 #endif
 	net::MessageQueue *messageQueue();
 

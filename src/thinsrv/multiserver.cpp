@@ -359,9 +359,10 @@ void MultiServer::newWebSocketClient()
 	QHostAddress ip;
 	QString ipSource;
 	QHostAddress peerAddress = webSocket->peerAddress();
-	if(webSocket->request().hasRawHeader("X-Real-IP") &&
-	   ip.setAddress(
-		   QString::fromUtf8(webSocket->request().rawHeader("X-Real-IP")))) {
+	QNetworkRequest request = webSocket->request();
+	QString origin = QString::fromUtf8(request.rawHeader("Origin"));
+	if(request.hasRawHeader("X-Real-IP") &&
+	   ip.setAddress(QString::fromUtf8(request.rawHeader("X-Real-IP")))) {
 		ipSource = QStringLiteral("X-Real-IP header");
 	} else {
 		ip = peerAddress;
@@ -372,11 +373,11 @@ void MultiServer::newWebSocketClient()
 		Log()
 			.about(Log::Level::Info, Log::Topic::Status)
 			.user(0, ip, QString())
-			.message(QStringLiteral(
-						 "New WebSocket client connected from %1 (IP from %2)")
-						 .arg(peerAddress.toString(), ipSource)));
-	newClient(
-		new ThinServerClient(webSocket, ip, m_sessions->config()->logger()));
+			.message(QStringLiteral("New WebSocket client connected from %1 "
+									"(IP from %2, Origin '%3')")
+						 .arg(peerAddress.toString(), ipSource, origin)));
+	newClient(new ThinServerClient(
+		webSocket, ip, !origin.isEmpty(), m_sessions->config()->logger()));
 }
 #endif
 

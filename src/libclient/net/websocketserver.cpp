@@ -55,11 +55,6 @@ WebSocketServer::WebSocketServer(int timeoutSecs, int proxyMode, Client *client)
 	connectMessageQueue(m_msgqueue);
 }
 
-bool WebSocketServer::isWebSocket() const
-{
-	return true;
-}
-
 bool WebSocketServer::hasSslSupport() const
 {
 	return false;
@@ -116,6 +111,11 @@ bool WebSocketServer::loginIgnoreTlsErrors(const QList<QSslError> &ignore)
 {
 	Q_UNUSED(ignore);
 	return false;
+}
+
+bool WebSocketServer::isWebSocket() const
+{
+	return true;
 }
 
 }

@@ -716,15 +716,14 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	bool allowWebChanged = false;
 	if(changeAllowWeb) {
 		bool allowWeb = conf[QStringLiteral("allowWeb")].toBool();
-		// We don't allow clients that are connected via WebSocket to prevent
+		// We don't allow clients that are connected via browser to prevent
 		// themselves from rejoining the session by disabling them.
-		if(allowWeb || !changedBy || !changedBy->isWebSocket()) {
+		if(allowWeb || !changedBy || !changedBy->isBrowser()) {
 			allowWebChanged = true;
 			flags.setFlag(SessionHistory::AllowWeb, allowWeb);
 			changes
-				<< (allowWeb
-						? QStringLiteral("enabled WebSocket connections")
-						: QStringLiteral("disabled WebSocket connections"));
+				<< (allowWeb ? QStringLiteral("enabled browser connections")
+							 : QStringLiteral("disabled browser connections"));
 		}
 	}
 
@@ -735,10 +734,10 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 							   m_history, m_config, &dependentAllowWeb)) {
 		changes
 			<< (dependentAllowWeb
-					? QStringLiteral("enabled WebSocket connections because "
-									 "password is set")
-					: QStringLiteral("disabled WebSocket connections because "
-									 "no password is set"));
+					? QStringLiteral(
+						  "enabled browser connections because password is set")
+					: QStringLiteral("disabled browser connections because no "
+									 "password is set"));
 	}
 
 	if(!changes.isEmpty()) {

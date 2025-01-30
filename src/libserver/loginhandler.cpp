@@ -75,7 +75,7 @@ void LoginHandler::startLoginProcess()
 		m_state = State::WaitForSecure;
 	}
 	bool allowGuests = m_config->getConfigBool(config::AllowGuests) &&
-					   (!m_client->isWebSocket() ||
+					   (!m_client->isBrowser() ||
 						m_config->getConfigBool(config::AllowGuestWeb));
 	if(!allowGuests) {
 		flags << QStringLiteral("NOGUEST");
@@ -98,7 +98,7 @@ void LoginHandler::startLoginProcess()
 	QJsonObject methods;
 	bool allowGuestHosts =
 		m_config->getConfigBool(config::AllowGuestHosts) &&
-		(!m_client->isWebSocket() ||
+		(!m_client->isBrowser() ||
 		 m_config->getConfigBool(config::AllowGuestWebSession));
 	if(allowGuests) {
 		QJsonArray guestActions = {QStringLiteral("join")};
@@ -565,7 +565,7 @@ void LoginHandler::authLoginOk(
 
 	insertImplicitFlags(effectiveFlags);
 
-	if(m_client->isWebSocket() &&
+	if(m_client->isBrowser() &&
 	   !effectiveFlags.contains(QStringLiteral("WEB"))) {
 		sendError(
 			QStringLiteral("webNotAllowed"),
@@ -936,7 +936,7 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 		return;
 	}
 
-	if(m_client->isWebSocket() &&
+	if(m_client->isBrowser() &&
 	   !session->history()->hasFlag(SessionHistory::AllowWeb)) {
 		sendError(
 			QStringLiteral("noWebJoin"),
@@ -1283,13 +1283,13 @@ QJsonArray LoginHandler::flagSetToJson(const QSet<QString> &flags)
 bool LoginHandler::shouldAllowWebOnHost(
 	const net::ServerCommand &cmd, const Session *session) const
 {
-	// If the client is hosting via WebSocket, the session must allow them.
+	// If the client is hosting via browser, the session must allow them.
 	// Otherwise they wouldn't be able to rejoin it if they leave.
-	if(m_client->isWebSocket()) {
+	if(m_client->isBrowser()) {
 		return true;
 	}
 	// If the client has the WEBSESSION flag, they may explicitly specify what
-	// they want the WebSocket allowance to be.
+	// they want the browser allowance to be.
 	QString webKey = QStringLiteral("web");
 	bool canManageWebSession = m_client->canManageWebSession();
 	if(canManageWebSession && cmd.kwargs.contains(webKey)) {
@@ -1298,7 +1298,7 @@ bool LoginHandler::shouldAllowWebOnHost(
 			return webValue.toBool();
 		}
 	}
-	// If password-dependent WebSocket allowance is enabled, follow that.
+	// If password-dependent browser allowance is enabled, follow that.
 	if(m_config->getConfigBool(config::PasswordDependentWebSession)) {
 		return !session->history()->passwordHash().isEmpty();
 	}

@@ -150,6 +150,25 @@ void Server::logout()
 		MessageQueue::GracefulDisconnect::Shutdown, QString());
 }
 
+bool Server::isBrowser() const
+{
+	switch(m_clientType) {
+	case CLIENT_TYPE_APPLICATION:
+		return false;
+	case CLIENT_TYPE_BROWSER:
+		return true;
+	default:
+		Q_ASSERT(CLIENT_TYPE_UNKNOWN);
+		return isWebSocket();
+	}
+}
+
+void Server::setBrowser(bool browser)
+{
+	Q_ASSERT(m_clientType == CLIENT_TYPE_UNKNOWN);
+	m_clientType = browser ? CLIENT_TYPE_BROWSER : CLIENT_TYPE_APPLICATION;
+}
+
 int Server::uploadQueueBytes() const
 {
 	return messageQueue()->uploadQueueBytes();

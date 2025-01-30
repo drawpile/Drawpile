@@ -837,7 +837,7 @@ LoginSession LoginHandler::updateSession(const QJsonObject &js)
 		js["persistent"].toBool(),
 		js["closed"].toBool(),
 		js["authOnly"].toBool() && m_isGuest,
-		!js["allowWeb"].toBool() && m_server->isWebSocket(),
+		!js["allowWeb"].toBool() && m_server->isBrowser(),
 		js["nsfm"].toBool(),
 	};
 	m_sessions->updateSession(session);

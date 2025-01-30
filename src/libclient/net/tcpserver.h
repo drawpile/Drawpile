@@ -14,8 +14,6 @@ class TcpServer final : public Server {
 public:
 	explicit TcpServer(int timeoutSecs, int proxyMode, Client *client);
 
-	bool isWebSocket() const override;
-
 	bool hasSslSupport() const override;
 
 	QSslCertificate hostCertificate() const override;
@@ -30,6 +28,7 @@ protected:
 	QString socketErrorString() const override;
 	bool loginStartTls(LoginHandler *loginstate) override;
 	bool loginIgnoreTlsErrors(const QList<QSslError> &ignore) override;
+	bool isWebSocket() const override;
 
 private:
 	QSslSocket *m_socket;

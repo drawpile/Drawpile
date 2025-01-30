@@ -15,8 +15,6 @@ public:
 	explicit WebSocketServer(
 		int timeoutSecs, int proxyMode, Client *client);
 
-	bool isWebSocket() const override;
-
 	bool hasSslSupport() const override;
 
 	QSslCertificate hostCertificate() const override;
@@ -31,6 +29,7 @@ protected:
 	QString socketErrorString() const override;
 	bool loginStartTls(LoginHandler *loginstate) override;
 	bool loginIgnoreTlsErrors(const QList<QSslError> &ignore) override;
+	bool isWebSocket() const override;
 
 private:
 	QWebSocket *m_socket;

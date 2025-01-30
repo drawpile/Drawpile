@@ -58,7 +58,8 @@ public:
 	 */
 	bool isLoggedIn() const { return m_loginstate == nullptr; }
 
-	virtual bool isWebSocket() const = 0;
+	bool isBrowser() const;
+	void setBrowser(bool browser);
 
 	/**
 	 * @brief Return the number of bytes in the upload buffer
@@ -149,12 +150,18 @@ protected:
 	virtual QString socketErrorString() const = 0;
 	virtual bool loginStartTls(LoginHandler *loginstate) = 0;
 	virtual bool loginIgnoreTlsErrors(const QList<QSslError> &ignore) = 0;
+	virtual bool isWebSocket() const = 0;
 
 private slots:
 	void handleMessage();
 	void handleBadData(int len, int type, int contextId);
 
 private:
+	static constexpr unsigned char CLIENT_TYPE_UNKNOWN = 0;
+	static constexpr unsigned char CLIENT_TYPE_APPLICATION = 1;
+	static constexpr unsigned char CLIENT_TYPE_BROWSER = 2;
+
+
 	void receiveMessages();
 	void loginSuccess();
 	void loginFailure(const QString &message, const QString &errorcode);
@@ -166,6 +173,7 @@ private:
 	LoginHandler *m_loginstate = nullptr;
 	QString m_error, m_errorcode;
 	Security m_securityLevel = NO_SECURITY;
+	unsigned char m_clientType = CLIENT_TYPE_UNKNOWN;
 	bool m_selfSignedCertificate = false;
 	bool m_localDisconnect = false;
 	bool m_supportsPersistence = false;

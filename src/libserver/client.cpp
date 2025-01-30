@@ -43,7 +43,7 @@ public:
 	virtual QString errorString() const = 0;
 	virtual void abort() = 0;
 
-	virtual bool isWebSocket() const = 0;
+	virtual bool isBrowser() const = 0;
 	virtual bool hasSslSupport() const = 0;
 	virtual bool isSecure() const = 0;
 	virtual void startTls() = 0;
@@ -72,7 +72,7 @@ public:
 
 	virtual void abort() override { m_tcpSocket->abort(); }
 
-	virtual bool isWebSocket() const override { return false; }
+	virtual bool isBrowser() const override { return false; }
 
 	virtual bool hasSslSupport() const override
 	{
@@ -100,9 +100,10 @@ private:
 class ClientWebSocket final : public ClientSocket {
 	COMPAT_DISABLE_COPY_MOVE(ClientWebSocket)
 public:
-	ClientWebSocket(QWebSocket *webSocket, const QHostAddress &ip)
+	ClientWebSocket(QWebSocket *webSocket, const QHostAddress &ip, bool browser)
 		: m_webSocket(webSocket)
 		, m_ip(ip)
+		, m_browser(browser)
 	{
 		Q_ASSERT(webSocket);
 	}
@@ -118,7 +119,7 @@ public:
 
 	virtual void abort() override { m_webSocket->abort(); }
 
-	virtual bool isWebSocket() const override { return true; }
+	virtual bool isBrowser() const override { return m_browser; }
 
 	virtual bool hasSslSupport() const override { return false; }
 
@@ -129,6 +130,7 @@ public:
 private:
 	QWebSocket *m_webSocket;
 	QHostAddress m_ip;
+	bool m_browser;
 };
 #endif
 
@@ -200,10 +202,10 @@ Client::Client(
 
 #ifdef HAVE_WEBSOCKETS
 Client::Client(
-	QWebSocket *webSocket, const QHostAddress &ip, ServerLog *logger,
-	bool decodeOpaque, QObject *parent)
+	QWebSocket *webSocket, const QHostAddress &ip, bool browser,
+	ServerLog *logger, bool decodeOpaque, QObject *parent)
 	: QObject(parent)
-	, d(new Private(new ClientWebSocket(webSocket, ip), logger))
+	, d(new Private(new ClientWebSocket(webSocket, ip, browser), logger))
 {
 	d->msgqueue = new net::WebSocketMessageQueue(webSocket, decodeOpaque, this);
 	webSocket->setParent(this);
@@ -866,9 +868,9 @@ bool Client::isAwaitingReset() const
 		   !d->resetFlags.testFlag(ResetFlag::Streaming);
 }
 
-bool Client::isWebSocket() const
+bool Client::isBrowser() const
 {
-	return d->socket->isWebSocket();
+	return d->socket->isBrowser();
 }
 
 bool Client::hasSslSupport() const
