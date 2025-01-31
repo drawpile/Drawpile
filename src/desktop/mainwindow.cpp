@@ -4039,6 +4039,7 @@ void MainWindow::changeCanvasBackground()
 	if(m_doc->checkPermission(DP_FEATURE_RESIZE)) {
 		color_widgets::ColorDialog *dlg = dialogs::newDeleteOnCloseColorDialog(
 			m_doc->canvas()->paintEngine()->historyBackgroundColor(), this);
+		dlg->setPreviewDisplayMode(color_widgets::ColorPreview::AllAlpha);
 		connect(
 			dlg, &color_widgets::ColorDialog::colorSelected, m_doc,
 			&Document::sendCanvasBackground);
@@ -4061,6 +4062,7 @@ void MainWindow::changeLocalCanvasBackground()
 
 	color_widgets::ColorDialog *dlg =
 		dialogs::newDeleteOnCloseColorDialog(color, this);
+	dlg->setPreviewDisplayMode(color_widgets::ColorPreview::AllAlpha);
 	connect(
 		dlg, &color_widgets::ColorDialog::colorSelected, paintEngine,
 		&canvas::PaintEngine::setLocalBackgroundColor);

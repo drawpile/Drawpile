@@ -77,6 +77,7 @@ Unreleased Version 2.2.2-pre
  * Server Feature: Only treat WebSocket connections from browsers (based on the presence of an Origin header) as requiring extra permissions, to allow desktop and mobile clients to connect via WebSockets without being subjected to extra restrictions.
  * Server Feature: Allow hosting passworded sessions via the browser if password-dependent sessions are enabled, rather than refusing hosting altogether.
  * Server Feature: Allow restricting connections to the correct host name as passed with --local-host. Enabling this requires an updated client, since older ones don't transmit the hostname.
+ * Fix: When setting the canvas background color, the dialog now properly previews colors with alpha instead of showing them as opaque.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.
