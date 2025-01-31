@@ -10004,7 +10004,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation">Not suitable for minors (NSFM)</translation>
+        <translation>Not suitable for minors (NSFM)</translation>
     </message>
     <message>
         <location line="+3"/>
