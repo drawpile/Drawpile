@@ -630,6 +630,16 @@ static void handle_local_change(DP_LocalState *ls, DP_DrawContext *dc,
     }
 }
 
+static void clear_layer_state(DP_LocalState *ls, int layer_id)
+{
+    DP_Vector *layer_states = &ls->layer_states;
+    int index = DP_vector_search_index(layer_states, sizeof(DP_LocalLayerState),
+                                       is_layer_state, &layer_id);
+    if (index != -1) {
+        DP_VECTOR_REMOVE_TYPE(layer_states, DP_LocalLayerState, index);
+    }
+}
+
 void DP_local_state_handle(DP_LocalState *ls, DP_DrawContext *dc,
                            DP_Message *msg)
 {
@@ -644,12 +654,11 @@ void DP_local_state_handle(DP_LocalState *ls, DP_DrawContext *dc,
         handle_local_change(ls, dc, DP_message_internal(msg));
         break;
     case DP_MSG_LAYER_CREATE:
-        set_layer_visibility(
-            ls, DP_msg_layer_create_id(DP_message_internal(msg)), false);
+        clear_layer_state(ls, DP_msg_layer_create_id(DP_message_internal(msg)));
         break;
     case DP_MSG_LAYER_TREE_CREATE:
-        set_layer_visibility(
-            ls, DP_msg_layer_tree_create_id(DP_message_internal(msg)), false);
+        clear_layer_state(
+            ls, DP_msg_layer_tree_create_id(DP_message_internal(msg)));
         break;
     case DP_MSG_TRACK_CREATE:
         update_track_state(ls, DP_msg_track_create_id(DP_message_internal(msg)),
