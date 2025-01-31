@@ -228,6 +228,26 @@
     </message>
     <message>
         <location line="+2"/>
+        <source>Free Rotate Canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Change Color Hue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Change Color Saturation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Change Color Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Unknown Action %1</source>
         <translation>Azione sconosciuta %1</translation>
     </message>
@@ -333,7 +353,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+917"/>
+        <location filename="../document.cpp" line="+944"/>
         <source>Unknown format.</source>
         <translation>Formato sconosciuto.</translation>
     </message>
@@ -358,7 +378,7 @@
         <translation>Errore sconosciuto.</translation>
     </message>
     <message>
-        <location line="+606"/>
+        <location line="+629"/>
         <source>Error saving image</source>
         <translation>Errore durante il salvataggio dell&apos;immagine</translation>
     </message>
@@ -400,12 +420,12 @@
 <context>
     <name>FillSettings</name>
     <message>
-        <location filename="../tools/floodfill.cpp" line="+275"/>
+        <location filename="../tools/floodfill.cpp" line="+322"/>
         <source>Filling…</source>
         <translation>Riempimento…</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+73"/>
         <source>No layer selected.</source>
         <translation>Nessun livello selezionato.</translation>
     </message>
@@ -438,7 +458,7 @@ Seleziona invece un livello normale.</translation>
 <context>
     <name>MagicWandSettings</name>
     <message>
-        <location filename="../tools/magicwand.cpp" line="+197"/>
+        <location filename="../tools/magicwand.cpp" line="+293"/>
         <source>Selecting…</source>
         <translation>Selezione…</translation>
     </message>
@@ -537,7 +557,7 @@ Seleziona invece un livello normale.</translation>
 <context>
     <name>QShortcut</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="-131"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="-139"/>
         <source>Shift</source>
         <translation>Shift</translation>
     </message>
@@ -1122,7 +1142,7 @@ Seleziona invece un livello normale.</translation>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+527"/>
+        <location filename="../net/client.cpp" line="+538"/>
         <source>%1 banned by %2.</source>
         <translation>%1 bannato da %2.</translation>
     </message>
@@ -1147,7 +1167,7 @@ Seleziona invece un livello normale.</translation>
         <translation>Stato da Operatore revocato da %1 dal server.</translation>
     </message>
     <message>
-        <location line="-474"/>
+        <location line="-485"/>
         <source>You have been kicked.</source>
         <translation>Sei stato espulso.</translation>
     </message>
@@ -1187,7 +1207,7 @@ Seleziona invece un livello normale.</translation>
         <translation>Disconnesso: %1</translation>
     </message>
     <message>
-        <location line="+406"/>
+        <location line="+417"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>Solo i moderatori possono esportare i ban.</translation>
@@ -1259,6 +1279,26 @@ Seleziona invece un livello normale.</translation>
     </message>
     <message>
         <location line="+4"/>
+        <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Session terminated by moderator (%1).</source>
         <extracomment>%1 is the name of the moderator.</extracomment>
         <translation>Sessione terminata dal moderatore (%1).</translation>
@@ -1299,28 +1339,28 @@ Seleziona invece un livello normale.</translation>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+121"/>
-        <location line="+529"/>
+        <location filename="../net/login.cpp" line="+109"/>
+        <location line="+569"/>
         <source>Invalid state</source>
         <translation>Stato non valido</translation>
     </message>
     <message>
-        <location line="-481"/>
+        <location line="-512"/>
         <location line="+8"/>
-        <location line="+129"/>
-        <location line="+379"/>
-        <location line="+176"/>
-        <location line="+47"/>
+        <location line="+131"/>
+        <location line="+408"/>
+        <location line="+181"/>
+        <location line="+80"/>
         <source>Incompatible server</source>
         <translation>Server incompatibile</translation>
     </message>
     <message>
-        <location line="-724"/>
+        <location line="-793"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Il server è per una diversa versione di Drawpile!</translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+86"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation>Questo server non fornisce un modo per accedere a una sessione!</translation>
     </message>
@@ -1335,7 +1375,12 @@ Seleziona invece un livello normale.</translation>
         <translation>Server si aspetta STARTTLS su socket non supportato.</translation>
     </message>
     <message>
-        <location line="+76"/>
+        <location line="+64"/>
+        <source>Failed to retrieve server info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+41"/>
         <source>Session lookup failed</source>
         <translation>Ricerca sessione fallita</translation>
     </message>
@@ -1386,7 +1431,7 @@ Seleziona invece un livello normale.</translation>
         <translation>Il Server ha segnalato due diversi URL ext-auth</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+118"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation>Ho più sessioni quando solo una era prevista</translation>
     </message>
@@ -1411,7 +1456,7 @@ Seleziona invece un livello normale.</translation>
         <translation>Sessione per un&apos;altra versione di Drawpile (%1) in corso!</translation>
     </message>
     <message>
-        <location line="+181"/>
+        <location line="+214"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation>TLS non è supportato tramite questo tipo di presa</translation>
@@ -1428,17 +1473,17 @@ Seleziona invece un livello normale.</translation>
         <translation>Certificato SSL non valido per l&apos;host %1</translation>
     </message>
     <message>
-        <location line="-789"/>
+        <location line="-856"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation>Modalità sicura non abilitata su un host con certificato bloccato!</translation>
     </message>
     <message>
-        <location line="+524"/>
+        <location line="+558"/>
         <source>Unknown version %1</source>
         <translation>Versione sconosciuta %1</translation>
     </message>
     <message>
-        <location line="+247"/>
+        <location line="+280"/>
         <source>Pinned certificate has changed!</source>
         <translation>Il certificato bloccato è cambiato!</translation>
     </message>
@@ -1508,7 +1553,17 @@ Seleziona invece un livello normale.</translation>
         <translation>Questo server permette solo di unirsi alle sessioni attraverso un link diretto.</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+3"/>
+        <source>Invalid host name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+33"/>
         <source>Client failed to serialize command</source>
         <translation>Il client non è riuscito a serializzare il comando</translation>
     </message>
@@ -1649,7 +1704,7 @@ Seleziona invece un livello normale.</translation>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+195"/>
+        <location filename="../net/server.cpp" line="+214"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation>Se non intendi utilizzare un proxy, puoi disattivare il proxy di rete nelle preferenze di Drawpile, nella scheda Rete.</translation>
     </message>
@@ -1679,7 +1734,7 @@ Seleziona invece un livello normale.</translation>
         <translation>Time out della connessione di rete</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+97"/>
         <source>Received invalid data</source>
         <translation>Ricevuti dati non validi</translation>
     </message>
@@ -1699,7 +1754,7 @@ Seleziona invece un livello normale.</translation>
 <context>
     <name>tools::TransformSettings</name>
     <message>
-        <location filename="../tools/transform.cpp" line="+380"/>
+        <location filename="../tools/transform.cpp" line="+419"/>
         <source>You don&apos;t have permission to transform selections.</source>
         <translation>Non hai l&apos;autorizzazione per trasformare le selezioni.</translation>
     </message>
@@ -1709,19 +1764,27 @@ Seleziona invece un livello normale.</translation>
         <translation>Nessuna tela presente.</translation>
     </message>
     <message>
-        <location line="-244"/>
+        <location line="-254"/>
         <source>You don&apos;t have permission for that transformation.</source>
         <translation>Non hai l&apos;autorizzazione per quella trasformazione.</translation>
     </message>
     <message>
-        <location line="+203"/>
+        <location line="+207"/>
         <source>You don&apos;t have permission to stamp selections.</source>
         <translation>Non hai l&apos;autorizzazione per apporre stamp sulle selezioni.</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+63"/>
         <source>Nothing selected that could be transformed.</source>
         <translation>Niente di selezionato che potrebbe essere trasformato.</translation>
+    </message>
+</context>
+<context>
+    <name>utils::HostPresetModel</name>
+    <message>
+        <location filename="../utils/hostpresetmodel.cpp" line="+57"/>
+        <source>Defaults</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

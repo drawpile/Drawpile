@@ -338,123 +338,6 @@
     </message>
 </context>
 <context>
-    <name>DumpPlaybackDialog</name>
-    <message>
-        <location filename="../ui/dumpplayback.ui" line="+14"/>
-        <source>Play Debug Dump</source>
-        <translation>Воспроизвести дамп отладки</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source> ms</source>
-        <translation> мСек</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Playback Delay: </source>
-        <translation>Задержка воспроизведения </translation>
-    </message>
-    <message>
-        <location line="+16"/>
-        <source>Play/Pause</source>
-        <translation>Начать/Пауза</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Jump</source>
-        <translation>Перейти</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Previous Reset</source>
-        <translation>Предыдущий сброс</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Single Step</source>
-        <translation>Один шаг</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Next Reset</source>
-        <translation>Следующий сброс</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Position: </source>
-        <translation>Позиция: </translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Status</source>
-        <translation>Состояние</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>History Size:</source>
-        <translation>Размер истории:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <location line="+7"/>
-        <location line="+28"/>
-        <location line="+21"/>
-        <location line="+14"/>
-        <source>0</source>
-        <translation>0</translation>
-    </message>
-    <message>
-        <location line="-56"/>
-        <source>Local Fork Present:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>No</source>
-        <translation>Нет</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Local Fork Size:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Local Fork Start:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>History Offset:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Local Fork Fallbehind:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>History</source>
-        <translation>История</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Hide Entries Without State</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Hide Gone Entries</source>
-        <translation>Спрятать Отмененные Вхождения</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Local Fork</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>FileTypeDialog</name>
     <message>
         <location filename="../ui/filetypedialog.ui" line="+20"/>
@@ -470,7 +353,7 @@
 <context>
     <name>FileWrangler</name>
     <message>
-        <location filename="../filewrangler.cpp" line="+150"/>
+        <location filename="../filewrangler.cpp" line="+169"/>
         <source>Certificates (%1)</source>
         <translation type="unfinished">Сертификаты (%1)</translation>
     </message>
@@ -480,7 +363,7 @@
         <translation>Импорт</translation>
     </message>
     <message>
-        <location line="-118"/>
+        <location line="-135"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
@@ -500,13 +383,13 @@
         <translation>Импортировать Роли</translation>
     </message>
     <message>
-        <location line="+120"/>
-        <location line="+313"/>
+        <location line="+137"/>
+        <location line="+323"/>
         <source>Save Image</source>
         <translation type="unfinished">Сохранить изображение</translation>
     </message>
     <message>
-        <location line="-313"/>
+        <location line="-323"/>
         <source>Export Image</source>
         <translation>Экспортировать Изображение</translation>
     </message>
@@ -521,7 +404,7 @@
         <translation>Сохранить выделенное</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+19"/>
         <source>Record Session</source>
         <translation type="unfinished">Запись сессии</translation>
     </message>
@@ -546,12 +429,12 @@
         <translation>Журнал событий планшета</translation>
     </message>
     <message>
-        <location line="+159"/>
+        <location line="+168"/>
         <source>Log File</source>
         <translation type="unfinished">Файл журнала</translation>
     </message>
     <message>
-        <location line="-187"/>
+        <location line="-196"/>
         <location line="+36"/>
         <source>Export MP4 Video</source>
         <translation>Экспорт MP4 видео</translation>
@@ -572,7 +455,7 @@
         <translation>Сохранить кадры анимации</translation>
     </message>
     <message>
-        <location line="-253"/>
+        <location line="-271"/>
         <source>Add Avatar</source>
         <translation type="unfinished"></translation>
     </message>
@@ -607,7 +490,33 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+23"/>
+        <source>Import Session Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>All Supported Files (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location line="+416"/>
+        <source>Session Settings (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-415"/>
+        <source>Session Bans (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Session Roles (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Error opening temporary file for %1.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -627,7 +536,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+167"/>
+        <location line="+5"/>
+        <source>Reference Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+168"/>
         <source>Export Frames in ZIP</source>
         <translation type="unfinished"></translation>
     </message>
@@ -662,7 +576,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+10"/>
+        <source>Export Session Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+38"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -693,7 +612,7 @@
         <translation type="unfinished">Без названия</translation>
     </message>
     <message>
-        <location line="+102"/>
+        <location line="+104"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
         <translation>Untitled%1</translation>
@@ -703,12 +622,12 @@
     <name>FillSettings</name>
     <message>
         <location filename="../ui/fillsettings.ui" line="+330"/>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="+291"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+310"/>
         <source>Feather: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="+139"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+143"/>
         <source>Size Limit: Unlimited</source>
         <translation type="unfinished"></translation>
     </message>
@@ -716,7 +635,7 @@
         <location filename="../ui/fillsettings.ui" line="-298"/>
         <location line="+279"/>
         <location line="+16"/>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="-188"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="-192"/>
         <location line="+51"/>
         <location line="+12"/>
         <source>px</source>
@@ -921,12 +840,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>&lt;strong&gt;Note:&lt;/strong&gt; changing the session password will cause the link to stop working! If someone else changes the password, you have to reconnect for this dialog to update.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+29"/>
+        <location line="+25"/>
         <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1033,11 +947,12 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+7"/>
+        <location line="+55"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-45"/>
         <source>Blending Mode:</source>
         <translation>Режим наложения:</translation>
     </message>
@@ -1057,7 +972,22 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+7"/>
+        <source>Sketch mode for you</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Sketch Opacity:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Sketch Tint:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Collaboration:</source>
         <translation>Совместная работа:</translation>
     </message>
@@ -1070,6 +1000,21 @@ Subrange: [%3, %4]</source>
         <location line="+7"/>
         <source>Created by:</source>
         <translation>Создан:</translation>
+    </message>
+    <message>
+        <location line="+81"/>
+        <source>No tint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Blue tint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Choose…</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1096,7 +1041,30 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+24"/>
-        <source>Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
+        <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>LinkCheck</name>
+    <message>
+        <location filename="../utils/widgetutils.cpp" line="+1081"/>
+        <source>Open Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>This link will take you to the website at &quot;%1&quot;, which is not run by Drawpile. Are you sure you want to go there?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Yes, visit website</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>No, cancel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1274,13 +1242,13 @@ Subrange: [%3, %4]</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+718"/>
-        <location line="+1987"/>
+        <location filename="../mainwindow.cpp" line="+850"/>
+        <location line="+2091"/>
         <source>Untitled</source>
         <translation>Без названия</translation>
     </message>
     <message>
-        <location line="-1323"/>
+        <location line="-1406"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>Выйти из Drawpile</translation>
@@ -1298,12 +1266,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+744"/>
+        <location line="+789"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location line="-753"/>
+        <location line="-798"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Есть несохранённые изменения.
 Сохранить их перед выходом?</translation>
@@ -1319,7 +1287,7 @@ Subrange: [%3, %4]</source>
         <translation>Не сохранять</translation>
     </message>
     <message>
-        <location line="+560"/>
+        <location line="+605"/>
         <source>Couldn&apos;t save image</source>
         <translation>Невозможно сохранить изображение</translation>
     </message>
@@ -1329,12 +1297,12 @@ Subrange: [%3, %4]</source>
         <translation>Остановить запись</translation>
     </message>
     <message>
-        <location line="-298"/>
+        <location line="-301"/>
         <source>Saving...</source>
         <translation>Сохранение...</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+27"/>
         <source>Image saved</source>
         <translation>Изображение сохранено</translation>
     </message>
@@ -1349,7 +1317,7 @@ Subrange: [%3, %4]</source>
         <translation>Воспроизвести</translation>
     </message>
     <message>
-        <location line="+346"/>
+        <location line="+352"/>
         <source>Invalid address</source>
         <translation>Неправильный адрес</translation>
     </message>
@@ -1359,7 +1327,7 @@ Subrange: [%3, %4]</source>
         <translation>Начать сессию</translation>
     </message>
     <message>
-        <location line="+95"/>
+        <location line="+127"/>
         <source>Really leave the session?</source>
         <translation>Покинуть сессию? Вы уверены?</translation>
     </message>
@@ -1379,7 +1347,7 @@ Subrange: [%3, %4]</source>
         <translation>Ещё есть неотправленные данные! Пожалуйста, подождите пока передача завершится!</translation>
     </message>
     <message>
-        <location line="+247"/>
+        <location line="+258"/>
         <source>Would you like to join the session instead?</source>
         <translation>Хотите присоединиться к этой сессии?</translation>
     </message>
@@ -1389,13 +1357,12 @@ Subrange: [%3, %4]</source>
         <translation>Присоединиться</translation>
     </message>
     <message>
-        <location line="+657"/>
-        <location line="+13"/>
+        <location line="+706"/>
         <source>The image could not be loaded</source>
         <translation>Изображение не может быть загружено</translation>
     </message>
     <message>
-        <location line="+436"/>
+        <location line="+441"/>
         <source>About Drawpile</source>
         <translation>О Drawpile</translation>
     </message>
@@ -1405,45 +1372,45 @@ Subrange: [%3, %4]</source>
         <translation>Программа для совместного рисования.</translation>
     </message>
     <message>
-        <location line="+199"/>
+        <location line="+237"/>
         <location filename="../widgets/macmenu.cpp" line="-169"/>
         <source>&amp;New</source>
         <translation>&amp;Новый</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Open...</source>
         <translation>&amp;Открыть...</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+5"/>
         <source>Close</source>
         <translation>Закрыть</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+11"/>
         <source>&amp;Save</source>
         <translation>&amp;Сохранить</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <source>Save &amp;As...</source>
         <translation>Сохранить &amp;как...</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+14"/>
         <source>Autosave</source>
         <translation>Автосохранение</translation>
     </message>
     <message>
-        <location line="-2032"/>
-        <location line="+2044"/>
+        <location line="-2183"/>
+        <location line="+2210"/>
         <source>Record...</source>
         <translation>Записать...</translation>
     </message>
     <message>
-        <location line="-3983"/>
+        <location line="-4335"/>
         <source>Server out of space</source>
         <translation>На сервере нет места</translation>
     </message>
@@ -1455,17 +1422,17 @@ Simplify the canvas and reset manually before space runs out.</source>
 Упростите холст и сбросьте вручную до того как место закончится.</translation>
     </message>
     <message>
-        <location line="+2257"/>
+        <location line="+2448"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+52"/>
         <source>Hosting on this computer is not available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+112"/>
         <source>Really leave and terminate the session?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1480,18 +1447,18 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Введите пароль оператора</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="+62"/>
         <source>Terminate session</source>
         <translation>Завершить сессию</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2417"/>
+        <location line="+2663"/>
         <source>Terminate</source>
         <translation>Завершить</translation>
     </message>
     <message>
-        <location line="-2251"/>
+        <location line="-2487"/>
         <source>You&apos;ve been disconnected from the session.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1506,18 +1473,18 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Сессия заблокирована родительским контролем</translation>
     </message>
     <message>
-        <location line="+1157"/>
+        <location line="+1235"/>
         <source>Hide Docks</source>
         <translation>Скрывать доки</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+85"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
         <translation>&amp;Выйти</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+82"/>
         <location filename="../widgets/macmenu.cpp" line="-12"/>
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
@@ -1529,7 +1496,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Открыть не&amp;давнее</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+32"/>
         <source>&amp;Export</source>
         <translation>&amp;Экспортировать</translation>
     </message>
@@ -1544,58 +1511,58 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>От&amp;менить действие</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+4"/>
         <source>&amp;Redo</source>
         <translation>&amp;Повторить действие</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Copy selected area to the clipboard</source>
         <translation>Копировать выбранную область в буфер</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+5"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
         <translation>Копировать выбранную область, исключая фон, в буфер обмена</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+7"/>
         <source>Copy selected area of the current layer to the clipboard</source>
         <translation>Копировать выбранную область текущего слоя в буфер</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Cut selected area of the current layer to the clipboard</source>
         <translation>Вырезать выбранную область текущего слоя в буфер</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>&amp;Paste</source>
         <translation>&amp;Вставить</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+14"/>
         <source>Paste &amp;From File...</source>
         <translation>Вставить &amp;из файла...</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+4"/>
         <source>Delete Empty Annotations</source>
         <translation>Удалить пустые аннотации</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <source>Resi&amp;ze Canvas...</source>
         <translation>Изменить размер &amp;холста...</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+13"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Prefere&amp;nces</source>
         <translation>П&amp;араметры</translation>
     </message>
     <message>
-        <location line="+499"/>
+        <location line="+547"/>
         <source>Select &amp;All</source>
         <translation>Выделить вс&amp;ё</translation>
     </message>
@@ -1620,7 +1587,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Стереть цвет в выделении</translation>
     </message>
     <message>
-        <location line="-413"/>
+        <location line="-415"/>
         <source>&amp;Edit</source>
         <translation>&amp;Правка</translation>
     </message>
@@ -1650,13 +1617,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Чат</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="+364"/>
+        <location filename="../docks/layerlistdock.cpp" line="+396"/>
         <location filename="../mainwindow.cpp" line="+264"/>
         <source>Merge Layer</source>
         <translation>Объединить слои</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+4"/>
+        <location filename="../mainwindow.cpp" line="+5"/>
         <source>Set as Fill Source</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1666,7 +1633,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Слой (&amp;L)</translation>
     </message>
     <message>
-        <location line="+173"/>
+        <location line="+176"/>
         <source>Flipbook</source>
         <translation>Кинеограф</translation>
     </message>
@@ -1676,7 +1643,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Показать окно предпросмотра анимации</translation>
     </message>
     <message>
-        <location line="-447"/>
+        <location line="-451"/>
         <source>Zoom &amp;In</source>
         <translation>У&amp;величить</translation>
     </message>
@@ -1686,7 +1653,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>У&amp;меньшить</translation>
     </message>
     <message>
-        <location line="+446"/>
+        <location line="+450"/>
         <source>Change Frame Count...</source>
         <translation>Изменить количество кадров.</translation>
     </message>
@@ -1931,7 +1898,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Отменить действие</translation>
     </message>
     <message>
-        <location line="-926"/>
+        <location line="-930"/>
         <source>Show Names</source>
         <translation>Показать имена</translation>
     </message>
@@ -1951,7 +1918,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Указатели пользователей</translation>
     </message>
     <message>
-        <location line="+356"/>
+        <location line="+360"/>
         <source>Become Operator...</source>
         <translation>Стать оператором...</translation>
     </message>
@@ -1961,17 +1928,17 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Заблокировать всё</translation>
     </message>
     <message>
-        <location line="-515"/>
+        <location line="-519"/>
         <source>Show &amp;Annotations</source>
         <translation>Показывать &amp;аннотации</translation>
     </message>
     <message>
-        <location line="-4109"/>
+        <location line="-4539"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 присоединяется!</translation>
     </message>
     <message>
-        <location line="+573"/>
+        <location line="+674"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1986,12 +1953,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+588"/>
+        <location line="+613"/>
         <source>Opening file…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+189"/>
+        <location line="+212"/>
         <source>Image saving failed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2071,12 +2038,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+25"/>
         <source>Error opening tablet event log.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+552"/>
+        <location line="+600"/>
         <source>Disconnected</source>
         <translation type="unfinished">Отключён</translation>
     </message>
@@ -2111,7 +2078,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished">Ошибка</translation>
     </message>
     <message>
-        <location line="+712"/>
+        <location line="+746"/>
         <source>User #%1</source>
         <translation type="unfinished">Пользователь #%1</translation>
     </message>
@@ -2127,23 +2094,23 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1370"/>
+        <location line="+1572"/>
         <source>Tablet Event Log...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1366"/>
+        <location line="-1568"/>
         <source>Stop Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1367"/>
+        <location line="+1569"/>
         <source>Profile...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1356"/>
+        <location line="-1558"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2169,12 +2136,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+15"/>
-        <location line="+1312"/>
+        <location line="+1514"/>
         <source>Record Debug Dumps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1311"/>
+        <location line="-1513"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2183,7 +2150,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+69"/>
         <source>Settings File:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2203,112 +2170,107 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+141"/>
+        <location line="+150"/>
         <source>Toggle Dock %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+18"/>
         <source>Lock Docks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+19"/>
         <source>Vertical Tabs on Sides</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
-        <source>Hold Shift to Arrange</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+16"/>
+        <location line="+38"/>
         <source>&amp;Download Image…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+4"/>
         <source>Download Selection…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+30"/>
         <source>Export &amp;Animation…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+5"/>
         <source>Import Animation &amp;Frames…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Import Animation from &amp;Layers…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+13"/>
         <source>Start...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+91"/>
+        <location line="+113"/>
         <source>&amp;Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+83"/>
         <source>&amp;Copy Merged</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+5"/>
         <source>Copy Without Background</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Copy From &amp;Layer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Cu&amp;t From Layer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+9"/>
         <source>Paste in View Center</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+5"/>
         <source>Pic&amp;k From Screen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+14"/>
         <source>Set Session Background...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <source>Set Local Background...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <source>Clear Local Background</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>&amp;Brush Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+136"/>
+        <location line="+184"/>
         <source>Canvas Background</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2441,7 +2403,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+194"/>
+        <location line="+4"/>
+        <location filename="../mainwindow.cpp" line="+1"/>
+        <source>Toggle Layer &amp;Sketch Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="+197"/>
         <source>Set Key Frame to Current Layer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2577,45 +2545,23 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+140"/>
-        <source>Wheel</source>
-        <extracomment>&quot;Wheel&quot; refers to the color wheel.</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Sliders</source>
-        <extracomment>&quot;Sliders&quot; refers to the RGB and HSV sliders.</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-5"/>
-        <source>Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>Onion Skins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../docks/layerlistdock.cpp" line="-3"/>
-        <location filename="../mainwindow.cpp" line="-892"/>
+        <location filename="../docks/layerlistdock.cpp" line="-7"/>
+        <location filename="../mainwindow.cpp" line="-727"/>
         <source>Delete Layer</source>
         <translation>Удалить слой</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-2894"/>
+        <location filename="../mainwindow.cpp" line="-3175"/>
         <source>Joined the session!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+779"/>
+        <location line="+818"/>
         <source>Reason:</source>
         <translation type="unfinished">Причина:</translation>
     </message>
     <message>
-        <location line="+245"/>
+        <location line="+255"/>
         <source>Canvas locked</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2625,7 +2571,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+404"/>
+        <location line="+428"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2645,27 +2591,98 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+807"/>
+        <location line="+876"/>
         <source>Export Image…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+8"/>
         <source>Export Selection...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+24"/>
         <source>Import &amp;Brushes...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-7"/>
+        <location line="-16"/>
         <source>Export Session &amp;Template...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2741"/>
+        <location line="-3891"/>
+        <source>disconnect you from the session</source>
+        <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>lose any unsaved changes</source>
+        <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>stop your recording</source>
+        <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>discard your playback</source>
+        <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location line="+15"/>
+        <source>Doing so will %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <source>Doing so will %1 and %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Doing so will %1, %2 and %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Doing so will %1, %2, %3 and %4.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Are you sure you want to continue?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Yes, continue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>No, cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+100"/>
+        <location line="+3733"/>
+        <source>Export Again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-3729"/>
+        <source>Export Again to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+799"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
         <translation type="unfinished"></translation>
@@ -2696,7 +2713,78 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2489"/>
+        <location line="+110"/>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You&apos;re about to create a new canvas and close this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Open Recent File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You&apos;re about to open a recent file and close this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+141"/>
+        <source>Open</source>
+        <translation type="unfinished">Открыть</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You&apos;re about to open a new file and close this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+770"/>
+        <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+145"/>
+        <source>Reconnect</source>
+        <translation type="unfinished">Переподключиться</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You&apos;re about reconnect to the session and close this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+155"/>
+        <source>Join Session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You&apos;re about to connect to a new session and close this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+831"/>
+        <source>The image could not be loaded: %1.</source>
+        <extracomment>%1 is an error message.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+424"/>
+        <source>Open Debug Dump</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You&apos;re about to open a debug dump and close this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>Cause Crash</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2706,12 +2794,22 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+242"/>
+        <location line="+220"/>
+        <source>Show Icons on Tabs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Arrange Docks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+71"/>
         <source>Export &amp;Brushes…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+206"/>
+        <location line="+321"/>
         <source>Expand &amp;Up…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2886,7 +2984,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Clear Fill Source</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2916,7 +3014,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+43"/>
         <source>&amp;Invert Selection</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3007,7 +3105,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+48"/>
         <source>Selectio&amp;n</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3309,7 +3407,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>По&amp;мощь</translation>
     </message>
     <message>
-        <location line="-1053"/>
+        <location line="-1057"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
@@ -3319,7 +3417,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Окно</translation>
     </message>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="+1045"/>
+        <location filename="../utils/widgetutils.cpp" line="-39"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
         <translation type="unfinished">%1 (%2)</translation>
@@ -3454,12 +3552,12 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../filewrangler.cpp" line="-589"/>
+        <location filename="../filewrangler.cpp" line="-601"/>
         <source>All files (*)</source>
         <translation>Все файлы(*)</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="+78"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="+79"/>
         <source>Freehand</source>
         <translation>От руки</translation>
     </message>
@@ -3733,7 +3831,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+6"/>
+        <source>Only operators can manage bans.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
         <location line="+82"/>
         <source>Import</source>
         <translation type="unfinished">Импорт</translation>
@@ -3755,7 +3858,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-453"/>
+        <location line="-466"/>
         <source>Title:</source>
         <translation>Название:</translation>
     </message>
@@ -3846,12 +3949,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+188"/>
+        <location line="+201"/>
         <source>Trusted</source>
         <translation>Доверенные</translation>
     </message>
     <message>
-        <location line="-268"/>
+        <location line="-281"/>
         <source>permissions</source>
         <translation>права</translation>
     </message>
@@ -3861,7 +3964,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+77"/>
         <source>Remove selected</source>
         <translation>Удалить выделенных</translation>
     </message>
@@ -4235,7 +4338,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::AddServerDialog</name>
     <message>
-        <location filename="../dialogs/addserverdialog.cpp" line="+153"/>
+        <location filename="../dialogs/addserverdialog.cpp" line="+130"/>
         <source>&lt;strong&gt;Error:&lt;/strong&gt; %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4245,7 +4348,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="+74"/>
         <source>Check</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4507,17 +4610,171 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
 </context>
 <context>
+    <name>dialogs::ArtisticColorWheelDialog</name>
+    <message>
+        <location filename="../dialogs/artisticcolorwheeldialog.cpp" line="+23"/>
+        <source>Color Circle Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+86"/>
+        <source>Continuous hue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hue steps: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hue angle: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location line="+43"/>
+        <source>°</source>
+        <extracomment>Degree symbol. Unless your language uses a different one, keep as-is.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-40"/>
+        <source>Continuous chroma</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Chroma steps: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Continuous luminance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Luminance steps: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Continuous saturation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Saturation steps: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Continuous lightness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Lightness steps: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Continuous value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Value steps: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Gamut mask:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Mask angle: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Mask opacity: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>%</source>
+        <translation type="unfinished">%</translation>
+    </message>
+    <message>
+        <location line="+54"/>
+        <source>Atmosphere with accent</source>
+        <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Atmospheric triad</source>
+        <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Complementary</source>
+        <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Dominant hue with accent</source>
+        <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Shifted triad</source>
+        <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Split</source>
+        <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Split complementary</source>
+        <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Tetradic</source>
+        <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dialogs::AvatarImport</name>
     <message>
-        <location filename="../dialogs/avatarimport.cpp" line="+57"/>
-        <location line="+6"/>
+        <location filename="../dialogs/avatarimport.cpp" line="+58"/>
+        <location line="+8"/>
         <source>Import Avatar</source>
         <translation>Импортировать аватар</translation>
     </message>
     <message>
         <location line="-6"/>
-        <source>Couldn&apos;t read image</source>
-        <translation>Невозможно прочитать изображение</translation>
+        <source>Couldn&apos;t read image: %1.</source>
+        <extracomment>%1 is an error message.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4568,49 +4825,9 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
 </context>
 <context>
-    <name>dialogs::BrushSettingsDialog</name>
+    <name>dialogs::BrushPresetForm</name>
     <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="+138"/>
-        <source>Brush Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+83"/>
-        <source>No shortcut assigned</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+41"/>
-        <source>Brush</source>
-        <translation type="unfinished">Кисть</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Brush metadata settings.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>General</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Core brush settings.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+62"/>
-        <source>Save as New Brush</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+64"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+70"/>
         <source>Change…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4650,18 +4867,56 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished">Описание:</translation>
     </message>
     <message>
-        <location line="+16"/>
-        <source>Brush is not attached.</source>
+        <location line="+60"/>
+        <source>No shortcut assigned</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::BrushSettingsDialog</name>
+    <message>
+        <location line="+133"/>
+        <source>Brush Editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+105"/>
+        <source>Brush</source>
+        <translation type="unfinished">Кисть</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Brush metadata settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>General</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Core brush settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+62"/>
+        <source>Save as New Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Overwrite Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+80"/>
         <source>Brush Type:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+422"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+425"/>
         <source>Round Pixel Brush</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4971,116 +5226,129 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+12"/>
+        <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+14"/>
         <source>Pressure</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Fine speed</source>
         <comment>mypaintinput</comment>
-        <extracomment>&quot;fine&quot; refers to the accuracy and update frequency of the speed value, as in &quot;fine grained&quot;</extracomment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. &quot;fine&quot; refers to the accuracy and update frequency of the speed value, as in &quot;fine grained&quot;</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Gross speed</source>
         <comment>mypaintinput</comment>
-        <extracomment>changes more smoothly but is less accurate than &quot;Fine speed&quot;</extracomment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. changes more smoothly but is less accurate than &quot;Fine speed&quot;</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Random</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Stroke</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Direction</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Declination/Tilt</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Ascension</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Custom</source>
         <comment>mypaintinput</comment>
-        <extracomment>the input is the output of the &quot;Custom input&quot; setting</extracomment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. the input is the output of the &quot;Custom input&quot; setting</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Direction 360</source>
         <comment>mypaintinput</comment>
-        <extracomment>refers to the direction of the stroke</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Attack Angle</source>
-        <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Declination/Tilt X</source>
-        <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Declination/Tilt Y</source>
-        <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>GridMap X</source>
-        <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>GridMap Y</source>
-        <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. refers to the direction of the stroke</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
+        <source>Attack Angle</source>
+        <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Declination/Tilt X</source>
+        <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Declination/Tilt Y</source>
+        <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>GridMap X</source>
+        <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>GridMap Y</source>
+        <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>Zoom Level</source>
         <comment>mypaintinput</comment>
-        <extracomment>refers to canvas zoom</extracomment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. refers to canvas zoom</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Barrel Rotation</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Base Brush Radius</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5090,511 +5358,592 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>The pressure reported by the tablet. Usually between 0.0 and 1.0, but it may get larger when a pressure gain is used. If you use the mouse, it will be 0.5 when a button is pressed and 0.0 otherwise.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Fast random noise, changing at each evaluation. Evenly distributed between 0 and 1.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the &apos;stroke duration&apos; and &apos;stroke hold time&apos; settings.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Declination of stylus tilt. 0 when stylus is parallel to tablet and 90.0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Right ascension of stylus tilt. 0 when stylus working end points to you, +90 when rotated 90 degrees clockwise, -90 when rotated 90 degrees counterclockwise.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>The angle of the stroke, from 0 to 360 degrees.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>The difference, in degrees, between the angle the stylus is pointing and the angle of the stroke movement.
 The range is +/-180.0.
 0.0 means the stroke angle corresponds to the angle of the stylus.
 90 means the stroke angle is perpendicular to the angle of the stylus.
 180 means the angle of the stroke is directly opposite the angle of the stylus.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Declination of stylus tilt on X-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Declination of stylus tilt on Y-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>The X coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the X axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>The Y coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the Y axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>The current zoom level of the canvas view.
 Logarithmic: 0.0 is 100%, 0.69 is 200%, -1.38 is 25%
 For the Radius setting, using a value of -4.15 makes the brush size roughly constant, relative to the level of zoom.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Barrel rotation of stylus.
 0 when not twisted
 +90 when twisted clockwise 90 degrees
 -90 when twisted counterclockwise 90 degrees</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>The base brush radius allows you to change the behavior of a brush as you make it bigger or smaller.
-You can even cancel out dab size increase and adjust something else to make a brush bigger.
-Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&quot;, which behave much differently.</source>
-        <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Opacity</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Opacity multiply</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Opacity linearize</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Radius</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Hardness</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Pixel feather</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Dabs per basic radius</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Dabs per actual radius</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Dabs per second</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Radius by random</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Fine speed filter</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Gross speed filter</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Fine speed gamma</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Gross speed gamma</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Jitter</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Offset by speed</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Offset by speed filter</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Slow position tracking</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Slow tracking per dab</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Tracking noise</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <location line="+137"/>
-        <source>Color hue</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-135"/>
-        <location line="+137"/>
-        <source>Color saturation</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-135"/>
-        <source>Color value</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Save color</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Change color hue</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Change color lightness (HSL)</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Change color satur. (HSL)</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Change color value (HSV)</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Change color satur. (HSV)</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Smudge</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Smudge length</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Smudge radius</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Eraser</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished">Ластик</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Stroke threshold</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Stroke duration</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Stroke hold time</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Custom input</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Custom input filter</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Elliptical dab: ratio</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Elliptical dab: angle</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Direction filter</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Lock alpha</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Colorize</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Snap to pixel</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Pressure gain</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>GridMap Scale</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>GridMap Scale X</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>GridMap Scale Y</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Smudge length multiplier</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Smudge bucket</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Smudge transparency</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Offset Y</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Offset X</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Angular Offset: Direction</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Angular Offset: Ascension</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Angular Offset: View</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Angular Offset Mirrored: Direction</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Angular Offset Mirrored: Ascension</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Angular Offset Mirrored: View</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Angular Offsets Adjustment</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Offsets Multiplier</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Posterize</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Posterization levels</source>
-        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
+        <source>The base brush radius allows you to change the behavior of a brush as you make it bigger or smaller.
+You can even cancel out dab size increase and adjust something else to make a brush bigger.
+Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&quot;, which behave much differently.</source>
+        <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Opacity</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Opacity multiply</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Opacity linearize</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Radius</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Hardness</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Pixel feather</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Dabs per basic radius</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Dabs per actual radius</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Dabs per second</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Radius by random</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Fine speed filter</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Gross speed filter</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Fine speed gamma</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Gross speed gamma</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Jitter</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Offset by speed</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Offset by speed filter</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Slow position tracking</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Slow tracking per dab</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Tracking noise</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+201"/>
+        <source>Color hue</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-198"/>
+        <location line="+201"/>
+        <source>Color saturation</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-198"/>
+        <source>Color value</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Save color</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Change color hue</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Change color lightness (HSL)</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Change color satur. (HSL)</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Change color value (HSV)</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Change color satur. (HSV)</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Smudge</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Smudge length</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Smudge radius</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Eraser</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished">Ластик</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Stroke threshold</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Stroke duration</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Stroke hold time</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Custom input</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Custom input filter</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Elliptical dab: ratio</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Elliptical dab: angle</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Direction filter</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Lock alpha</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Colorize</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Snap to pixel</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Pressure gain</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>GridMap Scale</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>GridMap Scale X</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>GridMap Scale Y</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Smudge length multiplier</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Smudge bucket</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Smudge transparency</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Offset Y</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Offset X</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Angular Offset: Direction</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Angular Offset: Ascension</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Angular Offset: View</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Angular Offset Mirrored: Direction</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Angular Offset Mirrored: Ascension</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Angular Offset Mirrored: View</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Angular Offsets Adjustment</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Offsets Multiplier</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Posterize</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Posterization levels</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>Pigment</source>
         <comment>mypaintsetting</comment>
-        <extracomment>The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.</extracomment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5604,456 +5953,517 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>0 means brush is transparent, 1 fully visible
 (also known as alpha or opacity)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This gets multiplied with opaque. You should only change the pressure input of this setting. Use &apos;opaque&apos; instead to make opacity depend on speed.
 This setting is responsible to stop painting when there is zero pressure. This is just a convention, the behaviour is identical to &apos;opaque&apos;.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Correct the nonlinearity introduced by blending multiple dabs on top of each other. This correction should get you a linear (&quot;natural&quot;) pressure response when pressure is mapped to opaque_multiply, as it is usually done. 0.9 is good for standard strokes, set it smaller if your brush scatters a lot, or higher if you use dabs_per_second.
 0.0 the opaque value above is for the individual dabs
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Basic brush radius (logarithmic)
  0.7 means 2 pixels
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Hard brush-circle borders (setting to zero will draw nothing). To reach the maximum hardness, you need to disable Pixel feather.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This setting decreases the hardness when necessary to prevent a pixel staircase effect (aliasing) by making the dab more blurred.
  0.0 disable (for very strong erasers and pixel brushes)
  1.0 blur one pixel (good value)
  5.0 notable blur, thin strokes will disappear</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Dabs to draw each second, no matter how far the pointer moves</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Alter the radius randomly each dab. You can also do this with the by_random input on the radius setting. If you do it here, there are two differences:
 1) the opaque value will be corrected such that a big-radius dabs is more transparent
 2) it will not change the actual radius seen by dabs_per_actual_radius</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>How slow the input fine speed is following the real speed
 0.0 change immediately as your speed changes (not recommended, but try it)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Same as &apos;fine speed filter&apos;, but note that the range is different</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This changes the reaction of the &apos;fine speed&apos; input to extreme physical speed. You will see the difference best if &apos;fine speed&apos; is mapped to the radius.
 -8.0 very fast speed does not increase &apos;fine speed&apos; much more
 +8.0 very fast speed increases &apos;fine speed&apos; a lot
 For very slow speed the opposite happens.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Same as &apos;fine speed gamma&apos; for gross speed</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Add a random offset to the position where each dab is drawn
  0.0 disabled
  1.0 standard deviation is one basic radius away
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change position depending on pointer speed
 = 0 disable
 &gt; 0 draw where the pointer moves to
 &lt; 0 draw where the pointer comes from</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>How slow the offset goes back to zero when the cursor stops moving</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Similar as above but at brushdab level (ignoring how much time has passed if brushdabs do not depend on time)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+9"/>
         <source>Color value (brightness, intensity)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>When selecting a brush, the color can be restored to the color that the brush was saved with.
  0.0 do not modify the active color when selecting this brush
  0.5 change active color towards brush color
  1.0 set the active color to the brush color when selected</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change color hue.
 -0.1 small clockwise color hue shift
  0.0 disable
  0.5 counterclockwise hue shift by 180 degrees</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change the color lightness using the HSL color model.
 -1.0 blacker
  0.0 disable
  1.0 whiter</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change the color saturation using the HSL color model.
 -1.0 more grayish
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change the color value (brightness, intensity) using the HSV color model. HSV changes are applied before HSL.
 -1.0 darker
  0.0 disable
  1.0 brigher</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change the color saturation using the HSV color model. HSV changes are applied before HSL.
 -1.0 more grayish
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Paint with the smudge color instead of the brush color. The smudge color is slowly changed to the color you are painting on.
  0.0 do not use the smudge color
  0.5 mix the smudge color with the brush color
  1.0 use only the smudge color</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This controls how fast the smudge color becomes the color you are painting on.
 0.0 immediately update the smudge color (requires more CPU cycles because of the frequent color checks)
 0.5 change the smudge color steadily towards the canvas color
 1.0 never change the smudge color</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This modifies the radius of the circle where color is picked up for smudging.
  0.0 use the brush radius
 -0.7 half the brush radius (fast, but not always intuitive)
 +0.7 twice the brush radius
 +1.6 five times the brush radius (slow performance)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>how much this tool behaves like an eraser
  0.0 normal painting
  1.0 standard eraser
  0.5 pixels go towards 50% transparency</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>How far you have to move until the stroke input reaches 1.0. This value is logarithmic (negative values will not invert the process).</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This defines how long the stroke input stays at 1.0. After that it will reset to 0.0 and start growing again, even if the stroke is not yet finished.
 2.0 means twice as long as it takes to go from 0.0 to 1.0
 9.9 or higher stands for infinite</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Set the custom input to this value. If it is slowed down, move it towards this value (see below). The idea is that you make this input depend on a mixture of pressure/speed/whatever, and then make other settings depend on this &apos;custom input&apos; instead of repeating this combination everywhere you need it.
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>How slow the custom input actually follows the desired value (the one above). This happens at brushdab level (ignoring how much time has passed, if brushdabs do not depend on time).
 0.0 no slowdown (changes apply instantly)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Aspect ratio of the dabs; must be &gt;= 1.0, where 1.0 means a perfectly round dab.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Angle by which elliptical dabs are tilted
  0.0 horizontal dabs
  45.0 45 degrees, turned clockwise
  180.0 horizontal again</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>A low value will make the direction input adapt more quickly, a high value will make it smoother</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Do not modify the alpha channel of the layer (paint only where there is paint already)
  0.0 normal painting
  0.5 half of the paint gets applied normally
  1.0 alpha channel fully locked</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Colorize the target layer, setting its hue and saturation from the active brush color while retaining its value and alpha.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Snap brush dab&apos;s center and its radius to pixels. Set this to 1.0 for a thin pixel brush.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This changes how hard you have to press. It multiplies tablet pressure by a constant factor.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Changes the overall scale that the GridMap brush input operates on.
 Logarithmic (same scale as brush radius).
 A scale of 0 will make the grid 256x256 pixels.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Changes the scale that the GridMap brush input operates on - affects X axis only.
 The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Changes the scale that the GridMap brush input operates on - affects Y axis only.
 The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Logarithmic multiplier for the &quot;Smudge length&quot; value.
 Useful to correct for high-definition/large brushes with lots of dabs.
 The longer the smudge length the more a color will spread and will also boost performance dramatically, as the canvas is sampled less often</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>There are 256 buckets that each can hold a color picked up from the canvas.
 You can control which bucket to use to improve variability and realism of the brush.
 Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Control how much transparency is picked up and smudged, similar to lock alpha.
 1.0 will not move any transparency.
 0.5 will move only 50% transparency and above.
 0.0 will have no effect.
 Negative values do the reverse</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Moves the dabs up or down based on canvas coordinates.</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Moves the dabs left or right based on canvas coordinates.</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Follows the stroke direction to offset the dabs to one side.</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Follows the tilt direction to offset the dabs to one side. Requires Tilt.</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Follows the view orientation to offset the dabs to one side.</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Follows the stroke direction to offset the dabs, but to both sides of the stroke.</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Follows the tilt direction to offset the dabs, but to both sides of the stroke. Requires Tilt.</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Follows the view orientation to offset the dabs, but to both sides of the stroke.</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Change the Angular Offset angle from the default, which is 90 degrees.</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Logarithmic multiplier for X, Y, and Angular Offset settings.</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</source>
-        <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Number of posterization levels (divided by 100).
-0.05 = 5 levels, 0.2 = 20 levels, etc.
-Values above 0.5 may not be noticeable.</source>
-        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
+        <source>Moves the dabs up or down based on canvas coordinates.</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Moves the dabs left or right based on canvas coordinates.</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Follows the stroke direction to offset the dabs to one side.</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Follows the tilt direction to offset the dabs to one side. Requires Tilt.</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Follows the view orientation to offset the dabs to one side.</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Follows the stroke direction to offset the dabs, but to both sides of the stroke.</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Follows the tilt direction to offset the dabs, but to both sides of the stroke. Requires Tilt.</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Follows the view orientation to offset the dabs, but to both sides of the stroke.</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Change the Angular Offset angle from the default, which is 90 degrees.</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Logarithmic multiplier for X, Y, and Angular Offset settings.</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Number of posterization levels (divided by 100).
+0.05 = 5 levels, 0.2 = 20 levels, etc.
+Values above 0.5 may not be noticeable.</source>
+        <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>Subtractive spectral color mixing mode.
 0.0 no spectral mixing
 1.0 only spectral mixing</source>
         <comment>mypaintsetting</comment>
-        <extracomment>If this string is difficult to translate, feel free to change it to something more descriptive. Just try to be succinct and consistent.</extracomment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. If this string is difficult to translate, feel free to change it to something more descriptive. Just try to be succinct and consistent.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6122,6 +6532,21 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+2"/>
+        <source>Change Color Hue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Change Color Saturation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Change Color Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
         <translation type="unfinished"></translation>
@@ -6162,13 +6587,18 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+45"/>
         <source>&lt;b&gt;Conflict:&lt;/b&gt; the existing shortcut for &apos;%1&apos; will be overwritten if you proceed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can&apos;t assign a shortcut to a Left Click without any keys since that would interfere with drawing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>You can&apos;t assign just a key combination to this action, change the type to mouse button instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6266,116 +6696,6 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
-    <name>dialogs::DumpPlaybackDialog</name>
-    <message>
-        <location filename="../dialogs/dumpplaybackdialog.cpp" line="+25"/>
-        <source>done</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>undone</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>gone</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>unknown</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>local user</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>properties of layer %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>annotation %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>pixels on layer %1, from (%2, %3) to (%4, %5)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>canvas background</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>document metadata type %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>timeline frame %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>selection %1 of user %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>everything</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>unknown domain %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <location line="+6"/>
-        <source>Type</source>
-        <translation type="unfinished">Тип</translation>
-    </message>
-    <message>
-        <location line="-6"/>
-        <location line="+6"/>
-        <source>User</source>
-        <translation type="unfinished">Пользователь</translation>
-    </message>
-    <message>
-        <location line="-6"/>
-        <source>Undo</source>
-        <translation type="unfinished">Отменить</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>State</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Affected Area</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+240"/>
-        <source>Yes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>No</source>
-        <translation type="unfinished">Нет</translation>
-    </message>
-</context>
-<context>
     <name>dialogs::Flipbook</name>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+157"/>
@@ -6391,7 +6711,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::InviteDialog</name>
     <message>
-        <location filename="../dialogs/invitedialog.cpp" line="+106"/>
+        <location filename="../dialogs/invitedialog.cpp" line="+99"/>
         <source>Invite link copied to clipboard.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6409,15 +6729,25 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Название:</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Filter Layers:</source>
+        <location line="+8"/>
+        <source>Search…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Previous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Next</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>dialogs::LayerProperties</name>
     <message>
-        <location filename="../dialogs/layerproperties.cpp" line="+52"/>
+        <location filename="../dialogs/layerproperties.cpp" line="+92"/>
         <source>New Layer Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6427,7 +6757,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Новый слой</translation>
     </message>
     <message>
-        <location line="+101"/>
+        <location line="+110"/>
         <source>Pass Through</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6528,7 +6858,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+168"/>
+        <location filename="../dialogs/logindialog.cpp" line="+169"/>
         <source>Report...</source>
         <translation>Сообщить о нарушении...</translation>
     </message>
@@ -6632,12 +6962,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+546"/>
+        <location line="+552"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-630"/>
+        <location line="-636"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6692,7 +7022,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+534"/>
+        <location line="+540"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6741,7 +7071,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::ResetDialog</name>
     <message>
-        <location filename="../dialogs/resetdialog.cpp" line="+129"/>
+        <location filename="../dialogs/resetdialog.cpp" line="+132"/>
         <source>Reset Session</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6774,22 +7104,22 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::ResizeDialog</name>
     <message>
-        <location filename="../dialogs/resizedialog.cpp" line="+28"/>
+        <location filename="../dialogs/resizedialog.cpp" line="+30"/>
         <source>Expand up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Expand left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Expand right</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Expand down</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6804,7 +7134,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>По центру</translation>
     </message>
     <message>
-        <location line="+92"/>
+        <location line="+94"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
@@ -6843,7 +7173,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::SessionSettingsDialog</name>
     <message>
-        <location filename="../dialogs/sessionsettings.cpp" line="+510"/>
+        <location filename="../dialogs/sessionsettings.cpp" line="+511"/>
         <source>Operators</source>
         <translation>Операторы</translation>
     </message>
@@ -6881,7 +7211,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>нет</translation>
     </message>
     <message numerus="yes">
-        <location line="-231"/>
+        <location line="-232"/>
         <source>Imported %n session ban(s).</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -6901,13 +7231,13 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+471"/>
+        <location line="+472"/>
         <location line="+12"/>
         <source>Session Ban Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-469"/>
+        <location line="-470"/>
         <source>Session Ban Export</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6932,7 +7262,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+151"/>
+        <location line="+152"/>
         <source>assign</source>
         <comment>password</comment>
         <translation>установить</translation>
@@ -7163,7 +7493,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::StartDialog</name>
     <message>
-        <location filename="../dialogs/startdialog.cpp" line="+74"/>
+        <location filename="../dialogs/startdialog.cpp" line="+75"/>
         <source>Start</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7268,12 +7598,42 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Добавить сервер</translation>
     </message>
     <message>
+        <location line="+5"/>
+        <source>Save/Load</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Reload defaults…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Load settings…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Save settings…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Import from file…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Export to file…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+6"/>
         <source>Check for Updates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+302"/>
+        <location line="+338"/>
         <source>Checking…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7307,7 +7667,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Начать</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+9"/>
         <source>Create</source>
         <translation type="unfinished">Создать</translation>
     </message>
@@ -7561,7 +7921,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-138"/>
+        <location line="+42"/>
+        <source>%1 offline undo levels by default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-180"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7631,12 +7996,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>Use %1 undo levels by default</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
+        <location line="+11"/>
         <source>Session history:</source>
         <translation type="unfinished">История сессии:</translation>
     </message>
@@ -7644,32 +8004,32 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Input</name>
     <message>
-        <location filename="../mainwindow.cpp" line="-25"/>
+        <location filename="../mainwindow.cpp" line="-65"/>
         <source>KisTablet Windows Ink</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+8"/>
         <source>KisTablet Wintab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+8"/>
         <source>KisTablet Wintab Relative</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+10"/>
         <source>Qt5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+9"/>
         <source>Qt6 Windows Ink</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+8"/>
         <source>Qt6 Wintab</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7777,9 +8137,19 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+0"/>
+        <source>Add</source>
+        <translation type="unfinished">Добавить</translation>
+    </message>
+    <message>
         <location line="+4"/>
         <source>Delete selected avatars…</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Remove</source>
+        <translation type="unfinished">Удалить</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8056,7 +8426,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Servers</name>
     <message>
-        <location filename="../dialogs/settingsdialog/servers.cpp" line="+112"/>
+        <location filename="../dialogs/settingsdialog/servers.cpp" line="+109"/>
         <source>Known hosts:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8076,7 +8446,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-84"/>
+        <location line="-81"/>
         <source>List servers:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8086,7 +8456,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>Remove selected list servers…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8096,7 +8466,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location line="+61"/>
+        <location line="+59"/>
         <source>Really remove %n known host(s)?</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -8105,7 +8475,7 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message numerus="yes">
-        <location line="-60"/>
+        <location line="-58"/>
         <source>Really remove %n list server(s)?</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -8114,12 +8484,24 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-7"/>
+        <location line="+57"/>
+        <source>Add</source>
+        <translation type="unfinished">Добавить</translation>
+    </message>
+    <message>
+        <location line="-53"/>
+        <location line="+58"/>
+        <source>Remove</source>
+        <translation type="unfinished">Удалить</translation>
+    </message>
+    <message>
+        <location line="-54"/>
         <source>Move up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>Move down</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8185,24 +8567,30 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="-4"/>
-        <location line="+145"/>
+        <location line="+163"/>
         <source>Restore defaults…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-140"/>
+        <location line="-158"/>
         <source>Really restore all shortcuts to their default values?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+117"/>
+        <location line="+118"/>
+        <location line="+27"/>
         <source>Edit Canvas Shortcut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-17"/>
         <source>Add canvas shortcut…</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Add</source>
+        <translation type="unfinished">Добавить</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8210,9 +8598,24 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
+        <source>Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Edit selected canvas shortcut…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
         <source>Remove selected canvas shortcut…</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Remove</source>
+        <translation type="unfinished">Удалить</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8387,7 +8790,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+20"/>
         <source>Attach selected brushes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8407,7 +8810,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-95"/>
+        <location line="-108"/>
         <source>px</source>
         <translation type="unfinished"> пкс</translation>
     </message>
@@ -8418,11 +8821,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+2"/>
+        <location line="+88"/>
         <source>Enable brush outline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="-71"/>
         <source>Brush outline:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8466,8 +8870,19 @@ Values above 0.5 may not be noticeable.</source>
         <source>Color picker:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location line="+19"/>
+        <source>ms</source>
+        <extracomment>This stands for millseconds.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Switch tool temporarily by holding shortcut key for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message numerus="yes">
-        <location line="+37"/>
+        <location line="+29"/>
         <source>Show %1 brush slot(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -8476,7 +8891,7 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="-123"/>
+        <location line="-136"/>
         <source>Color space:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8987,124 +9402,63 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Host</name>
     <message>
-        <location filename="../dialogs/startdialog/host.cpp" line="+118"/>
-        <source>The title is shown in the application title bar and in the session selection dialog</source>
-        <translation type="unfinished">Это название указано в заголовке приложения и в диалоге выбора сессии</translation>
+        <location filename="../dialogs/startdialog/host.cpp" line="+41"/>
+        <source>Session</source>
+        <translation type="unfinished">Сессия</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Title:</source>
-        <translation type="unfinished">Название:</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Optional. If left blank, no password will be needed to join this session.</source>
-        <translation type="unfinished">Опционально. Если оставить пустым, для присоединения к этой сессии не понадобится пароль.</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Generate</source>
+        <location line="+4"/>
+        <source>Listing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Generates a random password.</source>
+        <location line="+4"/>
+        <source>Permissions</source>
+        <translation type="unfinished">Права</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Roles</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>Password:</source>
-        <translation type="unfinished">Пароль:</translation>
+        <location line="+4"/>
+        <source>Bans</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+23"/>
-        <source>The built-in server is not available on Android.</source>
+        <location line="+50"/>
+        <source>Host Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+3"/>
+        <source>Invalid input(s), please correct the following:</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+55"/>
+        <source>Failed to read file: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
-        <source>The built-in server is not available in the browser.</source>
+        <source>No file or content received.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>The built-in server is not available on this installation of Drawpile.</source>
+        <location line="+82"/>
+        <source>Import Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+29"/>
-        <source>Enable advanced options</source>
+        <location line="+0"/>
+        <source>Could not import session settings.</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>An optional user friendly ID for the session</source>
-        <translation type="unfinished">Необязательное удобное имя для сессии</translation>
-    </message>
-    <message>
-        <location line="-4"/>
-        <source>ID Alias:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-154"/>
-        <source>A session title is required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Invalid session title. If you want to join a session using an invite link, &lt;a href=&quot;#&quot;&gt;click here to go to the Join page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+60"/>
-        <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished">Не подходит для несовершеннолетних (NSFM)</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Marks the session as having age-restricted content.</source>
-        <translation type="unfinished">Обозначить сессию как содержащую контент для взрослых.</translation>
-    </message>
-    <message>
-        <location line="+70"/>
-        <source>List at:</source>
-        <translation type="unfinished">Показ в списке:</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Announce the session at a public list</source>
-        <translation type="unfinished">Опубликовать сессию в общедоступном списке</translation>
-    </message>
-    <message>
-        <location line="-59"/>
-        <source>Host on this computer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Use Drawpile&apos;s built-in server</source>
-        <translation type="unfinished">Использовать встроенный сервер Drawpile</translation>
-    </message>
-    <message>
-        <location line="-5"/>
-        <source>Host at:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Use an external dedicated server</source>
-        <translation type="unfinished">Использовать выделенный внешний сервер</translation>
     </message>
 </context>
 <context>
@@ -9260,19 +9614,518 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
+    <name>dialogs::startdialog::host::Bans</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/bans.cpp" line="+24"/>
+        <source>No bans imported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Remove</source>
+        <translation type="unfinished">Удалить</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::Categories</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/categories.cpp" line="+27"/>
+        <source>Session</source>
+        <translation type="unfinished">Сессия</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Listing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Replace announcements</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Permissions</source>
+        <translation type="unfinished">Права</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Roles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Replace role list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Bans</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Replace ban list</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::ExportDialog</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+499"/>
+        <source>Export Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Pick the sections you want to export:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Export Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Could not export session settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::ImportDialog</name>
+    <message>
+        <location line="-113"/>
+        <source>Import Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Pick the sections you want to import:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::Listing</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/listing.cpp" line="+37"/>
+        <source>Set title automatically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Enter a publicly visible title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Title:</source>
+        <translation type="unfinished">Название:</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Publicly visible ID for pretty invite links</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>ID alias:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Announcements:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Add</source>
+        <translation type="unfinished">Добавить</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Remove selected</source>
+        <translation type="unfinished">Удалить выделенных</translation>
+    </message>
+    <message>
+        <location line="+134"/>
+        <source>Listing: a title is required for public sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Listing: the title is inappropriate.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Listing: the ID alias is inappropriate.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::LoadDialog</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-350"/>
+        <source>Load Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <location line="+109"/>
+        <source>Rename</source>
+        <translation type="unfinished">Переименовать</translation>
+    </message>
+    <message>
+        <location line="-102"/>
+        <location line="+134"/>
+        <source>Delete</source>
+        <translation type="unfinished">Удалить</translation>
+    </message>
+    <message>
+        <location line="-125"/>
+        <source>Pick the sections you want to load:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+94"/>
+        <source>Choose a new name for preset %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Conflict</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Preset %1 already exists, do you want to replace it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Yes, replace</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location line="+19"/>
+        <source>No, keep</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-2"/>
+        <source>Are you sure you want to delete preset %1?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Yes, delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::Permissions</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/permissions.cpp" line="+97"/>
+        <source>Undo Limit: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Cut, paste and fill:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Transform selections:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Create annotations:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Manage own layers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Manage all layers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Change canvas size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Change background:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>MyPaint brushes:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Laser pointer:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Animation timeline:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Undo and redo:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Kick and ban:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+112"/>
+        <source>Everyone</source>
+        <translation type="unfinished">Все</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Registered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Trusted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Operators</source>
+        <translation type="unfinished">Операторы</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::ResetDialog</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-226"/>
+        <source>Reset</source>
+        <translation type="unfinished">Сброс</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Pick the sections you want to reset to their defaults:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::Roles</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/roles.cpp" line="+36"/>
+        <source>Define a password to let anyone become operator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Operator password:</source>
+        <translation type="unfinished">Пароль оператора:</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>No roles imported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+47"/>
+        <source>Operator</source>
+        <translation type="unfinished">Оператор</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Trusted</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::SaveDialog</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+276"/>
+        <source>Load Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Name:</source>
+        <translation type="unfinished">Название:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Pick the sections you want to save:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Save</source>
+        <translation type="unfinished">Сохранить</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Preset %1 already exists, do you want to replace it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Yes, replace</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>No, keep</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::Session</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="+38"/>
+        <source>Personal session, only people you invite can join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Public session, anyone can freely join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Set a session title in the Listing tab.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Session password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Enter or generate a session password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Generate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Not suitable for minors (NSFM)</source>
+        <translation type="unfinished">Не подходит для несовершеннолетних (NSFM)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Keep chat history</source>
+        <translation type="unfinished">Сохранять историю чата</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Host or IP address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Builtin server on this computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Server:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Enter a host or IP address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+129"/>
+        <source>Session: a password is required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Session: a server is required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+70"/>
+        <source>This will host your session on the public Drawpile server. It&apos;s freely available for anyone. To keep space available, sessions will be stopped when they&apos;re inactive for a while or after everybody leaves.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Sessions must comply with the rules, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;click here to view them&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Hosting on your own computer requires additional setup!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::SessionSettingsImporter</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/files.cpp" line="+52"/>
+        <source>This file doesn&apos;t contain any valid session settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Invalid session settings format.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>File contains session settings to import.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Invalid role format.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>File contains no roles to import.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>docks::BrushPalette</name>
     <message>
-        <location filename="../docks/brushpalettedock.cpp" line="+111"/>
+        <location filename="../docks/brushpalettedock.cpp" line="+102"/>
         <source>Brushes</source>
         <translation>Кисти</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+28"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+548"/>
+        <location line="+553"/>
         <source>New Tag</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9282,7 +10135,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-571"/>
+        <location line="-576"/>
         <source>&amp;Edit Brush</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9357,7 +10210,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+233"/>
+        <location line="+227"/>
         <source>Overwrite Brush</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9373,13 +10226,13 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+297"/>
+        <location line="+308"/>
         <location line="+45"/>
         <source>Keep</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-278"/>
+        <location line="-290"/>
         <source>Brush Import</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9416,7 +10269,7 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="+105"/>
+        <location line="+116"/>
         <source>No tags</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but there&apos;s no tags to assign it to.</extracomment>
         <translation type="unfinished"></translation>
@@ -9428,7 +10281,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+40"/>
         <location line="+15"/>
         <source>Tag name:</source>
         <translation type="unfinished"></translation>
@@ -9459,16 +10312,29 @@ Values above 0.5 may not be noticeable.</source>
         <source>Really delete brush &apos;%1&apos;?</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>docks::ColorCircleDock</name>
     <message>
-        <location line="-410"/>
-        <source>New Brush</source>
+        <location filename="../docks/colorcircle.cpp" line="+25"/>
+        <source>Color Circle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Circle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Configure…</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>docks::ColorPaletteDock</name>
     <message>
-        <location filename="../docks/colorpalette.cpp" line="+311"/>
+        <location filename="../docks/colorpalette.cpp" line="+313"/>
         <source>Delete</source>
         <translation type="unfinished">Удалить</translation>
     </message>
@@ -9478,7 +10344,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-12"/>
+        <source>Color Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
         <source>Duplicate palette</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9568,33 +10444,43 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ColorSliderDock</name>
     <message>
-        <location filename="../docks/colorsliders.cpp" line="+80"/>
+        <location filename="../docks/colorsliders.cpp" line="+73"/>
+        <source>Color Sliders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Sliders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>Color space</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+364"/>
+        <location line="+388"/>
         <source>HSV</source>
         <extracomment>Color space HSV (hue, chroma, value)</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-353"/>
-        <location line="+329"/>
+        <location line="-377"/>
+        <location line="+353"/>
         <source>HSL</source>
         <extracomment>Color space HSL (hue, saturation, lightness)</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-318"/>
-        <location line="+330"/>
+        <location line="-342"/>
+        <location line="+354"/>
         <source>HCL</source>
         <extracomment>Color space HCL (hue, chroma, lightness)</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-317"/>
+        <location line="-341"/>
         <source>Show all sliders at once</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9627,7 +10513,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+177"/>
+        <location line="+201"/>
         <source>H</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Hue&quot; H of HSL.</extracomment>
@@ -9693,7 +10579,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ColorSpinnerDock</name>
     <message>
-        <location filename="../docks/colorspinner.cpp" line="+77"/>
+        <location filename="../docks/colorspinner.cpp" line="+87"/>
         <source>Shape</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9718,27 +10604,41 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location filename="../docks/colorcircle.cpp" line="+6"/>
+        <location filename="../docks/colorspinner.cpp" line="+15"/>
         <source>Color space</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
+        <location filename="../docks/colorspinner.cpp" line="+3"/>
         <source>HSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
+        <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>HSL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
+        <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>HCL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location filename="../docks/colorspinner.cpp" line="-99"/>
+        <source>Color Wheel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Wheel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+110"/>
         <source>Direction</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9768,8 +10668,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">По центру</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location filename="../docks/colorcircle.cpp" line="+12"/>
+        <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>Preview selected color</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>docks::DockBase</name>
+    <message>
+        <location filename="../docks/dockbase.cpp" line="+73"/>
+        <source>Drag here to arrange</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Finish arranging</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9819,22 +10733,33 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="-332"/>
+        <location filename="../docks/layerlistdock.cpp" line="-362"/>
         <source>Layers</source>
         <translation>Слои</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+45"/>
+        <source>Toggle sketch mode (only visible to you)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location line="+1303"/>
         <source>Opacity: </source>
         <translation type="unfinished">Прозрачность: </translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-1302"/>
         <source>%</source>
         <translation type="unfinished">%</translation>
     </message>
     <message>
-        <location line="+266"/>
+        <location line="+10"/>
+        <source>Change sketch tint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+274"/>
         <source>Duplicate Layer Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9859,6 +10784,11 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+2"/>
+        <source>Toggle Layer Group &amp;Sketch Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+3"/>
         <source>Check Layer Group</source>
         <translation type="unfinished"></translation>
@@ -9869,7 +10799,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+24"/>
         <source>Check Layer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9879,12 +10809,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1011"/>
+        <location line="+984"/>
+        <source>Sketch: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+136"/>
         <source>Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-433"/>
+        <location line="-513"/>
         <source>Delete Layer?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9894,7 +10829,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+432"/>
+        <location line="+512"/>
         <source>Layer</source>
         <translation>Слой</translation>
     </message>
@@ -9902,12 +10837,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::Navigator</name>
     <message>
-        <location filename="../docks/navigator.cpp" line="+474"/>
+        <location filename="../docks/navigator.cpp" line="+475"/>
         <source>Navigator</source>
         <translation>Навигатор</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>Show Cursors</source>
         <translation>Показывать курсоры</translation>
     </message>
@@ -9920,7 +10855,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::OnionSkinsDock</name>
     <message>
-        <location filename="../docks/onionskins.cpp" line="+126"/>
+        <location filename="../docks/onionskins.cpp" line="+117"/>
+        <source>Onion Skins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Tint Below</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9952,6 +10892,85 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+42"/>
         <source>Opacity: %1%</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>docks::ReferenceDock</name>
+    <message>
+        <location filename="../docks/reference.cpp" line="+26"/>
+        <source>Reference</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Open…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open a file as a reference image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Paste</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Paste a reference image from the clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Close</source>
+        <translation type="unfinished">Закрыть</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Close the current reference image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Pick color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Pan image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Reset zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Zoom to fit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Zoom: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>%</source>
+        <translation type="unfinished">%</translation>
+    </message>
+    <message>
+        <location line="+62"/>
+        <source>Error</source>
+        <translation type="unfinished">Ошибка</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Could not open reference image: %1.</source>
+        <extracomment>%1 is an error message.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9989,8 +11008,13 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ToolSettings</name>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="+14"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="+12"/>
         <source>Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Tool Settings</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10005,7 +11029,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tabletinput</name>
     <message>
-        <location filename="../tabletinput.cpp" line="+186"/>
+        <location filename="../tabletinput.cpp" line="+148"/>
         <source>Qt tablet input</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10245,12 +11269,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+116"/>
         <source>You don&apos;t have permission to use the fill tool.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+223"/>
+        <location line="+231"/>
         <source>Size Limit: Selection</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10283,7 +11307,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::SelectionSettings</name>
     <message>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="-132"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="-140"/>
         <source>Replace selection</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10313,7 +11337,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+162"/>
+        <location line="+7"/>
+        <source>Drag to move</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Allow dragging the selection for a quick move operation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+161"/>
         <source>Select continuous area</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10326,7 +11360,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::TransformSettings</name>
     <message>
-        <location filename="../toolwidgets/transformsettings.cpp" line="+139"/>
+        <location filename="../toolwidgets/transformsettings.cpp" line="+143"/>
         <source>Fast</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10383,6 +11417,16 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+16"/>
+        <source>Show</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Show transform handles instead of just moving</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Scale</source>
         <translation type="unfinished">Масштабировать</translation>
     </message>
@@ -10402,7 +11446,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
         <source>Handles:</source>
         <extracomment>Refers to the handles on the corners and edges of a transform. Which are either arrows to scale the transformation or squares to distort it.</extracomment>
         <translation type="unfinished"></translation>
@@ -10467,7 +11511,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>view::CanvasScene</name>
     <message>
-        <location filename="../view/canvasscene.cpp" line="+540"/>
+        <location filename="../view/canvasscene.cpp" line="+567"/>
         <source>Restoring canvas…</source>
         <translation>Восстановление холста…</translation>
     </message>
@@ -10597,7 +11641,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+233"/>
+        <location filename="../scene/canvasview.cpp" line="+337"/>
         <location filename="../view/canvasview.cpp" line="-30"/>
         <source>Reconnect</source>
         <translation>Переподключиться</translation>
@@ -10621,7 +11665,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+375"/>
-        <location filename="../view/canvascontroller.cpp" line="+353"/>
+        <location filename="../view/canvascontroller.cpp" line="+467"/>
         <source>Vertical flip: ON</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10644,8 +11688,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1649"/>
-        <location filename="../view/canvascontroller.cpp" line="+1791"/>
+        <location line="+1828"/>
+        <location filename="../view/canvascontroller.cpp" line="+1968"/>
         <source>Zoom: %1%</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10974,12 +12018,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::NetStatus</name>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="+384"/>
+        <location filename="../widgets/netstatus.cpp" line="+390"/>
         <source>not connected</source>
         <translation>не подключен</translation>
     </message>
     <message>
-        <location line="-326"/>
+        <location line="-332"/>
         <source>Copy address to clipboard</source>
         <translation>Копировать адрес в буфер</translation>
     </message>
@@ -11004,7 +12048,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Показать сертификат</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+86"/>
         <source>Self-signed certificate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11044,12 +12088,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Выход...</translation>
     </message>
     <message>
-        <location line="-319"/>
+        <location line="-325"/>
         <source>Hide address</source>
         <translation>Скрыть адрес</translation>
     </message>
     <message>
-        <location line="+308"/>
+        <location line="+314"/>
         <source>Connecting...</source>
         <translation>Подключение...</translation>
     </message>
@@ -11110,7 +12154,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+202"/>
+        <location line="+203"/>
         <source>Red: %1
 Green: %2
 Blue: %3
@@ -11350,12 +12394,12 @@ or via Animation ▸ New Track.</source>
 <context>
     <name>widgets::ViewStatus</name>
     <message>
-        <location filename="../widgets/viewstatus.cpp" line="+73"/>
+        <location filename="../widgets/viewstatus.cpp" line="+77"/>
         <source>Canvas Rotation</source>
         <translation>Вращение холста</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+46"/>
         <source>Zoom</source>
         <translation type="unfinished"></translation>
     </message>

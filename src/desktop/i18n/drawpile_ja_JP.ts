@@ -338,123 +338,6 @@
     </message>
 </context>
 <context>
-    <name>DumpPlaybackDialog</name>
-    <message>
-        <location filename="../ui/dumpplayback.ui" line="+14"/>
-        <source>Play Debug Dump</source>
-        <translation>デバッグダンプの再生</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source> ms</source>
-        <translation> ミリ秒</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Playback Delay: </source>
-        <translation>再生遅延: </translation>
-    </message>
-    <message>
-        <location line="+16"/>
-        <source>Play/Pause</source>
-        <translation>再生/一時停止</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Jump</source>
-        <translation>ジャンプ</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Previous Reset</source>
-        <translation>前のリセット</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Single Step</source>
-        <translation>シングルステップ</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Next Reset</source>
-        <translation>次のリセット</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Position: </source>
-        <translation>位置: </translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Status</source>
-        <translation>ステータス</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>History Size:</source>
-        <translation>ヒストリーサイズ:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <location line="+7"/>
-        <location line="+28"/>
-        <location line="+21"/>
-        <location line="+14"/>
-        <source>0</source>
-        <translation>0</translation>
-    </message>
-    <message>
-        <location line="-56"/>
-        <source>Local Fork Present:</source>
-        <translation>ローカルフォークの存在:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>No</source>
-        <translation>無効</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Local Fork Size:</source>
-        <translation>ローカルフォークサイズ:</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Local Fork Start:</source>
-        <translation>ローカルフォークの開始位置:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>History Offset:</source>
-        <translation>ヒストリーオフセット:</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Local Fork Fallbehind:</source>
-        <translation>脱落したローカルフォーク:</translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>History</source>
-        <translation>ヒストリー</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Hide Entries Without State</source>
-        <translation>ステートなしでエントリーを隠す</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Hide Gone Entries</source>
-        <translation>消えたエントリーを隠す</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Local Fork</source>
-        <translation>ローカルフォーク</translation>
-    </message>
-</context>
-<context>
     <name>FileTypeDialog</name>
     <message>
         <location filename="../ui/filetypedialog.ui" line="+20"/>
@@ -470,7 +353,7 @@
 <context>
     <name>FileWrangler</name>
     <message>
-        <location filename="../filewrangler.cpp" line="+150"/>
+        <location filename="../filewrangler.cpp" line="+169"/>
         <source>Certificates (%1)</source>
         <translation>証明書 (%1)</translation>
     </message>
@@ -480,7 +363,7 @@
         <translation>インポート</translation>
     </message>
     <message>
-        <location line="-118"/>
+        <location line="-135"/>
         <source>Open</source>
         <translation>開く</translation>
     </message>
@@ -500,13 +383,13 @@
         <translation>ロールをインポート</translation>
     </message>
     <message>
-        <location line="+120"/>
-        <location line="+313"/>
+        <location line="+137"/>
+        <location line="+323"/>
         <source>Save Image</source>
         <translation>画像を保存</translation>
     </message>
     <message>
-        <location line="-313"/>
+        <location line="-323"/>
         <source>Export Image</source>
         <translation>画像のエクスポート</translation>
     </message>
@@ -521,7 +404,7 @@
         <translation>選択範囲を保存</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+19"/>
         <source>Record Session</source>
         <translation>セッションを記録</translation>
     </message>
@@ -546,12 +429,12 @@
         <translation>タブレットイベントのログ</translation>
     </message>
     <message>
-        <location line="+159"/>
+        <location line="+168"/>
         <source>Log File</source>
         <translation>ログファイル</translation>
     </message>
     <message>
-        <location line="-187"/>
+        <location line="-196"/>
         <location line="+36"/>
         <source>Export MP4 Video</source>
         <translation>MP4動画形式へエクスポート</translation>
@@ -572,7 +455,7 @@
         <translation>アニメーションフレームの保存</translation>
     </message>
     <message>
-        <location line="-253"/>
+        <location line="-271"/>
         <source>Add Avatar</source>
         <translation>アバターの追加</translation>
     </message>
@@ -607,7 +490,33 @@
         <translation>ブラシのインポート</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+23"/>
+        <source>Import Session Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>All Supported Files (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location line="+416"/>
+        <source>Session Settings (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-415"/>
+        <source>Session Bans (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Session Roles (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Error opening temporary file for %1.</source>
         <translation>%1 の一時ファイルを開くときにエラーが発生しました。</translation>
     </message>
@@ -627,7 +536,12 @@
         <translation>ファイルを貼り付け</translation>
     </message>
     <message>
-        <location line="+167"/>
+        <location line="+5"/>
+        <source>Reference Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+168"/>
         <source>Export Frames in ZIP</source>
         <translation>フレームをZIPファイルでエクスポート</translation>
     </message>
@@ -662,7 +576,12 @@
         <translation>ロールのエクスポート</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+10"/>
+        <source>Export Session Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+38"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
         <translation>PSD形式では注釈、アニメーションのタイムライン、及び一部の合成モードがサポートされていません。これらを含めて保存したい場合はORAファイルで保存する必要があります。</translation>
     </message>
@@ -693,7 +612,7 @@
         <translation>無題</translation>
     </message>
     <message>
-        <location line="+102"/>
+        <location line="+104"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
         <translation>無題%1</translation>
@@ -703,7 +622,7 @@
     <name>FillSettings</name>
     <message>
         <location filename="../ui/fillsettings.ui" line="+330"/>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="+291"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+310"/>
         <source>Feather: </source>
         <translation>ぼかし: </translation>
     </message>
@@ -815,13 +734,13 @@
         <translation>隙間埋め: </translation>
     </message>
     <message>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="+127"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+131"/>
         <source>Size Limit: Unlimited</source>
         <translation>サイズ制限: 無制限</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="-260"/>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="-163"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="-167"/>
         <source>Tolerance: </source>
         <translation>許容範囲: </translation>
     </message>
@@ -921,12 +840,7 @@
         <translation>パスワードを含める</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>&lt;strong&gt;Note:&lt;/strong&gt; changing the session password will cause the link to stop working! If someone else changes the password, you have to reconnect for this dialog to update.</source>
-        <translation>&lt;strong&gt;注意:&lt;/strong&gt; セッション パスワードを変更するとリンクが機能しなくなります。 他の人がパスワードを変更した場合、このダイアログを更新するには再接続する必要があります。</translation>
-    </message>
-    <message>
-        <location line="+29"/>
+        <location line="+25"/>
         <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
         <translation>ローカルでセッションをホストしています。 他の人がセッションに参加できない場合は、&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;ホスティングに関するヘルプ ページ&lt;/a&gt;をご覧ください。</translation>
     </message>
@@ -1033,11 +947,12 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+7"/>
+        <location line="+55"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-45"/>
         <source>Blending Mode:</source>
         <translation>合成モード:</translation>
     </message>
@@ -1057,7 +972,22 @@ Subrange: [%3, %4]</source>
         <translation>センシティブな内容</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+7"/>
+        <source>Sketch mode for you</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Sketch Opacity:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Sketch Tint:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Collaboration:</source>
         <translation>共同作業:</translation>
     </message>
@@ -1070,6 +1000,21 @@ Subrange: [%3, %4]</source>
         <location line="+7"/>
         <source>Created by:</source>
         <translation>作成したユーザー:</translation>
+    </message>
+    <message>
+        <location line="+81"/>
+        <source>No tint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Blue tint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Choose…</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1096,8 +1041,31 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+24"/>
-        <source>Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation>Drawpile のドックウィンドウは、Shift キーを押しながら上部をドラッグして自由に配置して組み合わせることができます。 ここでお気に入りの配置を保存したり復元したりできます。 配置が画面の解像度に合っていることを確認してください。そうでない場合、一部のコントロールが画面の外に押し出されてしまう可能性があります。</translation>
+        <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>LinkCheck</name>
+    <message>
+        <location filename="../utils/widgetutils.cpp" line="+1081"/>
+        <source>Open Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>This link will take you to the website at &quot;%1&quot;, which is not run by Drawpile. Are you sure you want to go there?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Yes, visit website</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>No, cancel</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1272,13 +1240,13 @@ Subrange: [%3, %4]</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+718"/>
-        <location line="+1987"/>
+        <location filename="../mainwindow.cpp" line="+850"/>
+        <location line="+2091"/>
         <source>Untitled</source>
         <translation>無題</translation>
     </message>
     <message>
-        <location line="-1323"/>
+        <location line="-1406"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>Drawpile を終了</translation>
@@ -1296,12 +1264,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+744"/>
+        <location line="+789"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location line="-753"/>
+        <location line="-798"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>未保存の変更内容があります。終了する前に保存しますか？</translation>
     </message>
@@ -1316,7 +1284,7 @@ Subrange: [%3, %4]</source>
         <translation>破棄</translation>
     </message>
     <message>
-        <location line="+560"/>
+        <location line="+605"/>
         <source>Couldn&apos;t save image</source>
         <translation>画像を保存できませんでした</translation>
     </message>
@@ -1331,12 +1299,12 @@ Subrange: [%3, %4]</source>
         <translation>アニメーションを保存中...</translation>
     </message>
     <message>
-        <location line="+431"/>
+        <location line="+437"/>
         <source>Invalid address</source>
         <translation>無効なアドレスです</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+145"/>
         <source>Really leave the session?</source>
         <translation>本当にセッションを退出しますか？</translation>
     </message>
@@ -1356,12 +1324,12 @@ Subrange: [%3, %4]</source>
         <translation>未送信のデータがあります！転送が完了するまでお待ちください！</translation>
     </message>
     <message>
-        <location line="+102"/>
+        <location line="+103"/>
         <source>Reason:</source>
         <translation>理由:</translation>
     </message>
     <message>
-        <location line="+145"/>
+        <location line="+155"/>
         <source>Would you like to join the session instead?</source>
         <translation>代わりにこのセッションに参加しますか？</translation>
     </message>
@@ -1381,7 +1349,7 @@ Subrange: [%3, %4]</source>
         <translation>キャンバスのロック解除</translation>
     </message>
     <message>
-        <location line="+404"/>
+        <location line="+428"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation>フリーハンド(消去モード,クリックでリセット)</translation>
     </message>
@@ -1401,66 +1369,70 @@ Subrange: [%3, %4]</source>
         <translation>フリーハンドブラシツール(透明度保護モード)</translation>
     </message>
     <message>
-        <location line="+146"/>
-        <location line="+13"/>
+        <location line="+171"/>
         <source>The image could not be loaded</source>
         <translation>画像を読み込みできませんでした</translation>
     </message>
     <message>
-        <location line="+436"/>
+        <location line="+441"/>
         <source>About Drawpile</source>
         <translation>Drawpile について</translation>
     </message>
     <message>
-        <location line="+201"/>
+        <location line="+228"/>
+        <source>Arrange Docks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
         <location filename="../widgets/macmenu.cpp" line="-169"/>
         <source>&amp;New</source>
         <translation>新規(&amp;N)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Open...</source>
         <translation>開く(&amp;O)...</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+16"/>
         <source>&amp;Save</source>
         <translation>保存(&amp;S)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <source>Save &amp;As...</source>
         <translation>名前を付けて保存(&amp;A)...</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <source>Export Image…</source>
         <translation>画像のエクスポート…</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+8"/>
         <source>Export Selection...</source>
         <translation>選択範囲のエクスポート...</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <source>Autosave</source>
         <translation>自動保存</translation>
     </message>
     <message>
-        <location line="-2032"/>
-        <location line="+2044"/>
+        <location line="-2183"/>
+        <location line="+2210"/>
         <source>Record...</source>
         <translation>記録...</translation>
     </message>
     <message>
-        <location line="-2345"/>
+        <location line="-2514"/>
         <source>Saving...</source>
         <translation>保存中...</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+27"/>
         <source>Image saved</source>
         <translation>画像を保存しました</translation>
     </message>
@@ -1475,30 +1447,30 @@ Subrange: [%3, %4]</source>
         <translation>再生</translation>
     </message>
     <message>
-        <location line="+572"/>
+        <location line="+611"/>
         <source>Terminate session</source>
         <translation>セッションを終了</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2417"/>
+        <location line="+2663"/>
         <source>Terminate</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location line="-935"/>
+        <location line="-1052"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
         <translation>終了(&amp;Q)</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+82"/>
         <location filename="../widgets/macmenu.cpp" line="-12"/>
         <source>&amp;File</source>
         <translation>ファイル(&amp;F)</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+37"/>
         <source>&amp;Export</source>
         <translation>エクスポート(&amp;E)</translation>
     </message>
@@ -1508,32 +1480,32 @@ Subrange: [%3, %4]</source>
         <translation>取り消し(&amp;U)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+4"/>
         <source>&amp;Redo</source>
         <translation>やり直し(&amp;R)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Copy selected area to the clipboard</source>
         <translation>選択範囲をクリップボードにコピー</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+12"/>
         <source>Copy selected area of the current layer to the clipboard</source>
         <translation>現在のレイヤーの選択範囲をクリップボードにコピー</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Cut selected area of the current layer to the clipboard</source>
         <translation>現在のレイヤーの選択範囲をクリップボードに切り取り</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>&amp;Paste</source>
         <translation>貼り付け(&amp;P)</translation>
     </message>
     <message>
-        <location line="+416"/>
+        <location line="+483"/>
         <source>Stay Time</source>
         <translation>滞在時間</translation>
     </message>
@@ -1568,7 +1540,7 @@ Subrange: [%3, %4]</source>
         <translation>無期限</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+42"/>
         <source>Clear Fill Source</source>
         <translation>塗りつぶし参照元をクリア</translation>
     </message>
@@ -1588,7 +1560,7 @@ Subrange: [%3, %4]</source>
         <translation>チェックをすべて外す(&amp;U)</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+40"/>
         <source>&amp;Deselect</source>
         <translation>選択解除(&amp;D)</translation>
     </message>
@@ -1608,7 +1580,7 @@ Subrange: [%3, %4]</source>
         <translation>選択範囲を色消しゴムで消去</translation>
     </message>
     <message>
-        <location line="-413"/>
+        <location line="-415"/>
         <source>&amp;Edit</source>
         <translation>編集(&amp;E)</translation>
     </message>
@@ -1638,7 +1610,7 @@ Subrange: [%3, %4]</source>
         <translation>新しいレイヤーグループ</translation>
     </message>
     <message>
-        <location line="+196"/>
+        <location line="+200"/>
         <source>Flipbook</source>
         <translation>フリップブック</translation>
     </message>
@@ -1648,12 +1620,12 @@ Subrange: [%3, %4]</source>
         <translation>アニメーションのプレビューウィンドウを表示</translation>
     </message>
     <message>
-        <location line="-247"/>
+        <location line="-251"/>
         <source>User Pointers</source>
         <translation>ユーザーポインター</translation>
     </message>
     <message>
-        <location line="+265"/>
+        <location line="+269"/>
         <source>Next Frame</source>
         <translation>次のフレーム</translation>
     </message>
@@ -1768,22 +1740,88 @@ Subrange: [%3, %4]</source>
         <translation>アクションをキャンセル</translation>
     </message>
     <message>
-        <location line="+148"/>
-        <source>Palette</source>
-        <translation>パレット</translation>
-    </message>
-    <message>
-        <location line="-1075"/>
+        <location line="-931"/>
         <source>Show User &amp;Pointers</source>
         <translation>ユーザーポインターを表示(&amp;P)</translation>
     </message>
     <message>
-        <location line="-4110"/>
+        <location line="-4540"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 が入室しました！</translation>
     </message>
     <message>
-        <location line="+573"/>
+        <location line="+84"/>
+        <source>disconnect you from the session</source>
+        <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>lose any unsaved changes</source>
+        <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>stop your recording</source>
+        <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>discard your playback</source>
+        <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location line="+15"/>
+        <source>Doing so will %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <source>Doing so will %1 and %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Doing so will %1, %2 and %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Doing so will %1, %2, %3 and %4.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Are you sure you want to continue?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Yes, continue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>No, cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+100"/>
+        <location line="+3733"/>
+        <source>Export Again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-3729"/>
+        <source>Export Again to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+439"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt;ショートカット &apos;%1&apos; は以下で複数設定されています:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -1798,7 +1836,7 @@ Subrange: [%3, %4]</source>
         <translation>修正する</translation>
     </message>
     <message>
-        <location line="+349"/>
+        <location line="+352"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
         <translation>切り取り、貼り付け、塗りつぶし、削除を行う権限がありません。</translation>
@@ -1829,7 +1867,37 @@ Subrange: [%3, %4]</source>
         <translation>あなたにはそれをする許可がありません。</translation>
     </message>
     <message>
-        <location line="+411"/>
+        <location line="+110"/>
+        <source>New</source>
+        <translation type="unfinished">新規</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You&apos;re about to create a new canvas and close this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Open Recent File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You&apos;re about to open a recent file and close this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+141"/>
+        <source>Open</source>
+        <translation type="unfinished">開く</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You&apos;re about to open a new file and close this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+172"/>
         <source>Image saving failed</source>
         <translation>画像の保存に失敗</translation>
     </message>
@@ -1904,12 +1972,37 @@ Subrange: [%3, %4]</source>
         <translation>タブレット イベントの ログを閉じる際にエラーが発生しました。</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+25"/>
         <source>Error opening tablet event log.</source>
         <translation>タブレットのイベント ログを開く際にエラーが発生しました。</translation>
     </message>
     <message>
-        <location line="+552"/>
+        <location line="+183"/>
+        <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+145"/>
+        <source>Reconnect</source>
+        <translation type="unfinished">再接続</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You&apos;re about reconnect to the session and close this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+155"/>
+        <source>Join Session</source>
+        <translation type="unfinished">セッションに参加</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You&apos;re about to connect to a new session and close this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+115"/>
         <source>Disconnected</source>
         <translation>切断しました</translation>
     </message>
@@ -1944,7 +2037,13 @@ Subrange: [%3, %4]</source>
         <translation>エラー</translation>
     </message>
     <message>
-        <location line="+712"/>
+        <location line="+487"/>
+        <source>The image could not be loaded: %1.</source>
+        <extracomment>%1 is an error message.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+259"/>
         <source>User #%1</source>
         <translation>ユーザー #%1</translation>
     </message>
@@ -1960,23 +2059,23 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1370"/>
+        <location line="+1572"/>
         <source>Tablet Event Log...</source>
         <translation>タブレットイベントのログ...</translation>
     </message>
     <message>
-        <location line="-1366"/>
+        <location line="-1568"/>
         <source>Stop Profile</source>
         <translation>プロファイルの停止</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1367"/>
+        <location line="+1569"/>
         <source>Profile...</source>
         <translation>プロファイル...</translation>
     </message>
     <message>
-        <location line="-1356"/>
+        <location line="-1558"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>強制遅延を設定... (現在 %1 ミリ秒)</translation>
     </message>
@@ -2002,12 +2101,12 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+15"/>
-        <location line="+1312"/>
+        <location line="+1514"/>
         <source>Record Debug Dumps</source>
         <translation>デバッグダンプの記録</translation>
     </message>
     <message>
-        <location line="-1311"/>
+        <location line="-1513"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2020,7 +2119,17 @@ Are you sure youwant to start recording debug dumps?</source>
 デバッグ ダンプの記録を開始してもよろしいですか?</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+16"/>
+        <source>Open Debug Dump</source>
+        <translation type="unfinished">デバッグダンプを開く</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You&apos;re about to open a debug dump and close this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>Cause Crash</source>
         <translation>クラッシュの原因</translation>
     </message>
@@ -2040,87 +2149,87 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>タブレット入力:</translation>
     </message>
     <message>
-        <location line="+144"/>
+        <location line="+153"/>
         <source>Toggle Dock %1</source>
         <translation>ドックの表示切替 %1</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+18"/>
         <source>Lock Docks</source>
         <translation>ドックを固定</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+8"/>
+        <source>Show Icons on Tabs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
         <source>Vertical Tabs on Sides</source>
         <translation>タブを縦に配置</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <source>Hold Shift to Arrange</source>
-        <translation>Shift キーを押しながら配置</translation>
-    </message>
-    <message>
-        <location line="+16"/>
+        <location line="+38"/>
         <source>&amp;Download Image…</source>
         <translation>画像のダウンロード(&amp;D)…</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+4"/>
         <source>Download Selection…</source>
         <translation>選択範囲のダウンロード…</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+30"/>
         <source>Export &amp;Animation…</source>
         <translation>アニメーションのエクスポート(&amp;A)…</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+5"/>
         <source>Import Animation &amp;Frames…</source>
         <translation>アニメーションとフレームのインポート(&amp;F)…</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Import Animation from &amp;Layers…</source>
         <translation>レイヤーからアニメーションをインポート(&amp;L)…</translation>
     </message>
     <message>
-        <location line="+98"/>
+        <location line="+126"/>
         <source>&amp;Import</source>
         <translation>インポート(&amp;I)</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+109"/>
         <source>Paste in View Center</source>
         <translation>画面中央に貼り付け</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+5"/>
         <source>Pic&amp;k From Screen</source>
         <translation>画面から取得(&amp;k)</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+14"/>
         <source>Set Session Background...</source>
         <translation>セッションの背景色を設定...</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <source>Set Local Background...</source>
         <translation>ローカルの背景色を設定...</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <source>Clear Local Background</source>
         <translation>ローカルの背景をクリア</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>&amp;Brush Settings</source>
         <translation>ブラシの設定(&amp;B)</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+65"/>
         <source>Expand &amp;Up…</source>
         <translation>上に拡張(&amp;U)…</translation>
     </message>
@@ -2290,13 +2399,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>レイヤー表示モード</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="+364"/>
+        <location filename="../docks/layerlistdock.cpp" line="+396"/>
         <location filename="../mainwindow.cpp" line="+64"/>
         <source>Merge Layer</source>
         <translation>下のレイヤーと結合</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+7"/>
+        <location filename="../mainwindow.cpp" line="+8"/>
         <source>Select Above</source>
         <translation>上のレイヤーを選択</translation>
     </message>
@@ -2311,7 +2420,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>レイヤー(&amp;L)</translation>
     </message>
     <message>
-        <location line="+176"/>
+        <location line="+179"/>
         <source>Set Key Frame to Current Layer</source>
         <translation>現在のレイヤーにキーフレームを設定</translation>
     </message>
@@ -2460,96 +2569,79 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>キャンバスの中心</translation>
     </message>
     <message>
-        <location line="+140"/>
-        <source>Wheel</source>
-        <extracomment>&quot;Wheel&quot; refers to the color wheel.</extracomment>
-        <translation>ホイール</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Sliders</source>
-        <extracomment>&quot;Sliders&quot; refers to the RGB and HSV sliders.</extracomment>
-        <translation>スライダー</translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>Onion Skins</source>
-        <translation>オニオンスキン</translation>
-    </message>
-    <message>
-        <location line="-3575"/>
+        <location line="-3691"/>
         <source>Stop Recording</source>
         <translation>セッションの記録を停止</translation>
     </message>
     <message>
-        <location line="+359"/>
+        <location line="+365"/>
         <source>Host Session</source>
         <translation>セッションをホスト</translation>
     </message>
     <message>
-        <location line="+1464"/>
+        <location line="+1548"/>
         <source>A collaborative drawing program.</source>
         <translation>共同作業可能なドローイングアプリケーションです。</translation>
     </message>
     <message>
-        <location line="+202"/>
+        <location line="+245"/>
         <source>Close</source>
         <translation>閉じる</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+49"/>
         <source>Import &amp;Brushes...</source>
         <translation>ブラシのインポート(&amp;B)...</translation>
     </message>
     <message>
-        <location line="-7"/>
+        <location line="-16"/>
         <source>Export Session &amp;Template...</source>
         <translation>セッションテンプレートをエクスポート(&amp;T)...</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+19"/>
         <source>Export &amp;Brushes…</source>
         <translation>ブラシをエクスポート(&amp;B)…</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+96"/>
         <location filename="../widgets/macmenu.cpp" line="-16"/>
         <source>Open &amp;Recent</source>
         <translation>最近使ったファイルを開く(&amp;R)</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+49"/>
         <source>File Tools</source>
         <translation>ファイルツール</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+94"/>
         <source>Paste &amp;From File...</source>
         <translation>ファイルから貼り付け(&amp;F)...</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+4"/>
         <source>Delete Empty Annotations</source>
         <translation>空の注釈を削除</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <source>Resi&amp;ze Canvas...</source>
         <translation>キャンバスのサイズを変更(&amp;z)...</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+13"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Prefere&amp;nces</source>
         <translation>設定(&amp;n)</translation>
     </message>
     <message>
-        <location line="+499"/>
+        <location line="+547"/>
         <source>Select &amp;All</source>
         <translation>すべて選択(&amp;A)</translation>
     </message>
     <message>
-        <location line="-337"/>
+        <location line="-339"/>
         <source>Edit Tools</source>
         <translation>編集ツール</translation>
     </message>
@@ -2574,7 +2666,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>全画面(&amp;F)</translation>
     </message>
     <message>
-        <location line="+557"/>
+        <location line="+561"/>
         <source>Pick colors from the image</source>
         <translation>画像から色を抽出</translation>
     </message>
@@ -2589,7 +2681,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>直線(&amp;L)</translation>
     </message>
     <message>
-        <location line="-4982"/>
+        <location line="-5453"/>
         <source>Server out of space</source>
         <translation>サーバーのスペースが不足</translation>
     </message>
@@ -2601,7 +2693,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 キャンバスの内容をシンプルにしてスペースがなくなる前に手動でリセットします。</translation>
     </message>
     <message>
-        <location line="+2440"/>
+        <location line="+2664"/>
         <source>Become Operator</source>
         <translation>管理者になる</translation>
     </message>
@@ -2611,22 +2703,22 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>管理者パスワードを入力</translation>
     </message>
     <message>
-        <location line="+344"/>
+        <location line="+355"/>
         <source>Session blocked by parental controls</source>
         <translation>ペアレンタルコントロールによりブロック済のセッション</translation>
     </message>
     <message>
-        <location line="+1157"/>
+        <location line="+1235"/>
         <source>Hide Docks</source>
         <translation>ドックを隠す</translation>
     </message>
     <message>
-        <location line="+211"/>
+        <location line="+286"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
         <translation>選択範囲のうち、背景以外をクリップボードにコピー</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+124"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
@@ -2674,32 +2766,38 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>レイヤーの表示/非表示を切り替え(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-77"/>
+        <location line="+4"/>
+        <location filename="../mainwindow.cpp" line="+1"/>
+        <source>Toggle Layer &amp;Sketch Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="-78"/>
         <source>Show Censored Layers</source>
         <translation>センシティブレイヤーの表示</translation>
     </message>
     <message>
-        <location line="-3073"/>
+        <location line="-3377"/>
         <source>Opening file…</source>
         <translation>ファイルを開く…</translation>
     </message>
     <message>
-        <location line="+788"/>
+        <location line="+816"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>ホストするキャンバスがありません!！ファイルを作成するか、ファイルを開いてください。</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+52"/>
         <source>Hosting on this computer is not available</source>
         <translation>このコンピューターでホストすることはできません</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+112"/>
         <source>Really leave and terminate the session?</source>
         <translation>本当に退出してセッションを終了しますか？</translation>
     </message>
     <message>
-        <location line="+282"/>
+        <location line="+293"/>
         <source>You&apos;ve been disconnected from the session.</source>
         <translation>セッションから切断されました。</translation>
     </message>
@@ -2709,7 +2807,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>切断済み: %1</translation>
     </message>
     <message>
-        <location line="+1109"/>
+        <location line="+1150"/>
         <source>Primary screen:</source>
         <translation>メイン画面:</translation>
     </message>
@@ -2719,32 +2817,32 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>%1x%2px² (%3x%4mm²)</translation>
     </message>
     <message>
-        <location line="+203"/>
+        <location line="+281"/>
         <source>Start...</source>
         <translation>スタート...</translation>
     </message>
     <message>
-        <location line="+168"/>
+        <location line="+196"/>
         <source>&amp;Copy Merged</source>
         <translation>結合してコピー(&amp;C)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+5"/>
         <source>Copy Without Background</source>
         <translation>背景を除いてコピー</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Copy From &amp;Layer</source>
         <translation>レイヤーからコピー(&amp;L)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Cu&amp;t From Layer</source>
         <translation>レイヤーから切り取り(&amp;t)</translation>
     </message>
     <message>
-        <location line="+162"/>
+        <location line="+233"/>
         <source>Tablet Driver</source>
         <translation>タブレットドライバー</translation>
     </message>
@@ -2799,18 +2897,18 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>現在のフレーム内のレイヤーのみを表示</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="-6"/>
+        <location filename="../docks/layerlistdock.cpp" line="-10"/>
         <location filename="../mainwindow.cpp" line="+76"/>
         <source>Layer Properties…</source>
         <translation>レイヤーのプロパティ…</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+3"/>
+        <location filename="../mainwindow.cpp" line="+4"/>
         <source>Set as Fill Source</source>
         <translation>塗りつぶし参照元に設定</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+55"/>
         <source>&amp;Invert Selection</source>
         <translation>選択範囲の反転(&amp;I)</translation>
     </message>
@@ -2901,7 +2999,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>スタンプ変形(&amp;S)</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+48"/>
         <source>Selectio&amp;n</source>
         <translation>選択(&amp;n)</translation>
     </message>
@@ -3320,7 +3418,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>ウィンドウ</translation>
     </message>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="+1045"/>
+        <location filename="../utils/widgetutils.cpp" line="-39"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
         <translation>%1 (%2)</translation>
@@ -3455,12 +3553,12 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../filewrangler.cpp" line="-589"/>
+        <location filename="../filewrangler.cpp" line="-601"/>
         <source>All files (*)</source>
         <translation>すべてのファイル (*)</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="+78"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="+79"/>
         <source>Freehand</source>
         <translation>フリーハンド</translation>
     </message>
@@ -3734,7 +3832,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>メタデータ:</translation>
     </message>
     <message>
-        <location line="+211"/>
+        <location line="+34"/>
+        <source>Only operators can manage bans.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+190"/>
         <source>Add listing</source>
         <translation>リストを追加</translation>
     </message>
@@ -3744,7 +3847,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>選択したリストを削除</translation>
     </message>
     <message>
-        <location line="-232"/>
+        <location line="-245"/>
         <source>Timeline:</source>
         <translation>タイムライン:</translation>
     </message>
@@ -3754,7 +3857,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>BAN</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+31"/>
         <location line="+82"/>
         <source>Import</source>
         <translation>インポート</translation>
@@ -3776,7 +3879,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>管理者</translation>
     </message>
     <message>
-        <location line="-315"/>
+        <location line="-328"/>
         <source>Block new logins</source>
         <translation>新規ログインをブロック</translation>
     </message>
@@ -3857,12 +3960,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+188"/>
+        <location line="+201"/>
         <source>Trusted</source>
         <translation>信頼済み</translation>
     </message>
     <message>
-        <location line="-268"/>
+        <location line="-281"/>
         <source>permissions</source>
         <translation>権限</translation>
     </message>
@@ -3872,7 +3975,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>MyPaint ブラシ:</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+77"/>
         <source>Remove selected</source>
         <translation>選択したユーザーをリストから消す</translation>
     </message>
@@ -4236,7 +4339,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::AddServerDialog</name>
     <message>
-        <location filename="../dialogs/addserverdialog.cpp" line="+153"/>
+        <location filename="../dialogs/addserverdialog.cpp" line="+130"/>
         <source>&lt;strong&gt;Error:&lt;/strong&gt; %1</source>
         <translation>&lt;strong&gt;エラー:&lt;/strong&gt; %1</translation>
     </message>
@@ -4246,7 +4349,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>%1 を受信しています...</translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="+74"/>
         <source>Check</source>
         <translation>確認</translation>
     </message>
@@ -4506,17 +4609,171 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
+    <name>dialogs::ArtisticColorWheelDialog</name>
+    <message>
+        <location filename="../dialogs/artisticcolorwheeldialog.cpp" line="+23"/>
+        <source>Color Circle Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+86"/>
+        <source>Continuous hue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hue steps: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hue angle: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location line="+43"/>
+        <source>°</source>
+        <extracomment>Degree symbol. Unless your language uses a different one, keep as-is.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-40"/>
+        <source>Continuous chroma</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Chroma steps: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Continuous luminance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Luminance steps: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Continuous saturation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Saturation steps: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Continuous lightness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Lightness steps: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Continuous value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Value steps: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Gamut mask:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Mask angle: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Mask opacity: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>%</source>
+        <translation type="unfinished">%</translation>
+    </message>
+    <message>
+        <location line="+54"/>
+        <source>Atmosphere with accent</source>
+        <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Atmospheric triad</source>
+        <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Complementary</source>
+        <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Dominant hue with accent</source>
+        <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Shifted triad</source>
+        <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Split</source>
+        <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Split complementary</source>
+        <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Tetradic</source>
+        <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dialogs::AvatarImport</name>
     <message>
-        <location filename="../dialogs/avatarimport.cpp" line="+57"/>
-        <location line="+6"/>
+        <location filename="../dialogs/avatarimport.cpp" line="+58"/>
+        <location line="+8"/>
         <source>Import Avatar</source>
         <translation>アバターをインポート</translation>
     </message>
     <message>
         <location line="-6"/>
-        <source>Couldn&apos;t read image</source>
-        <translation>画像を読み込めませんでした</translation>
+        <source>Couldn&apos;t read image: %1.</source>
+        <extracomment>%1 is an error message.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4563,19 +4820,62 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
+    <name>dialogs::BrushPresetForm</name>
+    <message>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+70"/>
+        <source>Change…</source>
+        <translation type="unfinished">変更…</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Shortcut:</source>
+        <translation type="unfinished">ショートカット:</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Choose File…</source>
+        <translation type="unfinished">ファイルを選択…</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Will be resized to 64x64 pixels.</source>
+        <translation type="unfinished">64x64 ピクセルにサイズが変更されます。</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Thumbnail:</source>
+        <translation type="unfinished">サムネイル:</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Add Label:</source>
+        <translation type="unfinished">ラベルを追加:</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Name:</source>
+        <translation type="unfinished">名前:</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Description:</source>
+        <translation type="unfinished">説明:</translation>
+    </message>
+    <message>
+        <location line="+60"/>
+        <source>No shortcut assigned</source>
+        <translation type="unfinished">ショートカットが割り当てられていません</translation>
+    </message>
+</context>
+<context>
     <name>dialogs::BrushSettingsDialog</name>
     <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="+138"/>
+        <location line="+133"/>
         <source>Brush Editor</source>
         <translation>ブラシエディター</translation>
     </message>
     <message>
-        <location line="+83"/>
-        <source>No shortcut assigned</source>
-        <translation>ショートカットが割り当てられていません</translation>
-    </message>
-    <message>
-        <location line="+41"/>
+        <location line="+105"/>
         <source>Brush</source>
         <translation>ブラシ</translation>
     </message>
@@ -4605,58 +4905,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>ブラシを上書き</translation>
     </message>
     <message>
-        <location line="+64"/>
-        <source>Change…</source>
-        <translation>変更…</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Shortcut:</source>
-        <translation>ショートカット:</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>Choose File…</source>
-        <translation>ファイルを選択…</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Will be resized to 64x64 pixels.</source>
-        <translation>64x64 ピクセルにサイズが変更されます。</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Thumbnail:</source>
-        <translation>サムネイル:</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Add Label:</source>
-        <translation>ラベルを追加:</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Name:</source>
-        <translation>名前:</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Description:</source>
-        <translation>説明:</translation>
-    </message>
-    <message>
-        <location line="+16"/>
-        <source>Brush is not attached.</source>
-        <translation>ブラシはアタッチされていません。</translation>
-    </message>
-    <message>
-        <location line="+20"/>
+        <location line="+80"/>
         <source>Brush Type:</source>
         <translation>ブラシのタイプ:</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+422"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+425"/>
         <source>Round Pixel Brush</source>
         <translation>ピクセル丸ブラシ</translation>
     </message>
@@ -4966,116 +5221,129 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>手ブレ補正設定とブラシの同期は無効になっています。</translation>
     </message>
     <message>
-        <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+12"/>
+        <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+14"/>
         <source>Pressure</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>筆圧</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Fine speed</source>
         <comment>mypaintinput</comment>
-        <extracomment>&quot;fine&quot; refers to the accuracy and update frequency of the speed value, as in &quot;fine grained&quot;</extracomment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. &quot;fine&quot; refers to the accuracy and update frequency of the speed value, as in &quot;fine grained&quot;</extracomment>
         <translation>詳細速度</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Gross speed</source>
         <comment>mypaintinput</comment>
-        <extracomment>changes more smoothly but is less accurate than &quot;Fine speed&quot;</extracomment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. changes more smoothly but is less accurate than &quot;Fine speed&quot;</extracomment>
         <translation>大まかな速度</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Random</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ランダム</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Stroke</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ストローク</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Direction</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>方向</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Declination/Tilt</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>傾斜・傾き</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Ascension</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>上昇</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Custom</source>
         <comment>mypaintinput</comment>
-        <extracomment>the input is the output of the &quot;Custom input&quot; setting</extracomment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. the input is the output of the &quot;Custom input&quot; setting</extracomment>
         <translation>カスタム</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Direction 360</source>
         <comment>mypaintinput</comment>
-        <extracomment>refers to the direction of the stroke</extracomment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. refers to the direction of the stroke</extracomment>
         <translation>360度方向</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Attack Angle</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>開始角度</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Declination/Tilt X</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>傾斜・角度 X</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Declination/Tilt Y</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>傾斜・角度 Y</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>GridMap X</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>グリッドマップ X</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>GridMap Y</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>グリッドマップ Y</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Zoom Level</source>
         <comment>mypaintinput</comment>
-        <extracomment>refers to canvas zoom</extracomment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. refers to canvas zoom</extracomment>
         <translation>ズームレベル</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Barrel Rotation</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>急速な回転</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Base Brush Radius</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>基本ブラシ半径</translation>
     </message>
     <message>
@@ -5085,73 +5353,84 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>不明な入力</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>The pressure reported by the tablet. Usually between 0.0 and 1.0, but it may get larger when a pressure gain is used. If you use the mouse, it will be 0.5 when a button is pressed and 0.0 otherwise.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>タブレットによって報告される筆圧。 通常は 0.0 ～ 1.0 ですが筆圧ゲインを使用するとさらに大きくなる場合があります。 マウスを使用する場合ボタンが押された場合は 0.5、それ以外の場合は 0.0 になります。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>現在の移動速度。 これは非常に急速に変化する可能性があります。 「ヘルプ」メニューから「タブレットテスター」を試して範囲の感覚をつかんでください。 負の値はまれですが非常に低速な場合は発生する可能性があります。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>詳細速度と同じですが変化が遅くなります。 「大まかな速度フィルタ」設定も確認してください。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Fast random noise, changing at each evaluation. Evenly distributed between 0 and 1.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>評価ごとに変化する高速ランダム ノイズ。 0 と 1 の間で均等に分散されます。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the &apos;stroke duration&apos; and &apos;stroke hold time&apos; settings.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ストロークを描画している間、この入力はゆっくりと 0 から 1 に変化します。 移動中に定期的にゼロに戻るように設定することもできます。 「ストローク基準長」と「ストローク残留期間」の設定を確認してください。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ストロークの角度 (度単位)。 値は 0.0 ～ 180.0 の範囲に収まり、実質的に 180 度の回転は無視されます。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Declination of stylus tilt. 0 when stylus is parallel to tablet and 90.0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ペンの傾きの減少。 ペンがタブレットに対して平行の場合は 0、タブレットに対して垂直の場合は 90.0。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Right ascension of stylus tilt. 0 when stylus working end points to you, +90 when rotated 90 degrees clockwise, -90 when rotated 90 degrees counterclockwise.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ペンの傾きの座標。 ペンの向きが自分を向いている場合は 0、時計回りに 90 度回転すると +90、反時計回りに 90 度回転すると -90 となります。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>これはユーザー定義の入力です。 詳細については「カスタム入力」設定を参照してください。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>The angle of the stroke, from 0 to 360 degrees.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ストロークの角度 (0 ～ 360 度)。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>The difference, in degrees, between the angle the stylus is pointing and the angle of the stroke movement.
 The range is +/-180.0.
 0.0 means the stroke angle corresponds to the angle of the stylus.
 90 means the stroke angle is perpendicular to the angle of the stylus.
 180 means the angle of the stroke is directly opposite the angle of the stylus.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ペンが指している角度とストロークの動きの角度の差 (1度単位)。
 範囲は +/-180.0 です。
 0.0 はストローク角度がペンの角度に対応することを意味します。
@@ -5159,450 +5438,520 @@ The range is +/-180.0.
 180 はストロークの角度がペンの角度の正反対であることを意味します。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Declination of stylus tilt on X-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>X 軸上のペンの傾きの偏角。 ペンがタブレットに対して平行の場合は 90/-90、タブレットに対して垂直の場合は 0。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Declination of stylus tilt on Y-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>Y 軸上のペンの傾きの偏角。 ペンがタブレットに対して平行の場合は 90/-90、タブレットに対して垂直の場合は 0。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>The X coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the X axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>256 ピクセル グリッド上の X 座標。 カーソルが X 軸上に移動すると、これは 0 ～ 256 の周りをラップします。 「ストローク」に似ています。 不透明度などを変更して紙のテクスチャを追加するために使用できます。
 ベストな結果を得るには、ブラシ のサイズはグリッド スケールよりもかなり小さい必要があります。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>The Y coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the Y axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>256 ピクセル グリッド上の Y 座標。 カーソルがY軸上を移動すると、0-256で折り返します。 「ストローク」に似ています。 不透明度などを変更して紙のテクスチャを追加するために使用できます。
 最良の結果を得るには、ブラシ のサイズはグリッド スケールよりもかなり小さい必要があります。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>The current zoom level of the canvas view.
 Logarithmic: 0.0 is 100%, 0.69 is 200%, -1.38 is 25%
 For the Radius setting, using a value of -4.15 makes the brush size roughly constant, relative to the level of zoom.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>キャンバス表示の現在のズームレベル。
 対数: 0.0 は 100%、0.69 は 200%、-1.38 は 25%
 半径設定では、-4.15 の値を使用すると拡大レベルに応じてブラシ サイズがほぼ一定になります。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Barrel rotation of stylus.
 0 when not twisted
 +90 when twisted clockwise 90 degrees
 -90 when twisted counterclockwise 90 degrees</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ペンの急速な回転。
 ねじれていない場合は0
 時計回りに90度ひねると+90
 反時計回りに90度ひねると-90</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>The base brush radius allows you to change the behavior of a brush as you make it bigger or smaller.
 You can even cancel out dab size increase and adjust something else to make a brush bigger.
 Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&quot;, which behave much differently.</source>
         <comment>mypaintinput</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>基本ブラシ半径を使用すると、ブラシを大きくしたり小さくしたりするときにブラシの動作を変更できます。
 描点のサイズの増加をキャンセルして、他の項目を調整してブラシを大きくすることもできます。
 「基本ブラシ半径あたりの描点数」と「実際のブラシ半径あたりの描点数」は動作が大きく異なることに注意してください。</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+11"/>
         <source>Opacity</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>不透明度</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Opacity multiply</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>不透明度の乗算</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Opacity linearize</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>不透明度の線画化</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Radius</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>半径</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Hardness</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>硬さ</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Pixel feather</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ピクセルのぼかし</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Dabs per basic radius</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>基本ブラシ半径あたりの描点数</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Dabs per actual radius</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>実際のブラシ半径あたりの描点数</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Dabs per second</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>1 秒間あたりの描点数</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Radius by random</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ランダムな半径</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Fine speed filter</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>「詳細速度」フィルタ</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Gross speed filter</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>大まかな速度フィルタ</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Fine speed gamma</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>「詳細速度」のガンマ値</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Gross speed gamma</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>「大まかな速度」のガンマ値</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Jitter</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ジッター</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Offset by speed</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>速度によるオフセット</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Offset by speed filter</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>速度フィルタによるオフセット</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Slow position tracking</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>遅い位置の追跡</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Slow tracking per dab</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>描点ごとの遅い追跡</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Tracking noise</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>トラッキングノイズ</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <location line="+137"/>
+        <location line="+3"/>
+        <location line="+201"/>
         <source>Color hue</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>色調</translation>
     </message>
     <message>
-        <location line="-135"/>
-        <location line="+137"/>
+        <location line="-198"/>
+        <location line="+201"/>
         <source>Color saturation</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>彩度</translation>
     </message>
     <message>
-        <location line="-135"/>
+        <location line="-198"/>
         <source>Color value</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>明度</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Save color</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>色の保存</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change color hue</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>色調変化</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change color lightness (HSL)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>色の明度を変更する (HSL)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change color satur. (HSL)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>色の彩度を変更する。 (HSL)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change color value (HSV)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>明度の変更(HSV)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change color satur. (HSV)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>色の彩度を変更する。 (HSV)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Smudge</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>混色</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Smudge length</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>混色する長さ</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Smudge radius</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>混色の半径</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Eraser</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>消しゴム</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Stroke threshold</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ストロークの開始しきい値</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Stroke duration</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ストロークの基準長</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Stroke hold time</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ストロークの保持時間</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Custom input</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>カスタム入力</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Custom input filter</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>カスタム入力フィルタ</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Elliptical dab: ratio</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>楕円形の描点: 縦横比</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Elliptical dab: angle</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>楕円形の描点: 角度</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Direction filter</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>方向フィルタ</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Lock alpha</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>透明度のロック</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Colorize</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>彩色</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Snap to pixel</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ピクセルにスナップ</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Pressure gain</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>筆圧ゲイン</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>GridMap Scale</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>グリッドマップスケール</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>GridMap Scale X</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>グリッドマップスケール X</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>GridMap Scale Y</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>グリッドマップスケール Y</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Smudge length multiplier</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>混色する長さの乗算</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Smudge bucket</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>混色バケツ</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Smudge transparency</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>混色の透明度</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Offset Y</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>オフセット Y</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Offset X</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>オフセット X</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Angular Offset: Direction</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>角度オフセット: 方向</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Angular Offset: Ascension</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>角度オフセット: 上昇</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Angular Offset: View</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>角度オフセット: 表示</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Angular Offset Mirrored: Direction</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>角度オフセットの反映: 方向</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Angular Offset Mirrored: Ascension</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>角度オフセットの反映: 上昇</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Angular Offset Mirrored: View</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>角度オフセットの反映: 表示</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Angular Offsets Adjustment</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>角度オフセットの調整</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Offsets Multiplier</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>オフセット乗算</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Posterize</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ポスタライズ</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Posterization levels</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ポスタライズのレベル</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Pigment</source>
         <comment>mypaintsetting</comment>
-        <extracomment>The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.</extracomment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.</extracomment>
         <translation>顔料</translation>
     </message>
     <message>
@@ -5612,277 +5961,307 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <translation>不明な設定</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>0 means brush is transparent, 1 fully visible
 (also known as alpha or opacity)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>0 はブラシが透明であることを意味し、1 は完全に表示されます。
 (アルファまたは不透明度とも呼ばれます)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This gets multiplied with opaque. You should only change the pressure input of this setting. Use &apos;opaque&apos; instead to make opacity depend on speed.
 This setting is responsible to stop painting when there is zero pressure. This is just a convention, the behaviour is identical to &apos;opaque&apos;.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>これに不透明度が乗算されます。 この設定の筆圧入力のみを変更する必要があります。 不透明度を速度に依存させるには、代わりに「不透明度」を使用します。
 この設定は筆圧がゼロのときにペイントを停止する役割を果たします。 これは単なる慣例であり動作は「不透明」と同じです。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Correct the nonlinearity introduced by blending multiple dabs on top of each other. This correction should get you a linear (&quot;natural&quot;) pressure response when pressure is mapped to opaque_multiply, as it is usually done. 0.9 is good for standard strokes, set it smaller if your brush scatters a lot, or higher if you use dabs_per_second.
 0.0 the opaque value above is for the individual dabs
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>複数の描点を重ねて合成することによって生じた非線形性を修正します。 この修正により通常のように筆圧が 透明度の乗算 にマップされる場合、線形 (「自然な」) 圧力の応答を得られます。 0.9 は標準的なストロークに適しており、ブラシの散乱が多い場合はより小さく設定し、dabs_per_second を使用する場合はより高く設定します
 0.0 上記の不透明な値は個々の描点に対するものです
 1.0 上記の不透明な値は、ストローク中に各ピクセルが平均して (dabs_per_radius*2) 個のブラシ描点を取得すると仮定した、最終的なブラシ ストロークのものです</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Basic brush radius (logarithmic)
  0.7 means 2 pixels
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>基本ブラシ半径 (対数)
  0.7 は 2 ピクセルを意味します
  3.0 は 20 ピクセルを意味します</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Hard brush-circle borders (setting to zero will draw nothing). To reach the maximum hardness, you need to disable Pixel feather.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>硬いブラシの円の境界線 (ゼロに設定すると何も描画されません)。 最大の硬さに到達するには、「ピクセルのぼかし」を無効にする必要があります。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This setting decreases the hardness when necessary to prevent a pixel staircase effect (aliasing) by making the dab more blurred.
  0.0 disable (for very strong erasers and pixel brushes)
  1.0 blur one pixel (good value)
  5.0 notable blur, thin strokes will disappear</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>この設定では必要に応じて硬さを下げ、描点をよりぼやけさせることでピクセルの階段効果 (エイリアシング) を防ぎます。
  0.0 無効 (非常に強力な消しゴムとピクセル ブラシ用)
  1.0 1 ピクセルをぼかします (良い値)
  5.0 顕著なぼかし、細いストロークは消えます</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ポインタが 1 つのブラシ半径の距離を移動する間に描画する描点の数 (より正確には半径の基本値)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>上記と同じですが、実際に描画された半径が使用され動的に変更できます</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Dabs to draw each second, no matter how far the pointer moves</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ポインターがどれだけ遠くに移動しても、一秒ごとに描画される描点</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Alter the radius randomly each dab. You can also do this with the by_random input on the radius setting. If you do it here, there are two differences:
 1) the opaque value will be corrected such that a big-radius dabs is more transparent
 2) it will not change the actual radius seen by dabs_per_actual_radius</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>描点ごとに半径をランダムに変更します。 半径設定の by_random の入力を使用してこれを行うこともできます。 ここで実行すると次の 2 つの違いがあります
 1) 不透明の値は半径の大きな描点がより透明になるように修正されます
 2) dabs_per_actual_radius によって表示される実際の半径は変更されません</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>How slow the input fine speed is following the real speed
 0.0 change immediately as your speed changes (not recommended, but try it)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>詳細速度の入力が実際の速度に追従する速度の遅さ
 速度が変わるとすぐに 0.0 が変更されます (推奨されませんが、試してみてください)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Same as &apos;fine speed filter&apos;, but note that the range is different</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>「詳細速度フィルタ」と同じですが、範囲が異なることに注意してください</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This changes the reaction of the &apos;fine speed&apos; input to extreme physical speed. You will see the difference best if &apos;fine speed&apos; is mapped to the radius.
 -8.0 very fast speed does not increase &apos;fine speed&apos; much more
 +8.0 very fast speed increases &apos;fine speed&apos; a lot
 For very slow speed the opposite happens.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>これにより、「詳細速度」入力の反応が極端な物理的速度に変化します。 「詳細速度」を半径にマッピングすると違いが最もよく分かります。
 -8.0 の非常に速い速度では「詳細速度」はそれほど増加しません。
 +8.0 非常に速い速度は「詳細速度」を大幅に増加させます
 非常に遅い速度では逆のことが起こります。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Same as &apos;fine speed gamma&apos; for gross speed</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>大まかな速度の「詳細速度のガンマ値」と同じ</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Add a random offset to the position where each dab is drawn
  0.0 disabled
  1.0 standard deviation is one basic radius away
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>各描点が描画される位置にランダムなオフセットを追加します。
  0.0 無効
  1.0 標準偏差は 1 つの基本半径分離れています
 &lt;0.0 の負の値ではジッターは発生しません</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change position depending on pointer speed
 = 0 disable
 &gt; 0 draw where the pointer moves to
 &lt; 0 draw where the pointer comes from</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ポインタの速度に応じて位置を変更する
 = 0 無効にする
 &gt; 0 ポインタの移動先を描画します
 &lt; 0 ポインターがどこから来るかを描画します</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>How slow the offset goes back to zero when the cursor stops moving</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>カーソルの動きが止まったときにオフセットがゼロに戻るまでの速度</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ポインタの追従速度を遅くします。 0 を指定すると無効になり、値を大きくするとカーソルの動きのジッターがさらに除去されます。 滑らかで漫画のような輪郭を描くのに便利です。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Similar as above but at brushdab level (ignoring how much time has passed if brushdabs do not depend on time)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>上記と似ていますが、ブラシの猫点レベルです (ブラシの猫点が時間に依存しない場合は、経過時間は無視されます)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>マウス ポインタにランダム性を追加します。 これにより通常ランダムな方向に多数の小さな線が生成されます。 「遅い追跡」と組み合わせて試してみてください</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+9"/>
         <source>Color value (brightness, intensity)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>色の値 (明るさ、強度)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>When selecting a brush, the color can be restored to the color that the brush was saved with.
  0.0 do not modify the active color when selecting this brush
  0.5 change active color towards brush color
  1.0 set the active color to the brush color when selected</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ブラシを選択すると、ブラシを保存したときの色に戻すことができます。
  0.0 このブラシを選択するときにアクティブなカラーを変更しません
  0.5 アクティブな色をブラシの色に合わせて変更します
  1.0 選択時にアクティブな色をブラシの色に設定します</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change color hue.
 -0.1 small clockwise color hue shift
  0.0 disable
  0.5 counterclockwise hue shift by 180 degrees</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>色合いを変更します。
 -0.1 小さい時計回りの色相に変化
  0.0 無効
  0.5 反時計回りに 180 度の色相に変化</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change the color lightness using the HSL color model.
 -1.0 blacker
  0.0 disable
  1.0 whiter</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>HSL カラー モデルを使用して色の明度を変更します。
 -1.0より黒くなる
  0.0 無効
  1.0より白くなります</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change the color saturation using the HSL color model.
 -1.0 more grayish
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>HSL カラーモデルを使用して色の彩度を変更します。
 -1.0 よりグレーっぽくなります
  0.0 無効
  1.0 より飽和</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change the color value (brightness, intensity) using the HSV color model. HSV changes are applied before HSL.
 -1.0 darker
  0.0 disable
  1.0 brigher</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>HSV カラー モデルを使用してカラー値 (明るさ、強度) を変更します。 HSV の変更は HSL の前に適用されます。
 -1.0 暗くなる
  0.0 無効
  1.0より明るい</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change the color saturation using the HSV color model. HSV changes are applied before HSL.
 -1.0 more grayish
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>HSV カラーモデルを使用して色の彩度を変更します。 HSV の変更は HSL の前に適用されます。
 -1.0 よりグレーっぽくなります
  0.0 無効
  1.0 より飽和</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Paint with the smudge color instead of the brush color. The smudge color is slowly changed to the color you are painting on.
  0.0 do not use the smudge color
  0.5 mix the smudge color with the brush color
  1.0 use only the smudge color</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ブラシの色の代わりに混色の色を使用し描画します。 混色の色が徐々に描画中の色に変化します。
  0.0 混色の色を使用しません
  0.5 混色の色とブラシの色を混ぜる
  1.0 混色の色のみを使用</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This controls how fast the smudge color becomes the color you are painting on.
 0.0 immediately update the smudge color (requires more CPU cycles because of the frequent color checks)
 0.5 change the smudge color steadily towards the canvas color
 1.0 never change the smudge color</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>これは混色の色が描画中の色になるまでの速度を制御します。
 0.0 混色の色を即座に更新します (頻繁に色チェックが行われるため、より多くの CPUの処理が必要です)。
 0.5 混色の色をキャンバスの色に向かって徐々に変更します
 1.0 混色の色を変更しない</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This modifies the radius of the circle where color is picked up for smudging.
  0.0 use the brush radius
 -0.7 half the brush radius (fast, but not always intuitive)
 +0.7 twice the brush radius
 +1.6 five times the brush radius (slow performance)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>これにより、混色のために色が拾われる円の半径が変更されます。
  0.0 ブラシ半径を使用します
 -0.7 ブラシ半径の半分 (高速ですが、常に直感的であるとは限りません)
@@ -5890,167 +6269,186 @@ For very slow speed the opposite happens.</source>
 +1.6 ブラシ半径の 5 倍 (遅くなります)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>how much this tool behaves like an eraser
  0.0 normal painting
  1.0 standard eraser
  0.5 pixels go towards 50% transparency</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>このツールがどれほど消しゴムのように動作するか
  0.0 通常描画
  1.0 標準的な消しゴム
  0.5 ピクセルは透明度 50% に近づきます</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>描画を開始するために必要な筆圧。 これはストローク入力のみに影響します。 MyPaint では描画を開始するための最小の筆圧は必要ありません。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>How far you have to move until the stroke input reaches 1.0. This value is logarithmic (negative values will not invert the process).</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ストローク入力が 1.0 に達するまでに移動しなければならない距離。 この値は対数です (負の値でもプロセスは反転しません)。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This defines how long the stroke input stays at 1.0. After that it will reset to 0.0 and start growing again, even if the stroke is not yet finished.
 2.0 means twice as long as it takes to go from 0.0 to 1.0
 9.9 or higher stands for infinite</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>これは、ストローク入力が 1.0 に維持される時間を定義します。 その後ストロークがまだ終了していなくても、0.0 にリセットされ再び増加が始まります。
 2.0 は0.0 から 1.0 に移行するのにかかる時間が 2 倍であることを意味します。
 9.9 以上は無限を表します</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Set the custom input to this value. If it is slowed down, move it towards this value (see below). The idea is that you make this input depend on a mixture of pressure/speed/whatever, and then make other settings depend on this &apos;custom input&apos; instead of repeating this combination everywhere you need it.
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>カスタム入力をこの値に設定します。 速度が遅くなった場合は、この値に向かって動かします (下記を参照)。 このアイデアはこの入力を圧力/速度などの組み合わせに依存させ、必要な場所でこの組み合わせを繰り返すのではなく、他の設定をこの「カスタム入力」に依存させるということです。
 「ランダムに」変化させると、遅い（スムーズな）ランダム入力を生成できます。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>How slow the custom input actually follows the desired value (the one above). This happens at brushdab level (ignoring how much time has passed, if brushdabs do not depend on time).
 0.0 no slowdown (changes apply instantly)</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>カスタム入力が実際に希望の値 (上記の値) に追従する速度。 これはブラシの猫点レベルで発生します (ブラシの猫点が時間に依存しない場合は、経過時間は無視されます)。
 0.0 速度低下しない (変更は即座に適用されます)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Aspect ratio of the dabs; must be &gt;= 1.0, where 1.0 means a perfectly round dab.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>描点の縦横比。 &gt;= 1.0 である必要があります。1.0 は完全に丸い描点を意味します。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Angle by which elliptical dabs are tilted
  0.0 horizontal dabs
  45.0 45 degrees, turned clockwise
  180.0 horizontal again</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>楕円形の描点を傾ける角度
  0.0 水平描点
  45.0 45 度、時計回りに回す
  180.0 再び水平</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>A low value will make the direction input adapt more quickly, a high value will make it smoother</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>値を低くすると方向入力がより速く適応し、値を高くするとスムーズになります</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Do not modify the alpha channel of the layer (paint only where there is paint already)
  0.0 normal painting
  0.5 half of the paint gets applied normally
  1.0 alpha channel fully locked</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>レイヤーのアルファチャンネルは変更しない(既に描かれている場所のみ描画する)
  0.0 通常描画
  0.5 半分の描画が適用されます
  1.0 アルファ チャネルの完全なロック</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Colorize the target layer, setting its hue and saturation from the active brush color while retaining its value and alpha.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>明度と透明度を保持しながら、現在のブラシの色から色相と彩度を設定して、対象のレイヤを彩色します。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Snap brush dab&apos;s center and its radius to pixels. Set this to 1.0 for a thin pixel brush.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ブラシ描点の中心と半径をピクセルにスナップします。 細いピクセル ブラシの場合は、これを 1.0 に設定します。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>This changes how hard you have to press. It multiplies tablet pressure by a constant factor.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>これにより、どれくらいの強さで筆圧をかけなければいけないかが変わります。 タブレットの筆圧に一定の係数を掛けます。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Changes the overall scale that the GridMap brush input operates on.
 Logarithmic (same scale as brush radius).
 A scale of 0 will make the grid 256x256 pixels.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>グリッドマップ ブラシ入力が動作する全体的なスケールを変更します。
 対数(ブラシ半径と同じスケール)。
 スケールを 0 にすると、グリッドは 256x256 ピクセルになります。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Changes the scale that the GridMap brush input operates on - affects X axis only.
 The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>グリッドマップ ブラシ入力が操作するスケールを変更します。X 軸のみに影響します。
 範囲は 0 ～ 5x です。
 これにより、グリッドマップパターンを伸縮したり圧縮したりできます。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Changes the scale that the GridMap brush input operates on - affects Y axis only.
 The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>グリッドマップブラシ入力が操作するスケールを変更します。Y 軸のみに影響します。
 範囲は 0 ～ 5x です。
 これにより、グリッドマップ パターンを伸縮したり圧縮したりできます。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Logarithmic multiplier for the &quot;Smudge length&quot; value.
 Useful to correct for high-definition/large brushes with lots of dabs.
 The longer the smudge length the more a color will spread and will also boost performance dramatically, as the canvas is sampled less often</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>「混色する長さ」値の対数乗数
 描点が多い高解像度/大きなブラシを修正するのに役立ちます
 混色する長さが長いほど、色の広がりが大きくなり、キャンバスのサンプリング頻度が減るためパフォーマンスも大幅に向上します</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>There are 256 buckets that each can hold a color picked up from the canvas.
 You can control which bucket to use to improve variability and realism of the brush.
 Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>キャンバスから取得した色をそれぞれに保持できる 256 個のバケツがあります。
 ブラシの可変性とリアルさを向上させるために、どのバケツを使用するかを制御できます。
 バケツをオフセットなどの他の設定と関連付けるために「カスタム入力」設定を使用すると特に便利です。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Control how much transparency is picked up and smudged, similar to lock alpha.
 1.0 will not move any transparency.
 0.5 will move only 50% transparency and above.
 0.0 will have no effect.
 Negative values do the reverse</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>透明度のロックと同様に、透明度をどの程度拾い混色するかを制御します。
 1.0 では透明度は移動しません。
 0.5 では50% 以上の透明度のみが移動します。
@@ -6058,88 +6456,100 @@ Negative values do the reverse</source>
 負の値はその逆を行います</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Moves the dabs up or down based on canvas coordinates.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>キャンバス座標に基づいて描点を上下に移動します。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Moves the dabs left or right based on canvas coordinates.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>キャンバス座標に基づいて描点を左右に移動します。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Follows the stroke direction to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ストロークの方向に従い描点を片側にオフセットします。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Follows the tilt direction to offset the dabs to one side. Requires Tilt.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>傾きの方向に従い描点を片側にオフセットします。「傾き」が必要です。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Follows the view orientation to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>表示の向きに従って描点を片側にオフセットします。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Follows the stroke direction to offset the dabs, but to both sides of the stroke.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ストロークの方向に従いストロークの両側に描点をオフセットします。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Follows the tilt direction to offset the dabs, but to both sides of the stroke. Requires Tilt.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>傾きの方向に従って描点をオフセットしますが、ストロークの両側に適用されます。 「傾き」が必要です。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Follows the view orientation to offset the dabs, but to both sides of the stroke.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>表示の方向に従って描点をオフセットしますが、ストロークの両側に配置されます。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Change the Angular Offset angle from the default, which is 90 degrees.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>角度オフセット角度をデフォルトの 90 度から変更します。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Logarithmic multiplier for X, Y, and Angular Offset settings.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>X、Y、および角度オフセット設定の対数乗数。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ポスタライズの強度。透明度を維持しながら「ポスタライズ レベル」設定に基づいて色の数を減らします。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Number of posterization levels (divided by 100).
 0.05 = 5 levels, 0.2 = 20 levels, etc.
 Values above 0.5 may not be noticeable.</source>
         <comment>mypaintsetting</comment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>ポスタライズ レベルの数 (100 で割った値)。
 0.05 = 5 レベル、0.2 = 20 レベルなど。
 0.5 を超える値は目立たない場合があります。</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Subtractive spectral color mixing mode.
 0.0 no spectral mixing
 1.0 only spectral mixing</source>
         <comment>mypaintsetting</comment>
-        <extracomment>If this string is difficult to translate, feel free to change it to something more descriptive. Just try to be succinct and consistent.</extracomment>
+        <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. If this string is difficult to translate, feel free to change it to something more descriptive. Just try to be succinct and consistent.</extracomment>
         <translation>減法スペクトル色混合モード。
 0.0 スペクトル混合なし
 1.0 のみスペクトル混合</translation>
@@ -6210,6 +6620,21 @@ Values above 0.5 may not be noticeable.</source>
         <translation>ブラシサイズの変更</translation>
     </message>
     <message>
+        <location line="+2"/>
+        <source>Change Color Hue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Change Color Saturation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Change Color Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
         <translation>制限ツール</translation>
@@ -6250,7 +6675,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>不明な形式 %1。</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+45"/>
         <source>&lt;b&gt;Conflict:&lt;/b&gt; the existing shortcut for &apos;%1&apos; will be overwritten if you proceed.</source>
         <translation>&lt;b&gt;キーの競合:&lt;/b&gt; 続行すると「%1」の既存のショートカットが上書きされます。</translation>
     </message>
@@ -6258,6 +6683,11 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+5"/>
         <source>You can&apos;t assign a shortcut to a Left Click without any keys since that would interfere with drawing.</source>
         <translation>描画に支障をきたすため、キーの組み合わせが設定されていない左クリックにショートカットを割り当てることはできません。</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>You can&apos;t assign just a key combination to this action, change the type to mouse button instead.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6354,116 +6784,6 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
-    <name>dialogs::DumpPlaybackDialog</name>
-    <message>
-        <location filename="../dialogs/dumpplaybackdialog.cpp" line="+25"/>
-        <source>done</source>
-        <translation>完了</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>undone</source>
-        <translation>未完了</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>gone</source>
-        <translation>消失</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>unknown</source>
-        <translation>不明</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>local user</source>
-        <translation>ローカルユーザー</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>properties of layer %1</source>
-        <translation>レイヤー %1 のプロパティ</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>annotation %1</source>
-        <translation>注釈 %1</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>pixels on layer %1, from (%2, %3) to (%4, %5)</source>
-        <translation>レイヤ %1 のピクセル (%2, %3) から (%4, %5)</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>canvas background</source>
-        <translation>キャンバスの背景</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>document metadata type %1</source>
-        <translation>ドキュメントのメタデータ タイプ %1</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>timeline frame %1</source>
-        <translation>タイムライン フレーム %1</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>selection %1 of user %2</source>
-        <translation>ユーザー %2 の選択範囲 %1</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>everything</source>
-        <translation>すべて</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>unknown domain %1</source>
-        <translation>不明なドメイン %1</translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <location line="+6"/>
-        <source>Type</source>
-        <translation>形式</translation>
-    </message>
-    <message>
-        <location line="-6"/>
-        <location line="+6"/>
-        <source>User</source>
-        <translation>ユーザー</translation>
-    </message>
-    <message>
-        <location line="-6"/>
-        <source>Undo</source>
-        <translation>取り消し</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>State</source>
-        <translation>状態</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Affected Area</source>
-        <translation>影響範囲</translation>
-    </message>
-    <message>
-        <location line="+240"/>
-        <source>Yes</source>
-        <translation>有効</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>No</source>
-        <translation>無効</translation>
-    </message>
-</context>
-<context>
     <name>dialogs::Flipbook</name>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+157"/>
@@ -6479,7 +6799,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::InviteDialog</name>
     <message>
-        <location filename="../dialogs/invitedialog.cpp" line="+106"/>
+        <location filename="../dialogs/invitedialog.cpp" line="+99"/>
         <source>Invite link copied to clipboard.</source>
         <translation>招待リンクがクリップボードにコピーされました。</translation>
     </message>
@@ -6497,15 +6817,25 @@ Values above 0.5 may not be noticeable.</source>
         <translation>タイトル:</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Filter Layers:</source>
-        <translation>フィルターレイヤー:</translation>
+        <location line="+8"/>
+        <source>Search…</source>
+        <translation type="unfinished">検索…</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Previous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>dialogs::LayerProperties</name>
     <message>
-        <location filename="../dialogs/layerproperties.cpp" line="+52"/>
+        <location filename="../dialogs/layerproperties.cpp" line="+92"/>
         <source>New Layer Group</source>
         <translation>新しいレイヤーグループ</translation>
     </message>
@@ -6515,7 +6845,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>新規レイヤー</translation>
     </message>
     <message>
-        <location line="+101"/>
+        <location line="+110"/>
         <source>Pass Through</source>
         <translation>貫通</translation>
     </message>
@@ -6616,7 +6946,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+168"/>
+        <location filename="../dialogs/logindialog.cpp" line="+169"/>
         <source>Report...</source>
         <translation>報告...</translation>
     </message>
@@ -6720,12 +7050,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>このユーザー名は、このサーバー上のアカウントに属していません。これはあなたの drawpile.net アカウントではありません!</translation>
     </message>
     <message>
-        <location line="+546"/>
+        <location line="+552"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
         <translation>このサーバー上のアカウントのユーザー名とパスワードを入力します。これはあなたの drawpile.net アカウントではありません!</translation>
     </message>
     <message>
-        <location line="-630"/>
+        <location line="-636"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation>アカウントなしで続行できます。アカウントを登録したい場合は %1 で可能です。</translation>
     </message>
@@ -6780,7 +7110,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>このユーザー名は他のログイン方法に属しています。このサーバーで %1 を使用してログインすることはできません。</translation>
     </message>
     <message>
-        <location line="+534"/>
+        <location line="+540"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation>%1 アカウントのユーザー名とパスワードを入力してください。</translation>
     </message>
@@ -6829,7 +7159,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::ResetDialog</name>
     <message>
-        <location filename="../dialogs/resetdialog.cpp" line="+129"/>
+        <location filename="../dialogs/resetdialog.cpp" line="+132"/>
         <source>Reset Session</source>
         <translation>セッションのリセット</translation>
     </message>
@@ -6862,22 +7192,22 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::ResizeDialog</name>
     <message>
-        <location filename="../dialogs/resizedialog.cpp" line="+28"/>
+        <location filename="../dialogs/resizedialog.cpp" line="+30"/>
         <source>Expand up</source>
         <translation>上に拡張</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Expand left</source>
         <translation>左に拡張</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Expand right</source>
         <translation>右に拡張</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Expand down</source>
         <translation>下に拡張</translation>
     </message>
@@ -6892,7 +7222,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>中心</translation>
     </message>
     <message>
-        <location line="+92"/>
+        <location line="+94"/>
         <source>Error</source>
         <translation>エラー</translation>
     </message>
@@ -6947,13 +7277,13 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+471"/>
+        <location line="+472"/>
         <location line="+12"/>
         <source>Session Ban Import</source>
         <translation>セッションBANインポート</translation>
     </message>
     <message>
-        <location line="-469"/>
+        <location line="-470"/>
         <source>Session Ban Export</source>
         <translation>セッションBANエクスポート</translation>
     </message>
@@ -6978,7 +7308,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>このリストは管理者のみが閲覧できます。</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+69"/>
         <source>Operators</source>
         <translation>管理者</translation>
     </message>
@@ -7239,7 +7569,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::StartDialog</name>
     <message>
-        <location filename="../dialogs/startdialog.cpp" line="+74"/>
+        <location filename="../dialogs/startdialog.cpp" line="+75"/>
         <source>Start</source>
         <translation>スタート</translation>
     </message>
@@ -7344,12 +7674,42 @@ Values above 0.5 may not be noticeable.</source>
         <translation>サーバーを追加</translation>
     </message>
     <message>
+        <location line="+5"/>
+        <source>Save/Load</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Reload defaults…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Load settings…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Save settings…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Import from file…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Export to file…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+6"/>
         <source>Check for Updates</source>
         <translation>更新を確認</translation>
     </message>
     <message>
-        <location line="+302"/>
+        <location line="+338"/>
         <source>Checking…</source>
         <translation>確認中…</translation>
     </message>
@@ -7381,7 +7741,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>ホスト</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+9"/>
         <source>Create</source>
         <translation>作成</translation>
     </message>
@@ -7635,7 +7995,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>%1 秒ごとに 1 つのスナップショットを作成します</translation>
     </message>
     <message>
-        <location line="-138"/>
+        <location line="+42"/>
+        <source>%1 offline undo levels by default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-180"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
         <translation>[ファイル] ▸ [自動保存] で現在のファイルの自動保存を有効にできます。</translation>
     </message>
@@ -7705,12 +8070,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>カラースキーム:</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>Use %1 undo levels by default</source>
-        <translation>取り消し制限回数は %1 を デフォルトとする</translation>
-    </message>
-    <message>
-        <location line="+2"/>
+        <location line="+11"/>
         <source>Session history:</source>
         <translation>セッション履歴:</translation>
     </message>
@@ -7718,32 +8078,32 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Input</name>
     <message>
-        <location filename="../mainwindow.cpp" line="-1078"/>
+        <location filename="../mainwindow.cpp" line="-1122"/>
         <source>KisTablet Windows Ink</source>
         <translation>KisTablet Windows Ink</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+8"/>
         <source>KisTablet Wintab</source>
         <translation>KisTablet Wintab</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+8"/>
         <source>KisTablet Wintab Relative</source>
         <translation>KisTablet Wintab 相対位置</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+10"/>
         <source>Qt5</source>
         <translation>Qt5</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+9"/>
         <source>Qt6 Windows Ink</source>
         <translation>Qt6 Windows Ink</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+8"/>
         <source>Qt6 Wintab</source>
         <translation>Qt6 Wintab</translation>
     </message>
@@ -7851,9 +8211,19 @@ Values above 0.5 may not be noticeable.</source>
         <translation>アバターの追加…</translation>
     </message>
     <message>
+        <location line="+0"/>
+        <source>Add</source>
+        <translation type="unfinished">追加</translation>
+    </message>
+    <message>
         <location line="+4"/>
         <source>Delete selected avatars…</source>
         <translation>選択したアバターを削除…</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Remove</source>
+        <translation type="unfinished">削除</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8128,7 +8498,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Servers</name>
     <message>
-        <location filename="../dialogs/settingsdialog/servers.cpp" line="+112"/>
+        <location filename="../dialogs/settingsdialog/servers.cpp" line="+109"/>
         <source>Known hosts:</source>
         <translation>既知のホスト:</translation>
     </message>
@@ -8148,7 +8518,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>既知のホストを削除する</translation>
     </message>
     <message>
-        <location line="-84"/>
+        <location line="-81"/>
         <source>List servers:</source>
         <translation>公開サーバー:</translation>
     </message>
@@ -8158,7 +8528,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>公開サーバーを追加…</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>Remove selected list servers…</source>
         <translation>選択した公開 サーバーを削除…</translation>
     </message>
@@ -8168,26 +8538,38 @@ Values above 0.5 may not be noticeable.</source>
         <translation>公開サーバーを削除</translation>
     </message>
     <message numerus="yes">
-        <location line="+61"/>
+        <location line="+59"/>
         <source>Really remove %n known host(s)?</source>
         <translation>
             <numerusform>本当に既知のホスト %n を削除しますか?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location line="-60"/>
+        <location line="-58"/>
         <source>Really remove %n list server(s)?</source>
         <translation>
             <numerusform>本当に公開サーバー %n を削除しますか?</numerusform>
         </translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-7"/>
+        <location line="+57"/>
+        <source>Add</source>
+        <translation type="unfinished">追加</translation>
+    </message>
+    <message>
+        <location line="-53"/>
+        <location line="+58"/>
+        <source>Remove</source>
+        <translation type="unfinished">削除</translation>
+    </message>
+    <message>
+        <location line="-54"/>
         <source>Move up</source>
         <translation>上へ移動</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>Move down</source>
         <translation>下へ移動</translation>
     </message>
@@ -8253,24 +8635,30 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="-4"/>
-        <location line="+145"/>
+        <location line="+163"/>
         <source>Restore defaults…</source>
         <translation>デフォルトに戻す…</translation>
     </message>
     <message>
-        <location line="-140"/>
+        <location line="-158"/>
         <source>Really restore all shortcuts to their default values?</source>
         <translation>本当にすべてのショートカットをデフォルトに戻しますか?</translation>
     </message>
     <message>
-        <location line="+117"/>
+        <location line="+118"/>
+        <location line="+27"/>
         <source>Edit Canvas Shortcut</source>
         <translation>キャンバスショートカットの編集</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-17"/>
         <source>Add canvas shortcut…</source>
         <translation>キャンバスショートカットの追加…</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Add</source>
+        <translation type="unfinished">追加</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8278,9 +8666,24 @@ Values above 0.5 may not be noticeable.</source>
         <translation>新しいキャンバスショートカット</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
+        <source>Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Edit selected canvas shortcut…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
         <source>Remove selected canvas shortcut…</source>
         <translation>選択したキャンバスショートカットを削除…</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Remove</source>
+        <translation type="unfinished">削除</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8453,7 +8856,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Alt キーをダブルタップしてキャンバスにフォーカスします</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+20"/>
         <source>Attach selected brushes</source>
         <translation>選択したブラシをアタッチする</translation>
     </message>
@@ -8473,7 +8876,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>すべてのブラシ スロットで 選択している色を共有する</translation>
     </message>
     <message>
-        <location line="-95"/>
+        <location line="-108"/>
         <source>px</source>
         <translation>px</translation>
     </message>
@@ -8484,11 +8887,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+2"/>
+        <location line="+88"/>
         <source>Enable brush outline</source>
         <translation>ブラシのアウトラインを有効化</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="-71"/>
         <source>Brush outline:</source>
         <translation>ブラシの輪郭:</translation>
     </message>
@@ -8532,15 +8936,26 @@ Values above 0.5 may not be noticeable.</source>
         <source>Color picker:</source>
         <translation>カラーピッカー:</translation>
     </message>
+    <message>
+        <location line="+19"/>
+        <source>ms</source>
+        <extracomment>This stands for millseconds.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Switch tool temporarily by holding shortcut key for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message numerus="yes">
-        <location line="+37"/>
+        <location line="+29"/>
         <source>Show %1 brush slot(s)</source>
         <translation>
             <numerusform>%1 ブラシ スロットを表示</numerusform>
         </translation>
     </message>
     <message>
-        <location line="-123"/>
+        <location line="-136"/>
         <source>Color space:</source>
         <translation>色空間:</translation>
     </message>
@@ -9051,124 +9466,61 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Host</name>
     <message>
-        <location filename="../dialogs/startdialog/host.cpp" line="+118"/>
-        <source>The title is shown in the application title bar and in the session selection dialog</source>
-        <translation>タイトルはアプリケーションのタイトルバーとセッション選択ダイアログで表示されます</translation>
+        <location filename="../dialogs/startdialog/host.cpp" line="+41"/>
+        <source>Session</source>
+        <translation type="unfinished">セッション</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Title:</source>
-        <translation>タイトル:</translation>
+        <location line="+4"/>
+        <source>Listing</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
-        <source>Optional. If left blank, no password will be needed to join this session.</source>
-        <translation>空白にすると、このセッションへの参加にパスワードが不要になります。</translation>
+        <location line="+4"/>
+        <source>Permissions</source>
+        <translation type="unfinished">権限</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Generate</source>
-        <translation>生成</translation>
+        <location line="+4"/>
+        <source>Roles</source>
+        <translation type="unfinished">ロール</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Generates a random password.</source>
-        <translation>ランダムなパスワードを生成します。</translation>
+        <location line="+4"/>
+        <source>Bans</source>
+        <translation type="unfinished">BAN</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>Password:</source>
-        <translation>パスワード:</translation>
+        <location line="+50"/>
+        <source>Host Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+3"/>
+        <source>Invalid input(s), please correct the following:</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
-        <location line="+23"/>
-        <source>The built-in server is not available on Android.</source>
-        <translation>内蔵サーバーはAndroidでは利用できません。</translation>
+        <location line="+55"/>
+        <source>Failed to read file: %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
-        <source>The built-in server is not available in the browser.</source>
-        <translation>内蔵サーバーはブラウザでは使用できません。</translation>
+        <source>No file or content received.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>The built-in server is not available on this installation of Drawpile.</source>
-        <translation>内蔵サーバーはこのインストールされたDrawpileでは利用できません。</translation>
+        <location line="+82"/>
+        <source>Import Failed</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+29"/>
-        <source>Enable advanced options</source>
-        <translation>詳細オプションを有効</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>An optional user friendly ID for the session</source>
-        <translation>わかりやすい文字列をセッションへのリンクの代わりとして設定できます</translation>
-    </message>
-    <message>
-        <location line="-4"/>
-        <source>ID Alias:</source>
-        <translation>IDエイリアス:</translation>
-    </message>
-    <message>
-        <location line="-154"/>
-        <source>A session title is required.</source>
-        <translation>セッションのタイトルは必須です。</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Invalid session title. If you want to join a session using an invite link, &lt;a href=&quot;#&quot;&gt;click here to go to the Join page&lt;/a&gt;.</source>
-        <translation>セッションタイトルが無効です。招待リンクを使用してセッションに参加する場合は&lt;a href=&quot;#&quot;&gt;ここをクリックして参加ページに移動してください&lt;/a&gt;。</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
-        <translation>パスワードを設定しなくても誰でもセッションに参加できます。プライベート セッションをホストする場合はパスワードを選択するか、&lt;a href=&quot;#&quot;&gt;パスワードを生成&lt;/a&gt;します。</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation>あなたのコンピュータでホストするには追加のセットアップが必要です。 &lt;a href=&quot;#&quot;&gt;手順については、ここをクリックしてください。&lt;/a&gt;</translation>
-    </message>
-    <message>
-        <location line="+60"/>
-        <source>Not suitable for minors (NSFM)</source>
-        <translation>未成年者には適していません (NSFM)</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Marks the session as having age-restricted content.</source>
-        <translation>セッションに年齢制限のある内容があることをマークします。</translation>
-    </message>
-    <message>
-        <location line="+70"/>
-        <source>List at:</source>
-        <translation>公開先:</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Announce the session at a public list</source>
-        <translation>セッションを公開リストで告知</translation>
-    </message>
-    <message>
-        <location line="-59"/>
-        <source>Host on this computer</source>
-        <translation>このコンピュータでホスト</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Use Drawpile&apos;s built-in server</source>
-        <translation>Drawpile 内蔵のサーバー機能を使います</translation>
-    </message>
-    <message>
-        <location line="-5"/>
-        <source>Host at:</source>
-        <translation>ホスト:</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Use an external dedicated server</source>
-        <translation>外部のサーバーを利用します</translation>
+        <location line="+0"/>
+        <source>Could not import session settings.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9324,19 +9676,518 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
+    <name>dialogs::startdialog::host::Bans</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/bans.cpp" line="+24"/>
+        <source>No bans imported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Remove</source>
+        <translation type="unfinished">削除</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::Categories</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/categories.cpp" line="+27"/>
+        <source>Session</source>
+        <translation type="unfinished">セッション</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Listing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Replace announcements</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Permissions</source>
+        <translation type="unfinished">権限</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Roles</source>
+        <translation type="unfinished">ロール</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Replace role list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Bans</source>
+        <translation type="unfinished">BAN</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Replace ban list</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::ExportDialog</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+499"/>
+        <source>Export Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Pick the sections you want to export:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Export Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Could not export session settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::ImportDialog</name>
+    <message>
+        <location line="-113"/>
+        <source>Import Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Pick the sections you want to import:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::Listing</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/listing.cpp" line="+37"/>
+        <source>Set title automatically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Enter a publicly visible title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Title:</source>
+        <translation type="unfinished">タイトル:</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Publicly visible ID for pretty invite links</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>ID alias:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Announcements:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Add</source>
+        <translation type="unfinished">追加</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Remove selected</source>
+        <translation type="unfinished">選択したユーザーをリストから消す</translation>
+    </message>
+    <message>
+        <location line="+134"/>
+        <source>Listing: a title is required for public sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Listing: the title is inappropriate.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Listing: the ID alias is inappropriate.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::LoadDialog</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-350"/>
+        <source>Load Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <location line="+109"/>
+        <source>Rename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-102"/>
+        <location line="+134"/>
+        <source>Delete</source>
+        <translation type="unfinished">削除</translation>
+    </message>
+    <message>
+        <location line="-125"/>
+        <source>Pick the sections you want to load:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+94"/>
+        <source>Choose a new name for preset %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Conflict</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Preset %1 already exists, do you want to replace it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Yes, replace</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location line="+19"/>
+        <source>No, keep</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-2"/>
+        <source>Are you sure you want to delete preset %1?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Yes, delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::Permissions</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/permissions.cpp" line="+97"/>
+        <source>Undo Limit: </source>
+        <translation type="unfinished">取り消し制限回数: </translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Cut, paste and fill:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Transform selections:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Create annotations:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Manage own layers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Manage all layers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Change canvas size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Change background:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>MyPaint brushes:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Laser pointer:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Animation timeline:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Undo and redo:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Kick and ban:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+112"/>
+        <source>Everyone</source>
+        <translation type="unfinished">全員</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Registered</source>
+        <translation type="unfinished">登録済み</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Trusted</source>
+        <translation type="unfinished">信頼済み</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Operators</source>
+        <translation type="unfinished">管理者</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::ResetDialog</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-226"/>
+        <source>Reset</source>
+        <translation type="unfinished">リセット</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Pick the sections you want to reset to their defaults:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::Roles</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/roles.cpp" line="+36"/>
+        <source>Define a password to let anyone become operator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Operator password:</source>
+        <translation type="unfinished">管理者パスワード:</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>No roles imported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+47"/>
+        <source>Operator</source>
+        <translation type="unfinished">管理者</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Trusted</source>
+        <translation type="unfinished">信頼済み</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::SaveDialog</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+276"/>
+        <source>Load Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Name:</source>
+        <translation type="unfinished">名前:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Pick the sections you want to save:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Save</source>
+        <translation type="unfinished">保存</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Preset %1 already exists, do you want to replace it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Yes, replace</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>No, keep</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::Session</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="+38"/>
+        <source>Personal session, only people you invite can join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Public session, anyone can freely join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Set a session title in the Listing tab.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Session password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Enter or generate a session password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Generate</source>
+        <translation type="unfinished">生成</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Not suitable for minors (NSFM)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Keep chat history</source>
+        <translation type="unfinished">チャットの履歴を保存</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Host or IP address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Builtin server on this computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Server:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Enter a host or IP address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+129"/>
+        <source>Session: a password is required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Session: a server is required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+70"/>
+        <source>This will host your session on the public Drawpile server. It&apos;s freely available for anyone. To keep space available, sessions will be stopped when they&apos;re inactive for a while or after everybody leaves.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Sessions must comply with the rules, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;click here to view them&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Hosting on your own computer requires additional setup!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::host::SessionSettingsImporter</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/files.cpp" line="+52"/>
+        <source>This file doesn&apos;t contain any valid session settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Invalid session settings format.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>File contains session settings to import.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Invalid role format.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>File contains no roles to import.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>docks::BrushPalette</name>
     <message>
-        <location filename="../docks/brushpalettedock.cpp" line="+111"/>
+        <location filename="../docks/brushpalettedock.cpp" line="+102"/>
         <source>Brushes</source>
         <translation>ブラシ</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+28"/>
         <source>Search</source>
         <translation>検索</translation>
     </message>
     <message>
-        <location line="+548"/>
+        <location line="+553"/>
         <source>New Tag</source>
         <translation>新しいタグ</translation>
     </message>
@@ -9346,7 +10197,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>タグの削除</translation>
     </message>
     <message>
-        <location line="-571"/>
+        <location line="-576"/>
         <source>&amp;Edit Brush</source>
         <translation>ブラシの編集(&amp;E)</translation>
     </message>
@@ -9421,7 +10272,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>%1x%1</translation>
     </message>
     <message>
-        <location line="+233"/>
+        <location line="+227"/>
         <source>Overwrite Brush</source>
         <translation>ブラシの上書き</translation>
     </message>
@@ -9437,13 +10288,13 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+297"/>
+        <location line="+308"/>
         <location line="+45"/>
         <source>Keep</source>
         <translation>維持</translation>
     </message>
     <message>
-        <location line="-278"/>
+        <location line="-290"/>
         <source>Brush Import</source>
         <translation>ブラシのインポート</translation>
     </message>
@@ -9474,7 +10325,7 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="+105"/>
+        <location line="+116"/>
         <source>No tags</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but there&apos;s no tags to assign it to.</extracomment>
         <translation>タグ無し</translation>
@@ -9486,7 +10337,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>ブラシが選択されていません</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+40"/>
         <location line="+15"/>
         <source>Tag name:</source>
         <translation>タグ名:</translation>
@@ -9517,16 +10368,29 @@ Values above 0.5 may not be noticeable.</source>
         <source>Really delete brush &apos;%1&apos;?</source>
         <translation>本当にブラシ &apos;%1&apos; を削除しますか？</translation>
     </message>
+</context>
+<context>
+    <name>docks::ColorCircleDock</name>
     <message>
-        <location line="-410"/>
-        <source>New Brush</source>
-        <translation>新しいブラシ</translation>
+        <location filename="../docks/colorcircle.cpp" line="+25"/>
+        <source>Color Circle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Circle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Configure…</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>docks::ColorPaletteDock</name>
     <message>
-        <location filename="../docks/colorpalette.cpp" line="+311"/>
+        <location filename="../docks/colorpalette.cpp" line="+313"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
@@ -9536,7 +10400,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>新しいパレット</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-12"/>
+        <source>Color Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Palette</source>
+        <translation type="unfinished">パレット</translation>
+    </message>
+    <message>
+        <location line="+14"/>
         <source>Duplicate palette</source>
         <translation>パレットの複製</translation>
     </message>
@@ -9626,33 +10500,43 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ColorSliderDock</name>
     <message>
-        <location filename="../docks/colorsliders.cpp" line="+80"/>
+        <location filename="../docks/colorsliders.cpp" line="+73"/>
+        <source>Color Sliders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Sliders</source>
+        <translation type="unfinished">スライダー</translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>Color space</source>
         <translation>色空間</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+364"/>
+        <location line="+388"/>
         <source>HSV</source>
         <extracomment>Color space HSV (hue, chroma, value)</extracomment>
         <translation>HSV</translation>
     </message>
     <message>
-        <location line="-353"/>
-        <location line="+329"/>
+        <location line="-377"/>
+        <location line="+353"/>
         <source>HSL</source>
         <extracomment>Color space HSL (hue, saturation, lightness)</extracomment>
         <translation>HSL</translation>
     </message>
     <message>
-        <location line="-318"/>
-        <location line="+330"/>
+        <location line="-342"/>
+        <location line="+354"/>
         <source>HCL</source>
         <extracomment>Color space HCL (hue, chroma, lightness)</extracomment>
         <translation>HCL</translation>
     </message>
     <message>
-        <location line="-317"/>
+        <location line="-341"/>
         <source>Show all sliders at once</source>
         <translation>すべてのスライダーを一度に表示</translation>
     </message>
@@ -9685,7 +10569,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>RGB</translation>
     </message>
     <message>
-        <location line="+177"/>
+        <location line="+201"/>
         <source>H</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Hue&quot; H of HSL.</extracomment>
@@ -9751,7 +10635,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ColorSpinnerDock</name>
     <message>
-        <location filename="../docks/colorspinner.cpp" line="+77"/>
+        <location filename="../docks/colorspinner.cpp" line="+87"/>
         <source>Shape</source>
         <translation>形状</translation>
     </message>
@@ -9776,27 +10660,41 @@ Values above 0.5 may not be noticeable.</source>
         <translation>固定正方形</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location filename="../docks/colorcircle.cpp" line="+6"/>
+        <location filename="../docks/colorspinner.cpp" line="+15"/>
         <source>Color space</source>
         <translation>色空間</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
+        <location filename="../docks/colorspinner.cpp" line="+3"/>
         <source>HSV</source>
         <translation>HSV</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
+        <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>HSL</source>
         <translation>HSL</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
+        <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>HCL</source>
         <translation>HCL</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location filename="../docks/colorspinner.cpp" line="-99"/>
+        <source>Color Wheel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Wheel</source>
+        <translation type="unfinished">ホイール</translation>
+    </message>
+    <message>
+        <location line="+110"/>
         <source>Direction</source>
         <translation>方向</translation>
     </message>
@@ -9826,9 +10724,23 @@ Values above 0.5 may not be noticeable.</source>
         <translation>中心</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location filename="../docks/colorcircle.cpp" line="+12"/>
+        <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>Preview selected color</source>
         <translation>選択した色のプレビュー</translation>
+    </message>
+</context>
+<context>
+    <name>docks::DockBase</name>
+    <message>
+        <location filename="../docks/dockbase.cpp" line="+73"/>
+        <source>Drag here to arrange</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Finish arranging</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9877,22 +10789,33 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="-329"/>
+        <location filename="../docks/layerlistdock.cpp" line="-359"/>
         <source>Layers</source>
         <translation>レイヤー</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+45"/>
+        <source>Toggle sketch mode (only visible to you)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location line="+1303"/>
         <source>Opacity: </source>
         <translation>不透明度: </translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-1302"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location line="+266"/>
+        <location line="+10"/>
+        <source>Change sketch tint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+274"/>
         <source>Duplicate Layer Group</source>
         <translation>レイヤーグループの複製</translation>
     </message>
@@ -9917,6 +10840,11 @@ Values above 0.5 may not be noticeable.</source>
         <translation>レイヤ グループの表示/非表示を切り替え(&amp;V)</translation>
     </message>
     <message>
+        <location line="+2"/>
+        <source>Toggle Layer Group &amp;Sketch Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+3"/>
         <source>Check Layer Group</source>
         <translation>レイヤーグループのチェック</translation>
@@ -9927,7 +10855,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>レイヤーグループのチェックを外す</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+24"/>
         <source>Check Layer</source>
         <translation>レイヤーのチェック</translation>
     </message>
@@ -9937,7 +10865,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>レイヤーのチェックを外す</translation>
     </message>
     <message>
-        <location line="+1011"/>
+        <location line="+984"/>
+        <source>Sketch: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+136"/>
         <source>Layer</source>
         <translation>レイヤー</translation>
     </message>
@@ -9947,7 +10880,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>グループ</translation>
     </message>
     <message>
-        <location line="-433"/>
+        <location line="-513"/>
         <source>Delete Layer?</source>
         <translation>レイヤーを削除しますか?</translation>
     </message>
@@ -9960,12 +10893,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::Navigator</name>
     <message>
-        <location filename="../docks/navigator.cpp" line="+474"/>
+        <location filename="../docks/navigator.cpp" line="+475"/>
         <source>Navigator</source>
         <translation>ナビゲーター</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>Show Cursors</source>
         <translation>カーソルを表示</translation>
     </message>
@@ -9978,7 +10911,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::OnionSkinsDock</name>
     <message>
-        <location filename="../docks/onionskins.cpp" line="+136"/>
+        <location filename="../docks/onionskins.cpp" line="+137"/>
         <source>Frames: </source>
         <translation>フレーム: </translation>
     </message>
@@ -9988,7 +10921,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>下の色合い</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="-10"/>
+        <source>Onion Skins</source>
+        <translation type="unfinished">オニオンスキン</translation>
+    </message>
+    <message>
+        <location line="+27"/>
         <source>Wrap</source>
         <translation>ラップ</translation>
     </message>
@@ -10011,6 +10949,85 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+42"/>
         <source>Opacity: %1%</source>
         <translation>不透明度: %1%</translation>
+    </message>
+</context>
+<context>
+    <name>docks::ReferenceDock</name>
+    <message>
+        <location filename="../docks/reference.cpp" line="+26"/>
+        <source>Reference</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Open…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open a file as a reference image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Paste</source>
+        <translation type="unfinished">貼り付け</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Paste a reference image from the clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Close</source>
+        <translation type="unfinished">閉じる</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Close the current reference image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Pick color</source>
+        <translation type="unfinished">色を取得</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Pan image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Reset zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Zoom to fit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Zoom: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>%</source>
+        <translation type="unfinished">%</translation>
+    </message>
+    <message>
+        <location line="+62"/>
+        <source>Error</source>
+        <translation type="unfinished">エラー</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Could not open reference image: %1.</source>
+        <extracomment>%1 is an error message.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10047,9 +11064,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ToolSettings</name>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="+14"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="+12"/>
         <source>Tool</source>
         <translation>ツール</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Tool Settings</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10063,7 +11085,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tabletinput</name>
     <message>
-        <location filename="../tabletinput.cpp" line="+186"/>
+        <location filename="../tabletinput.cpp" line="+148"/>
         <source>Qt tablet input</source>
         <translation>Qt タブレット入力</translation>
     </message>
@@ -10303,12 +11325,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>別の塗りつぶしを開始する代わりに、クリックするだけで塗りつぶしを適用する</translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+116"/>
         <source>You don&apos;t have permission to use the fill tool.</source>
         <translation>塗りつぶしツールを使用する権限がありません。</translation>
     </message>
     <message>
-        <location line="+223"/>
+        <location line="+231"/>
         <source>Size Limit: Selection</source>
         <translation>サイズ制限: 選択範囲</translation>
     </message>
@@ -10341,7 +11363,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::SelectionSettings</name>
     <message>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="-242"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="-250"/>
         <source>Replace selection</source>
         <translation>選択範囲の置き換え</translation>
     </message>
@@ -10371,7 +11393,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>選択範囲の端を滑らかにする</translation>
     </message>
     <message>
-        <location line="+162"/>
+        <location line="+7"/>
+        <source>Drag to move</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Allow dragging the selection for a quick move operation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+161"/>
         <source>Select continuous area</source>
         <translation>連続領域を選択</translation>
     </message>
@@ -10384,7 +11416,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::TransformSettings</name>
     <message>
-        <location filename="../toolwidgets/transformsettings.cpp" line="+139"/>
+        <location filename="../toolwidgets/transformsettings.cpp" line="+143"/>
         <source>Fast</source>
         <translation>高速</translation>
     </message>
@@ -10441,6 +11473,16 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+16"/>
+        <source>Show</source>
+        <translation type="unfinished">表示</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Show transform handles instead of just moving</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Scale</source>
         <translation>拡大・縮小</translation>
     </message>
@@ -10460,7 +11502,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>角と端に歪みハンドルを表示</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
         <source>Handles:</source>
         <extracomment>Refers to the handles on the corners and edges of a transform. Which are either arrows to scale the transformation or squares to distort it.</extracomment>
         <translation>ハンドル:</translation>
@@ -10525,7 +11567,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>view::CanvasScene</name>
     <message>
-        <location filename="../view/canvasscene.cpp" line="+540"/>
+        <location filename="../view/canvasscene.cpp" line="+567"/>
         <source>Restoring canvas…</source>
         <translation>キャンバスを復元中…</translation>
     </message>
@@ -10655,7 +11697,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+233"/>
+        <location filename="../scene/canvasview.cpp" line="+337"/>
         <location filename="../view/canvasview.cpp" line="-30"/>
         <source>Reconnect</source>
         <translation>再接続</translation>
@@ -10679,7 +11721,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+375"/>
-        <location filename="../view/canvascontroller.cpp" line="+353"/>
+        <location filename="../view/canvascontroller.cpp" line="+467"/>
         <source>Vertical flip: ON</source>
         <translation>上下反転：オン</translation>
     </message>
@@ -10702,8 +11744,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation>左右反転：OFF</translation>
     </message>
     <message>
-        <location line="+1649"/>
-        <location filename="../view/canvascontroller.cpp" line="+1791"/>
+        <location line="+1828"/>
+        <location filename="../view/canvascontroller.cpp" line="+1968"/>
         <source>Zoom: %1%</source>
         <translation>拡大率: %1%</translation>
     </message>
@@ -11070,7 +12112,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>証明書を表示</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+86"/>
         <source>Self-signed certificate</source>
         <translation>自己署名証明書</translation>
     </message>
@@ -11176,7 +12218,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>パレットの色をセット</translation>
     </message>
     <message>
-        <location line="+202"/>
+        <location line="+203"/>
         <source>Red: %1
 Green: %2
 Blue: %3
@@ -11421,12 +12463,12 @@ or via Animation ▸ New Track.</source>
 <context>
     <name>widgets::ViewStatus</name>
     <message>
-        <location filename="../widgets/viewstatus.cpp" line="+73"/>
+        <location filename="../widgets/viewstatus.cpp" line="+77"/>
         <source>Canvas Rotation</source>
         <translation>キャンバスの回転</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+46"/>
         <source>Zoom</source>
         <translation>ズーム</translation>
     </message>

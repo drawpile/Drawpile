@@ -228,6 +228,26 @@
     </message>
     <message>
         <location line="+2"/>
+        <source>Free Rotate Canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Change Color Hue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Change Color Saturation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Change Color Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Unknown Action %1</source>
         <translation>未知动作%1</translation>
     </message>
@@ -333,7 +353,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+917"/>
+        <location filename="../document.cpp" line="+944"/>
         <source>Unknown format.</source>
         <translation>未知格式.</translation>
     </message>
@@ -358,7 +378,7 @@
         <translation>未知错误.</translation>
     </message>
     <message>
-        <location line="+606"/>
+        <location line="+629"/>
         <source>Error saving image</source>
         <translation>保存图片时出现错误</translation>
     </message>
@@ -400,12 +420,12 @@
 <context>
     <name>FillSettings</name>
     <message>
-        <location filename="../tools/floodfill.cpp" line="+275"/>
+        <location filename="../tools/floodfill.cpp" line="+322"/>
         <source>Filling…</source>
         <translation>填充…</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+73"/>
         <source>No layer selected.</source>
         <translation>未选择图层.</translation>
     </message>
@@ -438,7 +458,7 @@ Select a regular layer instead.</source>
 <context>
     <name>MagicWandSettings</name>
     <message>
-        <location filename="../tools/magicwand.cpp" line="+197"/>
+        <location filename="../tools/magicwand.cpp" line="+293"/>
         <source>Selecting…</source>
         <translation>选择…</translation>
     </message>
@@ -537,7 +557,7 @@ Select a regular layer instead.</source>
 <context>
     <name>QShortcut</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="-131"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="-139"/>
         <source>Shift</source>
         <translation>Shift键</translation>
     </message>
@@ -1119,7 +1139,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+527"/>
+        <location filename="../net/client.cpp" line="+538"/>
         <source>%1 banned by %2.</source>
         <translation>%1 已被 %2 禁止IP.</translation>
     </message>
@@ -1144,7 +1164,7 @@ Select a regular layer instead.</source>
         <translation>%1 的房间管理员身份已被服务器移除.</translation>
     </message>
     <message>
-        <location line="-474"/>
+        <location line="-485"/>
         <source>You have been kicked.</source>
         <translation>你已被踢除.</translation>
     </message>
@@ -1184,7 +1204,7 @@ Select a regular layer instead.</source>
         <translation>断开连接: %1</translation>
     </message>
     <message>
-        <location line="+406"/>
+        <location line="+417"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>只有服务器管理员可以导出普通的被禁的用户.</translation>
@@ -1256,6 +1276,26 @@ Select a regular layer instead.</source>
     </message>
     <message>
         <location line="+4"/>
+        <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Session terminated by moderator (%1).</source>
         <extracomment>%1 is the name of the moderator.</extracomment>
         <translation>房间已被服务器管理员 (%1) 终止.</translation>
@@ -1296,33 +1336,33 @@ Select a regular layer instead.</source>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+121"/>
-        <location line="+529"/>
+        <location filename="../net/login.cpp" line="+109"/>
+        <location line="+569"/>
         <source>Invalid state</source>
         <translation>无效状态</translation>
     </message>
     <message>
-        <location line="-481"/>
+        <location line="-512"/>
         <location line="+8"/>
-        <location line="+129"/>
-        <location line="+379"/>
-        <location line="+176"/>
-        <location line="+47"/>
+        <location line="+131"/>
+        <location line="+408"/>
+        <location line="+181"/>
+        <location line="+80"/>
         <source>Incompatible server</source>
         <translation>服务器不兼容</translation>
     </message>
     <message>
-        <location line="-724"/>
+        <location line="-793"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>服务器不支持当前的Drawpile版本！</translation>
     </message>
     <message>
-        <location line="+973"/>
+        <location line="+1042"/>
         <source>Username already taken!</source>
         <translation>用户名已被使用!</translation>
     </message>
     <message>
-        <location line="-759"/>
+        <location line="-797"/>
         <source>This server does not allow guest logins</source>
         <translation>此服务器不支持非注册用户登录</translation>
     </message>
@@ -1348,7 +1388,7 @@ Select a regular layer instead.</source>
         <translation>不支持ext-auth的URL方案</translation>
     </message>
     <message>
-        <location line="+188"/>
+        <location line="+193"/>
         <source>New version</source>
         <translation>新版本</translation>
     </message>
@@ -1363,7 +1403,7 @@ Select a regular layer instead.</source>
         <translation>已被控制面板屏蔽</translation>
     </message>
     <message>
-        <location line="+285"/>
+        <location line="+318"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>服务器 %1 证书无效</translation>
@@ -1404,17 +1444,27 @@ Select a regular layer instead.</source>
         <translation>此服务器只允许通过直接链接加入房间.</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+3"/>
+        <source>Invalid host name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+33"/>
         <source>Client failed to serialize command</source>
         <translation>客户端序列化命令失败</translation>
     </message>
     <message>
-        <location line="-83"/>
+        <location line="-90"/>
         <source>Cancelled</source>
         <translation>已取消</translation>
     </message>
     <message>
-        <location line="-856"/>
+        <location line="-923"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation>此服务器没有提供登录方式来加入房间!</translation>
     </message>
@@ -1434,7 +1484,12 @@ Select a regular layer instead.</source>
         <translation>未在有固定证书的服务器上启用安全模式!</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+59"/>
+        <source>Failed to retrieve server info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+41"/>
         <source>Session lookup failed</source>
         <translation>房间查找失败</translation>
     </message>
@@ -1459,7 +1514,7 @@ Select a regular layer instead.</source>
         <translation>服务器报告了两个不同的外部认证 URLs</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+118"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation>在预期只有一个房间的情况下出现了多个房间</translation>
     </message>
@@ -1474,7 +1529,7 @@ Select a regular layer instead.</source>
         <translation>未知版本 %1</translation>
     </message>
     <message>
-        <location line="+149"/>
+        <location line="+182"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation>此类socket不支持 TLS</translation>
@@ -1645,7 +1700,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+195"/>
+        <location filename="../net/server.cpp" line="+214"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation>如果你不打算使用代理, 你可以在首选项的网络页面中禁用网络代理.</translation>
     </message>
@@ -1675,7 +1730,7 @@ Select a regular layer instead.</source>
         <translation>网络连接超时</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+97"/>
         <source>Received invalid data</source>
         <translation>接收数据无效</translation>
     </message>
@@ -1695,7 +1750,7 @@ Select a regular layer instead.</source>
 <context>
     <name>tools::TransformSettings</name>
     <message>
-        <location filename="../tools/transform.cpp" line="+380"/>
+        <location filename="../tools/transform.cpp" line="+419"/>
         <source>You don&apos;t have permission to transform selections.</source>
         <translation>你没有权限变换选区.</translation>
     </message>
@@ -1705,19 +1760,27 @@ Select a regular layer instead.</source>
         <translation>无画布.</translation>
     </message>
     <message>
-        <location line="-244"/>
+        <location line="-254"/>
         <source>You don&apos;t have permission for that transformation.</source>
         <translation>你没有权限进行这种变换.</translation>
     </message>
     <message>
-        <location line="+203"/>
+        <location line="+207"/>
         <source>You don&apos;t have permission to stamp selections.</source>
         <translation>你没有权限进行图章变换.</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+63"/>
         <source>Nothing selected that could be transformed.</source>
         <translation>未选中有东西可以被变换.</translation>
+    </message>
+</context>
+<context>
+    <name>utils::HostPresetModel</name>
+    <message>
+        <location filename="../utils/hostpresetmodel.cpp" line="+57"/>
+        <source>Defaults</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
