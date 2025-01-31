@@ -312,6 +312,11 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_doc, &Document::dirtyCanvas, this, &MainWindow::setWindowModified);
 	connect(m_doc, &Document::sessionTitleChanged, this, &MainWindow::updateTitle);
 	connect(m_doc, &Document::currentPathChanged, this, &MainWindow::updateTitle);
+#if !defined(Q_OS_ANDROID) && !defined(__EMSCRIPTEN__)
+	connect(
+		m_doc, &Document::exportPathChanged, this,
+		&MainWindow::updateExportPath);
+#endif
 	connect(m_doc, &Document::recorderStateChanged, this, &MainWindow::setRecorderStatus);
 	connect(m_doc, &Document::sessionResetState, this, &MainWindow::showResetNoticeDialog, Qt::QueuedConnection);
 	connect(
@@ -518,6 +523,9 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	// Create actions and menus
 	setupActions();
 	setDrawingToolsEnabled(false);
+#if !defined(Q_OS_ANDROID) && !defined(__EMSCRIPTEN__)
+	updateExportPath(m_doc->exportPath());
+#endif
 	m_dockToolSettings->triggerUpdate();
 
 	// Restore settings and show the window
@@ -828,7 +836,6 @@ void MainWindow::addRecentFile(const QString &file)
 	}
 #endif
 }
-// clang-format off
 
 /**
  * Set window title according to currently open file and session
@@ -836,25 +843,25 @@ void MainWindow::addRecentFile(const QString &file)
 void MainWindow::updateTitle()
 {
 	QString name;
-	if(m_doc->currentPath().isEmpty()) {
-		name = tr("Untitled");
-
-	} else {
-		const QFileInfo info(m_doc->currentPath());
+	if(m_doc->haveCurrentPath()) {
+		QFileInfo info(m_doc->currentPath());
 		name = info.completeBaseName();
+	} else {
+		name = tr("Untitled");
 	}
 
-	if(m_doc->sessionTitle().isEmpty())
+	if(m_doc->sessionTitle().isEmpty()) {
 		setWindowTitle(QStringLiteral("%1[*]").arg(name));
-	else
-		setWindowTitle(QStringLiteral("%1[*] - %2").arg(name, m_doc->sessionTitle()));
+	} else {
+		setWindowTitle(
+			QStringLiteral("%1[*] - %2").arg(name, m_doc->sessionTitle()));
+	}
 
 #ifdef Q_OS_MACOS
 	MacMenu::instance()->updateWindow(this);
 #endif
 }
 
-// clang-format on
 void MainWindow::setDrawingToolsEnabled(bool enable)
 {
 	bool actuallyEnabled = enable && m_doc->canvas();
@@ -883,6 +890,21 @@ void MainWindow::aboutToHideMenu()
 	m_resizetools->setEnabled(true);
 	m_undotools->setEnabled(true);
 }
+
+#if !defined(Q_OS_ANDROID) && !defined(__EMSCRIPTEN__)
+void MainWindow::updateExportPath(const QString &path)
+{
+	QAction *action = getAction(QStringLiteral("exportdocumentagain"));
+	if(path.isEmpty()) {
+		action->setText(tr("Export Again"));
+		action->setEnabled(false);
+	} else {
+		QFileInfo info(path);
+		action->setText(tr("Export Again to %1").arg(info.fileName()));
+		action->setEnabled(!path.isEmpty() && !m_doc->isSaveInProgress());
+	}
+}
+#endif
 // clang-format off
 
 /**
@@ -2003,7 +2025,7 @@ void MainWindow::downloadSelection()
  */
 bool MainWindow::save()
 {
-	QString result = FileWrangler{this}.saveImage(m_doc);
+	QString result = FileWrangler{this}.saveImage(m_doc, false);
 	if(result.isEmpty()) {
 		return false;
 	} else {
@@ -2039,6 +2061,16 @@ void MainWindow::exportImage()
 		addRecentFile(result);
 	}
 }
+
+#	ifndef Q_OS_ANDROID
+void MainWindow::exportImageAgain()
+{
+	QString result = FileWrangler(this).saveImage(m_doc, true);
+	if(!result.isEmpty()) {
+		addRecentFile(result);
+	}
+}
+#	endif
 #endif
 
 void MainWindow::importAnimationFrames()
@@ -2112,6 +2144,9 @@ void MainWindow::onCanvasSaveStarted()
 	getAction("savedocument")->setEnabled(false);
 	getAction("savedocumentas")->setEnabled(false);
 	getAction("exportdocument")->setEnabled(false);
+#	ifndef Q_OS_ANDROID
+	getAction("exportdocumentagain")->setEnabled(false);
+#	endif
 #endif
 	m_viewStatusBar->showMessage(tr("Saving..."));
 	m_canvasView->setSaveInProgress(true);
@@ -2127,6 +2162,9 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 	getAction("savedocument")->setEnabled(true);
 	getAction("savedocumentas")->setEnabled(true);
 	getAction("exportdocument")->setEnabled(true);
+#	ifndef Q_OS_ANDROID
+	getAction("exportdocumentagain")->setEnabled(m_doc->haveExportPath());
+#	endif
 #endif
 	m_canvasView->setSaveInProgress(false);
 
@@ -2989,7 +3027,7 @@ void MainWindow::resetSession()
 				if(dlg->isExternalResetImage()) {
 					// The user picked an external file to reset to, clear the
 					// save file path so they don't accidentally overwrite it.
-					m_doc->clearCurrentPath();
+					m_doc->clearPaths();
 				}
 				net::MessageList snapshot = dlg->getResetImage();
 				canvas->amendSnapshotMetadata(
@@ -4589,6 +4627,11 @@ void MainWindow::setupActions()
 	QAction *exportDocument = makeAction("exportdocument", tr("Export Image…"))
 								  .icon("document-export")
 								  .noDefaultShortcut();
+#	ifndef Q_OS_ANDROID
+	QAction *exportDocumentAgain =
+		makeAction("exportdocumentagain", tr("Export Again"))
+			.noDefaultShortcut();
+#	endif
 	QAction *savesel = makeAction("saveselection", tr("Export Selection..."))
 						   .icon("select-rectangular")
 						   .noDefaultShortcut();
@@ -4643,6 +4686,9 @@ void MainWindow::setupActions()
 	m_currentdoctools->addAction(exportTemplate);
 	m_currentdoctools->addAction(savesel);
 	m_currentdoctools->addAction(exportDocument);
+#	ifndef Q_OS_ANDROID
+	m_currentdoctools->addAction(exportDocumentAgain);
+#	endif
 	m_currentdoctools->addAction(record);
 #endif
 	m_currentdoctools->addAction(exportAnimation);
@@ -4658,6 +4704,11 @@ void MainWindow::setupActions()
 	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
 	connect(
 		exportDocument, &QAction::triggered, this, &MainWindow::exportImage);
+#	ifndef Q_OS_ANDROID
+	connect(
+		exportDocumentAgain, &QAction::triggered, this,
+		&MainWindow::exportImageAgain);
+#	endif
 	connect(
 		exportTemplate, &QAction::triggered, this, &MainWindow::exportTemplate);
 	connect(savesel, &QAction::triggered, this, &MainWindow::saveSelection);
@@ -4721,6 +4772,9 @@ void MainWindow::setupActions()
 	filemenu->addAction(saveas);
 	filemenu->addAction(savesel);
 	filemenu->addAction(exportDocument);
+#	ifndef Q_OS_ANDROID
+	filemenu->addAction(exportDocumentAgain);
+#	endif
 	filemenu->addAction(autosave);
 #endif
 	filemenu->addSeparator();

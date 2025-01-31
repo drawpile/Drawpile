@@ -189,17 +189,17 @@ QStringList FileWrangler::getImportCertificatePaths(const QString &title) const
 }
 #endif
 
-QString FileWrangler::saveImage(Document *doc) const
+QString FileWrangler::saveImage(Document *doc, bool exported) const
 {
-	QString path = doc->currentPath();
-	DP_SaveImageType type = doc->currentType();
+	QString path = exported ? doc->exportPath() : doc->currentPath();
+	DP_SaveImageType type = exported ? doc->exportType() : doc->currentType();
 	qCDebug(
-		lcDpFileWrangler, "saveImage path='%s', type=%d", qUtf8Printable(path),
-		int(type));
+		lcDpFileWrangler, "saveImage exported=%d, path='%s', type=%d",
+		int(exported), qUtf8Printable(path), int(type));
 	if(path.isEmpty() || type == DP_SAVE_IMAGE_UNKNOWN) {
-		return saveImageAs(doc, false);
-	} else if(confirmFlatten(doc, path, type)) {
-		doc->saveCanvasAs(path, type, false);
+		return saveImageAs(doc, exported);
+	} else if(exported || confirmFlatten(doc, path, type)) {
+		doc->saveCanvasAs(path, type, exported);
 		return path;
 	} else {
 		return QString();

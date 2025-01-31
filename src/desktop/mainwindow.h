@@ -148,6 +148,9 @@ public slots:
 	void saveas();
 	void saveSelection();
 	void exportImage();
+#	ifndef Q_OS_ANDROID
+	void exportImageAgain();
+#	endif
 #endif
 	void importAnimationFrames();
 	void importAnimationLayers();
@@ -346,6 +349,9 @@ private:
 
 	void aboutToShowMenu();
 	void aboutToHideMenu();
+#if !defined(Q_OS_ANDROID) && !defined(__EMSCRIPTEN__)
+	void updateExportPath(const QString &path);
+#endif
 
 	//! Display an error message
 	void showErrorMessage(const QString &message);
@@ -498,7 +504,7 @@ private:
 	Document *m_doc;
 	MainActions *m_ma;
 #ifndef __EMSCRIPTEN__
-	enum {RUNNING, DISCONNECTING, SAVING} m_exitAction;
+	enum { RUNNING, DISCONNECTING, SAVING } m_exitAction;
 #endif
 
 	drawdance::CanvasState m_preResetCanvasState;

@@ -204,7 +204,7 @@ void Document::initCanvas()
 	emit canvasChanged(m_canvas);
 	m_canvas->paintEngine()->resetAcl(m_client->myId());
 
-	setCurrentPath(QString(), DP_SAVE_IMAGE_UNKNOWN);
+	clearPaths();
 }
 
 void Document::onSessionResetted()
@@ -242,7 +242,7 @@ bool Document::loadBlank(const QSize &size, const QColor &background)
 	unmarkDirty();
 
 	m_canvas->loadBlank(m_settings.engineUndoDepth(), size, background);
-	setCurrentPath(QString(), DP_SAVE_IMAGE_UNKNOWN);
+	clearPaths();
 	return true;
 }
 
@@ -259,6 +259,15 @@ void Document::loadState(
 	}
 	m_canvas->loadCanvasState(m_settings.engineUndoDepth(), canvasState);
 	setCurrentPath(path, type);
+	switch(type) {
+	case DP_SAVE_IMAGE_UNKNOWN:
+	case DP_SAVE_IMAGE_ORA:
+		setExportPath(QString(), DP_SAVE_IMAGE_UNKNOWN);
+		break;
+	default:
+		setExportPath(path, type);
+		break;
+	}
 }
 
 static bool isSessionTemplate(DP_Player *player)
@@ -291,7 +300,7 @@ DP_LoadResult Document::loadRecording(
 			m_canvas->paintEngine()->flushPlayback();
 			m_canvas->paintEngine()->closePlayback();
 		}
-		setCurrentPath(path, DP_SAVE_IMAGE_UNKNOWN);
+		clearPaths();
 		break;
 	default:
 		Q_ASSERT(!player);
@@ -775,6 +784,15 @@ void Document::setCurrentPath(const QString &path, DP_SaveImageType type)
 	}
 }
 
+void Document::setExportPath(const QString &path, DP_SaveImageType type)
+{
+	if(m_exportPath != path || m_exportType != type) {
+		m_exportPath = path;
+		m_exportType = path.isEmpty() ? DP_SAVE_IMAGE_UNKNOWN : type;
+		emit exportPathChanged(path);
+	}
+}
+
 void Document::markDirty()
 {
 	bool wasDirty = m_dirty;
@@ -811,9 +829,10 @@ QString Document::sessionTitle() const
 		return QString();
 }
 
-void Document::clearCurrentPath()
+void Document::clearPaths()
 {
 	setCurrentPath(QString(), DP_SAVE_IMAGE_UNKNOWN);
+	setExportPath(QString(), DP_SAVE_IMAGE_UNKNOWN);
 }
 
 QString Document::downloadName() const
@@ -883,7 +902,9 @@ void Document::saveCanvasStateAs(
 	const drawdance::CanvasState &canvasState, bool isCurrentState,
 	bool exported)
 {
-	if(!exported) {
+	if(exported) {
+		setExportPath(path, type);
+	} else {
 		setCurrentPath(path, type);
 	}
 	saveCanvasState(canvasState, isCurrentState, exported, path, type);

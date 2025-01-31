@@ -150,9 +150,13 @@ public:
 
 	QString sessionTitle() const;
 
+	bool haveCurrentPath() const { return !m_currentPath.isEmpty(); }
+	bool haveExportPath() const { return !m_exportPath.isEmpty(); }
 	QString currentPath() const { return m_currentPath; }
+	QString exportPath() const { return m_exportPath; }
 	DP_SaveImageType currentType() const { return m_currentType; }
-	void clearCurrentPath();
+	DP_SaveImageType exportType() const { return m_exportType; }
+	void clearPaths();
 
 	QString downloadName() const;
 	void setDownloadName(const QString &downloadName);
@@ -222,6 +226,7 @@ signals:
 	void autosaveChanged(bool autosave);
 	void canAutosaveChanged(bool canAutosave);
 	void currentPathChanged(const QString &path);
+	void exportPathChanged(const QString &path);
 	void recorderStateChanged(bool recording);
 
 	void sessionTitleChanged(const QString &title);
@@ -342,6 +347,7 @@ private:
 		bool exported, const QString &path, DP_SaveImageType type);
 	QImage selectionToImage();
 	void setCurrentPath(const QString &path, DP_SaveImageType type);
+	void setExportPath(const QString &path, DP_SaveImageType type);
 	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);
 	void setSessionAuthOnly(bool authOnly);
@@ -385,7 +391,9 @@ private:
 	void emitStreamResetProgress();
 
 	QString m_currentPath;
+	QString m_exportPath;
 	DP_SaveImageType m_currentType = DP_SAVE_IMAGE_UNKNOWN;
+	DP_SaveImageType m_exportType = DP_SAVE_IMAGE_UNKNOWN;
 	QString m_downloadName;
 
 	const int m_canvasImplementation;

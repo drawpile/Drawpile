@@ -96,7 +96,7 @@ public:
 	QStringList getImportCertificatePaths(const QString &title) const;
 #endif
 
-	QString saveImage(Document *doc) const;
+	QString saveImage(Document *doc, bool exported) const;
 	QString saveImageAs(Document *doc, bool exported) const;
 	QString savePreResetImageAs(
 		Document *doc, const drawdance::CanvasState &canvasState) const;
