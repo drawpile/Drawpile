@@ -492,28 +492,28 @@
     <message>
         <location line="+23"/>
         <source>Import Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションの設定をインポート</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>サポートされているファイル(%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+416"/>
         <source>Session Settings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションの設定 (%1)</translation>
     </message>
     <message>
         <location line="-415"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションのBAN (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Session Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションのロール (%1)</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -538,7 +538,7 @@
     <message>
         <location line="+5"/>
         <source>Reference Image</source>
-        <translation type="unfinished"></translation>
+        <translation>参照画像</translation>
     </message>
     <message>
         <location line="+168"/>
@@ -578,7 +578,7 @@
     <message>
         <location line="+10"/>
         <source>Export Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションの設定をエクスポート</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -974,17 +974,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Sketch mode for you</source>
-        <translation type="unfinished"></translation>
+        <translation>スケッチモード</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Sketch Opacity:</source>
-        <translation type="unfinished"></translation>
+        <translation>スケッチの不透明度:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Sketch Tint:</source>
-        <translation type="unfinished"></translation>
+        <translation>スケッチの色:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1004,17 +1004,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+81"/>
         <source>No tint</source>
-        <translation type="unfinished"></translation>
+        <translation>色なし</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blue tint</source>
-        <translation type="unfinished"></translation>
+        <translation>青色</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>選択…</translation>
     </message>
 </context>
 <context>
@@ -1042,7 +1042,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpileのドックは自由に配置できます。 表示 &gt; ドック &gt; ドックの配置 を使用して、より簡単にドラッグできるようにすることができます。配置位置が画面解像度内にあることを確認してください。そうしないと、一部のコントロールが画面から押し出される場合があります。</translation>
     </message>
 </context>
 <context>
@@ -1050,22 +1050,22 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../utils/widgetutils.cpp" line="+1081"/>
         <source>Open Link</source>
-        <translation type="unfinished"></translation>
+        <translation>リンクを開く</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This link will take you to the website at &quot;%1&quot;, which is not run by Drawpile. Are you sure you want to go there?</source>
-        <translation type="unfinished"></translation>
+        <translation>このリンクは、Drawpileによって実行されているものではない &quot;%1&quot; のWebサイトに移動します。そこへ移動してもよろしいですか？</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Yes, visit website</source>
-        <translation type="unfinished"></translation>
+        <translation>はい、ウェブサイトへ移動します</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>いいえ、取り消します</translation>
     </message>
 </context>
 <context>
@@ -1381,7 +1381,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+228"/>
         <source>Arrange Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>ドックの配置</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -1753,72 +1753,72 @@ Subrange: [%3, %4]</source>
         <location line="+84"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>セッションからあなたは切断されます</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>lose any unsaved changes</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>保存されていない変更を失います</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>stop your recording</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>記録が停止されます</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>discard your playback</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>再生を破棄します</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+15"/>
         <source>Doing so will %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>そうすると %1 になります。</translation>
     </message>
     <message>
         <location line="-11"/>
         <source>Doing so will %1 and %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>そうすると %1 と %2 になります。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Doing so will %1, %2 and %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>そうすると %1 と %2 および %3 になります。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Doing so will %1, %2, %3 and %4.</source>
-        <translation type="unfinished"></translation>
+        <translation>そうすると %1, %2, %3 および %4 になります。</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Are you sure you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>続行してもよろしいですか？</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, continue</source>
-        <translation type="unfinished"></translation>
+        <translation>はい、続行します</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>いいえ、キャンセルします</translation>
     </message>
     <message>
         <location line="+100"/>
         <location line="+3733"/>
         <source>Export Again</source>
-        <translation type="unfinished"></translation>
+        <translation>再エクスポート</translation>
     </message>
     <message>
         <location line="-3729"/>
         <source>Export Again to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 に再エクスポート</translation>
     </message>
     <message>
         <location line="+439"/>
@@ -1869,32 +1869,32 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+110"/>
         <source>New</source>
-        <translation type="unfinished">新規</translation>
+        <translation>新規</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to create a new canvas and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>このウィンドウを閉じ、新しいキャンバスを作成します。</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Open Recent File</source>
-        <translation type="unfinished"></translation>
+        <translation>最近使ったファイルを開く</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recent file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>このウィンドウを閉じ、最近使ったファイルを開きます。</translation>
     </message>
     <message>
         <location line="+141"/>
         <source>Open</source>
-        <translation type="unfinished">開く</translation>
+        <translation>開く</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a new file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>このウィンドウを閉じ、新しいファイルを開きます。</translation>
     </message>
     <message>
         <location line="+172"/>
@@ -1979,27 +1979,27 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+183"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
-        <translation type="unfinished"></translation>
+        <translation>すでにセッションに参加しています。ホストになるには一度切断してください。</translation>
     </message>
     <message>
         <location line="+145"/>
         <source>Reconnect</source>
-        <translation type="unfinished">再接続</translation>
+        <translation>再接続</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about reconnect to the session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>このウィンドウを閉じ、セッションに再接続します。</translation>
     </message>
     <message>
         <location line="+155"/>
         <source>Join Session</source>
-        <translation type="unfinished">セッションに参加</translation>
+        <translation>セッションに参加</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to connect to a new session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>このウィンドウを閉じ、新しいセッションに接続します。</translation>
     </message>
     <message>
         <location line="+115"/>
@@ -2040,7 +2040,7 @@ Subrange: [%3, %4]</source>
         <location line="+487"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 により画像の読み込みに失敗しました。</translation>
     </message>
     <message>
         <location line="+259"/>
@@ -2121,12 +2121,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+16"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished">デバッグダンプを開く</translation>
+        <translation>デバッグダンプを開く</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a debug dump and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>このウィンドウを閉じ、デバッグダンプを開きます。</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -2161,7 +2161,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+8"/>
         <source>Show Icons on Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>タブにアイコンを表示</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2769,7 +2769,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+4"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーのスケッチモードを切り替え(&amp;S)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="-78"/>
@@ -3834,7 +3834,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+34"/>
         <source>Only operators can manage bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>BANの管理は管理者のみが行えます。</translation>
     </message>
     <message>
         <location line="+190"/>
@@ -3977,7 +3977,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+77"/>
         <source>Remove selected</source>
-        <translation>選択したユーザーをリストから消す</translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location line="+99"/>
@@ -4613,152 +4613,152 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../dialogs/artisticcolorwheeldialog.cpp" line="+23"/>
         <source>Color Circle Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>カラーサークルの設定</translation>
     </message>
     <message>
         <location line="+86"/>
         <source>Continuous hue</source>
-        <translation type="unfinished"></translation>
+        <translation>連続する色相</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>色相の段階: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue angle: </source>
-        <translation type="unfinished"></translation>
+        <translation>色相の角度: </translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+43"/>
         <source>°</source>
         <extracomment>Degree symbol. Unless your language uses a different one, keep as-is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>°</translation>
     </message>
     <message>
         <location line="-40"/>
         <source>Continuous chroma</source>
-        <translation type="unfinished"></translation>
+        <translation>連続的な彩度</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Chroma steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>彩度の段階: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Continuous luminance</source>
-        <translation type="unfinished"></translation>
+        <translation>連続的な輝度</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Luminance steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>輝度の段階: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>連続的な彩度</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Saturation steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>彩度の段階: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous lightness</source>
-        <translation type="unfinished"></translation>
+        <translation>連続的な明るさ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lightness steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>明るさの段階: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous value</source>
-        <translation type="unfinished"></translation>
+        <translation>連続的な値</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Value steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>値の段階: </translation>
     </message>
     <message>
         <location line="+8"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>なし</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Gamut mask:</source>
-        <translation type="unfinished"></translation>
+        <translation>色域マスク:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Mask angle: </source>
-        <translation type="unfinished"></translation>
+        <translation>マスクの角度: </translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Mask opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>マスクの不透明度: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+54"/>
         <source>Atmosphere with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>アクセントのある雰囲気</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Atmospheric triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>雰囲気のある三要素</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>補足的</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dominant hue with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>強調色が加わった主要な色相</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Shifted triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>シフトした三要素</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>分割</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>補完的な分割</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Tetradic</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>四要素</translation>
     </message>
 </context>
 <context>
@@ -4773,7 +4773,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="-6"/>
         <source>Couldn&apos;t read image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1によって画像を読み込めませんでした。</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4824,47 +4824,47 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+70"/>
         <source>Change…</source>
-        <translation type="unfinished">変更…</translation>
+        <translation>変更…</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Shortcut:</source>
-        <translation type="unfinished">ショートカット:</translation>
+        <translation>ショートカット:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Choose File…</source>
-        <translation type="unfinished">ファイルを選択…</translation>
+        <translation>ファイルを選択…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Will be resized to 64x64 pixels.</source>
-        <translation type="unfinished">64x64 ピクセルにサイズが変更されます。</translation>
+        <translation>64x64 ピクセルにサイズが変更されます。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished">サムネイル:</translation>
+        <translation>サムネイル:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Add Label:</source>
-        <translation type="unfinished">ラベルを追加:</translation>
+        <translation>ラベルを追加:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Name:</source>
-        <translation type="unfinished">名前:</translation>
+        <translation>名前:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Description:</source>
-        <translation type="unfinished">説明:</translation>
+        <translation>説明:</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>No shortcut assigned</source>
-        <translation type="unfinished">ショートカットが割り当てられていません</translation>
+        <translation>ショートカットが割り当てられていません</translation>
     </message>
 </context>
 <context>
@@ -6622,17 +6622,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>色相を変更する</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>彩度を変更する</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>明度を変更する</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6687,7 +6687,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>You can&apos;t assign just a key combination to this action, change the type to mouse button instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>この操作はキーの組み合わせのみでは設定できません。タイプをマウスボタンに変更してください。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6819,17 +6819,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Search…</source>
-        <translation type="unfinished">検索…</translation>
+        <translation>検索…</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>前</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>次</translation>
     </message>
 </context>
 <context>
@@ -7601,7 +7601,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Browse publicly listed drawing sessions</source>
-        <translation>公開されている描画中のセッションを閲覧</translation>
+        <translation>公開リストにある描画中のセッションを閲覧</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7676,32 +7676,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Save/Load</source>
-        <translation type="unfinished"></translation>
+        <translation>保存/読み込み</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Reload defaults…</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルトに戻す…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Load settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>設定の読み込み…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>設定の保存…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import from file…</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルからインポート…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Export to file…</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルにエクスポート…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7997,7 +7997,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+42"/>
         <source>%1 offline undo levels by default</source>
-        <translation type="unfinished"></translation>
+        <translation>オフライン時のアンドゥ回数のデフォルト %1</translation>
     </message>
     <message>
         <location line="-180"/>
@@ -8213,7 +8213,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Add</source>
-        <translation type="unfinished">追加</translation>
+        <translation>追加</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8223,7 +8223,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Remove</source>
-        <translation type="unfinished">削除</translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8555,13 +8555,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-7"/>
         <location line="+57"/>
         <source>Add</source>
-        <translation type="unfinished">追加</translation>
+        <translation>追加</translation>
     </message>
     <message>
         <location line="-53"/>
         <location line="+58"/>
         <source>Remove</source>
-        <translation type="unfinished">削除</translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location line="-54"/>
@@ -8658,7 +8658,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Add</source>
-        <translation type="unfinished">追加</translation>
+        <translation>追加</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8668,12 +8668,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>編集</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Edit selected canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>選択したキャンバスショートカットを編集…</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8683,7 +8683,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Remove</source>
-        <translation type="unfinished">削除</translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8940,12 +8940,12 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+19"/>
         <source>ms</source>
         <extracomment>This stands for millseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ms</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Switch tool temporarily by holding shortcut key for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>一時的にツールを切り替えるまでのショートカットキーを押している時間 %1</translation>
     </message>
     <message numerus="yes">
         <location line="+29"/>
@@ -9139,7 +9139,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Two-finger twist:</source>
-        <translation>２本指ひねり:</translation>
+        <translation>２本指で回転:</translation>
     </message>
 </context>
 <context>
@@ -9468,59 +9468,59 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host.cpp" line="+41"/>
         <source>Session</source>
-        <translation type="unfinished">セッション</translation>
+        <translation>セッション</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Listing</source>
-        <translation type="unfinished"></translation>
+        <translation>リスト</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Permissions</source>
-        <translation type="unfinished">権限</translation>
+        <translation>権限</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles</source>
-        <translation type="unfinished">ロール</translation>
+        <translation>ロール</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Bans</source>
-        <translation type="unfinished">BAN</translation>
+        <translation>BAN</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Host Error</source>
-        <translation type="unfinished"></translation>
+        <translation>ホストのエラー</translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>Invalid input(s), please correct the following:</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>無効な入力です。以下を修正してください:</numerusform>
         </translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Failed to read file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルの読み込みに失敗: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No file or content received.</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルまたはコンテンツを受信しませんでした。</translation>
     </message>
     <message>
         <location line="+82"/>
         <source>Import Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>インポート失敗</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Could not import session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>セッション設定をインポートできませんでした。</translation>
     </message>
 </context>
 <context>
@@ -9680,12 +9680,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/bans.cpp" line="+24"/>
         <source>No bans imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>BANはインポートされていません。</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Remove</source>
-        <translation type="unfinished">削除</translation>
+        <translation>削除</translation>
     </message>
 </context>
 <context>
@@ -9693,42 +9693,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/categories.cpp" line="+27"/>
         <source>Session</source>
-        <translation type="unfinished">セッション</translation>
+        <translation>セッション</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Listing</source>
-        <translation type="unfinished"></translation>
+        <translation>リスト</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Replace announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>告知の置き換え</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Permissions</source>
-        <translation type="unfinished">権限</translation>
+        <translation>権限</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles</source>
-        <translation type="unfinished">ロール</translation>
+        <translation>ロール</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Replace role list</source>
-        <translation type="unfinished"></translation>
+        <translation>ロール一覧の置き換え</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Bans</source>
-        <translation type="unfinished">BAN</translation>
+        <translation>BAN</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Replace ban list</source>
-        <translation type="unfinished"></translation>
+        <translation>BAN一覧の置き換え</translation>
     </message>
 </context>
 <context>
@@ -9736,22 +9736,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+499"/>
         <source>Export Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>設定のエクスポート</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Pick the sections you want to export:</source>
-        <translation type="unfinished"></translation>
+        <translation>エクスポートする項目を選択:</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Export Error</source>
-        <translation type="unfinished"></translation>
+        <translation>エクスポートエラー</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Could not export session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションの設定をエクスポートできませんでした。</translation>
     </message>
 </context>
 <context>
@@ -9759,12 +9759,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-113"/>
         <source>Import Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>設定のインポート</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pick the sections you want to import:</source>
-        <translation type="unfinished"></translation>
+        <translation>インポートする項目を選択:</translation>
     </message>
 </context>
 <context>
@@ -9772,57 +9772,57 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/listing.cpp" line="+37"/>
         <source>Set title automatically</source>
-        <translation type="unfinished"></translation>
+        <translation>タイトルを自動的に設定</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Enter a publicly visible title</source>
-        <translation type="unfinished"></translation>
+        <translation>公開するタイトルを入力</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Title:</source>
-        <translation type="unfinished">タイトル:</translation>
+        <translation>タイトル:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Publicly visible ID for pretty invite links</source>
-        <translation type="unfinished"></translation>
+        <translation>共有しやすい招待リンクのための公開ID</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>ID alias:</source>
-        <translation type="unfinished"></translation>
+        <translation>IDエイリアス:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Announcements:</source>
-        <translation type="unfinished"></translation>
+        <translation>告知:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Add</source>
-        <translation type="unfinished">追加</translation>
+        <translation>追加</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove selected</source>
-        <translation type="unfinished">選択したユーザーをリストから消す</translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location line="+134"/>
         <source>Listing: a title is required for public sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>リスト: パブリックセッションにはタイトルが必要です</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Listing: the title is inappropriate.</source>
-        <translation type="unfinished"></translation>
+        <translation>リスト: タイトルは不適切です。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Listing: the ID alias is inappropriate.</source>
-        <translation type="unfinished"></translation>
+        <translation>リスト: IDエイリアスは不適切です。</translation>
     </message>
 </context>
 <context>
@@ -9830,60 +9830,60 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-350"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>設定の読み込み</translation>
     </message>
     <message>
         <location line="+37"/>
         <location line="+109"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>名前の変更</translation>
     </message>
     <message>
         <location line="-102"/>
         <location line="+134"/>
         <source>Delete</source>
-        <translation type="unfinished">削除</translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location line="-125"/>
         <source>Pick the sections you want to load:</source>
-        <translation type="unfinished"></translation>
+        <translation>読み込みたい項目を選択:</translation>
     </message>
     <message>
         <location line="+94"/>
         <source>Choose a new name for preset %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセット %1 の新しい名前を選択してください。</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation>衝突</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセット %1 はすでに存在します。置き換えますか？</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Yes, replace</source>
-        <translation type="unfinished"></translation>
+        <translation>はい、置き換えます</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+19"/>
         <source>No, keep</source>
-        <translation type="unfinished"></translation>
+        <translation>いいえ、そのままにします</translation>
     </message>
     <message>
         <location line="-2"/>
         <source>Are you sure you want to delete preset %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセット %1 を削除してもよろしいですか？</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, delete</source>
-        <translation type="unfinished"></translation>
+        <translation>はい、削除します</translation>
     </message>
 </context>
 <context>
@@ -9891,87 +9891,87 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/permissions.cpp" line="+97"/>
         <source>Undo Limit: </source>
-        <translation type="unfinished">取り消し制限回数: </translation>
+        <translation>取り消し制限回数: </translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Cut, paste and fill:</source>
-        <translation type="unfinished"></translation>
+        <translation>切り取り、貼り付け、塗りつぶし:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Transform selections:</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲の変形:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Create annotations:</source>
-        <translation type="unfinished"></translation>
+        <translation>注釈の作成:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Manage own layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>自分のレイヤーの管理:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Manage all layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>すべてのレイヤーの管理:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change canvas size:</source>
-        <translation type="unfinished"></translation>
+        <translation>キャバスサイズの変更:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change background:</source>
-        <translation type="unfinished"></translation>
+        <translation>背景の変更:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>MyPaint brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>MyPaintブラシ:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Laser pointer:</source>
-        <translation type="unfinished"></translation>
+        <translation>レーザーポインター:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Animation timeline:</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションタイムライン:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Undo and redo:</source>
-        <translation type="unfinished"></translation>
+        <translation>取り消しとやり直し:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Kick and ban:</source>
-        <translation type="unfinished"></translation>
+        <translation>キックとBAN:</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>Everyone</source>
-        <translation type="unfinished">全員</translation>
+        <translation>全員</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Registered</source>
-        <translation type="unfinished">登録済み</translation>
+        <translation>登録済み</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Trusted</source>
-        <translation type="unfinished">信頼済み</translation>
+        <translation>信頼済み</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Operators</source>
-        <translation type="unfinished">管理者</translation>
+        <translation>管理者</translation>
     </message>
 </context>
 <context>
@@ -9979,12 +9979,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-226"/>
         <source>Reset</source>
-        <translation type="unfinished">リセット</translation>
+        <translation>リセット</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pick the sections you want to reset to their defaults:</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルトにリセットする項目を選択:</translation>
     </message>
 </context>
 <context>
@@ -9992,27 +9992,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/roles.cpp" line="+36"/>
         <source>Define a password to let anyone become operator</source>
-        <translation type="unfinished"></translation>
+        <translation>誰でも管理者になれるようにパスワードを設定する</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Operator password:</source>
-        <translation type="unfinished">管理者パスワード:</translation>
+        <translation>管理者パスワード:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>No roles imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>ロールはインポートされていません。</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Operator</source>
-        <translation type="unfinished">管理者</translation>
+        <translation>管理者</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Trusted</source>
-        <translation type="unfinished">信頼済み</translation>
+        <translation>信頼済み</translation>
     </message>
 </context>
 <context>
@@ -10020,37 +10020,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+276"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>設定の読み込み</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Name:</source>
-        <translation type="unfinished">名前:</translation>
+        <translation>名前:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Pick the sections you want to save:</source>
-        <translation type="unfinished"></translation>
+        <translation>保存したい項目を選択:</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Save</source>
-        <translation type="unfinished">保存</translation>
+        <translation>保存</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセット %1 はすでに存在します。置き換えますか？</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Yes, replace</source>
-        <translation type="unfinished"></translation>
+        <translation>はい、置き換えます</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep</source>
-        <translation type="unfinished"></translation>
+        <translation>いいえ、そのままにします</translation>
     </message>
 </context>
 <context>
@@ -10058,92 +10058,92 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/session.cpp" line="+38"/>
         <source>Personal session, only people you invite can join</source>
-        <translation type="unfinished"></translation>
+        <translation>個人セッション、招待された人だけが参加できます</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Public session, anyone can freely join</source>
-        <translation type="unfinished"></translation>
+        <translation>パブリックセッション、誰でも自由に参加できます</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Set a session title in the Listing tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>「リスト」タブでセッションタイトルを設定してください。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Session password:</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションパスワード:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Enter or generate a session password</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションパスワードを入力または生成</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Generate</source>
-        <translation type="unfinished">生成</translation>
+        <translation>生成</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>未成年者には適していません(NSFM)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation type="unfinished">チャットの履歴を保存</translation>
+        <translation>チャットの履歴を保存</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>ホストかIPアドレス</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Builtin server on this computer</source>
-        <translation type="unfinished"></translation>
+        <translation>このコンピューターの内蔵サーバー</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server:</source>
-        <translation type="unfinished"></translation>
+        <translation>サーバー:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Enter a host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>ホストかIPアドレスを入力</translation>
     </message>
     <message>
         <location line="+129"/>
         <source>Session: a password is required</source>
-        <translation type="unfinished"></translation>
+        <translation>セッション: パスワードが必要です</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Session: a server is required</source>
-        <translation type="unfinished"></translation>
+        <translation>セッション: サーバーが必要です</translation>
     </message>
     <message>
         <location line="+70"/>
         <source>This will host your session on the public Drawpile server. It&apos;s freely available for anyone. To keep space available, sessions will be stopped when they&apos;re inactive for a while or after everybody leaves.</source>
-        <translation type="unfinished"></translation>
+        <translation>この操作を行うと、あなたのセッションはパブリックDrawpileサーバー上でホストされます。このサーバーは誰でも無料で利用できます。スペースを確保するため、セッションが一定時間アクティブでない状態が続くか参加者全員が退出した場合、セッションは自動的に停止されます。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Sessions must comply with the rules, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;click here to view them&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションはルールに準拠する必要があります、&lt;a href = &quot;https://drawpile.net/pubrules&quot;&gt;ここをクリックして表示します&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Hosting on your own computer requires additional setup!</source>
-        <translation type="unfinished"></translation>
+        <translation>自分のコンピューターでホストするには追加のセットアップが必要です!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;a href = &quot;https://drawpile.net/localhosthelp&quot;&gt;手順についてはここをクリックしてください。&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -10151,27 +10151,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/files.cpp" line="+52"/>
         <source>This file doesn&apos;t contain any valid session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>このファイルは有効なセッション設定を含んでいません。</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Invalid session settings format.</source>
-        <translation type="unfinished"></translation>
+        <translation>無効なセッション設定の形式です。</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>File contains session settings to import.</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルにはインポートするセッション設定が含まれています。</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Invalid role format.</source>
-        <translation type="unfinished"></translation>
+        <translation>無効なロールの形式です。</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>File contains no roles to import.</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルにはインポートするロールが含まれていません。</translation>
     </message>
 </context>
 <context>
@@ -10374,17 +10374,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+25"/>
         <source>Color Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>カラーサークル</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>サークル</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Configure…</source>
-        <translation type="unfinished"></translation>
+        <translation>構成…</translation>
     </message>
 </context>
 <context>
@@ -10402,12 +10402,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-12"/>
         <source>Color Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>カラーパレット</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Palette</source>
-        <translation type="unfinished">パレット</translation>
+        <translation>パレット</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -10502,12 +10502,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorsliders.cpp" line="+73"/>
         <source>Color Sliders</source>
-        <translation type="unfinished"></translation>
+        <translation>カラースライダー</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Sliders</source>
-        <translation type="unfinished">スライダー</translation>
+        <translation>スライダー</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10686,12 +10686,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorspinner.cpp" line="-99"/>
         <source>Color Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>カラーホイール</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Wheel</source>
-        <translation type="unfinished">ホイール</translation>
+        <translation>ホイール</translation>
     </message>
     <message>
         <location line="+110"/>
@@ -10735,12 +10735,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/dockbase.cpp" line="+73"/>
         <source>Drag here to arrange</source>
-        <translation type="unfinished"></translation>
+        <translation>ドラッグして配置</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Finish arranging</source>
-        <translation type="unfinished"></translation>
+        <translation>配置の終了</translation>
     </message>
 </context>
 <context>
@@ -10796,7 +10796,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+45"/>
         <source>Toggle sketch mode (only visible to you)</source>
-        <translation type="unfinished"></translation>
+        <translation>スケッチモード切替(あなたにだけ見えます)</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10812,7 +10812,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Change sketch tint</source>
-        <translation type="unfinished"></translation>
+        <translation>スケッチの色合いを変更</translation>
     </message>
     <message>
         <location line="+274"/>
@@ -10842,7 +10842,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーグループとスケッチモードの切替</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10867,7 +10867,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+984"/>
         <source>Sketch: </source>
-        <translation type="unfinished"></translation>
+        <translation>スケッチ: </translation>
     </message>
     <message>
         <location line="+136"/>
@@ -10923,7 +10923,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-10"/>
         <source>Onion Skins</source>
-        <translation type="unfinished">オニオンスキン</translation>
+        <translation>オニオンスキン</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -10956,78 +10956,78 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/reference.cpp" line="+26"/>
         <source>Reference</source>
-        <translation type="unfinished"></translation>
+        <translation>参考</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Open…</source>
-        <translation type="unfinished"></translation>
+        <translation>開く…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open a file as a reference image</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルを参考画像として開く</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Paste</source>
-        <translation type="unfinished">貼り付け</translation>
+        <translation>貼り付け</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Paste a reference image from the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>クリップボードから参考画像を貼り付け</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished">閉じる</translation>
+        <translation>閉じる</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Close the current reference image</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の参考画像を閉じる</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished">色を取得</translation>
+        <translation>色を取得</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Pan image</source>
-        <translation type="unfinished"></translation>
+        <translation>画像をスクロール</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Reset zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>ズームをリセット</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Zoom to fit</source>
-        <translation type="unfinished"></translation>
+        <translation>全体表示</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Zoom: </source>
-        <translation type="unfinished"></translation>
+        <translation>ズーム: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Error</source>
-        <translation type="unfinished">エラー</translation>
+        <translation>エラー</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Could not open reference image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>参考画像が開くことができませんでした: %1。</translation>
     </message>
 </context>
 <context>
@@ -11071,7 +11071,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Tool Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>ツールの設定</translation>
     </message>
 </context>
 <context>
@@ -11395,12 +11395,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Drag to move</source>
-        <translation type="unfinished"></translation>
+        <translation>ドラッグして移動</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Allow dragging the selection for a quick move operation.</source>
-        <translation type="unfinished"></translation>
+        <translation>ドラッグによる選択範囲の素早い移動を許可する。</translation>
     </message>
     <message>
         <location line="+161"/>
@@ -11474,12 +11474,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+16"/>
         <source>Show</source>
-        <translation type="unfinished">表示</translation>
+        <translation>表示</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show transform handles instead of just moving</source>
-        <translation type="unfinished"></translation>
+        <translation>移動だけでなく、変形ハンドルを表示する</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -11836,7 +11836,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>/!: can only shout in a public chat.</source>
-        <translation>/!: 公開チャットでのみ叫べます。</translation>
+        <translation>/!: 公開チャットでのみシャウトできます。</translation>
     </message>
     <message>
         <location line="+3"/>
