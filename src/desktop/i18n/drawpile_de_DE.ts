@@ -8634,7 +8634,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/shortcutfilterinput.cpp" line="+18"/>
         <source>Search…</source>
-        <translation>Suche…</translation>
+        <translation>Suchen…</translation>
     </message>
     <message>
         <location line="+5"/>
