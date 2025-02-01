@@ -9087,7 +9087,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+1"/>
         <source>Two-finger tap:</source>
-        <translation>Tippen mit zwei Fingern</translation>
+        <translation>Tippen mit zwei Fingern:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9102,7 +9102,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation>Farbpipette</translation>
+        <translation>Farbe aufnehmen</translation>
     </message>
     <message>
         <location line="+8"/>
