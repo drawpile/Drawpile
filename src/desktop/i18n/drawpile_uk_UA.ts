@@ -492,28 +492,28 @@
     <message>
         <location line="+23"/>
         <source>Import Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпорт налаштувань сеансу</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Усі підтримувані файли (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+416"/>
         <source>Session Settings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштування сеансу (%1)</translation>
     </message>
     <message>
         <location line="-415"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Заборони сеансів (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Session Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ролі сеансу (%1)</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -538,7 +538,7 @@
     <message>
         <location line="+5"/>
         <source>Reference Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Еталонне зображення</translation>
     </message>
     <message>
         <location line="+168"/>
@@ -578,7 +578,7 @@
     <message>
         <location line="+10"/>
         <source>Export Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Експорт налаштувань сеансу</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -974,17 +974,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Sketch mode for you</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим ескізів для вас</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Sketch Opacity:</source>
-        <translation type="unfinished"></translation>
+        <translation>Непрозорість ескізу:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Sketch Tint:</source>
-        <translation type="unfinished"></translation>
+        <translation>Відтінок ескізу:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1004,17 +1004,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+81"/>
         <source>No tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Без відтінку</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blue tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Синій відтінок</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть…</translation>
     </message>
 </context>
 <context>
@@ -1042,7 +1042,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation>Причали витяжної колони можуть бути організовані довільно. Ви можете скористатися «Перегляд» &gt; «Доки» &gt; «Упорядкувати доки», щоб легше перетягувати їх. Переконайтеся, що ваше розташування відповідає вашій роздільній здатності, інакше деякі елементи керування можуть бути винесені за межі екрана.</translation>
     </message>
 </context>
 <context>
@@ -1050,22 +1050,22 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../utils/widgetutils.cpp" line="+1081"/>
         <source>Open Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрити посилання</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This link will take you to the website at &quot;%1&quot;, which is not run by Drawpile. Are you sure you want to go there?</source>
-        <translation type="unfinished"></translation>
+        <translation>Це посилання приведе вас на веб-сайт за адресою &quot;%1&quot;, який не підтримується Drawpile. Ви впевнені, що хочете туди?</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Yes, visit website</source>
-        <translation type="unfinished"></translation>
+        <translation>Так, відвідайте веб-сайт</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Ні, скасувати</translation>
     </message>
 </context>
 <context>
@@ -1494,7 +1494,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1812"/>
         <source>Arrange Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Організувати доки</translation>
     </message>
     <message>
         <location line="+80"/>
@@ -2012,7 +2012,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+4"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнути режим шару &amp;ескізу</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+212"/>
@@ -2223,72 +2223,72 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="-590"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>відключити вас від сеансу</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>lose any unsaved changes</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>втратити всі незбережені зміни</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>stop your recording</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>зупиніть свій запис</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>discard your playback</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>скасувати відтворення</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+15"/>
         <source>Doing so will %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Це призведе до %1.</translation>
     </message>
     <message>
         <location line="-11"/>
         <source>Doing so will %1 and %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Це буде %1 і %2.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Doing so will %1, %2 and %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Це буде %1, %2 і %3.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Doing so will %1, %2, %3 and %4.</source>
-        <translation type="unfinished"></translation>
+        <translation>Це буде %1, %2, %3 і %4.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Are you sure you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви впевнені, що бажаєте продовжити?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Так, продовжувати</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Ні, скасувати</translation>
     </message>
     <message>
         <location line="+100"/>
         <location line="+3733"/>
         <source>Export Again</source>
-        <translation type="unfinished"></translation>
+        <translation>Знову експорт</translation>
     </message>
     <message>
         <location line="-3729"/>
         <source>Export Again to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Знову експортуйте до %1</translation>
     </message>
     <message>
         <location line="+444"/>
@@ -2334,22 +2334,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+110"/>
         <source>New</source>
-        <translation type="unfinished">Новий</translation>
+        <translation>Новий</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to create a new canvas and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви збираєтеся створити нове полотно та закрити це вікно.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Open Recent File</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрийте останній файл</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recent file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви збираєтеся відкрити останній файл і закрити це вікно.</translation>
     </message>
     <message>
         <location line="+102"/>
@@ -2359,12 +2359,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+39"/>
         <source>Open</source>
-        <translation type="unfinished">Відкрити</translation>
+        <translation>Відчинено</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a new file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви збираєтеся відкрити новий файл і закрити це вікно.</translation>
     </message>
     <message>
         <location line="+172"/>
@@ -2429,7 +2429,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+183"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви вже підключилися до сеансу! Спершу відключіться, щоб розмістити один.</translation>
     </message>
     <message>
         <location line="+58"/>
@@ -2439,12 +2439,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+87"/>
         <source>Reconnect</source>
-        <translation type="unfinished">Повторне підключення</translation>
+        <translation>Повторне підключення</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about reconnect to the session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви збираєтеся повторно підключитися до сеансу та закрити це вікно.</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -2454,12 +2454,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+131"/>
         <source>Join Session</source>
-        <translation type="unfinished">Приєднатися до сесії</translation>
+        <translation>Приєднатися до сесії</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to connect to a new session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви збираєтеся підключитися до нового сеансу та закрити це вікно.</translation>
     </message>
     <message>
         <location line="+115"/>
@@ -2510,7 +2510,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+487"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося завантажити зображення: %1.</translation>
     </message>
     <message>
         <location line="+259"/>
@@ -2591,12 +2591,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+16"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished">Відкрийте дамп налагодження</translation>
+        <translation>Відкрийте дамп налагодження</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a debug dump and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви збираєтеся відкрити дамп налагодження та закрити це вікно.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -2641,7 +2641,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+8"/>
         <source>Show Icons on Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Показувати значки на вкладках</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -3866,7 +3866,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Only operators can manage bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Керувати заборонами можуть лише оператори.</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -4617,152 +4617,152 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/artisticcolorwheeldialog.cpp" line="+23"/>
         <source>Color Circle Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметри кольорового кола</translation>
     </message>
     <message>
         <location line="+86"/>
         <source>Continuous hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Безперервний відтінок</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Кроки відтінку: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue angle: </source>
-        <translation type="unfinished"></translation>
+        <translation>Кут відтінку: </translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+43"/>
         <source>°</source>
         <extracomment>Degree symbol. Unless your language uses a different one, keep as-is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>°</translation>
     </message>
     <message>
         <location line="-40"/>
         <source>Continuous chroma</source>
-        <translation type="unfinished"></translation>
+        <translation>Безперервна кольоровість</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Chroma steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Етапи кольоровості: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Continuous luminance</source>
-        <translation type="unfinished"></translation>
+        <translation>Безперервна яскравість</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Luminance steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Кроки яскравості: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Безперервне насичення</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Saturation steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Етапи насичення: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous lightness</source>
-        <translation type="unfinished"></translation>
+        <translation>Безперервна легкість</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lightness steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Легкість кроків: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous value</source>
-        <translation type="unfinished"></translation>
+        <translation>Безперервне значення</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Value steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Значення кроків: </translation>
     </message>
     <message>
         <location line="+8"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Жодного</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Gamut mask:</source>
-        <translation type="unfinished"></translation>
+        <translation>Маска гами:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Mask angle: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ракурс маски: </translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Mask opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Непрозорість маски: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+54"/>
         <source>Atmosphere with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Атмосфера з акцентом</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Atmospheric triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Атмосферна тріада</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Доповнюють</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dominant hue with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Домінуючий відтінок з акцентом</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Shifted triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Зсувний тризвук</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Спліт</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Спліт компліментарний</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Tetradic</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Тетрадійний</translation>
     </message>
 </context>
 <context>
@@ -4777,7 +4777,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="-6"/>
         <source>Couldn&apos;t read image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося прочитати зображення: %1.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4832,47 +4832,47 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+70"/>
         <source>Change…</source>
-        <translation type="unfinished">Зміна…</translation>
+        <translation>Зміна…</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Shortcut:</source>
-        <translation type="unfinished">Ярлик:</translation>
+        <translation>Ярлик:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Choose File…</source>
-        <translation type="unfinished">Виберіть файл…</translation>
+        <translation>Виберіть файл…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Will be resized to 64x64 pixels.</source>
-        <translation type="unfinished">Розмір буде змінено до 64x64 пікселів.</translation>
+        <translation>Розмір буде змінено до 64x64 пікселів.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished">Мініатюра:</translation>
+        <translation>Мініатюра:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Add Label:</source>
-        <translation type="unfinished">Додати мітку:</translation>
+        <translation>Додати мітку:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ім&apos;я:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Description:</source>
-        <translation type="unfinished">Опис:</translation>
+        <translation>Опис:</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>No shortcut assigned</source>
-        <translation type="unfinished">Ярлик не призначено</translation>
+        <translation>Ярлик не призначено</translation>
     </message>
 </context>
 <context>
@@ -6630,17 +6630,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити відтінок кольору</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Зміна насиченості кольору</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити значення кольору</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6695,7 +6695,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>You can&apos;t assign just a key combination to this action, change the type to mouse button instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви не можете призначити цій дії лише комбінацію клавіш, натомість змініть тип на кнопку миші.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6827,17 +6827,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Search…</source>
-        <translation type="unfinished">Пошук…</translation>
+        <translation>Пошук…</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Попередній</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Далі</translation>
     </message>
 </context>
 <context>
@@ -7696,32 +7696,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Save/Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти/Завантажити</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Reload defaults…</source>
-        <translation type="unfinished"></translation>
+        <translation>Оновити налаштування за замовчуванням…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Load settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантажити налаштування…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти налаштування…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import from file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Імпортувати з файлу…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Export to file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Експорт у файл…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8019,7 +8019,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+42"/>
         <source>%1 offline undo levels by default</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 рівень скасування офлайн за замовчуванням</translation>
     </message>
     <message>
         <location line="-180"/>
@@ -8235,7 +8235,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8245,7 +8245,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Remove</source>
-        <translation type="unfinished">Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8583,13 +8583,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-7"/>
         <location line="+57"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати</translation>
     </message>
     <message>
         <location line="-53"/>
         <location line="+58"/>
         <source>Remove</source>
-        <translation type="unfinished">Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location line="-54"/>
@@ -8686,7 +8686,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8696,12 +8696,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Редагувати</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Edit selected canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>Редагувати вибраний ярлик полотна…</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8711,7 +8711,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Remove</source>
-        <translation type="unfinished">Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8970,12 +8970,12 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+19"/>
         <source>ms</source>
         <extracomment>This stands for millseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>мс</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Switch tool temporarily by holding shortcut key for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Тимчасово перемкніть інструмент, утримуючи клавішу швидкого доступу для %1</translation>
     </message>
     <message numerus="yes">
         <location line="+29"/>
@@ -9500,61 +9500,61 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host.cpp" line="+41"/>
         <source>Session</source>
-        <translation type="unfinished">Сеанс</translation>
+        <translation>Сесія</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Лістинг</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Permissions</source>
-        <translation type="unfinished">Права доступу</translation>
+        <translation>Дозволи</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles</source>
-        <translation type="unfinished">Ролі</translation>
+        <translation>Ролі</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Bans</source>
-        <translation type="unfinished">Заборони</translation>
+        <translation>Заборони</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Host Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка хоста</translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>Invalid input(s), please correct the following:</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Недійсний ведення, виправте наступне:</numerusform>
+            <numerusform>Недійсні введення, виправте наступне:</numerusform>
+            <numerusform>Недійсні введення, виправте наступне:</numerusform>
         </translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Failed to read file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося прочитати файл: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No file or content received.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл або вміст не отримано.</translation>
     </message>
     <message>
         <location line="+82"/>
         <source>Import Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка імпорту</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Could not import session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося імпортувати налаштування сеансу.</translation>
     </message>
 </context>
 <context>
@@ -9714,12 +9714,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/bans.cpp" line="+24"/>
         <source>No bans imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>Без заборон імпорту.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Remove</source>
-        <translation type="unfinished">Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
 </context>
 <context>
@@ -9727,42 +9727,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/categories.cpp" line="+27"/>
         <source>Session</source>
-        <translation type="unfinished">Сеанс</translation>
+        <translation>Сесія</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Лістинг</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Replace announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>Замінити оголошення</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Permissions</source>
-        <translation type="unfinished">Права доступу</translation>
+        <translation>Дозволи</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles</source>
-        <translation type="unfinished">Ролі</translation>
+        <translation>Ролі</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Replace role list</source>
-        <translation type="unfinished"></translation>
+        <translation>Замінити список ролей</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Bans</source>
-        <translation type="unfinished">Заборони</translation>
+        <translation>Заборони</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Replace ban list</source>
-        <translation type="unfinished"></translation>
+        <translation>Замінити бан-лист</translation>
     </message>
 </context>
 <context>
@@ -9770,22 +9770,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+499"/>
         <source>Export Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштування експорту</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Pick the sections you want to export:</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть розділи, які потрібно експортувати:</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Export Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка експорту</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Could not export session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося експортувати налаштування сеансу.</translation>
     </message>
 </context>
 <context>
@@ -9793,12 +9793,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-113"/>
         <source>Import Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштування імпорту</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pick the sections you want to import:</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть розділи, які потрібно імпортувати:</translation>
     </message>
 </context>
 <context>
@@ -9806,57 +9806,57 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/listing.cpp" line="+37"/>
         <source>Set title automatically</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити назву автоматично</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Enter a publicly visible title</source>
-        <translation type="unfinished"></translation>
+        <translation>Введіть загальнодоступну назву</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Publicly visible ID for pretty invite links</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальнодоступний ідентифікатор для красивих посилань для запрошень</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>ID alias:</source>
-        <translation type="unfinished"></translation>
+        <translation>ідентифікатор псевдоніма:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Announcements:</source>
-        <translation type="unfinished"></translation>
+        <translation>Оголошення:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove selected</source>
-        <translation type="unfinished">Вилучити позначені</translation>
+        <translation>Вилучити позначені</translation>
     </message>
     <message>
         <location line="+134"/>
         <source>Listing: a title is required for public sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Перелік: для відкритих сесій необхідна назва</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Listing: the title is inappropriate.</source>
-        <translation type="unfinished"></translation>
+        <translation>Лістинг: назва невідповідна.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Listing: the ID alias is inappropriate.</source>
-        <translation type="unfinished"></translation>
+        <translation>Перелік: псевдонім ідентифікатора невідповідний.</translation>
     </message>
 </context>
 <context>
@@ -9864,60 +9864,60 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-350"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантажити налаштування</translation>
     </message>
     <message>
         <location line="+37"/>
         <location line="+109"/>
         <source>Rename</source>
-        <translation type="unfinished">Перейменувати</translation>
+        <translation>Перейменувати</translation>
     </message>
     <message>
         <location line="-102"/>
         <location line="+134"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Видалити</translation>
     </message>
     <message>
         <location line="-125"/>
         <source>Pick the sections you want to load:</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть розділи, які потрібно завантажити:</translation>
     </message>
     <message>
         <location line="+94"/>
         <source>Choose a new name for preset %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть нову назву для стилю %1.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation>Конфлікт</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Попередній набір %1 уже існує, ви бажаєте його замінити?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Yes, replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Так, замінити</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+19"/>
         <source>No, keep</source>
-        <translation type="unfinished"></translation>
+        <translation>Ні, тримай</translation>
     </message>
     <message>
         <location line="-2"/>
         <source>Are you sure you want to delete preset %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви впевнені, що хочете видалити стиль %1?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Так, видалити</translation>
     </message>
 </context>
 <context>
@@ -9925,87 +9925,87 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/permissions.cpp" line="+97"/>
         <source>Undo Limit: </source>
-        <translation type="unfinished">Ліміт скасування: </translation>
+        <translation>Ліміт скасування: </translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Cut, paste and fill:</source>
-        <translation type="unfinished"></translation>
+        <translation>Вирізати, вставити та заповнити:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Transform selections:</source>
-        <translation type="unfinished"></translation>
+        <translation>Трансформувати виділення:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Create annotations:</source>
-        <translation type="unfinished"></translation>
+        <translation>Створення анотацій:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Manage own layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Керуйте власними шарами:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Manage all layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Керуйте всіма шарами:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change canvas size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити розмір полотна:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change background:</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити фон:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>MyPaint brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Пензлі MyPaint:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Laser pointer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Лазерна указка:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Animation timeline:</source>
-        <translation type="unfinished"></translation>
+        <translation>Хронологія анімації:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Undo and redo:</source>
-        <translation type="unfinished"></translation>
+        <translation>Скасувати та повторити:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Kick and ban:</source>
-        <translation type="unfinished"></translation>
+        <translation>Кік і бан:</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>Everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>Всі</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>Зареєстрований</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Довірений</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Operators</source>
-        <translation type="unfinished">Оператори</translation>
+        <translation>Оператори</translation>
     </message>
 </context>
 <context>
@@ -10013,12 +10013,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-226"/>
         <source>Reset</source>
-        <translation type="unfinished">Скинути</translation>
+        <translation>Скинути</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pick the sections you want to reset to their defaults:</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть розділи, які потрібно скинути до стандартних значень:</translation>
     </message>
 </context>
 <context>
@@ -10026,27 +10026,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/roles.cpp" line="+36"/>
         <source>Define a password to let anyone become operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Визначте пароль, щоб кожен міг стати оператором</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Operator password:</source>
-        <translation type="unfinished">Пароль оператора:</translation>
+        <translation>Пароль оператора:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>No roles imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>Немає імпортованих ролей.</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Operator</source>
-        <translation type="unfinished">Оператор</translation>
+        <translation>Оператор</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Довірений</translation>
     </message>
 </context>
 <context>
@@ -10054,37 +10054,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+276"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантажити налаштування</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ім&apos;я:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Pick the sections you want to save:</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть розділи, які потрібно зберегти:</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Save</source>
-        <translation type="unfinished">Зберегти</translation>
+        <translation>Зберегти</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Попередній набір %1 уже існує, ви бажаєте його замінити?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Yes, replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Так, замінити</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep</source>
-        <translation type="unfinished"></translation>
+        <translation>Ні, тримай</translation>
     </message>
 </context>
 <context>
@@ -10092,92 +10092,92 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/session.cpp" line="+38"/>
         <source>Personal session, only people you invite can join</source>
-        <translation type="unfinished"></translation>
+        <translation>Особистий сеанс, до якого можуть приєднатися лише запрошені вами люди</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Public session, anyone can freely join</source>
-        <translation type="unfinished"></translation>
+        <translation>Публічна сесія, будь-хто може вільно приєднатися</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Set a session title in the Listing tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановіть назву сеансу на вкладці Listing.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Session password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Пароль сесії:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Enter or generate a session password</source>
-        <translation type="unfinished"></translation>
+        <translation>Введіть або згенеруйте пароль сеансу</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Generate</source>
-        <translation type="unfinished">Генерувати</translation>
+        <translation>Генерувати</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished">Не підходить для неповнолітніх (NSFM)</translation>
+        <translation>Не підходить для неповнолітніх (NSFM)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation type="unfinished">Зберігати журнал спілкування</translation>
+        <translation>Зберігайте історію чату</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Хост або IP-адреса</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Builtin server on this computer</source>
-        <translation type="unfinished"></translation>
+        <translation>Вбудований сервер на цьому комп&apos;ютері</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server:</source>
-        <translation type="unfinished"></translation>
+        <translation>Сервер:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Enter a host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Введіть хост або IP-адресу</translation>
     </message>
     <message>
         <location line="+129"/>
         <source>Session: a password is required</source>
-        <translation type="unfinished"></translation>
+        <translation>Сеанс: потрібен пароль</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Session: a server is required</source>
-        <translation type="unfinished"></translation>
+        <translation>Сесія: потрібен сервер</translation>
     </message>
     <message>
         <location line="+70"/>
         <source>This will host your session on the public Drawpile server. It&apos;s freely available for anyone. To keep space available, sessions will be stopped when they&apos;re inactive for a while or after everybody leaves.</source>
-        <translation type="unfinished"></translation>
+        <translation>Це розмістить ваш сеанс на публічному сервері Drawpile. Він у вільному доступі для всіх. Щоб зберегти вільний простір, сеанси припинятимуться, якщо вони будуть неактивні деякий час або після всіх листя.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Sessions must comply with the rules, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;click here to view them&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сеанси мають відповідати правилам, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;натисніть тут, щоб переглянути їх&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Hosting on your own computer requires additional setup!</source>
-        <translation type="unfinished"></translation>
+        <translation>Хостинг на власному комп&apos;ютері вимагає додаткового налаштування!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;Натисніть тут, щоб отримати інструкції.&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -10185,27 +10185,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/files.cpp" line="+52"/>
         <source>This file doesn&apos;t contain any valid session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Цей файл не містить дійсних налаштувань сеансу.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Invalid session settings format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Недійсний формат налаштувань сеансу.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>File contains session settings to import.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл містить налаштування сеансу для імпорту.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Invalid role format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Недійсний формат ролі.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>File contains no roles to import.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл не містить ролей для імпорту.</translation>
     </message>
 </context>
 <context>
@@ -10414,17 +10414,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+25"/>
         <source>Color Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Кольорове коло</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Коло</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Configure…</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштувати…</translation>
     </message>
 </context>
 <context>
@@ -10442,12 +10442,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-12"/>
         <source>Color Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Палітра кольорів</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Palette</source>
-        <translation type="unfinished">Палітра</translation>
+        <translation>Палітра</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -10542,12 +10542,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorsliders.cpp" line="+73"/>
         <source>Color Sliders</source>
-        <translation type="unfinished"></translation>
+        <translation>Кольорові повзунки</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Sliders</source>
-        <translation type="unfinished">Повзунки</translation>
+        <translation>Повзунки</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10726,12 +10726,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorspinner.cpp" line="-99"/>
         <source>Color Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Колірне коло</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Wheel</source>
-        <translation type="unfinished">Колесо</translation>
+        <translation>Колесо</translation>
     </message>
     <message>
         <location line="+110"/>
@@ -10775,12 +10775,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/dockbase.cpp" line="+73"/>
         <source>Drag here to arrange</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетягніть сюди, щоб упорядкувати</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Finish arranging</source>
-        <translation type="unfinished"></translation>
+        <translation>Закінчити аранжування</translation>
     </message>
 </context>
 <context>
@@ -10836,7 +10836,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+45"/>
         <source>Toggle sketch mode (only visible to you)</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемкнути режим ескізу (бачите лише ви)</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10852,7 +10852,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Change sketch tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити відтінок ескізу</translation>
     </message>
     <message>
         <location line="+274"/>
@@ -10882,7 +10882,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемкнути групу шарів і режим ескізу</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10907,7 +10907,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+984"/>
         <source>Sketch: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ескіз: </translation>
     </message>
     <message>
         <location line="+136"/>
@@ -10963,7 +10963,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-10"/>
         <source>Onion Skins</source>
-        <translation type="unfinished">Лушпиння цибулі</translation>
+        <translation>Лушпиння цибулі</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -10996,78 +10996,78 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/reference.cpp" line="+26"/>
         <source>Reference</source>
-        <translation type="unfinished"></translation>
+        <translation>Довідка</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Open…</source>
-        <translation type="unfinished"></translation>
+        <translation>ВІдкрити…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open a file as a reference image</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрийте файл як еталонне зображення</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Paste</source>
-        <translation type="unfinished">Вставити</translation>
+        <translation>Вставити</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Paste a reference image from the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставте еталонне зображення з буфера обміну</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished">Закрити</translation>
+        <translation>Закрити</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Close the current reference image</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрийте поточне еталонне зображення</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished">Виберіть колір</translation>
+        <translation>Виберіть колір</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Pan image</source>
-        <translation type="unfinished"></translation>
+        <translation>Панорама зображення</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Reset zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути масштаб</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Zoom to fit</source>
-        <translation type="unfinished"></translation>
+        <translation>Збільшити до розміру</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Zoom: </source>
-        <translation type="unfinished"></translation>
+        <translation>Збільшити: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Error</source>
-        <translation type="unfinished">Помилка</translation>
+        <translation>Помилка</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Could not open reference image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося відкрити контрольне зображення: %1.</translation>
     </message>
 </context>
 <context>
@@ -11111,7 +11111,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Tool Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштування інструменту</translation>
     </message>
 </context>
 <context>
@@ -11435,12 +11435,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Drag to move</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетягніть, щоб переміститися</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Allow dragging the selection for a quick move operation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Дозвольте перетягувати виділення для швидкого переміщення.</translation>
     </message>
     <message>
         <location line="+161"/>
@@ -11514,12 +11514,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+16"/>
         <source>Show</source>
-        <translation type="unfinished">Показати</translation>
+        <translation>Показати</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show transform handles instead of just moving</source>
-        <translation type="unfinished"></translation>
+        <translation>Показувати маркери трансформації замість простого переміщення</translation>
     </message>
     <message>
         <location line="+10"/>
