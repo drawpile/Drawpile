@@ -229,22 +229,22 @@
     <message>
         <location line="+2"/>
         <source>Free Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Вільне обертання полотна</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити відтінок кольору</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Зміна насиченості кольору</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити значення кольору</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1283,22 +1283,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>Підготовка до скидання сеансу %1! Будь ласка, зачекайте, незабаром сеанс знову буде доступний…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 стискає полотно! Будь ласка, зачекайте, незабаром сеанс знову буде доступний…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 замінює полотно! Будь ласка, зачекайте, незабаром сеанс знову буде доступний…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 повертає полотно до попереднього стану! Будь ласка, зачекайте, незабаром сеанс знову буде доступний…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1380,7 +1380,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+64"/>
         <source>Failed to retrieve server info</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося отримати інформацію про сервер</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -1558,12 +1558,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Invalid host name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Недійсне ім&apos;я хоста.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вам заборонено проводити публічні сеанси тут, дозволені лише особисті сеанси. Ви можете перейти від публічного до особистого на вкладці Сеанс.</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -1788,7 +1788,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/hostpresetmodel.cpp" line="+57"/>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>За замовчуванням</translation>
     </message>
 </context>
 <context>
