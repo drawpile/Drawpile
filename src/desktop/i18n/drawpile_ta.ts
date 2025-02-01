@@ -1146,7 +1146,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+183"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation>&lt;p&gt; இந்த அமர்வு அதன் உள்ளடக்கங்கள் &lt;em&gt; சிறார்களுக்கு ஏற்றது அல்ல என்று சுட்டிக்காட்டியுள்ளது &lt;/em&gt; (NSFM). தொடர வேண்டிய உள்ளடக்கம். &lt;/strong&gt; &lt;/p&gt; &lt;p&gt; இந்த அமர்வில் சேர விரும்புகிறீர்களா? &lt;/p&gt;</translation>
+        <translation>&lt;p&gt;இந்த அமர்வு அதன் உள்ளடக்கங்கள் &lt;em&gt;சிறார்களுக்கு ஏற்றது அல்ல என்று சுட்டிக்காட்டியுள்ளது&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;நீங்கள் 18 வயதுக்கு மேற்பட்டவராகவும், தொடர வயதுவந்தோர் உள்ளடக்கத்தைப் பயன்படுத்த அனுமதிக்கப்படுபவராகவும் இருக்க வேண்டும்.&lt;/strong&gt; &lt;/p&gt; &lt;p&gt;இந்த அமர்வில் சேர விரும்புகிறீர்களா?&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -1249,7 +1249,7 @@ Subrange: [%3, %4]</source>
     <message numerus="yes">
         <location line="+129"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
-        <translation>
+        <translation type="unfinished">
             <numerusform>சேமிக்கப்படாத மாற்றங்களுடன் %n படங்கள் உள்ளன. வெளியேறுவதற்கு முன்பு இந்த மாற்றங்களை மதிப்பாய்வு செய்ய விரும்புகிறீர்களா?</numerusform>
             <numerusform>சேமிக்கப்படாத மாற்றங்களுடன் %n படங்கள் உள்ளன. வெளியேறுவதற்கு முன்பு இந்த மாற்றங்களை மதிப்பாய்வு செய்ய விரும்புகிறீர்களா?</numerusform>
         </translation>
@@ -4057,7 +4057,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+20"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>இப்போது &gt; &lt;span சூல் தண்டு = &quot;font -weight: 600;&quot;&gt; {F} &lt;/span&gt; - கோப்பு நீட்டிப்பு &lt;/p&gt; &lt;/body&gt; &lt;/html&gt;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+14"/>
@@ -6477,7 +6477,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>% (%1 FPS)</source>
-        <translation>% (% 1 FPS)</translation>
+        <translation>% (%1 FPS)</translation>
     </message>
 </context>
 <context>
@@ -6947,8 +6947,8 @@ Values above 0.5 may not be noticeable.</source>
         <source>%1 %n was/were not imported because it was/they were invalid or duplicates.</source>
         <extracomment>%1 is the &quot;Imported %n session ban(s).&quot; message.</extracomment>
         <translation>
-            <numerusform>%1 %N இறக்குமதி செய்யப்படவில்லை, ஏனெனில் அது/அவை தவறானவை அல்லது நகல்கள்.</numerusform>
-            <numerusform>%1 %N இறக்குமதி செய்யப்படவில்லை, ஏனெனில் அது/அவை தவறானவை அல்லது நகல்கள்.</numerusform>
+            <numerusform>%1 %n இறக்குமதி செய்யப்படவில்லை, ஏனெனில் அது தவறானவை அல்லது நகல்கள்.</numerusform>
+            <numerusform>%1 %n இறக்குமதி செய்யப்படவில்லை, ஏனெனில் அவை தவறானவை அல்லது நகல்கள்.</numerusform>
         </translation>
     </message>
     <message>
@@ -8221,7 +8221,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-64"/>
         <source>Unpin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation>Unpin</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
