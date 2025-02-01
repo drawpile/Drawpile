@@ -234,7 +234,7 @@
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>色相を変更</translation>
     </message>
     <message>
         <location line="+2"/>
