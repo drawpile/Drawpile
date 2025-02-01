@@ -239,12 +239,12 @@
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>彩度を変更</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>明度を変更</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1277,22 +1277,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1によるセッションのリセットを準備中です！ しばらくお待ち下さい、セッションはまもなく再び利用可能になります…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1はキャンバスを圧縮しています！しばらくお待ち下さい、セッションはまもなく再び利用可能になります…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1はキャンバスを置き換えています！しばらくお待ち下さい、セッションはまもなく再び利用可能になります…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1はキャンバスを以前の状態に戻しています！しばらくお待ち下さい、セッションはまもなく再び利用可能になります…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1374,7 +1374,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+64"/>
         <source>Failed to retrieve server info</source>
-        <translation type="unfinished"></translation>
+        <translation>サーバー情報の取得に失敗しました</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -1552,12 +1552,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Invalid host name.</source>
-        <translation type="unfinished"></translation>
+        <translation>無効なホスト名です。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>ここでは公開セッションをホストすることは許可されていません、個人セッションのみが許可されています。 セッションタブでパブリックから個人に切り替えることができます。</translation>
     </message>
     <message>
         <location line="+33"/>
