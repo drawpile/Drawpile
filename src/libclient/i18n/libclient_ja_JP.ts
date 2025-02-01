@@ -229,7 +229,7 @@
     <message>
         <location line="+2"/>
         <source>Free Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスをスナップさせずに自由に回転</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1780,7 +1780,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/hostpresetmodel.cpp" line="+57"/>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>デフォルト</translation>
     </message>
 </context>
 <context>
