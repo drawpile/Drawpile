@@ -8811,7 +8811,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+2"/>
         <source>Pen pressure:</source>
-        <translation>Stiftdruck:</translation>
+        <translation>Druckerkennung:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9087,7 +9087,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+1"/>
         <source>Two-finger tap:</source>
-        <translation>Mit zwei Fingern antippen:</translation>
+        <translation>Tippen mit zwei Fingern</translation>
     </message>
     <message>
         <location line="+1"/>
