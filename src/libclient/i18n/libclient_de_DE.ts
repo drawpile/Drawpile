@@ -229,22 +229,22 @@
     <message>
         <location line="+2"/>
         <source>Free Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand frei rotieren</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbton ändern</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Sättigung ändern</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Helligkeit ändern</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1280,22 +1280,22 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="+4"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 setzt die Leinwand zurück! Bitte warten Sie, die Sitzung sollte in Kürze wieder verfügbar sein…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 komprimiert die Leinwand! Bitte warten Sie, die Sitzung sollte in Kürze wieder verfügbar sein…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ersetzt die Leinwand! Bitte warten Sie, die Sitzung sollte in Kürze wieder verfügbar sein…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 setzt die Leinwand auf einen vorherigen Stand zurück! Bitte warten Sie, die Sitzung sollte in Kürze wieder verfügbar sein…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1449,12 +1449,12 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="+3"/>
         <source>Invalid host name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültiger Hostname.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie dürfen hier keine öffentlichen Sitzungen hosten, nur persönliche Sitzungen sind erlaubt. Sie können von öffentlich zu personlich im Sitzung-Tab umschalten.</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -1489,7 +1489,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="+59"/>
         <source>Failed to retrieve server info</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Anfordern der Serverinformationen</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -1784,7 +1784,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location filename="../utils/hostpresetmodel.cpp" line="+57"/>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Standardwerte</translation>
     </message>
 </context>
 <context>
