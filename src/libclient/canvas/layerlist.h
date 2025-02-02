@@ -106,8 +106,10 @@ public:
 		IsHiddenInTreeRole,
 		IsCensoredInTreeRole,
 		IsFillSourceRole,
+		CheckModeRole,
 		CheckStateRole,
 		IsSketchModeRole,
+		OwnerIdRole,
 	};
 
 	enum CheckState {
@@ -187,6 +189,13 @@ public:
 	 */
 	int findNearestLayer(int layerId) const;
 
+	QModelIndex findHighestLayer(const QSet<int> &layerIds) const;
+
+	QSet<int> topLevelSelectedIds(const QSet<int> &layerIds) const;
+
+	static bool
+	isTopLevelSelection(const QSet<int> &layerIds, const QModelIndex &idx);
+
 	bool isLayerVisibleInFrame(int layerId) const
 	{
 		return m_frameLayers.contains(layerId);
@@ -197,10 +206,10 @@ public:
 
 	// Retrieves all modifiable layers under the given id. That is, it will
 	// return the ids of non-group, non-locked, non-hidden, non-censored layers.
-	QSet<int> getModifiableLayers(int layerId) const;
+	QSet<int> getModifiableLayers(const QSet<int> &layerIds) const;
 
 	bool isCheckMode() const { return m_checkMode; }
-	void initCheckedLayers(int initialLayerId);
+	void initCheckedLayers(const QSet<int> &initialLayerIds);
 	void clearCheckedLayers();
 	void setAllChecked(bool checked);
 
@@ -208,6 +217,13 @@ public:
 	QSet<int> checkedLayers() const;
 
 	bool isLayerCheckStateToggleable(const QModelIndex &idx) const;
+
+	static int extractOwnerId(int layerId) { return (layerId >> 8) & 0xff; }
+
+	static bool isOwner(int layerId, int contextId)
+	{
+		return extractOwnerId(layerId) == contextId;
+	}
 
 public slots:
 	void setLayers(
@@ -223,7 +239,9 @@ signals:
 	void autoSelectRequest(int);
 
 	//! Emitted when layers are manually reordered
-	void moveRequested(int sourceId, int targetId, bool intoGroup, bool below);
+	void moveRequested(
+		const QVector<int> &sourceIds, int targetId, bool intoGroup,
+		bool below);
 
 	void layersVisibleInFrameChanged();
 	void layerCheckStateToggled();
@@ -262,8 +280,6 @@ private:
 	void
 	gatherModifiableLayers(QSet<int> &layerIds, const QModelIndex &idx) const;
 
-	void emitCheckStatesChanged(const QModelIndex &parent = QModelIndex());
-
 	QVector<LayerListItem> m_items;
 	QSet<int> m_frameLayers;
 	QHash<int, CheckState> m_checkStates;
@@ -285,16 +301,16 @@ private:
 class LayerMimeData final : public QMimeData {
 	Q_OBJECT
 public:
-	LayerMimeData(const LayerListModel *source, uint16_t id)
+	LayerMimeData(const LayerListModel *source)
 		: QMimeData()
 		, m_source(source)
-		, m_id(id)
 	{
 	}
 
 	const LayerListModel *source() const { return m_source; }
 
-	uint16_t layerId() const { return m_id; }
+	void insertLayerId(int layerId) { m_layerIds.insert(layerId); }
+	const QSet<int> &layerIds() const { return m_layerIds; }
 
 	QStringList formats() const override;
 
@@ -305,7 +321,7 @@ protected:
 
 private:
 	const LayerListModel *m_source;
-	uint16_t m_id;
+	QSet<int> m_layerIds;
 
 	QVariant retrieveImageData(bool isImageType) const;
 };

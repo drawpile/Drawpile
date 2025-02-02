@@ -9,6 +9,7 @@ extern "C" {
 #include "desktop/view/lock.h"
 #include "libclient/net/message.h"
 #include <QColor>
+#include <QModelIndexList>
 #include <QSet>
 #include <QVector>
 
@@ -84,6 +85,8 @@ public:
 	 */
 	QFlags<view::Lock::Reason> currentLayerLock() const;
 
+	int currentId() const { return m_currentId; }
+
 public slots:
 	void selectLayer(int id);
 	void selectAbove();
@@ -96,6 +99,7 @@ public slots:
 signals:
 	//! A layer was selected by the user
 	void layerSelected(int id);
+	void layerSelectionChanged(const QSet<int> &layerIds);
 	void layerChecked(int layerId, bool checked);
 	void activeLayerVisibilityChanged();
 	void fillSourceSet(int layerId);
@@ -111,7 +115,7 @@ private slots:
 	void duplicateLayer();
 	void deleteSelected();
 	void mergeSelected();
-	void setFillSourceToSelected();
+	void setFillSourceToCurrent();
 	void clearFillSource();
 	void toggleChecked();
 	void checkAll();
@@ -124,6 +128,7 @@ private slots:
 	void toggleLayerSketch();
 	void setLayerVisibility(int layerId, bool visible);
 	void setLayerSketch(int layerId, int opacityPercent, const QColor &tint);
+	void toggleSelection(const QModelIndex &idx);
 	void
 	changeLayerAcl(bool lock, DP_AccessTier tier, QVector<uint8_t> exclusive);
 
@@ -131,7 +136,6 @@ private slots:
 	void userLockStatusChanged(bool);
 	void blendModeChanged(int index);
 	void opacityChanged(int value);
-	void selectionChanged(const QItemSelection &selected);
 
 	void triggerUpdate();
 
@@ -142,8 +146,14 @@ private:
 	void updateBlendModes(bool compatibilityMode);
 	void updateCheckActions();
 	bool canMergeCurrent() const;
+	bool canEditLayer(const QModelIndex &idx) const;
 
-	void updateUiFromSelection();
+	void
+	currentChanged(const QModelIndex &current, const QModelIndex &previous);
+	void selectionChanged(
+		const QItemSelection &selected, const QItemSelection &deselected);
+	void updateCurrent(const QModelIndex &current);
+	void updateUiFromCurrent();
 
 	void addOrPromptLayerOrGroup(bool group);
 	void addLayerOrGroupFromPrompt(
@@ -153,7 +163,7 @@ private:
 	void addLayerOrGroup(
 		bool group, bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset);
 	int makeAddLayerOrGroupCommands(
-		QVector<net::Message> &msgs, int selectedId, bool group,
+		net::MessageList &msgs, int selectedId, bool group,
 		bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset,
 		const QString &title);
 	QModelIndex searchKeyFrameReference(int &outRequiredIdCount) const;
@@ -163,16 +173,16 @@ private:
 		int sourceFrame, int targetFrame, int &sourceId, int &targetId,
 		uint8_t &flags) const;
 	void makeKeyFrameReferenceAddCommands(
-		const canvas::LayerListModel *layerlist, QVector<net::Message> &msgs,
+		const canvas::LayerListModel *layerlist, net::MessageList &msgs,
 		QVector<int> ids, int &idIndex, uint8_t contextId,
 		const QModelIndex &parent, int parentId) const;
 	void makeKeyFrameReferenceEditCommands(
-		QVector<net::Message> &msgs, uint8_t contextId, const QModelIndex &idx,
+		net::MessageList &msgs, uint8_t contextId, const QModelIndex &idx,
 		int id) const;
 
 	void showPropertiesForNew(bool group);
-	void showPropertiesOfSelected();
-	void showPropertiesOfIndex(QModelIndex index);
+	void showPropertiesOfCurrent();
+	void showPropertiesOfIndex(const QModelIndex &index);
 	dialogs::LayerProperties *makeLayerPropertiesDialog(
 		const QString &dialogObjectName, const QModelIndex &index);
 
@@ -181,6 +191,11 @@ private:
 
 	bool isGroupSelected() const;
 	QModelIndex currentSelection() const;
+	bool ownsAllTopLevelSelections() const;
+	QModelIndexList topLevelSelections() const;
+	QSet<int> topLevelSelectedIds() const;
+	void
+	gatherTopLevel(const std::function<void(const QModelIndex &)> &fn) const;
 	void selectLayerIndex(QModelIndex index, bool scrollTo = false);
 
 	QString layerCreatorName(uint16_t layerId) const;
@@ -190,8 +205,9 @@ private:
 	canvas::CanvasModel *m_canvas;
 
 	// cache selection and remember it across model resets
-	int m_selectedId;
+	int m_currentId;
 	int m_nearestToDeletedId;
+	QSet<int> m_selectedIds;
 
 	// try to retain view status across model resets
 	QSet<int> m_expandedGroups;

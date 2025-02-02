@@ -20,13 +20,14 @@
 #include <QActionGroup>
 #include <QComboBox>
 #include <QDateTime>
-#include <QDebug>
 #include <QHBoxLayout>
 #include <QIcon>
 #include <QItemSelection>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QScopedValueRollback>
 #include <QScrollBar>
+#include <QSignalBlocker>
 #include <QStandardItemModel>
 #include <QTimer>
 #include <QTreeView>
@@ -35,11 +36,91 @@
 
 namespace docks {
 
+
+namespace {
+class LayerListTreeView : public QTreeView {
+public:
+	LayerListTreeView(LayerList *dock, LayerListDelegate *del)
+		: QTreeView()
+		, m_dock(dock)
+		, m_del(del)
+	{
+	}
+
+	void drawRow(
+		QPainter *painter, const QStyleOptionViewItem &options,
+		const QModelIndex &index) const override
+	{
+		bool disabled =
+			index.data(canvas::LayerListModel::IsLockedRole).toBool() ||
+			index.data(canvas::LayerListModel::IsHiddenInFrameRole).toBool() ||
+			index.data(canvas::LayerListModel::IsHiddenInTreeRole).toBool() ||
+			index.data(canvas::LayerListModel::IsCensoredInTreeRole).toBool();
+		bool secondarySelection =
+			selectionModel()->isSelected(index) &&
+			m_dock->currentId() !=
+				index.data(canvas::LayerListModel::IdRole).toInt();
+		if(disabled || secondarySelection) {
+			QStyleOptionViewItem opt = options;
+			if(disabled) {
+				opt.state.setFlag(QStyle::State_Enabled, false);
+			}
+			if(secondarySelection) {
+				if(index.data(canvas::LayerListModel::CheckModeRole).toBool()) {
+					for(int i = 0; i < QPalette::NColorGroups; ++i) {
+						opt.palette.setColor(
+							QPalette::ColorGroup(i), QPalette::Highlight,
+							Qt::transparent);
+						opt.palette.setColor(
+							QPalette::ColorGroup(i), QPalette::HighlightedText,
+							opt.palette.color(
+								QPalette::ColorGroup(i), QPalette::Text));
+					}
+				} else {
+					for(int i = 0; i < QPalette::NColorGroups; ++i) {
+						QColor highlight = opt.palette.color(
+							QPalette::ColorGroup(i), QPalette::Highlight);
+						highlight.setAlpha(highlight.alpha() / 2);
+						opt.palette.setColor(
+							QPalette::ColorGroup(i), QPalette::Highlight,
+							highlight);
+					}
+				}
+			}
+			QTreeView::drawRow(painter, opt, index);
+		} else {
+			QTreeView::drawRow(painter, options, index);
+		}
+	}
+
+protected:
+	void mouseMoveEvent(QMouseEvent *event) override
+	{
+		QTreeView::mouseMoveEvent(event);
+		if(m_del->shouldDisableDrag()) {
+			setDragEnabled(false);
+		}
+	}
+
+	void mouseReleaseEvent(QMouseEvent *event) override
+	{
+		QTreeView::mouseReleaseEvent(event);
+		m_del->clearDrag();
+		setDragEnabled(true);
+	}
+
+private:
+	LayerList *m_dock;
+	LayerListDelegate *m_del;
+};
+}
+
+
 LayerList::LayerList(QWidget *parent)
 	: DockBase(
 		  tr("Layers"), QString(), QIcon::fromTheme("layer-visible-on"), parent)
 	, m_canvas(nullptr)
-	, m_selectedId(0)
+	, m_currentId(0)
 	, m_nearestToDeletedId(0)
 	, m_trackId(0)
 	, m_frame(-1)
@@ -118,12 +199,13 @@ LayerList::LayerList(QWidget *parent)
 	opacitySliderLayout->addWidget(m_opacitySlider);
 	rootLayout->addLayout(opacitySliderLayout);
 
-	m_view = new QTreeView;
+	LayerListDelegate *del = new LayerListDelegate(this);
+	m_view = new LayerListTreeView(this, del);
 	m_view->setHeaderHidden(true);
 	m_view->setDragEnabled(true);
 	m_view->viewport()->setAcceptDrops(true);
 	m_view->setEnabled(false);
-	m_view->setSelectionMode(QAbstractItemView::SingleSelection);
+	m_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	m_view->setContextMenuPolicy(Qt::CustomContextMenu);
 	utils::bindKineticScrolling(m_view);
@@ -145,16 +227,17 @@ LayerList::LayerList(QWidget *parent)
 		m_aclmenu, &LayerAclMenu::layerCensoredChange, this,
 		&LayerList::censorSelected);
 
-	selectionChanged(QItemSelection());
+	updateCurrent(QModelIndex());
 
-	// Custom layer list item delegate
-	LayerListDelegate *del = new LayerListDelegate(this);
 	connect(
 		del, &LayerListDelegate::interacted, this,
 		&LayerList::disableAutoselectAny);
 	connect(
 		del, &LayerListDelegate::toggleVisibility, this,
 		&LayerList::setLayerVisibility);
+	connect(
+		del, &LayerListDelegate::toggleSelection, this,
+		&LayerList::toggleSelection);
 	connect(
 		del, &LayerListDelegate::toggleChecked, this, &LayerList::layerChecked);
 	connect(
@@ -204,9 +287,11 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 		canvas->aclState(), &canvas::AclState::resetLockChanged, this,
 		&LayerList::setDisabled);
 	connect(
-		m_view->selectionModel(),
-		SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this,
-		SLOT(selectionChanged(QItemSelection)));
+		m_view->selectionModel(), &QItemSelectionModel::currentChanged, this,
+		&LayerList::currentChanged);
+	connect(
+		m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+		&LayerList::selectionChanged);
 	connect(
 		canvas, &canvas::CanvasModel::compatibilityModeChanged, this,
 		&LayerList::updateLockedControls);
@@ -316,7 +401,7 @@ void LayerList::setLayerEditActions(const Actions &actions)
 		m_actions.merge, &QAction::triggered, this, &LayerList::mergeSelected);
 	connect(
 		m_actions.properties, &QAction::triggered, this,
-		&LayerList::showPropertiesOfSelected);
+		&LayerList::showPropertiesOfCurrent);
 	connect(
 		m_actions.toggleVisibility, &QAction::triggered, this,
 		&LayerList::toggleLayerVisibility);
@@ -327,7 +412,7 @@ void LayerList::setLayerEditActions(const Actions &actions)
 		m_actions.del, &QAction::triggered, this, &LayerList::deleteSelected);
 	connect(
 		m_actions.setFillSource, &QAction::triggered, this,
-		&LayerList::setFillSourceToSelected);
+		&LayerList::setFillSourceToCurrent);
 	connect(
 		m_actions.clearFillSource, &QAction::triggered, this,
 		&LayerList::clearFillSource);
@@ -440,24 +525,38 @@ void LayerList::updateLockedControls()
 	}
 
 	// Rest of the controls need a selection to work.
-	const bool enabled =
-		!locked && m_selectedId &&
-		(canEdit ||
-		 (ownLayers && (m_selectedId >> 8) == m_canvas->localUserId()));
+	bool haveCurrent = m_currentId != 0;
+	bool canEditCurrent =
+		!locked && haveCurrent &&
+		(canEdit || (ownLayers && canvas::LayerListModel::isOwner(
+									  m_currentId, m_canvas->localUserId())));
+	int selectedCount = m_selectedIds.size();
+	bool haveAnySelected = selectedCount != 0;
+	bool haveMultipleSelected = selectedCount > 1;
+	bool canEditSelected =
+		!locked && haveAnySelected &&
+		(canEdit || (ownLayers && ownsAllTopLevelSelections()));
 
-	m_lockButton->setEnabled(enabled);
-	m_blendModeCombo->setEnabled(enabled);
-	m_opacitySlider->setEnabled(m_selectedId != 0 && (m_sketchMode || enabled));
-	m_sketchButton->setEnabled(m_selectedId != 0);
+	m_lockButton->setEnabled(canEditCurrent && !haveMultipleSelected);
+	m_blendModeCombo->setEnabled(
+		canEditCurrent && haveAnySelected && canEditSelected);
+	m_opacitySlider->setEnabled(
+		haveCurrent && haveAnySelected && (m_sketchMode || canEditSelected));
+	m_sketchButton->setEnabled(haveCurrent && haveAnySelected);
+	m_sketchTintButton->setEnabled(haveCurrent && haveAnySelected);
 
 	if(hasEditActions) {
-		m_actions.duplicate->setEnabled(enabled);
-		m_actions.del->setEnabled(enabled);
-		m_actions.merge->setEnabled(enabled && canMergeCurrent());
-		m_actions.properties->setEnabled(enabled);
-		m_actions.toggleVisibility->setEnabled(enabled);
-		m_actions.toggleSketch->setEnabled(m_selectedId != 0);
-		m_actions.setFillSource->setEnabled(m_selectedId != 0);
+		m_actions.duplicate->setEnabled(
+			canEditCurrent && !haveMultipleSelected);
+		m_actions.del->setEnabled(canEditSelected);
+		m_actions.merge->setEnabled(
+			canEditCurrent && !haveMultipleSelected && canMergeCurrent());
+		m_actions.properties->setEnabled(
+			canEditCurrent && !haveMultipleSelected);
+		m_actions.toggleVisibility->setEnabled(haveCurrent && haveAnySelected);
+		m_actions.toggleSketch->setEnabled(haveCurrent && haveAnySelected);
+		m_actions.setFillSource->setEnabled(
+			haveCurrent && !haveMultipleSelected);
 	}
 
 	updateFillSourceLayerId();
@@ -521,7 +620,8 @@ void LayerList::updateFillSourceLayerId()
 	if(m_canvas) {
 		int fillSourceLayerId = m_canvas->layerlist()->fillSourceLayerId();
 		m_actions.setFillSource->setEnabled(
-			m_selectedId != 0 && m_selectedId != fillSourceLayerId);
+			m_currentId != 0 && m_currentId != fillSourceLayerId &&
+			m_selectedIds.size() <= 1);
 		m_actions.clearFillSource->setEnabled(fillSourceLayerId != 0);
 	}
 }
@@ -529,7 +629,7 @@ void LayerList::updateFillSourceLayerId()
 void LayerList::selectLayerIndex(QModelIndex index, bool scrollTo)
 {
 	if(index.isValid()) {
-		m_view->selectionModel()->select(
+		m_view->selectionModel()->setCurrentIndex(
 			index,
 			QItemSelectionModel::SelectCurrent | QItemSelectionModel::Clear);
 		if(scrollTo) {
@@ -541,7 +641,8 @@ void LayerList::selectLayerIndex(QModelIndex index, bool scrollTo)
 
 QString LayerList::layerCreatorName(uint16_t layerId) const
 {
-	return m_canvas->userlist()->getUsername((layerId >> 8) & 0xff);
+	return m_canvas->userlist()->getUsername(
+		canvas::LayerListModel::extractOwnerId(layerId));
 }
 
 void LayerList::censorSelected(bool censor)
@@ -571,9 +672,10 @@ void LayerList::toggleLayerVisibility()
 {
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
-		canvas::LayerListItem layer =
-			index.data().value<canvas::LayerListItem>();
-		setLayerVisibility(layer.id, layer.hidden);
+		bool visible = index.data().value<canvas::LayerListItem>().hidden;
+		for(int layerId : m_selectedIds) {
+			setLayerVisibility(layerId, visible);
+		}
 	}
 }
 
@@ -581,15 +683,17 @@ void LayerList::toggleLayerSketch()
 {
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
-		canvas::LayerListItem layer =
-			index.data().value<canvas::LayerListItem>();
-		if(layer.sketchOpacity <= 0.0f) {
+		bool sketch =
+			index.data().value<canvas::LayerListItem>().sketchOpacity <= 0.0f;
+		int opacityPercent = 0;
+		QColor tint;
+		if(sketch) {
 			const desktop::settings::Settings &settings = dpApp().settings();
-			setLayerSketch(
-				layer.id, settings.layerSketchOpacityPercent(),
-				settings.layerSketchTint());
-		} else {
-			setLayerSketch(layer.id, 0, QColor());
+			opacityPercent = settings.layerSketchOpacityPercent();
+			tint = settings.layerSketchTint();
+		}
+		for(int layerId : m_selectedIds) {
+			setLayerSketch(layerId, opacityPercent, tint);
 		}
 	}
 }
@@ -604,6 +708,20 @@ void LayerList::setLayerSketch(
 {
 	m_canvas->paintEngine()->setLayerSketch(
 		layerId, qRound(opacityPercent / 100.0 * DP_BIT15), tint);
+}
+
+void LayerList::toggleSelection(const QModelIndex &idx)
+{
+	if(idx.isValid()) {
+		QItemSelectionModel *selectionModel = m_view->selectionModel();
+		if(m_selectedIds.contains(
+			   idx.data(canvas::LayerListModel::IdRole).toInt())) {
+			selectionModel->select(idx, QItemSelectionModel::Deselect);
+		} else {
+			selectionModel->select(idx, QItemSelectionModel::Select);
+			selectionModel->setCurrentIndex(idx, QItemSelectionModel::Current);
+		}
+	}
 }
 
 void LayerList::changeLayerAcl(
@@ -633,13 +751,12 @@ void LayerList::addLayerOrGroupFromPrompt(
 	int blendMode, bool isolated, bool censored, bool defaultLayer,
 	bool visible, int sketchOpacityPercent, const QColor &sketchTint)
 {
-	QVector<net::Message> msgs;
-	msgs.reserve(2);
+	net::MessageList msgs;
 	bool selectedExists =
 		m_canvas->layerlist()->layerIndex(selectedId).isValid();
 	int layerId = makeAddLayerOrGroupCommands(
-		msgs, selectedExists ? selectedId : m_selectedId, group, false, false,
-		0, title);
+		msgs, selectedExists ? selectedId : m_currentId, group, false, false, 0,
+		title);
 	if(layerId > 0 && !msgs.isEmpty()) {
 		uint8_t contextId = m_canvas->localUserId();
 		if(opacityPercent != 100 || blendMode != DP_BLEND_MODE_NORMAL ||
@@ -668,10 +785,9 @@ void LayerList::addLayerOrGroupFromPrompt(
 void LayerList::addLayerOrGroup(
 	bool group, bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset)
 {
-	QVector<net::Message> msgs;
-	msgs.reserve(4);
+	net::MessageList msgs;
 	makeAddLayerOrGroupCommands(
-		msgs, m_selectedId, group, duplicateKeyFrame, keyFrame, keyFrameOffset,
+		msgs, m_currentId, group, duplicateKeyFrame, keyFrame, keyFrameOffset,
 		QString());
 	if(!msgs.isEmpty()) {
 		emit layerCommands(int(msgs.size()), msgs.constData());
@@ -679,11 +795,40 @@ void LayerList::addLayerOrGroup(
 }
 
 int LayerList::makeAddLayerOrGroupCommands(
-	QVector<net::Message> &msgs, int selectedId, bool group,
-	bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset,
-	const QString &title)
+	net::MessageList &msgs, int selectedId, bool group, bool duplicateKeyFrame,
+	bool keyFrame, int keyFrameOffset, const QString &title)
 {
 	canvas::LayerListModel *layers = m_canvas->layerlist();
+	QModelIndex index = layers->layerIndex(selectedId);
+	uint8_t contextId = m_canvas->localUserId();
+
+	// If the user has selected multiple layers and then creates a group, we
+	// assume that they want to group the selected layers and try to do so.
+	QSet<int> layerIdsToGroup;
+	if(group && !duplicateKeyFrame && !keyFrame && m_selectedIds.size() > 1 &&
+	   index.isValid()) {
+		canvas::AclState *acls = m_canvas->aclState();
+		bool canEditAll = acls->canUseFeature(DP_FEATURE_EDIT_LAYERS);
+		if(canEditAll || acls->canUseFeature(DP_FEATURE_OWN_LAYERS)) {
+			layerIdsToGroup = topLevelSelectedIds();
+			if(!layerIdsToGroup.contains(selectedId)) {
+				// If the target layer isn't in the set of top-level selected
+				// layers, it means we're trying to group a parent into one of
+				// its children. Since that's impossible, we just give up.
+				layerIdsToGroup.clear();
+			} else if(!canEditAll) {
+				// Toss any layers the user isn't allowed to move.
+				for(QSet<int>::iterator it = layerIdsToGroup.begin(),
+										end = layerIdsToGroup.end();
+					it != end; ++it) {
+					int layerId = *it;
+					if(!canvas::LayerListModel::isOwner(layerId, contextId)) {
+						layerIdsToGroup.erase(it);
+					}
+				}
+			}
+		}
+	}
 
 	// If we're creating new key frame layers, we intuit the structure from a
 	// surrounding key frame if we can find one. That's generally more useful
@@ -705,10 +850,8 @@ int LayerList::makeAddLayerOrGroupCommands(
 	}
 
 	int firstId = ids.first();
-	uint8_t contextId = m_canvas->localUserId();
 	msgs.append(net::makeUndoPointMessage(contextId));
 
-	QModelIndex index = layers->layerIndex(selectedId);
 	bool compatibilityMode = m_canvas->isCompatibilityMode();
 	if(compatibilityMode) {
 		uint16_t targetId = index.isValid() ? selectedId : 0;
@@ -736,6 +879,7 @@ int LayerList::makeAddLayerOrGroupCommands(
 		if(targetId == -1 && index.isValid()) {
 			targetId = selectedId;
 			bool into =
+				layerIdsToGroup.isEmpty() &&
 				index.data(canvas::LayerListModel::IsGroupRole).toBool() &&
 				(m_view->isExpanded(index) ||
 				 index.data(canvas::LayerListModel::IsEmptyRole).toBool());
@@ -780,6 +924,20 @@ int LayerList::makeAddLayerOrGroupCommands(
 			int idIndex = 1;
 			makeKeyFrameReferenceAddCommands(
 				layers, msgs, ids, idIndex, contextId, referenceIdx, firstId);
+		}
+
+		if(!layerIdsToGroup.isEmpty()) {
+			const QVector<canvas::LayerListItem> &items = layers->layerItems();
+			for(QVector<canvas::LayerListItem>::const_reverse_iterator
+					it = items.crbegin(),
+					end = items.crend();
+				it != end; ++it) {
+				int layerId = it->id;
+				if(layerIdsToGroup.contains(layerId)) {
+					msgs.append(net::makeLayerTreeMoveMessage(
+						contextId, layerId, firstId, 0));
+				};
+			}
 		}
 	}
 
@@ -912,7 +1070,7 @@ int LayerList::intuitKeyFrameTarget(
 }
 
 void LayerList::makeKeyFrameReferenceAddCommands(
-	const canvas::LayerListModel *layerlist, QVector<net::Message> &msgs,
+	const canvas::LayerListModel *layerlist, net::MessageList &msgs,
 	QVector<int> ids, int &idIndex, uint8_t contextId,
 	const QModelIndex &parent, int parentId) const
 {
@@ -937,7 +1095,7 @@ void LayerList::makeKeyFrameReferenceAddCommands(
 }
 
 void LayerList::makeKeyFrameReferenceEditCommands(
-	QVector<net::Message> &msgs, uint8_t contextId, const QModelIndex &idx,
+	net::MessageList &msgs, uint8_t contextId, const QModelIndex &idx,
 	int id) const
 {
 	const canvas::LayerListItem &layer =
@@ -1007,18 +1165,37 @@ bool LayerList::canMergeCurrent() const
 	}
 }
 
+bool LayerList::canEditLayer(const QModelIndex &idx) const
+{
+	canvas::AclState *acls = m_canvas->aclState();
+	return !acls->amLocked() &&
+		   (acls->canUseFeature(DP_FEATURE_EDIT_LAYERS) ||
+			(acls->canUseFeature(DP_FEATURE_OWN_LAYERS) &&
+			 idx.data(canvas::LayerListModel::OwnerIdRole).toInt() ==
+				 m_canvas->localUserId()));
+}
+
 void LayerList::deleteSelected()
 {
-	QModelIndex index = currentSelection();
-	if(!index.isValid())
+	QModelIndexList indexes = topLevelSelections();
+	compat::sizetype count = indexes.size();
+	if(count == 0) {
 		return;
+	}
 
-	const canvas::LayerListItem &layer =
-		index.data().value<canvas::LayerListItem>();
 	if(dpApp().settings().confirmLayerDelete()) {
+		QStringList names;
+		names.reserve(count);
+		for(const QModelIndex &idx : indexes) {
+			names.append(
+				idx.data(canvas::LayerListModel::TitleRole).toString());
+		}
+		names.sort(Qt::CaseInsensitive);
+		// FIXME: proper translation.
 		QMessageBox::StandardButton result = QMessageBox::question(
 			this, tr("Delete Layer?"),
-			tr("Really delete the layer '%1'?").arg(layer.title),
+			tr("Really delete the layer '%1'?")
+				.arg(QLocale().createSeparatedList(names)),
 			QMessageBox::Yes | QMessageBox::No,
 			QMessageBox::StandardButton::Yes);
 		if(result != QMessageBox::StandardButton::Yes) {
@@ -1027,17 +1204,18 @@ void LayerList::deleteSelected()
 	}
 
 	uint8_t contextId = m_canvas->localUserId();
-	net::Message msg;
-	if(m_canvas->isCompatibilityMode()) {
-		msg = net::makeLayerDeleteMessage(
-			contextId, index.data().value<canvas::LayerListItem>().id, false);
-	} else {
-		msg = net::makeLayerTreeDeleteMessage(
-			contextId, index.data().value<canvas::LayerListItem>().id, 0);
+	net::MessageList msgs;
+	msgs.reserve(count + 1);
+	msgs.append(net::makeUndoPointMessage(contextId));
+	bool compatibilityMode = m_canvas->isCompatibilityMode();
+	for(const QModelIndex &idx : indexes) {
+		int layerId = idx.data(canvas::LayerListModel::IdRole).toInt();
+		msgs.append(
+			compatibilityMode
+				? net::makeLayerDeleteMessage(contextId, layerId, false)
+				: net::makeLayerTreeDeleteMessage(contextId, layerId, 0));
 	}
-
-	net::Message messages[] = {net::makeUndoPointMessage(contextId), msg};
-	emit layerCommands(DP_ARRAY_LENGTH(messages), messages);
+	emit layerCommands(msgs.size(), msgs.constData());
 }
 
 void LayerList::mergeSelected()
@@ -1074,7 +1252,7 @@ void LayerList::mergeSelected()
 	emit layerCommands(DP_ARRAY_LENGTH(messages), messages);
 }
 
-void LayerList::setFillSourceToSelected()
+void LayerList::setFillSourceToCurrent()
 {
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
@@ -1123,7 +1301,7 @@ void LayerList::showPropertiesForNew(bool group)
 	if(!dlg) {
 		dlg = makeLayerPropertiesDialog(dialogObjectName, QModelIndex());
 		dlg->setNewLayerItem(
-			m_selectedId, group,
+			m_currentId, group,
 			m_canvas->layerlist()->getAvailableLayerName(getBaseName(group)));
 	}
 	dlg->show();
@@ -1131,12 +1309,12 @@ void LayerList::showPropertiesForNew(bool group)
 	dlg->raise();
 }
 
-void LayerList::showPropertiesOfSelected()
+void LayerList::showPropertiesOfCurrent()
 {
 	showPropertiesOfIndex(currentSelection());
 }
 
-void LayerList::showPropertiesOfIndex(QModelIndex index)
+void LayerList::showPropertiesOfIndex(const QModelIndex &index)
 {
 	if(index.isValid()) {
 		int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
@@ -1176,7 +1354,8 @@ dialogs::LayerProperties *LayerList::makeLayerPropertiesDialog(
 	bool isOwnLayer;
 	if(index.isValid()) {
 		int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
-		isOwnLayer = (layerId & 0xff00) >> 8 == m_canvas->localUserId();
+		isOwnLayer =
+			canvas::LayerListModel::isOwner(layerId, m_canvas->localUserId());
 		connect(
 			dlg, &dialogs::LayerProperties::visibilityChanged, this,
 			&LayerList::setLayerVisibility);
@@ -1257,8 +1436,7 @@ void LayerList::showContextMenu(const QPoint &pos)
 
 void LayerList::beforeLayerReset()
 {
-	m_nearestToDeletedId =
-		m_canvas->layerlist()->findNearestLayer(m_selectedId);
+	m_nearestToDeletedId = m_canvas->layerlist()->findNearestLayer(m_currentId);
 	m_lastScrollPosition = m_view->verticalScrollBar()->value();
 	m_expandedGroups.clear();
 	for(const canvas::LayerListItem &item :
@@ -1281,15 +1459,51 @@ void LayerList::afterLayerReset()
 		}
 	}
 
-	if(m_canvas->layerlist()->rowCount() == 0) {
+	canvas::LayerListModel *layers = m_canvas->layerlist();
+	bool selectedChanged = false;
+	if(layers->rowCount() == 0) {
 		// If there's nothing to select, the selection model doesn't emit
 		// a selection change signal, so we have to call this manually.
-		selectionChanged(QItemSelection{});
-	} else if(m_selectedId) {
-		const auto selectedIndex =
-			m_canvas->layerlist()->layerIndex(m_selectedId);
-		if(selectedIndex.isValid()) {
-			selectLayerIndex(selectedIndex);
+		if(!m_selectedIds.isEmpty()) {
+			m_selectedIds.clear();
+			selectedChanged = true;
+		}
+		updateCurrent(QModelIndex());
+	} else if(m_currentId == 0) {
+		if(!m_selectedIds.isEmpty()) {
+			m_selectedIds.clear();
+			selectedChanged = true;
+		}
+	} else {
+		QModelIndex currentIndex = layers->layerIndex(m_currentId);
+		if(currentIndex.isValid()) {
+			QItemSelectionModel *selectionModel = m_view->selectionModel();
+			QSignalBlocker blocker(selectionModel);
+			selectionModel->setCurrentIndex(
+				currentIndex, QItemSelectionModel::SelectCurrent |
+								  QItemSelectionModel::Clear);
+
+			if(!m_selectedIds.contains(m_currentId)) {
+				m_selectedIds.insert(m_currentId);
+				selectedChanged = true;
+			}
+			for(QSet<int>::iterator it = m_selectedIds.begin(),
+									end = m_selectedIds.end();
+				it != end; ++it) {
+				int selectedId = *it;
+				if(selectedId != m_currentId) {
+					QModelIndex selectedIndex = layers->layerIndex(selectedId);
+					if(selectedIndex.isValid()) {
+						selectionModel->select(
+							selectedIndex, QItemSelectionModel::Select);
+					} else {
+						m_selectedIds.erase(it);
+						selectedChanged = true;
+					}
+				}
+			}
+
+			updateCurrent(currentIndex);
 		} else {
 			selectLayer(m_nearestToDeletedId);
 		}
@@ -1298,6 +1512,9 @@ void LayerList::afterLayerReset()
 	m_view->verticalScrollBar()->setValue(m_lastScrollPosition);
 	m_view->setAnimated(wasAnimated);
 	updateCheckActions();
+	if(selectedChanged) {
+		emit layerSelectionChanged(m_selectedIds);
+	}
 }
 
 bool LayerList::isGroupSelected() const
@@ -1310,13 +1527,60 @@ bool LayerList::isGroupSelected() const
 QModelIndex LayerList::currentSelection() const
 {
 	QItemSelectionModel *selectionModel = m_view->selectionModel();
-	if(selectionModel) {
-		QModelIndexList sel = selectionModel->selectedIndexes();
-		if(!sel.isEmpty()) {
-			return sel.first();
+	return selectionModel ? selectionModel->currentIndex() : QModelIndex();
+}
+
+bool LayerList::ownsAllTopLevelSelections() const
+{
+	if(m_canvas) {
+		int contextId = m_canvas->localUserId();
+		for(const QModelIndex &idx : topLevelSelections()) {
+			int ownerId = idx.data(canvas::LayerListModel::OwnerIdRole).toInt();
+			if(ownerId != contextId) {
+				return false;
+			}
+		}
+		return true;
+	} else {
+		return false;
+	}
+}
+
+QModelIndexList LayerList::topLevelSelections() const
+{
+	QModelIndexList topLevelIndexes;
+	gatherTopLevel([&topLevelIndexes](const QModelIndex &idx) {
+		topLevelIndexes.append(idx);
+	});
+	return topLevelIndexes;
+}
+
+QSet<int> LayerList::topLevelSelectedIds() const
+{
+	QSet<int> topLevelIds;
+	gatherTopLevel([&topLevelIds](const QModelIndex &idx) {
+		topLevelIds.insert(idx.data(canvas::LayerListModel::IdRole).toInt());
+	});
+	return topLevelIds;
+}
+
+void LayerList::gatherTopLevel(
+	const std::function<void(const QModelIndex &)> &fn) const
+{
+	QModelIndexList candidates =
+		m_view->selectionModel()->selection().indexes();
+	if(!candidates.isEmpty()) {
+		QSet<int> layerIds;
+		layerIds.reserve(candidates.size());
+		for(const QModelIndex &idx : candidates) {
+			layerIds.insert(idx.data(canvas::LayerListModel::IdRole).toInt());
+		}
+		for(const QModelIndex &idx : candidates) {
+			if(canvas::LayerListModel::isTopLevelSelection(layerIds, idx)) {
+				fn(idx);
+			}
 		}
 	}
-	return QModelIndex();
 }
 
 QFlags<view::Lock::Reason> LayerList::currentLayerLock() const
@@ -1349,35 +1613,73 @@ QFlags<view::Lock::Reason> LayerList::currentLayerLock() const
 	return reasons;
 }
 
-void LayerList::selectionChanged(const QItemSelection &selected)
+void LayerList::currentChanged(
+	const QModelIndex &current, const QModelIndex &previous)
+{
+	Q_UNUSED(previous);
+	updateCurrent(current);
+}
+
+void LayerList::selectionChanged(
+	const QItemSelection &selected, const QItemSelection &deselected)
+{
+	Q_UNUSED(selected);
+	Q_UNUSED(deselected);
+	if(m_debounceTimer->isActive()) {
+		m_debounceTimer->stop();
+		triggerUpdate();
+	}
+
+	QItemSelectionModel *selectionModel = m_view->selectionModel();
+	QModelIndexList selectedIndexes = selectionModel->selectedIndexes();
+	m_selectedIds.clear();
+	m_selectedIds.reserve(selectedIndexes.size());
+	for(const QModelIndex &idx : selectedIndexes) {
+		int id = idx.data(canvas::LayerListModel::IdRole).toInt();
+		if(id > 0) {
+			m_selectedIds.insert(id);
+		}
+	}
+
+	if((m_currentId == 0 && !m_selectedIds.isEmpty()) ||
+	   !m_selectedIds.contains(m_currentId)) {
+		selectionModel->setCurrentIndex(
+			m_canvas->layerlist()->findHighestLayer(m_selectedIds),
+			QItemSelectionModel::Current);
+	} else {
+		updateLockedControls();
+	}
+
+	emit layerSelectionChanged(m_selectedIds);
+}
+
+void LayerList::updateCurrent(const QModelIndex &current)
 {
 	if(m_debounceTimer->isActive()) {
 		m_debounceTimer->stop();
 		triggerUpdate();
 	}
 
-	bool on = selected.count() > 0;
-
-	if(on) {
-		updateUiFromSelection();
+	if(current.isValid()) {
+		updateUiFromCurrent();
 	} else {
-		m_selectedId = 0;
+		m_currentId = 0;
 	}
 
 	updateActionLabels();
 	updateLockedControls();
 	updateCheckActions();
 
-	emit layerSelected(m_selectedId);
+	emit layerSelected(m_currentId);
 }
 
-void LayerList::updateUiFromSelection()
+void LayerList::updateUiFromCurrent()
 {
 	const canvas::LayerListItem &layer =
 		currentSelection().data().value<canvas::LayerListItem>();
-	m_noupdate = true;
-	m_selectedId = layer.id;
+	m_currentId = layer.id;
 
+	QScopedValueRollback<bool> rollback(m_noupdate, true);
 	m_sketchMode = layer.sketchOpacity > 0.0f;
 	m_sketchButton->setChecked(m_sketchMode);
 	m_sketchButton->setGroupPosition(
@@ -1406,12 +1708,11 @@ void LayerList::updateUiFromSelection()
 
 	// TODO use change flags to detect if this really changed
 	emit activeLayerVisibilityChanged();
-	m_noupdate = false;
 }
 
 void LayerList::layerLockStatusChanged(int layerId)
 {
-	if(m_selectedId == layerId) {
+	if(m_currentId == layerId) {
 		const auto acl = m_canvas->aclState()->layerAcl(layerId);
 		m_lockButton->setChecked(
 			acl.locked || acl.tier != DP_ACCESS_TIER_GUEST ||
@@ -1439,7 +1740,7 @@ void LayerList::blendModeChanged(int index)
 
 void LayerList::opacityChanged(int value)
 {
-	if(m_selectedId != 0 && !m_noupdate) {
+	if(m_currentId != 0 && !m_noupdate) {
 		if(m_sketchMode) {
 			m_updateSketchOpacity = value;
 		} else {
@@ -1452,68 +1753,98 @@ void LayerList::opacityChanged(int value)
 void LayerList::triggerUpdate()
 {
 	m_debounceTimer->stop();
-	QModelIndex index = currentSelection();
-	if(index.isValid()) {
-		const canvas::LayerListItem &layer =
-			index.data().value<canvas::LayerListItem>();
 
-		if(m_updateBlendModeIndex != -1 || m_updateOpacity != -1) {
-			DP_BlendMode mode;
-			bool isolated;
-			if(m_updateBlendModeIndex == -1) {
-				mode = layer.blend;
-				isolated = layer.isolated;
-			} else {
-				int blendModeData =
-					m_blendModeCombo->itemData(m_updateBlendModeIndex).toInt();
-				mode = blendModeData == -1 ? layer.blend
-										   : DP_BlendMode(blendModeData);
-				isolated = layer.group && blendModeData != -1;
+	int selectedCount = m_selectedIds.size();
+	bool haveBlendModeUpdate = m_updateBlendModeIndex != -1;
+	bool haveOpacityUpdate = m_updateOpacity != -1;
+	bool haveAnyAttributeUpdate = haveBlendModeUpdate || haveOpacityUpdate;
+	bool haveSketchOpacityUpdate = m_updateSketchOpacity;
+	bool haveSketchTintUpdate = m_updateSketchTint.isValid();
+	bool haveAnySketchUpdate = haveSketchOpacityUpdate || haveSketchTintUpdate;
+	bool haveAnyUpdate = haveAnyAttributeUpdate || haveAnySketchUpdate;
+	if(selectedCount != 0 && haveAnyUpdate && m_canvas) {
+		canvas::LayerListModel *layers = m_canvas->layerlist();
+		QModelIndexList indexes;
+		indexes.reserve(selectedCount);
+		for(int layerId : m_selectedIds) {
+			QModelIndex idx = layers->layerIndex(layerId);
+			if(idx.isValid()) {
+				indexes.append(idx);
 			}
-
-			float opacity;
-			if(m_updateOpacity == -1) {
-				opacity = layer.opacity;
-			} else {
-				opacity = m_updateOpacity / 100.0f;
-			}
-
-			uint8_t flags =
-				(layer.actuallyCensored() ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR
-										  : 0) |
-				(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0);
-
-			net::Message msg = net::makeLayerAttributesMessage(
-				m_canvas->localUserId(), layer.id, 0, flags,
-				opacity * 255.0f + 0.5f, mode);
-
-			emit layerCommands(1, &msg);
 		}
 
-		if(m_updateSketchOpacity != -1 || m_updateSketchTint.isValid()) {
-			if(m_sketchMode) {
-				desktop::settings::Settings &settings = dpApp().settings();
+		net::MessageList msgs;
+		uint8_t contextId = m_canvas->localUserId();
+		int targetBlendMode = -1;
+		float targetOpacity = 0.0f;
+		if(haveAnyAttributeUpdate) {
+			msgs.reserve(indexes.size() + 1);
+			msgs.append(net::makeUndoPointMessage(contextId));
+			if(haveBlendModeUpdate) {
+				targetBlendMode =
+					m_blendModeCombo->itemData(m_updateBlendModeIndex).toInt();
+			}
+			if(haveOpacityUpdate) {
+				targetOpacity = float(m_updateOpacity) / 100.0f;
+			}
+		}
 
-				int sketchOpacity;
-				if(m_updateSketchOpacity != -1) {
-					sketchOpacity = m_updateSketchOpacity;
-					settings.setLayerSketchOpacityPercent(sketchOpacity);
+		if(haveAnySketchUpdate) {
+			desktop::settings::Settings &settings = dpApp().settings();
+			if(haveSketchOpacityUpdate) {
+				settings.setLayerSketchOpacityPercent(m_updateSketchOpacity);
+			}
+			if(haveSketchTintUpdate) {
+				settings.setLayerSketchTint(m_updateSketchTint);
+			}
+		}
+
+		for(const QModelIndex &idx : indexes) {
+			const canvas::LayerListItem layer =
+				idx.data().value<canvas::LayerListItem>();
+
+			if(haveAnyAttributeUpdate && canEditLayer(idx)) {
+				DP_BlendMode mode;
+				bool isolated;
+				if(haveBlendModeUpdate) {
+					mode = targetBlendMode == -1
+							   ? layer.blend
+							   : DP_BlendMode(targetBlendMode);
+					isolated = layer.group && targetBlendMode != -1;
 				} else {
-					sketchOpacity = layer.sketchOpacity * 100.0 + 0.5;
+					mode = layer.blend;
+					isolated = layer.isolated;
 				}
 
-				QColor sketchTint;
-				if(m_updateSketchTint.isValid()) {
-					sketchTint = m_updateSketchTint;
-					settings.setLayerSketchTint(sketchTint);
-				} else {
-					sketchTint = layer.sketchTint;
-				}
+				float opacity =
+					haveOpacityUpdate ? targetOpacity : layer.opacity;
 
+				uint8_t flags =
+					(layer.actuallyCensored()
+						 ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR
+						 : 0) |
+					(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0);
+
+				msgs.append(net::makeLayerAttributesMessage(
+					contextId, layer.id, 0, flags, opacity * 255.0f + 0.5f,
+					mode));
+			}
+
+			if(haveAnySketchUpdate && layer.sketchOpacity > 0.0f) {
+				int sketchOpacity = haveSketchOpacityUpdate
+										? m_updateSketchOpacity
+										: (layer.sketchOpacity * 100.0 + 0.5);
+				QColor sketchTint = haveSketchTintUpdate ? m_updateSketchTint
+														 : layer.sketchTint;
 				setLayerSketch(layer.id, sketchOpacity, sketchTint);
 			}
 		}
+
+		if(haveAnyAttributeUpdate && msgs.size() > 1) {
+			emit layerCommands(msgs.size(), msgs.constData());
+		}
 	}
+
 	m_updateBlendModeIndex = -1;
 	m_updateOpacity = -1;
 	m_updateSketchOpacity = -1;

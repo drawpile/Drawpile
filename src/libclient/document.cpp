@@ -598,22 +598,50 @@ void Document::buildStreamResetImage(
 }
 
 void Document::onMoveLayerRequested(
-	int sourceId, int targetId, bool intoGroup, bool below)
+	const QVector<int> &sourceIds, int targetId, bool intoGroup, bool below)
 {
-	uint8_t contextId = m_client->myId();
-	net::Message msg;
-	if(m_client->isCompatibilityMode()) {
-		msg = m_canvas->paintEngine()->historyCanvasState().makeLayerOrder(
-			contextId, sourceId, targetId, below);
-	} else {
-		msg = m_canvas->paintEngine()->historyCanvasState().makeLayerTreeMove(
-			contextId, sourceId, targetId, intoGroup, below);
-	}
-	if(msg.isNull()) {
-		qWarning("Can't move layer: %s", DP_error());
-	} else {
-		net::Message messages[] = {net::makeUndoPointMessage(contextId), msg};
-		m_client->sendCommands(DP_ARRAY_LENGTH(messages), messages);
+	int sourceIdCount = sourceIds.size();
+	if(sourceIdCount > 0) {
+		uint8_t contextId = m_client->myId();
+		bool compatibilityMode = m_client->isCompatibilityMode();
+		net::MessageList msgs;
+		msgs.reserve(compatibilityMode ? 2 : sourceIdCount + 1);
+		msgs.append(net::makeUndoPointMessage(contextId));
+
+		if(compatibilityMode) {
+			if(sourceIdCount == 1) {
+				net::Message msg =
+					m_canvas->paintEngine()
+						->historyCanvasState()
+						.makeLayerOrder(
+							contextId, sourceIds[0], targetId, below);
+				if(msg.isNull()) {
+					qWarning("Can't order layer: %s", DP_error());
+					return;
+				} else {
+					msgs.append(msg);
+				}
+			} else {
+				qWarning("Reordering multiple layers is not implemented in "
+						 "compatibility mode");
+				return;
+			}
+		} else {
+			drawdance::CanvasState canvasState =
+				m_canvas->paintEngine()->historyCanvasState();
+			for(int i = sourceIdCount - 1; i >= 0; --i) {
+				net::Message msg = canvasState.makeLayerTreeMove(
+					contextId, sourceIds[i], targetId, intoGroup, below);
+				if(msg.isNull()) {
+					qWarning("Can't move layer: %s", DP_error());
+					return; // Bail out instead of doing something nonsensical.
+				} else {
+					msgs.append(msg);
+				}
+			}
+		}
+
+		m_client->sendCommands(msgs.size(), msgs.constData());
 	}
 }
 
@@ -1388,16 +1416,6 @@ void Document::selectInvert()
 void Document::selectLayerBounds()
 {
 	selectLayer(false);
-	if(m_canvas) {
-		int layerId = m_toolctrl->activeLayer();
-		QRect bounds =
-			m_canvas->paintEngine()->viewCanvasState().layerBounds(layerId);
-		if(bounds.isEmpty()) {
-			selectNone(true);
-		} else {
-			selectOp(DP_MSG_SELECTION_PUT_OP_REPLACE, bounds);
-		}
-	}
 }
 
 void Document::selectLayerContents()
@@ -1419,17 +1437,45 @@ void Document::selectMask(const QImage &img, int x, int y)
 void Document::selectLayer(bool includeMask)
 {
 	if(m_canvas) {
-		int layerId = m_toolctrl->activeLayer();
 		drawdance::CanvasState canvasState =
 			m_canvas->paintEngine()->viewCanvasState();
-		QRect bounds = canvasState.layerBounds(layerId);
+		QSet<int> layerIds = m_canvas->layerlist()->topLevelSelectedIds(
+			m_toolctrl->selectedLayers());
+		QHash<int, QRect> boundsByLayerId;
+		QRect bounds;
+		for(int layerId : layerIds) {
+			QRect layerBounds = canvasState.layerBounds(layerId);
+			if(!layerBounds.isEmpty()) {
+				bounds |= layerBounds;
+				if(includeMask) {
+					boundsByLayerId.insert(layerId, layerBounds);
+				}
+			}
+		}
+
 		if(bounds.isEmpty()) {
 			selectNone(true);
+		} else if(includeMask) {
+			QImage img(
+				bounds.width(), bounds.height(),
+				QImage::Format_ARGB32_Premultiplied);
+			img.fill(0);
+			{
+				QPainter painter(&img);
+				for(QHash<int, QRect>::key_value_iterator
+						it = boundsByLayerId.keyValueBegin(),
+						end = boundsByLayerId.keyValueEnd();
+					it != end; ++it) {
+					int layerId = it->first;
+					QRect layerBounds = it->second;
+					painter.drawImage(
+						layerBounds.topLeft() - bounds.topLeft(),
+						canvasState.layerToFlatImage(layerId, layerBounds));
+				}
+			}
+			selectOp(DP_MSG_SELECTION_PUT_OP_REPLACE, bounds, img);
 		} else {
-			selectOp(
-				DP_MSG_SELECTION_PUT_OP_REPLACE, bounds,
-				includeMask ? canvasState.layerToFlatImage(layerId, bounds)
-							: QImage());
+			selectOp(DP_MSG_SELECTION_PUT_OP_REPLACE, bounds);
 		}
 	}
 }
@@ -1636,8 +1682,8 @@ void Document::fillArea(const QColor &color, DP_BlendMode mode, float opacity)
 		return;
 	}
 
-	QSet<int> layerIds =
-		m_canvas->layerlist()->getModifiableLayers(m_toolctrl->activeLayer());
+	QSet<int> layerIds = m_canvas->layerlist()->getModifiableLayers(
+		m_toolctrl->selectedLayers());
 	if(layerIds.isEmpty()) {
 		return;
 	}

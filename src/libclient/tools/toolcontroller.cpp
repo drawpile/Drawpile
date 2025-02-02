@@ -156,6 +156,11 @@ void ToolController::setActiveAnnotation(uint16_t id)
 	}
 }
 
+void ToolController::setSelectedLayers(const QSet<int> &selectedLayers)
+{
+	m_selectedLayers = selectedLayers;
+}
+
 void ToolController::deselectDeletedAnnotation(int annotationId)
 {
 	if(m_activeAnnotation == annotationId) {

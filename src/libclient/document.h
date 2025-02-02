@@ -332,7 +332,8 @@ private slots:
 	void buildStreamResetImage(
 		const drawdance::CanvasState &canvasState, const QString &correlator);
 	void onMoveLayerRequested(
-		int sourceId, int targetId, bool intoGroup, bool below);
+		const QVector<int> &sourceIds, int targetId, bool intoGroup,
+		bool below);
 
 	void snapshotNeeded();
 	void markDirty();

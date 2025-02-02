@@ -34,7 +34,8 @@ public:
 	qreal opacity() const { return m_opacity; }
 
 	void beginFromCanvas(
-		const QRect &srcBounds, const QImage &mask, int sourceLayerId);
+		const QRect &srcBounds, const QImage &mask,
+		const QSet<int> &sourceLayerIds);
 
 	void beginFloating(const QRect &srcBounds, const QImage &image);
 

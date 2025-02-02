@@ -440,6 +440,9 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		&MainWindow::setToolState, Qt::QueuedConnection);
 
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_doc->toolCtrl(), &tools::ToolController::setActiveLayer);
+	connect(
+		m_dockLayers, &docks::LayerList::layerSelectionChanged,
+		m_doc->toolCtrl(), &tools::ToolController::setSelectedLayers);
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_dockTimeline, &docks::Timeline::setCurrentLayer);
 	connect(m_dockTimeline, &docks::Timeline::layerSelected, m_dockLayers, &docks::LayerList::selectLayer);
 	connect(m_dockTimeline, &docks::Timeline::trackSelected, m_dockLayers, &docks::LayerList::setTrackId);

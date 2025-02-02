@@ -80,6 +80,8 @@ Unreleased Version 2.2.2-pre
  * Fix: When setting the canvas background color, the dialog now properly previews colors with alpha instead of showing them as opaque.
  * Feature: Add File > Export Again to let you export to the same file without showing a file picker. Thanks gerroon for suggesting.
  * Fix: Properly save flipbook crop for when cropping multiple times without resetting in-between. Thanks BornIncompetence for reporting.
+ * Feature: Allow selecting and then moving, grouping, deleting etc. of multiple layers at once. To select multiple layers, hold Shift or Ctrl while making a selection or use the boxes on the right. Thanks MorrowShore for suggesting parts of this.
+ * Feature: Allow dragging across the layer icons to hide the visibility of multiple layers in a row, rather than having to click each one. Thanks MorrowShore for suggesting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

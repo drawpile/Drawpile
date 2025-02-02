@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/docks/layerlistdelegate.h"
+#include "desktop/docks/layerlistdock.h"
 #include "desktop/main.h"
 #include "libclient/canvas/layerlist.h"
-#include <QDebug>
 #include <QIcon>
 #include <QLineEdit>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPalette>
+#include <QStyle>
 
 namespace docks {
 
@@ -28,31 +30,36 @@ void LayerListDelegate::paint(
 	const QModelIndex &index) const
 {
 	QStyleOptionViewItem opt = setOptions(index, option);
-	painter->save();
+	QRect originalRect = opt.rect;
+	QRect textRect = originalRect;
+	QRect glyphRect = getOpacityGlyphRect(originalRect);
+	drawBackgroundFor(painter, opt, index, glyphRect, 0, -1);
 
 	const canvas::LayerListItem &layer =
 		index.data().value<canvas::LayerListItem>();
-
-	if(index.data(canvas::LayerListModel::IsLockedRole).toBool() ||
-	   index.data(canvas::LayerListModel::IsHiddenInFrameRole).toBool() ||
-	   index.data(canvas::LayerListModel::IsHiddenInTreeRole).toBool() ||
-	   index.data(canvas::LayerListModel::IsCensoredInTreeRole).toBool()) {
-		opt.state &= ~QStyle::State_Enabled;
-	}
-
-	drawBackground(painter, opt, index);
-
-	QRect textRect = opt.rect;
-
-	QRect glyphRect = getOpacityGlyphRect(option);
 	drawOpacityGlyph(
 		glyphRect, painter, layer.opacity, layer.hidden,
 		layer.actuallyCensored(), layer.group);
 
-	int checkState = index.data(canvas::LayerListModel::CheckStateRole).toInt();
-	if(checkState != int(canvas::LayerListModel::NotApplicable)) {
-		QRect checkRect = getCheckRect(opt);
-		drawSelectionCheckBox(checkRect, painter, opt, checkState);
+	if(index.data(canvas::LayerListModel::CheckModeRole).toBool()) {
+		int checkState =
+			index.data(canvas::LayerListModel::CheckStateRole).toInt();
+		if(checkState != int(canvas::LayerListModel::NotApplicable)) {
+			QRect checkRect = getCheckRect(originalRect);
+			drawBackgroundFor(painter, opt, index, checkRect, 1, 0);
+			drawSelectionCheckBox(checkRect, painter, opt, checkState);
+			textRect.setRight(checkRect.left());
+		}
+	} else {
+		QRect checkRect = getCheckRect(originalRect);
+		drawBackgroundFor(painter, opt, index, checkRect, 1, 0);
+		qreal originalOpacity = painter->opacity();
+		painter->setOpacity(originalOpacity / 2.0);
+		drawSelectionCheckBox(
+			checkRect, painter, opt,
+			opt.state.testFlag(QStyle::State_Selected) ? Qt::PartiallyChecked
+													   : Qt::Unchecked);
+		painter->setOpacity(originalOpacity);
 		textRect.setRight(checkRect.left());
 	}
 
@@ -61,6 +68,7 @@ void LayerListDelegate::paint(
 			glyphRect.topRight() +
 				QPoint(0, opt.rect.height() / 2 - GLYPH_SIZE / 2),
 			QSize(GLYPH_SIZE, GLYPH_SIZE));
+		drawBackgroundFor(painter, opt, index, glyphRect, 0, -1);
 		drawGlyph(m_sketchIcon, glyphRect, painter);
 	}
 
@@ -69,17 +77,17 @@ void LayerListDelegate::paint(
 			glyphRect.topRight() +
 				QPoint(0, opt.rect.height() / 2 - GLYPH_SIZE / 2),
 			QSize(GLYPH_SIZE, GLYPH_SIZE));
+		drawBackgroundFor(painter, opt, index, glyphRect, 0, -1);
 		drawGlyph(m_fillIcon, glyphRect, painter);
 	}
 
 	textRect.setLeft(glyphRect.right());
+	opt.rect = originalRect;
 
 	if(index.data(canvas::LayerListModel::IsDefaultRole).toBool()) {
 		opt.font.setUnderline(true);
 	}
 	drawDisplay(painter, opt, textRect, layer.title);
-
-	painter->restore();
 }
 
 bool LayerListDelegate::editorEvent(
@@ -91,25 +99,49 @@ bool LayerListDelegate::editorEvent(
 		emit interacted();
 
 		const QMouseEvent *me = static_cast<QMouseEvent *>(event);
-
+		m_toggledVisibilityId = 0;
+		m_toggledSelectionId = 0;
 		if(me->button() == Qt::LeftButton) {
 			if(handleClick(me, option, index)) {
 				return true;
 			}
 		}
-		m_justToggledVisibility = false;
 
 	} else if(type == QEvent::MouseMove) {
-		// Mouse movements with the button held down cause the layer to be
-		// selected, which is immensely annoying when you're just trying to
-		// toggle visibility. So if the last click was a visibility toggle, we
-		// eat the event to prevent that from happening.
-		if(m_justToggledVisibility) {
+		if(m_toggledVisibilityId != 0) {
+			const canvas::LayerListItem &layer =
+				index.data().value<canvas::LayerListItem>();
+			if(layer.id != m_toggledVisibilityId) {
+				m_toggledVisibilityId = layer.id;
+				emit toggleVisibility(layer.id, layer.hidden);
+			}
+			return true;
+		}
+
+		if(m_toggledSelectionId != 0) {
+			int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
+			if(layerId != m_toggledSelectionId) {
+				m_toggledSelectionId = layerId;
+				if(index.data(canvas::LayerListModel::CheckModeRole).toBool()) {
+					int checkState =
+						index.data(canvas::LayerListModel::CheckStateRole)
+							.toInt();
+					if(hasCheckBox(checkState)) {
+						emit toggleChecked(
+							layerId,
+							checkState ==
+								int(canvas::LayerListModel::Unchecked));
+					}
+				} else {
+					emit toggleSelection(index);
+				}
+			}
 			return true;
 		}
 
 	} else if(type == QEvent::MouseButtonDblClick) {
-		m_justToggledVisibility = false;
+		m_toggledVisibilityId = 0;
+		m_toggledSelectionId = 0;
 		const QMouseEvent *me = static_cast<QMouseEvent *>(event);
 		if(me->button() == Qt::LeftButton) {
 			if(handleClick(me, option, index)) {
@@ -136,18 +168,19 @@ QSize LayerListDelegate::sizeHint(
 	return size;
 }
 
-QRect LayerListDelegate::getOpacityGlyphRect(const QStyleOptionViewItem &opt)
+QRect LayerListDelegate::getOpacityGlyphRect(const QRect &originalRect)
 {
 	return QRect(
-		opt.rect.topLeft() + QPoint(0, opt.rect.height() / 2 - GLYPH_SIZE / 2),
+		originalRect.topLeft() +
+			QPoint(0, originalRect.height() / 2 - GLYPH_SIZE / 2),
 		QSize(GLYPH_SIZE, GLYPH_SIZE));
 }
 
-QRect LayerListDelegate::getCheckRect(const QStyleOptionViewItem &opt)
+QRect LayerListDelegate::getCheckRect(const QRect &originalRect)
 {
 	return QRect(
-		opt.rect.topRight() +
-			QPoint(-GLYPH_SIZE, opt.rect.height() / 2 - GLYPH_SIZE / 2),
+		originalRect.topRight() +
+			QPoint(-GLYPH_SIZE, originalRect.height() / 2 - GLYPH_SIZE / 2),
 		QSize(GLYPH_SIZE, GLYPH_SIZE));
 }
 
@@ -167,26 +200,45 @@ bool LayerListDelegate::handleClick(
 	const QModelIndex &index)
 {
 	QPoint pos = me->pos();
-	if(getOpacityGlyphRect(option).contains(pos)) {
-		m_justToggledVisibility = true;
+	if(getOpacityGlyphRect(option.rect).contains(pos)) {
 		const canvas::LayerListItem &layer =
 			index.data().value<canvas::LayerListItem>();
+		m_toggledVisibilityId = layer.id;
 		emit toggleVisibility(layer.id, layer.hidden);
 		return true;
 	}
 
-	if(getCheckRect(option).contains(pos)) {
-		int checkState =
-			index.data(canvas::LayerListModel::CheckStateRole).toInt();
-		if(hasCheckBox(checkState)) {
-			emit toggleChecked(
-				index.data(canvas::LayerListModel::IdRole).toInt(),
-				checkState == int(canvas::LayerListModel::Unchecked));
+	if(getCheckRect(option.rect).contains(pos)) {
+		if(index.data(canvas::LayerListModel::CheckModeRole).toBool()) {
+			int checkState =
+				index.data(canvas::LayerListModel::CheckStateRole).toInt();
+			if(hasCheckBox(checkState)) {
+				int layerId =
+					index.data(canvas::LayerListModel::IdRole).toInt();
+				m_toggledSelectionId = layerId;
+				emit toggleChecked(
+					layerId,
+					checkState == int(canvas::LayerListModel::Unchecked));
+				return true;
+			}
+		} else {
+			m_toggledSelectionId =
+				index.data(canvas::LayerListModel::IdRole).toInt();
+			emit toggleSelection(index);
 			return true;
 		}
 	}
 
 	return false;
+}
+
+void LayerListDelegate::drawBackgroundFor(
+	QPainter *painter, QStyleOptionViewItem &opt, const QModelIndex &index,
+	const QRect &rect, int leftOffset, int rightOffset) const
+{
+	opt.rect.setLeft(rect.left() + leftOffset);
+	opt.rect.setRight(rect.right() + rightOffset);
+	drawBackground(painter, opt, index);
 }
 
 void LayerListDelegate::drawOpacityGlyph(
@@ -205,8 +257,8 @@ void LayerListDelegate::drawOpacityGlyph(
 			m_hiddenIcon.paint(painter, r);
 		}
 	} else {
-		painter->save();
-		painter->setOpacity(value);
+		qreal originalOpacity = painter->opacity();
+		painter->setOpacity(originalOpacity * value);
 		if(censored) {
 			m_censoredIcon.paint(painter, r);
 		} else if(group) {
@@ -214,7 +266,7 @@ void LayerListDelegate::drawOpacityGlyph(
 		} else {
 			m_visibleIcon.paint(painter, r);
 		}
-		painter->restore();
+		painter->setOpacity(originalOpacity);
 	}
 }
 

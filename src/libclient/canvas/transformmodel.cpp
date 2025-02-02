@@ -78,11 +78,11 @@ QImage TransformModel::layerImage(int layerId)
 }
 
 void TransformModel::beginFromCanvas(
-	const QRect &srcBounds, const QImage &mask, int sourceLayerId)
+	const QRect &srcBounds, const QImage &mask, const QSet<int> &sourceLayerIds)
 {
 	clear();
 	LayerListModel *layerlist = m_canvas->layerlist();
-	layerlist->initCheckedLayers(sourceLayerId);
+	layerlist->initCheckedLayers(sourceLayerIds);
 	m_active = true;
 	m_justApplied = false;
 	m_srcBounds = srcBounds;

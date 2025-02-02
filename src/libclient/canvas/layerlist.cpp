@@ -130,12 +130,16 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 		}
 	case IsFillSourceRole:
 		return m_fillSourceLayerId != 0 && item.id == m_fillSourceLayerId;
+	case CheckModeRole:
+		return m_checkMode;
 	case CheckStateRole:
 		return int(
 			m_checkMode ? m_checkStates.value(item.id, Unchecked)
 						: NotApplicable);
 	case IsSketchModeRole:
 		return item.sketchOpacity > 0.0f;
+	case OwnerIdRole:
+		return extractOwnerId(item.id);
 	}
 
 	return QVariant();
@@ -166,7 +170,14 @@ QStringList LayerListModel::mimeTypes() const
 
 QMimeData *LayerListModel::mimeData(const QModelIndexList &indexes) const
 {
-	return new LayerMimeData(this, indexes[0].data().value<LayerListItem>().id);
+	LayerMimeData *data = new LayerMimeData(this);
+	for(const QModelIndex &idx : indexes) {
+		int layerId = idx.data(IdRole).toInt();
+		if(layerId > 0) {
+			data->insertLayerId(layerId);
+		}
+	}
+	return data;
 }
 
 bool LayerListModel::dropMimeData(
@@ -175,11 +186,25 @@ bool LayerListModel::dropMimeData(
 {
 	Q_UNUSED(action);
 	Q_UNUSED(column);
-	Q_UNUSED(parent);
 
 	const LayerMimeData *ldata = qobject_cast<const LayerMimeData *>(data);
 	if(ldata && ldata->source() == this) {
 		if(m_items.size() < 2) {
+			return false;
+		}
+
+		QVector<int> topLevelLayerIds;
+		const QSet<int> &layerIds = ldata->layerIds();
+		int itemCount = m_items.size();
+		for(int i = 0; i < itemCount; ++i) {
+			int layerId = m_items[i].id;
+			if(layerIds.contains(layerId) &&
+			   isTopLevelSelection(
+				   layerIds, createIndex(m_items[i].relIndex, 0, i))) {
+				topLevelLayerIds.append(layerId);
+			}
+		}
+		if(topLevelLayerIds.isEmpty()) {
 			return false;
 		}
 
@@ -211,7 +236,7 @@ bool LayerListModel::dropMimeData(
 			}
 		}
 
-		emit moveRequested(ldata->layerId(), targetId, intoGroup, below);
+		emit moveRequested(topLevelLayerIds, targetId, intoGroup, below);
 
 	} else {
 		// TODO support new layer drops
@@ -251,6 +276,44 @@ int LayerListModel::findNearestLayer(int layerId) const
 	}
 
 	return 0;
+}
+
+QModelIndex LayerListModel::findHighestLayer(const QSet<int> &layerIds) const
+{
+	int count = m_items.size();
+	for(int i = 0; i < count; ++i) {
+		if(layerIds.contains(m_items[i].id)) {
+			return createIndex(m_items[i].relIndex, 0, i);
+		}
+	}
+	return QModelIndex();
+}
+
+QSet<int> LayerListModel::topLevelSelectedIds(const QSet<int> &layerIds) const
+{
+	QSet<int> topLevelIds;
+	int count = m_items.size();
+	for(int i = 0; i < count; ++i) {
+		if(layerIds.contains(m_items[i].id) &&
+		   isTopLevelSelection(
+			   layerIds, createIndex(m_items[i].relIndex, 0, i))) {
+			topLevelIds.insert(m_items[i].id);
+		}
+	}
+	return topLevelIds;
+}
+
+bool LayerListModel::isTopLevelSelection(
+	const QSet<int> &layerIds, const QModelIndex &idx)
+{
+	for(QModelIndex parent = idx.parent(); parent.isValid();
+		parent = parent.parent()) {
+		if(layerIds.contains(
+			   parent.data(canvas::LayerListModel::IdRole).toInt())) {
+			return false;
+		}
+	}
+	return true;
 }
 
 int LayerListModel::rowCount(const QModelIndex &parent) const
@@ -534,11 +597,19 @@ void LayerListModel::setLayersVisibleInFrame(
 	}
 }
 
-void LayerListModel::initCheckedLayers(int initialLayerId)
+void LayerListModel::initCheckedLayers(const QSet<int> &initialLayerIds)
 {
-	// Resolve groups into checking the layers contained withing.
+	// Resolve groups into checking the layers contained within.
 	QHash<int, CheckState> checkStates;
-	gatherCheckedLayers(checkStates, layerIndex(initialLayerId));
+	int itemCount = m_items.size();
+	for(int i = 0; i < itemCount; ++i) {
+		int layerId = m_items[i].id;
+		if(initialLayerIds.contains(layerId) &&
+		   isTopLevelSelection(
+			   initialLayerIds, createIndex(m_items[i].relIndex, 0, i))) {
+			gatherCheckedLayers(checkStates, layerIndex(layerId));
+		}
+	}
 
 	// Fill in check states of groups and unchecked layers.
 	int rootCount = rowCount();
@@ -577,9 +648,10 @@ void LayerListModel::initCheckedLayers(int initialLayerId)
 			}
 		}
 	} else {
+		beginResetModel();
 		m_checkMode = true;
 		m_checkStates = checkStates;
-		emitCheckStatesChanged();
+		endResetModel();
 	}
 	emit layerCheckStateToggled();
 }
@@ -587,9 +659,10 @@ void LayerListModel::initCheckedLayers(int initialLayerId)
 void LayerListModel::clearCheckedLayers()
 {
 	if(m_checkMode) {
+		beginResetModel();
 		m_checkMode = false;
 		m_checkStates.clear();
-		emitCheckStatesChanged();
+		endResetModel();
 		emit layerCheckStateToggled();
 	}
 }
@@ -901,11 +974,17 @@ void LayerListModel::flattenKeyFrameLayer(
 	++index;
 }
 
-QSet<int> LayerListModel::getModifiableLayers(int layerId) const
+QSet<int> LayerListModel::getModifiableLayers(const QSet<int> &layerIds) const
 {
-	QSet<int> layerIds;
-	gatherModifiableLayers(layerIds, layerIndex(layerId));
-	return layerIds;
+	QSet<int> modifiableLayerIds;
+	int itemCount = m_items.size();
+	for(int i = 0; i < itemCount; ++i) {
+		if(layerIds.contains(m_items[i].id)) {
+			gatherModifiableLayers(
+				modifiableLayerIds, createIndex(m_items[i].relIndex, 0, i));
+		}
+	}
+	return modifiableLayerIds;
 }
 
 void LayerListModel::gatherModifiableLayers(
@@ -925,32 +1004,17 @@ void LayerListModel::gatherModifiableLayers(
 	}
 }
 
-void LayerListModel::emitCheckStatesChanged(const QModelIndex &parent)
-{
-	int childCount = rowCount(parent);
-	if(childCount > 0) {
-		for(int i = 0; i < childCount; ++i) {
-			QModelIndex idx = index(i, 0, parent);
-			if(idx.isValid()) {
-				emitCheckStatesChanged(idx);
-			}
-		}
-		emit dataChanged(
-			index(0, 0, parent), index(childCount - 1, 0, parent),
-			{CheckStateRole});
-	}
-}
-
 QStringList LayerMimeData::formats() const
 {
-	return QStringList() << "application/x-qt-image";
+	return {QStringLiteral("application/x-qt-image")};
 }
 
 QVariant LayerMimeData::retrieveData(
 	const QString &mimeType, compat::RetrieveDataMetaType type) const
 {
-	if(compat::isImageMime(mimeType, type) && m_source->m_getlayerfn) {
-		return m_source->m_getlayerfn(m_id);
+	if(!m_layerIds.isEmpty() && compat::isImageMime(mimeType, type) &&
+	   m_source->m_getlayerfn) {
+		return m_source->m_getlayerfn(*m_layerIds.constBegin());
 	} else {
 		return QVariant();
 	}

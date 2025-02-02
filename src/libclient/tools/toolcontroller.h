@@ -92,6 +92,9 @@ public:
 	void setActiveAnnotation(uint16_t id);
 	uint16_t activeAnnotation() const { return m_activeAnnotation; }
 
+	void setSelectedLayers(const QSet<int> &selectedLayers);
+	const QSet<int> &selectedLayers() const { return m_selectedLayers; }
+
 	void setActiveBrush(const brushes::ActiveBrush &b);
 	const brushes::ActiveBrush &activeBrush() const { return m_activebrush; }
 
@@ -283,6 +286,7 @@ private:
 	Tool *m_activeTool;
 	uint16_t m_activeLayer;
 	uint16_t m_activeAnnotation;
+	QSet<int> m_selectedLayers;
 	QColor m_foregroundColor;
 	bool m_drawing;
 	bool m_applyGlobalSmoothing;

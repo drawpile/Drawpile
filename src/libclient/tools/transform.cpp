@@ -435,7 +435,7 @@ TransformTool::tryBeginMove(bool firstClick, bool onlyMask, Mode mode)
 	canvas::TransformModel *transform = canvas->transform();
 	transform->beginFromCanvas(
 		selection->bounds(), selection->mask(),
-		onlyMask ? 0 : m_owner.activeLayer());
+		onlyMask ? QSet<int>() : m_owner.selectedLayers());
 	m_mode = mode;
 	m_firstClick = firstClick;
 	m_hoverHandle = Handle::Invalid;
