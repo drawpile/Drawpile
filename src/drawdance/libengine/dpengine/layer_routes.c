@@ -352,11 +352,28 @@ DP_Message *DP_layer_routes_layer_tree_move_make(DP_LayerRoutes *lr,
     }
     else {
         parent_id = get_layer_tree_move_parent_id(cs, target_lre);
+        if (source_id == parent_id) {
+            DP_error_set("Make layer tree move: source and parent are both %d",
+                         parent_id);
+            return NULL;
+        }
+
         if (below) {
             sibling_id = target_id;
         }
         else {
             sibling_id = get_layer_tree_move_sibling_id_above(cs, target_lre);
+        }
+
+        if (source_id == sibling_id) {
+            DP_error_set("Make layer tree move: source and sibling are both %d",
+                         sibling_id);
+            return NULL;
+        }
+        else if (parent_id == sibling_id && parent_id != 0) {
+            DP_error_set("Make layer tree move: parent and sibling are both %d",
+                         sibling_id);
+            return NULL;
         }
     }
 
