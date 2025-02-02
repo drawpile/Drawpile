@@ -79,6 +79,7 @@ Unreleased Version 2.2.2-pre
  * Server Feature: Allow restricting connections to the correct host name as passed with --local-host. Enabling this requires an updated client, since older ones don't transmit the hostname.
  * Fix: When setting the canvas background color, the dialog now properly previews colors with alpha instead of showing them as opaque.
  * Feature: Add File > Export Again to let you export to the same file without showing a file picker. Thanks gerroon for suggesting.
+ * Fix: Properly save flipbook crop for when cropping multiple times without resetting in-between. Thanks BornIncompetence for reporting.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

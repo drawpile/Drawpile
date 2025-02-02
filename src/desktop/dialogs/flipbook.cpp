@@ -198,7 +198,14 @@ void Flipbook::setCrop(const QRectF &rect)
 		d->ui.zoomButton->setVisible(true);
 	}
 
-	d->state.crop = rect;
+	d->state.crop =
+		d->crop == canvasRect
+			? QRectF()
+			: QRectF(
+				  qreal(d->crop.x()) / qreal(canvasRect.width()),
+				  qreal(d->crop.y()) / qreal(canvasRect.height()),
+				  qreal(d->crop.width()) / qreal(canvasRect.width()),
+				  qreal(d->crop.height()) / qreal(canvasRect.height()));
 	d->state.lastCanvasOffset =
 		d->canvasState.isNull() ? QPoint{} : d->canvasState.offset();
 	d->state.lastCanvasSize = canvasSize;
