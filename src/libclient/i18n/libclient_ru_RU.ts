@@ -26,7 +26,7 @@
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Конфликт %1</translation>
     </message>
     <message>
         <location line="+85"/>
@@ -44,12 +44,12 @@
     <message>
         <location filename="../export/canvassaverrunnable.cpp" line="+84"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
-        <translation>Неверные аргументы, вероятнее всего это баг Drawpile.</translation>
+        <translation>Неправильные аргументы. Вероятно, ошибка на стороне Drawpile.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unsupported format.</source>
-        <translation>Неподдерживаемый формат.</translation>
+        <translation>Формат не поддерживается.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -69,7 +69,7 @@
     <message>
         <location line="+3"/>
         <source>Internal error during saving.</source>
-        <translation>Внутренняя ошиба при сохранении.</translation>
+        <translation>Внутренняя ошибка при сохранении.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -89,7 +89,7 @@
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Конфликт %1</translation>
     </message>
     <message>
         <location line="+76"/>
@@ -139,52 +139,52 @@
         <location line="+4"/>
         <source>+</source>
         <extracomment>Joins shortcut components, probably doesn&apos;t need to be translated.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>+</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Unset</source>
-        <translation type="unfinished"></translation>
+        <translation>Не назначен</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Left Click</source>
-        <translation>ЛКМ</translation>
+        <translation>Левый клик</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right Click</source>
-        <translation>ПКМ</translation>
+        <translation>Правый клик</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation>СКМ</translation>
+        <translation>Средний клик</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Unknown Button 0x%1</source>
-        <translation>Неизвестная кнопка 0x%1</translation>
+        <translation>Неизвестная клавиша 0x%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Button %1</source>
-        <translation>Кнопка %1</translation>
+        <translation>Клавиша %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемещение по холсту</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation>Повернуть холст</translation>
+        <translation>Вращение холста</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Canvas</source>
-        <translation>Приблизить холст</translation>
+        <translation>Масштаб холста</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -199,7 +199,7 @@
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation>Сменить размер кисти</translation>
+        <translation>Изменить размер кисти</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -209,17 +209,17 @@
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Центрирование</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Ограничение и центрирование</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Constraint 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестный ограничитель 0x%1</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -229,7 +229,7 @@
     <message>
         <location line="+2"/>
         <source>Free Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Свободное вращение холста</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -239,17 +239,17 @@
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить насыщенность цвета</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить значение цвета</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Action %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестное действие %1</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -272,47 +272,47 @@
     <message>
         <location filename="../utils/certificatestoremodel.cpp" line="+25"/>
         <source>&apos;%1&apos; does not contain any valid host certificates.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; не содержит действительных сертификатов хоста</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&apos;%1&apos; contains multiple host certificates, which is not currently supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; содержит несколько сертификатов хоста, что в данный момент не поддерживается.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&apos;%1&apos; contains an invalid certificate.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; имеет недействительный сертификат</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&apos;%1&apos; contains a certificate with multiple hostnames, which is not currently supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; имеет сертификат с несколькими именами хоста, что в настоящее время не поддерживается.</translation>
     </message>
     <message>
         <location line="+140"/>
         <source>Could not read certificate from &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно прочесть сертификат из &apos;%1&apos; .</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Could not open &apos;%1&apos; for writing: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно открыть &apos;%1&apos; для чтения: %2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not write &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно записать &apos;%1&apos;: %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно переместить &apos;%1&apos; к &apos;%2&apos;: %3.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Could not delete &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно удалить &apos;%1&apos;: %2.</translation>
     </message>
 </context>
 <context>
@@ -321,13 +321,13 @@
         <location filename="../utils/customshortcutmodel.cpp" line="+57"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Конфликт</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Конфликт %1</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -355,27 +355,27 @@
     <message>
         <location filename="../document.cpp" line="+944"/>
         <source>Unknown format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестный формат.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Header error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка заголовка.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка при открытии файла.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error starting recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка при начале записи.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished">Неизвестная ошибка.</translation>
+        <translation>Неизвестная ошибка.</translation>
     </message>
     <message>
         <location line="+629"/>
@@ -388,33 +388,33 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="+62"/>
         <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы можете скачать версию ffmpeg для Windows здесь: &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Выберите ffmpeg.exe в строке адреса в Drawpile.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You can install ffmpeg through Homebrew.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы можете установить ffmpeg через Homebrew.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вероятно, Вы можете установить ffmpeg с помощью установщика пакетов.</translation>
     </message>
     <message>
         <location line="+98"/>
         <source>Failed to start ffmpeg using &apos;%1&apos;. %2</source>
         <extracomment>%1 is the path to ffmpeg, %2 is the note on what to do to acquire ffmpeg, e.g. download it on Windows or install the package on Linux.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно запустить ffmpeg с помощью %1&apos;. %2</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Ffmpeg crashed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка ffmpeg!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ffmpeg process error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка обработки ffmpeg</translation>
     </message>
 </context>
 <context>
@@ -422,7 +422,7 @@
     <message>
         <location filename="../tools/floodfill.cpp" line="+322"/>
         <source>Filling…</source>
-        <translation type="unfinished"></translation>
+        <translation>Заполнение…</translation>
     </message>
     <message>
         <location line="+73"/>
@@ -433,7 +433,8 @@
         <location line="+15"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно залить группу слоёв %1
+Выберите обычный слой.</translation>
     </message>
 </context>
 <context>
@@ -441,17 +442,17 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
         <source>Visibility: Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Видимость: Скрытый</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Revealed</source>
-        <translation type="unfinished"></translation>
+        <translation>Видимость: Видимый</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Parent</source>
-        <translation type="unfinished"></translation>
+        <translation>Видимость: Родитель</translation>
     </message>
 </context>
 <context>
@@ -472,7 +473,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>GIF (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>GIF (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -497,42 +498,42 @@ Select a regular layer instead.</source>
     <message>
         <location line="+10"/>
         <source>Debug Dumps (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Дампы дебага (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Tablet Event Log (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Лог событий планшета (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>MP4 Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 Video (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>WebM Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>WebM видео (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Text File (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Текстовый файл (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brush Pack (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Пакет кистей (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Баны сессии (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Роли (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -586,48 +587,48 @@ Select a regular layer instead.</source>
     <message>
         <location line="-458"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1д%2ч%3мин</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1ч%2мин</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1мин</translation>
     </message>
     <message numerus="yes">
         <location line="+106"/>
         <source>%1/%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1/%n пользователь</numerusform>
+            <numerusform>%1/%n пользователя</numerusform>
+            <numerusform>%1/%n пользователей</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n пользователь</numerusform>
+            <numerusform>%n пользователя</numerusform>
+            <numerusform>%n пользователей</numerusform>
         </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестное число активно рисующих пользователей</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n активно рисующий пользователь</numerusform>
+            <numerusform>%n активно рисующих пользователя</numerusform>
+            <numerusform>%n активно рисующих пользователей</numerusform>
         </translation>
     </message>
     <message>
@@ -638,12 +639,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Requires compatibility mode (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Необходим режим совместимости (%1)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Requires newer client (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Необходим более новый клиент Drawpile (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -678,7 +679,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>Активный</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -698,17 +699,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>joining from web not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>Вход в сессию из браузера запрещён</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation>закрыта</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation>Защищена паролем</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -741,7 +742,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Экран</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -867,12 +868,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>Show all brushes, regardless of tagging.</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать все кисти, независимо от тегов.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show brushes not assigned to any tag.</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать кисти без тегов.</translation>
     </message>
     <message>
         <location line="+198"/>
@@ -882,23 +883,23 @@ Select a regular layer instead.</source>
     <message>
         <location line="+18"/>
         <source>Classic Brush %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Классическая кисть %1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Converted from %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Конвертировано из %1.</translation>
     </message>
     <message>
         <location line="+16"/>
         <location line="+460"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно открыть &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="-423"/>
         <source>Invalid brush pack: order.conf not found inside</source>
-        <translation type="unfinished"></translation>
+        <translation>Неправильный пак кистей: не найден order.conf</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -908,97 +909,97 @@ Select a regular layer instead.</source>
     <message>
         <location line="+23"/>
         <source>Invalid brush pack: order.conf contains no brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Неправильный пак кистей: order.conf не содержит кистей</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Could not create tag &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно создать тег &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Could not create brush preset &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно создать шаблон кисти &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not assign brush &apos;%1&apos; to tag &apos;%2&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно привязать кисть &apos;%1&apos; к тегу &apos;%2&apos;.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно прочесть файл кисти &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Unknown brush format in file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестный формат кисти в файле &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>Brush file &apos;%1&apos; does not contain valid JSON: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл кисти &apos;%1&apos; не содержит действительный JSON: %1</translation>
     </message>
     <message>
         <location line="-55"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно загрузить кисть из файла кистей %1</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл кисти &apos;%1&apos; не содержит объект JSON</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Brush file &apos;%1&apos; has invalid version %d</source>
-        <translation type="unfinished"></translation>
+        <translation>Неправильная версия %d файла кисти &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл кисти &apos;%1&apos; содержит неправильную настройку &quot;цвета&quot;</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл кисти &apos;%1&apos; содержит устаревшие настройки %2&apos;</translation>
     </message>
     <message>
         <location line="+129"/>
         <source>No brushes exported</source>
-        <translation type="unfinished"></translation>
+        <translation>Не выгружено ни одной кисти</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Can&apos;t export order.conf</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно экспортировать order.conf</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error writing &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка записи &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно экспортировать тэг &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Missing preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Отсутствует пресет %1</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно экспортировать пресет %1</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно экспортировать обложку пресета &apos;%1&apos;</translation>
     </message>
 </context>
 <context>
@@ -1132,7 +1133,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Client info</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация о клиенте</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1146,57 +1147,57 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/client.cpp" line="+538"/>
         <source>%1 banned by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 забанен пользователем %2.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 kicked by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 выгнан(а) пользователем %2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 made operator by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 назначен оператором сервером.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 made operator by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 назначен оператором пользователем %2.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Operator status revoked from %1 by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Статус оператора изъят у пользователя %1 сервером.</translation>
     </message>
     <message>
         <location line="-485"/>
         <source>You have been kicked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы были выгнаны.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы были выгнаны пользователем %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>Произошла ошибка сервера.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Произошла ошибка сервера: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сервер выключается.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The session has been shut down: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Сессия была закрыта: %1</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1206,38 +1207,38 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Отключен: %1</translation>
     </message>
     <message>
         <location line="+417"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Только модераторы могут экспортировать список забаненых пользователей.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка сервера.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Exporting encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт зашифрованного списка банов не настроен на данном сервере.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exporting encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт зашифрованного списка банов не поддерживается данным сервером.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сервер не может прочесть импортируемые данные. Скорее всего, файл был экспортирован с другого сервера. Импортировать файл списка банов можно только на тот же сервер, откуда он был экспортирован.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Неверные импортируемые данные.</translation>
     </message>
     <message>
         <location line="+2"/>
