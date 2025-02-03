@@ -234,7 +234,7 @@
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Renk tonunu değiştir</translation>
     </message>
     <message>
         <location line="+2"/>
