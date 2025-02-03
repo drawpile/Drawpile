@@ -262,9 +262,11 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 	Q_ASSERT(m_active);
 	Q_ASSERT(!m_pasted || m_stamped);
 	bool identity = TransformQuad(m_srcBounds) == m_dstQuad;
+	bool adjustsImage =
+		m_blendMode != int(DP_BLEND_MODE_NORMAL) || m_opacity < 1.0;
 	int singleLayerSourceId =
 		compatibilityMode ? 0 : getSingleLayerMoveId(layerId);
-	if(!identity ||
+	if(!identity || adjustsImage ||
 	   (singleLayerSourceId > 0 && singleLayerSourceId != layerId)) {
 		int srcX = m_srcBounds.x();
 		int srcY = m_srcBounds.y();
@@ -277,8 +279,6 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 		bool moveSelection = alterSelection && !m_deselectOnApply;
 		bool needsMask = moveContents && !m_mask.isNull();
 		bool sizeOutOfBounds = isDstQuadBoundingRectAreaSizeOutOfBounds();
-		bool adjustsImage =
-			m_blendMode != int(DP_BLEND_MODE_NORMAL) || m_opacity < 1.0;
 		QVector<net::Message> msgs;
 		msgs.reserve(1 + (moveContents ? 1 : 0) + (alterSelection ? 1 : 0));
 
