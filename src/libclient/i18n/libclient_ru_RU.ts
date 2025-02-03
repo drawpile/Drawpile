@@ -20,7 +20,7 @@
         <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Конфликт</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -31,7 +31,7 @@
     <message>
         <location line="+85"/>
         <source>Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Кисть</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -83,7 +83,7 @@
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Конфликт</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -427,7 +427,7 @@
     <message>
         <location line="+73"/>
         <source>No layer selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Слой не выбран.</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -558,7 +558,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-139"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation>Shift</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -568,12 +568,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation type="unfinished"></translation>
+        <translation>Meta</translation>
     </message>
 </context>
 <context>
@@ -633,7 +633,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+20"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation>Совместим</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -658,7 +658,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+113"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Совместимость</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -713,7 +713,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM</translation>
     </message>
 </context>
 <context>
@@ -746,7 +746,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>Наложение</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -781,7 +781,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -796,12 +796,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Hard Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Направленный свет</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Soft Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Рассеянный свет</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -831,7 +831,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Luminosity</source>
-        <translation type="unfinished"></translation>
+        <translation>Светимость</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -841,7 +841,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+10"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестный</translation>
     </message>
 </context>
 <context>
@@ -862,7 +862,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation type="unfinished"></translation>
+        <translation>Без тегов</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1107,7 +1107,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Роли</translation>
     </message>
 </context>
 <context>
@@ -1116,7 +1116,7 @@ Select a regular layer instead.</source>
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ИД</translation>
     </message>
     <message>
         <location line="-13"/>
