@@ -204,7 +204,7 @@
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Ограничить до:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -234,7 +234,7 @@
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменение оттенка</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -380,7 +380,7 @@
     <message>
         <location line="+629"/>
         <source>Error saving image</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось сохранить</translation>
     </message>
 </context>
 <context>
@@ -460,7 +460,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/magicwand.cpp" line="+293"/>
         <source>Selecting…</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбор</translation>
     </message>
 </context>
 <context>
@@ -493,7 +493,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>Performance Profile (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Профиль производительности</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -551,7 +551,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../drawdance/canvasstate.cpp" line="+48"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Слой %1</translation>
     </message>
 </context>
 <context>
@@ -564,7 +564,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -649,12 +649,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Incompatible (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Несовместимое приложение</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестная версия</translation>
     </message>
     <message>
         <location line="+113"/>
@@ -694,7 +694,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+181"/>
         <source>incompatible</source>
-        <translation type="unfinished"></translation>
+        <translation>Несовместимо</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -858,7 +858,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="-128"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Все</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -904,7 +904,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Без категории</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -1007,7 +1007,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/paintengine.cpp" line="+205"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Слой %1</translation>
     </message>
 </context>
 <context>
@@ -1074,13 +1074,13 @@ Select a regular layer instead.</source>
         <location filename="../import/animationimporter.cpp" line="+30"/>
         <source>Frame %1</source>
         <extracomment>Title for imported animation layers.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Кадр %1</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Кадр %1</translation>
     </message>
 </context>
 <context>
@@ -1202,7 +1202,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Отключен.</translation>
     </message>
     <message>
         <location line="+2"/>
