@@ -1111,11 +1111,6 @@ static DP_FloodFillResult finish_fill(DP_FillContext *c, float *mask, int img_x,
                                       DP_Image **out_img, int *out_x,
                                       int *out_y)
 {
-    if (is_mask_empty(mask, img_width, img_height)) {
-        DP_error_set("Fill result is blank");
-        return DP_FLOOD_FILL_NOTHING_TO_FILL;
-    }
-
     DP_Image *img = mask_to_image(c, mask, img_width, img_height, fill_color);
     DP_free(mask);
 
@@ -1199,14 +1194,23 @@ DP_flood_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
 
     if (x < 0 || y < 0 || x >= c.parent.width || y >= c.parent.height
         || DP_rect_empty(c.parent.area)
-        || !DP_rect_contains(c.parent.area, x, y)
-        || (c.parent.sel
-            && DP_layer_content_pixel_at(
-                   DP_selection_content_noinc(c.parent.sel), x, y)
-                       .a
-                   == 0)) {
+        || !DP_rect_contains(c.parent.area, x, y)) {
         DP_error_set("Flood fill: initial point out of bounds");
         return DP_FLOOD_FILL_OUT_OF_BOUNDS;
+    }
+
+    float fallback_mask;
+    if (c.parent.sel) {
+        DP_LayerContent *sel_lc = DP_selection_content_noinc(c.parent.sel);
+        uint16_t alpha = DP_layer_content_pixel_at(sel_lc, x, y).a;
+        fallback_mask = DP_channel15_to_float_round8(alpha);
+        if (fallback_mask == 0.0f) {
+            DP_error_set("Flood fill: initial point outside of selection");
+            return DP_FLOOD_FILL_OUT_OF_BOUNDS;
+        }
+    }
+    else {
+        fallback_mask = 1.0f;
     }
 
     if (!source_init(&c, cs, layer_id, include_sublayers, view_mode,
@@ -1262,6 +1266,19 @@ DP_flood_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
     if (is_cancelled(&c.parent)) {
         DP_free(mask);
         return DP_FLOOD_FILL_CANCELLED;
+    }
+
+    // Filling nothing can happen because of erosion from either a negative
+    // expand value or gap filling. That result is not useful though, since the
+    // user obviously didn't issue a fill for no reason. It also makes clicking
+    // and dragging to increase the tolerance not work, which is not useful. So
+    // in that case, we just fill a single pixel.
+    if (is_mask_empty(mask, img_width, img_height)) {
+        mask[0] = fallback_mask;
+        img_x = x;
+        img_y = y;
+        img_width = 1;
+        img_height = 1;
     }
 
     return finish_fill(&c.parent, mask, img_x, img_y, img_width, img_height,
@@ -1346,6 +1363,12 @@ DP_selection_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
     if (is_cancelled(&c)) {
         DP_free(mask);
         return DP_FLOOD_FILL_CANCELLED;
+    }
+
+    if (is_mask_empty(mask, img_width, img_height)) {
+        DP_error_set("Fill result is blank");
+        DP_free(mask);
+        return DP_FLOOD_FILL_NOTHING_TO_FILL;
     }
 
     return finish_fill(&c, mask, img_x, img_y, img_width, img_height,
