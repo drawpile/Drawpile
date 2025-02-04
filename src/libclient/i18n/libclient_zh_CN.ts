@@ -229,22 +229,22 @@
     <message>
         <location line="+2"/>
         <source>Free Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>自由旋转画布</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>更改色相</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>更改饱和度</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>更改明度</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1272,27 +1272,27 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
-        <translation>准备重置房间! 请稍等,房间应该很快可以重新使用…</translation>
+        <translation>准备重置房间! 请稍等, 房间应该很快可以重新使用…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>准备由 %1 重置房间! 请稍等, 房间应该很快可以重新使用…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 正在压缩画布! 请稍等, 房间应该很快可以重新使用…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 正在替换画布! 请稍等, 房间应该很快可以重新使用…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 正在将画布还原到之前的状态! 请稍等, 房间应该很快可以重新使用…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1446,12 +1446,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Invalid host name.</source>
-        <translation type="unfinished"></translation>
+        <translation>无效服务器名.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>你不能在这里创建公共房间, 只有私人房间允许被创建. 你可以在房间栏中切换到私人房间来重新创建.</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -1486,7 +1486,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+59"/>
         <source>Failed to retrieve server info</source>
-        <translation type="unfinished"></translation>
+        <translation>读取服务器信息失败</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -1780,7 +1780,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/hostpresetmodel.cpp" line="+57"/>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>默认</translation>
     </message>
 </context>
 <context>
