@@ -467,7 +467,7 @@
     <message>
         <location line="+2"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -477,7 +477,7 @@
     <message>
         <location line="+10"/>
         <source>Import Animation from Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar Animación desde Capas</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -492,7 +492,7 @@
     <message>
         <location line="+23"/>
         <source>Import Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar Ajustes de Sesión</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -503,12 +503,12 @@
         <location line="+2"/>
         <location line="+416"/>
         <source>Session Settings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustes de Sesión (%1)</translation>
     </message>
     <message>
         <location line="-415"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Baneos de Sesión (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -538,7 +538,7 @@
     <message>
         <location line="+5"/>
         <source>Reference Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Imagen de Referencia</translation>
     </message>
     <message>
         <location line="+168"/>
@@ -578,7 +578,7 @@
     <message>
         <location line="+10"/>
         <source>Export Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Ajustes de Sesión</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -670,14 +670,14 @@
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill entire selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Rellenar selección completa</translation>
     </message>
     <message>
         <location line="+78"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+71"/>
         <source>Merged image</source>
-        <translation type="unfinished"></translation>
+        <translation>Combinar imagen</translation>
     </message>
     <message>
         <location line="+17"/>
