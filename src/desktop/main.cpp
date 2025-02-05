@@ -269,6 +269,15 @@ void DrawpileApp::setThemePalette(desktop::settings::ThemePalette themePalette)
 	case ThemePalette::HotdogStand:
 		newPalette = loadPalette(QStringLiteral("hotdogstand.colors"));
 		break;
+	case ThemePalette::Indigo:
+		newPalette = loadPalette(QStringLiteral("indigo.colors"));
+		break;
+	case ThemePalette::PoolTable:
+		newPalette = loadPalette(QStringLiteral("pooltable.colors"));
+		break;
+	case ThemePalette::Rust:
+		newPalette = loadPalette(QStringLiteral("rust.colors"));
+		break;
 	}
 
 	setPalette(newPalette);

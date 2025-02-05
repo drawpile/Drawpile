@@ -230,7 +230,7 @@ void General::initTheme(
 	theme->addItems(
 		{tr("System"), tr("Light"), tr("Dark"), tr("Krita Bright"),
 		 tr("Krita Dark"), tr("Krita Darker"), tr("Qt Fusion"),
-		 tr("Hotdog Stand")});
+		 tr("Hotdog Stand"), tr("Indigo"), tr("Pool Table"), tr("Rust")});
 	settings.bindThemePalette(theme, std::nullopt);
 	form->addRow(tr("Color scheme:"), theme);
 }

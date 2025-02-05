@@ -84,6 +84,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Allow dragging across the layer icons to hide the visibility of multiple layers in a row, rather than having to click each one. Thanks MorrowShore for suggesting.
  * Feature: The fill and magic wand tools now always at least fill the initial pixel if gap closing or shrinking would up with a blank result. Thanks MorrowShore for suggesting.
  * Fix: Properly apply transforms if the only thing you change is the opacity or blend mode. Thanks Blozzom for reporting.
+ * Feature: Add Indigo, Pool Table and Rust color schemes. Thanks Weenifer for contributing.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.

@@ -273,8 +273,8 @@ SETTING_GETSET(tabletEraserAction , TabletEraserAction        , "settings/input/
 SETTING(tabletEvents              , TabletEvents              , "settings/input/tabletevents"           , true)
 SETTING(temporaryToolSwitch       , TemporaryToolSwitch       , "settings/tools/temporaryswitch"        , true)
 SETTING(temporaryToolSwitchMs     , TemporaryToolSwitchMs     , "settings/tools/temporaryswitchms"      , 250)
-SETTING_GETSET_V(V2, themePalette , ThemePalette              , "settings/theme/palette"                , THEME_PALETTE_DEFAULT
-	, &any::get	      , &any::set)
+SETTING_GETSET_V(V3, themePalette , ThemePalette              , "settings/theme/palette"                , THEME_PALETTE_DEFAULT
+	, &any::get	      , &themePalette::set)
 SETTING_FULL(V2, themeStyle       , ThemeStyle                , "settings/theme/style"                  , THEME_STYLE_DEFAULT
 	, &any::get       , &any::set, &themeStyle::notify)
 SETTING(toolToggle                , ToolToggle                , "settings/tooltoggle"                   , true)

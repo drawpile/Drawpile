@@ -106,7 +106,10 @@ enum class ThemePalette : int {
 	KritaDark,
 	KritaDarker,
 	Fusion,
-	HotdogStand
+	HotdogStand,
+	Indigo,
+	PoolTable,
+	Rust,
 };
 Q_ENUM_NS(ThemePalette)
 

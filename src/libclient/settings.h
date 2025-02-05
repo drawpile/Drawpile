@@ -85,6 +85,7 @@ struct SettingMeta final {
 		V0 = 0,
 		V1,
 		V2,
+		V3,
 	};
 
 	Version version;

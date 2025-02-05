@@ -306,6 +306,21 @@ void set(const SettingMeta &meta, QSettings &settings, QVariant value)
 }
 }
 
+namespace themePalette {
+	void set(const SettingMeta &meta, QSettings &settings, QVariant value)
+	{
+		using Key = std::optional<libclient::settings::FoundKey>;
+		any::forceSet(meta, settings, value);
+		if (Key oldKey = findKey(settings, meta.baseKey, SettingMeta::Version::V2)) {
+			ThemePalette oldValue = value.value<ThemePalette>();
+			if(int(oldValue) > int(ThemePalette::HotdogStand)) {
+				oldValue = THEME_PALETTE_DEFAULT;
+			}
+			settings.setValue(oldKey->key, QVariant::fromValue(oldValue));
+		}
+	}
+}
+
 namespace themeStyle {
 	// Changing the theme style can cause the theme palette to change too
 	void notify(const SettingMeta &, libclient::settings::Settings &base) {
