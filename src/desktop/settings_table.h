@@ -65,19 +65,11 @@
 #endif
 
 #ifndef THEME_PALETTE_DEFAULT
-#	ifdef Q_OS_MACOS
-#		define THEME_PALETTE_DEFAULT ThemePalette::System
-#	else
-#		define THEME_PALETTE_DEFAULT ThemePalette::KritaDark
-#	endif
+#	define THEME_PALETTE_DEFAULT ThemePalette::KritaDark
 #endif
 
 #ifndef THEME_STYLE_DEFAULT
-#	ifdef Q_OS_MACOS
-#		define THEME_STYLE_DEFAULT QString()
-#	else
-#		define THEME_STYLE_DEFAULT QString("Fusion")
-#	endif
+#	define THEME_STYLE_DEFAULT QString("Fusion")
 #endif
 
 #ifndef UPDATE_CHECK_DEFAULT
