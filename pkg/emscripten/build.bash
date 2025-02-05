@@ -3,6 +3,9 @@
 # Performs local Emscripten builds. Only tested to work on Linux.
 
 # Qt strongly suggests using the same Emscripten version they use.
+# TODO: Figure out why Qt 6.8.2 is busted. When e.g. operating sliders in the
+# brush dock, nothing updates until something else in the UI is fiddled with.
+# It also spews lots of warnings about glTexImage2D going out of bounds.
 QT_VERSION_MAJOR=6
 QT_VERSION_MINOR=7
 QT_VERSION_PATCH=2

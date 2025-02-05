@@ -8,11 +8,11 @@ list(APPEND CMAKE_MODULE_PATH
 
 set(LIBX264 "31e19f92f00c7003fa115047ce50978bc98c3a0d" CACHE STRING
 	"The commit of libx264 to build")
-set(LIBVPX "1.14.1" CACHE STRING
+set(LIBVPX "1.15.0" CACHE STRING
 	"The version of libvpx to build")
-set(LIBWEBP "1.4.0" CACHE STRING
+set(LIBWEBP "1.5.0" CACHE STRING
 	"The version of libwebp to build")
-set(FFMPEG "7.0.1" CACHE STRING
+set(FFMPEG "7.1" CACHE STRING
 	"The version of ffmpeg to build")
 option(KEEP_ARCHIVES "Keep downloaded archives instead of deleting them" OFF)
 option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
@@ -58,8 +58,8 @@ if(LIBWEBP)
 		URL https://github.com/webmproject/libwebp/archive/refs/tags/v@version@.tar.gz
 		TARGET_ARCH "${TARGET_ARCH}"
 		VERSIONS
-			1.4.0
-			SHA384=64e06cfd52d1c9142d3849506d414fb2cfd067dcd05b45b6ad7bd386c35722f90a0108746e99dccff629cad2d889e6ed
+			1.5.0
+			SHA384=430aeec458a5f376efb19c16b636d45a8a6be8b0eb29331296e5cfd2d52b446849b410411d1dbdeea7de0094942d4c11
 		ALL_PLATFORMS
 			CMAKE
 				ALL
@@ -138,8 +138,8 @@ if(NOT EMSCRIPTEN AND LIBVPX)
 		URL https://github.com/webmproject/libvpx/archive/refs/tags/v@version@.tar.gz
 		TARGET_ARCH "${TARGET_ARCH}"
 		VERSIONS
-			1.14.1
-			SHA384=42392dcae787ac556e66776a03bd064e0bb5795e7d763a6459edd2127e7ffae4aafe5c755d16ec4a4ab6e9785c27684c
+			1.15.0
+			SHA384=cd8aac7124b17379120e58a38465ea4ce52f2d18950cf5f53c81e57f53b0b392d5bc281499deef6122e9c12983b327b4
 		ALL_PLATFORMS
 			AUTOMAKE
 				ASSIGN_PREFIX BROKEN_INSTALL
@@ -321,8 +321,8 @@ if(NOT EMSCRIPTEN AND FFMPEG)
 		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "FFmpeg-n@version@"
 		VERSIONS
-			7.0.1
-			SHA384=f28ca267732ded75262f6d739fe9228730424bb9b20dce4bd40fa68fb5d42b66a8df909e756a017c438ab821c3faeda2
+			7.1
+			SHA384=6c9c4971415ab500cd336a349c38231b596614a6bdff3051663954e4a3d7fb6f51547de296686efa3fa1be8f8251f1db
 		ALL_PLATFORMS
 			AUTOMAKE
 				ASSIGN_PREFIX

@@ -220,7 +220,7 @@ if [[ -z "$SCRIPT_DIR" ]]; then
 fi
 
 : "${BUILD_TYPE:=release}"
-: "${QT_VERSION:=5.15.14}"
+: "${QT_VERSION:=5.15.16}"
 : "${ANDROID_ABI:=arm64-v8a}"
 : "${ANDROID_BUILD_TOOLS_VERSION:=34.0.0-rc3}"
 : "${ANDROID_NDK_VERSION:=27.0.12077973}"

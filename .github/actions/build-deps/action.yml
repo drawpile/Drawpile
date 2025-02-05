@@ -58,15 +58,15 @@ inputs:
     type: string
   libvpx:
     description: Version of libvpx to build
-    default: '1.14.1'
+    default: '1.15.0'
     type: string
   libwebp:
     description: Version of libwebp to build
-    default: '1.4.0'
+    default: '1.5.0'
     type: string
   ffmpeg:
     description: Version of ffmpeg to build
-    default: '7.0.1'
+    default: '7.1'
     type: string
   libmicrohttpd:
     description: Version of libmicrohttpd to build
@@ -82,7 +82,7 @@ inputs:
     type: string
   libzip:
     description: Version of libzip to build (Qt6 only)
-    default: 1.10.1
+    default: 1.11.3
     type: string
   karchive5:
     description: Version of karchive to build (Qt5 only)

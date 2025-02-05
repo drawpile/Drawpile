@@ -1,0 +1,41 @@
+Description: When compiling for Emscripten, extra-cmake-modules' FindEGL.cmake
+will pick up libEGL.so from the system if it's installed and then try to link
+that into the WebAssembly build, which will obviously fail. This leads to the
+configure step saying that Qt6Gui was not found because EGL was not found. The
+solution is to just not look for any libraries when building under Emscripten.
+This patch has been sent upstream, so it should percolate back eventually.
+
+--- a/cmake/3rdparty/extra-cmake-modules/find-modules/FindEGL.cmake
++++ b/cmake/3rdparty/extra-cmake-modules/find-modules/FindEGL.cmake
+@@ -79,12 +79,14 @@
+     HINTS
+         ${PKG_EGL_INCLUDE_DIRS}
+ )
+-find_library(EGL_LIBRARY
+-    NAMES
+-        EGL
+-    HINTS
+-        ${PKG_EGL_LIBRARY_DIRS}
+-)
++if(NOT EMSCRIPTEN)
++    find_library(EGL_LIBRARY
++        NAMES
++            EGL
++        HINTS
++            ${PKG_EGL_LIBRARY_DIRS}
++    )
++endif()
+
+ # NB: We do *not* use the version information from pkg-config, as that
+ #     is the implementation version (eg: the Mesa version)
+@@ -116,7 +118,9 @@
+ endif()
+
+ cmake_push_check_state(RESET)
+-list(APPEND CMAKE_REQUIRED_LIBRARIES "${EGL_LIBRARY}")
++if(NOT EMSCRIPTEN)
++    list(APPEND CMAKE_REQUIRED_LIBRARIES "${EGL_LIBRARY}")
++endif()
+ list(APPEND CMAKE_REQUIRED_INCLUDES "${EGL_INCLUDE_DIR}")
+ list(APPEND CMAKE_REQUIRED_DEFINITIONS "${EGL_DEFINITIONS}")
+
