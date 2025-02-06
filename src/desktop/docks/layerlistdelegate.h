@@ -7,6 +7,8 @@
 
 namespace docks {
 
+class LayerList;
+
 /**
  * \brief A custom item delegate for displaying layer names and editing layer
  * settings.
@@ -14,7 +16,7 @@ namespace docks {
 class LayerListDelegate final : public QItemDelegate {
 	Q_OBJECT
 public:
-	LayerListDelegate(QObject *parent = nullptr);
+	LayerListDelegate(LayerList *layerlist = nullptr);
 
 	void paint(
 		QPainter *painter, const QStyleOptionViewItem &option,
@@ -72,6 +74,7 @@ private:
 	void
 	drawGlyph(const QIcon &icon, const QRect &rect, QPainter *painter) const;
 
+	LayerList *m_dock;
 	QIcon m_visibleIcon;
 	QIcon m_groupIcon;
 	QIcon m_censoredIcon;

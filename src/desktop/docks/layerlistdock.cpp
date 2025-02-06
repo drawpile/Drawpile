@@ -1613,6 +1613,11 @@ QFlags<view::Lock::Reason> LayerList::currentLayerLock() const
 	return reasons;
 }
 
+bool LayerList::isExpanded(const QModelIndex &index) const
+{
+	return m_view->isExpanded(index);
+}
+
 void LayerList::currentChanged(
 	const QModelIndex &current, const QModelIndex &previous)
 {

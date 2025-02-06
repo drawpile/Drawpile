@@ -12,8 +12,9 @@
 
 namespace docks {
 
-LayerListDelegate::LayerListDelegate(QObject *parent)
-	: QItemDelegate(parent)
+LayerListDelegate::LayerListDelegate(LayerList *dock)
+	: QItemDelegate(dock)
+	, m_dock(dock)
 	, m_visibleIcon(QIcon::fromTheme("layer-visible-on"))
 	, m_groupIcon(QIcon::fromTheme("folder"))
 	, m_censoredIcon(QIcon(":/icons/censored.svg"))
@@ -126,7 +127,13 @@ bool LayerListDelegate::editorEvent(
 					int checkState =
 						index.data(canvas::LayerListModel::CheckStateRole)
 							.toInt();
-					if(hasCheckBox(checkState)) {
+					// Only allow toggling of layers and collapsed groups,
+					// otherwise the effect of dragging over them is just too
+					// crazy with partial and fully-checked states flickering.
+					if(hasCheckBox(checkState) &&
+					   (!index.data(canvas::LayerListModel::IsGroupRole)
+							 .toBool() ||
+						!m_dock->isExpanded(index))) {
 						emit toggleChecked(
 							layerId,
 							checkState ==
