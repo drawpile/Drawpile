@@ -1758,7 +1758,7 @@ void LayerList::triggerUpdate()
 	bool haveBlendModeUpdate = m_updateBlendModeIndex != -1;
 	bool haveOpacityUpdate = m_updateOpacity != -1;
 	bool haveAnyAttributeUpdate = haveBlendModeUpdate || haveOpacityUpdate;
-	bool haveSketchOpacityUpdate = m_updateSketchOpacity;
+	bool haveSketchOpacityUpdate = m_updateSketchOpacity != -1;
 	bool haveSketchTintUpdate = m_updateSketchTint.isValid();
 	bool haveAnySketchUpdate = haveSketchOpacityUpdate || haveSketchTintUpdate;
 	bool haveAnyUpdate = haveAnyAttributeUpdate || haveAnySketchUpdate;
