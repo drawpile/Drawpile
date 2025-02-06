@@ -684,7 +684,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+13"/>
         <source>Merged without background</source>
-        <translation type="unfinished"></translation>
+        <translation>Combinada sin fondo</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -703,7 +703,7 @@
         <location line="+96"/>
         <location line="+3"/>
         <source>Apply the pending fill, making it visible for everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplicar el rellenar pendiente, haciéndolo visible para todos</translation>
     </message>
     <message>
         <location line="+3"/>
