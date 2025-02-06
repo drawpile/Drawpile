@@ -147,6 +147,7 @@ private:
 	void updateLockedControls();
 	void updateBlendModes(bool compatibilityMode);
 	void updateCheckActions();
+	void forceRefreshMargin();
 	bool canMergeCurrent() const;
 	bool canEditLayer(const QModelIndex &idx) const;
 

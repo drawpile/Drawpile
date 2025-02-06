@@ -588,6 +588,15 @@ void LayerList::updateCheckActions()
 	}
 }
 
+void LayerList::forceRefreshMargin()
+{
+	// QTreeView doesn't repaint the margin next to our items when the selection
+	// state changes, leading to weird effects where the items themselves have a
+	// different selection state to the margin. This hack forces a repaint.
+	m_view->setRootIsDecorated(false);
+	m_view->setRootIsDecorated(true);
+}
+
 void LayerList::selectLayer(int id)
 {
 	selectLayerIndex(m_canvas->layerlist()->layerIndex(id), true);
@@ -1655,6 +1664,7 @@ void LayerList::selectionChanged(
 		updateLockedControls();
 	}
 
+	forceRefreshMargin();
 	emit layerSelectionChanged(m_selectedIds);
 }
 
