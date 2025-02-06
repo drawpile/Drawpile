@@ -14,6 +14,7 @@ namespace startdialog {
 namespace host {
 
 class Categories : public QWidget {
+	Q_OBJECT
 public:
 	enum Category { Session, Listing, Permissions, Roles, Bans, Count };
 	using CategoryBoxes = std::array<QCheckBox *, int(Count)>;
