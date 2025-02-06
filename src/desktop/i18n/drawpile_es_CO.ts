@@ -677,7 +677,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+71"/>
         <source>Merged image</source>
-        <translation>Combinar imagen</translation>
+        <translation>Imagen combinada</translation>
     </message>
     <message>
         <location line="+17"/>
