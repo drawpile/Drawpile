@@ -11,6 +11,7 @@
 #include <QSaveFile>
 #include <QTemporaryFile>
 #include <QBuffer>
+#include <QCoreApplication>
 
 namespace networkaccess {
 
@@ -32,12 +33,18 @@ QNetworkAccessManager *getInstance()
 		qDebug() << "Creating new NetworkAccessManager for thread" << t;
 		nam = new QNetworkAccessManager;
 		nam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
-		t->connect(t, &QThread::finished, [nam, t]() {
+		QMetaObject::Connection conn = t->connect(t, &QThread::finished, [nam, t]() {
 			qDebug() << "thread" << t << "ended. Removing NetworkAccessManager";
 			nam->deleteLater();
 			QMutexLocker guard(&MANAGERS.mutex);
 			MANAGERS.perThreadManagers.remove(t);
 		});
+		// Don't fiddle with statics during global destruction.
+		nam->connect(
+			QCoreApplication::instance(), &QCoreApplication::aboutToQuit, nam,
+			[conn] {
+				QObject::disconnect(conn);
+			});
 		MANAGERS.perThreadManagers[t] = nam;
 	}
 	return nam;
