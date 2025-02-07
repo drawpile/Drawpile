@@ -112,9 +112,9 @@ bool LayerListDelegate::editorEvent(
 		if(m_toggledVisibilityId != 0) {
 			const canvas::LayerListItem &layer =
 				index.data().value<canvas::LayerListItem>();
-			if(layer.id != m_toggledVisibilityId) {
-				m_toggledVisibilityId = layer.id;
-				emit toggleVisibility(layer.id, layer.hidden);
+			m_toggledVisibilityId = layer.id;
+			if(layer.hidden == m_targetVisibility) {
+				emit toggleVisibility(layer.id, m_targetVisibility);
 			}
 			return true;
 		}
@@ -130,17 +130,19 @@ bool LayerListDelegate::editorEvent(
 					// Only allow toggling of layers and collapsed groups,
 					// otherwise the effect of dragging over them is just too
 					// crazy with partial and fully-checked states flickering.
-					if(hasCheckBox(checkState) &&
-					   (!index.data(canvas::LayerListModel::IsGroupRole)
-							 .toBool() ||
-						!m_dock->isExpanded(index))) {
-						emit toggleChecked(
-							layerId,
-							checkState ==
-								int(canvas::LayerListModel::Unchecked));
+					bool shouldToggle =
+						hasCheckBox(checkState) &&
+						(!index.data(canvas::LayerListModel::IsGroupRole)
+							  .toBool() ||
+						 !m_dock->isExpanded(index)) &&
+						(checkState ==
+						 int(canvas::LayerListModel::Unchecked)) ==
+							m_targetSelection;
+					if(shouldToggle) {
+						emit toggleChecked(layerId, m_targetSelection);
 					}
-				} else {
-					emit toggleSelection(index);
+				} else if(m_dock->isSelected(layerId) != m_targetSelection) {
+					emit toggleSelection(index, m_targetSelection);
 				}
 			}
 			return true;
@@ -211,6 +213,7 @@ bool LayerListDelegate::handleClick(
 		const canvas::LayerListItem &layer =
 			index.data().value<canvas::LayerListItem>();
 		m_toggledVisibilityId = layer.id;
+		m_targetVisibility = layer.hidden;
 		emit toggleVisibility(layer.id, layer.hidden);
 		return true;
 	}
@@ -223,15 +226,16 @@ bool LayerListDelegate::handleClick(
 				int layerId =
 					index.data(canvas::LayerListModel::IdRole).toInt();
 				m_toggledSelectionId = layerId;
-				emit toggleChecked(
-					layerId,
-					checkState == int(canvas::LayerListModel::Unchecked));
+				m_targetSelection =
+					checkState == int(canvas::LayerListModel::Unchecked);
+				emit toggleChecked(layerId, m_targetSelection);
 				return true;
 			}
 		} else {
 			m_toggledSelectionId =
 				index.data(canvas::LayerListModel::IdRole).toInt();
-			emit toggleSelection(index);
+			m_targetSelection = !m_dock->isSelected(m_toggledSelectionId);
+			emit toggleSelection(index, m_targetSelection);
 			return true;
 		}
 	}

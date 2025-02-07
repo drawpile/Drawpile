@@ -43,7 +43,7 @@ public:
 signals:
 	void interacted();
 	void toggleVisibility(int layerId, bool visible);
-	void toggleSelection(const QModelIndex &index);
+	void toggleSelection(const QModelIndex &index, bool selected);
 	void toggleChecked(int layerId, bool checked);
 	void editProperties(const QModelIndex &index);
 
@@ -85,6 +85,8 @@ private:
 	QIcon m_forbiddenIcon;
 	int m_toggledSelectionId = 0;
 	int m_toggledVisibilityId = 0;
+	bool m_targetSelection = false;
+	bool m_targetVisibility = false;
 };
 
 }

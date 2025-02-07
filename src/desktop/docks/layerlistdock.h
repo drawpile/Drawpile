@@ -88,6 +88,7 @@ public:
 	int currentId() const { return m_currentId; }
 
 	bool isExpanded(const QModelIndex &index) const;
+	bool isSelected(int id) const { return m_selectedIds.contains(id); }
 
 public slots:
 	void selectLayer(int id);
