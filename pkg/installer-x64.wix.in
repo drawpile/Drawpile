@@ -19,7 +19,7 @@
 				Key="SOFTWARE\Microsoft\VisualStudio\${WIX_DRAWPILE_TOOLSET_VERSION_MAJOR}.0\VC\Runtimes\X64"
 				Name="Version"/>
 		</Property>
-		<Condition Message="${PROJECT_NAME} requires the Visual Studio x64 Redistributable. Please download and install https://aka.ms/vs/17/release/vc_redist.x64.exe first.">
+		<Condition Message="${PROJECT_NAME} requires the Visual Studio x64 Redistributable. Check the bottom of the Downloads page on drawpile.net or visit https://aka.ms/vs/17/release/vc_redist.x64.exe to download and install it.">
 			Installed OR VC_REDIST_INSTALLED
 		</Condition>
 	</CPackWiXFragment>
