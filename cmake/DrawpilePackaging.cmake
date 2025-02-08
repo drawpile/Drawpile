@@ -70,6 +70,10 @@ elseif(WIN32)
 		configure_file("pkg/installer-${CPACK_WIX_ARCHITECTURE}.wix.in" pkg/installer.wix)
 
 		set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_BINARY_DIR}/pkg/installer.wix")
+
+		set(CPACK_WIX_EXTRA_SOURCES "${PROJECT_SOURCE_DIR}/pkg/installer-nolicense.wxs")
+		set(CPACK_WIX_UI_REF "WixUI_InstallDir_NoLicense")
+
 		if(HAVE_CODE_SIGNING)
 			message(STATUS "Will sign installer executable")
 			set(CPACK_POST_BUILD_SCRIPTS "${PROJECT_SOURCE_DIR}/pkg/SignWindowsInstaller.cmake")

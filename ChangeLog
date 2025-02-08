@@ -87,6 +87,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Add Indigo, Pool Table and Rust color schemes. Thanks Weenifer for contributing.
  * Fix: Use the Fusion style by default on macOS because the System style has crashing bugs when using it with Sidecar. Thanks Axocrat for reporting.
  * Fix: Make the software renderer not create errant dark lines when moving the cursor when fractional scaling is involved. Thanks lambda20xx for reporting.
+ * Fix: Remove nonsensical license page from Windows installer, Drawpile isn't under the kind of license that requires the user to accept it.
 
 2024-11-06 Version 2.2.2-beta.4
  * Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.
