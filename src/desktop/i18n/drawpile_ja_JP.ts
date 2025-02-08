@@ -4680,12 +4680,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Continuous value</source>
-        <translation>連続的な値</translation>
+        <translation>連続的な明度</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Value steps: </source>
-        <translation>値の段階: </translation>
+        <translation>明度の段階: </translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4716,19 +4716,19 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+54"/>
         <source>Atmosphere with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation>アクセントのある雰囲気</translation>
+        <translation>強調色のある範囲</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Atmospheric triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation>雰囲気のある三要素</translation>
+        <translation>三角形の範囲</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation>補足的</translation>
+        <translation>補完</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4740,7 +4740,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+5"/>
         <source>Shifted triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation>シフトした三要素</translation>
+        <translation>シフトした三角形</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4752,13 +4752,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+5"/>
         <source>Split complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation>補完的な分割</translation>
+        <translation>補完しあう分割</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Tetradic</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation>四要素</translation>
+        <translation>四角形</translation>
     </message>
 </context>
 <context>
