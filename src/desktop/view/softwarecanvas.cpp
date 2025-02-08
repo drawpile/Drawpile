@@ -127,10 +127,11 @@ struct SoftwareCanvas::Private {
 				}
 
 				painter->setTransform(tf);
-				QRectF exposed = controller->invertedTransform()
-									 .map(QRectF(rect))
-									 .boundingRect()
-									 .intersected(canvasRect);
+				QRect exposed = controller->invertedTransform()
+									.map(QRectF(rect))
+									.boundingRect()
+									.intersected(canvasRect)
+									.toAlignedRect();
 				painter->drawPixmap(exposed, *pixmap, exposed);
 
 				if(pixelGridVisible) {
@@ -148,10 +149,10 @@ struct SoftwareCanvas::Private {
 					pen.setCosmetic(true);
 					painter->setPen(pen);
 
-					int left = qFloor(exposed.left());
-					int right = qCeil(exposed.right());
-					int top = qFloor(exposed.top());
-					int bottom = qCeil(exposed.bottom());
+					int left = exposed.left();
+					int right = exposed.right();
+					int top = exposed.top();
+					int bottom = exposed.bottom();
 					for(int x = left; x < right; ++x) {
 						painter->drawLine(x, top, x, bottom);
 					}
