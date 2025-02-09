@@ -64,7 +64,7 @@
     <message>
         <location line="+2"/>
         <source>Save operation failed, but the file might have been partially written.</source>
-        <translation>Operación de Guardado fallida, pero el archivo puede haber sido parcialmente escrito.</translation>
+        <translation>Operación de guardar falló, pero el archivo puede haber sido escrito parcialmente.</translation>
     </message>
     <message>
         <location line="+3"/>
