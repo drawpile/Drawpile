@@ -54,7 +54,7 @@
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
-        <translation>No se pudo unir el canas a una imagen plana.</translation>
+        <translation>No se pudo fusionar el lienzo en una imagen plana.</translation>
     </message>
     <message>
         <location line="+2"/>
