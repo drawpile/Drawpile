@@ -50,7 +50,6 @@
 #include <dpcommon/perf.h>
 #include <dpmsg/blend_mode.h>
 #include <dpmsg/message.h>
-#include <limits.h>
 
 #define DP_PERF_CONTEXT "canvas_state"
 

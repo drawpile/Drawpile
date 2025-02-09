@@ -26,7 +26,6 @@
 #include <dpcommon/input.h>
 #include <dpcommon/vector.h>
 #include <dpmsg/message.h>
-#include <limits.h>
 
 
 struct DP_DumpReader {

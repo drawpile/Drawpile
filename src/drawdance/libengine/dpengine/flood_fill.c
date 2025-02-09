@@ -41,7 +41,6 @@
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
 #include <dpcommon/queue.h>
-#include <limits.h>
 #include <math.h>
 #include <helpers.h> // M_PI
 

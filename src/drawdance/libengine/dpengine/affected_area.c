@@ -27,7 +27,6 @@
 #include <dpcommon/geom.h>
 #include <dpmsg/blend_mode.h>
 #include <dpmsg/message.h>
-#include <limits.h>
 
 
 #define ALL_IDS INT_MIN

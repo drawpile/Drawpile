@@ -25,7 +25,6 @@
 #include "cpu.h"
 #include "threading.h"
 #include <ctype.h>
-#include <limits.h>
 #include <stdio.h>
 
 

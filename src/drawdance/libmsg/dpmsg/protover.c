@@ -3,7 +3,6 @@
 #include "message.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
-#include <limits.h>
 
 
 struct DP_ProtocolVersion {

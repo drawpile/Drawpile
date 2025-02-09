@@ -22,6 +22,7 @@
 #ifndef DPCOMMON_COMMON_H
 #define DPCOMMON_COMMON_H
 #include <assert.h>   // IWYU pragma: export
+#include <limits.h>   // IWYU pragma: export
 #include <stdalign.h> // IWYU pragma: export
 #include <stdarg.h>   // IWYU pragma: export
 #include <stdbool.h>  // IWYU pragma: export
@@ -281,6 +282,21 @@ DP_INLINE size_t DP_flex_size(size_t type_size, size_t flex_offset,
 {
     return DP_max_size(type_size, flex_offset + flex_size * count);
 }
+
+#ifdef __GNUC__
+#    define DP_add_overflow_int(X, Y, RES) __builtin_sadd_overflow(X, Y, RES)
+#else
+DP_INLINE bool DP_add_overflow_int(int x, int y, int *res)
+{
+    if ((y > 0 && x > INT_MAX - y) || (y < 0 && x < INT_MIN - y)) {
+        return true;
+    }
+    else {
+        *res = x + y;
+        return false;
+    }
+}
+#endif
 
 /*
  * Overly correct way of getting the size of a structure with a flexible array

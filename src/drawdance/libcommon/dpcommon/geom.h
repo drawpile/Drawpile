@@ -91,8 +91,16 @@ DP_INLINE DP_Rect DP_rect_make(int x, int y, int width, int height)
 {
     DP_ASSERT(width >= 0);
     DP_ASSERT(height >= 0);
-    DP_Rect rect = {x, y, x + width - 1, y + height - 1};
-    return rect;
+    int x2, y2;
+    if (!DP_add_overflow_int(x, width - 1, &x2)
+        && !DP_add_overflow_int(y, height - 1, &y2)) {
+        DP_Rect rect = {x, y, x2, y2};
+        return rect;
+    }
+    else {
+        DP_Rect invalid_rect = {0, 0, -1, -1};
+        return invalid_rect;
+    }
 }
 
 DP_INLINE bool DP_rect_valid(DP_Rect rect)

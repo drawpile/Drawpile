@@ -32,7 +32,6 @@
 #include <dpmsg/text_reader.h>
 #include <dpmsg/text_writer.h>
 #include <dptest.h>
-#include <limits.h>
 #include <parson.h>
 
 

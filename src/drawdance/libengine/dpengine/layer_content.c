@@ -35,7 +35,6 @@
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
 #include <dpmsg/blend_mode.h>
-#include <limits.h>
 
 
 #ifdef DP_NO_STRICT_ALIASING

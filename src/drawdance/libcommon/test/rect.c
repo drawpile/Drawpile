@@ -45,6 +45,12 @@ static void rect_make(TEST_PARAMS)
 
     DP_Rect empty = DP_rect_make(0, 0, 0, 0);
     NOK(DP_rect_valid(empty), "empty rect is not valid");
+
+    DP_Rect fits = DP_rect_make(1, 1, INT_MAX, INT_MAX);
+    OK(DP_rect_valid(fits), "Rect with INT_MAX dimensions valid");
+
+    DP_Rect overflow = DP_rect_make(9999, 2, INT_MAX, INT_MAX);
+    NOK(DP_rect_valid(overflow), "Rect beyond INT_MAX dimensions not valid");
 }
 
 

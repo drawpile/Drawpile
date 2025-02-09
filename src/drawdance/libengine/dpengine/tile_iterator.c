@@ -23,7 +23,6 @@
 #include "tile.h"
 #include <dpcommon/common.h>
 #include <dpcommon/geom.h>
-#include <limits.h>
 
 
 DP_TileIterator DP_tile_iterator_make(int canvas_width, int canvas_height,
