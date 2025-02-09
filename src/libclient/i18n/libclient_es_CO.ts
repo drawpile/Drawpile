@@ -1622,7 +1622,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>No es apto para menores (NSFM)</translation>
     </message>
     <message>
         <location line="+6"/>
