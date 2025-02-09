@@ -218,6 +218,11 @@ void Listing::host(
 			outTitle.clear();
 		} else {
 			outTitle = m_titleEdit->text().trimmed();
+			if(outTitle.isEmpty()) {
+				// The user unchecked the automatic title, but then didn't
+				// provide a title anyway. We'll just recheck the box then.
+				m_automaticBox->setChecked(true);
+			}
 		}
 	} else {
 		outTitle = m_titleEdit->text().trimmed();
