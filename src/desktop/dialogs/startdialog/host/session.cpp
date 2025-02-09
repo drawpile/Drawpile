@@ -117,8 +117,9 @@ Session::Session(QWidget *parent)
 
 	desktop::settings::Settings &settings = dpApp().settings();
 	if(settings.lastSessionPassword().trimmed().isEmpty()) {
-		generatePassword();
+		generatePasswordWith(settings);
 	}
+	fixUpLastHostServer(settings);
 	settings.bindLastHostType(m_typeCombo, Qt::UserRole);
 	settings.bindLastHostType(this, &Session::updateType);
 	settings.bindLastSessionPassword(m_passwordEdit);
@@ -139,7 +140,7 @@ void Session::reset()
 {
 	desktop::settings::Settings &settings = dpApp().settings();
 	m_typeCombo->setCurrentIndex(0);
-	generatePassword();
+	generatePasswordWith(settings);
 	settings.setLastNsfm(false);
 	settings.setLastKeepChat(false);
 	settings.setLastHostServer(0);
@@ -392,6 +393,11 @@ void Session::followServerInfoLink(const QUrl &url)
 
 void Session::generatePassword()
 {
+	generatePasswordWith(dpApp().settings());
+}
+
+void Session::generatePasswordWith(desktop::settings::Settings &settings)
+{
 	// Passwords are just a mechanism to facilitate invite-only sessions.
 	// They're not secret and are meant to be shared with anyone who wants to
 	// join the session, so we don't need cryptographic security for them.
@@ -402,7 +408,42 @@ void Session::generatePassword()
 		password.append(characters[QRandomGenerator::global()->bounded(
 			0, characters.length())]);
 	}
-	dpApp().settings().setLastSessionPassword(password);
+	settings.setLastSessionPassword(password);
+}
+
+void Session::fixUpLastHostServer(desktop::settings::Settings &settings)
+{
+	int lastHostServer = settings.lastHostServer();
+	switch(lastHostServer) {
+	case SERVER_PUB:
+		break;
+	case SERVER_ADDRESS: {
+		// If there's no last hosted-on address present or we effectively hosted
+		// on pub by entering its address, we switch the server combo to pub.
+		QString address = dpApp().recents().getMostRecentHostAddress();
+		if(address.isEmpty() || looksLikePub(address)) {
+			settings.setLastHostServer(SERVER_PUB);
+		}
+		break;
+	}
+#ifdef DP_HAVE_BUILTIN_SERVER
+	case SERVER_BUILTIN:
+		break;
+#endif
+	default:
+		// Not a valid last server, fall back to pub.
+		settings.setLastHostServer(SERVER_PUB);
+		break;
+	}
+}
+
+bool Session::looksLikePub(const QString &address)
+{
+	QRegularExpression re(
+		QStringLiteral("\\A(?:(?:pub|www)\\.)?drawpile\\.net\\z"),
+		QRegularExpression::CaseInsensitiveOption |
+			QRegularExpression::DotMatchesEverythingOption);
+	return re.match(address).hasMatch();
 }
 
 }

@@ -15,10 +15,15 @@ namespace utils {
 
 QString Recents::Host::toString() const
 {
-	if(port == cmake_config::proto::port()) {
-		return host;
+	return toStringFrom(host, port);
+}
+
+QString Recents::Host::toStringFrom(const QString &host, int port)
+{
+	if(port <= 0 || port == cmake_config::proto::port()) {
+		return host.trimmed();
 	} else {
-		return QStringLiteral("%1:%2").arg(host).arg(port);
+		return QStringLiteral("%1:%2").arg(host.trimmed()).arg(port);
 	}
 }
 
@@ -155,6 +160,20 @@ QVector<Recents::Host> Recents::getHosts() const
 		}
 	}
 	return hosts;
+}
+
+QString Recents::getMostRecentHostAddress() const
+{
+	StateDatabase::Query qry = m_state.query();
+	if(qry.exec(
+		   "select host, port from recent_hosts where flags & ? "
+		   "order by weight limit 1",
+		   {FLAG_HOSTED}) &&
+	   qry.next()) {
+		return Host::toStringFrom(
+			qry.value(0).toString(), qry.value(1).toInt());
+	}
+	return QString();
 }
 
 static int recentHostCountWith(StateDatabase::Query &qry)

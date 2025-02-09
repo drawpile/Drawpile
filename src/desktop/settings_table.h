@@ -160,8 +160,9 @@ SETTING(lastBrowseSortColumn      , LastBrowseSortColumn      , "history/browses
 SETTING(lastBrowseSortDirection   , LastBrowseSortDirection   , "history/browsesortdirection"           , 0)
 SETTING(lastFileOpenPath          , LastFileOpenPath          , "window/lastpath"                       , QString())
 SETTING(lastFileOpenPaths         , LastFileOpenPaths         , "window/lastpaths"                      , QVariantMap())
-SETTING(lastHostServer            , LastHostServer            , "history/hostserver"                    , 0)
-SETTING(lastHostType              , LastHostType              , "history/hosttype"                      , 0)
+SETTING_GETSET(lastHostServer     , LastHostServer            , "history/hostserver"                    , -1,
+	&lastHostServer::get, &any::set)
+SETTING(lastHostType             , LastHostType              , "history/hosttype"                      , 0)
 SETTING(lastIdAlias               , LastIdAlias               , "history/idalias"                       , QString())
 SETTING(lastJoinAddress           , LastJoinAddress           , "history/joinaddress"                   , QString())
 SETTING(lastKeepChat              , LastKeepChat              , "history/keepchat"                      , false)

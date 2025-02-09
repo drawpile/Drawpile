@@ -33,6 +33,7 @@ public:
 		bool hosted;
 
 		QString toString() const;
+		static QString toStringFrom(const QString &host, int port);
 	};
 
 	explicit Recents(StateDatabase &state);
@@ -46,6 +47,7 @@ public:
 #endif
 
 	QVector<Host> getHosts() const;
+	QString getMostRecentHostAddress() const;
 	int hostCount() const;
 	void addHost(const QString &host, int port, bool joined, bool hosted);
 	bool removeHostById(long long id);

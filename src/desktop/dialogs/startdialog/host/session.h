@@ -13,6 +13,12 @@ class QPushButton;
 class QStackedWidget;
 class QTextBrowser;
 
+namespace desktop {
+namespace settings {
+class Settings;
+}
+}
+
 namespace utils {
 class FormNote;
 }
@@ -66,6 +72,9 @@ private:
 	void followServerInfoLink(const QUrl &url);
 
 	static void generatePassword();
+	static void generatePasswordWith(desktop::settings::Settings &settings);
+	static void fixUpLastHostServer(desktop::settings::Settings &settings);
+	static bool looksLikePub(const QString &address);
 
 	QIcon m_drawpileIcon;
 	QComboBox *m_typeCombo;

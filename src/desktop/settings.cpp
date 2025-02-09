@@ -48,6 +48,25 @@ namespace debounceDelayMs {
 	}
 }
 
+namespace lastHostServer {
+	QVariant get(const SettingMeta &meta, QSettings &settings)
+	{
+		std::optional<libclient::settings::FoundKey> lastHostServer =
+			findKey(settings, meta.baseKey, meta.version);
+		if (lastHostServer.has_value()) {
+			return settings.value(lastHostServer->key);
+		}
+
+		std::optional<libclient::settings::FoundKey> hostRemoteKey =
+			findKey(settings, "history/hostremote", SettingMeta::Version::V0);
+		if (hostRemoteKey.has_value() && !settings.value(hostRemoteKey->key).toBool()) {
+			return 2;
+		}
+
+		return 1;
+	}
+}
+
 namespace onionSkinsFrames {
 	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{
