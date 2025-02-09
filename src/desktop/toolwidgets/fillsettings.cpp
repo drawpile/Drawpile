@@ -62,7 +62,7 @@ bool FillSettings::isLocked()
 QWidget *FillSettings::createUiWidget(QWidget *parent)
 {
 	m_headerWidget = new QWidget(parent);
-	QHBoxLayout *headerLayout = new QHBoxLayout;
+	QHBoxLayout *headerLayout = new QHBoxLayout(m_headerWidget);
 	headerLayout->setSpacing(0);
 	headerLayout->setContentsMargins(0, 0, 0, 0);
 
