@@ -69,7 +69,7 @@
     <message>
         <location line="+3"/>
         <source>Internal error during saving.</source>
-        <translation>Error interno durante guardado.</translation>
+        <translation>Error interno durante el guardado.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -83,13 +83,13 @@
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Conflicto</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (conflicto)</translation>
     </message>
     <message>
         <location line="+76"/>
@@ -869,7 +869,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Show brushes not assigned to any tag.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar pinceles no asignados a una marca.</translation>
     </message>
     <message>
         <location line="+198"/>
@@ -1070,13 +1070,13 @@ Select a regular layer instead.</source>
         <location filename="../import/animationimporter.cpp" line="+30"/>
         <source>Frame %1</source>
         <extracomment>Title for imported animation layers.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fotograma %1</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fotogramas %1</translation>
     </message>
 </context>
 <context>
@@ -1135,7 +1135,7 @@ Select a regular layer instead.</source>
         <location line="+2"/>
         <location line="+11"/>
         <source>Banned by</source>
-        <translation>Baneado por</translation>
+        <translation>Suspendido por</translation>
     </message>
 </context>
 <context>
@@ -1143,123 +1143,123 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/client.cpp" line="+538"/>
         <source>%1 banned by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 suspendido por %2.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 kicked by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 expulsado por %2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 made operator by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 hecho operador por el servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 made operator by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 hecho operador por %2.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Operator status revoked from %1 by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estatus de operador revocado de %1 por el servidor.</translation>
     </message>
     <message>
         <location line="-485"/>
         <source>You have been kicked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Has sido expulsado.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Has sido expulsado por %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ha ocurrido un error de servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ha ocurrido un error de servidor: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation>El servidor se está cerrando.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The session has been shut down: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>La sesión ha sido cerrada: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Desconectado.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Desconectado: %1</translation>
     </message>
     <message>
         <location line="+417"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sólo moderadores pueden exportar suspensiones simples.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Exporting encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>La exportación de suspensiones encriptadas no ha sido configurada en este servidor.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exporting encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>La exportación de suspensiones encriptadas no es soportada por este servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation type="unfinished"></translation>
+        <translation>El servidor no pudo leer la data importada. Esto puede deberse a que fue exportada de un servidor distinto. Solo pueden importarse suspensiones a la misma sesión desde donde fueron exportadas.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Data importada inválida.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Malformed import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Data importada no estándar.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Importing encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>La importación de suspensiones encriptadas no ha sido configurada en este servidor.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Importing encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>La importación de suspensiones encriptadas no es soportada por este servidor.</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>El estatus de operador ha sido revocado de %1 por %2.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>¡Sesión sin espacio! Para continuar dibujando, un operador debe resetearla para disminuir su tamaño. Esto puede hacerse vía Sesión &gt; Reset.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1312,27 +1312,27 @@ Select a regular layer instead.</source>
         <location line="+4"/>
         <source>Session terminated by moderator (%1): %2</source>
         <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sesión terminada por un moderador (%1): %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 trusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 es confiable según el servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 trusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 es confiable según %2.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 untrusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 no es confiable según el servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 no es confiable según %2.</translation>
     </message>
 </context>
 <context>
@@ -1341,7 +1341,7 @@ Select a regular layer instead.</source>
         <location filename="../net/login.cpp" line="+109"/>
         <location line="+569"/>
         <source>Invalid state</source>
-        <translation>Estado invalido</translation>
+        <translation>Estado inválido</translation>
     </message>
     <message>
         <location line="-512"/>
@@ -1452,24 +1452,24 @@ Select a regular layer instead.</source>
     <message>
         <location line="+9"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
-        <translation type="unfinished"></translation>
+        <translation>¡Hay una sesión para una versión diferente de Drawpile (%1) en progreso!</translation>
     </message>
     <message>
         <location line="+214"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
-        <translation type="unfinished"></translation>
+        <translation>TLS no es soportado por este tipo de socket</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Unable to set TLS error ignore state</source>
-        <translation type="unfinished"></translation>
+        <translation>No es posible aplicar el estado Ignorar error de TLS</translation>
     </message>
     <message>
         <location line="+32"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
-        <translation>Certificado SSL invalido para host %1</translation>
+        <translation>Certificado SSL inválido para host %1</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -1509,17 +1509,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="-937"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
-        <translation type="unfinished"></translation>
+        <translation>¡Modo seguro no activado en un anfitrión con certificado fijo!</translation>
     </message>
     <message>
         <location line="+558"/>
         <source>Unknown version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Versión desconocida %1</translation>
     </message>
     <message>
         <location line="+280"/>
         <source>Pinned certificate has changed!</source>
-        <translation type="unfinished"></translation>
+        <translation>¡El certificado fijo ha cambiado!</translation>
     </message>
     <message>
         <location line="+102"/>
@@ -1587,37 +1587,37 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (fully compatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 (totalmente compatible)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation>Versión no compatible</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Closed (not allowed to join from the web browser)</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerrada (no se permite la participación desde el navegador web)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (not allowed to join via WebSocket)</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerrada (no se permite unirse vía WebSocket)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Closed (guest logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerrada (usuarios de invitados son bloqueados)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (new logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerrada (Nuevos usuarios son bloqueados)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session password required</source>
-        <translation type="unfinished"></translation>
+        <translation>Se requiere la contraseña de esta sesión</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1627,25 +1627,25 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>Número desconocido de usuarios dibujando actualmente</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n usuario dibujando actualmente</numerusform>
+            <numerusform>%n usuarios dibujando actualmente</numerusform>
         </translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Title</source>
-        <translation>Titulo</translation>
+        <translation>Título</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Started by</source>
-        <translation>Empezado por</translation>
+        <translation>Iniciado por</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1655,19 +1655,19 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>Activos</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>It is full or closed.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sesión cerrada o llena.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It requires an account.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Se requiere una cuenta.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1755,27 +1755,27 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/transform.cpp" line="+419"/>
         <source>You don&apos;t have permission to transform selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>No posees permisos para transformar selecciones.</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>No canvas present.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lienzo no existe.</translation>
     </message>
     <message>
         <location line="-254"/>
         <source>You don&apos;t have permission for that transformation.</source>
-        <translation type="unfinished"></translation>
+        <translation>No tienes permisos para esa transformación.</translation>
     </message>
     <message>
         <location line="+207"/>
         <source>You don&apos;t have permission to stamp selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>No tienes permisos para estampar selecciones.</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>Nothing selected that could be transformed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nada seleccionado que pueda ser transformado.</translation>
     </message>
 </context>
 <context>
@@ -1783,7 +1783,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/hostpresetmodel.cpp" line="+57"/>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Valores predeterminados</translation>
     </message>
 </context>
 <context>
@@ -1792,17 +1792,17 @@ Select a regular layer instead.</source>
         <location filename="../utils/news.cpp" line="+286"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscando actualizaciones…</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>La búsqueda automática de actualizaciones está desactivada, &lt;a href=&quot;#autoupdate&quot;&gt;haz clic aquí para activarla&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Si no quieres búsquedas automáticas, &lt;a href=&quot;#checkupdates&quot;&gt;haz clic aquí para buscar manualmente&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -1812,32 +1812,32 @@ Select a regular layer instead.</source>
     <message>
         <location line="+12"/>
         <source>Couldn&apos;t make sense of the fetched data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Data obtenida no procesada.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Couldn&apos;t make sense of fetched updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Actualización obtenida no procesada.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se guardaron los cambios.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Couldn&apos;t make sense of fetched news.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anuncio obtenido no procesado.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save news.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se guardaron los anuncios.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>No news available.</source>
-        <translation type="unfinished"></translation>
+        <translation>No hay anuncios disponibles.</translation>
     </message>
 </context>
 <context>
@@ -1845,22 +1845,22 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../wasmsupport.cpp" line="+109"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
-        <translation type="unfinished"></translation>
+        <translation>No está utilizando el cliente oficial para web.drawpile.net. La mayoría de los servidores no admiten conexiones provenientes de otras plataformas.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The session address does not look like a valid WebSocket URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>La dirección de esta sesión no es una URL válida de WebSocket.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You&apos;re trying to connect to an IP address instead of a proper domain name. This usually doesn&apos;t work unless you&apos;ve configured your browser to allow this first.</source>
-        <translation type="unfinished"></translation>
+        <translation>Está intentando conectarse a una dirección IP en vez de a un dominio apropiado. Esto usualmente no es posible a menos que su navegador haya sido configurado para ello.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The server may not support joining via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>Puede que el servidor no soporte la participación a través de un navegador web.</translation>
     </message>
 </context>
 </TS>
