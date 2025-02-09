@@ -254,7 +254,7 @@
     <message>
         <location line="+8"/>
         <source>Inverted, Swap Axes</source>
-        <translation>Invertir, intercambiar Ejes</translation>
+        <translation>Invertido, Intercambiar Ejes</translation>
     </message>
     <message>
         <location line="+2"/>
