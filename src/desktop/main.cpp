@@ -278,6 +278,18 @@ void DrawpileApp::setThemePalette(desktop::settings::ThemePalette themePalette)
 	case ThemePalette::Rust:
 		newPalette = loadPalette(QStringLiteral("rust.colors"));
 		break;
+	case ThemePalette::BlueApatite:
+		newPalette = loadPalette(QStringLiteral("blueapatite.colors"));
+		break;
+	case ThemePalette::OceanDeep:
+		newPalette = loadPalette(QStringLiteral("oceandeep.colors"));
+		break;
+	case ThemePalette::RoseQuartz:
+		newPalette = loadPalette(QStringLiteral("rosequartz.colors"));
+		break;
+	case ThemePalette::Watermelon:
+		newPalette = loadPalette(QStringLiteral("watermelon.colors"));
+		break;
 	}
 
 	setPalette(newPalette);

@@ -110,6 +110,10 @@ enum class ThemePalette : int {
 	Indigo,
 	PoolTable,
 	Rust,
+	BlueApatite,
+	OceanDeep,
+	RoseQuartz,
+	Watermelon,
 };
 Q_ENUM_NS(ThemePalette)
 

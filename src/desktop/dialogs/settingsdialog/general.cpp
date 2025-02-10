@@ -227,11 +227,27 @@ void General::initTheme(
 	form->addRow(tr("Style:"), style);
 
 	auto *theme = new QComboBox;
-	theme->addItems(
-		{tr("System"), tr("Light"), tr("Dark"), tr("Krita Bright"),
-		 tr("Krita Dark"), tr("Krita Darker"), tr("Qt Fusion"),
-		 tr("Hotdog Stand"), tr("Indigo"), tr("Pool Table"), tr("Rust")});
-	settings.bindThemePalette(theme, std::nullopt);
+	QPair<desktop::settings::ThemePalette, QString> themes[] = {
+		{desktop::settings::ThemePalette::System, tr("System")},
+		{desktop::settings::ThemePalette::Light, tr("Light")},
+		{desktop::settings::ThemePalette::Dark, tr("Dark")},
+		{desktop::settings::ThemePalette::KritaBright, tr("Krita Bright")},
+		{desktop::settings::ThemePalette::KritaDark, tr("Krita Dark")},
+		{desktop::settings::ThemePalette::KritaDarker, tr("Krita Darker")},
+		{desktop::settings::ThemePalette::Fusion, tr("Qt Fusion")},
+		{desktop::settings::ThemePalette::BlueApatite, tr("Blue Apatite")},
+		{desktop::settings::ThemePalette::HotdogStand, tr("Hotdog Stand")},
+		{desktop::settings::ThemePalette::Indigo, tr("Indigo")},
+		{desktop::settings::ThemePalette::OceanDeep, tr("Ocean Deep")},
+		{desktop::settings::ThemePalette::PoolTable, tr("Pool Table")},
+		{desktop::settings::ThemePalette::RoseQuartz, tr("Rose Quartz")},
+		{desktop::settings::ThemePalette::Rust, tr("Rust")},
+		{desktop::settings::ThemePalette::Watermelon, tr("Watermelon")},
+	};
+	for(const QPair<desktop::settings::ThemePalette, QString> &p : themes) {
+		theme->addItem(p.second, QVariant::fromValue(p.first));
+	}
+	settings.bindThemePalette(theme, Qt::UserRole);
 	form->addRow(tr("Color scheme:"), theme);
 }
 
