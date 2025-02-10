@@ -473,6 +473,7 @@ void BrushPalette::onOpen(const QString &path, QTemporaryFile *tempFile)
 	dlg->setWindowTitle(tr("Brush Import"));
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->setModal(true);
+	dlg->resize(300, 0);
 
 	QVBoxLayout *layout = new QVBoxLayout{dlg};
 	dlg->setLayout(layout);
