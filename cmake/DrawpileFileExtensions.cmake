@@ -101,6 +101,31 @@ function(get_plist_extensions icon out_var)
 endfunction()
 
 #[[
+Gets extensions from ARGN in a format suitable for a C array.
+#]]
+function(get_c_extensions out_var)
+	set(exts "")
+	foreach(token IN LISTS SUPPORTED_FILE_TYPES)
+		if(token STREQUAL "EXT")
+			set(in_ext TRUE)
+			set(in_group FALSE)
+		elseif(token STREQUAL "GROUP")
+			set(in_ext FALSE)
+			set(in_group TRUE)
+		elseif(token IN_LIST _FT_ANY_TOKENS)
+			set(in_ext FALSE)
+			set(in_group FALSE)
+		elseif(in_group)
+			set(current_group ${token})
+		elseif(in_ext AND current_group IN_LIST ARGN)
+			list(APPEND exts "\"${token}\"")
+		endif()
+	endforeach()
+	list(JOIN exts ", " exts)
+	set(${out_var} "${exts}" PARENT_SCOPE)
+endfunction()
+
+#[[
 Gets extensions assigned to the given file group in a format suitable for use
 by a Qt file filter.
 #]]

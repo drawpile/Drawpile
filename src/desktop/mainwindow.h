@@ -309,6 +309,8 @@ private:
 	Q_DECLARE_FLAGS(ReplacementCriteria, ReplacementCriterion)
 
 	ReplacementCriteria getReplacementCriteria() const;
+	void
+	questionOpenFileWindowReplacement(const std::function<void(bool)> &block);
 	void questionWindowReplacement(
 		const QString &title, const QString &action,
 		const std::function<void(bool)> &block);

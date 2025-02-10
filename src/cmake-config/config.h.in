@@ -24,6 +24,7 @@ constexpr const char *sourceAssetsDesktop() { return DRAWPILE_SOURCE_ASSETS_DESK
 #endif
 
 namespace file_group {
+	constexpr auto canvasReplacing() { return std::array{ @DRAWPILE_FILE_GROUP_CANVAS_REPLACING@  }; }
 	constexpr const char *image() { return "@DRAWPILE_FILE_GROUP_IMAGE@"; }
 	constexpr const char *layeredImage() { return "@DRAWPILE_FILE_GROUP_LAYERED_IMAGE@"; }
 	constexpr const char *flatImage() { return "@DRAWPILE_FILE_GROUP_FLAT_IMAGE@"; }

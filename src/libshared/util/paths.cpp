@@ -135,6 +135,16 @@ QString extractBasename(QString filename)
 	return title;
 }
 
+bool looksLikeCanvasReplacingSuffix(const QString &suffix)
+{
+	for(const char *ext : cmake_config::file_group::canvasReplacing()) {
+		if(suffix.compare(QString::fromUtf8(ext), Qt::CaseInsensitive) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
 bool slurp(const QString &path, QByteArray &outBytes, QString &outError)
 {
 	QFile file(path);

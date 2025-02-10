@@ -741,6 +741,14 @@ MainWindow::ReplacementCriteria MainWindow::getReplacementCriteria() const
 	return rc;
 }
 
+void MainWindow::questionOpenFileWindowReplacement(
+	const std::function<void(bool)> &block)
+{
+	questionWindowReplacement(
+		tr("Open"),
+		tr("You're about to open a new file and close this window."), block);
+}
+
 void MainWindow::questionWindowReplacement(
 	const QString &title, const QString &action,
 	const std::function<void(bool)> &block)
@@ -2001,15 +2009,12 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
  */
 void MainWindow::open()
 {
-	questionWindowReplacement(
-		tr("Open"),
-		tr("You're about to open a new file and close this window."),
-		[this](bool ok) {
-			if(ok) {
-				FileWrangler(getStartDialogOrThis())
-					.openMain(std::bind(&MainWindow::openPath, this, _1, _2));
-			}
-		});
+	questionOpenFileWindowReplacement([this](bool ok) {
+		if(ok) {
+			FileWrangler(getStartDialogOrThis())
+				.openMain(std::bind(&MainWindow::openPath, this, _1, _2));
+		}
+	});
 }
 
 #ifdef __EMSCRIPTEN__
@@ -3957,10 +3962,19 @@ void MainWindow::dropUrl(const QUrl &url)
 {
 	if(url.isLocalFile()) {
 		QString path = url.toLocalFile();
-		if(m_canvasView->canvas()) {
+		QString suffix = QFileInfo(path).suffix();
+		if(suffix.compare(QStringLiteral("zip"), Qt::CaseInsensitive) == 0) {
+			m_dockBrushPalette->importBrushesFrom(path);
+		} else if(
+			m_canvasView->canvas() &&
+			!utils::paths::looksLikeCanvasReplacingSuffix(suffix)) {
 			pasteFilePath(path);
 		} else {
-			openPath(path);
+			questionOpenFileWindowReplacement([this, path](bool ok) {
+				if(ok) {
+					openPath(path);
+				}
+			});
 		}
 	}
 }
