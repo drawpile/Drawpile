@@ -1,46 +1,47 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/docks/layeraclmenu.h"
 #include "desktop/main.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
-
-#include <QApplication>
 #include <QActionGroup>
 
 namespace docks {
 
-static void addTier(QActionGroup *group, const QString &title, DP_AccessTier tier)
-{
-	QAction *a = group->addAction(title);
-	a->setProperty("userTier", int(tier));
-	a->setCheckable(true);
-	a->setChecked(true);
-}
-
-LayerAclMenu::LayerAclMenu(QWidget *parent) :
-	QMenu(parent), m_userlist(nullptr)
+LayerAclMenu::LayerAclMenu(QWidget *parent)
+	: QMenu(parent)
+	, m_userlist(nullptr)
 {
 	m_lock = addAction(tr("Lock this layer"));
 	m_lock->setCheckable(true);
+	connect(m_lock, &QAction::triggered, this, &LayerAclMenu::layerLockChange);
 
 	m_censored = addAction(tr("Censor"));
 	m_censored->setCheckable(true);
+	connect(
+		m_censored, &QAction::triggered, this,
+		&LayerAclMenu::layerCensoredChange);
 
 	addSection(tr("Access tier:"));
 	m_tiers = new QActionGroup(this);
-	addTier(m_tiers, tr("Operators"), DP_ACCESS_TIER_OPERATOR);
-	addTier(m_tiers, tr("Trusted"), DP_ACCESS_TIER_TRUSTED);
-	addTier(m_tiers, tr("Registered"), DP_ACCESS_TIER_AUTHENTICATED);
-	addTier(m_tiers, tr("Everyone"), DP_ACCESS_TIER_GUEST);
 	static_assert(DP_ACCESS_TIER_COUNT == 4, "update LayerAclMenu tiers!");
+	QPair<QString, int> pairs[DP_ACCESS_TIER_COUNT] = {
+		{tr("Operators"), int(DP_ACCESS_TIER_OPERATOR)},
+		{tr("Trusted"), int(DP_ACCESS_TIER_TRUSTED)},
+		{tr("Registered"), int(DP_ACCESS_TIER_AUTHENTICATED)},
+		{tr("Everyone"), int(DP_ACCESS_TIER_GUEST)},
+	};
+	for(QPair<QString, int> p : pairs) {
+		QAction *action = m_tiers->addAction(p.first);
+		action->setProperty("userTier", p.second);
+		connect(action, &QAction::triggered, this, [this, tier = p.second] {
+			emit layerAccessTierChange(tier);
+		});
+	}
 	addActions(m_tiers->actions());
 
 	addSection(tr("Exclusive access:"));
 	m_users = new QActionGroup(this);
 	m_users->setExclusive(false);
-
-	connect(this, &LayerAclMenu::triggered, this, &LayerAclMenu::userClicked);
 
 	dpApp().settings().bindParentalControlsForceCensor(this, [=](bool force) {
 		m_censored->setDisabled(force);
@@ -55,59 +56,28 @@ void LayerAclMenu::setUserList(QAbstractItemModel *model)
 void LayerAclMenu::showEvent(QShowEvent *e)
 {
 	// Rebuild user list when menu is shown
-	const QList<QAction*> actions = m_users->actions();
-	for(auto *a : actions)
+	const QList<QAction *> actions = m_users->actions();
+	for(QAction *a : actions) {
 		delete a;
+	}
 
 	if(m_userlist) {
-		for(int i=0;i<m_userlist->rowCount();++i) {
-			const QModelIndex idx = m_userlist->index(i, 0);
-			const int id = idx.data(canvas::UserListModel::IdRole).toInt();
-
-			QAction *ua = m_users->addAction(idx.data(canvas::UserListModel::NameRole).toString());
+		for(int i = 0; i < m_userlist->rowCount(); ++i) {
+			QModelIndex idx = m_userlist->index(i, 0);
+			int userId = idx.data(canvas::UserListModel::IdRole).toInt();
+			QAction *ua = m_users->addAction(
+				idx.data(canvas::UserListModel::NameRole).toString());
 			ua->setCheckable(true);
-			ua->setProperty("userId", id);
-			ua->setChecked(m_exclusives.contains(id));
+			ua->setChecked(m_exclusives.contains(userId));
 			addAction(ua);
+			connect(
+				ua, &QAction::triggered, this, [this, userId](bool checked) {
+					emit layerUserAccessChanged(userId, checked);
+				});
 		}
 	}
 
 	QMenu::showEvent(e);
-}
-
-void LayerAclMenu::userClicked(QAction *useraction)
-{
-	// Get exclusive user access list
-	QVector<uint8_t> exclusive;
-	for(const QAction *a : m_users->actions()) {
-		if(a->isChecked())
-			exclusive.append(a->property("userId").toInt());
-	}
-
-	// Get selected tier
-	DP_AccessTier tier = DP_ACCESS_TIER_GUEST;
-	for(const QAction *a : m_tiers->actions()) {
-		if(a->isChecked()) {
-			tier = DP_AccessTier(a->property("userTier").toInt());
-			break;
-		}
-	}
-
-	if(useraction == m_lock) {
-		// Lock out all other controls when general layer lock is on
-		const bool enable = !useraction->isChecked();
-		m_tiers->setEnabled(enable);
-		m_users->setEnabled(enable);
-
-	} else if(useraction == m_censored) {
-		// Just toggle the censored flag, no other ACL changes
-		emit layerCensoredChange(m_censored->isChecked());
-		return;
-
-	}
-
-	// Send ACL update message
-	emit layerAclChange(m_lock->isChecked(), tier, exclusive);
 }
 
 void LayerAclMenu::setAcl(bool lock, int tier, const QVector<uint8_t> exclusive)
@@ -133,4 +103,3 @@ void LayerAclMenu::setCensored(bool censor)
 }
 
 }
-

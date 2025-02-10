@@ -24,29 +24,17 @@ public:
 	void setCensored(bool censor);
 
 signals:
-	/**
-	 * @brief Layer Access Control List changed
-	 *
-	 * This signal includes the new exclusive access list.
-	 * The list is empty if all users have access.
-	 *
-	 * @param lock general layer lock
-	 * @param ids list of user IDs.
-	 */
-	void layerAclChange(bool lock, DP_AccessTier tier, QVector<uint8_t> ids);
-
-	/**
-	 * @brief The censored checkbox was toggled
-	 */
+	void layerLockChange(bool locked);
+	void layerAccessTierChange(int tier);
+	void layerUserAccessChanged(int userId, bool access);
 	void layerCensoredChange(bool censor);
 
 protected:
 	void showEvent(QShowEvent *e) override;
 
-private slots:
-	void userClicked(QAction *useraction);
-
 private:
+	void lockTriggered(bool checked);
+
 	QAbstractItemModel *m_userlist;
 	QVector<uint8_t> m_exclusives;
 	QAction *m_lock;

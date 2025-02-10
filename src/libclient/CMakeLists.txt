@@ -178,7 +178,6 @@ target_sources(dpclient PRIVATE
 	utils/canvasshortcutsmodel.h
 	utils/certificatestoremodel.cpp
 	utils/certificatestoremodel.h
-	utils/changeflags.h
 	utils/colorscheme.cpp
 	utils/colorscheme.h
 	utils/cursors.cpp

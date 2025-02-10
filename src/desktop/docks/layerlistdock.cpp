@@ -15,7 +15,6 @@
 #include "libclient/canvas/timelinemodel.h"
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/canvas/userlist.h"
-#include "libclient/utils/changeflags.h"
 #include <QAction>
 #include <QActionGroup>
 #include <QComboBox>
@@ -221,11 +220,17 @@ LayerList::LayerList(QWidget *parent)
 	m_lockButton->setMenu(m_aclmenu);
 
 	connect(
-		m_aclmenu, &LayerAclMenu::layerAclChange, this,
-		&LayerList::changeLayerAcl);
+		m_aclmenu, &LayerAclMenu::layerLockChange, this,
+		&LayerList::changeLayersLock);
+	connect(
+		m_aclmenu, &LayerAclMenu::layerAccessTierChange, this,
+		&LayerList::changeLayersAccessTier);
+	connect(
+		m_aclmenu, &LayerAclMenu::layerUserAccessChanged, this,
+		&LayerList::changeLayersUserAccess);
 	connect(
 		m_aclmenu, &LayerAclMenu::layerCensoredChange, this,
-		&LayerList::censorSelected);
+		&LayerList::changeLayersCensor);
 
 	updateCurrent(QModelIndex());
 
@@ -537,7 +542,8 @@ void LayerList::updateLockedControls()
 		!locked && haveAnySelected &&
 		(canEdit || (ownLayers && ownsAllTopLevelSelections()));
 
-	m_lockButton->setEnabled(canEditCurrent && !haveMultipleSelected);
+	m_lockButton->setEnabled(
+		canEditCurrent && haveAnySelected && canEditCurrent);
 	m_blendModeCombo->setEnabled(
 		canEditCurrent && haveAnySelected && canEditSelected);
 	m_opacitySlider->setEnabled(
@@ -654,19 +660,106 @@ QString LayerList::layerCreatorName(uint16_t layerId) const
 		canvas::LayerListModel::extractOwnerId(layerId));
 }
 
-void LayerList::censorSelected(bool censor)
+void LayerList::changeLayersLock(bool locked)
 {
-	QModelIndex index = currentSelection();
-	if(index.isValid()) {
-		canvas::LayerListItem layer =
-			index.data().value<canvas::LayerListItem>();
-		uint8_t flags = ChangeFlags<uint8_t>()
-							.set(DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR, censor)
-							.update(layer.attributeFlags());
-		net::Message msg = net::makeLayerAttributesMessage(
-			m_canvas->localUserId(), layer.id, 0, flags, layer.opacity * 255,
-			layer.blend);
-		emit layerCommands(1, &msg);
+	uint8_t contextId = m_canvas->localUserId();
+	uint8_t lockedFlag = locked ? DP_ACL_ALL_LOCKED_BIT : 0;
+	canvas::AclState *aclState = m_canvas->aclState();
+	net::MessageList msgs;
+	msgs.reserve(m_selectedIds.size());
+
+	for(int layerId : m_selectedIds) {
+		canvas::AclState::Layer acl = aclState->layerAcl(layerId);
+		if(acl.locked != locked) {
+			msgs.append(net::makeLayerAclMessage(
+				contextId, layerId, lockedFlag | uint8_t(acl.tier),
+				acl.exclusive));
+		}
+	}
+
+	if(!msgs.isEmpty()) {
+		emit layerCommands(msgs.size(), msgs.constData());
+	}
+}
+
+void LayerList::changeLayersAccessTier(int tier)
+{
+	uint8_t contextId = m_canvas->localUserId();
+	canvas::AclState *aclState = m_canvas->aclState();
+	net::MessageList msgs;
+	msgs.reserve(m_selectedIds.size());
+
+	for(int layerId : m_selectedIds) {
+		canvas::AclState::Layer acl = aclState->layerAcl(layerId);
+		if(acl.tier != tier) {
+			msgs.append(net::makeLayerAclMessage(
+				contextId, layerId,
+				uint8_t(acl.locked ? DP_ACL_ALL_LOCKED_BIT : 0) | uint8_t(tier),
+				acl.exclusive));
+		}
+	}
+
+	if(!msgs.isEmpty()) {
+		emit layerCommands(msgs.size(), msgs.constData());
+	}
+}
+
+void LayerList::changeLayersUserAccess(int userId, bool access)
+{
+	uint8_t contextId = m_canvas->localUserId();
+	canvas::AclState *aclState = m_canvas->aclState();
+	net::MessageList msgs;
+	msgs.reserve(m_selectedIds.size());
+
+	for(int layerId : m_selectedIds) {
+		canvas::AclState::Layer acl = aclState->layerAcl(layerId);
+		if(access) {
+			if(acl.exclusive.contains(userId)) {
+				continue;
+			} else {
+				acl.exclusive.append(userId);
+			}
+		} else if(!acl.exclusive.removeOne(userId)) {
+			continue;
+		}
+		msgs.append(net::makeLayerAclMessage(
+			contextId, layerId,
+			uint8_t(acl.locked ? DP_ACL_ALL_LOCKED_BIT : 0) | uint8_t(acl.tier),
+			acl.exclusive));
+	}
+
+	if(!msgs.isEmpty()) {
+		emit layerCommands(msgs.size(), msgs.constData());
+	}
+}
+
+void LayerList::changeLayersCensor(bool censor)
+{
+	uint8_t contextId = m_canvas->localUserId();
+	canvas::LayerListModel *layers = m_canvas->layerlist();
+	net::MessageList msgs;
+	msgs.reserve(m_selectedIds.size() + 1);
+	msgs.append(net::makeUndoPointMessage(contextId));
+
+	for(int layerId : m_selectedIds) {
+		QModelIndex index = layers->layerIndex(layerId);
+		if(index.isValid()) {
+			canvas::LayerListItem layer =
+				index.data().value<canvas::LayerListItem>();
+			uint8_t flags = layer.attributeFlags();
+			if(censor) {
+				flags |= uint8_t(DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR);
+			} else {
+				flags &= ~uint8_t(DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR);
+			}
+			msgs.append(net::makeLayerAttributesMessage(
+				contextId, layer.id, 0, flags, layer.opacity * 255,
+				layer.blend));
+		}
+	}
+
+	if(msgs.size() > 1) {
+		emit layerCommands(msgs.size(), msgs.constData());
 	}
 }
 
@@ -737,12 +830,16 @@ void LayerList::changeLayerAcl(
 	bool lock, DP_AccessTier tier, QVector<uint8_t> exclusive)
 {
 	const QModelIndex index = currentSelection();
-	if(index.isValid()) {
-		uint16_t layerId = index.data(canvas::LayerListModel::IdRole).toInt();
+	if(index.isValid() && !m_selectedIds.isEmpty()) {
+		uint8_t contextId = m_canvas->localUserId();
 		uint8_t flags = (lock ? DP_ACL_ALL_LOCKED_BIT : 0) | uint8_t(tier);
-		net::Message msg = net::makeLayerAclMessage(
-			m_canvas->localUserId(), layerId, flags, exclusive);
-		emit layerCommands(1, &msg);
+		net::MessageList msgs;
+		msgs.reserve(m_selectedIds.size());
+		for(int layerId : m_selectedIds) {
+			msgs.append(
+				net::makeLayerAclMessage(contextId, layerId, flags, exclusive));
+		}
+		emit layerCommands(msgs.size(), msgs.constData());
 	}
 }
 

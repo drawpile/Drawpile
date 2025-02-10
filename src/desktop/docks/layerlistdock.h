@@ -125,7 +125,10 @@ private slots:
 	void uncheckAll();
 
 	void showContextMenu(const QPoint &pos);
-	void censorSelected(bool censor);
+	void changeLayersLock(bool locked);
+	void changeLayersAccessTier(int tier);
+	void changeLayersUserAccess(int userId, bool access);
+	void changeLayersCensor(bool censor);
 	void disableAutoselectAny();
 	void toggleLayerVisibility();
 	void toggleLayerSketch();
