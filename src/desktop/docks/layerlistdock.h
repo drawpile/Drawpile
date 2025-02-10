@@ -152,7 +152,7 @@ private:
 	void updateBlendModes(bool compatibilityMode);
 	void updateCheckActions();
 	void forceRefreshMargin();
-	bool canMergeCurrent() const;
+	bool canMerge(bool canEdit, bool ownLayers) const;
 	bool canEditLayer(const QModelIndex &idx) const;
 
 	void

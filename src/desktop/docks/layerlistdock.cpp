@@ -556,7 +556,7 @@ void LayerList::updateLockedControls()
 			canEditCurrent && !haveMultipleSelected);
 		m_actions.del->setEnabled(canEditSelected);
 		m_actions.merge->setEnabled(
-			canEditCurrent && !haveMultipleSelected && canMergeCurrent());
+			canEditCurrent && canMerge(canEdit, ownLayers));
 		m_actions.properties->setEnabled(
 			canEditCurrent && !haveMultipleSelected);
 		m_actions.toggleVisibility->setEnabled(haveCurrent && haveAnySelected);
@@ -1253,21 +1253,43 @@ void LayerList::duplicateLayer()
 	emit layerCommands(DP_ARRAY_LENGTH(messages), messages);
 }
 
-bool LayerList::canMergeCurrent() const
+bool LayerList::canMerge(bool canEdit, bool ownLayers) const
 {
 	const QModelIndex index = currentSelection();
 	if(!index.isValid()) {
 		return false;
 	}
 
-	if(index.data(canvas::LayerListModel::IsGroupRole).toBool()) {
+	int targetId = index.data(canvas::LayerListModel::IdRole).toInt();
+	QSet<int> otherIds = m_selectedIds;
+	otherIds.remove(targetId);
+	if(otherIds.isEmpty()) {
+		if(index.data(canvas::LayerListModel::IsGroupRole).toBool()) {
+			return true;
+		} else {
+			const QModelIndex below = index.sibling(index.row() + 1, 0);
+			return below.isValid() &&
+				   !below.data(canvas::LayerListModel::IsGroupRole).toBool() &&
+				   !m_canvas->aclState()->isLayerLocked(
+					   below.data(canvas::LayerListModel::IdRole).toInt());
+		}
+	} else if(
+		!m_canvas || m_canvas->isCompatibilityMode() ||
+		!topLevelSelectedIds().contains(targetId)) {
+		return false;
+	} else if(canEdit) {
+		return true;
+	} else if(ownLayers) {
+		int contextId = m_canvas->localUserId();
+		for(int layerId : otherIds) {
+			if(layerId != targetId &&
+			   !canvas::LayerListModel::isOwner(layerId, contextId)) {
+				return false;
+			}
+		}
 		return true;
 	} else {
-		const QModelIndex below = index.sibling(index.row() + 1, 0);
-		return below.isValid() &&
-			   !below.data(canvas::LayerListModel::IsGroupRole).toBool() &&
-			   !m_canvas->aclState()->isLayerLocked(
-				   below.data(canvas::LayerListModel::IdRole).toInt());
+		return false;
 	}
 }
 
@@ -1333,14 +1355,21 @@ void LayerList::mergeSelected()
 
 	uint8_t contextId = m_canvas->localUserId();
 	int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
-	net::Message msg;
+	QSet<int> otherIds = m_selectedIds;
+	otherIds.remove(layerId);
+	net::MessageList msgs;
+	msgs.append(net::makeUndoPointMessage(contextId));
+
 	if(m_canvas->isCompatibilityMode()) {
+		if(!otherIds.isEmpty()) {
+			return;
+		}
 		QModelIndex below = index.sibling(index.row() + 1, 0);
 		if(!below.isValid()) {
 			return;
 		}
-		msg = net::makeLayerDeleteMessage(contextId, layerId, true);
-	} else {
+		msgs.append(net::makeLayerDeleteMessage(contextId, layerId, true));
+	} else if(otherIds.isEmpty()) {
 		int mergeId;
 		if(index.data(canvas::LayerListModel::IsGroupRole).toBool()) {
 			mergeId = layerId;
@@ -1351,11 +1380,34 @@ void LayerList::mergeSelected()
 			}
 			mergeId = below.data(canvas::LayerListModel::IdRole).toInt();
 		}
-		msg = net::makeLayerTreeDeleteMessage(contextId, layerId, mergeId);
+		msgs.append(
+			net::makeLayerTreeDeleteMessage(contextId, layerId, mergeId));
+	} else {
+		otherIds = topLevelSelectedIds();
+		if(!otherIds.remove(layerId)) {
+			return;
+		}
+
+		if(index.data(canvas::LayerListModel::IsGroupRole).toBool()) {
+			msgs.append(
+				net::makeLayerTreeDeleteMessage(contextId, layerId, layerId));
+		}
+
+		const QVector<canvas::LayerListItem> &items =
+			m_canvas->layerlist()->layerItems();
+		for(QVector<canvas::LayerListItem>::const_reverse_iterator
+				it = items.crbegin(),
+				end = items.crend();
+			it != end; ++it) {
+			int sourceId = it->id;
+			if(otherIds.contains(sourceId)) {
+				msgs.append(net::makeLayerTreeDeleteMessage(
+					contextId, sourceId, layerId));
+			}
+		}
 	}
 
-	net::Message messages[] = {net::makeUndoPointMessage(contextId), msg};
-	emit layerCommands(DP_ARRAY_LENGTH(messages), messages);
+	emit layerCommands(msgs.size(), msgs.constData());
 }
 
 void LayerList::setFillSourceToCurrent()
