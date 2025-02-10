@@ -247,6 +247,18 @@ bool AclState::canUseFeature(DP_Feature feature) const
 	return false;
 }
 
+bool AclState::canEditLayer(int layerId) const
+{
+	return !amLocked() && !isLayerLocked(layerId) &&
+		   (canUseFeature(DP_FEATURE_EDIT_LAYERS) ||
+			(canUseFeature(DP_FEATURE_OWN_LAYERS) && isOwnLayer(layerId)));
+}
+
+bool AclState::isOwnLayer(int layerId) const
+{
+	return isLayerOwner(layerId, localUserId());
+}
+
 uint8_t AclState::localUserId() const
 {
 	return d->localUser;

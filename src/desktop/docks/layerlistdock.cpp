@@ -533,14 +533,14 @@ void LayerList::updateLockedControls()
 	bool haveCurrent = m_currentId != 0;
 	bool canEditCurrent =
 		!locked && haveCurrent &&
-		(canEdit || (ownLayers && canvas::LayerListModel::isOwner(
+		(canEdit || (ownLayers && canvas::AclState::isLayerOwner(
 									  m_currentId, m_canvas->localUserId())));
 	int selectedCount = m_selectedIds.size();
 	bool haveAnySelected = selectedCount != 0;
 	bool haveMultipleSelected = selectedCount > 1;
-	bool canEditSelected =
-		!locked && haveAnySelected &&
-		(canEdit || (ownLayers && ownsAllTopLevelSelections()));
+	QSet<int> topLevelIds = topLevelSelectedIds();
+	bool canEditSelected = !locked && haveAnySelected &&
+						   (canEdit || (ownLayers && ownsAll(topLevelIds)));
 
 	m_lockButton->setEnabled(
 		canEditCurrent && haveAnySelected && canEditCurrent);
@@ -555,8 +555,7 @@ void LayerList::updateLockedControls()
 		m_actions.duplicate->setEnabled(
 			canEditCurrent && !haveMultipleSelected);
 		m_actions.del->setEnabled(canEditSelected);
-		m_actions.merge->setEnabled(
-			canEditCurrent && canMerge(canEdit, ownLayers));
+		m_actions.merge->setEnabled(canMerge(topLevelIds).isValid());
 		m_actions.properties->setEnabled(
 			canEditCurrent && !haveMultipleSelected);
 		m_actions.toggleVisibility->setEnabled(haveCurrent && haveAnySelected);
@@ -657,7 +656,7 @@ void LayerList::selectLayerIndex(QModelIndex index, bool scrollTo)
 QString LayerList::layerCreatorName(uint16_t layerId) const
 {
 	return m_canvas->userlist()->getUsername(
-		canvas::LayerListModel::extractOwnerId(layerId));
+		canvas::AclState::extractLayerOwnerId(layerId));
 }
 
 void LayerList::changeLayersLock(bool locked)
@@ -928,7 +927,7 @@ int LayerList::makeAddLayerOrGroupCommands(
 										end = layerIdsToGroup.end();
 					it != end; ++it) {
 					int layerId = *it;
-					if(!canvas::LayerListModel::isOwner(layerId, contextId)) {
+					if(!canvas::AclState::isLayerOwner(layerId, contextId)) {
 						layerIdsToGroup.erase(it);
 					}
 				}
@@ -1253,44 +1252,45 @@ void LayerList::duplicateLayer()
 	emit layerCommands(DP_ARRAY_LENGTH(messages), messages);
 }
 
-bool LayerList::canMerge(bool canEdit, bool ownLayers) const
+QModelIndex LayerList::canMerge(const QSet<int> &topLevelIds) const
 {
-	const QModelIndex index = currentSelection();
-	if(!index.isValid()) {
-		return false;
+	if(!m_canvas) {
+		return QModelIndex();
 	}
 
-	int targetId = index.data(canvas::LayerListModel::IdRole).toInt();
-	QSet<int> otherIds = m_selectedIds;
-	otherIds.remove(targetId);
-	if(otherIds.isEmpty()) {
-		if(index.data(canvas::LayerListModel::IsGroupRole).toBool()) {
-			return true;
-		} else {
-			const QModelIndex below = index.sibling(index.row() + 1, 0);
-			return below.isValid() &&
-				   !below.data(canvas::LayerListModel::IsGroupRole).toBool() &&
-				   !m_canvas->aclState()->isLayerLocked(
-					   below.data(canvas::LayerListModel::IdRole).toInt());
-		}
-	} else if(
-		!m_canvas || m_canvas->isCompatibilityMode() ||
-		!topLevelSelectedIds().contains(targetId)) {
-		return false;
-	} else if(canEdit) {
-		return true;
-	} else if(ownLayers) {
-		int contextId = m_canvas->localUserId();
-		for(int layerId : otherIds) {
-			if(layerId != targetId &&
-			   !canvas::LayerListModel::isOwner(layerId, contextId)) {
-				return false;
+	QModelIndex targetIndex = canvas::LayerListModel::toTopLevelSelection(
+		topLevelIds, currentSelection());
+	if(!targetIndex.isValid()) {
+		return QModelIndex();
+	}
+
+	int targetId = targetIndex.data(canvas::LayerListModel::IdRole).toInt();
+	canvas::AclState *aclState = m_canvas->aclState();
+	if(!aclState->canEditLayer(targetId)) {
+		return QModelIndex();
+	}
+
+	Q_ASSERT(!topLevelIds.isEmpty());
+	if(topLevelIds.size() == 1) {
+		if(!targetIndex.data(canvas::LayerListModel::IsGroupRole).toBool()) {
+			QModelIndex below = targetIndex.sibling(targetIndex.row() + 1, 0);
+			if(!below.isValid() ||
+			   !aclState->canEditLayer(
+				   below.data(canvas::LayerListModel::IdRole).toInt())) {
+				return QModelIndex();
 			}
 		}
-		return true;
+	} else if(m_canvas->isCompatibilityMode()) {
+		return QModelIndex();
 	} else {
-		return false;
+		for(int layerId : topLevelIds) {
+			if(layerId != targetId && !aclState->canEditLayer(layerId)) {
+				return QModelIndex();
+			}
+		}
 	}
+
+	return targetIndex;
 }
 
 bool LayerList::canEditLayer(const QModelIndex &idx) const
@@ -1348,49 +1348,41 @@ void LayerList::deleteSelected()
 
 void LayerList::mergeSelected()
 {
-	QModelIndex index = currentSelection();
-	if(!index.isValid()) {
+	if(!m_canvas) {
 		return;
 	}
 
-	uint8_t contextId = m_canvas->localUserId();
-	int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
-	QSet<int> otherIds = m_selectedIds;
-	otherIds.remove(layerId);
+	QSet<int> topLevelIds = topLevelSelectedIds();
+	QModelIndex targetIndex = canMerge(topLevelIds);
+	if(!targetIndex.isValid()) {
+		return;
+	}
+
 	net::MessageList msgs;
+	uint8_t contextId = m_canvas->localUserId();
 	msgs.append(net::makeUndoPointMessage(contextId));
 
+	int targetId = targetIndex.data(canvas::LayerListModel::IdRole).toInt();
 	if(m_canvas->isCompatibilityMode()) {
-		if(!otherIds.isEmpty()) {
-			return;
-		}
-		QModelIndex below = index.sibling(index.row() + 1, 0);
-		if(!below.isValid()) {
-			return;
-		}
-		msgs.append(net::makeLayerDeleteMessage(contextId, layerId, true));
-	} else if(otherIds.isEmpty()) {
-		int mergeId;
-		if(index.data(canvas::LayerListModel::IsGroupRole).toBool()) {
-			mergeId = layerId;
-		} else {
-			QModelIndex below = index.sibling(index.row() + 1, 0);
-			if(!below.isValid()) {
-				return;
-			}
-			mergeId = below.data(canvas::LayerListModel::IdRole).toInt();
-		}
-		msgs.append(
-			net::makeLayerTreeDeleteMessage(contextId, layerId, mergeId));
-	} else {
-		otherIds = topLevelSelectedIds();
-		if(!otherIds.remove(layerId)) {
-			return;
-		}
-
-		if(index.data(canvas::LayerListModel::IsGroupRole).toBool()) {
+		msgs.append(net::makeLayerDeleteMessage(contextId, targetId, true));
+	} else if(topLevelIds.size() == 1) {
+		if(targetIndex.data(canvas::LayerListModel::IsGroupRole).toBool()) {
 			msgs.append(
-				net::makeLayerTreeDeleteMessage(contextId, layerId, layerId));
+				net::makeLayerTreeDeleteMessage(contextId, targetId, targetId));
+		} else {
+			QModelIndex below = targetIndex.sibling(targetIndex.row() + 1, 0);
+			int belowId = below.data(canvas::LayerListModel::IdRole).toInt();
+			if(below.data(canvas::LayerListModel::IsGroupRole).toBool()) {
+				msgs.append(net::makeLayerTreeDeleteMessage(
+					contextId, belowId, belowId));
+			}
+			msgs.append(
+				net::makeLayerTreeDeleteMessage(contextId, targetId, belowId));
+		}
+	} else {
+		if(targetIndex.data(canvas::LayerListModel::IsGroupRole).toBool()) {
+			msgs.append(
+				net::makeLayerTreeDeleteMessage(contextId, targetId, targetId));
 		}
 
 		const QVector<canvas::LayerListItem> &items =
@@ -1400,9 +1392,9 @@ void LayerList::mergeSelected()
 				end = items.crend();
 			it != end; ++it) {
 			int sourceId = it->id;
-			if(otherIds.contains(sourceId)) {
+			if(sourceId != targetId && topLevelIds.contains(sourceId)) {
 				msgs.append(net::makeLayerTreeDeleteMessage(
-					contextId, sourceId, layerId));
+					contextId, sourceId, targetId));
 			}
 		}
 	}
@@ -1512,8 +1504,7 @@ dialogs::LayerProperties *LayerList::makeLayerPropertiesDialog(
 	bool isOwnLayer;
 	if(index.isValid()) {
 		int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
-		isOwnLayer =
-			canvas::LayerListModel::isOwner(layerId, m_canvas->localUserId());
+		isOwnLayer = m_canvas->aclState()->isOwnLayer(layerId);
 		connect(
 			dlg, &dialogs::LayerProperties::visibilityChanged, this,
 			&LayerList::setLayerVisibility);
@@ -1690,11 +1681,15 @@ QModelIndex LayerList::currentSelection() const
 
 bool LayerList::ownsAllTopLevelSelections() const
 {
+	return ownsAll(topLevelSelectedIds());
+}
+
+bool LayerList::ownsAll(const QSet<int> &layerIds) const
+{
 	if(m_canvas) {
-		int contextId = m_canvas->localUserId();
-		for(const QModelIndex &idx : topLevelSelections()) {
-			int ownerId = idx.data(canvas::LayerListModel::OwnerIdRole).toInt();
-			if(ownerId != contextId) {
+		canvas::AclState *aclState = m_canvas->aclState();
+		for(int layerId : layerIds) {
+			if(!aclState->isOwnLayer(layerId)) {
 				return false;
 			}
 		}
@@ -1725,17 +1720,20 @@ QSet<int> LayerList::topLevelSelectedIds() const
 void LayerList::gatherTopLevel(
 	const std::function<void(const QModelIndex &)> &fn) const
 {
-	QModelIndexList candidates =
-		m_view->selectionModel()->selection().indexes();
-	if(!candidates.isEmpty()) {
-		QSet<int> layerIds;
-		layerIds.reserve(candidates.size());
-		for(const QModelIndex &idx : candidates) {
-			layerIds.insert(idx.data(canvas::LayerListModel::IdRole).toInt());
-		}
-		for(const QModelIndex &idx : candidates) {
-			if(canvas::LayerListModel::isTopLevelSelection(layerIds, idx)) {
-				fn(idx);
+	QItemSelectionModel *selectionModel = m_view->selectionModel();
+	if(selectionModel) {
+		QModelIndexList candidates = selectionModel->selection().indexes();
+		if(!candidates.isEmpty()) {
+			QSet<int> layerIds;
+			layerIds.reserve(candidates.size());
+			for(const QModelIndex &idx : candidates) {
+				layerIds.insert(
+					idx.data(canvas::LayerListModel::IdRole).toInt());
+			}
+			for(const QModelIndex &idx : candidates) {
+				if(canvas::LayerListModel::isTopLevelSelection(layerIds, idx)) {
+					fn(idx);
+				}
 			}
 		}
 	}

@@ -63,6 +63,12 @@ public:
 	//! Is this feature available for us?
 	bool canUseFeature(DP_Feature feature) const;
 
+	//! Is the canvas, layer and we not locked and can we edit it?
+	bool canEditLayer(int layerId) const;
+
+	//! Do we own the given layer?
+	bool isOwnLayer(int layerId) const;
+
 	//! Get the ID of the local user
 	uint8_t localUserId() const;
 
@@ -73,6 +79,16 @@ public:
 	Layer layerAcl(uint16_t layerId) const;
 
 	bool isResetLocked() const;
+
+	static int extractLayerOwnerId(int layerId)
+	{
+		return (layerId >> 8) & 0xff;
+	}
+
+	static bool isLayerOwner(int layerId, int contextId)
+	{
+		return extractLayerOwnerId(layerId) == contextId;
+	}
 
 public slots:
 	void aclsChanged(const drawdance::AclState &acls, int aclChangeFlags, bool reset);

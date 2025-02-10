@@ -139,7 +139,7 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 	case IsSketchModeRole:
 		return item.sketchOpacity > 0.0f;
 	case OwnerIdRole:
-		return extractOwnerId(item.id);
+		return AclState::extractLayerOwnerId(item.id);
 	}
 
 	return QVariant();
@@ -292,12 +292,14 @@ QModelIndex LayerListModel::findHighestLayer(const QSet<int> &layerIds) const
 QSet<int> LayerListModel::topLevelSelectedIds(const QSet<int> &layerIds) const
 {
 	QSet<int> topLevelIds;
-	int count = m_items.size();
-	for(int i = 0; i < count; ++i) {
-		if(layerIds.contains(m_items[i].id) &&
-		   isTopLevelSelection(
-			   layerIds, createIndex(m_items[i].relIndex, 0, i))) {
-			topLevelIds.insert(m_items[i].id);
+	if(!layerIds.isEmpty()) {
+		int count = m_items.size();
+		for(int i = 0; i < count; ++i) {
+			if(layerIds.contains(m_items[i].id) &&
+			   isTopLevelSelection(
+				   layerIds, createIndex(m_items[i].relIndex, 0, i))) {
+				topLevelIds.insert(m_items[i].id);
+			}
 		}
 	}
 	return topLevelIds;
@@ -306,14 +308,30 @@ QSet<int> LayerListModel::topLevelSelectedIds(const QSet<int> &layerIds) const
 bool LayerListModel::isTopLevelSelection(
 	const QSet<int> &layerIds, const QModelIndex &idx)
 {
-	for(QModelIndex parent = idx.parent(); parent.isValid();
-		parent = parent.parent()) {
-		if(layerIds.contains(
-			   parent.data(canvas::LayerListModel::IdRole).toInt())) {
-			return false;
+	if(!layerIds.isEmpty()) {
+		for(QModelIndex parent = idx.parent(); parent.isValid();
+			parent = parent.parent()) {
+			if(layerIds.contains(
+				   parent.data(canvas::LayerListModel::IdRole).toInt())) {
+				return false;
+			}
 		}
 	}
 	return true;
+}
+
+QModelIndex LayerListModel::toTopLevelSelection(
+	const QSet<int> &layerIds, const QModelIndex &idx)
+{
+	if(!layerIds.isEmpty()) {
+		for(QModelIndex cur = idx; cur.isValid(); cur = cur.parent()) {
+			if(layerIds.contains(
+				   cur.data(canvas::LayerListModel::IdRole).toInt())) {
+				return cur;
+			}
+		}
+	}
+	return QModelIndex();
 }
 
 int LayerListModel::rowCount(const QModelIndex &parent) const

@@ -152,7 +152,7 @@ private:
 	void updateBlendModes(bool compatibilityMode);
 	void updateCheckActions();
 	void forceRefreshMargin();
-	bool canMerge(bool canEdit, bool ownLayers) const;
+	QModelIndex canMerge(const QSet<int> &topLevelIds) const;
 	bool canEditLayer(const QModelIndex &idx) const;
 
 	void
@@ -199,6 +199,7 @@ private:
 	bool isGroupSelected() const;
 	QModelIndex currentSelection() const;
 	bool ownsAllTopLevelSelections() const;
+	bool ownsAll(const QSet<int> &layerIds) const;
 	QModelIndexList topLevelSelections() const;
 	QSet<int> topLevelSelectedIds() const;
 	void

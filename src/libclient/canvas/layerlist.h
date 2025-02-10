@@ -196,6 +196,9 @@ public:
 	static bool
 	isTopLevelSelection(const QSet<int> &layerIds, const QModelIndex &idx);
 
+	static QModelIndex
+	toTopLevelSelection(const QSet<int> &layerIds, const QModelIndex &idx);
+
 	bool isLayerVisibleInFrame(int layerId) const
 	{
 		return m_frameLayers.contains(layerId);
@@ -217,13 +220,6 @@ public:
 	QSet<int> checkedLayers() const;
 
 	bool isLayerCheckStateToggleable(const QModelIndex &idx) const;
-
-	static int extractOwnerId(int layerId) { return (layerId >> 8) & 0xff; }
-
-	static bool isOwner(int layerId, int contextId)
-	{
-		return extractOwnerId(layerId) == contextId;
-	}
 
 public slots:
 	void setLayers(
