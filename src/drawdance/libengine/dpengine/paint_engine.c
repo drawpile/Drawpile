@@ -1201,15 +1201,17 @@ static int should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
             return PUSH_MESSAGE;
         }
         else if (type == DP_MSG_LASER_TRAIL) {
-            if (DP_message_context_id(msg)
-                != DP_acl_state_local_user_id(acls)) {
+            if (DP_message_context_id(msg) != DP_acl_state_local_user_id(acls)
+                && !pe->reset_locked && !pe->catching_up
+                && !DP_atomic_get(&pe->just_reset)) {
                 handle_laser_trail(pe, msg);
             }
             return NO_PUSH;
         }
         else if (type == DP_MSG_MOVE_POINTER) {
-            if (DP_message_context_id(msg)
-                != DP_acl_state_local_user_id(acls)) {
+            if (DP_message_context_id(msg) != DP_acl_state_local_user_id(acls)
+                && !pe->reset_locked && !pe->catching_up
+                && !DP_atomic_get(&pe->just_reset)) {
                 handle_move_pointer(pe, msg);
             }
             return NO_PUSH;
