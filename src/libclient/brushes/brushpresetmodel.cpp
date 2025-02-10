@@ -1486,8 +1486,6 @@ BrushImportResult BrushPresetTagModel::importBrushPack(const QString &file)
 	}
 
 	beginResetModel();
-	d->presetModel()->beginResetModel();
-
 	QVector<ImportBrushGroup> groups = readOrderConf(result, file, zr);
 	for(const ImportBrushGroup &group : groups) {
 		if(!group.brushes.isEmpty()) {
@@ -1497,7 +1495,6 @@ BrushImportResult BrushPresetTagModel::importBrushPack(const QString &file)
 
 	d->refreshTagCache();
 	d->refreshPresetCache();
-	d->presetModel()->endResetModel();
 	endResetModel();
 	return result;
 }
