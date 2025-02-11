@@ -1018,14 +1018,18 @@ endif()
 include(AddResources)
 add_resources(drawpile
 	FILES
+		blueapatite.colors
 		hotdogstand.colors
 		indigo.colors
 		kritabright.colors
 		kritadark.colors
 		kritadarker.colors
 		nightmode.colors
+		oceandeep.colors
 		pooltable.colors
+		rosequartz.colors
 		rust.colors
+		watermelon.colors
 		initialbrushpresets.db
 	DIRS gamutmasks palettes sounds theme
 	BUILD_TIME_DESTINATION "${build_time_assets_dir}"
