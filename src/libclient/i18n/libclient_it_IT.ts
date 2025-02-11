@@ -229,22 +229,22 @@
     <message>
         <location line="+2"/>
         <source>Free Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Tela a rotazione libera</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambia tonalità di colore</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambia la saturazione del colore</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambia valore colore</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1280,22 +1280,22 @@ Seleziona invece un livello normale.</translation>
     <message>
         <location line="+4"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>Preparazione per la reimpostazione della sessione da parte di %1! Attendi, la sessione dovrebbe essere di nuovo disponibile a breve…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 sta comprimendo la tela! Attendi, la sessione dovrebbe essere di nuovo disponibile a breve…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 sta sostituendo la tela! Attendi, la sessione dovrebbe essere di nuovo disponibile a breve…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 sta riportando la tela a uno stato precedente! Attendi, la sessione dovrebbe essere di nuovo disponibile a breve…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1377,7 +1377,7 @@ Seleziona invece un livello normale.</translation>
     <message>
         <location line="+64"/>
         <source>Failed to retrieve server info</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile recuperare le informazioni del server</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -1555,12 +1555,12 @@ Seleziona invece un livello normale.</translation>
     <message>
         <location line="+3"/>
         <source>Invalid host name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome host non valido.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Qui non ti è consentito ospitare sessioni pubbliche, sono consentite solo sessioni personali. Puoi passare da pubblico a personale nella scheda Sessione.</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -1784,7 +1784,7 @@ Seleziona invece un livello normale.</translation>
     <message>
         <location filename="../utils/hostpresetmodel.cpp" line="+57"/>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Predefiniti</translation>
     </message>
 </context>
 <context>
