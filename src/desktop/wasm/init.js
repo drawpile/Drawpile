@@ -650,7 +650,7 @@ import { UAParser } from "ua-parser-js";
     if (os.indexOf("Android") !== -1 && browser.indexOf("Firefox") !== -1) {
       return tag("p", [
         tag("strong", ["❌ Incompatible browser:"]),
-        " Firefox on Android is not able to run Drawpile. " +
+        " Firefox on Android does not support pressure-sensitive pens. " +
           "Consider using a different browser or ",
         tag(
           "a",
