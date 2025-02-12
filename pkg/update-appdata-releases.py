@@ -138,8 +138,8 @@ def update_release_artifacts(appdata, include_legacy_platform_ids):
         ('x86_64-darwin-gnu', 'macos', f'Drawpile-{version}-x86_64.dmg'),
         ('aarch64-darwin-gnu', '', f'Drawpile-{version}-arm64.dmg'),
         ('x86_64-linux-gnu', '', f'Drawpile-{version}-x86_64.AppImage'),
-        ('aarch64-linux-android', '', f'Drawpile-{version}-arm64-v8a.apk'),
-        ('arm-linux-android', '', f'Drawpile-{version}-armeabi-v7a.apk'),
+        ('aarch64-linux-android', '', f'Drawpile-{version}-30-34-arm64-v8a.apk'),
+        ('arm-linux-android', '', f'Drawpile-{version}-23-23-armeabi-v7a.apk'),
         ('source', '', f'Drawpile-{version}.tar.gz'),
     )
 
