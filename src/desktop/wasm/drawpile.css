@@ -6,6 +6,25 @@ body {
   touch-action: pan-y;
 }
 
+dt:before {
+  content: "";
+  display: block;
+}
+
+dt {
+  font-weight: bold;
+  display: inline;
+}
+
+dd:before {
+  content: " ";
+}
+
+dd {
+  display: inline;
+  margin-inline-start: 0;
+}
+
 .fullscreen {
   height: 100%;
   margin: 0;

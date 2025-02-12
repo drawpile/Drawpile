@@ -7,6 +7,7 @@ import { UAParser } from "ua-parser-js";
   const cachebusterSuffix = cachebuster
     ? `?cachebuster=${encodeURIComponent(cachebuster)}`
     : "";
+  let uaParserInstance = null;
 
   function isString(arg) {
     return typeof arg === "string";
@@ -63,8 +64,7 @@ import { UAParser } from "ua-parser-js";
 
   function isStandalone(params) {
     return (
-      (params.get("host") || "") === "" ||
-      isTrueParam(params.get("standalone"))
+      (params.get("host") || "") === "" || isTrueParam(params.get("standalone"))
     );
   }
 
@@ -380,13 +380,20 @@ import { UAParser } from "ua-parser-js";
   }
   // SPDX-SnippetEnd
 
+  function getUa() {
+    if (!uaParserInstance) {
+      uaParserInstance = new UAParser();
+    }
+    return uaParserInstance;
+  }
+
   // Apple pencils have ludicrously low pressure, meaning that with a normal,
   // linear pressure curve, lines will come out almost invisibly thin unless the
   // user presses down with enough force to pierce their pen through the screen.
   // We can't actually determine if the user has such a pen, so we guess.
   window.drawpileHasLowPressurePen = function () {
     try {
-      const ua = new UAParser();
+      const ua = getUa();
       const device = ua.getDevice?.model || "";
       const ios =
         device.indexOf("iPad") !== -1 || device.indexOf("iPhone") !== -1;
@@ -640,7 +647,7 @@ import { UAParser } from "ua-parser-js";
   }
 
   function checkBrowserSupport() {
-    const ua = new UAParser();
+    const ua = getUa();
     const os = ua.getOS()?.name || "";
     const browser = ua.getBrowser()?.name || "";
     if (os.indexOf("Linux") !== -1 && browser.indexOf("Firefox") !== -1) {
@@ -705,6 +712,32 @@ import { UAParser } from "ua-parser-js";
     return null;
   }
 
+  function debugUserAgent() {
+    const ua = getUa();
+    return tag("dl", [
+      tag("dt", ["Browser name:"]),
+      tag("dd", [JSON.stringify(ua.getBrowser()?.name || null)]),
+      tag("dt", ["Browser version:"]),
+      tag("dd", [JSON.stringify(ua.getBrowser()?.version || null)]),
+      tag("dt", ["CPU architecture:"]),
+      tag("dd", [JSON.stringify(ua.getCPU()?.architecture || null)]),
+      tag("dt", ["Device type:"]),
+      tag("dd", [JSON.stringify(ua.getDevice()?.type || null)]),
+      tag("dt", ["Device vendor:"]),
+      tag("dd", [JSON.stringify(ua.getDevice()?.vendor || null)]),
+      tag("dt", ["Device model:"]),
+      tag("dd", [JSON.stringify(ua.getDevice()?.model || null)]),
+      tag("dt", ["Engine name:"]),
+      tag("dd", [JSON.stringify(ua.getEngine()?.name || null)]),
+      tag("dt", ["Engine version:"]),
+      tag("dd", [JSON.stringify(ua.getEngine()?.version || null)]),
+      tag("dt", ["OS name:"]),
+      tag("dd", [JSON.stringify(ua.getOS()?.name || null)]),
+      tag("dt", ["OS version:"]),
+      tag("dd", [JSON.stringify(ua.getOS()?.version || null)]),
+    ]);
+  }
+
   async function showStartup() {
     const startup = document.querySelector("#startup");
 
@@ -719,6 +752,17 @@ import { UAParser } from "ua-parser-js";
       console.error(e);
     }
 
+    let haveDebugMessage = false;
+    const params = getQueryParams();
+    if (isTrueParam(params.get("uadebug"))) {
+      haveDebugMessage = true;
+      try {
+        startup.appendChild(debugUserAgent());
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
     const updateLoading = tag("p", { "aria-busy": "true" }, [
       "Checking for updates…",
     ]);
@@ -728,7 +772,6 @@ import { UAParser } from "ua-parser-js";
     let upToDate = false;
     let haveNotice = false;
     const commit = document.documentElement.dataset.commit || "-missing-";
-    const params = getQueryParams();
     const standalone = isStandalone(params);
     try {
       if (isTrueParam(params.get("blockupdatecheck"))) {
@@ -832,7 +875,12 @@ import { UAParser } from "ua-parser-js";
         start();
       };
 
-      if (!browserTrouble && upToDate && (standalone || !haveNotice)) {
+      if (
+        !browserTrouble &&
+        !haveDebugMessage &&
+        upToDate &&
+        (standalone || !haveNotice)
+      ) {
         doStart();
       } else {
         const button = tag(
