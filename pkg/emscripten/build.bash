@@ -34,7 +34,7 @@ croak_with_usage() {
     carp "        to configure the cmake build of Drawpile"
     carp
     carp "The following environment variables can be set:"
-    carp "    BUILD_TYPE (release, debug) [$BUILD_TYPE]"
+    carp "    BUILD_TYPE (release, relwithdebinfo, debug) [$BUILD_TYPE]"
     carp
     exit 2
 }
@@ -211,6 +211,10 @@ fi
 case $BUILD_TYPE in
     'debug')
         cmake_build_type=Debug
+        cmake_interprocedural_optimization=OFF
+        ;;
+    'relwithdebinfo')
+        cmake_build_type=RelWithDebInfo
         cmake_interprocedural_optimization=OFF
         ;;
     'release')
