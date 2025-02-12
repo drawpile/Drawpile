@@ -120,6 +120,48 @@
           <li>Fix: Don't show laser trails while catching up. Thanks MorrowShore for reporting.</li>
         </ul>
       </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.5/Drawpile-2.2.2-beta.5-x86_64.msi</location>
+          <checksum type="sha256">0201430ee1bd6caabb8452ba18b5c7c92121a5388cbd10fe2ab06e8e0ad842e0</checksum>
+          <size type="download">23158784</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.5/Drawpile-2.2.2-beta.5-x86.msi</location>
+          <checksum type="sha256">21b028bfcd7dce21678968f4e5b49b8ae934dc5f409174f90df71052bbecc5e2</checksum>
+          <size type="download">19791872</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.5/Drawpile-2.2.2-beta.5-x86_64.dmg</location>
+          <checksum type="sha256">6fd87af95954a5e6eb978b9dbc950f639a5c08165e716aa27fc97ef1fdaabf2d</checksum>
+          <size type="download">30312510</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.5/Drawpile-2.2.2-beta.5-arm64.dmg</location>
+          <checksum type="sha256">6a5bb42fb946801621a3dfc3cbe74fe6e7d33782f1ea2e04c977ec6a00bd33ba</checksum>
+          <size type="download">27909885</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.5/Drawpile-2.2.2-beta.5-x86_64.AppImage</location>
+          <checksum type="sha256">c1ce0acb31aa9b8e0b5a2213a1f6fd536e6f187ca65efaaea423a35fa1a531c3</checksum>
+          <size type="download">52016320</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.5/Drawpile-2.2.2-beta.5-30-34-arm64-v8a.apk</location>
+          <checksum type="sha256">ccefed6043a0795a4904da42a071b87aa6088a7fd8e4c77841fe46e081e819d0</checksum>
+          <size type="download">23217543</size>
+        </artifact>
+        <artifact type="binary" platform="arm-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.5/Drawpile-2.2.2-beta.5-23-23-armeabi-v7a.apk</location>
+          <checksum type="sha256">251cb1641ca79f20ba5517998a4f6397efb4114876d465221486de8c5c4356d3</checksum>
+          <size type="download">19449407</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.2-beta.5.tar.gz</location>
+          <checksum type="sha256">303a5f912901281332adaca8d134b8468f9e856161df1958887ebf04b07ef5ab</checksum>
+          <size type="download">6548545</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.2.2-beta.4" type="development" date="2024-11-06">
       <url>https://drawpile.net/news/release-2.2.2-beta.4/</url>
