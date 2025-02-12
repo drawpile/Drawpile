@@ -1,0 +1,1 @@
+Fixes aspect ratios and windows going off-screen for some devices, a crash when putting the palm on the device, incorrectly detecting fingerpainting over pens. Warns when you're about to obliterate the current document. Adds reference dock, color circle dock, more themes, sketch layer mode and more. See the website for the full changelog.
