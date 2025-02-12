@@ -1,4 +1,6 @@
 Unreleased Version 2.2.2-pre
+
+2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.
  * Fix: Make temporary tool switches by holding a key down work again. Thanks 3rd_EFNO and bunnie for reporting.
  * Fix: Disregard hidden layers when layer picking in frame view.
