@@ -13,7 +13,7 @@ class AnnotationItem final : public BaseItem {
 public:
 	enum { Type = UserType + 10 };
 
-	explicit AnnotationItem(int id, QGraphicsItem *parent = nullptr);
+	AnnotationItem(int id, qreal zoom, QGraphicsItem *parent = nullptr);
 
 	//! Get the ID number of this annotation
 	int id() const { return m_id; }
@@ -48,6 +48,8 @@ public:
 	//! Highlight this item
 	void setHighlight(bool h);
 
+	void setZoom(qreal zoom);
+
 	//! Enable border
 	void setShowBorder(bool show);
 
@@ -64,12 +66,14 @@ protected:
 		QWidget *) override;
 
 private:
-	static constexpr int HANDLE = 10;
+	static constexpr int HANDLE_SIZE = 10;
 
+	static int calculateHandleSize(qreal zoom);
 	void paintHiddenBorder(QPainter *painter);
 
 	int m_id;
 	int m_valign = 0;
+	int m_handleSize;
 	QRectF m_rect;
 	QColor m_color = Qt::transparent;
 	QTextDocument m_doc;

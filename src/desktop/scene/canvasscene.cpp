@@ -153,6 +153,12 @@ void CanvasScene::setZoom(qreal zoom)
 {
 	if(zoom != m_zoom) {
 		m_zoom = zoom;
+		for(QGraphicsItem *item : m_group->childItems()) {
+			AnnotationItem *ai = qgraphicsitem_cast<AnnotationItem *>(item);
+			if(ai) {
+				ai->setZoom(zoom);
+			}
+		}
 		if(m_pathPreview) {
 			m_pathPreview->setZoom(zoom);
 		}
@@ -456,7 +462,7 @@ void CanvasScene::annotationsChanged(const drawdance::AnnotationList &al)
 		QHash<int, AnnotationItem *>::iterator it = annotationItems.find(id);
 		AnnotationItem *ai;
 		if(it == annotationItems.end()) {
-			ai = new AnnotationItem(id, m_group);
+			ai = new AnnotationItem(id, m_zoom, m_group);
 			ai->setShowBorder(m_showAnnotationBorders);
 			ai->setVisible(m_showAnnotations);
 		} else {
@@ -480,7 +486,7 @@ void CanvasScene::previewAnnotation(int id, const QRect &shape)
 {
 	AnnotationItem *ai = getAnnotationItem(id);
 	if(!ai) {
-		ai = new AnnotationItem(id, m_group);
+		ai = new AnnotationItem(id, m_zoom, m_group);
 		ai->setShowBorder(m_showAnnotationBorders);
 		ai->setVisible(m_showAnnotations);
 	}

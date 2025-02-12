@@ -8,9 +8,10 @@
 
 namespace drawingboard {
 
-AnnotationItem::AnnotationItem(int id, QGraphicsItem *parent)
+AnnotationItem::AnnotationItem(int id, qreal zoom, QGraphicsItem *parent)
 	: BaseItem(parent)
 	, m_id(id)
+	, m_handleSize(calculateHandleSize(zoom))
 {
 }
 
@@ -57,6 +58,15 @@ void AnnotationItem::setHighlight(bool hl)
 	}
 }
 
+void AnnotationItem::setZoom(qreal zoom)
+{
+	int handleSize = calculateHandleSize(zoom);
+	if(handleSize != m_handleSize) {
+		refreshGeometry();
+		m_handleSize = handleSize;
+	}
+}
+
 /**
  * Border is normally drawn when the annotation is highlighted or has no text.
  * The border is forced on when the annotation edit tool is selected.
@@ -71,7 +81,8 @@ void AnnotationItem::setShowBorder(bool show)
 
 QRectF AnnotationItem::boundingRect() const
 {
-	return m_rect.adjusted(-HANDLE / 2, -HANDLE / 2, HANDLE / 2, HANDLE / 2);
+	qreal h = m_handleSize / 2.0;
+	return m_rect.adjusted(-h, -h, h, h);
 }
 
 void AnnotationItem::paint(
@@ -94,7 +105,7 @@ void AnnotationItem::paint(
 
 		QPen pen(border);
 		pen.setCosmetic(true);
-		pen.setWidth(HANDLE);
+		pen.setWidth(HANDLE_SIZE);
 		painter->setPen(pen);
 		painter->drawPoint(m_rect.topLeft());
 		painter->drawPoint(m_rect.topLeft() + QPointF(m_rect.width() / 2, 0));
@@ -125,6 +136,11 @@ void AnnotationItem::paint(
 	m_doc.drawContents(painter, QRectF(-offset, m_rect.size()));
 
 	painter->restore();
+}
+
+int AnnotationItem::calculateHandleSize(qreal zoom)
+{
+	return zoom > 0.0 ? qRound(HANDLE_SIZE / zoom) : 0;
 }
 
 void AnnotationItem::paintHiddenBorder(QPainter *painter)
