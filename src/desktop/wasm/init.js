@@ -436,6 +436,15 @@ import { UAParser } from "ua-parser-js";
       config.arguments = ["--single-session", "--join", getUrlArgument(params)];
     }
 
+    const renderer = params.get("renderer");
+    if (renderer) {
+      if (config.arguments) {
+        config.arguments.push("--renderer", renderer);
+      } else {
+        config.arguments = ["--renderer", renderer];
+      }
+    }
+
     config.qt.onLoaded = () => {
       showScreen();
       registerEventHandlers(
