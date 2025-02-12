@@ -22,6 +22,105 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.2.2-beta.5" type="development" date="2025-02-12">
+      <url>https://drawpile.net/news/release-2.2.2-beta.5/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Feature: Color circle dock with gamut masks, available through View &gt; Docks &gt; Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.</li>
+          <li>Fix: Make temporary tool switches by holding a key down work again. Thanks 3rd_EFNO and bunnie for reporting.</li>
+          <li>Fix: Disregard hidden layers when layer picking in frame view.</li>
+          <li>Feature: Add a search bar to the key frame properties dialog.</li>
+          <li>Fix: Reset locale to "C" after Qt messes it up on startup. Thanks Meru for reporting.</li>
+          <li>Fix: Don't use bilinear interpolation in transforms unnecessarily.</li>
+          <li>Feature: Add canvas shortcuts for changing color hue, saturation/chroma and value/lightness/luminosity. Thanks Dann DecCairns for suggesting.</li>
+          <li>Feature: Make size adjustment canvas shortcut depend on the speed of the drag. Thanks MorrowShore for suggesting.</li>
+          <li>Fix: Remove pointless permissions on Android that Qt includes by default but aren't actually used.</li>
+          <li>Fix: Don't default Android to fingerpaint when a pen is present.</li>
+          <li>Fix: Work around a crash on Android that sometimes occurs when putting your palm on the screen, which somehow leads to touch events with zero contact points. Thanks Mav for reporting.</li>
+          <li>Fix: Uncap aspect ratio on older Android versions. Thanks Molderche for reporting.</li>
+          <li>Fix: Work around modifier keys not registering when using a tablet on Wayland. Thanks Absolute Goober for reporting.</li>
+          <li>Server Fix: Don't pointlessly reload server certificates if they didn't change. Thanks Liz for reporting.</li>
+          <li>Server Fix: Work around too many authenticated users in a session, which could cause a crash. Thanks Liz for reporting.</li>
+          <li>Fix: Don't crash when filling with feathering and a canvas-filling selection. Thanks Meru for reporting.</li>
+          <li>Fix: Don't carry over HUD button presses to dock UI in small screen mode. Thanks Meru for reporting.</li>
+          <li>Feature: Make list action buttons in settings dialog clearer, adding an edit button for canvas shortcuts. Thanks Maffi for suggesting.</li>
+          <li>Fix: Work around broken transparency when copying images between canvases on Wayland. Thanks Absolute Goober for reporting.</li>
+          <li>Fix: Properly ignore system tablet events when using KisTablet drivers on Windows. Thanks Doc for reporting.</li>
+          <li>Feature: Warn when an action will close a relevant window on Android and in the browser. Thanks 3rd_EFNO for suggesting.</li>
+          <li>Fix: When enabling a dock and it gets put into a tab, that tab now gets activated.</li>
+          <li>Feature: Show icons on dock tabs by default, rather than text that gets squashed. In desktop mode, this can be toggled via View &gt; Docks &gt; Show Icons on Tabs.</li>
+          <li>Feature: Replace "hold shift to arrange" with View &gt; Docks &gt; Arrange Docks, which doesn't require a keyboard. Thanks 3rd_EFNO for suggesting.</li>
+          <li>Feature: Allow configuring temporary tool switch hold time. Thanks 3rd_EFNO and pachuco for suggesting.</li>
+          <li>Fix: Properly pass tilt and barrel rotation values to MyPaint brushes. Thanks MorrowShore for reporting.</li>
+          <li>Feature: Tilt support on Android. Thanks MorrowShore and Verdrusk for suggesting.</li>
+          <li>Server Feature: Allow two-way chat in web admin, letting admins talk to sessions without having to intrude on them. Thanks Bluestrings for suggesting.</li>
+          <li>Server Fix: Don't transmit ban lists and logs to non-operators. Thanks Ryngtail for reporting.</li>
+          <li>Fix: Always show color dialogs in HSV color space, since they don't behave correctly in other spaces. Thanks Meru for reporting.</li>
+          <li>Fix: Apply pending fills when manipulating layers. Thanks MorrowShore for reporting.</li>
+          <li>Server Feature: Show better messages when a session reset happens, specifying if it's compressing, reverting or replacing the canvas. Thanks MorrowShore for suggesting.</li>
+          <li>Feature: Reference image dock. Allows opening images in a separate dock and picking colors from them. Thanks 3rd_EFNO and leandro2222 for suggesting parts of this.</li>
+          <li>Fix: Make clicking and dragging fill and magic wand tools work at all zoom levels and drag speeds.</li>
+          <li>Feature: Make the canvas resize dialog fit to a floating transform, if present. This allows you to paste an image larger than the canvas and then resize to fit. Thanks Meru for suggesting.</li>
+          <li>Server Fix: Don't filter out feature access messages when loading session templates, so that permissions can actually get set properly from them.</li>
+          <li>Feature: Add --pass/-p option to dprectool, to allow configuring which messages are passed through when converting. The default is to pass all messages through, rather than just messages relevant for the client.</li>
+          <li>Server Feature: Treat invalid password and opword hashes in session templates as plain passwords. This still issues a warning, since those kinds of passwords should really be specified by prefixing them with "plain;".</li>
+          <li>Server Fix: Make template sessions not appear with a blank title and settings when first joining them.</li>
+          <li>Server Fix: Properly include web socket allowance in template session listings.</li>
+          <li>Server Feature: Allow authOnly option in session templates.</li>
+          <li>Server Fix: Allow joining a non-instantiated templated session via a direct link to its alias, rather than telling the user that the session isn't up.</li>
+          <li>Server Fix: Properly start recordings for sessions instantiated from a template.</li>
+          <li>Fix: Try to retain dock arrangements after resizing the window, the Windows on-screen keyboard squashing the application or rotating a device/monitor. They should no longer remain squished to a smaller size after resizing the window back. Thanks vipperz for reporting.</li>
+          <li>Fix: Work around Android devices reporting way too huge motions when panning with two fingers. Thanks quandaledingle44 for reporting.</li>
+          <li>Feature: Right-clicking outside of a transform now applies it. Thanks MorrowShore for suggesting.</li>
+          <li>Feature: Allow dragging selections to quickly move their contents without having to double-click to deselect and dragging the edge to move the selection itself without its contents. Thanks Blozzom, Lungy, MorrowShore, SadColor and Zheida for suggesting and testing.</li>
+          <li>Fix: Don't mark the canvas as saved if it was only exported.</li>
+          <li>Fix: Round colors to 8 bits in fill and magic wand tools so that they don't get snagged on color differences too small to see on screen. Thanks vipperz for reporting.</li>
+          <li>Feature: Add -I/--interpolation option to the drawpile-cmd and drawpile-timelapse commands, to allow using better scaling than bilinear if appropriate. Thanks Saphiros for causing this.</li>
+          <li>Fix: Don't add blank filenames to recent files list. Thanks Aries Raenidaez for reporting.</li>
+          <li>Fix: Don't reset zoom and rotation when lifting and replacing one of two fingers in a pinch or twist operation. Thanks Partack for reporting.</li>
+          <li>Fix: Stop tap-and-hold color picking when another finger is added.</li>
+          <li>Fix: Use Normal blending in Layer View and Group View modes. Thanks Meru for reporting.</li>
+          <li>Feature: Show different cursors for selection replace, unite, exclude and intersect operations. Thanks MorrowShore for suggesting.</li>
+          <li>Fix: Take canvas rotation, mirror and flip into account with regards to pen tilt inputs.</li>
+          <li>Fix: Adjust minimum resolution for desktop-screen mode to be a bit larger, to avoid getting a cut-off desktop UI on some phones.</li>
+          <li>Fix: Don't cut off the bottom of dialogs on some Android phones. Thanks Anonymous, Bluestrings and Molderche for reporting.</li>
+          <li>Fix: Work around Gaomon tablets reporting pen buttons as mouse inputs. They were getting ignored because of an earlier Huion bug workaround.</li>
+          <li>Fix: Replace sound playback implementation on Windows to avoid mysterious crashes on some systems. Thanks Anonymous for reporting.</li>
+          <li>Fix: Properly put an undo point before layer property changes. Thanks Maffi for reporting.</li>
+          <li>Feature: Raise default undo limit to 60 instead of 30.</li>
+          <li>Feature: Expand the Host tab in the start dialog, allowing setting up sessions in advance and separating personal from public sessions better.</li>
+          <li>Feature: Remember background color as well when using per-slot colors.</li>
+          <li>Fix: Scroll to the brush in question when creating or overwriting one.</li>
+          <li>Feature: Allow editing brush names, descriptions and thumbnails when using detached slots.</li>
+          <li>Fix: Make next/previous brush and tag shortcuts work when using detached slots.</li>
+          <li>Server Feature: Inform clients of session password changes so that they can update their invite links.</li>
+          <li>Fix: Work around the web browser receiving messages while the application is handling messages already. This could cause nonsensical errors like "incompatible server" or "invalid state" or outright crashes during login.</li>
+          <li>Server Feature: Allow filtering server logs via the web admin API. Thanks Bluestrings for suggesting.</li>
+          <li>Fix: Properly save background color of annotations in ORA files.</li>
+          <li>Feature: Allow toggling a "sketch mode" on layers, which will change the opacity and/or tint the layer locally. The exact look of this can be configured in the layer properties. Thanks abrasivetroop and leandro2222 for suggesting.</li>
+          <li>Feature: Use the sketch mode tinting for onion skins as well, since it gives better results when there's colored areas involved.</li>
+          <li>Fix: Properly update rotation when choosing an angle from the drop-down in the status bar when the angle is fractionally off the chosen angle. Thanks annoy for reporting.</li>
+          <li>Server Feature: Allow locking admin API sections to prevent changes on them, optionally with a password that needs to be entered to unlock them.</li>
+          <li>Server Feature: Only treat WebSocket connections from browsers (based on the presence of an Origin header) as requiring extra permissions, to allow desktop and mobile clients to connect via WebSockets without being subjected to extra restrictions.</li>
+          <li>Server Feature: Allow hosting passworded sessions via the browser if password-dependent sessions are enabled, rather than refusing hosting altogether.</li>
+          <li>Server Feature: Allow restricting connections to the correct host name as passed with --local-host. Enabling this requires an updated client, since older ones don't transmit the hostname.</li>
+          <li>Fix: When setting the canvas background color, the dialog now properly previews colors with alpha instead of showing them as opaque.</li>
+          <li>Feature: Add File &gt; Export Again to let you export to the same file without showing a file picker. Thanks gerroon for suggesting.</li>
+          <li>Fix: Properly save flipbook crop for when cropping multiple times without resetting in-between. Thanks BornIncompetence for reporting.</li>
+          <li>Feature: Allow selecting and then moving, grouping, deleting etc. of multiple layers at once. To select multiple layers, hold Shift or Ctrl while making a selection or use the boxes on the right. Thanks MorrowShore for suggesting parts of this.</li>
+          <li>Feature: Allow dragging across the layer icons to hide the visibility of multiple layers in a row, rather than having to click each one. Thanks MorrowShore for suggesting.</li>
+          <li>Feature: The fill and magic wand tools now always at least fill the initial pixel if gap closing or shrinking would up with a blank result. Thanks MorrowShore for suggesting.</li>
+          <li>Fix: Properly apply transforms if the only thing you change is the opacity or blend mode. Thanks Blozzom for reporting.</li>
+          <li>Feature: Add Blue Apatite, Indigo, Ocean Deep, Pool Table, Rose Quartz, Rust and Watermelon color schemes. Thanks Weenifer for contributing.</li>
+          <li>Fix: Use the Fusion style by default on macOS because the System style has crashing bugs when using it with Sidecar. Thanks Axocrat for reporting.</li>
+          <li>Fix: Make the software renderer not create errant dark lines when moving the cursor when fractional scaling is involved. Thanks lambda20xx for reporting.</li>
+          <li>Fix: Remove nonsensical license page from Windows installer, Drawpile isn't under the kind of license that requires the user to accept it.</li>
+          <li>Fix: Properly open ORA, PSD and brush pack ZIP files when dragging them over the window. Thanks MorrowShore for reporting.</li>
+          <li>Fix: Don't show laser trails while catching up. Thanks MorrowShore for reporting.</li>
+        </ul>
+      </description>
+    </release>
     <release version="2.2.2-beta.4" type="development" date="2024-11-06">
       <url>https://drawpile.net/news/release-2.2.2-beta.4/</url>
       <description>
