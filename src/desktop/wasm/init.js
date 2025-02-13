@@ -679,7 +679,51 @@ import { UAParser } from "ua-parser-js";
     }
   }
 
+  function getBustedSafari(ua) {
+    const browser = ua.getBrowser();
+    const browserName = browser?.name || "";
+    if (/^safari$/i.test(browserName)) {
+      const browserVersion = browser?.version || "";
+      const match = /^([0-9]+)\./.exec(browserVersion);
+      if (match && Number.parseInt(match[1], 10) >= 18) {
+        return `${browserName} ${browserVersion}`;
+      }
+    }
+    return null;
+  }
+
+  function getIDevice(ua) {
+    const device = ua.getDevice()?.model || "";
+    return device.indexOf("iPad") !== -1
+      ? "iPad"
+      : device.indexOf("iPhone") !== -1
+        ? "iPhone"
+        : null;
+  }
+
   function checkBrowserSupport() {
+    const ua = getUa();
+    if (getBustedSafari(ua)) {
+      const iDevice = getIDevice(ua);
+      return tag("p", [
+        tag("strong", ["❌ Broken browser:"]),
+        " your web browser probably can't run Drawpile. Apple needs to fix ",
+        tag(
+          "a",
+          {
+            href: "https://bugs.webkit.org/show_bug.cgi?id=284752",
+            target: "_blank",
+          },
+          "this critical bug introduced in Safari version 18",
+        ),
+        ". You can try to continue anyway, but the application will likey hang. ",
+        iDevice
+          ? "You can't switch to a different browser either, all browsers on " +
+            `${iDevice} are Safari under the hood.`
+          : "Try using a different browser instead.",
+      ]);
+    }
+
     const { isInApp, appName } = InAppSpy();
     if (isInApp) {
       const prefix = appName ? `${appName}'s` : "an";
@@ -691,7 +735,6 @@ import { UAParser } from "ua-parser-js";
       ]);
     }
 
-    const ua = getUa();
     const os = ua.getOS()?.name || "";
     const browser = ua.getBrowser()?.name || "";
     if (os.indexOf("Linux") !== -1 && browser.indexOf("Firefox") !== -1) {
@@ -734,13 +777,7 @@ import { UAParser } from "ua-parser-js";
         ".",
       ]);
     }
-    const device = ua.getDevice()?.model || "";
-    const iDevice =
-      device.indexOf("iPad") !== -1
-        ? "iPad"
-        : device.indexOf("iPhone") !== -1
-          ? "iPhone"
-          : null;
+    const iDevice = getIDevice(ua);
     if (iDevice) {
       const engine = ua.getEngine()?.name || "";
       if (browser.indexOf("Chrome") !== -1 && engine.indexOf("WebKit") !== -1) {
@@ -750,6 +787,22 @@ import { UAParser } from "ua-parser-js";
             "just the system browser (Safari) in a different shell, which " +
             "causes problems with controls ending up off-screen. Consider " +
             `using the ${iDevice} system browser (Safari) directly instead.`,
+        ]);
+      } else {
+        return tag("p", [
+          tag("strong", ["⚠️ Avoid updating to iOS/iPadOS 18:"]),
+          " Apple introduced ",
+          tag(
+            "a",
+            {
+              href: "https://bugs.webkit.org/show_bug.cgi?id=284752",
+              target: "_blank",
+            },
+            "a critical bug in Safari version 18",
+          ),
+          " that prevents Drawpile from working if you update to it. ",
+          "To continue using Drawpile, hold off on the update until Apple ",
+          "fixes their bug.",
         ]);
       }
     }
@@ -789,18 +842,13 @@ import { UAParser } from "ua-parser-js";
       prefix = "relwithdebinfo/";
     } else if (wasmtype !== "keep") {
       const ua = getUa();
-      const browser = ua.getBrowser();
-      const browserName = browser?.name || "";
-      if (/^safari$/i.test(browserName)) {
-        const browserVersion = browser?.version || "";
-        const match = /^([0-9]+)\./.exec(browserVersion);
-        if (match && Number.parseInt(match[1], 10) >= 18) {
-          initialConsoleMessages.push(
-            `Browser ${browserName} ${browserVersion} is likely affected by ` +
-              " WebKit bug 284752, deteriorating to less-optimized version",
-          );
-          prefix = "relwithdebinfo/";
-        }
+      const bustedSafari = getBustedSafari(ua);
+      if (bustedSafari) {
+        initialConsoleMessages.push(
+          `Browser ${bustedSafari} is likely affected by WebKit bug 284752, ` +
+            "deteriorating to less-optimized version",
+        );
+        prefix = "relwithdebinfo/";
       }
     }
 
