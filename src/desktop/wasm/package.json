@@ -2,9 +2,9 @@
   "name": "drawpile-wasm",
   "license": "GPL-3.0-or-later",
   "devDependencies": {
-    "esbuild": "^0.20.2"
+    "esbuild": "^0.25.0"
   },
   "dependencies": {
-    "ua-parser-js": "^1.0.37"
+    "ua-parser-js": "^1.0.40"
   }
 }
