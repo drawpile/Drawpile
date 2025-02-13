@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+import InAppSpy from "inapp-spy";
 import { UAParser } from "ua-parser-js";
 
 (function () {
@@ -647,6 +648,17 @@ import { UAParser } from "ua-parser-js";
   }
 
   function checkBrowserSupport() {
+    const { isInApp, appName } = InAppSpy();
+    if (isInApp) {
+      const prefix = appName ? `${appName}'s` : "an";
+      return tag("p", [
+        tag("strong", ["⚠️ In-app browser:"]),
+        ` it looks like you opened Drawpile in ${prefix} in-app browser. ` +
+          "That usually doesn't work properly, please open this page in a " +
+          "real web browser instead.",
+      ]);
+    }
+
     const ua = getUa();
     const os = ua.getOS()?.name || "";
     const browser = ua.getBrowser()?.name || "";
