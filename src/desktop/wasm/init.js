@@ -9,6 +9,14 @@ import { UAParser } from "ua-parser-js";
     ? `?cachebuster=${encodeURIComponent(cachebuster)}`
     : "";
   let uaParserInstance = null;
+  let initialConsoleMessages = [];
+  const pathMappings = {};
+
+  function locateFile(path, scriptDirectory) {
+    return (
+      (scriptDirectory || "") + (pathMappings[path] || path) + cachebusterSuffix
+    );
+  }
 
   function isString(arg) {
     return typeof arg === "string";
@@ -469,9 +477,7 @@ import { UAParser } from "ua-parser-js";
     let assetBundlePath = "assets.bundle";
     if (cachebuster) {
       assetBundlePath += cachebusterSuffix;
-      config.locateFile = (path, scriptDirectory) => {
-        return (scriptDirectory || "") + path + cachebusterSuffix;
-      };
+      config.locateFile = locateFile;
     }
 
     if (isTrueParam(params.get("console"))) {
@@ -510,10 +516,18 @@ import { UAParser } from "ua-parser-js";
         ]);
         return true;
       });
-      appendToConsole("console-log", [
-        "Arguments:",
-        JSON.stringify(config.arguments),
-      ]);
+      if (config.arguments) {
+        appendToConsole("console-log", [
+          "Arguments:",
+          JSON.stringify(config.arguments),
+        ]);
+      } else {
+        appendToConsole("console-log", ["No arguments."]);
+      }
+      for (const message of initialConsoleMessages) {
+        appendToConsole("console-log", [message]);
+      }
+      initialConsoleMessages = undefined;
     }
 
     const response = await fetch(assetBundlePath);
@@ -572,7 +586,7 @@ import { UAParser } from "ua-parser-js";
     await window.qtLoad(config);
   }
 
-  async function start() {
+  async function startLoading() {
     try {
       const assetSize = getSizeFromDocument("assetsize");
       const wasmSize = getSizeFromDocument("wasmsize");
@@ -587,6 +601,24 @@ import { UAParser } from "ua-parser-js";
       showErrorStatus(`Failed to start Drawpile: ${e}`);
       throw e;
     }
+  }
+
+  function start() {
+    showBusyStatus("Setting up…");
+
+    let loadStarted = false;
+    const onReady = () => {
+      if (!loadStarted) {
+        loadStarted = true;
+        startLoading();
+      }
+    };
+
+    const script = document.createElement("script");
+    script.src = locateFile("drawpile.js");
+    script.onreadystatechange = onReady;
+    script.onload = onReady;
+    document.body.appendChild(script);
   }
 
   function checkSharedArrayBuffer() {
@@ -750,6 +782,41 @@ import { UAParser } from "ua-parser-js";
     ]);
   }
 
+  function makePathMappings(wasmtype) {
+    let prefix = null;
+    if (wasmtype === "relwithdebinfo") {
+      initialConsoleMessages.push("Using less-optimized version as requested");
+      prefix = "relwithdebinfo/";
+    } else if (wasmtype !== "keep") {
+      const ua = getUa();
+      const browser = ua.getBrowser();
+      const browserName = browser?.name || "";
+      if (/^safari$/i.test(browserName)) {
+        const browserVersion = browser?.version || "";
+        const match = /^([0-9]+)\./.exec(browserVersion);
+        if (match && Number.parseInt(match[1], 10) >= 18) {
+          initialConsoleMessages.push(
+            `Browser ${browserName} ${browserVersion} is likely affected by ` +
+              " WebKit bug 284752, deteriorating to less-optimized version",
+          );
+          prefix = "relwithdebinfo/";
+        }
+      }
+    }
+
+    if (prefix) {
+      for (const path of [
+        "drawpile.js",
+        "drawpile.wasm",
+        "drawpile.worker.js",
+      ]) {
+        const mappedPath = prefix + path;
+        initialConsoleMessages.push(`Mapping path ${path} to ${mappedPath}`);
+        pathMappings[path] = mappedPath;
+      }
+    }
+  }
+
   async function showStartup() {
     const startup = document.querySelector("#startup");
 
@@ -773,6 +840,12 @@ import { UAParser } from "ua-parser-js";
       } catch (e) {
         console.error(e);
       }
+    }
+
+    try {
+      makePathMappings(params.get("wasmtype"));
+    } catch (e) {
+      console.error(e);
     }
 
     const updateLoading = tag("p", { "aria-busy": "true" }, [
