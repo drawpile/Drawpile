@@ -1,0 +1,28 @@
+Description: Qt incorrectly uses a literal int for some callback functions that
+are supposed to return EM_BOOL. Emscripten changed their typedef for EM_BOOL
+from int to bool, causing them to break. This patch fixes those return types so
+they work either way.
+
+--- a/src/plugins/platforms/wasm/qwasmcompositor.cpp
++++ b/src/plugins/platforms/wasm/qwasmcompositor.cpp
+@@ -62,7 +62,7 @@
+     if (m_requestAnimationFrameId != -1)
+         return;
+
+-    static auto frame = [](double frameTime, void *context) -> int {
++    static auto frame = [](double frameTime, void *context) -> EM_BOOL {
+         Q_UNUSED(frameTime);
+
+         QWasmCompositor *compositor = reinterpret_cast<QWasmCompositor *>(context);
+
+--- a/src/plugins/platforms/wasm/qwasmintegration.cpp
++++ b/src/plugins/platforms/wasm/qwasmintegration.cpp
+@@ -120,7 +120,7 @@
+
+     // install browser window resize handler
+     emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, nullptr, EM_TRUE,
+-                                   [](int, const EmscriptenUiEvent *, void *) -> int {
++                                   [](int, const EmscriptenUiEvent *, void *) -> EM_BOOL {
+                                        // This resize event is called when the HTML window is
+                                        // resized. Depending on the page layout the elements might
+                                        // also have been resized, so we update the Qt screen sizes

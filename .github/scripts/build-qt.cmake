@@ -291,6 +291,8 @@ if(BASE)
 				patches/macostabs-qt6.diff
 				patches/qtbug-127468.diff
 				patches/qt6androidmacros_build_tools_revision.diff
+				patches/findeglemscripten.diff
+				patches/embool_qtbase.diff
 			6.8.2
 				patches/qtbug-113394.diff
 				patches/cancel_touch_on_pen.diff
@@ -374,6 +376,9 @@ if(MULTIMEDIA)
 		ALL_PLATFORMS
 			${MODULE_GENERATOR}
 				ALL ${FLAGS_SEPARATOR} ${MULTIMEDIA_FLAGS}
+		PATCHES
+			6.7.2
+				patches/embool_qtmultimedia.diff
 	)
 endif()
 

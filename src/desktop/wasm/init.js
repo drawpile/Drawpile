@@ -355,6 +355,11 @@ import { UAParser } from "ua-parser-js";
 
     const originalInstantiateStreaming = WebAssembly.instantiateStreaming;
     WebAssembly.instantiateStreaming = (response, ...args) => {
+      if(typeof(response.then) === "function") {
+        console.log("response is promise");
+        return response.then((res) => WebAssembly.instantiateStreaming(res, ...args));
+      }
+      try {
       const reportingResponse = new Response(
         new ReadableStream(
           {
@@ -385,6 +390,10 @@ import { UAParser } from "ua-parser-js";
       }
 
       return originalInstantiateStreaming(reportingResponse, ...args);
+      } catch (e) {
+        console.error("InstantiateStreaming failed:", e);
+        console.error(e.stack);
+      }
     };
   }
   // SPDX-SnippetEnd
@@ -707,20 +716,7 @@ import { UAParser } from "ua-parser-js";
       const iDevice = getIDevice(ua);
       return tag("p", [
         tag("strong", ["❌ Broken browser:"]),
-        " your web browser probably can't run Drawpile. Apple needs to fix ",
-        tag(
-          "a",
-          {
-            href: "https://bugs.webkit.org/show_bug.cgi?id=284752",
-            target: "_blank",
-          },
-          "this critical bug introduced in Safari version 18",
-        ),
-        ". You can try to continue anyway, but the application will likey hang. ",
-        iDevice
-          ? "You can't switch to a different browser either, all browsers on " +
-            `${iDevice} are Safari under the hood.`
-          : "Try using a different browser instead.",
+        " your web browser is why this test build exists. Keep going.",
       ]);
     }
 
@@ -835,34 +831,8 @@ import { UAParser } from "ua-parser-js";
     ]);
   }
 
-  function makePathMappings(wasmtype) {
-    let prefix = null;
-    if (wasmtype === "relwithdebinfo") {
-      initialConsoleMessages.push("Using less-optimized version as requested");
-      prefix = "relwithdebinfo/";
-    } else if (wasmtype !== "keep") {
-      const ua = getUa();
-      const bustedSafari = getBustedSafari(ua);
-      if (bustedSafari) {
-        initialConsoleMessages.push(
-          `Browser ${bustedSafari} is likely affected by WebKit bug 284752, ` +
-            "deteriorating to less-optimized version",
-        );
-        prefix = "relwithdebinfo/";
-      }
-    }
-
-    if (prefix) {
-      for (const path of [
-        "drawpile.js",
-        "drawpile.wasm",
-        "drawpile.worker.js",
-      ]) {
-        const mappedPath = prefix + path;
-        initialConsoleMessages.push(`Mapping path ${path} to ${mappedPath}`);
-        pathMappings[path] = mappedPath;
-      }
-    }
+  function makePathMappings(_wasmtype) {
+    initialConsoleMessages.push("Test build, not mapping any paths");
   }
 
   async function showStartup() {
@@ -907,6 +877,8 @@ import { UAParser } from "ua-parser-js";
     const commit = document.documentElement.dataset.commit || "-missing-";
     const standalone = isStandalone(params);
     try {
+      throw new Error("This is a test build. Don't use it unless asked to.");
+
       if (isTrueParam(params.get("blockupdatecheck"))) {
         throw Error("Update check blocked");
       }
@@ -977,28 +949,7 @@ import { UAParser } from "ua-parser-js";
       console.error(e);
       updateDiv.appendChild(
         tag("p", [
-          tag("strong", ["⚠️ Warning:"]),
-          " Could not determine if installation is up to date or not. " +
-            "It may be outdated at version ",
-          tag("code", [commit]),
-          ".",
-        ]),
-      );
-      updateDiv.appendChild(
-        tag("p", [
-          "Try refreshing the page. If that doesn't change anything, " +
-            "consult the server owner or check out ",
-          tag(
-            "a",
-            { href: "https://drawpile.net/help/" },
-            "the help page on drawpile.net",
-          ),
-          " on how to get in contact with someone who can check what's going on.",
-        ]),
-      );
-      updateDiv.appendChild(
-        tag("p", [
-          "You can continue regardless, but things may not work properly.",
+          `${e.message}`,
         ]),
       );
     } finally {

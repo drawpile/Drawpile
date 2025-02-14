@@ -953,7 +953,6 @@ elseif(EMSCRIPTEN)
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.js"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.svg"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.wasm"
-			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.worker.js"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/favicon.ico"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/init.js"
@@ -967,9 +966,14 @@ elseif(EMSCRIPTEN)
 		-sEXPORTED_FUNCTIONS=_main,_drawpileMain,_drawpileInitScheduleSyncPersistentFileSystem,_drawpileFinishPersistentFileSystemSync,_drawpileHandleBrowserAuth,_drawpileHandleMouseLeave,_drawpileShouldPreventUnload,stringToNewUTF8,UTF8ToString
 		--js-library "${CMAKE_CURRENT_SOURCE_DIR}/wasm/lib.js"
 		-lidbfs.js
+		-sASSERTIONS=1
+		-sASYNCIFY_IGNORE_INDIRECT
+		-sASYNCIFY_ADVISE
+		-sASYNCIFY_ADD=QCoreApplication::processEvents*,QEventLoop::exec*,QThread::exec*,drawpileMain,drawpileInitScheduleSyncPersistentFileSystem,browser::*,*::Promise*,QPlatformIntegrationPlugin::create*,QPlatformIntegrationFactory::create*,QCoreApplicationPrivate::init*,QFontDatabasePrivate::ensureFontDatabase*,*syncJournal*,dynCall_*,*PersistentFileSystem*,QSqlQuery::exec*
+		-sASYNCIFY_REMOVE=QWidget::QWidget*,QWidget::~QWidget*,QWidget::event*,QWidget::setLayout*,QWidget::setParent*,QWidget::setVisible*
 	)
 	if(CMAKE_BUILD_TYPE MATCHES "^[rR][eE][lL]")
-		target_link_options(drawpile PUBLIC -O3)
+		target_link_options(drawpile PUBLIC -O0)
 		if(CMAKE_BUILD_TYPE MATCHES "[dD][eE][bB]")
 			target_link_options(drawpile PUBLIC -gseparate-dwarf)
 		endif()
