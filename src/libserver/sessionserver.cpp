@@ -349,7 +349,7 @@ void SessionServer::onSessionAttributeChanged(Session *session)
 
 	bool delSession = false;
 
-	if(session->userCount() == 0 &&
+	if(session->isEffectivelyEmpty() &&
 	   session->state() != Session::State::Shutdown) {
 		session->log(Log()
 						 .about(Log::Level::Info, Log::Topic::Status)
@@ -388,7 +388,7 @@ void SessionServer::cleanupSessions()
 	for(Session *s : m_sessions) {
 		qint64 lastEventTime = s->lastEventTime();
 		if(!s->history()->hasFlag(SessionHistory::Persistent) &&
-		   s->userCount() == 0 && lastEventTime > emptySessionLingerTime) {
+		   s->isEffectivelyEmpty() && lastEventTime > emptySessionLingerTime) {
 			s->log(Log()
 					   .about(Log::Level::Info, Log::Topic::Status)
 					   .message(QStringLiteral(

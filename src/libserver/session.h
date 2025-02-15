@@ -188,6 +188,9 @@ public:
 	//! Get the number of clients that were actively drawing in the given time.
 	int activeDrawingUserCount(qint64 ms) const;
 
+	//! A session is empty if it contains no non-ghost users.
+	bool isEffectivelyEmpty() const;
+
 	//! Get the of clients currently in this session
 	const QVector<Client *> &clients() const { return m_clients; }
 

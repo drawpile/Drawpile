@@ -547,6 +547,16 @@ int Session::activeDrawingUserCount(qint64 ms) const
 	return count;
 }
 
+bool Session::isEffectivelyEmpty() const
+{
+	for(const Client *c : m_clients) {
+		if(!c->isGhost()) {
+			return false;
+		}
+	}
+	return true;
+}
+
 void Session::setRecordingFile(const QString &filename)
 {
 	m_recordingFile = filename;
