@@ -190,13 +190,13 @@ QWidget *Shortcuts::initActionShortcuts(
 	QPushButton *restoreDefaults = new QPushButton(tr("Restore defaults…"));
 	restoreDefaults->setAutoDefault(false);
 	connect(restoreDefaults, &QPushButton::clicked, this, [=, &settings] {
-		bool confirm = execConfirm(
-			tr("Restore Shortcut Defaults"),
-			tr("Really restore all shortcuts to their default values?"), this);
-		if(confirm) {
+		QMessageBox *box = utils::showQuestion(
+			this, tr("Restore Shortcut Defaults"),
+			tr("Really restore all shortcuts to their default values?"));
+		connect(box, &QMessageBox::accepted, this, [this, &settings] {
 			settings.setShortcuts({});
 			m_actionShortcutsModel->loadShortcuts({});
-		}
+		});
 	});
 	actions->addWidget(restoreDefaults);
 	layout->addLayout(actions);
@@ -274,15 +274,20 @@ static void execCanvasShortcutDialog(
 	CanvasShortcutsModel *model, QWidget *parent, const QString &title,
 	std::function<QModelIndex(CanvasShortcuts::Shortcut)> &&callback)
 {
-	dialogs::CanvasShortcutsDialog editor(shortcut, *model, parent);
-	editor.setWindowTitle(title);
-	editor.setWindowModality(Qt::WindowModal);
-	if(editor.exec() == QDialog::Accepted) {
-		auto row = std::invoke(callback, editor.shortcut());
-		if(row.isValid()) {
-			view->selectRow(mapToView(view, row).row());
-		}
-	}
+	dialogs::CanvasShortcutsDialog *editor =
+		new dialogs::CanvasShortcutsDialog(shortcut, *model, parent);
+	editor->setAttribute(Qt::WA_DeleteOnClose);
+	editor->setWindowTitle(title);
+	editor->setWindowModality(Qt::WindowModal);
+	QObject::connect(
+		editor, &dialogs::CanvasShortcutsDialog::accepted, view,
+		[editor, view, callback] {
+			auto row = std::invoke(callback, editor->shortcut());
+			if(row.isValid()) {
+				view->selectRow(mapToView(view, row).row());
+			}
+		});
+	editor->show();
 }
 
 QWidget *Shortcuts::initCanvasShortcuts(desktop::settings::Settings &settings)
@@ -352,14 +357,14 @@ QWidget *Shortcuts::initCanvasShortcuts(desktop::settings::Settings &settings)
 
 	QPushButton *restoreDefaults = new QPushButton(tr("Restore defaults…"));
 	restoreDefaults->setAutoDefault(false);
-	connect(restoreDefaults, &QPushButton::clicked, this, [=] {
-		bool confirm = execConfirm(
-			tr("Restore Canvas Shortcut Defaults"),
-			tr("Really restore all canvas shortcuts to their default values?"),
-			this);
-		if(confirm) {
+	connect(restoreDefaults, &QPushButton::clicked, this, [this] {
+		QMessageBox *box = utils::showQuestion(
+			this, tr("Restore Canvas Shortcut Defaults"),
+			tr("Really restore all canvas shortcuts to their default values?"));
+		connect(box, &QMessageBox::accepted, this, [this] {
 			m_canvasShortcutsModel->restoreDefaults();
-		}
+			m_actionShortcutsModel->loadShortcuts({});
+		});
 	});
 	actions->addWidget(restoreDefaults);
 	layout->addLayout(actions);

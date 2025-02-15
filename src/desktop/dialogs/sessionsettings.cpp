@@ -12,7 +12,6 @@
 #include "ui_sessionsettings.h"
 #include <QDebug>
 #include <QFile>
-#include <QInputDialog>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -361,7 +360,7 @@ void SessionSettingsDialog::bansImported(int total, int imported)
 					 "", total - imported)
 					  .arg(message);
 	}
-	QMessageBox::information(this, tr("Session Ban Import"), message);
+	utils::showInformation(this, tr("Session Ban Import"), message);
 }
 
 void SessionSettingsDialog::bansExported(const QByteArray &bans)
@@ -388,7 +387,7 @@ void SessionSettingsDialog::bansImpExError(const QString &message)
 	m_awaitingImportExportResponse = false;
 	updateBanImportExportState();
 
-	QMessageBox::critical(this, tr("Session Ban Error"), message);
+	utils::showCritical(this, tr("Session Ban Error"), message);
 }
 
 void SessionSettingsDialog::onCanvasChanged(canvas::CanvasModel *canvas)
@@ -783,14 +782,12 @@ void SessionSettingsDialog::changePassword()
 	else
 		prompt = tr("Set a password for the session.");
 
-	bool ok;
-	QString newpass = QInputDialog::getText(
-		this, tr("Session Password"), prompt, QLineEdit::Password, QString(),
-		&ok);
-	if(ok) {
-		emit joinPasswordChanged(newpass);
-		changeSessionConf("password", newpass, true);
-	}
+	utils::getInputPassword(
+		this, tr("Session Password"), prompt, QString(),
+		[this](const QString &newpass) {
+			emit joinPasswordChanged(newpass);
+			changeSessionConf("password", newpass, true);
+		});
 }
 
 void SessionSettingsDialog::changeOpword()
@@ -801,12 +798,11 @@ void SessionSettingsDialog::changeOpword()
 	else
 		prompt = tr("Set a password for gaining operator status.");
 
-	bool ok;
-	QString newpass = QInputDialog::getText(
-		this, tr("Operator Password"), prompt, QLineEdit::Password, QString(),
-		&ok);
-	if(ok)
-		changeSessionConf("opword", newpass, true);
+	utils::getInputPassword(
+		this, tr("Operator Password"), prompt, QString(),
+		[this](const QString &newpass) {
+			changeSessionConf("opword", newpass, true);
+		});
 }
 
 void SessionSettingsDialog::updateBanImportExportState()
@@ -892,34 +888,38 @@ void SessionSettingsDialog::exportBans()
 		return;
 	}
 
-	bool plain;
 	if(m_canModExportBans) {
 		if(m_canCryptImpExBans) {
-			QMessageBox messageBox(
-				QMessageBox::Question, tr("Choose Ban Export Type"),
+			QMessageBox *messageBox = utils::makeMessage(
+				this, tr("Choose Ban Export Type"),
 				tr("Since you are a moderator, you can export bans encrypted "
 				   "or plain. Encrypted bans can only be imported on this "
 				   "server. Which format do you want to export?"),
-				QMessageBox::Cancel, this);
+				QString(), QMessageBox::Question, QMessageBox::Cancel);
 			QPushButton *encryptedButton =
-				messageBox.addButton(tr("Encrypted"), QMessageBox::ActionRole);
+				messageBox->addButton(tr("Encrypted"), QMessageBox::ActionRole);
 			QPushButton *plainButton =
-				messageBox.addButton(tr("Plain"), QMessageBox::ActionRole);
-			messageBox.exec();
-			if(messageBox.clickedButton() == encryptedButton) {
-				plain = false;
-			} else if(messageBox.clickedButton() == plainButton) {
-				plain = true;
-			} else {
-				return;
-			}
+				messageBox->addButton(tr("Plain"), QMessageBox::ActionRole);
+			connect(
+				messageBox, &QMessageBox::finished, messageBox,
+				[this, messageBox, encryptedButton, plainButton] {
+					if(messageBox->clickedButton() == encryptedButton) {
+						startBanExport(false);
+					} else if(messageBox->clickedButton() == plainButton) {
+						startBanExport(true);
+					}
+				});
+			messageBox->show();
 		} else {
-			plain = true;
+			startBanExport(true);
 		}
 	} else {
-		plain = false;
+		startBanExport(false);
 	}
+}
 
+void SessionSettingsDialog::startBanExport(bool plain)
+{
 	m_awaitingImportExportResponse = true;
 	updateBanImportExportState();
 	emit requestBanExport(plain);

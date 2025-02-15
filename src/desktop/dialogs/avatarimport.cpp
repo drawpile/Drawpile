@@ -2,6 +2,7 @@
 
 #include "desktop/dialogs/avatarimport.h"
 #include "desktop/filewrangler.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/utils/avatarlistmodel.h"
 
 #include "ui_avatarimport.h"
@@ -54,7 +55,7 @@ void AvatarImport::importAvatar(
 													   QImage &img,
 													   const QString &error) {
 		if(img.isNull()) {
-			QMessageBox::warning(
+			utils::showWarning(
 				parentWindow, tr("Import Avatar"),
 				//: %1 is an error message.
 				tr("Couldn't read image: %1.").arg(error));
@@ -62,7 +63,7 @@ void AvatarImport::importAvatar(
 		}
 
 		if(img.width() < Size || img.height() < Size) {
-			QMessageBox::warning(
+			utils::showWarning(
 				parentWindow, tr("Import Avatar"), tr("Picture is too small"));
 			return;
 		}

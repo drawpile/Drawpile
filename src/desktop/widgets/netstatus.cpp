@@ -160,8 +160,10 @@ void NetStatus::connectingToHost(const QString &address, int port)
 	m_discoverIp->setEnabled(m_isLocalHost);
 	m_discoverIp->setVisible(m_isLocalHost);
 
+#ifndef __EMSCRIPTEN__
 	if(!m_isLocalHost && WhatIsMyIp::isCGNAddress(address))
 		showCGNAlert();
+#endif
 
 	// reset statistics
 	m_recvbytes = 0;
@@ -358,8 +360,10 @@ void NetStatus::externalIpDiscovered(const QString &ip)
 		m_sessionUrl.setHost(ip);
 		updateLabel();
 
+#ifndef __EMSCRIPTEN__
 		if(WhatIsMyIp::isCGNAddress(ip))
 			showCGNAlert();
+#endif
 
 		emit remoteAddressDiscovered();
 	}
@@ -434,6 +438,7 @@ void NetStatus::showNetStats()
 	m_netstats->show();
 }
 
+#ifndef __EMSCRIPTEN__
 void NetStatus::showCGNAlert()
 {
 	auto &settings = dpApp().settings();
@@ -452,5 +457,6 @@ void NetStatus::showCGNAlert()
 		settings.setIgnoreCarrierGradeNat(box.checkBox()->isChecked());
 	}
 }
+#endif
 
 }

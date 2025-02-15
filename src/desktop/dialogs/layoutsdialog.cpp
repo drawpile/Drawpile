@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/layoutsdialog.h"
 #include "desktop/main.h"
+#include "desktop/utils/widgetutils.h"
 #include "ui_layoutsdialog.h"
 #include <QByteArray>
-#include <QInputDialog>
 #include <QTimer>
 #include <QVector>
 
@@ -253,20 +253,18 @@ LayoutsDialog::~LayoutsDialog()
 void LayoutsDialog::save()
 {
 	Layout *layout = d->transientLayout();
-	QString title;
-	if(promptTitle(layout, title)) {
+	promptTitle(layout, [this, layout](const QString &title) {
 		layout->title = title;
 		layout->transient = false;
 		d->updateList(layout);
 		updateButtons();
-	}
+	});
 }
 
 void LayoutsDialog::rename()
 {
 	Layout *layout = d->selectedLayout();
-	QString title;
-	if(promptTitle(layout, title)) {
+	promptTitle(layout, [this, layout](const QString &title) {
 		if(!layout->wasTransient) {
 			if(layout->originalTitle.isNull()) {
 				layout->originalTitle = layout->title;
@@ -277,7 +275,7 @@ void LayoutsDialog::rename()
 		layout->title = title;
 		d->updateList(layout);
 		updateButtons();
-	}
+	});
 }
 
 void LayoutsDialog::toggleDeleted()
@@ -336,20 +334,19 @@ void LayoutsDialog::onFinish(int result)
 	}
 }
 
-bool LayoutsDialog::promptTitle(Layout *layout, QString &outTitle)
+void LayoutsDialog::promptTitle(
+	Layout *layout, const std::function<void(const QString &)> &fn)
 {
 	if(layout) {
-		bool ok;
-		QString title = QInputDialog::getText(
-							this, d->ui.saveButton->text(), tr("Layout Name:"),
-							QLineEdit::Normal, layout->title, &ok)
-							.trimmed();
-		if(ok && !title.isEmpty() && title != layout->title) {
-			outTitle = title;
-			return true;
-		}
+		utils::getInputText(
+			this, d->ui.saveButton->text(), tr("Layout Name:"), layout->title,
+			[layout, fn](const QString &title) {
+				QString trimmedTitle = title.trimmed();
+				if(!trimmedTitle.isEmpty() && trimmedTitle != layout->title) {
+					fn(title);
+				}
+			});
 	}
-	return false;
 }
 
 

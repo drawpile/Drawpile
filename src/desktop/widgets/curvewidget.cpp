@@ -5,7 +5,6 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_curve_widget.h"
 #include "desktop/widgets/toolmessage.h"
-#include "desktop/utils/widgetutils.h"
 #include <QClipboard>
 #include <QGridLayout>
 #include <QGuiApplication>
@@ -234,10 +233,13 @@ void CurveWidget::saveCurve() {}
 
 void CurveWidget::loadCurve()
 {
-	dialogs::CurvePresetDialog dlg{m_curve->curve(), m_curve->linear(), this};
-	if(dlg.exec() == QDialog::Accepted) {
-		m_curve->setCurve(dlg.curve());
-	}
+	dialogs::CurvePresetDialog *dlg = new dialogs::CurvePresetDialog(
+		m_curve->curve(), m_curve->linear(), this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	connect(dlg, &dialogs::CurvePresetDialog::accepted, this, [this, dlg] {
+		m_curve->setCurve(dlg->curve());
+	});
+	dlg->show();
 }
 
 }

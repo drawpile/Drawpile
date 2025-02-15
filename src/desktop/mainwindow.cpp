@@ -1354,16 +1354,18 @@ void MainWindow::handleAmbiguousShortcut(QShortcutEvent *shortcutEvent)
 			.arg(keySequence.toString(QKeySequence::NativeText))
 			.arg(matchingShortcuts.join(QString()));
 
-	QMessageBox box{
-		QMessageBox::Warning, tr("Ambiguous Shortcut"), message,
-		QMessageBox::Close, this};
+	QMessageBox *box = utils::makeMessage(
+		this, tr("Ambiguous Shortcut"), message, QString(),
+		QMessageBox::Warning, QMessageBox::Close);
 
-	QPushButton *fixButton = box.addButton(tr("Fix"), QMessageBox::ActionRole);
+	QPushButton *fixButton = box->addButton(tr("Fix"), QMessageBox::ActionRole);
 
-	box.exec();
-	if(box.clickedButton() == fixButton) {
-		showSettings()->initiateFixShortcutConflicts();
-	}
+	connect(box, &QMessageBox::finished, box, [this, box, fixButton] {
+		if(box->clickedButton() == fixButton) {
+			showSettings()->initiateFixShortcutConflicts();
+		}
+	});
+	box->show();
 }
 // clang-format off
 
@@ -2822,7 +2824,7 @@ void MainWindow::hostSession(const HostParams &params)
 			settings.networkProxyMode(), settings.serverPrivateUserList(),
 			&errorMessage);
 		if(!serverStarted) {
-			QMessageBox::warning(this, tr("Host Session"), errorMessage);
+			utils::showWarning(this, tr("Host Session"), errorMessage);
 			delete server;
 			return;
 		}
@@ -2967,6 +2969,7 @@ void MainWindow::leave()
 	leavebox->show();
 }
 
+// clang-format on
 #ifndef __EMSCRIPTEN__
 void MainWindow::checkForUpdates()
 {
@@ -2998,15 +3001,15 @@ void MainWindow::reportAbuse()
 
 void MainWindow::tryToGainOp()
 {
-	QString opword = QInputDialog::getText(
-				this,
-				tr("Become Operator"),
-				tr("Enter operator password"),
-				QLineEdit::Password
-	);
-	if(!opword.isEmpty())
-		m_doc->sendOpword(opword);
+	utils::getInputPassword(
+		this, tr("Become Operator"), tr("Enter operator password"), QString(),
+		[this](const QString &opword) {
+			if(!opword.isEmpty()) {
+				m_doc->sendOpword(opword);
+			}
+		});
 }
+// clang-format off
 
 void MainWindow::resetSession()
 {
@@ -4251,15 +4254,20 @@ void MainWindow::changeUndoDepthLimit()
 	bool ok;
 	int previousUndoDepthLimit = action->property("undodepthlimit").toInt(&ok);
 
-	dialogs::SessionUndoDepthLimitDialog dlg{
-		ok ? previousUndoDepthLimit : DP_DUMP_UNDO_DEPTH_LIMIT, this};
-	if(dlg.exec() == QDialog::Accepted) {
-		int undoDepthLimit = dlg.undoDepthLimit();
-		if(undoDepthLimit != previousUndoDepthLimit) {
-			m_doc->client()->sendMessage(net::makeUndoDepthMessage(
-				m_doc->canvas()->localUserId(), undoDepthLimit));
-		}
-	}
+	dialogs::SessionUndoDepthLimitDialog *dlg =
+		new dialogs::SessionUndoDepthLimitDialog(
+			ok ? previousUndoDepthLimit : DP_DUMP_UNDO_DEPTH_LIMIT, this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	connect(
+		dlg, &dialogs::SessionUndoDepthLimitDialog::accepted, this,
+		[this, previousUndoDepthLimit, dlg] {
+			int undoDepthLimit = dlg->undoDepthLimit();
+			if(undoDepthLimit != previousUndoDepthLimit) {
+				m_doc->client()->sendMessage(net::makeUndoDepthMessage(
+					m_doc->canvas()->localUserId(), undoDepthLimit));
+			}
+		});
+	dlg->show();
 }
 
 void MainWindow::updateDevToolsActions()
@@ -4289,37 +4297,36 @@ void MainWindow::updateDevToolsActions()
 	if(artificialDisconnectAction) {
 		artificialDisconnectAction->setEnabled(connected);
 	}
-
+#ifndef __EMSCRIPTEN__
 	QAction *debugDumpAction = getAction("debugdump");
 	debugDumpAction->setChecked(m_doc->wantCanvasHistoryDump());
+#endif
 }
-// clang-format off
 
 void MainWindow::setArtificialLag()
 {
-	bool ok;
-	int artificalLagMs = QInputDialog::getInt(
+	utils::getInputInt(
 		this, tr("Set Artificial Lag"),
 		tr("Artificial lag in milliseconds (0 to disable):"),
-		m_doc->client()->artificialLagMs(), 0, INT_MAX, 1, &ok);
-	if(ok) {
-		m_doc->client()->setArtificialLagMs(artificalLagMs);
-	}
+		m_doc->client()->artificialLagMs(), 0, INT_MAX,
+		[this](int artificialLagMs) {
+			m_doc->client()->setArtificialLagMs(artificialLagMs);
+		});
 }
 
 void MainWindow::setArtificialDisconnect()
 {
-	bool ok;
-	int seconds = QInputDialog::getInt(
+	utils::getInputInt(
 		this, tr("Artificial Disconnect"),
-		tr("Simulate a disconnect after this many seconds:"),
-		1, 0, INT_MAX, 1, &ok);
-	if(ok) {
-		QTimer::singleShot(seconds * 1000, m_doc->client(),
-			&net::Client::artificialDisconnect);
-	}
+		tr("Simulate a disconnect after this many seconds:"), 1, 0, INT_MAX,
+		[this](int seconds) {
+			QTimer::singleShot(
+				seconds * 1000, m_doc->client(),
+				&net::Client::artificialDisconnect);
+		});
 }
 
+#ifndef __EMSCRIPTEN__
 void MainWindow::toggleDebugDump()
 {
 	if(m_doc->wantCanvasHistoryDump()) {
@@ -4329,18 +4336,19 @@ void MainWindow::toggleDebugDump()
 		QMessageBox::StandardButton result = QMessageBox::question(
 			this, tr("Record Debug Dumps"),
 			tr("Debug dumps will record local and remote drawing commands. "
-				"They can be used to fix network issues, but not much else. "
-				"If you want to make a regular recording, use File > Record... "
-				"instead.\n\nDebug dump recording starts on the next canvas "
-				"reset and the files will be saved in %1\n\nAre you sure you"
-				"want to start recording debug dumps?").arg(path));
+			   "They can be used to fix network issues, but not much else. "
+			   "If you want to make a regular recording, use File > Record... "
+			   "instead.\n\nDebug dump recording starts on the next canvas "
+			   "reset and the files will be saved in %1\n\nAre you sure you"
+			   "want to start recording debug dumps?")
+				.arg(path));
 		if(result == QMessageBox::Yes) {
 			m_doc->setWantCanvasHistoryDump(true);
 		}
 	}
 }
+#endif
 
-// clang-format on
 void MainWindow::openDebugDump()
 {
 	questionWindowReplacement(
@@ -5841,20 +5849,26 @@ void MainWindow::setupActions()
 	QAction *systeminfo = makeAction("systeminfo", tr("System Information…")).noDefaultShortcut();
 	QAction *tableteventlog = makeAction("tableteventlog", tr("Tablet Event Log...")).noDefaultShortcut();
 	QAction *profile = makeAction("profile", tr("Profile...")).noDefaultShortcut();
+#ifndef __EMSCRIPTEN__
 	QAction *debugDump = makeAction("debugdump", tr("Record Debug Dumps")).checkable().noDefaultShortcut();
+#endif
 	QAction *openDebugDump = makeAction("opendebugdump", tr("Open Debug Dump...")).noDefaultShortcut();
 	QAction *showNetStats = makeAction("shownetstats", tr("Statistics…")).noDefaultShortcut();
 	devtoolsmenu->addAction(systeminfo);
 	devtoolsmenu->addAction(tableteventlog);
 	devtoolsmenu->addAction(profile);
+#ifndef __EMSCRIPTEN__
 	devtoolsmenu->addAction(debugDump);
+#endif
 	devtoolsmenu->addAction(openDebugDump);
 	devtoolsmenu->addAction(showNetStats);
 	connect(devtoolsmenu, &QMenu::aboutToShow, this, &MainWindow::updateDevToolsActions);
 	connect(systeminfo, &QAction::triggered, this, &MainWindow::showSystemInfo);
 	connect(tableteventlog, &QAction::triggered, this, &MainWindow::toggleTabletEventLog);
 	connect(profile, &QAction::triggered, this, &MainWindow::toggleProfile);
+#ifndef __EMSCRIPTEN__
 	connect(debugDump, &QAction::triggered, this, &MainWindow::toggleDebugDump);
+#endif
 	connect(openDebugDump, &QAction::triggered, this, &MainWindow::openDebugDump);
 	connect(showNetStats, &QAction::triggered, m_netstatus, &widgets::NetStatus::showNetStats);
 

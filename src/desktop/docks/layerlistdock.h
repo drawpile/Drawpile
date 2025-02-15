@@ -186,6 +186,7 @@ private:
 	void makeKeyFrameReferenceEditCommands(
 		net::MessageList &msgs, uint8_t contextId, const QModelIndex &idx,
 		int id) const;
+	void doDeleteSelected();
 
 	void showPropertiesForNew(bool group);
 	void showPropertiesOfCurrent();

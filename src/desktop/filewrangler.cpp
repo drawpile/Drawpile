@@ -402,80 +402,55 @@ QString FileWrangler::getSaveImageSeriesPath() const
 #endif
 
 #ifdef __EMSCRIPTEN__
-void FileWrangler::downloadImage(Document *doc)
+void FileWrangler::downloadImage(Document *doc) const
 {
-	dialogs::FileTypeDialog nameAndTypeDialog(
+	withFileTypeDialog(
 		doc->downloadName(),
-		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages),
-		parentWidget());
-	if(nameAndTypeDialog.exec() != QDialog::Accepted) {
-		return;
-	}
+		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages), doc,
+		[doc](const QString &name, const QString &type) {
+			doc->setDownloadName(name);
+			QString selectedExt = guessExtension(type, QStringLiteral(".ora"));
+			QString filename = name;
+			replaceExtension(filename, selectedExt);
 
-	QString filename = nameAndTypeDialog.name();
-	if(filename.isEmpty()) {
-		return;
-	}
-
-	doc->setDownloadName(filename);
-	QString filter = nameAndTypeDialog.type();
-	QString selectedExt = guessExtension(filter, QStringLiteral(".ora"));
-	replaceExtension(filename, selectedExt);
-
-	DP_SaveImageType type = guessType(filename);
-	QTemporaryDir *tempDir = new QTemporaryDir;
-	doc->downloadCanvas(filename, type, tempDir);
+			QTemporaryDir *tempDir = new QTemporaryDir;
+			doc->downloadCanvas(filename, guessType(filename), tempDir);
+		});
 }
 
 bool FileWrangler::downloadPreResetImage(
 	Document *doc, const drawdance::CanvasState &canvasState) const
 {
-	dialogs::FileTypeDialog nameAndTypeDialog(
+	withFileTypeDialog(
 		doc->downloadName(),
-		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages),
-		parentWidget());
-	if(nameAndTypeDialog.exec() != QDialog::Accepted) {
-		return false;
-	}
+		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages), doc,
+		[doc, canvasState](const QString &name, const QString &type) {
+			doc->setDownloadName(name);
+			QString selectedExt = guessExtension(type, QStringLiteral(".ora"));
+			QString filename = name;
+			replaceExtension(filename, selectedExt);
 
-	QString filename = nameAndTypeDialog.name();
-	if(filename.isEmpty()) {
-		return false;
-	}
-
-	doc->setDownloadName(filename);
-	QString filter = nameAndTypeDialog.type();
-	QString selectedExt = guessExtension(filter, QStringLiteral(".ora"));
-	replaceExtension(filename, selectedExt);
-
-	DP_SaveImageType type = guessType(filename);
-	QTemporaryDir *tempDir = new QTemporaryDir;
-	doc->downloadCanvasState(filename, type, tempDir, canvasState);
+			QTemporaryDir *tempDir = new QTemporaryDir;
+			doc->downloadCanvasState(
+				filename, guessType(filename), tempDir, canvasState);
+		});
 	return true;
 }
 
 void FileWrangler::downloadSelection(Document *doc)
 {
-	dialogs::FileTypeDialog nameAndTypeDialog(
+	withFileTypeDialog(
 		doc->downloadName(),
 		utils::fileFormatFilterList(
 			utils::FileFormatOption::SaveImages |
 			utils::FileFormatOption::QtImagesOnly),
-		parentWidget());
-	if(nameAndTypeDialog.exec() != QDialog::Accepted) {
-		return;
-	}
-
-	QString filename = nameAndTypeDialog.name();
-	if(filename.isEmpty()) {
-		return;
-	}
-
-	doc->setDownloadName(filename);
-	QString filter = nameAndTypeDialog.type();
-	QString selectedExt = guessExtension(filter, QStringLiteral(".png"));
-	replaceExtension(filename, selectedExt);
-	doc->downloadSelection(filename);
+		doc, [doc](const QString &name, const QString &type) {
+			doc->setDownloadName(name);
+			QString selectedExt = guessExtension(type, QStringLiteral(".png"));
+			QString filename = name;
+			replaceExtension(filename, selectedExt);
+			doc->downloadSelection(filename);
+		});
 }
 
 void FileWrangler::saveFileContent(
@@ -1153,6 +1128,26 @@ QString FileWrangler::getEffectiveFilter(const QStringList &filters)
 	return filters.join(QStringLiteral(";;"));
 #endif
 }
+
+#ifdef __EMSCRIPTEN__
+void FileWrangler::withFileTypeDialog(
+	const QString &name, const QStringList &formats, QObject *context,
+	const std::function<void(const QString &, const QString &)> fn) const
+{
+	dialogs::FileTypeDialog *nameAndTypeDialog =
+		new dialogs::FileTypeDialog(name, formats, parentWidget());
+	nameAndTypeDialog->setAttribute(Qt::WA_DeleteOnClose);
+	connect(
+		nameAndTypeDialog, &dialogs::FileTypeDialog::accepted, context,
+		[nameAndTypeDialog, fn] {
+			QString name = nameAndTypeDialog->name();
+			if(!name.isEmpty()) {
+				fn(name, nameAndTypeDialog->type());
+			}
+		});
+	nameAndTypeDialog->show();
+}
+#endif
 
 QWidget *FileWrangler::parentWidget() const
 {

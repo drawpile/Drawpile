@@ -355,7 +355,7 @@ void PlaybackDialog::startVideoExport(VideoExporter *exporter)
 void PlaybackDialog::videoExporterError(const QString &msg)
 {
 	setPlaying(false);
-	QMessageBox::warning(this, tr("Video error"), msg);
+	utils::showWarning(this, tr("Video error"), msg);
 }
 
 void PlaybackDialog::videoExporterFinished(bool showExportDialogAgain)

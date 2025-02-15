@@ -113,6 +113,7 @@ private:
 	bool
 	readAuthListImport(const QByteArray &content, QJsonArray &outList) const;
 	void importAuthListChunked(const QJsonArray &list);
+	void startBanExport(bool plain);
 	QModelIndex getSelectedAuthListEntry();
 	void authListChangeParam(const QString &key, bool value);
 

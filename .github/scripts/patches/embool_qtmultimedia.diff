@@ -1,0 +1,16 @@
+Description: Qt incorrectly uses a literal int for some callback functions that
+are supposed to return EM_BOOL. Emscripten changed their typedef for EM_BOOL
+from int to bool, causing them to break. This patch fixes those return types so
+they work either way.
+
+--- a/src/plugins/multimedia/wasm/common/qwasmvideooutput.cpp
++++ b/src/plugins/multimedia/wasm/common/qwasmvideooutput.cpp
+@@ -960,7 +960,7 @@
+
+ void QWasmVideoOutput::videoFrameTimerCallback()
+ {
+-    static auto frame = [](double frameTime, void *context) -> int {
++    static auto frame = [](double frameTime, void *context) -> EM_BOOL {
+         Q_UNUSED(frameTime);
+         QWasmVideoOutput *videoOutput = reinterpret_cast<QWasmVideoOutput *>(context);
+

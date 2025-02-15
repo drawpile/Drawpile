@@ -14,9 +14,9 @@
 #include <QFrame>
 #include <QGraphicsOpacityEffect>
 #include <QHeaderView>
+#include <QInputDialog>
 #include <QKeySequence>
 #include <QLabel>
-#include <QMessageBox>
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPair>
@@ -932,7 +932,7 @@ QLabel *makeIconLabel(const QIcon &icon, QWidget *parent)
 	return label;
 }
 
-static QMessageBox *makeMessage(
+QMessageBox *makeMessage(
 	QWidget *parent, const QString &title, const QString &text,
 	const QString &informativeText, QMessageBox::Icon icon,
 	QMessageBox::StandardButtons buttons)
@@ -1055,6 +1055,54 @@ QString makeActionShortcutText(QString text, const QKeySequence &shortcut)
 	}
 }
 
+namespace {
+static void getInputTextWith(
+	QWidget *parent, const QString &title, const QString &label,
+	const QString &text, const std::function<void(const QString &)> &fn,
+	QLineEdit::EchoMode echoMode)
+{
+	QInputDialog *dlg = new QInputDialog(parent);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->setWindowTitle(title);
+	dlg->setLabelText(label);
+	dlg->setInputMode(QInputDialog::TextInput);
+	dlg->setTextEchoMode(echoMode);
+	dlg->setTextValue(text);
+	QObject::connect(dlg, &QInputDialog::textValueSelected, parent, fn);
+	dlg->show();
+}
+}
+
+void getInputText(
+	QWidget *parent, const QString &title, const QString &label,
+	const QString &text, const std::function<void(const QString &)> &fn)
+{
+	getInputTextWith(parent, title, label, text, fn, QLineEdit::Normal);
+}
+
+void getInputPassword(
+	QWidget *parent, const QString &title, const QString &label,
+	const QString &text, const std::function<void(const QString &)> &fn)
+{
+	getInputTextWith(parent, title, label, text, fn, QLineEdit::Password);
+}
+
+void getInputInt(
+	QWidget *parent, const QString &title, const QString &label, int value,
+	int minValue, int maxValue, const std::function<void(int)> &fn)
+{
+	QInputDialog *dlg = new QInputDialog(parent);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->setWindowTitle(title);
+	dlg->setLabelText(label);
+	dlg->setInputMode(QInputDialog::IntInput);
+	dlg->setIntValue(value);
+	dlg->setIntMinimum(minValue);
+	dlg->setIntMaximum(maxValue);
+	QObject::connect(dlg, &QInputDialog::intValueSelected, parent, fn);
+	dlg->show();
+}
+
 bool openOrQuestionUrl(QWidget *parent, const QUrl &url)
 {
 	if(!url.isValid() || url.isLocalFile() || url.isRelative()) {
@@ -1098,7 +1146,8 @@ bool openOrQuestionUrl(QWidget *parent, const QUrl &url)
 	return true;
 }
 
-QIcon makeColorIcon(int size, const QColor &color) {
+QIcon makeColorIcon(int size, const QColor &color)
+{
 	int half = size / 2;
 	QPixmap pixmap(size, size);
 	pixmap.fill(color);

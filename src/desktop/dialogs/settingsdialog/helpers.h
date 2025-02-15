@@ -183,66 +183,39 @@ utils::EncapsulatedLayout *listActions(
 		QString(), QString(), noop, false, false);
 }
 
-inline bool
-execConfirm(const QString &title, const QString &message, QWidget *owner)
-{
-	QMessageBox box(
-		QMessageBox::Question, title, message,
-		QMessageBox::Yes | QMessageBox::No, owner);
-	box.setDefaultButton(QMessageBox::No);
-#ifndef __EMSCRIPTEN__
-	box.setWindowModality(Qt::WindowModal);
-#endif
-	return box.exec() == QMessageBox::Yes;
-}
-
-inline int execWarning(
-	const QString &title, const QString &message, QWidget *owner,
-	QMessageBox::StandardButtons buttons = QMessageBox::Ok,
-	QMessageBox::StandardButton defaultButton = QMessageBox::Ok)
-{
-	QMessageBox box(QMessageBox::Warning, title, message, buttons, owner);
-	box.setDefaultButton(defaultButton);
-#ifndef __EMSCRIPTEN__
-	box.setWindowModality(Qt::WindowModal);
-#endif
-	return box.exec();
-}
-
 template <typename Widget, typename Fn>
 auto makeDefaultDeleter(
 	Widget *owner, QAbstractItemView *view, const QString &title,
 	const char *message, Fn fn)
 {
 	return [=] {
-		auto selection = view->selectionModel()->selectedRows();
+		QMessageBox *box = utils::showQuestion(
+			owner, title,
+			Widget::tr(
+				message, nullptr,
+				view->selectionModel()->selectedRows().size()));
+		QObject::connect(box, &QMessageBox::accepted, owner, [view, fn] {
+			QModelIndexList selection = view->selectionModel()->selectedRows();
+			// Any list-based model is going to have a bad time if we do not
+			// sort and do not invalidate
+			std::sort(
+				selection.begin(), selection.end(),
+				[](QModelIndex a, QModelIndex b) {
+					return b < a;
+				});
 
-		const auto confirm = execConfirm(
-			title, Widget::tr(message, nullptr, selection.size()), owner);
-
-		if(!confirm) {
-			return;
-		}
-
-		// Any list-based model is going to have a bad time if we do not sort
-		// and do not invalidate
-		std::sort(
-			selection.begin(), selection.end(),
-			[](QModelIndex a, QModelIndex b) {
-				return b < a;
-			});
-
-		auto *model = view->model();
-		for(const auto &index : selection) {
-			if(fn(index)) {
-				model->removeRow(index.row(), index.parent());
-			} else {
-				model->revert();
-				return;
+			QAbstractItemModel *model = view->model();
+			for(const QModelIndex &index : selection) {
+				if(fn(index)) {
+					model->removeRow(index.row(), index.parent());
+				} else {
+					model->revert();
+					return;
+				}
 			}
-		}
 
-		model->submit();
+			model->submit();
+		});
 	};
 }
 

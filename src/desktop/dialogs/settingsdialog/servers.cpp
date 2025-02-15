@@ -10,7 +10,6 @@
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "libclient/utils/certificatestoremodel.h"
 #include "libclient/utils/listservermodel.h"
-#include "libshared/util/paths.h"
 #include <QApplication>
 #include <QDir>
 #include <QHBoxLayout>
@@ -22,7 +21,6 @@
 #include <QSslCertificate>
 #include <QStringList>
 #include <QVBoxLayout>
-#include <algorithm>
 #include <optional>
 #include <utility>
 
@@ -217,12 +215,12 @@ void Servers::pinCertificates(
 		model->setData(index, pin, CertificateStoreModel::TrustedRole);
 	}
 	if(!model->submit()) {
-		execWarning(
+		utils::showWarning(
+			this,
 			pin ? tr("Pin selected certificates")
 				: tr("Unpin selected certificates"),
 			tr("Could not save changes to known hosts: %1")
-				.arg(model->lastError()),
-			this);
+				.arg(model->lastError()));
 	}
 }
 

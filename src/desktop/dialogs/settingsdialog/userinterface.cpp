@@ -250,14 +250,14 @@ void UserInterface::pickColor(
 	const QColor &defaultColor)
 {
 	using color_widgets::ColorDialog;
-	ColorDialog dlg;
-	dlg.setColor((settings.*getColor)());
-	dlg.setAlphaEnabled(false);
-	dialogs::applyColorDialogSettings(&dlg);
-	dialogs::setColorDialogResetColor(&dlg, defaultColor);
-	if(dlg.exec() == QDialog::Accepted) {
-		(settings.*setColor)(dlg.color());
-	}
+	ColorDialog *dlg =
+		dialogs::newDeleteOnCloseColorDialog((settings.*getColor)(), this);
+	dlg->setAlphaEnabled(false);
+	dialogs::setColorDialogResetColor(dlg, defaultColor);
+	connect(dlg, &ColorDialog::accepted, this, [&settings, setColor, dlg] {
+		(settings.*setColor)(dlg->color());
+	});
+	dlg->show();
 }
 
 }

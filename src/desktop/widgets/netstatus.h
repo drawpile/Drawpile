@@ -81,7 +81,9 @@ private slots:
 	void showCertificate();
 
 private:
+#ifndef __EMSCRIPTEN__
 	void showCGNAlert();
+#endif
 	void updateLabel();
 
 	enum { NotConnected, Connecting, LoggedIn, Disconnecting } m_state;

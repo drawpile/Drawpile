@@ -140,8 +140,7 @@ void ResizeDialog::done(int r)
 {
 	if(r == QDialog::Accepted) {
 		if(!utils::checkImageSize(newSize())) {
-			QMessageBox::information(
-				this, tr("Error"), tr("Size is too large"));
+			utils::showInformation(this, tr("Error"), tr("Size is too large"));
 			return;
 		}
 	}

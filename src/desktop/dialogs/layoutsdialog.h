@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef LAYOUTSDIALOG_H
-#define LAYOUTSDIALOG_H
-
+#ifndef DESKTOP_DIALOGS_LAYOUTSDIALOG_H
+#define DESKTOP_DIALOGS_LAYOUTSDIALOG_H
 #include <QDialog>
+#include <functional>
 
 class QByteArray;
 
@@ -30,7 +30,8 @@ private slots:
 	void onFinish(int result);
 
 private:
-	bool promptTitle(Layout *layout, QString &outTitle);
+	void
+	promptTitle(Layout *layout, const std::function<void(const QString &)> &fn);
 
 	struct Private;
 	Private *d;

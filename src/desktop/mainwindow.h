@@ -257,7 +257,9 @@ private slots:
 	void updateDevToolsActions();
 	void setArtificialLag();
 	void setArtificialDisconnect();
+#ifndef __EMSCRIPTEN__
 	void toggleDebugDump();
+#endif
 	void openDebugDump();
 	void causeCrash();
 

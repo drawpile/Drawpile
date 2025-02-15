@@ -962,17 +962,13 @@ elseif(EMSCRIPTEN)
 	)
 
 	target_link_options(drawpile PUBLIC
-		-sASYNCIFY
 		-sMAXIMUM_MEMORY=4294967296
 		-sEXPORTED_FUNCTIONS=_main,_drawpileMain,_drawpileInitScheduleSyncPersistentFileSystem,_drawpileFinishPersistentFileSystemSync,_drawpileHandleBrowserAuth,_drawpileHandleMouseLeave,_drawpileShouldPreventUnload,stringToNewUTF8,UTF8ToString
 		--js-library "${CMAKE_CURRENT_SOURCE_DIR}/wasm/lib.js"
 		-lidbfs.js
 	)
-	if(CMAKE_BUILD_TYPE MATCHES "^[rR][eE][lL]")
-		target_link_options(drawpile PUBLIC -O3)
-		if(CMAKE_BUILD_TYPE MATCHES "[dD][eE][bB]")
-			target_link_options(drawpile PUBLIC -gseparate-dwarf)
-		endif()
+	if(CMAKE_BUILD_TYPE MATCHES "^[rR][eE][lL]" AND CMAKE_BUILD_TYPE MATCHES "[dD][eE][bB]")
+		target_link_options(drawpile PUBLIC -gseparate-dwarf)
 	endif()
 elseif(UNIX)
 	function(install_datarootdir target files destination)

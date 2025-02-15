@@ -1,0 +1,517 @@
+Description: Make things work without asyncify because of WebKit bug 284752.
+This patch can probably be tossed after that bug has been resolved for long
+enough.
+
+Without asyncify, QDialog::exec doesn't work. Qt tries to prevent
+it by calling sleep, but that just continues anyway and then the application
+breaks weirdly. We replace that with an abort so it crashes more noisily.
+
+Regular drag and drop doesn't work either. Qt will attempt to enter into a
+nested event loop regardless, which will just hang the application. We instead
+bail out immediately and keep running.
+
+We also implement a new async drag and drop API that doesn't require this nested
+event loop. This requires patching the call sites though, of which we only do
+QAbstractItemView and stuff inside Drawpile itself.
+
+And lastly, we patch QMessageBox::about and QMessageBox::aboutQt to use show
+instead of exec.
+
+--- a/src/corelib/kernel/qeventdispatcher_wasm.cpp
++++ b/src/corelib/kernel/qeventdispatcher_wasm.cpp
+@@ -477,7 +477,7 @@
+     if (!useAsyncify()) {
+         qWarning() << "Warning: exec() is not supported on Qt for WebAssembly in this configuration. Please build"
+                    << "with asyncify support, or use an asynchronous API like QDialog::open()";
+-        emscripten_sleep(1); // This call never returns
++        abort();
+     }
+     // For the asyncify case we do nothing here and wait for events in wait()
+ }
+--- a/src/gui/kernel/qdnd.cpp
++++ b/src/gui/kernel/qdnd.cpp
+@@ -86,6 +86,41 @@
+     return result;
+ }
+
++#ifdef Q_OS_WASM
++void QDragManager::dragAsync(QDrag *drag, const std::function<void (Qt::DropAction)> &fn)
++{
++    if (!drag || m_object == drag) {
++        fn(Qt::IgnoreAction);
++        return;
++    }
++
++    if (!m_platformDrag || !drag->source()) {
++        drag->deleteLater();
++        fn(Qt::IgnoreAction);
++        return;
++    }
++
++    if (m_object) {
++        qWarning("QDragManager::dragAsync in possibly invalid state");
++        drag->deleteLater();
++        fn(Qt::IgnoreAction);
++        return;
++    }
++
++    m_object = drag;
++
++    m_object->d_func()->target = nullptr;
++
++    QGuiApplicationPrivate::instance()->notifyDragStarted(m_object.data());
++    m_platformDrag->dragAsync(m_object, [this, fn](Qt::DropAction result) {
++        if (!m_object.isNull())
++            m_object->deleteLater();
++        m_object.clear();
++        fn(result);
++    });
++}
++#endif
++
+ QT_END_NAMESPACE
+
+ #include "moc_qdnd_p.cpp"
+--- a/src/gui/kernel/qdnd_p.h
++++ b/src/gui/kernel/qdnd_p.h
+@@ -29,6 +29,10 @@
+
+ #include <QtCore/qpointer.h>
+
++#ifdef Q_OS_WASM
++#   include <functional>
++#endif
++
+ QT_REQUIRE_CONFIG(draganddrop);
+
+ QT_BEGIN_NAMESPACE
+@@ -63,6 +67,9 @@
+     static QDragManager *self();
+
+     Qt::DropAction drag(QDrag *);
++#ifdef Q_OS_WASM
++    void dragAsync(QDrag *drag, const std::function<void (Qt::DropAction)> &fn);
++#endif
+
+     void setCurrentTarget(QObject *target, bool dropped = false);
+     QObject *currentTarget() const;
+--- a/src/gui/kernel/qdrag.cpp
++++ b/src/gui/kernel/qdrag.cpp
+@@ -11,6 +11,10 @@
+
+ #include <QtCore/qpointer.h>
+
++#ifdef Q_OS_WASM
++#   include <QtCore/private/qstdweb_p.h>
++#endif
++
+ QT_BEGIN_NAMESPACE
+
+ /*!
+@@ -252,6 +256,54 @@
+     return d->executed_action;
+ }
+
++#ifdef Q_OS_WASM
++bool QDrag::needsAsync()
++{
++    return !qstdweb::canBlockCallingThread();
++}
++
++void QDrag::execAsync(Qt::DropActions supportedActions)
++{
++    execAsync([](Qt::DropAction){}, supportedActions, Qt::IgnoreAction);
++}
++
++void QDrag::execAsync(Qt::DropActions supportedActions, Qt::DropAction defaultAction)
++{
++    execAsync([](Qt::DropAction){}, supportedActions, defaultAction);
++}
++
++void QDrag::execAsync(const std::function<void (Qt::DropAction)> &fn, Qt::DropActions supportedActions)
++{
++    execAsync(fn, supportedActions, Qt::IgnoreAction);
++}
++
++void QDrag::execAsync(const std::function<void (Qt::DropAction)> &fn, Qt::DropActions supportedActions, Qt::DropAction defaultAction)
++{
++    Q_D(QDrag);
++    if (!d->data) {
++        qWarning("QDrag: No mimedata set before starting the drag");
++        deleteLater();
++        return;
++    }
++    Qt::DropAction transformedDefaultDropAction = Qt::IgnoreAction;
++
++    if (defaultAction == Qt::IgnoreAction) {
++        if (supportedActions & Qt::MoveAction) {
++            transformedDefaultDropAction = Qt::MoveAction;
++        } else if (supportedActions & Qt::CopyAction) {
++            transformedDefaultDropAction = Qt::CopyAction;
++        } else if (supportedActions & Qt::LinkAction) {
++            transformedDefaultDropAction = Qt::LinkAction;
++        }
++    } else {
++        transformedDefaultDropAction = defaultAction;
++    }
++    d->supported_actions = supportedActions;
++    d->default_action = transformedDefaultDropAction;
++    QDragManager::self()->dragAsync(this, fn);
++}
++#endif
++
+ /*!
+     Sets the drag \a cursor for the \a action. This allows you
+     to override the default native cursors. To revert to using the
+--- a/src/gui/kernel/qdrag.h
++++ b/src/gui/kernel/qdrag.h
+@@ -6,6 +6,9 @@
+
+ #include <QtGui/qtguiglobal.h>
+ #include <QtCore/qobject.h>
++#ifdef Q_OS_WASM
++#   include <functional>
++#endif
+
+ QT_REQUIRE_CONFIG(draganddrop);
+
+@@ -40,6 +43,13 @@
+
+     Qt::DropAction exec(Qt::DropActions supportedActions = Qt::MoveAction);
+     Qt::DropAction exec(Qt::DropActions supportedActions, Qt::DropAction defaultAction);
++#ifdef Q_OS_WASM
++    static bool needsAsync();
++    void execAsync(Qt::DropActions supportedActions = Qt::MoveAction);
++    void execAsync(Qt::DropActions supportedActions, Qt::DropAction defaultAction);
++    void execAsync(const std::function<void (Qt::DropAction)> &fn, Qt::DropActions supportedActions = Qt::MoveAction);
++    void execAsync(const std::function<void (Qt::DropAction)> &fn, Qt::DropActions supportedActions, Qt::DropAction defaultAction);
++#endif
+
+     void setDragCursor(const QPixmap &cursor, Qt::DropAction action);
+     QPixmap dragCursor(Qt::DropAction action) const;
+--- a/src/gui/kernel/qplatformdrag.h
++++ b/src/gui/kernel/qplatformdrag.h
+@@ -16,6 +16,10 @@
+ #include <QtGui/qtguiglobal.h>
+ #include <QtGui/QPixmap>
+
++#ifdef Q_OS_WASM
++#   include <functional>
++#endif
++
+ QT_REQUIRE_CONFIG(draganddrop);
+
+ QT_BEGIN_NAMESPACE
+@@ -63,6 +67,9 @@
+     QDrag *currentDrag() const;
+
+     virtual Qt::DropAction drag(QDrag *m_drag) = 0;
++#ifdef Q_OS_WASM
++    virtual void dragAsync(QDrag *m_drag, const std::function<void (Qt::DropAction)> &fn) = 0;
++#endif
+     virtual void cancelDrag();
+     void updateAction(Qt::DropAction action);
+
+--- a/src/gui/kernel/qsimpledrag.cpp
++++ b/src/gui/kernel/qsimpledrag.cpp
+@@ -170,6 +170,9 @@
+     m_drag = o;
+     m_executed_drop_action = Qt::IgnoreAction;
+     m_can_drop = false;
++#ifdef Q_OS_WASM
++    m_asyncFn = {};
++#endif
+
+     startDrag();
+     m_eventLoop = new QEventLoop;
+@@ -182,11 +185,28 @@
+     return m_executed_drop_action;
+ }
+
++#ifdef Q_OS_WASM
++void QBasicDrag::dragAsync(QDrag *drag, const std::function<void (Qt::DropAction)> &fn)
++{
++    m_drag = drag;
++    m_executed_drop_action = Qt::IgnoreAction;
++    m_can_drop = false;
++    m_asyncFn = fn;
++
++    startDrag();
++}
++#endif
++
+ void QBasicDrag::cancelDrag()
+ {
+     if (m_eventLoop) {
+         cancel();
+         m_eventLoop->quit();
++#ifdef Q_OS_WASM
++    } else if (m_asyncFn.has_value()) {
++        cancel();
++        finishAsync();
++#endif
+     }
+ }
+
+@@ -252,7 +272,24 @@
+ {
+     if (m_eventLoop && m_eventLoop->isRunning())
+         m_eventLoop->exit();
++#ifdef Q_OS_WASM
++    else if (m_asyncFn.has_value())
++        finishAsync();
++#endif
++}
++
++#ifdef Q_OS_WASM
++void QBasicDrag::finishAsync()
++{
++    if (m_asyncFn.has_value()) {
++        std::function<void (Qt::DropAction)> fn = m_asyncFn.value();
++        m_asyncFn = {};
++        m_drag = nullptr;
++        endDrag();
++        fn(m_executed_drop_action);
++    }
+ }
++#endif
+
+ void QBasicDrag::updateCursor(Qt::DropAction action)
+ {
+--- a/src/gui/kernel/qsimpledrag_p.h
++++ b/src/gui/kernel/qsimpledrag_p.h
+@@ -22,6 +22,10 @@
+ #include <QtCore/QPointer>
+ #include <QtGui/QWindow>
+
++#ifdef Q_OS_WASM
++#   include <optional>
++#endif
++
+ QT_REQUIRE_CONFIG(draganddrop);
+
+ QT_BEGIN_NAMESPACE
+@@ -38,6 +42,9 @@
+     ~QBasicDrag();
+
+     virtual Qt::DropAction drag(QDrag *drag) override;
++#ifdef Q_OS_WASM
++    void dragAsync(QDrag *drag, const std::function<void (Qt::DropAction)> &fn) override;
++#endif
+     void cancelDrag() override;
+
+     virtual bool eventFilter(QObject *o, QEvent *e) override;
+@@ -79,6 +86,9 @@
+     void disableEventFilter();
+     void restoreCursor();
+     void exitDndEventLoop();
++#ifdef Q_OS_WASM
++    void finishAsync();
++#endif
+
+ #ifndef QT_NO_CURSOR
+     bool m_dndHasSetOverrideCursor = false;
+@@ -91,6 +101,9 @@
+     bool m_useCompositing = true;
+     QScreen *m_screen = nullptr;
+     QPoint m_lastPos;
++#ifdef Q_OS_WASM
++    std::optional<std::function<void (Qt::DropAction)>> m_asyncFn;
++#endif
+ };
+
+ class Q_GUI_EXPORT QSimpleDrag : public QBasicDrag
+--- a/src/plugins/platforms/wasm/qwasmdrag.cpp
++++ b/src/plugins/platforms/wasm/qwasmdrag.cpp
+@@ -99,12 +99,30 @@
+         m_dragState.reset();
+     }
+
+-    if (dragResult == Qt::IgnoreAction)
+-        dragResult = QBasicDrag::drag(drag);
++    if (dragResult == Qt::IgnoreAction) {
++        if (qstdweb::canBlockCallingThread()) {
++            dragResult = QBasicDrag::drag(drag);
++        } else {
++            qWarning() << "Drag not supported without Asyncify or JSPI";
++        }
++    }
+
+     return dragResult;
+ }
+
++void QWasmDrag::dragAsync(QDrag *drag, const std::function<void (Qt::DropAction)> &fn)
++{
++    Q_ASSERT_X(!m_dragState, Q_FUNC_INFO, "Drag already in progress");
++
++    QWindow *window = windowForDrag(drag);
++    if (window) {
++        QBasicDrag::dragAsync(drag, fn);
++    } else {
++        fn(Qt::IgnoreAction);
++        delete drag;
++    }
++}
++
+ void QWasmDrag::onNativeDragStarted(DragEvent *event)
+ {
+     Q_ASSERT_X(event->type == EventType::DragStart, Q_FUNC_INFO,
+--- a/src/plugins/platforms/wasm/qwasmdrag.h
++++ b/src/plugins/platforms/wasm/qwasmdrag.h
+@@ -36,6 +36,8 @@
+     // QPlatformDrag:
+     Qt::DropAction drag(QDrag *drag) final;
+
++    void dragAsync(QDrag *drag, const std::function<void (Qt::DropAction)> &fn) override;
++
+ private:
+     struct DragState;
+
+--- a/src/widgets/dialogs/qmessagebox.cpp
++++ b/src/widgets/dialogs/qmessagebox.cpp
+@@ -1942,7 +1942,7 @@
+ */
+ void QMessageBox::about(QWidget *parent, const QString &title, const QString &text)
+ {
+-#ifdef Q_OS_MAC
++#if defined(Q_OS_MAC) || defined(Q_OS_WASM)
+     static QPointer<QMessageBox> oldMsgBox;
+
+     if (oldMsgBox && oldMsgBox->text() == text) {
+@@ -1964,11 +1964,13 @@
+     msgBox->setIconPixmap(icon.pixmap(size));
+
+     // should perhaps be a style hint
+-#ifdef Q_OS_MAC
++#if defined(Q_OS_MAC) || defined(Q_OS_WASM)
+     oldMsgBox = msgBox;
++#ifdef Q_OS_MAC
+     auto *d = msgBox->d_func();
+     d->buttonBox->setCenterButtons(true);
+-#ifdef Q_OS_IOS
++#endif
++#if defined(Q_OS_IOS) || defined(Q_OS_WASM)
+     msgBox->setModal(true);
+ #else
+     msgBox->setModal(false);
+@@ -1996,7 +1998,7 @@
+ */
+ void QMessageBox::aboutQt(QWidget *parent, const QString &title)
+ {
+-#ifdef Q_OS_MAC
++#if defined(Q_OS_MAC) || defined(Q_OS_WASM)
+     static QPointer<QMessageBox> oldMsgBox;
+
+     if (oldMsgBox) {
+@@ -2050,11 +2052,13 @@
+         msgBox->setIconPixmap(pm);
+
+     // should perhaps be a style hint
+-#ifdef Q_OS_MAC
++#if defined(Q_OS_MAC) || defined(Q_OS_WASM)
+     oldMsgBox = msgBox;
++#ifdef Q_OS_MAC
+     auto *d = msgBox->d_func();
+     d->buttonBox->setCenterButtons(true);
+-#ifdef Q_OS_IOS
++#endif
++#if defined(Q_OS_IOS) || defined(Q_OS_WASM)
+     msgBox->setModal(true);
+ #else
+     msgBox->setModal(false);
+--- a/src/widgets/itemviews/qabstractitemview.cpp
++++ b/src/widgets/itemviews/qabstractitemview.cpp
+@@ -68,6 +68,9 @@
+         dragDropMode(QAbstractItemView::NoDragDrop),
+         overwrite(false),
+         dropEventMoved(false),
++#   ifdef Q_OS_WASM
++        dragNeedsReset(false),
++#   endif
+         dropIndicatorPosition(QAbstractItemView::OnItem),
+         defaultDropAction(Qt::IgnoreAction),
+ #endif
+@@ -3844,8 +3847,16 @@
+     QModelIndexList indexes = d->selectedDraggableIndexes();
+     if (indexes.size() > 0) {
+         QMimeData *data = d->model->mimeData(indexes);
+-        if (!data)
++        if (!data) {
++#   ifdef Q_OS_WASM
++            if (d->dragNeedsReset) {
++                d->dragNeedsReset = false;
++                setState(QAbstractItemView::NoState);
++                stopAutoScroll();
++            }
++#   endif
+             return;
++        }
+         QRect rect;
+         QPixmap pixmap = d->renderToPixmap(indexes, &rect);
+         rect.adjust(horizontalOffset(), verticalOffset(), 0, 0);
+@@ -3861,6 +3872,26 @@
+         else if (supportedActions & Qt::CopyAction && dragDropMode() != QAbstractItemView::InternalMove)
+             defaultDropAction = Qt::CopyAction;
+         d->dropEventMoved = false;
++#ifdef Q_OS_WASM
++        if (QDrag::needsAsync()) {
++            drag->execAsync([this, d, drag](Qt::DropAction dropAction) {
++                if (dropAction == Qt::MoveAction && !d->dropEventMoved) {
++                    if (dragDropMode() != InternalMove || drag->target() == viewport())
++                        d->clearOrRemove();
++                }
++                d->dropEventMoved = false;
++                // Reset the drop indicator
++                d->dropIndicatorRect = QRect();
++                d->dropIndicatorPosition = OnItem;
++                if (d->dragNeedsReset) {
++                    d->dragNeedsReset = false;
++                    setState(QAbstractItemView::NoState);
++                    stopAutoScroll();
++                }
++            }, supportedActions, defaultDropAction);
++            return;
++        }
++#endif
+         if (drag->exec(supportedActions, defaultDropAction) == Qt::MoveAction && !d->dropEventMoved) {
+             if (dragDropMode() != InternalMove || drag->target() == viewport())
+                 d->clearOrRemove();
+@@ -3869,6 +3900,12 @@
+         // Reset the drop indicator
+         d->dropIndicatorRect = QRect();
+         d->dropIndicatorPosition = OnItem;
++#ifdef Q_OS_WASM
++    } else if (d->dragNeedsReset) {
++        d->dragNeedsReset = false;
++        setState(QAbstractItemView::NoState);
++        stopAutoScroll();
++#endif
+     }
+ }
+ #endif // QT_CONFIG(draganddrop)
+@@ -4751,6 +4788,13 @@
+     const QPoint topLeft = pressedPosition - offset();
+     if ((topLeft - eventPosition).manhattanLength() > QApplication::startDragDistance()) {
+         pressedIndex = QModelIndex();
++#   ifdef Q_OS_WASM
++        if (QDrag::needsAsync()) {
++            dragNeedsReset = true;
++            q->startDrag(model->supportedDragActions());
++            return;
++        }
++#   endif
+         q->startDrag(model->supportedDragActions());
+         q->setState(QAbstractItemView::NoState); // the startDrag will return when the dnd operation
+                                                  // is done
+--- a/src/widgets/itemviews/qabstractitemview_p.h
++++ b/src/widgets/itemviews/qabstractitemview_p.h
+@@ -375,6 +375,9 @@
+     QAbstractItemView::DragDropMode dragDropMode;
+     bool overwrite;
+     bool dropEventMoved;
++#   ifdef Q_OS_WASM
++    bool dragNeedsReset;
++#   endif
+     QAbstractItemView::DropIndicatorPosition dropIndicatorPosition;
+     Qt::DropAction defaultDropAction;
+ #endif

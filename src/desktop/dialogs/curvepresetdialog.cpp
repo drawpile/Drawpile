@@ -2,11 +2,11 @@
 
 #include "desktop/dialogs/curvepresetdialog.h"
 #include "desktop/main.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_curve_widget.h"
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QIcon>
-#include <QInputDialog>
 #include <QListWidget>
 #include <QMessageBox>
 #include <QPushButton>
@@ -123,29 +123,31 @@ void CurvePresetDialog::saveRenameCurve()
 	if(item) {
 		int type = item->data(TypeRole).toInt();
 		if(type == Unsaved) {
-			bool ok;
-			QString name = QInputDialog::getText(
-				this, tr("Save Curve"), tr("Name"), QLineEdit::Normal,
-				QString{}, &ok);
-			if(ok && !name.trimmed().isEmpty()) {
-				item->setIcon(getPresetIcon(Saved));
-				item->setText(name.trimmed());
-				item->setData(TypeRole, Saved);
-				QFont font = item->font();
-				font.setItalic(false);
-				item->setFont(font);
-				savePresets();
-				curveSelected(item, nullptr);
-			}
+			utils::getInputText(
+				this, tr("Save Curve"), tr("Name"), QString(),
+				[this, item](const QString &name) {
+					QString trimmedName = name.trimmed();
+					if(!trimmedName.isEmpty()) {
+						item->setIcon(getPresetIcon(Saved));
+						item->setText(name.trimmed());
+						item->setData(TypeRole, Saved);
+						QFont font = item->font();
+						font.setItalic(false);
+						item->setFont(font);
+						savePresets();
+						curveSelected(item, nullptr);
+					}
+				});
 		} else if(type == Saved) {
-			bool ok;
-			QString name = QInputDialog::getText(
-				this, tr("Rename Curve"), tr("Name"), QLineEdit::Normal,
-				item->text(), &ok);
-			if(ok && !name.trimmed().isEmpty()) {
-				item->setText(name.trimmed());
-				savePresets();
-			}
+			utils::getInputText(
+				this, tr("Rename Curve"), tr("Name"), QString(),
+				[this, item](const QString &name) {
+					QString trimmedName = name.trimmed();
+					if(!trimmedName.isEmpty()) {
+						item->setText(name.trimmed());
+						savePresets();
+					}
+				});
 		}
 	}
 }
@@ -154,13 +156,13 @@ void CurvePresetDialog::deleteCurve()
 {
 	QListWidgetItem *item = m_presetList->currentItem();
 	if(item && item->data(TypeRole).toInt() == Saved) {
-		QMessageBox::StandardButton result = QMessageBox::question(
+		QMessageBox *box = utils::showQuestion(
 			this, tr("Delete Curve"),
 			tr("Really delete curve '%1'?").arg(item->text()));
-		if(result == QMessageBox::Yes) {
+		connect(box, &QMessageBox::accepted, this, [this, item] {
 			delete item; // Deleting the item will remove it from the list.
 			savePresets();
-		}
+		});
 	}
 }
 
@@ -179,32 +181,32 @@ void CurvePresetDialog::loadSavedPresets()
 {
 	auto &settings = dpApp().settings();
 	// TODO: This migration should be in Settings
-	if (settings.curvesPresets().isEmpty() && !settings.curvesPresetsConverted()) {
+	if(settings.curvesPresets().isEmpty() &&
+	   !settings.curvesPresetsConverted()) {
 		convertInputPresetsToCurvePresets(settings);
 		settings.setCurvesPresetsConverted(true);
 	}
 
 	const auto presets = dpApp().settings().curvesPresets();
-	for (const auto &preset : presets) {
+	for(const auto &preset : presets) {
 		KisCubicCurve curve;
 		curve.fromString(preset.value("curve").toString());
 		addPreset(preset.value("name").toString(), Saved, curve);
 	}
 }
 
-void CurvePresetDialog::convertInputPresetsToCurvePresets(desktop::settings::Settings &cfg)
+void CurvePresetDialog::convertInputPresetsToCurvePresets(
+	desktop::settings::Settings &cfg)
 {
 	// TODO: This migration should be in Settings
 	desktop::settings::Settings::CurvesPresetsType curves;
 	const auto inputs = cfg.inputPresets();
-	for (const auto &input : inputs) {
+	for(const auto &input : inputs) {
 		const auto curveString = input.value("curve").toString();
 		// A straight line is not an interesting preset.
 		if(!isLinearCurve(curveString)) {
-			curves.append({
-				{"name", input.value("name")},
-				{"curve", curveString}
-			});
+			curves.append(
+				{{"name", input.value("name")}, {"curve", curveString}});
 		}
 	}
 }
@@ -263,10 +265,9 @@ void CurvePresetDialog::savePresets()
 	for(auto i = 0; i < count; ++i) {
 		QListWidgetItem *item = m_presetList->item(i);
 		if(item->data(TypeRole).toInt() == Saved) {
-			presets.append({
-				{"name", item->text()},
-				{"curve", item->data(CurveRole).toString()}
-			});
+			presets.append(
+				{{"name", item->text()},
+				 {"curve", item->data(CurveRole).toString()}});
 		}
 	}
 	dpApp().settings().setCurvesPresets(presets);

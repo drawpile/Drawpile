@@ -14,7 +14,6 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QIcon>
-#include <QInputDialog>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListView>
@@ -679,31 +678,34 @@ void BrushPalette::presetCurrentIndexChanged(
 
 void BrushPalette::newTag()
 {
-	bool ok;
-	QString name = QInputDialog::getText(
-		this, tr("New Tag"), tr("Tag name:"), QLineEdit::Normal, QString(),
-		&ok);
-	if(ok && !(name = name.trimmed()).isEmpty()) {
-		int tagId = d->tagModel->newTag(name);
-		if(tagId > 0) {
-			d->tagComboBox->setCurrentIndex(tagIdToProxyRow(tagId));
-		}
-	}
+	utils::getInputText(
+		this, tr("New Tag"), tr("Tag name:"), QString(),
+		[this](const QString &text) {
+			QString name = text.trimmed();
+			if(!name.isEmpty()) {
+				int tagId = d->tagModel->newTag(name);
+				if(tagId > 0) {
+					d->tagComboBox->setCurrentIndex(tagIdToProxyRow(tagId));
+				}
+			}
+		});
 }
 
 void BrushPalette::editCurrentTag()
 {
 	if(d->currentTag.isEditable()) {
-		bool ok;
-		QString name = QInputDialog::getText(
-			this, tr("Edit Tag"), tr("Tag name:"), QLineEdit::Normal,
-			d->currentTag.name, &ok);
-		if(ok && !(name = name.trimmed()).isEmpty()) {
-			int sourceRow = d->tagModel->editTag(d->currentTag.id, name);
-			if(sourceRow >= 0) {
-				d->tagComboBox->setCurrentIndex(sourceRow);
-			}
-		}
+		utils::getInputText(
+			this, tr("Edit Tag"), tr("Tag name:"), QString(),
+			[this](const QString &text) {
+				QString name = text.trimmed();
+				if(!name.isEmpty()) {
+					int sourceRow =
+						d->tagModel->editTag(d->currentTag.id, name);
+					if(sourceRow >= 0) {
+						d->tagComboBox->setCurrentIndex(sourceRow);
+					}
+				}
+			});
 	}
 }
 

@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog/parentalcontrols.h"
-#include "desktop/dialogs/settingsdialog/helpers.h"
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
@@ -170,43 +169,44 @@ void ParentalControls::initOsManaged(QVBoxLayout *layout)
 
 void ParentalControls::toggleLock()
 {
-	const auto hash = m_settings.parentalControlsLocked();
-	const auto locked = !hash.isEmpty();
-	const auto title =
-		locked ? tr("Unlock Parental Controls") : tr("Lock Parental Controls");
+	Qt::WindowFlags flags;
+#ifndef __EMSCRIPTEN__
+	flags.setFlag(Qt::Sheet);
+#endif
+	QInputDialog *dlg = new QInputDialog(this, flags);
 
-	for(;;) {
-		auto ok = true;
-		Qt::WindowFlags flags;
-#ifndef __EMSCRIPTEN__
-		flags.setFlag(Qt::Sheet);
-#endif
-		const auto pass = QInputDialog::getText(
-			this, title, tr("Enter password:"), QLineEdit::Password, QString(),
-			&ok, flags);
-		if(!ok) {
-			break;
-		} else if(locked) {
-			if(server::passwordhash::check(pass, hash)) {
-				m_settings.setParentalControlsLocked(QByteArray());
-				break;
-			} else {
-				QMessageBox box(
-					QMessageBox::Warning, title, tr("Incorrect password."),
-					QMessageBox::Retry | QMessageBox::Cancel, this);
-#ifndef __EMSCRIPTEN__
-				box.setWindowModality(Qt::WindowModal);
-#endif
-				if(box.exec() == QMessageBox::Cancel) {
-					break;
+	QByteArray hash = m_settings.parentalControlsLocked();
+	bool locked = !hash.isEmpty();
+	QString title =
+		locked ? tr("Unlock Parental Controls") : tr("Lock Parental Controls");
+	dlg->setWindowTitle(title);
+	dlg->setLabelText(tr("Enter password:"));
+	dlg->setInputMode(QInputDialog::TextInput);
+	dlg->setTextEchoMode(QLineEdit::Password);
+	connect(
+		dlg, &QInputDialog::accepted, this, [this, dlg, hash, locked, title] {
+			QString pass = dlg->textValue();
+			if(!pass.isEmpty()) {
+				if(locked) {
+					if(server::passwordhash::check(pass, hash)) {
+						m_settings.setParentalControlsLocked(QByteArray());
+					} else {
+						QMessageBox *box = utils::makeMessage(
+							this, title, tr("Incorrect password."), QString(),
+							QMessageBox::Warning,
+							QMessageBox::Retry | QMessageBox::Cancel);
+						connect(box, &QMessageBox::accepted, this, [this] {
+							toggleLock();
+						});
+						box->show();
+					}
+				} else {
+					m_settings.setParentalControlsLocked(
+						server::passwordhash::hash(pass));
 				}
 			}
-		} else {
-			m_settings.setParentalControlsLocked(
-				server::passwordhash::hash(pass));
-			break;
-		}
-	}
+		});
+	dlg->show();
 }
 
 } // namespace settingsdialog

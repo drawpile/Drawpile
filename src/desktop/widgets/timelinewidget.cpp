@@ -17,7 +17,6 @@ extern "C" {
 #include <QDrag>
 #include <QHash>
 #include <QIcon>
-#include <QInputDialog>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -935,7 +934,14 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 		QDrag *drag = new QDrag{this};
 		drag->setMimeData(mimeData); // QDrag takes ownership of the QMimeData.
 		drag->setPixmap(pixmap);
+#ifdef __EMSCRIPTEN__
+		if(QDrag::needsAsync()) {
+			drag->execAsync(d->dropAction); // Qt takes ownership of the QDrag.
+			return;
+		}
+#else
 		drag->exec(d->dropAction); // Qt takes ownership of the QDrag.
+#endif
 	} else if(d->pressedOnHeader && target.frameIndex != -1) {
 		setCurrent(0, target.frameIndex, true, true);
 	}
@@ -1375,16 +1381,17 @@ void TimelineWidget::retitleTrack()
 		return;
 	}
 
-	bool ok;
-	QString title = QInputDialog::getText(
-		this, tr("Rename Track"), tr("Track Name"), QLineEdit::Normal,
-		source->title, &ok);
-	if(ok && !(title = title.trimmed()).isEmpty()) {
-		emitCommand([&](uint8_t contextId) {
-			return net::makeTrackRetitleMessage(
-				contextId, d->currentTrackId, title);
+	utils::getInputText(
+		this, tr("Rename Track"), tr("Track Name"), QString(),
+		[this](const QString &text) {
+			QString title = text.trimmed();
+			if(!title.isEmpty() && d->currentTrack()) {
+				emitCommand([&](uint8_t contextId) {
+					return net::makeTrackRetitleMessage(
+						contextId, d->currentTrackId, title);
+				});
+			}
 		});
-	}
 }
 
 void TimelineWidget::deleteTrack()
@@ -1407,32 +1414,24 @@ void TimelineWidget::deleteTrack()
 
 void TimelineWidget::setFrameCount()
 {
-	if(!d->editable) {
-		return;
-	}
-
-	bool ok;
-	int frameCount = QInputDialog::getInt(
-		this, tr("Change Frame Count"),
-		tr("Frame Count (key frames beyond this point will be deleted)"),
-		d->frameCount(), 1, 9999, 1, &ok);
-	if(ok) {
-		changeFrameCount(frameCount);
+	if(d->editable) {
+		utils::getInputInt(
+			this, tr("Change Frame Count"),
+			tr("Frame Count (key frames beyond this point will be deleted)"),
+			d->frameCount(), 1, 9999, [this](int frameCount) {
+				changeFrameCount(frameCount);
+			});
 	}
 }
 
 void TimelineWidget::setFramerate()
 {
-	if(!d->editable) {
-		return;
-	}
-
-	bool ok;
-	int framerate = QInputDialog::getInt(
-		this, tr("Change Framerate"), tr("Frames Per Second (FPS)"),
-		d->framerate(), 1, 999, 1, &ok);
-	if(ok) {
-		changeFramerate(framerate);
+	if(d->editable) {
+		utils::getInputInt(
+			this, tr("Change Framerate"), tr("Frames Per Second (FPS)"),
+			d->framerate(), 1, 999, [this](int framerate) {
+				changeFramerate(framerate);
+			});
 	}
 }
 

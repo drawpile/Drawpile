@@ -355,36 +355,41 @@ import { UAParser } from "ua-parser-js";
 
     const originalInstantiateStreaming = WebAssembly.instantiateStreaming;
     WebAssembly.instantiateStreaming = (response, ...args) => {
-      const reportingResponse = new Response(
-        new ReadableStream(
-          {
-            async start(controller) {
-              const reader = response.clone().body.getReader();
-              let loaded = 0;
-              for (;;) {
-                const { done, value } = await reader.read();
-                if (done) {
-                  onProgress(wasmSize);
-                  break;
+      if (typeof response.then === "function") {
+        return response.then((res) =>
+          WebAssembly.instantiateStreaming(res, ...args),
+        );
+      } else {
+        const reportingResponse = new Response(
+          new ReadableStream(
+            {
+              async start(controller) {
+                const reader = response.clone().body.getReader();
+                let loaded = 0;
+                for (;;) {
+                  const { done, value } = await reader.read();
+                  if (done) {
+                    onProgress(wasmSize);
+                    break;
+                  }
+                  loaded += value.byteLength;
+                  onProgress(loaded);
+                  controller.enqueue(value);
                 }
-                loaded += value.byteLength;
-                onProgress(loaded);
-                controller.enqueue(value);
-              }
-              controller.close();
+                controller.close();
+              },
             },
-          },
-          {
-            status: response.status,
-            statusText: response.statusText,
-          },
-        ),
-      );
-      for (const pair of response.headers.entries()) {
-        reportingResponse.headers.set(pair[0], pair[1]);
+            {
+              status: response.status,
+              statusText: response.statusText,
+            },
+          ),
+        );
+        for (const pair of response.headers.entries()) {
+          reportingResponse.headers.set(pair[0], pair[1]);
+        }
+        return originalInstantiateStreaming(reportingResponse, ...args);
       }
-
-      return originalInstantiateStreaming(reportingResponse, ...args);
     };
   }
   // SPDX-SnippetEnd
@@ -702,28 +707,6 @@ import { UAParser } from "ua-parser-js";
   }
 
   function checkBrowserSupport() {
-    const ua = getUa();
-    if (getBustedSafari(ua)) {
-      const iDevice = getIDevice(ua);
-      return tag("p", [
-        tag("strong", ["❌ Broken browser:"]),
-        " your web browser probably can't run Drawpile. Apple needs to fix ",
-        tag(
-          "a",
-          {
-            href: "https://bugs.webkit.org/show_bug.cgi?id=284752",
-            target: "_blank",
-          },
-          "this critical bug introduced in Safari version 18",
-        ),
-        ". You can try to continue anyway, but the application will likey hang. ",
-        iDevice
-          ? "You can't switch to a different browser either, all browsers on " +
-            `${iDevice} are Safari under the hood.`
-          : "Try using a different browser instead.",
-      ]);
-    }
-
     const { isInApp, appName } = InAppSpy();
     if (isInApp) {
       const prefix = appName ? `${appName}'s` : "an";
@@ -735,6 +718,7 @@ import { UAParser } from "ua-parser-js";
       ]);
     }
 
+    const ua = getUa();
     const os = ua.getOS()?.name || "";
     const browser = ua.getBrowser()?.name || "";
     if (os.indexOf("Linux") !== -1 && browser.indexOf("Firefox") !== -1) {
@@ -788,24 +772,34 @@ import { UAParser } from "ua-parser-js";
             "causes problems with controls ending up off-screen. Consider " +
             `using the ${iDevice} system browser (Safari) directly instead.`,
         ]);
-      } else {
-        return tag("p", [
-          tag("strong", ["⚠️ Avoid updating to iOS/iPadOS 18:"]),
-          " Apple introduced ",
-          tag(
-            "a",
-            {
-              href: "https://bugs.webkit.org/show_bug.cgi?id=284752",
-              target: "_blank",
-            },
-            "a critical bug in Safari version 18",
-          ),
-          " that prevents Drawpile from working if you update to it. ",
-          "To continue using Drawpile, hold off on the update until Apple ",
-          "fixes their bug.",
-        ]);
       }
     }
+
+    if (getBustedSafari(ua)) {
+      return tag("p", [
+        tag("strong", ["ℹ️ Browser workaround:"]),
+        " your web browser is affected by ",
+        tag(
+          "a",
+          {
+            href: "https://bugs.webkit.org/show_bug.cgi?id=284752",
+            target: "_blank",
+          },
+          "this bug that Apple introduced in Safari version 18",
+        ),
+        ". Drawpile will try to make it work anyway. If it doesn't run or ",
+        "crashes for you, ",
+        tag(
+          "a",
+          {
+            href: "https://drawpile.net/help/",
+            target: "_blank",
+          },
+          "please let us know!",
+        ),
+      ]);
+    }
+
     return null;
   }
 
@@ -835,23 +829,10 @@ import { UAParser } from "ua-parser-js";
     ]);
   }
 
-  function makePathMappings(wasmtype) {
+  function makePathMappings(_wasmtype) {
     let prefix = null;
-    if (wasmtype === "relwithdebinfo") {
-      initialConsoleMessages.push("Using less-optimized version as requested");
-      prefix = "relwithdebinfo/";
-    } else if (wasmtype !== "keep") {
-      const ua = getUa();
-      const bustedSafari = getBustedSafari(ua);
-      if (bustedSafari) {
-        initialConsoleMessages.push(
-          `Browser ${bustedSafari} is likely affected by WebKit bug 284752, ` +
-            "deteriorating to less-optimized version",
-        );
-        prefix = "relwithdebinfo/";
-      }
-    }
-
+    // Currently there's only the base wasm, but this can be used to put other
+    // versions of the three below files into a directory and use those.
     if (prefix) {
       for (const path of [
         "drawpile.js",

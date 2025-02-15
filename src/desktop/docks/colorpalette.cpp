@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/docks/colorpalette.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/main.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/palettewidget.h"
 #include "libclient/utils/wasmpersistence.h"
@@ -13,7 +13,6 @@
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QIcon>
-#include <QInputDialog>
 #include <QLineEdit>
 #include <QMenu>
 #include <QMessageBox>
@@ -275,20 +274,20 @@ void ColorPaletteDock::updateColumnButtons(int columns)
 
 void ColorPaletteDock::addPalette()
 {
-	bool ok;
-	QString name = QInputDialog::getText(
-					   this, tr("New Palette"), tr("Name"),
-					   QLineEdit::EchoMode::Normal, QString{}, &ok)
-					   .trimmed();
-	if(ok && !name.isEmpty()) {
-		color_widgets::ColorPalette pal = color_widgets::ColorPalette();
-		pal.setName(name);
-		pal.setColumns(8);
-		getSharedPaletteModel()->addPalette(pal, false);
-		d->paletteChoiceBox->setCurrentIndex(
-			d->paletteChoiceBox->model()->rowCount() - 1);
-		DRAWPILE_FS_PERSIST();
-	}
+	utils::getInputText(
+		this, tr("New Palette"), tr("Name"), QString(),
+		[this](const QString &text) {
+			QString name = text.trimmed();
+			if(!name.isEmpty()) {
+				color_widgets::ColorPalette pal = color_widgets::ColorPalette();
+				pal.setName(name);
+				pal.setColumns(8);
+				getSharedPaletteModel()->addPalette(pal, false);
+				d->paletteChoiceBox->setCurrentIndex(
+					d->paletteChoiceBox->model()->rowCount() - 1);
+				DRAWPILE_FS_PERSIST();
+			}
+		});
 }
 
 void ColorPaletteDock::copyPalette()
@@ -309,37 +308,34 @@ void ColorPaletteDock::deletePalette()
 {
 	const int current = d->paletteChoiceBox->currentIndex();
 	if(current >= 0) {
-		const int ret = QMessageBox::question(
+		QMessageBox *box = utils::showQuestion(
 			this, tr("Delete"),
 			tr("Delete palette \"%1\"?")
-				.arg(d->paletteChoiceBox->currentText()),
-			QMessageBox::Yes | QMessageBox::No);
-
-		if(ret == QMessageBox::Yes) {
+				.arg(d->paletteChoiceBox->currentText()));
+		connect(box, &QMessageBox::accepted, this, [current] {
 			getSharedPaletteModel()->removePalette(current);
 			DRAWPILE_FS_PERSIST();
-		}
+		});
 	}
 }
 
 void ColorPaletteDock::renamePalette()
 {
-	bool ok;
-	QString name =
-		QInputDialog::getText(
-			this, tr("New Palette"), tr("Name"), QLineEdit::EchoMode::Normal,
-			d->paletteWidget->colorPalette().name(), &ok)
-			.trimmed();
-	if(ok && !name.isEmpty()) {
-		color_widgets::ColorPaletteModel *pm = getSharedPaletteModel();
-		d->paletteWidget->colorPalette().setName(name);
-		pm->updatePalette(
-			d->paletteChoiceBox->currentIndex(),
-			d->paletteWidget->colorPalette());
-		d->paletteWidget->setColorPalette(
-			pm->palette(d->paletteChoiceBox->currentIndex()));
-		DRAWPILE_FS_PERSIST();
-	}
+	utils::getInputText(
+		this, tr("Rename Palette"), tr("Name"), QString(),
+		[this](const QString &text) {
+			QString name = text.trimmed();
+			if(!name.isEmpty()) {
+				color_widgets::ColorPaletteModel *pm = getSharedPaletteModel();
+				d->paletteWidget->colorPalette().setName(name);
+				pm->updatePalette(
+					d->paletteChoiceBox->currentIndex(),
+					d->paletteWidget->colorPalette());
+				d->paletteWidget->setColorPalette(
+					pm->palette(d->paletteChoiceBox->currentIndex()));
+				DRAWPILE_FS_PERSIST();
+			}
+		});
 }
 
 #ifndef __EMSCRIPTEN__
@@ -372,7 +368,7 @@ void ColorPaletteDock::exportPalette()
 		color_widgets::ColorPalette pal = d->paletteWidget->colorPalette();
 
 		if(!pal.save(filename))
-			QMessageBox::warning(this, tr("Error"), tr("Couldn't save file"));
+			utils::showWarning(this, tr("Error"), tr("Couldn't save file"));
 	}
 }
 #endif

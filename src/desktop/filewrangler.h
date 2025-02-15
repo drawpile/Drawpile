@@ -119,7 +119,7 @@ public:
 #endif
 
 #ifdef __EMSCRIPTEN__
-	void downloadImage(Document *doc);
+	void downloadImage(Document *doc) const;
 	bool downloadPreResetImage(
 		Document *doc, const drawdance::CanvasState &canvasState) const;
 	void downloadSelection(Document *doc);
@@ -208,6 +208,12 @@ private:
 		const OpenFn &fileOpenCompleted) const;
 
 	static QString getEffectiveFilter(const QStringList &filters);
+
+#ifdef __EMSCRIPTEN__
+	void withFileTypeDialog(
+		const QString &name, const QStringList &formats, QObject *context,
+		const std::function<void(const QString &, const QString &)> fn) const;
+#endif
 
 	QWidget *parentWidget() const;
 

@@ -10,7 +10,6 @@
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
-#include <QInputDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLabel>
@@ -228,30 +227,36 @@ void LoadDialog::renameCurrentPreset()
 		m_presetCombo->currentData(utils::HostPresetModel::TitleRole)
 			.toString()
 			.trimmed();
-	QString newTitle = QInputDialog::getText(
-						   this, tr("Rename"),
-						   tr("Choose a new name for preset %1.").arg(oldTitle))
-						   .trimmed();
-	if(!newTitle.isEmpty() && newTitle != oldTitle) {
-		int id =
-			m_presetCombo->currentData(utils::HostPresetModel::IdRole).toInt();
-		QSet<int> ids = m_presetModel->getPresetIdsByTitle(newTitle);
-		ids.remove(id);
-		if(ids.isEmpty()) {
-			m_presetModel->renamePresetById(id, newTitle);
-		} else {
-			QMessageBox *box = utils::makeQuestion(
-				this, tr("Conflict"),
-				tr("Preset %1 already exists, do you want to replace it?")
-					.arg(newTitle));
-			box->button(QMessageBox::Yes)->setText(tr("Yes, replace"));
-			box->button(QMessageBox::No)->setText(tr("No, keep"));
-			connect(box, &QMessageBox::accepted, this, [this, id, newTitle] {
-				m_presetModel->renamePresetById(id, newTitle);
-			});
-			box->show();
-		}
-	}
+	utils::getInputText(
+		this, tr("Rename"),
+		tr("Choose a new name for preset %1.").arg(oldTitle), QString(),
+		[this, oldTitle](const QString &text) {
+			QString newTitle = text.trimmed();
+			if(!newTitle.isEmpty() && newTitle != oldTitle) {
+				int id =
+					m_presetCombo->currentData(utils::HostPresetModel::IdRole)
+						.toInt();
+				QSet<int> ids = m_presetModel->getPresetIdsByTitle(newTitle);
+				ids.remove(id);
+				if(ids.isEmpty()) {
+					m_presetModel->renamePresetById(id, newTitle);
+				} else {
+					QMessageBox *box = utils::makeQuestion(
+						this, tr("Conflict"),
+						tr("Preset %1 already exists, do you want to replace "
+						   "it?")
+							.arg(newTitle));
+					box->button(QMessageBox::Yes)->setText(tr("Yes, replace"));
+					box->button(QMessageBox::No)->setText(tr("No, keep"));
+					connect(
+						box, &QMessageBox::accepted, this,
+						[this, id, newTitle] {
+							m_presetModel->renamePresetById(id, newTitle);
+						});
+					box->show();
+				}
+			}
+		});
 }
 
 void LoadDialog::deleteCurrentPreset()

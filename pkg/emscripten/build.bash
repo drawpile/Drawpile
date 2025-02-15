@@ -108,6 +108,7 @@ run_build_script() {
         -DCMAKE_PREFIX_PATH="$build_prefix_dir" \
         -DCMAKE_INSTALL_PREFIX="$build_prefix_dir" \
         -DEMSCRIPTEN=ON \
+        -DEMSCRIPTEN_ASYNCIFY="$asyncify" \
         -DEMSCRIPTEN_THREADS=ON \
         -DKEEP_SOURCE_DIRS=ON \
         -DKEEP_BINARY_DIRS=ON \
@@ -210,14 +211,32 @@ fi
 
 case $BUILD_TYPE in
     'debug')
+        asyncify=OFF
         cmake_build_type=Debug
         cmake_interprocedural_optimization=OFF
         ;;
     'relwithdebinfo')
+        asyncify=OFF
         cmake_build_type=RelWithDebInfo
         cmake_interprocedural_optimization=OFF
         ;;
     'release')
+        asyncify=OFF
+        cmake_build_type=Release
+        cmake_interprocedural_optimization=ON
+        ;;
+    'debugasync')
+        asyncify=ON
+        cmake_build_type=Debug
+        cmake_interprocedural_optimization=OFF
+        ;;
+    'relwithdebinfoasync')
+        asyncify=ON
+        cmake_build_type=RelWithDebInfo
+        cmake_interprocedural_optimization=OFF
+        ;;
+    'releaseasync')
+        asyncify=ON
         cmake_build_type=Release
         cmake_interprocedural_optimization=ON
         ;;

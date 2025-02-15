@@ -3,10 +3,12 @@
 #define WIDGETUTILS_H
 #include <QHBoxLayout>
 #include <QIcon>
+#include <QMessageBox>
 #include <QObject>
 #include <QScroller>
 #include <QSizePolicy>
 #include <QWidget>
+#include <functional>
 #include <optional>
 
 class QAbstractScrollArea;
@@ -19,7 +21,6 @@ class QFrame;
 class QHeaderView;
 class QKeySequence;
 class QLabel;
-class QMessageBox;
 class QWidget;
 
 namespace utils {
@@ -208,6 +209,11 @@ QCheckBox *addCheckable(
 
 QLabel *makeIconLabel(const QIcon &icon, QWidget *parent = nullptr);
 
+QMessageBox *makeMessage(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText, QMessageBox::Icon icon,
+	QMessageBox::StandardButtons buttons);
+
 QMessageBox *makeQuestion(
 	QWidget *parent, const QString &title, const QString &text,
 	const QString &informativeText = QString());
@@ -243,6 +249,18 @@ QMessageBox *showWarning(
 QMessageBox *showCritical(
 	QWidget *parent, const QString &title, const QString &text,
 	const QString &informativeText = QString());
+
+void getInputText(
+	QWidget *parent, const QString &title, const QString &label,
+	const QString &text, const std::function<void(const QString &)> &fn);
+
+void getInputPassword(
+	QWidget *parent, const QString &title, const QString &label,
+	const QString &text, const std::function<void(const QString &)> &fn);
+
+void getInputInt(
+	QWidget *parent, const QString &title, const QString &label, int value,
+	int minValue, int maxValue, const std::function<void(int)> &fn);
 
 bool openOrQuestionUrl(QWidget *parent, const QUrl &url);
 

@@ -1320,30 +1320,36 @@ void LayerList::deleteSelected()
 		}
 		names.sort(Qt::CaseInsensitive);
 		// FIXME: proper translation.
-		QMessageBox::StandardButton result = QMessageBox::question(
+		QMessageBox *box = utils::showQuestion(
 			this, tr("Delete Layer?"),
 			tr("Really delete the layer '%1'?")
-				.arg(QLocale().createSeparatedList(names)),
-			QMessageBox::Yes | QMessageBox::No,
-			QMessageBox::StandardButton::Yes);
-		if(result != QMessageBox::StandardButton::Yes) {
-			return;
-		}
+				.arg(QLocale().createSeparatedList(names)));
+		connect(
+			box, &QMessageBox::accepted, this, &LayerList::doDeleteSelected);
+	} else {
+		doDeleteSelected();
 	}
+}
 
-	uint8_t contextId = m_canvas->localUserId();
-	net::MessageList msgs;
-	msgs.reserve(count + 1);
-	msgs.append(net::makeUndoPointMessage(contextId));
-	bool compatibilityMode = m_canvas->isCompatibilityMode();
-	for(const QModelIndex &idx : indexes) {
-		int layerId = idx.data(canvas::LayerListModel::IdRole).toInt();
-		msgs.append(
-			compatibilityMode
-				? net::makeLayerDeleteMessage(contextId, layerId, false)
-				: net::makeLayerTreeDeleteMessage(contextId, layerId, 0));
+void LayerList::doDeleteSelected()
+{
+	QModelIndexList indexes = topLevelSelections();
+	compat::sizetype count = indexes.size();
+	if(count != 0) {
+		uint8_t contextId = m_canvas->localUserId();
+		net::MessageList msgs;
+		msgs.reserve(count + 1);
+		msgs.append(net::makeUndoPointMessage(contextId));
+		bool compatibilityMode = m_canvas->isCompatibilityMode();
+		for(const QModelIndex &idx : indexes) {
+			int layerId = idx.data(canvas::LayerListModel::IdRole).toInt();
+			msgs.append(
+				compatibilityMode
+					? net::makeLayerDeleteMessage(contextId, layerId, false)
+					: net::makeLayerTreeDeleteMessage(contextId, layerId, 0));
+		}
+		emit layerCommands(msgs.size(), msgs.constData());
 	}
-	emit layerCommands(msgs.size(), msgs.constData());
 }
 
 void LayerList::mergeSelected()

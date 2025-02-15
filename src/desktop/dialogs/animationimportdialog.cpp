@@ -301,7 +301,7 @@ void AnimationImportDialog::importFinished(
 {
 	if(canvasState.isNull()) {
 		QApplication::restoreOverrideCursor();
-		QMessageBox::critical(this, tr("Animation Import Error"), error);
+		utils::showCritical(this, tr("Animation Import Error"), error);
 		setEnabled(true);
 	} else {
 		emit canvasStateImported(canvasState);

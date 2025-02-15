@@ -726,16 +726,16 @@ void LoginDialog::onRecentEditClicked()
 
 void LoginDialog::onRecentForgetClicked()
 {
-	QMessageBox::StandardButton result = QMessageBox::question(
+	QMessageBox *box = utils::showQuestion(
 		this, tr("Remove Account"),
 		tr("Really forget this account? This will only remove it from your "
 		   "recent account list, it won't delete the account."));
-	if(result == QMessageBox::Yes) {
+	connect(box, &QMessageBox::accepted, this, [this] {
 		d->accounts->deleteAccountAt(d->ui->recentAccountCombo->currentIndex());
 		if(!d->haveRecentAccounts()) {
 			onRecentBreakClicked();
 		}
-	}
+	});
 }
 
 void LoginDialog::onRecentBreakClicked()
