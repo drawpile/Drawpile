@@ -74,7 +74,7 @@ impl Image {
         if width == scale_width && height == scale_height {
             let img = unsafe { DP_image_new(width as i32, height as i32) };
             unsafe {
-                copy_nonoverlapping(pixels.as_ptr(), DP_image_pixels(img).cast(), width * height)
+                copy_nonoverlapping(pixels.as_ptr(), DP_image_pixels(img).cast(), width * height);
             }
             return Ok(Image { image: img });
         }

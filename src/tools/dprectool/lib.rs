@@ -144,10 +144,9 @@ impl std::str::FromStr for Pass {
             "all" => Ok(Self::All),
             "template" => Ok(Self::Template),
             "client" => Ok(Self::Client),
-            _ => Err(format!(
-                "invalid pass option, should be one of 'all', 'template' or \
-                'client'"
-            )),
+            _ => Err(
+                "invalid pass option, should be one of 'all', 'template' or 'client'".to_owned(),
+            ),
         }
     }
 }

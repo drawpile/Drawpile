@@ -59,7 +59,7 @@ pub struct CropArea {
 }
 
 impl CropArea {
-    fn to_tuple(&self) -> (usize, usize, usize, usize) {
+    fn as_tuple(&self) -> (usize, usize, usize, usize) {
         (self.x, self.y, self.width, self.height)
     }
 }
@@ -108,8 +108,8 @@ impl Crop {
     }
 
     fn to_arg(&self) -> String {
-        let mut s = String::new();
         use std::fmt::Write;
+        let mut s = String::new();
         write!(s, "{}", self).unwrap();
         s
     }
@@ -750,7 +750,7 @@ fn timelapse_recording(
         let pos = if initial {
             pe.skip_playback(1)
         } else {
-            pe.play_playback_timelapse(interval, last_area.map(|a| a.to_tuple()))
+            pe.play_playback_timelapse(interval, last_area.map(|a| a.as_tuple()))
         }?;
 
         pe.render();
