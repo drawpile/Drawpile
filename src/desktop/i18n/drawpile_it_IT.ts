@@ -508,12 +508,12 @@
     <message>
         <location line="-415"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ban di sessione (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Session Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ruoli di sessione (%1)</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1042,7 +1042,7 @@ Sottogamma: [%3, %4]</translation>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation>I dock di Drawpile possono essere disposti liberamente. Puoi usare Vista &gt; Docks &gt; Arrange Docks per trascinarli più facilmente. Assicurati che la disposizione si adatti alla tua risoluzione, altrimenti alcuni controlli potrebbero essere spinti fuori dallo schermo.</translation>
     </message>
 </context>
 <context>
@@ -1493,7 +1493,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+1812"/>
         <source>Arrange Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Disponi i dock</translation>
     </message>
     <message>
         <location line="+80"/>
@@ -2011,7 +2011,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <location line="+4"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Attiva modalità Livello&amp;Schizzo</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+212"/>
@@ -2240,28 +2240,28 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <location line="+5"/>
         <source>discard your playback</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>scarta la tua riproduzione</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+15"/>
         <source>Doing so will %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>In questo modo %1.</translation>
     </message>
     <message>
         <location line="-11"/>
         <source>Doing so will %1 and %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>In questo modo %1 e %2.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Doing so will %1, %2 and %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Così facendo si otterranno %1, %2 e %3.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Doing so will %1, %2, %3 and %4.</source>
-        <translation type="unfinished"></translation>
+        <translation>In questo modo saranno %1, %2, %3 e %4.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -2438,7 +2438,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+87"/>
         <source>Reconnect</source>
-        <translation type="unfinished">Ricollegati</translation>
+        <translation>Riconnettiti</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2590,12 +2590,12 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+16"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished">Apri il Dump di Debug</translation>
+        <translation>Apri Dump di debug</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a debug dump and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Stai per aprire un dump di debug e chiudere questa finestra.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4425,7 +4425,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished">Liscio</translation>
+        <translation>Liscio</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4620,17 +4620,17 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+86"/>
         <source>Continuous hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Colore continuo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Passaggi per la tonalità: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue angle: </source>
-        <translation type="unfinished"></translation>
+        <translation>Angolo di tonalità: </translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4642,67 +4642,67 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="-40"/>
         <source>Continuous chroma</source>
-        <translation type="unfinished"></translation>
+        <translation>Croma continuo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Chroma steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Passaggi di croma: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Continuous luminance</source>
-        <translation type="unfinished"></translation>
+        <translation>Luminanza continua</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Luminance steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Passaggi di luminanza: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Saturazione continua</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Saturation steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Passaggi di saturazione: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous lightness</source>
-        <translation type="unfinished"></translation>
+        <translation>Leggerezza continua</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lightness steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Passaggi di leggerezza: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous value</source>
-        <translation type="unfinished"></translation>
+        <translation>Valore continuo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Value steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Passaggi di valore: </translation>
     </message>
     <message>
         <location line="+8"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessuno</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Gamut mask:</source>
-        <translation type="unfinished"></translation>
+        <translation>Maschera gamut:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Mask angle: </source>
-        <translation type="unfinished"></translation>
+        <translation>Angolo maschera: </translation>
     </message>
     <message>
         <location line="+15"/>
@@ -4718,13 +4718,13 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
         <location line="+54"/>
         <source>Atmosphere with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Atmosfera con colore</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Atmospheric triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Triade atmosferica</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4736,31 +4736,31 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
         <location line="+5"/>
         <source>Dominant hue with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tonalità dominante con colore</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Shifted triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Triade spostata</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Dividi</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Dividi complementare</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Tetradic</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tetradico</translation>
     </message>
 </context>
 <context>
@@ -4775,7 +4775,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
         <location line="-6"/>
         <source>Couldn&apos;t read image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile leggere l&apos;immagine: %1.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4828,7 +4828,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+70"/>
         <source>Change…</source>
-        <translation type="unfinished">Modifica…</translation>
+        <translation>Cambia…</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -8839,7 +8839,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+3"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished">Passa allo slot di cancellazione</translation>
+        <translation>Passa allo slot della gomma</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9110,7 +9110,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+11"/>
         <source>Draw</source>
-        <translation type="unfinished">Disegna</translation>
+        <translation>Disegno</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9489,7 +9489,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+4"/>
         <source>Listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Elenco</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9715,7 +9715,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+4"/>
         <source>Listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Elenco</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -9745,7 +9745,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+8"/>
         <source>Replace ban list</source>
-        <translation type="unfinished"></translation>
+        <translation>Sostituisci l&apos;elenco dei ban</translation>
     </message>
 </context>
 <context>
@@ -9829,17 +9829,17 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+134"/>
         <source>Listing: a title is required for public sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Elenco: è richiesto un titolo per le sessioni pubbliche</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Listing: the title is inappropriate.</source>
-        <translation type="unfinished"></translation>
+        <translation>Elenco: il titolo non è appropriato.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Listing: the ID alias is inappropriate.</source>
-        <translation type="unfinished"></translation>
+        <translation>Annuncio: l&apos;alias ID non è appropriato.</translation>
     </message>
 </context>
 <context>
@@ -9958,37 +9958,37 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+3"/>
         <source>Animation timeline:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sequenza temporale dell&apos;animazione:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Undo and redo:</source>
-        <translation type="unfinished"></translation>
+        <translation>Annulla e ripeti:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Kick and ban:</source>
-        <translation type="unfinished"></translation>
+        <translation>Espulsione e ban:</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>Everyone</source>
-        <translation type="unfinished">Tutti</translation>
+        <translation>Tutti</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Registered</source>
-        <translation type="unfinished">Registrato</translation>
+        <translation>Registrato</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Fidato</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Operators</source>
-        <translation type="unfinished">Оperatori</translation>
+        <translation>Оperatori</translation>
     </message>
 </context>
 <context>
@@ -9996,12 +9996,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-226"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Resetta</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pick the sections you want to reset to their defaults:</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona le sezioni di cui vuoi ripristinare le impostazioni predefinite:</translation>
     </message>
 </context>
 <context>
@@ -10009,27 +10009,27 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/roles.cpp" line="+36"/>
         <source>Define a password to let anyone become operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Definisci una password per consentire a chiunque di diventare operatore</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Operator password:</source>
-        <translation type="unfinished">Password operatore:</translation>
+        <translation>Password operatore:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>No roles imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun ruolo importato.</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Operator</source>
-        <translation type="unfinished">Оperatore</translation>
+        <translation>Оperatore</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Fidato</translation>
     </message>
 </context>
 <context>
@@ -10037,37 +10037,37 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+276"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Carica impostazioni</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Name:</source>
-        <translation type="unfinished">Nome:</translation>
+        <translation>Nome:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Pick the sections you want to save:</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona le sezioni che vuoi salvare:</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Save</source>
-        <translation type="unfinished">Salva</translation>
+        <translation>Salva</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Il preset %1 esiste già, vuoi sostituirlo?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Yes, replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Sì, sostituisci</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep</source>
-        <translation type="unfinished"></translation>
+        <translation>No, tieni</translation>
     </message>
 </context>
 <context>
@@ -10075,92 +10075,92 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/session.cpp" line="+38"/>
         <source>Personal session, only people you invite can join</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessione personale, solo le persone che inviti possono partecipare</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Public session, anyone can freely join</source>
-        <translation type="unfinished"></translation>
+        <translation>Seduta pubblica, chiunque può partecipare liberamente</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Set a session title in the Listing tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta un titolo per la sessione nella scheda Elenco.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Session password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Password di sessione:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Enter or generate a session password</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci o genera una password di sessione</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Generate</source>
-        <translation type="unfinished">Creare</translation>
+        <translation>Generare</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished">Non adatto ai minori (NSFM)</translation>
+        <translation>Non adatto ai minori (NSFM)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation type="unfinished">Mantieni cronologia della chat</translation>
+        <translation>Mantieni cronologia della chat</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Host o indirizzo IP</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Builtin server on this computer</source>
-        <translation type="unfinished"></translation>
+        <translation>Server incorporato su questo computer</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server:</source>
-        <translation type="unfinished"></translation>
+        <translation>Server:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Enter a host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci un host o un indirizzo IP</translation>
     </message>
     <message>
         <location line="+129"/>
         <source>Session: a password is required</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessione: è richiesta una password</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Session: a server is required</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessione: è richiesto un server</translation>
     </message>
     <message>
         <location line="+70"/>
         <source>This will host your session on the public Drawpile server. It&apos;s freely available for anyone. To keep space available, sessions will be stopped when they&apos;re inactive for a while or after everybody leaves.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questo ospiterà la tua sessione sul server pubblico Drawpile. È liberamente disponibile per chiunque. Per mantenere lo spazio disponibile, le sessioni verranno interrotte quando saranno inattive per un po&apos; o dopo che tutti se ne saranno andati.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Sessions must comply with the rules, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;click here to view them&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le sessioni devono rispettare le regole, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;clicca qui per visualizzarle&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Hosting on your own computer requires additional setup!</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;hosting sul tuo computer richiede una configurazione aggiuntiva!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;Fai clic qui per le istruzioni.&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -10168,27 +10168,27 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/files.cpp" line="+52"/>
         <source>This file doesn&apos;t contain any valid session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questo file non contiene impostazioni di sessione valide.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Invalid session settings format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato delle impostazioni di sessione non valido.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>File contains session settings to import.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il file contiene le impostazioni della sessione da importare.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Invalid role format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato ruolo non valido.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>File contains no roles to import.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il file non contiene ruoli da importare.</translation>
     </message>
 </context>
 <context>
@@ -10394,17 +10394,17 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+25"/>
         <source>Color Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerchio dei colori</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerchio</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Configure…</source>
-        <translation type="unfinished"></translation>
+        <translation>Configura…</translation>
     </message>
 </context>
 <context>
@@ -10422,12 +10422,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="-12"/>
         <source>Color Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Tavolozza dei colori</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Palette</source>
-        <translation type="unfinished">Palette dei colori</translation>
+        <translation>Tavolozza</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -10522,12 +10522,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../docks/colorsliders.cpp" line="+73"/>
         <source>Color Sliders</source>
-        <translation type="unfinished"></translation>
+        <translation>Colore cursori</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Sliders</source>
-        <translation type="unfinished">Slider</translation>
+        <translation>Cursori</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10706,12 +10706,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../docks/colorspinner.cpp" line="-99"/>
         <source>Color Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Ruota dei colori</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Wheel</source>
-        <translation type="unfinished">Ruota</translation>
+        <translation>Ruota</translation>
     </message>
     <message>
         <location line="+110"/>
@@ -10755,12 +10755,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../docks/dockbase.cpp" line="+73"/>
         <source>Drag here to arrange</source>
-        <translation type="unfinished"></translation>
+        <translation>Trascina qui per organizzare</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Finish arranging</source>
-        <translation type="unfinished"></translation>
+        <translation>Finisci di organizzare</translation>
     </message>
 </context>
 <context>
@@ -10816,7 +10816,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+45"/>
         <source>Toggle sketch mode (only visible to you)</source>
-        <translation type="unfinished"></translation>
+        <translation>Attiva la modalità schizzo (visibile solo a te)</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10832,7 +10832,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+10"/>
         <source>Change sketch tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambia la tinta dello schizzo</translation>
     </message>
     <message>
         <location line="+274"/>
@@ -10862,7 +10862,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Attiva gruppo livelli &amp;modalità schizzo</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10887,7 +10887,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+984"/>
         <source>Sketch: </source>
-        <translation type="unfinished"></translation>
+        <translation>Schizzo: </translation>
     </message>
     <message>
         <location line="+136"/>
@@ -10943,7 +10943,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="-10"/>
         <source>Onion Skins</source>
-        <translation type="unfinished">Onion Skin</translation>
+        <translation>Pelle a cipolla</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -10976,78 +10976,78 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../docks/reference.cpp" line="+26"/>
         <source>Reference</source>
-        <translation type="unfinished"></translation>
+        <translation>Riferimento</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Open…</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open a file as a reference image</source>
-        <translation type="unfinished"></translation>
+        <translation>Aprire un file come immagine di riferimento</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Paste</source>
-        <translation type="unfinished">Incolla</translation>
+        <translation>Incolla</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Paste a reference image from the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Incolla un&apos;immagine di riferimento dagli appunti</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished">Chiudi</translation>
+        <translation>Chiudi</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Close the current reference image</source>
-        <translation type="unfinished"></translation>
+        <translation>Chiudi l&apos;immagine di riferimento corrente</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished">Seleziona il colore</translation>
+        <translation>Seleziona il colore</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Pan image</source>
-        <translation type="unfinished"></translation>
+        <translation>Panoramica dell&apos;immagine</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Reset zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta zoom</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Zoom to fit</source>
-        <translation type="unfinished"></translation>
+        <translation>Adatta zoom</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Zoom: </source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Error</source>
-        <translation type="unfinished">Errore</translation>
+        <translation>Errore</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Could not open reference image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile aprire l&apos;immagine di riferimento: %1.</translation>
     </message>
 </context>
 <context>
@@ -11091,7 +11091,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+0"/>
         <source>Tool Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostazioni dello strumento</translation>
     </message>
 </context>
 <context>
@@ -11415,12 +11415,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+7"/>
         <source>Drag to move</source>
-        <translation type="unfinished"></translation>
+        <translation>Trascina per spostare</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Allow dragging the selection for a quick move operation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Consentire di trascinare la selezione per un&apos;operazione di spostamento rapida.</translation>
     </message>
     <message>
         <location line="+161"/>
@@ -11494,12 +11494,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+16"/>
         <source>Show</source>
-        <translation type="unfinished">Mostra</translation>
+        <translation>Mostra</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show transform handles instead of just moving</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra le maniglie di trasformazione invece di spostarle semplicemente</translation>
     </message>
     <message>
         <location line="+10"/>
