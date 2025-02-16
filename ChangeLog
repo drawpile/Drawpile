@@ -1,5 +1,6 @@
 Unreleased Version 2.2.2-pre
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.
+ * Feature: Add -u/--users parameter to dprectool, which will print out a table of user statistics along with names and ids.
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.

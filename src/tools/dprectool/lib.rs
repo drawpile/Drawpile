@@ -3,7 +3,7 @@ use anyhow::Result;
 use drawdance::{
     dp_cmake_config_version,
     engine::{Player, Recorder},
-    msg::Message,
+    msg::{InternalMessage, Message},
     DP_MessageType, DP_PlayerPass, DP_PlayerType, DP_RecorderType, DP_PLAYER_BACKWARD_COMPATIBLE,
     DP_PLAYER_COMPATIBLE, DP_PLAYER_MINOR_INCOMPATIBILITY, DP_PLAYER_PASS_ALL,
     DP_PLAYER_PASS_CLIENT_PLAYBACK, DP_PLAYER_PASS_FEATURE_ACCESS, DP_PLAYER_TYPE_BINARY,
@@ -12,7 +12,7 @@ use drawdance::{
 };
 use std::{
     collections::HashMap,
-    ffi::{c_int, CStr},
+    ffi::{c_int, c_uint, CStr},
     str::FromStr,
 };
 
@@ -181,6 +181,8 @@ pub extern "C" fn dprectool_main() -> c_int {
         optional -p,--pass pass: Pass
         /// Print message frequency table and exit.
         optional --msg-freq
+        /// Print information about which users were part of the recordings.
+        optional -u,--users
         /// Input recording file.
         optional input: String
     };
@@ -216,6 +218,16 @@ pub extern "C" fn dprectool_main() -> c_int {
     }
 
     let acl_override = !flags.acl;
+    if flags.users {
+        return match print_user_list(input_format, input_path, acl_override) {
+            Ok(_) => 0,
+            Err(e) => {
+                eprintln!("{}", e);
+                1
+            }
+        };
+    }
+
     let pass = flags.pass.unwrap_or_default();
     if flags.msg_freq {
         return match print_message_frequency(input_format, input_path, acl_override, pass) {
@@ -273,6 +285,96 @@ fn print_version(input_format: InputFormat, input_path: String) -> Result<()> {
         .unwrap_or_else(|| "(no writer version)".to_owned());
 
     println!("{} {} {}", compat_flag, format_version, writer_version);
+
+    Ok(())
+}
+
+#[derive(Default, Clone)]
+struct UserStats {
+    context_id: c_uint,
+    name: String,
+    total_count: usize,
+    total_size: usize,
+    stroke_count: usize,
+    undo_count: usize,
+    redo_count: usize,
+}
+
+impl UserStats {
+    fn add(&mut self, msg: &Message) {
+        let size = msg.length();
+        self.total_count += 1;
+        self.total_size += size;
+        match msg.to_internal() {
+            InternalMessage::PenUp() => self.stroke_count += 1,
+            InternalMessage::Undo(undo) => {
+                if undo.is_redo() {
+                    self.redo_count += 1;
+                } else {
+                    self.undo_count += 1;
+                }
+            }
+            _ => (),
+        }
+    }
+}
+
+fn print_user_list(
+    input_format: InputFormat,
+    input_path: String,
+    acl_override: bool,
+) -> Result<()> {
+    let mut player = make_player(input_format, input_path).and_then(Player::check_compatible)?;
+    player.set_acl_override(acl_override);
+    player.set_pass(Pass::All.to_player_type());
+
+    let mut users: HashMap<String, UserStats> = HashMap::new();
+    let mut context_id_to_key: HashMap<c_uint, String> = HashMap::new();
+    let mut context_id_to_name: HashMap<c_uint, String> = HashMap::new();
+    while let Some(msg) = player.step()? {
+        let context_id = msg.context_id();
+        if let InternalMessage::Join(join) = msg.to_internal() {
+            let name = join.name();
+            context_id_to_key.insert(context_id, format!("{}:{}", context_id, name));
+            context_id_to_name.insert(context_id, name);
+        };
+
+        let key = context_id_to_key
+            .get(&context_id)
+            .map_or_else(|| context_id.to_string(), Clone::clone);
+
+        let entry = users.entry(key).or_insert_with(|| UserStats {
+            context_id,
+            name: context_id_to_name
+                .get(&context_id)
+                .map(Clone::clone)
+                .unwrap_or_default(),
+            ..Default::default()
+        });
+        entry.add(&msg);
+    }
+
+    println!(
+        "id  | bytes sent           | message count        \
+             | stroke count         | undo count           \
+             | redo count           | name"
+    );
+
+    let mut keys: Vec<String> = users.keys().cloned().collect();
+    keys.sort_unstable();
+    for key in keys {
+        let value = &users[&key];
+        println!(
+            "{:<3} | {:20} | {:20} | {:20} | {:20} | {:20} | {}",
+            value.context_id,
+            value.total_size,
+            value.total_count,
+            value.stroke_count,
+            value.undo_count,
+            value.redo_count,
+            value.name
+        );
+    }
 
     Ok(())
 }
