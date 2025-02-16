@@ -4,14 +4,15 @@ use drawdance::{
     dp_cmake_config_version,
     engine::{Player, Recorder},
     msg::{InternalMessage, Message},
-    DP_MessageType, DP_PlayerPass, DP_PlayerType, DP_RecorderType, DP_PLAYER_BACKWARD_COMPATIBLE,
-    DP_PLAYER_COMPATIBLE, DP_PLAYER_MINOR_INCOMPATIBILITY, DP_PLAYER_PASS_ALL,
-    DP_PLAYER_PASS_CLIENT_PLAYBACK, DP_PLAYER_PASS_FEATURE_ACCESS, DP_PLAYER_TYPE_BINARY,
-    DP_PLAYER_TYPE_GUESS, DP_PLAYER_TYPE_TEXT, DP_PROTOCOL_VERSION, DP_RECORDER_TYPE_BINARY,
-    DP_RECORDER_TYPE_TEXT,
+    DP_MessageType, DP_PlayerPass, DP_PlayerType, DP_RecorderType, DP_MSG_DRAW_DABS_CLASSIC,
+    DP_MSG_DRAW_DABS_MYPAINT, DP_MSG_DRAW_DABS_PIXEL, DP_MSG_DRAW_DABS_PIXEL_SQUARE,
+    DP_MSG_FILL_RECT, DP_MSG_PUT_IMAGE, DP_PLAYER_BACKWARD_COMPATIBLE, DP_PLAYER_COMPATIBLE,
+    DP_PLAYER_MINOR_INCOMPATIBILITY, DP_PLAYER_PASS_ALL, DP_PLAYER_PASS_CLIENT_PLAYBACK,
+    DP_PLAYER_PASS_FEATURE_ACCESS, DP_PLAYER_TYPE_BINARY, DP_PLAYER_TYPE_GUESS,
+    DP_PLAYER_TYPE_TEXT, DP_PROTOCOL_VERSION, DP_RECORDER_TYPE_BINARY, DP_RECORDER_TYPE_TEXT,
 };
 use std::{
-    collections::HashMap,
+    collections::{HashMap, HashSet},
     ffi::{c_int, c_uint, CStr},
     str::FromStr,
 };
@@ -178,6 +179,9 @@ pub extern "C" fn dprectool_main() -> c_int {
         /// 'client' to pass through only messages that are relevant for
         /// playback in the client.
         optional -p,--pass pass: Pass
+        /// Include only visible messages from the given user ids,
+        /// comma-separated. Use -u/--users to find out which ids there are.
+        optional --include-user-ids include_user_ids: String
         /// Print message frequency table and exit.
         optional --msg-freq
         /// Print information about which users were part of the recordings.
@@ -238,6 +242,19 @@ pub extern "C" fn dprectool_main() -> c_int {
         };
     }
 
+    let mut include_context_ids: HashSet<c_uint> = HashSet::new();
+    if let Some(include_user_ids) = flags.include_user_ids {
+        for s in include_user_ids.split(',') {
+            match s.parse::<c_uint>() {
+                Ok(context_id) => include_context_ids.insert(context_id),
+                Err(e) => {
+                    eprintln!("Can't parse include-user-id '{}': {}", s, e);
+                    return 2;
+                }
+            };
+        }
+    }
+
     let output_path_is_default = flags.out.is_none();
     let output_path = flags.out.unwrap_or_else(|| "-".to_owned());
     if output_path.is_empty() {
@@ -258,6 +275,7 @@ pub extern "C" fn dprectool_main() -> c_int {
         output_path_is_default,
         acl_override,
         pass,
+        include_context_ids,
     ) {
         Ok(_) => 0,
         Err(e) => {
@@ -440,6 +458,7 @@ fn convert_recording(
     output_path_is_default: bool,
     acl_override: bool,
     pass: Pass,
+    include_context_ids: HashSet<c_uint>,
 ) -> Result<()> {
     let mut player = make_player(input_format, input_path).and_then(Player::check_compatible)?;
 
@@ -453,7 +472,7 @@ fn convert_recording(
     player.set_acl_override(acl_override);
     player.set_pass(pass.to_player_type());
     while let Some(msg) = player.step()? {
-        if !recorder.push_noinc(msg) {
+        if should_include(&msg, &include_context_ids) && !recorder.push_noinc(msg) {
             break;
         }
     }
@@ -469,4 +488,18 @@ fn make_player(input_format: InputFormat, input_path: String) -> Result<Player> 
     } else {
         Player::new_from_path(ptype, input_path)
     }
+}
+
+fn should_include(msg: &Message, include_context_ids: &HashSet<c_uint>) -> bool {
+    include_context_ids.is_empty()
+        || include_context_ids.contains(&msg.context_id())
+        || !matches!(
+            msg.message_type(),
+            DP_MSG_PUT_IMAGE
+                | DP_MSG_FILL_RECT
+                | DP_MSG_DRAW_DABS_CLASSIC
+                | DP_MSG_DRAW_DABS_PIXEL
+                | DP_MSG_DRAW_DABS_PIXEL_SQUARE
+                | DP_MSG_DRAW_DABS_MYPAINT
+        )
 }
