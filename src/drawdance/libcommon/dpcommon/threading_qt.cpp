@@ -32,34 +32,87 @@ extern "C" {
 #endif
 }
 #include <QByteArray>
+#include <QCoreApplication>
 #include <QMutex>
+#include <QRecursiveMutex>
 #include <QSemaphore>
 #include <QSharedPointer>
 #include <QThread>
 #include <QThreadStorage>
 
 
+struct DP_Mutex {
+    virtual ~DP_Mutex() = default;
+    virtual void lock() = 0;
+    virtual bool try_lock() = 0;
+    virtual void unlock() = 0;
+};
+
+struct DP_QMutex final : public DP_Mutex {
+    void lock() override
+    {
+        mutex.lock();
+    }
+
+    bool try_lock() override
+    {
+        return mutex.tryLock();
+    }
+
+    void unlock() override
+    {
+        mutex.unlock();
+    }
+
+    QMutex mutex;
+};
+
+struct DP_QRecursiveMutex final : public DP_Mutex {
+    void lock() override
+    {
+        mutex.lock();
+    }
+
+    bool try_lock() override
+    {
+        return mutex.tryLock();
+    }
+
+    void unlock() override
+    {
+        mutex.unlock();
+    }
+
+    QRecursiveMutex mutex;
+};
+
+
 extern "C" DP_Mutex *DP_mutex_new(void)
 {
-    return reinterpret_cast<DP_Mutex *>(new QMutex);
+    return new DP_QMutex();
+}
+
+extern "C" DP_Mutex *DP_mutex_new_recursive(void)
+{
+    return new DP_QRecursiveMutex();
 }
 
 extern "C" void DP_mutex_free(DP_Mutex *mutex)
 {
-    delete reinterpret_cast<QMutex *>(mutex);
+    delete mutex;
 }
 
 extern "C" bool DP_mutex_lock(DP_Mutex *mutex)
 {
     DP_ASSERT(mutex);
-    reinterpret_cast<QMutex *>(mutex)->lock();
+    mutex->lock();
     return true;
 }
 
 extern "C" DP_MutexResult DP_mutex_try_lock(DP_Mutex *mutex)
 {
     DP_ASSERT(mutex);
-    if (reinterpret_cast<QMutex *>(mutex)->tryLock()) {
+    if (mutex->try_lock()) {
         return DP_MUTEX_OK;
     }
     else {
@@ -70,7 +123,7 @@ extern "C" DP_MutexResult DP_mutex_try_lock(DP_Mutex *mutex)
 extern "C" bool DP_mutex_unlock(DP_Mutex *mutex)
 {
     DP_ASSERT(mutex);
-    reinterpret_cast<QMutex *>(mutex)->unlock();
+    mutex->unlock();
     return true;
 }
 
@@ -132,6 +185,11 @@ extern "C" DP_SemaphoreResult DP_semaphore_try_wait(DP_Semaphore *sem)
     }
 }
 
+
+extern "C" DP_ProcessId DP_process_current_id(void)
+{
+    return QCoreApplication::applicationPid();
+}
 
 extern "C" unsigned long long DP_thread_current_id(void)
 {

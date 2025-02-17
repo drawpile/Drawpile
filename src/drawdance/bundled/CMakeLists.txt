@@ -36,6 +36,34 @@ target_include_directories(
 add_library(uthash INTERFACE)
 target_include_directories(uthash SYSTEM INTERFACE "uthash")
 
+add_library(bundled_sqlite3 OBJECT
+    sqlite3/dbdata.c
+    sqlite3/sqlite3.c
+    sqlite3/sqlite3.h
+    sqlite3/sqlite3recover.c
+    sqlite3/sqlite3recover.h
+)
+# These settings are recommended by SQLite. The exception is THREADSAFE,
+# which we can't set to 0 because we need a little multithreading support.
+target_compile_definitions(bundled_sqlite3 PUBLIC
+    SQLITE_DQS=0
+    SQLITE_THREADSAFE=2
+    SQLITE_DEFAULT_MEMSTATUS=0
+    SQLITE_DEFAULT_WAL_SYNCHRONOUS=1
+    SQLITE_LIKE_DOESNT_MATCH_BLOBS=1
+    SQLITE_MAX_EXPR_DEPTH=0
+    SQLITE_OMIT_DECLTYPE=1
+    SQLITE_OMIT_DEPRECATED=1
+    SQLITE_OMIT_PROGRESS_CALLBACK=1
+    SQLITE_OMIT_SHARED_CACHE=1
+    SQLITE_USE_ALLOCA=1
+    SQLITE_OMIT_AUTOINIT=1
+    SQLITE_STRICT_SUBTYPE=1
+    SQLITE_TRUSTED_SCHEMA=0
+)
+target_include_directories(
+    bundled_sqlite3 SYSTEM PUBLIC ${CMAKE_CURRENT_LIST_DIR}/sqlite3)
+
 if(CLIENT OR TOOLS)
     set(psd_sdk_sources
     psd_sdk/Psd.h

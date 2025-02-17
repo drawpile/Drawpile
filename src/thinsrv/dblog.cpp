@@ -1,28 +1,33 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "thinsrv/dblog.h"
-#include "libshared/util/database.h"
 #include <QMetaEnum>
-#include <QSqlError>
-#include <QSqlQuery>
+#include <dpdb/sql_qt.h>
 
 namespace server {
 
-const QString DbLog::INSERT_SQL =
-	QStringLiteral("INSERT INTO serverlog (timestamp, level, topic, user, "
-				   "session, message) VALUES (?, ?, ?, ?, ?, ?)");
+struct DbLog::Private {
+	drawdance::Database &db;
+	drawdance::Query query;
+};
 
-DbLog::DbLog(const QSqlDatabase &db)
-	: m_db(db)
-	, m_insertQuery(m_db)
+DbLog::DbLog(drawdance::Database &db)
+	: d(new Private{db, db.queryWithoutLock()})
 {
+}
+
+DbLog::~DbLog()
+{
+	delete d;
 }
 
 bool DbLog::initDb()
 {
-	QSqlQuery q(m_db);
-	return utils::db::exec(
-		q, QStringLiteral("CREATE TABLE IF NOT EXISTS serverlog ("
-						  "timestamp, level, topic, user, session, message)"));
+	return d->query.exec("create table if not exists serverlog ("
+						 "timestamp, level, topic, user, session, message)") &&
+		   d->query.prepare(
+			   "insert into serverlog (timestamp, level, topic, user, "
+			   "session, message) values (?, ?, ?, ?, ?, ?)",
+			   drawdance::Database::PREPARE_PERSISTENT);
 }
 
 QList<Log> DbLog::getLogEntries(
@@ -31,65 +36,66 @@ QList<Log> DbLog::getLogEntries(
 	bool omitSensitive, bool omitKicksAndBans, int offset, int limit) const
 {
 	QString sql = QStringLiteral(
-		"SELECT timestamp, session, user, level, topic, message FROM "
-		"serverlog WHERE 1 = 1");
-	QVariantList params;
+		"select timestamp, session, user, level, topic, message from "
+		"serverlog where 1 = 1");
+	QVector<drawdance::Query::Param> params;
 	params.reserve(7);
 
 	if(!session.isEmpty()) {
-		sql += QStringLiteral(" AND LOWER(session) = LOWER(?)");
+		sql += QStringLiteral(" and lower(session) = lower(?)");
 		params.append(session);
 	}
 
 	if(!user.isEmpty()) {
-		sql += QStringLiteral(" AND INSTR(LOWER(user), LOWER(?))");
+		sql += QStringLiteral(" and instr(lower(user), lower(?))");
 		params.append(user);
 	}
 
 	if(!messageSubstring.isEmpty()) {
-		sql += QStringLiteral(" AND INSTR(LOWER(message), LOWER(?))");
+		sql += QStringLiteral(" and instr(lower(message), lower(?))");
 		params.append(messageSubstring);
 	}
 
 	if(after.isValid()) {
-		sql += QStringLiteral(" AND timestamp >= ?");
+		sql += QStringLiteral(" and timestamp >= ?");
 		params.append(after.addMSecs(1000).toString(Qt::ISODate));
 	}
 
 	if(atleast < Log::Level::Debug) {
-		sql += QStringLiteral(" AND level <= ?");
+		sql += QStringLiteral(" and level <= ?");
 		params.append(int(atleast));
 	}
 
 	if(omitSensitive) {
-		sql += QStringLiteral(" AND topic <> 'ClientInfo'");
+		sql += QStringLiteral(" and topic <> 'ClientInfo'");
 	}
 
 	if(omitKicksAndBans) {
-		sql += QStringLiteral(" AND topic NOT IN ('Kick', 'Ban', 'Unban')");
+		sql += QStringLiteral(" and topic not in ('Kick', 'Ban', 'Unban')");
 	}
 
-	sql += QStringLiteral(" ORDER BY timestamp DESC, rowid DESC");
+	sql += QStringLiteral(" order by timestamp desc, rowid desc");
 
 	if(limit > 0) {
-		sql += QStringLiteral(" LIMIT ?");
+		sql += QStringLiteral(" limit ?");
 		params.append(limit);
 	}
 	if(offset > 0) {
-		sql += QStringLiteral(" OFFSET ?");
+		sql += QStringLiteral(" offset ?");
 		params.append(offset);
 	}
 
-	QSqlQuery q(m_db);
 	QList<Log> results;
-	if(utils::db::exec(q, sql, params)) {
-		while(q.next()) {
-			results.append(
-				Log(q.value(0).toDateTime(), q.value(1).toString(),
-					q.value(2).toString(), Log::Level(q.value(3).toInt()),
-					Log::Topic(QMetaEnum::fromType<Log::Topic>().keyToValue(
-						q.value(4).toString().toUtf8().constData())),
-					q.value(5).toString()));
+	drawdance::Query query = d->db.queryWithoutLock();
+	if(query.exec(sql, params)) {
+		while(query.next()) {
+			results.append(Log(
+				QDateTime::fromString(query.columnText16(0, true), Qt::ISODate),
+				query.columnText16(1), query.columnText16(2),
+				Log::Level(query.columnInt(3)),
+				Log::Topic(QMetaEnum::fromType<Log::Topic>().keyToValue(
+					query.columnText8(4).constData())),
+				query.columnText16(5)));
 		}
 	}
 	return results;
@@ -97,36 +103,24 @@ QList<Log> DbLog::getLogEntries(
 
 void DbLog::storeMessage(const Log &entry)
 {
-	if(!m_insertQueryPrepared) {
-		if(utils::db::prepare(m_insertQuery, INSERT_SQL)) {
-			m_insertQueryPrepared = true;
-		} else {
-			return;
-		}
-	}
-	m_insertQuery.bindValue(0, entry.timestamp().toString(Qt::ISODate));
-	m_insertQuery.bindValue(1, int(entry.level()));
-	m_insertQuery.bindValue(
+	d->query.bind(0, entry.timestamp().toString(Qt::ISODate));
+	d->query.bind(1, int(entry.level()));
+	d->query.bind(
 		2, QMetaEnum::fromType<Log::Topic>().valueToKey(int(entry.topic())));
-	m_insertQuery.bindValue(3, entry.user());
-	m_insertQuery.bindValue(4, entry.session());
-	m_insertQuery.bindValue(5, entry.message());
-	if(!utils::db::execPrepared(m_insertQuery, INSERT_SQL)) {
-		m_insertQuery.clear();
-		m_insertQueryPrepared = false;
-	}
+	d->query.bind(3, entry.user());
+	d->query.bind(4, entry.session());
+	d->query.bind(5, entry.message());
+	d->query.execPrepared();
 }
 
 int DbLog::purgeLogs(int olderThanDays)
 {
 	if(olderThanDays > 0) {
-		QSqlQuery q(m_db);
-		if(utils::db::exec(
-			   q,
-			   QStringLiteral(
-				   "DELETE FROM serverlog WHERE timestamp < DATE('now', ?)"),
+		drawdance::Query query = d->db.queryWithoutLock();
+		if(query.exec(
+			   "delete from serverlog where timestamp < date('now', ?)",
 			   {QStringLiteral("-%1 days").arg(olderThanDays)})) {
-			return q.numRowsAffected();
+			return query.numRowsAffected();
 		}
 	}
 	return 0;

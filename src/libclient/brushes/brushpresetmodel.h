@@ -142,8 +142,8 @@ public:
 	int editTag(int tagId, const QString &name);
 	void deleteTag(int tagId);
 
-	void setState(const QString &key, const QVariant &value);
-	QVariant getState(const QString &key) const;
+	int getStateInt(const QString &key, int defaultValue) const;
+	bool setStateInt(const QString &key, int value);
 
 	BrushImportResult importBrushPack(const QString &file);
 

@@ -16,6 +16,7 @@ BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeBraces: Stroustrup
 DeriveLineEnding: false
 DerivePointerAlignment: false
+FixNamespaceComments: false
 ForEachMacros:
   - HASH_ITER
 IncludeCategories:

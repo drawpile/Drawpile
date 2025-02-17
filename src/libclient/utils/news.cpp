@@ -118,13 +118,13 @@ public:
 
 	QString readNewsContentFor(const QDate &date)
 	{
-		StateDatabase::Query qry = m_state.query();
+		drawdance::Query qry = m_state.query();
 		bool hasRow = qry.exec(
-						  "select content from news where date <= ?\n"
+						  "select content from news where date <= ? "
 						  "order by date desc limit 1",
 						  {dateToString(date)}) &&
 					  qry.next();
-		return hasRow ? qry.value(0).toString() : QString{};
+		return hasRow ? qry.columnText16(0) : QString();
 	}
 
 	bool isStale(const QDate &date, long long staleDays)
@@ -143,15 +143,14 @@ public:
 
 	Update readUpdateAvailable(const Version &forVersion, bool includeBeta)
 	{
-		StateDatabase::Query qry = m_state.query();
+		drawdance::Query qry = m_state.query();
 		if(qry.exec(
-			   "select server, major, minor, beta, date, url\n"
-			   "from updates\n"
+			   "select server, major, minor, beta, date, url from updates "
 			   "order by server desc, major desc, minor desc, beta desc")) {
 			while(qry.next()) {
 				Version candidate = {
-					qry.value(0).toInt(), qry.value(1).toInt(),
-					qry.value(2).toInt(), qry.value(3).toInt()};
+					qry.columnInt(0), qry.columnInt(1), qry.columnInt(2),
+					qry.columnInt(3)};
 				if(candidate.isNewerThan(forVersion)) {
 					if(includeBeta || !candidate.isBeta()) {
 						qCDebug(
@@ -159,8 +158,8 @@ public:
 							qUtf8Printable(candidate.toString()),
 							qUtf8Printable(forVersion.toString()));
 						return {
-							candidate, dateFromString(qry.value(4).toString()),
-							QUrl{qry.value(5).toString()}};
+							candidate, dateFromString(qry.columnText16(4)),
+							QUrl{qry.columnText16(5)}};
 					} else {
 						qCDebug(
 							lcDpNews, "Candidate version %s > %s, but is beta",
@@ -182,52 +181,49 @@ public:
 	bool writeNewsAt(const QVector<News::Article> articles, const QDate &today)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-		return m_state.tx([&articles, &today](StateDatabase::Query &qry) {
-			if(!qry.exec(QStringLiteral("delete from news"))) {
+		return m_state.tx([this, &articles, &today](drawdance::Query &qry) {
+			if(!qry.exec("delete from news")) {
 				return false;
 			}
 
-			QString sql = QStringLiteral(
-				"insert into news (content, date) values (?, ?)");
-			if(!qry.prepare(sql)) {
+			if(!qry.prepare("insert into news (content, date) values (?, ?)")) {
 				return false;
 			}
 
 			for(const News::Article &article : articles) {
-				qry.bindValue(0, article.content);
-				qry.bindValue(1, dateToString(article.date));
-				if(!qry.execPrepared()) {
+				if(!qry.bind(0, article.content) ||
+				   !qry.bind(1, dateToString(article.date)) ||
+				   !qry.execPrepared()) {
 					return false;
 				}
 			}
 
-			return qry.put(LAST_CHECK_KEY, dateToString(today));
+			return m_state.putWith(qry, LAST_CHECK_KEY, dateToString(today));
 		});
 	}
 
 	bool writeUpdates(const QVector<News::Update> updates)
 	{
 		DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-		return m_state.tx([&updates](StateDatabase::Query &qry) {
-			if(!qry.exec(QStringLiteral("delete from updates"))) {
+		return m_state.tx([&updates](drawdance::Query &qry) {
+			if(!qry.exec("delete from updates")) {
 				return false;
 			}
 
 			QString sql = QStringLiteral(
-				"insert into updates (server, major, minor, beta, date, url)\n"
+				"insert into updates (server, major, minor, beta, date, url) "
 				"values (?, ?, ?, ?, ?, ?)");
 			if(!qry.prepare(sql)) {
 				return false;
 			}
 
 			for(const News::Update &update : updates) {
-				qry.bindValue(0, update.version.server);
-				qry.bindValue(1, update.version.major);
-				qry.bindValue(2, update.version.minor);
-				qry.bindValue(3, update.version.beta);
-				qry.bindValue(4, dateToString(update.date));
-				qry.bindValue(5, update.url.toString());
-				if(!qry.execPrepared()) {
+				if(!qry.bind(0, update.version.server) ||
+				   !qry.bind(1, update.version.major) ||
+				   !qry.bind(2, update.version.minor) ||
+				   !qry.bind(3, update.version.beta) ||
+				   !qry.bind(4, dateToString(update.date)) ||
+				   !qry.bind(5, update.url.toString()) || !qry.execPrepared()) {
 					return false;
 				}
 			}
@@ -238,7 +234,7 @@ public:
 
 	QDate readLastCheck() const
 	{
-		return dateFromString(m_state.get(LAST_CHECK_KEY).toString());
+		return dateFromString(m_state.getString(LAST_CHECK_KEY, QString()));
 	}
 
 private:
@@ -246,16 +242,16 @@ private:
 
 	void createTables()
 	{
-		StateDatabase::Query qry = m_state.query();
-		qry.exec("create table if not exists news (\n"
-				 "	content text not null,\n"
+		drawdance::Query qry = m_state.query();
+		qry.exec("create table if not exists news ( "
+				 "	content text not null, "
 				 "	date text not null)");
-		qry.exec("create table if not exists updates (\n"
-				 "	server integer not null,\n"
-				 "	major integer not null,\n"
-				 "	minor integer not null,\n"
-				 "	beta integer not null,\n"
-				 "	date text not null,\n"
+		qry.exec("create table if not exists updates ( "
+				 "	server integer not null, "
+				 "	major integer not null, "
+				 "	minor integer not null, "
+				 "	beta integer not null, "
+				 "	date text not null, "
 				 "	url text not null)");
 	}
 

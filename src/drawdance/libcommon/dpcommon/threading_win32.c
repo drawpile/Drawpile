@@ -33,6 +33,11 @@ DP_Mutex *DP_mutex_new(void)
     return (DP_Mutex *)cs;
 }
 
+DP_Mutex *DP_mutex_new_recursive(void)
+{
+    return DP_mutex_new(); // CRITICAL_SECTION is recursive.
+}
+
 void DP_mutex_free(DP_Mutex *mutex)
 {
     CRITICAL_SECTION *cs = (CRITICAL_SECTION *)mutex;
@@ -138,6 +143,11 @@ DP_SemaphoreResult DP_semaphore_try_wait(DP_Semaphore *sem)
     else {
         return DP_SEMAPHORE_BLOCKED;
     }
+}
+
+DP_ProcessId DP_process_current_id(void)
+{
+    return GetCurrentProcessId();
 }
 
 DP_ThreadId DP_thread_current_id(void)
