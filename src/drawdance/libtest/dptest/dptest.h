@@ -33,6 +33,7 @@ typedef struct DP_TestRegistry {
     int capacity;
     DP_Test *tests;
     void *user;
+    const char *skip_all_reason;
 } DP_TestRegistry;
 
 typedef struct DP_TestContext {
@@ -138,6 +139,11 @@ bool DP_test_file_eq_ok(DP_TestContext *T, const char *file, int line,
     DP_test_register(REGISTER_ARGS, #NAME, NAME, USER)
 
 #define REGISTER_TEST(NAME) REGISTER_TEST_USER(NAME, NULL)
+
+#define SKIP_ALL(REASON)        \
+    do {                        \
+        R->skip_all_reason = (REASON); \
+    } while (0)
 
 #define FATAL(EXPR)                                                           \
     do {                                                                      \
