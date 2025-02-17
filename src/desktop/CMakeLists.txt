@@ -1,6 +1,9 @@
 find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS
-	Gui Multimedia OpenGL Sql Svg Widgets Xml
+	Gui OpenGL Sql Svg Widgets Xml
 )
+if(NOT WIN32)
+	find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Multimedia)
+endif()
 if(QT_VERSION VERSION_GREATER_EQUAL 6)
 	find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS OpenGLWidgets)
 endif()
@@ -460,9 +463,12 @@ target_link_libraries(drawpile PRIVATE
 	${QT_PACKAGE_NAME}::Sql
 	${QT_PACKAGE_NAME}::Svg
 	${QT_PACKAGE_NAME}::Widgets
-	${QT_PACKAGE_NAME}::Multimedia
 	${QT_PACKAGE_NAME}::Xml
 )
+
+if(NOT WIN32)
+	target_link_libraries(drawpile PRIVATE ${QT_PACKAGE_NAME}::Multimedia)
+endif()
 
 if(QT_VERSION VERSION_GREATER_EQUAL 6)
 	target_link_libraries(drawpile PRIVATE ${QT_PACKAGE_NAME}::OpenGLWidgets)
@@ -1038,12 +1044,21 @@ if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
 	add_subdirectory(i18n)
 
 	include(DrawpileTranslations)
-	bundle_translations(bundle_files
-		NAME all
-		OUTPUT_LOCATION i18n-bundle
-		QT qtbase qtmultimedia
-		TARGETS dpclient drawpile
-	)
+	if(WIN32)
+		bundle_translations(bundle_files
+			NAME all
+			OUTPUT_LOCATION i18n-bundle
+			QT qtbase
+			TARGETS dpclient drawpile
+		)
+	else()
+		bundle_translations(bundle_files
+			NAME all
+			OUTPUT_LOCATION i18n-bundle
+			QT qtbase qtmultimedia
+			TARGETS dpclient drawpile
+		)
+	endif()
 
 	target_sources(drawpile PRIVATE ${bundle_files})
 
