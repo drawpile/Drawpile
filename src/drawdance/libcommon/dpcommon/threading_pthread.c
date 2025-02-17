@@ -268,11 +268,6 @@ DP_SemaphoreResult DP_semaphore_try_wait(DP_Semaphore *sem)
 }
 
 
-DP_ProcessId DP_process_current_id(void)
-{
-    return (DP_ProcessId)getpid();
-}
-
 DP_ThreadId DP_thread_current_id(void)
 {
     return (DP_ThreadId)pthread_self();

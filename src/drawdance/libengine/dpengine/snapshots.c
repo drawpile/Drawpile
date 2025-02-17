@@ -230,34 +230,34 @@ struct DP_ResetImagePixelBuffer {
 };
 
 struct DP_ResetImageContext {
-    unsigned int context_id;
     DP_Worker *worker;
-    void (*push_message)(void *, DP_Message *);
-    void *push_message_user;
+    void (*handle_entry)(void *, const DP_ResetEntry *);
+    void *handle_entry_user;
     struct DP_ResetImageOutputBuffer *output_buffers;
     struct DP_ResetImagePixelBuffer *pixel_buffers;
 };
 
 struct DP_ResetImageJob {
     struct DP_ResetImageContext *c;
-    uint16_t layer_id;
-    uint8_t sublayer_id;
-    uint8_t repeat;
-    uint16_t x;
-    uint16_t y;
+    int layer_index;
+    int layer_id;
+    int sublayer_id;
+    int tile_index;
+    int tile_run;
     DP_Tile *tile;
 };
 
-static void reset_image_push(struct DP_ResetImageContext *c, DP_Message *msg)
+static void reset_image_handle(struct DP_ResetImageContext *c,
+                               DP_ResetEntry entry)
 {
     DP_Worker *worker = c->worker;
     if (worker) {
         DP_worker_lock(worker);
-        c->push_message(c->push_message_user, msg);
+        c->handle_entry(c->handle_entry_user, &entry);
         DP_worker_unlock(worker);
     }
     else {
-        c->push_message(c->push_message_user, msg);
+        c->handle_entry(c->handle_entry_user, &entry);
     }
 }
 
@@ -270,11 +270,6 @@ static unsigned char *reset_image_get_output_buffer(size_t size, void *user)
         output_buffer->capacity = size;
     }
     return output_buffer->data;
-}
-
-static void set_tile_data(size_t size, unsigned char *out, void *bytes)
-{
-    memcpy(out, bytes, size);
 }
 
 static size_t reset_image_compress_tile(struct DP_ResetImageContext *c,
@@ -310,24 +305,10 @@ static size_t reset_image_maybe_compress_tile(struct DP_ResetImageContext *c,
         }                                   \
     } while (0)
 
-static void layers_to_reset_image(struct DP_ResetImageContext *c,
-                                  uint16_t target_id, DP_LayerList *ll,
-                                  DP_LayerPropsList *lpl);
-
-static void layer_props_to_reset_image(struct DP_ResetImageContext *c,
-                                       DP_LayerProps *lp, bool group,
-                                       uint16_t layer_id, uint8_t sublayer_id)
-{
-    uint8_t attr_flags = 0;
-    SET_FLAG_IF(attr_flags, DP_layer_props_censored(lp),
-                DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR);
-    SET_FLAG_IF(attr_flags, group && DP_layer_props_isolated(lp),
-                DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED);
-    reset_image_push(c, DP_msg_layer_attributes_new(
-                            c->context_id, layer_id, sublayer_id, attr_flags,
-                            DP_channel15_to_8(DP_layer_props_opacity(lp)),
-                            (uint8_t)DP_layer_props_blend_mode(lp)));
-}
+static int layers_to_reset_image(struct DP_ResetImageContext *c,
+                                 int next_layer_index, int parent_index,
+                                 int parent_id, DP_LayerList *ll,
+                                 DP_LayerPropsList *lpl);
 
 static bool layer_fill(DP_LayerContent *lc, DP_Pixel15 *out_pixel)
 {
@@ -374,22 +355,15 @@ static bool layer_fill(DP_LayerContent *lc, DP_Pixel15 *out_pixel)
     return false;
 }
 
-static uint16_t layer_to_reset_image(struct DP_ResetImageContext *c,
-                                     uint16_t target_id, DP_LayerProps *lp,
-                                     bool group, uint32_t fill)
+static void layer_to_reset_image(struct DP_ResetImageContext *c, int layer_id,
+                                 int layer_index, int sublayer_id,
+                                 int parent_index, int parent_id,
+                                 DP_LayerProps *lp, uint32_t fill)
 {
-    uint16_t layer_id = DP_int_to_uint16(DP_layer_props_id(lp));
-    size_t name_len;
-    const char *name = DP_layer_props_title(lp, &name_len);
-    uint8_t create_flags = 0;
-    SET_FLAG_IF(create_flags, target_id != 0,
-                DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO);
-    SET_FLAG_IF(create_flags, group, DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP);
-    reset_image_push(
-        c, DP_msg_layer_tree_create_new(c->context_id, layer_id, 0, target_id,
-                                        fill, create_flags, name, name_len));
-    layer_props_to_reset_image(c, lp, group, layer_id, 0);
-    return layer_id;
+    reset_image_handle(
+        c, (DP_ResetEntry){DP_RESET_ENTRY_LAYER,
+                           .layer = {layer_index, layer_id, sublayer_id,
+                                     parent_index, parent_id, fill, lp}});
 }
 
 static bool tile_is_effectively_blank(DP_Tile *t, DP_Pixel15 fill_pixel)
@@ -403,105 +377,104 @@ static bool tile_is_effectively_blank(DP_Tile *t, DP_Pixel15 fill_pixel)
 }
 
 static void tile_to_reset_image(struct DP_ResetImageContext *c,
-                                int buffer_index, uint16_t layer_id,
-                                uint8_t sublayer_id, uint8_t repeat, uint16_t x,
-                                uint16_t y, DP_Tile *t)
+                                int buffer_index, int layer_index, int layer_id,
+                                int sublayer_id, int tile_index, int tile_run,
+                                DP_Tile *t)
 {
     size_t size = reset_image_compress_tile(c, buffer_index, t);
     if (size != 0) {
-        reset_image_push(
-            c, DP_msg_put_tile_new(c->context_id, layer_id, sublayer_id,
-                                   DP_int_to_uint16(x), DP_int_to_uint16(y),
-                                   repeat, set_tile_data, size,
-                                   c->output_buffers[buffer_index].data));
+        reset_image_handle(
+            c, (DP_ResetEntry){DP_RESET_ENTRY_TILE,
+                               .tile = {layer_index, layer_id, sublayer_id,
+                                        tile_index, tile_run, size,
+                                        c->output_buffers[buffer_index].data}});
     }
 }
 
 static void tile_to_reset_image_job(void *user, int thread_index)
 {
     struct DP_ResetImageJob *job = user;
-    tile_to_reset_image(job->c, thread_index, job->layer_id, job->sublayer_id,
-                        job->repeat, job->x, job->y, job->tile);
+    tile_to_reset_image(job->c, thread_index, job->layer_index, job->layer_id,
+                        job->sublayer_id, job->tile_index, job->tile_run,
+                        job->tile);
 }
 
-static void flush_tile(struct DP_ResetImageContext *c, uint16_t layer_id,
-                       uint8_t sublayer_id, int x, int y, int tile_run,
-                       DP_Tile *t)
+static void flush_tile(struct DP_ResetImageContext *c, int layer_index,
+                       int layer_id, int sublayer_id, int tile_index,
+                       int tile_run, DP_Tile *t)
 {
-    uint8_t repeat = DP_int_to_uint8(tile_run - 1);
-    uint16_t x16 = DP_int_to_uint16(x);
-    uint16_t y16 = DP_int_to_uint16(y);
     DP_Worker *worker = c->worker;
     if (worker) {
-        struct DP_ResetImageJob job = {c,   layer_id, sublayer_id, repeat, x16,
-                                       y16, t};
+        struct DP_ResetImageJob job = {
+            c, layer_index, layer_id, sublayer_id, tile_index, tile_run, t};
         DP_worker_push(worker, &job);
     }
     else {
-        tile_to_reset_image(c, 0, layer_id, sublayer_id, repeat, x16, y16, t);
+        tile_to_reset_image(c, 0, layer_index, layer_id, sublayer_id,
+                            tile_index, tile_run, t);
     }
 }
 
 static void tiles_to_reset_image(struct DP_ResetImageContext *c,
-                                 DP_LayerContent *lc, uint16_t layer_id,
-                                 uint8_t sublayer_id, DP_Pixel15 fill_pixel)
+                                 DP_LayerContent *lc, int layer_index,
+                                 int layer_id, int sublayer_id,
+                                 DP_Pixel15 fill_pixel)
 {
-    DP_TileCounts counts = DP_tile_counts_round(DP_layer_content_width(lc),
-                                                DP_layer_content_height(lc));
+    int count = DP_tile_total_round(DP_layer_content_width(lc),
+                                    DP_layer_content_height(lc));
     int tile_run = 0;
     DP_Tile *start_tile;
-    int start_x;
-    int start_y;
+    int start_index;
 
-    for (int y = 0; y < counts.y; ++y) {
-        for (int x = 0; x < counts.x; ++x) {
-            DP_Tile *t = DP_layer_content_tile_at_noinc(lc, x, y);
-            if (!tile_is_effectively_blank(t, fill_pixel)) {
-                if (tile_run != 0) {
-                    if (DP_tile_pixels_equal(start_tile, t)
-                        && ++tile_run < 256) {
-                        continue;
-                    }
-                    else {
-                        flush_tile(c, layer_id, sublayer_id, start_x, start_y,
-                                   tile_run, start_tile);
-                    }
+    for (int i = 0; i < count; ++i) {
+        DP_Tile *t = DP_layer_content_tile_at_index_noinc(lc, i);
+        if (!tile_is_effectively_blank(t, fill_pixel)) {
+            if (tile_run != 0) {
+                if (DP_tile_pixels_equal(start_tile, t)) {
+                    ++tile_run;
+                    continue;
                 }
+                else {
+                    flush_tile(c, layer_index, layer_id, sublayer_id,
+                               start_index, tile_run, start_tile);
+                }
+            }
 
-                tile_run = 1;
-                start_tile = t;
-                start_x = x;
-                start_y = y;
-            }
-            else if (tile_run != 0) {
-                flush_tile(c, layer_id, sublayer_id, start_x, start_y, tile_run,
-                           start_tile);
-                tile_run = 0;
-            }
+            tile_run = 1;
+            start_tile = t;
+            start_index = i;
+        }
+        else if (tile_run != 0) {
+            flush_tile(c, layer_index, layer_id, sublayer_id, start_index,
+                       tile_run, start_tile);
+            tile_run = 0;
         }
     }
 
     if (tile_run != 0) {
-        flush_tile(c, layer_id, sublayer_id, start_x, start_y, tile_run,
+        flush_tile(c, layer_index, layer_id, sublayer_id, start_index, tile_run,
                    start_tile);
     }
 }
 
 static void layer_content_to_reset_image(struct DP_ResetImageContext *c,
-                                         uint16_t target_id,
-                                         DP_LayerContent *lc, DP_LayerProps *lp)
+                                         int layer_index, int parent_index,
+                                         int parent_id, DP_LayerContent *lc,
+                                         DP_LayerProps *lp)
 {
     DP_Pixel15 fill_pixel;
     bool have_fill = layer_fill(lc, &fill_pixel);
     uint32_t fill =
         have_fill ? DP_upixel15_to_8(DP_pixel15_unpremultiply(fill_pixel)).color
                   : 0;
-    uint16_t layer_id = layer_to_reset_image(c, target_id, lp, false, fill);
+    int layer_id = DP_layer_props_id(lp);
+    layer_to_reset_image(c, layer_index, layer_id, 0, parent_index, parent_id,
+                         lp, fill);
     if (fill == 0) {
         fill_pixel = DP_pixel15_zero();
     }
 
-    tiles_to_reset_image(c, lc, layer_id, 0, fill_pixel);
+    tiles_to_reset_image(c, lc, layer_index, layer_id, 0, fill_pixel);
 
     DP_LayerList *sub_ll = DP_layer_content_sub_contents_noinc(lc);
     DP_LayerPropsList *sub_lpl = DP_layer_content_sub_props_noinc(lc);
@@ -513,26 +486,31 @@ static void layer_content_to_reset_image(struct DP_ResetImageContext *c,
         if (sub_id > 0 && sub_id <= 255) {
             DP_LayerContent *sub_lc = DP_layer_list_entry_content_noinc(
                 DP_layer_list_at_noinc(sub_ll, i));
-            uint8_t sublayer_id = DP_int_to_uint8(sub_id);
-            layer_props_to_reset_image(c, sub_lp, false, layer_id, sublayer_id);
-            tiles_to_reset_image(c, sub_lc, layer_id, sublayer_id,
+            layer_to_reset_image(c, layer_id, layer_index, sub_id, parent_index,
+                                 parent_id, sub_lp, 0);
+            tiles_to_reset_image(c, sub_lc, layer_index, layer_id, sub_id,
                                  DP_pixel15_zero());
         }
     }
 }
 
-static void layer_group_to_reset_image(struct DP_ResetImageContext *c,
-                                       uint16_t target_id, DP_LayerGroup *lg,
-                                       DP_LayerProps *lp)
+static int layer_group_to_reset_image(struct DP_ResetImageContext *c,
+                                      int layer_index, int parent_index,
+                                      int parent_id, DP_LayerGroup *lg,
+                                      DP_LayerProps *lp)
 {
-    uint16_t layer_id = layer_to_reset_image(c, target_id, lp, true, 0);
-    layers_to_reset_image(c, layer_id, DP_layer_group_children_noinc(lg),
-                          DP_layer_props_children_noinc(lp));
+    int layer_id = DP_layer_props_id(lp);
+    layer_to_reset_image(c, layer_index, layer_id, 0, parent_index, parent_id,
+                         lp, 0);
+    return layers_to_reset_image(c, layer_index + 1, layer_index, layer_id,
+                                 DP_layer_group_children_noinc(lg),
+                                 DP_layer_props_children_noinc(lp));
 }
 
-static void layers_to_reset_image(struct DP_ResetImageContext *c,
-                                  uint16_t target_id, DP_LayerList *ll,
-                                  DP_LayerPropsList *lpl)
+static int layers_to_reset_image(struct DP_ResetImageContext *c,
+                                 int next_layer_index, int parent_index,
+                                 int parent_id, DP_LayerList *ll,
+                                 DP_LayerPropsList *lpl)
 {
     int count = DP_layer_list_count(ll);
     DP_ASSERT(DP_layer_props_list_count(lpl) == count);
@@ -540,26 +518,18 @@ static void layers_to_reset_image(struct DP_ResetImageContext *c,
         DP_LayerListEntry *lle = DP_layer_list_at_noinc(ll, i);
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
         if (DP_layer_list_entry_is_group(lle)) {
-            layer_group_to_reset_image(
-                c, target_id, DP_layer_list_entry_group_noinc(lle), lp);
+            next_layer_index = layer_group_to_reset_image(
+                c, next_layer_index, parent_index, parent_id,
+                DP_layer_list_entry_group_noinc(lle), lp);
         }
         else {
             layer_content_to_reset_image(
-                c, target_id, DP_layer_list_entry_content_noinc(lle), lp);
+                c, next_layer_index, parent_index, parent_id,
+                DP_layer_list_entry_content_noinc(lle), lp);
+            ++next_layer_index;
         }
     }
-}
-
-static uint8_t get_annotation_valign_flags(DP_Annotation *a)
-{
-    switch (DP_annotation_valign(a)) {
-    case DP_ANNOTATION_VALIGN_CENTER:
-        return DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER;
-    case DP_ANNOTATION_VALIGN_BOTTOM:
-        return DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER;
-    default:
-        return 0;
-    }
+    return next_layer_index;
 }
 
 static void annotations_to_reset_image(struct DP_ResetImageContext *c,
@@ -567,33 +537,19 @@ static void annotations_to_reset_image(struct DP_ResetImageContext *c,
 {
     int count = DP_annotation_list_count(al);
     for (int i = 0; i < count; ++i) {
-        DP_Annotation *a = DP_annotation_list_at_noinc(al, i);
-        uint16_t annotation_id = DP_int_to_uint16(DP_annotation_id(a));
-        reset_image_push(c, DP_msg_annotation_create_new(
-                                c->context_id, annotation_id,
-                                DP_int_to_int32(DP_annotation_x(a)),
-                                DP_int_to_int32(DP_annotation_y(a)),
-                                DP_int_to_uint16(DP_annotation_width(a)),
-                                DP_int_to_uint16(DP_annotation_height(a))));
-
-        size_t text_len;
-        const char *text = DP_annotation_text(a, &text_len);
-        uint8_t edit_flags = get_annotation_valign_flags(a);
-        SET_FLAG_IF(edit_flags, DP_annotation_protect(a),
-                    DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT);
-        reset_image_push(
-            c, DP_msg_annotation_edit_new(c->context_id, annotation_id,
-                                          DP_annotation_background_color(a),
-                                          edit_flags, 0, text, text_len));
+        reset_image_handle(
+            c, (DP_ResetEntry){
+                   DP_RESET_ENTRY_ANNOTATION,
+                   .annotation = {i, DP_annotation_list_at_noinc(al, i)}});
     }
 }
 
 static void set_document_metadata_int_field_if_not_default(
-    struct DP_ResetImageContext *c, uint8_t field, int value, int default_value)
+    struct DP_ResetImageContext *c, int field, int value, int default_value)
 {
     if (value != default_value) {
-        reset_image_push(c, DP_msg_set_metadata_int_new(
-                                c->context_id, field, DP_int_to_int32(value)));
+        reset_image_handle(c, (DP_ResetEntry){DP_RESET_ENTRY_METADATA,
+                                              .metadata = {field, value}});
     }
 }
 
@@ -616,55 +572,27 @@ static void document_metadata_to_reset_image(struct DP_ResetImageContext *c,
         DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT);
 }
 
-static void set_key_frame_layers(int count, uint16_t *out, void *user)
-{
-    int layer_count = count / 2;
-    const DP_KeyFrameLayer *kfls = user;
-    for (int i = 0; i < layer_count; ++i) {
-        out[i * 2] = DP_int_to_uint16(kfls[i].layer_id);
-        out[i * 2 + 1] = DP_uint_to_uint16(kfls[i].flags);
-    }
-}
-
 static void key_frame_to_reset_image(struct DP_ResetImageContext *c,
-                                     uint16_t track_id, uint16_t frame_index,
-                                     DP_KeyFrame *kf)
+                                     int track_index, int track_id,
+                                     int frame_index, DP_KeyFrame *kf)
 {
-    reset_image_push(
-        c, DP_msg_key_frame_set_new(c->context_id, track_id, frame_index,
-                                    DP_int_to_uint16(DP_key_frame_layer_id(kf)),
-                                    0, DP_MSG_KEY_FRAME_SET_SOURCE_LAYER));
 
-    size_t title_length;
-    const char *title = DP_key_frame_title(kf, &title_length);
-    if (title_length != 0) {
-        reset_image_push(c, DP_msg_key_frame_retitle_new(c->context_id,
-                                                         track_id, frame_index,
-                                                         title, title_length));
-    }
-
-    int layer_count;
-    const DP_KeyFrameLayer *kfls = DP_key_frame_layers(kf, &layer_count);
-    if (layer_count != 0) {
-        reset_image_push(c, DP_msg_key_frame_layer_attributes_new(
-                                c->context_id, track_id, frame_index,
-                                set_key_frame_layers, layer_count * 2,
-                                (void *)kfls));
-    }
+    reset_image_handle(
+        c, (DP_ResetEntry){DP_RESET_ENTRY_FRAME,
+                           .frame = {track_index, track_id, frame_index, kf}});
 }
 
-static void track_to_reset_image(struct DP_ResetImageContext *c, DP_Track *t)
+static void track_to_reset_image(struct DP_ResetImageContext *c,
+                                 int track_index, DP_Track *t)
 {
-    uint16_t track_id = DP_int_to_uint16(DP_track_id(t));
-    size_t title_length;
-    const char *title = DP_track_title(t, &title_length);
-    reset_image_push(c, DP_msg_track_create_new(c->context_id, track_id, 0, 0,
-                                                title, title_length));
+    reset_image_handle(
+        c, (DP_ResetEntry){DP_RESET_ENTRY_TRACK, .track = {track_index, t}});
+    int track_id = DP_track_id(t);
     int key_frame_count = DP_track_key_frame_count(t);
     for (int i = 0; i < key_frame_count; ++i) {
-        key_frame_to_reset_image(
-            c, track_id, DP_int_to_uint16(DP_track_frame_index_at_noinc(t, i)),
-            DP_track_key_frame_at_noinc(t, i));
+        key_frame_to_reset_image(c, track_index, track_id,
+                                 DP_track_frame_index_at_noinc(t, i),
+                                 DP_track_key_frame_at_noinc(t, i));
     }
 }
 
@@ -673,7 +601,7 @@ static void timeline_to_reset_image(struct DP_ResetImageContext *c,
 {
     int track_count = DP_timeline_count(tl);
     for (int i = track_count - 1; i >= 0; --i) {
-        track_to_reset_image(c, DP_timeline_at_noinc(tl, i));
+        track_to_reset_image(c, i, DP_timeline_at_noinc(tl, i));
     }
 }
 
@@ -681,25 +609,23 @@ static void canvas_state_to_reset_image(struct DP_ResetImageContext *c,
                                         DP_CanvasState *cs)
 {
     DP_PERF_BEGIN(canvas, "canvas");
-    int width = DP_canvas_state_width(cs);
-    int height = DP_canvas_state_height(cs);
-    if (width > 0 && height > 0) {
-        reset_image_push(c, DP_msg_canvas_resize_new(
-                                c->context_id, 0, DP_int_to_int32(width),
-                                DP_int_to_int32(height), 0));
-    }
+    reset_image_handle(c,
+                       (DP_ResetEntry){DP_RESET_ENTRY_CANVAS,
+                                       .canvas = {DP_canvas_state_width(cs),
+                                                  DP_canvas_state_height(cs)}});
 
     size_t size = reset_image_maybe_compress_tile(
         c, 0, DP_canvas_state_background_tile_noinc(cs));
     if (size != 0) {
-        reset_image_push(
-            c, DP_msg_canvas_background_new(c->context_id, set_tile_data, size,
-                                            c->output_buffers[0].data));
+        reset_image_handle(
+            c,
+            (DP_ResetEntry){DP_RESET_ENTRY_BACKGROUND,
+                            .background = {size, c->output_buffers[0].data}});
     }
     DP_PERF_END(canvas);
 
     DP_PERF_BEGIN(layers, "layers");
-    layers_to_reset_image(c, 0, DP_canvas_state_layers_noinc(cs),
+    layers_to_reset_image(c, 0, -1, 0, DP_canvas_state_layers_noinc(cs),
                           DP_canvas_state_layer_props_noinc(cs));
     DP_PERF_END(layers);
 
@@ -716,9 +642,10 @@ static void canvas_state_to_reset_image(struct DP_ResetImageContext *c,
     DP_PERF_END(timeline);
 }
 
-void DP_reset_image_build(DP_CanvasState *cs, unsigned int context_id,
-                          void (*push_message)(void *, DP_Message *),
-                          void *user)
+void DP_reset_image_build_with(DP_CanvasState *cs,
+                               void (*handle_entry)(void *,
+                                                    const DP_ResetEntry *),
+                               void *user)
 {
     DP_PERF_BEGIN(fn, "reset_image");
     int buffers_count = DP_worker_cpu_count(128);
@@ -730,9 +657,8 @@ void DP_reset_image_build(DP_CanvasState *cs, unsigned int context_id,
     }
 
     struct DP_ResetImageContext c = {
-        context_id,
         worker,
-        push_message,
+        handle_entry,
         user,
         DP_malloc(sizeof(struct DP_ResetImageOutputBuffer)
                   * DP_int_to_size(buffers_count)),
@@ -752,4 +678,227 @@ void DP_reset_image_build(DP_CanvasState *cs, unsigned int context_id,
     DP_free(c.output_buffers);
     DP_free(c.pixel_buffers);
     DP_PERF_END(fn);
+}
+
+
+struct DP_ResetImageMessageContext {
+    unsigned int context_id;
+    int xtiles;
+    void (*push_message)(void *, DP_Message *);
+    void *push_message_user;
+};
+
+static void reset_message_push(struct DP_ResetImageMessageContext *c,
+                               DP_Message *msg)
+{
+    c->push_message(c->push_message_user, msg);
+}
+
+static void reset_entry_canvas_to_message(struct DP_ResetImageMessageContext *c,
+                                          const DP_ResetEntryCanvas *rec)
+{
+    if (rec->width > 0 && rec->height > 0) {
+        c->xtiles = DP_tile_count_round(rec->width);
+        reset_message_push(c, DP_msg_canvas_resize_new(
+                                  c->context_id, 0, DP_int_to_int32(rec->width),
+                                  DP_int_to_int32(rec->height), 0));
+    }
+}
+
+static void set_tile_data(size_t size, unsigned char *out, void *bytes)
+{
+    memcpy(out, bytes, size);
+}
+
+static void
+reset_entry_background_to_message(struct DP_ResetImageMessageContext *c,
+                                  const DP_ResetEntryBackground *reb)
+{
+    reset_message_push(c, DP_msg_canvas_background_new(c->context_id,
+                                                       set_tile_data, reb->size,
+                                                       reb->data));
+}
+
+static void reset_entry_layer_to_message(struct DP_ResetImageMessageContext *c,
+                                         const DP_ResetEntryLayer *rel)
+{
+    DP_LayerProps *lp = rel->lp;
+    bool group = DP_layer_props_children_noinc(lp);
+    if (rel->sublayer_id == 0) {
+        uint8_t create_flags = 0;
+        SET_FLAG_IF(create_flags, rel->parent_id != 0,
+                    DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO);
+        SET_FLAG_IF(create_flags, group, DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP);
+        size_t title_length;
+        const char *title = DP_layer_props_title(lp, &title_length);
+        reset_message_push(c,
+                           DP_msg_layer_tree_create_new(
+                               c->context_id, DP_int_to_uint16(rel->layer_id),
+                               0, DP_int_to_uint16(rel->parent_id), rel->fill,
+                               create_flags, title, title_length));
+    }
+    uint8_t attr_flags = 0;
+    SET_FLAG_IF(attr_flags, DP_layer_props_censored(lp),
+                DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR);
+    SET_FLAG_IF(attr_flags, group && DP_layer_props_isolated(lp),
+                DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED);
+    reset_message_push(c, DP_msg_layer_attributes_new(
+                              c->context_id, DP_int_to_uint16(rel->layer_id),
+                              DP_int_to_uint8(rel->sublayer_id), attr_flags,
+                              DP_channel15_to_8(DP_layer_props_opacity(lp)),
+                              DP_int_to_uint8(DP_layer_props_blend_mode(lp))));
+}
+
+static void reset_entry_tile_to_message(struct DP_ResetImageMessageContext *c,
+                                        const DP_ResetEntryTile *ret)
+{
+    int xtiles = c->xtiles;
+    if (xtiles > 0) {
+        uint16_t layer_id = DP_int_to_uint16(ret->layer_id);
+        uint8_t sublayer_id = DP_int_to_uint8(ret->sublayer_id);
+        int tile_index = ret->tile_index;
+        uint16_t row = DP_int_to_uint16(tile_index / xtiles);
+        uint16_t col = DP_int_to_uint16(tile_index % xtiles);
+        int max = UINT16_MAX;
+        for (int tile_run = ret->tile_run; tile_run > 0; tile_run -= max + 1) {
+            reset_message_push(
+                c, DP_msg_put_tile_new(
+                       c->context_id, layer_id, sublayer_id, col, row,
+                       DP_int_to_uint16(DP_min_int(tile_run - 1, max)),
+                       set_tile_data, ret->size, ret->data));
+        }
+    }
+}
+
+static void
+reset_entry_annotation_to_message(struct DP_ResetImageMessageContext *c,
+                                  const DP_ResetEntryAnnotation *rea)
+{
+    DP_Annotation *a = rea->a;
+    uint16_t annotation_id = DP_int_to_uint16(DP_annotation_id(a));
+    reset_message_push(c, DP_msg_annotation_create_new(
+                              c->context_id, annotation_id,
+                              DP_int_to_int32(DP_annotation_x(a)),
+                              DP_int_to_int32(DP_annotation_y(a)),
+                              DP_int_to_uint16(DP_annotation_width(a)),
+                              DP_int_to_uint16(DP_annotation_height(a))));
+
+    uint8_t edit_flags;
+    switch (DP_annotation_valign(a)) {
+    case DP_ANNOTATION_VALIGN_CENTER:
+        edit_flags = DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER;
+        break;
+    case DP_ANNOTATION_VALIGN_BOTTOM:
+        edit_flags = DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER;
+        break;
+    default:
+        edit_flags = 0;
+        break;
+    }
+    SET_FLAG_IF(edit_flags, DP_annotation_protect(a),
+                DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT);
+    size_t text_length;
+    const char *text = DP_annotation_text(a, &text_length);
+    reset_message_push(
+        c, DP_msg_annotation_edit_new(c->context_id, annotation_id,
+                                      DP_annotation_background_color(a),
+                                      edit_flags, 0, text, text_length));
+}
+
+static void
+reset_entry_metadata_to_message(struct DP_ResetImageMessageContext *c,
+                                const DP_ResetEntryMetadata *rem)
+{
+    reset_message_push(c, DP_msg_set_metadata_int_new(
+                              c->context_id, DP_int_to_uint8(rem->field),
+                              DP_int_to_int32(rem->value_int)));
+}
+
+static void reset_entry_track_to_message(struct DP_ResetImageMessageContext *c,
+                                         const DP_ResetEntryTrack *ret)
+{
+    DP_Track *t = ret->t;
+    size_t title_length;
+    const char *title = DP_track_title(t, &title_length);
+    reset_message_push(c, DP_msg_track_create_new(
+                              c->context_id, DP_int_to_uint16(DP_track_id(t)),
+                              0, 0, title, title_length));
+}
+
+static void set_key_frame_layers(int count, uint16_t *out, void *user)
+{
+    int layer_count = count / 2;
+    const DP_KeyFrameLayer *kfls = user;
+    for (int i = 0; i < layer_count; ++i) {
+        out[i * 2] = DP_int_to_uint16(kfls[i].layer_id);
+        out[i * 2 + 1] = DP_uint_to_uint16(kfls[i].flags);
+    }
+}
+
+static void reset_entry_frame_to_message(struct DP_ResetImageMessageContext *c,
+                                         const DP_ResetEntryFrame *ref)
+{
+    uint16_t track_id = DP_int_to_uint16(ref->track_id);
+    uint16_t frame_index = DP_int_to_uint16(ref->frame_index);
+    DP_KeyFrame *kf = ref->kf;
+    reset_message_push(
+        c, DP_msg_key_frame_set_new(c->context_id, track_id, frame_index,
+                                    DP_int_to_uint16(DP_key_frame_layer_id(kf)),
+                                    0, DP_MSG_KEY_FRAME_SET_SOURCE_LAYER));
+
+    size_t title_length;
+    const char *title = DP_key_frame_title(kf, &title_length);
+    if (title_length != 0) {
+        reset_message_push(
+            c, DP_msg_key_frame_retitle_new(c->context_id, track_id,
+                                            frame_index, title, title_length));
+    }
+
+    int kfl_count;
+    const DP_KeyFrameLayer *kfls = DP_key_frame_layers(kf, &kfl_count);
+    if (kfl_count != 0) {
+        reset_message_push(c, DP_msg_key_frame_layer_attributes_new(
+                                  c->context_id, track_id, frame_index,
+                                  set_key_frame_layers, kfl_count * 2,
+                                  (void *)kfls));
+    }
+}
+
+static void reset_entry_to_message(void *user, const DP_ResetEntry *re)
+{
+    struct DP_ResetImageMessageContext *c = user;
+    switch (re->type) {
+    case DP_RESET_ENTRY_CANVAS:
+        reset_entry_canvas_to_message(c, &re->canvas);
+        break;
+    case DP_RESET_ENTRY_BACKGROUND:
+        reset_entry_background_to_message(c, &re->background);
+        break;
+    case DP_RESET_ENTRY_LAYER:
+        reset_entry_layer_to_message(c, &re->layer);
+        break;
+    case DP_RESET_ENTRY_TILE:
+        reset_entry_tile_to_message(c, &re->tile);
+        break;
+    case DP_RESET_ENTRY_ANNOTATION:
+        reset_entry_annotation_to_message(c, &re->annotation);
+        break;
+    case DP_RESET_ENTRY_METADATA:
+        reset_entry_metadata_to_message(c, &re->metadata);
+        break;
+    case DP_RESET_ENTRY_TRACK:
+        reset_entry_track_to_message(c, &re->track);
+        break;
+    case DP_RESET_ENTRY_FRAME:
+        reset_entry_frame_to_message(c, &re->frame);
+        break;
+    }
+}
+
+void DP_reset_image_build(DP_CanvasState *cs, unsigned int context_id,
+                          void (*push_message)(void *, DP_Message *),
+                          void *user)
+{
+    struct DP_ResetImageMessageContext c = {context_id, 0, push_message, user};
+    DP_reset_image_build_with(cs, reset_entry_to_message, &c);
 }

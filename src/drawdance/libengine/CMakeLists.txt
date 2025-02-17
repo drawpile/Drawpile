@@ -33,6 +33,7 @@ dp_target_sources(dpengine
     dpengine/pixels.c
     dpengine/player.c
     dpengine/preview.c
+    dpengine/project.c
     dpengine/recorder.c
     dpengine/renderer.c
     dpengine/selection.c
@@ -77,6 +78,7 @@ dp_target_sources(dpengine
     dpengine/pixels.h
     dpengine/player.h
     dpengine/preview.h
+    dpengine/project.h
     dpengine/recorder.h
     dpengine/renderer.h
     dpengine/save_enums.h
@@ -94,7 +96,7 @@ dp_target_sources(dpengine
 
 target_include_directories(dpengine PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 target_link_libraries(dpengine PUBLIC
-    mypaint uthash qgrayraster parson dpmsg dpdb dpcommon ZLIB::ZLIB
+    mypaint uthash qgrayraster parson dpdb dpmsg dpcommon ZLIB::ZLIB
     "Qt${QT_VERSION_MAJOR}::Core"
 )
 
@@ -112,6 +114,7 @@ if(TESTS)
         test/handle_metadata.c
         test/handle_timeline.c
         test/pixel_conversion.c
+        test/project.c
     )
 endif()
 
