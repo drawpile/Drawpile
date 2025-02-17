@@ -2,6 +2,6 @@ find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_SERVER} REQUIRED COMPONENTS 
 
 add_unit_tests(thinsrv
 	SOURCES resources.qrc
-	LIBS ${srvlib} ${QT_PACKAGE_NAME}::Network ${QT_PACKAGE_NAME}::Sql ${QT_PACKAGE_NAME}::Test
+	LIBS ${srvlib} ${QT_PACKAGE_NAME}::Network ${QT_PACKAGE_NAME}::Test
 	TESTS serverconfig templates dblog
 )

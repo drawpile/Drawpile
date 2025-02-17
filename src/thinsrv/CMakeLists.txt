@@ -1,4 +1,3 @@
-find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Sql)
 find_package(libmicrohttpd QUIET)
 
 add_compile_definitions(
@@ -47,7 +46,6 @@ target_link_libraries(${srvlib} PUBLIC
 	drawdance_server
 	${QT_PACKAGE_NAME}::Core
 	${QT_PACKAGE_NAME}::Network
-	${QT_PACKAGE_NAME}::Sql
 )
 
 target_link_libraries(${srvname} PRIVATE ${srvlib})
