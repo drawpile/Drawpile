@@ -3,17 +3,14 @@
 #define THINSRV_DATABASE_H
 #include "libserver/serverconfig.h"
 
-class QSqlQuery;
+namespace drawdance {
+class Query;
+}
 
 namespace server {
 
 class ExtBans;
 
-/**
- * @brief Configuration database access object.
- *
- *
- */
 class Database final : public ServerConfig {
 	Q_OBJECT
 public:
@@ -82,9 +79,9 @@ private:
 	QString getConfigValueByName(const QString &name, bool &found) const;
 	void setConfigValueByName(const QString &name, const QString &value);
 
-	static QJsonObject ipBanResultToJson(const QSqlQuery &q);
-	static QJsonObject systemBanResultToJson(const QSqlQuery &q);
-	static QJsonObject userBanResultToJson(const QSqlQuery &q);
+	static QJsonObject ipBanResultToJson(const drawdance::Query &query);
+	static QJsonObject systemBanResultToJson(const drawdance::Query &query);
+	static QJsonObject userBanResultToJson(const drawdance::Query &query);
 
 	struct Private;
 	Private *d;

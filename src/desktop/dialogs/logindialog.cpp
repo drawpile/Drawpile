@@ -250,9 +250,12 @@ struct LoginDialog::Private {
 
 	void restoreGuest()
 	{
-		const utils::StateDatabase &state = dpApp().state();
-		ui->username->setText(state.get(LAST_GUEST_NAME_KEY).toString());
-		restoreAvatar(state.get(LAST_GUEST_AVATAR_KEY).toString());
+		utils::StateDatabase &state = dpApp().state();
+		drawdance::Query qry = state.query();
+		ui->username->setText(
+			state.getStringWith(qry, LAST_GUEST_NAME_KEY, QString()));
+		restoreAvatar(
+			state.getStringWith(qry, LAST_GUEST_AVATAR_KEY, QString()));
 	}
 
 	void saveGuest(const QString &username)
@@ -849,7 +852,7 @@ void LoginDialog::onRuleAcceptanceNeeded(const QString &ruleText)
 	d->ruleHash = QString::fromUtf8(
 		QCryptographicHash::hash(ruleText.toUtf8(), QCryptographicHash::Md5)
 			.toHex());
-	QString lastAcceptedHash = dpApp().state().get(d->ruleKey).toString();
+	QString lastAcceptedHash = dpApp().state().getString(d->ruleKey, QString());
 	if(d->ruleHash == lastAcceptedHash) {
 		d->loginHandler->acceptRules();
 	} else {
