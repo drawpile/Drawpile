@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "thinsrv/database.h"
 #include "libserver/serverlog.h"
 #include "libshared/util/database.h"
@@ -8,99 +7,56 @@
 #include "libshared/util/validators.h"
 #include "thinsrv/dblog.h"
 #include "thinsrv/extbans.h"
-
 #include <QDateTime>
 #include <QHostAddress>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QRegularExpression>
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QSqlQuery>
 #include <QTimer>
 #include <QUrl>
 #include <QVariant>
+#include <dpdb/sql_qt.h>
 
 namespace server {
 
 struct Database::Private {
-	QSqlDatabase db;
+	drawdance::Database db;
 	InMemoryLog *memlog;
 	DbLog *dblog;
 };
 
-static bool initDatabase(QSqlDatabase db)
+static bool initDatabase(drawdance::Database &db)
 {
-	QSqlQuery q(db);
-
-	// Settings key/value table
-	if(!utils::db::exec(
-		   q, QStringLiteral("CREATE TABLE IF NOT EXISTS settings (key PRIMARY "
-							 "KEY, value)"))) {
-		return false;
-	}
-
-	// Listing server URL whitelist (regular expressions)
-	if(!utils::db::exec(
-		   q,
-		   QStringLiteral("CREATE TABLE IF NOT EXISTS listingservers (url)"))) {
-		return false;
-	}
-
-	// List of serverwide IP address bans
-	if(!utils::db::exec(
-		   q, QStringLiteral("CREATE TABLE IF NOT EXISTS ipbans ("
-							 "ip, subnet, expires, comment, added)"))) {
-		return false;
-	}
-
-	// List of serverwide system bans
-	if(!utils::db::exec(
-		   q, QStringLiteral("CREATE TABLE IF NOT EXISTS systembans ("
-							 "id INTEGER PRIMARY KEY NOT NULL,"
-							 "sid TEXT NOT NULL,"
-							 "reaction TEXT NOT NULL DEFAULT 'normal',"
-							 "expires TEXT NOT NULL,"
-							 "comment TEXT,"
-							 "reason TEXT,"
-							 "added TEXT NOT NULL)"))) {
-		return false;
-	}
-
-	// List of serverwide external user bans
-	if(!utils::db::exec(
-		   q, QStringLiteral("CREATE TABLE IF NOT EXISTS userbans ("
-							 "id INTEGER PRIMARY KEY NOT NULL,"
-							 "userid INTEGER NOT NULL,"
-							 "reaction TEXT NOT NULL DEFAULT 'normal',"
-							 "expires TEXT NOT NULL,"
-							 "comment TEXT,"
-							 "reason TEXT,"
-							 "added TEXT NOT NULL)"))) {
-		return false;
-	}
-
-	// Registered user accounts
-	if(!utils::db::exec(
-		   q,
-		   QStringLiteral(
-			   "CREATE TABLE IF NOT EXISTS users ("
-			   "username UNIQUE," // the username
-			   "password,"		  // hashed password
-			   "locked,"		  // is this username locked/banned
-			   "flags)" // comma separated list of extra features (e.g. "mod")
-			   ))) {
-		return false;
-	}
-
-	// Disabling of external, imported bans
-	if(!utils::db::exec(
-		   q, QStringLiteral("CREATE TABLE IF NOT EXISTS disabledextbans ("
-							 "id INTEGER PRIMARY KEY NOT NULL)"))) {
-		return false;
-	}
-
-	return true;
+	drawdance::Query query = db.queryWithoutLock();
+	query.enableWalMode();
+	query.setForeignKeysEnabled(false);
+	return query.tx([&query] {
+		return query.exec("create table if not exists settings ("
+						  "key primary key, value)") &&
+			   query.exec("create table if not exists listingservers (url)") &&
+			   query.exec("create table if not exists ipbans ("
+						  "ip, subnet, expires, comment, added)") &&
+			   query.exec("create table if not exists systembans ("
+						  "id integer primary key not null,"
+						  "sid text not null,"
+						  "reaction text not null default 'normal',"
+						  "expires text not null,"
+						  "comment text,"
+						  "reason text,"
+						  "added text not null)") &&
+			   query.exec("create table if not exists userbans ("
+						  "id integer primary key not null,"
+						  "userid integer not null,"
+						  "reaction text not null default 'normal',"
+						  "expires text not null,"
+						  "comment text,"
+						  "reason text,"
+						  "added text not null)") &&
+			   query.exec("create table if not exists users ("
+						  "username unique, password, locked, flags)") &&
+			   query.exec("create table if not exists disabledextbans ("
+						  "id integer primary key not null)");
+	});
 }
 
 Database::Database(QObject *parent)
@@ -124,14 +80,13 @@ Database::~Database()
 {
 	delete d->dblog;
 	delete d->memlog;
+	d->db.close();
 	delete d;
 }
 
 bool Database::openFile(const QString &path)
 {
-	d->db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"));
-	d->db.setDatabaseName(path);
-	if(!d->db.open()) {
+	if(!d->db.open(path, QStringLiteral("server database"))) {
 		qCritical("Unable to open database: %s", qUtf8Printable(path));
 		return false;
 	}
@@ -163,22 +118,21 @@ bool Database::openFile(const QString &path)
 void Database::loadExternalIpBans(ExtBans *extBans)
 {
 	extBans->loadFromCache();
-	QSqlQuery q(d->db);
-	if(utils::db::exec(q, QStringLiteral("SELECT id FROM disabledextbans"))) {
-		while(q.next()) {
-			ServerConfig::setExternalBanEnabled(q.value(0).toInt(), false);
+	drawdance::Query query = d->db.queryWithoutLock();
+	if(query.exec("select id from disabledextbans")) {
+		while(query.next()) {
+			ServerConfig::setExternalBanEnabled(query.columnInt(0), false);
 		}
 	}
 }
 
 bool Database::setExternalBanEnabled(int id, bool enabled)
 {
-	QSqlQuery q(d->db);
-	QString sql =
-		enabled ? QStringLiteral("DELETE FROM disabledextbans WHERE id = ?")
-				: QStringLiteral(
-					  "INSERT OR REPLACE INTO disabledextbans (id) VALUES (?)");
-	return utils::db::exec(q, sql, {id}) &&
+	const char *sql =
+		enabled ? "delete from disabledextbans where id = ?"
+				: "insert or replace into disabledextbans (id) values (?)";
+	drawdance::Query query = d->db.queryWithoutLock();
+	return query.exec(sql, {id}) &&
 		   ServerConfig::setExternalBanEnabled(id, enabled);
 }
 
@@ -189,10 +143,8 @@ void Database::setConfigValue(ConfigKey key, const QString &value)
 
 void Database::setConfigValueByName(const QString &name, const QString &value)
 {
-	QSqlQuery q(d->db);
-	utils::db::exec(
-		q, QStringLiteral("INSERT OR REPLACE INTO settings VALUES (?, ?)"),
-		{name, value});
+	drawdance::Query query = d->db.queryWithoutLock();
+	query.exec("insert or replace into settings values (?, ?)", {name, value});
 }
 
 QString Database::getConfigValue(const ConfigKey key, bool &found) const
@@ -202,13 +154,11 @@ QString Database::getConfigValue(const ConfigKey key, bool &found) const
 
 QString Database::getConfigValueByName(const QString &name, bool &found) const
 {
-	QSqlQuery q(d->db);
-	if(utils::db::exec(
-		   q, QStringLiteral("SELECT value FROM settings WHERE key = ?"),
-		   {name}) &&
-	   q.next()) {
+	drawdance::Query query = d->db.queryWithoutLock();
+	if(query.exec("select value from settings where key = ?", {name}) &&
+	   query.next()) {
 		found = true;
-		return q.value(0).toString();
+		return query.columnText16(0);
 	} else {
 		found = false;
 		return QString();
@@ -228,11 +178,11 @@ bool Database::isAllowedAnnouncementUrl(const QUrl &url) const
 
 	const QString urlStr = url.toString();
 
-	QSqlQuery q(d->db);
-	if(utils::db::exec(q, QStringLiteral("SELECT url FROM listingservers"))) {
-		while(q.next()) {
-			const QString serverUrl = q.value(0).toString();
-			const QRegularExpression re(serverUrl);
+	drawdance::Query query = d->db.queryWithoutLock();
+	if(query.exec("select url from listingservers")) {
+		while(query.next()) {
+			QString serverUrl = query.columnText16(0);
+			QRegularExpression re(serverUrl);
 			if(!re.isValid()) {
 				qWarning(
 					"Invalid listingserver whitelist regexp: %s",
@@ -251,10 +201,10 @@ bool Database::isAllowedAnnouncementUrl(const QUrl &url) const
 QStringList Database::listServerWhitelist() const
 {
 	QStringList list;
-	QSqlQuery q(d->db);
-	if(utils::db::exec(q, QStringLiteral("SELECT url FROM listingservers"))) {
-		while(q.next()) {
-			list.append(q.value(0).toString());
+	drawdance::Query query = d->db.queryWithoutLock();
+	if(query.exec("select url from listingservers")) {
+		while(query.next()) {
+			list.append(query.columnText16(0));
 		}
 	}
 	return list;
@@ -262,45 +212,42 @@ QStringList Database::listServerWhitelist() const
 
 void Database::updateListServerWhitelist(const QStringList &whitelist)
 {
-	utils::db::tx(d->db, [this, &whitelist] {
-		QSqlQuery q(d->db);
-		if(!utils::db::exec(q, QStringLiteral("DELETE FROM listingservers"))) {
+	d->db.txWithoutLock([&whitelist](drawdance::Query &query) {
+		if(!query.exec("delete from listingservers")) {
 			return false;
 		}
 
-		if(whitelist.isEmpty()) {
-			return true;
-		} else {
-			QString sql =
-				QStringLiteral("INSERT INTO listingservers VALUES (?)");
-			if(!utils::db::prepare(q, sql)) {
+		if(!whitelist.isEmpty()) {
+			if(!query.prepare("insert into listingservers values (?)")) {
 				return false;
 			}
-			q.addBindValue(whitelist);
-			return utils::db::execBatch(q, sql);
+			for(const QString &serverUrl : whitelist) {
+				if(!query.bind(0, serverUrl) || !query.execPrepared()) {
+					return false;
+				}
+			}
 		}
+		return true;
 	});
 }
 
 BanResult Database::isAddressBanned(const QHostAddress &addr) const
 {
-	QSqlQuery q(d->db);
-	bool ok = utils::db::exec(
-		q, QStringLiteral("SELECT rowid, ip, subnet, expires FROM ipbans\n"
-						  "WHERE expires > datetime('now')"));
-	if(ok) {
-		while(q.next()) {
-			QHostAddress ip(q.value(1).toString());
-			int subnet = q.value(2).toInt();
+	drawdance::Query query = d->db.queryWithoutLock();
+	if(query.exec("select rowid, ip, subnet, expires from ipbans "
+				  "where expires > datetime('now')")) {
+		while(query.next()) {
+			QHostAddress ip(query.columnText16(1));
+			int subnet = query.columnInt(2);
 			if(matchesBannedAddress(addr, ip, subnet)) {
 				return {
 					BanReaction::NormalBan,
 					QString(),
-					parseDateTime(q.value(3).toString()),
+					parseDateTime(query.columnText16(3)),
 					addr.toString(),
 					QStringLiteral("database"),
 					QStringLiteral("IP"),
-					q.value(0).toInt(),
+					query.columnInt(0),
 					true};
 			}
 		}
@@ -310,18 +257,16 @@ BanResult Database::isAddressBanned(const QHostAddress &addr) const
 
 BanResult Database::isSystemBanned(const QString &sid) const
 {
-	QSqlQuery q(d->db);
-	bool ok = utils::db::exec(
-		q,
-		QStringLiteral("SELECT id, reaction, expires, reason FROM systembans\n"
-					   "WHERE sid = ? AND expires > datetime('now')\n"
-					   "LIMIT 1"),
+	drawdance::Query query = d->db.queryWithoutLock();
+	bool ok = query.exec(
+		"select id, reaction, expires, reason from systembans "
+		"where sid = ? and expires > datetime('now') limit 1",
 		{sid});
-	if(ok && q.next()) {
-		int id = q.value(0).toLongLong();
-		BanReaction reaction = parseReaction(q.value(1).toString());
-		QDateTime expires = parseDateTime(q.value(2).toString());
-		QString reason = q.value(3).toString();
+	if(ok && query.next()) {
+		int id = query.columnInt64(0);
+		BanReaction reaction = parseReaction(query.columnText16(1));
+		QDateTime expires = parseDateTime(query.columnText16(2));
+		QString reason = query.columnText16(3);
 		return {
 			reaction,
 			reason,
@@ -337,18 +282,16 @@ BanResult Database::isSystemBanned(const QString &sid) const
 
 BanResult Database::isUserBanned(long long userId) const
 {
-	QSqlQuery q(d->db);
-	bool ok = utils::db::exec(
-		q,
-		QStringLiteral("SELECT id, reaction, expires, reason FROM userbans\n"
-					   "WHERE userid = ? AND expires > datetime('now')\n"
-					   "LIMIT 1"),
+	drawdance::Query query = d->db.queryWithoutLock();
+	bool ok = query.exec(
+		"select id, reaction, expires, reason from userbans "
+		"where userid = ? and expires > datetime('now') limit 1",
 		{userId});
-	if(ok && q.next()) {
-		int id = q.value(0).toLongLong();
-		BanReaction reaction = parseReaction(q.value(1).toString());
-		QDateTime expires = parseDateTime(q.value(2).toString());
-		QString reason = q.value(3).toString();
+	if(ok && query.next()) {
+		int id = query.columnInt64(0);
+		BanReaction reaction = parseReaction(query.columnText16(1));
+		QDateTime expires = parseDateTime(query.columnText16(2));
+		QString reason = query.columnText16(3);
 		return {
 			reaction,
 			reason,
@@ -365,13 +308,11 @@ BanResult Database::isUserBanned(long long userId) const
 QJsonArray Database::getIpBanlist() const
 {
 	QJsonArray result;
-	QSqlQuery q(d->db);
-	bool ok = utils::db::exec(
-		q,
-		QStringLiteral(
-			"SELECT rowid, ip, subnet, expires, comment, added FROM ipbans"));
-	while(ok && q.next()) {
-		result.append(ipBanResultToJson(q));
+	drawdance::Query query = d->db.queryWithoutLock();
+	bool ok = query.exec(
+		"select rowid, ip, subnet, expires, comment, added from ipbans");
+	while(ok && query.next()) {
+		result.append(ipBanResultToJson(query));
 	}
 	return result;
 }
@@ -379,12 +320,11 @@ QJsonArray Database::getIpBanlist() const
 QJsonArray Database::getSystemBanlist() const
 {
 	QJsonArray result;
-	QSqlQuery q(d->db);
-	bool ok = utils::db::exec(
-		q, QStringLiteral("SELECT id, sid, expires, reaction, reason, comment, "
-						  "added FROM systembans ORDER BY id ASC"));
-	while(ok && q.next()) {
-		result.append(systemBanResultToJson(q));
+	drawdance::Query query = d->db.queryWithoutLock();
+	bool ok = query.exec("select id, sid, expires, reaction, reason, comment, "
+						 "added from systembans order by id asc");
+	while(ok && query.next()) {
+		result.append(systemBanResultToJson(query));
 	}
 	return result;
 }
@@ -392,12 +332,11 @@ QJsonArray Database::getSystemBanlist() const
 QJsonArray Database::getUserBanlist() const
 {
 	QJsonArray result;
-	QSqlQuery q(d->db);
-	bool ok = utils::db::exec(
-		q, QStringLiteral("SELECT id, userid, expires, reaction, reason, "
-						  "comment, added FROM userbans ORDER BY id ASC"));
-	while(ok && q.next()) {
-		result.append(userBanResultToJson(q));
+	drawdance::Query query = d->db.queryWithoutLock();
+	bool ok = query.exec("select id, userid, expires, reaction, reason, "
+						 "comment, added from userbans order by id asc");
+	while(ok && query.next()) {
+		result.append(userBanResultToJson(query));
 	}
 	return result;
 }
@@ -406,34 +345,31 @@ QJsonObject Database::addIpBan(
 	const QHostAddress &ip, int subnet, const QDateTime &expiration,
 	const QString &comment)
 {
-	QSqlQuery q(d->db);
+	drawdance::Query query = d->db.queryWithoutLock();
 	QString ipstr = ip.toString();
-	if(!utils::db::exec(
-		   q,
-		   QStringLiteral("SELECT rowid, ip, subnet, expires, comment, added "
-						  "FROM ipbans WHERE ip = ? AND subnet = ?"),
+	if(!query.exec(
+		   "select rowid, ip, subnet, expires, comment, added "
+		   "from ipbans where ip = ? and subnet = ?",
 		   {ipstr, subnet})) {
 		return {};
 	}
 
-	if(q.next()) {
+	if(query.next()) {
 		// Matching entry already in database
-		return ipBanResultToJson(q);
+		return ipBanResultToJson(query);
 	} else {
 		QString datestr = formatDateTime(expiration);
 		QString now = formatDateTime(QDateTime::currentDateTime());
 
-		if(!utils::db::exec(
-			   q,
-			   QStringLiteral(
-				   "INSERT INTO ipbans (ip, subnet, expires, comment, added) "
-				   "VALUES (?, ?, ?, ?, ?)"),
+		if(!query.exec(
+			   "insert into ipbans (ip, subnet, expires, comment, added) "
+			   "values (?, ?, ?, ?, ?)",
 			   {ipstr, subnet, datestr, comment, now})) {
 			return {};
 		}
 
 		QJsonObject b;
-		b["id"] = q.lastInsertId().toInt();
+		b["id"] = query.lastInsertId();
 		b["ip"] = ipstr;
 		b["subnet"] = subnet;
 		b["expires"] = datestr;
@@ -447,20 +383,19 @@ QJsonObject Database::addSystemBan(
 	const QString &sid, const QDateTime &expires, BanReaction reaction,
 	const QString &reason, const QString &comment)
 {
-	QSqlQuery q(d->db);
+	drawdance::Query query = d->db.queryWithoutLock();
 	QString expiresString = formatDateTime(expires);
 	QString addedString = formatDateTime(QDateTime::currentDateTime());
 	QString reactionString = reactionToString(reaction);
 
-	bool ok = utils::db::exec(
-		q,
-		QStringLiteral("INSERT INTO systembans (sid, expires, reaction, "
-					   "reason, comment, added) VALUES (?, ?, ?, ?, ?, ?)"),
+	bool ok = query.exec(
+		"insert into systembans (sid, expires, reaction, "
+		"reason, comment, added) values (?, ?, ?, ?, ?, ?)",
 		{sid, expiresString, reactionString, reason, comment, addedString});
 
 	if(ok) {
 		return {
-			{QStringLiteral("id"), q.lastInsertId().toInt()},
+			{QStringLiteral("id"), query.lastInsertId()},
 			{QStringLiteral("sid"), sid},
 			{QStringLiteral("expires"), expiresString},
 			{QStringLiteral("reaction"), reactionString},
@@ -477,20 +412,19 @@ QJsonObject Database::addUserBan(
 	long long userId, const QDateTime &expires, BanReaction reaction,
 	const QString &reason, const QString &comment)
 {
-	QSqlQuery q(d->db);
+	drawdance::Query query = d->db.queryWithoutLock();
 	QString expiresString = formatDateTime(expires);
 	QString addedString = formatDateTime(QDateTime::currentDateTime());
 	QString reactionString = reactionToString(reaction);
 
-	bool ok = utils::db::exec(
-		q,
-		QStringLiteral("INSERT INTO userbans (userid, expires, reaction, "
-					   "reason, comment, added) VALUES (?, ?, ?, ?, ?, ?)"),
+	bool ok = query.exec(
+		"insert into userbans (userid, expires, reaction, "
+		"reason, comment, added) values (?, ?, ?, ?, ?, ?)",
 		{userId, expiresString, reactionString, reason, comment, addedString});
 
 	if(ok) {
 		return {
-			{QStringLiteral("id"), q.lastInsertId().toInt()},
+			{QStringLiteral("id"), query.lastInsertId()},
 			{QStringLiteral("userId"), userId},
 			{QStringLiteral("expires"), expiresString},
 			{QStringLiteral("reaction"), reactionString},
@@ -505,67 +439,61 @@ QJsonObject Database::addUserBan(
 
 bool Database::deleteIpBan(int entryId)
 {
-	QSqlQuery q(d->db);
-	return utils::db::exec(
-			   q, QStringLiteral("DELETE FROM ipbans WHERE rowid = ?"),
-			   {entryId}) &&
-		   q.numRowsAffected() > 0;
+	drawdance::Query query = d->db.queryWithoutLock();
+	return query.exec("delete from ipbans where rowid = ?", {entryId}) &&
+		   query.numRowsAffected() > 0;
 }
 
 bool Database::deleteSystemBan(int entryId)
 {
-	QSqlQuery q(d->db);
-	return utils::db::exec(
-			   q, QStringLiteral("DELETE FROM systembans WHERE id = ?"),
-			   {entryId}) &&
-		   q.numRowsAffected() > 0;
+	drawdance::Query query = d->db.queryWithoutLock();
+	return query.exec("delete from systembans where id = ?", {entryId}) &&
+		   query.numRowsAffected() > 0;
 }
 
 bool Database::deleteUserBan(int entryId)
 {
-	QSqlQuery q(d->db);
-	return utils::db::exec(
-			   q, QStringLiteral("DELETE FROM userbans WHERE id = ?"),
-			   {entryId}) &&
-		   q.numRowsAffected() > 0;
+	drawdance::Query query = d->db.queryWithoutLock();
+	return query.exec("delete from userbans where id = ?", {entryId}) &&
+		   query.numRowsAffected() > 0;
 }
 
-QJsonObject Database::ipBanResultToJson(const QSqlQuery &q)
+QJsonObject Database::ipBanResultToJson(const drawdance::Query &query)
 {
-	QJsonObject b;
-	b[QStringLiteral("id")] = q.value(0).toInt();
-	b[QStringLiteral("ip")] = q.value(1).toString();
-	b[QStringLiteral("subnet")] = q.value(2).toInt();
-	b[QStringLiteral("expires")] = q.value(3).toString();
-	b[QStringLiteral("comment")] = q.value(4).toString();
-	b[QStringLiteral("added")] = q.value(5).toString();
-	return b;
+	return QJsonObject({
+		{QStringLiteral("id"), query.columnInt(0)},
+		{QStringLiteral("ip"), query.columnText16(1)},
+		{QStringLiteral("subnet"), query.columnInt(2)},
+		{QStringLiteral("expires"), query.columnText16(3)},
+		{QStringLiteral("comment"), query.columnText16(4)},
+		{QStringLiteral("added"), query.columnText16(5)},
+	});
 }
 
-QJsonObject Database::systemBanResultToJson(const QSqlQuery &q)
+QJsonObject Database::systemBanResultToJson(const drawdance::Query &query)
 {
-	QJsonObject b;
-	b[QStringLiteral("id")] = q.value(0).toInt();
-	b[QStringLiteral("sid")] = q.value(1).toString();
-	b[QStringLiteral("expires")] = q.value(2).toString();
-	b[QStringLiteral("reaction")] = q.value(3).toString();
-	b[QStringLiteral("reason")] = q.value(4).toString();
-	b[QStringLiteral("comment")] = q.value(5).toString();
-	b[QStringLiteral("added")] = q.value(6).toString();
-	return b;
+	return QJsonObject({
+		{QStringLiteral("id"), query.columnInt(0)},
+		{QStringLiteral("sid"), query.columnText16(1)},
+		{QStringLiteral("expires"), query.columnText16(2)},
+		{QStringLiteral("reaction"), query.columnText16(3)},
+		{QStringLiteral("reason"), query.columnText16(4)},
+		{QStringLiteral("comment"), query.columnText16(5)},
+		{QStringLiteral("added"), query.columnText16(6)},
+	});
 }
 
-QJsonObject Database::userBanResultToJson(const QSqlQuery &q)
+QJsonObject Database::userBanResultToJson(const drawdance::Query &query)
 {
-	QJsonObject b;
-	b[QStringLiteral("id")] = q.value(0).toInt();
-	b[QStringLiteral("userId")] = double(q.value(1).toLongLong());
-	b[QStringLiteral("expires")] = q.value(2).toString();
-	b[QStringLiteral("reaction")] = q.value(3).toString();
-	b[QStringLiteral("reason")] = q.value(4).toString();
-	b[QStringLiteral("comment")] = q.value(5).toString();
-	b[QStringLiteral("added")] = q.value(6).toString();
-	return b;
+	return QJsonObject({
+		{QStringLiteral("id"), query.columnInt(0)},
+		{QStringLiteral("userId"), double(query.columnInt64(1))},
+		{QStringLiteral("expires"), query.columnText16(2)},
+		{QStringLiteral("reaction"), query.columnText16(3)},
+		{QStringLiteral("reason"), query.columnText16(4)},
+		{QStringLiteral("comment"), query.columnText16(5)},
+		{QStringLiteral("added"), query.columnText16(6)},
+	});
 }
 
 ServerLog *Database::logger() const
@@ -580,18 +508,17 @@ ServerLog *Database::logger() const
 RegisteredUser
 Database::getUserAccount(const QString &username, const QString &password) const
 {
-	QSqlQuery q(d->db);
-	if(utils::db::exec(
-		   q,
-		   QStringLiteral("SELECT rowid, password, locked, flags FROM users "
-						  "WHERE username = ?"),
+	drawdance::Query query = d->db.queryWithoutLock();
+	if(query.exec(
+		   "select rowid, password, locked, flags "
+		   "from users where username = ?",
 		   {username}) &&
-	   q.next()) {
-		const int rowid = q.value(0).toInt();
-		const QByteArray passwordHash = q.value(1).toByteArray();
-		const int locked = q.value(2).toInt();
-		const QStringList flags =
-			q.value(3).toString().split(',', compat::SkipEmptyParts);
+	   query.next()) {
+		int rowid = query.columnInt(0);
+		QByteArray passwordHash = query.columnBlob(1);
+		int locked = query.columnInt(2);
+		QStringList flags =
+			query.columnText16(3).split(',', compat::SkipEmptyParts);
 
 		if(locked) {
 			return RegisteredUser{
@@ -613,9 +540,8 @@ Database::getUserAccount(const QString &username, const QString &password) const
 
 bool Database::hasAnyUserAccounts() const
 {
-	QSqlQuery q(d->db);
-	return utils::db::exec(q, QStringLiteral("SELECT 1 FROM users LIMIT 1")) &&
-		   q.next();
+	drawdance::Query query = d->db.queryWithoutLock();
+	return query.exec("select 1 from users limit 1") && query.next();
 }
 
 bool Database::supportsAdminSectionLocks() const
@@ -625,21 +551,20 @@ bool Database::supportsAdminSectionLocks() const
 
 bool Database::isAdminSectionLocked(const QString &section) const
 {
-	QSqlQuery q(d->db);
-	return utils::db::exec(
-			   q, QStringLiteral("SELECT 1 FROM settings WHERE key = ?"),
+	drawdance::Query query = d->db.queryWithoutLock();
+	return query.exec(
+			   "select 1 from settings where key = ?",
 			   {QStringLiteral("_lock_admin_section_%1").arg(section)}) &&
-		   q.next();
+		   query.next();
 }
 
 bool Database::checkAdminSectionLockPassword(const QString &password) const
 {
-	QSqlQuery q(d->db);
-	if(utils::db::exec(
-		   q,
-		   QStringLiteral(
-			   "SELECT value FROM settings WHERE key = '_lock_admin_hash'"))) {
-		QByteArray hash = q.next() ? q.value(0).toByteArray() : QByteArray();
+	drawdance::Query query = d->db.queryWithoutLock();
+	if(query.exec(
+		   "select value from settings where key = '_lock_admin_hash'")) {
+		QByteArray hash =
+			query.next() ? query.columnBlob(0, true) : QByteArray();
 		return !passwordhash::isValidHash(hash) ||
 			   (!password.isEmpty() && passwordhash::check(password, hash));
 	} else {
@@ -650,48 +575,54 @@ bool Database::checkAdminSectionLockPassword(const QString &password) const
 bool Database::setAdminSectionsLocked(
 	const QSet<QString> &sections, const QString &password)
 {
-	QVariantList keys;
-	for(const QString &section : sections) {
-		keys.append(QStringLiteral("_lock_admin_section_%1").arg(section));
-	}
-	return utils::db::tx(d->db, [&] {
-		QSqlQuery q(d->db);
-		QString batchSql =
-			QStringLiteral("INSERT INTO settings (key, value) VALUES (?, 1)");
-		return utils::db::exec(
-				   q, QStringLiteral("DELETE FROM settings "
-									 "WHERE INSTR(key, '_lock_admin_') = 1")) &&
-			   (sections.isEmpty() || (utils::db::prepare(q, batchSql) &&
-									   utils::db::bindValue(q, 0, keys) &&
-									   utils::db::execBatch(q, batchSql))) &&
-			   (password.isEmpty() ||
-				utils::db::exec(
-					q,
-					QStringLiteral("INSERT INTO settings (key, value) "
-								   "VALUES ('_lock_admin_hash', ?)"),
-					{passwordhash::hash(password)}));
+	return d->db.txWithoutLock([&sections, &password](drawdance::Query &query) {
+		if(!query.exec(
+			   "delete from settings where instr(key, '_lock_admin_') = 1")) {
+			return false;
+		}
+
+		if(!sections.isEmpty()) {
+			if(!query.prepare(
+				   "insert into settings (key, value) values (?, 1)")) {
+				return false;
+			}
+			for(const QString &section : sections) {
+				QString key =
+					QStringLiteral("_lock_admin_section_%1").arg(section);
+				if(!query.bind(0, key) || !query.execPrepared()) {
+					return false;
+				}
+			}
+		}
+
+		if(!password.isEmpty() && !query.exec(
+									  "insert into settings (key, value) "
+									  "values ('_lock_admin_hash', ?)",
+									  {passwordhash::hash(password)})) {
+			return false;
+		}
+
+		return true;
 	});
 }
 
-static QJsonObject userQueryToJson(const QSqlQuery &q)
+static QJsonObject userQueryToJson(const drawdance::Query &query)
 {
-	QJsonObject o;
-	o[QStringLiteral("id")] = q.value(0).toInt();
-	o[QStringLiteral("username")] = q.value(1).toString();
-	o[QStringLiteral("locked")] = q.value(2).toBool();
-	o[QStringLiteral("flags")] = q.value(3).toString();
-	return o;
+	return QJsonObject({
+		{QStringLiteral("id"), query.columnInt(0)},
+		{QStringLiteral("username"), query.columnText16(1)},
+		{QStringLiteral("locked"), query.columnBool(2)},
+		{QStringLiteral("flags"), query.columnText16(3)},
+	});
 }
 
 QJsonArray Database::getAccountList() const
 {
 	QJsonArray list;
-	QSqlQuery q(d->db);
-	if(utils::db::exec(
-		   q, QStringLiteral(
-				  "SELECT rowid, username, locked, flags FROM users"))) {
-		while(q.next()) {
-			list.append(userQueryToJson(q));
+	drawdance::Query query = d->db.queryWithoutLock();
+	if(query.exec("select rowid, username, locked, flags from users")) {
+		while(query.next()) {
+			list.append(userQueryToJson(query));
 		}
 	}
 	return list;
@@ -705,18 +636,15 @@ QJsonObject Database::addAccount(
 		return QJsonObject();
 	}
 
-	QSqlQuery q(d->db);
-	if(utils::db::exec(
-		   q,
-		   QStringLiteral(
-			   "INSERT INTO users (username, password, locked, flags) "
-			   "VALUES (?, ?, ?, ?)"),
+	drawdance::Query query = d->db.queryWithoutLock();
+	if(query.exec(
+		   "insert into users (username, password, locked, flags) "
+		   "values (?, ?, ?, ?)",
 		   {username, passwordhash::hash(password), locked, flags.join(',')}) &&
-	   utils::db::exec(
-		   q, QStringLiteral("SELECT rowid, username, locked, flags FROM users "
-							 "WHERE rowid IN (SELECT last_insert_rowid())")) &&
-	   q.next()) {
-		return userQueryToJson(q);
+	   query.exec("select rowid, username, locked, flags from users "
+				  "where rowid in (select last_insert_rowid())") &&
+	   query.next()) {
+		return userQueryToJson(query);
 	}
 	return QJsonObject();
 }
@@ -724,7 +652,7 @@ QJsonObject Database::addAccount(
 QJsonObject Database::updateAccount(int id, const QJsonObject &update)
 {
 	QStringList updates;
-	QVariantList params;
+	QVector<drawdance::Query::Param> params;
 
 	QString username = update.value(QStringLiteral("username")).toString();
 	if(validateUsername(username)) {
@@ -748,23 +676,21 @@ QJsonObject Database::updateAccount(int id, const QJsonObject &update)
 		params.append(update.value(QStringLiteral("flags")).toString());
 	}
 
-	QSqlQuery q(d->db);
+	drawdance::Query query = d->db.queryWithoutLock();
 	if(!updates.isEmpty()) {
-		QString sql = QStringLiteral("UPDATE users SET %1 WHERE rowid = ?")
+		QString sql = QStringLiteral("update users set %1 where rowid = ?")
 						  .arg(updates.join(','));
 		params.append(id);
-		if(!utils::db::exec(q, sql, params)) {
+		if(!query.exec(sql, params)) {
 			return QJsonObject();
 		}
 	}
 
-	if(utils::db::exec(
-		   q,
-		   QStringLiteral("SELECT rowid, username, locked, flags "
-						  "FROM users WHERE rowid = ?"),
+	if(query.exec(
+		   "select rowid, username, locked, flags from users where rowid = ?",
 		   {id}) &&
-	   q.next()) {
-		return userQueryToJson(q);
+	   query.next()) {
+		return userQueryToJson(query);
 	} else {
 		return QJsonObject();
 	}
@@ -772,11 +698,9 @@ QJsonObject Database::updateAccount(int id, const QJsonObject &update)
 
 bool Database::deleteAccount(int userId)
 {
-	QSqlQuery q(d->db);
-	return utils::db::exec(
-			   q, QStringLiteral("DELETE FROM users WHERE rowid = ?"),
-			   {userId}) &&
-		   q.numRowsAffected() > 0;
+	drawdance::Query query = d->db.queryWithoutLock();
+	return query.exec("delete from users where rowid = ?", {userId}) &&
+		   query.numRowsAffected() > 0;
 }
 
 void Database::dailyTasks()
@@ -789,5 +713,4 @@ void Database::dailyTasks()
 		}
 	}
 }
-
 }

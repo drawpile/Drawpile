@@ -8,8 +8,6 @@
 
 namespace utils {
 
-class StateDatabase;
-
 class HostPresetModel final : public QAbstractItemModel {
 	Q_OBJECT
 public:
@@ -56,7 +54,7 @@ private:
 	};
 
 	static bool
-	loadOldPresets(StateDatabase::Query &qry, const QString &oldPresetsPath);
+	loadOldPresets(drawdance::Query &qry, const QString &oldPresetsPath);
 
 	static bool loadOldPreset(const QString &path, QByteArray &outData);
 

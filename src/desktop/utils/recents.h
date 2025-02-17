@@ -9,7 +9,6 @@
 
 class QMenu;
 class QPixmap;
-class QSqlQuery;
 class QString;
 
 namespace utils {
