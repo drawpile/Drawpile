@@ -94,11 +94,10 @@ QSet<int> HostPresetModel::getPresetIdsByTitleWith(
 	StateDatabase &state, const QString &title)
 {
 	QSet<int> ids;
-	QString sql = QStringLiteral("select id from host_presets where title = ?");
-	StateDatabase::Query qry = state.query();
-	if(qry.exec(sql, {title})) {
+	drawdance::Query qry = state.query();
+	if(qry.exec("select id from host_presets where title = ?", {title})) {
 		while(qry.next()) {
-			ids.insert(qry.value(0).toInt());
+			ids.insert(qry.columnInt(0));
 		}
 	}
 	return ids;
@@ -125,14 +124,13 @@ bool HostPresetModel::renamePresetById(int id, const QString &title)
 				}
 			}
 
-			m_state.tx([&](StateDatabase::Query &qry) {
+			m_state.tx([&](drawdance::Query &qry) {
 				return qry.exec(
-						   QStringLiteral("delete from host_presets "
-										  "where id <> ? and title = ?"),
+						   "delete from host_presets "
+						   "where id <> ? and title = ?",
 						   {id, title}) &&
 					   qry.exec(
-						   QStringLiteral("update host_presets "
-										  "set title = ? where id = ?"),
+						   "update host_presets set title = ? where id = ?",
 						   {title, id});
 			});
 			return true;
@@ -160,31 +158,26 @@ bool HostPresetModel::deletePresetById(int id)
 void HostPresetModel::migrateOldPresets(
 	StateDatabase &state, const QString &oldPresetsPath)
 {
-	state.tx([&](StateDatabase::Query &qry) {
+	state.tx([&state, &oldPresetsPath](drawdance::Query &qry) {
 		QString key =
 			QStringLiteral("hostpresetmodel/presetsmigratedfromfiles");
-		if(qry.get(key).toBool()) {
-			return true;
-		} else {
-			return qry.put(key, true) && loadOldPresets(qry, oldPresetsPath);
-		}
+		return state.getBoolWith(qry, key, false) ||
+			   (state.putWith(qry, key, true) &&
+				loadOldPresets(qry, oldPresetsPath));
 	});
 }
 
 bool HostPresetModel::loadOldPresets(
-	StateDatabase::Query &qry, const QString &oldPresetsPath)
+	drawdance::Query &qry, const QString &oldPresetsPath)
 {
 	QDir dir(oldPresetsPath);
 	QStringList entries = dir.entryList(
 		{QStringLiteral("*.preset")}, QDir::Files | QDir::Readable, QDir::Name);
 	if(!entries.isEmpty()) {
-		if(!qry.prepare(
-			   QStringLiteral("insert into host_presets (version, title, data)"
-							  "values (?, ?, ?)"))) {
+		if(!qry.prepare("insert into host_presets (version, title, data)"
+						"values (1, ?, ?)")) {
 			return false;
 		}
-
-		qry.bindValue(0, 1);
 
 		for(const QString &entry : entries) {
 			QString title = entry;
@@ -192,9 +185,8 @@ bool HostPresetModel::loadOldPresets(
 			title = title.trimmed();
 			QByteArray data;
 			if(!title.isEmpty() && loadOldPreset(dir.filePath(entry), data)) {
-				qry.bindValue(1, title);
-				qry.bindValue(2, data);
-				if(!qry.execPrepared()) {
+				if(!qry.bind(0, title) || !qry.bind(1, data) ||
+				   !qry.execPrepared()) {
 					return false;
 				}
 			}
@@ -263,19 +255,19 @@ void HostPresetModel::loadPresets()
 {
 	QString sql = QStringLiteral(
 		"select id, version, title, data from host_presets order by id");
-	StateDatabase::Query qry = m_state.query();
+	drawdance::Query qry = m_state.query();
 	if(qry.exec(sql)) {
 		while(qry.next()) {
-			int id = qry.value(0).toInt();
-			int version = qry.value(1).toInt();
+			int id = qry.columnInt(0);
+			int version = qry.columnInt(1);
 			if(version != 1) {
 				qWarning("Preset %d has unsupported version %d", id, version);
 				continue;
 			}
 
 			QJsonParseError parseError;
-			QJsonDocument doc = QJsonDocument::fromJson(
-				qry.value(3).toByteArray(), &parseError);
+			QJsonDocument doc =
+				QJsonDocument::fromJson(qry.columnBlob(3), &parseError);
 			if(parseError.error != QJsonParseError::NoError) {
 				qWarning(
 					"Failed to parse data of preset %d: %s", id,
@@ -288,8 +280,7 @@ void HostPresetModel::loadPresets()
 				continue;
 			}
 
-			m_presets.append(
-				{id, version, qry.value(2).toString(), doc.object()});
+			m_presets.append({id, version, qry.columnText16(2), doc.object()});
 		}
 	}
 }

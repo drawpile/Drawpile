@@ -26,6 +26,8 @@
 
 #define DP_ERROR_STATE_INITIAL_BUFFER_SIZE 128
 
+typedef long long DP_ProcessId;
+
 #if defined(_WIN32)
 typedef int DP_ThreadId;
 #    define DP_THREAD_ID_FMT "d"
@@ -66,7 +68,9 @@ typedef struct DP_ErrorState {
 } DP_ErrorState;
 
 
+// When using Win32 threads, the mutex is always recursive.
 DP_Mutex *DP_mutex_new(void);
+DP_Mutex *DP_mutex_new_recursive(void);
 
 void DP_mutex_free(DP_Mutex *mutex);
 
@@ -146,6 +150,8 @@ bool DP_semaphore_must_try_wait_at(const char *file, int line,
     DP_semaphore_must_try_wait_at(&__FILE__[DP_PROJECT_DIR_LENGTH], __LINE__, \
                                   (SEM))
 
+
+DP_ProcessId DP_process_current_id(void);
 
 DP_ThreadId DP_thread_current_id(void);
 

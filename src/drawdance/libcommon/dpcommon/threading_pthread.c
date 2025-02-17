@@ -62,6 +62,42 @@ DP_Mutex *DP_mutex_new(void)
     }
 }
 
+DP_Mutex *DP_mutex_new_recursive(void)
+{
+    pthread_mutexattr_t attr;
+    int error = pthread_mutexattr_init(&attr);
+    if (error != 0) {
+        DP_error_set("Can't create recursive mutex attributes: %s",
+                     strerror(error));
+        return NULL;
+    }
+
+    DP_Mutex *mutex;
+    error = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+    if (error == 0) {
+        mutex = DP_malloc(sizeof(*mutex));
+        error = pthread_mutex_init(&mutex->value, &attr);
+        if (error != 0) {
+            DP_free(mutex);
+            mutex = NULL;
+            DP_error_set("Can't create recursive mutex: %s", strerror(error));
+        }
+    }
+    else {
+        mutex = NULL;
+        DP_error_set("Can't set recursive mutex attribute: %s",
+                     strerror(error));
+    }
+
+    error = pthread_mutexattr_destroy(&attr);
+    if (error != 0) {
+        DP_warn("Error destroying recursive mutex attributes: %s",
+                strerror(error));
+    }
+
+    return mutex;
+}
+
 void DP_mutex_free(DP_Mutex *mutex)
 {
     if (mutex) {
@@ -231,6 +267,11 @@ DP_SemaphoreResult DP_semaphore_try_wait(DP_Semaphore *sem)
     }
 }
 
+
+DP_ProcessId DP_process_current_id(void)
+{
+    return (DP_ProcessId)getpid();
+}
 
 DP_ThreadId DP_thread_current_id(void)
 {
