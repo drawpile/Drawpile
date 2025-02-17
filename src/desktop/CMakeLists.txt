@@ -460,9 +460,8 @@ target_link_libraries(drawpile PRIVATE
 	${QT_PACKAGE_NAME}::Core
 	${QT_PACKAGE_NAME}::Gui
 	${QT_PACKAGE_NAME}::OpenGL
-	# Svg, Sql and Xml are needed only indirectly and are linked transitively,
-	# but Android and Emscripten need them here to load their plugins properly.
-	${QT_PACKAGE_NAME}::Sql
+	# Svg and Xml are needed only indirectly and are linked transitively, but
+	# Android and Emscripten need them here to load their plugins properly.
 	${QT_PACKAGE_NAME}::Svg
 	${QT_PACKAGE_NAME}::Widgets
 	${QT_PACKAGE_NAME}::Xml

@@ -274,11 +274,9 @@ BrushPalette::BrushPalette(QWidget *parent)
 		d->presetListView, &QWidget::customContextMenuRequested, this,
 		&BrushPalette::showPresetContextMenu);
 
-	bool selectedTagIdOk;
-	int selectedTagId =
-		d->tagModel->getState(SELECTED_TAG_ID_KEY).toInt(&selectedTagIdOk);
+	int selectedTagId = d->tagModel->getStateInt(SELECTED_TAG_ID_KEY, 0);
 	int selectedTagRow =
-		selectedTagIdOk ? d->tagModel->getTagRowById(selectedTagId) : -1;
+		selectedTagId > 0 ? d->tagModel->getTagRowById(selectedTagId) : -1;
 	int initialTagRow = selectedTagRow > 0 ? selectedTagRow : 0;
 	d->tagComboBox->setCurrentIndex(initialTagRow);
 	tagIndexChanged(d->tagComboBox->currentIndex());
@@ -587,7 +585,7 @@ void BrushPalette::tagIndexChanged(int row)
 	d->editTagAction->setEnabled(d->currentTag.isEditable());
 	d->deleteTagAction->setEnabled(d->currentTag.isEditable());
 	d->presetModel->setTagIdToFilter(d->currentTag.id);
-	d->tagModel->setState(SELECTED_TAG_ID_KEY, d->currentTag.id);
+	d->tagModel->setStateInt(SELECTED_TAG_ID_KEY, d->currentTag.id);
 }
 
 void BrushPalette::setSelectedPresetIdFromBrushSettings(

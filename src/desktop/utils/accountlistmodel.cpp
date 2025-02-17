@@ -358,49 +358,47 @@ bool AccountListModel::canSavePasswords(bool insecureFallback)
 void AccountListModel::clearFallbackPasswords()
 {
 	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-	utils::StateDatabase::Query qry = m_state.query();
-	QString sql = QStringLiteral("delete from insecure_storage");
-	qry.exec(sql);
+	drawdance::Query qry = m_state.query();
+	qry.exec("delete from insecure_storage");
 }
 
 void AccountListModel::createTables()
 {
 	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-	utils::StateDatabase::Query qry = m_state.query();
-	qry.exec(QStringLiteral("create table if not exists accounts (\n"
-							"	type integer not null,\n"
-							"	host text not null,\n"
-							"	username text not null,\n"
-							"	display_username text not null,\n"
-							"	avatar_filename text not null,\n"
-							"	last_used text not null,\n"
-							"	primary key (type, host, username))"));
-	qry.exec(
-		QStringLiteral("create table if not exists insecure_storage (\n"
-					   "	keychain_secret_name text primary key not null,\n"
-					   "	obfuscated_value text not null)"));
+	drawdance::Query qry = m_state.query();
+	qry.exec("create table if not exists accounts ("
+			 "type integer not null,"
+			 "host text not null,"
+			 "username text not null,"
+			 "display_username text not null,"
+			 "avatar_filename text not null,"
+			 "last_used text not null,"
+			 "primary key (type, host, username))");
+	qry.exec("create table if not exists insecure_storage ("
+			 "keychain_secret_name text primary key not null,"
+			 "obfuscated_value text not null)");
 }
 
 void AccountListModel::loadAccounts(
 	QVector<Account> &accounts, QSet<QString> &usernames, Type type,
 	const QString &host)
 {
-	utils::StateDatabase::Query qry = m_state.query();
-	QString sql = QStringLiteral(
-		"select username, display_username, avatar_filename, last_used\n"
-		"from accounts where type = ? and host = ?");
-	if(qry.exec(sql, {int(type), host})) {
+	drawdance::Query qry = m_state.query();
+	if(qry.exec(
+		   "select username, display_username, avatar_filename, last_used "
+		   "from accounts where type = ? and host = ?",
+		   {int(type), host})) {
 		while(qry.next()) {
-			QString username = qry.value(0).toString();
+			QString username = qry.columnText16(0);
 			if(!usernames.contains(username)) {
 				usernames.insert(username);
 				accounts.append({
 					type,
 					host,
 					username,
-					qry.value(1).toString(),
-					qry.value(2).toString(),
-					QDateTime::fromString(qry.value(3).toString(), Qt::ISODate),
+					qry.columnText16(1),
+					qry.columnText16(2),
+					QDateTime::fromString(qry.columnText16(3), Qt::ISODate),
 				});
 			}
 		}
@@ -432,12 +430,13 @@ bool AccountListModel::isAccountLessThan(const Account &a, const Account &b)
 QString
 AccountListModel::readPasswordFallback(const QString &keychainSecretName)
 {
-	utils::StateDatabase::Query qry = m_state.query();
-	QString sql =
-		QStringLiteral("select obfuscated_value from insecure_storage\n"
-					   "where keychain_secret_name = ?");
-	bool ok = qry.exec(sql, {keychainSecretName}) && qry.next();
-	return ok ? deobfuscate(qry.value(0).toString()) : QString();
+	drawdance::Query qry = m_state.query();
+	bool ok = qry.exec(
+				  "select obfuscated_value from insecure_storage "
+				  "where keychain_secret_name = ?",
+				  {keychainSecretName}) &&
+			  qry.next();
+	return ok ? deobfuscate(qry.columnText16(0)) : QString();
 }
 
 void AccountListModel::savePasswordFallback(
@@ -445,23 +444,21 @@ void AccountListModel::savePasswordFallback(
 	const QString &password)
 {
 	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-	utils::StateDatabase::Query qry = state->query();
-	QString sql =
-		QStringLiteral("insert into insecure_storage (\n"
-					   "	keychain_secret_name, obfuscated_value)\n"
-					   "values (?, ?)\n"
-					   "on conflict do update set\n"
-					   "	obfuscated_value = excluded.obfuscated_value");
-	qry.exec(sql, {keychainSecretName, obfuscate(password)});
+	drawdance::Query qry = state->query();
+	qry.exec(
+		"insert into insecure_storage (keychain_secret_name, obfuscated_value) "
+		"values (?, ?) on conflict do update set "
+		"obfuscated_value = excluded.obfuscated_value",
+		{keychainSecretName, obfuscate(password)});
 }
 
 void AccountListModel::deletePasswordFallback(const QString &keychainSecretName)
 {
 	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-	utils::StateDatabase::Query qry = m_state.query();
-	QString sql = QStringLiteral(
-		"delete from insecure_storage where keychain_secret_name = ?");
-	qry.exec(sql, {keychainSecretName});
+	drawdance::Query qry = m_state.query();
+	qry.exec(
+		"delete from insecure_storage where keychain_secret_name = ?",
+		{keychainSecretName});
 }
 
 QString AccountListModel::obfuscate(const QString &value)

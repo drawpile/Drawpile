@@ -1,147 +1,99 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/utils/statedatabase.h"
 #include "libshared/util/database.h"
-#include <QMutexLocker>
-#include <QSqlError>
 
 namespace utils {
 
-StateDatabase::Query::~Query()
-{
-	m_mutex.unlock();
-}
-
-bool StateDatabase::Query::exec(const QString &sql, const QVariantList &params)
-{
-	return db::exec(m_query, sql, params);
-}
-
-bool StateDatabase::Query::prepare(const QString &sql)
-{
-	m_preparedSql = sql;
-	return db::prepare(m_query, sql);
-}
-
-bool StateDatabase::Query::execPrepared()
-{
-	return db::execPrepared(m_query, m_preparedSql);
-}
-
-void StateDatabase::Query::bindValue(int pos, const QVariant &val)
-{
-	m_query.bindValue(pos, val);
-}
-
-bool StateDatabase::Query::next()
-{
-	return m_query.next();
-}
-
-QVariant StateDatabase::Query::value(int i) const
-{
-	return m_query.value(i);
-}
-
-int StateDatabase::Query::numRowsAffected() const
-{
-	return m_query.numRowsAffected();
-}
-
-QVariant StateDatabase::Query::get(const QString &key)
-{
-	bool hasRow =
-		exec("select value from state where key = ?", {key}) && next();
-	return hasRow ? value(0) : QVariant{};
-}
-
-bool StateDatabase::Query::put(const QString &key, const QVariant &value)
-{
-	QString sql =
-		QStringLiteral("insert into state (key, value) values (?, ?)\n"
-					   "	on conflict (key) do update set value = ?");
-	return exec(sql, {key, value, value});
-}
-
-bool StateDatabase::Query::remove(const QString &key)
-{
-	QString sql = QStringLiteral("delete from state where key = ?");
-	return exec(sql, {key}) && numRowsAffected() > 0;
-}
-
-StateDatabase::Query::Query(QRecursiveMutex &mutex, const QSqlDatabase &db)
-	: m_mutex(mutex)
-	, m_query(db)
-{
-}
-
-
 StateDatabase::StateDatabase(QObject *parent)
 	: QObject(parent)
-	, m_db(utils::db::sqlite(
-		  QStringLiteral("drawpile_state_connection"), QStringLiteral("state"),
-		  QStringLiteral("state.db")))
 {
-	QSqlQuery qry(m_db);
-	utils::db::exec(qry, "pragma foreign_keys = on");
-	utils::db::exec(
-		qry, "create table if not exists migrations (\n"
-			 "	migration_id integer primary key not null)");
-	utils::db::exec(
-		qry, "create table if not exists state (\n"
-			 "	key text primary key not null,\n"
-			 "	value)");
-	executeMigrations(qry);
+	if(utils::db::open(
+		   m_db, QStringLiteral("state"), QStringLiteral("state.db"))) {
+		drawdance::Query qry = m_db.query();
+		qry.setForeignKeysEnabled(false);
+		qry.exec("create table if not exists migrations ("
+				 "migration_id integer primary key not null)");
+		qry.exec("create table if not exists state ("
+				 "key text primary key not null,"
+				 "value)");
+		executeMigrations(qry);
+		qry.setForeignKeysEnabled(true);
+	}
 }
 
-
-StateDatabase::Query StateDatabase::query() const
+bool StateDatabase::getBool(const QString &key, bool defaultValue)
 {
-	m_mutex.lock();
-	return Query(m_mutex, m_db);
+	drawdance::Query qry = query();
+	return getBoolWith(qry, key, defaultValue);
 }
 
-bool StateDatabase::tx(std::function<bool(Query &)> fn)
+QString
+StateDatabase::getString(const QString &key, const QString &defaultValue)
 {
-	Query qry = query();
-	return db::tx(m_db, [&] {
-		return fn(qry);
-	});
+	drawdance::Query qry = query();
+	return getStringWith(qry, key, defaultValue);
 }
 
-QVariant StateDatabase::get(const QString &key) const
+bool StateDatabase::put(
+	const QString &key, const drawdance::Query::Param &value)
 {
-	return query().get(key);
-}
-
-bool StateDatabase::put(const QString &key, const QVariant &value)
-{
-	return query().put(key, value);
+	drawdance::Query qry = query();
+	return putWith(qry, key, value);
 }
 
 bool StateDatabase::remove(const QString &key)
 {
-	return query().remove(key);
+	drawdance::Query qry = query();
+	return removeWith(qry, key);
 }
 
-void StateDatabase::executeMigrations(QSqlQuery &qry)
+bool StateDatabase::getBoolWith(
+	drawdance::Query &qry, const QString &key, bool defaultValue) const
 {
-	QVector<std::function<bool(StateDatabase *, QSqlQuery &)>> migrations = {
-		&StateDatabase::executeMigration1HostPresets,
-	};
+	return getWith(qry, key) ? qry.columnBool(0) : defaultValue;
+}
+
+QString StateDatabase::getStringWith(
+	drawdance::Query &qry, const QString &key,
+	const QString &defaultValue) const
+{
+	return getWith(qry, key) ? qry.columnText16(0) : defaultValue;
+}
+
+bool StateDatabase::putWith(
+	drawdance::Query &qry, const QString &key,
+	const drawdance::Query::Param &value)
+{
+	return qry.exec(
+		"insert into state (key, value) values (?1, ?2) "
+		"on conflict (key) do update set value = ?2",
+		{key, value});
+}
+
+bool StateDatabase::removeWith(drawdance::Query &qry, const QString &key)
+{
+	return qry.exec("delete from state where key = ?", {key});
+}
+
+void StateDatabase::executeMigrations(drawdance::Query &qry)
+{
+	QVector<std::function<bool(StateDatabase *, drawdance::Query &)>>
+		migrations = {
+			&StateDatabase::executeMigration1HostPresets,
+		};
 
 	int migrationCount = migrations.size();
-	QString selectMigrationsSql =
-		QStringLiteral("select migration_id from migrations\n"
-					   "order by migration_id desc limit 1");
-	QString insertMigrationsSql =
-		QStringLiteral("insert into migrations (migration_id) values (?)");
+	const char *selectMigrationsSql = "select migration_id from migrations "
+									  "order by migration_id desc limit 1";
+	const char *insertMigrationsSql =
+		"insert into migrations (migration_id) values (?)";
 
-	if(utils::db::exec(qry, selectMigrationsSql)) {
-		int lastMigrationId = qry.next() ? qry.value(0).toInt() : 0;
+	if(qry.exec(selectMigrationsSql)) {
+		int lastMigrationId = qry.next() ? qry.columnInt(0) : 0;
 		for(int i = lastMigrationId; i < migrationCount; ++i) {
-			bool ok = db::tx(m_db, [&] {
+			bool ok = qry.tx([&] {
 				return migrations[i](this, qry) &&
-					   db::exec(qry, insertMigrationsSql, {i + 1});
+					   qry.exec(insertMigrationsSql, {i + 1});
 			});
 			if(!ok) {
 				qWarning("Migration %d failed", i);
@@ -151,14 +103,19 @@ void StateDatabase::executeMigrations(QSqlQuery &qry)
 	}
 }
 
-bool StateDatabase::executeMigration1HostPresets(QSqlQuery &qry)
+bool StateDatabase::executeMigration1HostPresets(drawdance::Query &qry)
 {
-	return db::exec(
-		qry, QStringLiteral("create table host_presets (\n"
-							"	id integer primary key not null,\n"
-							"	version integer not null,\n"
-							"	title text not null,\n"
-							"	data blob not null)"));
+	return qry.exec("create table host_presets ("
+					"id integer primary key not null,"
+					"version integer not null,"
+					"title text not null,"
+					"data blob not null)");
+}
+
+bool StateDatabase::getWith(drawdance::Query &qry, const QString &key) const
+{
+	return qry.exec("select value from state where key = ?", {key}) &&
+		   qry.next();
 }
 
 }

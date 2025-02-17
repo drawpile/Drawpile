@@ -2,14 +2,17 @@
 #ifndef THINSRV_DBLOG_H
 #define THINSRV_DBLOG_H
 #include "libserver/serverlog.h"
-#include <QSqlDatabase>
-#include <QSqlQuery>
+
+namespace drawdance {
+class Database;
+}
 
 namespace server {
 
 class DbLog final : public ServerLog {
 public:
-	explicit DbLog(const QSqlDatabase &db);
+	explicit DbLog(drawdance::Database &db);
+	~DbLog() override;
 
 	bool initDb();
 
@@ -30,11 +33,8 @@ protected:
 	void storeMessage(const Log &entry) override;
 
 private:
-	static const QString INSERT_SQL;
-
-	QSqlDatabase m_db;
-	QSqlQuery m_insertQuery;
-	bool m_insertQueryPrepared = false;
+	struct Private;
+	Private *d;
 };
 
 }
