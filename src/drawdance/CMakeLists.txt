@@ -17,16 +17,17 @@ endif()
 add_subdirectory(bundled)
 add_subdirectory(generators)
 add_subdirectory(libcommon)
+add_subdirectory(libdb)
 add_subdirectory(libmsg)
 add_subdirectory(libengine)
 
 add_library(drawdance_server INTERFACE)
-target_link_libraries(
-    drawdance_server INTERFACE dpengine dpmsg dpcommon cmake-config)
+target_link_libraries(drawdance_server INTERFACE
+    dpengine dpmsg dpdb_qt dpdb dpcommon cmake-config)
 
 if(CLIENT OR TOOLS)
     add_subdirectory(libimpex)
     add_library(drawdance_client INTERFACE)
-    target_link_libraries(
-        drawdance_client INTERFACE dpimpex dpengine dpmsg dpcommon cmake-config)
+    target_link_libraries(drawdance_client INTERFACE
+        dpimpex dpengine dpmsg dpdb dpcommon cmake-config)
 endif()

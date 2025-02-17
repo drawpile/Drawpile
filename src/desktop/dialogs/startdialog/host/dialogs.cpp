@@ -391,14 +391,11 @@ void SaveDialog::accept()
 		}
 	}
 
-	state.tx([&](utils::StateDatabase::Query &qry) {
-		return qry.exec(
-				   QStringLiteral("delete from host_presets where title = ?"),
-				   {title}) &&
+	state.tx([&](drawdance::Query &qry) {
+		return qry.exec("delete from host_presets where title = ?", {title}) &&
 			   qry.exec(
-				   QStringLiteral(
-					   "insert into host_presets (version, title, data) "
-					   "values (?, ?, ?)"),
+				   "insert into host_presets (version, title, data) "
+				   "values (?, ?, ?)",
 				   {1, title,
 					QJsonDocument(selectedData)
 						.toJson(QJsonDocument::Compact)});
@@ -409,11 +406,11 @@ void SaveDialog::accept()
 
 void SaveDialog::loadExistingTitles()
 {
-	utils::StateDatabase::Query qry = dpApp().state().query();
+	drawdance::Query qry = dpApp().state().query();
 	if(qry.exec(QStringLiteral(
 		   "select distinct title from host_presets order by title"))) {
 		while(qry.next()) {
-			m_titleCombo->addItem(qry.value(0).toString());
+			m_titleCombo->addItem(qry.columnText16(0));
 		}
 	}
 }
