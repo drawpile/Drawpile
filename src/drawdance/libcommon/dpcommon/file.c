@@ -88,6 +88,16 @@ bool DP_file_exists(const char *path)
 #endif
 }
 
+bool DP_file_remove(const char *path)
+{
+    DP_ASSERT(path);
+#ifdef DP_QT_IO
+    return DP_qfile_remove(path);
+#else
+    return remove(path);
+#endif
+}
+
 
 bool DP_file_copy(const char *source_path, const char *target_path)
 {

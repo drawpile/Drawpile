@@ -274,11 +274,11 @@ bool Database::open(const QString &path, const QString &humaneName)
     DatabaseLocker locker(*this);
 
     sqlite3 *db;
-    int open_result =
-        sqlite3_open_v2(qUtf8Printable(path), &db,
-                        SQLITE_OPEN_READWRITE | SQLITE_OPEN_NOMUTEX
-                            | SQLITE_OPEN_PRIVATECACHE | SQLITE_OPEN_EXRESCODE,
-                        NULL);
+    int open_result = sqlite3_open_v2(
+        qUtf8Printable(path), &db,
+        SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_NOMUTEX
+            | SQLITE_OPEN_PRIVATECACHE | SQLITE_OPEN_EXRESCODE,
+        NULL);
     if (open_result != SQLITE_OK) {
         return false;
     }

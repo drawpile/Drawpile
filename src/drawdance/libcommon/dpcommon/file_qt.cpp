@@ -11,3 +11,8 @@ extern "C" bool DP_qfile_exists(const char *path)
 {
     return QFileInfo::exists(QString::fromUtf8(path));
 }
+
+extern "C" bool DP_qfile_remove(const char *path)
+{
+    return QFile::remove(QString::fromUtf8(path));
+}
