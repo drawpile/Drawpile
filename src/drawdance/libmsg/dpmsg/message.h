@@ -81,6 +81,10 @@ size_t DP_message_serialize(DP_Message *msg, bool write_body_length,
                             DP_GetMessageBufferFn get_buffer,
                             void *user) DP_MUST_CHECK;
 
+size_t DP_message_serialize_body(DP_Message *msg,
+                                 DP_GetMessageBufferFn get_buffer,
+                                 void *user) DP_MUST_CHECK;
+
 bool DP_message_write_text(DP_Message *msg,
                            DP_TextWriter *writer) DP_MUST_CHECK;
 
