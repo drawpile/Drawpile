@@ -515,3 +515,48 @@ instead of exec.
      QAbstractItemView::DropIndicatorPosition dropIndicatorPosition;
      Qt::DropAction defaultDropAction;
  #endif
+
+--- a/src/widgets/widgets/qtoolbutton.cpp
++++ b/src/widgets/widgets/qtoolbutton.cpp
+@@ -28,6 +28,9 @@
+ #include <qmenu.h>
+ #include <private/qmenu_p.h>
+ #endif
++#ifdef Q_OS_WASM
++#include <QtCore/private/qstdweb_p.h>
++#endif
+
+ QT_BEGIN_NAMESPACE
+
+@@ -781,6 +784,31 @@
+     auto positionFunction = [q, horizontal](const QSize &sizeHint) {
+         return positionMenu(q, horizontal, sizeHint); };
+     const auto initialPos = positionFunction(actualMenu->sizeHint());
++
++#ifdef Q_OS_WASM
++    if (!qstdweb::canBlockCallingThread()) {
++        if (that) {
++            QObject::connect(actualMenu, &QMenu::aboutToHide, q, [this, q, actualMenu, mustDeleteActualMenu] {
++                QObjectPrivate::disconnect(actualMenu, &QMenu::aboutToHide,
++                                           this, &QToolButtonPrivate::updateButtonDown);
++                if (mustDeleteActualMenu) {
++                    delete actualMenu;
++                } else {
++                    QObjectPrivate::disconnect(actualMenu, &QMenu::triggered,
++                                               this, &QToolButtonPrivate::onMenuTriggered);
++                }
++
++                actionsCopy.clear();
++
++                if (repeat)
++                    q->setAutoRepeat(true);
++            }, Qt::QueuedConnection);
++        }
++        actualMenu->d_func()->popup(initialPos, nullptr, positionFunction);
++        return;
++    }
++#endif
++
+     actualMenu->d_func()->exec(initialPos, nullptr, positionFunction);
+
+     if (!that)
