@@ -1,30 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include "thinsrv/multiserver.h"
-#include "thinsrv/initsys.h"
-#include "thinsrv/database.h"
-#include "libserver/sslserver.h"
-#include "libserver/inmemoryconfig.h"
-#include "thinsrv/headless/configfile.h"
-#include "libshared/util/paths.h"
 #include "cmake-config/config.h"
-
-#ifdef HAVE_WEBADMIN
-#include "thinsrv/webadmin/webadmin.h"
-#endif
-
-#include <QCoreApplication>
-#include <QStringList>
-#include <QSslSocket>
+#include "libserver/inmemoryconfig.h"
+#include "libserver/sslserver.h"
+#include "libshared/util/paths.h"
+#include "thinsrv/database.h"
+#include "thinsrv/headless/configfile.h"
+#include "thinsrv/initsys.h"
+#include "thinsrv/multiserver.h"
 #include <QCommandLineParser>
+#include <QCoreApplication>
 #include <QDir>
-
+#include <QSslSocket>
+#include <QStringList>
 #ifdef Q_OS_UNIX
-#include "thinsrv/headless/unixsignals.h"
+#	include "thinsrv/headless/unixsignals.h"
 #endif
-
+#ifdef HAVE_WEBADMIN
+#	include "thinsrv/webadmin/webadmin.h"
+#endif
 #ifdef HAVE_LIBSODIUM
-#include <sodium.h>
+#	include <sodium.h>
 #endif
 
 namespace server {
@@ -34,9 +29,15 @@ namespace {
 void printVersion()
 {
 	printf("drawpile-srv %s\n", cmake_config::version());
-	printf("Protocol version: %d.%d\n", cmake_config::proto::major(), cmake_config::proto::minor());
-	printf("Qt version: %s (compiled against %s)\n", qVersion(), QT_VERSION_STR);
-	printf("SSL library version: %s (%lu)\n", QSslSocket::sslLibraryVersionString().toLocal8Bit().constData(), QSslSocket::sslLibraryVersionNumber());
+	printf(
+		"Protocol version: %d.%d\n", cmake_config::proto::major(),
+		cmake_config::proto::minor());
+	printf(
+		"Qt version: %s (compiled against %s)\n", qVersion(), QT_VERSION_STR);
+	printf(
+		"SSL library version: %s (%lu)\n",
+		QSslSocket::sslLibraryVersionString().toLocal8Bit().constData(),
+		QSslSocket::sslLibraryVersionNumber());
 #ifdef HAVE_WEBADMIN
 	printf("Libmicrohttpd version: %s\n", qPrintable(Webadmin::version()));
 #else
@@ -61,8 +62,9 @@ bool isBadDrawpileNetExtAuthUrl(const QUrl &url)
 	if(url.host().endsWith(
 		   QStringLiteral(".drawpile.net"), Qt::CaseInsensitive)) {
 		return true;
-	} else if(url.host().compare(
-				  QStringLiteral("drawpile.net"), Qt::CaseInsensitive) == 0) {
+	} else if(
+		url.host().compare(
+			QStringLiteral("drawpile.net"), Qt::CaseInsensitive) == 0) {
 		// The URL should be "https://drawpile.net/api/ext-auth/". Don't allow
 		// funny capitalization, a scheme other than https, a missing slash or
 		// anything else.  Specifying port 443 explicitly, adding query
@@ -130,7 +132,8 @@ bool isUncompiledOptionGiven(
 }
 }
 
-bool start() {
+bool start()
+{
 	// Set up command line arguments
 	QCommandLineParser parser;
 
@@ -138,21 +141,26 @@ bool start() {
 	parser.addHelpOption();
 
 	// --version, -v
-	QCommandLineOption versionOption(QStringList() << "v" << "version", "Displays version information.");
+	QCommandLineOption versionOption(
+		QStringList() << "v" << "version", "Displays version information.");
 	parser.addOption(versionOption);
 
 #ifdef HAVE_SERVERGUI
 	// --gui (this is just for the help text)
-	QCommandLineOption guiOption(QStringList() << "gui", "Run the graphical version.");
+	QCommandLineOption guiOption(
+		QStringList() << "gui", "Run the graphical version.");
 	parser.addOption(guiOption);
 #endif
 
 	// --port, -p <port>
-	QCommandLineOption portOption(QStringList() << "port" << "p", "Listening port", "port", QString::number(cmake_config::proto::port()));
+	QCommandLineOption portOption(
+		QStringList() << "port" << "p", "Listening port", "port",
+		QString::number(cmake_config::proto::port()));
 	parser.addOption(portOption);
 
 	// --listen, -l <address>
-	QCommandLineOption listenOption(QStringList() << "listen" << "l", "Listening address", "address");
+	QCommandLineOption listenOption(
+		QStringList() << "listen" << "l", "Listening address", "address");
 	parser.addOption(listenOption);
 
 #ifdef HAVE_WEBSOCKETS
@@ -162,23 +170,34 @@ bool start() {
 		" [QtWebSockets not compiled in, this option is unavailable]");
 #endif
 	// --websocket-port <port>
-	QCommandLineOption webSocketPortOption(QStringList() << "websocket-port", "WebSocket listening port (0 to disable)" + websocketOptionSuffix, "port", "0");
+	QCommandLineOption webSocketPortOption(
+		QStringList() << "websocket-port",
+		"WebSocket listening port (0 to disable)" + websocketOptionSuffix,
+		"port", "0");
 	parser.addOption(webSocketPortOption);
 
 	// --websocket-listen <address>
-	QCommandLineOption webSocketListenOption(QStringList() << "websocket-listen", "WebSocket listening address" + websocketOptionSuffix, "address");
+	QCommandLineOption webSocketListenOption(
+		QStringList() << "websocket-listen",
+		"WebSocket listening address" + websocketOptionSuffix, "address");
 	parser.addOption(webSocketListenOption);
 
 	// --local-host
-	QCommandLineOption localAddr("local-host", "This server's hostname for session announcement", "hostname");
+	QCommandLineOption localAddr(
+		"local-host", "This server's hostname for session announcement",
+		"hostname");
 	parser.addOption(localAddr);
 
 	// --announce-port <port>
-	QCommandLineOption announcePortOption(QStringList() << "announce-port", "Port number to announce (set if forwarding from different port)", "port");
+	QCommandLineOption announcePortOption(
+		QStringList() << "announce-port",
+		"Port number to announce (set if forwarding from different port)",
+		"port");
 	parser.addOption(announcePortOption);
 
 	// --ssl-cert <certificate file>
-	QCommandLineOption sslCertOption("ssl-cert", "SSL certificate file", "certificate");
+	QCommandLineOption sslCertOption(
+		"ssl-cert", "SSL certificate file", "certificate");
 	parser.addOption(sslCertOption);
 
 	// --ssl-key <key file>
@@ -186,7 +205,10 @@ bool start() {
 	parser.addOption(sslKeyOption);
 
 	// --ssl-key-algorithm <algorithm>
-	QCommandLineOption sslKeyAlgorithmOption("ssl-key-algorithm", "SSL key algorithm: guess (the default), rsa, ec, dsa or dh.", "algorithm", "guess");
+	QCommandLineOption sslKeyAlgorithmOption(
+		"ssl-key-algorithm",
+		"SSL key algorithm: guess (the default), rsa, ec, dsa or dh.",
+		"algorithm", "guess");
 	parser.addOption(sslKeyAlgorithmOption);
 
 	// --record <path>
@@ -200,15 +222,24 @@ bool start() {
 		" [Libmicrohttpd not compiled in, this option is unavailable]");
 #endif
 	// --web-admin-port <port>
-	QCommandLineOption webadminPortOption("web-admin-port", "Web admin interface port" + webadminOptionSuffix, "port", "0");
+	QCommandLineOption webadminPortOption(
+		"web-admin-port", "Web admin interface port" + webadminOptionSuffix,
+		"port", "0");
 	parser.addOption(webadminPortOption);
 
 	// --web-admin-auth <user:password>
-	QCommandLineOption webadminAuthOption("web-admin-auth", "Web admin username & password (you can also use the DRAWPILESRV_WEB_ADMIN_AUTH environment variable for this)" + webadminOptionSuffix, "user:password");
+	QCommandLineOption webadminAuthOption(
+		"web-admin-auth",
+		"Web admin username & password (you can also use the "
+		"DRAWPILESRV_WEB_ADMIN_AUTH environment variable for this)" +
+			webadminOptionSuffix,
+		"user:password");
 	parser.addOption(webadminAuthOption);
 
 	// --web-admin-access <address/subnet>
-	QCommandLineOption webadminAccessOption("web-admin-access", "Set web admin access mask" + webadminOptionSuffix, "address/subnet|all");
+	QCommandLineOption webadminAccessOption(
+		"web-admin-access", "Set web admin access mask" + webadminOptionSuffix,
+		"address/subnet|all");
 	parser.addOption(webadminAccessOption);
 
 	// --web-admin-allow-origin <origin>
@@ -220,19 +251,24 @@ bool start() {
 	parser.addOption(webadminAllowedOriginOption);
 
 	// --database, -d <filename>
-	QCommandLineOption dbFileOption(QStringList() << "database" << "d", "Use configuration database", "filename");
+	QCommandLineOption dbFileOption(
+		QStringList() << "database" << "d", "Use configuration database",
+		"filename");
 	parser.addOption(dbFileOption);
 
 	// --config, -c <filename>
-	QCommandLineOption configFileOption(QStringList() << "config" << "c", "Use configuration file", "filename");
+	QCommandLineOption configFileOption(
+		QStringList() << "config" << "c", "Use configuration file", "filename");
 	parser.addOption(configFileOption);
 
 	// --sessions, -s <path>
-	QCommandLineOption sessionsOption(QStringList() << "sessions" << "s", "File backed sessions", "path");
+	QCommandLineOption sessionsOption(
+		QStringList() << "sessions" << "s", "File backed sessions", "path");
 	parser.addOption(sessionsOption);
 
 	// --templates, -t <path>
-	QCommandLineOption templatesOption(QStringList() << "templates" << "t", "Session templates", "path");
+	QCommandLineOption templatesOption(
+		QStringList() << "templates" << "t", "Session templates", "path");
 	parser.addOption(templatesOption);
 
 #ifdef HAVE_LIBSODIUM
@@ -242,19 +278,26 @@ bool start() {
 		" [Libsodium not compiled in, this option is unavailable]");
 #endif
 	// --extauth <url>
-	QCommandLineOption extAuthOption(QStringList() << "extauth", "Extauth server URL" + sodiumOptionSuffix, "url");
+	QCommandLineOption extAuthOption(
+		QStringList() << "extauth", "Extauth server URL" + sodiumOptionSuffix,
+		"url");
 	parser.addOption(extAuthOption);
 
 	// --crypt-key
-	QCommandLineOption cryptKeyOption(QStringList() << "crypt-key", "Encryption key for session ban exports" + sodiumOptionSuffix, "key");
+	QCommandLineOption cryptKeyOption(
+		QStringList() << "crypt-key",
+		"Encryption key for session ban exports" + sodiumOptionSuffix, "key");
 	parser.addOption(cryptKeyOption);
 
 	// --generate-crypt-key
-	QCommandLineOption generateCryptKeyOption(QStringList() << "generate-crypt-key", "Generate a key to pass to --crypt-key and exit" + sodiumOptionSuffix);
+	QCommandLineOption generateCryptKeyOption(
+		QStringList() << "generate-crypt-key",
+		"Generate a key to pass to --crypt-key and exit" + sodiumOptionSuffix);
 	parser.addOption(generateCryptKeyOption);
 
 	// --report-url <url>
-	QCommandLineOption reportUrlOption(QStringList() << "report-url", "Abuse report handler URL", "url");
+	QCommandLineOption reportUrlOption(
+		QStringList() << "report-url", "Abuse report handler URL", "url");
 	parser.addOption(reportUrlOption);
 
 	// Parse
@@ -303,13 +346,16 @@ bool start() {
 	ServerConfig *serverconfig;
 	if(parser.isSet(dbFileOption)) {
 		if(parser.isSet(configFileOption)) {
-			qCritical("Configuration file and database are mutually exclusive options");
+			qCritical("Configuration file and database are mutually exclusive "
+					  "options");
 			return false;
 		}
 
-		auto *db = new Database;
+		Database *db = new Database;
 		if(!db->openFile(parser.value(dbFileOption))) {
-			qCritical("Couldn't open database file %s", qPrintable(parser.value(dbFileOption)));
+			qCritical(
+				"Couldn't open database file %s",
+				qPrintable(parser.value(dbFileOption)));
 			delete db;
 			return false;
 		}
@@ -358,8 +404,10 @@ bool start() {
 	if(parser.isSet(announcePortOption)) {
 		bool ok;
 		icfg.announcePort = parser.value(announcePortOption).toInt(&ok);
-		if(!ok || icfg.announcePort>0xffff) {
-			qCritical("Invalid port %s", qPrintable(parser.value(announcePortOption)));
+		if(!ok || icfg.announcePort > 0xffff) {
+			qCritical(
+				"Invalid port %s",
+				qPrintable(parser.value(announcePortOption)));
 			delete serverconfig;
 			return false;
 		}
@@ -371,13 +419,15 @@ bool start() {
 	server::MultiServer *server = new server::MultiServer(serverconfig);
 	serverconfig->setParent(server);
 
-	server->connect(server, SIGNAL(serverStopped()), QCoreApplication::instance(), SLOT(quit()));
+	server->connect(
+		server, SIGNAL(serverStopped()), QCoreApplication::instance(),
+		SLOT(quit()));
 
 	int port;
 	{
 		bool ok;
 		port = parser.value(portOption).toInt(&ok);
-		if(!ok || port<1 || port>0xffff) {
+		if(!ok || port < 1 || port > 0xffff) {
 			qCritical("Invalid port %s", qPrintable(parser.value(portOption)));
 			return false;
 		}
@@ -399,8 +449,10 @@ bool start() {
 	{
 		bool ok;
 		webSocketPort = parser.value(webSocketPortOption).toInt(&ok);
-		if(!ok || webSocketPort<0 || webSocketPort>0xffff) {
-			qCritical("Invalid WebSocket port %s", qUtf8Printable(parser.value(webSocketPortOption)));
+		if(!ok || webSocketPort < 0 || webSocketPort > 0xffff) {
+			qCritical(
+				"Invalid WebSocket port %s",
+				qUtf8Printable(parser.value(webSocketPortOption)));
 			return false;
 		}
 	}
@@ -409,7 +461,9 @@ bool start() {
 		QString av = parser.value(webSocketListenOption);
 		if(!av.isEmpty()) {
 			if(!webSocketAddress.setAddress(av)) {
-				qCritical("Invalid WebSocket listening address %s", qUtf8Printable(av));
+				qCritical(
+					"Invalid WebSocket listening address %s",
+					qUtf8Printable(av));
 				return false;
 			}
 		}
@@ -427,9 +481,11 @@ bool start() {
 			server::SslServer::Algorithm algorithm;
 			if(sslKeyAlgorithm.compare("guess", Qt::CaseInsensitive) == 0) {
 				algorithm = SslServer::Algorithm::Guess;
-			} else if(sslKeyAlgorithm.compare("rsa", Qt::CaseInsensitive) == 0) {
+			} else if(
+				sslKeyAlgorithm.compare("rsa", Qt::CaseInsensitive) == 0) {
 				algorithm = SslServer::Algorithm::Rsa;
-			} else if(sslKeyAlgorithm.compare("dsa", Qt::CaseInsensitive) == 0) {
+			} else if(
+				sslKeyAlgorithm.compare("dsa", Qt::CaseInsensitive) == 0) {
 				algorithm = SslServer::Algorithm::Dsa;
 			} else if(sslKeyAlgorithm.compare("ec", Qt::CaseInsensitive) == 0) {
 				algorithm = SslServer::Algorithm::Ec;
@@ -456,7 +512,7 @@ bool start() {
 	{
 		QString sessionDirPath = parser.value(sessionsOption);
 		if(!sessionDirPath.isEmpty()) {
-			QDir sessionDir { sessionDirPath };
+			QDir sessionDir{sessionDirPath};
 			sessionDir.mkpath(".");
 			if(!sessionDir.isReadable()) {
 				qCritical("Cannot open %s", qPrintable(sessionDirPath));
@@ -470,7 +526,9 @@ bool start() {
 	if(parser.isSet(templatesOption)) {
 		QDir dir(parser.value(templatesOption));
 		if(!dir.exists()) {
-			qCritical("%s: template directory does not exist!", qPrintable(dir.absolutePath()));
+			qCritical(
+				"%s: template directory does not exist!",
+				qPrintable(dir.absolutePath()));
 			return false;
 		}
 		server->setTemplateDirectory(dir);
@@ -501,17 +559,21 @@ bool start() {
 			webadmin->setAllowedOrigin(allowedOrigin);
 		}
 
-#ifdef Q_OS_UNIX
-	server->connect(UnixSignals::instance(), SIGNAL(sigUsr1()), webadmin, SLOT(restart()));
-#endif
+#	ifdef Q_OS_UNIX
+		server->connect(
+			UnixSignals::instance(), SIGNAL(sigUsr1()), webadmin,
+			SLOT(restart()));
+#	endif
 	}
 
 #endif
 
 	// Catch signals
 #ifdef Q_OS_UNIX
-	server->connect(UnixSignals::instance(), SIGNAL(sigInt()), server, SLOT(stop()));
-	server->connect(UnixSignals::instance(), SIGNAL(sigTerm()), server, SLOT(stop()));
+	server->connect(
+		UnixSignals::instance(), SIGNAL(sigInt()), server, SLOT(stop()));
+	server->connect(
+		UnixSignals::instance(), SIGNAL(sigTerm()), server, SLOT(stop()));
 #endif
 
 	// Start
@@ -524,9 +586,10 @@ bool start() {
 			}
 
 #ifdef HAVE_WEBADMIN
-			if(webadminPort>0) {
+			if(webadminPort > 0) {
 				webadmin->setSessions(server);
-				const auto webadminDirectory = utils::paths::locateDataFile("webadmin/");
+				QString webadminDirectory =
+					utils::paths::locateDataFile("webadmin/");
 				if(!webadminDirectory.isEmpty()) {
 					webadmin->setStaticFileRoot(QDir(webadminDirectory));
 				}
@@ -586,7 +649,8 @@ bool start() {
 				webadmin->setSessions(server);
 				webadmin->startFd(listenfds[1]);
 #else
-				qCritical("Web admin socket passed, but web admin support not built in!");
+				qCritical("Web admin socket passed, but web admin support not "
+						  "built in!");
 #endif
 			}
 		}
