@@ -12462,7 +12462,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Kick</source>
-        <translation>&amp;Удар ногою</translation>
+        <translation>&amp;Вигнати</translation>
     </message>
     <message>
         <location line="+2"/>
