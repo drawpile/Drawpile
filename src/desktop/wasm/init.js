@@ -234,6 +234,21 @@ import { UAParser } from "ua-parser-js";
     progress.textContent = percentText;
   }
 
+  function showFinishedProgressBar(title, total) {
+    const progressBar = getOrAddProgressBar();
+    const description = progressBar.querySelector("#progress-description");
+    description.textContent = title;
+
+    const size = progressBar.querySelector("#progress-size");
+    const mib = toMibString(total);
+    size.textContent = `${mib} / ${mib} MiB`;
+
+    const progress = progressBar.querySelector("progress");
+    progress.value = `${total}`;
+    progress.max = `${total}`;
+    progress.textContent = "100%";
+  }
+
   function showBusyStatus(text) {
     const status = document.querySelector("#status");
     status.textContent = text;
@@ -341,13 +356,15 @@ import { UAParser } from "ua-parser-js";
   // SPDX-License-Identifier: GPL-2.0-or-later
   // SDPX—SnippetName: WASM loading progress from wordpress-playground
   function patchInstantiateStreaming(assetSize, wasmSize) {
+    const totalSize = assetSize + wasmSize;
     function onProgress(done) {
       try {
-        showProgressBar(
-          "Loading application",
-          assetSize + Math.min(done, wasmSize),
-          assetSize + wasmSize,
-        );
+        if (done < wasmSize) {
+          showProgressBar("Loading application", assetSize + done, totalSize);
+        } else {
+          showFinishedProgressBar("Starting up…", totalSize);
+          showBusyStatus("Starting, this should only take a moment…");
+        }
       } catch (e) {
         console.error("Error showing WASM streaming progress", e);
       }
@@ -373,7 +390,7 @@ import { UAParser } from "ua-parser-js";
                     break;
                   }
                   loaded += value.byteLength;
-                  onProgress(loaded);
+                  onProgress(Math.min(loaded, wasmSize - 1));
                   controller.enqueue(value);
                 }
                 controller.close();
