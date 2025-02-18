@@ -12,6 +12,7 @@
 #include <QDir>
 #include <QSslSocket>
 #include <QStringList>
+#include <memory>
 #ifdef Q_OS_UNIX
 #	include "thinsrv/headless/unixsignals.h"
 #endif
@@ -343,7 +344,7 @@ bool start()
 #endif
 
 	// Set server configuration file or database
-	ServerConfig *serverconfig;
+	std::unique_ptr<ServerConfig> serverconfig;
 	if(parser.isSet(dbFileOption)) {
 		if(parser.isSet(configFileOption)) {
 			qCritical("Configuration file and database are mutually exclusive "
@@ -352,21 +353,20 @@ bool start()
 		}
 
 		Database *db = new Database;
+		serverconfig.reset(db);
 		if(!db->openFile(parser.value(dbFileOption))) {
 			qCritical(
 				"Couldn't open database file %s",
 				qPrintable(parser.value(dbFileOption)));
-			delete db;
 			return false;
 		}
-		serverconfig = db;
 
 	} else if(parser.isSet(configFileOption)) {
-		serverconfig = new ConfigFile(parser.value(configFileOption));
+		serverconfig.reset(new ConfigFile(parser.value(configFileOption)));
 
 	} else {
 		// No database or config file: just use the defaults
-		serverconfig = new InMemoryConfig;
+		serverconfig.reset(new InMemoryConfig);
 	}
 
 	// Set internal server config
@@ -377,7 +377,6 @@ bool start()
 	if(!extAuthUrl.isEmpty()) {
 		icfg.extAuthUrl = QUrl(extAuthUrl, QUrl::StrictMode);
 		if(!validateExtAuthUrl(extAuthUrl, icfg.extAuthUrl)) {
-			delete serverconfig;
 			return false;
 		}
 	}
@@ -394,7 +393,6 @@ bool start()
 		} else {
 			qCritical("Invalid crypt key '%s'", qUtf8Printable(cryptKey));
 			qInfo("Use --generate-crypt-key to generate a proper one.");
-			delete serverconfig;
 			return false;
 		}
 	}
@@ -408,7 +406,6 @@ bool start()
 			qCritical(
 				"Invalid port %s",
 				qPrintable(parser.value(announcePortOption)));
-			delete serverconfig;
 			return false;
 		}
 	}
@@ -416,12 +413,8 @@ bool start()
 	serverconfig->setInternalConfig(icfg);
 
 	// Initialize the server
-	server::MultiServer *server = new server::MultiServer(serverconfig);
-	serverconfig->setParent(server);
-
-	server->connect(
-		server, SIGNAL(serverStopped()), QCoreApplication::instance(),
-		SLOT(quit()));
+	std::unique_ptr<server::MultiServer> server(
+		new server::MultiServer(serverconfig.release()));
 
 	int port;
 	{
@@ -535,7 +528,7 @@ bool start()
 	}
 
 #ifdef HAVE_WEBADMIN
-	server::Webadmin *webadmin = new server::Webadmin;
+	server::Webadmin *webadmin = new server::Webadmin(server.get());
 	int webadminPort = parser.value(webadminPortOption).toInt();
 	{
 		QString auth = parser.value(webadminAuthOption);
@@ -561,19 +554,21 @@ bool start()
 
 #	ifdef Q_OS_UNIX
 		server->connect(
-			UnixSignals::instance(), SIGNAL(sigUsr1()), webadmin,
-			SLOT(restart()));
+			UnixSignals::instance(), &UnixSignals::sigUsr1, webadmin,
+			&Webadmin::restart);
 #	endif
 	}
 
 #endif
 
-	// Catch signals
 #ifdef Q_OS_UNIX
+	// Catch signals
 	server->connect(
-		UnixSignals::instance(), SIGNAL(sigInt()), server, SLOT(stop()));
+		UnixSignals::instance(), &UnixSignals::sigInt, server.get(),
+		&MultiServer::stop);
 	server->connect(
-		UnixSignals::instance(), SIGNAL(sigTerm()), server, SLOT(stop()));
+		UnixSignals::instance(), &UnixSignals::sigTerm, server.get(),
+		&MultiServer::stop);
 #endif
 
 	// Start
@@ -587,7 +582,7 @@ bool start()
 
 #ifdef HAVE_WEBADMIN
 			if(webadminPort > 0) {
-				webadmin->setSessions(server);
+				webadmin->setSessions(server.get());
 				QString webadminDirectory =
 					utils::paths::locateDataFile("webadmin/");
 				if(!webadminDirectory.isEmpty()) {
@@ -646,7 +641,7 @@ bool start()
 
 			if(fdWebAdmin > 0) {
 #ifdef HAVE_WEBADMIN
-				webadmin->setSessions(server);
+				webadmin->setSessions(server.get());
 				webadmin->startFd(listenfds[1]);
 #else
 				qCritical("Web admin socket passed, but web admin support not "
@@ -656,6 +651,14 @@ bool start()
 		}
 	}
 
+	server->connect(
+		server.get(), &MultiServer::serverStopped, server.get(),
+		&MultiServer::deleteLater);
+	server->connect(
+		server.get(), &MultiServer::destroyed, QCoreApplication::instance(),
+		&QCoreApplication::quit, Qt::QueuedConnection);
+
+	server.release(); // We're up and running, so don't delete the server.
 	return true;
 }
 

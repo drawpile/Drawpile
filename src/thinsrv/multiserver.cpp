@@ -39,6 +39,7 @@ MultiServer::MultiServer(ServerConfig *config, QObject *parent)
 	, m_autoStop(false)
 	, m_port(0)
 {
+	m_config->setParent(this);
 	m_sessions = new SessionServer(config, this);
 	m_started = QDateTime::currentDateTimeUtc();
 

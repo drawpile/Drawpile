@@ -28,6 +28,7 @@ class ThinServerClient;
 class MultiServer final : public QObject {
 	Q_OBJECT
 public:
+	// Takes ownership of config.
 	explicit MultiServer(ServerConfig *config, QObject *parent = nullptr);
 
 	void setSslCertFile(
