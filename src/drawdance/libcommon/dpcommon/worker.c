@@ -173,3 +173,15 @@ void DP_worker_push(DP_Worker *worker, void *element)
     DP_MUTEX_MUST_UNLOCK(queue_mutex);
     DP_SEMAPHORE_MUST_POST(worker->sem);
 }
+
+void DP_worker_lock(DP_Worker *worker)
+{
+    DP_ASSERT(worker);
+    DP_MUTEX_MUST_LOCK(worker->queue_mutex);
+}
+
+void DP_worker_unlock(DP_Worker *worker)
+{
+    DP_ASSERT(worker);
+    DP_MUTEX_MUST_UNLOCK(worker->queue_mutex);
+}

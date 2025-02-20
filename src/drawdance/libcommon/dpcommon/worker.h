@@ -39,5 +39,10 @@ int DP_worker_thread_count(DP_Worker *worker);
 
 void DP_worker_push(DP_Worker *worker, void *element);
 
+// Convenience functions to use the worker mutex for other purposes. Not needed
+// to call any worker functions, they lock on their own.
+void DP_worker_lock(DP_Worker *worker);
+void DP_worker_unlock(DP_Worker *worker);
+
 
 #endif

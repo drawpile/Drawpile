@@ -136,6 +136,15 @@ bool DP_tile_opaque(DP_Tile *tile_or_null);
 
 bool DP_tile_same_pixel(DP_Tile *tile_or_null, DP_Pixel15 *out_pixel);
 
+bool DP_tile_pixels_equal(DP_Tile *t1, DP_Tile *t2);
+
+bool DP_tile_pixels_equal_pixel(DP_Tile *tile, DP_Pixel15 pixel);
+
+
+size_t DP_tile_compress_pixel(DP_Pixel15 pixel,
+                              unsigned char *(*get_output_buffer)(size_t,
+                                                                  void *),
+                              void *user);
 
 size_t DP_tile_compress(DP_Tile *tile, DP_Pixel8 *pixel_buffer,
                         unsigned char *(*get_output_buffer)(size_t, void *),

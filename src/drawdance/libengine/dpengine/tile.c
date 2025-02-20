@@ -376,6 +376,45 @@ bool DP_tile_same_pixel(DP_Tile *tile_or_null, DP_Pixel15 *out_pixel)
     return true;
 }
 
+bool DP_tile_pixels_equal(DP_Tile *t1, DP_Tile *t2)
+{
+    DP_ASSERT(t1);
+    DP_ASSERT(t2);
+    DP_ASSERT(DP_atomic_get(&t1->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&t2->refcount) > 0);
+    return memcmp(t1->pixels, t2->pixels, DP_TILE_BYTES) == 0;
+}
+
+bool DP_tile_pixels_equal_pixel(DP_Tile *tile, DP_Pixel15 pixel)
+{
+    DP_ASSERT(tile);
+    DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
+    DP_Pixel15 *pixels = tile->pixels;
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        if (!DP_pixel15_equal(pixels[i], pixel)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+size_t DP_tile_compress_pixel(DP_Pixel15 pixel,
+                              unsigned char *(*get_output_buffer)(size_t,
+                                                                  void *),
+                              void *user)
+{
+    unsigned char *buffer = get_output_buffer(4, user);
+    if (buffer) {
+        uint32_t color =
+            DP_upixel15_to_8(DP_pixel15_unpremultiply(pixel)).color;
+        DP_write_bigendian_uint32(color, buffer);
+        return 4;
+    }
+    else {
+        return 0; // The function should have already set the error message.
+    }
+}
 
 size_t DP_tile_compress(DP_Tile *tile, DP_Pixel8 *pixel_buffer,
                         unsigned char *(*get_output_buffer)(size_t, void *),
@@ -384,10 +423,16 @@ size_t DP_tile_compress(DP_Tile *tile, DP_Pixel8 *pixel_buffer,
     DP_ASSERT(tile);
     DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
     DP_ASSERT(pixel_buffer);
-    DP_pixels15_to_8(pixel_buffer, tile->pixels, DP_TILE_LENGTH);
-    return DP_compress_deflate((const unsigned char *)pixel_buffer,
-                               DP_TILE_COMPRESSED_BYTES, get_output_buffer,
-                               user);
+    DP_Pixel15 pixel;
+    if (DP_tile_same_pixel(tile, &pixel)) {
+        return DP_tile_compress_pixel(pixel, get_output_buffer, user);
+    }
+    else {
+        DP_pixels15_to_8(pixel_buffer, tile->pixels, DP_TILE_LENGTH);
+        return DP_compress_deflate((const unsigned char *)pixel_buffer,
+                                   DP_TILE_COMPRESSED_BYTES, get_output_buffer,
+                                   user);
+    }
 }
 
 
