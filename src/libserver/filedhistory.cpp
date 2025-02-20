@@ -314,38 +314,38 @@ bool FiledHistory::load()
 			params = line.mid(sep + 1).trimmed();
 		}
 
-		if(cmd == "FILE") {
+		if(cmd == QByteArrayLiteral("FILE")) {
 			recordingFile = QString::fromUtf8(params);
 			++m_fileCount;
 			m_blockCache.clear();
 
-		} else if(cmd == "ALIAS") {
+		} else if(cmd == QByteArrayLiteral("ALIAS")) {
 			if(m_alias.isEmpty())
 				m_alias = QString::fromUtf8(params);
 			else
 				qWarning() << id() << "alias set twice.";
 
-		} else if(cmd == "FOUNDER") {
+		} else if(cmd == QByteArrayLiteral("FOUNDER")) {
 			m_founder = QString::fromUtf8(params);
 
-		} else if(cmd == "PASSWORD") {
+		} else if(cmd == QByteArrayLiteral("PASSWORD")) {
 			if(params.isEmpty() || passwordhash::isValidHash(params))
 				m_password = params;
 
-		} else if(cmd == "OPWORD") {
+		} else if(cmd == QByteArrayLiteral("OPWORD")) {
 			if(params.isEmpty() || passwordhash::isValidHash(params))
 				m_opword = params;
 
-		} else if(cmd == "MAXUSERS") {
+		} else if(cmd == QByteArrayLiteral("MAXUSERS")) {
 			m_maxUsers = qBound(1, params.toInt(), 254);
 
-		} else if(cmd == "AUTORESET") {
+		} else if(cmd == QByteArrayLiteral("AUTORESET")) {
 			m_autoResetThreshold = params.toULong();
 
-		} else if(cmd == "TITLE") {
+		} else if(cmd == QByteArrayLiteral("TITLE")) {
 			m_title = params;
 
-		} else if(cmd == "FLAGS") {
+		} else if(cmd == QByteArrayLiteral("FLAGS")) {
 			Flags flags;
 			for(const QByteArray &f : params.split(' ')) {
 				if(f == QStringLiteral("persistent")) {
@@ -371,7 +371,7 @@ bool FiledHistory::load()
 			}
 			m_flags = flags;
 
-		} else if(cmd == "BAN") {
+		} else if(cmd == QByteArrayLiteral("BAN")) {
 			const QList<QByteArray> args = params.split(' ');
 			int length = args.length();
 			if(length < 5 || length > 6) {
@@ -394,17 +394,17 @@ bool FiledHistory::load()
 				m_banlist.addBan(name, ip, extAuthId, sid, bannedBy, id);
 			}
 
-		} else if(cmd == "UNBAN") {
+		} else if(cmd == QByteArrayLiteral("UNBAN")) {
 			m_banlist.removeBan(params.toInt());
 
-		} else if(cmd == "ANNOUNCE") {
+		} else if(cmd == QByteArrayLiteral("ANNOUNCE")) {
 			if(!m_announcements.contains(params))
 				m_announcements << params;
 
-		} else if(cmd == "UNANNOUNCE") {
+		} else if(cmd == QByteArrayLiteral("UNANNOUNCE")) {
 			m_announcements.removeAll(params);
 
-		} else if(cmd == "USER") {
+		} else if(cmd == QByteArrayLiteral("USER")) {
 			const QList<QByteArray> args = params.split(' ');
 			if(args.length() != 2) {
 				qWarning() << "Invalid USER entry:"
@@ -416,27 +416,27 @@ bool FiledHistory::load()
 				idQueue().setIdForName(id, name);
 			}
 
-		} else if(cmd == "OP") {
+		} else if(cmd == QByteArrayLiteral("OP")) {
 			QString authId = QString::fromUtf8(params);
 			if(!authId.isEmpty()) {
 				SessionHistory::setAuthenticatedOperator(authId, true);
 			}
 
-		} else if(cmd == "DEOP") {
+		} else if(cmd == QByteArrayLiteral("DEOP")) {
 			QString authId = QString::fromUtf8(params);
 			SessionHistory::setAuthenticatedOperator(authId, false);
 
-		} else if(cmd == "TRUST") {
+		} else if(cmd == QByteArrayLiteral("TRUST")) {
 			const QString authId = QString::fromUtf8(params);
 			if(!authId.isEmpty()) {
 				SessionHistory::setAuthenticatedTrust(authId, true);
 			}
 
-		} else if(cmd == "UNTRUST") {
+		} else if(cmd == QByteArrayLiteral("UNTRUST")) {
 			QString authId = QString::fromUtf8(params);
 			SessionHistory::setAuthenticatedTrust(authId, false);
 
-		} else if(cmd == "AUTHNAME") {
+		} else if(cmd == QByteArrayLiteral("AUTHNAME")) {
 			const QList<QByteArray> args = params.split(' ');
 			if(args.length() != 2) {
 				qWarning() << "Invalid AUTHNAME entry:"
@@ -451,7 +451,7 @@ bool FiledHistory::load()
 				}
 			}
 
-		} else if(cmd == "CATCHUP") {
+		} else if(cmd == QByteArrayLiteral("CATCHUP")) {
 			m_nextCatchupKey =
 				qBound(MIN_CATCHUP_KEY, params.toInt(), MAX_CATCHUP_KEY);
 
