@@ -458,7 +458,7 @@ static void tiles_to_reset_image(struct DP_ResetImageContext *c,
             DP_Tile *t = DP_layer_content_tile_at_noinc(lc, x, y);
             if (!tile_is_effectively_blank(t, fill_pixel)) {
                 if (tile_run != 0) {
-                    if ((start_tile == t || DP_tile_pixels_equal(start_tile, t))
+                    if (DP_tile_pixels_equal(start_tile, t)
                         && ++tile_run < 256) {
                         continue;
                     }

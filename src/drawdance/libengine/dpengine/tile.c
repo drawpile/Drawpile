@@ -378,11 +378,17 @@ bool DP_tile_same_pixel(DP_Tile *tile_or_null, DP_Pixel15 *out_pixel)
 
 bool DP_tile_pixels_equal(DP_Tile *t1, DP_Tile *t2)
 {
-    DP_ASSERT(t1);
-    DP_ASSERT(t2);
-    DP_ASSERT(DP_atomic_get(&t1->refcount) > 0);
-    DP_ASSERT(DP_atomic_get(&t2->refcount) > 0);
-    return memcmp(t1->pixels, t2->pixels, DP_TILE_BYTES) == 0;
+    if (t1 == t2) {
+        return true;
+    }
+    else if (t1 && t2) {
+        DP_ASSERT(DP_atomic_get(&t1->refcount) > 0);
+        DP_ASSERT(DP_atomic_get(&t2->refcount) > 0);
+        return memcmp(t1->pixels, t2->pixels, DP_TILE_BYTES) == 0;
+    }
+    else {
+        return false;
+    }
 }
 
 bool DP_tile_pixels_equal_pixel(DP_Tile *tile, DP_Pixel15 pixel)
