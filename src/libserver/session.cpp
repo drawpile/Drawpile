@@ -739,6 +739,9 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 			changes
 				<< (allowWeb ? QStringLiteral("enabled browser connections")
 							 : QStringLiteral("disabled browser connections"));
+			if(!allowWeb) {
+				kickWebUsers(changedBy);
+			}
 		}
 	}
 
@@ -1539,6 +1542,19 @@ void Session::ensureOperatorExists()
 	// or by a registered user rejoining. Make the first client within reach op.
 	if(firstClient) {
 		changeOpStatus(firstClient->id(), true, QString());
+	}
+}
+
+void Session::kickWebUsers(Client *by)
+{
+	for(Client *c : m_clients) {
+		if(c != by && !c->isModerator() && c->isBrowser()) {
+			c->disconnectClient(
+				Client::DisconnectionReason::Kick,
+				by ? by->username() : QStringLiteral("administrator"),
+				QStringLiteral(
+					"Joining this session via web browser disabled"));
+		}
 	}
 }
 

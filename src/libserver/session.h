@@ -495,6 +495,8 @@ private:
 
 	void ensureOperatorExists();
 
+	void kickWebUsers(Client *by);
+
 	JsonApiResult callListingsJsonApi(
 		JsonApiMethod method, const QStringList &path,
 		const QJsonObject &request);
