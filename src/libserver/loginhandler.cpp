@@ -123,21 +123,20 @@ void LoginHandler::startLoginProcess()
 		  << QStringLiteral("CINFO");	 // Supports client info messages.
 
 	QJsonObject methods;
-	bool allowGuestHosts = m_config->getConfigBool(config::AllowGuestHosts);
+	bool allowGuestHosts =
+		m_config->getConfigBool(config::AllowGuestHosts) &&
+		(!browser || m_config->getConfigBool(config::AllowGuestWebHosts));
 	HostPrivilege guestHost = HostPrivilege::None;
 	if(allowGuests) {
 		QJsonArray guestActions = {QStringLiteral("join")};
-		// Guest host permissions are a bit more complicated for the browser. It
-		// only gets general host permission if guests can manipulate the web
-		// allowance setting. If web session allowance is based on passwords,
-		// the browser can only host passworded sessions.
 		if(allowGuestHosts) {
 			if(browser) {
-				if(m_config->getConfigBool(config::AllowGuestWebSession)) {
-					guestHost = HostPrivilege::Any;
-				} else if(m_config->getConfigBool(
-							  config::PasswordDependentWebSession)) {
+				if(!m_config->getConfigBool(config::AllowGuestWebSession) &&
+				   m_config->getConfigBool(
+					   config::PasswordDependentWebSession)) {
 					guestHost = HostPrivilege::Passworded;
+				} else {
+					guestHost = HostPrivilege::Any;
 				}
 			} else {
 				guestHost = HostPrivilege::Any;
@@ -171,14 +170,13 @@ void LoginHandler::startLoginProcess()
 			extauthActions.append(QStringLiteral("host"));
 			break;
 		default:
-			if(m_config->getConfigBool(config::ExtAuthHost) &&
-			   (!browser ||
-				m_config->getConfigBool(config::ExtAuthWebSession))) {
+			if(allowGuestHosts ||
+			   (m_config->getConfigBool(config::ExtAuthHost) &&
+				(!browser ||
+				 m_config->getConfigBool(config::ExtAuthWebHost)))) {
 				extauthActions.append(QStringLiteral("host"));
 			}
-		}
-		if(allowGuestHosts || m_config->getConfigBool(config::ExtAuthHost)) {
-			extauthActions.append(QStringLiteral("host"));
+			break;
 		}
 		methods[QStringLiteral("extauth")] = QJsonObject{
 			{{QStringLiteral("actions"), extauthActions},
@@ -587,6 +585,7 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 						m_config->getConfigBool(config::ExtAuthGhosts),
 					extAuthBanExempt,
 					m_config->getConfigBool(config::ExtAuthWeb),
+					m_config->getConfigBool(config::ExtAuthWebHost),
 					m_config->getConfigBool(config::ExtAuthWebSession),
 					m_config->getConfigBool(config::ExtAuthPersist));
 
@@ -655,7 +654,7 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 			username, QStringLiteral("internal:%1").arg(userAccount.userId),
 			userAccount.flags, QByteArray(), true, true,
 			m_config->getConfigBool(config::EnableGhosts), true, true, true,
-			true);
+			true, true);
 		break;
 	}
 }
@@ -663,7 +662,8 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 void LoginHandler::authLoginOk(
 	const QString &username, const QString &authId, const QStringList &flags,
 	const QByteArray &avatar, bool allowMod, bool allowHost, bool allowGhost,
-	bool allowBanExempt, bool allowWeb, bool allowWebSession, bool allowPersist)
+	bool allowBanExempt, bool allowWeb, bool allowWebHost, bool allowWebSession,
+	bool allowPersist)
 {
 	Q_ASSERT(!authId.isEmpty());
 
@@ -685,6 +685,8 @@ void LoginHandler::authLoginOk(
 				shouldInsert = allowBanExempt;
 			} else if(flag == QStringLiteral("WEB")) {
 				shouldInsert = allowWeb;
+			} else if(flag == QStringLiteral("WEBHOST")) {
+				shouldInsert = allowWebHost;
 			} else if(flag == QStringLiteral("WEBSESSION")) {
 				shouldInsert = allowWebSession;
 			} else if(flag == QStringLiteral("PERSIST")) {
@@ -1437,6 +1439,7 @@ void LoginHandler::insertImplicitFlags(QSet<QString> &effectiveFlags)
 		{QStringLiteral("HOST"), config::AllowGuestHosts},
 		{QStringLiteral("WEB"), config::AllowGuestWeb},
 		{QStringLiteral("WEBSESSION"), config::AllowGuestWebSession},
+		{QStringLiteral("WEBHOST"), config::AllowGuestWebHosts},
 	};
 	for(const auto &[flag, cfg] : implicitFlags) {
 		if(!effectiveFlags.contains(flag) && m_config->getConfigBool(cfg)) {
@@ -1465,11 +1468,14 @@ LoginHandler::getHostPrivilege(const QSet<QString> &effectiveFlags) const
 {
 	if(effectiveFlags.contains(QStringLiteral("HOST"))) {
 		if(m_client->isBrowser()) {
-			if(effectiveFlags.contains(QStringLiteral("WEBSESSION"))) {
-				return HostPrivilege::Any;
-			} else if(m_config->getConfigBool(
-						  config::PasswordDependentWebSession)) {
-				return HostPrivilege::Passworded;
+			if(effectiveFlags.contains(QStringLiteral("WEBHOST"))) {
+				if(!effectiveFlags.contains(QStringLiteral("WEBSESSION")) &&
+				   m_config->getConfigBool(
+					   config::PasswordDependentWebSession)) {
+					return HostPrivilege::Passworded;
+				} else {
+					return HostPrivilege::Any;
+				}
 			}
 		} else {
 			return HostPrivilege::Any;

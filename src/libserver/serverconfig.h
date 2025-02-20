@@ -148,7 +148,12 @@ static const ConfigKey
 	EmptySessionLingerTime(45, "emptySessionLingerTime", "0", ConfigKey::TIME),
 	// Require host name given by clients in the cinfo message to match
 	// InternalConfig::localHostname.
-	RequireMatchingHost(46, "requireMatchingHost", "false", ConfigKey::BOOL);
+	RequireMatchingHost(46, "requireMatchingHost", "false", ConfigKey::BOOL),
+	// Allow guests (or users without the WEBHOST flag) to host sessions from
+	// the browser.
+	AllowGuestWebHosts(47, "allowGuestWebHosts", "true", ConfigKey::BOOL),
+	// Respect ext-auth user's "WEBHOST" flag.
+	ExtAuthWebHost(48, "extauthweb", "false", ConfigKey::BOOL);
 }
 
 //! Settings that are not adjustable after the server has started

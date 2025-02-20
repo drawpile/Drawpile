@@ -117,7 +117,7 @@ private:
 		const QString &username, const QString &authId,
 		const QStringList &flags, const QByteArray &avatar, bool allowMod,
 		bool allowHost, bool allowGhost, bool allowBanExempt, bool allowWeb,
-		bool allowWebSession, bool allowPersist);
+		bool allowWebHost, bool allowWebSession, bool allowPersist);
 	bool send(const net::Message &msg);
 	void sendError(
 		const QString &code, const QString &message, bool disconnect = true);
