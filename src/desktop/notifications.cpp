@@ -3,13 +3,11 @@
 #include "desktop/main.h"
 #include "desktop/mainwindow.h"
 #include "libshared/util/paths.h"
-#include <QAudioOutput>
 #include <QDateTime>
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
 #include <QMap>
-#include <QMediaPlayer>
 
 namespace notification {
 
