@@ -458,18 +458,8 @@ static void tiles_to_reset_image(struct DP_ResetImageContext *c,
             DP_Tile *t = DP_layer_content_tile_at_noinc(lc, x, y);
             if (!tile_is_effectively_blank(t, fill_pixel)) {
                 if (tile_run != 0) {
-                    if (start_tile == t
-                        || DP_tile_pixels_equal(start_tile, t)) {
-                        if (tile_run < 256) {
-                            ++tile_run;
-                        }
-                        else {
-                            flush_tile(c, layer_id, sublayer_id, start_x,
-                                       start_y, tile_run, start_tile);
-                            tile_run = 1;
-                            start_x = x;
-                            start_y = y;
-                        }
+                    if ((start_tile == t || DP_tile_pixels_equal(start_tile, t))
+                        && ++tile_run < 256) {
                         continue;
                     }
                     else {
