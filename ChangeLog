@@ -14,6 +14,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Make tablet positions work on Cintiqs under Windows Ink with UI scaling and when it's not set to be the primary monitor. The old behavior is available via Edit > Tablet Driver > Windows Ink Non-Native, in case this breaks something else. Thanks Axocrat and Liz for reporting, Weenifer for reporting and testing.
  * Fix: Remove the "KisTablet" prefix from the tablet driver names in Windows, it's a technical name that doesn't add anything useful.
  * Feature: Indicate when you have no layer selected so that it doesn't seem like you can draw but nothing happens.
+ * Server Fix: Remove browser users when a session disables browser access. Thanks Bluestrings for reporting.
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.
