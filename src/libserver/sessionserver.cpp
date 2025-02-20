@@ -258,30 +258,31 @@ Session *SessionServer::getSessionById(const QString &id, bool load)
 	return nullptr;
 }
 
-QJsonObject SessionServer::getSessionDescriptionByIdOrAlias(
-	const QString &idOrAlias, bool loadTemplate)
+Sessions::JoinResult SessionServer::checkSessionJoin(
+	const QString &idOrAlias, const QString &inviteSecret)
 {
 	for(Session *s : m_sessions) {
-		if(s->id() == idOrAlias || s->idAlias() == idOrAlias) {
-			return s->getDescription();
+		QString id = s->id();
+		if(id == idOrAlias || s->idAlias() == idOrAlias) {
+			return JoinResult{
+				id, s->getDescription(),
+				!inviteSecret.isEmpty() && !s->hasInvite(inviteSecret)};
 		}
 	}
 
-	if(loadTemplate) {
-		const TemplateLoader *loader = templateLoader();
-		if(loader && loader->exists(idOrAlias)) {
-			QString id = m_nextTemplateIds.value(idOrAlias);
-			if(id.isEmpty()) {
-				id = Ulid::make().toString();
-				m_nextTemplateIds.insert(idOrAlias, id);
-			}
-			QJsonObject description = loader->templateDescription(idOrAlias);
-			description.insert(QStringLiteral("id"), id);
-			return description;
+	const TemplateLoader *loader = templateLoader();
+	if(loader && loader->exists(idOrAlias)) {
+		QString id = m_nextTemplateIds.value(idOrAlias);
+		if(id.isEmpty()) {
+			id = Ulid::make().toString();
+			m_nextTemplateIds.insert(idOrAlias, id);
 		}
+		QJsonObject description = loader->templateDescription(idOrAlias);
+		description.insert(QStringLiteral("id"), id);
+		return JoinResult{id, description, !inviteSecret.isEmpty()};
 	}
 
-	return QJsonObject();
+	return JoinResult();
 }
 
 void SessionServer::stopAll()

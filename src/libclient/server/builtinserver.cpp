@@ -41,12 +41,23 @@ Session *BuiltinServer::getSessionById(const QString &id, bool loadTemplate)
 	return matchesSession(id) ? m_session : nullptr;
 }
 
-QJsonObject BuiltinServer::getSessionDescriptionByIdOrAlias(
-	const QString &idOrAlias, bool loadTemplate)
+Sessions::JoinResult BuiltinServer::checkSessionJoin(
+	Client *client, const QString &idOrAlias, const QString &inviteSecret)
 {
-	Q_UNUSED(loadTemplate);
-	return matchesSession(idOrAlias) ? m_session->getDescription()
-									 : QJsonObject();
+	JoinResult result;
+	if(matchesSession(idOrAlias)) {
+		result.id = m_session->id();
+		result.description = m_session->getDescription();
+		if(!inviteSecret.isEmpty()) {
+			QString sid = client->sid();
+			if(sid.isEmpty()) {
+				result.invalidInvite = !m_session->hasInvite(inviteSecret);
+			} else {
+				m_session->checkInvite();
+			}
+		}
+	}
+	return result;
 }
 
 std::tuple<Session *, QString> BuiltinServer::createSession(

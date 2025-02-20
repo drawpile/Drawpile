@@ -101,6 +101,13 @@ public:
 	void setAuthenticatedUsername(
 		const QString &authId, const QString &username) override;
 
+	Invite *createInvite(
+		const QString &createdBy, int maxUses, bool trust, bool op) override;
+	bool removeInvite(const QString &secret) override;
+	CheckInviteResult checkInvite(
+		Client *client, const QString &secret,
+		QString *outClientKey = nullptr) override;
+
 protected:
 	void historyAdd(const net::Message &msg) override;
 	void historyReset(const net::MessageList &newHistory) override;

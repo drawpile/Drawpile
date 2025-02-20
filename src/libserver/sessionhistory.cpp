@@ -5,6 +5,7 @@ extern "C" {
 #include "libserver/client.h"
 #include "libserver/sessionhistory.h"
 #include "libshared/net/servercmd.h"
+#include "libshared/util/ulid.h"
 #include <QJsonObject>
 
 namespace server {
@@ -410,6 +411,95 @@ QJsonValue SessionHistory::getStreamedResetDescription() const
 		{QStringLiteral("messageCount"), m_resetStreamMessageCount},
 		{QStringLiteral("haveConsumer"), m_resetStreamConsumer != nullptr},
 	});
+}
+
+Invite *SessionHistory::createInvite(
+	const QString &createdBy, int maxUses, bool trust, bool op)
+{
+	if(m_invites.size() < MAX_INVITES) {
+		return &setInvite(
+			generateInviteSecret(), createdBy, maxUses, trust, op);
+	} else {
+		return nullptr;
+	}
+}
+
+bool SessionHistory::removeInvite(const QString &secret)
+{
+	if(m_invites.remove(secret)) {
+		QHash<QString, QString>::iterator it = m_inviteClients.begin();
+		QHash<QString, QString>::iterator end = m_inviteClients.end();
+		while(it != end) {
+			if(*it == secret) {
+				it = m_inviteClients.erase(it);
+			} else {
+				++it;
+			}
+		}
+		return true;
+	} else {
+		return false;
+	}
+}
+
+CheckInviteResult SessionHistory::checkInvite(
+	Client *client, const QString &secret, QString *outClientKey)
+{
+	Q_ASSERT(client);
+	const QString &clientKey = client->sid();
+	if(outClientKey) {
+		*outClientKey = clientKey;
+	}
+
+	if(m_inviteClients.contains(clientKey)) {
+		return CheckInviteResult::AlreadyInvited;
+	}
+
+	if(!secret.isEmpty()) {
+		QHash<QString, Invite>::iterator it = m_invites.find(secret);
+		if(it != m_invites.end()) {
+			Invite &invite = *it;
+			if(invite.maxUses == 0 || invite.uses < invite.maxUses) {
+				++invite.uses;
+				m_inviteClients.insert(clientKey, secret);
+				return CheckInviteResult::InviteUsed;
+			} else {
+				return CheckInviteResult::MaxUsesReached;
+			}
+		}
+	}
+
+	return CheckInviteResult::NotFound;
+}
+
+Invite &SessionHistory::setInvite(
+	const QString &secret, const QString &createdBy, int maxUses, bool trust,
+	bool op)
+{
+	return resetInvite(
+		m_invites[secret], secret, createdBy, maxUses, trust, op);
+}
+
+QString SessionHistory::generateInviteSecret() const
+{
+	QString secret;
+	do {
+		secret = Ulid::makeShortIdentifier();
+	} while(m_invites.contains(secret));
+	return secret;
+}
+
+Invite &SessionHistory::resetInvite(
+	Invite &invite, const QString &secret, const QString &createdBy,
+	int maxUses, bool trust, bool op)
+{
+	invite.secret = secret;
+	invite.creator = createdBy;
+	invite.maxUses = qBound(0, maxUses, MAX_INVITE_USES);
+	invite.uses = 0;
+	invite.trust = trust;
+	invite.op = op;
+	return invite;
 }
 
 int SessionHistory::incrementNextCatchupKey(int &nextCatchupKey)

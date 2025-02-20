@@ -306,12 +306,11 @@ bool FiledHistory::load()
 		// qDebug() << QString::fromUtf8(line.trimmed());
 
 		QByteArray params;
-		int sep = line.indexOf(' ');
-		if(sep < 0) {
-			cmd = line;
-		} else {
+		if(int sep = line.indexOf(' '); sep != -1) {
 			cmd = line.left(sep).trimmed();
 			params = line.mid(sep + 1).trimmed();
+		} else {
+			cmd = line;
 		}
 
 		if(cmd == QByteArrayLiteral("FILE")) {
@@ -364,6 +363,8 @@ bool FiledHistory::load()
 					flags |= AllowWeb;
 				} else if(f == QStringLiteral("autotitle")) {
 					flags |= AutoTitle;
+				} else if(f == QStringLiteral("invites")) {
+					flags |= Invites;
 				} else {
 					qWarning()
 						<< id() << "unknown flag:" << QString::fromUtf8(f);
@@ -454,6 +455,48 @@ bool FiledHistory::load()
 		} else if(cmd == QByteArrayLiteral("CATCHUP")) {
 			m_nextCatchupKey =
 				qBound(MIN_CATCHUP_KEY, params.toInt(), MAX_CATCHUP_KEY);
+
+		} else if(cmd == QByteArrayLiteral("INV")) {
+			QList<QByteArray> args = params.split(' ');
+			int argc = args.size();
+			if(argc < 2 || argc > 3) {
+				qWarning() << "Invalid INV entry:" << QString::fromUtf8(params);
+			} else {
+				QString secret = QString::fromUtf8(args[0]);
+				bool trust = args[1].contains(QByteArrayLiteral(",trust"));
+				bool op = args[1].contains(QByteArrayLiteral(",op"));
+				if(int pos = args[1].indexOf(','); pos != -1) {
+					args[1].truncate(pos);
+				}
+				bool maxUsesOk;
+				int maxUses = args[1].toInt(&maxUsesOk);
+				QString createdBy =
+					argc < 3 ? QString()
+							 : QString::fromUtf8(
+								   QByteArray::fromPercentEncoding(args[2]));
+				if(!secret.isEmpty() && maxUsesOk) {
+					setInvite(secret, createdBy, maxUses, trust, op);
+				} else {
+					qWarning() << "Invalid INV entry data:"
+							   << QString::fromUtf8(params);
+				}
+			}
+
+		} else if(cmd == QByteArrayLiteral("UNV")) {
+			QString secret = QString::fromUtf8(params);
+			if(!SessionHistory::removeInvite(secret)) {
+				qWarning() << "No matching invite for UNV" << secret;
+			}
+
+		} else if(cmd == QByteArrayLiteral("USV")) {
+			int sep = params.indexOf(' ');
+			if(sep > 0) {
+				QString secret = QString::fromUtf8(params.left(sep));
+				QString clientKey = QString::fromUtf8(params.mid(sep + 1));
+
+			} else {
+				qWarning() << "Invalid USE entry:" << QString::fromUtf8(params);
+			}
 
 		} else {
 			qWarning() << id()
@@ -685,6 +728,9 @@ void FiledHistory::setFlags(Flags f)
 		}
 		if(f.testFlag(AutoTitle)) {
 			fstr.append(QStringLiteral("autotitle"));
+		}
+		if(f.testFlag(Invites)) {
+			fstr.append(QStringLiteral("invites"));
 		}
 		writeStringToJournal(QStringLiteral("FLAGS %1\n").arg(fstr.join(' ')));
 	}
@@ -1059,6 +1105,59 @@ void FiledHistory::setAuthenticatedUsername(
 			username.toUtf8().toPercentEncoding() + QByteArrayLiteral("\n"));
 	}
 	SessionHistory::setAuthenticatedUsername(authId, username);
+}
+
+Invite *FiledHistory::createInvite(
+	const QString &createdBy, int maxUses, bool trust, bool op)
+{
+	Invite *invite =
+		SessionHistory::createInvite(createdBy, maxUses, trust, op);
+	if(invite) {
+		QByteArray bytes = QByteArrayLiteral("INV") + invite->secret.toUtf8() +
+						   QByteArrayLiteral(" ") +
+						   QByteArray::number(invite->maxUses);
+		if(invite->trust) {
+			bytes.append(QByteArrayLiteral(",trust"));
+		}
+		if(invite->op) {
+			bytes.append(QByteArrayLiteral(",op"));
+		}
+		if(!invite->creator.isEmpty()) {
+			bytes.append(invite->creator.toUtf8().toPercentEncoding());
+		}
+		bytes.append(QByteArrayLiteral("\n"));
+		writeBytesToJournal(bytes);
+	}
+	return invite;
+}
+
+bool FiledHistory::removeInvite(const QString &secret)
+{
+	bool removed = SessionHistory::removeInvite(secret);
+	if(removed) {
+		writeBytesToJournal(QByteArrayLiteral("UNV") + secret.toUtf8());
+	}
+	return removed;
+}
+
+CheckInviteResult FiledHistory::checkInvite(
+	Client *client, const QString &secret, QString *outClientKey)
+{
+	QString clientKey;
+	CheckInviteResult result =
+		SessionHistory::checkInvite(client, secret, &clientKey);
+
+	if(outClientKey) {
+		*outClientKey = clientKey;
+	}
+
+	if(result == CheckInviteResult::InviteUsed) {
+		writeBytesToJournal(
+			QByteArrayLiteral("USV ") + secret.toUtf8() +
+			QByteArrayLiteral(" ") + clientKey.toUtf8());
+	}
+
+	return result;
 }
 
 

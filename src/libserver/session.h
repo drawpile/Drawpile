@@ -295,6 +295,10 @@ public:
 	virtual StreamResetPrepareResult
 	handleStreamResetFinish(int ctxId, int expectedMessageCount) = 0;
 
+	Invite *createInvite(Client *creator, int maxUses, bool trust, bool op);
+	bool removeInvite(Client *client, const QString &secret);
+	bool hasInvite(const QString &secret) const;
+
 	/**
 	 * @brief Grant or revoke OP status of a user
 	 * @param id user ID
@@ -327,6 +331,8 @@ public:
 
 	//! Send a refreshed list or registered users with op and trusted states.
 	void sendUpdatedAuthList();
+
+	void sendUpdatedInviteList();
 
 	/**
 	 * @brief Send an abuse report
@@ -378,6 +384,9 @@ public:
 	 * The abridged version is also sent to all active memeers of the session.
 	 */
 	Q_SLOT void log(const Log &entry);
+
+	// Log a message for the given client if non-null, otherwise a session log.
+	void logFor(Client *client, const Log &entry);
 
 signals:
 	/**
@@ -506,6 +515,10 @@ private:
 		const QJsonObject &request);
 
 	JsonApiResult callChatJsonApi(
+		JsonApiMethod method, const QStringList &path,
+		const QJsonObject &request);
+
+	JsonApiResult callInviteJsonApi(
 		JsonApiMethod method, const QStringList &path,
 		const QJsonObject &request);
 

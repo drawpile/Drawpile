@@ -44,8 +44,9 @@ public:
 
 	Session *getSessionById(const QString &id, bool loadTemplate) override;
 
-	QJsonObject getSessionDescriptionByIdOrAlias(
-		const QString &idOrAlias, bool loadTemplate) override;
+	JoinResult checkSessionJoin(
+		Client *client, const QString &idOrAlias,
+		const QString &inviteSecret) override;
 
 	std::tuple<Session *, QString> createSession(
 		const QString &id, const QString &alias,

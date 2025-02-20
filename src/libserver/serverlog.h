@@ -45,6 +45,7 @@ public:
 		ExtBan,		// Externally sourced bans
 		BanImpEx,	// Session ban import and export
 		AdminChat,	// Messages sent to a connected admin chat
+		Invite,		// Invite-related events
 	};
 	Q_ENUM(Topic)
 

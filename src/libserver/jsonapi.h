@@ -43,6 +43,10 @@ inline JsonApiResult JsonApiBadMethod() { return JsonApiErrorResult(JsonApiResul
 //! A convenience function that returns the fist path element and the remaining path
 std::tuple<QString, QStringList> popApiPath(const QStringList &path);
 
+int parseRequestBool(
+	const QJsonObject &request, const QString &key, int defaultValue,
+	int errorValue);
+
 int parseRequestInt(
 	const QJsonObject &request, const QString &key, int defaultValue,
 	int errorValue);

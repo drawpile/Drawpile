@@ -575,4 +575,11 @@ net::Message ServerReply::makeStatusUpdate(int size)
 		{{QStringLiteral("type"), QStringLiteral("status")},
 		 {QStringLiteral("size"), size}});
 }
+
+net::Message ServerReply::makeInviteCreated(const QString &secret)
+{
+	return make(
+		{{QStringLiteral("type"), QStringLiteral("invitecreated")},
+		 {QStringLiteral("secret"), secret}});
+}
 }

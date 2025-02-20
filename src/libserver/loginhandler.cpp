@@ -422,6 +422,12 @@ void LoginHandler::handleLookupMessage(const net::ServerCommand &cmd)
 
 	} else if(argc == 1) {
 		QString sessionIdOrAlias = cmd.args[0].toString();
+		QString inviteSecret;
+		if(int pos = sessionIdOrAlias.lastIndexOf(':'); pos != -1) {
+			inviteSecret = sessionIdOrAlias.mid(pos + 1);
+			sessionIdOrAlias.truncate(pos);
+		}
+
 		if(sessionIdOrAlias.isEmpty()) {
 			if(m_mandatoryLookup) {
 				sendError(
@@ -435,23 +441,26 @@ void LoginHandler::handleLookupMessage(const net::ServerCommand &cmd)
 				QStringLiteral("Empty join lookup OK!"), QJsonObject());
 
 		} else {
-			QJsonObject description =
-				m_sessions->getSessionDescriptionByIdOrAlias(
-					sessionIdOrAlias, true);
-			QString id;
-			if(description.isEmpty() ||
-			   (id = description.value(QStringLiteral("id")).toString())
-				   .isEmpty()) {
+			Sessions::JoinResult jr =
+				m_sessions->checkSessionJoin(sessionIdOrAlias, inviteSecret);
+			if(jr.id.isEmpty()) {
 				sendError(
 					"lookupFailed",
 					QStringLiteral(
 						"Session not found, it may have ended or its "
 						"invite link has changed"));
 				return;
+			} else if(jr.invalidInvite) {
+				sendError(
+					"lookupInviteFailed",
+					QStringLiteral("Invite is invalid or has been revoked"));
+				return;
 			}
-			m_lookup = id;
+
+			m_lookup = jr.id;
+			m_lookupInviteSecret = inviteSecret;
 			msg = net::ServerReply::makeResultJoinLookup(
-				QStringLiteral("Join lookup OK!"), description);
+				QStringLiteral("Join lookup OK!"), jr.description);
 		}
 
 	} else {
@@ -1096,23 +1105,27 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 		return;
 	}
 
-	if(m_client->isBrowser() &&
-	   !session->history()->hasFlag(SessionHistory::AllowWeb)) {
-		sendError(
-			QStringLiteral("noWebJoin"),
-			QStringLiteral("This session does not allow joining from the web"));
-		return;
-	}
-
 	if(!verifySystemId(
 		   clientInfoLogGuard.sid(),
 		   session->history()->protocolVersion().shouldHaveSystemId())) {
 		return;
 	}
 
+	if(!m_lookupInviteSecret.isEmpty()) {
+		session->checkInvite
+	}
+
+	SessionHistory *history = session->history();
+	if(m_client->isBrowser() && !history->hasFlag(SessionHistory::AllowWeb)) {
+		sendError(
+			QStringLiteral("noWebJoin"),
+			QStringLiteral("This session does not allow joining from the web"));
+		return;
+	}
+
 	if(!m_client->isModerator()) {
 		// Non-moderators have to obey access restrictions
-		int banId = session->history()->banlist().isBanned(
+		int banId = history->banlist().isBanned(
 			m_client->username(), m_client->peerAddress(), m_client->authId(),
 			m_client->sid());
 		if(banId != 0) {
@@ -1134,14 +1147,13 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 			sendError("closed", "This session is closed");
 			return;
 		}
-		if(session->history()->hasFlag(SessionHistory::AuthOnly) &&
+		if(history->hasFlag(SessionHistory::AuthOnly) &&
 		   !m_client->isAuthenticated()) {
 			sendError("authOnly", "This session does not allow guest logins");
 			return;
 		}
 
-		if(!session->history()->checkPassword(
-			   cmd.kwargs.value("password").toString())) {
+		if(!history->checkPassword(cmd.kwargs.value("password").toString())) {
 			++m_sessionPasswordAttempts;
 			m_client->log(
 				Log()

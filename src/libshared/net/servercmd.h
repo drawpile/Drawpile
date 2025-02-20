@@ -221,6 +221,8 @@ struct ServerReply {
 	static net::Message makeOutOfSpace();
 
 	static net::Message makeStatusUpdate(int size);
+
+	static net::Message makeInviteCreated(const QString &secret);
 };
 
 }
