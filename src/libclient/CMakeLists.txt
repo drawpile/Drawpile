@@ -260,6 +260,8 @@ if(HAVE_TCPSOCKETS)
 		target_sources(dpclient PRIVATE
 			server/builtinclient.cpp
 			server/builtinclient.h
+			server/builtinreset.cpp
+			server/builtinreset.h
 			server/builtinsession.cpp
 			server/builtinsession.h
 			server/builtinserver.cpp

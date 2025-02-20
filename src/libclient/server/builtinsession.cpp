@@ -5,7 +5,9 @@
 #include "libserver/inmemoryhistory.h"
 #include "libserver/serverlog.h"
 #include "libshared/net/servercmd.h"
+#include "libshared/util/functionrunnable.h"
 #include "libshared/util/qtcompat.h"
+#include <QThreadPool>
 #include <QVector>
 
 namespace server {
@@ -44,34 +46,20 @@ void BuiltinSession::readyToAutoReset(
 void BuiltinSession::doInternalReset(const drawdance::CanvasState &canvasState)
 {
 	m_softResetRequested = false;
-
-	QVector<Client *> awaitingClients;
-	for(Client *c : clients()) {
-		if(c->isAwaitingReset()) {
-			awaitingClients.append(c);
-		}
+	if(m_reset) {
+		qWarning("Internal reset triggered while one is already in progress");
+		return;
 	}
 
-	if(awaitingClients.isEmpty()) {
+	if(!haveAnyClientAwaitingReset()) {
 		qWarning("No clients awaiting reset, not performing it");
 		return;
 	}
 
-	internalReset(canvasState);
-
-	auto [msgs, lastBatchIndex] = history()->getBatch(-1);
-	// InMemoryHistory always returns the whole history
-	Q_ASSERT(lastBatchIndex == history()->lastIndex());
-	history()->reset(net::MessageList());
-
-	net::Message catchup = net::ServerReply::makeCatchup(msgs.size(), 1);
-	net::Message caughtup = net::ServerReply::makeCaughtUp(1);
-	for(Client *c : awaitingClients) {
-		c->setResetFlags(Client::ResetFlag::None);
-		c->sendDirectMessage(catchup);
-		c->sendDirectMessages(msgs);
-		c->sendDirectMessage(caughtup);
-	}
+	log(Log()
+			.about(Log::Level::Debug, Log::Topic::Status)
+			.message(QStringLiteral("Starting internal reset")));
+	startInternalReset(canvasState);
 }
 
 StreamResetStartResult
@@ -142,7 +130,12 @@ void BuiltinSession::addToHistory(const net::Message &msg)
 
 	} else {
 		for(Client *client : clients()) {
-			client->sendDirectMessage(msg);
+			if(!client->isAwaitingReset()) {
+				client->sendDirectMessage(msg);
+			}
+		}
+		if(m_reset) {
+			m_reset->appendPostResetMessage(msg);
 		}
 	}
 }
@@ -182,7 +175,7 @@ void BuiltinSession::onClientJoin(Client *client, bool host)
 		// The new client has to wait until the soft reset point is processed.
 		// The paint engine will call us back once it has done so.
 		client->setResetFlags(Client::ResetFlag::Awaiting);
-		if(!m_softResetRequested) {
+		if(!m_softResetRequested && !m_reset) {
 			directToAll(net::makeSoftResetMessage(
 				m_paintEngine->aclState().localUserId()));
 			m_softResetRequested = true;
@@ -211,29 +204,58 @@ void BuiltinSession::onStateChanged()
 	// Nothing to do.
 }
 
-void BuiltinSession::internalReset(const drawdance::CanvasState &canvasState)
+void BuiltinSession::chatMessageToAll(const net::Message &msg)
 {
-	net::MessageList snapshot = serverSideStateMessages();
+	Session::chatMessageToAll(msg);
+	if(m_reset) {
+		m_reset->appendPostResetMessage(msg);
+	}
+}
+
+bool BuiltinSession::haveAnyClientAwaitingReset() const
+{
+	for(const Client *c : clients()) {
+		if(c->isAwaitingReset()) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void BuiltinSession::startInternalReset(
+	const drawdance::CanvasState &canvasState)
+{
+	m_reset.reset(new BuiltinReset(serverSideStateMessages()));
 	uint8_t localUserId = m_paintEngine->aclState().localUserId();
 
 	if(!m_pinnedMessage.isEmpty()) {
-		snapshot.append(net::makeChatMessage(
+		m_reset->appendResetImageMessage(net::makeChatMessage(
 			localUserId, 0, DP_MSG_CHAT_OFLAGS_PIN, m_pinnedMessage));
 	}
 
-	snapshot.append(
+	m_reset->appendResetImageMessage(
 		net::makeUndoDepthMessage(0, m_paintEngine->undoDepthLimit()));
 
-	canvasState.toResetImage(snapshot, 0);
-
 	if(m_defaultLayer > 0) {
-		snapshot.append(net::makeDefaultLayerMessage(0, m_defaultLayer));
+		m_reset->appendPostResetMessage(
+			net::makeDefaultLayerMessage(0, m_defaultLayer));
 	}
 
-	m_acls.toResetImage(
-		snapshot, localUserId, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS);
+	m_reset->appendAclsToPostResetMessages(m_acls, localUserId);
 
-	history()->reset(snapshot);
+	utils::FunctionRunnable *runnable =
+		new utils::FunctionRunnable([reset = m_reset, canvasState]() {
+			reset->generateResetImage(canvasState);
+		});
+	connect(
+		m_reset.get(), &BuiltinReset::resetImageGenerated, this,
+		&BuiltinSession::finishInternalReset, Qt::QueuedConnection);
+	QThreadPool::globalInstance()->start(runnable);
+}
+
+void BuiltinSession::finishInternalReset()
+{
+	history()->reset(m_reset->takeResetImage());
 
 	double sizeInMiB = history()->sizeInBytes() / 1024.0 / 1024.0;
 	log(Log()
@@ -241,6 +263,24 @@ void BuiltinSession::internalReset(const drawdance::CanvasState &canvasState)
 			.message(
 				QStringLiteral("Performed internal reset. Image size is %1 MB")
 					.arg(sizeInMiB, 0, 'f', 2)));
+
+	auto [msgs, lastBatchIndex] = history()->getBatch(-1);
+	// InMemoryHistory always returns the whole history
+	Q_ASSERT(lastBatchIndex == history()->lastIndex());
+	history()->reset(net::MessageList());
+
+	net::Message catchup = net::ServerReply::makeCatchup(msgs.size(), 1);
+	net::Message caughtup = net::ServerReply::makeCaughtUp(1);
+	for(Client *c : clients()) {
+		if(c->isAwaitingReset()) {
+			c->setResetFlags(Client::ResetFlag::None);
+			c->sendDirectMessage(catchup);
+			c->sendDirectMessages(msgs);
+			c->sendDirectMessage(caughtup);
+		}
+	}
+
+	m_reset.clear();
 }
 
 }

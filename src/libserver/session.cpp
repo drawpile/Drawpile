@@ -273,6 +273,11 @@ void Session::switchState(State newstate)
 	onStateChanged();
 }
 
+void Session::chatMessageToAll(const net::Message &msg)
+{
+	directToAll(msg);
+}
+
 void Session::assignId(Client *user)
 {
 	uint8_t id = m_history->idQueue().getIdForName(user->username());
@@ -1225,7 +1230,7 @@ void Session::handleClientMessage(Client &client, const net::Message &msg)
 					DP_msg_chat_oflags(mc));
 			}
 			if(bypass) {
-				directToAll(msg);
+				chatMessageToAll(msg);
 				return;
 			}
 		}
@@ -1240,7 +1245,7 @@ void Session::handleClientMessage(Client &client, const net::Message &msg)
 				QStringLiteral("Can't send private messages in ghost mode.")));
 		} else if(targetId > 0) {
 			Client *target = getClientById(targetId);
-			if(target) {
+			if(target && !target->isAwaitingReset()) {
 				client.sendDirectMessage(msg);
 				target->sendDirectMessage(msg);
 			}

@@ -438,6 +438,8 @@ protected:
 
 	virtual void onStateChanged() = 0;
 
+	virtual void chatMessageToAll(const net::Message &msg);
+
 	//! Get the user join, SessionOwner, etc. messages that should be prepended
 	//! to a reset image
 	net::MessageList serverSideStateMessages() const;

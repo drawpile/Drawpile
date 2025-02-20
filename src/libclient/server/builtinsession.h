@@ -2,7 +2,9 @@
 #ifndef LIBCLIENT_SERVER_BUILTINSESSION_H
 #define LIBCLIENT_SERVER_BUILTINSESSION_H
 #include "libclient/drawdance/aclstate.h"
+#include "libclient/server/builtinreset.h"
 #include "libserver/session.h"
+#include <QSharedPointer>
 
 namespace canvas {
 class PaintEngine;
@@ -50,17 +52,19 @@ protected:
 	void onClientDeop(Client *client) override;
 	void onResetStream(Client &client, const net::Message &msg) override;
 	void onStateChanged() override;
+	void chatMessageToAll(const net::Message &msg) override;
 
 private:
-	void internalReset(const drawdance::CanvasState &canvasState);
+	bool haveAnyClientAwaitingReset() const;
+	void startInternalReset(const drawdance::CanvasState &canvasState);
+	void finishInternalReset();
 
 	canvas::PaintEngine *m_paintEngine;
 	drawdance::AclState m_acls;
-	net::MessageList m_resetImage;
-	size_t m_resetImageSize = 0;
 	QString m_pinnedMessage;
 	int m_defaultLayer = 0;
 	bool m_softResetRequested = false;
+	QSharedPointer<BuiltinReset> m_reset;
 };
 }
 
