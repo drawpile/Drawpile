@@ -296,8 +296,9 @@ ThinSession::handleStreamResetStart(int ctxId, const QString &correlator)
 		return StreamResetStartResult::InvalidCorrelator;
 	}
 
-	StreamResetStartResult result = history()->startStreamedReset(
-		ctxId, correlator, serverSideStateMessages());
+	SessionHistory *hist = history();
+	StreamResetStartResult result =
+		hist->startStreamedReset(ctxId, correlator, serverSideStateMessages());
 
 	bool clear = false;
 	QString error;
@@ -308,8 +309,11 @@ ThinSession::handleStreamResetStart(int ctxId, const QString &correlator)
 												 : Client::ResetFlag::None);
 		log(Log()
 				.about(Log::Level::Info, Log::Topic::Status)
-				.message(
-					QStringLiteral("User %1 started stream reset").arg(ctxId)));
+				.message(QStringLiteral("User %1 started stream reset (fork "
+										"pos %2, stream pos %3)")
+							 .arg(ctxId)
+							 .arg(hist->resetStreamForkPos())
+							 .arg(hist->resetStreamHeaderPos())));
 		return StreamResetStartResult::Ok;
 	case StreamResetStartResult::Unsupported:
 		error = QStringLiteral("that's unsupported by this session");

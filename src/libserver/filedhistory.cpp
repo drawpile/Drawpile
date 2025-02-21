@@ -700,6 +700,16 @@ void FiledHistory::joinUser(uint8_t id, const QString &name)
 		QByteArrayLiteral("\n"));
 }
 
+qint64 FiledHistory::resetStreamForkPos() const
+{
+	return m_resetStreamForkPos;
+}
+
+qint64 FiledHistory::resetStreamHeaderPos() const
+{
+	return m_resetStreamHeaderPos;
+}
+
 std::tuple<net::MessageList, long long>
 FiledHistory::getBatch(long long after) const
 {
@@ -856,13 +866,21 @@ bool FiledHistory::resolveResetStream(
 	Q_ASSERT(m_resetStreamRecording);
 
 	qint64 prevPos = m_recording->pos();
-	Q_ASSERT(prevPos >= m_resetStreamForkPos);
+	qint64 streamPos = m_resetStreamRecording->pos();
+	if(prevPos < m_resetStreamForkPos || streamPos < m_resetStreamHeaderPos) {
+		outError = QStringLiteral("invalid stream offsets, recording pos %1 "
+								  "fork %2, stream pos %3 fork %4")
+					   .arg(prevPos)
+					   .arg(m_resetStreamForkPos)
+					   .arg(streamPos)
+					   .arg(m_resetStreamHeaderPos);
+		return false;
+	}
 
 	size_t sizeLimitInBytes = sizeLimit();
 	if(sizeLimitInBytes != 0) {
-		size_t sizeInBytes =
-			(prevPos - m_resetStreamForkPos) +
-			(m_resetStreamRecording->pos() - m_resetStreamHeaderPos);
+		size_t sizeInBytes = (prevPos - m_resetStreamForkPos) +
+							 (streamPos - m_resetStreamHeaderPos);
 		if(sizeInBytes > sizeLimitInBytes) {
 			outError = QStringLiteral("total size %1 exceeds limit %2")
 						   .arg(sizeInBytes)

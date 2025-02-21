@@ -18,6 +18,9 @@ public:
 		const protocol::ProtocolVersion &version, const QString &founder,
 		QObject *parent = nullptr);
 
+	qint64 resetStreamForkPos() const override;
+	qint64 resetStreamHeaderPos() const override;
+
 	std::tuple<net::MessageList, long long>
 	getBatch(long long after) const override;
 

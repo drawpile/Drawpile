@@ -276,6 +276,9 @@ public:
 
 	long long resetStreamStartIndex() const { return m_resetStreamStartIndex; }
 
+	virtual qint64 resetStreamForkPos() const = 0;
+	virtual qint64 resetStreamHeaderPos() const = 0;
+
 	/**
 	 * @brief Get a batch of messages
 	 *

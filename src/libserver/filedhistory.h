@@ -81,6 +81,9 @@ public:
 	int nextCatchupKey() override;
 	void joinUser(uint8_t id, const QString &name) override;
 
+	qint64 resetStreamForkPos() const override;
+	qint64 resetStreamHeaderPos() const override;
+
 	void terminate() override;
 	void cleanupBatches(long long before) override;
 	std::tuple<net::MessageList, long long>

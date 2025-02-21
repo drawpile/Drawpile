@@ -24,6 +24,16 @@ int InMemoryHistory::nextCatchupKey()
 	return incrementNextCatchupKey(m_nextCatchupKey);
 }
 
+qint64 InMemoryHistory::resetStreamForkPos() const
+{
+	return m_resetStreamIndex;
+}
+
+qint64 InMemoryHistory::resetStreamHeaderPos() const
+{
+	return 0;
+}
+
 std::tuple<net::MessageList, long long>
 InMemoryHistory::getBatch(long long after) const
 {
