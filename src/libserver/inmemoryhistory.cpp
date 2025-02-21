@@ -24,6 +24,11 @@ int InMemoryHistory::nextCatchupKey()
 	return incrementNextCatchupKey(m_nextCatchupKey);
 }
 
+bool InMemoryHistory::isStreamResetIoAvailable() const
+{
+	return true;
+}
+
 qint64 InMemoryHistory::resetStreamForkPos() const
 {
 	return m_resetStreamIndex;

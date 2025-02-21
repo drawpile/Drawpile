@@ -81,6 +81,7 @@ public:
 	int nextCatchupKey() override;
 	void joinUser(uint8_t id, const QString &name) override;
 
+	bool isStreamResetIoAvailable() const override;
 	qint64 resetStreamForkPos() const override;
 	qint64 resetStreamHeaderPos() const override;
 

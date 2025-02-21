@@ -276,6 +276,7 @@ public:
 
 	long long resetStreamStartIndex() const { return m_resetStreamStartIndex; }
 
+	virtual bool isStreamResetIoAvailable() const = 0;
 	virtual qint64 resetStreamForkPos() const = 0;
 	virtual qint64 resetStreamHeaderPos() const = 0;
 

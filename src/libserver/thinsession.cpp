@@ -428,7 +428,7 @@ ThinSession::handleStreamResetFinish(int ctxId, int expectedMessageCount)
 				.about(Log::Level::Info, Log::Topic::Status)
 				.message(QStringLiteral("User %1 prepared streamed reset")
 							 .arg(ctxId)));
-		resolvePendingStreamedReset();
+		resolvePendingStreamedReset(QStringLiteral("prepare"));
 		return StreamResetPrepareResult::Ok;
 	case StreamResetPrepareResult::Unsupported:
 		error = QStringLiteral("that's unsupported by this session");
@@ -478,10 +478,10 @@ ThinSession::handleStreamResetFinish(int ctxId, int expectedMessageCount)
 	return result;
 }
 
-void ThinSession::resolvePendingStreamedReset()
+void ThinSession::resolvePendingStreamedReset(const QString &cause)
 {
 	SessionHistory *hist = history();
-	if(hist->isResetStreamPending() && allClientsCaughtUpToResetStreamStart()) {
+	if(checkStreamedResetStart(cause)) {
 		size_t prevSizeInBytes = hist->sizeInBytes();
 		size_t prevAutoResetThresholdBase = hist->autoResetThresholdBase();
 		long long offset;
@@ -492,16 +492,17 @@ void ThinSession::resolvePendingStreamedReset()
 			log(Log()
 					.about(Log::Level::Info, Log::Topic::Status)
 					.message(
-						QStringLiteral(
-							"Resolved streamed reset with offset %1 (size %2 "
-							"=> %3, autoreset threshold base %4 => %5)")
-							.arg(offset)
-							.arg(locale.formattedDataSize(prevSizeInBytes))
-							.arg(locale.formattedDataSize(hist->sizeInBytes()))
-							.arg(locale.formattedDataSize(
-								prevAutoResetThresholdBase))
-							.arg(locale.formattedDataSize(
-								hist->autoResetThresholdBase()))));
+						QStringLiteral("Resolved streamed reset after %1 with "
+									   "offset %2 (size %3 => %4, autoreset "
+									   "threshold base %5 => %6)")
+							.arg(
+								cause, QString::number(offset),
+								locale.formattedDataSize(prevSizeInBytes),
+								locale.formattedDataSize(hist->sizeInBytes()),
+								locale.formattedDataSize(
+									prevAutoResetThresholdBase),
+								locale.formattedDataSize(
+									hist->autoResetThresholdBase()))));
 			for(Client *c : clients()) {
 				ThinServerClient *tsc = static_cast<ThinServerClient *>(c);
 				tsc->addToHistoryPosition(offset);
@@ -570,7 +571,7 @@ void ThinSession::onClientLeave(Client *client)
 						.arg(ctxId)));
 		clearAutoReset(AUTORESET_FAILURE_RETRY_MSECS);
 	} else {
-		resolvePendingStreamedReset();
+		resolvePendingStreamedReset(QStringLiteral("leave"));
 	}
 }
 
@@ -881,15 +882,50 @@ void ThinSession::clearAutoReset(int retryDelay)
 	m_autoResetDelay.setRemainingTime(retryDelay > 0 ? retryDelay : 0);
 }
 
-bool ThinSession::allClientsCaughtUpToResetStreamStart() const
+bool ThinSession::checkStreamedResetStart(const QString &cause)
 {
-	long long resetStreamStartIndex = history()->resetStreamStartIndex();
+	SessionHistory *hist = history();
+	if(!hist->isResetStreamPending()) {
+		return false;
+	}
+
+	long long resetStreamStartIndex = hist->resetStreamStartIndex();
 	for(Client *c : clients()) {
 		ThinServerClient *tsc = static_cast<ThinServerClient *>(c);
-		if(tsc->historyPosition() < resetStreamStartIndex) {
+		long long historyPosition = tsc->historyPosition();
+		if(historyPosition < resetStreamStartIndex) {
+			if(m_lastAutoResetWarning.hasExpired()) {
+				m_lastAutoResetWarning.setRemainingTime(
+					AUTORESET_RESOLVE_LOG_MSECS);
+				log(Log()
+						.about(Log::Level::Warn, Log::Topic::Status)
+						.message(
+							QStringLiteral(
+								"Streamed reset after %1 blocked by user %2 at "
+								"position %3 < reset start %4")
+								.arg(
+									cause, QString::number(tsc->id()),
+									QString::number(historyPosition),
+									QString::number(historyPosition))));
+			}
 			return false;
 		}
 	}
+
+	if(!hist->isStreamResetIoAvailable()) {
+		if(m_lastAutoResetWarning.hasExpired()) {
+			m_lastAutoResetWarning.setRemainingTime(
+				AUTORESET_RESOLVE_LOG_MSECS);
+			log(Log()
+					.about(Log::Level::Warn, Log::Topic::Status)
+					.message(
+						QStringLiteral(
+							"Streamed reset after %1 blocked by unavailable IO")
+							.arg(cause)));
+		}
+		return false;
+	}
+
 	return true;
 }
 

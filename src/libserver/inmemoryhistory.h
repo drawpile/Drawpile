@@ -18,6 +18,7 @@ public:
 		const protocol::ProtocolVersion &version, const QString &founder,
 		QObject *parent = nullptr);
 
+	bool isStreamResetIoAvailable() const override;
 	qint64 resetStreamForkPos() const override;
 	qint64 resetStreamHeaderPos() const override;
 

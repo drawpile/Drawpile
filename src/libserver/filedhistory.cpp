@@ -700,6 +700,12 @@ void FiledHistory::joinUser(uint8_t id, const QString &name)
 		QByteArrayLiteral("\n"));
 }
 
+bool FiledHistory::isStreamResetIoAvailable() const
+{
+	return m_recording && m_resetStreamRecording && m_recording->atEnd() &&
+		   m_resetStreamRecording->atEnd();
+}
+
 qint64 FiledHistory::resetStreamForkPos() const
 {
 	return m_resetStreamForkPos;
@@ -866,20 +872,26 @@ bool FiledHistory::resolveResetStream(
 	Q_ASSERT(m_resetStreamRecording);
 
 	qint64 prevPos = m_recording->pos();
+	qint64 endPos = m_recording->size();
 	qint64 streamPos = m_resetStreamRecording->pos();
-	if(prevPos < m_resetStreamForkPos || streamPos < m_resetStreamHeaderPos) {
-		outError = QStringLiteral("invalid stream offsets, recording pos %1 "
-								  "fork %2, stream pos %3 fork %4")
-					   .arg(prevPos)
-					   .arg(m_resetStreamForkPos)
-					   .arg(streamPos)
-					   .arg(m_resetStreamHeaderPos);
+	qint64 streamEnd = m_resetStreamRecording->size();
+	if(prevPos != endPos || endPos < m_resetStreamForkPos ||
+	   streamPos != streamEnd || streamPos < m_resetStreamHeaderPos) {
+		outError =
+			QStringLiteral("invalid stream offsets, recording pos %1 size %2 "
+						   "fork %3, stream pos %4 size %5 fork %6")
+				.arg(prevPos)
+				.arg(endPos)
+				.arg(m_resetStreamForkPos)
+				.arg(streamPos)
+				.arg(streamEnd)
+				.arg(m_resetStreamHeaderPos);
 		return false;
 	}
 
 	size_t sizeLimitInBytes = sizeLimit();
 	if(sizeLimitInBytes != 0) {
-		size_t sizeInBytes = (prevPos - m_resetStreamForkPos) +
+		size_t sizeInBytes = (endPos - m_resetStreamForkPos) +
 							 (streamPos - m_resetStreamHeaderPos);
 		if(sizeInBytes > sizeLimitInBytes) {
 			outError = QStringLiteral("total size %1 exceeds limit %2")

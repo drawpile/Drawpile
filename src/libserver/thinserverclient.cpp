@@ -40,7 +40,7 @@ void ThinServerClient::sendNextHistoryBatch()
 		// There may be a streamed reset pending, waiting for clients to catch
 		// up far enough. If the streamed reset is applies, it will change the
 		// history position of all clients, so don't touch it before this point!
-		s->resolvePendingStreamedReset();
+		s->resolvePendingStreamedReset(QStringLiteral("batch"));
 
 		net::MessageList batch;
 		long long batchLast;

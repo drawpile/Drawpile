@@ -6,6 +6,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Correct weird letter spacing in the font rendering on Windows. Thanks Sinamer for reporting.
  * Feature: Make reset images a bit smaller and much faster. This speeds up manual session resets, canvas compression, hosting and joins in the builtin server. Thanks mukihyena for reporting.
  * Fix: Generate the catchup image in the background when hosting on the builtin server, rather than hanging the client. Thanks mukihyena for reporting.
+ * Server Fix: Additional checks and logging to avoid and diagnose temporary failures in streamed resets. Thanks Will for reporting.
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.

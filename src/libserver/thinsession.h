@@ -30,7 +30,7 @@ public:
 	StreamResetPrepareResult
 	handleStreamResetFinish(int ctxId, int expectedMessageCount) override;
 
-	void resolvePendingStreamedReset();
+	void resolvePendingStreamedReset(const QString &cause);
 
 	void cleanupHistoryCache();
 
@@ -55,6 +55,8 @@ private:
 	static constexpr int AUTORESET_RESPONSE_DELAY_MSECS = 3000;
 	// After an autoreset failed, wait 30 seconds before trying again.
 	static constexpr int AUTORESET_FAILURE_RETRY_MSECS = 30000;
+	// Don't spam reset failure logs, once every minute is enough.
+	static constexpr int AUTORESET_RESOLVE_LOG_MSECS = 60000;
 
 	enum class AutoResetState { NotSent, Queried, QueriedWaiting, Requested };
 
@@ -78,11 +80,12 @@ private:
 	void invalidateAutoResetCandidate(int ctxId);
 	void clearAutoReset(int delay = 0);
 
-	bool allClientsCaughtUpToResetStreamStart() const;
+	bool checkStreamedResetStart(const QString &cause);
 
 	QDeadlineTimer m_lastStatusUpdate;
 	QDeadlineTimer m_lastSizeWarning;
 	QDeadlineTimer m_autoResetDelay;
+	QDeadlineTimer m_lastAutoResetWarning;
 	AutoResetState m_autoResetRequestStatus = AutoResetState::NotSent;
 	QTimer *m_autoResetTimer;
 	QString m_autoResetPayload;
