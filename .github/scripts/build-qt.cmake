@@ -234,6 +234,12 @@ endif()
 set(URL https://download.qt.io/archive/qt/@version_major@/@version@/submodules/@name@-everywhere-${URL_LICENSE}src-@version@.tar.xz)
 
 if(OPENSSL)
+	if("${OPENSSL_SOURCE_DATE_EPOCH}" MATCHES "^[0-9]+$")
+		message(STATUS "Using given OPENSSL_SOURCE_DATE_EPOCH '${OPENSSL_SOURCE_DATE_EPOCH}'")
+		list(APPEND OPENSSL_ENV "SOURCE_DATE_EPOCH=${OPENSSL_SOURCE_DATE_EPOCH}")
+	else()
+		message(STATUS "No valid OPENSSL_SOURCE_DATE_EPOCH, using current time")
+	endif()
 	string(REGEX REPLACE "[a-z]+$" "" openssl_prefix "${OPENSSL}")
 	build_dependency(openssl ${OPENSSL} ${BUILD_TYPE}
 		URL "https://www.openssl.org/source/old/${openssl_prefix}/openssl-@version@.tar.gz"

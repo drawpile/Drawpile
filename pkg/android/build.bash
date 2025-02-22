@@ -111,8 +111,12 @@ run_build_script() {
 }
 
 build_qt() {
+    # Reproducibility: use the head commit's timestamp for OpenSSL's build time.
+    local commit_timestamp
+    commit_timestamp="$(git "--git-dir=$SRC_DIR/.git" show '--format=%at' --no-patch)"
     run_build_script \
         -DQT_VERSION="$QT_VERSION" \
+        -DOPENSSL_SOURCE_DATE_EPOCH="$commit_timestamp" \
         -P "$SRC_DIR/.github/scripts/build-qt.cmake"
 }
 
