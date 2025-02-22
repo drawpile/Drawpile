@@ -1,0 +1,16 @@
+Description: Remove the build id from Android builds to improve determinism.
+Requested by F-Droid.
+
+--- a/mkspecs/android-clang/qmake.conf
++++ b/mkspecs/android-clang/qmake.conf
+@@ -66,8 +66,8 @@
+ QMAKE_CFLAGS_HIDESYMS   = -fvisibility=hidden
+ QMAKE_CFLAGS_NEON       = -mfpu=neon
+
+-QMAKE_LFLAGS_APP        = -Wl,--build-id=sha1 -Wl,--no-undefined -Wl,-z,noexecstack -shared
+-QMAKE_LFLAGS_SHLIB      = -Wl,--build-id=sha1 -Wl,--no-undefined -Wl,-z,noexecstack -shared
++QMAKE_LFLAGS_APP        = -Wl,--build-id=none -Wl,--no-undefined -Wl,-z,noexecstack -shared
++QMAKE_LFLAGS_SHLIB      = -Wl,--build-id=none -Wl,--no-undefined -Wl,-z,noexecstack -shared
+ QMAKE_LFLAGS_PLUGIN     = $$QMAKE_LFLAGS_SHLIB
+ QMAKE_LFLAGS_NOUNDEF    = -Wl,--no-undefined
+ QMAKE_LFLAGS_RPATH      = -Wl,-rpath=

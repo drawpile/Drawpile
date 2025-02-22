@@ -302,6 +302,7 @@ if(BASE)
 				patches/android_backtrace.diff
 				patches/androidtilt-qt5.diff
 				patches/qtbug-104895.diff
+				patches/android_no_build-id.diff
 			6.7.2
 				patches/qtbug-113394.diff
 				patches/cancel_touch_on_pen.diff
@@ -316,6 +317,7 @@ if(BASE)
 				patches/findeglemscripten.diff
 				patches/embool_qtbase.diff
 				patches/noasyncify.diff
+				patches/android_no_build-id.diff
 			6.8.2
 				patches/qtbug-113394.diff
 				patches/cancel_touch_on_pen.diff
@@ -328,6 +330,7 @@ if(BASE)
 				patches/findeglemscripten.diff
 				# TODO: make this patch work.
 				# patches/noasyncify.diff
+				patches/android_no_build-id.diff
 	)
 endif()
 
