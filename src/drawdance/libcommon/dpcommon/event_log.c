@@ -140,7 +140,7 @@ static bool write_log(bool timestamped, const char *fmt, va_list ap)
         }
     }
     ok = ok && DP_output_vformat(output, fmt, ap)
-      && DP_OUTPUT_PRINT_LITERAL(output, "\n");
+      && DP_OUTPUT_PRINT_LITERAL(output, "\n") && DP_output_flush(output);
     DP_MUTEX_MUST_UNLOCK(event_log_mutex);
     return ok;
 }
