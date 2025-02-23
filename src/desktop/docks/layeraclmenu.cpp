@@ -33,6 +33,7 @@ LayerAclMenu::LayerAclMenu(QWidget *parent)
 	for(QPair<QString, int> p : pairs) {
 		QAction *action = m_tiers->addAction(p.first);
 		action->setProperty("userTier", p.second);
+		action->setCheckable(true);
 		connect(action, &QAction::triggered, this, [this, tier = p.second] {
 			emit layerAccessTierChange(tier);
 		});
