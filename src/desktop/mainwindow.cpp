@@ -5266,14 +5266,6 @@ void MainWindow::setupActions()
 		makeAction("fittoscreen", tr("&Fit to Screen")).noDefaultShortcut();
 #else
 	QAction *fullscreen = makeAction("fullscreen", tr("&Full Screen")).shortcut(QKeySequence::FullScreen).checkable();
-	if(windowHandle()) { // mainwindow should always be a native window, but better safe than sorry
-		connect(windowHandle(), &QWindow::windowStateChanged, fullscreen, [fullscreen](Qt::WindowState state) {
-			// Update the mode tickmark on fulscreen state change.
-			// On Qt 5.3.0, this signal doesn't seem to get emitted on OSX when clicking
-			// on the toggle button in the titlebar. The state can be queried correctly though.
-			fullscreen->setChecked(state & Qt::WindowFullScreen);
-		});
-	}
 #endif
 
 	connect(layoutsAction, &QAction::triggered, this, &MainWindow::showLayoutsDialog);
@@ -5442,6 +5434,10 @@ void MainWindow::setupActions()
 	viewmenu->addAction(fittoscreen);
 #else
 	viewmenu->addAction(fullscreen);
+	connect(viewmenu, &QMenu::aboutToShow, this, [this, fullscreen] {
+		QSignalBlocker blocker(fullscreen);
+		fullscreen->setChecked(windowState().testFlag(Qt::WindowFullScreen));
+	});
 #endif
 
 	//
