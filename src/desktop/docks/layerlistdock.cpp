@@ -1770,6 +1770,8 @@ QFlags<view::Lock::Reason> LayerList::currentLayerLock() const
 				   .toBool()) {
 				reasons.setFlag(Reason::LayerCensored);
 			}
+		} else {
+			reasons.setFlag(Reason::NoLayer);
 		}
 	}
 	return reasons;

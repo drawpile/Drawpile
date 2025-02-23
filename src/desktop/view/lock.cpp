@@ -51,6 +51,8 @@ QString Lock::buildDescription() const
 		lines.append(tr("Layer is hidden"));
 	} else if(hasReason(Reason::LayerHiddenInFrame)) {
 		lines.append(tr("Layer is not visible in this frame"));
+	} else if(hasReason(Reason::NoLayer)) {
+		lines.append(tr("No layer selected"));
 	}
 
 	if(hasReason(Reason::Tool)) {

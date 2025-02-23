@@ -9,17 +9,18 @@ class Lock : public QObject {
 	Q_OBJECT
 public:
 	enum class Reason : unsigned int {
-		None = 0,
-		Reset = 1 << 0,
-		Canvas = 1 << 1,
-		User = 1 << 2,
-		LayerLocked = 1 << 3,
-		LayerGroup = 1 << 4,
-		LayerCensored = 1 << 5,
-		LayerHidden = 1 << 6,
-		LayerHiddenInFrame = 1 << 7,
-		Tool = 1 << 8,
-		OutOfSpace = 1 << 9,
+		None = 0u,
+		Reset = 1u << 0u,
+		Canvas = 1u << 1u,
+		User = 1u << 2u,
+		LayerLocked = 1u << 3u,
+		LayerGroup = 1u << 4u,
+		LayerCensored = 1u << 5u,
+		LayerHidden = 1u << 6u,
+		LayerHiddenInFrame = 1u << 7u,
+		NoLayer = 1u << 8u,
+		Tool = 1u << 9u,
+		OutOfSpace = 1u << 10u,
 	};
 	Q_ENUM(Reason)
 
