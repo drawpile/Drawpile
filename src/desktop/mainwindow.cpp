@@ -1371,7 +1371,6 @@ void MainWindow::handleAmbiguousShortcut(QShortcutEvent *shortcutEvent)
 	});
 	box->show();
 }
-// clang-format off
 
 void MainWindow::saveSplitterState()
 {
@@ -1381,8 +1380,7 @@ void MainWindow::saveSplitterState()
 	}
 	m_saveSplitterDebounce.stop();
 	if(!m_smallScreenMode) {
-		auto &settings = dpApp().settings();
-		settings.setLastWindowViewState(m_splitter->saveState());
+		dpApp().settings().setLastWindowViewState(m_splitter->saveState());
 	}
 }
 
@@ -1394,21 +1392,25 @@ void MainWindow::saveWindowState()
 	}
 	m_saveWindowDebounce.stop();
 
-	auto &settings = dpApp().settings();
+	desktop::settings::Settings &settings = dpApp().settings();
 	settings.setLastWindowPosition(normalGeometry().topLeft());
 	settings.setLastWindowSize(normalGeometry().size());
 	if(!m_smallScreenMode) {
-		settings.setLastWindowMaximized(isMaximized());
-		settings.setLastWindowState(m_hiddenDockState.isEmpty() ? saveState() : m_hiddenDockState);
+		settings.setLastWindowMaximized(
+			isMaximized() || windowState().testFlag(Qt::WindowFullScreen));
+		settings.setLastWindowState(
+			m_hiddenDockState.isEmpty() ? saveState() : m_hiddenDockState);
 
-		// TODO: This should be separate from window state and happen only when dock
-		// states change
+		// TODO: This should be separate from window state and happen only when
+		// dock states change
 		Settings::LastWindowDocksType docksConfig;
-		for (const auto *dw : findChildren<const QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
+		for(const auto *dw : findChildren<const QDockWidget *>(
+				QString(), Qt::FindDirectChildrenOnly)) {
 			if(!dw->objectName().isEmpty()) {
-				docksConfig[dw->objectName()] = QVariantMap {
-					{"undockable", dw->isFloating() && dw->allowedAreas() == Qt::NoDockWidgetArea}
-				};
+				docksConfig[dw->objectName()] = QVariantMap{
+					{"undockable",
+					 dw->isFloating() &&
+						 dw->allowedAreas() == Qt::NoDockWidgetArea}};
 			}
 		}
 		settings.setLastWindowDocks(docksConfig);
@@ -1416,6 +1418,7 @@ void MainWindow::saveWindowState()
 
 	m_dockToolSettings->saveSettings();
 }
+// clang-format off
 
 void MainWindow::requestUserInfo(int userId)
 {
@@ -3413,16 +3416,17 @@ void MainWindow::onUndoDepthLimitSet(int undoDepthLimit)
 	action->setStatusTip(tr("Change the session's undo limit, current limit is %1.").arg(undoDepthLimit));
 }
 
+// clang-format on
 #ifndef __EMSCRIPTEN__
-/**
- * Write settings and exit. The application will not be terminated until
- * the last mainwindow is closed.
- */
 void MainWindow::exit()
 {
-	if(windowState().testFlag(Qt::WindowFullScreen))
+	if(windowState().testFlag(Qt::WindowFullScreen)) {
 		toggleFullscreen();
-	setDocksHidden(false);
+	}
+	if(!m_hiddenDockState.isEmpty()) {
+		setDocksHidden(false);
+	}
+	QApplication::processEvents();
 	saveSplitterState();
 	saveWindowState();
 	deleteLater();
@@ -3433,6 +3437,7 @@ void MainWindow::showErrorMessage(const QString &message)
 {
 	showErrorMessageWithDetails(message, QString{});
 }
+// clang-format off
 
 /**
  * @param message error message
