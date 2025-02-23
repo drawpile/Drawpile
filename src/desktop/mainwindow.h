@@ -134,6 +134,7 @@ signals:
 	void viewShifted(qreal deltaX, qreal deltaY);
 	void dockTabUpdateRequested();
 	void intendedDockStateRestoreRequested();
+	void resizeReactionRequested();
 
 public slots:
 	// Triggerable actions
@@ -389,6 +390,7 @@ private:
 	void updateInterfaceModeActions();
 	void reenableUpdates();
 	void keepCanvasPosition(const std::function<void()> &block);
+	void reactToResize();
 
 	static bool isInitialSmallScreenMode();
 	void updateInterfaceMode();
@@ -504,6 +506,7 @@ private:
 	bool m_toolStateNormal;
 	bool m_dockTabUpdatePending = false;
 	bool m_updatingDockState = false;
+	bool m_resizeReactionPending = false;
 
 	Document *m_doc;
 	MainActions *m_ma;

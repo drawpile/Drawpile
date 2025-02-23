@@ -586,6 +586,10 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(
 		&m_restoreIntendedDockStateDebounce, &QTimer::timeout, this,
 		&MainWindow::restoreIntendedDockState);
+	connect(
+		this, &MainWindow::resizeReactionRequested, this,
+		&MainWindow::reactToResize, Qt::QueuedConnection);
+	m_resizeReactionPending = false;
 	m_updateIntendedDockStateDebounce.stop();
 	m_restoreIntendedDockStateDebounce.stop();
 	QTimer::singleShot(DEBOUNCE_MS, this, &MainWindow::updateIntendedDockState);
@@ -1513,6 +1517,16 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 {
 	QScopedValueRollback<bool> rollback(m_updatingDockState, true);
 	QMainWindow::resizeEvent(event);
+	if(!m_resizeReactionPending) {
+		m_resizeReactionPending = true;
+		emit resizeReactionRequested();
+	}
+}
+
+void MainWindow::reactToResize()
+{
+	QScopedValueRollback<bool> rollback(m_updatingDockState, true);
+	m_resizeReactionPending = false;
 	updateInterfaceMode();
 	restoreIntendedDockState();
 	m_restoreIntendedDockStateDebounce.start();
