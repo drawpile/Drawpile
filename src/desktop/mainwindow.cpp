@@ -6589,9 +6589,22 @@ void MainWindow::updateIntendedDockState()
 {
 	m_updateIntendedDockStateDebounce.stop();
 	if(!m_updatingDockState && !m_smallScreenMode &&
-	   m_hiddenDockState.isEmpty()) {
+	   m_hiddenDockState.isEmpty() && canRememberDockStateFromWindow()) {
 		m_intendedDockState = saveState();
 	}
+}
+
+bool MainWindow::canRememberDockStateFromWindow() const
+{
+	// We only really want to save intended dock states from maximized windows.
+	// On Linux, depending on your window manager, you may not have the concept
+	// of a maximized window, so we just always remember the dock state. On
+	// Android and in the browser, the window is always full screen anyway.
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+	return isMaximized() || isFullScreen();
+#else
+	return true;
+#endif
 }
 
 void MainWindow::restoreIntendedDockState()

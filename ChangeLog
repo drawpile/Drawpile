@@ -9,7 +9,8 @@ Unreleased Version 2.2.2-pre
  * Server Fix: Additional checks and logging to avoid and diagnose temporary failures in streamed resets. Thanks Will for reporting.
  * Fix: Slightly delay restoring dock layouts after the window is resized to avoid a crash on macOS. Thanks Axocrat for reporting.
  * Fix: Properly update the checkbox on View > Full Screen if the OS forces the application out of it. Thanks Sinamer for reporting.
- * Fix: Restore window maximized after exiting the application from full screen mode. Thanks Meiren and Sinamer for reporting.
+ * Fix: Restore window maximized after exiting the application from full screen mode. Thanks Sinamer for reporting.
+ * Fix: Only remember dock sizes when the window is maximized or full screen on operating systems where that's possible to tell. Thanks Meiren for reporting.
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.

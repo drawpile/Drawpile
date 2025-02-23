@@ -401,6 +401,7 @@ private:
 
 	void startIntendedDockStateDebounce();
 	void updateIntendedDockState();
+	bool canRememberDockStateFromWindow() const;
 	void restoreIntendedDockState();
 	void startRefitWindowDebounce();
 	void refitWindow();
