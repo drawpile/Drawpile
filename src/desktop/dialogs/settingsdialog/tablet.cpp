@@ -74,6 +74,9 @@ void Tablet::initTablet(
 		tr("KisTablet Windows Ink"),
 		QVariant::fromValue(tabletinput::Mode::KisTabletWinink));
 	driver->addItem(
+		tr("KisTablet Windows Ink Non-Native"),
+		QVariant::fromValue(tabletinput::Mode::KisTabletWininkNonNative));
+	driver->addItem(
 		tr("KisTablet Wintab"),
 		QVariant::fromValue(tabletinput::Mode::KisTabletWintab));
 	driver->addItem(

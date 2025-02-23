@@ -492,11 +492,17 @@ if(WIN32)
 		bundled/kis_tablet/wintab.h
 	)
 	target_link_libraries(drawpile-kis_tablet PUBLIC
+		cmake-config
+		dpshared
+		dpclient
+		drawdance_client
 		${QT_PACKAGE_NAME}::Core
 		${QT_PACKAGE_NAME}::Gui
 		${QT_PACKAGE_NAME}::Network
 		${QT_PACKAGE_NAME}::Widgets
 	)
+	target_include_directories(drawpile-kis_tablet SYSTEM PRIVATE
+		"${Qt${QT_VERSION_MAJOR}Gui_PRIVATE_INCLUDE_DIRS}")
 	set_target_properties(drawpile-kis_tablet
 		PROPERTIES DP_AUTO_SOURCE_TREE_BASE bundled/kis_tablet
 	)

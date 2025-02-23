@@ -11,6 +11,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Properly update the checkbox on View > Full Screen if the OS forces the application out of it. Thanks Sinamer for reporting.
  * Fix: Restore window maximized after exiting the application from full screen mode. Thanks Sinamer for reporting.
  * Fix: Only remember dock sizes when the window is maximized or full screen on operating systems where that's possible to tell. Thanks Meiren for reporting.
+ * Fix: Make tablet positions work on Cintiqs under Windows Ink with UI scaling and when it's not set to be the primary monitor. The old behavior is available via Edit > Tablet Driver > Windows Ink Non-Native, in case this breaks something else. Thanks Axocrat and Liz for reporting, Weenifer for reporting and testing.
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.

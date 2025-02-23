@@ -25,7 +25,9 @@ enum class Mode : int {
 	Qt6Winink,
 	Qt6Wintab,
 	Qt5,
-	Last = Qt5, // Must be equal to the last value, used for a range check.
+	KisTabletWininkNonNative,
+	Last = KisTabletWininkNonNative, // Must be equal to the last value, used
+									 // for a range check.
 };
 
 Q_ENUM_NS(Mode)

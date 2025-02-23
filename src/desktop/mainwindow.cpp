@@ -4977,6 +4977,16 @@ void MainWindow::setupActions()
 			.noDefaultShortcut()
 			.checkable()
 			.property("tabletdriver", int(tabletinput::Mode::KisTabletWinink)));
+	drivers.append(makeAction(
+					   "driverkistabletwindowsinknonnative",
+					   QCoreApplication::translate(
+						   "dialogs::settingsdialog::Input",
+						   "KisTablet Windows Ink Non-Native"))
+					   .noDefaultShortcut()
+					   .checkable()
+					   .property(
+						   "tabletdriver",
+						   int(tabletinput::Mode::KisTabletWininkNonNative)));
 	drivers.append(
 		makeAction(
 			"driverkistabletwintab",

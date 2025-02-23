@@ -8,6 +8,7 @@
 #include "debug.h"
 #include "desktop/utils/qtguicompat.h"
 #include "libshared/util/qtcompat.h"
+#include "libclient/drawdance/eventlog.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -18,6 +19,7 @@
 #include <QVector>
 #include <QWidget>
 #include <QWindow>
+#include <QtGui/private/qhighdpiscaling_p.h>
 
 #include <utility>
 
@@ -30,6 +32,8 @@
 
 namespace
 {
+
+static bool useNativePositions;
 
 class Win8PointerInputApi
 {
@@ -252,8 +256,8 @@ public:
 struct PointerDeviceItem
 {
     // HANDLE handle;
-    // RECT pointerDeviceRect;
-    // RECT displayRect;
+    RECT pointerDeviceRect;
+    RECT displayRect;
     qreal himetricToPixelX;
     qreal himetricToPixelY;
     qreal pixelOffsetX;
@@ -270,6 +274,7 @@ struct PenPointerItem
     HWND hwnd;
     HANDLE deviceHandle;
     QPointer<QWidget> activeWidget; // Current widget receiving events
+    QPointer<QWindow> activeWindow; // Top-level window receiving events
     qreal oneOverDpr; // 1 / devicePixelRatio of activeWidget
     bool widgetIsCaptured; // Current widget is capturing a pen down event
     bool widgetIsIgnored; // Pen events should be ignored until pen up
@@ -352,8 +357,9 @@ bool KisTabletSupportWin8::isPenDeviceAvailable()
     return hasPenDevice;
 }
 
-bool KisTabletSupportWin8::init()
+bool KisTabletSupportWin8::init(bool nativePositions)
 {
+    useNativePositions = nativePositions;
     return api.init();
 }
 
@@ -442,6 +448,8 @@ bool registerOrUpdateDevice(HANDLE deviceHandle, const RECT &pointerDeviceRect, 
     PointerDeviceItem &deviceItem = penDevices[deviceHandle];
     PointerDeviceItem oldDeviceItem = deviceItem;
     // deviceItem.handle = deviceHandle;
+    deviceItem.pointerDeviceRect = pointerDeviceRect;
+    deviceItem.displayRect = displayRect;
     deviceItem.himetricToPixelX =
             static_cast<qreal>(displayRect.right - displayRect.left)
             / (pointerDeviceRect.right - pointerDeviceRect.left);
@@ -540,20 +548,100 @@ QTabletEvent makeProximityTabletEvent(const QEvent::Type eventType, const POINTE
 //     tiltY = newTiltY;
 // }
 
+void setPositions(
+	const QWidget *targetWidget, const QPointF &globalPosF,
+	QPointF &outGlobalPosF, QPointF &outLocalPosF)
+{
+	QPoint globalPos = globalPosF.toPoint();
+	QPoint localPos = targetWidget->mapFromGlobal(globalPos);
+	QPointF delta = globalPosF - globalPos;
+	outGlobalPosF = globalPosF;
+	outLocalPosF = localPos + delta;
+}
+
+void calculatePositions(
+	const QWidget *targetWidget, const POINTER_PEN_INFO &penInfo,
+	const PointerDeviceItem &deviceItem, const PenPointerItem &penPointerItem,
+	QPointF &outGlobalPosF, QPointF &outLocalPosF)
+{
+	QPointF globalPosF(
+		(deviceItem.himetricToPixelX *
+			 penInfo.pointerInfo.ptHimetricLocationRaw.x +
+		 deviceItem.pixelOffsetX) *
+			penPointerItem.oneOverDpr,
+		(deviceItem.himetricToPixelY *
+			 penInfo.pointerInfo.ptHimetricLocationRaw.y +
+		 deviceItem.pixelOffsetY) *
+			penPointerItem.oneOverDpr);
+	setPositions(targetWidget, globalPosF, outGlobalPosF, outLocalPosF);
+}
+
+void calculatePositionsNative(
+	const QWidget *targetWidget, const POINTER_PEN_INFO &penInfo,
+	const PointerDeviceItem &deviceItem, const PenPointerItem &penPointerItem,
+	QPointF &outGlobalPosF, QPointF &outLocalPosF)
+{
+	QWindow *window = penPointerItem.activeWindow.data();
+	if(window) {
+		const RECT &pRect = deviceItem.pointerDeviceRect;
+		const RECT &dRect = deviceItem.displayRect;
+		QPointF nativeGlobalPosF = QPointF(
+			dRect.left +
+				qreal(penInfo.pointerInfo.ptHimetricLocation.x - pRect.left) /
+					(pRect.right - pRect.left) * (dRect.right - dRect.left),
+			dRect.top +
+				qreal(penInfo.pointerInfo.ptHimetricLocation.y - pRect.top) /
+					(pRect.bottom - pRect.top) * (dRect.bottom - dRect.top));
+		QPointF globalPosF =
+			QHighDpi::fromNativePixels(nativeGlobalPosF, window);
+		setPositions(targetWidget, globalPosF, outGlobalPosF, outLocalPosF);
+		if(DP_event_log_is_open()) {
+			POINT nativeLocalPos = penInfo.pointerInfo.ptPixelLocation;
+			ScreenToClient(penInfo.pointerInfo.hwndTarget, &nativeLocalPos);
+			QPointF windowLocalPosF = QHighDpi::fromNativeLocalPosition(
+				QPointF(nativeLocalPos.x, nativeLocalPos.y), window);
+			QPoint windowLocalPos = windowLocalPosF.toPoint();
+			QPoint globalPos = window->mapToGlobal(windowLocalPos);
+			QPoint localPos = targetWidget->mapFromGlobal(globalPos);
+			QPointF delta = windowLocalPosF - windowLocalPos;
+			QPointF localPosF = localPos + delta;
+			DP_event_log_write(
+				"KisTablet pRect(%ld,%ld,%ld,%ld) dRect(%ld,%ld,%ld,%ld) "
+				"himetricLocation(%ld,%ld) nativeGlobalPosF(%f,%f) "
+				"globalPosF(%f,%f) localPosF(%f,%f) pixelLocation(%ld,%ld) "
+				"nativeLocalPos(%ld,%ld) windowLocalPosF(%f,%f) "
+				"globalPos(%d,%d) localPosF(%f,%f)",
+				pRect.left, pRect.top, pRect.right, pRect.bottom, dRect.left,
+				dRect.top, dRect.right, dRect.bottom,
+				penInfo.pointerInfo.ptHimetricLocation.x,
+				penInfo.pointerInfo.ptHimetricLocation.y, nativeGlobalPosF.x(),
+				nativeGlobalPosF.y(), globalPosF.x(), globalPosF.y(),
+				outLocalPosF.x(), outLocalPosF.y(),
+				penInfo.pointerInfo.ptPixelLocation.x,
+				penInfo.pointerInfo.ptPixelLocation.y, nativeLocalPos.x,
+				nativeLocalPos.y, windowLocalPosF.x(), windowLocalPosF.y(),
+				globalPos.x(), globalPos.y(), localPosF.x(), localPosF.y());
+		}
+	} else {
+		calculatePositions(
+			targetWidget, penInfo, deviceItem, penPointerItem, outGlobalPosF,
+			outLocalPosF);
+	}
+}
+
 QTabletEvent makePositionalTabletEvent(const QWidget *targetWidget, const QEvent::Type eventType, const POINTER_PEN_INFO &penInfo, const PointerDeviceItem &deviceItem, const PenPointerItem &penPointerItem)
 {
     PenFlagsWrapper penFlags = PenFlagsWrapper::fromPenInfo(penInfo);
     PointerFlagsWrapper pointerFlags = PointerFlagsWrapper::fromPenInfo(penInfo);
     PenMaskWrapper penMask = PenMaskWrapper::fromPenInfo(penInfo);
 
-    const QPointF globalPosF(
-        (deviceItem.himetricToPixelX * penInfo.pointerInfo.ptHimetricLocationRaw.x + deviceItem.pixelOffsetX) * penPointerItem.oneOverDpr,
-        (deviceItem.himetricToPixelY * penInfo.pointerInfo.ptHimetricLocationRaw.y + deviceItem.pixelOffsetY) * penPointerItem.oneOverDpr
-    );
-    const QPoint globalPos = globalPosF.toPoint();
-    const QPoint localPos = targetWidget->mapFromGlobal(globalPos);
-    const QPointF delta = globalPosF - globalPos;
-    const QPointF localPosF = localPos + delta;
+    QPointF globalPosF;
+    QPointF localPosF;
+    if (useNativePositions) {
+        calculatePositionsNative(targetWidget, penInfo, deviceItem, penPointerItem, globalPosF, localPosF);
+    } else {
+        calculatePositions(targetWidget, penInfo, deviceItem, penPointerItem, globalPosF, localPosF);
+    }
 
     const compat::PointerType pointerType = penFlags.isInverted() ? compat::PointerType::Eraser : compat::PointerType::Pen;
 
@@ -762,6 +850,7 @@ bool handlePenEnterMsg(const POINTER_PEN_INFO &penInfo)
     penPointerItem.hwnd = penInfo.pointerInfo.hwndTarget;
     penPointerItem.deviceHandle = penInfo.pointerInfo.sourceDevice;
     penPointerItem.activeWidget = nullptr;
+    penPointerItem.activeWindow = nullptr;
     penPointerItem.oneOverDpr = 1.0;
     penPointerItem.widgetIsCaptured = false;
     penPointerItem.widgetIsIgnored = false;
@@ -828,6 +917,7 @@ bool handleSinglePenUpdate(PenPointerItem &penPointerItem, const POINTER_PEN_INF
         {
             QWindow *topLevelWindow = hwndWidget->windowHandle();
             if (topLevelWindow) {
+                penPointerItem.activeWindow = topLevelWindow;
                 penPointerItem.oneOverDpr = 1.0 / topLevelWindow->devicePixelRatio();
             } else {
                 penPointerItem.oneOverDpr = 1.0 / qApp->devicePixelRatio();
@@ -912,6 +1002,7 @@ bool handlePenDownMsg(const POINTER_PEN_INFO &penInfo)
     {
         QWindow *topLevelWindow = hwndWidget->windowHandle();
         if (topLevelWindow) {
+            currentPointerIt->activeWindow = topLevelWindow;
             currentPointerIt->oneOverDpr = 1.0 / topLevelWindow->devicePixelRatio();
         } else {
             currentPointerIt->oneOverDpr = 1.0 / qApp->devicePixelRatio();

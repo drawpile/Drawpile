@@ -34,10 +34,10 @@ static void resetKisTablet(DrawpileApp &app)
 	KisTabletSupportWin::quit();
 }
 
-static void enableKisTabletWinink(DrawpileApp &app)
+static void enableKisTabletWinink(DrawpileApp &app, bool nativePositions)
 {
 	kisTabletSupportWin8 = new KisTabletSupportWin8;
-	if(kisTabletSupportWin8->init()) {
+	if(kisTabletSupportWin8->init(nativePositions)) {
 		shouldPassPenEvents = false;
 		app.installNativeEventFilter(kisTabletSupportWin8);
 		currentMode = Mode::KisTabletWinink;
@@ -106,7 +106,10 @@ void init(DrawpileApp &app)
 		currentMode = Mode::Uninitialized;
 		switch(mode) {
 		case Mode::KisTabletWinink:
-			enableKisTabletWinink(app);
+			enableKisTabletWinink(app, true);
+			break;
+		case Mode::KisTabletWininkNonNative:
+			enableKisTabletWinink(app, false);
 			break;
 		case Mode::KisTabletWintab:
 			enableKisTabletWintab(false);
@@ -142,16 +145,20 @@ void init(DrawpileApp &app)
 
 const char *current()
 {
-	switch (currentMode) {
+	switch(currentMode) {
 	case Mode::Uninitialized:
 	case Mode::Qt5:
 		return QT_TRANSLATE_NOOP("tabletinput", "Qt tablet input");
 	case Mode::KisTabletWinink:
 		return QT_TRANSLATE_NOOP("tabletinput", "KisTablet Windows Ink input");
+	case Mode::KisTabletWininkNonNative:
+		return QT_TRANSLATE_NOOP(
+			"tabletinput", "KisTablet Windows Ink non-native input");
 	case Mode::KisTabletWintab:
 		return QT_TRANSLATE_NOOP("tabletinput", "KisTablet Wintab input");
 	case Mode::KisTabletWintabRelativePenHack:
-		return QT_TRANSLATE_NOOP("tabletinput", "KisTablet Wintab input with relative pen mode");
+		return QT_TRANSLATE_NOOP(
+			"tabletinput", "KisTablet Wintab input with relative pen mode");
 	case Mode::Qt6Winink:
 		return QT_TRANSLATE_NOOP("tabletinput", "Qt6 Windows Ink input");
 	case Mode::Qt6Wintab:

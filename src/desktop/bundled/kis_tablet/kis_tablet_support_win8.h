@@ -22,7 +22,7 @@ public:
     KisTabletSupportWin8() = default;
     ~KisTabletSupportWin8() = default;
 
-    bool init();
+    bool init(bool nativePositions);
     // void registerPointerDeviceNotifications();
     virtual bool nativeEventFilter(const QByteArray &eventType, void *message, compat::NativeEventResult result) override;
 };
