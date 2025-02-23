@@ -107,7 +107,7 @@ struct LayoutsDialog::Private {
 			LayoutsDialog::Layout{tr("Krita-esque"), predefs.kritaEsqueLayout},
 			LayoutsDialog::Layout{
 				tr("MediBang-esque"), predefs.mediBangEsqueLayout},
-			LayoutsDialog::Layout{tr("Mink"), predefs.kritaEsqueLayout},
+			LayoutsDialog::Layout{tr("Mink"), predefs.minkLayout},
 			LayoutsDialog::Layout{
 				tr("Paint.NET-esque"), predefs.paintNetEsqueLayout},
 			LayoutsDialog::Layout{tr("SAI-esque"), predefs.saiEsqueLayout},
