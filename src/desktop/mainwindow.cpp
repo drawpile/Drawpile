@@ -4973,25 +4973,25 @@ void MainWindow::setupActions()
 		makeAction(
 			"driverkistabletwindowsink",
 			QCoreApplication::translate(
-				"dialogs::settingsdialog::Input", "KisTablet Windows Ink"))
+				"dialogs::settingsdialog::Tablet", "Windows Ink"))
 			.noDefaultShortcut()
 			.checkable()
 			.property("tabletdriver", int(tabletinput::Mode::KisTabletWinink)));
-	drivers.append(makeAction(
-					   "driverkistabletwindowsinknonnative",
-					   QCoreApplication::translate(
-						   "dialogs::settingsdialog::Input",
-						   "KisTablet Windows Ink Non-Native"))
-					   .noDefaultShortcut()
-					   .checkable()
-					   .property(
-						   "tabletdriver",
-						   int(tabletinput::Mode::KisTabletWininkNonNative)));
+	drivers.append(
+		makeAction(
+			"driverkistabletwindowsinknonnative",
+			QCoreApplication::translate(
+				"dialogs::settingsdialog::Tablet", "Windows Ink Non-Native"))
+			.noDefaultShortcut()
+			.checkable()
+			.property(
+				"tabletdriver",
+				int(tabletinput::Mode::KisTabletWininkNonNative)));
 	drivers.append(
 		makeAction(
 			"driverkistabletwintab",
 			QCoreApplication::translate(
-				"dialogs::settingsdialog::Input", "KisTablet Wintab"))
+				"dialogs::settingsdialog::Tablet", "Wintab"))
 			.noDefaultShortcut()
 			.checkable()
 			.property("tabletdriver", int(tabletinput::Mode::KisTabletWintab)));
@@ -4999,7 +4999,7 @@ void MainWindow::setupActions()
 		makeAction(
 			"driverkistabletwintabrelative",
 			QCoreApplication::translate(
-				"dialogs::settingsdialog::Input", "KisTablet Wintab Relative"))
+				"dialogs::settingsdialog::Tablet", "Wintab Relative"))
 			.noDefaultShortcut()
 			.checkable()
 			.property(
@@ -5009,7 +5009,7 @@ void MainWindow::setupActions()
 	drivers.append(
 		makeAction(
 			"driverqt5", QCoreApplication::translate(
-							 "dialogs::settingsdialog::Input", "Qt5"))
+							 "dialogs::settingsdialog::Tablet", "Qt5"))
 			.noDefaultShortcut()
 			.checkable()
 			.property("tabletdriver", int(tabletinput::Mode::Qt5)));
@@ -5018,7 +5018,7 @@ void MainWindow::setupActions()
 		makeAction(
 			"driverqt6windowsink",
 			QCoreApplication::translate(
-				"dialogs::settingsdialog::Input", "Qt6 Windows Ink"))
+				"dialogs::settingsdialog::Tablet", "Qt6 Windows Ink"))
 			.noDefaultShortcut()
 			.checkable()
 			.property("tabletdriver", int(tabletinput::Mode::Qt6Winink)));
@@ -5026,7 +5026,7 @@ void MainWindow::setupActions()
 		makeAction(
 			"driverqt6wintab",
 			QCoreApplication::translate(
-				"dialogs::settingsdialog::Input", "Qt6 Wintab"))
+				"dialogs::settingsdialog::Tablet", "Qt6 Wintab"))
 			.noDefaultShortcut()
 			.checkable()
 			.property("tabletdriver", int(tabletinput::Mode::Qt6Wintab)));

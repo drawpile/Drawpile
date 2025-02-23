@@ -71,16 +71,15 @@ void Tablet::initTablet(
 #if defined(Q_OS_WIN)
 	QComboBox *driver = new QComboBox;
 	driver->addItem(
-		tr("KisTablet Windows Ink"),
+		tr("Windows Ink"),
 		QVariant::fromValue(tabletinput::Mode::KisTabletWinink));
 	driver->addItem(
-		tr("KisTablet Windows Ink Non-Native"),
+		tr("Windows Ink Non-Native"),
 		QVariant::fromValue(tabletinput::Mode::KisTabletWininkNonNative));
 	driver->addItem(
-		tr("KisTablet Wintab"),
-		QVariant::fromValue(tabletinput::Mode::KisTabletWintab));
+		tr("Wintab"), QVariant::fromValue(tabletinput::Mode::KisTabletWintab));
 	driver->addItem(
-		tr("KisTablet Wintab Relative"),
+		tr("Wintab Relative"),
 		QVariant::fromValue(tabletinput::Mode::KisTabletWintabRelativePenHack));
 #	if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	driver->addItem(tr("Qt5"), QVariant::fromValue(tabletinput::Mode::Qt5));
