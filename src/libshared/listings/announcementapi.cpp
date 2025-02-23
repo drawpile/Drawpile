@@ -270,7 +270,6 @@ AnnouncementApiResponse *getSessionList(const QUrl &apiUrl)
 				protocol::ProtocolVersion::fromString(obj["protocol"].toString()),
 				obj["title"].toString(),
 				obj["users"].toInt(),
-				obj["usernames"].toVariant().toStringList(),
 				obj["password"].toBool(),
 				obj["nsfm"].toBool(),
 				obj["owner"].toString(),
@@ -304,7 +303,6 @@ AnnouncementApiResponse *announceSession(const QUrl &apiUrl, const Session &sess
 	o["title"] = session.title;
 	o["users"] = session.users;
 	o["activedrawingusers"] = session.activeDrawingUsers;
-	o["usernames"] = QJsonArray::fromStringList(session.usernames);
 	o["password"] = session.password;
 	o["owner"] = session.owner;
 	o["nsfm"] = session.nsfm;
@@ -362,7 +360,6 @@ AnnouncementApiResponse *refreshSession(const Announcement &a, const Session &se
 	o["title"] = session.title;
 	o["users"] = session.users;
 	o["activedrawingusers"] = session.activeDrawingUsers;
-	o["usernames"] = QJsonArray::fromStringList(session.usernames);
 	o["password"] = session.password;
 	o["owner"] = session.owner;
 	o["nsfm"] = session.nsfm;
@@ -415,7 +412,6 @@ AnnouncementApiResponse *refreshSessions(const QVector<QPair<Announcement, Sessi
 		o["title"] = listing.second.title;
 		o["users"] = listing.second.users;
 		o["activedrawingusers"] = listing.second.activeDrawingUsers;
-		o["usernames"] = QJsonArray::fromStringList(listing.second.usernames);
 		o["password"] = listing.second.password;
 		o["owner"] = listing.second.owner;
 		o["nsfm"] = listing.second.nsfm;

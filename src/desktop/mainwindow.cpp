@@ -2838,8 +2838,7 @@ void MainWindow::hostSession(const HostParams &params)
 		QString errorMessage;
 		bool serverStarted = server->start(
 			settings.serverPort(), settings.serverTimeout(),
-			settings.networkProxyMode(), settings.serverPrivateUserList(),
-			&errorMessage);
+			settings.networkProxyMode(), &errorMessage);
 		if(!serverStarted) {
 			utils::showWarning(this, tr("Host Session"), errorMessage);
 			delete server;

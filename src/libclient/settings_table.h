@@ -38,7 +38,6 @@ SETTING(engineSnapshotInterval      , EngineSnapshotInterval      , "settings/pa
 SETTING(engineUndoDepth             , EngineUndoDepth             , "settings/paintengine/undodepthlimit"   , ENGINE_UNDO_LIMIT_DEFAULT)
 SETTING(listServers                 , ListServers                 , "listservers"                           , QVector<QVariantMap>())
 SETTING(serverAutoReset             , ServerAutoReset             , "settings/server/autoreset"             , true)
-SETTING(serverPrivateUserList       , ServerPrivateUserList       , "settings/server/privateUserList"       , false)
 SETTING(serverPort                  , ServerPort                  , "settings/server/port"                  , cmake_config::proto::port())
 SETTING(serverTimeout               , ServerTimeout               , "settings/server/timeout"               , 60)
 SETTING(smoothing                   , Smoothing                   , "settings/input/smooth"                 , defaultSmoothing)

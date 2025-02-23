@@ -1675,9 +1675,6 @@ void Session::unlistAnnouncement(const QUrl &url, bool terminate)
 
 sessionlisting::Session Session::getSessionAnnouncement() const
 {
-	const bool privateUserList =
-		m_config->getConfigBool(config::PrivateUserList);
-
 	return sessionlisting::Session{
 		m_config->internalConfig().localHostname,
 		m_config->internalConfig().getAnnouncePort(),
@@ -1685,9 +1682,6 @@ sessionlisting::Session Session::getSessionAnnouncement() const
 		m_history->protocolVersion(),
 		m_history->title(),
 		userCount(),
-		(!m_history->passwordHash().isEmpty() || privateUserList)
-			? QStringList()
-			: userNames(),
 		!m_history->passwordHash().isEmpty(),
 		m_history->hasFlag(SessionHistory::Nsfm),
 		m_history->founderName(),

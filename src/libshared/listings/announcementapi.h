@@ -30,7 +30,6 @@ struct Session {
 	protocol::ProtocolVersion protocol;
 	QString title;
 	int users;
-	QStringList usernames;
 	bool password;
 	bool nsfm;
 	QString owner;

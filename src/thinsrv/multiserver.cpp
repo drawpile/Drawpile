@@ -553,7 +553,6 @@ JsonApiResult MultiServer::serverJsonApi(
 		config::IdleTimeLimit,
 		config::ServerTitle,
 		config::WelcomeMessage,
-		config::PrivateUserList,
 		config::AllowGuestHosts,
 		config::AllowGuests,
 #ifdef HAVE_LIBSODIUM

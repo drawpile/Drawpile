@@ -45,7 +45,6 @@ struct ServerSummaryPage::Private {
 	QDoubleSpinBox *idleTimeout;
 	QSpinBox *maxSessions;
 	QCheckBox *persistence;
-	QCheckBox *privateUserList;
 	QCheckBox *archiveSessions;
 	QSpinBox *logPurge;
 
@@ -78,7 +77,6 @@ struct ServerSummaryPage::Private {
 		  idleTimeout(new QDoubleSpinBox),
 		  maxSessions(new QSpinBox),
 		  persistence(new QCheckBox),
-		  privateUserList(new QCheckBox),
 		  archiveSessions(new QCheckBox),
 		  logPurge(new QSpinBox),
 		  useExtAuth(new QCheckBox),
@@ -112,7 +110,6 @@ struct ServerSummaryPage::Private {
 		logPurge->setSpecialValueText("keep all");
 
 		persistence->setText(ServerSummaryPage::tr("Allow sessions to persist without users"));
-		privateUserList->setText(ServerSummaryPage::tr("Do not include user list is session announcement"));
 		archiveSessions->setText(ServerSummaryPage::tr("Archive terminated sessions"));
 
 		customAvatars->setText(ServerSummaryPage::tr("Allow custom avatars"));
@@ -228,7 +225,6 @@ ServerSummaryPage::ServerSummaryPage(Server *server, QWidget *parent)
 	addWidgets(d, layout, row++, tr("Maximum sessions"), d->maxSessions, true);
 	addWidgets(d, layout, row++, QString(), d->persistence);
 	addWidgets(d, layout, row++, QString(), d->archiveSessions);
-	addWidgets(d, layout, row++, QString(), d->privateUserList);
 	addWidgets(d, layout, row++, QString(), d->customAvatars);
 
 	layout->addItem(new QSpacerItem(1,10), row++, 0);
@@ -311,7 +307,6 @@ void ServerSummaryPage::handleResponse(const QString &requestId, const JsonApiRe
 	d->logPurge->setValue(o[config::LogPurgeDays.name].toInt());
 	d->persistence->setChecked(o[config::EnablePersistence.name].toBool());
 	d->archiveSessions->setChecked(o[config::ArchiveMode.name].toBool());
-	d->privateUserList->setChecked(o[config::PrivateUserList.name].toBool());
 	d->customAvatars->setChecked(o[config::AllowCustomAvatars.name].toBool());
 
 	d->useExtAuth->setChecked(o[config::UseExtAuth.name].toBool());
@@ -345,7 +340,6 @@ void ServerSummaryPage::saveSettings()
 		{config::LogPurgeDays.name, d->logPurge->value()},
 		{config::EnablePersistence.name, d->persistence->isChecked()},
 		{config::ArchiveMode.name, d->archiveSessions->isChecked()},
-		{config::PrivateUserList.name, d->privateUserList->isChecked()},
 		{config::AllowCustomAvatars.name, d->customAvatars->isChecked()},
 		{config::UseExtAuth.name, d->useExtAuth->isChecked()},
 		{config::ExtAuthKey.name, d->extAuthKey->text()},

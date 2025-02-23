@@ -54,7 +54,7 @@ public:
 
 	bool start(
 		quint16 preferredPort, int clientTimeout, int proxyMode,
-		bool privateUserList, QString *outErrorMessage = nullptr);
+		QString *outErrorMessage = nullptr);
 
 public slots:
 	void stop();

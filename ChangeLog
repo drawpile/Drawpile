@@ -16,6 +16,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Indicate when you have no layer selected so that it doesn't seem like you can draw but nothing happens.
  * Server Fix: Remove browser users when a session disables browser access. Thanks Bluestrings for reporting.
  * Server Feature: Add a separate permission for hosting via browser and whether to take this permission from ext-auth. This also fixes the issue where it would ask you to log in when trying to host from the browser, just to then tell you that you're not allowed to do so anyway. Thanks Bluestrings for suggesting.
+ * Removed Feature: Username lists in external session announcements. They were never used.
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.

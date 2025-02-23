@@ -81,17 +81,13 @@ void Network::initAvatars(QVBoxLayout *layout)
 void Network::initBuiltinServer(
 	desktop::settings::Settings &settings, QFormLayout *form)
 {
-	auto *privateUserList =
-		new QCheckBox(tr("Hide user list in announcements"));
-	settings.bindServerPrivateUserList(privateUserList);
-	form->addRow(tr("Builtin server:"), privateUserList);
-
 	auto *port = new QSpinBox;
 	port->setAlignment(Qt::AlignLeft);
 	port->setRange(1, UINT16_MAX);
 	settings.bindServerPort(port);
 	form->addRow(
-		nullptr, utils::encapsulate(tr("Host on port %1 if available"), port));
+		tr("Builtin server:"),
+		utils::encapsulate(tr("Host on port %1 if available"), port));
 }
 
 void Network::initNetwork(

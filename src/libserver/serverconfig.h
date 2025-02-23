@@ -68,8 +68,8 @@ static const ConfigKey
 	WelcomeMessage(7, "welcomeMessage", "", ConfigKey::STRING),
 	// Should the announcement server whitelist be used (bool)
 	AnnounceWhiteList(8, "announceWhitelist", "false", ConfigKey::BOOL),
-	// Don't include user list in announcement
-	PrivateUserList(9, "privateUserList", "false", ConfigKey::BOOL),
+	// Don't include user list in announcements (removed)
+	// PrivateUserList(9, "privateUserList", "false", ConfigKey::BOOL),
 	// Allow unauthenticated users
 	AllowGuests(10, "allowGuests", "true", ConfigKey::BOOL),
 	// Don't delete terminated session files

@@ -43,7 +43,6 @@ Returns a list of server settings:
                                      (0 means no time limit)
         "serverTitle": "string"      (title to be shown in the login box)
         "welcomeMessage": "string")  (welcome chat message sent to new users)
-        "privateUserList": boolean   (if true, user list is never included in announcements)
         "allowGuests": boolean       (allow unauthenticated logins)
         "archive": boolean           (archive file backed sessions instead of deleting them)
         "extauth": boolean           (enable external authentication)

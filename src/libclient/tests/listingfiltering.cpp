@@ -86,7 +86,6 @@ private:
 			protocol::ProtocolVersion("dp", 2, 1, 0),
 			title,
 			1,
-			QStringList(),
 			password,
 			nsfm,
 			QString(),

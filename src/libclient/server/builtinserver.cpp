@@ -69,7 +69,7 @@ std::tuple<Session *, QString> BuiltinServer::createSession(
 
 bool BuiltinServer::start(
 	quint16 preferredPort, int clientTimeout, int proxyMode,
-	bool privateUserList, QString *outErrorMessage)
+	QString *outErrorMessage)
 {
 	Q_ASSERT(!m_server);
 
@@ -99,7 +99,6 @@ bool BuiltinServer::start(
 	icfg.realPort = actualPort;
 	m_config->setInternalConfig(icfg);
 	m_config->setConfigInt(config::ClientTimeout, clientTimeout);
-	m_config->setConfigBool(config::PrivateUserList, privateUserList);
 
 	qInfo("Builtin server started listening on port %d", actualPort);
 
