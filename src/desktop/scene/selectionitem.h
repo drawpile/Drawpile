@@ -45,7 +45,6 @@ protected:
 		QWidget *widget) override;
 
 private:
-	bool canShowOutline() const;
 	void setOutline(unsigned int executionId, const SelectionOutlinePath &path);
 	void updateBoundingRectFromBounds();
 
