@@ -533,7 +533,7 @@
     <message>
         <location line="+5"/>
         <source>Paste File</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить файл</translation>
     </message>
     <message>
         <location line="+5"/>
