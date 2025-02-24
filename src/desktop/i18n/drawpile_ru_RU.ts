@@ -83,7 +83,7 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+64"/>
         <source>Brush type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип кисти</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -533,7 +533,7 @@
     <message>
         <location line="+5"/>
         <source>Paste File</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить файл</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -563,7 +563,7 @@
     <message>
         <location line="+99"/>
         <source>Export Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать кисти</translation>
     </message>
     <message>
         <location line="+10"/>
