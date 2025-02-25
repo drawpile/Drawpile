@@ -544,6 +544,18 @@ Client::translateMessage(const QJsonObject &reply, const QString &fallbackKey)
 				.arg(
 					params[QStringLiteral("target")].toString(),
 					params[QStringLiteral("by")].toString());
+		} else if(key == net::ServerReply::KEY_KICK_WEB_USERS) {
+			QString by = params[QStringLiteral("by")].toString();
+			if(by.isEmpty()) {
+				return tr("Session password removed by a server administrator. "
+						  "This server doesn't allow web browsers in public "
+						  "sessions, they will be disconnected.");
+			} else {
+				return tr("Session password removed by %1. This server doesn't "
+						  "allow web browsers in public sessions, they will be "
+						  "disconnected.")
+					.arg(by);
+			}
 		} else if(key == net::ServerReply::KEY_OP_GIVE) {
 			QString target = params[QStringLiteral("target")].toString();
 			QString by = params[QStringLiteral("by")].toString();

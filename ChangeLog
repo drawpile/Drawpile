@@ -14,7 +14,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Make tablet positions work on Cintiqs under Windows Ink with UI scaling and when it's not set to be the primary monitor. The old behavior is available via Edit > Tablet Driver > Windows Ink Non-Native, in case this breaks something else. Thanks Axocrat and Liz for reporting, Weenifer for reporting and testing.
  * Fix: Remove the "KisTablet" prefix from the tablet driver names in Windows, it's a technical name that doesn't add anything useful.
  * Feature: Indicate when you have no layer selected so that it doesn't seem like you can draw but nothing happens.
- * Server Fix: Remove browser users when a session disables browser access. Thanks Bluestrings for reporting.
+ * Server Fix: Remove browser users when a session's password is removed and the server only allows browsers in passworded sessions. Thanks Bluestrings for reporting.
  * Server Feature: Add a separate permission for hosting via browser and whether to take this permission from ext-auth. This also fixes the issue where it would ask you to log in when trying to host from the browser, just to then tell you that you're not allowed to do so anyway. Thanks Bluestrings for suggesting.
  * Removed Feature: Username lists in external session announcements. They were never used.
  * Fix: Show current tier in the layer permissions menu again. Thanks Meiren for reporting.

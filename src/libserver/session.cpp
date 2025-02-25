@@ -117,23 +117,6 @@ static bool forceEnableNsfm(SessionHistory *history, const ServerConfig *config)
 	}
 }
 
-static bool setAllowWebDependentOnPassword(
-	SessionHistory *history, const ServerConfig *config, bool *outAllowWeb)
-{
-	if(config->getConfigBool(config::PasswordDependentWebSession)) {
-		bool hasPassword = !history->passwordHash().isEmpty();
-		bool allowWeb = history->hasFlag(SessionHistory::AllowWeb);
-		if((hasPassword && !allowWeb) || (!hasPassword && allowWeb)) {
-			history->setFlag(SessionHistory::AllowWeb, hasPassword);
-			if(outAllowWeb) {
-				*outAllowWeb = hasPassword;
-			}
-			return true;
-		}
-	}
-	return false;
-}
-
 Session::Session(
 	SessionHistory *history, ServerConfig *config,
 	sessionlisting::Announcements *announcements, QObject *parent)
@@ -670,12 +653,9 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	}
 
 	bool changePassword = conf.contains(QStringLiteral("password"));
-	QString newPassword;
-	if(changePassword) {
-		newPassword = conf["password"].toString();
-		m_history->setPassword(newPassword);
-		changes << "changed password";
-	}
+	QString newPassword =
+		changePassword ? conf.value(QStringLiteral("password")).toString()
+					   : QString();
 
 	if(conf.contains("opword")) {
 		m_history->setOpword(conf["opword"].toString());
@@ -726,37 +706,48 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 
 	// Toggling allowing WebSocket connections requires the client to have the
 	// WEBSESSION flag. If changedBy is null, the request came from the API.
-	bool changeAllowWeb = conf.contains(QStringLiteral("allowWeb")) &&
-						  (!changedBy || changedBy->canManageWebSession());
-	bool allowWebChanged = false;
+	bool canManageWebSession = !changedBy || changedBy->canManageWebSession();
+	bool changeAllowWeb =
+		conf.contains(QStringLiteral("allowWeb")) && canManageWebSession;
 	if(changeAllowWeb) {
 		bool allowWeb = conf[QStringLiteral("allowWeb")].toBool();
 		// We don't allow clients that are connected via browser to prevent
 		// themselves from rejoining the session by disabling them.
 		if(allowWeb || !changedBy || !changedBy->isBrowser()) {
-			allowWebChanged = true;
 			flags.setFlag(SessionHistory::AllowWeb, allowWeb);
 			changes
 				<< (allowWeb ? QStringLiteral("enabled browser connections")
 							 : QStringLiteral("disabled browser connections"));
-			if(!allowWeb) {
+		}
+	}
+
+	if(changePassword && !changeAllowWeb &&
+	   m_config->getConfigBool(config::PasswordDependentWebSession)) {
+		bool hasPassword = !newPassword.isEmpty();
+		bool allowWeb = flags.testFlag(SessionHistory::AllowWeb);
+		if(hasPassword && !allowWeb) {
+			flags.setFlag(SessionHistory::AllowWeb, true);
+			changes << QStringLiteral(
+				"enabled browser connections because password is set");
+		} else if(!hasPassword && allowWeb && !canManageWebSession) {
+			if(changedBy && changedBy->isBrowser()) {
+				// Don't let browser users obliterate themselves.
+				changePassword = false;
+			} else {
+				flags.setFlag(SessionHistory::AllowWeb, false);
 				kickWebUsers(changedBy);
+				changes << QStringLiteral(
+					"disabled browser connections because no password is set");
 			}
 		}
 	}
 
-	m_history->setFlags(flags);
-
-	bool dependentAllowWeb;
-	if(!allowWebChanged && setAllowWebDependentOnPassword(
-							   m_history, m_config, &dependentAllowWeb)) {
-		changes
-			<< (dependentAllowWeb
-					? QStringLiteral(
-						  "enabled browser connections because password is set")
-					: QStringLiteral("disabled browser connections because no "
-									 "password is set"));
+	if(changePassword) {
+		m_history->setPassword(newPassword);
+		changes << QStringLiteral("changed password");
 	}
+
+	m_history->setFlags(flags);
 
 	if(!changes.isEmpty()) {
 		sendUpdatedSessionProperties();
@@ -1547,13 +1538,34 @@ void Session::ensureOperatorExists()
 
 void Session::kickWebUsers(Client *by)
 {
+	QVector<Client *> clientsToKick;
 	for(Client *c : m_clients) {
 		if(c != by && !c->isModerator() && c->isBrowser()) {
+			clientsToKick.append(c);
+		}
+	}
+
+	if(!clientsToKick.isEmpty()) {
+		keyMessageAll(
+			QStringLiteral(
+				"Session password removed by %1. This server doesn't allow web "
+				"browsers in public sessions, they will be disconnected.")
+				.arg(
+					by ? by->username()
+					   : QStringLiteral("a server administrator")),
+			true, net::ServerReply::KEY_KICK_WEB_USERS,
+			by ? QJsonObject{{QStringLiteral("by"), by->username()}}
+			   : QJsonObject());
+
+		QString message =
+			QStringLiteral("Web browser clients are only allowed on sessions "
+						   "with a password, but %1 removed it.")
+				.arg(
+					by ? by->username()
+					   : QStringLiteral("a server administrator"));
+		for(Client *c : clientsToKick) {
 			c->disconnectClient(
-				Client::DisconnectionReason::Kick,
-				by ? by->username() : QStringLiteral("administrator"),
-				QStringLiteral(
-					"Joining this session via web browser disabled"));
+				Client::DisconnectionReason::Shutdown, message, QString());
 		}
 	}
 }
