@@ -20,7 +20,7 @@
         <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation>Конфлікт</translation>
+        <translation>Вже зайнято</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -83,7 +83,7 @@
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation>Конфлікт</translation>
+        <translation>Вже зайнято</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -321,7 +321,7 @@
         <location filename="../utils/customshortcutmodel.cpp" line="+57"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation>Конфлікт</translation>
+        <translation>Вже зайнято</translation>
     </message>
     <message>
         <location line="+4"/>
