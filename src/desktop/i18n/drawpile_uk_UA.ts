@@ -2127,7 +2127,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Pan</source>
-        <translation>Пан</translation>
+        <translation>Панорама</translation>
     </message>
     <message>
         <location line="+0"/>
