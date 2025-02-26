@@ -2666,7 +2666,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Import Animation &amp;Frames…</source>
-        <translation>Імпорт &amp;рамок анімації…</translation>
+        <translation>Імпортувати кадри анімації</translation>
     </message>
     <message>
         <location line="+4"/>
