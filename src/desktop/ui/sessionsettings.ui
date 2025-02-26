@@ -230,14 +230,14 @@
           <item row="3" column="0" colspan="2">
            <widget class="QCheckBox" name="denyJoins">
             <property name="text">
-             <string>Block new logins</string>
+             <string>Block new joins</string>
             </property>
            </widget>
           </item>
           <item row="4" column="0" colspan="2">
            <widget class="QCheckBox" name="authOnly">
             <property name="text">
-             <string>No guest logins</string>
+             <string>Require a registered account to join</string>
             </property>
            </widget>
           </item>
