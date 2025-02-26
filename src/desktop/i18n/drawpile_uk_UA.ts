@@ -462,7 +462,7 @@
     <message>
         <location line="+14"/>
         <source>Import Animation Frames</source>
-        <translation>Імпортувати кадри анімації</translation>
+        <translation>Імпортувати анімацію з кадрів</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2107,7 +2107,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>&amp;Magic Wand Select</source>
-        <translation>&amp;Чарівна паличка Виберіть</translation>
+        <translation>&amp;Неперервний вибір</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2666,7 +2666,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Import Animation &amp;Frames…</source>
-        <translation>Імпортувати кадри анімації</translation>
+        <translation>Імпортувати анімацію &amp;з кадрів…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2919,7 +2919,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+48"/>
         <source>Selectio&amp;n</source>
-        <translation>Вибір</translation>
+        <translation>Прямокутний вибір</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -4514,7 +4514,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Importing animation frames is not supported in the web browser version of Drawpile.</source>
-        <translation>Імпорт кадрів анімації не підтримується у версії Drawpile для веб-браузера.</translation>
+        <translation>Імпорт анімацій з кадрів не підтримується у браузерній версії Drawpile.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -9891,7 +9891,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Conflict</source>
-        <translation>Конфлікт</translation>
+        <translation>Вже зайнято</translation>
     </message>
     <message>
         <location line="+1"/>
