@@ -23,6 +23,7 @@ Unreleased Version 2.2.2-pre
  * Removed Feature: Toggling between web and direct links in the invite dialog. Drawpile will translate the web link if you paste it into the join dialog anyway, so the distinction was pointless.
  * Fix: Change temporary tool switch setting text to say that only the primary shortcut will cause it. This was unintentional, but it's useful. Thanks 3rd_EFNO for reporting.
  * Fix: Use proper background images in Windows installer instead of those ugly red discs. Thanks evilTriangle for reporting.
+ * Fix: Correct intermittent errors when reconnecting or otherwise opening a new main view in the browser that could hang the application.
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.

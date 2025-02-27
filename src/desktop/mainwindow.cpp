@@ -835,6 +835,17 @@ void MainWindow::prepareWindowReplacement()
 	dpApp().settings().trySubmit();
 }
 
+void MainWindow::createNewWindow(const std::function<void(MainWindow *)> &block)
+{
+	// Create the new window at top-level in the event loop, otherwise we can
+	// end up deleting ourselves from under us.
+	QTimer::singleShot(0, this, [this, block] {
+		MainWindow *win = new MainWindow(false);
+		emit windowReplacementFailed(win);
+		block(win);
+	});
+}
+
 /**
  * The file is added to the list of recent files and the menus on all open
  * mainwindows are updated.
@@ -1875,9 +1886,9 @@ void MainWindow::newDocument(const QSize &size, const QColor &background)
 					if(newProcessStarted) {
 						emit windowReplacementFailed(nullptr);
 					} else {
-						MainWindow *win = new MainWindow(false);
-						emit windowReplacementFailed(win);
-						win->m_doc->loadBlank(size, background);
+						createNewWindow([size, background](MainWindow *win) {
+							win->m_doc->loadBlank(size, background);
+						});
 					}
 				}
 			}
@@ -1912,9 +1923,9 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 			Q_ASSERT(!tempFile);
 			delete tempFile;
 		} else {
-			MainWindow *win = new MainWindow(false);
-			emit windowReplacementFailed(win);
-			win->openPath(path, tempFile);
+			createNewWindow([path, tempFile](MainWindow *win) {
+				win->openPath(path, tempFile);
+			});
 		}
 		return;
 	}
@@ -2126,18 +2137,18 @@ void MainWindow::importAnimation(int source)
 		connect(
 			dlg, &dialogs::AnimationImportDialog::canvasStateImported, this,
 			[this, dlg](const drawdance::CanvasState &canvasState) {
-				MainWindow *win;
+				auto block = [canvasState](MainWindow *win) {
+					// Don't use the path of the imported animation to avoid
+					// clobbering the old file by mashing Ctrl+S instinctually.
+					win->m_doc->loadState(
+						canvasState, QString(), DP_SAVE_IMAGE_UNKNOWN, true);
+				};
 				if(canReplace()) {
-					win = this;
+					block(this);
 				} else {
 					prepareWindowReplacement();
-					win = new MainWindow;
-					emit windowReplacementFailed(win);
+					createNewWindow(block);
 				}
-				// Don't use the path of the imported animation to avoid
-				// clobbering of the old file by mashing Ctrl+S instinctually.
-				win->m_doc->loadState(
-					canvasState, QString(), DP_SAVE_IMAGE_UNKNOWN, true);
 				dlg->deleteLater();
 			});
 		utils::showWindow(dlg, shouldShowDialogMaximized());
@@ -2153,9 +2164,9 @@ void MainWindow::importAnimation(int source)
 			if(newProcessStarted) {
 				emit windowReplacementFailed(nullptr);
 			} else {
-				MainWindow *win = new MainWindow(false);
-				emit windowReplacementFailed(win);
-				win->importAnimationLayers();
+				createNewWindow([](MainWindow *win) {
+					win->importAnimationLayers();
+				});
 			}
 		}
 	}
@@ -3132,9 +3143,9 @@ void MainWindow::joinSession(const QUrl &url, const QString &autoRecordFile)
 			}
 		});
 }
-// clang-format off
 
-void MainWindow::connectToSession(const QUrl& url, const QString &autoRecordFile)
+void MainWindow::connectToSession(
+	const QUrl &url, const QString &autoRecordFile)
 {
 	m_canvasView->hideDisconnectedWarning();
 	if(!canReplace()) {
@@ -3157,12 +3168,12 @@ void MainWindow::connectToSession(const QUrl& url, const QString &autoRecordFile
 		if(newProcessStarted) {
 			emit windowReplacementFailed(nullptr);
 		} else {
-			MainWindow *win = new MainWindow(false);
-			emit windowReplacementFailed(win);
-			if(m_singleSession) {
-				win->m_doc->client()->setSessionUrl(url);
-			}
-			win->connectToSession(url, autoRecordFile);
+			createNewWindow([this, url, autoRecordFile](MainWindow *win) {
+				if(m_singleSession) {
+					win->m_doc->client()->setSessionUrl(url);
+				}
+				win->connectToSession(url, autoRecordFile);
+			});
 		}
 		return;
 	}
@@ -3170,10 +3181,17 @@ void MainWindow::connectToSession(const QUrl& url, const QString &autoRecordFile
 	net::LoginHandler *login = new net::LoginHandler(
 		net::LoginHandler::Mode::Join, net::Server::fixUpAddress(url, true),
 		this);
-	auto *dlg = new dialogs::LoginDialog(login, getStartDialogOrThis());
-	connect(m_doc, &Document::catchupProgress, dlg, &dialogs::LoginDialog::catchupProgress);
-	connect(m_doc, &Document::serverLoggedIn, dlg, &dialogs::LoginDialog::onLoginDone);
-	connect(dlg, &dialogs::LoginDialog::destroyed, this, &MainWindow::showCompatibilityModeWarning);
+	dialogs::LoginDialog *dlg =
+		new dialogs::LoginDialog(login, getStartDialogOrThis());
+	connect(
+		m_doc, &Document::catchupProgress, dlg,
+		&dialogs::LoginDialog::catchupProgress);
+	connect(
+		m_doc, &Document::serverLoggedIn, dlg,
+		&dialogs::LoginDialog::onLoginDone);
+	connect(
+		dlg, &dialogs::LoginDialog::destroyed, this,
+		&MainWindow::showCompatibilityModeWarning);
 	m_canvasView->connectLoginDialog(m_doc, dlg);
 
 	dlg->show();
@@ -3183,9 +3201,6 @@ void MainWindow::connectToSession(const QUrl& url, const QString &autoRecordFile
 		settings.serverTimeout(), settings.networkProxyMode(), login, false);
 }
 
-/**
- * Now connecting to server
- */
 void MainWindow::onServerConnected()
 {
 	// Enable connection related actions
@@ -3200,10 +3215,8 @@ void MainWindow::onServerConnected()
 	m_canvasView->viewWidget()->setEnabled(false);
 	setDrawingToolsEnabled(false);
 }
+// clang-format off
 
-/**
- * Connection lost, so disable and enable some UI elements
- */
 void MainWindow::onServerDisconnected(
 	const QString &message, const QString &errorcode, bool localDisconnect,
 	bool anyMessageReceived)
