@@ -1791,6 +1791,8 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 			dlg->setParent(win, dlg->windowFlags());
 			win->connectStartDialog(dlg);
 			utils::showWindow(dlg, win->shouldShowDialogMaximized());
+			dlg->activateWindow();
+			dlg->raise();
 		} else {
 			dlg->deleteLater();
 		}
