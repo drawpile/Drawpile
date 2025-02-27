@@ -157,7 +157,7 @@ void Tools::initKeyboardShortcuts(
 	//: This stands for millseconds.
 	temporarySwitchMs->setSuffix(tr("ms"));
 	auto *temporarySwitchLayout = utils::encapsulate(
-		tr("Switch tool temporarily by holding shortcut key for %1"),
+		tr("Switch tool temporarily by holding primary shortcut for %1"),
 		temporarySwitchMs);
 	auto *temporarySwitch = utils::addCheckable(
 		tr("Enable brush outline"), temporarySwitchLayout, temporarySwitchMs);
