@@ -19,6 +19,7 @@ extern "C" {
 #include <QTimer>
 #include <QUrl>
 #include <QVariantMap>
+#include <functional>
 
 class ActionBuilder;
 class Document;
@@ -318,6 +319,7 @@ private:
 		const QString &title, const QString &action,
 		const std::function<void(bool)> &block);
 	void prepareWindowReplacement();
+	void createNewWindow(const std::function<void(MainWindow *)> &block);
 
 	void connectStartDialog(dialogs::StartDialog *dlg);
 	void setStartDialogActions(dialogs::StartDialog *dlg);
