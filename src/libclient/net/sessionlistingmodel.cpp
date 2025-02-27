@@ -402,18 +402,6 @@ QSize SessionListingModel::span(const QModelIndex &index) const
 	return QSize(1, 1);
 }
 
-QModelIndex SessionListingModel::indexOfListing(const QString &listing) const
-{
-	for(int i = 0; i < m_listings.size(); ++i) {
-		if(m_listings.at(i).name == listing) {
-			qInfo("indexOf %s -> %d", qPrintable(listing), i);
-			return createIndex(i, 0);
-		}
-	}
-
-	return QModelIndex();
-}
-
 QModelIndex SessionListingModel::primaryIndexOfUrl(const QUrl &url) const
 {
 	QVector<QModelIndex> indexes;

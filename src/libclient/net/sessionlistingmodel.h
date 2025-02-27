@@ -62,8 +62,6 @@ public:
 	Qt::ItemFlags flags(const QModelIndex &index) const override;
 	QSize span(const QModelIndex &index) const override;
 
-	QModelIndex indexOfListing(const QString &listing) const;
-
 	QModelIndex primaryIndexOfUrl(const QUrl &url) const;
 
 public slots:
