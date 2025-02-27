@@ -20,6 +20,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Show current tier in the layer permissions menu again. Thanks Meiren for reporting.
  * Fix: Reduce selection outline resolution instead of punting to the blue selection mask when it gets too large. Thanks Meru, MorrowShore and Shane for reporting.
  * Server Feature: Invite codes, allowing inviting people with revokable links that override regular session restrictions. Thanks Bluestrings and Liz for suggesting.
+ * Removed Feature: Toggling between web and direct links in the invite dialog. Drawpile will translate the web link if you paste it into the join dialog anyway, so the distinction was pointless.
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.

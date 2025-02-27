@@ -148,7 +148,6 @@ SETTING(insecurePasswordStorage   , InsecurePasswordStorage   , "settings/insecu
 SETTING_GETSET_V(
 	V1, interfaceMode             , InterfaceMode             , "settings/interfacemode"                , int(INTERFACE_MODE_DEFAULT),
 	&any::getExactVersion, &any::set)
-SETTING(inviteLinkType            , InviteLinkType            , "invites/linktype"                      , int(dialogs::InviteDialog::LinkType::Web))
 SETTING(inviteIncludePassword     , InviteIncludePassword     , "invites/includepassword"               , true)
 SETTING(kineticScrollGesture      , KineticScrollGesture      , "settings/kineticscroll/gesture"        , int(KINETIC_SCROLL_GESTURE_DEFAULT))
 SETTING(kineticScrollThreshold    , KineticScrollThreshold    , "settings/kineticscroll/threshold"      , 10)

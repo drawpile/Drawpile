@@ -22,7 +22,6 @@ struct InviteDialog::Private {
 	widgets::NetStatus *netStatus;
 	net::InviteListModel *inviteListModel;
 	Ui::InviteDialog ui;
-	QButtonGroup *linkTypeGroup;
 	QMenu *inviteCodeMenu = nullptr;
 	QAction *inviteCodeCreate = nullptr;
 	QAction *inviteCodeRemove = nullptr;
@@ -60,12 +59,6 @@ InviteDialog::InviteDialog(
 	d->ui.ipProgressBar->setVisible(false);
 
 	desktop::settings::Settings &settings = dpApp().settings();
-
-	d->linkTypeGroup = new QButtonGroup{this};
-	d->linkTypeGroup->addButton(d->ui.webLinkRadio, int(LinkType::Web));
-	d->linkTypeGroup->addButton(d->ui.directLinkRadio, int(LinkType::Direct));
-	settings.bindInviteLinkType(d->linkTypeGroup);
-	settings.bindInviteLinkType(this, &InviteDialog::updateInviteLink);
 	settings.bindInviteIncludePassword(d->ui.includePasswordBox);
 	settings.bindInviteIncludePassword(this, &InviteDialog::updateInviteLink);
 	settings.bindShowInviteDialogOnHost(d->ui.showOnHostBox);
@@ -199,17 +192,6 @@ void InviteDialog::selectInviteCode(const QString &secret)
 	}
 }
 
-QString InviteDialog::buildDirectInviteLink(
-	bool includePassword, const QString &secret) const
-{
-	QUrl inviteUrl = d->netStatus->sessionUrl();
-	if(includePassword) {
-		inviteUrl.setQuery(QStringLiteral("p=%1").arg(d->joinPassword));
-	}
-	inviteUrl.setPath(buildPath(inviteUrl.path(), secret));
-	return inviteUrl.toString();
-}
-
 QString InviteDialog::buildWebInviteLink(
 	bool includePassword, const QString &secret) const
 {
@@ -313,10 +295,7 @@ void InviteDialog::updateInviteLink()
 {
 	bool includePassword =
 		d->ui.includePasswordBox->isChecked() && !d->joinPassword.isEmpty();
-	d->ui.urlEdit->setPlainText(
-		d->linkTypeGroup->checkedId() == int(LinkType::Web)
-			? buildWebInviteLink(includePassword, QString())
-			: buildDirectInviteLink(includePassword, QString()));
+	d->ui.urlEdit->setPlainText(buildWebInviteLink(includePassword, QString()));
 }
 
 void InviteDialog::updateCodes()

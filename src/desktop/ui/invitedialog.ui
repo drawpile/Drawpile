@@ -56,35 +56,11 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="linkTypeLayout">
-          <item>
-           <widget class="QRadioButton" name="webLinkRadio">
-            <property name="text">
-             <string>Web link</string>
-            </property>
-            <property name="autoExclusive">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="directLinkRadio">
-            <property name="text">
-             <string>Direct link</string>
-            </property>
-            <property name="autoExclusive">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="includePasswordBox">
-            <property name="text">
-             <string>Include password</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QCheckBox" name="includePasswordBox">
+          <property name="text">
+           <string>Include password</string>
+          </property>
+         </widget>
         </item>
         <item>
          <spacer name="urlTopSpacer">

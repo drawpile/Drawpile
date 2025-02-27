@@ -21,9 +21,6 @@ namespace dialogs {
 class InviteDialog : public QDialog {
 	Q_OBJECT
 public:
-	enum class LinkType : int { Web, Direct };
-	Q_ENUM(LinkType)
-
 	InviteDialog(
 		widgets::NetStatus *netStatus, net::InviteListModel *inviteListModel,
 		bool compatibilityMode, bool allowWeb, bool nsfm, bool op,
@@ -44,8 +41,6 @@ signals:
 	void removeInviteCode(const QString &secret);
 
 private:
-	QString
-	buildDirectInviteLink(bool includePassword, const QString &secret) const;
 	QString
 	buildWebInviteLink(bool includePassword, const QString &secret) const;
 	static QString buildPath(QString path, const QString &secret);
