@@ -986,8 +986,8 @@ void ChatWidget::showChatContextMenu(const QPoint &pos)
 		}
 	}
 
-	menu->exec(d->view->mapToGlobal(pos));
-	delete menu;
+	menu->popup(d->view->mapToGlobal(pos));
+	menu->setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void ChatWidget::contextMenuAboutToShow()
