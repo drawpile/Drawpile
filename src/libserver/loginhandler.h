@@ -158,6 +158,7 @@ private:
 	bool m_requireMatchingHost;
 	bool m_mandatoryLookup;
 	QString m_lookup;
+	QString m_lookupInviteSecret;
 	int m_authPasswordAttempts = 0;
 	int m_sessionPasswordAttempts = 0;
 	QJsonObject m_clientInfo;

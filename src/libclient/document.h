@@ -29,8 +29,9 @@ namespace canvas {
 class CanvasModel;
 }
 namespace net {
-class BanlistModel;
 class AnnouncementListModel;
+class BanlistModel;
+class InviteListModel;
 }
 namespace libclient {
 namespace settings {
@@ -106,6 +107,7 @@ public:
 	{
 		return m_announcementlist;
 	}
+	net::InviteListModel *inviteList() const { return m_inviteList; }
 	QStringListModel *serverLog() const { return m_serverLog; }
 
 	/**
@@ -191,6 +193,14 @@ public:
 	}
 
 	bool isSessionOutOfSpace() const { return m_sessionOutOfSpace; }
+	bool isSessionInviteCodesEnabled() const
+	{
+		return m_sessionInviteCodesEnabled;
+	}
+	bool serverSupportsInviteCodes() const
+	{
+		return m_serverSupportsInviteCodes;
+	}
 	bool isPreparingReset() const { return m_preparingReset; }
 
 	bool isStreamingReset() const
@@ -247,6 +257,8 @@ signals:
 	void baseResetThresholdChanged(double threshold);
 	void autoResetTooLarge(int maxSize);
 	void sessionOutOfSpaceChanged(bool outOfSpace);
+	void sessionInviteCodesEnabledChanged(bool inviteCodesEnabled);
+	void serverSupportsInviteCodesChanged(bool serverSupportsInviteCodes);
 	void preparingResetChanged(bool preparingReset);
 	void sessionResetState(const drawdance::CanvasState &canvasState);
 
@@ -285,6 +297,8 @@ public slots:
 	void sendTerminateSession(const QString &reason);
 	void sendCanvasBackground(const QColor &color);
 	void sendAbuseReport(int userId, const QString &message);
+	void sendCreateInviteCode(int maxUses, bool op, bool trust);
+	void sendRemoveInviteCode(const QString &secret);
 
 	// Tool related functions
 	void undo();
@@ -366,6 +380,8 @@ private:
 	void setSessionIdleOverride(bool idleOverride);
 	void setSessionAllowIdleOverride(bool allowIdleOverride);
 	void setSessionOutOfSpace(bool outOfSpace);
+	void setSessionInviteCodesEnabled(bool sessionInviteCodesEnabled);
+	void setServerSupportsInviteCodes(bool serverSupportsInviteCodes);
 
 	bool copyFromLayer(int layer);
 	void fillBackground(QImage &img);
@@ -409,6 +425,7 @@ private:
 	net::BanlistModel *m_banlist;
 	net::AuthListModel *m_authList;
 	net::AnnouncementListModel *m_announcementlist;
+	net::InviteListModel *m_inviteList;
 	QStringListModel *m_serverLog;
 	libclient::settings::Settings &m_settings;
 
@@ -435,12 +452,13 @@ private:
 	bool m_sessionDeputies;
 	bool m_sessionIdleOverride;
 	bool m_sessionAllowIdleOverride;
-
+	bool m_sessionInviteCodesEnabled = false;
 	int m_sessionMaxUserCount;
 	int m_sessionHistoryMaxSize;
 	int m_sessionResetThreshold;
 	int m_baseResetThreshold;
 	int m_sessionIdleTimeLimit;
+	bool m_serverSupportsInviteCodes = false;
 	int m_streamResetMessageCount = 0;
 	int m_streamResetImageOriginalCount = 0;
 	StreamResetState m_streamResetState = StreamResetState::None;

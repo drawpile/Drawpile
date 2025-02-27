@@ -253,6 +253,7 @@ signals:
 	void sessionConfChange(const QJsonObject &config);
 	void sessionPasswordChanged(const QString &password);
 	void sessionOutOfSpace();
+	void inviteCodeCreated(const QString &secret);
 
 	void serverConnected(const QString &address, int port);
 	void serverLoggedIn(

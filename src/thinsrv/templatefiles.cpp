@@ -159,6 +159,7 @@ QJsonObject TemplateFiles::templateFileDescription(
 		{"nsfm", getHeaderBool(header, "nsfm")},
 		{"authOnly", getHeaderBool(header, "authOnly")},
 		{"allowWeb", getHeaderBool(header, "allowWeb")},
+		{"invites", getHeaderBool(header, "invites")},
 	};
 
 	DP_player_free(player);
@@ -246,6 +247,8 @@ bool TemplateFiles::init(SessionHistory *session) const
 		flags |= SessionHistory::IdleOverride;
 	if(getHeaderBool(header, "allowWeb"))
 		flags |= SessionHistory::AllowWeb;
+	if(getHeaderBool(header, "invites"))
+		flags |= SessionHistory::Invites;
 	session->setFlags(flags);
 
 	// Set initial history

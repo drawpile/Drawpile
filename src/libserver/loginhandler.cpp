@@ -422,6 +422,12 @@ void LoginHandler::handleLookupMessage(const net::ServerCommand &cmd)
 
 	} else if(argc == 1) {
 		QString sessionIdOrAlias = cmd.args[0].toString();
+		QString inviteSecret;
+		if(int pos = sessionIdOrAlias.lastIndexOf(':'); pos != -1) {
+			inviteSecret = sessionIdOrAlias.mid(pos + 1);
+			sessionIdOrAlias.truncate(pos);
+		}
+
 		if(sessionIdOrAlias.isEmpty()) {
 			if(m_mandatoryLookup) {
 				sendError(
@@ -435,23 +441,37 @@ void LoginHandler::handleLookupMessage(const net::ServerCommand &cmd)
 				QStringLiteral("Empty join lookup OK!"), QJsonObject());
 
 		} else {
-			QJsonObject description =
-				m_sessions->getSessionDescriptionByIdOrAlias(
-					sessionIdOrAlias, true);
-			QString id;
-			if(description.isEmpty() ||
-			   (id = description.value(QStringLiteral("id")).toString())
-				   .isEmpty()) {
+			Sessions::JoinResult jr = m_sessions->checkSessionJoin(
+				m_client, sessionIdOrAlias, inviteSecret);
+			if(jr.id.isEmpty()) {
 				sendError(
 					"lookupFailed",
 					QStringLiteral(
 						"Session not found, it may have ended or its "
 						"invite link has changed"));
 				return;
+			} else {
+				switch(jr.invite) {
+				case Sessions::JoinResult::InviteOk:
+					break;
+				case Sessions::JoinResult::InviteNotFound:
+					sendError(
+						"inviteNotFound",
+						QStringLiteral(
+							"Invite is invalid or has been revoked"));
+					return;
+				case Sessions::JoinResult::InviteLimitReached:
+					sendError(
+						"inviteLimitReached",
+						QStringLiteral("Invite has already been used up"));
+					return;
+				}
 			}
-			m_lookup = id;
+
+			m_lookup = jr.id;
+			m_lookupInviteSecret = inviteSecret;
 			msg = net::ServerReply::makeResultJoinLookup(
-				QStringLiteral("Join lookup OK!"), description);
+				QStringLiteral("Join lookup OK!"), jr.description);
 		}
 
 	} else {
@@ -1042,6 +1062,10 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 		session->history()->setFlag(SessionHistory::AllowWeb);
 	}
 
+	if(m_config->getConfigBool(config::Invites)) {
+		session->history()->setFlag(SessionHistory::Invites);
+	}
+
 	// Mark login phase as complete.
 	// No more login messages will be sent to this user.
 	send(net::ServerReply::makeResultJoinHost(
@@ -1096,23 +1120,56 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 		return;
 	}
 
-	if(m_client->isBrowser() &&
-	   !session->history()->hasFlag(SessionHistory::AllowWeb)) {
-		sendError(
-			QStringLiteral("noWebJoin"),
-			QStringLiteral("This session does not allow joining from the web"));
-		return;
-	}
-
 	if(!verifySystemId(
 		   clientInfoLogGuard.sid(),
 		   session->history()->protocolVersion().shouldHaveSystemId())) {
 		return;
 	}
 
+	Invite *invite = nullptr;
+	if(!m_lookupInviteSecret.isEmpty()) {
+		switch(session->checkInvite(
+			m_client, m_lookupInviteSecret, true, &invite)) {
+		case CheckInviteResult::InviteOk:
+		case CheckInviteResult::InviteUsed:
+		case CheckInviteResult::AlreadyInvited:
+		case CheckInviteResult::AlreadyInvitedNameChanged:
+			break;
+		case CheckInviteResult::NoClientKey:
+			sendError(
+				"inviteNoClientKey",
+				QStringLiteral("No client key to use with invite"));
+			return;
+			break;
+		case CheckInviteResult::NotFound:
+			sendError(
+				"inviteNotFound",
+				QStringLiteral("Invite is invalid or has been revoked"));
+			return;
+		case CheckInviteResult::MaxUsesReached:
+			sendError(
+				"inviteLimitReached",
+				QStringLiteral("Invite has already been used up"));
+			return;
+		}
+	}
+
+	if(invite) {
+		m_client->setInviteSecret(invite->secret);
+	}
+
+	SessionHistory *history = session->history();
+	if(!invite && m_client->isBrowser() &&
+	   !history->hasFlag(SessionHistory::AllowWeb)) {
+		sendError(
+			QStringLiteral("noWebJoin"),
+			QStringLiteral("This session does not allow joining from the web"));
+		return;
+	}
+
 	if(!m_client->isModerator()) {
 		// Non-moderators have to obey access restrictions
-		int banId = session->history()->banlist().isBanned(
+		int banId = history->banlist().isBanned(
 			m_client->username(), m_client->peerAddress(), m_client->authId(),
 			m_client->sid());
 		if(banId != 0) {
@@ -1130,18 +1187,18 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 							  .arg(banId));
 			return;
 		}
-		if(session->isClosed()) {
+		if(!invite && session->isClosed()) {
 			sendError("closed", "This session is closed");
 			return;
 		}
-		if(session->history()->hasFlag(SessionHistory::AuthOnly) &&
+		if(!invite && history->hasFlag(SessionHistory::AuthOnly) &&
 		   !m_client->isAuthenticated()) {
 			sendError("authOnly", "This session does not allow guest logins");
 			return;
 		}
 
-		if(!session->history()->checkPassword(
-			   cmd.kwargs.value("password").toString())) {
+		if(!invite &&
+		   !history->checkPassword(cmd.kwargs.value("password").toString())) {
 			++m_sessionPasswordAttempts;
 			m_client->log(
 				Log()
@@ -1191,7 +1248,7 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 	checkClientCapabilities(cmd);
 
 	m_complete = true;
-	session->joinUser(m_client, false);
+	session->joinUser(m_client, false, invite);
 
 	deleteLater();
 }

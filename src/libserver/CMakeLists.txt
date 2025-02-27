@@ -35,6 +35,7 @@ target_sources(dpserver PRIVATE
 	sessionban.h
 	sessionhistory.cpp
 	sessionhistory.h
+	sessions.cpp
 	sessions.h
 	sessionserver.cpp
 	sessionserver.h

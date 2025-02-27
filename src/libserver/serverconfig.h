@@ -153,7 +153,10 @@ static const ConfigKey
 	// the browser.
 	AllowGuestWebHosts(47, "allowGuestWebHosts", "true", ConfigKey::BOOL),
 	// Respect ext-auth user's "WEBHOST" flag.
-	ExtAuthWebHost(48, "extauthweb", "false", ConfigKey::BOOL);
+	ExtAuthWebHost(48, "extauthweb", "false", ConfigKey::BOOL),
+	// Whether to enable temporary invites on sessions by default. Can be
+	// overridden by moderators per-session.
+	Invites(49, "invites", "true", ConfigKey::BOOL);
 }
 
 //! Settings that are not adjustable after the server has started

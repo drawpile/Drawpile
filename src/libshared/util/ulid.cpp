@@ -177,3 +177,19 @@ bool Ulid::operator>(const Ulid &other) const
 {
 	return memcmp(m_ulid, other.m_ulid, sizeof(m_ulid)) > 0;
 }
+
+QString Ulid::makeShortIdentifier()
+{
+	char buffer[8];
+	int n = int(QDateTime::currentSecsSinceEpoch() % 1000000LL);
+	buffer[0] = ENC[n % 32];
+	buffer[1] = ENC[(n / 32) % 32];
+	buffer[2] = ENC[((n / 32) / 32) % 32];
+	QRandomGenerator *rand = QRandomGenerator::global();
+	buffer[3] = ENC[rand->bounded(32)];
+	buffer[4] = ENC[rand->bounded(32)];
+	buffer[5] = ENC[rand->bounded(32)];
+	buffer[6] = ENC[rand->bounded(32)];
+	buffer[7] = ENC[rand->bounded(32)];
+	return QString::fromLatin1(buffer, sizeof(buffer));
+}

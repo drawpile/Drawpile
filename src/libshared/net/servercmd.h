@@ -70,6 +70,7 @@ struct ServerReply {
 	static constexpr char KEY_KICK_WEB_USERS[] = "kickwebusers";
 	static constexpr char KEY_OUT_OF_SPACE[] = "outofspace";
 	static constexpr char KEY_OP_GIVE[] = "opgive";
+	static constexpr char KEY_OP_GIVE_INVITE[] = "opgiveinvite";
 	static constexpr char KEY_OP_TAKE[] = "optake";
 	static constexpr char KEY_RESET_CANCEL[] = "resetcancel";
 	static constexpr char KEY_RESET_FAILED[] = "resetfailed";
@@ -84,6 +85,7 @@ struct ServerReply {
 	static constexpr char KEY_TERMINATE_SESSION_REASON[] =
 		"terminatesessionreason";
 	static constexpr char KEY_TRUST_GIVE[] = "trustgive";
+	static constexpr char KEY_TRUST_GIVE_INVITE[] = "trustgiveinvite";
 	static constexpr char KEY_TRUST_TAKE[] = "trusttake";
 
 	enum class ReplyType {
@@ -106,6 +108,7 @@ struct ServerReply {
 		StreamStart,	  // streamed session reset start marker
 		StreamProgress,	  // streamed session reset progress control message
 		PasswordChange,	  // session password changed
+		InviteCreated,	  // invite code created
 	} type;
 	QString message;
 	QJsonObject reply;
@@ -222,6 +225,8 @@ struct ServerReply {
 	static net::Message makeOutOfSpace();
 
 	static net::Message makeStatusUpdate(int size);
+
+	static net::Message makeInviteCreated(const QString &secret);
 };
 
 }

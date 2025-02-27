@@ -2912,20 +2912,46 @@ void MainWindow::hostSession(const HostParams &params)
 
 void MainWindow::invite()
 {
-	dialogs::InviteDialog *dlg = new dialogs::InviteDialog(
-		m_netstatus, m_doc->isCompatibilityMode(), m_doc->isSessionAllowWeb(),
-		m_doc->isSessionNsfm(), this);
-	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	connect(
-		m_doc, &Document::compatibilityModeChanged, dlg,
-		&dialogs::InviteDialog::setSessionCompatibilityMode);
-	connect(
-		m_doc, &Document::sessionAllowWebChanged, dlg,
-		&dialogs::InviteDialog::setSessionAllowWeb);
-	connect(
-		m_doc, &Document::sessionNsfmChanged, dlg,
-		&dialogs::InviteDialog::setSessionNsfm);
-	dlg->show();
+	canvas::CanvasModel *canvas = m_doc->canvas();
+	if(canvas) {
+		net::Client *client = m_doc->client();
+		canvas::AclState *acls = canvas->aclState();
+		dialogs::InviteDialog *dlg = new dialogs::InviteDialog(
+			m_netstatus, m_doc->inviteList(), m_doc->isCompatibilityMode(),
+			m_doc->isSessionAllowWeb(), m_doc->isSessionNsfm(),
+			acls->amOperator(), client->isModerator(),
+			m_doc->serverSupportsInviteCodes(),
+			m_doc->isSessionInviteCodesEnabled(), this);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		connect(
+			m_doc, &Document::compatibilityModeChanged, dlg,
+			&dialogs::InviteDialog::setSessionCompatibilityMode);
+		connect(
+			m_doc, &Document::sessionAllowWebChanged, dlg,
+			&dialogs::InviteDialog::setSessionAllowWeb);
+		connect(
+			m_doc, &Document::sessionNsfmChanged, dlg,
+			&dialogs::InviteDialog::setSessionNsfm);
+		connect(
+			acls, &canvas::AclState::localOpChanged, dlg,
+			&dialogs::InviteDialog::setOp);
+		connect(
+			m_doc, &Document::sessionInviteCodesEnabledChanged, dlg,
+			&dialogs::InviteDialog::setSessionCodesEnabled);
+		connect(
+			m_doc, &Document::serverSupportsInviteCodesChanged, dlg,
+			&dialogs::InviteDialog::setServerSupportsInviteCodes);
+		connect(
+			client, &net::Client::inviteCodeCreated, dlg,
+			&dialogs::InviteDialog::selectInviteCode);
+		connect(
+			dlg, &dialogs::InviteDialog::createInviteCode, m_doc,
+			&Document::sendCreateInviteCode);
+		connect(
+			dlg, &dialogs::InviteDialog::removeInviteCode, m_doc,
+			&Document::sendRemoveInviteCode);
+		dlg->show();
+	}
 }
 
 void MainWindow::join()

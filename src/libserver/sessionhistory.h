@@ -61,6 +61,38 @@ enum class StreamResetPrepareResult {
 	ConsumerError,
 };
 
+enum class CheckInviteResult {
+	InviteOk,
+	InviteUsed,
+	NotFound,
+	NoClientKey,
+	MaxUsesReached,
+	AlreadyInvited,
+	AlreadyInvitedNameChanged,
+};
+
+struct InviteUse {
+	QString name;
+	QString at;
+
+	QJsonObject toJson() const;
+};
+
+struct Invite {
+	QString secret;
+	QString creator;
+	QString at;
+	QHash<QString, InviteUse> uses;
+	int maxUses;
+	bool trust;
+	bool op;
+
+	bool hasUsesRemaining() const { return uses.size() < maxUses; }
+
+	QJsonObject toJson() const;
+	QJsonArray usesToJson() const;
+};
+
 /**
  * @brief Abstract base class for session history implementations
  *
@@ -79,6 +111,7 @@ public:
 		IdleOverride = 0x20,
 		AllowWeb = 0x40,
 		AutoTitle = 0x80,
+		Invites = 0x100,
 	};
 	Q_DECLARE_FLAGS(Flags, Flag)
 
@@ -454,6 +487,16 @@ public:
 
 	QJsonValue getStreamedResetDescription() const;
 
+	virtual Invite *
+	createInvite(const QString &createdBy, int maxUses, bool trust, bool op);
+	virtual bool removeInvite(const QString &secret);
+	bool removeOldestInvite(QString *outSecret = nullptr);
+	virtual CheckInviteResult checkInvite(
+		Client *client, const QString &secret, bool use,
+		QString *outClientKey = nullptr, Invite **outInvite = nullptr,
+		InviteUse **outInviteUse = nullptr);
+	const QHash<QString, Invite> &invitesBySecret() const { return m_invites; }
+
 signals:
 	/**
 	 * @brief This signal is emited when new messages are added to the history
@@ -487,12 +530,22 @@ protected:
 		size_t &outSizeInBytes, QString &outError) = 0;
 	virtual void discardResetStream() = 0;
 
+	Invite &setInvite(
+		const QString &secret, const QString &createdBy, const QString &at,
+		int maxUses, bool trust, bool op);
+	CheckInviteResult checkInviteFor(
+		const QString &clientKey, const QString &name, const QString &secret,
+		bool use, Invite **outInvite = nullptr,
+		InviteUse **outInviteUse = nullptr);
+
 	int incrementNextCatchupKey(int &nextCatchupKey);
 
 	SessionBanList m_banlist;
 
 private:
 	enum class ResetStreamState { None, Streaming, Prepared };
+	static constexpr int MAX_INVITES = 50;
+	static constexpr int MAX_INVITE_USES = 50;
 
 	bool hasSpaceFor(size_t bytes, size_t extra) const;
 	void addMessageInternal(const net::Message &msg, size_t bytes);
@@ -500,6 +553,11 @@ private:
 	void abortActiveStreamedReset();
 	static bool receiveResetStreamMessageCallback(void *user, DP_Message *msg);
 	bool receiveResetStreamMessage(const net::Message &msg);
+
+	QString generateInviteSecret() const;
+	static Invite &resetInvite(
+		Invite &invite, const QString &secret, const QString &createdBy,
+		const QString &at, int maxUses, bool trust, bool op);
 
 	QString m_id;
 	IdQueue m_idqueue;
@@ -522,6 +580,7 @@ private:
 	QSet<QString> m_authOps;
 	QSet<QString> m_authTrusted;
 	QHash<QString, QString> m_authUsernames;
+	QHash<QString, Invite> m_invites;
 };
 
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69210

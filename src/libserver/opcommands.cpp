@@ -863,6 +863,65 @@ CmdResult streamResetFinish(
 	return CmdResult::err(QStringLiteral("unknown error %d").arg(int(result)));
 }
 
+CmdResult
+createInvite(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	if(args.size() != 0) {
+		return CmdResult::err(
+			QStringLiteral("Create invite expected no arguments"));
+	}
+
+	Session *session = client->session();
+	if(!client->isModerator() &&
+	   !session->history()->hasFlag(SessionHistory::Invites)) {
+		return CmdResult::err(QStringLiteral(
+			"You're not allowed to create invite codes in this session"));
+	}
+
+	bool trust = kwargs.value(QStringLiteral("trust")).toBool();
+	bool op = kwargs.value(QStringLiteral("op")).toBool();
+	if((trust && !client->isOperator() && !client->isTrusted()) ||
+	   (op && !client->isOperator())) {
+		return CmdResult::err(
+			QStringLiteral("Can't create an invite code with a higher role"));
+	}
+
+	int maxUses = kwargs.value(QStringLiteral("maxUses")).toInt();
+	Invite *invite =
+		client->session()->createInvite(client, maxUses, trust, op);
+	if(!invite) {
+		return CmdResult::err(QStringLiteral("Too many invite codes"));
+	}
+
+	client->sendDirectMessage(
+		net::ServerReply::makeInviteCreated(invite->secret));
+	return CmdResult::ok();
+}
+
+CmdResult
+removeInvite(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(kwargs);
+	if(args.size() != 1) {
+		return CmdResult::err(
+			QStringLiteral("Remove invite expected one argument: secret"));
+	}
+
+	Session *session = client->session();
+	if(!client->isModerator() &&
+	   !session->history()->hasFlag(SessionHistory::Invites)) {
+		return CmdResult::err(QStringLiteral(
+			"You're not allowed to remove invite codes in this session"));
+	}
+
+	if(!client->session()->removeInvite(client, args[0].toString())) {
+		return CmdResult::err(
+			QStringLiteral("Invite code to remove not found"));
+	}
+
+	return CmdResult::ok();
+}
+
 SrvCommandSet::SrvCommandSet()
 {
 	commands << SrvCommand("ready-to-autoreset", readyToAutoReset)
@@ -884,7 +943,9 @@ SrvCommandSet::SrvCommandSet()
 			 << SrvCommand("auth-list", authList)
 			 << SrvCommand("stream-reset-start", streamResetStart)
 			 << SrvCommand("stream-reset-abort", streamResetAbort)
-			 << SrvCommand("stream-reset-finish", streamResetFinish);
+			 << SrvCommand("stream-reset-finish", streamResetFinish)
+			 << SrvCommand("invite-create", createInvite)
+			 << SrvCommand("invite-remove", removeInvite);
 }
 
 } // end of anonymous namespace

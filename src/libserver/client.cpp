@@ -145,6 +145,7 @@ struct Client::Private {
 	QString username;
 	QString authId;
 	QString sid;
+	QString inviteSecret;
 	QByteArray avatar;
 	QSet<QString> flags;
 
@@ -408,6 +409,16 @@ const QString &Client::sid() const
 void Client::setSid(const QString &sid)
 {
 	d->sid = sid;
+}
+
+const QString &Client::inviteSecret() const
+{
+	return d->inviteSecret;
+}
+
+void Client::setInviteSecret(const QString &inviteSecret)
+{
+	d->inviteSecret = inviteSecret;
 }
 
 void Client::setOperator(bool op)
@@ -899,8 +910,14 @@ void Client::log(Log entry) const
 
 Log Client::log() const
 {
-	return Log().user(d->id, d->socket->peerAddress(), d->username);
+	Log l = Log();
+	setUserOnLog(l);
+	return l;
 }
 
+Log &Client::setUserOnLog(Log &log) const
+{
+	return log.user(d->id, d->socket->peerAddress(), d->username);
+}
 
 }

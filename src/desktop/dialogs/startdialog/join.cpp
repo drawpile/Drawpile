@@ -116,7 +116,7 @@ void Join::updateJoinButton()
 QString Join::fixUpInviteOrWebAddress(const QString &address)
 {
 	static QRegularExpression inviteRe{
-		"\\A/invites/([^:/]+)(?::([0-9]+))?/+([a-zA-Z0-9-]{1,50})/*\\z"};
+		"\\A/invites/([^:/]+)(?::([0-9]+))?/+([a-zA-Z0-9:-]{1,50})/*\\z"};
 
 	QUrl url = QUrl::fromUserInput(address);
 	if(!url.scheme().startsWith("http", Qt::CaseInsensitive)) {

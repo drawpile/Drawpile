@@ -95,9 +95,9 @@ void ThinSession::cleanupHistoryCache()
 	history()->cleanupBatches(minIdx);
 }
 
-QJsonObject ThinSession::getDescription(bool full) const
+QJsonObject ThinSession::getDescription(bool full, bool invite) const
 {
-	QJsonObject o = Session::getDescription(full);
+	QJsonObject o = Session::getDescription(full, invite);
 	if(full) {
 		QString sessionState;
 		switch(state()) {
