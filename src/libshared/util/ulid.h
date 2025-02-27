@@ -44,6 +44,10 @@ public:
 	bool operator<(const Ulid &other) const;
 	bool operator>(const Ulid &other) const;
 
+	//! Generates an eight-character string, not really a ULID, but similar.
+	//! Used for temporary invite codes where brevity is more important.
+	static QString makeShortIdentifier();
+
 private:
 	uchar m_ulid[16];
 };

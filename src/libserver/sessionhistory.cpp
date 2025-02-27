@@ -5,9 +5,50 @@ extern "C" {
 #include "libserver/client.h"
 #include "libserver/sessionhistory.h"
 #include "libshared/net/servercmd.h"
+#include "libshared/util/ulid.h"
 #include <QJsonObject>
 
 namespace server {
+
+QJsonObject InviteUse::toJson() const
+{
+	return QJsonObject{
+		{QStringLiteral("name"), name},
+		{QStringLiteral("at"), at},
+	};
+}
+
+QJsonObject Invite::toJson() const
+{
+	QJsonObject json = {
+		{QStringLiteral("secret"), secret},
+		{QStringLiteral("at"), at},
+		{QStringLiteral("maxUses"), maxUses},
+		{QStringLiteral("uses"), usesToJson()},
+	};
+	if(!creator.isEmpty()) {
+		json.insert(QStringLiteral("creator"), creator);
+	}
+	if(op) {
+		json.insert(QStringLiteral("op"), op);
+	}
+	if(trust) {
+		json.insert(QStringLiteral("trust"), trust);
+	}
+	return json;
+}
+
+QJsonArray Invite::usesToJson() const
+{
+	QJsonArray json;
+	for(QHash<QString, InviteUse>::const_iterator it = uses.constBegin(),
+												  end = uses.constEnd();
+		it != end; ++it) {
+		json.append(it->toJson());
+	}
+	return json;
+}
+
 
 SessionHistory::SessionHistory(const QString &id, QObject *parent)
 	: QObject(parent)
@@ -410,6 +451,136 @@ QJsonValue SessionHistory::getStreamedResetDescription() const
 		{QStringLiteral("messageCount"), m_resetStreamMessageCount},
 		{QStringLiteral("haveConsumer"), m_resetStreamConsumer != nullptr},
 	});
+}
+
+Invite *SessionHistory::createInvite(
+	const QString &createdBy, int maxUses, bool trust, bool op)
+{
+	if(m_invites.size() < MAX_INVITES) {
+		return &setInvite(
+			generateInviteSecret(), createdBy,
+			QDateTime::currentDateTimeUtc().toString(Qt::ISODate), maxUses,
+			trust, op);
+	} else {
+		return nullptr;
+	}
+}
+
+bool SessionHistory::removeInvite(const QString &secret)
+{
+	return m_invites.remove(secret);
+}
+
+bool SessionHistory::removeOldestInvite(QString *outSecret)
+{
+	QString oldestSecret;
+	QString oldestAt;
+	for(QHash<QString, Invite>::const_iterator it = m_invites.constBegin(),
+											   end = m_invites.constEnd();
+		it != end; ++it) {
+		if(oldestSecret.isEmpty() || it->at < oldestAt) {
+			oldestSecret = it->secret;
+			oldestAt = it->at;
+		}
+	}
+	if(outSecret) {
+		*outSecret = oldestSecret;
+	}
+	return !oldestSecret.isEmpty() && removeInvite(oldestSecret);
+}
+
+CheckInviteResult SessionHistory::checkInvite(
+	Client *client, const QString &secret, bool use, QString *outClientKey,
+	Invite **outInvite, InviteUse **outInviteUse)
+{
+	Q_ASSERT(client);
+	const QString &clientKey = client->sid();
+	if(outClientKey) {
+		*outClientKey = clientKey;
+	}
+	return checkInviteFor(
+		clientKey, client->username(), secret, use, outInvite, outInviteUse);
+}
+
+Invite &SessionHistory::setInvite(
+	const QString &secret, const QString &createdBy, const QString &at,
+	int maxUses, bool trust, bool op)
+{
+	return resetInvite(
+		m_invites[secret], secret, createdBy, at, maxUses, trust, op);
+}
+
+CheckInviteResult SessionHistory::checkInviteFor(
+	const QString &clientKey, const QString &name, const QString &secret,
+	bool use, Invite **outInvite, InviteUse **outInviteUse)
+{
+	if(clientKey.isEmpty()) {
+		return CheckInviteResult::NoClientKey;
+	}
+
+	if(!secret.isEmpty()) {
+		QHash<QString, Invite>::iterator it = m_invites.find(secret);
+		if(it != m_invites.end()) {
+			Invite &invite = *it;
+			if(outInvite) {
+				*outInvite = &invite;
+			}
+
+			QHash<QString, InviteUse>::iterator u = invite.uses.find(clientKey);
+			if(u != invite.uses.end()) {
+				if(outInviteUse) {
+					*outInviteUse = &*u;
+				}
+				if(!use || u->name == name) {
+					return CheckInviteResult::AlreadyInvited;
+				} else {
+					u->name = name;
+					return CheckInviteResult::AlreadyInvitedNameChanged;
+				}
+			} else if(invite.hasUsesRemaining()) {
+				if(use) {
+					u = invite.uses.insert(
+						clientKey,
+						InviteUse{
+							name, QDateTime::currentDateTimeUtc().toString(
+									  Qt::ISODate)});
+					if(outInviteUse) {
+						*outInviteUse = &*u;
+					}
+					return CheckInviteResult::InviteUsed;
+				} else {
+					return CheckInviteResult::InviteOk;
+				}
+			} else {
+				return CheckInviteResult::MaxUsesReached;
+			}
+		}
+	}
+
+	return CheckInviteResult::NotFound;
+}
+
+QString SessionHistory::generateInviteSecret() const
+{
+	QString secret;
+	do {
+		secret = Ulid::makeShortIdentifier();
+	} while(m_invites.contains(secret));
+	return secret;
+}
+
+Invite &SessionHistory::resetInvite(
+	Invite &invite, const QString &secret, const QString &createdBy,
+	const QString &at, int maxUses, bool trust, bool op)
+{
+	invite.secret = secret;
+	invite.creator = createdBy;
+	invite.at = at;
+	invite.maxUses = qBound(1, maxUses, MAX_INVITE_USES);
+	invite.uses.clear();
+	invite.trust = trust;
+	invite.op = op;
+	return invite;
 }
 
 int SessionHistory::incrementNextCatchupKey(int &nextCatchupKey)

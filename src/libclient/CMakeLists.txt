@@ -120,6 +120,8 @@ target_sources(dpclient PRIVATE
 	net/banlistmodel.h
 	net/client.cpp
 	net/client.h
+	net/invitelistmodel.cpp
+	net/invitelistmodel.h
 	net/login.cpp
 	net/login.h
 	net/loginsessions.cpp

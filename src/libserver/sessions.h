@@ -3,18 +3,19 @@
 #ifndef SESSIONS_INTERFACE_H
 #define SESSIONS_INTERFACE_H
 
-#include <tuple>
+#include <QJsonObject>
+#include <QString>
 
 class QJsonArray;
 class QJsonObject;
-class QString;
 
 namespace protocol {
-	class ProtocolVersion;
+class ProtocolVersion;
 }
 
 namespace server {
 
+class Client;
 class Session;
 
 /**
@@ -22,6 +23,19 @@ class Session;
  */
 class Sessions {
 public:
+	struct JoinResult {
+		QString id;
+		QJsonObject description;
+		enum {
+			InviteOk,
+			InviteNotFound,
+			InviteLimitReached
+		} invite = InviteNotFound;
+
+		void setInvite(
+			Session *session, Client *client, const QString &inviteSecret);
+	};
+
 	virtual ~Sessions();
 
 	/**
@@ -33,20 +47,16 @@ public:
 	 * Get a session with the given ID or alias
 	 *
 	 * @param id session ID or alias
-	 * @param load if true, a session is loaded from template if it's not yet live
-	 * @return session or nullptr if session was not active or couldn't be loaded
+	 * @param load if true, a session is loaded from template if it's not yet
+	 * live
+	 * @return session or nullptr if session was not active or couldn't be
+	 * loaded
 	 */
 	virtual Session *getSessionById(const QString &id, bool loadTemplate) = 0;
 
-	/**
-	 * Get a session's description by a session ID or alias.
-	 *
-	 * @param idOrAlias A session ID, session alias or template alias.
-	 * @param loadTemplate Whether the session may be loaded from a template.
-	 * @return The session's description or an empty object if not found.
-	 */
-	virtual QJsonObject getSessionDescriptionByIdOrAlias(
-		const QString &idOrAlias, bool loadTemplate) = 0;
+	virtual JoinResult checkSessionJoin(
+		Client *client, const QString &idOrAlias,
+		const QString &inviteSecret) = 0;
 
 	/**
 	 * Create a new session
@@ -62,9 +72,13 @@ public:
 	 * @param protocolVersion session protocol version
 	 * @param founder name of the user who created the session
 	 *
-	 * @return session, error string pair: if session is null, error string contains the error code
+	 * @return session, error string pair: if session is null, error string
+	 * contains the error code
 	 */
-	virtual std::tuple<Session*, QString> createSession(const QString &id, const QString &alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder) = 0;
+	virtual std::tuple<Session *, QString> createSession(
+		const QString &id, const QString &alias,
+		const protocol::ProtocolVersion &protocolVersion,
+		const QString &founder) = 0;
 };
 
 }

@@ -102,9 +102,10 @@ public:
 	 *
 	 * The session is also temporarily closed during the Reset state.
 	 *
+	 * @param ignoreFlag Whether to ignore the closed flag
 	 * @return true if new users will not be admitted
 	 */
-	bool isClosed() const;
+	bool isClosed(bool ignoreFlag = false) const;
 	void setClosed(bool closed);
 
 	/**
@@ -119,8 +120,9 @@ public:
 	 * @brief Add a new client to the session
 	 * @param user the client to add
 	 * @param host is this the hosting user
+	 * @param invite the invite used, if any
 	 */
-	void joinUser(Client *user, bool host);
+	void joinUser(Client *user, bool host, const Invite *invite = nullptr);
 
 	/**
 	 * @brief Assign an ID for this user
@@ -295,15 +297,24 @@ public:
 	virtual StreamResetPrepareResult
 	handleStreamResetFinish(int ctxId, int expectedMessageCount) = 0;
 
+	Invite *createInvite(Client *creator, int maxUses, bool trust, bool op);
+	bool removeInvite(Client *client, const QString &secret);
+	bool hasInvite(const QString &secret) const;
+	CheckInviteResult checkInvite(
+		Client *client, const QString &secret, bool use,
+		Invite **outInvite = nullptr);
+
 	/**
 	 * @brief Grant or revoke OP status of a user
 	 * @param id user ID
 	 * @param op new status
 	 * @param changedBy name of the user who issued the command
 	 * @param sendUpdate whether to send an updated auth list to operators
+	 * @param invite the invite that triggered this change, if any
 	 */
 	void changeOpStatus(
-		uint8_t id, bool op, const QString &changedBy, bool sendUpdate = true);
+		uint8_t id, bool op, const QString &changedBy, bool sendUpdate = true,
+		const Invite *invite = nullptr);
 
 	/**
 	 * @brief Grant or revoke trusted status of a user
@@ -311,10 +322,11 @@ public:
 	 * @param trusted new status
 	 * @param changedBy name of the user who issued the command
 	 * @param sendUpdate whether to send an updated auth list to operators
+	 * @param invite the invite that triggered this change, if any
 	 */
 	void changeTrustedStatus(
 		uint8_t id, bool trusted, const QString &changedBy,
-		bool sendUpdate = true);
+		bool sendUpdate = true, const Invite *invite = nullptr);
 
 	//! Send refreshed ban list to all logged in users
 	void sendUpdatedBanlist(bool clearForNonOperators = false);
@@ -327,6 +339,8 @@ public:
 
 	//! Send a refreshed list or registered users with op and trusted states.
 	void sendUpdatedAuthList();
+
+	void sendUpdatedInviteList();
 
 	/**
 	 * @brief Send an abuse report
@@ -348,9 +362,11 @@ public:
 	 * and the JSON api.
 	 *
 	 * @param full - include detailed information (for admin use)
+	 * @param invite - adjust description for an explicit invite
 	 * @return
 	 */
-	virtual QJsonObject getDescription(bool full = false) const;
+	virtual QJsonObject
+	getDescription(bool full = false, bool invite = false) const;
 
 	QJsonObject getExportBanList() const;
 
@@ -378,6 +394,9 @@ public:
 	 * The abridged version is also sent to all active memeers of the session.
 	 */
 	Q_SLOT void log(const Log &entry);
+
+	// Log a message for the given client if non-null, otherwise a session log.
+	void logFor(Client *client, const Log &entry);
 
 signals:
 	/**
@@ -472,10 +491,12 @@ private:
 	 * @param ids new list of session operators
 	 * @param changedBy name of the user who issued the change command
 	 * @param sendUpdate whether to send an updated auth list to operators
+	 * @param invite the invite that triggered this change, if any
 	 * @return sanitized list of actual session operators
 	 */
 	QVector<uint8_t> updateOwnership(
-		QVector<uint8_t> ids, const QString &changedBy, bool sendUpdate = true);
+		QVector<uint8_t> ids, const QString &changedBy, bool sendUpdate = true,
+		const Invite *invite = nullptr);
 
 	/**
 	 * @brief Update the list of trusted users
@@ -484,10 +505,12 @@ private:
 	 * @param ids new list of trusted users
 	 * @param changedBy name of the user who issued the change command
 	 * @param sendUpdate whether to send an updated auth list to operators
+	 * @param invite the invite that triggered this change, if any
 	 * @return sanitized list of actual trusted users
 	 */
 	QVector<uint8_t> updateTrustedUsers(
-		QVector<uint8_t> ids, const QString &changedBy, bool sendUpdate = true);
+		QVector<uint8_t> ids, const QString &changedBy, bool sendUpdate = true,
+		const Invite *invite = nullptr);
 
 	void restartRecording();
 	void stopRecording();
@@ -506,6 +529,10 @@ private:
 		const QJsonObject &request);
 
 	JsonApiResult callChatJsonApi(
+		JsonApiMethod method, const QStringList &path,
+		const QJsonObject &request);
+
+	JsonApiResult callInvitesJsonApi(
 		JsonApiMethod method, const QStringList &path,
 		const QJsonObject &request);
 

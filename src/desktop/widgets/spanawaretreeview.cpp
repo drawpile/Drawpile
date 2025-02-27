@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/widgets/spanawaretreeview.h"
 #include <QDebug>
+#include <QKeyEvent>
+#include <QKeySequence>
 #include <QList>
 #include <QModelIndex>
 #include <QScrollBar>
@@ -44,13 +46,31 @@ void SpanAwareTreeView::verticalScrollbarValueChanged(int value)
 	checkVerticalScrollBarVisibility();
 }
 
+void SpanAwareTreeView::keyPressEvent(QKeyEvent *event)
+{
+	if(m_handleCopy && event == QKeySequence::Copy) {
+		emit copyRequested();
+		event->accept();
+	} else if(m_handleDelete && event == QKeySequence::Delete) {
+		emit deleteRequested();
+		event->accept();
+	} else {
+		QTreeView::keyPressEvent(event);
+	}
+}
+
 void SpanAwareTreeView::setAllSpans(const QModelIndex &index)
 {
 	const QAbstractItemModel *m = index.model();
-	setFirstColumnSpanned(
-		index.row(), m->parent(index), m->span(index).width() != 1);
-	if(m->hasChildren(index)) {
-		setAllSpans(m->index(0, 0, index));
+	if(m) {
+		setFirstColumnSpanned(
+			index.row(), m->parent(index), m->span(index).width() != 1);
+		if(m->hasChildren(index)) {
+			int childRows = m->rowCount(index);
+			for(int i = 0; i < childRows; ++i) {
+				setAllSpans(m->index(i, 0, index));
+			}
+		}
 	}
 }
 

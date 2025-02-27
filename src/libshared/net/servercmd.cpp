@@ -186,6 +186,8 @@ ServerReply ServerReply::fromJson(const QJsonDocument &doc)
 		r.type = ServerReply::ReplyType::StreamProgress;
 	} else if(typestr == QStringLiteral("passwordchange")) {
 		r.type = ServerReply::ReplyType::PasswordChange;
+	} else if(typestr == QStringLiteral("invitecreated")){
+		r.type = ServerReply::ReplyType::InviteCreated;
 	} else {
 		r.type = ServerReply::ReplyType::Unknown;
 	}
@@ -574,5 +576,12 @@ net::Message ServerReply::makeStatusUpdate(int size)
 	return make(
 		{{QStringLiteral("type"), QStringLiteral("status")},
 		 {QStringLiteral("size"), size}});
+}
+
+net::Message ServerReply::makeInviteCreated(const QString &secret)
+{
+	return make(
+		{{QStringLiteral("type"), QStringLiteral("invitecreated")},
+		 {QStringLiteral("secret"), secret}});
 }
 }

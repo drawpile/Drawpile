@@ -96,8 +96,9 @@ public:
 	 */
 	Session *getSessionById(const QString &id, bool load) override;
 
-	QJsonObject getSessionDescriptionByIdOrAlias(
-		const QString &idOrAlias, bool loadTemplate) override;
+	JoinResult checkSessionJoin(
+		Client *client, const QString &idOrAlias,
+		const QString &inviteSecret) override;
 
 	/**
 	 * @brief Get the total number of connected users

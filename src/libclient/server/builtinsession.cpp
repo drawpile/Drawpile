@@ -281,6 +281,12 @@ void BuiltinSession::finishInternalReset()
 	}
 
 	m_reset.clear();
+	sendUpdatedSessionProperties();
+	sendUpdatedAnnouncementList();
+	sendUpdatedBanlist();
+	sendUpdatedMuteList();
+	sendUpdatedAuthList();
+	sendUpdatedInviteList();
 }
 
 }

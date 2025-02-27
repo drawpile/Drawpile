@@ -12,6 +12,7 @@ extern "C" {
 #include "libclient/canvas/userlist.h"
 #include "libclient/document.h"
 #include "libclient/export/canvassaverrunnable.h"
+#include "libclient/net/invitelistmodel.h"
 #include "libclient/settings.h"
 #include "libclient/tools/selection.h"
 #include "libclient/tools/toolcontroller.h"
@@ -85,6 +86,7 @@ Document::Document(
 	m_authList = new net::AuthListModel(this);
 	m_announcementlist =
 		new net::AnnouncementListModel(settings.listServers(), this);
+	m_inviteList = new net::InviteListModel(this);
 	m_serverLog = new QStringListModel(this);
 
 	m_autosaveTimer = new QTimer(this);
@@ -347,8 +349,11 @@ void Document::onServerDisconnect()
 	m_banlist->clear();
 	m_authList->clear();
 	m_announcementlist->clear();
+	m_inviteList->clear();
 	setSessionOpword(false);
 	setSessionOutOfSpace(false);
+	setSessionInviteCodesEnabled(false);
+	setServerSupportsInviteCodes(false);
 	emit compatibilityModeChanged(false);
 	setPreparingReset(false);
 	m_autoResetCorrelator = QString();
@@ -455,6 +460,18 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 
 	if(config.contains("auth")) {
 		m_authList->update(config["auth"].toArray());
+	}
+
+	if(config.contains(QStringLiteral("invites"))) {
+		setServerSupportsInviteCodes(true);
+		setSessionInviteCodesEnabled(
+			config.value(QStringLiteral("invites")).toBool());
+	}
+
+	if(config.contains(QStringLiteral("invitelist"))) {
+		setServerSupportsInviteCodes(true);
+		m_inviteList->update(
+			config.value(QStringLiteral("invitelist")).toArray());
 	}
 }
 
@@ -773,6 +790,22 @@ void Document::setSessionOutOfSpace(bool outOfSpace)
 	if(outOfSpace != m_sessionOutOfSpace) {
 		m_sessionOutOfSpace = outOfSpace;
 		emit sessionOutOfSpaceChanged(outOfSpace);
+	}
+}
+
+void Document::setSessionInviteCodesEnabled(bool sessionInviteCodesEnabled)
+{
+	if(sessionInviteCodesEnabled != m_sessionInviteCodesEnabled) {
+		m_sessionInviteCodesEnabled = sessionInviteCodesEnabled;
+		emit sessionInviteCodesEnabledChanged(sessionInviteCodesEnabled);
+	}
+}
+
+void Document::setServerSupportsInviteCodes(bool serverSupportsInviteCodes)
+{
+	if(serverSupportsInviteCodes != m_serverSupportsInviteCodes) {
+		m_serverSupportsInviteCodes = serverSupportsInviteCodes;
+		emit serverSupportsInviteCodesChanged(serverSupportsInviteCodes);
 	}
 }
 
@@ -1148,6 +1181,23 @@ void Document::sendAbuseReport(int userId, const QString &message)
 	kwargs["reason"] = message;
 	m_client->sendMessage(
 		net::ServerCommand::make("report", QJsonArray(), kwargs));
+}
+
+void Document::sendCreateInviteCode(int maxUses, bool op, bool trust)
+{
+	m_client->sendMessage(net::ServerCommand::make(
+		QStringLiteral("invite-create"), {},
+		{
+			{QStringLiteral("maxUses"), maxUses},
+			{QStringLiteral("op"), op},
+			{QStringLiteral("trust"), trust},
+		}));
+}
+
+void Document::sendRemoveInviteCode(const QString &secret)
+{
+	m_client->sendMessage(net::ServerCommand::make(
+		QStringLiteral("invite-remove"), {secret}, {}));
 }
 
 void Document::snapshotNeeded()

@@ -275,7 +275,7 @@ void Session::assignId(Client *user)
 	user->setId(id);
 }
 
-void Session::joinUser(Client *user, bool host)
+void Session::joinUser(Client *user, bool host, const Invite *invite)
 {
 	Client *existingUser = getClientById(user->id());
 	user->setSession(this);
@@ -322,10 +322,14 @@ void Session::joinUser(Client *user, bool host)
 
 	if(user->isOperator() || m_history->isOperator(authId)) {
 		changeOpStatus(user->id(), true, QString(), false);
+	} else if(invite && invite->op) {
+		changeOpStatus(user->id(), true, invite->creator, false, invite);
 	}
 
 	if(user->authFlags().contains("TRUSTED") || m_history->isTrusted(authId)) {
 		changeTrustedStatus(user->id(), true, QString(), false);
+	} else if(invite && invite->trust) {
+		changeTrustedStatus(user->id(), true, invite->creator, false, invite);
 	}
 
 	ensureOperatorExists();
@@ -360,6 +364,7 @@ void Session::joinUser(Client *user, bool host)
 	sendUpdatedBanlist();
 	sendUpdatedMuteList();
 	sendUpdatedAuthList();
+	sendUpdatedInviteList();
 
 	m_history->joinUser(user->id(), username);
 
@@ -553,9 +558,9 @@ void Session::setRecordingFile(const QString &filename)
 	}
 }
 
-bool Session::isClosed() const
+bool Session::isClosed(bool ignoreFlag) const
 {
-	return m_closed || userCount() >= m_history->maxUsers() ||
+	return (!ignoreFlag && m_closed) || userCount() >= m_history->maxUsers() ||
 		   (m_state != State::Initialization && m_state != State::Running);
 }
 
@@ -704,6 +709,14 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 							 : QStringLiteral("disabled idle override"));
 	}
 
+	if(changedByModeratorOrAdmin && conf.contains(QStringLiteral("invites"))) {
+		bool invites = conf.value(QStringLiteral("invites")).toBool();
+		flags.setFlag(SessionHistory::Invites, invites);
+		changes.append(
+			invites ? QStringLiteral("enabled invites")
+					: QStringLiteral("disabled invites"));
+	}
+
 	// Toggling allowing WebSocket connections requires the client to have the
 	// WEBSESSION flag. If changedBy is null, the request came from the API.
 	bool canManageWebSession = !changedBy || changedBy->canManageWebSession();
@@ -752,7 +765,13 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	if(!changes.isEmpty()) {
 		sendUpdatedSessionProperties();
 		if(changePassword) {
-			directToAll(net::ServerReply::makePasswordChange(newPassword));
+			net::Message msg =
+				net::ServerReply::makePasswordChange(newPassword);
+			for(Client *c : m_clients) {
+				if(c->inviteSecret().isEmpty()) {
+					c->sendDirectMessage(msg);
+				}
+			}
 		}
 
 		QString logmsg = changes.join(QStringLiteral(", "));
@@ -768,7 +787,8 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 }
 
 QVector<uint8_t> Session::updateOwnership(
-	QVector<uint8_t> ids, const QString &changedBy, bool sendUpdate)
+	QVector<uint8_t> ids, const QString &changedBy, bool sendUpdate,
+	const Invite *invite)
 {
 	QVector<uint8_t> truelist;
 	Client *kickResetter = nullptr;
@@ -792,32 +812,54 @@ QVector<uint8_t> Session::updateOwnership(
 
 			c->setOperator(op);
 			bool isGhost = c->isGhost();
+			Log::Topic topic;
 			QString msg, key;
 			if(op) {
-				msg = "Made operator by " + (changedBy.isEmpty()
-												 ? QStringLiteral("the server")
-												 : changedBy);
-				key = net::ServerReply::KEY_OP_GIVE;
-				c->log(
-					Log().about(Log::Level::Info, Log::Topic::Op).message(msg));
+				topic = Log::Topic::Op;
+				if(invite) {
+					key = net::ServerReply::KEY_OP_GIVE_INVITE;
+					msg = QStringLiteral(
+							  "Made operator via invite %1 created by %2")
+							  .arg(
+								  invite->secret,
+								  invite->creator.isEmpty()
+									  ? QStringLiteral("a server administrator")
+									  : invite->creator);
+				} else {
+					key = net::ServerReply::KEY_OP_GIVE;
+					msg = QStringLiteral("Made operator by %1")
+							  .arg(
+								  changedBy.isEmpty()
+									  ? QStringLiteral("the server")
+									  : changedBy);
+				}
 			} else {
-				msg = "Operator status revoked by " +
-					  (changedBy.isEmpty() ? QStringLiteral("the server")
-										   : changedBy);
+				topic = Log::Topic::Deop;
 				key = net::ServerReply::KEY_OP_TAKE;
-				c->log(Log()
-						   .about(Log::Level::Info, Log::Topic::Deop)
-						   .message(msg));
+				msg = QStringLiteral("Operator status revoked by %1")
+						  .arg(
+							  changedBy.isEmpty() ? QStringLiteral("the server")
+												  : changedBy);
 			}
 
+			c->log(Log().about(Log::Level::Info, topic).message(msg));
+
 			if(!isGhost) {
+				QJsonObject params;
+				params.insert(QStringLiteral("target"), c->username());
+				if(invite) {
+					params.insert(QStringLiteral("secret"), invite->secret);
+					if(!invite->creator.isEmpty()) {
+						params.insert(
+							QStringLiteral("creator"), invite->creator);
+					}
+				} else if(!changedBy.isEmpty()) {
+					params.insert(QStringLiteral("by"), changedBy);
+				}
+				msg[0] = msg[0].toLower();
 				keyMessageAll(
-					c->username() + " " + msg, false, key,
-					changedBy.isEmpty()
-						? QJsonObject{{QStringLiteral("target"), c->username()}}
-						: QJsonObject{
-							  {QStringLiteral("target"), c->username()},
-							  {QStringLiteral("by"), changedBy}});
+					QStringLiteral("%1 %2").arg(c->username(), msg), false, key,
+					params);
 
 				if(c->isAuthenticated() && !c->isModerator()) {
 					m_history->setAuthenticatedOperator(c->authId(), op);
@@ -839,13 +881,79 @@ QVector<uint8_t> Session::updateOwnership(
 	if(sendUpdate && needsUpdate) {
 		sendUpdatedAuthList();
 		sendUpdatedBanlist(true);
+		sendUpdatedInviteList();
 	}
 
 	return truelist;
 }
 
+Invite *Session::createInvite(Client *client, int maxUses, bool trust, bool op)
+{
+	Invite *invite = m_history->createInvite(
+		client ? client->username() : QString(), maxUses, trust, op);
+	if(invite) {
+		logFor(
+			client,
+			Log()
+				.about(Log::Level::Info, Log::Topic::Invite)
+				.message(QStringLiteral("Created invite %1 with %2 use(s)")
+							 .arg(
+								 invite->secret,
+								 invite->maxUses > 0
+									 ? QString::number(invite->maxUses)
+									 : QStringLiteral("unlimited"))));
+		sendUpdatedInviteList();
+		return invite;
+	} else {
+		return nullptr;
+	}
+}
+
+bool Session::removeInvite(Client *client, const QString &secret)
+{
+	bool removed = m_history->removeInvite(secret);
+	if(removed) {
+		logFor(
+			client,
+			Log()
+				.about(Log::Level::Info, Log::Topic::Invite)
+				.message(QStringLiteral("Removed invite %1").arg(secret)));
+		sendUpdatedInviteList();
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool Session::hasInvite(const QString &secret) const
+{
+	return m_history->invitesBySecret().contains(secret);
+}
+
+CheckInviteResult Session::checkInvite(
+	Client *client, const QString &secret, bool use, Invite **outInvite)
+{
+	CheckInviteResult result =
+		m_history->checkInvite(client, secret, use, nullptr, outInvite);
+	switch(result) {
+	case CheckInviteResult::InviteUsed:
+		log(client->setUserOnLog(
+			Log()
+				.about(Log::Level::Info, Log::Topic::Invite)
+				.message(QStringLiteral("Used invite %1").arg(secret))));
+		Q_FALLTHROUGH();
+	case CheckInviteResult::AlreadyInvitedNameChanged:
+		sendUpdatedInviteList();
+		break;
+	default:
+		break;
+	}
+	return result;
+}
+
 void Session::changeOpStatus(
-	uint8_t id, bool op, const QString &changedBy, bool sendUpdate)
+	uint8_t id, bool op, const QString &changedBy, bool sendUpdate,
+	const Invite *invite)
 {
 	QVector<uint8_t> ids;
 	for(const Client *c : m_clients) {
@@ -860,12 +968,13 @@ void Session::changeOpStatus(
 		ids.removeOne(id);
 	}
 
-	ids = updateOwnership(ids, changedBy, sendUpdate);
+	ids = updateOwnership(ids, changedBy, sendUpdate, invite);
 	addToHistory(net::makeSessionOwnerMessage(0, ids));
 }
 
 QVector<uint8_t> Session::updateTrustedUsers(
-	QVector<uint8_t> ids, const QString &changedBy, bool sendUpdate)
+	QVector<uint8_t> ids, const QString &changedBy, bool sendUpdate,
+	const Invite *invite)
 {
 	QVector<uint8_t> truelist;
 	bool needsUpdate = false;
@@ -875,33 +984,53 @@ QVector<uint8_t> Session::updateTrustedUsers(
 			needsUpdate = true;
 			c->setTrusted(trusted);
 			bool isGhost = c->isGhost();
+			Log::Topic topic;
 			QString msg, key;
 			if(trusted) {
-				msg = "Trusted by " + (changedBy.isEmpty()
-										   ? QStringLiteral("the server")
-										   : changedBy);
-				key = net::ServerReply::KEY_TRUST_GIVE;
-				c->log(Log()
-						   .about(Log::Level::Info, Log::Topic::Trust)
-						   .message(msg));
+				topic = Log::Topic::Trust;
+				if(invite) {
+					key = net::ServerReply::KEY_TRUST_GIVE_INVITE;
+					msg = QStringLiteral("Trusted via invite %1 created by %2")
+							  .arg(
+								  invite->secret,
+								  invite->creator.isEmpty()
+									  ? QStringLiteral("a server administrator")
+									  : invite->creator);
+				} else {
+					key = net::ServerReply::KEY_TRUST_GIVE;
+					msg = QStringLiteral("Trusted by %1")
+							  .arg(
+								  changedBy.isEmpty()
+									  ? QStringLiteral("the server")
+									  : changedBy);
+				}
 			} else {
-				msg = "Untrusted by " + (changedBy.isEmpty()
-											 ? QStringLiteral("the server")
-											 : changedBy);
+				topic = Log::Topic::Untrust;
 				key = net::ServerReply::KEY_TRUST_TAKE;
-				c->log(Log()
-						   .about(Log::Level::Info, Log::Topic::Untrust)
-						   .message(msg));
+				msg = QStringLiteral("Untrusted by %1")
+						  .arg(
+							  changedBy.isEmpty() ? QStringLiteral("the server")
+												  : changedBy);
 			}
 
+			c->log(Log().about(Log::Level::Info, topic).message(msg));
+
 			if(!isGhost) {
+				QJsonObject params;
+				params.insert(QStringLiteral("target"), c->username());
+				if(invite) {
+					params.insert(QStringLiteral("secret"), invite->secret);
+					if(!invite->creator.isEmpty()) {
+						params.insert(
+							QStringLiteral("creator"), invite->creator);
+					}
+				} else if(!changedBy.isEmpty()) {
+					params.insert(QStringLiteral("by"), changedBy);
+				}
+				msg[0] = msg[0].toLower();
 				keyMessageAll(
-					c->username() + " " + msg, false, key,
-					changedBy.isEmpty()
-						? QJsonObject{{QStringLiteral("target"), c->username()}}
-						: QJsonObject{
-							  {QStringLiteral("target"), c->username()},
-							  {QStringLiteral("by"), changedBy}});
+					QStringLiteral("%1 %2").arg(c->username(), msg), false, key,
+					params);
 
 				if(c->isAuthenticated()) {
 					m_history->setAuthenticatedTrust(c->authId(), trusted);
@@ -915,13 +1044,15 @@ QVector<uint8_t> Session::updateTrustedUsers(
 
 	if(sendUpdate && needsUpdate) {
 		sendUpdatedAuthList();
+		sendUpdatedInviteList();
 	}
 
 	return truelist;
 }
 
 void Session::changeTrustedStatus(
-	uint8_t id, bool trusted, const QString &changedBy, bool sendUpdate)
+	uint8_t id, bool trusted, const QString &changedBy, bool sendUpdate,
+	const Invite *invite)
 {
 	QVector<uint8_t> ids;
 	for(const Client *c : m_clients) {
@@ -936,7 +1067,7 @@ void Session::changeTrustedStatus(
 		ids.removeOne(id);
 	}
 
-	ids = updateTrustedUsers(ids, changedBy, sendUpdate);
+	ids = updateTrustedUsers(ids, changedBy, sendUpdate, invite);
 	addToHistory(net::makeTrustedUsersMessage(0, ids));
 }
 
@@ -966,6 +1097,8 @@ void Session::sendUpdatedSessionProperties()
 		{QStringLiteral("hasOpword"), !m_history->opwordHash().isEmpty()},
 		{QStringLiteral("idleOverride"),
 		 m_history->hasFlag(SessionHistory::IdleOverride)},
+		{QStringLiteral("invites"),
+		 m_history->hasFlag(SessionHistory::Invites)},
 		// These configs are basically session properties set by the server.
 		// We report them here so the client can show them in the UI.
 		{QStringLiteral("forceNsfm"),
@@ -1142,6 +1275,48 @@ void Session::sendUpdatedAuthList()
 			if(c->isOperator()) {
 				c->sendDirectMessage(msg);
 			}
+		}
+	}
+}
+
+void Session::sendUpdatedInviteList()
+{
+	while(true) {
+		QJsonArray invites;
+		const QHash<QString, Invite> &invitesBySecret =
+			m_history->invitesBySecret();
+		for(QHash<QString, Invite>::const_iterator
+				it = invitesBySecret.constBegin(),
+				end = invitesBySecret.constEnd();
+			it != end; ++it) {
+			invites.append(it->toJson());
+		}
+
+		net::Message msg = net::ServerReply::makeSessionConf(
+			QJsonObject{{QStringLiteral("invitelist"), invites}});
+		if(!msg.isNull()) {
+			for(Client *c : m_clients) {
+				if(c->isOperator()) {
+					c->sendDirectMessage(msg);
+				}
+			}
+			break;
+		}
+
+		// Didn't fit, just delete the oldest invite and try again.
+		QString oldestSecret;
+		if(m_history->removeOldestInvite(&oldestSecret)) {
+			log(Log()
+					.about(Log::Level::Warn, Log::Topic::Invite)
+					.message(QStringLiteral("Removed oldest invite %1 to fit "
+											"them into a message")
+								 .arg(oldestSecret)));
+		} else {
+			log(Log()
+					.about(Log::Level::Warn, Log::Topic::Invite)
+					.message(QStringLiteral(
+						"Failed to fit invites into a message")));
+			break;
 		}
 	}
 }
@@ -1826,7 +2001,7 @@ void Session::sendAbuseReport(
 	connect(reply, &QNetworkReply::finished, reply, &QObject::deleteLater);
 }
 
-QJsonObject Session::getDescription(bool full) const
+QJsonObject Session::getDescription(bool full, bool invite) const
 {
 	// The basic description contains just the information
 	// needed for the login session listing
@@ -1842,10 +2017,11 @@ QJsonObject Session::getDescription(bool full) const
 		{QStringLiteral("title"), m_history->title()},
 		{QStringLiteral("autotitle"),
 		 m_history->hasFlag(SessionHistory::AutoTitle)},
-		{QStringLiteral("hasPassword"), !m_history->passwordHash().isEmpty()},
-		{QStringLiteral("closed"), isClosed()},
+		{QStringLiteral("hasPassword"),
+		 !invite && !m_history->passwordHash().isEmpty()},
+		{QStringLiteral("closed"), isClosed(invite)},
 		{QStringLiteral("authOnly"),
-		 m_history->hasFlag(SessionHistory::AuthOnly)},
+		 !invite && m_history->hasFlag(SessionHistory::AuthOnly)},
 		{QStringLiteral("nsfm"), m_history->hasFlag(SessionHistory::Nsfm)},
 		{QStringLiteral("startTime"),
 		 m_history->startTime().toString(Qt::ISODate)},
@@ -1862,7 +2038,7 @@ QJsonObject Session::getDescription(bool full) const
 #ifdef HAVE_WEBSOCKETS
 	if(m_config->internalConfig().webSocket) {
 		o[QStringLiteral("allowWeb")] =
-			m_history->hasFlag(SessionHistory::AllowWeb);
+			invite || m_history->hasFlag(SessionHistory::AllowWeb);
 	}
 #endif
 
@@ -1972,6 +2148,8 @@ JsonApiResult Session::callJsonApi(
 			return callAuthJsonApi(method, tail, request);
 		} else if(head == QStringLiteral("chat")) {
 			return callChatJsonApi(method, tail, request);
+		} else if(head == QStringLiteral("invites")) {
+			return callInvitesJsonApi(method, tail, request);
 		}
 
 		int userId = head.toInt();
@@ -2272,6 +2450,78 @@ JsonApiResult Session::callChatJsonApi(
 	}
 }
 
+JsonApiResult Session::callInvitesJsonApi(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	int pathCount = path.size();
+	if(pathCount == 0) {
+		if(method == JsonApiMethod::Get) {
+			QJsonArray invites;
+			const QHash<QString, Invite> &invitesBySecret =
+				m_history->invitesBySecret();
+			for(QHash<QString, Invite>::const_iterator
+					it = invitesBySecret.constBegin(),
+					end = invitesBySecret.constEnd();
+				it != end; ++it) {
+				invites.append(it->toJson());
+			}
+			return JsonApiResult{
+				JsonApiResult::Ok, QJsonDocument(QJsonObject{
+									   {QStringLiteral("invites"), invites}})};
+		} else if(method == JsonApiMethod::Create) {
+			int maxUses =
+				parseRequestInt(request, QStringLiteral("maxUses"), 0, 0);
+			if(maxUses < 1) {
+				return JsonApiErrorResult(
+					JsonApiResult::BadRequest,
+					QStringLiteral("Missing or invalid maxUses"));
+			}
+
+			bool trust =
+				parseRequestBool(request, QStringLiteral("trust"), 0, 0);
+			bool op = parseRequestBool(request, QStringLiteral("op"), 0, 0);
+			Invite *invite = createInvite(nullptr, maxUses, trust, op);
+			if(invite) {
+				return JsonApiResult{
+					JsonApiResult::Ok, QJsonDocument(invite->toJson())};
+			} else {
+				return JsonApiErrorResult(
+					JsonApiResult::BadRequest,
+					QStringLiteral("Too many invites"));
+			}
+		} else {
+			return JsonApiBadMethod();
+		}
+	} else if(pathCount == 1) {
+		QString secret = path[0];
+		if(method == JsonApiMethod::Get) {
+			const QHash<QString, Invite> &invitesBySecret =
+				m_history->invitesBySecret();
+			QHash<QString, Invite>::const_iterator it =
+				invitesBySecret.constFind(secret);
+			if(it == invitesBySecret.constEnd()) {
+				return JsonApiNotFound();
+			} else {
+				return JsonApiResult{
+					JsonApiResult::Ok, QJsonDocument(it->toJson())};
+			}
+		} else if(method == JsonApiMethod::Delete) {
+			if(removeInvite(nullptr, secret)) {
+				return JsonApiResult{
+					JsonApiResult::Ok,
+					QJsonDocument(QJsonObject{
+						{QStringLiteral("status"), QStringLiteral("ok")}})};
+			} else {
+				return JsonApiNotFound();
+			}
+		} else {
+			return JsonApiBadMethod();
+		}
+	} else {
+		return JsonApiNotFound();
+	}
+}
+
 void Session::timeOutAdminChat()
 {
 	if(m_adminChat) {
@@ -2301,6 +2551,15 @@ void Session::log(const Log &log)
 		} else {
 			directToAll(msg);
 		}
+	}
+}
+
+void Session::logFor(Client *client, const Log &entry)
+{
+	if(client) {
+		client->log(entry);
+	} else {
+		log(entry);
 	}
 }
 

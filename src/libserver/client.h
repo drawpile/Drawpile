@@ -114,6 +114,9 @@ public:
 	const QString &sid() const;
 	void setSid(const QString &sid);
 
+	const QString &inviteSecret() const;
+	void setInviteSecret(const QString &inviteSecret);
+
 	/**
 	 * @brief Does this user have session operator privileges?
 	 * @return
@@ -297,6 +300,7 @@ public:
 	 */
 	void log(Log entry) const;
 	Log log() const;
+	Log &setUserOnLog(Log &log) const;
 
 signals:
 	/**
