@@ -566,6 +566,7 @@ JsonApiResult MultiServer::serverJsonApi(
 		config::ExtAuthBanExempt,
 		config::ExtAuthGhosts,
 		config::ExtAuthPersist,
+		config::ExtAuthWebHost,
 #endif
 		config::LogPurgeDays,
 		config::AllowCustomAvatars,
@@ -592,6 +593,8 @@ JsonApiResult MultiServer::serverJsonApi(
 		config::SessionUserLimit,
 		config::EmptySessionLingerTime,
 		config::RequireMatchingHost,
+		config::AllowGuestWebHosts,
+		config::Invites,
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 
