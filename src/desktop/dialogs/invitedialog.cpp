@@ -304,9 +304,11 @@ void InviteDialog::updateCodes()
 	QSet<QString> selectedSecrets = gatherSelectedSecrets();
 	d->ui.codes->setCurrentIndex(canManage ? 0 : 1);
 	d->ui.noCodesExplanation->setText(
-		d->supportsCodes ? tr("Only server administrators can manage invite "
-							  "codes on this session.")
-						 : tr("This server does not support invite codes."));
+		!d->supportsCodes  ? tr("This server does not support invite codes.")
+		: !d->codesEnabled ? tr("Only server administrators can manage invite "
+								"codes on this session.")
+						   : tr("Only operators and server administrators can "
+								"manage invite codes on this session."));
 	d->ui.createCodeButton->setEnabled(canManage);
 	d->ui.removeCodeButton->setEnabled(canManage && !selectedSecrets.isEmpty());
 
