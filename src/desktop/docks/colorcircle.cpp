@@ -87,6 +87,9 @@ ColorCircleDock::ColorCircleDock(QWidget *parent)
 	});
 #endif
 
+	menu->addSeparator();
+	ColorPaletteDock::addSwatchOptionsToMenu(menu, COLOR_SWATCH_NO_CIRCLE);
+
 	widgets::GroupedToolButton *menuButton =
 		new widgets::GroupedToolButton(this);
 	menuButton->setIcon(QIcon::fromTheme("application-menu"));
@@ -100,6 +103,7 @@ ColorCircleDock::ColorCircleDock(QWidget *parent)
 	m_lastUsedSwatch->setReadOnly(true);
 	m_lastUsedSwatch->setBorder(Qt::NoPen);
 	m_lastUsedSwatch->setMinimumHeight(24);
+	utils::setWidgetRetainSizeWhenHidden(m_lastUsedSwatch, true);
 
 	titlebar->addCustomWidget(menuButton);
 	titlebar->addSpace(4);
@@ -154,6 +158,7 @@ ColorCircleDock::ColorCircleDock(QWidget *parent)
 #ifdef DP_COLOR_CIRCLE_ENABLE_PREVIEW
 	settings.bindColorWheelPreview(this, &ColorCircleDock::setPreview);
 #endif
+	settings.bindColorSwatchFlags(this, &ColorCircleDock::setSwatchFlags);
 }
 
 void ColorCircleDock::setColor(const QColor &color)
@@ -243,6 +248,12 @@ void ColorCircleDock::showSettingsDialog()
 		new dialogs::ArtisticColorWheelDialog(this);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	utils::showWindow(dlg);
+}
+
+void ColorCircleDock::setSwatchFlags(int flags)
+{
+	bool hideSwatch = flags & COLOR_SWATCH_NO_CIRCLE;
+	m_lastUsedSwatch->setVisible(!hideSwatch);
 }
 
 }

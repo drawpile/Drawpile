@@ -80,6 +80,14 @@
 #	endif
 #endif
 
+#define COLOR_SWATCH_NO_CIRCLE (1 << 0)
+#define COLOR_SWATCH_NO_PALETTE (1 << 1)
+#define COLOR_SWATCH_NO_SLIDERS (1 << 2)
+#define COLOR_SWATCH_NO_SPINNER (1 << 3)
+#define COLOR_SWATCH_NONE                                                      \
+	(COLOR_SWATCH_NO_CIRCLE | COLOR_SWATCH_NO_PALETTE |                        \
+	 COLOR_SWATCH_NO_SLIDERS | COLOR_SWATCH_NO_SPINNER)
+
 SETTING(_brushCursorDummy         , _BrushCursorDummy         , "_brushcursordummy"                     , widgets::CanvasView::BrushCursor::Dot)
 SETTING_GETSET_V(
 	V1, alphaLockCursor           , AlphaLockCursor           , "settings/alphalockcursor"              , int(view::Cursor::SameAsBrush),
@@ -115,6 +123,7 @@ SETTING(colorCircleValueLimit     , ColorCircleValueLimit     , "settings/colorc
 SETTING(colorSlidersShowAll       , ColorSlidersShowAll       , "settings/colorsliders/showall"         , false)
 SETTING(colorSlidersShowInput     , ColorSlidersShowInput     , "settings/colorsliders/showinput"       , true)
 SETTING(colorSlidersMode          , ColorSlidersMode          , "settings/colorsliders/mode"            , 0)
+SETTING(colorSwatchFlags          , ColorSwatchFlags          , "settings/colorswatchflags"             , 0)
 SETTING(colorWheelAngle           , ColorWheelAngle           , "settings/colorwheel/rotate"            , color_widgets::ColorWheel::AngleEnum::AngleRotating)
 SETTING(colorWheelAlign           , ColorWheelAlign           , "settings/colorwheel/align"             , int(Qt::AlignVCenter))
 SETTING(colorWheelMirror          , ColorWheelMirror          , "settings/colorwheel/mirror"            , true)

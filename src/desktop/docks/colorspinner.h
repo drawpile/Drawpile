@@ -49,6 +49,7 @@ signals:
 
 private:
 	void updateShapeAction();
+	void setSwatchFlags(int flags);
 
 	struct Private;
 	Private *d;

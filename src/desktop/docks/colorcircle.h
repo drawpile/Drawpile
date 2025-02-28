@@ -50,6 +50,7 @@ signals:
 
 private:
 	void showSettingsDialog();
+	void setSwatchFlags(int flags);
 
 	QAction *m_colorSpaceHsvAction = nullptr;
 	QAction *m_colorSpaceHslAction = nullptr;

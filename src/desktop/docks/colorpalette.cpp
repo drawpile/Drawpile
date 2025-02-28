@@ -8,6 +8,7 @@
 #include "desktop/widgets/palettewidget.h"
 #include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/paths.h"
+#include <QAction>
 #include <QComboBox>
 #include <QCursor>
 #include <QFileDialog>
@@ -17,6 +18,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QPaintEvent>
+#include <QSignalBlocker>
 #include <QVBoxLayout>
 #include <QtColorWidgets/color_palette_model.hpp>
 #include <QtColorWidgets/swatch.hpp>
@@ -132,6 +134,8 @@ ColorPaletteDock::ColorPaletteDock(QWidget *parent)
 	paletteMenu->addAction(
 		tr("Export palette…"), this, &ColorPaletteDock::exportPalette);
 #endif
+	paletteMenu->addSeparator();
+	addSwatchOptionsToMenu(paletteMenu, COLOR_SWATCH_NO_PALETTE);
 	menuButton->setMenu(paletteMenu);
 	menuButton->setPopupMode(QToolButton::InstantPopup);
 
@@ -142,6 +146,7 @@ ColorPaletteDock::ColorPaletteDock(QWidget *parent)
 	d->lastUsedSwatch->setReadOnly(true);
 	d->lastUsedSwatch->setBorder(Qt::NoPen);
 	d->lastUsedSwatch->setMinimumHeight(24);
+	utils::setWidgetRetainSizeWhenHidden(d->lastUsedSwatch, true);
 
 	titlebar->addCustomWidget(menuButton);
 	titlebar->addSpace(4);
@@ -209,7 +214,8 @@ ColorPaletteDock::ColorPaletteDock(QWidget *parent)
 		QOverload<int>::of(&QComboBox::currentIndexChanged), this,
 		&ColorPaletteDock::paletteChanged);
 
-	dpApp().settings().bindLastPalette(
+	desktop::settings::Settings &settings = dpApp().settings();
+	settings.bindLastPalette(
 		d->paletteChoiceBox,
 		[=](int index) {
 			int lastPalette =
@@ -221,12 +227,66 @@ ColorPaletteDock::ColorPaletteDock(QWidget *parent)
 			}
 		},
 		QOverload<int>::of(&QComboBox::currentIndexChanged));
+	settings.bindColorSwatchFlags(this, &ColorPaletteDock::setSwatchFlags);
 }
 
 ColorPaletteDock::~ColorPaletteDock()
 {
 	d->saveCurrentPalette();
 	delete d;
+}
+
+void ColorPaletteDock::addSwatchOptionsToMenu(QMenu *menu, int flag)
+{
+	QMenu *historyMenu = menu->addMenu(tr("Color history"));
+
+	QAction *showThis = historyMenu->addAction(tr("Show on this dock"));
+	showThis->setCheckable(true);
+	connect(showThis, &QAction::triggered, showThis, [flag](bool checked) {
+		desktop::settings::Settings &settings = dpApp().settings();
+		int flags = settings.colorSwatchFlags();
+		if(checked) {
+			flags &= ~flag;
+		} else {
+			flags |= flag;
+		}
+		settings.setColorSwatchFlags(flags);
+	});
+
+	historyMenu->addSeparator();
+
+	QAction *showAll = historyMenu->addAction(tr("Show on all color docks"));
+	connect(showAll, &QAction::triggered, showAll, [] {
+		dpApp().settings().setColorSwatchFlags(0);
+	});
+
+	QAction *hideAll = historyMenu->addAction(tr("Hide on all color docks"));
+	connect(hideAll, &QAction::triggered, hideAll, [] {
+		dpApp().settings().setColorSwatchFlags(-1);
+	});
+
+	QAction *showOnly = historyMenu->addAction(tr("Show only on this dock"));
+	connect(showOnly, &QAction::triggered, showOnly, [flag] {
+		dpApp().settings().setColorSwatchFlags(~flag);
+	});
+
+	QAction *hideOnly = historyMenu->addAction(tr("Hide only on this dock"));
+	connect(hideOnly, &QAction::triggered, hideOnly, [flag] {
+		dpApp().settings().setColorSwatchFlags(flag);
+	});
+
+	connect(
+		historyMenu, &QMenu::aboutToShow, historyMenu,
+		[flag, showThis, showAll, hideAll, showOnly, hideOnly] {
+			QSignalBlocker blocker(showThis);
+			int flags = dpApp().settings().colorSwatchFlags();
+			showThis->setChecked((flags & flag) == 0);
+			showAll->setEnabled((flags & COLOR_SWATCH_NONE) != 0);
+			hideAll->setEnabled(
+				(flags & COLOR_SWATCH_NONE) != COLOR_SWATCH_NONE);
+			showOnly->setEnabled((~flags & COLOR_SWATCH_NONE) != flag);
+			hideOnly->setEnabled((flags & COLOR_SWATCH_NONE) != flag);
+		});
 }
 
 void ColorPaletteDock::setColor(const QColor &color)
@@ -377,6 +437,12 @@ void ColorPaletteDock::selectColor(const QColor &color)
 {
 	setColor(color);
 	emit colorSelected(color);
+}
+
+void ColorPaletteDock::setSwatchFlags(int flags)
+{
+	bool hideSwatch = flags & COLOR_SWATCH_NO_PALETTE;
+	d->lastUsedSwatch->setVisible(!hideSwatch);
 }
 
 int findPaletteColor(

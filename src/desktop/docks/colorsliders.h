@@ -48,6 +48,8 @@ private:
 	QColor getColorSpaceColor(int h, int s, int v) const;
 	static QColor fixHue(int h, const QColor &color);
 
+	void setSwatchFlags(int flags);
+
 	struct Private;
 	Private *d;
 };

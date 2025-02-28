@@ -5,6 +5,8 @@
 
 #include "desktop/docks/dockbase.h"
 
+class QMenu;
+
 namespace color_widgets {
 class ColorPalette;
 }
@@ -16,6 +18,8 @@ class ColorPaletteDock final : public DockBase {
 public:
 	explicit ColorPaletteDock(QWidget *parent);
 	~ColorPaletteDock() override;
+
+	static void addSwatchOptionsToMenu(QMenu *menu, int flag);
 
 public slots:
 	void setColor(const QColor &color);
@@ -42,7 +46,7 @@ private slots:
 	void selectColor(const QColor &color);
 
 private:
-	void showColorDialog(int index, bool replace);
+	void setSwatchFlags(int flags);
 
 	struct Private;
 	Private *d;

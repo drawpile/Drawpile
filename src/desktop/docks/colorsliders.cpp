@@ -123,6 +123,9 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 	d->showInputAction = menu->addAction(tr("Show hex input"));
 	d->showInputAction->setCheckable(true);
 
+	menu->addSeparator();
+	ColorPaletteDock::addSwatchOptionsToMenu(menu, COLOR_SWATCH_NO_SLIDERS);
+
 	d->menuButton = new widgets::GroupedToolButton(this);
 	d->menuButton->setIcon(QIcon::fromTheme("application-menu"));
 	d->menuButton->setPopupMode(QToolButton::InstantPopup);
@@ -135,6 +138,7 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 	d->lastUsedSwatch->setReadOnly(true);
 	d->lastUsedSwatch->setBorder(Qt::NoPen);
 	d->lastUsedSwatch->setMinimumHeight(24);
+	utils::setWidgetRetainSizeWhenHidden(d->lastUsedSwatch, true);
 
 	titlebar->addCustomWidget(d->menuButton);
 	titlebar->addSpace(4);
@@ -325,6 +329,8 @@ ColorSliderDock::ColorSliderDock(QWidget *parent)
 	connect(
 		d->showInputAction, &QAction::toggled, this,
 		&ColorSliderDock::updateWidgetVisibilities);
+
+	settings.bindColorSwatchFlags(this, &ColorSliderDock::setSwatchFlags);
 }
 
 ColorSliderDock::~ColorSliderDock()
@@ -681,6 +687,12 @@ QColor ColorSliderDock::getColorSpaceColor(int h, int s, int v) const
 QColor ColorSliderDock::fixHue(int h, const QColor &color)
 {
 	return QColor::fromHsv(h, color.saturation(), color.value());
+}
+
+void ColorSliderDock::setSwatchFlags(int flags)
+{
+	bool hideSwatch = flags & COLOR_SWATCH_NO_SLIDERS;
+	d->lastUsedSwatch->setVisible(!hideSwatch);
 }
 
 }

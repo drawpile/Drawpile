@@ -4,6 +4,7 @@
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/main.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include <QAction>
 #include <QActionGroup>
@@ -241,6 +242,9 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 	});
 #endif
 
+	menu->addSeparator();
+	ColorPaletteDock::addSwatchOptionsToMenu(menu, COLOR_SWATCH_NO_SPINNER);
+
 	d->menuButton = new widgets::GroupedToolButton(this);
 	d->menuButton->setIcon(QIcon::fromTheme("application-menu"));
 	d->menuButton->setPopupMode(QToolButton::InstantPopup);
@@ -253,6 +257,7 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 	d->lastUsedSwatch->setReadOnly(true);
 	d->lastUsedSwatch->setBorder(Qt::NoPen);
 	d->lastUsedSwatch->setMinimumHeight(24);
+	utils::setWidgetRetainSizeWhenHidden(d->lastUsedSwatch, true);
 
 	titlebar->addCustomWidget(d->menuButton);
 	titlebar->addSpace(4);
@@ -294,6 +299,7 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 #ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
 	settings.bindColorWheelPreview(this, &ColorSpinnerDock::setPreview);
 #endif
+	settings.bindColorSwatchFlags(this, &ColorSpinnerDock::setSwatchFlags);
 }
 
 ColorSpinnerDock::~ColorSpinnerDock()
@@ -440,6 +446,12 @@ void ColorSpinnerDock::updateShapeAction()
 		break;
 	}
 	action->setChecked(true);
+}
+
+void ColorSpinnerDock::setSwatchFlags(int flags)
+{
+	bool hideSwatch = flags & COLOR_SWATCH_NO_SPINNER;
+	d->lastUsedSwatch->setVisible(!hideSwatch);
 }
 
 }
