@@ -457,7 +457,7 @@
     <message>
         <location line="-271"/>
         <source>Add Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Avatar ekle</translation>
     </message>
     <message>
         <location line="+14"/>
