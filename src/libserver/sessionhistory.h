@@ -75,7 +75,7 @@ struct InviteUse {
 	QString name;
 	QString at;
 
-	QJsonObject toJson() const;
+	QJsonObject toJson(const QString &sid = QString()) const;
 };
 
 struct Invite {
@@ -89,8 +89,8 @@ struct Invite {
 
 	bool hasUsesRemaining() const { return uses.size() < maxUses; }
 
-	QJsonObject toJson() const;
-	QJsonArray usesToJson() const;
+	QJsonObject toJson(bool full = false) const;
+	QJsonArray usesToJson(bool full = false) const;
 };
 
 /**

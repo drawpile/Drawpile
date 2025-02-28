@@ -1282,18 +1282,8 @@ void Session::sendUpdatedAuthList()
 void Session::sendUpdatedInviteList()
 {
 	while(true) {
-		QJsonArray invites;
-		const QHash<QString, Invite> &invitesBySecret =
-			m_history->invitesBySecret();
-		for(QHash<QString, Invite>::const_iterator
-				it = invitesBySecret.constBegin(),
-				end = invitesBySecret.constEnd();
-			it != end; ++it) {
-			invites.append(it->toJson());
-		}
-
-		net::Message msg = net::ServerReply::makeSessionConf(
-			QJsonObject{{QStringLiteral("invitelist"), invites}});
+		net::Message msg = net::ServerReply::makeSessionConf(QJsonObject{
+			{QStringLiteral("invitelist"), getInvitesDescription()}});
 		if(!msg.isNull()) {
 			for(Client *c : m_clients) {
 				if(c->isOperator()) {
@@ -2028,6 +2018,8 @@ QJsonObject Session::getDescription(bool full, bool invite) const
 		{QStringLiteral("size"), int(m_history->sizeInBytes())},
 		{QStringLiteral("persistent"),
 		 m_history->hasFlag(SessionHistory::Persistent)},
+		{QStringLiteral("invites"),
+		 m_history->hasFlag(SessionHistory::Invites)},
 	};
 
 	if(m_config->getConfigBool(config::AllowIdleOverride)) {
@@ -2068,6 +2060,7 @@ QJsonObject Session::getDescription(bool full, bool invite) const
 		}
 		o[QStringLiteral("users")] = users;
 		o[QStringLiteral("listings")] = getListingsDescription();
+		o[QStringLiteral("invitelist")] = getInvitesDescription(true);
 		if(m_adminChat) {
 			o[QStringLiteral("chat")] = m_adminChat->getDescription();
 		} else {
@@ -2115,6 +2108,20 @@ QJsonObject Session::getUserDescription(const Client *user) const
 	u[QStringLiteral("resetFlags")] = f;
 
 	return u;
+}
+
+QJsonArray Session::getInvitesDescription(bool full) const
+{
+	QJsonArray invites;
+	const QHash<QString, Invite> &invitesBySecret =
+		m_history->invitesBySecret();
+	for(QHash<QString, Invite>::const_iterator
+			it = invitesBySecret.constBegin(),
+			end = invitesBySecret.constEnd();
+		it != end; ++it) {
+		invites.append(it->toJson(full));
+	}
+	return invites;
 }
 
 QJsonObject Session::getExportBanList() const
@@ -2456,18 +2463,10 @@ JsonApiResult Session::callInvitesJsonApi(
 	int pathCount = path.size();
 	if(pathCount == 0) {
 		if(method == JsonApiMethod::Get) {
-			QJsonArray invites;
-			const QHash<QString, Invite> &invitesBySecret =
-				m_history->invitesBySecret();
-			for(QHash<QString, Invite>::const_iterator
-					it = invitesBySecret.constBegin(),
-					end = invitesBySecret.constEnd();
-				it != end; ++it) {
-				invites.append(it->toJson());
-			}
 			return JsonApiResult{
-				JsonApiResult::Ok, QJsonDocument(QJsonObject{
-									   {QStringLiteral("invites"), invites}})};
+				JsonApiResult::Ok,
+				QJsonDocument(QJsonObject{
+					{QStringLiteral("invites"), getInvitesDescription(true)}})};
 		} else if(method == JsonApiMethod::Create) {
 			int maxUses =
 				parseRequestInt(request, QStringLiteral("maxUses"), 0, 0);

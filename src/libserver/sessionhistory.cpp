@@ -10,21 +10,25 @@ extern "C" {
 
 namespace server {
 
-QJsonObject InviteUse::toJson() const
+QJsonObject InviteUse::toJson(const QString &sid) const
 {
-	return QJsonObject{
+	QJsonObject json = {
 		{QStringLiteral("name"), name},
 		{QStringLiteral("at"), at},
 	};
+	if(sid.isEmpty()) {
+		json.insert(QStringLiteral("s"), sid);
+	}
+	return json;
 }
 
-QJsonObject Invite::toJson() const
+QJsonObject Invite::toJson(bool full) const
 {
 	QJsonObject json = {
 		{QStringLiteral("secret"), secret},
 		{QStringLiteral("at"), at},
 		{QStringLiteral("maxUses"), maxUses},
-		{QStringLiteral("uses"), usesToJson()},
+		{QStringLiteral("uses"), usesToJson(full)},
 	};
 	if(!creator.isEmpty()) {
 		json.insert(QStringLiteral("creator"), creator);
@@ -38,13 +42,14 @@ QJsonObject Invite::toJson() const
 	return json;
 }
 
-QJsonArray Invite::usesToJson() const
+QJsonArray Invite::usesToJson(bool full) const
 {
 	QJsonArray json;
-	for(QHash<QString, InviteUse>::const_iterator it = uses.constBegin(),
-												  end = uses.constEnd();
+	for(QHash<QString, InviteUse>::const_key_value_iterator
+			it = uses.constKeyValueBegin(),
+			end = uses.constKeyValueEnd();
 		it != end; ++it) {
-		json.append(it->toJson());
+		json.append(it->second.toJson(full ? it->first : QString()));
 	}
 	return json;
 }
