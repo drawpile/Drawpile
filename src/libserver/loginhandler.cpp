@@ -1140,12 +1140,31 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 				"inviteNoClientKey",
 				QStringLiteral("No client key to use with invite"));
 			return;
-			break;
 		case CheckInviteResult::NotFound:
 			sendError(
 				"inviteNotFound",
 				QStringLiteral("Invite is invalid or has been revoked"));
 			return;
+		case CheckInviteResult::MaxUsesReached:
+			sendError(
+				"inviteLimitReached",
+				QStringLiteral("Invite has already been used up"));
+			return;
+		}
+	}
+
+	QString password = cmd.kwargs.value(QStringLiteral("password")).toString();
+	if(!invite && !password.isEmpty()) {
+		switch(session->checkInvite(m_client, password, true, &invite)) {
+		case CheckInviteResult::InviteOk:
+		case CheckInviteResult::InviteUsed:
+		case CheckInviteResult::AlreadyInvited:
+		case CheckInviteResult::AlreadyInvitedNameChanged:
+			break;
+		case CheckInviteResult::NoClientKey:
+		case CheckInviteResult::NotFound:
+			invite = nullptr;
+			break;
 		case CheckInviteResult::MaxUsesReached:
 			sendError(
 				"inviteLimitReached",
@@ -1197,8 +1216,7 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 			return;
 		}
 
-		if(!invite &&
-		   !history->checkPassword(cmd.kwargs.value("password").toString())) {
+		if(!invite && !history->checkPassword(password)) {
 			++m_sessionPasswordAttempts;
 			m_client->log(
 				Log()
