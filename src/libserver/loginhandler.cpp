@@ -1218,9 +1218,11 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 
 	Client *existingClient = session->getClientByUsername(m_client->username());
 	if(existingClient) {
-		bool shouldReplace = m_client->isAuthenticated() &&
-							 existingClient->isAuthenticated() &&
-							 m_client->authId() == existingClient->authId();
+		bool shouldReplace =
+			(m_client->isAuthenticated() && existingClient->isAuthenticated() &&
+			 m_client->authId() == existingClient->authId()) ||
+			(m_client->hasSid() && existingClient->hasSid() &&
+			 m_client->sid() == existingClient->sid());
 		if(!shouldReplace) {
 			sendError("nameInuse", "This username is already in use");
 			return;

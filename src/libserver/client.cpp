@@ -411,6 +411,11 @@ void Client::setSid(const QString &sid)
 	d->sid = sid;
 }
 
+bool Client::hasSid() const
+{
+	return !d->sid.isEmpty();
+}
+
 const QString &Client::inviteSecret() const
 {
 	return d->inviteSecret;

@@ -113,6 +113,7 @@ public:
 
 	const QString &sid() const;
 	void setSid(const QString &sid);
+	bool hasSid() const;
 
 	const QString &inviteSecret() const;
 	void setInviteSecret(const QString &inviteSecret);
