@@ -656,7 +656,7 @@ JsonApiResult MultiServer::statusJsonApi(
 	}
 
 	QJsonObject result;
-	result["started"] = m_started.toString("yyyy-MM-dd HH:mm:ss");
+	result["started"] = m_started.toString(Qt::ISODate);
 	result["sessions"] = m_sessions->sessionCount();
 	result["maxSessions"] = m_config->getConfigInt(config::SessionCountLimit);
 	result["users"] = m_sessions->totalUsers();
