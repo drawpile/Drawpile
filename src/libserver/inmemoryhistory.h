@@ -55,7 +55,7 @@ public:
 	int maxUsers() const override { return m_maxUsers; }
 	void setMaxUsers(int max) override { m_maxUsers = qBound(1, max, 254); }
 	QString title() const override { return m_title; }
-	void setTitle(const QString &title) override { m_title = title; }
+	bool setTitle(const QString &title) override;
 	Flags flags() const override { return m_flags; }
 	void setFlags(Flags f) override { m_flags = f; }
 	void setAutoResetThreshold(size_t limit) override

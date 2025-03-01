@@ -619,16 +619,28 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 
 	if((changeFounder && flags.testFlag(SessionHistory::AutoTitle)) ||
 	   conf.value(QString("autotitle")).toBool()) {
+		bool hadAutoTitle = flags.testFlag(SessionHistory::AutoTitle);
 		flags.setFlag(SessionHistory::AutoTitle, true);
-		m_history->setTitle(QStringLiteral("%1 Drawpile")
-								.arg(m_history->founderName())
-								.mid(0, 100));
-		changes << QStringLiteral("changed autotitle");
+		QString newTitle = QStringLiteral("%1 Drawpile")
+							   .arg(m_history->founderName())
+							   .mid(0, 100);
+		if(m_history->setTitle(newTitle)) {
+			changes.append(
+				QStringLiteral("changed autotitle to '%1'").arg(newTitle));
+		} else if(!hadAutoTitle) {
+			changes.append(QStringLiteral("enabled autotitle"));
+		}
 	} else if(conf.contains(QStringLiteral("title"))) {
+		bool hadAutoTitle = flags.testFlag(SessionHistory::AutoTitle);
 		flags.setFlag(SessionHistory::AutoTitle, false);
-		m_history->setTitle(
-			conf.value(QStringLiteral("title")).toString().mid(0, 100));
-		changes << QStringLiteral("changed title");
+		QString newTitle =
+			conf.value(QStringLiteral("title")).toString().mid(0, 100);
+		if(m_history->setTitle(newTitle)) {
+			changes.append(
+				QStringLiteral("changed title to '%1'").arg(newTitle));
+		} else if(hadAutoTitle) {
+			changes.append(QStringLiteral("disabled autotitle"));
+		}
 	}
 
 	if(conf.contains("maxUserCount")) {

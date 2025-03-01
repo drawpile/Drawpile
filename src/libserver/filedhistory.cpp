@@ -699,11 +699,14 @@ int FiledHistory::nextCatchupKey()
 	return result;
 }
 
-void FiledHistory::setTitle(const QString &title)
+bool FiledHistory::setTitle(const QString &title)
 {
 	if(title != m_title) {
 		m_title = title;
 		writeStringToJournal(QStringLiteral("TITLE %1\n").arg(title));
+		return true;
+	} else {
+		return false;
 	}
 }
 

@@ -19,6 +19,16 @@ InMemoryHistory::InMemoryHistory(
 {
 }
 
+bool InMemoryHistory::setTitle(const QString &title)
+{
+	if(title != m_title) {
+		m_title = title;
+		return true;
+	} else {
+		return false;
+	}
+}
+
 int InMemoryHistory::nextCatchupKey()
 {
 	return incrementNextCatchupKey(m_nextCatchupKey);

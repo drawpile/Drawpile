@@ -174,8 +174,8 @@ public:
 	//! Get the title of the session
 	virtual QString title() const = 0;
 
-	//! Set the title of the session
-	virtual void setTitle(const QString &title) = 0;
+	//! Set the title of the session, returns whether it changed
+	virtual bool setTitle(const QString &title) = 0;
 
 	//! Get the persistent session flags
 	virtual Flags flags() const = 0;

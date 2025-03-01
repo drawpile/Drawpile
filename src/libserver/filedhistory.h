@@ -75,7 +75,7 @@ public:
 	void setPasswordHash(const QByteArray &password) override;
 	void setOpwordHash(const QByteArray &opword) override;
 	void setMaxUsers(int max) override;
-	void setTitle(const QString &title) override;
+	bool setTitle(const QString &title) override;
 	void setFlags(Flags f) override;
 	void setAutoResetThreshold(size_t limit) override;
 	int nextCatchupKey() override;
