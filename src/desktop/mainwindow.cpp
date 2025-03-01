@@ -3524,7 +3524,9 @@ void MainWindow::setShowLaserTrails(bool show)
  */
 void MainWindow::toggleFullscreen()
 {
-#ifndef SINGLE_MAIN_WINDOW
+#if defined(__EMSCRIPTEN__)
+	browser::toggleFullscreen();
+#elif !defined(SINGLE_MAIN_WINDOW)
 	if(windowState().testFlag(Qt::WindowFullScreen)==false) {
 		// Save windowed mode state
 		m_fullscreenOldGeometry = geometry();
@@ -5307,21 +5309,31 @@ void MainWindow::setupActions()
 	QAction *showlasers = makeAction("showlasers", tr("Show La&ser Trails")).noDefaultShortcut().checked().remembered();
 	QAction *showgrid = makeAction("showgrid", tr("Show Pixel &Grid")).noDefaultShortcut().checked().remembered();
 	QAction *showrulers = makeAction("showrulers", tr("Show &Rulers")).noDefaultShortcut().checkable().remembered();
-	// clang-tidy on
+	// clang-format on
 	QAction *showselectionmask =
 		makeAction("showselectionmask", tr("Show Selection &Mask"))
-		.statusTip(tr("Toggle selection display between a mask and an outline"))
+			.statusTip(
+				tr("Toggle selection display between a mask and an outline"))
 			.noDefaultShortcut()
 			.checkable()
 			.remembered();
-	// clang-tidy off
-
 #ifdef SINGLE_MAIN_WINDOW
 	QAction *fittoscreen =
 		makeAction("fittoscreen", tr("&Fit to Screen")).noDefaultShortcut();
-#else
-	QAction *fullscreen = makeAction("fullscreen", tr("&Full Screen")).shortcut(QKeySequence::FullScreen).checkable();
 #endif
+#if !defined(SINGLE_MAIN_WINDOW) || defined(__EMSCRIPTEN__)
+#	ifdef __EMSCRIPTEN__
+#		define FULLSCREEN_SHORTCUT                                            \
+			QKeySequence(Qt::ALT | Qt::Key_Return),                            \
+				QKeySequence(Qt::ALT | Qt::Key_Enter)
+#	else
+#		define FULLSCREEN_SHORTCUT QKeySequence::FullScreen
+#	endif
+	QAction *fullscreen = makeAction("fullscreen", tr("&Full Screen"))
+							  .shortcut(FULLSCREEN_SHORTCUT)
+							  .checkable();
+#endif
+	// clang-format off
 
 	connect(layoutsAction, &QAction::triggered, this, &MainWindow::showLayoutsDialog);
 
@@ -5377,13 +5389,15 @@ void MainWindow::setupActions()
 		 zoomfitheight, rotateorig,		rotatecw,		 rotateccw,
 		 viewflip,		viewmirror,		showgrid,		 showusermarkers,
 		 showusernames, showuserlayers, showuseravatars, evadeusercursors});
-	// clang-format off
 
 #ifdef SINGLE_MAIN_WINDOW
 	connect(fittoscreen, &QAction::triggered, this, &MainWindow::refitWindow);
-#else
-	connect(fullscreen, &QAction::triggered, this, &MainWindow::toggleFullscreen);
 #endif
+#if !defined(SINGLE_MAIN_WINDOW) || defined(__EMSCRIPTEN__)
+	connect(
+		fullscreen, &QAction::triggered, this, &MainWindow::toggleFullscreen);
+#endif
+	// clang-format off
 
 	connect(showannotations, &QAction::toggled, this, &MainWindow::setShowAnnotations);
 	connect(showlasers, &QAction::toggled, this, &MainWindow::setShowLaserTrails);
@@ -5478,6 +5492,7 @@ void MainWindow::setupActions()
 			});
 	}
 
+	// clang-format on
 	viewmenu->addAction(showannotations);
 
 	viewmenu->addAction(showgrid);
@@ -5487,13 +5502,23 @@ void MainWindow::setupActions()
 	viewmenu->addSeparator();
 #ifdef SINGLE_MAIN_WINDOW
 	viewmenu->addAction(fittoscreen);
-#else
+#endif
+#if !defined(SINGLE_MAIN_WINDOW) || defined(__EMSCRIPTEN__)
 	viewmenu->addAction(fullscreen);
+#	ifdef __EMSCRIPTEN__
+	connect(viewmenu, &QMenu::aboutToShow, this, [fullscreen] {
+		QSignalBlocker blocker(fullscreen);
+		fullscreen->setEnabled(browser::isFullscreenSupported());
+		fullscreen->setChecked(browser::isFullscreen());
+	});
+#	else
 	connect(viewmenu, &QMenu::aboutToShow, this, [this, fullscreen] {
 		QSignalBlocker blocker(fullscreen);
 		fullscreen->setChecked(windowState().testFlag(Qt::WindowFullScreen));
 	});
+#	endif
 #endif
+	// clang-format off
 
 	//
 	// Layer menu

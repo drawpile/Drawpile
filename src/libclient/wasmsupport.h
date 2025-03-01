@@ -23,6 +23,9 @@ void mountPersistentFileSystem(int argc, char **argv);
 // Asynchronously tries to persist the IDBFS file system, returns false if
 // another sync operation is already in progress.
 bool syncPersistentFileSystem();
+bool isFullscreenSupported();
+bool isFullscreen();
+void toggleFullscreen();
 
 }
 

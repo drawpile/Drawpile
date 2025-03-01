@@ -155,6 +155,25 @@ bool syncPersistentFileSystem()
 	}
 }
 
+bool isFullscreenSupported()
+{
+	return EM_ASM_INT(return window.document.fullscreenEnabled ? 1 : 0;);
+}
+
+bool isFullscreen()
+{
+	return EM_ASM_INT(return window.document.fullscreenElement ? 1 : 0;);
+}
+
+void toggleFullscreen()
+{
+	if(isFullscreen()) {
+		EM_ASM(window.document.exitFullscreen(););
+	} else {
+		EM_ASM(window.document.body.requestFullscreen(););
+	}
+}
+
 }
 
 // Stuff called from JavaScript.
