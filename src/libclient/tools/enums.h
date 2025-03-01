@@ -16,6 +16,7 @@ enum class Capability : unsigned int {
 	Fractional = (1u << 3u),
 	SupportsPressure = (1u << 4u),
 	IgnoresSelections = (1u << 5u),
+	SendsNoMessages = (1u << 6u),
 };
 Q_DECLARE_FLAGS(Capabilities, Capability)
 

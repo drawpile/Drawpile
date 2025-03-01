@@ -353,6 +353,11 @@ private:
 		return m_toolCapabilities.testFlag(tools::Capability::Fractional);
 	}
 
+	bool toolSendsNoMessages() const
+	{
+		return m_toolCapabilities.testFlag(tools::Capability::SendsNoMessages);
+	}
+
 	CanvasScene *m_scene;
 	CanvasInterface *m_canvasWidget = nullptr;
 	canvas::CanvasModel *m_canvasModel = nullptr;

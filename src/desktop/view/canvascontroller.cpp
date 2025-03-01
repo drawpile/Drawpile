@@ -1386,7 +1386,7 @@ void CanvasController::penMoveEvent(
 							modifiers, m_keysDown);
 					switch(m_penMode) {
 					case PenMode::Normal:
-						if(!m_locked) {
+						if(!m_locked || toolSendsNoMessages()) {
 							emit penMove(
 								point.timeMsec(), point, point.pressure(),
 								point.xtilt(), point.ytilt(), point.rotation(),
@@ -1518,7 +1518,7 @@ void CanvasController::penPressEvent(
 			if(m_canvasModel) {
 				switch(m_penMode) {
 				case PenMode::Normal:
-					if(!m_locked) {
+					if(!m_locked || toolSendsNoMessages()) {
 						CanvasShortcuts::ConstraintMatch constraintMatch =
 							m_canvasShortcuts.matchConstraints(
 								modifiers, m_keysDown);
@@ -1580,7 +1580,8 @@ void CanvasController::penReleaseEvent(
 		((button == Qt::LeftButton || button == Qt::RightButton) &&
 		 m_penState == PenState::MouseDown)) {
 
-		if(!m_locked && m_penMode == PenMode::Normal) {
+		if((!m_locked || toolSendsNoMessages()) &&
+		   m_penMode == PenMode::Normal) {
 			CanvasShortcuts::ConstraintMatch constraintMatch =
 				m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
 			emit penUp(
@@ -1885,7 +1886,7 @@ void CanvasController::resetCursor()
 		return;
 	}
 
-	if(m_locked) {
+	if(m_locked && !toolSendsNoMessages()) {
 		setViewportCursor(Qt::ForbiddenCursor);
 		return;
 	} else if(m_toolState == int(tools::ToolState::Busy)) {

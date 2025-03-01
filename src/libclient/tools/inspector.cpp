@@ -8,7 +8,7 @@ namespace tools {
 Inspector::Inspector(ToolController &owner)
 	: Tool(
 		  owner, INSPECTOR, QCursor(Qt::WhatsThisCursor),
-		  Capability::Fractional)
+		  Capability::Fractional | Capability::SendsNoMessages)
 {
 }
 

@@ -388,6 +388,11 @@ private:
 		return m_toolCapabilities.testFlag(tools::Capability::Fractional);
 	}
 
+	bool toolSendsNoMessages() const
+	{
+		return m_toolCapabilities.testFlag(tools::Capability::SendsNoMessages);
+	}
+
 	CanvasShortcuts m_canvasShortcuts;
 	QSet<Qt::Key> m_keysDown;
 

@@ -11,7 +11,8 @@ namespace tools {
 ColorPicker::ColorPicker(ToolController &owner)
 	: Tool(
 		  owner, PICKER, utils::Cursors::colorPick(),
-		  Capability::AllowToolAdjust | Capability::Fractional)
+		  Capability::AllowToolAdjust | Capability::Fractional |
+			  Capability::SendsNoMessages)
 {
 }
 

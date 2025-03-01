@@ -9,7 +9,8 @@ namespace tools {
 ZoomTool::ZoomTool(ToolController &owner)
 	: Tool(
 		  owner, ZOOM, utils::Cursors::zoom(),
-		  Capability::AllowColorPick | Capability::HandlesRightClick)
+		  Capability::AllowColorPick | Capability::HandlesRightClick |
+			  Capability::SendsNoMessages)
 {
 }
 

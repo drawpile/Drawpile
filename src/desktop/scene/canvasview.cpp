@@ -881,7 +881,7 @@ void CanvasView::resetCursor()
 		return;
 	}
 
-	if(m_locked) {
+	if(m_locked && !toolSendsNoMessages()) {
 		setViewportCursor(Qt::ForbiddenCursor);
 		return;
 	} else if(m_toolState == int(tools::ToolState::Busy)) {
@@ -1127,7 +1127,7 @@ void CanvasView::onPenDown(
 	if(m_scene->hasImage()) {
 		switch(m_penmode) {
 		case PenMode::Normal:
-			if(!m_locked) {
+			if(!m_locked || toolSendsNoMessages()) {
 				CanvasShortcuts::ConstraintMatch constraintMatch =
 					m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
 				emit penDown(
@@ -1165,7 +1165,7 @@ void CanvasView::onPenMove(
 	if(m_scene->hasImage()) {
 		switch(m_penmode) {
 		case PenMode::Normal:
-			if(!m_locked)
+			if(!m_locked || toolSendsNoMessages())
 				emit penMove(
 					p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(),
 					p.rotation(), constrain1, constrain2, viewPos);
@@ -1465,7 +1465,8 @@ void CanvasView::penReleaseEvent(
 		m_pendown == TABLETDOWN ||
 		((button == Qt::LeftButton || button == Qt::RightButton) &&
 		 m_pendown == MOUSEDOWN)) {
-		if(!m_locked && m_penmode == PenMode::Normal) {
+		if((!m_locked || toolSendsNoMessages()) &&
+		   m_penmode == PenMode::Normal) {
 			CanvasShortcuts::ConstraintMatch constraintMatch =
 				m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
 			emit penUp(
