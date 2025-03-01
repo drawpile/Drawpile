@@ -26,6 +26,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Correct intermittent errors when connecting, reconnecting or otherwise opening a new main view in the browser that could hang the application.
  * Feature: Allow hiding the color history swatches on individual color docks. Thanks Stickly for suggesting.
  * Fix: Make pan, zoom, inspector and color picker tools not get locked by the session catching up or resetting. Thanks Greendyno for reporting.
+ * Fix: Don't show canvas during catchup when using software renderer.
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.

@@ -104,69 +104,71 @@ struct SoftwareCanvas::Private {
 		painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
 		painter->fillRect(rect, controller->clearColor());
 
-		bool shouldRenderSmooth = controller->shouldRenderSmooth();
-		if(shouldRenderSmooth) {
-			painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-		}
-
-		bool checkersVisible = isCheckersVisible();
-		bool pixelGridVisible = controller->pixelGridScale() > 0.0;
-		controller->withTileCache([&](canvas::TileCache &tileCache) {
-			const QPixmap *pixmap = tileCache.softwareCanvasPixmap();
-			if(pixmap) {
-				painter->save();
-				const QTransform &tf = controller->transform();
-				QRectF canvasRect = QRectF(pixmap->rect());
-
-				if(checkersVisible) {
-					painter->setBrush(getCheckerBrush());
-					painter->drawPolygon(tf.map(canvasRect));
-					painter->setCompositionMode(
-						QPainter::CompositionMode_SourceOver);
-					painter->setBrush(Qt::NoBrush);
-				}
-
-				painter->setTransform(tf);
-				QRect exposed = controller->invertedTransform()
-									.map(QRectF(rect))
-									.boundingRect()
-									.intersected(canvasRect)
-									.toAlignedRect();
-				painter->drawPixmap(exposed, *pixmap, exposed);
-
-				if(pixelGridVisible) {
-					QPen pen;
-					const QPaintEngine *pe = painter->paintEngine();
-					if(pe->hasFeature(QPaintEngine::BlendModes)) {
-						pen.setColor(QColor(32, 32, 32));
-						painter->setCompositionMode(
-							QPainter::CompositionMode_Difference);
-					} else {
-						pen.setColor(QColor(160, 160, 160));
-						painter->setCompositionMode(
-							QPainter::CompositionMode_Source);
-					}
-					pen.setCosmetic(true);
-					painter->setPen(pen);
-
-					int left = exposed.left();
-					int right = exposed.right() + 1;
-					int top = exposed.top();
-					int bottom = exposed.bottom() + 1;
-					for(int x = left; x < right; ++x) {
-						painter->drawLine(x, top, x, bottom);
-					}
-					for(int y = top; y < bottom; ++y) {
-						painter->drawLine(left, y, right, y);
-					}
-				}
-
-				painter->restore();
+		if(controller->isCanvasVisible()) {
+			bool shouldRenderSmooth = controller->shouldRenderSmooth();
+			if(shouldRenderSmooth) {
+				painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
 			}
-		});
 
-		if(shouldRenderSmooth) {
-			painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
+			bool checkersVisible = isCheckersVisible();
+			bool pixelGridVisible = controller->pixelGridScale() > 0.0;
+			controller->withTileCache([&](canvas::TileCache &tileCache) {
+				const QPixmap *pixmap = tileCache.softwareCanvasPixmap();
+				if(pixmap) {
+					painter->save();
+					const QTransform &tf = controller->transform();
+					QRectF canvasRect = QRectF(pixmap->rect());
+
+					if(checkersVisible) {
+						painter->setBrush(getCheckerBrush());
+						painter->drawPolygon(tf.map(canvasRect));
+						painter->setCompositionMode(
+							QPainter::CompositionMode_SourceOver);
+						painter->setBrush(Qt::NoBrush);
+					}
+
+					painter->setTransform(tf);
+					QRect exposed = controller->invertedTransform()
+										.map(QRectF(rect))
+										.boundingRect()
+										.intersected(canvasRect)
+										.toAlignedRect();
+					painter->drawPixmap(exposed, *pixmap, exposed);
+
+					if(pixelGridVisible) {
+						QPen pen;
+						const QPaintEngine *pe = painter->paintEngine();
+						if(pe->hasFeature(QPaintEngine::BlendModes)) {
+							pen.setColor(QColor(32, 32, 32));
+							painter->setCompositionMode(
+								QPainter::CompositionMode_Difference);
+						} else {
+							pen.setColor(QColor(160, 160, 160));
+							painter->setCompositionMode(
+								QPainter::CompositionMode_Source);
+						}
+						pen.setCosmetic(true);
+						painter->setPen(pen);
+
+						int left = exposed.left();
+						int right = exposed.right() + 1;
+						int top = exposed.top();
+						int bottom = exposed.bottom() + 1;
+						for(int x = left; x < right; ++x) {
+							painter->drawLine(x, top, x, bottom);
+						}
+						for(int y = top; y < bottom; ++y) {
+							painter->drawLine(left, y, right, y);
+						}
+					}
+
+					painter->restore();
+				}
+			});
+
+			if(shouldRenderSmooth) {
+				painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
+			}
 		}
 		painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
 		controller->scene()->render(painter);
