@@ -643,6 +643,20 @@ import { UAParser } from "ua-parser-js";
     document.body.appendChild(script);
   }
 
+  function formatLastUpdateDate() {
+    const elem = document.querySelector("#last-update-date");
+    const timestamp = Date.parse(elem.getAttribute("title"));
+    if (
+      !Number.isNaN(timestamp) &&
+      typeof timestamp === "number" &&
+      timestamp > 0
+    ) {
+      const date = new Date(timestamp);
+      elem.textContent = date.toLocaleDateString();
+      elem.setAttribute("title", date.toLocaleString());
+    }
+  }
+
   function checkSharedArrayBuffer() {
     if (typeof SharedArrayBuffer === "function") {
       return true;
@@ -1023,6 +1037,12 @@ import { UAParser } from "ua-parser-js";
         startup.appendChild(button);
       }
     }
+  }
+
+  try {
+    formatLastUpdateDate();
+  } catch (e) {
+    console.error(e);
   }
 
   if (checkSharedArrayBuffer() && checkHost()) {

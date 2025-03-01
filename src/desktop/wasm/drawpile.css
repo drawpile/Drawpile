@@ -25,6 +25,17 @@ dd {
   margin-inline-start: 0;
 }
 
+h1 {
+  margin-block-start: 0.5em;
+  margin-block-end: 0.5em;
+}
+
+.last-updated-note {
+  font-size: smaller;
+  margin-block-start: 0;
+  opacity: 0.75;
+}
+
 .fullscreen {
   height: 100%;
   margin: 0;
