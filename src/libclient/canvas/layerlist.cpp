@@ -1121,28 +1121,31 @@ QString LayerListModel::getAvailableLayerName(QString basename) const
 	// biggest suffix number of layers named "basename n".
 
 	// First, strip suffix number from the basename (if it exists)
-
-	QRegularExpression suffixNumRe("(\\d+)$");
-	{
-		QRegularExpressionMatch m = suffixNumRe.match(basename);
-		if(m.hasMatch()) {
-			basename = basename.mid(0, m.capturedStart()).trimmed();
-		}
-	}
+	QRegularExpression stripRe(QStringLiteral("\\s*[0-9]*\\s*\\z"));
+	basename.replace(stripRe, QString());
 
 	// Find the biggest suffix in the layer stack
-	int suffix = 0;
+	QString space = QStringLiteral(" ");
+	int fieldWidth = 0;
+	int highestSuffix = 0;
+	QRegularExpression suffixRe(QStringLiteral("\\A%1(\\s*)(0*)([0-9]+)\\s*\\z")
+									.arg(QRegularExpression::escape(basename)));
 	for(const LayerListItem &l : m_items) {
-		auto m = suffixNumRe.match(l.title);
+		QRegularExpressionMatch m = suffixRe.match(l.title);
 		if(m.hasMatch()) {
-			if(l.title.startsWith(basename)) {
-				suffix = qMax(suffix, m.captured(1).toInt());
+			int suffix = m.captured(3).toInt();
+			if(suffix > highestSuffix) {
+				space = m.captured(1);
+				fieldWidth = m.captured(2).length() + m.captured(3).length();
+				highestSuffix = suffix;
 			}
 		}
 	}
 
 	// Make unique name
-	return QString("%2 %1").arg(suffix + 1).arg(basename);
+	return basename + space +
+		   QStringLiteral("%1").arg(
+			   highestSuffix + 1, fieldWidth, 10, QChar('0'));
 }
 
 LayerListItem LayerListItem::null()
