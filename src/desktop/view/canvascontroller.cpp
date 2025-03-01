@@ -13,7 +13,6 @@ extern "C" {
 #include "libclient/canvas/paintengine.h"
 #include "libclient/drawdance/eventlog.h"
 #include "libclient/tools/enums.h"
-#include "libclient/tools/toolstate.h"
 #include "libclient/utils/cursors.h"
 #include <QDateTime>
 #include <QGestureEvent>

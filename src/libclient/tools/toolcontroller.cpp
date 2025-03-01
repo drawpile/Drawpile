@@ -16,7 +16,6 @@
 #include "libclient/tools/pan.h"
 #include "libclient/tools/selection.h"
 #include "libclient/tools/shapetools.h"
-#include "libclient/tools/toolstate.h"
 #include "libclient/tools/transform.h"
 #include "libclient/tools/zoom.h"
 #include "libshared/util/functionrunnable.h"

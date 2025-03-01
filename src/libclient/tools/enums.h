@@ -7,6 +7,7 @@ namespace tools {
 enum class ColorPickSource { Canvas, Tool, Touch, Adjust };
 enum class DeviceType { Mouse, Tablet, Touch };
 enum class QuickAdjustType { Tool, ColorH, ColorS, ColorV };
+enum class ToolState { Normal, Busy };
 
 }
 
