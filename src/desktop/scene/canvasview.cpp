@@ -155,10 +155,6 @@ private:
 CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent)
 	, m_pendown(NOTDOWN)
-	, m_allowColorPick(false)
-	, m_allowToolAdjust(false)
-	, m_toolHandlesRightClick(false)
-	, m_fractionalTool(false)
 	, m_penmode(PenMode::Normal)
 	, m_tabletEventTimerDelay(0)
 	, m_dragmode(ViewDragMode::None)
@@ -830,16 +826,10 @@ void CanvasView::setToolCursor(const QCursor &cursor)
 	resetCursor();
 }
 
-void CanvasView::setToolCapabilities(
-	bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick,
-	bool fractionalTool, bool toolSupportsPressure)
+void CanvasView::setToolCapabilities(unsigned int toolCapabilities)
 {
-	m_allowColorPick = allowColorPick;
-	m_allowToolAdjust = allowToolAdjust;
-	m_toolHandlesRightClick = toolHandlesRightClick;
-	m_fractionalTool = fractionalTool;
-	m_toolSupportsPressure = toolSupportsPressure;
-	m_touch->setAllowColorPick(allowColorPick);
+	m_toolCapabilities = tools::Capabilities(toolCapabilities);
+	m_touch->setAllowColorPick(toolAllowsColorPick());
 }
 
 void CanvasView::resetCursor()
@@ -1232,7 +1222,7 @@ void CanvasView::penPressEvent(
 		m_canvasShortcuts.matchMouseButton(modifiers, m_keysDown, button);
 	// If the tool wants to receive right clicks (e.g. to undo the last point in
 	// a bezier curve), we have to override that shortcut.
-	if(m_toolHandlesRightClick && match.isUnmodifiedClick(Qt::RightButton)) {
+	if(toolHandlesRightClick() && match.isUnmodifiedClick(Qt::RightButton)) {
 		match.shortcut = nullptr;
 	}
 
@@ -1242,12 +1232,12 @@ void CanvasView::penPressEvent(
 	case CanvasShortcuts::NO_ACTION:
 		break;
 	case CanvasShortcuts::TOOL_ADJUST:
-		setDrag(
-			SetDragParams::fromMouseMatch(match)
-				.setDragMode(ViewDragMode::Prepared)
-				.setDragCondition(
-					m_allowToolAdjust && m_dragmode != ViewDragMode::Started)
-				.setUpdateOutline());
+		setDrag(SetDragParams::fromMouseMatch(match)
+					.setDragMode(ViewDragMode::Prepared)
+					.setDragCondition(
+						toolAllowsToolAdjust() &&
+						m_dragmode != ViewDragMode::Started)
+					.setUpdateOutline());
 		break;
 	case CanvasShortcuts::COLOR_H_ADJUST:
 	case CanvasShortcuts::COLOR_S_ADJUST:
@@ -1255,7 +1245,8 @@ void CanvasView::penPressEvent(
 		setDrag(SetDragParams::fromMouseMatch(match)
 					.setDragMode(ViewDragMode::Prepared)
 					.setDragCondition(
-						m_allowColorPick && m_dragmode != ViewDragMode::Started)
+						toolAllowsColorPick() &&
+						m_dragmode != ViewDragMode::Started)
 					.setUpdateOutline());
 		break;
 	case CanvasShortcuts::CANVAS_PAN:
@@ -1269,7 +1260,7 @@ void CanvasView::penPressEvent(
 					.setUpdateOutline());
 		break;
 	case CanvasShortcuts::COLOR_PICK:
-		if(m_allowColorPick) {
+		if(toolAllowsColorPick()) {
 			penmode = PenMode::Colorpick;
 		}
 		break;
@@ -1375,7 +1366,7 @@ void CanvasView::penMoveEvent(
 		moveDrag(pos.toPoint());
 
 	} else {
-		if(m_fractionalTool || !m_prevpoint.intSame(point)) {
+		if(toolFractional() || !m_prevpoint.intSame(point)) {
 			CanvasShortcuts::ConstraintMatch match =
 				m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
 			if(m_pendown) {
@@ -1497,7 +1488,7 @@ void CanvasView::penReleaseEvent(
 				setDrag(SetDragParams::fromMouseMatch(mouseMatch)
 							.setPenMode(PenMode::Normal)
 							.setDragMode(ViewDragMode::Prepared)
-							.setDragCondition(m_allowToolAdjust));
+							.setDragCondition(toolAllowsToolAdjust()));
 				break;
 			case CanvasShortcuts::COLOR_H_ADJUST:
 			case CanvasShortcuts::COLOR_S_ADJUST:
@@ -1505,7 +1496,7 @@ void CanvasView::penReleaseEvent(
 				setDrag(SetDragParams::fromMouseMatch(mouseMatch)
 							.setPenMode(PenMode::Normal)
 							.setDragMode(ViewDragMode::Prepared)
-							.setDragCondition(m_allowColorPick));
+							.setDragCondition(toolAllowsColorPick()));
 				break;
 			case CanvasShortcuts::CANVAS_PAN:
 			case CanvasShortcuts::CANVAS_ROTATE:
@@ -1517,7 +1508,7 @@ void CanvasView::penReleaseEvent(
 							.setDragMode(ViewDragMode::Prepared));
 				break;
 			case CanvasShortcuts::COLOR_PICK:
-				if(m_allowColorPick) {
+				if(toolAllowsColorPick()) {
 					m_penmode = PenMode::Colorpick;
 				}
 				break;
@@ -1650,7 +1641,7 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 	// Color and layer picking by spinning the scroll wheel is weird, but okay.
 	case CanvasShortcuts::COLOR_PICK:
 		event->accept();
-		if(m_allowColorPick && m_scene->hasImage()) {
+		if(toolAllowsColorPick() && m_scene->hasImage()) {
 			QPointF p = mapToCanvas(compat::wheelPosition(*event));
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
 		}
@@ -1665,22 +1656,22 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 	}
 	case CanvasShortcuts::TOOL_ADJUST:
 		wheelAdjust(
-			event, int(tools::QuickAdjustType::Tool), m_allowToolAdjust,
+			event, int(tools::QuickAdjustType::Tool), toolAllowsToolAdjust(),
 			deltaY);
 		break;
 	case CanvasShortcuts::COLOR_H_ADJUST:
 		wheelAdjust(
-			event, int(tools::QuickAdjustType::ColorH), m_allowColorPick,
+			event, int(tools::QuickAdjustType::ColorH), toolAllowsColorPick(),
 			deltaY);
 		break;
 	case CanvasShortcuts::COLOR_S_ADJUST:
 		wheelAdjust(
-			event, int(tools::QuickAdjustType::ColorS), m_allowColorPick,
+			event, int(tools::QuickAdjustType::ColorS), toolAllowsColorPick(),
 			deltaY);
 		break;
 	case CanvasShortcuts::COLOR_V_ADJUST:
 		wheelAdjust(
-			event, int(tools::QuickAdjustType::ColorV), m_allowColorPick,
+			event, int(tools::QuickAdjustType::ColorV), toolAllowsColorPick(),
 			deltaY);
 		break;
 	default:
@@ -1762,9 +1753,9 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 				setDrag(SetDragParams::fromMouseMatch(mouseMatch)
 							.setPenMode(PenMode::Normal)
 							.setDragMode(ViewDragMode::Prepared)
-							.setDragCondition(m_allowToolAdjust)
+							.setDragCondition(toolAllowsToolAdjust())
 							.setUpdateOutline());
-				if(!m_allowToolAdjust) {
+				if(!toolAllowsToolAdjust()) {
 					emitPenModify(getKeyboardModifiers(event));
 				}
 				break;
@@ -1774,9 +1765,9 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 				setDrag(SetDragParams::fromMouseMatch(mouseMatch)
 							.setPenMode(PenMode::Normal)
 							.setDragMode(ViewDragMode::Prepared)
-							.setDragCondition(m_allowColorPick)
+							.setDragCondition(toolAllowsColorPick())
 							.setUpdateOutline());
-				if(!m_allowColorPick) {
+				if(!toolAllowsColorPick()) {
 					emitPenModify(getKeyboardModifiers(event));
 				}
 				break;
@@ -1791,8 +1782,8 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 							.setUpdateOutline());
 				break;
 			case CanvasShortcuts::COLOR_PICK:
-				m_penmode =
-					m_allowColorPick ? PenMode::Colorpick : PenMode::Normal;
+				m_penmode = toolAllowsColorPick() ? PenMode::Colorpick
+												  : PenMode::Normal;
 				break;
 			case CanvasShortcuts::LAYER_PICK:
 				m_penmode = PenMode::Layerpick;
@@ -1880,20 +1871,20 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 	if(m_dragmode == ViewDragMode::Prepared) {
 		switch(mouseMatch.action()) {
 		case CanvasShortcuts::TOOL_ADJUST:
-			setDrag(
-				SetDragParams::fromMouseMatch(mouseMatch)
-					.setDragMode(ViewDragMode::Prepared)
-					.setDragConditionClearDragModeOnFailure(m_allowToolAdjust)
-					.setUpdateOutline());
+			setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+						.setDragMode(ViewDragMode::Prepared)
+						.setDragConditionClearDragModeOnFailure(
+							toolAllowsToolAdjust())
+						.setUpdateOutline());
 			break;
 		case CanvasShortcuts::COLOR_H_ADJUST:
 		case CanvasShortcuts::COLOR_S_ADJUST:
 		case CanvasShortcuts::COLOR_V_ADJUST:
-			setDrag(
-				SetDragParams::fromMouseMatch(mouseMatch)
-					.setDragMode(ViewDragMode::Prepared)
-					.setDragConditionClearDragModeOnFailure(m_allowColorPick)
-					.setUpdateOutline());
+			setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+						.setDragMode(ViewDragMode::Prepared)
+						.setDragConditionClearDragModeOnFailure(
+							toolAllowsColorPick())
+						.setUpdateOutline());
 			break;
 		case CanvasShortcuts::CANVAS_PAN:
 		case CanvasShortcuts::CANVAS_ROTATE:
@@ -1913,7 +1904,8 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 	if(m_pendown == NOTDOWN) {
 		switch(mouseMatch.action()) {
 		case CanvasShortcuts::COLOR_PICK:
-			m_penmode = m_allowColorPick ? PenMode::Colorpick : PenMode::Normal;
+			m_penmode =
+				toolAllowsColorPick() ? PenMode::Colorpick : PenMode::Normal;
 			break;
 		case CanvasShortcuts::LAYER_PICK:
 			m_penmode = PenMode::Layerpick;

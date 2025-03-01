@@ -333,8 +333,13 @@ void ViewWrapper::connectDocument(Document *doc)
 		&tools::ToolController::offsetActiveTool);
 	connect(
 		toolCtrl, &tools::ToolController::toolCapabilitiesChanged, m_scene,
-		std::bind(&view::CanvasScene::setSelectionIgnored, m_scene, _6));
-	m_scene->setSelectionIgnored(toolCtrl->activeToolIgnoresSelections());
+		[this](unsigned int capabilities) {
+			m_scene->setSelectionIgnored(
+				tools::Capabilities(capabilities)
+					.testFlag(tools::Capability::IgnoresSelections));
+		});
+	m_scene->setSelectionIgnored(toolCtrl->activeToolCapabilities().testFlag(
+		tools::Capability::IgnoresSelections));
 
 	connect(
 		toolCtrl, &tools::ToolController::toolCursorChanged, m_controller,
@@ -344,12 +349,7 @@ void ViewWrapper::connectDocument(Document *doc)
 	connect(
 		toolCtrl, &tools::ToolController::toolCapabilitiesChanged, m_controller,
 		&CanvasController::setToolCapabilities);
-	m_controller->setToolCapabilities(
-		toolCtrl->activeToolAllowColorPick(),
-		toolCtrl->activeToolAllowToolAdjust(),
-		toolCtrl->activeToolHandlesRightClick(),
-		toolCtrl->activeToolIsFractional(),
-		toolCtrl->activeToolSupportsPressure());
+	m_controller->setToolCapabilities(toolCtrl->activeToolCapabilities());
 
 	connect(
 		m_controller, &CanvasController::penDown, toolCtrl,

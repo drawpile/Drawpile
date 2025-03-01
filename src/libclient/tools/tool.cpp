@@ -9,14 +9,12 @@ bool Tool::isActiveTool() const
 	return m_owner.activeTool() == m_type;
 }
 
-void Tool::setHandlesRightClick(bool handlesRightClick)
+void Tool::setCapability(Capability capability, bool enabled)
 {
-	if(handlesRightClick != m_handlesRightClick) {
-		m_handlesRightClick = handlesRightClick;
+	if(m_capabilities.testFlag(capability) != enabled) {
+		m_capabilities.setFlag(capability, enabled);
 		if(isActiveTool()) {
-			emit m_owner.toolCapabilitiesChanged(
-				m_allowColorPick, m_allowToolAdjust, m_handlesRightClick,
-				m_fractional, m_supportsPressure, m_ignoresSelections);
+			emit m_owner.toolCapabilitiesChanged(m_capabilities);
 		}
 	}
 }

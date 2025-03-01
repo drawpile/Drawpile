@@ -9,10 +9,8 @@ namespace tools {
 
 LaserPointer::LaserPointer(ToolController &owner)
 	: Tool(
-		  owner, LASERPOINTER, utils::Cursors::arrow(), false, true, false,
-		  false, false, false)
-	, m_persistence(1)
-	, m_drawing(false)
+		  owner, LASERPOINTER, utils::Cursors::arrow(),
+		  Capability::AllowToolAdjust)
 {
 }
 

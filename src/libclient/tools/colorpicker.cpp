@@ -10,8 +10,8 @@ namespace tools {
 
 ColorPicker::ColorPicker(ToolController &owner)
 	: Tool(
-		  owner, PICKER, utils::Cursors::colorPick(), false, true, false, true,
-		  false, false)
+		  owner, PICKER, utils::Cursors::colorPick(),
+		  Capability::AllowToolAdjust | Capability::Fractional)
 {
 }
 

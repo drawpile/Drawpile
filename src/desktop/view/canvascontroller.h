@@ -5,6 +5,7 @@
 #include "desktop/view/lock.h"
 #include "libclient/canvas/canvasshortcuts.h"
 #include "libclient/canvas/point.h"
+#include "libclient/tools/enums.h"
 #include "libclient/utils/kis_cubic_curve.h"
 #include <QColor>
 #include <QCursor>
@@ -137,9 +138,7 @@ public:
 	void setOutlineMode(bool subpixel, bool square, bool force);
 	void setPixelGrid(bool pixelGrid);
 	void setPointerTracking(bool pointerTracking);
-	void setToolCapabilities(
-		bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick,
-		bool fractionalTool, bool toolSupportsPressure);
+	void setToolCapabilities(unsigned int toolCapabilities);
 	void setToolCursor(const QCursor &toolCursor);
 	void setBrushBlendMode(int brushBlendMode);
 
@@ -333,6 +332,27 @@ private:
 	void showTransformNotice(const QString &text);
 	void updateLockNotice();
 
+	bool toolAllowsColorPick() const
+	{
+		return m_toolCapabilities.testFlag(tools::Capability::AllowColorPick);
+	}
+
+	bool toolAllowsToolAdjust() const
+	{
+		return m_toolCapabilities.testFlag(tools::Capability::AllowToolAdjust);
+	}
+
+	bool toolHandlesRightClick() const
+	{
+		return m_toolCapabilities.testFlag(
+			tools::Capability::HandlesRightClick);
+	}
+
+	bool toolFractional() const
+	{
+		return m_toolCapabilities.testFlag(tools::Capability::Fractional);
+	}
+
 	CanvasScene *m_scene;
 	CanvasInterface *m_canvasWidget = nullptr;
 	canvas::CanvasModel *m_canvasModel = nullptr;
@@ -374,11 +394,7 @@ private:
 	int m_alphaLockCursorStyle;
 	int m_brushBlendMode;
 
-	bool m_allowColorPick = false;
-	bool m_allowToolAdjust = false;
-	bool m_toolHandlesRightClick = false;
-	bool m_fractionalTool = false;
-	bool m_toolSupportsPressure = false;
+	tools::Capabilities m_toolCapabilities;
 
 #ifdef __EMSCRIPTEN__
 	bool m_enableEraserOverride = false;

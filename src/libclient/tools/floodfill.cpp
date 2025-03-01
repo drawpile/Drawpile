@@ -114,8 +114,8 @@ private:
 
 FloodFill::FloodFill(ToolController &owner)
 	: Tool(
-		  owner, FLOODFILL, Cursors::bucket(), true, true, false, false, false,
-		  false)
+		  owner, FLOODFILL, Cursors::bucket(),
+		  Capability::AllowColorPick | Capability::AllowToolAdjust)
 	, m_kernel(int(DP_FLOOD_FILL_KERNEL_ROUND))
 	, m_blendMode(DP_BLEND_MODE_NORMAL)
 	, m_originalBlendMode(m_blendMode)
@@ -316,7 +316,7 @@ void FloodFill::fillAt(const QPointF &point, int activeLayerId, bool editable)
 		m_running = true;
 		m_cancel = false;
 		canvas::PaintEngine *paintEngine = canvas->paintEngine();
-		setHandlesRightClick(true);
+		setCapability(Capability::HandlesRightClick, true);
 		emitFloodFillStateChanged();
 		requestToolNotice(
 			QCoreApplication::translate("FillSettings", "Filling…"));
@@ -368,7 +368,7 @@ void FloodFill::floodFillFinished(Task *task)
 		m_repeat = false;
 	}
 	previewPending();
-	setHandlesRightClick(havePending());
+	setCapability(Capability::HandlesRightClick, havePending());
 	emitFloodFillStateChanged();
 	if(m_repeat) {
 		fillAt(m_lastPoint, lastActiveLayerId(), m_pendingEditable);
@@ -465,7 +465,7 @@ void FloodFill::disposePending()
 	if(havePending()) {
 		m_pendingImage = QImage();
 		previewPending();
-		setHandlesRightClick(false);
+		setCapability(Capability::HandlesRightClick, false);
 		updateCursor();
 		emitFloodFillStateChanged();
 	}

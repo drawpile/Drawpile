@@ -26,7 +26,7 @@ private:
 	QRect getRect() const;
 
 	QPoint m_start, m_end;
-	bool m_reverse;
+	bool m_reverse = false;
 	bool m_zooming = false;
 };
 

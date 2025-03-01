@@ -86,17 +86,11 @@ public:
 
 	Tool(
 		ToolController &owner, Type type, const QCursor &cursor,
-		bool allowColorPick, bool allowToolAdjust, bool allowRightClick,
-		bool fractional, bool supportsPressure, bool ignoresSelections)
-		: m_owner{owner}
-		, m_type{type}
-		, m_cursor{cursor}
-		, m_allowColorPick{allowColorPick}
-		, m_allowToolAdjust{allowToolAdjust}
-		, m_handlesRightClick{allowRightClick}
-		, m_fractional(fractional)
-		, m_supportsPressure(supportsPressure)
-		, m_ignoresSelections(ignoresSelections)
+		Capabilities capabilities)
+		: m_owner(owner)
+		, m_type(type)
+		, m_cursor(cursor)
+		, m_capabilities(capabilities)
 	{
 	}
 
@@ -109,12 +103,7 @@ public:
 
 	Type type() const { return m_type; }
 	const QCursor &cursor() const { return m_cursor; }
-	bool allowColorPick() const { return m_allowColorPick; }
-	bool allowToolAdjust() const { return m_allowToolAdjust; }
-	bool handlesRightClick() const { return m_handlesRightClick; }
-	bool isFractional() const { return m_fractional; }
-	bool supportsPressure() const { return m_supportsPressure; }
-	bool ignoresSelections() const { return m_ignoresSelections; }
+	Capabilities capabilities() const { return m_capabilities; }
 
 	virtual void begin(const BeginParams &params) = 0;
 	virtual void motion(const MotionParams &params) = 0;
@@ -162,7 +151,7 @@ public:
 
 protected:
 	bool isActiveTool() const;
-	void setHandlesRightClick(bool handlesRightClick);
+	void setCapability(Capability capability, bool enabled);
 	void setCursor(const QCursor &cursor);
 	void requestToolNotice(const QString &text);
 
@@ -170,13 +159,8 @@ protected:
 
 private:
 	const Type m_type;
-	QCursor m_cursor; // May change during tool operation.
-	const bool m_allowColorPick;
-	const bool m_allowToolAdjust;
-	bool m_handlesRightClick; // May change during tool operation.
-	const bool m_fractional;
-	const bool m_supportsPressure;
-	const bool m_ignoresSelections;
+	QCursor m_cursor;
+	Capabilities m_capabilities;
 };
 
 }

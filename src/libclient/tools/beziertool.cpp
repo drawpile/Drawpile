@@ -16,8 +16,9 @@ static constexpr long long DELTA_MSEC = 10;
 
 BezierTool::BezierTool(ToolController &owner)
 	: Tool(
-		  owner, BEZIER, utils::Cursors::curve(), true, true, false, true,
-		  false, true)
+		  owner, BEZIER, utils::Cursors::curve(),
+		  Capability::AllowColorPick | Capability::AllowToolAdjust |
+			  Capability::Fractional | Capability::IgnoresSelections)
 {
 }
 
@@ -49,7 +50,7 @@ void BezierTool::begin(const BeginParams &params)
 	}
 
 	bool hasPoints = !m_points.isEmpty();
-	setHandlesRightClick(hasPoints);
+	setCapability(Capability::HandlesRightClick, hasPoints);
 	if(hasPoints) {
 		updatePreview();
 	}
@@ -94,7 +95,7 @@ void BezierTool::end(const EndParams &)
 		finishMultipart();
 	}
 
-	setHandlesRightClick(!m_points.isEmpty());
+	setCapability(Capability::HandlesRightClick, !m_points.isEmpty());
 }
 
 void BezierTool::finishMultipart()

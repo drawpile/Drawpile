@@ -12,7 +12,9 @@ using utils::Cursors;
 namespace tools {
 
 SelectionTool::SelectionTool(ToolController &owner, Type type, QCursor cursor)
-	: Tool(owner, type, cursor, true, false, false, true, false, false)
+	: Tool(
+		  owner, type, cursor,
+		  Capability::AllowColorPick | Capability::Fractional)
 {
 }
 

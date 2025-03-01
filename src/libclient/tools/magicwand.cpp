@@ -88,9 +88,7 @@ private:
 
 
 MagicWandTool::MagicWandTool(ToolController &owner)
-	: Tool(
-		  owner, MAGICWAND, Cursors::magicWand(), true, false, false, false,
-		  false, false)
+	: Tool(owner, MAGICWAND, Cursors::magicWand(), Capability::AllowColorPick)
 {
 }
 
@@ -288,7 +286,7 @@ void MagicWandTool::fillAt(const QPointF &point, bool constrain, bool center)
 			break;
 		}
 
-		setHandlesRightClick(true);
+		setCapability(Capability::HandlesRightClick, true);
 		requestToolNotice(
 			QCoreApplication::translate("MagicWandSettings", "Selecting…"));
 
@@ -333,7 +331,7 @@ void MagicWandTool::floodFillFinished(Task *task)
 		qWarning("Magic wand failed: %s", qUtf8Printable(task->error()));
 	}
 	requestToolNotice(QString());
-	setHandlesRightClick(havePending());
+	setCapability(Capability::HandlesRightClick, havePending());
 	if(m_repeat) {
 		fillAt(m_lastPoint, m_lastConstrain, m_lastCenter);
 	} else if(!m_held) {
@@ -369,7 +367,7 @@ void MagicWandTool::disposePending()
 		if(!EDITABLE) {
 			emit m_owner.maskPreviewRequested(QPoint(), QImage());
 		}
-		setHandlesRightClick(false);
+		setCapability(Capability::HandlesRightClick, false);
 		requestToolNotice(QString());
 	}
 }

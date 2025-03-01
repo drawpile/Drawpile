@@ -16,8 +16,8 @@ namespace tools {
 
 TransformTool::TransformTool(ToolController &owner)
 	: Tool(
-		  owner, TRANSFORM, QCursor(Qt::PointingHandCursor), false, false,
-		  false, true, false, false)
+		  owner, TRANSFORM, QCursor(Qt::PointingHandCursor),
+		  Capability::Fractional)
 {
 }
 

@@ -35,16 +35,16 @@ private:
 	void deselectAnnotation();
 
 	/// ID of the currently selected annotation
-	uint16_t m_selectedId;
+	uint16_t m_selectedId = 0;
 
 	/// Are we currently creating a new annotation?
-	bool m_isNew;
+	bool m_isNew = true;
 
 	/// Drag start and last point
 	QPointF m_p1, m_p2;
 
 	/// Grabbed handle
-	Handle m_handle;
+	Handle m_handle = Handle::Outside;
 
 	/// The shape of the annotation being edited
 	QRect m_shape;

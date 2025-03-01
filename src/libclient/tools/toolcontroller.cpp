@@ -130,10 +130,7 @@ void ToolController::setActiveTool(Tool::Type tool)
 	if(activeTool() != tool) {
 		finishActiveTool();
 		m_activeTool = getTool(tool);
-		emit toolCapabilitiesChanged(
-			activeToolAllowColorPick(), activeToolAllowToolAdjust(),
-			activeToolHandlesRightClick(), activeToolIsFractional(),
-			activeToolSupportsPressure(), activeToolIgnoresSelections());
+		emit toolCapabilitiesChanged(activeToolCapabilities());
 		emit toolCursorChanged(activeToolCursor());
 		emit toolNoticeRequested(QString());
 	}
@@ -184,40 +181,10 @@ QCursor ToolController::activeToolCursor() const
 	return m_activeTool->cursor();
 }
 
-bool ToolController::activeToolAllowColorPick() const
+Capabilities ToolController::activeToolCapabilities() const
 {
 	Q_ASSERT(m_activeTool);
-	return m_activeTool->allowColorPick();
-}
-
-bool ToolController::activeToolAllowToolAdjust() const
-{
-	Q_ASSERT(m_activeTool);
-	return m_activeTool->allowToolAdjust();
-}
-
-bool ToolController::activeToolHandlesRightClick() const
-{
-	Q_ASSERT(m_activeTool);
-	return m_activeTool->handlesRightClick();
-}
-
-bool ToolController::activeToolIsFractional() const
-{
-	Q_ASSERT(m_activeTool);
-	return m_activeTool->isFractional();
-}
-
-bool ToolController::activeToolSupportsPressure() const
-{
-	Q_ASSERT(m_activeTool);
-	return m_activeTool->supportsPressure();
-}
-
-bool ToolController::activeToolIgnoresSelections() const
-{
-	Q_ASSERT(m_activeTool);
-	return m_activeTool->ignoresSelections();
+	return m_activeTool->capabilities();
 }
 
 void ToolController::setActiveLayer(uint16_t id)

@@ -12,8 +12,9 @@ namespace tools {
 
 Freehand::Freehand(ToolController &owner, bool isEraser)
 	: Tool(
-		  owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor, true, true,
-		  false, false, true, true)
+		  owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor,
+		  Capability::AllowColorPick | Capability::AllowToolAdjust |
+			  Capability::SupportsPressure | Capability::IgnoresSelections)
 	, m_brushEngine(std::bind(&Freehand::pollControl, this, _1))
 {
 	m_pollTimer.setSingleShot(false);

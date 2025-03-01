@@ -8,8 +8,8 @@ namespace tools {
 
 PanTool::PanTool(ToolController &owner)
 	: Tool(
-		  owner, PAN, QCursor(Qt::OpenHandCursor), true, false, false, true,
-		  false, false)
+		  owner, PAN, QCursor(Qt::OpenHandCursor),
+		  Capability::AllowColorPick | Capability::Fractional)
 {
 }
 

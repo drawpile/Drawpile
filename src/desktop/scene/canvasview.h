@@ -6,6 +6,7 @@
 #include "desktop/view/lock.h"
 #include "libclient/canvas/canvasshortcuts.h"
 #include "libclient/canvas/point.h"
+#include "libclient/tools/enums.h"
 #include "libclient/utils/kis_cubic_curve.h"
 #include <QDeadlineTimer>
 #include <QGraphicsView>
@@ -227,9 +228,7 @@ public slots:
 	void zoomToFitHeight();
 
 	void setToolCursor(const QCursor &cursor);
-	void setToolCapabilities(
-		bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick,
-		bool fractionalTool, bool toolSupportsPressure);
+	void setToolCapabilities(unsigned int toolCapabilities);
 
 	void setBrushCursorStyle(int style);
 	void setEraseCursorStyle(int style);
@@ -368,6 +367,27 @@ private:
 	Qt::KeyboardModifiers geWheelModifiers(const QWheelEvent *wheelev) const;
 	Qt::KeyboardModifiers getFallbackModifiers() const;
 
+	bool toolAllowsColorPick() const
+	{
+		return m_toolCapabilities.testFlag(tools::Capability::AllowColorPick);
+	}
+
+	bool toolAllowsToolAdjust() const
+	{
+		return m_toolCapabilities.testFlag(tools::Capability::AllowToolAdjust);
+	}
+
+	bool toolHandlesRightClick() const
+	{
+		return m_toolCapabilities.testFlag(
+			tools::Capability::HandlesRightClick);
+	}
+
+	bool toolFractional() const
+	{
+		return m_toolCapabilities.testFlag(tools::Capability::Fractional);
+	}
+
 	CanvasShortcuts m_canvasShortcuts;
 	QSet<Qt::Key> m_keysDown;
 
@@ -385,11 +405,7 @@ private:
 	NotificationBar *m_notificationBar;
 	NotificationBarState m_notificationBarState = NotificationBarState::None;
 
-	bool m_allowColorPick;
-	bool m_allowToolAdjust;
-	bool m_toolHandlesRightClick;
-	bool m_fractionalTool;
-	bool m_toolSupportsPressure = false;
+	tools::Capabilities m_toolCapabilities;
 	PenMode m_penmode;
 	QDeadlineTimer m_tabletEventTimer;
 	int m_tabletEventTimerDelay;

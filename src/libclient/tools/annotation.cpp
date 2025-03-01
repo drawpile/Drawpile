@@ -12,9 +12,8 @@ namespace tools {
 
 Annotation::Annotation(ToolController &owner)
 	: Tool(
-		  owner, ANNOTATION, utils::Cursors::text(), false, false, true, false,
-		  false, true)
-	, m_selectedId{0}
+		  owner, ANNOTATION, utils::Cursors::text(),
+		  Capability::HandlesRightClick | Capability::IgnoresSelections)
 {
 }
 

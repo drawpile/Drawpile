@@ -16,8 +16,8 @@ public:
 	void setPersistence(int p) { m_persistence = p; }
 
 private:
-	int m_persistence;
-	bool m_drawing;
+	int m_persistence = 1;
+	bool m_drawing = false;
 };
 
 }
