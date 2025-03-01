@@ -1,0 +1,141 @@
+Description: Keyboard input doesn't work properly when Qt sees that
+navigator.maxTouchPoints is non-zero. It installs some kind of off-screen input
+event for touch key input, but then keyboard shortcuts just stop working. This
+patch cobbles something together that seems to make it work.
+
+This patch is for Qt 6.7. It seems like they tried to fix it in Qt 6.8, but it
+still doesn't work properly.
+
+--- a/src/plugins/platforms/wasm/qwasminputcontext.cpp
++++ b/src/plugins/platforms/wasm/qwasminputcontext.cpp
+@@ -6,6 +6,9 @@
+ #include "qwasminputcontext.h"
+ #include "qwasmintegration.h"
+ #include "qwasmplatform.h"
++#include "qwasmclipboard.h"
++#include "qwasmevent.h"
++#include "qwasmkeytranslator.h"
+ #include <QRectF>
+ #include <qpa/qplatforminputcontext.h>
+ #include "qwasmscreen.h"
+@@ -37,11 +40,43 @@
+     event["target"].set("value", "");
+ }
+
++static bool processKey(const KeyEvent &event)
++{
++    constexpr bool ProceedToNativeEvent = false;
++    Q_ASSERT(event.type == EventType::KeyDown || event.type == EventType::KeyUp);
++
++    const auto clipboardResult =
++            QWasmIntegration::get()->getWasmClipboard()->processKeyboard(event);
++
++    using ProcessKeyboardResult = QWasmClipboard::ProcessKeyboardResult;
++    if (clipboardResult == ProcessKeyboardResult::NativeClipboardEventNeeded)
++        return ProceedToNativeEvent;
++
++    const auto result = QWindowSystemInterface::handleKeyEvent(
++            0, event.type == EventType::KeyDown ? QEvent::KeyPress : QEvent::KeyRelease, event.key,
++            event.modifiers, event.text, event.autoRepeat);
++    return clipboardResult == ProcessKeyboardResult::NativeClipboardEventAndCopiedDataNeeded
++            ? ProceedToNativeEvent
++            : result;
++}
++
++static void keyCallback(emscripten::val event)
++{
++    QWasmInputContext *wasmInput =
++        reinterpret_cast<QWasmInputContext *>(
++                event["target"]["data-qinputcontext"].as<quintptr>());
++    if (processKey(*KeyEvent::fromWebWithDeadKeyTranslation(event, wasmInput->deadKeySupport())))
++        event.call<void>("preventDefault");
++    event.call<void>("stopPropagation");
++}
++
+ EMSCRIPTEN_BINDINGS(clipboard_module) {
+     function("qtInputContextCallback", &inputCallback);
++    function("qtInputContextKeyCallback", &keyCallback);
+ }
+
+ QWasmInputContext::QWasmInputContext()
++    : m_deadKeySupport(std::make_unique<QWasmDeadKeySupport>())
+ {
+     emscripten::val document = emscripten::val::global("document");
+     m_inputElement = document.call<emscripten::val>("createElement", std::string("input"));
+@@ -57,11 +92,17 @@
+         m_blurEventHandler.reset(new EventCallback(m_inputElement, "blur", callback));
+
+     } else {
+-
+-        const std::string inputType = platform() == Platform::Windows ? "textInput" : "input";
+-
+-        document.call<void>("addEventListener", inputType,
+-                            emscripten::val::module_property("qtInputContextCallback"),
++        if (platform() == Platform::Android) {
++            // Android inexplicably doesn't send keydown or keyup events without this.
++            document.call<void>("addEventListener", std::string("input"),
++                                emscripten::val::module_property("qtInputContextCallback"),
++                                emscripten::val(false));
++        }
++        document.call<void>("addEventListener", std::string("keydown"),
++                            emscripten::val::module_property("qtInputContextKeyCallback"),
++                            emscripten::val(false));
++        document.call<void>("addEventListener", std::string("keyup"),
++                            emscripten::val::module_property("qtInputContextKeyCallback"),
+                             emscripten::val(false));
+         m_inputElement.set("data-qinputcontext",
+                            emscripten::val(quintptr(reinterpret_cast<void *>(this))));
+
+--- a/src/plugins/platforms/wasm/qwasminputcontext.h
++++ b/src/plugins/platforms/wasm/qwasminputcontext.h
+@@ -14,6 +14,8 @@
+
+ QT_BEGIN_NAMESPACE
+
++class QWasmDeadKeySupport;
++
+ class QWasmInputContext : public QPlatformInputContext
+ {
+     Q_DISABLE_COPY(QWasmInputContext)
+@@ -32,6 +34,8 @@
+     void inputStringChanged(QString &, int eventType, QWasmInputContext *context);
+     emscripten::val m_inputElement = emscripten::val::null();
+
++    QWasmDeadKeySupport *deadKeySupport() { return m_deadKeySupport.get(); }
++
+ private:
+     emscripten::val inputHandlerElementForFocusedWindow();
+
+@@ -39,7 +43,7 @@
+
+     QPointer<QWindow> m_focusWindow;
+     std::unique_ptr<qstdweb::EventCallback> m_blurEventHandler;
+-    std::unique_ptr<qstdweb::EventCallback> m_inputEventHandler;
++    std::unique_ptr<QWasmDeadKeySupport> m_deadKeySupport;
+     bool inputPanelIsOpen = false;
+ };
+
+--- a/src/plugins/platforms/wasm/qwasmwindow.cpp
++++ b/src/plugins/platforms/wasm/qwasmwindow.cpp
+@@ -133,19 +133,9 @@
+         event.call<void>("stopPropagation");
+     });
+
+-   emscripten::val keyFocusWindow;
+-    if (QWasmInputContext *wasmContext =
+-       qobject_cast<QWasmInputContext *>(QWasmIntegration::get()->inputContext())) {
+-        // if there is an touchscreen input context,
+-        // use that window for key input
+-        keyFocusWindow = wasmContext->m_inputElement;
+-    } else {
+-        keyFocusWindow = m_qtWindow;
+-    }
+-
+     m_keyDownCallback =
+-            std::make_unique<qstdweb::EventCallback>(keyFocusWindow, "keydown", keyCallback);
+-    m_keyUpCallback = std::make_unique<qstdweb::EventCallback>(keyFocusWindow, "keyup", keyCallback);
++            std::make_unique<qstdweb::EventCallback>(m_qtWindow, "keydown", keyCallback);
++    m_keyUpCallback = std::make_unique<qstdweb::EventCallback>(m_qtWindow, "keyup", keyCallback);
+
+     // Drawpile patch: prevent gestures on iOS from going back a page. This also
+     // prevents scrolling the page, but we don't want that either, so it's fine.

@@ -318,6 +318,7 @@ if(BASE)
 				patches/embool_qtbase.diff
 				patches/noasyncify.diff
 				patches/android_no_build-id.diff
+				patches/browser_keyboard_input.diff
 			6.8.2
 				patches/qtbug-113394.diff
 				patches/cancel_touch_on_pen.diff
@@ -328,8 +329,9 @@ if(BASE)
 				patches/macostabs-qt6.diff
 				patches/qt6androidmacros_build_tools_revision.diff
 				patches/findeglemscripten.diff
-				# TODO: make this patch work.
+				# TODO: make these patches work.
 				# patches/noasyncify.diff
+				# patches/browser_keyboard_input.diff
 				patches/android_no_build-id.diff
 	)
 endif()
