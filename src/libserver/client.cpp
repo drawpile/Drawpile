@@ -426,6 +426,11 @@ void Client::setInviteSecret(const QString &inviteSecret)
 	d->inviteSecret = inviteSecret;
 }
 
+bool Client::hasInviteSecret() const
+{
+	return !d->inviteSecret.isEmpty();
+}
+
 void Client::setOperator(bool op)
 {
 	d->isOperator = op;

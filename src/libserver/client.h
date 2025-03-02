@@ -117,6 +117,7 @@ public:
 
 	const QString &inviteSecret() const;
 	void setInviteSecret(const QString &inviteSecret);
+	bool hasInviteSecret() const;
 
 	/**
 	 * @brief Does this user have session operator privileges?

@@ -780,7 +780,7 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 			net::Message msg =
 				net::ServerReply::makePasswordChange(newPassword);
 			for(Client *c : m_clients) {
-				if(c->inviteSecret().isEmpty()) {
+				if(!c->hasInviteSecret()) {
 					c->sendDirectMessage(msg);
 				}
 			}
@@ -1717,7 +1717,8 @@ void Session::kickWebUsers(Client *by)
 {
 	QVector<Client *> clientsToKick;
 	for(Client *c : m_clients) {
-		if(c != by && !c->isModerator() && c->isBrowser()) {
+		if(c != by && !c->isModerator() && c->isBrowser() &&
+		   !c->hasInviteSecret()) {
 			clientsToKick.append(c);
 		}
 	}
