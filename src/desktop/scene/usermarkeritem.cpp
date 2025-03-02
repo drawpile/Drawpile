@@ -166,13 +166,15 @@ void UserMarkerItem::updateFullText()
 				   : 0;
 	const qreal height = textrect.height() + avatarHeight + ARROW + 2 * padding;
 
-	m_bounds = QRectF(-rad, -height, width, height);
+	QRectF bounds = QRectF(-rad, -height, width, height);
+	m_bounds =
+		QRectF(bounds.toAlignedRect().marginsAdded(QMargins(2, 2, 2, 2)));
 
 	m_avatarRect = QRectF(
-		m_bounds.width() / 2 + m_bounds.left() - m_avatar.width() / 2,
-		m_bounds.top() + padding, m_avatar.width(), m_avatar.height());
+		bounds.width() / 2 + bounds.left() - m_avatar.width() / 2,
+		bounds.top() + padding, m_avatar.width(), m_avatar.height());
 	m_textRect =
-		m_bounds.adjusted(padding, padding + avatarHeight, -padding, -padding);
+		bounds.adjusted(padding, padding + avatarHeight, -padding, -padding);
 
 	m_bubble = QPainterPath(QPointF(0, 0));
 
