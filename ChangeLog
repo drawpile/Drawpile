@@ -31,6 +31,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Keep leading spaces and zeroes the same when creating or duplicating a layer. Thanks Greendyno for reporting.
  * Feature: Allow making the application full-screen in the browser, using View > Full Screen. Thanks Windy for suggesting.
  * Fix: Make user markers not leave streaks in the software renderer when fractional UI scaling is involved. Thanks lambda20xx for reporting.
+ * Feature: Add constrain and center buttons to the transform tool, for the equivalent of holding Shift and Alt when you don't have a keyboard. Thanks MachKerman for suggesting.
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.

@@ -77,6 +77,9 @@ private:
 	void updateBlendMode(int index);
 	void selectBlendMode(int blendMode);
 
+	void updateConstrain(bool constrain);
+	void updateCenter(bool center);
+
 	void updateOpacity(int value);
 	void setOpacity(qreal opacity);
 
@@ -98,6 +101,8 @@ private:
 	widgets::GroupedToolButton *m_distortButton = nullptr;
 	QButtonGroup *m_handlesGroup = nullptr;
 	QComboBox *m_blendModeCombo = nullptr;
+	widgets::GroupedToolButton *m_constrainButton = nullptr;
+	widgets::GroupedToolButton *m_centerButton = nullptr;
 	KisSliderSpinBox *m_opacitySlider = nullptr;
 	QPushButton *m_applyButton = nullptr;
 	QPushButton *m_cancelButton = nullptr;

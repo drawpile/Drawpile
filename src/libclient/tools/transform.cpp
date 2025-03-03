@@ -58,7 +58,9 @@ void TransformTool::motion(const MotionParams &params)
 		canvas::TransformModel *transform = getActiveTransformModel();
 		if(transform) {
 			m_dragCurrentPoint = params.point;
-			continueDrag(transform, params.constrain, params.center);
+			continueDrag(
+				transform, params.constrain ^ m_constrain,
+				params.center ^ m_center);
 		}
 	}
 }
@@ -68,7 +70,9 @@ void TransformTool::modify(const ModifyParams &params)
 	if(m_dragHandle != Handle::None) {
 		canvas::TransformModel *transform = getActiveTransformModel();
 		if(transform) {
-			continueDrag(transform, params.constrain, params.center);
+			continueDrag(
+				transform, params.constrain ^ m_constrain,
+				params.center ^ m_center);
 		}
 	}
 }
@@ -114,7 +118,9 @@ void TransformTool::end(const EndParams &params)
 			}
 			transform->setDstQuad(m_quadStack[m_quadStackTop]);
 		} else {
-			continueDrag(transform, params.constrain, params.center);
+			continueDrag(
+				transform, params.constrain ^ m_constrain,
+				params.center ^ m_center);
 			const TransformQuad &dstQuad = transform->dstQuad();
 			if(dstQuad != m_dragStartQuad) {
 				pushQuad(transform);
@@ -438,6 +444,8 @@ TransformTool::tryBeginMove(bool firstClick, bool onlyMask, Mode mode)
 		onlyMask ? QSet<int>() : m_owner.selectedLayers());
 	m_mode = mode;
 	m_firstClick = firstClick;
+	m_constrain = false;
+	m_center = false;
 	m_hoverHandle = Handle::Invalid;
 	m_dragHandle = Handle::None;
 	m_quadStack.clear();
@@ -466,6 +474,8 @@ void TransformTool::tryBeginPaste(const QRect &srcBounds, const QImage &image)
 	m_mode = Mode::Scale;
 	m_firstClick = false;
 	m_applyOnEnd = false;
+	m_constrain = false;
+	m_center = false;
 	m_hoverHandle = Handle::Invalid;
 	m_dragHandle = Handle::None;
 	m_quadStack.clear();

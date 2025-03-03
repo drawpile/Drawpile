@@ -70,6 +70,12 @@ public:
 	Mode mode() const { return m_mode; }
 	void setMode(Mode mode);
 
+	bool constrain() const { return m_constrain; }
+	void setConstrain(bool constrain) { m_constrain = constrain; }
+
+	bool center() const { return m_center; }
+	void setCenter(bool center) { m_center = center; }
+
 	void setFeatureAccess(bool canTransform) { m_canTransform = canTransform; }
 	void setForceMove(bool forceMove) { m_forceMove = forceMove; }
 	void setApplyOnEnd(bool applyOnEnd) { m_applyOnEnd = applyOnEnd; }
@@ -199,6 +205,8 @@ private:
 	bool m_firstClick = false;
 	bool m_forceMove = false;
 	bool m_applyOnEnd = false;
+	bool m_constrain = false;
+	bool m_center = false;
 	qreal m_angle = 0.0;
 	qreal m_zoom = 1.0;
 	Handle m_hoverHandle = Handle::Invalid;

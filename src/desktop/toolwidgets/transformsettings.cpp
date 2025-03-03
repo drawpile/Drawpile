@@ -276,16 +276,48 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
 		&TransformSettings::pushSettings);
 
+	QHBoxLayout *modeLayout = new QHBoxLayout;
+	modeLayout->setContentsMargins(0, 0, 0, 0);
+	modeLayout->setSpacing(0);
+	layout->addRow(tr("Mode:"), modeLayout);
+
 	m_blendModeCombo = new QComboBox;
 	for(const canvas::blendmode::Named &named :
 		canvas::blendmode::pasteModeNames()) {
 		m_blendModeCombo->addItem(named.name, int(named.mode));
 	}
 	selectBlendMode(DP_BLEND_MODE_NORMAL);
-	layout->addRow(tr("Mode:"), m_blendModeCombo);
+	modeLayout->addWidget(m_blendModeCombo);
 	connect(
 		m_blendModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, &TransformSettings::updateBlendMode);
+
+	modeLayout->addSpacing(
+		widget->style()->pixelMetric(QStyle::PM_LayoutHorizontalSpacing));
+
+	m_constrainButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
+	m_constrainButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	m_constrainButton->setIcon(QIcon::fromTheme("zoom-original"));
+	m_constrainButton->setToolTip(tr("Constrain"));
+	m_constrainButton->setStatusTip(m_constrainButton->toolTip());
+	m_constrainButton->setCheckable(true);
+	modeLayout->addWidget(m_constrainButton);
+	connect(
+		m_constrainButton, &widgets::GroupedToolButton::clicked, this,
+		&TransformSettings::updateConstrain);
+
+	m_centerButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+	m_centerButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	m_centerButton->setIcon(QIcon::fromTheme("drawpile_center"));
+	m_centerButton->setToolTip(tr("Center"));
+	m_centerButton->setStatusTip(m_centerButton->toolTip());
+	m_centerButton->setCheckable(true);
+	modeLayout->addWidget(m_centerButton);
+	connect(
+		m_centerButton, &widgets::GroupedToolButton::clicked, this,
+		&TransformSettings::updateCenter);
 
 	m_opacitySlider = new KisSliderSpinBox;
 	m_opacitySlider->setRange(1, 100);
@@ -365,7 +397,7 @@ void TransformSettings::setModel(canvas::CanvasModel *canvas)
 		canvas::TransformModel *transform = canvas->transform();
 		connect(
 			transform, &canvas::TransformModel::transformChanged, this,
-			&TransformSettings::updateEnabled);
+			&TransformSettings::updateEnabled, Qt::QueuedConnection);
 		connect(
 			this, &TransformSettings::blendModeChanged, transform,
 			&canvas::TransformModel::setBlendMode);
@@ -393,6 +425,8 @@ void TransformSettings::updateEnabledFrom(canvas::CanvasModel *canvas)
 		m_scaleButton->setEnabled(haveTransform);
 		m_distortButton->setEnabled(haveTransform);
 		m_blendModeCombo->setEnabled(haveTransform && !compatibilityMode);
+		m_constrainButton->setEnabled(haveTransform);
+		m_centerButton->setEnabled(haveTransform);
 		m_opacitySlider->setEnabled(haveTransform && !compatibilityMode);
 		m_applyButton->setEnabled(canApplyTransform);
 		m_cancelButton->setEnabled(haveTransform);
@@ -415,6 +449,10 @@ void TransformSettings::updateEnabledFrom(canvas::CanvasModel *canvas)
 			selectBlendMode(transform->blendMode());
 			setOpacity(transform->opacity());
 		}
+
+		TransformTool *tt = tool();
+		m_constrainButton->setChecked(haveTransform && tt->constrain());
+		m_centerButton->setChecked(haveTransform && tt->center());
 	}
 }
 
@@ -457,6 +495,16 @@ void TransformSettings::selectBlendMode(int blendMode)
 			break;
 		}
 	}
+}
+
+void TransformSettings::updateConstrain(bool constrain)
+{
+	tool()->setConstrain(constrain);
+}
+
+void TransformSettings::updateCenter(bool center)
+{
+	tool()->setCenter(center);
 }
 
 void TransformSettings::updateOpacity(int value)
