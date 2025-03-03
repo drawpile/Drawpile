@@ -384,12 +384,12 @@
     </message>
     <message>
         <location line="+137"/>
-        <location line="+323"/>
+        <location line="+298"/>
         <source>Save Image</source>
         <translation>Resmi Kaydet</translation>
     </message>
     <message>
-        <location line="-323"/>
+        <location line="-298"/>
         <source>Export Image</source>
         <translation>Görseli Dışa Aktar</translation>
     </message>
@@ -429,12 +429,12 @@
         <translation>Tablet Olay Kaydı</translation>
     </message>
     <message>
-        <location line="+168"/>
+        <location line="+143"/>
         <source>Log File</source>
         <translation>Kayıt Dosyası</translation>
     </message>
     <message>
-        <location line="-196"/>
+        <location line="-171"/>
         <location line="+36"/>
         <source>Export MP4 Video</source>
         <translation>MP4 Videosunu Dışa Aktar</translation>
@@ -501,12 +501,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+416"/>
+        <location line="+391"/>
         <source>Session Settings (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-415"/>
+        <location line="-390"/>
         <source>Session Bans (%1)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -561,7 +561,7 @@
         <translation>Resim Serisini Kaydet</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+74"/>
         <source>Export Brushes</source>
         <translation>Fırçaları Dışa Aktar</translation>
     </message>
@@ -820,32 +820,47 @@
         <translation>Davet Et</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+17"/>
+        <source>Session</source>
+        <translation type="unfinished">Oturum</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Copy Invite Link</source>
         <translation>Davet Linkini Kopyala</translation>
     </message>
     <message>
-        <location line="+35"/>
-        <source>Web link</source>
-        <translation>Web linki</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Direct link</source>
-        <translation>Direkt link</translation>
-    </message>
-    <message>
-        <location line="+10"/>
+        <location line="+24"/>
         <source>Include password</source>
         <translation>Şifreyi dahil et</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+23"/>
         <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
         <translation>Yerel oturum sunmaktasınız. Eğer başkalarıoturumunuza katılamıyorsa, şu adrese bakın: &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+30"/>
+        <source>Codes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>Create</source>
+        <translation type="unfinished">Oluştur</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Revoke</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Copy</source>
+        <translation type="unfinished">Kopyala</translation>
+    </message>
+    <message>
+        <location line="+42"/>
         <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
         <translation>Yerel oturum sunmaktasınız bu yüzden bir davet linki verebilmek için Drawpile dışarıdan görünür olan IP adresinizi bulmak zorunda. Daha fazla bilgi için şu adresi kontrol edin: &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</translation>
     </message>
@@ -856,13 +871,13 @@
     </message>
     <message>
         <location line="+37"/>
-        <source>Show this dialog when hosting a session</source>
-        <translation>Bir oturum hostlarken bu diyalog kutusunu göster</translation>
+        <source>Allow session operators to manage invite codes</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
-        <source>You can find this dialog again under &lt;i&gt;Session ▸ Invite…&lt;/i&gt;</source>
-        <translation>Bu diyalog kutusunu &lt;i&gt;Oturum ▸ Davet…&lt;/i&gt; kısmında bulabilirsiniz</translation>
+        <source>Show this dialog when hosting a session</source>
+        <translation>Bir oturum hostlarken bu diyalog kutusunu göster</translation>
     </message>
 </context>
 <context>
@@ -1048,7 +1063,7 @@ Alt aralık: [%3, %4]</translation>
 <context>
     <name>LinkCheck</name>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="+1081"/>
+        <location filename="../utils/widgetutils.cpp" line="+1129"/>
         <source>Open Link</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1252,12 +1267,12 @@ Simplify the canvas and reset manually before space runs out.</source>
 Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırlayın.</translation>
     </message>
     <message>
-        <location line="+337"/>
+        <location line="+344"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋%1katıldı!</translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+92"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
         <translation type="unfinished"></translation>
@@ -1317,19 +1332,19 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+51"/>
-        <location line="+2091"/>
+        <location line="+62"/>
+        <location line="+2130"/>
         <source>Untitled</source>
         <translation>Başlıksız</translation>
     </message>
     <message>
-        <location line="-2042"/>
-        <location line="+3733"/>
+        <location line="-2081"/>
+        <location line="+3793"/>
         <source>Export Again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3729"/>
+        <location line="-3789"/>
         <source>Export Again to %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1349,7 +1364,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <translation>Düzelt</translation>
     </message>
     <message>
-        <location line="+185"/>
+        <location line="+200"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>Drawpile&apos;dan Çık</translation>
@@ -1367,12 +1382,12 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+789"/>
+        <location line="+788"/>
         <source>Cancel</source>
         <translation>İptal</translation>
     </message>
     <message>
-        <location line="-798"/>
+        <location line="-797"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Kaydedilmemiş değişiklikler var. Programı kapatmadan önce kaydetmek ister misiniz?</translation>
     </message>
@@ -1418,7 +1433,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+110"/>
+        <location line="+112"/>
         <source>New</source>
         <translation type="unfinished">Yeni</translation>
     </message>
@@ -1443,7 +1458,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <translation>Dosya açılıyor…</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="-1254"/>
         <source>Open</source>
         <translation type="unfinished">Aç</translation>
     </message>
@@ -1453,7 +1468,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+148"/>
+        <location line="+1438"/>
         <source>Saving...</source>
         <translation>Kaydediliyor...</translation>
     </message>
@@ -1524,12 +1539,12 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     </message>
     <message>
         <location line="+3"/>
-        <location line="+2210"/>
+        <location line="+2256"/>
         <source>Record...</source>
         <translation>Kayda Al...</translation>
     </message>
     <message>
-        <location line="-2168"/>
+        <location line="-2214"/>
         <source>Unsupported format.</source>
         <translation>Desteklenmeyen format.</translation>
     </message>
@@ -1589,12 +1604,12 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <translation>Geçersiz adres</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+17"/>
         <source>Host Session</source>
         <translation>Oturum Hostla</translation>
     </message>
     <message>
-        <location line="+101"/>
+        <location line="+127"/>
         <source>Reconnect</source>
         <translation type="unfinished">Yeniden Bağlan</translation>
     </message>
@@ -1629,23 +1644,23 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <translation>Operatör Ol</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Enter operator password</source>
         <translation>Operatör şifresini gir</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+64"/>
         <source>Terminate session</source>
         <translation>Oturumu sonlandır</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2663"/>
+        <location line="+2712"/>
         <source>Terminate</source>
         <translation>Evet</translation>
     </message>
     <message>
-        <location line="-2649"/>
+        <location line="-2698"/>
         <source>Join Session</source>
         <translation type="unfinished">Oturuma Katıl</translation>
     </message>
@@ -1655,7 +1670,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="+141"/>
         <source>Would you like to join the session instead?</source>
         <translation>Yerine bu oturuma katılmak ister misiniz?</translation>
     </message>
@@ -1680,12 +1695,12 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <translation>Oturumun geri alma limitini değiştir, şu anki sınır %1.</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+33"/>
         <source>Error</source>
         <translation type="unfinished">Hata</translation>
     </message>
     <message>
-        <location line="+487"/>
+        <location line="+489"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
         <translation type="unfinished"></translation>
@@ -1696,7 +1711,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <translation>Resim yüklenemedi</translation>
     </message>
     <message>
-        <location line="+243"/>
+        <location line="+252"/>
         <source>User #%1</source>
         <translation>Kullanıcı #%1</translation>
     </message>
@@ -1706,34 +1721,34 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+42"/>
         <source>Stop Tablet Event Log</source>
         <translation>Tablet Olay Kaydını Durdur</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1572"/>
+        <location line="+1601"/>
         <source>Tablet Event Log...</source>
         <translation>Tablet Olay Kaydı...</translation>
     </message>
     <message>
-        <location line="-1568"/>
+        <location line="-1597"/>
         <source>Stop Profile</source>
         <translation>Profili durdur</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1569"/>
+        <location line="+1598"/>
         <source>Profile...</source>
         <translation>Profil...</translation>
     </message>
     <message>
-        <location line="-1558"/>
+        <location line="-1587"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Yapay Gecikme Kur... (şu an %1 ms)</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+16"/>
         <source>Set Artificial Lag</source>
         <translation>Yapay Gecikme Kur</translation>
     </message>
@@ -1743,7 +1758,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <translation>Yapay gecikme şu kadar milisaniye içinde (devre dışı bırakmak için 0):</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+10"/>
         <source>Artificial Disconnect</source>
         <translation>Yapay Bağlantı Kopumu</translation>
     </message>
@@ -1753,13 +1768,13 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <translation>Bu kadar saniye sonra yapay bağlantı kopumu simüle et:</translation>
     </message>
     <message>
-        <location line="+15"/>
-        <location line="+1514"/>
+        <location line="+16"/>
+        <location line="+1545"/>
         <source>Record Debug Dumps</source>
         <translation>Hata Ayıklama Çöplüklerini Kaydet</translation>
     </message>
     <message>
-        <location line="-1513"/>
+        <location line="-1544"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -1772,7 +1787,7 @@ Hata ayıklama çöplüğü kaydı gelecek tuval sıfırlamasından sonra başla
 Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+17"/>
         <source>Open Debug Dump</source>
         <translation type="unfinished">Hata Ayıklama Çöplüğünü Aç</translation>
     </message>
@@ -2028,7 +2043,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>Terci&amp;hler</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+72"/>
         <source>Expand &amp;Up…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2138,17 +2153,17 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Toggle selection display between a mask and an outline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+6"/>
         <source>&amp;Fit to Screen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+116"/>
         <source>Group View</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2193,7 +2208,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+57"/>
         <source>Clear Fill Source</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2263,12 +2278,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-678"/>
+        <location line="-697"/>
         <source>Delete</source>
         <translation>Sil</translation>
     </message>
     <message>
-        <location line="+494"/>
+        <location line="+513"/>
         <source>Fill Selection</source>
         <translation>Seçimi Doldur</translation>
     </message>
@@ -2283,12 +2298,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>Seçimin Rengini Sil</translation>
     </message>
     <message>
-        <location line="-415"/>
+        <location line="-434"/>
         <source>&amp;Edit</source>
         <translation>&amp;Düzenle</translation>
     </message>
     <message>
-        <location line="-1890"/>
+        <location line="-1918"/>
         <source>Disconnected</source>
         <translation type="unfinished">Bağlantı Kesildi</translation>
     </message>
@@ -2308,12 +2323,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1396"/>
+        <location line="+1414"/>
         <source>Arrange Docks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+506"/>
+        <location line="+516"/>
         <source>&amp;Expand Canvas</source>
         <translation>&amp;Tuvali Genişlet</translation>
     </message>
@@ -2423,12 +2438,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>Piksel &amp;Izgaralarını Göster</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+22"/>
         <source>&amp;Full Screen</source>
         <translation>&amp;Tam Ekran</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+75"/>
         <source>&amp;View</source>
         <translation>&amp;Görünüm</translation>
     </message>
@@ -2488,7 +2503,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>Kullanıcı İşaretçileri</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+65"/>
         <source>New Layer</source>
         <translation>Yeni Katman</translation>
     </message>
@@ -2498,7 +2513,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>Yeni Katman Grubu</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="+393"/>
+        <location filename="../docks/layerlistdock.cpp" line="+483"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Duplicate Layer</source>
         <translation>Katmanı Çoğalt</translation>
@@ -2870,7 +2885,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+35"/>
         <source>Cause Crash…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2950,33 +2965,33 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-333"/>
+        <location line="-339"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Join...</source>
         <translation>&amp;Katıl...</translation>
     </message>
     <message>
-        <location line="-3472"/>
+        <location line="-3547"/>
         <source>Joined the session!</source>
         <translation>Oturuma katılındı!</translation>
     </message>
     <message>
-        <location line="+590"/>
+        <location line="+589"/>
         <source>Hosting on this computer is not available</source>
         <translation>Bu bilgisayarda hostlamak mevcut değil</translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+138"/>
         <source>Really leave and terminate the session?</source>
         <translation>Oturumdan ayrılıp oturmu sonlandırmak istediğinize emin misiniz?</translation>
     </message>
     <message>
-        <location line="+116"/>
+        <location line="+117"/>
         <source>Reason:</source>
         <translation>Sebep:</translation>
     </message>
     <message>
-        <location line="+177"/>
+        <location line="+179"/>
         <source>You&apos;ve been disconnected from the session.</source>
         <translation>Oturumdan bağlantınız kesildi.</translation>
     </message>
@@ -2996,7 +3011,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>Tuvalin kilidi açıldı</translation>
     </message>
     <message>
-        <location line="+428"/>
+        <location line="+432"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation>Serbest çizim (silme modu, sıfırlamak için tıklayın)</translation>
     </message>
@@ -3016,7 +3031,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>Serbest çizim fırça aracı (alfa kilit modu, sıfırlamak için tıklayın)</translation>
     </message>
     <message>
-        <location line="+876"/>
+        <location line="+890"/>
         <source>Export Image…</source>
         <translation>Görseli Dışa Aktar…</translation>
     </message>
@@ -3062,7 +3077,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-10"/>
-        <location filename="../mainwindow.cpp" line="+533"/>
+        <location filename="../mainwindow.cpp" line="+562"/>
         <source>Layer Properties…</source>
         <translation>Katman Özellikleri…</translation>
     </message>
@@ -3278,7 +3293,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>Geliştirici Araçları</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+30"/>
         <source>Set Artificial Lag...</source>
         <translation>Yapay Gecikme Kur...</translation>
     </message>
@@ -3288,7 +3303,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>Yapay Bağlantı Kopumu...</translation>
     </message>
     <message>
-        <location line="-22"/>
+        <location line="-26"/>
         <source>Open Debug Dump...</source>
         <translation>Hata Ayıklama Çöplüğünü Aç...</translation>
     </message>
@@ -3298,7 +3313,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>İstatistikler…</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+43"/>
         <source>Toggle Eraser Mode</source>
         <translation>Silgi Modunu Aç/Kapat</translation>
     </message>
@@ -3418,7 +3433,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>Pencere</translation>
     </message>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="-39"/>
+        <location filename="../utils/widgetutils.cpp" line="-87"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
         <translation type="unfinished">%1 (%2)</translation>
@@ -3553,7 +3568,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../filewrangler.cpp" line="-601"/>
+        <location filename="../filewrangler.cpp" line="-576"/>
         <source>All files (*)</source>
         <translation>Tüm Dosyalar (*)</translation>
     </message>
@@ -3833,13 +3848,13 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     </message>
     <message>
         <location line="+32"/>
-        <source>Block new logins</source>
-        <translation>Yeni girişleri engelle</translation>
+        <source>Block new joins</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
-        <source>No guest logins</source>
-        <translation>Konuk girişlerini engelle</translation>
+        <source>Require a registered account to join</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4764,7 +4779,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
 <context>
     <name>dialogs::AvatarImport</name>
     <message>
-        <location filename="../dialogs/avatarimport.cpp" line="+58"/>
+        <location filename="../dialogs/avatarimport.cpp" line="+59"/>
         <location line="+8"/>
         <source>Import Avatar</source>
         <translation>Avatar Ekle</translation>
@@ -6705,6 +6720,39 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
+    <name>dialogs::CreateInviteCodeDialog</name>
+    <message>
+        <location filename="../dialogs/invitedialog.cpp" line="+426"/>
+        <source>Create Invite Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Uses:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>&amp;None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Trusted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Operator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Role:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dialogs::CurvePresetDialog</name>
     <message>
         <location filename="../dialogs/curvepresetdialog.cpp" line="+32"/>
@@ -6733,13 +6781,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Kaydet</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+18"/>
         <source>Save Curve</source>
         <translation>Eğriyi Kaydet</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+15"/>
+        <location line="+16"/>
         <source>Name</source>
         <translation>Ad</translation>
     </message>
@@ -6749,7 +6797,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Eğriyi Yeniden Adlandır</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+17"/>
         <source>Delete Curve</source>
         <translation>Eğriyi Sil</translation>
     </message>
@@ -6800,9 +6848,65 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::InviteDialog</name>
     <message>
-        <location filename="../dialogs/invitedialog.cpp" line="+99"/>
+        <location filename="../dialogs/invitedialog.cpp" line="-334"/>
+        <location line="+260"/>
+        <source>What are invite codes?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-122"/>
         <source>Invite link copied to clipboard.</source>
         <translation>Davet linki panoya kopyalandı.</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+22"/>
+        <source>Invite code link(s) copied to clipboard.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>This server does not support invite codes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Only server administrators can manage invite codes on this session.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Only operators and server administrators can manage invite codes on this session.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>Revoke Invite Codes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+1"/>
+        <source>Really revoke %n selected invite code(s)?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Invite codes let someone join the session via a limited-use link. You can revoke the code later to take away their access again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Someone joining via an invite code bypasses normal session restrictions: they don&apos;t need the session password, can join via web browser, don&apos;t need a registered account and aren&apos;t affected by new joins being blocked.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>They don&apos;t bypass bans or server-wide restrictions.</source>
+        <extracomment>&quot;They&quot; is referring to invite codes.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6854,7 +6958,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LayoutsDialog</name>
     <message>
-        <location filename="../dialogs/layoutsdialog.cpp" line="+122"/>
+        <location filename="../dialogs/layoutsdialog.cpp" line="+167"/>
         <source>Current (unsaved)</source>
         <translation>Şu anki (kaydedilmemiş)</translation>
     </message>
@@ -6874,7 +6978,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>%1 (önceden &quot;%2&quot;)</translation>
     </message>
     <message>
-        <location line="+138"/>
+        <location line="+136"/>
         <source>Undelete</source>
         <translation>Silmeyi Geri Al</translation>
     </message>
@@ -6889,57 +6993,57 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Düzen Adı:</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="-242"/>
         <source>Default</source>
         <translation>Varsayılan</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+2"/>
         <source>Default Animation</source>
         <translation>Varsayılan Animasyon</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+2"/>
         <source>FireAlpaca-esque</source>
         <translation>FireAlpaca-vari</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+1"/>
         <source>Horizontal</source>
         <translation>Yatay</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+1"/>
         <source>Hyena</source>
         <translation>Sırtlan</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+1"/>
         <source>Krita-esque</source>
         <translation>Krita-vari</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+2"/>
         <source>MediBang-esque</source>
         <translation>MediBang-vari</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+1"/>
         <source>Mink</source>
         <translation>Vizon</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+2"/>
         <source>Paint.NET-esque</source>
         <translation>Paint.NET-vari</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+1"/>
         <source>SAI-esque</source>
         <translation>SAI-vari</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+1"/>
         <source>Spider</source>
         <translation>Örümcek</translation>
     </message>
@@ -7223,7 +7327,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Orta</translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+93"/>
         <source>Error</source>
         <translation>Hata</translation>
     </message>
@@ -7262,7 +7366,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::SessionSettingsDialog</name>
     <message numerus="yes">
-        <location filename="../dialogs/sessionsettings.cpp" line="+356"/>
+        <location filename="../dialogs/sessionsettings.cpp" line="+355"/>
         <source>Imported %n session ban(s).</source>
         <translation>
             <numerusform>%n oturum engeli içe aktarıldı.</numerusform>
@@ -7278,13 +7382,13 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+472"/>
+        <location line="+469"/>
         <location line="+12"/>
         <source>Session Ban Import</source>
         <translation>Oturum Engeli İçe Aktar</translation>
     </message>
     <message>
-        <location line="-470"/>
+        <location line="-467"/>
         <source>Session Ban Export</source>
         <translation>Oturum Engeli Dışa Aktar</translation>
     </message>
@@ -7396,38 +7500,38 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+122"/>
-        <location line="+18"/>
+        <location line="+16"/>
         <source>Set a new password or leave blank to remove.</source>
         <translation>Yeni bir şifre belirleyin ya da şifreyi kaldırmak için boş bırakın.</translation>
     </message>
     <message>
-        <location line="-16"/>
+        <location line="-14"/>
         <source>Set a password for the session.</source>
         <translation>Bu oturuma şifre koy.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Session Password</source>
         <translation>Oturum Şifresi</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+13"/>
         <source>Set a password for gaining operator status.</source>
         <translation>Operatör statüsü kazanmak için bir şifre belirleyin.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Operator Password</source>
         <translation>Operatör Şifresi</translation>
     </message>
     <message>
         <location line="+31"/>
-        <location line="+118"/>
+        <location line="+122"/>
         <source>Error opening &apos;%1&apos;: %2</source>
         <translation>&apos;%1&apos; açılırken hata: %2</translation>
     </message>
     <message>
-        <location line="-87"/>
+        <location line="-91"/>
         <source>This server does not support importing encrypted bans.</source>
         <translation>Bu sunucu şifrelenmiş engelleri içe aktarmayı desteklemiyor.</translation>
     </message>
@@ -7442,7 +7546,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Dosyada engel verisi bulunamadı.</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+14"/>
         <source>Choose Ban Export Type</source>
         <translation>Engel Dışa Aktarma Biçimi Seç</translation>
     </message>
@@ -7462,7 +7566,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Sade</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+52"/>
         <location line="+12"/>
         <location line="+98"/>
         <source>Role Import</source>
@@ -7996,12 +8100,47 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Her %1 saniyede bir tuval resmi çek</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+36"/>
+        <source>Blue Apatite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Indigo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Ocean Deep</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Pool Table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Rose Quartz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Rust</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Watermelon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
         <source>%1 offline undo levels by default</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-180"/>
+        <location line="-196"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
         <translation>Şu anki dosya için Otomatik Kayıt ayarını Dosya ▸ Otomatik Kayıt uzantısından aktifleştirebilirsiniz.</translation>
     </message>
@@ -8031,17 +8170,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Stil:</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Light</source>
         <translation>Aydınlık</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Dark</source>
         <translation>Karanlık</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Krita Bright</source>
         <translation>Krita Aydınlık</translation>
     </message>
@@ -8051,22 +8190,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Krita Karanlık</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Krita Darker</source>
         <translation>Krita Daha Karanlık</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Qt Fusion</source>
         <translation>Qt Füzyon</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Hotdog Stand</source>
         <translation>Sosisli Standı</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+12"/>
         <source>Color scheme:</source>
         <translation>Renk teması:</translation>
     </message>
@@ -8077,52 +8216,14 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
-    <name>dialogs::settingsdialog::Input</name>
-    <message>
-        <location filename="../mainwindow.cpp" line="-1212"/>
-        <source>KisTablet Windows Ink</source>
-        <translation>KisTablet Windows Ink</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>KisTablet Wintab</source>
-        <translation>KisTablet Wintab</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>KisTablet Wintab Relative</source>
-        <translation>KisTablet Wintab Relative</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Qt5</source>
-        <translation>Qt5</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Qt6 Windows Ink</source>
-        <translation>Qt6 Windows Ink</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Qt6 Wintab</source>
-        <translation>Qt6 Wintab</translation>
-    </message>
-</context>
-<context>
     <name>dialogs::settingsdialog::Network</name>
     <message>
-        <location filename="../dialogs/settingsdialog/network.cpp" line="+85"/>
-        <source>Hide user list in announcements</source>
-        <translation>Anonslarda kullanıcı listesini sakla</translation>
-    </message>
-    <message>
-        <location line="+2"/>
+        <location filename="../dialogs/settingsdialog/network.cpp" line="+89"/>
         <source>Builtin server:</source>
         <translation>Yerleşik sunucu:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+1"/>
         <source>Host on port %1 if available</source>
         <translation>Mevcutsa %1 portunda hostla</translation>
     </message>
@@ -8202,7 +8303,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Bu değer ne kadar yüksekse, diğer kullanıcıların çizgileri de bir o kadar akıcı gözükür.</translation>
     </message>
     <message>
-        <location line="-102"/>
+        <location line="-98"/>
         <source>Chat avatars:</source>
         <translation>Sohbet avatarları:</translation>
     </message>
@@ -8385,7 +8486,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::ParentalControls</name>
     <message>
-        <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+57"/>
+        <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+56"/>
         <source>Consider sessions whose titles contain these keywords NSFM.</source>
         <translation>Şu anahtar kelimeleri içeren oturumları göster UYGUNSUZ.</translation>
     </message>
@@ -8476,7 +8577,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Ebeveyn kontrolleri şu an operatör sistemi tarafından kontrol ediliyor.</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+17"/>
         <source>Unlock Parental Controls</source>
         <translation>Ebeveyn Kontrollerinin Kilidini Aç</translation>
     </message>
@@ -8486,12 +8587,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Ebeveyn Kontrollerini Kilitle</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+2"/>
         <source>Enter password:</source>
         <translation>Şifreyi girin:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+12"/>
         <source>Incorrect password.</source>
         <translation>Geçersiz şifre.</translation>
     </message>
@@ -8499,7 +8600,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Servers</name>
     <message>
-        <location filename="../dialogs/settingsdialog/servers.cpp" line="+109"/>
+        <location filename="../dialogs/settingsdialog/servers.cpp" line="+107"/>
         <source>Known hosts:</source>
         <translation>Bilinen hostlar:</translation>
     </message>
@@ -8582,24 +8683,24 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+81"/>
+        <location line="+82"/>
         <source>Pin selected certificates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-64"/>
+        <location line="-65"/>
         <source>Unpin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+64"/>
+        <location line="+65"/>
         <source>Unpin selected certificates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-34"/>
+        <location line="-35"/>
         <source>Continue</source>
         <translation>Devam</translation>
     </message>
@@ -8609,7 +8710,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+25"/>
         <source>Could not save changes to known hosts: %1</source>
         <translation>Bilinen hostlara yapılan değişiklikler kaydedilemedi: %1</translation>
     </message>
@@ -8636,17 +8737,17 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="-4"/>
-        <location line="+163"/>
+        <location line="+168"/>
         <source>Restore defaults…</source>
         <translation>Varsayılanları geri yükle…</translation>
     </message>
     <message>
-        <location line="-158"/>
+        <location line="-163"/>
         <source>Really restore all shortcuts to their default values?</source>
         <translation>Tüm kısayolları varsayılana geri döndürmek istediğinize emin misiniz?</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+123"/>
         <location line="+27"/>
         <source>Edit Canvas Shortcut</source>
         <translation type="unfinished">Tuval Kısayolunu Düzenle</translation>
@@ -8754,31 +8855,43 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+9"/>
-        <source>KisTablet Windows Ink</source>
-        <translation type="unfinished">KisTablet Windows Ink</translation>
+        <location filename="../mainwindow.cpp" line="-1247"/>
+        <source>Windows Ink</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
-        <source>KisTablet Wintab</source>
-        <translation type="unfinished">KisTablet Wintab</translation>
+        <location filename="../mainwindow.cpp" line="+8"/>
+        <source>Windows Ink Non-Native</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
-        <source>KisTablet Wintab Relative</source>
-        <translation type="unfinished">KisTablet Wintab Relative</translation>
+        <location filename="../mainwindow.cpp" line="+10"/>
+        <source>Wintab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location filename="../mainwindow.cpp" line="+8"/>
+        <source>Wintab Relative</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+10"/>
         <source>Qt5</source>
         <translation type="unfinished">Qt5</translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+9"/>
         <source>Qt6 Windows Ink</source>
         <translation type="unfinished">Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+8"/>
         <source>Qt6 Wintab</source>
         <translation type="unfinished">Qt6 Wintab</translation>
     </message>
@@ -8857,7 +8970,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Tuvali odaklamak için Alt tuşuna iki kere basın</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+10"/>
+        <source>Switch tool temporarily by holding primary shortcut for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Attach selected brushes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8943,13 +9061,8 @@ Values above 0.5 may not be noticeable.</source>
         <extracomment>This stands for millseconds.</extracomment>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <location line="+2"/>
-        <source>Switch tool temporarily by holding shortcut key for %1</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message numerus="yes">
-        <location line="+29"/>
+        <location line="+31"/>
         <source>Show %1 brush slot(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -9735,7 +9848,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::host::ExportDialog</name>
     <message>
-        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+499"/>
+        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+504"/>
         <source>Export Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9811,7 +9924,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Seçilmişleri kaldır</translation>
     </message>
     <message>
-        <location line="+134"/>
+        <location line="+139"/>
         <source>Listing: a title is required for public sessions</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9829,7 +9942,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::host::LoadDialog</name>
     <message>
-        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-350"/>
+        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-356"/>
         <source>Load Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9841,12 +9954,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="-102"/>
-        <location line="+134"/>
+        <location line="+140"/>
         <source>Delete</source>
         <translation type="unfinished">Sil</translation>
     </message>
     <message>
-        <location line="-125"/>
+        <location line="-131"/>
         <source>Pick the sections you want to load:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9856,7 +9969,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+13"/>
         <source>Conflict</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9866,13 +9979,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Yes, replace</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+19"/>
+        <location line="+22"/>
         <source>No, keep</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9978,7 +10091,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::host::ResetDialog</name>
     <message>
-        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-226"/>
+        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-232"/>
         <source>Reset</source>
         <translation type="unfinished">Sıfırla</translation>
     </message>
@@ -10019,7 +10132,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::host::SaveDialog</name>
     <message>
-        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+276"/>
+        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+282"/>
         <source>Load Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10089,7 +10202,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">18 yaş altındakilere uygunsuz (UYGUNSUZ)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10117,7 +10230,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+129"/>
+        <location line="+130"/>
         <source>Session: a password is required</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10178,7 +10291,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::BrushPalette</name>
     <message>
-        <location filename="../docks/brushpalettedock.cpp" line="+102"/>
+        <location filename="../docks/brushpalettedock.cpp" line="+101"/>
         <source>Brushes</source>
         <translation>Fırçalar</translation>
     </message>
@@ -10193,12 +10306,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Yeni Etiket</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+34"/>
         <source>Delete Tag</source>
         <translation>Etiketi Sil</translation>
     </message>
     <message>
-        <location line="-576"/>
+        <location line="-580"/>
         <source>&amp;Edit Brush</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10289,18 +10402,18 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+308"/>
+        <location line="+312"/>
         <location line="+45"/>
         <source>Keep</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-290"/>
+        <location line="-294"/>
         <source>Brush Import</source>
         <translation>İçe Fırça Aktar</translation>
     </message>
     <message numerus="yes">
-        <location line="+11"/>
+        <location line="+12"/>
         <source>%n brush(es) imported.</source>
         <translation>
             <numerusform>%n fırça içe aktarıldı.</numerusform>
@@ -10338,8 +10451,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+40"/>
-        <location line="+15"/>
+        <location line="+39"/>
+        <location line="+16"/>
         <source>Tag name:</source>
         <translation>Etiket adı:</translation>
     </message>
@@ -10349,7 +10462,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Etiketi Düzenle</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+19"/>
         <source>Really delete tag &apos;%1&apos;? This will not delete the brushes within.</source>
         <translation>&apos;%1&apos; aslı etiketi silmek istediğinize emin misiniz? İçindeki fırçalar silinmeyecektir.</translation>
     </message>
@@ -10391,12 +10504,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ColorPaletteDock</name>
     <message>
-        <location filename="../docks/colorpalette.cpp" line="+313"/>
+        <location filename="../docks/colorpalette.cpp" line="+372"/>
         <source>Delete</source>
         <translation>Sil</translation>
     </message>
     <message>
-        <location line="-191"/>
+        <location line="-249"/>
         <source>New palette</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10436,7 +10549,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+41"/>
         <source>Add column</source>
         <translation>Sütun ekle</translation>
     </message>
@@ -10446,19 +10559,53 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Sütunu çıkart</translation>
     </message>
     <message>
-        <location line="+98"/>
-        <location line="+50"/>
+        <location line="+55"/>
+        <source>Color history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Show on this dock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Show on all color docks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Hide on all color docks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Show only on this dock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Hide only on this dock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+65"/>
         <source>New Palette</source>
         <translation>Yeni Palet</translation>
     </message>
     <message>
-        <location line="-50"/>
-        <location line="+50"/>
+        <location line="+0"/>
+        <location line="+47"/>
         <source>Name</source>
         <translation>Ad</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+0"/>
+        <source>Rename Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
         <source>Import palette</source>
         <translation>İçe palet aktar</translation>
     </message>
@@ -10493,7 +10640,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Dosya kaydedilemedi</translation>
     </message>
     <message>
-        <location line="-61"/>
+        <location line="-58"/>
         <source>Delete palette &quot;%1&quot;?</source>
         <translation>&quot;%1&quot; paletini silmek istediğinize emin misiniz?</translation>
     </message>
@@ -10517,27 +10664,27 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+388"/>
+        <location line="+394"/>
         <source>HSV</source>
         <extracomment>Color space HSV (hue, chroma, value)</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-377"/>
-        <location line="+353"/>
+        <location line="-383"/>
+        <location line="+359"/>
         <source>HSL</source>
         <extracomment>Color space HSL (hue, saturation, lightness)</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-342"/>
-        <location line="+354"/>
+        <location line="-348"/>
+        <location line="+360"/>
         <source>HCL</source>
         <extracomment>Color space HCL (hue, chroma, lightness)</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-341"/>
+        <location line="-347"/>
         <source>Show all sliders at once</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10547,7 +10694,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+84"/>
         <source>R</source>
         <extracomment>The &quot;Red&quot; R of RGB.</extracomment>
         <translation>R</translation>
@@ -10570,7 +10717,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+201"/>
+        <location line="+203"/>
         <source>H</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Hue&quot; H of HSL.</extracomment>
@@ -10636,7 +10783,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ColorSpinnerDock</name>
     <message>
-        <location filename="../docks/colorspinner.cpp" line="+87"/>
+        <location filename="../docks/colorspinner.cpp" line="+88"/>
         <source>Shape</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10747,22 +10894,22 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::LayerAclMenu</name>
     <message>
-        <location filename="../docks/layeraclmenu.cpp" line="+24"/>
+        <location filename="../docks/layeraclmenu.cpp" line="+14"/>
         <source>Lock this layer</source>
         <translation>Bu katmanı kilitle</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Censor</source>
         <translation>Sansür</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+6"/>
         <source>Access tier:</source>
         <translation>Erişim rütbesi:</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Operators</source>
         <translation>Operatörler</translation>
     </message>
@@ -10782,7 +10929,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Herkes</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+12"/>
         <source>Exclusive access:</source>
         <translation>Özel erişim:</translation>
     </message>
@@ -10790,7 +10937,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="-359"/>
+        <location filename="../docks/layerlistdock.cpp" line="-369"/>
         <source>Layers</source>
         <translation>Katmanlar</translation>
     </message>
@@ -10801,12 +10948,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+9"/>
-        <location line="+1303"/>
+        <location line="+1695"/>
         <source>Opacity: </source>
         <translation>Opaklık: </translation>
     </message>
     <message>
-        <location line="-1302"/>
+        <location line="-1694"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -10816,7 +10963,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+274"/>
+        <location line="+284"/>
         <source>Duplicate Layer Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10866,12 +11013,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+984"/>
+        <location line="+1366"/>
         <source>Sketch: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+136"/>
+        <location line="+165"/>
         <source>Layer</source>
         <translation>Katman</translation>
     </message>
@@ -10881,7 +11028,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Grup</translation>
     </message>
     <message>
-        <location line="-513"/>
+        <location line="-710"/>
         <source>Delete Layer?</source>
         <translation>Katmanı Sil?</translation>
     </message>
@@ -11078,7 +11225,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>drawingboard::CanvasScene</name>
     <message>
-        <location filename="../scene/canvasscene.cpp" line="+325"/>
+        <location filename="../scene/canvasscene.cpp" line="+331"/>
         <source>Restoring canvas…</source>
         <translation>Tuval onarılıyor…</translation>
     </message>
@@ -11086,7 +11233,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tabletinput</name>
     <message>
-        <location filename="../tabletinput.cpp" line="+148"/>
+        <location filename="../tabletinput.cpp" line="+151"/>
         <source>Qt tablet input</source>
         <translation>Qt tablet girdisi</translation>
     </message>
@@ -11097,6 +11244,11 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+2"/>
+        <source>KisTablet Windows Ink non-native input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>KisTablet Wintab input</source>
         <translation>KisTablet Wintab girdisi</translation>
     </message>
@@ -11106,7 +11258,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>KisTablet Wintab girdisi ve ilgili kalem modu</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Qt6 Windows Ink input</source>
         <translation>Qt6 Windows Ink girdisi</translation>
     </message>
@@ -11509,12 +11661,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+15"/>
         <source>Mode:</source>
         <translation type="unfinished">Mod:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+20"/>
+        <source>Constrain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Center</source>
+        <translation type="unfinished">Orta</translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Opacity: </source>
         <translation type="unfinished">Opaklık: </translation>
     </message>
@@ -11560,7 +11722,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>utils::Recents</name>
     <message>
-        <location filename="../utils/recents.cpp" line="+413"/>
+        <location filename="../utils/recents.cpp" line="+432"/>
         <source>More…</source>
         <translation>Daha Fazla…</translation>
     </message>
@@ -11568,7 +11730,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>view::CanvasScene</name>
     <message>
-        <location filename="../view/canvasscene.cpp" line="+567"/>
+        <location filename="../view/canvasscene.cpp" line="+573"/>
         <source>Restoring canvas…</source>
         <translation type="unfinished">Tuval onarılıyor…</translation>
     </message>
@@ -11639,6 +11801,11 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Katman bu karede görünür değil</translation>
     </message>
     <message>
+        <location line="+2"/>
+        <source>No layer selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+4"/>
         <source>Tool is locked</source>
         <translation type="unfinished">Araç kilitli</translation>
@@ -11698,7 +11865,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+337"/>
+        <location filename="../scene/canvasview.cpp" line="+332"/>
         <location filename="../view/canvasview.cpp" line="-30"/>
         <source>Reconnect</source>
         <translation>Yeniden Bağlan</translation>
@@ -11722,7 +11889,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+375"/>
-        <location filename="../view/canvascontroller.cpp" line="+467"/>
+        <location filename="../view/canvascontroller.cpp" line="+465"/>
         <source>Vertical flip: ON</source>
         <translation>Dikey döndürme: AÇIK</translation>
     </message>
@@ -11745,8 +11912,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Yatay aynalama: KAPALI</translation>
     </message>
     <message>
-        <location line="+1828"/>
-        <location filename="../view/canvascontroller.cpp" line="+1968"/>
+        <location line="+1825"/>
+        <location filename="../view/canvascontroller.cpp" line="+1964"/>
         <source>Zoom: %1%</source>
         <translation>Yakınlaştırma: %1%</translation>
     </message>
@@ -11956,7 +12123,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CurveWidget</name>
     <message>
-        <location filename="../widgets/curvewidget.cpp" line="+110"/>
+        <location filename="../widgets/curvewidget.cpp" line="+109"/>
         <source>Copy</source>
         <translation>Kopyala</translation>
     </message>
@@ -12113,7 +12280,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Sertifikayı göster</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+88"/>
         <source>Self-signed certificate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12138,7 +12305,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+167"/>
+        <location line="+169"/>
         <source>not connected</source>
         <translation>bağlı değil</translation>
     </message>
@@ -12168,7 +12335,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Çıkış yapılıyor...</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+39"/>
         <source>Notice</source>
         <translation>Duyuru</translation>
     </message>
@@ -12274,7 +12441,7 @@ Hex: %4</translation>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="+608"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+607"/>
         <source>Blank key frame (duplicate)</source>
         <translation>Boş key frame (çoğaltılmış)</translation>
     </message>
@@ -12333,12 +12500,12 @@ Oluşturmak için yukarıdaki + tuşunu kullanın
 ya da Animasyon ▸ Yeni Track seçeneğini kullanın.</translation>
     </message>
     <message>
-        <location line="+558"/>
+        <location line="+565"/>
         <source>Track</source>
         <translation>Track</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+56"/>
         <source>Rename Track</source>
         <translation>Tracki yeniden adlandır</translation>
     </message>
@@ -12348,7 +12515,7 @@ ya da Animasyon ▸ Yeni Track seçeneğini kullanın.</translation>
         <translation>Track Adı</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+34"/>
         <source>Change Frame Count</source>
         <translation>Kare Sayısını Değiştir</translation>
     </message>
@@ -12358,7 +12525,7 @@ ya da Animasyon ▸ Yeni Track seçeneğini kullanın.</translation>
         <translation>Kare Sayısı (bu noktanın ötesindeki key frameler silinecek)</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+11"/>
         <source>Change Framerate</source>
         <translation>Kare Hızını Değiştir</translation>
     </message>

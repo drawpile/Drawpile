@@ -353,7 +353,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+944"/>
+        <location filename="../document.cpp" line="+1005"/>
         <source>Unknown format.</source>
         <translation>不明な形式。</translation>
     </message>
@@ -378,7 +378,7 @@
         <translation>不明なエラー。</translation>
     </message>
     <message>
-        <location line="+629"/>
+        <location line="+664"/>
         <source>Error saving image</source>
         <translation>画像保存時のエラー</translation>
     </message>
@@ -458,7 +458,7 @@ Select a regular layer instead.</source>
 <context>
     <name>MagicWandSettings</name>
     <message>
-        <location filename="../tools/magicwand.cpp" line="+293"/>
+        <location filename="../tools/magicwand.cpp" line="+291"/>
         <source>Selecting…</source>
         <translation>選択中…</translation>
     </message>
@@ -580,12 +580,12 @@ Select a regular layer instead.</source>
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+534"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+522"/>
         <source>(untitled)</source>
         <translation>(無題)</translation>
     </message>
     <message>
-        <location line="-458"/>
+        <location line="-446"/>
         <source>%1d%2h%3m</source>
         <translation>%1日%2時間%3分</translation>
     </message>
@@ -686,7 +686,7 @@ Select a regular layer instead.</source>
         <translation>経過時間</translation>
     </message>
     <message>
-        <location line="+181"/>
+        <location line="+169"/>
         <source>incompatible</source>
         <translation>非対応</translation>
     </message>
@@ -886,7 +886,7 @@ Select a regular layer instead.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+460"/>
+        <location line="+457"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
         <translation>&apos;%1&apos; を開けません。</translation>
     </message>
@@ -1139,7 +1139,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+538"/>
+        <location filename="../net/client.cpp" line="+541"/>
         <source>%1 banned by %2.</source>
         <translation>%1 は %2 によりBANされた。</translation>
     </message>
@@ -1149,7 +1149,7 @@ Select a regular layer instead.</source>
         <translation>%1 は %2 からキックされた。</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+20"/>
         <source>%1 made operator by the server.</source>
         <translation>%1 はサーバーによって管理者になりました。</translation>
     </message>
@@ -1159,12 +1159,12 @@ Select a regular layer instead.</source>
         <translation>%1 は %2 によって管理者になりました。</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+18"/>
         <source>Operator status revoked from %1 by the server.</source>
         <translation>サーバーによって %1 の管理者ステータスが破棄されました。</translation>
     </message>
     <message>
-        <location line="-485"/>
+        <location line="-512"/>
         <source>You have been kicked.</source>
         <translation>あなたはキックされました。</translation>
     </message>
@@ -1204,7 +1204,7 @@ Select a regular layer instead.</source>
         <translation>切断されました: %1</translation>
     </message>
     <message>
-        <location line="+417"/>
+        <location line="+420"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>モデレーターのみが通常のBANをエクスポートできます。</translation>
@@ -1250,7 +1250,27 @@ Select a regular layer instead.</source>
         <translation>このサーバーでサポートされていない暗号化されたBANをインポートしています。</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+14"/>
+        <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>%1 made operator via invite %2 created by a server administrator.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 made operator via invite %2 created by %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Operator status revoked from %1 by %2.</source>
         <translation>管理者ステータスが %2 によって %1 から取り消されました。</translation>
     </message>
@@ -1323,7 +1343,17 @@ Select a regular layer instead.</source>
         <translation>%1 は %2 から信頼済みです。</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
+        <source>%1 trusted via invite %2 created by a server administrator.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 trusted via invite %2 created by %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>%1 untrusted by the server.</source>
         <translation>%1 はサーバーから信頼されていません。</translation>
     </message>
@@ -1331,6 +1361,67 @@ Select a regular layer instead.</source>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
         <translation>%1 は %2 から信頼されていません。</translation>
+    </message>
+</context>
+<context>
+    <name>net::InviteListModel</name>
+    <message>
+        <location filename="../net/invitelistmodel.cpp" line="+119"/>
+        <source>No invite codes, click Create to add one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Used %1 by %2</source>
+        <extracomment>%1 is a date and time, %2 is a username.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Created %1 by %2</source>
+        <extracomment>%1 is a date and time, %2 is a username</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Operator and Trusted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Operator</source>
+        <translation type="unfinished">管理者</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Trusted</source>
+        <translation type="unfinished">信頼済み</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>%1/%2</source>
+        <extracomment>This is the &quot;uses&quot; column in the invite code table. %1 is how often the invite has been used, %2 is how many there are total.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Creator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Role</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Uses</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1750,7 +1841,7 @@ Select a regular layer instead.</source>
 <context>
     <name>tools::TransformSettings</name>
     <message>
-        <location filename="../tools/transform.cpp" line="+419"/>
+        <location filename="../tools/transform.cpp" line="+425"/>
         <source>You don&apos;t have permission to transform selections.</source>
         <translation>選択範囲を変形する権限がありません。</translation>
     </message>

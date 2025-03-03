@@ -353,7 +353,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+944"/>
+        <location filename="../document.cpp" line="+1005"/>
         <source>Unknown format.</source>
         <translation>Unbekanntes Format.</translation>
     </message>
@@ -378,7 +378,7 @@
         <translation>Unbekannter Fehler.</translation>
     </message>
     <message>
-        <location line="+629"/>
+        <location line="+664"/>
         <source>Error saving image</source>
         <translation>Fehler beim Speichern des Bildes</translation>
     </message>
@@ -458,7 +458,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
 <context>
     <name>MagicWandSettings</name>
     <message>
-        <location filename="../tools/magicwand.cpp" line="+293"/>
+        <location filename="../tools/magicwand.cpp" line="+291"/>
         <source>Selecting…</source>
         <translation>Selektiere…</translation>
     </message>
@@ -580,12 +580,12 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+534"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+522"/>
         <source>(untitled)</source>
         <translation>(unbenannt)</translation>
     </message>
     <message>
-        <location line="-458"/>
+        <location line="-446"/>
         <source>%1d%2h%3m</source>
         <translation>%1d%2h%3m</translation>
     </message>
@@ -689,7 +689,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Alter</translation>
     </message>
     <message>
-        <location line="+181"/>
+        <location line="+169"/>
         <source>incompatible</source>
         <translation>inkompatibel</translation>
     </message>
@@ -889,7 +889,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+460"/>
+        <location line="+457"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
         <translation>Konnte &apos;%1&apos; nicht öffnen.</translation>
     </message>
@@ -1142,7 +1142,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+538"/>
+        <location filename="../net/client.cpp" line="+541"/>
         <source>%1 banned by %2.</source>
         <translation>%1 wurde von %2 gebannt.</translation>
     </message>
@@ -1152,7 +1152,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>%1 wurde von %2 gekickt.</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+20"/>
         <source>%1 made operator by the server.</source>
         <translation>%1 wurde durch den Server zum Operator gemacht.</translation>
     </message>
@@ -1162,12 +1162,12 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>%1 wurde von %2 zum Operator gemacht.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+18"/>
         <source>Operator status revoked from %1 by the server.</source>
         <translation>Der Operatorstatus von %1 wurde vom Server widerrufen.</translation>
     </message>
     <message>
-        <location line="-485"/>
+        <location line="-512"/>
         <source>You have been kicked.</source>
         <translation>Sie wurden gekickt.</translation>
     </message>
@@ -1207,7 +1207,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Verbindung getrennt: %1</translation>
     </message>
     <message>
-        <location line="+417"/>
+        <location line="+420"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>Nur Moderatoren können Bans im Klartext exportieren.</translation>
@@ -1253,7 +1253,27 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Der Import von verschlüsselten Bans wird von diesem Server nicht unterstützt.</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+14"/>
+        <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>%1 made operator via invite %2 created by a server administrator.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 made operator via invite %2 created by %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Operator status revoked from %1 by %2.</source>
         <translation>Operator-Status von %1 durch %2 weggenommen.</translation>
     </message>
@@ -1326,7 +1346,17 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>%1 wurde von %2 vertraut.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
+        <source>%1 trusted via invite %2 created by a server administrator.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 trusted via invite %2 created by %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>%1 untrusted by the server.</source>
         <translation>Vertrauen von %1 wurde vom Server widerrufen.</translation>
     </message>
@@ -1334,6 +1364,67 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
         <translation>Vertrauen von %1 wurde von %2 widerrufen.</translation>
+    </message>
+</context>
+<context>
+    <name>net::InviteListModel</name>
+    <message>
+        <location filename="../net/invitelistmodel.cpp" line="+119"/>
+        <source>No invite codes, click Create to add one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Used %1 by %2</source>
+        <extracomment>%1 is a date and time, %2 is a username.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Created %1 by %2</source>
+        <extracomment>%1 is a date and time, %2 is a username</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Operator and Trusted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Operator</source>
+        <translation type="unfinished">Operator</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Trusted</source>
+        <translation type="unfinished">Vertrauenswürdig</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>%1/%2</source>
+        <extracomment>This is the &quot;uses&quot; column in the invite code table. %1 is how often the invite has been used, %2 is how many there are total.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Creator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Role</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Uses</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1754,7 +1845,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
 <context>
     <name>tools::TransformSettings</name>
     <message>
-        <location filename="../tools/transform.cpp" line="+419"/>
+        <location filename="../tools/transform.cpp" line="+425"/>
         <source>You don&apos;t have permission to transform selections.</source>
         <translation>Sie haben nicht die Berechtigung Selektionen zu transformieren.</translation>
     </message>

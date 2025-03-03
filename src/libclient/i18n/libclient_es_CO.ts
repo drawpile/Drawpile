@@ -20,13 +20,13 @@
         <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Conflicto</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (conflicto)</translation>
     </message>
     <message>
         <location line="+85"/>
@@ -321,13 +321,13 @@
         <location filename="../utils/customshortcutmodel.cpp" line="+57"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Conflicto</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (conflicto)</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -353,7 +353,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+944"/>
+        <location filename="../document.cpp" line="+1005"/>
         <source>Unknown format.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -378,7 +378,7 @@
         <translation type="unfinished">Error desconocido.</translation>
     </message>
     <message>
-        <location line="+629"/>
+        <location line="+664"/>
         <source>Error saving image</source>
         <translation type="unfinished"></translation>
     </message>
@@ -457,7 +457,7 @@ Select a regular layer instead.</source>
 <context>
     <name>MagicWandSettings</name>
     <message>
-        <location filename="../tools/magicwand.cpp" line="+293"/>
+        <location filename="../tools/magicwand.cpp" line="+291"/>
         <source>Selecting…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -579,12 +579,12 @@ Select a regular layer instead.</source>
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+534"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+522"/>
         <source>(untitled)</source>
         <translation>(sin titulo)</translation>
     </message>
     <message>
-        <location line="-458"/>
+        <location line="-446"/>
         <source>%1d%2h%3m</source>
         <translation type="unfinished"></translation>
     </message>
@@ -617,14 +617,14 @@ Select a regular layer instead.</source>
     <message>
         <location line="+9"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Número desconocido de usuarios dibujando actualmente</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n usuario dibujando actualmente</numerusform>
+            <numerusform>%n usuarios dibujando actualmente</numerusform>
         </translation>
     </message>
     <message>
@@ -675,7 +675,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Activos</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -688,7 +688,7 @@ Select a regular layer instead.</source>
         <translation>Edad</translation>
     </message>
     <message>
-        <location line="+181"/>
+        <location line="+169"/>
         <source>incompatible</source>
         <translation type="unfinished"></translation>
     </message>
@@ -888,7 +888,7 @@ Select a regular layer instead.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+460"/>
+        <location line="+457"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1141,7 +1141,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+538"/>
+        <location filename="../net/client.cpp" line="+541"/>
         <source>%1 banned by %2.</source>
         <translation>%1 suspendido por %2.</translation>
     </message>
@@ -1151,7 +1151,7 @@ Select a regular layer instead.</source>
         <translation>%1 expulsado por %2.</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+20"/>
         <source>%1 made operator by the server.</source>
         <translation>%1 hecho operador por el servidor.</translation>
     </message>
@@ -1161,12 +1161,12 @@ Select a regular layer instead.</source>
         <translation>%1 hecho operador por %2.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+18"/>
         <source>Operator status revoked from %1 by the server.</source>
         <translation>Estatus de operador revocado de %1 por el servidor.</translation>
     </message>
     <message>
-        <location line="-485"/>
+        <location line="-512"/>
         <source>You have been kicked.</source>
         <translation>Has sido expulsado.</translation>
     </message>
@@ -1206,7 +1206,7 @@ Select a regular layer instead.</source>
         <translation>Desconectado: %1</translation>
     </message>
     <message>
-        <location line="+417"/>
+        <location line="+420"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>Sólo moderadores pueden exportar suspensiones simples.</translation>
@@ -1252,7 +1252,27 @@ Select a regular layer instead.</source>
         <translation>La importación de suspensiones encriptadas no es soportada por este servidor.</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+14"/>
+        <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>%1 made operator via invite %2 created by a server administrator.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 made operator via invite %2 created by %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Operator status revoked from %1 by %2.</source>
         <translation>El estatus de operador ha sido revocado de %1 por %2.</translation>
     </message>
@@ -1325,7 +1345,17 @@ Select a regular layer instead.</source>
         <translation>%1 es confiable según %2.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
+        <source>%1 trusted via invite %2 created by a server administrator.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 trusted via invite %2 created by %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>%1 untrusted by the server.</source>
         <translation>%1 no es confiable según el servidor.</translation>
     </message>
@@ -1333,6 +1363,67 @@ Select a regular layer instead.</source>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
         <translation>%1 no es confiable según %2.</translation>
+    </message>
+</context>
+<context>
+    <name>net::InviteListModel</name>
+    <message>
+        <location filename="../net/invitelistmodel.cpp" line="+119"/>
+        <source>No invite codes, click Create to add one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Used %1 by %2</source>
+        <extracomment>%1 is a date and time, %2 is a username.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Created %1 by %2</source>
+        <extracomment>%1 is a date and time, %2 is a username</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Operator and Trusted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Operator</source>
+        <translation type="unfinished">Operador</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Trusted</source>
+        <translation type="unfinished">Confiado</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>%1/%2</source>
+        <extracomment>This is the &quot;uses&quot; column in the invite code table. %1 is how often the invite has been used, %2 is how many there are total.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Creator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Role</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Uses</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1753,7 +1844,7 @@ Select a regular layer instead.</source>
 <context>
     <name>tools::TransformSettings</name>
     <message>
-        <location filename="../tools/transform.cpp" line="+419"/>
+        <location filename="../tools/transform.cpp" line="+425"/>
         <source>You don&apos;t have permission to transform selections.</source>
         <translation>No posees permisos para transformar selecciones.</translation>
     </message>
