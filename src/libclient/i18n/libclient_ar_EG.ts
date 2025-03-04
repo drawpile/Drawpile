@@ -1878,7 +1878,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+207"/>
         <source>You don&apos;t have permission to stamp selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>ليس لديك إذن لتحويل التحديدات.</translation>
     </message>
     <message>
         <location line="+63"/>
