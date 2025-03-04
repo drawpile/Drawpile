@@ -234,7 +234,7 @@
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation>تغيير لون</translation>
+        <translation>تغيير لون اللون</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -958,7 +958,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+61"/>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
-        <translation>لا يحتوي ملف الفرشاة &apos;%1&apos; على JSON</translation>
+        <translation>لا يحتوي ملف الفُرَش &apos;%1&apos; على ملف JSON صالح: %1</translation>
     </message>
     <message>
         <location line="+34"/>
