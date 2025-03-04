@@ -1200,6 +1200,11 @@ void Document::sendRemoveInviteCode(const QString &secret)
 		QStringLiteral("invite-remove"), {secret}, {}));
 }
 
+void Document::sendInviteCodesEnabled(bool enabled)
+{
+	sendSessionConf({{QStringLiteral("invites"), enabled}});
+}
+
 void Document::snapshotNeeded()
 {
 	// (We) requested a session reset and the server is now ready for it.

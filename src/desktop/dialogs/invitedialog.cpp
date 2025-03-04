@@ -122,6 +122,10 @@ InviteDialog::InviteDialog(
 		d->ui.removeCodeButton, &QPushButton::clicked, this,
 		&InviteDialog::promptRemoveSelectedCodes);
 
+	connect(
+		d->ui.enableCodesBox, &QCheckBox::clicked, this,
+		&InviteDialog::setInviteCodesEnabled);
+
 	updatePage();
 	updateCodes();
 }

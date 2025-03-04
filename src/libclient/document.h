@@ -299,6 +299,7 @@ public slots:
 	void sendAbuseReport(int userId, const QString &message);
 	void sendCreateInviteCode(int maxUses, bool op, bool trust);
 	void sendRemoveInviteCode(const QString &secret);
+	void sendInviteCodesEnabled(bool enabled);
 
 	// Tool related functions
 	void undo();

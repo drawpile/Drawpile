@@ -2963,6 +2963,9 @@ void MainWindow::invite()
 		connect(
 			dlg, &dialogs::InviteDialog::removeInviteCode, m_doc,
 			&Document::sendRemoveInviteCode);
+		connect(
+			dlg, &dialogs::InviteDialog::setInviteCodesEnabled, m_doc,
+			&Document::sendInviteCodesEnabled);
 		dlg->show();
 	}
 }

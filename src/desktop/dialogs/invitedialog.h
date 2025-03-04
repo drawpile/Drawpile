@@ -39,6 +39,7 @@ public:
 signals:
 	void createInviteCode(int maxUses, bool op, bool trust);
 	void removeInviteCode(const QString &secret);
+	void setInviteCodesEnabled(bool enabled);
 
 private:
 	QString
