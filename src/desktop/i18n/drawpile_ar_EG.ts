@@ -487,7 +487,7 @@
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation>استيراد الفرشة</translation>
+        <translation>استيراد &amp;الفرش...</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -548,7 +548,7 @@
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation>تصدير فيديو WEBM</translation>
+        <translation>تصدير WebM فيديو</translation>
     </message>
     <message>
         <location line="+7"/>
