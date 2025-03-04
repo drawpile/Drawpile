@@ -31,7 +31,7 @@
     <message>
         <location line="+85"/>
         <source>Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>فرشاة</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1405,7 +1405,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>الرؤساء</translation>
     </message>
     <message>
         <location line="+3"/>
