@@ -2078,7 +2078,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>اعاده التكبير</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4423,7 +4423,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>فيديو WebM</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -8746,18 +8746,18 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Move up</source>
-        <translation type="unfinished"></translation>
+        <translation>التحريك للأعلى</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Move down</source>
-        <translation type="unfinished"></translation>
+        <translation>التحريك للأسفل</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Pin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>زهري</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8780,7 +8780,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-35"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>استمرار</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -9548,7 +9548,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Closed</source>
-        <translation type="unfinished"></translation>
+        <translation>مغلق</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11128,7 +11128,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+165"/>
         <source>Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;طبقه</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -11138,7 +11138,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-710"/>
         <source>Delete Layer?</source>
-        <translation type="unfinished"></translation>
+        <translation>حذف الطبقه</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11291,7 +11291,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/timeline.cpp" line="+19"/>
         <source>Timeline</source>
-        <translation type="unfinished"></translation>
+        <translation>اداه الرسوم المتحركه:</translation>
     </message>
     <message>
         <location line="+181"/>
@@ -11704,7 +11704,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>Preview:</source>
-        <translation type="unfinished"></translation>
+        <translation>معاينة</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -12235,7 +12235,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;صق</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12245,7 +12245,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Presets…</source>
-        <translation type="unfinished"></translation>
+        <translation>الإعدادات المسبقة</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12412,7 +12412,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Connecting...</source>
-        <translation type="unfinished"></translation>
+        <translation>توصيل…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12499,7 +12499,7 @@ Hex: %4</source>
     <message>
         <location filename="../widgets/presetselector.cpp" line="+28"/>
         <source>Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>الإعدادات المسبقة</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -12612,7 +12612,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+34"/>
         <source>Change Frame Count</source>
-        <translation type="unfinished"></translation>
+        <translation>غير عدد الطبقات…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12655,17 +12655,17 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="-138"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>الرئيس</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>موثوق</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>اغلق</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12685,7 +12685,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Kick</source>
-        <translation type="unfinished"></translation>
+        <translation>اطرد</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12695,7 +12695,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Private Message</source>
-        <translation type="unfinished"></translation>
+        <translation>رسالة خاصة</translation>
     </message>
     <message>
         <location line="+2"/>
