@@ -2589,7 +2589,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+11"/>
         <source>&amp;Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير الحجم</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -4453,7 +4453,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Input</source>
-        <translation type="unfinished">مدخل</translation>
+        <translation>دخل</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4468,7 +4468,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished"></translation>
+        <translation>معدلFrame:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4503,7 +4503,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>صدّر</translation>
     </message>
     <message>
         <location line="+125"/>
@@ -7370,7 +7370,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/selectionalterdialog.cpp" line="+40"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-1"/>
@@ -7628,7 +7628,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-97"/>
         <source>File does not contain a valid role export.</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يحتوي الملف &apos;%1&apos; على تصدير دور صالح.</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -9543,7 +9543,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>تصفية</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -11819,7 +11819,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/zoomsettings.cpp" line="+21"/>
         <source>Normal Size</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;الحجم الطبيعي</translation>
     </message>
     <message>
         <location line="+1"/>
