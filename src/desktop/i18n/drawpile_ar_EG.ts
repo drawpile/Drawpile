@@ -457,7 +457,7 @@
     <message>
         <location line="-271"/>
         <source>Add Avatar</source>
-        <translation>إضافة الصورة الرمزية…</translation>
+        <translation>إضافة الصورة الرمزية</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -487,7 +487,7 @@
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation>استيراد &amp;الفرش...</translation>
+        <translation>استيراد &amp;الفرش</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -1114,7 +1114,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+13"/>
         <source>NSFM</source>
-        <translation>غير صالح للقاصرين</translation>
+        <translation>NSFMغير صالح للاطفال</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -9568,7 +9568,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished">NSFM</translation>
+        <translation>NSFMغير صالح للاطفال</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9748,7 +9748,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="+28"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;مساعده</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10391,7 +10391,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+28"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>بحث</translation>
     </message>
     <message>
         <location line="+553"/>
@@ -12035,7 +12035,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+30"/>
         <location filename="../view/canvascontroller.cpp" line="+34"/>
         <source>Downloading…</source>
-        <translation type="unfinished"></translation>
+        <translation>جارٍ التنزيل…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12072,7 +12072,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatwidget.cpp" line="+164"/>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation>عام</translation>
     </message>
     <message>
         <location line="+71"/>
@@ -12422,7 +12422,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Connected</source>
-        <translation type="unfinished"></translation>
+        <translation>متصل</translation>
     </message>
     <message>
         <location line="+2"/>
