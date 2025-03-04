@@ -20,13 +20,13 @@
         <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished">تعارض</translation>
+        <translation>تعارض</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (تعارض)</translation>
     </message>
     <message>
         <location line="+85"/>
@@ -36,7 +36,7 @@
     <message>
         <location line="+2"/>
         <source>Shortcut</source>
-        <translation type="unfinished">اختصار</translation>
+        <translation>اختصار</translation>
     </message>
 </context>
 <context>
@@ -83,13 +83,13 @@
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished">تعارض</translation>
+        <translation>تعارض</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (تعارض)</translation>
     </message>
     <message>
         <location line="+76"/>
@@ -229,22 +229,22 @@
     <message>
         <location line="+2"/>
         <source>Free Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>تدوير اللوحه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير لون</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير تشبع اللون</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير قيمة اللون</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -327,7 +327,7 @@
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (تعارض)</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -943,7 +943,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+15"/>
         <source>Unknown brush format in file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>فرشاة غير معروف في الملف &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+66"/>
@@ -958,22 +958,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+61"/>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يحتوي ملف الفرشاة &apos;%1&apos; على JSON</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Brush file &apos;%1&apos; has invalid version %d</source>
-        <translation type="unfinished"></translation>
+        <translation>يحتوي ملف الفرشاة &apos;%1&apos; على إصدار غير صالح %d</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>يحتوي ملف الفرشاة &apos;%1&apos; على إعداد &apos;لون&apos; غير صالح</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>يحتوي ملف الفرشاة &apos;%1&apos; على إعداد &apos;%2&apos; قديم</translation>
     </message>
     <message>
         <location line="+129"/>
@@ -1176,12 +1176,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>%1 made operator via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>تم إنشاء %1 عامل تشغيل عبر دعوة أنشأها مسؤول الخادم.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 made operator via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>قام %1 بإنشاء عامل عبر دعوة تم إنشاؤها بواسطة %2.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1277,17 +1277,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+14"/>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>تمت إزالة كلمة مرور الجلسة بواسطة مسؤول الخادم. لا يسمح هذا الخادم بمتصفحات الويب في الجلسات العامة، وسيتم قطع اتصالها.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>تمت إزالة كلمة مرور الجلسة بواسطة %1. لا يسمح هذا الخادم بمتصفحات الويب في الجلسات العامة، وسيتم قطع اتصالها.</translation>
     </message>
     <message>
         <location line="+93"/>
         <source>%1 trusted via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 موثوق به عبر دعوة أنشأها مسؤول الخادم.</translation>
     </message>
     <message>
         <location line="-62"/>
@@ -1317,22 +1317,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>التحضير لإعادة تعيين الجلسة بواسطة %1! برجاء الانتظار، من المفترض أن تكون الجلسة متاحة مرة أخرى قريبًا…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>يقوم %1 بضغط اللوحة القماشية! برجاء الانتظار، من المفترض أن تكون الجلسة متاحة مرة أخرى قريبًا…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1ستبدل اللوحة القماشية! برجاء الانتظار، من المفترض أن تكون الجلسة متاحة مرة أخرى قريبًا…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 يعيد اللوحة القماشية إلى حالتها السابقة! برجاء الانتظار، من المفترض أن تكون الجلسة متاحة مرة أخرى قريبًا…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1365,7 +1365,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+10"/>
         <source>%1 trusted via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>تم الثقة بـ %1 عبر دعوة تم إنشاؤها بواسطة %2.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1383,24 +1383,24 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/invitelistmodel.cpp" line="+119"/>
         <source>No invite codes, click Create to add one.</source>
-        <translation type="unfinished"></translation>
+        <translation>لا توجد رموز دعوة، انقر فوق &quot;إنشاء&quot; لإضافة واحد.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Used %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>تم استخدام %1 بواسطة %2</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Created %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>تم إنشاء %1 بواسطة %2</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Operator and Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>المشغل وموثوق</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1410,33 +1410,33 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished">موثوق</translation>
+        <translation>موثوق</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1/%2</source>
         <extracomment>This is the &quot;uses&quot; column in the invite code table. %1 is how often the invite has been used, %2 is how many there are total.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1/%2</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Code</source>
-        <translation type="unfinished"></translation>
+        <translation>شفرة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Creator</source>
-        <translation type="unfinished"></translation>
+        <translation>الخالق</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Role</source>
-        <translation type="unfinished"></translation>
+        <translation>دور</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Uses</source>
-        <translation type="unfinished"></translation>
+        <translation>الاستخدامات</translation>
     </message>
 </context>
 <context>
@@ -1480,7 +1480,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+64"/>
         <source>Failed to retrieve server info</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل في استرداد معلومات الخادم</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -1658,12 +1658,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Invalid host name.</source>
-        <translation type="unfinished"></translation>
+        <translation>اسم المضيف غير صالح.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يُسمح لك باستضافة الجلسات العامة هنا ، فقط الجلسات الشخصية مسموح بها. يمكنك التبديل من الجمهور إلى الشخصي في علامة التبويب الجلسة.</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -1813,7 +1813,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/server.cpp" line="+214"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>إذا كنت لا تنوي استخدام وكيل ، فيمكنك تعطيل وكيل الشبكة في تفضيلات Drawpile ضمن علامة التبويب الشبكة.</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -1849,13 +1849,13 @@ Select a regular layer instead.</source>
         <location line="+51"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>خطأ المقبس %1: %2</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (خطأ %2)</translation>
     </message>
 </context>
 <context>
@@ -1873,7 +1873,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="-254"/>
         <source>You don&apos;t have permission for that transformation.</source>
-        <translation type="unfinished"></translation>
+        <translation>ليس لديك إذن بهذا التحويل.</translation>
     </message>
     <message>
         <location line="+207"/>
@@ -1891,7 +1891,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/hostpresetmodel.cpp" line="+57"/>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>حدد تلقائيًا</translation>
     </message>
 </context>
 <context>
