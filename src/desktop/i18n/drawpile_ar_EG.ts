@@ -492,28 +492,28 @@
     <message>
         <location line="+23"/>
         <source>Import Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>استيراد إعدادات الجلسة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>جميع الملفات المدعومة (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+391"/>
         <source>Session Settings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>إعدادات الجلسة (%1)</translation>
     </message>
     <message>
         <location line="-390"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>ممنوع الجلسة (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Session Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>أدوار الجلسة (%1)</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -538,7 +538,7 @@
     <message>
         <location line="+5"/>
         <source>Reference Image</source>
-        <translation type="unfinished"></translation>
+        <translation>صور مراجعه</translation>
     </message>
     <message>
         <location line="+168"/>
@@ -578,7 +578,7 @@
     <message>
         <location line="+10"/>
         <source>Export Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير إعدادات الجلسة</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -822,7 +822,7 @@
     <message>
         <location line="+17"/>
         <source>Session</source>
-        <translation type="unfinished">الجلسه</translation>
+        <translation>الجلسه</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -842,22 +842,22 @@
     <message>
         <location line="+30"/>
         <source>Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>رموز</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Create</source>
-        <translation type="unfinished">خلق</translation>
+        <translation>خلق</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Revoke</source>
-        <translation type="unfinished"></translation>
+        <translation>إبطال</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>نسخ</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -872,7 +872,7 @@
     <message>
         <location line="+37"/>
         <source>Allow session operators to manage invite codes</source>
-        <translation type="unfinished"></translation>
+        <translation>السماح لمشغلي الجلسة بإدارة رموز الدعوة</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -989,17 +989,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Sketch mode for you</source>
-        <translation type="unfinished"></translation>
+        <translation>وضع المراجعه رسم بالنسبة لك</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Sketch Opacity:</source>
-        <translation type="unfinished"></translation>
+        <translation>عتامة الرسم:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Sketch Tint:</source>
-        <translation type="unfinished"></translation>
+        <translation>لون الرسمه:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1019,17 +1019,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+81"/>
         <source>No tint</source>
-        <translation type="unfinished"></translation>
+        <translation>لا لون</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blue tint</source>
-        <translation type="unfinished"></translation>
+        <translation>لون أزرق</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>ختار…</translation>
     </message>
 </context>
 <context>
@@ -1057,7 +1057,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation>يمكن ترتيب أرصفة Drawpile بحرية. يمكنك استخدام View &gt; Docks &gt; Arrange Docks للسماح لك بسحبها بسهولة أكبر. تأكد من أن ترتيبك يناسب الدقة التي اخترتها، وإلا فقد يتم دفع بعض عناصر التحكم خارج الشاشة.</translation>
     </message>
 </context>
 <context>
@@ -1065,22 +1065,22 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../utils/widgetutils.cpp" line="+1129"/>
         <source>Open Link</source>
-        <translation type="unfinished"></translation>
+        <translation>افتح الرابط</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This link will take you to the website at &quot;%1&quot;, which is not run by Drawpile. Are you sure you want to go there?</source>
-        <translation type="unfinished"></translation>
+        <translation>سينقلك هذا الارتباط إلى موقع الويب &quot;%1&quot;، والذي لا يتم تشغيله بواسطة Drawpile. هل أنت متأكد أنك تريد الذهاب إلى هناك؟</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Yes, visit website</source>
-        <translation type="unfinished"></translation>
+        <translation>نعم، قم بزيارة الموقع</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>لا، إلغاء</translation>
     </message>
 </context>
 <context>
@@ -1280,61 +1280,61 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+92"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>افصلك عن الجلسة</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>lose any unsaved changes</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>فقد أي تغييرات غير محفوظة</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>stop your recording</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>إيقاف التسجيل الخاص بك</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>discard your playback</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>تجاهل التشغيل الخاص بك</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+15"/>
         <source>Doing so will %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيؤدي القيام بذلك إلى %1.</translation>
     </message>
     <message>
         <location line="-11"/>
         <source>Doing so will %1 and %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيؤدي القيام بذلك إلى %1 و%2.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Doing so will %1, %2 and %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيؤدي القيام بذلك إلى %1 و%2 و%3.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Doing so will %1, %2, %3 and %4.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيؤدي القيام بذلك إلى %1 و%2 و%3 و%4.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Are you sure you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>هل أنت متأكد أنك تريد الاستمرار؟</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, continue</source>
-        <translation type="unfinished"></translation>
+        <translation>نعم، استمر</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>لا، إلغاء</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -1346,12 +1346,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="-2081"/>
         <location line="+3793"/>
         <source>Export Again</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير مرة أخرى</translation>
     </message>
     <message>
         <location line="-3789"/>
         <source>Export Again to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بالتصدير مرة أخرى إلى %1</translation>
     </message>
     <message>
         <location line="+439"/>
@@ -1410,12 +1410,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+131"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ليس لديك إذن بالقص أو اللصق أو التعبئة أو الحذف.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to resize the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>ليس لديك إذن لتغيير حجم اللوحة القماشية.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5237,7 +5237,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+175"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
-        <translation>يبطئرسم الفرشه لتثبيتها مع مرور الوقت. تعطي القيم العالية خطوطًا ناعمة جدًا، ولكنها سترسم ببطء. عندما تتوقف عن الحركة، سيلحق الخط بالمؤشر.تنعيم كمبيوتر اللوحي  ينطبق كمان.</translation>
+        <translation>يبطئرسم الفرشه لتثبيتها مع مرور الوقت. تعطي القيم العالية خطوطًا ناعمة جدًا، ولكنها سترسم ببطء. عندما تتوقف عن الحركة، سيلحق الخط بالمؤشر.تنعيم كمبيوتر اللوحي ينطبق كمان.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8378,7 +8378,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Add</source>
-        <translation type="unfinished">يضيف</translation>
+        <translation>ضيف</translation>
     </message>
     <message>
         <location line="+4"/>
