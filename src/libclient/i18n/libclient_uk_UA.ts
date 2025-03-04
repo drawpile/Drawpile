@@ -1427,7 +1427,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Uses</source>
-        <translation>Використання</translation>
+        <translation>Використань</translation>
     </message>
 </context>
 <context>
