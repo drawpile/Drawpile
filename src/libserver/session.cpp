@@ -830,13 +830,12 @@ QVector<uint8_t> Session::updateOwnership(
 				topic = Log::Topic::Op;
 				if(invite) {
 					key = net::ServerReply::KEY_OP_GIVE_INVITE;
-					msg = QStringLiteral(
-							  "Made operator via invite %1 created by %2")
-							  .arg(
-								  invite->secret,
-								  invite->creator.isEmpty()
-									  ? QStringLiteral("a server administrator")
-									  : invite->creator);
+					msg =
+						QStringLiteral("Made operator via invite created by %2")
+							.arg(
+								invite->creator.isEmpty()
+									? QStringLiteral("a server administrator")
+									: invite->creator);
 				} else {
 					key = net::ServerReply::KEY_OP_GIVE;
 					msg = QStringLiteral("Made operator by %1")
@@ -860,7 +859,6 @@ QVector<uint8_t> Session::updateOwnership(
 				QJsonObject params;
 				params.insert(QStringLiteral("target"), c->username());
 				if(invite) {
-					params.insert(QStringLiteral("secret"), invite->secret);
 					if(!invite->creator.isEmpty()) {
 						params.insert(
 							QStringLiteral("creator"), invite->creator);
@@ -908,9 +906,12 @@ Invite *Session::createInvite(Client *client, int maxUses, bool trust, bool op)
 			client,
 			Log()
 				.about(Log::Level::Info, Log::Topic::Invite)
-				.message(QStringLiteral("Created invite %1 with %2 use(s)")
+				.message(QStringLiteral("Created %1invite with %2 use(s)")
 							 .arg(
-								 invite->secret,
+								 op && trust ? QStringLiteral("op and trust ")
+								 : op		 ? QStringLiteral("op ")
+								 : trust	 ? QStringLiteral("trust ")
+											 : QString(),
 								 invite->maxUses > 0
 									 ? QString::number(invite->maxUses)
 									 : QStringLiteral("unlimited"))));
@@ -1002,9 +1003,8 @@ QVector<uint8_t> Session::updateTrustedUsers(
 				topic = Log::Topic::Trust;
 				if(invite) {
 					key = net::ServerReply::KEY_TRUST_GIVE_INVITE;
-					msg = QStringLiteral("Trusted via invite %1 created by %2")
+					msg = QStringLiteral("Trusted via invite created by %2")
 							  .arg(
-								  invite->secret,
 								  invite->creator.isEmpty()
 									  ? QStringLiteral("a server administrator")
 									  : invite->creator);
@@ -1031,7 +1031,6 @@ QVector<uint8_t> Session::updateTrustedUsers(
 				QJsonObject params;
 				params.insert(QStringLiteral("target"), c->username());
 				if(invite) {
-					params.insert(QStringLiteral("secret"), invite->secret);
 					if(!invite->creator.isEmpty()) {
 						params.insert(
 							QStringLiteral("creator"), invite->creator);

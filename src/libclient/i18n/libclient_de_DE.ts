@@ -1162,12 +1162,22 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>%1 wurde von %2 zum Operator gemacht.</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+6"/>
+        <source>%1 made operator via invite created by a server administrator.</source>
+        <translation>%1 wurde durch Einladung erstellt durch einen Serveradministrator zum Operator gemacht.</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 made operator via invite created by %2.</source>
+        <translation>%1 wurde durch Einladung erstellt durch %2 zum Operator gemacht.</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Operator status revoked from %1 by the server.</source>
         <translation>Der Operatorstatus von %1 wurde vom Server widerrufen.</translation>
     </message>
     <message>
-        <location line="-512"/>
+        <location line="-511"/>
         <source>You have been kicked.</source>
         <translation>Sie wurden gekickt.</translation>
     </message>
@@ -1263,17 +1273,12 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Sitzungspasswort wurde durch %1 entfernt. Dieser Server erlaubt keine Web-Browser in öffentlichen Sitzungen, ihre Verbindung wird getrennt.</translation>
     </message>
     <message>
-        <location line="+18"/>
-        <source>%1 made operator via invite %2 created by a server administrator.</source>
-        <translation>%1 wurde durch Einladung %2 erstellt von einem Serveradministrator zum Operator gemacht.</translation>
+        <location line="+93"/>
+        <source>%1 trusted via invite created by a server administrator.</source>
+        <translation>%1 wurde durch Einladung erstellt durch einen Serveradministrator vertraut.</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>%1 made operator via invite %2 created by %3.</source>
-        <translation>%1 wurde durch Einladung %2 erstellt von %3 zum Operator gemacht.</translation>
-    </message>
-    <message>
-        <location line="+10"/>
+        <location line="-62"/>
         <source>Operator status revoked from %1 by %2.</source>
         <translation>Operator-Status von %1 durch %2 weggenommen.</translation>
     </message>
@@ -1346,14 +1351,9 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>%1 wurde von %2 vertraut.</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>%1 trusted via invite %2 created by a server administrator.</source>
-        <translation>%1 wurde durch Einladung %2 erstellt von einem Serveradministrator vertraut.</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>%1 trusted via invite %2 created by %3.</source>
-        <translation>%1 wurde durch Einladung %2 erstellt von %3 vertraut.</translation>
+        <location line="+10"/>
+        <source>%1 trusted via invite created by %2.</source>
+        <translation>%1 wurde durch Einladung erstellt durch %2 vertraut.</translation>
     </message>
     <message>
         <location line="+7"/>

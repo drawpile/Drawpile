@@ -569,15 +569,14 @@ Client::translateMessage(const QJsonObject &reply, const QString &fallbackKey)
 			}
 		} else if(key == net::ServerReply::KEY_OP_GIVE_INVITE) {
 			QString target = params[QStringLiteral("target")].toString();
-			QString secret = params[QStringLiteral("secret")].toString();
 			QString creator = params[QStringLiteral("creator")].toString();
 			if(creator.isEmpty()) {
-				return tr("%1 made operator via invite %2 created by a server "
+				return tr("%1 made operator via invite created by a server "
 						  "administrator.")
-					.arg(target, secret);
+					.arg(target);
 			} else {
-				return tr("%1 made operator via invite %2 created by %3.")
-					.arg(target, secret, creator);
+				return tr("%1 made operator via invite created by %2.")
+					.arg(target, creator);
 			}
 		} else if(key == net::ServerReply::KEY_OP_TAKE) {
 			QString target = params[QStringLiteral("target")].toString();
@@ -646,15 +645,14 @@ Client::translateMessage(const QJsonObject &reply, const QString &fallbackKey)
 			}
 		} else if(key == net::ServerReply::KEY_TRUST_GIVE_INVITE) {
 			QString target = params[QStringLiteral("target")].toString();
-			QString secret = params[QStringLiteral("secret")].toString();
 			QString creator = params[QStringLiteral("creator")].toString();
 			if(creator.isEmpty()) {
-				return tr("%1 trusted via invite %2 created by a server "
+				return tr("%1 trusted via invite created by a server "
 						  "administrator.")
-					.arg(target, secret);
+					.arg(target);
 			} else {
-				return tr("%1 trusted via invite %2 created by %3.")
-					.arg(target, secret, creator);
+				return tr("%1 trusted via invite created by %2.")
+					.arg(target, creator);
 			}
 		} else if(key == net::ServerReply::KEY_TRUST_TAKE) {
 			QString target = params[QStringLiteral("target")].toString();

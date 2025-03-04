@@ -1159,12 +1159,22 @@ Select a regular layer instead.</source>
         <translation>%1 被 %2 赋予了房间管理员身份.</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+6"/>
+        <source>%1 made operator via invite created by a server administrator.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 made operator via invite created by %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Operator status revoked from %1 by the server.</source>
         <translation>%1 的房间管理员身份已被服务器移除.</translation>
     </message>
     <message>
-        <location line="-512"/>
+        <location line="-511"/>
         <source>You have been kicked.</source>
         <translation>你已被踢除.</translation>
     </message>
@@ -1260,17 +1270,12 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+18"/>
-        <source>%1 made operator via invite %2 created by a server administrator.</source>
+        <location line="+93"/>
+        <source>%1 trusted via invite created by a server administrator.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>%1 made operator via invite %2 created by %3.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
+        <location line="-62"/>
         <source>Operator status revoked from %1 by %2.</source>
         <translation>%1 的房间管理员身份已被 %2 移除.</translation>
     </message>
@@ -1343,13 +1348,8 @@ Select a regular layer instead.</source>
         <translation>%1 被 %2 赋予了信任用户身份.</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>%1 trusted via invite %2 created by a server administrator.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>%1 trusted via invite %2 created by %3.</source>
+        <location line="+10"/>
+        <source>%1 trusted via invite created by %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

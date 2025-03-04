@@ -1158,12 +1158,22 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+6"/>
+        <source>%1 made operator via invite created by a server administrator.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 made operator via invite created by %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Operator status revoked from %1 by the server.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-512"/>
+        <location line="-511"/>
         <source>You have been kicked.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1259,17 +1269,12 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+18"/>
-        <source>%1 made operator via invite %2 created by a server administrator.</source>
+        <location line="+93"/>
+        <source>%1 trusted via invite created by a server administrator.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>%1 made operator via invite %2 created by %3.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
+        <location line="-62"/>
         <source>Operator status revoked from %1 by %2.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1342,13 +1347,8 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>%1 trusted via invite %2 created by a server administrator.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>%1 trusted via invite %2 created by %3.</source>
+        <location line="+10"/>
+        <source>%1 trusted via invite created by %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
