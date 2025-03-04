@@ -1255,22 +1255,22 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="+14"/>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzungspasswort wurde durch einen Serveradministrator entfernt. Dieser Server erlaubt keine Web-Browser in öffentlichen Sitzungen, ihre Verbindung wird getrennt.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzungspasswort wurde durch %1 entfernt. Dieser Server erlaubt keine Web-Browser in öffentlichen Sitzungen, ihre Verbindung wird getrennt.</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>%1 made operator via invite %2 created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 wurde durch Einladung %2 erstellt von einem Serveradministrator zum Operator gemacht.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 made operator via invite %2 created by %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 wurde durch Einladung %2 erstellt von %3 zum Operator gemacht.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1348,12 +1348,12 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="+7"/>
         <source>%1 trusted via invite %2 created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 wurde durch Einladung %2 erstellt von einem Serveradministrator vertraut.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 trusted via invite %2 created by %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 wurde durch Einladung %2 erstellt von %3 vertraut.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1371,60 +1371,60 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location filename="../net/invitelistmodel.cpp" line="+119"/>
         <source>No invite codes, click Create to add one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Einladungscodes, klicken Sie auf Erstellen um einen hinzuzufügen.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Used %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Verwendet %1 von %2</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Created %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Erstellt %1 von %2</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Operator and Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator und vertraut</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished">Operator</translation>
+        <translation>Operator</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished">Vertrauenswürdig</translation>
+        <translation>Vertrauenswürdig</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1/%2</source>
         <extracomment>This is the &quot;uses&quot; column in the invite code table. %1 is how often the invite has been used, %2 is how many there are total.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1/%2</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Code</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Creator</source>
-        <translation type="unfinished"></translation>
+        <translation>Ersteller</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Role</source>
-        <translation type="unfinished"></translation>
+        <translation>Rolle</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Uses</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwendungen</translation>
     </message>
 </context>
 <context>
