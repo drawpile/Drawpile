@@ -1114,7 +1114,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+13"/>
         <source>NSFM</source>
-        <translation>NSFM</translation>
+        <translation>غير صالح للقاصرين</translation>
     </message>
     <message>
         <location line="+35"/>
