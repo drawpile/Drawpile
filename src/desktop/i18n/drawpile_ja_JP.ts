@@ -842,7 +842,7 @@
     <message>
         <location line="+30"/>
         <source>Codes</source>
-        <translation>記号</translation>
+        <translation>コード</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -9775,7 +9775,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
-        <translation>ドローイングセッションへの招待リンクがある場合は、直接&lt;a href=&quot;#join&quot;&gt;参加&lt;/a&gt;できます。 あるいは公開セッションを&lt;a href=&quot;#browse&quot;&gt;参照&lt;/a&gt;したり、&lt;a href=&quot;#create&quot;&gt;新しいキャンバス&lt;/a&gt;を作成して独自に描画したりすることもできます。</translation>
+        <translation>ドローイングセッションへの招待リンクがある場合は、直接&lt;a href=&quot;#join&quot;&gt;参加&lt;/a&gt;できます。 あるいはパブリックセッションを&lt;a href=&quot;#browse&quot;&gt;参照&lt;/a&gt;したり、&lt;a href=&quot;#create&quot;&gt;新しいキャンバス&lt;/a&gt;を作成して独自に描画したりすることもできます。</translation>
     </message>
     <message>
         <location line="+5"/>
