@@ -27,6 +27,7 @@
 
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
+typedef struct ZSTD_CCtx_s ZSTD_CCtx;
 
 #define DP_TILE_BYTES            (DP_TILE_LENGTH * sizeof(DP_Pixel15))
 #define DP_TILE_COMPRESSED_BYTES (DP_TILE_LENGTH * sizeof(DP_Pixel8))
@@ -149,6 +150,14 @@ size_t DP_tile_compress_pixel(DP_Pixel15 pixel,
 size_t DP_tile_compress(DP_Tile *tile, DP_Pixel8 *pixel_buffer,
                         unsigned char *(*get_output_buffer)(size_t, void *),
                         void *user);
+
+size_t DP_tile_compress_zstd8le_pixel(
+    DP_Pixel15 pixel, unsigned char *(*get_output_buffer)(size_t, void *),
+    void *user);
+
+size_t DP_tile_compress_zstd8le(
+    ZSTD_CCtx **in_out_context_or_null, DP_Tile *tile, DP_Pixel8 *pixel_buffer,
+    unsigned char *(*get_output_buffer)(size_t, void *), void *user);
 
 
 void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y);

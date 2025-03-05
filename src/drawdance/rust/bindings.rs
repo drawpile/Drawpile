@@ -371,6 +371,12 @@ extern "C" {
     pub fn DP_strdup(str_: *const ::std::os::raw::c_char) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
+    pub fn DP_memdup(
+        buf: *const ::std::os::raw::c_void,
+        size: usize,
+    ) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
     pub fn DP_str_equal(a: *const ::std::os::raw::c_char, b: *const ::std::os::raw::c_char)
         -> bool;
 }
@@ -388,6 +394,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_error_set(fmt: *const ::std::os::raw::c_char, ...);
+}
+extern "C" {
+    pub fn DP_error_set_string(str_: *const ::std::os::raw::c_char, length: usize);
 }
 extern "C" {
     pub fn DP_error_count() -> ::std::os::raw::c_uint;
@@ -7976,6 +7985,7 @@ pub const DP_SAVE_IMAGE_PNG: DP_SaveImageType = 2;
 pub const DP_SAVE_IMAGE_JPEG: DP_SaveImageType = 3;
 pub const DP_SAVE_IMAGE_PSD: DP_SaveImageType = 4;
 pub const DP_SAVE_IMAGE_WEBP: DP_SaveImageType = 5;
+pub const DP_SAVE_IMAGE_PROJECT: DP_SaveImageType = 6;
 pub type DP_SaveImageType = ::std::os::raw::c_uint;
 pub const DP_SAVE_RESULT_SUCCESS: DP_SaveResult = 0;
 pub const DP_SAVE_RESULT_BAD_ARGUMENTS: DP_SaveResult = 1;

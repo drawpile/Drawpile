@@ -3,6 +3,7 @@
 #define DPENGINE_PROJECT_H
 #include <dpcommon/common.h>
 
+typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_Message DP_Message;
 typedef struct DP_Output DP_Output;
 
@@ -30,10 +31,12 @@ typedef struct DP_Output DP_Output;
 #define DP_PROJECT_CHECK_ERROR_USER_VERSION   -6
 
 #define DP_PROJECT_SESSION_OPEN_ERROR_ALREADY_OPEN -1
-#define DP_PROJECT_SESSION_OPEN_ERROR_WRITE        -2
+#define DP_PROJECT_SESSION_OPEN_ERROR_PREPARE      -2
+#define DP_PROJECT_SESSION_OPEN_ERROR_WRITE        -3
 
-#define DP_PROJECT_SESSION_CLOSE_ERROR_WRITE     -1
-#define DP_PROJECT_SESSION_CLOSE_ERROR_NO_CHANGE -2
+#define DP_PROJECT_SESSION_CLOSE_ERROR_PREPARE   -1
+#define DP_PROJECT_SESSION_CLOSE_ERROR_WRITE     -2
+#define DP_PROJECT_SESSION_CLOSE_ERROR_NO_CHANGE -3
 #define DP_PROJECT_SESSION_CLOSE_NOT_OPEN        1
 
 #define DP_PROJECT_MESSAGE_RECORD_ERROR_NO_SESSION -1
@@ -42,22 +45,26 @@ typedef struct DP_Output DP_Output;
 
 #define DP_PROJECT_SNAPSHOT_OPEN_ERROR_NO_SESSION   -1
 #define DP_PROJECT_SNAPSHOT_OPEN_ERROR_ALREADY_OPEN -2
-#define DP_PROJECT_SNAPSHOT_OPEN_ERROR_WRITE        -3
+#define DP_PROJECT_SNAPSHOT_OPEN_ERROR_PREPARE      -3
+#define DP_PROJECT_SNAPSHOT_OPEN_ERROR_WRITE        -4
 
 #define DP_PROJECT_SNAPSHOT_FINISH_ERROR_NOT_OPEN  -1
-#define DP_PROJECT_SNAPSHOT_FINISH_ERROR_WRITE     -2
-#define DP_PROJECT_SNAPSHOT_FINISH_ERROR_NO_CHANGE -3
+#define DP_PROJECT_SNAPSHOT_FINISH_ERROR_PREPARE   -2
+#define DP_PROJECT_SNAPSHOT_FINISH_ERROR_WRITE     -3
+#define DP_PROJECT_SNAPSHOT_FINISH_ERROR_NO_CHANGE -4
 
-#define DP_PROJECT_SNAPSHOT_DISCARD_ERROR_WRITE -1
-#define DP_PROJECT_SNAPSHOT_DISCARD_NOT_FOUND   1
+#define DP_PROJECT_SNAPSHOT_DISCARD_ERROR_PREPARE -1
+#define DP_PROJECT_SNAPSHOT_DISCARD_ERROR_WRITE   -2
+#define DP_PROJECT_SNAPSHOT_DISCARD_NOT_FOUND     1
 
-#define DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR_READ       -1
-#define DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR_WRITE      -2
-#define DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR_READ_WRITE -3
+#define DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR_PREPARE    -1
+#define DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR_READ       -2
+#define DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR_WRITE      -3
+#define DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR_READ_WRITE -4
 
-#define DP_PROJECT_SNAPSHOT_MESSAGE_RECORD_ERROR_NOT_OPEN  -1
-#define DP_PROJECT_SNAPSHOT_MESSAGE_RECORD_ERROR_SERIALIZE -2
-#define DP_PROJECT_SNAPSHOT_MESSAGE_RECORD_ERROR_WRITE     -3
+#define DP_PROJECT_SNAPSHOT_CANVAS_ERROR_NOT_OPEN  -1
+#define DP_PROJECT_SNAPSHOT_CANVAS_ERROR_NOT_READY -2
+#define DP_PROJECT_SNAPSHOT_CANVAS_ERROR_WRITE     -3
 
 #define DP_PROJECT_OPEN_EXISTING (1u << 0u)
 #define DP_PROJECT_OPEN_TRUNCATE (1u << 1u)
@@ -154,11 +161,8 @@ int DP_project_snapshot_discard(DP_Project *prj, long long snapshot_id);
 int DP_project_snapshot_discard_all_except(DP_Project *prj,
                                            long long snapshot_id);
 
-// Records a message to the given snapshot. Returns 0 on success and a negative
-// DP_PROJECT_SNAPSHOT_MESSAGE_RECORD_ERROR_* value on failure. The snapshot id
-// must match the currently open snapshot.
-int DP_project_snapshot_message_record(DP_Project *prj, long long snapshot_id,
-                                       DP_Message *msg);
+int DP_project_snapshot_canvas(DP_Project *prj, long long snapshot_id,
+                               DP_CanvasState *cs);
 
 
 bool DP_project_dump(DP_Project *prj, DP_Output *output);

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "save.h"
+#include "dpmsg/messages.h"
 #include "image_impex.h"
 #include "image_png.h"
 #include "save_psd.h"
@@ -25,6 +26,7 @@
 #include <dpengine/layer_list.h>
 #include <dpengine/layer_props.h>
 #include <dpengine/layer_props_list.h>
+#include <dpengine/project.h>
 #include <dpengine/tile.h>
 #include <dpengine/timeline.h>
 #include <dpengine/track.h>
@@ -96,6 +98,7 @@ bool DP_save_image_type_is_flat_image(DP_SaveImageType type)
     switch (type) {
     case DP_SAVE_IMAGE_ORA:
     case DP_SAVE_IMAGE_PSD:
+    case DP_SAVE_IMAGE_PROJECT:
         return false;
     case DP_SAVE_IMAGE_PNG:
     case DP_SAVE_IMAGE_JPEG:
@@ -838,6 +841,72 @@ save_flat_image(DP_CanvasState *cs, DP_DrawContext *dc, DP_Rect *crop,
 }
 
 
+static void discard_project(DP_Project *prj, long long snapshot_id)
+{
+    const char *error = DP_error();
+    size_t error_length = strlen(error);
+    char *stashed_error = DP_memdup(error, error_length);
+
+    if (snapshot_id > 0LL) {
+        if (DP_project_snapshot_discard(prj, snapshot_id) < 0) {
+            DP_warn("Error discarding snapshot %lld: %s", snapshot_id,
+                    DP_error());
+        }
+    }
+
+    if (!DP_project_close(prj)) {
+        DP_warn("Error closing project: %s", DP_error());
+    }
+
+    DP_error_set_string(stashed_error, error_length);
+    DP_free(stashed_error);
+}
+
+static DP_SaveResult save_project(DP_CanvasState *cs, const char *path)
+{
+    DP_ProjectOpenResult open_result =
+        DP_project_open(path, DP_PROJECT_OPEN_TRUNCATE);
+    if (!open_result.project) {
+        return DP_SAVE_RESULT_OPEN_ERROR;
+    }
+
+    DP_Project *prj = open_result.project;
+
+    if (DP_project_session_open(prj, DP_PROJECT_SOURCE_FILE_OPEN, path,
+                                DP_PROTOCOL_VERSION, 0)
+        != 0) {
+        discard_project(prj, 0LL);
+    }
+
+    long long snapshot_id = DP_project_snapshot_open(prj, 0);
+    if (snapshot_id <= 0LL) {
+        discard_project(prj, 0LL);
+        return DP_SAVE_RESULT_WRITE_ERROR;
+    }
+
+    if (DP_project_snapshot_canvas(prj, snapshot_id, cs) != 0) {
+        discard_project(prj, snapshot_id);
+        return DP_SAVE_RESULT_WRITE_ERROR;
+    }
+
+    if (DP_project_snapshot_finish(prj, snapshot_id) != 0) {
+        discard_project(prj, snapshot_id);
+        return DP_SAVE_RESULT_WRITE_ERROR;
+    }
+
+    if (DP_project_session_close(prj, 0) != 0) {
+        discard_project(prj, snapshot_id);
+        return DP_SAVE_RESULT_WRITE_ERROR;
+    }
+
+    if (!DP_project_close(prj)) {
+        return DP_SAVE_RESULT_WRITE_ERROR;
+    }
+
+    return DP_SAVE_RESULT_SUCCESS;
+}
+
+
 static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
                           DP_SaveImageType type, const char *path,
                           const DP_ViewModeFilter *vmf_or_null,
@@ -857,6 +926,8 @@ static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
                                bake_annotation, user);
     case DP_SAVE_IMAGE_PSD:
         return DP_save_psd(cs, path, dc);
+    case DP_SAVE_IMAGE_PROJECT:
+        return save_project(cs, path);
     default:
         DP_error_set("Unknown save format");
         return DP_SAVE_RESULT_UNKNOWN_FORMAT;

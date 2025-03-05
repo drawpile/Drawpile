@@ -19,6 +19,7 @@
 #include "annotation_list.h"
 #include "canvas_history.h"
 #include "canvas_state.h"
+#include "compress.h"
 #include "document_metadata.h"
 #include "key_frame.h"
 #include "layer_content.h"
@@ -231,10 +232,12 @@ struct DP_ResetImagePixelBuffer {
 
 struct DP_ResetImageContext {
     DP_Worker *worker;
+    DP_ResetImageOptions options;
     void (*handle_entry)(void *, const DP_ResetEntry *);
     void *handle_entry_user;
     struct DP_ResetImageOutputBuffer *output_buffers;
     struct DP_ResetImagePixelBuffer *pixel_buffers;
+    ZSTD_CCtx **zstd_contexts;
 };
 
 struct DP_ResetImageJob {
@@ -245,6 +248,7 @@ struct DP_ResetImageJob {
     int tile_index;
     int tile_run;
     DP_Tile *tile;
+    bool holds_ref;
 };
 
 static void reset_image_handle(struct DP_ResetImageContext *c,
@@ -272,17 +276,44 @@ static unsigned char *reset_image_get_output_buffer(size_t size, void *user)
     return output_buffer->data;
 }
 
-static size_t reset_image_compress_tile(struct DP_ResetImageContext *c,
-                                        int buffer_index, DP_Tile *t)
+static size_t reset_image_compress_tile_gzip8be(struct DP_ResetImageContext *c,
+                                                int buffer_index, DP_Tile *t)
 {
     struct DP_ResetImageOutputBuffer *output_buffer =
         &c->output_buffers[buffer_index];
-    size_t size =
-        t ? DP_tile_compress(t, c->pixel_buffers[buffer_index].data,
-                             reset_image_get_output_buffer, output_buffer)
-          : DP_tile_compress_pixel(DP_pixel15_zero(),
-                                   reset_image_get_output_buffer,
-                                   output_buffer);
+    return t ? DP_tile_compress(t, c->pixel_buffers[buffer_index].data,
+                                reset_image_get_output_buffer, output_buffer)
+             : DP_tile_compress_pixel(DP_pixel15_zero(),
+                                      reset_image_get_output_buffer,
+                                      output_buffer);
+}
+
+static size_t reset_image_compress_tile_zstd8le(struct DP_ResetImageContext *c,
+                                                int buffer_index, DP_Tile *t)
+{
+    struct DP_ResetImageOutputBuffer *output_buffer =
+        &c->output_buffers[buffer_index];
+    return t ? DP_tile_compress_zstd8le(&c->zstd_contexts[buffer_index], t,
+                                        c->pixel_buffers[buffer_index].data,
+                                        reset_image_get_output_buffer,
+                                        output_buffer)
+             : DP_tile_compress_zstd8le_pixel(DP_pixel15_zero(),
+                                              reset_image_get_output_buffer,
+                                              output_buffer);
+}
+
+static size_t reset_image_compress_tile(struct DP_ResetImageContext *c,
+                                        int buffer_index, DP_Tile *t)
+{
+    size_t size;
+    switch (c->options.compression) {
+    case DP_RESET_IMAGE_COMPRESSION_ZSTD8LE:
+        size = reset_image_compress_tile_zstd8le(c, buffer_index, t);
+        break;
+    default:
+        size = reset_image_compress_tile_gzip8be(c, buffer_index, t);
+        break;
+    }
     if (size == 0) {
         DP_warn("Reset image: error tile: %s", DP_error());
     }
@@ -394,19 +425,29 @@ static void tile_to_reset_image(struct DP_ResetImageContext *c,
 static void tile_to_reset_image_job(void *user, int thread_index)
 {
     struct DP_ResetImageJob *job = user;
+    DP_Tile *t = job->tile;
     tile_to_reset_image(job->c, thread_index, job->layer_index, job->layer_id,
-                        job->sublayer_id, job->tile_index, job->tile_run,
-                        job->tile);
+                        job->sublayer_id, job->tile_index, job->tile_run, t);
+    if (job->holds_ref) {
+        DP_tile_decref(t);
+    }
 }
 
 static void flush_tile(struct DP_ResetImageContext *c, int layer_index,
                        int layer_id, int sublayer_id, int tile_index,
-                       int tile_run, DP_Tile *t)
+                       int tile_run, DP_Tile *t, bool ephemeral)
 {
     DP_Worker *worker = c->worker;
     if (worker) {
-        struct DP_ResetImageJob job = {
-            c, layer_index, layer_id, sublayer_id, tile_index, tile_run, t};
+        bool hold_ref = ephemeral && t;
+        struct DP_ResetImageJob job = {c,
+                                       layer_index,
+                                       layer_id,
+                                       sublayer_id,
+                                       tile_index,
+                                       tile_run,
+                                       hold_ref ? DP_tile_incref(t) : t,
+                                       hold_ref};
         DP_worker_push(worker, &job);
     }
     else {
@@ -418,7 +459,7 @@ static void flush_tile(struct DP_ResetImageContext *c, int layer_index,
 static void tiles_to_reset_image(struct DP_ResetImageContext *c,
                                  DP_LayerContent *lc, int layer_index,
                                  int layer_id, int sublayer_id,
-                                 DP_Pixel15 fill_pixel)
+                                 DP_Pixel15 fill_pixel, bool ephemeral)
 {
     int count = DP_tile_total_round(DP_layer_content_width(lc),
                                     DP_layer_content_height(lc));
@@ -436,7 +477,7 @@ static void tiles_to_reset_image(struct DP_ResetImageContext *c,
                 }
                 else {
                     flush_tile(c, layer_index, layer_id, sublayer_id,
-                               start_index, tile_run, start_tile);
+                               start_index, tile_run, start_tile, ephemeral);
                 }
             }
 
@@ -446,36 +487,44 @@ static void tiles_to_reset_image(struct DP_ResetImageContext *c,
         }
         else if (tile_run != 0) {
             flush_tile(c, layer_index, layer_id, sublayer_id, start_index,
-                       tile_run, start_tile);
+                       tile_run, start_tile, ephemeral);
             tile_run = 0;
         }
     }
 
     if (tile_run != 0) {
         flush_tile(c, layer_index, layer_id, sublayer_id, start_index, tile_run,
-                   start_tile);
+                   start_tile, ephemeral);
     }
 }
 
-static void layer_content_to_reset_image(struct DP_ResetImageContext *c,
-                                         int layer_index, int parent_index,
-                                         int parent_id, DP_LayerContent *lc,
-                                         DP_LayerProps *lp)
+static int main_content_to_reset_image(struct DP_ResetImageContext *c,
+                                       int layer_index, int parent_index,
+                                       int parent_id, DP_LayerContent *lc,
+                                       DP_LayerProps *lp, bool ephemeral)
 {
+    int layer_id = DP_layer_props_id(lp);
     DP_Pixel15 fill_pixel;
     bool have_fill = layer_fill(lc, &fill_pixel);
     uint32_t fill =
         have_fill ? DP_upixel15_to_8(DP_pixel15_unpremultiply(fill_pixel)).color
                   : 0;
-    int layer_id = DP_layer_props_id(lp);
     layer_to_reset_image(c, layer_index, layer_id, 0, parent_index, parent_id,
                          lp, fill);
     if (fill == 0) {
         fill_pixel = DP_pixel15_zero();
     }
 
-    tiles_to_reset_image(c, lc, layer_index, layer_id, 0, fill_pixel);
+    tiles_to_reset_image(c, lc, layer_index, layer_id, 0, fill_pixel,
+                         ephemeral);
+    return layer_id;
+}
 
+static void sublayer_content_to_reset_image(struct DP_ResetImageContext *c,
+                                            int layer_index, int parent_index,
+                                            int parent_id, DP_LayerContent *lc,
+                                            int layer_id)
+{
     DP_LayerList *sub_ll = DP_layer_content_sub_contents_noinc(lc);
     DP_LayerPropsList *sub_lpl = DP_layer_content_sub_props_noinc(lc);
     int sub_count = DP_layer_list_count(sub_ll);
@@ -489,8 +538,31 @@ static void layer_content_to_reset_image(struct DP_ResetImageContext *c,
             layer_to_reset_image(c, layer_id, layer_index, sub_id, parent_index,
                                  parent_id, sub_lp, 0);
             tiles_to_reset_image(c, sub_lc, layer_index, layer_id, sub_id,
-                                 DP_pixel15_zero());
+                                 DP_pixel15_zero(), false);
         }
+    }
+}
+
+static void layer_content_to_reset_image(struct DP_ResetImageContext *c,
+                                         int layer_index, int parent_index,
+                                         int parent_id, DP_LayerContent *lc,
+                                         DP_LayerProps *lp)
+{
+    if (!DP_layer_content_has_sublayers(lc)) {
+        main_content_to_reset_image(c, layer_index, parent_index, parent_id, lc,
+                                    lp, false);
+    }
+    else if (c->options.merge_sublayers) {
+        DP_LayerContent *merged_lc = DP_layer_content_merge_sublayers(lc);
+        main_content_to_reset_image(c, layer_index, parent_index, parent_id, lc,
+                                    lp, true);
+        DP_layer_content_decref(merged_lc);
+    }
+    else {
+        int layer_id = main_content_to_reset_image(c, layer_index, parent_index,
+                                                   parent_id, lc, lp, false);
+        sublayer_content_to_reset_image(c, layer_index, parent_index, parent_id,
+                                        lc, layer_id);
     }
 }
 
@@ -544,34 +616,6 @@ static void annotations_to_reset_image(struct DP_ResetImageContext *c,
     }
 }
 
-static void set_document_metadata_int_field_if_not_default(
-    struct DP_ResetImageContext *c, int field, int value, int default_value)
-{
-    if (value != default_value) {
-        reset_image_handle(c, (DP_ResetEntry){DP_RESET_ENTRY_METADATA,
-                                              .metadata = {field, value}});
-    }
-}
-
-static void document_metadata_to_reset_image(struct DP_ResetImageContext *c,
-                                             DP_DocumentMetadata *dm)
-{
-    set_document_metadata_int_field_if_not_default(
-        c, DP_MSG_SET_METADATA_INT_FIELD_DPIX, DP_document_metadata_dpix(dm),
-        DP_DOCUMENT_METADATA_DPIX_DEFAULT);
-    set_document_metadata_int_field_if_not_default(
-        c, DP_MSG_SET_METADATA_INT_FIELD_DPIY, DP_document_metadata_dpiy(dm),
-        DP_DOCUMENT_METADATA_DPIY_DEFAULT);
-    set_document_metadata_int_field_if_not_default(
-        c, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE,
-        DP_document_metadata_framerate(dm),
-        DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT);
-    set_document_metadata_int_field_if_not_default(
-        c, DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT,
-        DP_document_metadata_frame_count(dm),
-        DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT);
-}
-
 static void key_frame_to_reset_image(struct DP_ResetImageContext *c,
                                      int track_index, int track_id,
                                      int frame_index, DP_KeyFrame *kf)
@@ -609,19 +653,14 @@ static void canvas_state_to_reset_image(struct DP_ResetImageContext *c,
                                         DP_CanvasState *cs)
 {
     DP_PERF_BEGIN(canvas, "canvas");
-    reset_image_handle(c,
-                       (DP_ResetEntry){DP_RESET_ENTRY_CANVAS,
-                                       .canvas = {DP_canvas_state_width(cs),
-                                                  DP_canvas_state_height(cs)}});
-
-    size_t size = reset_image_maybe_compress_tile(
+    size_t background_size = reset_image_maybe_compress_tile(
         c, 0, DP_canvas_state_background_tile_noinc(cs));
-    if (size != 0) {
-        reset_image_handle(
-            c,
-            (DP_ResetEntry){DP_RESET_ENTRY_BACKGROUND,
-                            .background = {size, c->output_buffers[0].data}});
-    }
+    reset_image_handle(
+        c, (DP_ResetEntry){
+               DP_RESET_ENTRY_CANVAS,
+               .canvas = {DP_canvas_state_width(cs), DP_canvas_state_height(cs),
+                          DP_canvas_state_metadata_noinc(cs), background_size,
+                          c->output_buffers[0].data}});
     DP_PERF_END(canvas);
 
     DP_PERF_BEGIN(layers, "layers");
@@ -633,19 +672,19 @@ static void canvas_state_to_reset_image(struct DP_ResetImageContext *c,
     annotations_to_reset_image(c, DP_canvas_state_annotations_noinc(cs));
     DP_PERF_END(annotations);
 
-    DP_PERF_BEGIN(metadata, "metadata");
-    document_metadata_to_reset_image(c, DP_canvas_state_metadata_noinc(cs));
-    DP_PERF_END(metadata);
-
     DP_PERF_BEGIN(timeline, "timeline");
     timeline_to_reset_image(c, DP_canvas_state_timeline_noinc(cs));
     DP_PERF_END(timeline);
 }
 
-void DP_reset_image_build_with(DP_CanvasState *cs,
-                               void (*handle_entry)(void *,
-                                                    const DP_ResetEntry *),
-                               void *user)
+DP_ResetImageOptions DP_reset_image_options(void)
+{
+    return (DP_ResetImageOptions){false, DP_RESET_IMAGE_COMPRESSION_GZIP8BE};
+}
+
+void DP_reset_image_build_with(
+    DP_CanvasState *cs, const DP_ResetImageOptions *options,
+    void (*handle_entry)(void *, const DP_ResetEntry *), void *user)
 {
     DP_PERF_BEGIN(fn, "reset_image");
     int buffers_count = DP_worker_cpu_count(128);
@@ -656,17 +695,23 @@ void DP_reset_image_build_with(DP_CanvasState *cs,
         buffers_count = 1;
     }
 
+    bool zstd =
+        options && options->compression == DP_RESET_IMAGE_COMPRESSION_ZSTD8LE;
+    size_t buffers_size = DP_int_to_size(buffers_count);
     struct DP_ResetImageContext c = {
         worker,
+        options ? *options : DP_reset_image_options(),
         handle_entry,
         user,
-        DP_malloc(sizeof(struct DP_ResetImageOutputBuffer)
-                  * DP_int_to_size(buffers_count)),
-        DP_malloc(sizeof(struct DP_ResetImagePixelBuffer)
-                  * DP_int_to_size(buffers_count)),
+        DP_malloc(sizeof(*c.output_buffers) * buffers_size),
+        DP_malloc(sizeof(*c.pixel_buffers) * buffers_size),
+        zstd ? DP_malloc(sizeof(*c.zstd_contexts) * buffers_size) : NULL,
     };
     for (int i = 0; i < buffers_count; ++i) {
         c.output_buffers[i] = (struct DP_ResetImageOutputBuffer){0, NULL};
+        if (zstd) {
+            c.zstd_contexts[i] = NULL;
+        }
     }
 
     canvas_state_to_reset_image(&c, cs);
@@ -674,9 +719,13 @@ void DP_reset_image_build_with(DP_CanvasState *cs,
     DP_worker_free_join(worker);
     for (int i = 0; i < buffers_count; ++i) {
         DP_free(c.output_buffers[i].data);
+        if (zstd) {
+            DP_compress_zstd_free(&c.zstd_contexts[i]);
+        }
     }
-    DP_free(c.output_buffers);
+    DP_free(c.zstd_contexts);
     DP_free(c.pixel_buffers);
+    DP_free(c.output_buffers);
     DP_PERF_END(fn);
 }
 
@@ -694,6 +743,22 @@ static void reset_message_push(struct DP_ResetImageMessageContext *c,
     c->push_message(c->push_message_user, msg);
 }
 
+static void set_tile_data(size_t size, unsigned char *out, void *bytes)
+{
+    memcpy(out, bytes, size);
+}
+
+static void push_document_metadata_int_field_if_not_default(
+    struct DP_ResetImageMessageContext *c, int field, int value,
+    int default_value)
+{
+    if (value != default_value) {
+        reset_message_push(c, DP_msg_set_metadata_int_new(
+                                  c->context_id, DP_int_to_uint8(field),
+                                  DP_int_to_int32(value)));
+    }
+}
+
 static void reset_entry_canvas_to_message(struct DP_ResetImageMessageContext *c,
                                           const DP_ResetEntryCanvas *rec)
 {
@@ -703,20 +768,29 @@ static void reset_entry_canvas_to_message(struct DP_ResetImageMessageContext *c,
                                   c->context_id, 0, DP_int_to_int32(rec->width),
                                   DP_int_to_int32(rec->height), 0));
     }
-}
 
-static void set_tile_data(size_t size, unsigned char *out, void *bytes)
-{
-    memcpy(out, bytes, size);
-}
+    size_t background_size = rec->background_size;
+    if (background_size != 0) {
+        reset_message_push(c, DP_msg_canvas_background_new(
+                                  c->context_id, set_tile_data, background_size,
+                                  rec->background_data));
+    }
 
-static void
-reset_entry_background_to_message(struct DP_ResetImageMessageContext *c,
-                                  const DP_ResetEntryBackground *reb)
-{
-    reset_message_push(c, DP_msg_canvas_background_new(c->context_id,
-                                                       set_tile_data, reb->size,
-                                                       reb->data));
+    DP_DocumentMetadata *dm = rec->dm;
+    push_document_metadata_int_field_if_not_default(
+        c, DP_MSG_SET_METADATA_INT_FIELD_DPIX, DP_document_metadata_dpix(dm),
+        DP_DOCUMENT_METADATA_DPIX_DEFAULT);
+    push_document_metadata_int_field_if_not_default(
+        c, DP_MSG_SET_METADATA_INT_FIELD_DPIY, DP_document_metadata_dpiy(dm),
+        DP_DOCUMENT_METADATA_DPIY_DEFAULT);
+    push_document_metadata_int_field_if_not_default(
+        c, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE,
+        DP_document_metadata_framerate(dm),
+        DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT);
+    push_document_metadata_int_field_if_not_default(
+        c, DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT,
+        DP_document_metadata_frame_count(dm),
+        DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT);
 }
 
 static void reset_entry_layer_to_message(struct DP_ResetImageMessageContext *c,
@@ -805,15 +879,6 @@ reset_entry_annotation_to_message(struct DP_ResetImageMessageContext *c,
                                       edit_flags, 0, text, text_length));
 }
 
-static void
-reset_entry_metadata_to_message(struct DP_ResetImageMessageContext *c,
-                                const DP_ResetEntryMetadata *rem)
-{
-    reset_message_push(c, DP_msg_set_metadata_int_new(
-                              c->context_id, DP_int_to_uint8(rem->field),
-                              DP_int_to_int32(rem->value_int)));
-}
-
 static void reset_entry_track_to_message(struct DP_ResetImageMessageContext *c,
                                          const DP_ResetEntryTrack *ret)
 {
@@ -871,9 +936,6 @@ static void reset_entry_to_message(void *user, const DP_ResetEntry *re)
     case DP_RESET_ENTRY_CANVAS:
         reset_entry_canvas_to_message(c, &re->canvas);
         break;
-    case DP_RESET_ENTRY_BACKGROUND:
-        reset_entry_background_to_message(c, &re->background);
-        break;
     case DP_RESET_ENTRY_LAYER:
         reset_entry_layer_to_message(c, &re->layer);
         break;
@@ -882,9 +944,6 @@ static void reset_entry_to_message(void *user, const DP_ResetEntry *re)
         break;
     case DP_RESET_ENTRY_ANNOTATION:
         reset_entry_annotation_to_message(c, &re->annotation);
-        break;
-    case DP_RESET_ENTRY_METADATA:
-        reset_entry_metadata_to_message(c, &re->metadata);
         break;
     case DP_RESET_ENTRY_TRACK:
         reset_entry_track_to_message(c, &re->track);
@@ -900,5 +959,5 @@ void DP_reset_image_build(DP_CanvasState *cs, unsigned int context_id,
                           void *user)
 {
     struct DP_ResetImageMessageContext c = {context_id, 0, push_message, user};
-    DP_reset_image_build_with(cs, reset_entry_to_message, &c);
+    DP_reset_image_build_with(cs, NULL, reset_entry_to_message, &c);
 }

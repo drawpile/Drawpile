@@ -441,6 +441,41 @@ size_t DP_tile_compress(DP_Tile *tile, DP_Pixel8 *pixel_buffer,
     }
 }
 
+size_t DP_tile_compress_zstd8le_pixel(
+    DP_Pixel15 pixel, unsigned char *(*get_output_buffer)(size_t, void *),
+    void *user)
+{
+    unsigned char *buffer = get_output_buffer(4, user);
+    if (buffer) {
+        uint32_t color =
+            DP_upixel15_to_8(DP_pixel15_unpremultiply(pixel)).color;
+        DP_write_littleendian_uint32(color, buffer);
+        return 4;
+    }
+    else {
+        return 0; // The function should have already set the error message.
+    }
+}
+
+size_t DP_tile_compress_zstd8le(
+    ZSTD_CCtx **in_out_context_or_null, DP_Tile *tile, DP_Pixel8 *pixel_buffer,
+    unsigned char *(*get_output_buffer)(size_t, void *), void *user)
+{
+    DP_ASSERT(tile);
+    DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
+    DP_ASSERT(pixel_buffer);
+    DP_Pixel15 pixel;
+    if (DP_tile_same_pixel(tile, &pixel)) {
+        return DP_tile_compress_zstd8le_pixel(pixel, get_output_buffer, user);
+    }
+    else {
+        DP_pixels15_to_8(pixel_buffer, tile->pixels, DP_TILE_LENGTH);
+        return DP_compress_zstd(
+            in_out_context_or_null, (const unsigned char *)pixel_buffer,
+            DP_TILE_COMPRESSED_BYTES, get_output_buffer, user);
+    }
+}
+
 
 void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y)
 {
