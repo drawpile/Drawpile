@@ -1411,7 +1411,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Creator</source>
-        <translation type="unfinished"></translation>
+        <translation>クリエーター</translation>
     </message>
     <message>
         <location line="+2"/>
