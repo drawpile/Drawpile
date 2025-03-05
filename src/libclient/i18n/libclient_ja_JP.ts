@@ -1161,12 +1161,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>%1 made operator via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 は、サーバー管理者によって作成された招待により管理者になりました。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 made operator via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 は、%2 によって作成された招待により管理者になりました。</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1262,12 +1262,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+14"/>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションのパスワードはサーバーの管理者によって削除されました。このサーバーは、パブリックセッションでWebブラウザを許可していないため切断されます。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションのパスワードは %1 によって削除されました。このサーバーは、パブリックセッションでWebブラウザを許可していないため切断されます。</translation>
     </message>
     <message>
         <location line="+93"/>
