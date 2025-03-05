@@ -96,8 +96,8 @@ dp_target_sources(dpengine
 
 target_include_directories(dpengine PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 target_link_libraries(dpengine PUBLIC
-    mypaint uthash qgrayraster parson dpdb dpmsg dpcommon ZLIB::ZLIB
-    "Qt${QT_VERSION_MAJOR}::Core"
+    mypaint uthash qgrayraster parson dpdb dpmsg dpcommon LIBZSTD::LIBZSTD
+    ZLIB::ZLIB "Qt${QT_VERSION_MAJOR}::Core"
 )
 
 if(TARGET LIBAV::LIBSWSCALE)

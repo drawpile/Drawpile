@@ -713,6 +713,14 @@ void DP_transient_layer_list_insert_group_inc(DP_TransientLayerList *tll,
         (DP_LayerListEntry){true, {.group = DP_layer_group_incref(lg)}});
 }
 
+void DP_transient_layer_list_set_transient_content_noinc(
+    DP_TransientLayerList *tll, DP_TransientLayerContent *tlc, int index)
+{
+    DP_ASSERT(tlc);
+    set_element_at(tll, index,
+                   (DP_LayerListEntry){false, {.transient_content = tlc}});
+}
+
 void DP_transient_layer_list_set_transient_group_noinc(
     DP_TransientLayerList *tll, DP_TransientLayerGroup *tlg, int index)
 {
@@ -765,4 +773,18 @@ void DP_transient_layer_list_merge_at(DP_TransientLayerList *tll,
     DP_layer_group_decref(lg);
     tll->elements[index] =
         (DP_LayerListEntry){.is_group = false, .transient_content = tlc};
+}
+
+void DP_transient_layer_list_clamp(DP_TransientLayerList *tll, int count)
+{
+    DP_ASSERT(tll);
+    DP_ASSERT(DP_atomic_get(&tll->refcount) > 0);
+    DP_ASSERT(tll->transient);
+    DP_ASSERT(count >= 0);
+    DP_ASSERT(count <= tll->count);
+    int old_count = tll->count;
+    for (int i = count; i < old_count; ++i) {
+        layer_list_entry_decref_nullable(&tll->elements[i]);
+    }
+    tll->count = count;
 }

@@ -371,6 +371,12 @@ extern "C" {
     pub fn DP_strdup(str_: *const ::std::os::raw::c_char) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
+    pub fn DP_memdup(
+        buf: *const ::std::os::raw::c_void,
+        size: usize,
+    ) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
     pub fn DP_str_equal(a: *const ::std::os::raw::c_char, b: *const ::std::os::raw::c_char)
         -> bool;
 }
@@ -388,6 +394,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_error_set(fmt: *const ::std::os::raw::c_char, ...);
+}
+extern "C" {
+    pub fn DP_error_set_string(str_: *const ::std::os::raw::c_char, length: usize);
 }
 extern "C" {
     pub fn DP_error_count() -> ::std::os::raw::c_uint;
@@ -7280,6 +7289,18 @@ extern "C" {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct ZSTD_CCtx_s {
+    _unused: [u8; 0],
+}
+pub type ZSTD_CCtx = ZSTD_CCtx_s;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ZSTD_DCtx_s {
+    _unused: [u8; 0],
+}
+pub type ZSTD_DCtx = ZSTD_DCtx_s;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct DP_TileCounts {
     pub x: ::std::os::raw::c_int,
     pub y: ::std::os::raw::c_int,
@@ -7355,6 +7376,15 @@ extern "C" {
         context_id: ::std::os::raw::c_uint,
         image: *const ::std::os::raw::c_uchar,
         image_size: usize,
+    ) -> *mut DP_Tile;
+}
+extern "C" {
+    pub fn DP_tile_new_from_compressed_zstd8le(
+        in_out_context_or_null: *mut *mut ZSTD_DCtx,
+        context_id: ::std::os::raw::c_uint,
+        image: *const ::std::os::raw::c_uchar,
+        image_size: usize,
+        pixel_buffer: *mut DP_Pixel8,
     ) -> *mut DP_Tile;
 }
 extern "C" {
@@ -7439,6 +7469,32 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_tile_compress(
+        tile: *mut DP_Tile,
+        pixel_buffer: *mut DP_Pixel8,
+        get_output_buffer: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: usize,
+                arg2: *mut ::std::os::raw::c_void,
+            ) -> *mut ::std::os::raw::c_uchar,
+        >,
+        user: *mut ::std::os::raw::c_void,
+    ) -> usize;
+}
+extern "C" {
+    pub fn DP_tile_compress_zstd8le_pixel(
+        pixel: DP_Pixel15,
+        get_output_buffer: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: usize,
+                arg2: *mut ::std::os::raw::c_void,
+            ) -> *mut ::std::os::raw::c_uchar,
+        >,
+        user: *mut ::std::os::raw::c_void,
+    ) -> usize;
+}
+extern "C" {
+    pub fn DP_tile_compress_zstd8le(
+        in_out_context_or_null: *mut *mut ZSTD_CCtx,
         tile: *mut DP_Tile,
         pixel_buffer: *mut DP_Pixel8,
         get_output_buffer: ::std::option::Option<
@@ -7976,6 +8032,7 @@ pub const DP_SAVE_IMAGE_PNG: DP_SaveImageType = 2;
 pub const DP_SAVE_IMAGE_JPEG: DP_SaveImageType = 3;
 pub const DP_SAVE_IMAGE_PSD: DP_SaveImageType = 4;
 pub const DP_SAVE_IMAGE_WEBP: DP_SaveImageType = 5;
+pub const DP_SAVE_IMAGE_PROJECT: DP_SaveImageType = 6;
 pub type DP_SaveImageType = ::std::os::raw::c_uint;
 pub const DP_SAVE_RESULT_SUCCESS: DP_SaveResult = 0;
 pub const DP_SAVE_RESULT_BAD_ARGUMENTS: DP_SaveResult = 1;
@@ -8060,6 +8117,12 @@ extern "C" {
     pub fn DP_load_psd(
         dc: *mut DP_DrawContext,
         input: *mut DP_Input,
+        out_result: *mut DP_LoadResult,
+    ) -> *mut DP_CanvasState;
+}
+extern "C" {
+    pub fn DP_load_project(
+        path: *const ::std::os::raw::c_char,
         out_result: *mut DP_LoadResult,
     ) -> *mut DP_CanvasState;
 }

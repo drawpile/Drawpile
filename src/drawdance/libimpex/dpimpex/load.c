@@ -25,6 +25,7 @@
 #include <dpengine/layer_props_list.h>
 #include <dpengine/ops.h>
 #include <dpengine/player.h>
+#include <dpengine/project.h>
 #include <dpengine/text.h>
 #include <dpengine/tile.h>
 #include <dpengine/timeline.h>
@@ -1231,6 +1232,10 @@ DP_SaveImageType DP_load_guess(const unsigned char *buf, size_t size)
         return DP_SAVE_IMAGE_PSD;
     }
 
+    if (DP_project_check(buf, size) > 0) {
+        return DP_SAVE_IMAGE_PROJECT;
+    }
+
     switch (DP_image_guess(buf, size)) {
     case DP_IMAGE_FILE_TYPE_PNG:
         return DP_SAVE_IMAGE_PNG;
@@ -1302,7 +1307,7 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
         return NULL;
     }
 
-    unsigned char buf[12];
+    unsigned char buf[72];
     bool error;
     size_t read = DP_input_read(input, buf, sizeof(buf), &error);
     if (error) {
@@ -1323,6 +1328,10 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
     if (type == DP_SAVE_IMAGE_ORA) {
         DP_input_free(input);
         return load_ora(dc, path, flags, NULL, NULL, out_result);
+    }
+    else if (type == DP_SAVE_IMAGE_PROJECT) {
+        DP_input_free(input);
+        return DP_load_project(dc, path, flags, out_result);
     }
 
     if (!DP_input_rewind(input)) {
@@ -1375,6 +1384,51 @@ DP_CanvasState *DP_load_ora(DP_DrawContext *dc, const char *path,
                             DP_LoadResult *out_result)
 {
     return load_ora(dc, path, flags, on_fixed_layer, user, out_result);
+}
+
+
+static void discard_project(DP_Project *prj)
+{
+    if (!DP_project_close(prj)) {
+        DP_warn("Error closing project: %s", DP_error());
+    }
+}
+
+static void discard_project_on_error(DP_Project *prj)
+{
+    const char *error = DP_error();
+    size_t error_length = strlen(error);
+    char *stashed_error = DP_memdup(error, error_length);
+    discard_project(prj);
+    DP_error_set_string(stashed_error, error_length);
+    DP_free(stashed_error);
+}
+
+DP_CanvasState *DP_load_project(DP_DrawContext *dc, const char *path,
+                                DP_UNUSED unsigned int flags,
+                                DP_LoadResult *out_result)
+{
+    if (!path) {
+        DP_error_set("Path is null");
+        assign_load_result(out_result, DP_LOAD_RESULT_BAD_ARGUMENTS);
+        return NULL;
+    }
+
+    DP_Project *prj = DP_project_open(path, DP_PROJECT_OPEN_EXISTING).project;
+    if (!prj) {
+        assign_load_result(out_result, DP_LOAD_RESULT_OPEN_ERROR);
+        return NULL;
+    }
+
+    DP_CanvasState *cs = DP_project_canvas_from_latest_snapshot(prj, dc);
+    if (cs) {
+        discard_project(prj);
+        return cs;
+    }
+    else {
+        discard_project_on_error(prj);
+        return NULL;
+    }
 }
 
 
