@@ -14,6 +14,6 @@ migration_id
 
 --- select session_id, source_type, source_param, protocol, printf('0x%x', flags) as flags, case when closed_at is null then 'open' else 'closed' end as status from sessions order by session_id
 session_id,source_type,source_param,protocol,flags,status
-'1','0',NULL,'dp:4.24.0','0x0','open'
+'1','1','','dp:4.24.0','0x0','open'
 
 end project dump

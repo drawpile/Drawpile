@@ -8,6 +8,7 @@ extern "C" {
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/projectworker.h"
 #include "libclient/canvas/selectionmodel.h"
 #include "libclient/canvas/timelinemodel.h"
 #include "libclient/canvas/transformmodel.h"
@@ -94,6 +95,14 @@ CanvasModel::CanvasModel(
 	});
 	settings.bindCheckerColor1(m_paintengine, &PaintEngine::setCheckerColor1);
 	settings.bindCheckerColor2(m_paintengine, &PaintEngine::setCheckerColor2);
+}
+
+void CanvasModel::openSession(
+	int type, const QString &param, const QString &protocol)
+{
+	if(m_projectWorker || (m_projectWorker = ProjectWorker::init())) {
+		m_projectWorker->openSession(type, param, protocol);
+	}
 }
 
 void CanvasModel::loadBlank(

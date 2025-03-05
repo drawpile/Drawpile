@@ -30,6 +30,7 @@ class SelectionModel;
 class TransformModel;
 class DocumentMetadata;
 class PaintEngine;
+class ProjectWorker;
 
 class CanvasModel final : public QObject {
 	Q_OBJECT
@@ -43,6 +44,8 @@ public:
 		QObject *parent = nullptr);
 
 	PaintEngine *paintEngine() const { return m_paintengine; }
+
+	void openSession(int type, const QString &param, const QString &protocol);
 
 	//! Load an empty canvas
 	void
@@ -188,6 +191,7 @@ private:
 	TransformModel *m_transform;
 
 	PaintEngine *m_paintengine;
+	ProjectWorker *m_projectWorker = nullptr;
 	int m_transformInterpolation = 0;
 
 	QString m_title;

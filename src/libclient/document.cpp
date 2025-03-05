@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
+#include <dpengine/project.h>
 #include <dpengine/snapshots.h>
 #include <dpimpex/load.h>
 #include <dpmsg/reset_stream.h>
@@ -20,11 +21,13 @@ extern "C" {
 #include "libclient/utils/images.h"
 #include "libshared/net/servercmd.h"
 #include "libshared/util/functionrunnable.h"
+#include "libshared/util/paths.h"
 #include "libshared/util/qtcompat.h"
 #include <QBuffer>
 #include <QDir>
 #include <QGuiApplication>
 #include <QPainter>
+#include <QRegularExpression>
 #include <QRunnable>
 #include <QSysInfo>
 #include <QTemporaryDir>
@@ -50,6 +53,7 @@ Document::Document(
 	, m_autosave(false)
 	, m_canAutosave(false)
 	, m_saveInProgress(false)
+	, m_wantProjectWorker(settings.projectWorkerEnabled())
 	, m_wantCanvasHistoryDump(false)
 	, m_sessionPersistent(false)
 	, m_sessionClosed(false)
@@ -243,6 +247,12 @@ bool Document::loadBlank(const QSize &size, const QColor &background)
 	initCanvas();
 	unmarkDirty();
 
+	if(m_wantProjectWorker) {
+		m_canvas->openSession(
+			DP_PROJECT_SOURCE_BLANK, QString(),
+			QStringLiteral(DP_PROTOCOL_VERSION));
+	}
+
 	m_canvas->loadBlank(m_settings.engineUndoDepth(), size, background);
 	clearPaths();
 	return true;
@@ -259,11 +269,23 @@ void Document::loadState(
 	} else {
 		unmarkDirty();
 	}
+
+	if(m_wantProjectWorker) {
+		m_canvas->openSession(
+			DP_PROJECT_SOURCE_FILE,
+			// Only the basename, since the full path may contain someone's name
+			// or similar, so not something we'd just want to store in a file
+			// that may get shared with other people.
+			utils::paths::extractBasename(path),
+			QStringLiteral(DP_PROTOCOL_VERSION));
+	}
+
 	m_canvas->loadCanvasState(m_settings.engineUndoDepth(), canvasState);
 	setCurrentPath(path, type);
 	switch(type) {
 	case DP_SAVE_IMAGE_UNKNOWN:
 	case DP_SAVE_IMAGE_ORA:
+	case DP_SAVE_IMAGE_PROJECT_CANVAS:
 		setExportPath(QString(), DP_SAVE_IMAGE_UNKNOWN);
 		break;
 	default:
@@ -299,6 +321,7 @@ DP_LoadResult Document::loadRecording(
 		// supposed to contain a reset snapshot, so should be very quick.
 		isTemplate = isSessionTemplate(player);
 		if(isTemplate) {
+			// TODO project worker
 			m_canvas->paintEngine()->flushPlayback();
 			m_canvas->paintEngine()->closePlayback();
 		}
@@ -327,6 +350,22 @@ void Document::onServerLogin(
 	m_canvas->connectedToServer(m_client->myId(), join, compatibilityMode);
 	m_banlist->setShowSensitive(m_client->isModerator());
 	m_authList->setOwnAuthId(authId);
+
+	if(m_wantProjectWorker) {
+		m_canvas->openSession(
+			DP_PROJECT_SOURCE_SESSION,
+			// Only the session ID, since the full URL may contain someone's IP
+			// address or a private server or something, which don't belong in
+			// a file that may be shared.
+			m_client->sessionUrl()
+				.path(QUrl::FullyDecoded)
+				.replace(
+					QRegularExpression(
+						QStringLiteral("/|:.*\\z"),
+						QRegularExpression::DotMatchesEverythingOption),
+					QString()),
+			QStringLiteral(DP_PROTOCOL_VERSION));
+	}
 
 	if(!m_recordOnConnect.isEmpty()) {
 		m_originalRecordingFilename = m_recordOnConnect;

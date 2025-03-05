@@ -24,6 +24,7 @@
 #include <dpcommon/common.h>
 
 typedef struct DP_Message DP_Message;
+typedef struct DP_ProjectWorker DP_ProjectWorker;
 
 typedef enum DP_MsgInternalType {
     DP_MSG_INTERNAL_TYPE_RESET,
@@ -32,13 +33,14 @@ typedef enum DP_MsgInternalType {
     DP_MSG_INTERNAL_TYPE_CATCHUP,
     DP_MSG_INTERNAL_TYPE_CLEANUP,
     DP_MSG_INTERNAL_TYPE_PREVIEW,
-    DP_MSG_INTERNAL_TYPE_RECORDER_START,
+    DP_MSG_INTERNAL_TYPE_RECORDER_SYNC,
     DP_MSG_INTERNAL_TYPE_PLAYBACK,
     DP_MSG_INTERNAL_TYPE_DUMP_PLAYBACK,
     DP_MSG_INTERNAL_TYPE_DUMP_COMMAND,
     DP_MSG_INTERNAL_TYPE_LOCAL_FORK_CLEAR,
     DP_MSG_INTERNAL_TYPE_FLUSH,
     DP_MSG_INTERNAL_TYPE_STREAM_RESET_START,
+    DP_MSG_INTERNAL_TYPE_PROJECT_WORKER_SYNC,
     DP_MSG_INTERNAL_TYPE_COUNT,
 } DP_MsgInternalType;
 
@@ -59,7 +61,7 @@ DP_Message *DP_msg_internal_cleanup_new(unsigned int context_id);
 DP_Message *DP_msg_internal_preview_new(unsigned int context_id, int type,
                                         void *data);
 
-DP_Message *DP_msg_internal_recorder_start_new(unsigned int context_id);
+DP_Message *DP_msg_internal_recorder_sync_new(unsigned int context_id);
 
 DP_Message *DP_msg_internal_playback_new(unsigned int context_id,
                                          long long position);

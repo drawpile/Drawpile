@@ -449,6 +449,56 @@ DP_TransientTile *DP_layer_list_flatten_tile_to(
     return tt;
 }
 
+void DP_layer_list_entry_flatten_pixel(
+    DP_LayerListEntry *lle, DP_LayerProps *lp, int x, int y, DP_Pixel15 *pixel,
+    uint16_t parent_opacity, DP_UPixel8 parent_tint, bool pass_through_censored,
+    const DP_ViewModeContext *vmc)
+{
+    DP_ASSERT(lle);
+    DP_ASSERT(lp);
+    DP_ASSERT(pixel);
+    DP_ASSERT(vmc);
+    if (lle->is_group) {
+        DP_layer_group_flatten_pixel(lle->group, lp, x, y, pixel,
+                                     parent_opacity, parent_tint,
+                                     pass_through_censored, vmc);
+    }
+    else {
+        DP_ViewModeResult vmr =
+            DP_view_mode_context_apply(vmc, lp, parent_opacity);
+        if (vmr.visible) {
+            bool censored =
+                pass_through_censored || DP_layer_props_censored(lp);
+            DP_layer_content_flatten_pixel(
+                lle->content, x, y, pixel, vmr.opacity, vmr.blend_mode,
+                vmr.tint.a == 0 ? parent_tint : vmr.tint, censored);
+        }
+    }
+}
+
+void DP_layer_list_flatten_pixel(DP_LayerList *ll, DP_LayerPropsList *lpl,
+                                 int x, int y, DP_Pixel15 *pixel,
+                                 uint16_t parent_opacity,
+                                 DP_UPixel8 parent_tint,
+                                 bool pass_through_censored,
+                                 const DP_ViewModeContext *vmc)
+{
+    DP_ASSERT(ll);
+    DP_ASSERT(DP_atomic_get(&ll->refcount) > 0);
+    DP_ASSERT(lpl);
+    DP_ASSERT(DP_layer_props_list_refcount(lpl) > 0);
+    DP_ASSERT(ll->count == DP_layer_props_list_count(lpl));
+    DP_ASSERT(vmc);
+    int count = ll->count;
+    for (int i = 0; i < count; ++i) {
+        DP_LayerListEntry *lle = &ll->elements[i];
+        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
+        DP_layer_list_entry_flatten_pixel(lle, lp, x, y, pixel, parent_opacity,
+                                          parent_tint, pass_through_censored,
+                                          vmc);
+    }
+}
+
 
 DP_TransientLayerList *DP_transient_layer_list_new_init(int reserve)
 {
@@ -713,6 +763,14 @@ void DP_transient_layer_list_insert_group_inc(DP_TransientLayerList *tll,
         (DP_LayerListEntry){true, {.group = DP_layer_group_incref(lg)}});
 }
 
+void DP_transient_layer_list_set_transient_content_noinc(
+    DP_TransientLayerList *tll, DP_TransientLayerContent *tlc, int index)
+{
+    DP_ASSERT(tlc);
+    set_element_at(tll, index,
+                   (DP_LayerListEntry){false, {.transient_content = tlc}});
+}
+
 void DP_transient_layer_list_set_transient_group_noinc(
     DP_TransientLayerList *tll, DP_TransientLayerGroup *tlg, int index)
 {
@@ -765,4 +823,18 @@ void DP_transient_layer_list_merge_at(DP_TransientLayerList *tll,
     DP_layer_group_decref(lg);
     tll->elements[index] =
         (DP_LayerListEntry){.is_group = false, .transient_content = tlc};
+}
+
+void DP_transient_layer_list_clamp(DP_TransientLayerList *tll, int count)
+{
+    DP_ASSERT(tll);
+    DP_ASSERT(DP_atomic_get(&tll->refcount) > 0);
+    DP_ASSERT(tll->transient);
+    DP_ASSERT(count >= 0);
+    DP_ASSERT(count <= tll->count);
+    int old_count = tll->count;
+    for (int i = count; i < old_count; ++i) {
+        layer_list_entry_decref_nullable(&tll->elements[i]);
+    }
+    tll->count = count;
 }

@@ -27,6 +27,8 @@
 
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
+typedef struct ZSTD_CCtx_s ZSTD_CCtx;
+typedef struct ZSTD_DCtx_s ZSTD_DCtx;
 
 #define DP_TILE_BYTES            (DP_TILE_LENGTH * sizeof(DP_Pixel15))
 #define DP_TILE_COMPRESSED_BYTES (DP_TILE_LENGTH * sizeof(DP_Pixel8))
@@ -100,6 +102,12 @@ DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
                                      const unsigned char *image,
                                      size_t image_size);
 
+DP_Tile *DP_tile_new_from_compressed_zstd8le(ZSTD_DCtx **in_out_context_or_null,
+                                             unsigned int context_id,
+                                             const unsigned char *image,
+                                             size_t image_size,
+                                             DP_SplitTile8 *split_buffer);
+
 DP_Tile *DP_tile_new_zebra(unsigned int context_id, DP_Pixel15 pixel1,
                            DP_Pixel15 pixel2);
 
@@ -149,6 +157,16 @@ size_t DP_tile_compress_pixel(DP_Pixel15 pixel,
 size_t DP_tile_compress(DP_Tile *tile, DP_Pixel8 *pixel_buffer,
                         unsigned char *(*get_output_buffer)(size_t, void *),
                         void *user);
+
+size_t DP_tile_compress_zstd8le_pixel(
+    DP_Pixel15 pixel, unsigned char *(*get_output_buffer)(size_t, void *),
+    void *user);
+
+size_t DP_tile_compress_zstd8le(ZSTD_CCtx **in_out_context_or_null,
+                                DP_Tile *tile, DP_SplitTile8 *split_buffer,
+                                unsigned char *(*get_output_buffer)(size_t,
+                                                                    void *),
+                                void *user);
 
 
 void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y);

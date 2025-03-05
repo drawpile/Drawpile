@@ -170,9 +170,9 @@ DP_Message *DP_msg_internal_preview_new(unsigned int context_id, int type,
     return msg;
 }
 
-DP_Message *DP_msg_internal_recorder_start_new(unsigned int context_id)
+DP_Message *DP_msg_internal_recorder_sync_new(unsigned int context_id)
 {
-    return msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_RECORDER_START,
+    return msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_RECORDER_SYNC,
                             sizeof(DP_MsgInternal));
 }
 

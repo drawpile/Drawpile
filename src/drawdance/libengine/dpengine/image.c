@@ -375,8 +375,9 @@ DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
         dst_quad, interpolation, true, out_offset_x, out_offset_y);
 }
 
-static void thumbnail_scale(int width, int height, int max_width,
-                            int max_height, int *out_width, int *out_height)
+void DP_image_thumbnail_dimensions(int width, int height, int max_width,
+                                   int max_height, int *out_width,
+                                   int *out_height)
 {
     int w = max_height * width / height;
     if (w <= max_width) {
@@ -390,7 +391,7 @@ static void thumbnail_scale(int width, int height, int max_width,
 }
 
 bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
-                        int max_height, DP_Image **out_thumb)
+                        int max_height, int interpolation, DP_Image **out_thumb)
 {
     DP_ASSERT(img);
     DP_ASSERT(out_thumb);
@@ -401,26 +402,12 @@ bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
     int height = DP_image_height(img);
     if (width > max_width || height > max_height) {
         int thumb_width, thumb_height;
-        thumbnail_scale(width, height, max_width, max_height, &thumb_width,
-                        &thumb_height);
-        DP_Image *thumb = DP_image_new(thumb_width, thumb_height);
-
-        DP_Transform tf = DP_transform_scale(
-            DP_transform_identity(),
-            DP_int_to_double(thumb_width) / DP_int_to_double(width),
-            DP_int_to_double(thumb_height) / DP_int_to_double(height));
-
-        if (DP_image_transform_draw(width, height, DP_image_pixels(img), dc,
-                                    thumb, tf,
-                                    DP_MSG_TRANSFORM_REGION_MODE_BILINEAR)) {
-            *out_thumb = thumb;
-            return true;
-        }
-        else {
-            DP_image_free(thumb);
-            *out_thumb = NULL;
-            return false;
-        }
+        DP_image_thumbnail_dimensions(width, height, max_width, max_height,
+                                      &thumb_width, &thumb_height);
+        DP_Image *thumb =
+            DP_image_scale(img, dc, thumb_width, thumb_height, interpolation);
+        *out_thumb = thumb;
+        return thumb != NULL;
     }
     else {
         *out_thumb = NULL;

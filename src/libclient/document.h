@@ -444,6 +444,7 @@ private:
 	bool m_autosave;
 	bool m_canAutosave;
 	bool m_saveInProgress;
+	bool m_wantProjectWorker;
 	bool m_wantCanvasHistoryDump;
 	QTimer *m_autosaveTimer;
 

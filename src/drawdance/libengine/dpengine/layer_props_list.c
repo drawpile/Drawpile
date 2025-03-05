@@ -440,3 +440,18 @@ void DP_transient_layer_props_list_merge_at(DP_TransientLayerPropsList *tlpl,
     tlpl->elements[index].transient_layer_props = tlp;
     DP_layer_props_decref(lp);
 }
+
+void DP_transient_layer_props_list_clamp(DP_TransientLayerPropsList *tlpl,
+                                         int count)
+{
+    DP_ASSERT(tlpl);
+    DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
+    DP_ASSERT(tlpl->transient);
+    DP_ASSERT(count >= 0);
+    DP_ASSERT(count <= tlpl->count);
+    int old_count = tlpl->count;
+    for (int i = count; i < old_count; ++i) {
+        DP_layer_props_decref_nullable(tlpl->elements[i].layer_props);
+    }
+    tlpl->count = count;
+}

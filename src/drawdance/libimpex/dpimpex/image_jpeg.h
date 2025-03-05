@@ -12,7 +12,7 @@ typedef union DP_Pixel8 DP_Pixel8;
 DP_Image *DP_image_jpeg_read(DP_Input *input);
 
 bool DP_image_jpeg_write(DP_Output *output, int width, int height,
-                         DP_Pixel8 *pixels);
+                         DP_Pixel8 *pixels, int quality);
 
 
 #endif

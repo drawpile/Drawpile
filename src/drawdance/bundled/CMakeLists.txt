@@ -59,6 +59,7 @@ target_compile_definitions(bundled_sqlite3 PUBLIC
     SQLITE_USE_ALLOCA=1
     SQLITE_OMIT_AUTOINIT=1
     SQLITE_STRICT_SUBTYPE=1
+    SQLITE_TRUSTED_SCHEMA=0
 )
 target_include_directories(
     bundled_sqlite3 SYSTEM PUBLIC ${CMAKE_CURRENT_LIST_DIR}/sqlite3)
