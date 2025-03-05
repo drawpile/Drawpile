@@ -842,7 +842,7 @@
     <message>
         <location line="+30"/>
         <source>Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>記号</translation>
     </message>
     <message>
         <location line="+38"/>
