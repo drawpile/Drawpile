@@ -1272,7 +1272,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+93"/>
         <source>%1 trusted via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 はサーバーの管理者によって作成された招待により信頼されています。</translation>
     </message>
     <message>
         <location line="-62"/>
@@ -1350,7 +1350,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+10"/>
         <source>%1 trusted via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 は %2 によって作成された招待により信頼されています。</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1368,24 +1368,24 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/invitelistmodel.cpp" line="+119"/>
         <source>No invite codes, click Create to add one.</source>
-        <translation type="unfinished"></translation>
+        <translation>招待コードがありません、作成をクリックして追加できます。</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Used %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%2 によって %1 に利用</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Created %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%2 が %1 に作成</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Operator and Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>管理者と信頼済み</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1401,27 +1401,27 @@ Select a regular layer instead.</source>
         <location line="+8"/>
         <source>%1/%2</source>
         <extracomment>This is the &quot;uses&quot; column in the invite code table. %1 is how often the invite has been used, %2 is how many there are total.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1/%2</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Code</source>
-        <translation type="unfinished"></translation>
+        <translation>コード</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Creator</source>
-        <translation>クリエーター</translation>
+        <translation>作成者</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Role</source>
-        <translation type="unfinished"></translation>
+        <translation>ロール</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Uses</source>
-        <translation type="unfinished"></translation>
+        <translation>利用</translation>
     </message>
 </context>
 <context>
