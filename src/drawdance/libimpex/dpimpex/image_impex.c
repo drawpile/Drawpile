@@ -100,12 +100,18 @@ bool DP_image_write_png(DP_Image *img, DP_Output *output)
                               DP_image_pixels(img));
 }
 
+bool DP_image_write_jpeg_quality(DP_Image *img, DP_Output *output, int quality)
+{
+    return DP_image_jpeg_write(output, DP_image_width(img),
+                               DP_image_height(img), DP_image_pixels(img),
+                               DP_clamp_int(quality, 1, 100));
+}
+
 bool DP_image_write_jpeg(DP_Image *img, DP_Output *output)
 {
     DP_ASSERT(img);
     DP_ASSERT(output);
-    return DP_image_jpeg_write(output, DP_image_width(img),
-                               DP_image_height(img), DP_image_pixels(img));
+    return DP_image_write_jpeg_quality(img, output, 100);
 }
 
 bool DP_image_write_webp(DP_Image *img, DP_Output *output)

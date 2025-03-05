@@ -206,12 +206,27 @@ char *DP_format(const char *fmt, ...)
     return buf;
 }
 
+static void *non_null_memdup(const void *buf, size_t size)
+{
+    void *out = DP_malloc(size);
+    memcpy(out, buf, size);
+    return out;
+}
+
 char *DP_strdup(const char *str)
 {
     if (str) {
-        size_t size = strlen(str) + 1;
-        char *dup = DP_malloc(size);
-        return strncpy(dup, str, size);
+        return non_null_memdup(str, strlen(str) + (size_t)1);
+    }
+    else {
+        return NULL;
+    }
+}
+
+void *DP_memdup(const void *buf, size_t size)
+{
+    if (buf && size != 0) {
+        return non_null_memdup(buf, size);
     }
     else {
         return NULL;
@@ -277,6 +292,22 @@ void DP_error_set(const char *fmt, ...)
             va_end(ap);
         }
     }
+
+    DP_debug("Set error %u: %s", *error.count,
+             error.buffer ? error.buffer : "");
+}
+
+void DP_error_set_string(const char *str, size_t length)
+{
+    DP_ErrorState error = DP_thread_error_state_get();
+    ++*error.count;
+
+    size_t size = length + (size_t)1;
+    if (size > error.buffer_size) {
+        error = DP_thread_error_state_resize(size);
+    }
+    memcpy(error.buffer, str, length);
+    error.buffer[length] = '\0';
 
     DP_debug("Set error %u: %s", *error.count,
              error.buffer ? error.buffer : "");

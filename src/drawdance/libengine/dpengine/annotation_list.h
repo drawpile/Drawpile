@@ -91,8 +91,14 @@ int DP_transient_annotation_list_index_by_id(DP_TransientAnnotationList *tal,
 void DP_transient_annotation_list_insert_noinc(DP_TransientAnnotationList *tal,
                                                DP_Annotation *a, int index);
 
+void DP_transient_annotation_list_set_transient_noinc(
+    DP_TransientAnnotationList *tal, DP_TransientAnnotation *ta, int index);
+
 void DP_transient_annotation_list_delete_at(DP_TransientAnnotationList *tal,
                                             int index);
+
+void DP_transient_annotation_list_clamp(DP_TransientAnnotationList *tal,
+                                        int count);
 
 
 #endif

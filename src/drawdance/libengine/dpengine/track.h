@@ -106,5 +106,7 @@ void DP_transient_track_insert_noinc(DP_TransientTrack *tt, int frame_index,
 
 void DP_transient_track_delete_at(DP_TransientTrack *tt, int index);
 
+void DP_transient_track_clamp(DP_TransientTrack *tt, int count);
+
 
 #endif

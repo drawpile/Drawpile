@@ -11,7 +11,8 @@ static bool remove_preexisting(TEST_PARAMS, const char *path)
 {
     return OK(!DP_file_exists(path) || DP_file_remove(path),
               "Remove preexisting file %s", path)
-        && INT_EQ_OK(DP_project_check(path), DP_PROJECT_CHECK_ERROR_OPEN,
+        && INT_EQ_OK(DP_project_check_path(path).error,
+                     DP_PROJECT_CHECK_ERROR_OPEN,
                      "Removed project file can't be opened");
 }
 
@@ -63,8 +64,11 @@ static void project_basics(TEST_PARAMS)
 
     OK(DP_project_close(open.project), "Close project");
 
-    INT_EQ_OK(DP_project_check(path), DP_PROJECT_USER_VERSION,
-              "Project file checks out with version %d",
+    DP_ProjectCheckResult check = DP_project_check_path(path);
+    INT_EQ_OK(check.result, DP_PROJECT_CHECK_PROJECT,
+              "Project file checks out");
+    INT_EQ_OK(check.version, DP_PROJECT_USER_VERSION,
+              "Project file check results in version %d",
               DP_PROJECT_USER_VERSION);
 
     open = DP_project_open(path, DP_PROJECT_OPEN_EXISTING);
@@ -149,8 +153,11 @@ static void project_basics(TEST_PARAMS)
 
     OK(DP_project_close(open.project), "Close project");
 
-    INT_EQ_OK(DP_project_check(path), DP_PROJECT_USER_VERSION,
-              "Truncated project file checks out with version %d",
+    check = DP_project_check_path(path);
+    INT_EQ_OK(check.result, DP_PROJECT_CHECK_PROJECT,
+              "Truncated project file checks out");
+    INT_EQ_OK(check.version, DP_PROJECT_USER_VERSION,
+              "Truncated project file check results in version %d",
               DP_PROJECT_USER_VERSION);
 }
 

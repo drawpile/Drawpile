@@ -291,6 +291,19 @@ void DP_transient_annotation_list_insert_noinc(DP_TransientAnnotationList *tal,
     tal->elements[index].annotation = a;
 }
 
+void DP_transient_annotation_list_set_transient_noinc(
+    DP_TransientAnnotationList *tal, DP_TransientAnnotation *ta, int index)
+{
+    DP_ASSERT(tal);
+    DP_ASSERT(DP_atomic_get(&tal->refcount) > 0);
+    DP_ASSERT(tal->transient);
+    DP_ASSERT(ta);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < tal->count);
+    DP_ASSERT(!tal->elements[index].annotation);
+    tal->elements[index].transient_annotation = ta;
+}
+
 void DP_transient_annotation_list_delete_at(DP_TransientAnnotationList *tal,
                                             int index)
 {
@@ -303,4 +316,19 @@ void DP_transient_annotation_list_delete_at(DP_TransientAnnotationList *tal,
     int new_count = --tal->count;
     memmove(&tal->elements[index], &tal->elements[index + 1],
             DP_int_to_size(new_count - index) * sizeof(tal->elements[0]));
+}
+
+void DP_transient_annotation_list_clamp(DP_TransientAnnotationList *tal,
+                                        int count)
+{
+    DP_ASSERT(tal);
+    DP_ASSERT(DP_atomic_get(&tal->refcount) > 0);
+    DP_ASSERT(tal->transient);
+    DP_ASSERT(count >= 0);
+    DP_ASSERT(count <= tal->count);
+    int old_count = tal->count;
+    for (int i = count; i < old_count; ++i) {
+        DP_annotation_decref_nullable(tal->elements[i].annotation);
+    }
+    tal->count = count;
 }

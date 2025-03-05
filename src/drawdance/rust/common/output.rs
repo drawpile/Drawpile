@@ -4,7 +4,7 @@ use crate::{
     DP_output_tell, DP_output_write,
 };
 use anyhow::{anyhow, Result};
-use std::{ffi::c_char, ptr::null_mut};
+use std::{ffi::c_char, mem, ptr::null_mut};
 
 pub struct Output {
     output: *mut DP_Output,
@@ -18,6 +18,12 @@ impl Output {
         } else {
             Ok(Output { output })
         }
+    }
+
+    pub fn leak(self) -> *mut DP_Output {
+        let output = self.output;
+        mem::forget(self);
+        output
     }
 
     pub fn tell(&self) -> Result<usize> {

@@ -205,7 +205,7 @@ static void term_jpeg_destination_buffer(j_compress_ptr cinfo)
 }
 
 bool DP_image_jpeg_write(DP_Output *output, int width, int height,
-                         DP_Pixel8 *pixels)
+                         DP_Pixel8 *pixels, int quality)
 {
     DP_ASSERT(output);
     DP_ASSERT(width > 0);
@@ -240,7 +240,7 @@ bool DP_image_jpeg_write(DP_Output *output, int width, int height,
     cinfo.input_components = 3;
     cinfo.in_color_space = JCS_RGB;
     jpeg_set_defaults(&cinfo);
-    jpeg_set_quality(&cinfo, 100, TRUE);
+    jpeg_set_quality(&cinfo, quality, TRUE);
     jpeg_start_compress(&cinfo, TRUE);
 
     while (cinfo.next_scanline < cinfo.image_height) {

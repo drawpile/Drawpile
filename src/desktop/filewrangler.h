@@ -143,13 +143,20 @@ private:
 	guessExtension(const QString &selectedFilter, const QString &fallbackExt);
 
 	static void replaceExtension(QString &filename, const QString &ext);
+	static void updateSelectedFilter(
+		QString &selectedFilter, const QStringList &filters,
+		const QString &extension);
 
 	static DP_SaveImageType guessType(const QString &intendedName);
+	static DP_SaveImageType preferredSaveType();
+	static DP_SaveImageType preferredExportType();
+	static QString preferredSaveExtension();
+	static QString preferredSaveExtensionFor(DP_SaveImageType type);
+	static QString preferredExportExtension();
+	static QString preferredExportExtensionFor(DP_SaveImageType type);
 
 	static QString
 	getCurrentPathOrUntitled(Document *doc, const QString &defaultExtension);
-
-	static bool needsOra(Document *doc);
 
 	static QString getLastPath(LastPath type, const QString &ext = QString{});
 	static void setLastPath(LastPath type, const QString &path);
