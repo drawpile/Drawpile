@@ -19,6 +19,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QSignalBlocker>
+#include <QSpacerItem>
 #include <QStyle>
 #include <QWidget>
 
@@ -282,6 +283,13 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 	layout->addRow(tr("Mode:"), modeLayout);
 
 	m_blendModeCombo = new QComboBox;
+	QSizePolicy blendModeSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	blendModeSizePolicy.setHorizontalStretch(1);
+	blendModeSizePolicy.setVerticalStretch(0);
+	blendModeSizePolicy.setHeightForWidth(
+		m_blendModeCombo->sizePolicy().hasHeightForWidth());
+	m_blendModeCombo->setSizePolicy(blendModeSizePolicy);
+	m_blendModeCombo->setMinimumSize(QSize(24, 0));
 	for(const canvas::blendmode::Named &named :
 		canvas::blendmode::pasteModeNames()) {
 		m_blendModeCombo->addItem(named.name, int(named.mode));
@@ -292,8 +300,9 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 		m_blendModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, &TransformSettings::updateBlendMode);
 
-	modeLayout->addSpacing(
-		widget->style()->pixelMetric(QStyle::PM_LayoutHorizontalSpacing));
+	QSpacerItem *modeSpacer = new QSpacerItem(
+		6, 0, QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
+	modeLayout->addSpacerItem(modeSpacer);
 
 	m_constrainButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
