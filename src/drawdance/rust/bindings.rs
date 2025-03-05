@@ -4,6 +4,8 @@ pub const DP_LITTLE_ENDIAN: u32 = 1;
 pub const DP_BIG_ENDIAN: u32 = 2;
 pub const DP_BYTE_ORDER: u32 = 1;
 pub const DP_BYTE_ORDER_LITTLE_ENDIAN: u32 = 1;
+pub const DP_PERF_VERSION: &[u8; 2] = b"2\0";
+pub const DP_PERF_INVALID_HANDLE: i32 = -1;
 pub const DP_BIT15: u32 = 32768;
 pub const DP_TILE_SIZE: u32 = 64;
 pub const DP_TILE_LENGTH: u32 = 4096;
@@ -270,6 +272,7 @@ pub const DP_MESSAGE_TYPE_RANGE_START_COMMAND: u32 = 128;
 extern "C" {
     pub fn DP_byte_order() -> ::std::os::raw::c_uint;
 }
+pub type va_list = __builtin_va_list;
 #[repr(C)]
 #[repr(align(16))]
 #[derive(Debug, Copy, Clone)]
@@ -371,6 +374,12 @@ extern "C" {
     pub fn DP_strdup(str_: *const ::std::os::raw::c_char) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
+    pub fn DP_memdup(
+        buf: *const ::std::os::raw::c_void,
+        size: usize,
+    ) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
     pub fn DP_str_equal(a: *const ::std::os::raw::c_char, b: *const ::std::os::raw::c_char)
         -> bool;
 }
@@ -388,6 +397,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_error_set(fmt: *const ::std::os::raw::c_char, ...);
+}
+extern "C" {
+    pub fn DP_error_set_string(str_: *const ::std::os::raw::c_char, length: usize);
 }
 extern "C" {
     pub fn DP_error_count() -> ::std::os::raw::c_uint;
@@ -1043,6 +1055,32 @@ extern "C" {
         entries: *mut DP_OutputBinaryEntry,
     ) -> bool;
 }
+extern "C" {
+    pub static mut DP_perf_output: *mut DP_Output;
+}
+extern "C" {
+    pub fn DP_perf_open(output: *mut DP_Output) -> bool;
+}
+extern "C" {
+    pub fn DP_perf_close() -> bool;
+}
+extern "C" {
+    pub fn DP_perf_is_open() -> bool;
+}
+extern "C" {
+    pub fn DP_perf_time() -> ::std::os::raw::c_ulonglong;
+}
+extern "C" {
+    pub fn DP_perf_begin_internal(
+        realm: *const ::std::os::raw::c_char,
+        categories: *const ::std::os::raw::c_char,
+        fmt: *const ::std::os::raw::c_char,
+        ap: *mut __va_list_tag,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_perf_end_internal(output: *mut DP_Output, handle: ::std::os::raw::c_int);
+}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct DP_Annotation {
@@ -1154,9 +1192,22 @@ extern "C" {
     );
 }
 extern "C" {
+    pub fn DP_transient_annotation_list_set_transient_noinc(
+        tal: *mut DP_TransientAnnotationList,
+        ta: *mut DP_TransientAnnotation,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
     pub fn DP_transient_annotation_list_delete_at(
         tal: *mut DP_TransientAnnotationList,
         index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_annotation_list_clamp(
+        tal: *mut DP_TransientAnnotationList,
+        count: ::std::os::raw::c_int,
     );
 }
 #[repr(C)]
@@ -1408,6 +1459,69 @@ fn bindgen_test_layout_DP_UPixelFloat() {
         )
     );
 }
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_SplitTile8 {
+    pub b: [u8; 4096usize],
+    pub g: [u8; 4096usize],
+    pub r: [u8; 4096usize],
+    pub a: [u8; 4096usize],
+}
+#[test]
+fn bindgen_test_layout_DP_SplitTile8() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_SplitTile8> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_SplitTile8>(),
+        16384usize,
+        concat!("Size of: ", stringify!(DP_SplitTile8))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_SplitTile8>(),
+        1usize,
+        concat!("Alignment of ", stringify!(DP_SplitTile8))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).b) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_SplitTile8),
+            "::",
+            stringify!(b)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).g) as usize - ptr as usize },
+        4096usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_SplitTile8),
+            "::",
+            stringify!(g)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).r) as usize - ptr as usize },
+        8192usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_SplitTile8),
+            "::",
+            stringify!(r)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).a) as usize - ptr as usize },
+        12288usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_SplitTile8),
+            "::",
+            stringify!(a)
+        )
+    );
+}
 extern "C" {
     pub fn DP_fix15_mul(a: u16, b: u16) -> u16;
 }
@@ -1486,6 +1600,18 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_pixels15_to_8_tile(dst: *mut DP_Pixel8, src: *const DP_Pixel15);
+}
+extern "C" {
+    pub fn DP_pixels15_to_split_tile8_delta(dst: *mut DP_SplitTile8, src: *const DP_Pixel15);
+}
+extern "C" {
+    pub fn DP_split_tile8_delta_to_pixels15(dst: *mut DP_Pixel15, src: *const DP_SplitTile8);
+}
+extern "C" {
+    pub fn DP_split_tile8_delta_to_pixels15_checked(
+        dst: *mut DP_Pixel15,
+        src: *const DP_SplitTile8,
+    );
 }
 extern "C" {
     pub fn DP_pixel8_unpremultiply(pixel: DP_Pixel8) -> DP_UPixel8;
@@ -1785,6 +1911,13 @@ extern "C" {
         vmf_or_null: *const DP_ViewModeFilter,
         inout_img_or_null: *mut *mut DP_Image,
     ) -> *mut DP_Image;
+}
+extern "C" {
+    pub fn DP_canvas_state_to_flat_pixel(
+        cs: *mut DP_CanvasState,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+    ) -> DP_Pixel15;
 }
 extern "C" {
     pub fn DP_canvas_state_to_flat_separated_urgba8(
@@ -2445,11 +2578,22 @@ extern "C" {
     ) -> *mut DP_Image;
 }
 extern "C" {
+    pub fn DP_image_thumbnail_dimensions(
+        width: ::std::os::raw::c_int,
+        height: ::std::os::raw::c_int,
+        max_width: ::std::os::raw::c_int,
+        max_height: ::std::os::raw::c_int,
+        out_width: *mut ::std::os::raw::c_int,
+        out_height: *mut ::std::os::raw::c_int,
+    );
+}
+extern "C" {
     pub fn DP_image_thumbnail(
         img: *mut DP_Image,
         dc: *mut DP_DrawContext,
         max_width: ::std::os::raw::c_int,
         max_height: ::std::os::raw::c_int,
+        interpolation: ::std::os::raw::c_int,
         out_thumb: *mut *mut DP_Image,
     ) -> bool;
 }
@@ -2599,6 +2743,12 @@ extern "C" {
     ) -> *mut DP_TransientKeyFrame;
 }
 extern "C" {
+    pub fn DP_transient_key_frame_reserve(
+        tkf: *mut DP_TransientKeyFrame,
+        reserve: ::std::os::raw::c_int,
+    ) -> *mut DP_TransientKeyFrame;
+}
+extern "C" {
     pub fn DP_transient_key_frame_incref(
         tkf: *mut DP_TransientKeyFrame,
     ) -> *mut DP_TransientKeyFrame;
@@ -2637,6 +2787,12 @@ extern "C" {
     pub fn DP_transient_key_frame_layer_delete_at(
         tkf: *mut DP_TransientKeyFrame,
         index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_key_frame_clamp(
+        tkf: *mut DP_TransientKeyFrame,
+        count: ::std::os::raw::c_int,
     );
 }
 #[repr(C)]
@@ -2862,6 +3018,18 @@ extern "C" {
         censored: bool,
         include_sublayers: bool,
     ) -> *mut DP_TransientTile;
+}
+extern "C" {
+    pub fn DP_layer_content_flatten_pixel(
+        lc: *mut DP_LayerContent,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+        pixel: *mut DP_Pixel15,
+        opacity: u16,
+        blend_mode: ::std::os::raw::c_int,
+        tint: DP_UPixel8,
+        censored: bool,
+    );
 }
 extern "C" {
     pub fn DP_transient_layer_content_new(
@@ -3231,6 +3399,19 @@ extern "C" {
     ) -> *mut DP_TransientTile;
 }
 extern "C" {
+    pub fn DP_layer_group_flatten_pixel(
+        lg: *mut DP_LayerGroup,
+        lp: *mut DP_LayerProps,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+        pixel: *mut DP_Pixel15,
+        parent_opacity: u16,
+        parent_tint: DP_UPixel8,
+        pass_through_censored: bool,
+        vmc: *const DP_ViewModeContext,
+    );
+}
+extern "C" {
     pub fn DP_transient_layer_group_new(lg: *mut DP_LayerGroup) -> *mut DP_TransientLayerGroup;
 }
 extern "C" {
@@ -3416,6 +3597,32 @@ extern "C" {
     ) -> *mut DP_TransientTile;
 }
 extern "C" {
+    pub fn DP_layer_list_entry_flatten_pixel(
+        lle: *mut DP_LayerListEntry,
+        lp: *mut DP_LayerProps,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+        pixel: *mut DP_Pixel15,
+        parent_opacity: u16,
+        parent_tint: DP_UPixel8,
+        pass_through_censored: bool,
+        vmc: *const DP_ViewModeContext,
+    );
+}
+extern "C" {
+    pub fn DP_layer_list_flatten_pixel(
+        ll: *mut DP_LayerList,
+        lpl: *mut DP_LayerPropsList,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+        pixel: *mut DP_Pixel15,
+        parent_opacity: u16,
+        parent_tint: DP_UPixel8,
+        pass_through_censored: bool,
+        vmc: *const DP_ViewModeContext,
+    );
+}
+extern "C" {
     pub fn DP_transient_layer_list_new_init(
         reserve: ::std::os::raw::c_int,
     ) -> *mut DP_TransientLayerList;
@@ -3526,6 +3733,13 @@ extern "C" {
     );
 }
 extern "C" {
+    pub fn DP_transient_layer_list_set_transient_content_noinc(
+        tll: *mut DP_TransientLayerList,
+        tlc: *mut DP_TransientLayerContent,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
     pub fn DP_transient_layer_list_set_transient_group_noinc(
         tll: *mut DP_TransientLayerList,
         tlg: *mut DP_TransientLayerGroup,
@@ -3557,6 +3771,12 @@ extern "C" {
         tll: *mut DP_TransientLayerList,
         lp: *mut DP_LayerProps,
         index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_layer_list_clamp(
+        tll: *mut DP_TransientLayerList,
+        count: ::std::os::raw::c_int,
     );
 }
 extern "C" {
@@ -3905,6 +4125,12 @@ extern "C" {
     pub fn DP_transient_layer_props_list_merge_at(
         tlpl: *mut DP_TransientLayerPropsList,
         index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_layer_props_list_clamp(
+        tlpl: *mut DP_TransientLayerPropsList,
+        count: ::std::os::raw::c_int,
     );
 }
 #[repr(C)]
@@ -7280,6 +7506,18 @@ extern "C" {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct ZSTD_CCtx_s {
+    _unused: [u8; 0],
+}
+pub type ZSTD_CCtx = ZSTD_CCtx_s;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ZSTD_DCtx_s {
+    _unused: [u8; 0],
+}
+pub type ZSTD_DCtx = ZSTD_DCtx_s;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct DP_TileCounts {
     pub x: ::std::os::raw::c_int,
     pub y: ::std::os::raw::c_int,
@@ -7355,6 +7593,15 @@ extern "C" {
         context_id: ::std::os::raw::c_uint,
         image: *const ::std::os::raw::c_uchar,
         image_size: usize,
+    ) -> *mut DP_Tile;
+}
+extern "C" {
+    pub fn DP_tile_new_from_compressed_zstd8le(
+        in_out_context_or_null: *mut *mut ZSTD_DCtx,
+        context_id: ::std::os::raw::c_uint,
+        image: *const ::std::os::raw::c_uchar,
+        image_size: usize,
+        split_buffer: *mut DP_SplitTile8,
     ) -> *mut DP_Tile;
 }
 extern "C" {
@@ -7441,6 +7688,32 @@ extern "C" {
     pub fn DP_tile_compress(
         tile: *mut DP_Tile,
         pixel_buffer: *mut DP_Pixel8,
+        get_output_buffer: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: usize,
+                arg2: *mut ::std::os::raw::c_void,
+            ) -> *mut ::std::os::raw::c_uchar,
+        >,
+        user: *mut ::std::os::raw::c_void,
+    ) -> usize;
+}
+extern "C" {
+    pub fn DP_tile_compress_zstd8le_pixel(
+        pixel: DP_Pixel15,
+        get_output_buffer: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: usize,
+                arg2: *mut ::std::os::raw::c_void,
+            ) -> *mut ::std::os::raw::c_uchar,
+        >,
+        user: *mut ::std::os::raw::c_void,
+    ) -> usize;
+}
+extern "C" {
+    pub fn DP_tile_compress_zstd8le(
+        in_out_context_or_null: *mut *mut ZSTD_CCtx,
+        tile: *mut DP_Tile,
+        split_buffer: *mut DP_SplitTile8,
         get_output_buffer: ::std::option::Option<
             unsafe extern "C" fn(
                 arg1: usize,
@@ -7770,6 +8043,12 @@ extern "C" {
     );
 }
 extern "C" {
+    pub fn DP_transient_timeline_clamp(
+        ttl: *mut DP_TransientTimeline,
+        count: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
     pub fn DP_track_incref(t: *mut DP_Track) -> *mut DP_Track;
 }
 extern "C" {
@@ -7949,6 +8228,9 @@ extern "C" {
     pub fn DP_transient_track_delete_at(tt: *mut DP_TransientTrack, index: ::std::os::raw::c_int);
 }
 extern "C" {
+    pub fn DP_transient_track_clamp(tt: *mut DP_TransientTrack, count: ::std::os::raw::c_int);
+}
+extern "C" {
     pub fn DP_image_impex_init();
 }
 extern "C" {
@@ -7968,6 +8250,13 @@ extern "C" {
     pub fn DP_image_write_png(img: *mut DP_Image, output: *mut DP_Output) -> bool;
 }
 extern "C" {
+    pub fn DP_image_write_jpeg_quality(
+        img: *mut DP_Image,
+        output: *mut DP_Output,
+        quality: ::std::os::raw::c_int,
+    ) -> bool;
+}
+extern "C" {
     pub fn DP_image_write_jpeg(img: *mut DP_Image, output: *mut DP_Output) -> bool;
 }
 extern "C" {
@@ -7979,6 +8268,7 @@ pub const DP_SAVE_IMAGE_PNG: DP_SaveImageType = 2;
 pub const DP_SAVE_IMAGE_JPEG: DP_SaveImageType = 3;
 pub const DP_SAVE_IMAGE_PSD: DP_SaveImageType = 4;
 pub const DP_SAVE_IMAGE_WEBP: DP_SaveImageType = 5;
+pub const DP_SAVE_IMAGE_PROJECT_CANVAS: DP_SaveImageType = 6;
 pub type DP_SaveImageType = ::std::os::raw::c_uint;
 pub const DP_SAVE_RESULT_SUCCESS: DP_SaveResult = 0;
 pub const DP_SAVE_RESULT_BAD_ARGUMENTS: DP_SaveResult = 1;
@@ -8063,6 +8353,14 @@ extern "C" {
     pub fn DP_load_psd(
         dc: *mut DP_DrawContext,
         input: *mut DP_Input,
+        out_result: *mut DP_LoadResult,
+    ) -> *mut DP_CanvasState;
+}
+extern "C" {
+    pub fn DP_load_project_canvas(
+        dc: *mut DP_DrawContext,
+        path: *const ::std::os::raw::c_char,
+        flags: ::std::os::raw::c_uint,
         out_result: *mut DP_LoadResult,
     ) -> *mut DP_CanvasState;
 }
@@ -12074,6 +12372,13 @@ extern "C" {
     ) -> usize;
 }
 extern "C" {
+    pub fn DP_message_serialize_body(
+        msg: *mut DP_Message,
+        get_buffer: DP_GetMessageBufferFn,
+        user: *mut ::std::os::raw::c_void,
+    ) -> usize;
+}
+extern "C" {
     pub fn DP_message_write_text(msg: *mut DP_Message, writer: *mut DP_TextWriter) -> bool;
 }
 extern "C" {
@@ -12594,4 +12899,68 @@ extern "C" {
 }
 extern "C" {
     pub fn json_boolean(value: *const JSON_Value) -> ::std::os::raw::c_int;
+}
+pub type __builtin_va_list = [__va_list_tag; 1usize];
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct __va_list_tag {
+    pub gp_offset: ::std::os::raw::c_uint,
+    pub fp_offset: ::std::os::raw::c_uint,
+    pub overflow_arg_area: *mut ::std::os::raw::c_void,
+    pub reg_save_area: *mut ::std::os::raw::c_void,
+}
+#[test]
+fn bindgen_test_layout___va_list_tag() {
+    const UNINIT: ::std::mem::MaybeUninit<__va_list_tag> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<__va_list_tag>(),
+        24usize,
+        concat!("Size of: ", stringify!(__va_list_tag))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<__va_list_tag>(),
+        8usize,
+        concat!("Alignment of ", stringify!(__va_list_tag))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).gp_offset) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__va_list_tag),
+            "::",
+            stringify!(gp_offset)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).fp_offset) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__va_list_tag),
+            "::",
+            stringify!(fp_offset)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).overflow_arg_area) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__va_list_tag),
+            "::",
+            stringify!(overflow_arg_area)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).reg_save_area) as usize - ptr as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__va_list_tag),
+            "::",
+            stringify!(reg_save_area)
+        )
+    );
 }

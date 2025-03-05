@@ -328,3 +328,17 @@ void DP_transient_timeline_delete_at(DP_TransientTimeline *ttl, int index)
     memmove(&ttl->elements[index], &ttl->elements[index + 1],
             DP_int_to_size(new_count - index) * sizeof(ttl->elements[0]));
 }
+
+void DP_transient_timeline_clamp(DP_TransientTimeline *ttl, int count)
+{
+    DP_ASSERT(ttl);
+    DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
+    DP_ASSERT(ttl->transient);
+    DP_ASSERT(count >= 0);
+    DP_ASSERT(count <= ttl->count);
+    int old_count = ttl->count;
+    for (int i = count; i < old_count; ++i) {
+        DP_track_decref_nullable(ttl->elements[i].track);
+    }
+    ttl->count = count;
+}

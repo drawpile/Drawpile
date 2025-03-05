@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use anyhow::Result;
 use drawdance::{
+    common::Perf,
     dp_cmake_config_version,
     engine::{Player, Recorder},
     msg::{InternalMessage, Message},
@@ -155,6 +156,7 @@ impl std::str::FromStr for Pass {
 #[no_mangle]
 pub extern "C" fn dprectool_main() -> c_int {
     drawdance::init();
+    let _perf = Perf::new_from_env();
 
     let flags = xflags::parse_or_exit! {
         /// Displays version information and exits.

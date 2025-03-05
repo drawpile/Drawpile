@@ -298,6 +298,11 @@ DP_INLINE bool DP_add_overflow_int(int x, int y, int *res)
 }
 #endif
 
+DP_INLINE unsigned int DP_flag_uint(bool cond, unsigned int flag)
+{
+    return cond ? flag : 0u;
+}
+
 /*
  * Overly correct way of getting the size of a structure with a flexible array
  * member. Takes potential trailing padding being used as part of the flexible
@@ -341,6 +346,8 @@ char *DP_format(const char *fmt, ...) DP_FORMAT(1, 2);
 
 char *DP_strdup(const char *str);
 
+void *DP_memdup(const void *buf, size_t size);
+
 
 bool DP_str_equal(const char *a, const char *b);
 
@@ -352,6 +359,8 @@ const char *DP_error(void);
 const char *DP_error_since(unsigned int count);
 
 void DP_error_set(const char *fmt, ...) DP_FORMAT(1, 2);
+
+void DP_error_set_string(const char *str, size_t length);
 
 unsigned int DP_error_count(void);
 

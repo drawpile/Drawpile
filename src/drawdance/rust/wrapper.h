@@ -1,6 +1,7 @@
 #include <dpcommon/endianness.h>
 #include <dpcommon/input.h>
 #include <dpcommon/output.h>
+#include <dpcommon/perf.h>
 #include <dpengine/canvas_state.h>
 #include <dpengine/document_metadata.h>
 #include <dpengine/draw_context.h>

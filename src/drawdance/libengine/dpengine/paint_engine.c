@@ -37,6 +37,8 @@
 #include "paint.h"
 #include "player.h"
 #include "preview.h"
+#include "project.h"
+#include "project_worker.h"
 #include "recorder.h"
 #include "renderer.h"
 #include "tile.h"
@@ -147,7 +149,8 @@ struct DP_PaintEngine {
     struct {
         char *path;
         DP_Recorder *recorder;
-        DP_Semaphore *start_sem;
+        DP_ProjectWorker *project_worker;
+        DP_Semaphore *sync_sem;
         int state_change;
         DP_RecorderGetTimeMsFn get_time_ms_fn;
         void *get_time_ms_user;
@@ -313,8 +316,8 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
                                        DP_msg_internal_preview_data(mi)));
         break;
     }
-    case DP_MSG_INTERNAL_TYPE_RECORDER_START:
-        DP_SEMAPHORE_MUST_POST(pe->record.start_sem);
+    case DP_MSG_INTERNAL_TYPE_RECORDER_SYNC:
+        DP_SEMAPHORE_MUST_POST(pe->record.sync_sem);
         break;
     case DP_MSG_INTERNAL_TYPE_PLAYBACK: {
         DP_PaintEnginePlaybackFn playback_fn = pe->playback.fn;
@@ -745,7 +748,8 @@ DP_PaintEngine *DP_paint_engine_new_inc(
                         8);
     pe->record.path = NULL;
     pe->record.recorder = NULL;
-    pe->record.start_sem = DP_semaphore_new(0);
+    pe->record.project_worker = NULL;
+    pe->record.sync_sem = DP_semaphore_new(0);
     pe->record.state_change = RECORDER_STOPPED;
     pe->record.get_time_ms_fn = get_time_ms_fn;
     pe->record.get_time_ms_user = get_time_ms_user;
@@ -768,7 +772,7 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
         DP_SEMAPHORE_MUST_POST(pe->queue_sem);
         DP_thread_free_join(pe->paint_thread);
         DP_player_free(pe->playback.player);
-        DP_semaphore_free(pe->record.start_sem);
+        DP_semaphore_free(pe->record.sync_sem);
         DP_vector_dispose(&pe->meta.cursor_changes);
         DP_renderer_free(pe->renderer);
         DP_mutex_free(pe->queue_mutex);
@@ -984,6 +988,20 @@ static bool record_initial_message(void *user, DP_Message *msg)
     return DP_recorder_message_push_noinc(user, msg);
 }
 
+static void sync_recorder(DP_PaintEngine *pe)
+{
+    DP_MUTEX_MUST_LOCK(pe->queue_mutex);
+    DP_message_queue_push_noinc(&pe->remote_queue,
+                                DP_msg_internal_recorder_sync_new(0));
+    DP_SEMAPHORE_MUST_POST(pe->queue_sem);
+    DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
+    // The paint thread will post to this semaphore when it reaches our message.
+    DP_SEMAPHORE_MUST_WAIT(pe->record.sync_sem);
+    // Since we're blocking the single thread that is allowed to interact with
+    // the paint engine, there should be nothing left in the queue.
+    DP_ASSERT(pe->remote_queue.used == 0);
+}
+
 static bool start_recording(DP_PaintEngine *pe, DP_RecorderType type,
                             JSON_Value *header, char *path, bool initial)
 {
@@ -1000,15 +1018,7 @@ static bool start_recording(DP_PaintEngine *pe, DP_RecorderType type,
         // and then block this thread (which must be the only thread interacting
         // with the paint engine, maybe we should verify that somehow) until the
         // paint thread gets to it.
-        DP_MUTEX_MUST_LOCK(pe->queue_mutex);
-        DP_message_queue_push_noinc(&pe->remote_queue,
-                                    DP_msg_internal_recorder_start_new(0));
-        DP_SEMAPHORE_MUST_POST(pe->queue_sem);
-        DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
-        // The paint thread will post to this semaphore when it reaches our
-        // recorder start message.
-        DP_SEMAPHORE_MUST_WAIT(pe->record.start_sem);
-        DP_ASSERT(pe->remote_queue.used == 0);
+        sync_recorder(pe);
 
         // Now all queued messages have been handled. We can't just take the
         // current canvas state from the canvas history though, since that would
@@ -1092,6 +1102,21 @@ bool DP_paint_engine_recorder_is_recording(DP_PaintEngine *pe)
 }
 
 
+void DP_paint_engine_project_worker_set(DP_PaintEngine *pe,
+                                        DP_ProjectWorker *pw)
+{
+    DP_ASSERT(pe);
+    sync_recorder(pe);
+    pe->record.project_worker = pw;
+}
+
+DP_ProjectWorker *DP_paint_engine_project_worker(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    return pe->record.project_worker;
+}
+
+
 DP_PaintEnginePlayback *DP_paint_engine_playback(DP_PaintEngine *pe)
 {
     DP_ASSERT(pe);
@@ -1149,6 +1174,16 @@ static void record_message(DP_PaintEngine *pe, DP_Message *msg,
                 DP_paint_engine_recorder_stop(pe);
             }
         }
+    }
+
+    DP_ProjectWorker *pw = pe->record.project_worker;
+    if (pw && !DP_message_type_control(type)
+        && !DP_msg_local_match_is_local_match(msg)) {
+        DP_project_worker_message_record_inc(
+            pw, msg,
+            DP_flag_uint(DP_message_context_id(msg)
+                             == DP_acl_state_local_user_id(pe->acls),
+                         DP_PROJECT_MESSAGE_FLAG_OWN));
     }
 }
 

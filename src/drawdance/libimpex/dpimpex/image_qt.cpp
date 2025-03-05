@@ -208,8 +208,8 @@ extern "C" bool DP_image_png_write_unpremultiplied(DP_Output *output, int width,
 }
 
 bool DP_image_jpeg_write(DP_Output *output, int width, int height,
-                         DP_Pixel8 *pixels)
+                         DP_Pixel8 *pixels, int quality)
 {
     return write_image(output, width, height, reinterpret_cast<uchar *>(pixels),
-                       "JPEG", 100, QImage::Format_ARGB32_Premultiplied);
+                       "JPEG", quality, QImage::Format_ARGB32_Premultiplied);
 }

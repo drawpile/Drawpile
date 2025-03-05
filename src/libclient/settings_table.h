@@ -32,6 +32,7 @@ SETTING(parentalControlsForceCensor , ParentalControlsForceCensor , "pc/noUncens
 SETTING(parentalControlsLevel       , ParentalControlsLevel       , "pc/level"                              , parentalcontrols::Level::Unrestricted)
 SETTING(parentalControlsLocked      , ParentalControlsLocked      , "pc/locked"                             , QByteArray())
 SETTING(parentalControlsTags        , ParentalControlsTags        , "pc/tagwords"                           , parentalcontrols::defaultWordList())
+SETTING(projectWorkerEnabled        , ProjectWorkerEnabled        , "settings/project/workerenabled"        , true)
 SETTING(engineFrameRate             , EngineFrameRate             , "settings/paintengine/fps"              , 60)
 SETTING(engineSnapshotCount         , EngineSnapshotCount         , "settings/paintengine/snapshotcount"    , SNAPSHOT_COUNT_DEFAULT)
 SETTING(engineSnapshotInterval      , EngineSnapshotInterval      , "settings/paintengine/snapshotinterval" , 10)

@@ -38,6 +38,7 @@ typedef struct DP_DocumentMetadata DP_DocumentMetadata;
 typedef struct DP_Image DP_Image;
 typedef struct DP_LayerPropsList DP_LayerPropsList;
 typedef struct DP_Message DP_Message;
+typedef struct DP_ProjectWorker DP_ProjectWorker;
 typedef struct DP_Quad DP_Quad;
 typedef struct DP_SelectionSet DP_SelectionSet;
 typedef union DP_Pixel8 DP_Pixel8;
@@ -168,6 +169,11 @@ bool DP_paint_engine_recorder_start(DP_PaintEngine *pe, DP_RecorderType type,
 bool DP_paint_engine_recorder_stop(DP_PaintEngine *pe);
 
 bool DP_paint_engine_recorder_is_recording(DP_PaintEngine *pe);
+
+void DP_paint_engine_project_worker_set(DP_PaintEngine *pe,
+                                        DP_ProjectWorker *pw);
+
+DP_ProjectWorker *DP_paint_engine_project_worker(DP_PaintEngine *pe);
 
 DP_PaintEnginePlayback *DP_paint_engine_playback(DP_PaintEngine *pe);
 

@@ -33,6 +33,8 @@ target_sources(dpclient PRIVATE
 	canvas/layerlist.h
 	canvas/paintengine.cpp
 	canvas/paintengine.h
+	canvas/projectworker.cpp
+	canvas/projectworker.h
 	canvas/point.h
 	canvas/selectionmodel.cpp
 	canvas/selectionmodel.h

@@ -78,5 +78,7 @@ void DP_transient_timeline_insert_transient_noinc(DP_TransientTimeline *ttl,
 
 void DP_transient_timeline_delete_at(DP_TransientTimeline *ttl, int index);
 
+void DP_transient_timeline_clamp(DP_TransientTimeline *ttl, int count);
+
 
 #endif

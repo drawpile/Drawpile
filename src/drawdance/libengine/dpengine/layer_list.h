@@ -115,6 +115,18 @@ DP_TransientTile *DP_layer_list_flatten_tile_to(
     DP_UPixel8 parent_tint, bool include_sublayers, bool pass_through_censored,
     const DP_ViewModeContext *vmc);
 
+void DP_layer_list_entry_flatten_pixel(
+    DP_LayerListEntry *lle, DP_LayerProps *lp, int x, int y, DP_Pixel15 *pixel,
+    uint16_t parent_opacity, DP_UPixel8 parent_tint, bool pass_through_censored,
+    const DP_ViewModeContext *vmc);
+
+void DP_layer_list_flatten_pixel(DP_LayerList *ll, DP_LayerPropsList *lpl,
+                                 int x, int y, DP_Pixel15 *pixel,
+                                 uint16_t parent_opacity,
+                                 DP_UPixel8 parent_tint,
+                                 bool pass_through_censored,
+                                 const DP_ViewModeContext *vmc);
+
 
 DP_TransientLayerList *DP_transient_layer_list_new_init(int reserve);
 
@@ -173,6 +185,9 @@ void DP_transient_layer_list_insert_content_inc(DP_TransientLayerList *tll,
 void DP_transient_layer_list_insert_group_inc(DP_TransientLayerList *tll,
                                               DP_LayerGroup *lg, int index);
 
+void DP_transient_layer_list_set_transient_content_noinc(
+    DP_TransientLayerList *tll, DP_TransientLayerContent *tlc, int index);
+
 void DP_transient_layer_list_set_transient_group_noinc(
     DP_TransientLayerList *tll, DP_TransientLayerGroup *tlg, int index);
 
@@ -186,6 +201,8 @@ void DP_transient_layer_list_delete_at(DP_TransientLayerList *tll, int index);
 
 void DP_transient_layer_list_merge_at(DP_TransientLayerList *tll,
                                       DP_LayerProps *lp, int index);
+
+void DP_transient_layer_list_clamp(DP_TransientLayerList *tll, int count);
 
 
 #endif

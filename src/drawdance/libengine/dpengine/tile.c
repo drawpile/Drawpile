@@ -163,18 +163,18 @@ DP_Tile *DP_tile_new_from_bgra(unsigned int context_id, uint32_t bgra)
 }
 
 
-struct DP_TileInflateArgs {
-    DP_Pixel8 *buffer;
+struct DP_TileDecompressArgs {
+    void *buffer;
     unsigned int context_id;
     DP_TransientTile *tt;
 };
 
-static unsigned char *get_inflate_output_buffer(size_t out_size, void *user)
+static unsigned char *get_decompress_output_buffer(size_t out_size, void *user)
 {
     if (out_size == DP_TILE_COMPRESSED_BYTES) {
-        struct DP_TileInflateArgs *args = user;
+        struct DP_TileDecompressArgs *args = user;
         args->tt = alloc_tile(false, true, args->context_id);
-        return (unsigned char *)args->buffer;
+        return args->buffer;
     }
     else {
         DP_error_set("Tile decompression needs size %zu, but got %zu",
@@ -193,15 +193,37 @@ DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
         return DP_tile_new_from_bgra(context_id, bgra);
     }
     else {
-        struct DP_TileInflateArgs args = {
-            DP_draw_context_tile8_buffer(dc),
-            context_id,
-            NULL,
-        };
-        if (DP_compress_inflate(image, image_size, get_inflate_output_buffer,
+        DP_Pixel8 *pixel_buffer = DP_draw_context_tile8_buffer(dc);
+        struct DP_TileDecompressArgs args = {pixel_buffer, context_id, NULL};
+        if (DP_compress_inflate(image, image_size, get_decompress_output_buffer,
                                 &args)) {
             DP_pixels8_to_15_checked(args.tt->pixels, args.buffer,
                                      DP_TILE_LENGTH);
+            return (DP_Tile *)args.tt;
+        }
+        else {
+            DP_tile_decref_nullable((DP_Tile *)args.tt);
+            return NULL;
+        }
+    }
+}
+
+DP_Tile *DP_tile_new_from_compressed_zstd8le(ZSTD_DCtx **in_out_context_or_null,
+                                             unsigned int context_id,
+                                             const unsigned char *image,
+                                             size_t image_size,
+                                             DP_SplitTile8 *split_buffer)
+{
+    if (image_size == 4) {
+        uint32_t bgra = DP_read_littleendian_uint32(image);
+        return DP_tile_new_from_bgra(context_id, bgra);
+    }
+    else {
+        struct DP_TileDecompressArgs args = {split_buffer, context_id, NULL};
+        if (DP_decompress_zstd(in_out_context_or_null, image, image_size,
+                               get_decompress_output_buffer, &args)) {
+            DP_split_tile8_delta_to_pixels15_checked(args.tt->pixels,
+                                                     args.buffer);
             return (DP_Tile *)args.tt;
         }
         else {
@@ -438,6 +460,43 @@ size_t DP_tile_compress(DP_Tile *tile, DP_Pixel8 *pixel_buffer,
         return DP_compress_deflate((const unsigned char *)pixel_buffer,
                                    DP_TILE_COMPRESSED_BYTES, get_output_buffer,
                                    user);
+    }
+}
+
+size_t DP_tile_compress_zstd8le_pixel(
+    DP_Pixel15 pixel, unsigned char *(*get_output_buffer)(size_t, void *),
+    void *user)
+{
+    unsigned char *buffer = get_output_buffer(4, user);
+    if (buffer) {
+        uint32_t color =
+            DP_upixel15_to_8(DP_pixel15_unpremultiply(pixel)).color;
+        DP_write_littleendian_uint32(color, buffer);
+        return 4;
+    }
+    else {
+        return 0; // The function should have already set the error message.
+    }
+}
+
+size_t DP_tile_compress_zstd8le(ZSTD_CCtx **in_out_context_or_null,
+                                DP_Tile *tile, DP_SplitTile8 *split_buffer,
+                                unsigned char *(*get_output_buffer)(size_t,
+                                                                    void *),
+                                void *user)
+{
+    DP_ASSERT(tile);
+    DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
+    DP_ASSERT(split_buffer);
+    DP_Pixel15 pixel;
+    if (DP_tile_same_pixel(tile, &pixel)) {
+        return DP_tile_compress_zstd8le_pixel(pixel, get_output_buffer, user);
+    }
+    else {
+        DP_pixels15_to_split_tile8_delta(split_buffer, tile->pixels);
+        return DP_compress_zstd(
+            in_out_context_or_null, (const unsigned char *)split_buffer,
+            DP_TILE_COMPRESSED_BYTES, get_output_buffer, user);
     }
 }
 

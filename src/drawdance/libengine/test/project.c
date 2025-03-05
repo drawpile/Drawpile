@@ -3,6 +3,8 @@
 #include <dpcommon/file.h>
 #include <dpcommon/output.h>
 #include <dpdb/sql.h>
+#include <dpengine/canvas_state.h>
+#include <dpengine/draw_context.h>
 #include <dpengine/project.h>
 #include <dpmsg/message.h>
 #include <dptest.h>
@@ -11,7 +13,8 @@ static bool remove_preexisting(TEST_PARAMS, const char *path)
 {
     return OK(!DP_file_exists(path) || DP_file_remove(path),
               "Remove preexisting file %s", path)
-        && INT_EQ_OK(DP_project_check(path), DP_PROJECT_CHECK_ERROR_OPEN,
+        && INT_EQ_OK(DP_project_check_path(path).error,
+                     DP_PROJECT_CHECK_ERROR_OPEN,
                      "Removed project file can't be opened");
 }
 
@@ -47,6 +50,15 @@ static void project_basics(TEST_PARAMS)
     INT_EQ_OK(open.error, DP_PROJECT_OPEN_ERROR_OPEN,
               "Opening nonexisten file with EXISTING flag fails on open");
 
+    open = DP_project_open(path, DP_PROJECT_OPEN_READ_ONLY);
+    if (!NULL_OK(open.project,
+                 "Opening nonexistent file with READ_ONLY flag fails")) {
+        DP_project_close(open.project);
+    }
+
+    INT_EQ_OK(open.error, DP_PROJECT_OPEN_ERROR_OPEN,
+              "Opening nonexisten file with READ_ONLY flag fails on open");
+
     open = DP_project_open(path, 0);
     if (!NOT_NULL_OK(open.project, "Open fresh project")) {
         return;
@@ -63,8 +75,11 @@ static void project_basics(TEST_PARAMS)
 
     OK(DP_project_close(open.project), "Close project");
 
-    INT_EQ_OK(DP_project_check(path), DP_PROJECT_USER_VERSION,
-              "Project file checks out with version %d",
+    DP_ProjectCheckResult check = DP_project_check_path(path);
+    INT_EQ_OK(check.result, DP_PROJECT_CHECK_PROJECT,
+              "Project file checks out");
+    INT_EQ_OK(check.version, DP_PROJECT_USER_VERSION,
+              "Project file check results in version %d",
               DP_PROJECT_USER_VERSION);
 
     open = DP_project_open(path, DP_PROJECT_OPEN_EXISTING);
@@ -77,8 +92,8 @@ static void project_basics(TEST_PARAMS)
                     "test/tmp/project_basics_dump02_reopen",
                     "test/data/project_basics_dump02_reopen");
 
-    INT_EQ_OK(DP_project_session_open(open.project, DP_PROJECT_SOURCE_BLANK,
-                                      NULL, "dp:4.24.0", 0),
+    INT_EQ_OK(DP_project_session_open(open.project, DP_PROJECT_SOURCE_BLANK, "",
+                                      "dp:4.24.0", 0),
               0, "Open session");
 
     INT_EQ_OK(DP_project_session_id(open.project), 1LL, "Session 1 open");
@@ -98,7 +113,7 @@ static void project_basics(TEST_PARAMS)
                     "test/tmp/project_basics_dump04_autoclose",
                     "test/data/project_basics_dump04_autoclose");
 
-    INT_EQ_OK(DP_project_session_open(open.project, DP_PROJECT_SOURCE_FILE_OPEN,
+    INT_EQ_OK(DP_project_session_open(open.project, DP_PROJECT_SOURCE_FILE,
                                       "some/file.dppr", "dp:4.24.1", 0),
               0, "Open another session");
 
@@ -107,9 +122,9 @@ static void project_basics(TEST_PARAMS)
                     "test/tmp/project_basics_dump05_session2",
                     "test/data/project_basics_dump05_session2");
 
-    INT_EQ_OK(DP_project_session_open(
-                  open.project, DP_PROJECT_SOURCE_SESSION_JOIN,
-                  "drawpile://whatever/something", "dp:4.24.2", 0),
+    INT_EQ_OK(DP_project_session_open(open.project, DP_PROJECT_SOURCE_SESSION,
+                                      "drawpile://whatever/something",
+                                      "dp:4.24.2", 0),
               DP_PROJECT_SESSION_OPEN_ERROR_ALREADY_OPEN,
               "Trying to open session while another one is open fails");
 
@@ -149,9 +164,23 @@ static void project_basics(TEST_PARAMS)
 
     OK(DP_project_close(open.project), "Close project");
 
-    INT_EQ_OK(DP_project_check(path), DP_PROJECT_USER_VERSION,
-              "Truncated project file checks out with version %d",
+    check = DP_project_check_path(path);
+    INT_EQ_OK(check.result, DP_PROJECT_CHECK_PROJECT,
+              "Truncated project file checks out");
+    INT_EQ_OK(check.version, DP_PROJECT_USER_VERSION,
+              "Truncated project file check results in version %d",
               DP_PROJECT_USER_VERSION);
+
+    open = DP_project_open(path, DP_PROJECT_OPEN_TRUNCATE
+                                     | DP_PROJECT_OPEN_READ_ONLY);
+    if (!NULL_OK(open.project, "Trying to open project with both truncate and "
+                               "read-only flags fails")) {
+        DP_project_close(open.project);
+    }
+
+    INT_EQ_OK(open.error, DP_PROJECT_OPEN_ERROR_READ_ONLY,
+              "Trying to open project with both truncate and read-only flags "
+              "fails with READ_ONLY error");
 }
 
 static void project_lock(TEST_PARAMS)
@@ -164,19 +193,46 @@ static void project_lock(TEST_PARAMS)
         return;
     }
 
-    DP_ProjectOpenResult open2 =
-        DP_project_open(path, DP_PROJECT_OPEN_EXISTING);
-    if (NULL_OK(open2.project, "Fail to reopen open project")) {
-        INT_EQ_OK(open2.error, DP_PROJECT_OPEN_ERROR_SETUP,
-                  "Reopen open project gives SETUP error");
-        INT_EQ_OK(open2.sql_result & 0xff, SQLITE_BUSY,
-                  "Reopen open project gives SQLITE_BUSY error");
-        OK(DP_project_open_was_busy(&open2),
-           "Reopen open project detected as being busy");
+    unsigned int flag_sets[] = {
+        0,
+        DP_PROJECT_OPEN_EXISTING,
+        DP_PROJECT_OPEN_TRUNCATE,
+        DP_PROJECT_OPEN_EXISTING | DP_PROJECT_OPEN_TRUNCATE,
+        DP_PROJECT_OPEN_READ_ONLY,
+        DP_PROJECT_OPEN_EXISTING | DP_PROJECT_OPEN_READ_ONLY};
+    for (size_t i = 0; i < DP_ARRAY_LENGTH(flag_sets); ++i) {
+        unsigned int flags = flag_sets[i];
+        DP_ProjectOpenResult open2 = DP_project_open(path, flags);
+        if (NULL_OK(open2.project, "Fail to reopen open project with flags %x",
+                    flags)) {
+            INT_EQ_OK(open2.error, DP_PROJECT_OPEN_ERROR_LOCKED,
+                      "Reopen open project with flags %x gives LOCKED error",
+                      flags);
+            INT_EQ_OK(
+                open2.sql_result & 0xff, SQLITE_BUSY,
+                "Reopen open project with flags %x gives SQLITE_BUSY error",
+                flags);
+        }
+        else {
+            DP_project_close(open2.project);
+        }
     }
-    else {
-        DP_project_close(open2.project);
-    }
+
+    DP_DrawContext *dc = DP_draw_context_new();
+
+    DP_CanvasState *cs = NULL;
+    int canvas_load_result = DP_project_canvas_load(dc, path, &cs);
+    INT_EQ_OK(canvas_load_result, DP_PROJECT_OPEN_ERROR_LOCKED,
+              "Attempting to load canvas from open project gives LOCKED error");
+    DP_canvas_state_decref_nullable(cs);
+
+    cs = DP_canvas_state_new();
+    int canvas_save_result = DP_project_canvas_save(cs, path, NULL);
+    INT_EQ_OK(canvas_save_result, DP_PROJECT_OPEN_ERROR_LOCKED,
+              "Attempting to save canvas to open project gives LOCKED error");
+    DP_canvas_state_decref(cs);
+
+    DP_draw_context_free(dc);
 
     OK(DP_project_close(open1.project), "Close project");
 }

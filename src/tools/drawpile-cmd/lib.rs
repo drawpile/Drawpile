@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use anyhow::Result;
 use drawdance::{
+    common::Perf,
     dp_cmake_config_version,
     engine::{BaseCanvasState, CanvasState, DrawContext, Image, PaintEngine, Player},
-    Interpolation, DP_PLAYER_TYPE_GUESS, DP_PROTOCOL_VERSION, DP_SAVE_IMAGE_ORA, DP_SAVE_IMAGE_PSD,
+    Interpolation, DP_PLAYER_TYPE_GUESS, DP_PROTOCOL_VERSION, DP_SAVE_IMAGE_ORA,
+    DP_SAVE_IMAGE_PROJECT_CANVAS, DP_SAVE_IMAGE_PSD,
 };
 use std::{
     ffi::{c_int, CStr, OsStr},
@@ -39,6 +41,7 @@ impl FromStr for ImageSize {
 pub enum OutputFormat {
     #[default]
     Guess,
+    Dpcs,
     Ora,
     Psd,
     Png,
@@ -50,6 +53,7 @@ pub enum OutputFormat {
 impl OutputFormat {
     fn suffix(self) -> &'static str {
         match self {
+            Self::Dpcs => "dpcs",
             Self::Ora => "ora",
             Self::Psd => "psd",
             Self::Png => "png",
@@ -57,6 +61,10 @@ impl OutputFormat {
             Self::Webp => "webp",
             Self::Guess | Self::Jpeg => "jpeg",
         }
+    }
+
+    fn supports_scaling(self) -> bool {
+        matches!(self, Self::Dpcs | Self::Ora | Self::Psd)
     }
 }
 
@@ -66,6 +74,7 @@ impl FromStr for OutputFormat {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "guess" => Ok(Self::Guess),
+            "dpcs" => Ok(Self::Dpcs),
             "ora" => Ok(Self::Ora),
             "psd" => Ok(Self::Psd),
             "png" => Ok(Self::Png),
@@ -74,7 +83,7 @@ impl FromStr for OutputFormat {
             "webp" => Ok(Self::Webp),
             _ => Err(format!(
                 "invalid output format '{s}', should be one of 'guess', \
-                'ora', 'psd', 'png', 'jpg', 'jpeg' or 'webp'"
+                'dpcs', 'ora', 'psd', 'png', 'jpg', 'jpeg' or 'webp'"
             )),
         }
     }
@@ -90,16 +99,17 @@ enum Every {
 #[no_mangle]
 pub extern "C" fn drawpile_cmd_main() -> c_int {
     drawdance::init();
+    let _perf = Perf::new_from_env();
 
     let flags = xflags::parse_or_exit! {
         /// Displays version information and exits.
         optional -v,--version
         /// Print extra debugging information.
         optional -V,--verbose
-        /// Output file format. One of 'guess' (the default), 'ora', 'psd'
-        /// 'png', 'webp', 'jpg' ,'jpeg'. The last two are the same format, just
-        /// with a different extension. Guessing will either use the extension
-        /// from the value given by -o/--out or default to jpeg.
+        /// Output file format. One of 'guess' (the default), 'dpcs', 'ora',
+        /// 'psd', 'png', 'webp', 'jpg' ,'jpeg'. The last two are the same
+        /// format, just with a different extension. Guessing will either use
+        /// the extension from the value given by -o/--out or default to jpeg.
         optional -f,--format output_format: OutputFormat
         /// Output file pattern. Use '-' for stdout. The default is to use the
         /// input file name with a different file extension.
@@ -121,14 +131,14 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
         /// would also filter these out when playing back a recording.
         optional -A,--acl
         /// Maximum image size. Any images larger than this will be scaled down,
-        /// retaining the aspect ratio. This option is not supported for the ora
-        /// and psd output formats.
+        /// retaining the aspect ratio. This option is not supported for the
+        /// dpcs, ora and psd output formats.
         optional -s,--maxsize max_size: ImageSize
         /// Make all images the same size. If --maxsize is given, that size is
         /// used, otherwise it is guessed from the first saved image. All images
         /// will be scaled, retaining aspect ratio. Blank space is left
         /// transparent or black, depending on the output format. This option is
-        /// not supported for the ora and psd output formats.
+        /// not supported for the dpcs, ora and psd output formats.
         optional -S,--fixedsize
         /// Interpolation to use when scaling images. One of 'fastbilinear' (the
         /// default), 'bilinear', 'bicubic', 'experimental', 'nearest', 'area',
@@ -241,6 +251,7 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
             .map(OsStr::to_string_lossy)
         {
             match ext.to_lowercase().as_str() {
+                "dpcs" => OutputFormat::Dpcs,
                 "ora" => OutputFormat::Ora,
                 "psd" => OutputFormat::Psd,
                 "png" => OutputFormat::Png,
@@ -258,10 +269,10 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
         }
     }
 
-    if (flags.maxsize.is_some() || flags.fixedsize)
-        && (format == OutputFormat::Ora || format == OutputFormat::Psd)
-    {
-        eprintln!("The ora and psd output formats don't support -s/--max-size or -S/--fixed-size");
+    if (flags.maxsize.is_some() || flags.fixedsize) && !format.supports_scaling() {
+        eprintln!(
+            "The dpcs, ora and psd output formats don't support -s/--max-size or -S/--fixed-size"
+        );
         return 2;
     }
 
@@ -335,6 +346,7 @@ fn dump_image(
     let mut dc = DrawContext::default();
     let cs = CanvasState::new_load(&mut dc, in_path)?;
     match format {
+        OutputFormat::Dpcs => cs.save(&mut dc, DP_SAVE_IMAGE_PROJECT_CANVAS, out_path)?,
         OutputFormat::Ora => cs.save(&mut dc, DP_SAVE_IMAGE_ORA, out_path)?,
         OutputFormat::Psd => cs.save(&mut dc, DP_SAVE_IMAGE_PSD, out_path)?,
         OutputFormat::Png | OutputFormat::Jpg | OutputFormat::Jpeg | OutputFormat::Webp => {
@@ -447,6 +459,7 @@ fn dump_recording(
         *index += 1;
 
         match format {
+            OutputFormat::Dpcs => pe.save(&path, DP_SAVE_IMAGE_PROJECT_CANVAS)?,
             OutputFormat::Ora => pe.save(&path, DP_SAVE_IMAGE_ORA)?,
             OutputFormat::Psd => pe.save(&path, DP_SAVE_IMAGE_PSD)?,
             OutputFormat::Png | OutputFormat::Jpg | OutputFormat::Jpeg | OutputFormat::Webp => {

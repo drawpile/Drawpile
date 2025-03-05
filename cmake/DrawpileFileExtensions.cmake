@@ -12,7 +12,8 @@ set(SUPPORTED_FILE_TYPES
 		UTI net.drawpile.dprec
 		CONFORMS_TO public.image
 		EXT dprec
-		MAGIC "DPREC\\0"
+		MAGIC
+			0 string "DPREC\\0"
 
 	TYPE
 		EXPORTED
@@ -22,6 +23,17 @@ set(SUPPORTED_FILE_TYPES
 		UTI net.drawpile.dptxt
 		CONFORMS_TO public.image public.text
 		EXT dptxt
+
+	TYPE
+		EXPORTED
+		NAME Drawpile canvas
+		GROUP LAYERED_IMAGE
+		MIME application/vnd.drawpile.canvas
+		UTI net.drawpile.dpcs
+		EXT dpcs
+		MAGIC
+			0 string "SQLite format 3\\0"
+			68 big32 520585025
 
 	TYPE
 		IMPORTED
@@ -174,6 +186,25 @@ function(get_xdg_extensions out_var)
 	set(${out_var} "${exts}${urls}" PARENT_SCOPE)
 endfunction()
 
+function(generate_xdg_mime_info_matches out_var indent)
+	list(LENGTH ARGN count)
+	if(count LESS 3)
+		message(FATAL_ERROR "Ran out of entries generating mime info matches")
+	endif()
+
+	list(POP_FRONT ARGN offset type value)
+	set(result "${indent}<match type=\"${type}\" value=\"${value}\" offset=\"${offset}\"")
+
+	if(count GREATER 3)
+		generate_xdg_mime_info_matches(child_matches "${indent}\t" ${ARGN})
+		string(APPEND result ">\n${child_matches}${indent}</match>\n")
+	else()
+		string(APPEND result "/>\n")
+	endif()
+
+	set(${out_var} "${result}" PARENT_SCOPE)
+endfunction()
+
 #[[
 Generates XDG mime-info files for the exported file types.
 #]]
@@ -193,11 +224,8 @@ function(generate_xdg_mime_info out_dir)
 				)
 
 				if(MAGIC)
-					list(APPEND mime_info
-						"\t\t<magic>\n"
-						"\t\t\t<match type=\"string\" value=\"${MAGIC}\" offset=\"0\"/>\n"
-						"\t\t</magic>\n"
-					)
+					generate_xdg_mime_info_matches(magic_matches "\t\t\t" ${MAGIC})
+					list(APPEND mime_info "\t\t<magic>\n${magic_matches}\t\t</magic>\n")
 				endif()
 
 				foreach(_ext IN LISTS EXT)

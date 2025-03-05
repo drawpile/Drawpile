@@ -622,6 +622,119 @@ void DP_pixels15_to_8_tile(DP_Pixel8 *dst, const DP_Pixel15 *src)
 }
 
 
+void DP_pixels15_to_split_tile8(DP_SplitTile8 *dst, const DP_Pixel15 *src)
+{
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        DP_Pixel15 p = src[i];
+        dst->b[i] = DP_channel15_to_8(p.b);
+        dst->g[i] = DP_channel15_to_8(p.g);
+        dst->r[i] = DP_channel15_to_8(p.r);
+        dst->a[i] = DP_channel15_to_8(p.a);
+    }
+}
+
+void DP_split_tile8_to_pixels15(DP_Pixel15 *dst, const DP_SplitTile8 *src)
+{
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        dst[i] = (DP_Pixel15){
+            .b = DP_channel8_to_15(src->b[i]),
+            .g = DP_channel8_to_15(src->g[i]),
+            .r = DP_channel8_to_15(src->r[i]),
+            .a = DP_channel8_to_15(src->a[i]),
+        };
+    }
+}
+
+void DP_split_tile8_to_pixels15_checked(DP_Pixel15 *dst,
+                                        const DP_SplitTile8 *src)
+{
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        uint8_t b = src->b[i];
+        uint8_t g = src->g[i];
+        uint8_t r = src->r[i];
+        uint8_t a = src->a[i];
+        dst[i] = (DP_Pixel15){
+            .b = DP_channel8_to_15(b <= a ? b : a),
+            .g = DP_channel8_to_15(g <= a ? g : a),
+            .r = DP_channel8_to_15(r <= a ? r : a),
+            .a = DP_channel8_to_15(a),
+        };
+    }
+}
+
+void DP_pixels15_to_split_tile8_delta(DP_SplitTile8 *dst, const DP_Pixel15 *src)
+{
+    uint8_t last_b = 0;
+    uint8_t last_g = 0;
+    uint8_t last_r = 0;
+    uint8_t last_a = 0;
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        DP_Pixel15 p = src[i];
+        uint8_t b = DP_channel15_to_8(p.b);
+        uint8_t g = DP_channel15_to_8(p.g);
+        uint8_t r = DP_channel15_to_8(p.r);
+        uint8_t a = DP_channel15_to_8(p.a);
+        dst->b[i] = b - last_b;
+        dst->g[i] = g - last_g;
+        dst->r[i] = r - last_r;
+        dst->a[i] = a - last_a;
+        last_b = b;
+        last_g = g;
+        last_r = r;
+        last_a = a;
+    }
+}
+
+void DP_split_tile8_delta_to_pixels15(DP_Pixel15 *dst, const DP_SplitTile8 *src)
+{
+    uint8_t last_b = 0;
+    uint8_t last_g = 0;
+    uint8_t last_r = 0;
+    uint8_t last_a = 0;
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        uint8_t b = src->b[i] + last_b;
+        uint8_t g = src->g[i] + last_g;
+        uint8_t r = src->r[i] + last_r;
+        uint8_t a = src->a[i] + last_a;
+        last_b = b;
+        last_g = g;
+        last_r = r;
+        last_a = a;
+        dst[i] = (DP_Pixel15){
+            .b = DP_channel8_to_15(b),
+            .g = DP_channel8_to_15(g),
+            .r = DP_channel8_to_15(r),
+            .a = DP_channel8_to_15(a),
+        };
+    }
+}
+
+void DP_split_tile8_delta_to_pixels15_checked(DP_Pixel15 *dst,
+                                              const DP_SplitTile8 *src)
+{
+    uint8_t last_b = 0;
+    uint8_t last_g = 0;
+    uint8_t last_r = 0;
+    uint8_t last_a = 0;
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        uint8_t b = src->b[i] + last_b;
+        uint8_t g = src->g[i] + last_g;
+        uint8_t r = src->r[i] + last_r;
+        uint8_t a = src->a[i] + last_a;
+        last_b = b;
+        last_g = g;
+        last_r = r;
+        last_a = a;
+        dst[i] = (DP_Pixel15){
+            .b = DP_channel8_to_15(b <= a ? b : a),
+            .g = DP_channel8_to_15(g <= a ? g : a),
+            .r = DP_channel8_to_15(r <= a ? r : a),
+            .a = DP_channel8_to_15(a),
+        };
+    }
+}
+
+
 // Adapted from the Qt framework, see license above.
 static const unsigned int unpremultiply_factors[] = {
     0u,       16711935u, 8355967u, 5570645u, 4177983u, 3342387u, 2785322u,

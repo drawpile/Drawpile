@@ -79,6 +79,13 @@ typedef struct DP_UPixelFloat {
     float b, g, r, a;
 } DP_UPixelFloat;
 
+typedef struct DP_SplitTile8 {
+    uint8_t b[DP_TILE_LENGTH];
+    uint8_t g[DP_TILE_LENGTH];
+    uint8_t r[DP_TILE_LENGTH];
+    uint8_t a[DP_TILE_LENGTH];
+} DP_SplitTile8;
+
 
 uint16_t DP_fix15_mul(uint16_t a, uint16_t b);
 
@@ -114,6 +121,16 @@ void DP_pixels15_to_8_unpremultiply(DP_UPixel8 *dst, const DP_Pixel15 *src,
 // enough! The pixels of tiles are automatically properly aligned, but e.g. the
 // pixels of images or compression buffers are not, so you can't use this there.
 void DP_pixels15_to_8_tile(DP_Pixel8 *dst, const DP_Pixel15 *src);
+
+// These transform between 15 bit pixels and split 8 bit channels with each
+// channel being delta-encoded. This gives generally better results with zstd
+// compression. Credit to Bonbli for suggesting this.
+void DP_pixels15_to_split_tile8_delta(DP_SplitTile8 *dst,
+                                      const DP_Pixel15 *src);
+void DP_split_tile8_delta_to_pixels15(DP_Pixel15 *dst,
+                                      const DP_SplitTile8 *src);
+void DP_split_tile8_delta_to_pixels15_checked(DP_Pixel15 *dst,
+                                              const DP_SplitTile8 *src);
 
 DP_UPixel8 DP_pixel8_unpremultiply(DP_Pixel8 pixel);
 DP_UPixel15 DP_pixel15_unpremultiply(DP_Pixel15 pixel);

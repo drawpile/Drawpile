@@ -162,6 +162,20 @@ int DP_worker_thread_count(DP_Worker *worker)
     return worker->thread_count;
 }
 
+void DP_worker_push_with(DP_Worker *worker,
+                         void (*insert_element)(void *user, void *element),
+                         void *user)
+{
+    DP_ASSERT(worker);
+    DP_ASSERT(insert_element);
+    DP_Mutex *queue_mutex = worker->queue_mutex;
+    size_t element_size = worker->element_size;
+    DP_MUTEX_MUST_LOCK(queue_mutex);
+    insert_element(user, DP_queue_push(&worker->queue, element_size));
+    DP_MUTEX_MUST_UNLOCK(queue_mutex);
+    DP_SEMAPHORE_MUST_POST(worker->sem);
+}
+
 void DP_worker_push(DP_Worker *worker, void *element)
 {
     DP_ASSERT(worker);
@@ -172,16 +186,4 @@ void DP_worker_push(DP_Worker *worker, void *element)
     memcpy(DP_queue_push(&worker->queue, element_size), element, element_size);
     DP_MUTEX_MUST_UNLOCK(queue_mutex);
     DP_SEMAPHORE_MUST_POST(worker->sem);
-}
-
-void DP_worker_lock(DP_Worker *worker)
-{
-    DP_ASSERT(worker);
-    DP_MUTEX_MUST_LOCK(worker->queue_mutex);
-}
-
-void DP_worker_unlock(DP_Worker *worker)
-{
-    DP_ASSERT(worker);
-    DP_MUTEX_MUST_UNLOCK(worker->queue_mutex);
 }

@@ -56,10 +56,14 @@ bool DP_key_frame_layer_revealed(const DP_KeyFrameLayer *kfl)
 }
 
 
+static size_t key_frame_size(int count)
+{
+    return DP_FLEX_SIZEOF(DP_TransientKeyFrame, layers, DP_int_to_size(count));
+}
+
 static void *allocate_key_frame(bool transient, int count)
 {
-    DP_TransientKeyFrame *tkf = DP_malloc(
-        DP_FLEX_SIZEOF(DP_TransientKeyFrame, layers, DP_int_to_size(count)));
+    DP_TransientKeyFrame *tkf = DP_malloc(key_frame_size(count));
     DP_atomic_set(&tkf->refcount, 1);
     tkf->transient = transient;
     tkf->count = count;
@@ -209,6 +213,26 @@ DP_TransientKeyFrame *DP_transient_key_frame_new_init(int layer_id, int reserve)
     return tkf;
 }
 
+DP_TransientKeyFrame *DP_transient_key_frame_reserve(DP_TransientKeyFrame *tkf,
+                                                     int reserve)
+{
+    DP_ASSERT(tkf);
+    DP_ASSERT(DP_atomic_get(&tkf->refcount) > 0);
+    DP_ASSERT(tkf->transient);
+    DP_ASSERT(reserve >= 0);
+    DP_debug("Reserve %d elements in key frame", reserve);
+    if (reserve > 0) {
+        int old_count = tkf->count;
+        int new_count = old_count + reserve;
+        tkf = DP_realloc(tkf, key_frame_size(new_count));
+        tkf->count = new_count;
+        for (int i = old_count; i < new_count; ++i) {
+            tkf->layers[i] = (DP_KeyFrameLayer){0, 0};
+        }
+    }
+    return tkf;
+}
+
 DP_TransientKeyFrame *DP_transient_key_frame_incref(DP_TransientKeyFrame *tt)
 {
     return (DP_TransientKeyFrame *)DP_key_frame_incref((DP_KeyFrame *)tt);
@@ -274,4 +298,14 @@ void DP_transient_key_frame_layer_delete_at(DP_TransientKeyFrame *tkf,
     int new_count = --tkf->count;
     memmove(&tkf->layers[index], &tkf->layers[index + 1],
             DP_int_to_size(new_count - index) * sizeof(tkf->layers[0]));
+}
+
+void DP_transient_key_frame_clamp(DP_TransientKeyFrame *tkf, int count)
+{
+    DP_ASSERT(tkf);
+    DP_ASSERT(DP_atomic_get(&tkf->refcount) > 0);
+    DP_ASSERT(tkf->transient);
+    DP_ASSERT(count >= 0);
+    DP_ASSERT(count <= tkf->count);
+    tkf->count = count;
 }
