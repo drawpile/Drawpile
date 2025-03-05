@@ -6733,7 +6733,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>&amp;None</source>
-        <translation type="unfinished"></translation>
+        <translation>なし(&amp;N)</translation>
     </message>
     <message>
         <location line="+1"/>
