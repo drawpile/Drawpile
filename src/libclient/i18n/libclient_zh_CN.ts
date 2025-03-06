@@ -721,7 +721,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Recolor</source>
-        <translation>Recolor</translation>
+        <translation>重新着色</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1262,12 +1262,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+14"/>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>房间密码已被服务器管理员移除. 此服务器不允许通过浏览器加入公共房间, 它们将被断开连接.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>房间密码已被 %1 移除. 此服务器不允许通过浏览器加入公共房间, 它们将被断开连接.</translation>
     </message>
     <message>
         <location line="+93"/>
@@ -1368,60 +1368,60 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/invitelistmodel.cpp" line="+119"/>
         <source>No invite codes, click Create to add one.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有邀请代码, 请点击创建来添加一个.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Used %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 由 %2 使用</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Created %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 由 %2 创建</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Operator and Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>房间管理员和信任用户</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished">房间管理员</translation>
+        <translation>房间管理员</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished">信任用户</translation>
+        <translation>信任用户</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1/%2</source>
         <extracomment>This is the &quot;uses&quot; column in the invite code table. %1 is how often the invite has been used, %2 is how many there are total.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1/%2</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Code</source>
-        <translation type="unfinished"></translation>
+        <translation>代码</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Creator</source>
-        <translation type="unfinished"></translation>
+        <translation>创建者</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Role</source>
-        <translation type="unfinished"></translation>
+        <translation>角色</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Uses</source>
-        <translation type="unfinished"></translation>
+        <translation>使用</translation>
     </message>
 </context>
 <context>
