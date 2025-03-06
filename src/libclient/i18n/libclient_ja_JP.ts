@@ -1390,12 +1390,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished">管理者</translation>
+        <translation>管理者</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished">信頼済み</translation>
+        <translation>信頼済み</translation>
     </message>
     <message>
         <location line="+8"/>
