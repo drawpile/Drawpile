@@ -88,7 +88,7 @@
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation>锁定透明度 (recolor模式)</translation>
+        <translation>锁定透明度 (重新着色模式)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -822,7 +822,7 @@
     <message>
         <location line="+17"/>
         <source>Session</source>
-        <translation type="unfinished">房间</translation>
+        <translation>房间</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -842,22 +842,22 @@
     <message>
         <location line="+30"/>
         <source>Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>代码</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Create</source>
-        <translation type="unfinished">新建</translation>
+        <translation>创建</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Revoke</source>
-        <translation type="unfinished"></translation>
+        <translation>撤销</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Copy</source>
-        <translation type="unfinished">复制</translation>
+        <translation>复制</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -872,7 +872,7 @@
     <message>
         <location line="+37"/>
         <source>Allow session operators to manage invite codes</source>
-        <translation type="unfinished"></translation>
+        <translation>允许房间管理员管理邀请代码</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2551,7 +2551,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Toggle Recolor Mode</source>
-        <translation>切换Recolor模式</translation>
+        <translation>切换重新着色模式</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3911,12 +3911,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+113"/>
         <source>Block new joins</source>
-        <translation type="unfinished"></translation>
+        <translation>禁止新用户加入</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Require a registered account to join</source>
-        <translation type="unfinished"></translation>
+        <translation>禁止非注册用户加入</translation>
     </message>
     <message>
         <location line="+54"/>
@@ -4978,7 +4978,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-292"/>
         <source>Lock Alpha (Recolor Mode)</source>
-        <translation>锁定透明度 (Recolor模式)</translation>
+        <translation>锁定透明度 (重新着色模式)</translation>
     </message>
     <message>
         <location line="-253"/>
@@ -6724,32 +6724,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="+426"/>
         <source>Create Invite Code</source>
-        <translation type="unfinished"></translation>
+        <translation>创建邀请代码</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Uses:</source>
-        <translation type="unfinished"></translation>
+        <translation>使用:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;None</source>
-        <translation type="unfinished"></translation>
+        <translation>无(&amp;N)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished">信任用户(&amp;T)</translation>
+        <translation>信任用户(&amp;T)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished">房间管理员(&amp;O)</translation>
+        <translation>房间管理员(&amp;O)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Role:</source>
-        <translation type="unfinished"></translation>
+        <translation>角色:</translation>
     </message>
 </context>
 <context>
@@ -6851,7 +6851,7 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/invitedialog.cpp" line="-334"/>
         <location line="+260"/>
         <source>What are invite codes?</source>
-        <translation type="unfinished"></translation>
+        <translation>什么是邀请代码?</translation>
     </message>
     <message>
         <location line="-122"/>
@@ -6861,52 +6861,52 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location line="+22"/>
         <source>Invite code link(s) copied to clipboard.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>邀请代码链接已复制到剪贴板.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+34"/>
         <source>This server does not support invite codes.</source>
-        <translation type="unfinished"></translation>
+        <translation>此服务器不支持邀请代码.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only server administrators can manage invite codes on this session.</source>
-        <translation type="unfinished"></translation>
+        <translation>只有服务器管理员可以管理此房间的邀请代码.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Only operators and server administrators can manage invite codes on this session.</source>
-        <translation type="unfinished"></translation>
+        <translation>只有房间管理员和服务器管理员可以管理此房间的邀请代码.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Revoke Invite Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>撤销邀请代码</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really revoke %n selected invite code(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>确定撤销 %n 个选中的邀请代码吗?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Invite codes let someone join the session via a limited-use link. You can revoke the code later to take away their access again.</source>
-        <translation type="unfinished"></translation>
+        <translation>邀请代码允许用户通过一个有限使用的链接来加入房间. 你可以稍后撤销代码来取消他们的访问权.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Someone joining via an invite code bypasses normal session restrictions: they don&apos;t need the session password, can join via web browser, don&apos;t need a registered account and aren&apos;t affected by new joins being blocked.</source>
-        <translation type="unfinished"></translation>
+        <translation>通过邀请代码加入的用户可以绕过正常的房间限制: 他们不需要房间密码, 可以通过浏览器加入, 不需要注册一个账号, 以及不受禁止新用户加入的影响.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>They don&apos;t bypass bans or server-wide restrictions.</source>
         <extracomment>&quot;They&quot; is referring to invite codes.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>邀请代码无法绕过禁止IP或者服务器范围内的限制.</translation>
     </message>
 </context>
 <context>
@@ -8102,37 +8102,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+36"/>
         <source>Blue Apatite</source>
-        <translation type="unfinished"></translation>
+        <translation>Blue Apatite</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Indigo</source>
-        <translation type="unfinished"></translation>
+        <translation>Indigo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Ocean Deep</source>
-        <translation type="unfinished"></translation>
+        <translation>Ocean Deep</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pool Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Pool Table</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rose Quartz</source>
-        <translation type="unfinished"></translation>
+        <translation>Rose Quartz</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rust</source>
-        <translation type="unfinished"></translation>
+        <translation>Rust</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Watermelon</source>
-        <translation type="unfinished"></translation>
+        <translation>Watermelon</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8857,25 +8857,25 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+9"/>
         <location filename="../mainwindow.cpp" line="-1157"/>
         <source>Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Windows Ink Non-Native</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows Ink Non-Native</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+10"/>
         <source>Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>Wintab</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Wintab Relative</source>
-        <translation type="unfinished"></translation>
+        <translation>Wintab Relative</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8972,7 +8972,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Switch tool temporarily by holding primary shortcut for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>按住首要快捷键 %1 来临时切换工具</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -9173,7 +9173,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Toggle recolor mode</source>
-        <translation>切换 recolor 模式</translation>
+        <translation>切换重新着色模式</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -9540,7 +9540,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+92"/>
         <source>Nothing here yet!</source>
-        <translation>Nothing here yet!</translation>
+        <translation>这里还未有东西!</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10561,32 +10561,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+55"/>
         <source>Color history</source>
-        <translation type="unfinished"></translation>
+        <translation>颜色历史记录</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show on this dock</source>
-        <translation type="unfinished"></translation>
+        <translation>在此面板上显示</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Show on all color docks</source>
-        <translation type="unfinished"></translation>
+        <translation>在所有颜色面板上显示</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hide on all color docks</source>
-        <translation type="unfinished"></translation>
+        <translation>在所有颜色面板上隐藏</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show only on this dock</source>
-        <translation type="unfinished"></translation>
+        <translation>只在此面板上显示</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hide only on this dock</source>
-        <translation type="unfinished"></translation>
+        <translation>只在此面板上隐藏</translation>
     </message>
     <message>
         <location line="+65"/>
@@ -10602,7 +10602,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Rename Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名色板</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -11245,7 +11245,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>KisTablet Windows Ink non-native input</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Windows Ink non-native 输入</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11668,12 +11668,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+20"/>
         <source>Constrain</source>
-        <translation type="unfinished"></translation>
+        <translation>约束</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Center</source>
-        <translation type="unfinished">居中</translation>
+        <translation>居中</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -11803,7 +11803,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>No layer selected</source>
-        <translation type="unfinished"></translation>
+        <translation>未选中图层</translation>
     </message>
     <message>
         <location line="+4"/>
