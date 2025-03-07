@@ -183,6 +183,7 @@ private:
 	bool m_compatibilityMode = false;
 	bool m_canReceive = true;
 	bool m_receiveMore = false;
+	bool m_handlingError = false;
 };
 
 

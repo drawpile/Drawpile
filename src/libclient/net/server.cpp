@@ -6,6 +6,7 @@
 #include "libshared/util/whatismyip.h"
 #include <QDebug>
 #include <QMetaEnum>
+#include <QScopedValueRollback>
 #include <QUrlQuery>
 #ifdef HAVE_TCPSOCKETS
 #	include "libclient/net/tcpserver.h"
@@ -197,9 +198,16 @@ void Server::handleSocketStateChange(QAbstractSocket::SocketState state)
 
 void Server::handleSocketError()
 {
-	QString errorString = socketErrorStringWithCode();
-	qWarning() << "Socket error:" << errorString;
 	QAbstractSocket::SocketError errorCode = socketError();
+	if(m_handlingError) {
+		qWarning("Socket error %d while already handling one", int(errorCode));
+		return;
+	}
+
+	QScopedValueRollback<bool> rollback(m_handlingError, true);
+	QString errorString = socketErrorStringWithCode();
+	qWarning(
+		"Socket error %d: %s", int(errorCode), qUtf8Printable(errorString));
 	if(errorCode != QAbstractSocket::RemoteHostClosedError) {
 		if(m_error.isEmpty()) {
 			m_error = errorString;
