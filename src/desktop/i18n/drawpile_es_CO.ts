@@ -138,7 +138,7 @@
     <message>
         <location line="+19"/>
         <source>Gain: </source>
-        <translation type="unfinished">Ganar: </translation>
+        <translation type="unfinished">Ganancia: </translation>
     </message>
     <message>
         <location line="+22"/>
@@ -347,7 +347,7 @@
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished">Tipo:</translation>
+        <translation>Tipo:</translation>
     </message>
 </context>
 <context>
@@ -497,7 +497,7 @@
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Todos los Archivos Soportados (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -513,12 +513,12 @@
     <message>
         <location line="+1"/>
         <source>Session Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Roles de Sesiones (%1)</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Error opening temporary file for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error en abrir archivo temporal para %1.</translation>
     </message>
     <message>
         <location line="+12"/>
