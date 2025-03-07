@@ -37,6 +37,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Allow adding a "w" query parameter to session URLs to connect via WebSocket instead. Thanks IZUHU for suggesting.
  * Fix: Remember whether a host was connected to via WebSocket by adding the "w" query parameter to it.
  * Server Feature: Add a "prefer WebSockets" option. Clients will generate appropriate invite links and announcements will contain this preference.
+ * Server Fix: Allow refreshing external bans even when the section is locked. Thanks Bluestrings for reporting.
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.

@@ -145,7 +145,8 @@ private:
 		const QJsonObject &request, const QString &section,
 		const std::function<JsonApiResult(
 			MultiServer *, JsonApiMethod, const QStringList &,
-			const QJsonObject &, bool)> &fn);
+			const QJsonObject &, bool)> &fn,
+		const QSet<QStringList> &allowedPaths = {});
 	JsonApiResult serverJsonApi(
 		JsonApiMethod method, const QStringList &path,
 		const QJsonObject &request, bool sectionLocked);

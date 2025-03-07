@@ -499,7 +499,7 @@ JsonApiResult MultiServer::callJsonApi(
 	} else if(head == QStringLiteral("extbans")) {
 		return callJsonApiCheckLock(
 			method, tail, request, QStringLiteral("extbans"),
-			&MultiServer::extbansJsonApi);
+			&MultiServer::extbansJsonApi, {{QStringLiteral("refresh")}});
 	} else if(head == QStringLiteral("locks")) {
 		return locksJsonApi(method, tail, request);
 	} else {
@@ -520,10 +520,12 @@ JsonApiResult MultiServer::callJsonApiCheckLock(
 	const QString &section,
 	const std::function<JsonApiResult(
 		MultiServer *, JsonApiMethod, const QStringList &, const QJsonObject &,
-		bool)> &fn)
+		bool)> &fn,
+	const QSet<QStringList> &allowedPaths)
 {
 	bool sectionLocked = m_config->isAdminSectionLocked(section);
-	if(method == JsonApiMethod::Get || !sectionLocked) {
+	if(method == JsonApiMethod::Get || !sectionLocked ||
+	   allowedPaths.contains(path)) {
 		return fn(this, method, path, request, sectionLocked);
 	} else {
 		return JsonApiErrorResult(
