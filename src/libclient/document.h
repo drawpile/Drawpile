@@ -193,6 +193,7 @@ public:
 	}
 
 	bool isSessionOutOfSpace() const { return m_sessionOutOfSpace; }
+	bool isSessionPreferWebSockets() const { return m_sessionPreferWebSockets; }
 	bool isSessionInviteCodesEnabled() const
 	{
 		return m_sessionInviteCodesEnabled;
@@ -257,6 +258,7 @@ signals:
 	void baseResetThresholdChanged(double threshold);
 	void autoResetTooLarge(int maxSize);
 	void sessionOutOfSpaceChanged(bool outOfSpace);
+	void sessionPreferWebSocketsChanged(bool preferWebSockets);
 	void sessionInviteCodesEnabledChanged(bool inviteCodesEnabled);
 	void serverSupportsInviteCodesChanged(bool serverSupportsInviteCodes);
 	void preparingResetChanged(bool preparingReset);
@@ -381,6 +383,7 @@ private:
 	void setSessionIdleOverride(bool idleOverride);
 	void setSessionAllowIdleOverride(bool allowIdleOverride);
 	void setSessionOutOfSpace(bool outOfSpace);
+	void setSessionPreferWebSockets(bool sessionPreferWebSockets);
 	void setSessionInviteCodesEnabled(bool sessionInviteCodesEnabled);
 	void setServerSupportsInviteCodes(bool serverSupportsInviteCodes);
 
@@ -453,6 +456,7 @@ private:
 	bool m_sessionDeputies;
 	bool m_sessionIdleOverride;
 	bool m_sessionAllowIdleOverride;
+	bool m_sessionPreferWebSockets = false;
 	bool m_sessionInviteCodesEnabled = false;
 	int m_sessionMaxUserCount;
 	int m_sessionHistoryMaxSize;

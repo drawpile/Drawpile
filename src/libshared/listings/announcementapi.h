@@ -38,6 +38,7 @@ struct Session {
 	bool closed;
 	int activeDrawingUsers;
 	bool allowWeb;
+	bool preferWebSockets;
 };
 
 struct Announcement {

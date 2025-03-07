@@ -1123,6 +1123,8 @@ void Session::sendUpdatedSessionProperties()
 	if(m_config->internalConfig().webSocket) {
 		config[QStringLiteral("allowWeb")] =
 			m_history->hasFlag(SessionHistory::AllowWeb);
+		config[QStringLiteral("preferWebSockets")] =
+			m_config->getConfigBool(config::PreferWebSockets);
 	}
 #endif
 	addToHistory(net::ServerReply::makeSessionConf(config));
@@ -1879,6 +1881,7 @@ sessionlisting::Session Session::getSessionAnnouncement() const
 		m_closed,
 		activeDrawingUserCount(ACTIVE_THRESHOLD_MS),
 		m_history->hasFlag(SessionHistory::AllowWeb),
+		m_config->preferWebSockets(),
 	};
 }
 
@@ -1911,7 +1914,12 @@ void Session::onAnnouncementError(
 
 void Session::onConfigValueChanged(const ConfigKey &key)
 {
-	if(key.index == config::IdleTimeLimit.index) {
+	if(key.index == config::IdleTimeLimit.index
+#ifdef HAVE_WEBSOCKETS
+	   || (m_config->internalConfig().webSocket &&
+		   key.index == config::PreferWebSockets.index)
+#endif
+	) {
 		sendUpdatedSessionProperties();
 	} else if(key.index == config::ForceNsfm.index) {
 		if(forceEnableNsfm(m_history, m_config)) {
@@ -2043,6 +2051,9 @@ QJsonObject Session::getDescription(bool full, bool invite) const
 	if(m_config->internalConfig().webSocket) {
 		o[QStringLiteral("allowWeb")] =
 			invite || m_history->hasFlag(SessionHistory::AllowWeb);
+		if(m_config->getConfigBool(config::PreferWebSockets)) {
+			o.insert(QStringLiteral("preferWebSockets"), true);
+		}
 	}
 #endif
 

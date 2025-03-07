@@ -94,6 +94,7 @@ private:
 			false,
 			-1,
 			false,
+			false,
 		};
 	}
 

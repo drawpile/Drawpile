@@ -243,6 +243,15 @@ bool ServerConfig::setAdminSectionsLocked(
 	return false;
 }
 
+bool ServerConfig::preferWebSockets() const
+{
+#ifdef HAVE_WEBSOCKETS
+	return m_internalCfg.webSocket && getConfigBool(config::PreferWebSockets);
+#else
+	return false;
+#endif
+}
+
 int ServerConfig::parseTimeString(const QString &str)
 {
 	static const QRegularExpression re(

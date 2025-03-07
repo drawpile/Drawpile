@@ -156,7 +156,10 @@ static const ConfigKey
 	ExtAuthWebHost(48, "extauthweb", "false", ConfigKey::BOOL),
 	// Whether to enable temporary invites on sessions by default. Can be
 	// overridden by moderators per-session.
-	Invites(49, "invites", "true", ConfigKey::BOOL);
+	Invites(49, "invites", "true", ConfigKey::BOOL),
+	// Whether this server prefers that you connect via WebSockets. Will cause
+	// the client to generate invite links accordingly.
+	PreferWebSockets(50, "preferWebSockets", "false", ConfigKey::BOOL);
 }
 
 //! Settings that are not adjustable after the server has started
@@ -334,6 +337,8 @@ public:
 	virtual bool checkAdminSectionLockPassword(const QString &password) const;
 	virtual bool setAdminSectionsLocked(
 		const QSet<QString> &sections, const QString &password);
+
+	bool preferWebSockets() const;
 
 	/**
 	 * @brief Get the configured logger instance

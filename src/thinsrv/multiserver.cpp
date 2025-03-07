@@ -589,6 +589,7 @@ JsonApiResult MultiServer::serverJsonApi(
 		config::ExtAuthWebSession,
 #	endif
 		config::PasswordDependentWebSession,
+		config::PreferWebSockets,
 #endif
 		config::SessionUserLimit,
 		config::EmptySessionLingerTime,
@@ -635,6 +636,7 @@ JsonApiResult MultiServer::serverJsonApi(
 		result.remove(config::AllowGuestWebSession.name);
 		result.remove(config::ExtAuthWebSession.name);
 		result.remove(config::PasswordDependentWebSession.name);
+		result.remove(config::PreferWebSockets.name);
 	}
 #endif
 

@@ -352,6 +352,7 @@ void Document::onServerDisconnect()
 	m_inviteList->clear();
 	setSessionOpword(false);
 	setSessionOutOfSpace(false);
+	setSessionPreferWebSockets(false);
 	setSessionInviteCodesEnabled(false);
 	setServerSupportsInviteCodes(false);
 	emit compatibilityModeChanged(false);
@@ -432,6 +433,11 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 
 	if(config.contains("allowWeb")) {
 		setSessionAllowWeb(config["allowWeb"].toBool());
+	}
+
+	if(config.contains(QStringLiteral("preferWebSockets"))) {
+		setSessionPreferWebSockets(
+			config.value(QStringLiteral("preferWebSockets")).toBool());
 	}
 
 	if(config.contains("maxUserCount"))
@@ -790,6 +796,14 @@ void Document::setSessionOutOfSpace(bool outOfSpace)
 	if(outOfSpace != m_sessionOutOfSpace) {
 		m_sessionOutOfSpace = outOfSpace;
 		emit sessionOutOfSpaceChanged(outOfSpace);
+	}
+}
+
+void Document::setSessionPreferWebSockets(bool sessionPreferWebSockets)
+{
+	if(sessionPreferWebSockets != m_sessionPreferWebSockets) {
+		m_sessionPreferWebSockets = sessionPreferWebSockets;
+		emit sessionPreferWebSocketsChanged(sessionPreferWebSockets);
 	}
 }
 

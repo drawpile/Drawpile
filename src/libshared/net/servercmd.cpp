@@ -325,7 +325,8 @@ net::Message ServerReply::makeLog(const QString &message, QJsonObject data)
 
 net::Message ServerReply::makeLoginGreeting(
 	const QString &message, int version, const QJsonArray &flags,
-	const QJsonObject &methods, const QString &info, const QString &rules)
+	const QJsonObject &methods, const QString &info, const QString &rules,
+	bool preferWebSockets)
 {
 	QJsonObject data = {
 		{QStringLiteral("type"), QStringLiteral("login")},
@@ -338,6 +339,9 @@ net::Message ServerReply::makeLoginGreeting(
 	}
 	if(!rules.isEmpty()) {
 		data[QStringLiteral("rules")] = rules;
+	}
+	if(preferWebSockets) {
+		data.insert(QStringLiteral("preferWebSockets"), true);
 	}
 	return make(data);
 }

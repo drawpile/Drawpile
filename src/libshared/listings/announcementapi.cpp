@@ -278,6 +278,7 @@ AnnouncementApiResponse *getSessionList(const QUrl &apiUrl)
 				obj["closed"].toBool(),
 				obj["activedrawingusers"].toInt(-1),
 				obj["allowweb"].toBool(false),
+				obj["preferwebsockets"].toBool(),
 			};
 		}
 
@@ -314,6 +315,9 @@ AnnouncementApiResponse *announceSession(const QUrl &apiUrl, const Session &sess
 	}
 	if(session.allowWeb) {
 		o["allowweb"] = true;
+	}
+	if(session.preferWebSockets) {
+		o.insert(QStringLiteral("preferwebsockets"), true);
 	}
 
 	const QString sessionId = session.id;
@@ -366,6 +370,7 @@ AnnouncementApiResponse *refreshSession(const Announcement &a, const Session &se
 	o["maxusers"] = session.maxUsers;
 	o["closed"] = session.closed;
 	o["allowweb"] = session.allowWeb;
+	o["preferwebsockets"] = session.preferWebSockets;
 
 	// Send request
 	QUrl url = a.apiUrl;
@@ -418,6 +423,7 @@ AnnouncementApiResponse *refreshSessions(const QVector<QPair<Announcement, Sessi
 		o["maxusers"] = listing.second.maxUsers;
 		o["closed"] = listing.second.closed;
 		o["allowweb"] = listing.second.allowWeb;
+		o["preferwebsockets"] = listing.second.preferWebSockets;
 
 		batch[QString::number(listing.first.listingId)] = o;
 	}

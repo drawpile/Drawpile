@@ -23,13 +23,15 @@ class InviteDialog : public QDialog {
 public:
 	InviteDialog(
 		widgets::NetStatus *netStatus, net::InviteListModel *inviteListModel,
-		bool compatibilityMode, bool allowWeb, bool nsfm, bool op,
-		bool moderator, bool supportsCodes, bool codesEnabled, QWidget *parent);
+		bool compatibilityMode, bool allowWeb, bool preferWebSockets, bool nsfm,
+		bool op, bool moderator, bool supportsCodes, bool codesEnabled,
+		QWidget *parent);
 
 	~InviteDialog() override;
 
 	void setSessionCompatibilityMode(bool compatibilityMode);
 	void setSessionAllowWeb(bool allowWeb);
+	void setSessionPreferWebSockets(bool preferWebSockets);
 	void setSessionNsfm(bool nsfm);
 	void setOp(bool op);
 	void setSessionCodesEnabled(bool codesEnabled);
