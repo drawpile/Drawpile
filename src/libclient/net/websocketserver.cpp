@@ -3,8 +3,10 @@
 #include "libshared/net/websocketmessagequeue.h"
 #include <QWebSocket>
 #ifndef __EMSCRIPTEN__
+#	include "cmake-config/config.h"
 #	include "libshared/net/proxy.h"
 #	include <QNetworkProxy>
+#	include <QNetworkRequest>
 #endif
 
 namespace {
@@ -73,7 +75,15 @@ MessageQueue *WebSocketServer::messageQueue() const
 void WebSocketServer::connectToHost(const QUrl &url)
 {
 	qDebug() << "WebSocketServer connecting to" << url;
+#ifdef __EMSCRIPTEN__
 	m_socket->open(url);
+#else
+	QNetworkRequest request(url);
+	request.setHeader(
+		QNetworkRequest::UserAgentHeader,
+		QStringLiteral("DrawpileClient/%1").arg(cmake_config::version()));
+	m_socket->open(request);
+#endif
 }
 
 void WebSocketServer::disconnectFromHost()
