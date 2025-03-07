@@ -191,7 +191,8 @@ int Recents::hostCount() const
 	return recentHostCountWith(qry);
 }
 
-void Recents::addHost(const QString &host, int port, bool joined, bool hosted)
+void Recents::addHost(
+	const QString &host, int port, bool joined, bool hosted, bool webSocket)
 {
 	struct AddHost {
 		long long id;
@@ -199,8 +200,12 @@ void Recents::addHost(const QString &host, int port, bool joined, bool hosted)
 		int port;
 		int flags;
 	};
+	QString effectiveHost =
+		webSocket ? QStringLiteral("%1?w").arg(
+						QString::fromUtf8(QUrl::toPercentEncoding(host)))
+				  : host;
 	DRAWPILE_FS_PERSIST_SCOPE(scopedFsSync);
-	bool ok = m_state.tx([&host, port, joined,
+	bool ok = m_state.tx([&effectiveHost, port, joined,
 						  hosted](StateDatabase::Query &qry) {
 		if(!qry.exec("select recent_host_id, host, port, flags\n"
 					 "from recent_hosts order by weight")) {
@@ -216,7 +221,7 @@ void Recents::addHost(const QString &host, int port, bool joined, bool hosted)
 				qry.value(2).toInt(),
 				qry.value(3).toInt(),
 			};
-			if(ah.host.compare(host, Qt::CaseInsensitive) == 0 &&
+			if(ah.host.compare(effectiveHost, Qt::CaseInsensitive) == 0 &&
 			   ah.port == port) {
 				found = true;
 				ah.flags |= packHostFlags(joined, hosted);
@@ -230,7 +235,7 @@ void Recents::addHost(const QString &host, int port, bool joined, bool hosted)
 			if(!qry.exec(
 				   "insert into recent_hosts (host, port, flags, weight)\n"
 				   "values (?, ?, ?, ?)",
-				   {host, port, packHostFlags(joined, hosted), 0})) {
+				   {effectiveHost, port, packHostFlags(joined, hosted), 0})) {
 				return false;
 			}
 		}

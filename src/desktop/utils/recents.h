@@ -49,7 +49,9 @@ public:
 	QVector<Host> getHosts() const;
 	QString getMostRecentHostAddress() const;
 	int hostCount() const;
-	void addHost(const QString &host, int port, bool joined, bool hosted);
+	void addHost(
+		const QString &host, int port, bool joined, bool hosted,
+		bool webSocket);
 	bool removeHostById(long long id);
 
 signals:

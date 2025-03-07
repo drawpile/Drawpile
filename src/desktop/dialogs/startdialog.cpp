@@ -782,15 +782,26 @@ void StartDialog::guessPage()
 
 void StartDialog::addRecentHost(const QUrl &url, bool join)
 {
-	// FIXME: wss:// and ws:// handling.
-	bool isValidHost = url.isValid() &&
-					   url.scheme().compare("drawpile://", Qt::CaseInsensitive);
-	if(isValidHost) {
-		int port = url.port();
-		dpApp().recents().addHost(
-			url.host(), port > 0 ? port : cmake_config::proto::port(), join,
-			!join);
+	if(!url.isValid()) {
+		return;
 	}
+
+	bool webSocket;
+	QString scheme = url.scheme();
+	if(scheme.compare(QStringLiteral("drawpile"), Qt::CaseInsensitive) == 0) {
+		QUrlQuery query(url);
+		webSocket = query.hasQueryItem(QStringLiteral("w")) ||
+					query.hasQueryItem(QStringLiteral("W"));
+	} else if(scheme.compare(QStringLiteral("wss"), Qt::CaseInsensitive) == 0) {
+		webSocket = true;
+	} else {
+		return;
+	}
+
+	int port = webSocket ? -1 : url.port();
+	dpApp().recents().addHost(
+		url.host(), port > 0 ? port : cmake_config::proto::port(), join, !join,
+		webSocket);
 }
 
 }
