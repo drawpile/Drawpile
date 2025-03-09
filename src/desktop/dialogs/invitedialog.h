@@ -23,13 +23,14 @@ class InviteDialog : public QDialog {
 public:
 	InviteDialog(
 		widgets::NetStatus *netStatus, net::InviteListModel *inviteListModel,
-		bool compatibilityMode, bool allowWeb, bool preferWebSockets, bool nsfm,
-		bool op, bool moderator, bool supportsCodes, bool codesEnabled,
-		QWidget *parent);
+		bool compatibilityMode, bool webSupported, bool allowWeb,
+		bool preferWebSockets, bool nsfm, bool op, bool moderator,
+		bool supportsCodes, bool codesEnabled, QWidget *parent);
 
 	~InviteDialog() override;
 
 	void setSessionCompatibilityMode(bool compatibilityMode);
+	void setSessionWebSupported(bool webSupported);
 	void setSessionAllowWeb(bool allowWeb);
 	void setSessionPreferWebSockets(bool preferWebSockets);
 	void setSessionNsfm(bool nsfm);
@@ -44,8 +45,8 @@ signals:
 	void setInviteCodesEnabled(bool enabled);
 
 private:
-	QString
-	buildWebInviteLink(bool includePassword, const QString &secret) const;
+	QString buildWebInviteLink(
+		bool includePassword, bool web, const QString &secret) const;
 	static QString buildPath(QString path, const QString &secret);
 	void copyInviteLink();
 	int copyInviteCodeLinks();

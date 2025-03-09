@@ -2931,14 +2931,18 @@ void MainWindow::invite()
 		canvas::AclState *acls = canvas->aclState();
 		dialogs::InviteDialog *dlg = new dialogs::InviteDialog(
 			m_netstatus, m_doc->inviteList(), m_doc->isCompatibilityMode(),
-			m_doc->isSessionAllowWeb(), m_doc->isSessionPreferWebSockets(),
-			m_doc->isSessionNsfm(), acls->amOperator(), client->isModerator(),
+			m_doc->isSessionWebSupported(), m_doc->isSessionAllowWeb(),
+			m_doc->isSessionPreferWebSockets(), m_doc->isSessionNsfm(),
+			acls->amOperator(), client->isModerator(),
 			m_doc->serverSupportsInviteCodes(),
 			m_doc->isSessionInviteCodesEnabled(), this);
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
 		connect(
 			m_doc, &Document::compatibilityModeChanged, dlg,
 			&dialogs::InviteDialog::setSessionCompatibilityMode);
+		connect(
+			m_doc, &Document::sessionWebSupportedChanged, dlg,
+			&dialogs::InviteDialog::setSessionWebSupported);
 		connect(
 			m_doc, &Document::sessionAllowWebChanged, dlg,
 			&dialogs::InviteDialog::setSessionAllowWeb);

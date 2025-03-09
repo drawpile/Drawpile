@@ -352,6 +352,7 @@ void Document::onServerDisconnect()
 	m_inviteList->clear();
 	setSessionOpword(false);
 	setSessionOutOfSpace(false);
+	setSessionWebSupported(false);
 	setSessionPreferWebSockets(false);
 	setSessionInviteCodesEnabled(false);
 	setServerSupportsInviteCodes(false);
@@ -432,6 +433,7 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	}
 
 	if(config.contains("allowWeb")) {
+		setSessionWebSupported(true);
 		setSessionAllowWeb(config["allowWeb"].toBool());
 	}
 
@@ -689,6 +691,14 @@ void Document::setSessionAuthOnly(bool authOnly)
 	if(m_sessionAuthOnly != authOnly) {
 		m_sessionAuthOnly = authOnly;
 		emit sessionAuthOnlyChanged(authOnly);
+	}
+}
+
+void Document::setSessionWebSupported(bool sessionWebSupported)
+{
+	if(m_sessionWebSupported != sessionWebSupported) {
+		m_sessionWebSupported = sessionWebSupported;
+		emit sessionWebSupportedChanged(sessionWebSupported);
 	}
 }
 

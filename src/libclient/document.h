@@ -172,6 +172,7 @@ public:
 	bool isSessionPersistent() const { return m_sessionPersistent; }
 	bool isSessionClosed() const { return m_sessionClosed; }
 	bool isSessionAuthOnly() const { return m_sessionAuthOnly; }
+	bool isSessionWebSupported() const { return m_sessionWebSupported; }
 	bool isSessionAllowWeb() const { return m_sessionAllowWeb; }
 	bool isSessionPreserveChat() const { return m_sessionPreserveChat; }
 	bool isSessionPasswordProtected() const
@@ -245,6 +246,7 @@ signals:
 	void sessionPersistentChanged(bool p);
 	void sessionClosedChanged(bool closed);
 	void sessionAuthOnlyChanged(bool closed);
+	void sessionWebSupportedChanged(bool sessionWebSupported);
 	void sessionAllowWebChanged(bool allowWeb, bool canAlter);
 	void sessionHasPasswordChanged(bool passwordProtected);
 	void sessionPasswordChanged(const QString &password);
@@ -369,6 +371,7 @@ private:
 	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);
 	void setSessionAuthOnly(bool authOnly);
+	void setSessionWebSupported(bool sessionWebSupported);
 	void setSessionAllowWeb(bool allowWeb);
 	void setSessionPreserveChat(bool pc);
 	void setSessionPasswordProtected(bool pp);
@@ -447,6 +450,7 @@ private:
 	bool m_sessionPersistent;
 	bool m_sessionClosed;
 	bool m_sessionAuthOnly;
+	bool m_sessionWebSupported = false;
 	bool m_sessionAllowWeb;
 	bool m_sessionPreserveChat;
 	bool m_sessionPasswordProtected;

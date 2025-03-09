@@ -28,6 +28,7 @@ struct InviteDialog::Private {
 	QAction *inviteCodeCopy = nullptr;
 	QString joinPassword;
 	bool compatibilityMode;
+	bool webSupported;
 	bool allowWeb;
 	bool preferWebSockets;
 	bool nsfm;
@@ -40,9 +41,9 @@ struct InviteDialog::Private {
 
 InviteDialog::InviteDialog(
 	widgets::NetStatus *netStatus, net::InviteListModel *inviteListModel,
-	bool compatibilityMode, bool allowWeb, bool preferWebSockets, bool nsfm,
-	bool op, bool moderator, bool supportsCodes, bool codesEnabled,
-	QWidget *parent)
+	bool compatibilityMode, bool webSupported, bool allowWeb,
+	bool preferWebSockets, bool nsfm, bool op, bool moderator,
+	bool supportsCodes, bool codesEnabled, QWidget *parent)
 	: QDialog{parent}
 	, d{new Private}
 {
@@ -50,6 +51,7 @@ InviteDialog::InviteDialog(
 	d->inviteListModel = inviteListModel;
 	d->joinPassword = netStatus->joinPassword();
 	d->compatibilityMode = compatibilityMode;
+	d->webSupported = webSupported;
 	d->allowWeb = allowWeb;
 	d->preferWebSockets = preferWebSockets;
 	d->nsfm = nsfm;
@@ -146,6 +148,11 @@ void InviteDialog::setSessionCompatibilityMode(bool compatibilityMode)
 	}
 }
 
+void InviteDialog::setSessionWebSupported(bool webSupported)
+{
+	d->webSupported = webSupported;
+}
+
 void InviteDialog::setSessionAllowWeb(bool allowWeb)
 {
 	if(allowWeb != d->allowWeb) {
@@ -208,7 +215,7 @@ void InviteDialog::selectInviteCode(const QString &secret)
 }
 
 QString InviteDialog::buildWebInviteLink(
-	bool includePassword, const QString &secret) const
+	bool includePassword, bool web, const QString &secret) const
 {
 	QUrl url = d->netStatus->sessionUrl();
 
@@ -228,7 +235,7 @@ QString InviteDialog::buildWebInviteLink(
 	if(d->preferWebSockets) {
 		queryParams.append(QStringLiteral("w"));
 	}
-	if(d->allowWeb && !d->compatibilityMode) {
+	if(web && !d->compatibilityMode) {
 		queryParams.append(QStringLiteral("web"));
 	}
 	if(d->nsfm) {
@@ -276,7 +283,7 @@ int InviteDialog::copyInviteCodeLinks()
 	int count = links.size();
 	if(count != 0) {
 		for(QString &link : links) {
-			link = buildWebInviteLink(false, link);
+			link = buildWebInviteLink(false, d->webSupported, link);
 		}
 		QGuiApplication::clipboard()->setText(links.join('\n'));
 	}
@@ -313,7 +320,8 @@ void InviteDialog::updateInviteLink()
 {
 	bool includePassword =
 		d->ui.includePasswordBox->isChecked() && !d->joinPassword.isEmpty();
-	d->ui.urlEdit->setPlainText(buildWebInviteLink(includePassword, QString()));
+	d->ui.urlEdit->setPlainText(
+		buildWebInviteLink(includePassword, d->allowWeb, QString()));
 }
 
 void InviteDialog::updateCodes()
