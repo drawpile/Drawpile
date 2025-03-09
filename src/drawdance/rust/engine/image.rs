@@ -2,7 +2,7 @@ use crate::{
     dp_error_anyhow, DP_CanvasState, DP_Image, DP_ImageScaleInterpolation, DP_Output, DP_UPixel8,
     DP_blend_color8_to, DP_canvas_state_to_flat_image, DP_file_output_new_from_path, DP_image_free,
     DP_image_height, DP_image_new, DP_image_new_subimage, DP_image_pixels, DP_image_scale_pixels,
-    DP_image_width, DP_image_write_jpeg, DP_image_write_png, DP_output_free,
+    DP_image_width, DP_image_write_jpeg, DP_image_write_png, DP_image_write_webp, DP_output_free,
     DP_FLAT_IMAGE_RENDER_FLAGS,
 };
 use anyhow::{anyhow, Result};
@@ -203,6 +203,10 @@ impl Image {
 
     pub fn write_jpeg(&self, path: &str) -> Result<()> {
         self.write(path, DP_image_write_jpeg)
+    }
+
+    pub fn write_webp(&self, path: &str) -> Result<()> {
+        self.write(path, DP_image_write_webp)
     }
 
     fn write(

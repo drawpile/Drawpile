@@ -3,7 +3,7 @@ use anyhow::Result;
 use drawdance::{
     dp_cmake_config_version,
     engine::{BaseCanvasState, CanvasState, DrawContext, Image, PaintEngine, Player},
-    Interpolation, DP_PLAYER_TYPE_GUESS, DP_PROTOCOL_VERSION, DP_SAVE_IMAGE_ORA,
+    Interpolation, DP_PLAYER_TYPE_GUESS, DP_PROTOCOL_VERSION, DP_SAVE_IMAGE_ORA, DP_SAVE_IMAGE_PSD,
 };
 use std::{
     ffi::{c_int, CStr, OsStr},
@@ -40,17 +40,21 @@ pub enum OutputFormat {
     #[default]
     Guess,
     Ora,
+    Psd,
     Png,
     Jpg,
     Jpeg,
+    Webp,
 }
 
 impl OutputFormat {
     fn suffix(self) -> &'static str {
         match self {
             Self::Ora => "ora",
+            Self::Psd => "psd",
             Self::Png => "png",
             Self::Jpg => "jpg",
+            Self::Webp => "webp",
             Self::Guess | Self::Jpeg => "jpeg",
         }
     }
@@ -63,12 +67,14 @@ impl FromStr for OutputFormat {
         match s {
             "guess" => Ok(Self::Guess),
             "ora" => Ok(Self::Ora),
+            "psd" => Ok(Self::Psd),
             "png" => Ok(Self::Png),
             "jpg" => Ok(Self::Jpg),
             "jpeg" => Ok(Self::Jpeg),
+            "webp" => Ok(Self::Webp),
             _ => Err(format!(
                 "invalid output format '{s}', should be one of 'guess', \
-                'ora', 'png', 'jpg' or 'jpeg'"
+                'ora', 'psd', 'png', 'jpg', 'jpeg' or 'webp'"
             )),
         }
     }
@@ -90,10 +96,10 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
         optional -v,--version
         /// Print extra debugging information.
         optional -V,--verbose
-        /// Output file format. One of 'guess' (the default), 'ora', 'png',
-        /// 'jpg' or 'jpeg'. The last two are the same format, just with a
-        /// different extension. Guessing will either use the extension from the
-        /// value given by -o/--out or default to jpeg.
+        /// Output file format. One of 'guess' (the default), 'ora', 'psd'
+        /// 'png', 'webp', 'jpg' ,'jpeg'. The last two are the same format, just
+        /// with a different extension. Guessing will either use the extension
+        /// from the value given by -o/--out or default to jpeg.
         optional -f,--format output_format: OutputFormat
         /// Output file pattern. Use '-' for stdout. The default is to use the
         /// input file name with a different file extension.
@@ -116,13 +122,13 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
         optional -A,--acl
         /// Maximum image size. Any images larger than this will be scaled down,
         /// retaining the aspect ratio. This option is not supported for the ora
-        /// output format.
+        /// and psd output formats.
         optional -s,--maxsize max_size: ImageSize
         /// Make all images the same size. If --maxsize is given, that size is
         /// used, otherwise it is guessed from the first saved image. All images
         /// will be scaled, retaining aspect ratio. Blank space is left
         /// transparent or black, depending on the output format. This option is
-        /// not supported for the output ora format.
+        /// not supported for the ora and psd output formats.
         optional -S,--fixedsize
         /// Interpolation to use when scaling images. One of 'fastbilinear' (the
         /// default), 'bilinear', 'bicubic', 'experimental', 'nearest', 'area',
@@ -236,9 +242,11 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
         {
             match ext.to_lowercase().as_str() {
                 "ora" => OutputFormat::Ora,
+                "psd" => OutputFormat::Psd,
                 "png" => OutputFormat::Png,
                 "jpg" => OutputFormat::Jpg,
                 "jpeg" => OutputFormat::Jpeg,
+                "webp" => OutputFormat::Webp,
                 _ => {
                     eprintln!("Can't guess output format for extension '.{}'", ext);
                     return 2;
@@ -250,8 +258,10 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
         }
     }
 
-    if flags.maxsize.is_some() && format == OutputFormat::Ora {
-        eprintln!("The ora output format doesn't support -s/--max-size");
+    if (flags.maxsize.is_some() || flags.fixedsize)
+        && (format == OutputFormat::Ora || format == OutputFormat::Psd)
+    {
+        eprintln!("The ora and psd output formats don't support -s/--max-size or -S/--fixed-size");
         return 2;
     }
 
@@ -326,15 +336,18 @@ fn dump_image(
     let cs = CanvasState::new_load(&mut dc, in_path)?;
     match format {
         OutputFormat::Ora => cs.save(&mut dc, DP_SAVE_IMAGE_ORA, out_path)?,
-        OutputFormat::Png | OutputFormat::Jpg | OutputFormat::Jpeg => save_flat_image(
-            &cs,
-            &mut dc,
-            max_size,
-            fixed_size,
-            format,
-            interpolation,
-            out_path,
-        )?,
+        OutputFormat::Psd => cs.save(&mut dc, DP_SAVE_IMAGE_PSD, out_path)?,
+        OutputFormat::Png | OutputFormat::Jpg | OutputFormat::Jpeg | OutputFormat::Webp => {
+            save_flat_image(
+                &cs,
+                &mut dc,
+                max_size,
+                fixed_size,
+                format,
+                interpolation,
+                out_path,
+            )?;
+        }
         OutputFormat::Guess => panic!("Unhandled output format"),
     };
     Ok(())
@@ -434,8 +447,9 @@ fn dump_recording(
         *index += 1;
 
         match format {
-            OutputFormat::Ora => pe.write_ora(&path)?,
-            OutputFormat::Png | OutputFormat::Jpg | OutputFormat::Jpeg => {
+            OutputFormat::Ora => pe.save(&path, DP_SAVE_IMAGE_ORA)?,
+            OutputFormat::Psd => pe.save(&path, DP_SAVE_IMAGE_PSD)?,
+            OutputFormat::Png | OutputFormat::Jpg | OutputFormat::Jpeg | OutputFormat::Webp => {
                 save_recording_flat_image(
                     &mut pe,
                     max_size,
@@ -501,6 +515,7 @@ fn write_image(img: &Image, format: OutputFormat, path: &str) -> Result<()> {
     match format {
         OutputFormat::Png => img.write_png(path)?,
         OutputFormat::Jpg | OutputFormat::Jpeg => img.write_jpeg(path)?,
+        OutputFormat::Webp => img.write_webp(path)?,
         _ => panic!("Unhandled output format"),
     }
     Ok(())

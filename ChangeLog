@@ -39,6 +39,7 @@ Unreleased Version 2.2.2-pre
  * Server Feature: Add a "prefer WebSockets" option. Clients will generate appropriate invite links and announcements will contain this preference.
  * Server Fix: Allow refreshing external bans even when the section is locked. Thanks Bluestrings for reporting.
  * Feature: Add -i/--image option to the drawpile-cmd command, to allow e.g. converting an ORA to a PNG file or similar on the command line.
+ * Feature: Add PSD and WEBP format support to the drawpile-cmd command.
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.

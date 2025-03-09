@@ -2,14 +2,15 @@ use super::{AclState, DrawContext, Image, Player};
 use crate::{
     dp_error_anyhow, msg::Message, DP_AnnotationList, DP_CanvasState, DP_DocumentMetadata,
     DP_ImageScaleInterpolation, DP_LayerPropsList, DP_Message, DP_PaintEngine, DP_Pixel8,
-    DP_PlayerResult, DP_Rect, DP_SelectionSet, DP_Timeline, DP_affected_area_in_bounds,
-    DP_affected_area_make, DP_canvas_state_decref, DP_message_type, DP_paint_engine_free_join,
-    DP_paint_engine_handle_inc, DP_paint_engine_new_inc, DP_paint_engine_playback_begin,
-    DP_paint_engine_playback_play, DP_paint_engine_playback_skip_by, DP_paint_engine_playback_step,
+    DP_PlayerResult, DP_Rect, DP_SaveImageType, DP_SelectionSet, DP_Timeline,
+    DP_affected_area_in_bounds, DP_affected_area_make, DP_canvas_state_decref, DP_message_type,
+    DP_paint_engine_free_join, DP_paint_engine_handle_inc, DP_paint_engine_new_inc,
+    DP_paint_engine_playback_begin, DP_paint_engine_playback_play,
+    DP_paint_engine_playback_skip_by, DP_paint_engine_playback_step,
     DP_paint_engine_render_everything, DP_paint_engine_reveal_censored_set, DP_paint_engine_tick,
     DP_paint_engine_view_canvas_state_inc, DP_save, DP_MSG_INTERVAL, DP_MSG_UNDO,
     DP_PAINT_ENGINE_FILTER_MESSAGE_FLAG_NO_TIME, DP_PLAYER_RECORDING_END, DP_PLAYER_SUCCESS,
-    DP_SAVE_IMAGE_ORA, DP_SAVE_RESULT_SUCCESS, DP_TILE_SIZE,
+    DP_SAVE_RESULT_SUCCESS, DP_TILE_SIZE,
 };
 use anyhow::Result;
 use std::{
@@ -345,14 +346,14 @@ impl PaintEngine {
     extern "C" fn on_undo_depth_limit_set(_user: *mut c_void, _undo_depth_limit: c_int) {}
     extern "C" fn on_censored_layer_revealed(_user: *mut c_void, _layer_id: c_int) {}
 
-    pub fn write_ora(&mut self, path: &str) -> Result<()> {
+    pub fn save(&mut self, path: &str, save_type: DP_SaveImageType) -> Result<()> {
         let cpath = CString::new(path)?;
         let cs = unsafe { DP_paint_engine_view_canvas_state_inc(self.paint_engine) };
         let result = unsafe {
             DP_save(
                 cs,
                 self.main_dc.as_ptr(),
-                DP_SAVE_IMAGE_ORA,
+                save_type,
                 cpath.as_ptr(),
                 ptr::null(),
                 None,
