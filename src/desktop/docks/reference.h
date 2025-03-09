@@ -21,6 +21,9 @@ class ReferenceDock final : public DockBase {
 public:
 	explicit ReferenceDock(QWidget *parent);
 
+	QPoint scrollPosition() const;
+	void setScrollPosition(const QPoint &p);
+
 signals:
 	void colorPicked(const QColor &color);
 

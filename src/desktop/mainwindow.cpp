@@ -6378,7 +6378,12 @@ void MainWindow::keepCanvasPosition(const std::function<void()> &block)
 	QPoint centralPosBefore = centralWidget()->pos();
 	QSize canvasSizeBefore = canvasWidget->size();
 	QPointF offsetBefore = m_canvasView->viewTransformOffset();
+	QPoint referencePosition =
+		m_dockReference ? m_dockReference->scrollPosition() : QPoint();
 	block();
+	if(m_dockReference) {
+		m_dockReference->setScrollPosition(referencePosition);
+	}
 	QPoint centralPosDelta = centralWidget()->pos() - centralPosBefore;
 	QSize canvasSizeDelta = canvasWidget->size() - canvasSizeBefore;
 	QPointF offsetDelta = m_canvasView->viewTransformOffset() - offsetBefore;

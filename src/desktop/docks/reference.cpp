@@ -12,6 +12,7 @@
 #include <QHBoxLayout>
 #include <QImageReader>
 #include <QMenu>
+#include <QScrollBar>
 #include <QSignalBlocker>
 #include <QVBoxLayout>
 #include <functional>
@@ -158,6 +159,34 @@ ReferenceDock::ReferenceDock(QWidget *parent)
 
 	setWidget(widget);
 }
+
+QPoint ReferenceDock::scrollPosition() const
+{
+	QPoint p;
+	if(m_view && m_view->hasImage()) {
+		if(QScrollBar *hscroll = m_view->horizontalScrollBar()) {
+			p.setX(hscroll->value());
+		}
+		if(QScrollBar *vscroll = m_view->verticalScrollBar()) {
+			p.setY(vscroll->value());
+		}
+	}
+	return p;
+}
+
+void ReferenceDock::setScrollPosition(const QPoint &p)
+{
+	if(m_view && m_view->hasImage()) {
+		if(QScrollBar *hscroll = m_view->horizontalScrollBar()) {
+			hscroll->setValue(p.x());
+		}
+		if(QScrollBar *vscroll = m_view->verticalScrollBar()) {
+			vscroll->setValue(p.y());
+		}
+	}
+}
+
+void setScrollPosition(const QPoint &p);
 
 void ReferenceDock::openReferenceFile()
 {
