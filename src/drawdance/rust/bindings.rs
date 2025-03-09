@@ -37,6 +37,8 @@ pub const DP_CANVAS_HISTORY_UNDO_DEPTH_MAX: u32 = 255;
 pub const DP_PREVIEW_BASE_SUBLAYER_ID: i32 = -100;
 pub const DP_PREVIEW_TRANSFORM_COUNT: u32 = 16;
 pub const DP_PAINT_ENGINE_FILTER_MESSAGE_FLAG_NO_TIME: u32 = 1;
+pub const DP_LOAD_FLAG_NONE: u32 = 0;
+pub const DP_LOAD_FLAG_SINGLE_THREAD: u32 = 1;
 pub const DP_ACL_ALL_LOCKED_BIT: u32 = 128;
 pub const DP_ACL_STATE_FILTERED_BIT: u32 = 1;
 pub const DP_ACL_STATE_CHANGE_USERS_BIT: u32 = 2;
@@ -5685,10 +5687,10 @@ fn bindgen_test_layout_DP_ViewModePick() {
     );
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Copy, Clone)]
 pub struct DP_OnionSkin {
     pub opacity: u16,
-    pub tint: DP_UPixel15,
+    pub tint: DP_UPixel8,
 }
 #[test]
 fn bindgen_test_layout_DP_OnionSkin() {
@@ -5696,12 +5698,12 @@ fn bindgen_test_layout_DP_OnionSkin() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<DP_OnionSkin>(),
-        10usize,
+        8usize,
         concat!("Size of: ", stringify!(DP_OnionSkin))
     );
     assert_eq!(
         ::std::mem::align_of::<DP_OnionSkin>(),
-        2usize,
+        4usize,
         concat!("Alignment of ", stringify!(DP_OnionSkin))
     );
     assert_eq!(
@@ -5716,7 +5718,7 @@ fn bindgen_test_layout_DP_OnionSkin() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).tint) as usize - ptr as usize },
-        2usize,
+        4usize,
         concat!(
             "Offset of field: ",
             stringify!(DP_OnionSkin),
@@ -5801,6 +5803,7 @@ extern "C" {
         out_lp: *mut *mut DP_LayerProps,
         out_os: *mut *const DP_OnionSkin,
         out_parent_opacity: *mut u16,
+        out_parent_tint: *mut DP_UPixel8,
     ) -> DP_ViewModeContext;
 }
 extern "C" {
@@ -5881,7 +5884,7 @@ extern "C" {
         oss: *mut DP_OnionSkins,
         index: ::std::os::raw::c_int,
         opacity: u16,
-        tint: DP_UPixel15,
+        tint: DP_UPixel8,
     );
 }
 extern "C" {
@@ -5889,7 +5892,7 @@ extern "C" {
         oss: *mut DP_OnionSkins,
         index: ::std::os::raw::c_int,
         opacity: u16,
-        tint: DP_UPixel15,
+        tint: DP_UPixel8,
     );
 }
 #[repr(C)]
@@ -7417,6 +7420,24 @@ extern "C" {
     pub fn DP_tile_same_pixel(tile_or_null: *mut DP_Tile, out_pixel: *mut DP_Pixel15) -> bool;
 }
 extern "C" {
+    pub fn DP_tile_pixels_equal(t1: *mut DP_Tile, t2: *mut DP_Tile) -> bool;
+}
+extern "C" {
+    pub fn DP_tile_pixels_equal_pixel(tile: *mut DP_Tile, pixel: DP_Pixel15) -> bool;
+}
+extern "C" {
+    pub fn DP_tile_compress_pixel(
+        pixel: DP_Pixel15,
+        get_output_buffer: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: usize,
+                arg2: *mut ::std::os::raw::c_void,
+            ) -> *mut ::std::os::raw::c_uchar,
+        >,
+        user: *mut ::std::os::raw::c_void,
+    ) -> usize;
+}
+extern "C" {
     pub fn DP_tile_compress(
         tile: *mut DP_Tile,
         pixel_buffer: *mut DP_Pixel8,
@@ -7949,6 +7970,111 @@ extern "C" {
 extern "C" {
     pub fn DP_image_write_webp(img: *mut DP_Image, output: *mut DP_Output) -> bool;
 }
+pub const DP_SAVE_IMAGE_UNKNOWN: DP_SaveImageType = 0;
+pub const DP_SAVE_IMAGE_ORA: DP_SaveImageType = 1;
+pub const DP_SAVE_IMAGE_PNG: DP_SaveImageType = 2;
+pub const DP_SAVE_IMAGE_JPEG: DP_SaveImageType = 3;
+pub const DP_SAVE_IMAGE_PSD: DP_SaveImageType = 4;
+pub const DP_SAVE_IMAGE_WEBP: DP_SaveImageType = 5;
+pub type DP_SaveImageType = ::std::os::raw::c_uint;
+pub const DP_SAVE_RESULT_SUCCESS: DP_SaveResult = 0;
+pub const DP_SAVE_RESULT_BAD_ARGUMENTS: DP_SaveResult = 1;
+pub const DP_SAVE_RESULT_UNKNOWN_FORMAT: DP_SaveResult = 2;
+pub const DP_SAVE_RESULT_FLATTEN_ERROR: DP_SaveResult = 3;
+pub const DP_SAVE_RESULT_OPEN_ERROR: DP_SaveResult = 4;
+pub const DP_SAVE_RESULT_WRITE_ERROR: DP_SaveResult = 5;
+pub const DP_SAVE_RESULT_INTERNAL_ERROR: DP_SaveResult = 6;
+pub const DP_SAVE_RESULT_CANCEL: DP_SaveResult = 7;
+pub type DP_SaveResult = ::std::os::raw::c_uint;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_LoadFormat {
+    pub title: *const ::std::os::raw::c_char,
+    pub extensions: *mut *const ::std::os::raw::c_char,
+}
+#[test]
+fn bindgen_test_layout_DP_LoadFormat() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_LoadFormat> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_LoadFormat>(),
+        16usize,
+        concat!("Size of: ", stringify!(DP_LoadFormat))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_LoadFormat>(),
+        8usize,
+        concat!("Alignment of ", stringify!(DP_LoadFormat))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).title) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_LoadFormat),
+            "::",
+            stringify!(title)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).extensions) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_LoadFormat),
+            "::",
+            stringify!(extensions)
+        )
+    );
+}
+extern "C" {
+    pub fn DP_load_supported_formats() -> *const DP_LoadFormat;
+}
+pub type DP_LoadFixedLayerFn = ::std::option::Option<
+    unsafe extern "C" fn(user: *mut ::std::os::raw::c_void, layer_id: ::std::os::raw::c_int),
+>;
+extern "C" {
+    pub fn DP_load_guess(buf: *const ::std::os::raw::c_uchar, size: usize) -> DP_SaveImageType;
+}
+extern "C" {
+    pub fn DP_load(
+        dc: *mut DP_DrawContext,
+        path: *const ::std::os::raw::c_char,
+        flat_image_layer_title: *const ::std::os::raw::c_char,
+        flags: ::std::os::raw::c_uint,
+        out_result: *mut DP_LoadResult,
+        out_type: *mut DP_SaveImageType,
+    ) -> *mut DP_CanvasState;
+}
+extern "C" {
+    pub fn DP_load_ora(
+        dc: *mut DP_DrawContext,
+        path: *const ::std::os::raw::c_char,
+        flags: ::std::os::raw::c_uint,
+        on_fixed_layer: DP_LoadFixedLayerFn,
+        user: *mut ::std::os::raw::c_void,
+        out_result: *mut DP_LoadResult,
+    ) -> *mut DP_CanvasState;
+}
+extern "C" {
+    pub fn DP_load_psd(
+        dc: *mut DP_DrawContext,
+        input: *mut DP_Input,
+        out_result: *mut DP_LoadResult,
+    ) -> *mut DP_CanvasState;
+}
+extern "C" {
+    pub fn DP_load_recording(
+        path: *const ::std::os::raw::c_char,
+        out_result: *mut DP_LoadResult,
+    ) -> *mut DP_Player;
+}
+extern "C" {
+    pub fn DP_load_debug_dump(
+        path: *const ::std::os::raw::c_char,
+        out_result: *mut DP_LoadResult,
+    ) -> *mut DP_Player;
+}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct DP_PlayerIndexEntrySnapshot {
@@ -8122,22 +8248,6 @@ extern "C" {
 extern "C" {
     pub fn DP_paint_engine_playback_close(pe: *mut DP_PaintEngine) -> bool;
 }
-pub const DP_SAVE_IMAGE_UNKNOWN: DP_SaveImageType = 0;
-pub const DP_SAVE_IMAGE_ORA: DP_SaveImageType = 1;
-pub const DP_SAVE_IMAGE_PNG: DP_SaveImageType = 2;
-pub const DP_SAVE_IMAGE_JPEG: DP_SaveImageType = 3;
-pub const DP_SAVE_IMAGE_PSD: DP_SaveImageType = 4;
-pub const DP_SAVE_IMAGE_WEBP: DP_SaveImageType = 5;
-pub type DP_SaveImageType = ::std::os::raw::c_uint;
-pub const DP_SAVE_RESULT_SUCCESS: DP_SaveResult = 0;
-pub const DP_SAVE_RESULT_BAD_ARGUMENTS: DP_SaveResult = 1;
-pub const DP_SAVE_RESULT_UNKNOWN_FORMAT: DP_SaveResult = 2;
-pub const DP_SAVE_RESULT_FLATTEN_ERROR: DP_SaveResult = 3;
-pub const DP_SAVE_RESULT_OPEN_ERROR: DP_SaveResult = 4;
-pub const DP_SAVE_RESULT_WRITE_ERROR: DP_SaveResult = 5;
-pub const DP_SAVE_RESULT_INTERNAL_ERROR: DP_SaveResult = 6;
-pub const DP_SAVE_RESULT_CANCEL: DP_SaveResult = 7;
-pub type DP_SaveResult = ::std::os::raw::c_uint;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct DP_SaveFormat {
@@ -11956,6 +12066,13 @@ extern "C" {
     pub fn DP_message_serialize(
         msg: *mut DP_Message,
         write_body_length: bool,
+        get_buffer: DP_GetMessageBufferFn,
+        user: *mut ::std::os::raw::c_void,
+    ) -> usize;
+}
+extern "C" {
+    pub fn DP_message_serialize_body(
+        msg: *mut DP_Message,
         get_buffer: DP_GetMessageBufferFn,
         user: *mut ::std::os::raw::c_void,
     ) -> usize;

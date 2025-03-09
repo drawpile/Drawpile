@@ -1,8 +1,9 @@
 use crate::{
-    dp_error_anyhow, DP_Image, DP_ImageScaleInterpolation, DP_Output, DP_UPixel8,
-    DP_blend_color8_to, DP_file_output_new_from_path, DP_image_free, DP_image_height, DP_image_new,
-    DP_image_new_subimage, DP_image_pixels, DP_image_scale_pixels, DP_image_width,
-    DP_image_write_jpeg, DP_image_write_png, DP_output_free,
+    dp_error_anyhow, DP_CanvasState, DP_Image, DP_ImageScaleInterpolation, DP_Output, DP_UPixel8,
+    DP_blend_color8_to, DP_canvas_state_to_flat_image, DP_file_output_new_from_path, DP_image_free,
+    DP_image_height, DP_image_new, DP_image_new_subimage, DP_image_pixels, DP_image_scale_pixels,
+    DP_image_width, DP_image_write_jpeg, DP_image_write_png, DP_output_free,
+    DP_FLAT_IMAGE_RENDER_FLAGS,
 };
 use anyhow::{anyhow, Result};
 use core::slice;
@@ -10,7 +11,7 @@ use std::{
     ffi::{c_int, CString},
     io::{self},
     mem::size_of,
-    ptr::copy_nonoverlapping,
+    ptr::{copy_nonoverlapping, null},
 };
 
 use super::DrawContext;
@@ -123,6 +124,37 @@ impl Image {
         } else {
             Ok(img)
         }
+    }
+
+    pub fn new_from_canvas_state(cs: *mut DP_CanvasState) -> Result<Self> {
+        let image = unsafe {
+            DP_canvas_state_to_flat_image(cs, DP_FLAT_IMAGE_RENDER_FLAGS, null(), null())
+        };
+        if image.is_null() {
+            Err(dp_error_anyhow())
+        } else {
+            Ok(Image { image })
+        }
+    }
+
+    pub fn scaled(
+        &self,
+        scale_width: usize,
+        scale_height: usize,
+        expand: bool,
+        interpolation: DP_ImageScaleInterpolation,
+        dc: &mut DrawContext,
+    ) -> Result<Image> {
+        Self::new_from_pixels_scaled(
+            self.width(),
+            self.height(),
+            self.pixels(),
+            scale_width,
+            scale_height,
+            expand,
+            interpolation,
+            dc,
+        )
     }
 
     pub fn width(&self) -> usize {

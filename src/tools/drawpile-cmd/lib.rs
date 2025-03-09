@@ -2,8 +2,8 @@
 use anyhow::Result;
 use drawdance::{
     dp_cmake_config_version,
-    engine::{PaintEngine, Player},
-    Interpolation, DP_PLAYER_TYPE_GUESS, DP_PROTOCOL_VERSION,
+    engine::{BaseCanvasState, CanvasState, DrawContext, Image, PaintEngine, Player},
+    Interpolation, DP_PLAYER_TYPE_GUESS, DP_PROTOCOL_VERSION, DP_SAVE_IMAGE_ORA,
 };
 use std::{
     ffi::{c_int, CStr, OsStr},
@@ -128,7 +128,10 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
         /// default), 'bilinear', 'bicubic', 'experimental', 'nearest', 'area',
         /// 'bicublin', 'gauss', 'sinc', 'lanczos' or 'spline'.
         optional -I,--interpolation interpolation: Interpolation
-        /// Input recording file(s).
+        /// Input image file. Mutually exclusive with passing recording input
+        /// files.
+        optional -i,--image image: String
+        /// Input recording file(s). Mutually exclusive with -i/--image.
         repeated input: String
     };
 
@@ -168,26 +171,54 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
     };
 
     let input_paths = flags.input;
-    if input_paths.is_empty() {
-        eprintln!("No input file given");
+    let have_inputs = !input_paths.is_empty();
+    let have_image = flags.image.is_some();
+    if have_inputs && have_image {
+        eprintln!("Passing recording inputs and -i/--image is mutually exclusive");
+        return 2;
+    } else if !have_inputs && !have_image {
+        eprintln!("No inputs given");
         return 2;
     }
+
+    let image = match flags.image {
+        Some(s) => s,
+        None => String::default(),
+    };
 
     let mut format = flags.format.unwrap_or_default();
     let pre_out_pattern = if let Some(out) = flags.out {
         if metadata(&out).map(|m| m.is_dir()).unwrap_or(false) {
-            format!(
-                "{}/{}-:idx:.{}",
-                out,
-                Path::new(&input_paths[0])
-                    .file_stem()
-                    .unwrap_or_default()
-                    .to_string_lossy(),
-                format.suffix()
-            )
+            if have_image {
+                let image_path = Path::new(&image);
+                format!(
+                    "{}{}.{}",
+                    get_dir_prefix(image_path),
+                    image_path.file_stem().unwrap_or_default().to_string_lossy(),
+                    format.suffix()
+                )
+            } else {
+                format!(
+                    "{}/{}-:idx:.{}",
+                    out,
+                    Path::new(&input_paths[0])
+                        .file_stem()
+                        .unwrap_or_default()
+                        .to_string_lossy(),
+                    format.suffix()
+                )
+            }
         } else {
             out
         }
+    } else if have_image {
+        let image_path = Path::new(&image);
+        format!(
+            "{}{}.{}",
+            get_dir_prefix(image_path),
+            image_path.file_stem().unwrap_or_default().to_string_lossy(),
+            format.suffix()
+        )
     } else {
         let first_path = Path::new(&input_paths[0]);
         format!(
@@ -224,29 +255,48 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
         return 2;
     }
 
-    let out_path = Path::new(&pre_out_pattern);
-    let out_dir = get_dir_prefix(out_path);
-    let out_stem = out_path.file_stem().unwrap_or_default().to_string_lossy();
-    let out_suffix = format.suffix();
-    let out_pattern = if pre_out_pattern.contains(":idx:") {
-        format!("{}{}.{}", out_dir, out_stem, out_suffix)
+    let result = if have_image {
+        let out_path = if pre_out_pattern.contains(":idx:") {
+            pre_out_pattern.replace(":idx:", "1")
+        } else {
+            pre_out_pattern
+        };
+
+        dump_image(
+            image,
+            flags.maxsize,
+            flags.fixedsize,
+            format,
+            flags.interpolation.unwrap_or_default(),
+            out_path,
+        )
     } else {
-        format!("{}{}-:idx:.{}", out_dir, out_stem, out_suffix)
+        let out_path = Path::new(&pre_out_pattern);
+        let out_dir = get_dir_prefix(out_path);
+        let out_stem = out_path.file_stem().unwrap_or_default().to_string_lossy();
+        let out_suffix = format.suffix();
+        let out_pattern = if pre_out_pattern.contains(":idx:") {
+            format!("{}{}.{}", out_dir, out_stem, out_suffix)
+        } else {
+            format!("{}{}-:idx:.{}", out_dir, out_stem, out_suffix)
+        };
+
+        let acl_override = !flags.acl;
+
+        dump_recordings(
+            &input_paths,
+            acl_override,
+            every,
+            steps,
+            flags.maxsize,
+            flags.fixedsize,
+            format,
+            flags.interpolation.unwrap_or_default(),
+            &out_pattern,
+        )
     };
 
-    let acl_override = !flags.acl;
-
-    match dump_recordings(
-        &input_paths,
-        acl_override,
-        every,
-        steps,
-        flags.maxsize,
-        flags.fixedsize,
-        format,
-        flags.interpolation.unwrap_or_default(),
-        &out_pattern,
-    ) {
+    match result {
         Ok(_) => 0,
         Err(e) => {
             eprintln!("{}", e);
@@ -262,6 +312,67 @@ fn get_dir_prefix(path: &Path) -> String {
     } else {
         format!("{}/", dir)
     }
+}
+
+fn dump_image(
+    in_path: String,
+    max_size: Option<ImageSize>,
+    fixed_size: bool,
+    format: OutputFormat,
+    interpolation: Interpolation,
+    out_path: String,
+) -> Result<()> {
+    let mut dc = DrawContext::default();
+    let cs = CanvasState::new_load(&mut dc, in_path)?;
+    match format {
+        OutputFormat::Ora => cs.save(&mut dc, DP_SAVE_IMAGE_ORA, out_path)?,
+        OutputFormat::Png | OutputFormat::Jpg | OutputFormat::Jpeg => save_flat_image(
+            &cs,
+            &mut dc,
+            max_size,
+            fixed_size,
+            format,
+            interpolation,
+            out_path,
+        )?,
+        OutputFormat::Guess => panic!("Unhandled output format"),
+    };
+    Ok(())
+}
+
+fn save_flat_image(
+    cs: &CanvasState,
+    dc: &mut DrawContext,
+    max_size: Option<ImageSize>,
+    fixed_size: bool,
+    format: OutputFormat,
+    interpolation: Interpolation,
+    out_path: String,
+) -> Result<()> {
+    let img = if let Some(ImageSize { width, height }) = max_size {
+        if fixed_size {
+            cs.to_flat_image()?.scaled(
+                width,
+                height,
+                true,
+                interpolation.to_scale_interpolation(),
+                dc,
+            )?
+        } else if cs.width() as usize <= width && cs.height() as usize <= height {
+            cs.to_flat_image()?
+        } else {
+            cs.to_flat_image()?.scaled(
+                width,
+                height,
+                false,
+                interpolation.to_scale_interpolation(),
+                dc,
+            )?
+        }
+    } else {
+        cs.to_flat_image()?
+    };
+    write_image(&img, format, &out_path)
 }
 
 fn dump_recordings(
@@ -325,7 +436,14 @@ fn dump_recording(
         match format {
             OutputFormat::Ora => pe.write_ora(&path)?,
             OutputFormat::Png | OutputFormat::Jpg | OutputFormat::Jpeg => {
-                write_flat_image(&mut pe, max_size, fixed_size, format, interpolation, &path)?;
+                save_recording_flat_image(
+                    &mut pe,
+                    max_size,
+                    fixed_size,
+                    format,
+                    interpolation,
+                    &path,
+                )?;
             }
             OutputFormat::Guess => panic!("Unhandled output format"),
         }
@@ -353,7 +471,7 @@ fn skip_playback_to_end(pe: &mut PaintEngine) -> Result<i64> {
     Ok(-1)
 }
 
-fn write_flat_image(
+fn save_recording_flat_image(
     pe: &mut PaintEngine,
     max_size: Option<ImageSize>,
     fixed_size: bool,
@@ -364,7 +482,7 @@ fn write_flat_image(
     let result = if let Some(ImageSize { width, height }) = max_size {
         if fixed_size {
             pe.to_scaled_image(width, height, true, interpolation.to_scale_interpolation())
-        } else if pe.render_width() <= width && pe.render_height() < height {
+        } else if pe.render_width() <= width && pe.render_height() <= height {
             pe.to_image()
         } else {
             pe.to_scaled_image(width, height, false, interpolation.to_scale_interpolation())
@@ -373,12 +491,17 @@ fn write_flat_image(
         pe.to_image()
     };
     match result {
-        Ok(img) => match format {
-            OutputFormat::Png => img.write_png(path)?,
-            OutputFormat::Jpg | OutputFormat::Jpeg => img.write_jpeg(path)?,
-            _ => panic!("Unhandled output format"),
-        },
+        Ok(img) => write_image(&img, format, path)?,
         Err(e) => eprintln!("Warning: {}", e),
+    }
+    Ok(())
+}
+
+fn write_image(img: &Image, format: OutputFormat, path: &str) -> Result<()> {
+    match format {
+        OutputFormat::Png => img.write_png(path)?,
+        OutputFormat::Jpg | OutputFormat::Jpeg => img.write_jpeg(path)?,
+        _ => panic!("Unhandled output format"),
     }
     Ok(())
 }

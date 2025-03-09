@@ -17,6 +17,7 @@
 #include <dpengine/timeline.h>
 #include <dpengine/track.h>
 #include <dpimpex/image_impex.h>
+#include <dpimpex/load.h>
 #include <dpimpex/paint_engine_playback.h>
 #include <dpimpex/save.h>
 #include <dpmsg/acl.h>

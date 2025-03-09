@@ -3,16 +3,16 @@ use super::{
     types::Persistable, Attached, AttachedDocumentMetadata, AttachedLayerList,
     AttachedLayerPropsList, AttachedTile, AttachedTransientDocumentMetadata, BaseTile, CArc,
     Detached, DetachedTransientLayerList, DetachedTransientLayerPropsList,
-    DetachedTransientTimeline, DocumentMetadata, LayerList, LayerPropsList, Tile,
-    TransientDocumentMetadata,
+    DetachedTransientTimeline, DocumentMetadata, DrawContext, Image, LayerList, LayerPropsList,
+    Tile, TransientDocumentMetadata,
 };
 use crate::{
-    dp_error_anyhow, DP_CanvasState, DP_DrawContext, DP_TransientCanvasState,
+    dp_error_anyhow, DP_CanvasState, DP_DrawContext, DP_SaveImageType, DP_TransientCanvasState,
     DP_canvas_state_background_opaque, DP_canvas_state_background_tile_noinc,
     DP_canvas_state_decref, DP_canvas_state_height, DP_canvas_state_incref,
     DP_canvas_state_layer_props_noinc, DP_canvas_state_layers_noinc,
     DP_canvas_state_metadata_noinc, DP_canvas_state_to_flat_separated_urgba8,
-    DP_canvas_state_transient, DP_canvas_state_width, DP_tile_incref,
+    DP_canvas_state_transient, DP_canvas_state_width, DP_load, DP_save, DP_tile_incref,
     DP_transient_canvas_state_background_tile_set_noinc, DP_transient_canvas_state_decref,
     DP_transient_canvas_state_height_set, DP_transient_canvas_state_incref,
     DP_transient_canvas_state_layer_routes_reindex, DP_transient_canvas_state_new,
@@ -20,11 +20,11 @@ use crate::{
     DP_transient_canvas_state_transient_layers_set_noinc,
     DP_transient_canvas_state_transient_metadata,
     DP_transient_canvas_state_transient_timeline_set_noinc, DP_transient_canvas_state_width_set,
-    DP_FLAT_IMAGE_RENDER_FLAGS,
+    DP_FLAT_IMAGE_RENDER_FLAGS, DP_SAVE_RESULT_SUCCESS,
 };
 use anyhow::Result;
 use std::{
-    ffi::c_int,
+    ffi::{c_int, CString},
     ptr::{null, null_mut},
 };
 
@@ -96,6 +96,30 @@ pub trait BaseCanvasState {
             Err(dp_error_anyhow())
         }
     }
+
+    fn to_flat_image(&self) -> Result<Image> {
+        Image::new_from_canvas_state(self.persistent_ptr())
+    }
+
+    fn save(&self, dc: &mut DrawContext, save_type: DP_SaveImageType, path: String) -> Result<()> {
+        let cpath = CString::new(path)?;
+        let result = unsafe {
+            DP_save(
+                self.persistent_ptr(),
+                dc.as_ptr(),
+                save_type,
+                cpath.as_ptr(),
+                null(),
+                None,
+                null_mut(),
+            )
+        };
+        if result == DP_SAVE_RESULT_SUCCESS {
+            Ok(())
+        } else {
+            Err(dp_error_anyhow())
+        }
+    }
 }
 
 pub struct CanvasState {
@@ -124,6 +148,26 @@ impl CanvasState {
 
     pub fn new_detached_noinc_nullable(data: *mut DP_CanvasState) -> Option<DetachedCanvasState> {
         unsafe { data.as_mut() }.map(Self::new_detached_noinc)
+    }
+
+    pub fn new_load(dc: &mut DrawContext, path: String) -> Result<DetachedCanvasState> {
+        let cpath = CString::new(path)?;
+        let flat_image_layer_title = CString::new("Layer")?;
+        let opt = Self::new_detached_noinc_nullable(unsafe {
+            DP_load(
+                dc.as_ptr(),
+                cpath.as_ptr(),
+                flat_image_layer_title.as_ptr(),
+                0,
+                null_mut(),
+                null_mut(),
+            )
+        });
+        if let Some(cs) = opt {
+            Ok(cs)
+        } else {
+            Err(dp_error_anyhow())
+        }
     }
 }
 
