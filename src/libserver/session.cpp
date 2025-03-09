@@ -946,20 +946,31 @@ bool Session::hasInvite(const QString &secret) const
 CheckInviteResult Session::checkInvite(
 	Client *client, const QString &secret, bool use, Invite **outInvite)
 {
+	Invite *invite;
 	CheckInviteResult result =
-		m_history->checkInvite(client, secret, use, nullptr, outInvite);
+		m_history->checkInvite(client, secret, use, nullptr, &invite);
 	switch(result) {
-	case CheckInviteResult::InviteUsed:
+	case CheckInviteResult::InviteUsed: {
+		QString creator = invite ? invite->creator : QString();
 		log(client->setUserOnLog(
 			Log()
 				.about(Log::Level::Info, Log::Topic::Invite)
-				.message(QStringLiteral("Used invite %1").arg(secret))));
+				.message(
+					creator.isEmpty()
+						? QStringLiteral("Used invite created by a server "
+										 "administrator")
+						: QStringLiteral("Used invite created by %1")
+							  .arg(creator))));
+	}
 		Q_FALLTHROUGH();
 	case CheckInviteResult::AlreadyInvitedNameChanged:
 		sendUpdatedInviteList();
 		break;
 	default:
 		break;
+	}
+	if(outInvite && invite) {
+		*outInvite = invite;
 	}
 	return result;
 }
