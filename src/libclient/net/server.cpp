@@ -123,6 +123,10 @@ QString Server::extractAutoJoinId(const QString &path)
 		QRegularExpressionMatch m = idre.match(path);
 		if(m.hasMatch()) {
 			return m.captured(1);
+		} else {
+			qWarning(
+				"Failed to extract auto-join id from '%s'",
+				qUtf8Printable(path));
 		}
 	}
 	return QString();

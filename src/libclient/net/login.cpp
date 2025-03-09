@@ -66,7 +66,8 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 		path = m_address.path();
 	}
 	if(path.isEmpty()) {
-		path = QUrlQuery(url).queryItemValue(QStringLiteral("session"));
+		path = QUrlQuery(url).queryItemValue(
+			QStringLiteral("session"), QUrl::FullyDecoded);
 	}
 	m_autoJoinId = net::Server::extractAutoJoinId(path);
 }
