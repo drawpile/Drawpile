@@ -627,10 +627,6 @@ void DrawpileApp::deleteAllMainWindowsExcept(MainWindow *win)
 static QStringList gatherPotentialLanguages(const QLocale &locale)
 {
 	QStringList langs;
-#ifdef __EMSCRIPTEN__
-	Q_UNUSED(locale);
-	langs.append(QStringLiteral("en_US"));
-#else
 	for(const QString &lang : locale.uiLanguages()) {
 		if(!langs.contains(lang)) {
 			langs.append(lang);
@@ -643,7 +639,6 @@ static QStringList gatherPotentialLanguages(const QLocale &locale)
 			langs.append(langWithUnderscores);
 		}
 	}
-#endif
 	return langs;
 }
 
@@ -879,6 +874,9 @@ static StartupOptions initApp(DrawpileApp &app)
 	tabletinput::init(app);
 	parentalcontrols::init(settings);
 
+#ifdef __EMSCRIPTEN__
+	QLocale locale(browser::getLocale());
+#else
 	// Set override locale from settings, use system locale if no override set.
 	QLocale locale = QLocale::c();
 	QString overrideLang = settings.language();
@@ -888,6 +886,7 @@ static StartupOptions initApp(DrawpileApp &app)
 	if(locale == QLocale::c()) {
 		locale = QLocale::system();
 	}
+#endif
 
 	initTranslations(app, locale);
 	app.initBrushPresets();

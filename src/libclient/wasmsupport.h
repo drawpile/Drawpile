@@ -13,6 +13,7 @@ class LoginHandler;
 namespace browser {
 
 bool hasLowPressurePen();
+QString getLocale();
 QString getWelcomeMessage();
 void showLoginModal(net::LoginHandler *loginHandler);
 void cancelLoginModal(net::LoginHandler *loginHandler);

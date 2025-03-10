@@ -483,6 +483,8 @@ import { UAParser } from "ua-parser-js";
       }
     }
 
+    window.drawpileLocale = params.get("locale")?.trim();
+
     config.qt.onLoaded = () => {
       showScreen();
       registerEventHandlers(

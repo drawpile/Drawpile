@@ -62,6 +62,18 @@ bool hasLowPressurePen()
 	return lowPressurePen != 0;
 }
 
+QString getLocale()
+{
+	char *message = static_cast<char *>(
+		EM_ASM_PTR(return stringToNewUTF8(window.drawpileLocale || "");));
+	QString s;
+	if(message) {
+		s = QString::fromUtf8(message).trimmed();
+		free(message);
+	}
+	return s.isEmpty() ? QStringLiteral("en_US") : s;
+}
+
 QString getWelcomeMessage()
 {
 	char *message = static_cast<char *>(EM_ASM_PTR(
