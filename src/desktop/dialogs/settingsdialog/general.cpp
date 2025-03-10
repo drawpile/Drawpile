@@ -27,7 +27,9 @@ void General::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
 {
 	QFormLayout *themeLanguageSection = utils::addFormSection(layout);
 	initTheme(settings, themeLanguageSection);
+#ifndef __EMSCRIPTEN__
 	initLanguage(settings, themeLanguageSection);
+#endif
 
 	utils::addFormSeparator(layout);
 
