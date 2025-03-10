@@ -822,7 +822,7 @@
     <message>
         <location line="+17"/>
         <source>Session</source>
-        <translation type="unfinished">Sessione</translation>
+        <translation>Sessione</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -842,22 +842,22 @@
     <message>
         <location line="+30"/>
         <source>Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Codici</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Create</source>
-        <translation type="unfinished">Crea</translation>
+        <translation>Crea</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Revoke</source>
-        <translation type="unfinished"></translation>
+        <translation>Revocare</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Copy</source>
-        <translation type="unfinished">Copia</translation>
+        <translation>Copia</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -872,7 +872,7 @@
     <message>
         <location line="+37"/>
         <source>Allow session operators to manage invite codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Consentire agli operatori di sessione di gestire i codici di invito</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3912,12 +3912,12 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+113"/>
         <source>Block new joins</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloccare nuove partecipazioni</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Require a registered account to join</source>
-        <translation type="unfinished"></translation>
+        <translation>Richiede un account registrato per partecipare</translation>
     </message>
     <message>
         <location line="+54"/>
@@ -6727,32 +6727,32 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="+426"/>
         <source>Create Invite Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea codice invito</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Uses:</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilizzi:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;None</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nessuno</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished">&amp;Affidabile</translation>
+        <translation>&amp;Affidabile</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished">&amp;Operatore</translation>
+        <translation>&amp;Operatore</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Role:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ruolo:</translation>
     </message>
 </context>
 <context>
@@ -6854,7 +6854,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location filename="../dialogs/invitedialog.cpp" line="-334"/>
         <location line="+260"/>
         <source>What are invite codes?</source>
-        <translation type="unfinished"></translation>
+        <translation>Cosa sono i codici invito?</translation>
     </message>
     <message>
         <location line="-122"/>
@@ -6864,54 +6864,54 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message numerus="yes">
         <location line="+22"/>
         <source>Invite code link(s) copied to clipboard.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Link al codice di invito copiato negli appunti.</numerusform>
+            <numerusform>I link al codice di invito sono stati copiati negli appunti.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+34"/>
         <source>This server does not support invite codes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questo server non supporta i codici di invito.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only server administrators can manage invite codes on this session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Solo gli amministratori del server possono gestire i codici di invito in questa sessione.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Only operators and server administrators can manage invite codes on this session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Solo gli operatori e gli amministratori del server possono gestire i codici di invito in questa sessione.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Revoke Invite Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Revoca codici invito</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really revoke %n selected invite code(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Vuoi davvero revocare %n codice di invito selezionato?</numerusform>
+            <numerusform>Vuoi davvero revocare %n codici di invito selezionati?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Invite codes let someone join the session via a limited-use link. You can revoke the code later to take away their access again.</source>
-        <translation type="unfinished"></translation>
+        <translation>I codici invito consentono a qualcuno di unirsi alla sessione tramite un link a uso limitato. Puoi revocare il codice in seguito per revocare nuovamente l&apos;accesso.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Someone joining via an invite code bypasses normal session restrictions: they don&apos;t need the session password, can join via web browser, don&apos;t need a registered account and aren&apos;t affected by new joins being blocked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Chi si unisce tramite un codice di invito aggira le normali restrizioni di sessione: non ha bisogno della password di sessione, può unirsi tramite browser web, non ha bisogno di un account registrato e non è interessato dal blocco delle nuove iscrizioni.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>They don&apos;t bypass bans or server-wide restrictions.</source>
         <extracomment>&quot;They&quot; is referring to invite codes.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Non aggirano i divieti o le restrizioni a livello di server.</translation>
     </message>
 </context>
 <context>
@@ -8114,37 +8114,37 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+36"/>
         <source>Blue Apatite</source>
-        <translation type="unfinished"></translation>
+        <translation>Apatite blu</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Indigo</source>
-        <translation type="unfinished"></translation>
+        <translation>Indaco</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Ocean Deep</source>
-        <translation type="unfinished"></translation>
+        <translation>Oceano profondo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pool Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Tavolo da biliardo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rose Quartz</source>
-        <translation type="unfinished"></translation>
+        <translation>Quarzo rosa</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rust</source>
-        <translation type="unfinished"></translation>
+        <translation>Ruggine</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Watermelon</source>
-        <translation type="unfinished"></translation>
+        <translation>Anguria</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8873,25 +8873,25 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+9"/>
         <location filename="../mainwindow.cpp" line="-1243"/>
         <source>Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Windows Ink Non-Native</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows Ink non nativo</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+10"/>
         <source>Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>Wintab</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Wintab Relative</source>
-        <translation type="unfinished"></translation>
+        <translation>Parente di Wintab</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8988,7 +8988,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+10"/>
         <source>Switch tool temporarily by holding primary shortcut for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambia strumento temporaneamente tenendo premuto il collegamento principale per %1</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -10582,32 +10582,32 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+55"/>
         <source>Color history</source>
-        <translation type="unfinished"></translation>
+        <translation>Cronologia dei colori</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show on this dock</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra su questo dock</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Show on all color docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra su tutti i dock colorati</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hide on all color docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Nascondi su tutti i dock colorati</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show only on this dock</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra solo su questo dock</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hide only on this dock</source>
-        <translation type="unfinished"></translation>
+        <translation>Nascondi solo su questo dock</translation>
     </message>
     <message>
         <location line="+65"/>
@@ -10623,7 +10623,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+0"/>
         <source>Rename Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Rinomina tavolozza</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -11266,7 +11266,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>KisTablet Windows Ink non-native input</source>
-        <translation type="unfinished"></translation>
+        <translation>Input non nativo di KisTablet Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11689,12 +11689,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+20"/>
         <source>Constrain</source>
-        <translation type="unfinished"></translation>
+        <translation>Vincolare</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Centro</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -11824,7 +11824,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>No layer selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun livello selezionato</translation>
     </message>
     <message>
         <location line="+4"/>
