@@ -1161,12 +1161,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>%1 made operator via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 通过服务器管理员创建的邀请成为操作员。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 made operator via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 通过 %2 创建的邀请成为操作员。</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1272,7 +1272,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+93"/>
         <source>%1 trusted via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 通过服务器管理员创建的邀请获得信任。</translation>
     </message>
     <message>
         <location line="-62"/>
@@ -1350,7 +1350,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+10"/>
         <source>%1 trusted via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>通过 %2 创建的邀请，%1 受到信任。</translation>
     </message>
     <message>
         <location line="+7"/>
