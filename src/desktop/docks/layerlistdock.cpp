@@ -473,7 +473,7 @@ void LayerList::updateActionLabels()
 		setActionLabel(
 			m_actions.toggleVisibility, tr("Toggle Layer Group &Visibility"));
 		setActionLabel(
-			m_actions.toggleVisibility, tr("Toggle Layer Group &Sketch Mode"));
+			m_actions.toggleSketch, tr("Toggle Layer Group &Sketch Mode"));
 		setActionLabel(
 			m_actions.layerCheckToggle,
 			check ? tr("Check Layer Group") : tr("Uncheck Layer Group"));
