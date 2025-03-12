@@ -73,10 +73,10 @@ private:
 	qreal getValueAt(qreal n) const;
 	qreal getValueSection(int i) const;
 
-	QColor getColor(qreal h, qreal s, qreal v) const;
+	QColor getColor(qreal h, qreal s, qreal v, bool clamp = false) const;
 
-	static QColor
-	getColorInColorSpace(qreal h, qreal s, qreal v, ColorSpace colorSpace);
+	static QColor getColorInColorSpace(
+		qreal h, qreal s, qreal v, ColorSpace colorSpace, bool clamp = false);
 	void setColorInColorSpace(const QColor &color, ColorSpace colorSpace);
 
 	static qreal normalizeAngle(qreal angle);

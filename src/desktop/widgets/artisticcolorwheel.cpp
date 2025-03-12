@@ -8,6 +8,7 @@
 #include <QPainterPath>
 #include <QSvgRenderer>
 #include <QtColorWidgets/color_utils.hpp>
+#include <QtColorWidgets/gradient_helper.hpp>
 #include <cmath>
 
 namespace widgets {
@@ -406,7 +407,7 @@ void ArtisticColorWheel::updateWheelCache(int dimension)
 				QLineF line(center, QPointF(x, y));
 				qreal h = getHueAt(line.angle());
 				qreal s = getSaturationAt(line.length() / radius);
-				pixels[x] = getColor(h, s, m_value).rgba();
+				pixels[x] = getColor(h, s, m_value, true).rgba();
 			}
 		}
 
@@ -573,19 +574,60 @@ qreal ArtisticColorWheel::getValueSection(int i) const
 	return 1.0 - qreal(i) / qreal(m_valueCount - 1);
 }
 
-QColor ArtisticColorWheel::getColor(qreal h, qreal s, qreal v) const
+QColor ArtisticColorWheel::getColor(qreal h, qreal s, qreal v, bool clamp) const
 {
-	return getColorInColorSpace(h, s, v, m_colorSpace);
+	QColor c = getColorInColorSpace(h, s, v, m_colorSpace, clamp);
+	if(clamp && c.alpha() == 0) {
+		return color_widgets::blendColors(
+			getColorInColorSpace(h, s, v, m_colorSpace, false),
+			palette().window().color(), 0.5);
+	} else {
+		return c;
+	}
+}
+
+static QColor
+lchccc(qt_color_type hue, qt_color_type chroma, qt_color_type luma)
+{
+	qreal h1 = hue * 6;
+	qreal x = chroma * (1 - qAbs(std::fmod(h1, 2) - 1));
+	QColor col;
+	if(h1 >= 0 && h1 < 1)
+		col = QColor::fromRgbF(chroma, x, 0);
+	else if(h1 < 2)
+		col = QColor::fromRgbF(x, chroma, 0);
+	else if(h1 < 3)
+		col = QColor::fromRgbF(0, chroma, x);
+	else if(h1 < 4)
+		col = QColor::fromRgbF(0, x, chroma);
+	else if(h1 < 5)
+		col = QColor::fromRgbF(x, 0, chroma);
+	else if(h1 <= 6)
+		col = QColor::fromRgbF(chroma, 0, x);
+
+	qreal m = luma - color_widgets::utils::color_lumaF(col);
+
+	if(col.redF() + m > 1.0 || col.greenF() + m > 1.0 ||
+	   col.blueF() + m > 1.0 || col.redF() + m < 0.0 ||
+	   col.greenF() + m < 0.0 || col.blueF() + m < 0.0) {
+		return Qt::transparent;
+	} else {
+		return QColor::fromRgbF(
+			qBound(0.0, col.redF() + m, 1.0),
+			qBound(0.0, col.greenF() + m, 1.0),
+			qBound(0.0, col.blueF() + m, 1.0));
+	}
 }
 
 QColor ArtisticColorWheel::getColorInColorSpace(
-	qreal h, qreal s, qreal v, ColorSpace colorSpace)
+	qreal h, qreal s, qreal v, ColorSpace colorSpace, bool clamp)
 {
 	switch(colorSpace) {
 	case ColorSpace::ColorHSL:
 		return color_widgets::utils::color_from_hsl(h, s, v);
 	case ColorSpace::ColorLCH:
-		return color_widgets::utils::color_from_lch(h, s, v);
+		return clamp ? lchccc(h, s, v)
+					 : color_widgets::utils::color_from_lch(h, s, v);
 	default:
 		return QColor::fromHsvF(h, s, v);
 	}
