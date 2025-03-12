@@ -123,7 +123,7 @@
     <message>
         <location line="+16"/>
         <source>Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>Độ cứng: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -136,7 +136,7 @@
     <message>
         <location line="-16"/>
         <source>Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>Nhoè: </translation>
     </message>
     <message>
         <location line="+30"/>
@@ -161,7 +161,7 @@
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Mịn: </translation>
     </message>
     <message>
         <location line="-206"/>
@@ -179,7 +179,7 @@
     <message>
         <location line="+9"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Kiểu</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -190,7 +190,7 @@
         <location line="+16"/>
         <location line="+50"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Hành động</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -342,7 +342,7 @@
     <message>
         <location filename="../ui/filetypedialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tên:</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -360,12 +360,12 @@
     <message>
         <location line="+10"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Nhập</translation>
     </message>
     <message>
         <location line="-135"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Mở</translation>
     </message>
     <message>
         <location line="+30"/>
