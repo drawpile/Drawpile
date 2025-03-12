@@ -113,12 +113,12 @@
     <message>
         <location line="+16"/>
         <source>Radius: </source>
-        <translation type="unfinished"></translation>
+        <translation>Bán kính: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Độ trong suốt: </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -146,7 +146,7 @@
     <message>
         <location line="+16"/>
         <source>Spacing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Khoảng cách: </translation>
     </message>
     <message>
         <location line="+19"/>
