@@ -6,22 +6,22 @@
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+52"/>
         <source>Add New</source>
-        <translation type="unfinished"></translation>
+        <translation>Thêm Mới</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Đem lên trên</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Đem xuống dưới</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished">Loại bỏ</translation>
+        <translation>Loại bỏ</translation>
     </message>
 </context>
 <context>
@@ -29,7 +29,7 @@
     <message>
         <location filename="../ui/abusereport.ui" line="+14"/>
         <source>Report Abuse</source>
-        <translation>Báo cáo lạm dụng</translation>
+        <translation>Báo cáo Lạm dụng</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -49,7 +49,7 @@
     <message>
         <location line="+8"/>
         <source>Offender:</source>
-        <translation type="unfinished"></translation>
+        <translation>Người vi phạm:</translation>
     </message>
 </context>
 <context>
@@ -62,12 +62,12 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>Thêm một danh sách URL máy chủ:</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Bạn có thể thêm một vài danh sách máy chủ tại &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -75,7 +75,7 @@
     <message>
         <location filename="../ui/avatarimport.ui" line="+14"/>
         <source>Crop Avatar</source>
-        <translation>Cắt avatar</translation>
+        <translation>Cắt Hình đại diện</translation>
     </message>
 </context>
 <context>
@@ -83,17 +83,17 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+64"/>
         <source>Brush type</source>
-        <translation type="unfinished"></translation>
+        <translation>Kiểu cọ vẽ</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Pick initial color from layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Chọn màu từ lớp</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Khoá alpha (chế độ chỉnh màu)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -103,12 +103,12 @@
     <message>
         <location line="+14"/>
         <source>Direct drawing mode</source>
-        <translation>Chế độ vẽ trực tiếp</translation>
+        <translation>Chế độ vẽ đè</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Kích cỡ: </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -131,7 +131,7 @@
         <location line="+14"/>
         <location line="+33"/>
         <source>Pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Độ nhạy áp lực</translation>
     </message>
     <message>
         <location line="-16"/>
@@ -141,7 +141,7 @@
     <message>
         <location line="+30"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished"></translation>
+        <translation>Bộ chọn màu: 1/</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -151,12 +151,12 @@
     <message>
         <location line="+19"/>
         <source>Gain: </source>
-        <translation type="unfinished"></translation>
+        <translation>Độ khuếch đại: </translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Stabilizer: </source>
-        <translation type="unfinished"></translation>
+        <translation>Bộ ổn định: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -174,7 +174,7 @@
     <message>
         <location filename="../ui/canvasshortcutsdialog.ui" line="+14"/>
         <source>Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Phím tắt Bản vẽ</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -184,7 +184,7 @@
     <message>
         <location line="+22"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Phím tắt</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -195,22 +195,22 @@
     <message>
         <location line="-26"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Đảo ngược hướng của input. Ví dụ, cuộn lên sẽ thu nhỏ bảng vẽ thay vì phóng to.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>Đã đảo ngược</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation type="unfinished"></translation>
+        <translation>Đổi hướng ngang thành hướng dọc và ngược lại. Ví dụ, di chuột lên xuống để đổ kích cỡ của cọ vẽ thay vì sang trái và phải.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Tráo trục</translation>
     </message>
 </context>
 <context>
@@ -329,7 +329,7 @@
     <message>
         <location line="+7"/>
         <source>Alpha</source>
-        <translation>Anfa</translation>
+        <translation>Alpha</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -370,7 +370,7 @@
     <message>
         <location line="+30"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished"></translation>
+        <translation>Mở mục debug</translation>
     </message>
     <message>
         <location line="+16"/>
