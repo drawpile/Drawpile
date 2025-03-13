@@ -624,7 +624,7 @@
         <location filename="../ui/fillsettings.ui" line="+330"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+310"/>
         <source>Feather: </source>
-        <translation type="unfinished"></translation>
+        <translation>Lông vũ </translation>
     </message>
     <message>
         <location line="-298"/>
@@ -640,7 +640,7 @@
         <location line="-26"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+67"/>
         <source>Source:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nguồn:</translation>
     </message>
     <message>
         <location line="-135"/>
@@ -652,7 +652,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-2"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Độ trong suốt: </translation>
     </message>
     <message>
         <location line="-97"/>
