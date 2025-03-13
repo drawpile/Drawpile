@@ -725,7 +725,7 @@
         <location line="-336"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-113"/>
         <source>Size Limit: </source>
-        <translation>Giới hạn kích thước: </translation>
+        <translation>Giới hạn Kích thước: </translation>
     </message>
     <message>
         <location line="+279"/>
@@ -766,7 +766,7 @@
     <message>
         <location line="-17"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Làm mới</translation>
     </message>
     <message>
         <location line="+53"/>
