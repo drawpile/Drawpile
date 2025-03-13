@@ -538,7 +538,7 @@
     <message>
         <location line="+5"/>
         <source>Reference Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Hình ảnh Tham chiếu</translation>
     </message>
     <message>
         <location line="+168"/>
@@ -725,7 +725,7 @@
         <location line="-336"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-113"/>
         <source>Size Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>Giới hạn kích thước: </translation>
     </message>
     <message>
         <location line="+279"/>
@@ -748,7 +748,7 @@
         <location line="+289"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+146"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Chế độ :</translation>
     </message>
 </context>
 <context>
