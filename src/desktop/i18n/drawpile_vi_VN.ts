@@ -497,7 +497,7 @@
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tất cả các dạng tệp tin được hỗ trợ (%s)</translation>
     </message>
     <message>
         <location line="+2"/>
