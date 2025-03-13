@@ -43,6 +43,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Don't reset reference dock position when toggling dock visibility. Thanks izzy for reporting.
  * Fix: Remove language selection in the web version for now, since it doesn't do anything. Thanks Albano Battistella for reporting.
  * Feature: Allow setting the language in the web version using a query parameter. Many languages don't work properly, but this allows setting it before starting the thing and then having to change it.
+ * Fix: Show and select existing track title when renaming it. Thanks Greendyno for reporting.
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.

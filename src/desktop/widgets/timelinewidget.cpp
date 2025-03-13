@@ -1382,7 +1382,7 @@ void TimelineWidget::retitleTrack()
 	}
 
 	utils::getInputText(
-		this, tr("Rename Track"), tr("Track Name"), QString(),
+		this, tr("Rename Track"), tr("Track Name"), source->title,
 		[this](const QString &text) {
 			QString title = text.trimmed();
 			if(!title.isEmpty() && d->currentTrack()) {
