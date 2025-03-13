@@ -497,7 +497,7 @@
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation>Tất cả các dạng tệp tin được hỗ trợ (%s)</translation>
+        <translation>Tất cả các dạng tệp tin được hỗ trợ (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -508,7 +508,7 @@
     <message>
         <location line="-390"/>
         <source>Session Bans (%1)</source>
-        <translation>Người dùng bị cấm trong phiên (%1)</translation>
+        <translation>Người Dùng bị Cấm trong Phiên (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -518,22 +518,22 @@
     <message>
         <location line="+22"/>
         <source>Error opening temporary file for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gặp lỗi khi mở tập tin tạm thời cho %1.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Open Image</source>
-        <translation type="unfinished">Mở ảnh</translation>
+        <translation>Mở Ảnh</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Set Brush Preset Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>Đặt hình đại diện preset cọ vẽ</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Paste File</source>
-        <translation type="unfinished"></translation>
+        <translation>Dán Tập tin</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -543,67 +543,67 @@
     <message>
         <location line="+168"/>
         <source>Export Frames in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>Xuất khung hình vào tập tin ZIP</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Xuất Video WEBM</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>Xuất Ảnh động WEBP</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Save Image Series</source>
-        <translation type="unfinished"></translation>
+        <translation>Lưu Chuỗi Hình ảnh</translation>
     </message>
     <message>
         <location line="+74"/>
         <source>Export Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Xuất Cọ vẽ</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Export Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Xuất Danh sách Người dùng bị Cấm trong Phiên</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Export Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Xuất Vai trò</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Export Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Xuất Cài đặt của Phiên</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Định dạng PSD không hỗ trợ chú thích, thông tin hoạt hình và các kiểu pha trộn. Nếu bạn không muốn mất, hãy dùng định dạng ORA.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Định dạng được chọn sẽ kết hợp toàn bộ các lớp thành 1. Nếu bạn muốn dữ các lớp, chú thích và thông tin hoạt hình, bạn phải lưu dạng ORA.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Save as Selected Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Lưu ở Định dạng Được Chọn</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save as %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Lưu dưới dạng %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save as ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>Lưu dạng ORA</translation>
     </message>
     <message>
         <location line="+70"/>
@@ -615,7 +615,7 @@
         <location line="+104"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Chưa Đặt Tên%1</translation>
     </message>
 </context>
 <context>
@@ -646,7 +646,7 @@
         <location line="-135"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-115"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -658,63 +658,63 @@
         <location line="-97"/>
         <location line="+3"/>
         <source>Fill continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>Tô vùng liên tục</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill all similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Tô mọi vùng có màu giống nhau</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill entire selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Tô toàn bộ vùng chọn</translation>
     </message>
     <message>
         <location line="+78"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+71"/>
         <source>Merged image</source>
-        <translation type="unfinished"></translation>
+        <translation>Ảnh đã kết hợp</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+13"/>
         <source>Merged without background</source>
-        <translation type="unfinished"></translation>
+        <translation>Kết hợp ngoại trừ nền</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+15"/>
         <source>Current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Lớp hiện tại</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill source layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Tô lớp nguồn</translation>
     </message>
     <message>
         <location line="+96"/>
         <location line="+3"/>
         <source>Apply the pending fill, making it visible for everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>Áp dụng sự kiện tô đang chờ, hiển thị cho mọi người thấy</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Áp dụng</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation type="unfinished"></translation>
+        <translation>Huỷ sự kiện tô đang chờ mà không để ai thấy</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -731,18 +731,18 @@
         <location line="+279"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+62"/>
         <source>Close Gaps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Đóng Các Khẽ hở: </translation>
     </message>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+131"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Giới hạn Kích thước: Vô hạn</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="-260"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-167"/>
         <source>Tolerance: </source>
-        <translation type="unfinished"></translation>
+        <translation>Độ giống nhau: </translation>
     </message>
     <message>
         <location line="+289"/>
