@@ -375,124 +375,124 @@
     <message>
         <location line="+16"/>
         <source>Import Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Nhập danh sách người dùng bị cấm của phiên</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Import Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Nhập Vai trò</translation>
     </message>
     <message>
         <location line="+137"/>
         <location line="+298"/>
         <source>Save Image</source>
-        <translation type="unfinished">Lưu ảnh</translation>
+        <translation>Lưu Ảnh</translation>
     </message>
     <message>
         <location line="-298"/>
         <source>Export Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Xuất Ảnh</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Save Pre-Reset Image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Save Pre-Reset Image</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Save Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Lưu Vùng chọn</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Record Session</source>
-        <translation type="unfinished">Thu đĩa phiên</translation>
+        <translation>Ghi hình Phiên</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Session Template</source>
-        <translation type="unfinished"></translation>
+        <translation>Lưu Mẫu phiên</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Export Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>Xuất Ảnh động GIF</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Performance Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Giám sát Hiệu suất</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tablet Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Nhật ký Sự kiện Bảng vẽ</translation>
     </message>
     <message>
         <location line="+143"/>
         <source>Log File</source>
-        <translation type="unfinished">Tập tin nhật ký</translation>
+        <translation>Tập tin Nhật ký</translation>
     </message>
     <message>
         <location line="-171"/>
         <location line="+36"/>
         <source>Export MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Xuất video MP4</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export WebM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Xuất video WEBM</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Custom FFmpeg Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Xuất video FFmpeg tuỳ chỉnh</translation>
     </message>
     <message>
         <location line="-77"/>
         <source>Save Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Lưu các Khung hình Hoạt hình</translation>
     </message>
     <message>
         <location line="-271"/>
         <source>Add Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Thêm Hình đại diện</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Import Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Nhập các Khung hình Hoạt hình</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (%2)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Ảnh Khung hình</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Import Animation from Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Nhập Hoạt hình từ các Lớp</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Ảnh có Lớp</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Nhập cọ vẽ</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Import Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nhập Cài đặt Phiên</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -503,17 +503,17 @@
         <location line="+2"/>
         <location line="+391"/>
         <source>Session Settings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Cài đặt phiên (%1)</translation>
     </message>
     <message>
         <location line="-390"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Người dùng bị cấm trong phiên (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Session Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Các vai trò trong phiên (%1)</translation>
     </message>
     <message>
         <location line="+22"/>
