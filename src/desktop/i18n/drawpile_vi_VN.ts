@@ -771,7 +771,7 @@
     <message>
         <location line="+53"/>
         <source>Rewind</source>
-        <translation type="unfinished"></translation>
+        <translation>Tua lại</translation>
     </message>
     <message>
         <location line="+23"/>
