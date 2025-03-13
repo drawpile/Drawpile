@@ -761,7 +761,7 @@
     <message>
         <location line="+28"/>
         <source>Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Đặt lại độ phóng</translation>
     </message>
     <message>
         <location line="-17"/>
