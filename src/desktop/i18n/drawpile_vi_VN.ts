@@ -796,7 +796,7 @@
     <message>
         <location line="+29"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Xuất</translation>
     </message>
 </context>
 <context>
