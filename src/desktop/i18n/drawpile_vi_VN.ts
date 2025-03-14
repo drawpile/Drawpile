@@ -804,12 +804,12 @@
     <message>
         <location filename="../ui/inspectorsettings.ui" line="+17"/>
         <source>Last edited by:</source>
-        <translation>Chỉnh sửa lần cuối bởi</translation>
+        <translation>Chỉnh sửa lần cuối bởi:</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mark whole tiles</translation>
     </message>
 </context>
 <context>
@@ -822,7 +822,7 @@
     <message>
         <location line="+17"/>
         <source>Session</source>
-        <translation type="unfinished">Phiên</translation>
+        <translation>Phiên</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -832,17 +832,17 @@
     <message>
         <location line="+24"/>
         <source>Include password</source>
-        <translation type="unfinished"></translation>
+        <translation>Thêm mật khẩu</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bạn đang tổ chức một phiên cục bộ. Nếu người dùng khác không tham gia được, xem &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;trang hướng dẫn tổ chức phiên&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Mã</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -862,7 +862,7 @@
     <message>
         <location line="+42"/>
         <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bạn đang tổ chức một phiên cục bộ, vì thế Drawpile phải tìm IP hiển thị bên ngoài của bạn để tạo cho bạn một liên kết mời. Để tìm hiểu thêm, xem &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;trang hướng dẫn tổ chức&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -872,12 +872,12 @@
     <message>
         <location line="+37"/>
         <source>Allow session operators to manage invite codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Cho phép người dùng vận hành phiên quản lý các mã</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show this dialog when hosting a session</source>
-        <translation type="unfinished"></translation>
+        <translation>Hiện hộp thoại này khi tổ chức một phiên</translation>
     </message>
 </context>
 <context>
@@ -900,12 +900,14 @@
         <source>Toggle between full range and subrange.
 Full range: [%1, %2]
 Subrange: [%3, %4]</source>
-        <translation type="unfinished"></translation>
+        <translation>Đổi qua lại giữa khoảng đầy đủ và khoảng con.
+Khoảng đầy đủ: [%1, %2]
+Khoảng con: [%3, %4]</translation>
     </message>
     <message>
         <location line="+175"/>
         <source>&amp;Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Chọn tất cả</translation>
     </message>
     <message>
         <location line="+10"/>
