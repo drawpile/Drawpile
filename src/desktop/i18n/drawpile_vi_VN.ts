@@ -786,7 +786,7 @@
     <message>
         <location line="+20"/>
         <source>Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Khoảng</translation>
     </message>
     <message>
         <location line="+41"/>
