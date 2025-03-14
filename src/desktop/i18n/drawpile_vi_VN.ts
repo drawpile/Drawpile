@@ -827,7 +827,7 @@
     <message>
         <location line="+6"/>
         <source>Copy Invite Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Sao chép liên kết mời</translation>
     </message>
     <message>
         <location line="+24"/>
