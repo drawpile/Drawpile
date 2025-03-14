@@ -817,7 +817,7 @@
     <message>
         <location filename="../ui/invitedialog.ui" line="+14"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>Mời</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -852,12 +852,12 @@
     <message>
         <location line="+11"/>
         <source>Revoke</source>
-        <translation type="unfinished"></translation>
+        <translation>Thu hồi</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Sao chép</translation>
     </message>
     <message>
         <location line="+42"/>
