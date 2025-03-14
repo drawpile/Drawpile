@@ -791,7 +791,7 @@
     <message>
         <location line="+41"/>
         <source>Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Tốc độ: </translation>
     </message>
     <message>
         <location line="+29"/>
@@ -804,7 +804,7 @@
     <message>
         <location filename="../ui/inspectorsettings.ui" line="+17"/>
         <source>Last edited by:</source>
-        <translation type="unfinished"></translation>
+        <translation>Chỉnh sửa lần cuối bởi</translation>
     </message>
     <message>
         <location line="+56"/>
