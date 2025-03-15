@@ -104,6 +104,10 @@ private:
 
 	void disableKineticScrolling();
 
+	QScroller *makeViewportScroller();
+	bool hasViewportScroller() const;
+	void grabViewport(QScroller::ScrollerGestureType gestureType);
+	void ungrabViewport();
 	void setScrollPerPixel(bool scrollPerPixel);
 	void setEventFilter(QObject *target, bool install);
 

@@ -296,13 +296,12 @@ bool KineticScroller::eventFilter(QObject *watched, QEvent *event)
 {
 	switch(event->type()) {
 	case QEvent::Enter:
-		QScroller::ungrabGesture(m_scrollArea);
+		ungrabViewport();
 		break;
 	case QEvent::Leave: {
 		QScroller::ScrollerGestureType gestureType;
 		if(isKineticScrollingEnabled(m_kineticScrollGesture, &gestureType)) {
-			QScroller::grabGesture(
-				m_scrollArea, QScroller::ScrollerGestureType(gestureType));
+			grabViewport(gestureType);
 		}
 		break;
 	}
@@ -353,11 +352,13 @@ void KineticScroller::enableKineticScrolling(
 
 	setScrollPerPixel(true);
 
-	QScroller *scroller = QScroller::scroller(m_scrollArea);
-	// XXX: this leaks memory, see QTBUG-82355.
-	QScroller::grabGesture(m_scrollArea, gestureType);
-	scroller->setScrollerProperties(
-		getScrollerPropertiesForSensitivity(kineticScrollSensitivity));
+	QScroller *scroller = makeViewportScroller();
+	if(scroller) {
+		// XXX: this leaks memory, see QTBUG-82355.
+		grabViewport(gestureType);
+		scroller->setScrollerProperties(
+			getScrollerPropertiesForSensitivity(kineticScrollSensitivity));
+	}
 }
 
 void KineticScroller::disableKineticScrolling()
@@ -366,8 +367,36 @@ void KineticScroller::disableKineticScrolling()
 	m_scrollArea->setVerticalScrollBarPolicy(m_verticalScrollBarPolicy);
 	setEventFilter(m_scrollArea->horizontalScrollBar(), false);
 	setEventFilter(m_scrollArea->verticalScrollBar(), false);
-	if(QScroller::hasScroller(m_scrollArea)) {
-		QScroller::ungrabGesture(m_scrollArea);
+	if(hasViewportScroller()) {
+		ungrabViewport();
+	}
+}
+
+QScroller *KineticScroller::makeViewportScroller()
+{
+	QWidget *viewport = m_scrollArea->viewport();
+	return viewport ? QScroller::scroller(viewport) : nullptr;
+}
+
+bool KineticScroller::hasViewportScroller() const
+{
+	QWidget *viewport = m_scrollArea->viewport();
+	return viewport && QScroller::hasScroller(viewport);
+}
+
+void KineticScroller::grabViewport(QScroller::ScrollerGestureType gestureType)
+{
+	QWidget *viewport = m_scrollArea->viewport();
+	if(viewport) {
+		QScroller::grabGesture(viewport, gestureType);
+	}
+}
+
+void KineticScroller::ungrabViewport()
+{
+	QWidget *viewport = m_scrollArea->viewport();
+	if(viewport) {
+		QScroller::ungrabGesture(viewport);
 	}
 }
 
