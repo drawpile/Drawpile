@@ -608,6 +608,18 @@ void showWindow(QWidget *widget, bool maximized, bool isMainWindow)
 #endif
 }
 
+void maximizeExistingWindow(QWidget *widget)
+{
+#ifdef Q_OS_ANDROID
+	// Qt just does absolutely nothing if the widget is already visible. Setting
+	// the window state to maximized also does nothing . Making the window
+	// full-screen does work, but on some devices it makes the widget larger
+	// than the screen viewport, so that also isn't an option.
+	widget->hide();
+#endif
+	widget->showMaximized();
+}
+
 void setWidgetRetainSizeWhenHidden(QWidget *widget, bool retainSize)
 {
 	QSizePolicy sp = widget->sizePolicy();

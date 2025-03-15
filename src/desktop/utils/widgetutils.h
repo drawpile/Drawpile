@@ -158,6 +158,8 @@ private:
 void showWindow(
 	QWidget *widget, bool maximized = false, bool isMainWindow = false);
 
+void maximizeExistingWindow(QWidget *widget);
+
 void setWidgetRetainSizeWhenHidden(QWidget *widget, bool retainSize);
 
 bool moveIfOnScreen(QWidget *widget, const QPoint &pos);

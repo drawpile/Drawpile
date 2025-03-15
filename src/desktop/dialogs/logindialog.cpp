@@ -1146,7 +1146,7 @@ void LoginDialog::onBadLoginPassword(
 
 void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)
 {
-	adjustSize(600, 400, false);
+	adjustSize(800, 400, false);
 
 	d->sessions->setSourceModel(sessions);
 	d->ui->sessionList->resizeColumnsToContents();
@@ -1476,7 +1476,7 @@ void LoginDialog::adjustSize(int width, int height, bool allowShrink)
 	QRect newGeom(newX, newY, newWidth, newHeight);
 	QScreen *screen = compat::widgetScreen(*this);
 	if(screen && !screen->availableGeometry().contains(newGeom)) {
-		showMaximized();
+		utils::maximizeExistingWindow(this);
 	} else {
 		setGeometry(newGeom);
 	}
