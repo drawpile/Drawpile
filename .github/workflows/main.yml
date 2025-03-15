@@ -438,7 +438,7 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           fetch-depth: 0 # for git-describe
           submodules: true
@@ -449,7 +449,7 @@ jobs:
         if: runner.os == 'macOS'
 
       - name: Activate MSVC
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756
         with:
           arch: win${{ matrix.arch == 'x86_64' && '64' || '32' }}
         if: runner.os == 'Windows'
@@ -460,7 +460,7 @@ jobs:
         if: runner.os == 'macOS'
 
       - name: Install NASM for building OpenSSL and ffmpeg in Windows
-        uses: ilammy/setup-nasm@v1
+        uses: ilammy/setup-nasm@72793074d3c8cdda771dba85f6deafe00623038b
         with:
           platform: win${{ matrix.arch == 'x86_64' && '64' || '32' }}
         if: runner.os == 'Windows'
@@ -476,7 +476,7 @@ jobs:
         if: runner.os == 'Windows'
 
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce
         with:
           msbuild-architecture: x${{ matrix.arch == 'x86_64' && '64' || '32' }}
         if: runner.os == 'Windows'
@@ -584,7 +584,7 @@ jobs:
           cache_key: ${{ matrix.build_type != 'Release' && format('{0}-', matrix.build_type) || '' }}${{ runner.os }}${{ matrix.component }}-${{ matrix.arch }}${{ matrix.cross_os && format('+{0}', matrix.cross_os) }}${{ matrix.android_sdk_versions && format('-{0}', matrix.android_sdk_versions) }}-${{ matrix.qt }}
 
       - name: Cache gradle
-        uses: actions/cache@v4
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf
         with:
           # The zip file is unnecessary but the .zip.ok file is needed or it
           # will blow away the installation and redownload everything
@@ -693,7 +693,7 @@ jobs:
         if: matrix.packager
 
       - name: Upload artifacts for SignPath to sign
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1
         id: signpath-upload
         with:
           name: SignPath${{ matrix.component && format('-{0}', matrix.component) }}-${{ matrix.cross_os || runner.os }}-${{ matrix.arch }}-Qt${{ matrix.qt }}
@@ -709,7 +709,7 @@ jobs:
         if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
 
       - name: Submit artifacts to SignPath to sign
-        uses: signpath/github-action-submit-signing-request@v1
+        uses: signpath/github-action-submit-signing-request@b889265c0bf404280c1fc05a4f00ad8da5fbe5be
         id: signpath-sign
         with:
           api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
@@ -727,7 +727,7 @@ jobs:
         if: runner.os == 'Windows' && matrix.packager && startsWith(github.ref, 'refs/tags/') && matrix.signpath
 
       - name: Delete unsigned artifacts uploaded for SignPath after signing
-        uses: actions/github-script@v7
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
         id: signpath-delete-uploaded
         with:
           script: |
@@ -746,7 +746,7 @@ jobs:
         if: runner.os == 'Windows' && matrix.collect_symbols
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1
         if: matrix.packager
         with:
           name: Drawpile${{ matrix.component && format('-{0}', matrix.component) }}-${{ matrix.cross_os || runner.os }}${{ matrix.android_sdk_versions && format('-{0}', matrix.android_sdk_versions) }}-${{ matrix.arch }}-Qt${{ matrix.qt }}
@@ -759,7 +759,7 @@ jobs:
             DrawpileSymbols-*.zip
 
       - name: Upload error logs and artefacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1
         if: failure()
         with:
           name: Logs${{ matrix.component && format('-{0}', matrix.component) }}-${{ matrix.cross_os || runner.os }}${{ matrix.android_sdk_versions && format('-{0}', matrix.android_sdk_versions) }}-${{ matrix.arch }}-Qt${{ matrix.qt }}
@@ -792,13 +792,13 @@ jobs:
           || startsWith(github.ref, 'refs/tags/'))
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806
 
       - name: Dump directory contents
         run: ls -alFR
 
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           path: checkout
 

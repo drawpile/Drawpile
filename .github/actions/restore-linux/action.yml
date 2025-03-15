@@ -20,7 +20,7 @@ runs:
       shell: bash
 
     - name: Restore system build dependencies from cache
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@d4323d4df104b026a6aa633fdb11d772146be0bf
       id: cache
       with:
         path: ${{ inputs.path }}
@@ -71,7 +71,7 @@ runs:
       shell: bash
 
     - name: Store system build dependencies to cache
-      uses: actions/cache/save@v4
+      uses: actions/cache/save@d4323d4df104b026a6aa633fdb11d772146be0bf
       with:
         path: ${{ inputs.path }}
         key: build-packages-${{ matrix.os }}

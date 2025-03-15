@@ -40,7 +40,7 @@ runs:
   using: composite
   steps:
     - name: Restore ${{ inputs.name }} from cache
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@d4323d4df104b026a6aa633fdb11d772146be0bf
       id: cache
       with:
         path: ${{ inputs.path }}
@@ -58,7 +58,7 @@ runs:
       if: steps.cache.outputs.cache-hit != 'true'
 
     - name: Store ${{ inputs.name }} to cache
-      uses: actions/cache/save@v4
+      uses: actions/cache/save@d4323d4df104b026a6aa633fdb11d772146be0bf
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.cache_key }}

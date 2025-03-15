@@ -25,7 +25,7 @@ runs:
       if: (success() || failure()) && inputs.cache-hit == 'true' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
 
     - name: Save sccache
-      uses: actions/cache/save@v4
+      uses: actions/cache/save@d4323d4df104b026a6aa633fdb11d772146be0bf
       with:
         path: .github/sccache
         key: sccache-${{ inputs.cache_key }}
