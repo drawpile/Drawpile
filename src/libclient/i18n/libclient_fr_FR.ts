@@ -20,18 +20,18 @@
         <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Conflit</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (conflit)</translation>
     </message>
     <message>
         <location line="+85"/>
         <source>Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinceau</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -64,17 +64,17 @@
     <message>
         <location line="+2"/>
         <source>Save operation failed, but the file might have been partially written.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;opération de sauvegarde à échouée, mais le fichier a peut-être été partiellement écrit.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Internal error during saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur interne durant la sauvegarde.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur inconnue.</translation>
     </message>
 </context>
 <context>
@@ -83,40 +83,40 @@
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Conflit</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (conflit)</translation>
     </message>
     <message>
         <location line="+76"/>
         <source>Shortcut</source>
-        <translation type="unfinished">Raccourci</translation>
+        <translation>Raccourci</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation type="unfinished">Action</translation>
+        <translation>Action</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Modifiers</source>
-        <translation type="unfinished"></translation>
+        <translation>Modificateurs</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>%1</source>
         <extracomment>Example: &quot;Pan Canvas&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%1 (%2)</source>
         <extracomment>Example: &quot;Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -133,43 +133,43 @@
     <message>
         <location line="+48"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Molette</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>+</source>
         <extracomment>Joins shortcut components, probably doesn&apos;t need to be translated.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>+</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Unset</source>
-        <translation type="unfinished"></translation>
+        <translation>Non défini</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Left Click</source>
-        <translation type="unfinished"></translation>
+        <translation>Clic Gauche</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right Click</source>
-        <translation type="unfinished"></translation>
+        <translation>Clic Droit</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Clic du Milieu</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Unknown Button 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Bouton Inconnu 0x%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Button %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Bouton %1</translation>
     </message>
     <message>
         <location line="+8"/>
