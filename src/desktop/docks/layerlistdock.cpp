@@ -207,6 +207,11 @@ LayerList::LayerList(QWidget *parent)
 	m_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	m_view->setContextMenuPolicy(Qt::CustomContextMenu);
+#ifdef DRAWPILE_QSCROLLER_PATCH
+	m_view->viewport()->setProperty(
+		"drawpile_scroller_filter",
+		QVariant::fromValue(new LayerListScrollFilter(this)));
+#endif
 	utils::bindKineticScrolling(m_view);
 	rootLayout->addWidget(m_view);
 
@@ -2033,5 +2038,20 @@ QString LayerList::getBaseName(bool group)
 	}
 	return group ? tr("Group") : tr("Layer");
 }
+
+
+#ifdef DRAWPILE_QSCROLLER_PATCH
+LayerListScrollFilter::LayerListScrollFilter(LayerList *parent)
+	: DrawpileQScrollerFilter(parent)
+{
+}
+
+bool LayerListScrollFilter::filterScroll(QWidget *w, const QPointF &point)
+{
+	qreal width = qreal(w->width());
+	qreal x = point.x();
+	return x <= width * 0.55 || x >= width - 24.0;
+}
+#endif
 
 }

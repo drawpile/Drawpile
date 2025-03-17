@@ -10,6 +10,7 @@ extern "C" {
 #include "libclient/net/message.h"
 #include <QColor>
 #include <QModelIndexList>
+#include <QScroller>
 #include <QSet>
 #include <QVector>
 
@@ -246,6 +247,16 @@ private:
 
 	Actions m_actions;
 };
+
+#ifdef DRAWPILE_QSCROLLER_PATCH
+class LayerListScrollFilter : public DrawpileQScrollerFilter {
+	Q_OBJECT
+public:
+	explicit LayerListScrollFilter(LayerList *parent);
+
+    bool filterScroll(QWidget *w, const QPointF &point) override;
+};
+#endif
 
 }
 

@@ -303,6 +303,7 @@ if(BASE)
 				patches/androidtilt-qt5.diff
 				patches/qtbug-104895.diff
 				patches/android_no_build-id.diff
+				patches/kineticscrollfilter-qt5.diff
 			6.7.2
 				patches/qtbug-113394.diff
 				patches/cancel_touch_on_pen.diff
@@ -319,6 +320,7 @@ if(BASE)
 				patches/noasyncify.diff
 				patches/android_no_build-id.diff
 				patches/browser_keyboard_input.diff
+				patches/kineticscrollfilter-qt6.diff
 			6.8.2
 				patches/qtbug-113394.diff
 				patches/cancel_touch_on_pen.diff
@@ -333,6 +335,7 @@ if(BASE)
 				# patches/noasyncify.diff
 				# patches/browser_keyboard_input.diff
 				patches/android_no_build-id.diff
+				patches/kineticscrollfilter-qt6.diff
 	)
 endif()
 

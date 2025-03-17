@@ -1,0 +1,61 @@
+Description: The layer list dock needs both kinetic scrolling and dragging via
+left-click or touch. This conflicts with each other and feels really bad, since
+it'll pretty much always just scroll the list when you meant to move a layer
+unless you do some really strange motion to drag the layer out of the list and
+then back in.
+
+This patch adds a filter hook kinetic scrolling based on the starting position.
+
+--- a/src/widgets/util/qflickgesture.cpp
++++ b/src/widgets/util/qflickgesture.cpp
+@@ -531,8 +531,18 @@
+     bool scrollerWasScrolling = (scroller->state() == QScroller::Scrolling);
+
+     if (inputType) {
+-        if (QWidget *w = qobject_cast<QWidget *>(d->receiver))
++        if (QWidget *w = qobject_cast<QWidget *>(d->receiver)) {
+             point = w->mapFromGlobal(point.toPoint());
++			if (inputType == QScroller::InputPress && (button == Qt::NoButton || button == Qt::LeftButton)) {
++				QVariant filterVariant = w->property("drawpile_scroller_filter");
++                if (filterVariant.isValid()) {
++                    DrawpileQScrollerFilter *filter = filterVariant.value<DrawpileQScrollerFilter *>();
++                    if (filter && filter->filterScroll(w, point)) {
++                        return Ignore;
++                    }
++                }
++			}
++        }
+ #if QT_CONFIG(graphicsview)
+         else if (QGraphicsObject *go = qobject_cast<QGraphicsObject *>(d->receiver))
+             point = go->mapFromScene(point);
+
+--- a/src/widgets/util/qscroller.cpp
++++ b/src/widgets/util/qscroller.cpp
+@@ -32,6 +32,8 @@
+
+ QT_BEGIN_NAMESPACE
+
++DrawpileQScrollerFilter::DrawpileQScrollerFilter(QObject *parent) : QObject(parent) {}
++
+ Q_LOGGING_CATEGORY(lcScroller, "qt.widgets.scroller")
+
+ bool qt_sendSpontaneousEvent(QObject *receiver, QEvent *event);
+
+--- a/src/widgets/util/qscroller.h
++++ b/src/widgets/util/qscroller.h
+@@ -13,6 +13,15 @@
+
+ QT_BEGIN_NAMESPACE
+
++#define DRAWPILE_QSCROLLER_PATCH
++
++class Q_WIDGETS_EXPORT DrawpileQScrollerFilter : public QObject {
++    Q_OBJECT
++public:
++    explicit DrawpileQScrollerFilter(QObject *parent);
++    virtual bool filterScroll(QWidget *w, const QPointF &point) = 0;
++};
++
+
+ class QWidget;
+ class QScrollerPrivate;
