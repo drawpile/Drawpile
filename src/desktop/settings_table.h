@@ -26,7 +26,7 @@
 
 #ifndef KINETIC_SCROLL_GESTURE_DEFAULT
 #	if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
-#		define KINETIC_SCROLL_GESTURE_DEFAULT KineticScrollGesture::Touch
+#		define KINETIC_SCROLL_GESTURE_DEFAULT KineticScrollGesture::LeftClick
 #	else
 #		define KINETIC_SCROLL_GESTURE_DEFAULT KineticScrollGesture::None
 #	endif
