@@ -23,6 +23,7 @@ public:
 	}
 
 	bool isTouchDrawEnabled() const;
+	bool isTouchDrawPressureEnabled() const;
 	bool isTouchPanEnabled() const;
 	bool isTouchDrawOrPanEnabled() const;
 	bool isTouchPinchEnabled() const;
@@ -39,8 +40,9 @@ public:
 	void handleGesture(QGestureEvent *event, qreal zoom, qreal rotation);
 
 signals:
-	void touchPressed(QEvent *event, long long timeMsec, const QPointF &posf);
-	void touchMoved(long long timeMsec, const QPointF &posf);
+	void touchPressed(
+		QEvent *event, long long timeMsec, const QPointF &posf, qreal pressure);
+	void touchMoved(long long timeMsec, const QPointF &posf, qreal pressure);
 	void touchReleased(long long timeMsec, const QPointF &posf);
 	void touchScrolledBy(qreal dx, qreal dy);
 	void touchZoomedRotated(qreal zoom, qreal rotation);
@@ -98,11 +100,20 @@ private:
 		bool m_spotsChanged = true;
 	};
 
+	struct TouchDrawPoint {
+		long long timeMsec;
+		QPointF posf;
+		qreal pressure;
+	};
+
+	qreal touchPressure(const QTouchEvent *event) const;
+
 	static qreal squareDist(const QPointF &p)
 	{
 		return p.x() * p.x() + p.y() * p.y();
 	}
 
+	void setTouchDrawPressureEnabled(bool touchDrawPressureEnabled);
 	void setOneFingerTouchAction(int oneFingerTouchAction);
 	void setTwoFingerPinchAction(int twoFingerPinchAction);
 	void setTwoFingerTwistAction(int twoFingerTwistAction);
@@ -125,6 +136,7 @@ private:
 	bool m_touchHeld = false;
 	bool m_anyTabletEventsReceived = false;
 	bool m_allowColorPick = true;
+	bool m_touchDrawPressureEnabled = false;
 	int m_oneFingerTouchAction;
 	int m_twoFingerPinchAction;
 	int m_twoFingerTwistAction;
@@ -134,7 +146,7 @@ private:
 	int m_fourFingerTapAction;
 	int m_oneFingerTapAndHoldAction;
 	TouchMode m_touchMode = TouchMode::Unknown;
-	QVector<QPair<long long, QPointF>> m_touchDrawBuffer;
+	QVector<TouchDrawPoint> m_touchDrawBuffer;
 	TouchState m_touchState;
 	qreal m_touchStartZoom = 0.0;
 	qreal m_touchStartRotate = 0.0;

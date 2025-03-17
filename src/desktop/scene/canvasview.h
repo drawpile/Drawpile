@@ -290,8 +290,9 @@ private:
 		long long timeMsec, const QPointF &pos, Qt::MouseButton button,
 		Qt::KeyboardModifiers modifiers);
 
-	void touchPressEvent(QEvent *event, long long timeMsec, const QPointF &pos);
-	void touchMoveEvent(long long timeMsec, const QPointF &pos);
+	void touchPressEvent(
+		QEvent *event, long long timeMsec, const QPointF &pos, qreal pressure);
+	void touchMoveEvent(long long timeMsec, const QPointF &pos, qreal pressure);
 	void touchReleaseEvent(long long timeMsec, const QPointF &pos);
 	void touchZoomRotate(qreal zoom, qreal rotation);
 	void gestureEvent(QGestureEvent *event);

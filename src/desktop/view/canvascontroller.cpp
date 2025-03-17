@@ -1643,17 +1643,18 @@ void CanvasController::penReleaseEvent(
 }
 
 void CanvasController::touchPressEvent(
-	QEvent *event, long long timeMsec, const QPointF &posf)
+	QEvent *event, long long timeMsec, const QPointF &posf, qreal pressure)
 {
 	Q_UNUSED(event);
 	penPressEvent(
-		timeMsec, posf, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier,
+		timeMsec, posf, pressure, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier,
 		int(tools::DeviceType::Touch), false);
 }
 
-void CanvasController::touchMoveEvent(long long timeMsec, const QPointF &posf)
+void CanvasController::touchMoveEvent(
+	long long timeMsec, const QPointF &posf, qreal pressure)
 {
-	penMoveEvent(timeMsec, posf, 1.0, 0.0, 0.0, 0.0, Qt::NoModifier);
+	penMoveEvent(timeMsec, posf, pressure, 0.0, 0.0, 0.0, Qt::NoModifier);
 }
 
 void CanvasController::touchReleaseEvent(
