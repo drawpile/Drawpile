@@ -57,7 +57,7 @@
     <message>
         <location filename="../ui/addserverdialog.ui" line="+14"/>
         <source>Add Server</source>
-        <translation type="unfinished">Ajouter un serveur</translation>
+        <translation>Ajouter un Serveur</translation>
     </message>
     <message>
         <location line="+28"/>
