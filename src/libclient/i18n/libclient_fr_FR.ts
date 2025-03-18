@@ -122,13 +122,13 @@
         <location line="+6"/>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
-        <translation type="unfinished">%1h %2mn {1:?} {2?}</translation>
+        <translation type="unfinished">%1h %2min {1:?} {2?}</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%1: %2 (%3)</source>
         <extracomment>Example: &quot;Space: Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1: %2 (%3)</translation>
     </message>
     <message>
         <location line="+48"/>
@@ -159,7 +159,7 @@
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation type="unfinished">Clic du Milieu</translation>
+        <translation type="unfinished">Clic Milieu</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -204,7 +204,7 @@
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Outil de Contrainte</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -254,7 +254,7 @@
     <message>
         <location line="+8"/>
         <source>Inverted, Swap Axes</source>
-        <translation type="unfinished">Inversé, Échanger les Axes</translation>
+        <translation type="unfinished">Échanger et Inverser les Axes</translation>
     </message>
     <message>
         <location line="+2"/>
