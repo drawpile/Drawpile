@@ -2286,12 +2286,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="-4045"/>
         <source>Image saving failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec de l&apos;enregistrement de l&apos;image</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Download Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Téléchargement terminé</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2301,7 +2301,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+311"/>
         <source>Error downloading profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur lors du téléchargement des fichiers</translation>
     </message>
     <message>
         <location line="+35"/>
