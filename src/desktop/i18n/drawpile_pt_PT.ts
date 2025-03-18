@@ -2146,7 +2146,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+3"/>
         <source>Show &amp;Rulers</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar Réguas</translation>
     </message>
     <message>
         <location line="+3"/>
