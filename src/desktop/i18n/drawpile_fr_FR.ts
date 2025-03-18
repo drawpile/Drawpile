@@ -2301,17 +2301,17 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+311"/>
         <source>Error downloading profile.</source>
-        <translation>Erreur lors du téléchargement des fichiers</translation>
+        <translation>Erreur lors du téléchargement des fichiers.</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Error downloading tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erreur d&apos;enregistrement du journal des évènements.</translation>
     </message>
     <message>
         <location line="+219"/>
         <source>No canvas to host! Create one or open a file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de toile à héberger&#x202f;! Créez-en une ou ouvrez un fichier.</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -2321,7 +2321,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+138"/>
         <source>Really leave and terminate the session?</source>
-        <translation>Voulez-vous vraiment partir et terminer la session?</translation>
+        <translation>Voulez-vous vraiment partir et terminer la session&#x202f;?</translation>
     </message>
     <message>
         <location line="+250"/>
@@ -2351,17 +2351,17 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>Disconnected: %1</source>
-        <translation>Déconnecté: %1</translation>
+        <translation>Déconnecté&#xa0;: %1</translation>
     </message>
     <message>
         <location line="+150"/>
         <source>Undo Limit... (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite de Retour en Arrière... (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change the session&apos;s undo limit, current limit is %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Changer la limite de retour en arrière de la session, la limite actuelle est (%1).</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -2376,7 +2376,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+50"/>
         <source>Altering selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Altération de la sélection…</translation>
     </message>
     <message>
         <location line="+42"/>
