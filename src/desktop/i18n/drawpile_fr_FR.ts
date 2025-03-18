@@ -21,7 +21,7 @@
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished">Retirer</translation>
+        <translation>Retirer</translation>
     </message>
 </context>
 <context>
@@ -462,17 +462,17 @@
     <message>
         <location line="+14"/>
         <source>Import Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importer des Images d&apos;Animation</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Images d&apos;Animation</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -482,7 +482,7 @@
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Images Superposées</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -492,18 +492,18 @@
     <message>
         <location line="+23"/>
         <source>Import Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importer les Réglages de Session</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tous les Fichiers Supportés (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+391"/>
         <source>Session Settings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Paramètres de Session (%1)</translation>
     </message>
     <message>
         <location line="-390"/>
@@ -513,7 +513,7 @@
     <message>
         <location line="+1"/>
         <source>Session Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Roles de la Session (%1)</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -523,12 +523,12 @@
     <message>
         <location line="+12"/>
         <source>Open Image</source>
-        <translation type="unfinished">Ouvrir l&apos;image</translation>
+        <translation>Ouvrir l&apos;image</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Set Brush Preset Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Définir la Miniature du Préréglage du Pinceau</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -538,22 +538,22 @@
     <message>
         <location line="+5"/>
         <source>Reference Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Image de Référence</translation>
     </message>
     <message>
         <location line="+168"/>
         <source>Export Frames in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Exporter les Images en ZIP</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Exporter la Vidéo WEBM</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Exporter l&apos;Animation en WEBP</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -578,7 +578,7 @@
     <message>
         <location line="+10"/>
         <source>Export Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter les Paramètres de Session</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -646,19 +646,19 @@
         <location line="-135"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-115"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-2"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opacité&#x202f;: </translation>
+        <translation>Opacité&#xa0;: </translation>
     </message>
     <message>
         <location line="-97"/>
         <location line="+3"/>
         <source>Fill continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplir la surface continue</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -677,14 +677,14 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+71"/>
         <source>Merged image</source>
-        <translation type="unfinished"></translation>
+        <translation>Image fusionnée</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+13"/>
         <source>Merged without background</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fusionner sans l&apos;arrière-plan</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -697,7 +697,7 @@
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill source layer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Remplir le calque source</translation>
     </message>
     <message>
         <location line="+96"/>
@@ -714,12 +714,12 @@
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Annuler le remplissage en cours, sans montrer les effets à personne</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location line="-336"/>
@@ -822,7 +822,7 @@
     <message>
         <location line="+17"/>
         <source>Session</source>
-        <translation type="unfinished">Session</translation>
+        <translation>Session</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -842,22 +842,22 @@
     <message>
         <location line="+30"/>
         <source>Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Codes</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Create</source>
-        <translation type="unfinished">Créer</translation>
+        <translation>Créer</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Revoke</source>
-        <translation type="unfinished"></translation>
+        <translation>Révoquer</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Copier</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -867,12 +867,12 @@
     <message>
         <location line="+32"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished">Obtenir l&apos;adresse IP externe</translation>
+        <translation type="unfinished">Obtenir l&apos;adresse IP visible extérieurement</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Allow session operators to manage invite codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Autoriser les opérateurs de la session à gérer les codes d&apos;invitation</translation>
     </message>
     <message>
         <location line="+7"/>
