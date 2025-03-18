@@ -2030,7 +2030,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+330"/>
         <source>&amp;Invert Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Inverser la sélection</translation>
     </message>
     <message>
         <location line="+4"/>
