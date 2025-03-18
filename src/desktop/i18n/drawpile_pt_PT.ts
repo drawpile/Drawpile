@@ -2066,82 +2066,82 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+170"/>
         <source>Zoom In On Center</source>
-        <translation>Ampliar Tela No Centro</translation>
+        <translation>Ampliar Zoom No Centro</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Out From Center</source>
-        <translation>Reduzir Tela No Centro</translation>
+        <translation>Reduzir Zoom No Centro</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation>Repor Zoom</translation>
+        <translation>&amp;Repor Zoom</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset Zoom At Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Restaurar Zoom No Centro</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Fit Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Encaixar Tamanho da Tela</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fit Canvas &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Encaixar Largura da Tela</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Fit Canvas &amp;Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Encaixar Altura da Tela</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Reset Canvas Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Restaurar Rotação da Tela</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Rotate Canvas Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodar Tela em Sentido Anti-Horário</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Mirror Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Inverter Tela na Horizontal</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror the canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Inverte a tela de forma horizontal</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>inverter/virar tela horizontalmente</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Inverter Tela na Vertical</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the canvas upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Inverte a tela de forma Vertical</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>inverter/virar tela verticalmente</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Hide From Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Esconder do Ponteiro</translation>
     </message>
     <message>
         <location line="+3"/>
