@@ -891,102 +891,102 @@ En su lugar, selecciona una capa regular.</translation>
         <location line="+16"/>
         <location line="+457"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se puede abrir &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="-423"/>
         <source>Invalid brush pack: order.conf not found inside</source>
-        <translation type="unfinished"></translation>
+        <translation>Paquete de pinceles no válido: no se encontró el archivo order.conf dentro :(</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin categorizar %1</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Invalid brush pack: order.conf contains no brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Paquete de pinceles no válido: el archivo order.conf no contiene pinceles</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Could not create tag &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo crear la etiqueta &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Could not create brush preset &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo crear el pincel preestablecido &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not assign brush &apos;%1&apos; to tag &apos;%2&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo asignar el pincel &apos;%1&apos; a la etiqueta &apos;%2&apos;.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>No se puede leer el archivo de pincel &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Unknown brush format in file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato de pincel desconocido en el archivo &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>Brush file &apos;%1&apos; does not contain valid JSON: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo de pincel &apos;%1&apos; no contiene un JSON válido: %1</translation>
     </message>
     <message>
         <location line="-55"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>No se puede cargar el pincel desde el archivo de pincel &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo de pincel &apos;%1&apos; no contiene un objeto JSON</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Brush file &apos;%1&apos; has invalid version %d</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo de pincel &apos;%1&apos; tiene una versión no válida %d</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo de pincel &apos;%1&apos; contiene una configuración de &apos;color&apos; no válida</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo de pincel &apos;%1&apos; contiene una configuración &apos;%2&apos; obsoleta</translation>
     </message>
     <message>
         <location line="+129"/>
         <source>No brushes exported</source>
-        <translation type="unfinished"></translation>
+        <translation>No se exportaron pinceles</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Can&apos;t export order.conf</source>
-        <translation type="unfinished"></translation>
+        <translation>No se puede exportar order.conf</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error writing &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al escribir &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>No se puede exportar la etiqueta &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Missing preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Falta el ajuste preestablecido %1</translation>
     </message>
     <message>
         <location line="+17"/>
