@@ -1747,7 +1747,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation>Activos</translation>
+        <translation>Activar</translation>
     </message>
     <message>
         <location line="+42"/>
