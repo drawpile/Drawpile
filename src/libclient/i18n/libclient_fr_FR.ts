@@ -302,17 +302,17 @@
     <message>
         <location line="+8"/>
         <source>Could not write &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ne peut pas écrire &apos;%1&apos;&#xa0;: %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ne peut déplacer &apos;%1&apos; vers &apos;%2&apos;&#xa0;: &apos;%3&apos;.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Could not delete &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ne peut supprimer &apos;%1&apos;&#xa0;: &apos;%2&apos;.</translation>
     </message>
 </context>
 <context>
@@ -360,7 +360,7 @@
     <message>
         <location line="+3"/>
         <source>Header error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erreur d&apos;en-tête.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -398,7 +398,7 @@
     <message>
         <location line="+2"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous pouvez aussi installer ffmpeg depuis votre gestionnaire de paquets.</translation>
     </message>
     <message>
         <location line="+98"/>
@@ -414,7 +414,7 @@
     <message>
         <location line="+3"/>
         <source>Ffmpeg process error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur de processus ffmpeg</translation>
     </message>
 </context>
 <context>
@@ -422,18 +422,19 @@
     <message>
         <location filename="../tools/floodfill.cpp" line="+322"/>
         <source>Filling…</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplissage…</translation>
     </message>
     <message>
         <location line="+73"/>
         <source>No layer selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de calque sélectionné.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne peut remplir le groupe de calques %1
+Veuillez sélectionner un autre calque.</translation>
     </message>
 </context>
 <context>
@@ -441,17 +442,17 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
         <source>Visibility: Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Visibilité&#xa0;: Caché</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Revealed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Visibilité&#xa0;: Révélé</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Parent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Visibilité&#xa0;: Parent</translation>
     </message>
 </context>
 <context>
@@ -459,7 +460,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/magicwand.cpp" line="+291"/>
         <source>Selecting…</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélection…</translation>
     </message>
 </context>
 <context>
@@ -472,7 +473,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>GIF (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>GIF (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -492,47 +493,47 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>Performance Profile (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Profil de Performances (%1)</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Debug Dumps (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Déboguage Archives (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Tablet Event Log (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Journal des Évènements Tablette (1%)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>MP4 Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vidéo MP4 (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>WebM Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vidéo WebM (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Text File (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichier Texte (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brush Pack (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pack de Pinceaux (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bannissements de la Session (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Rôles (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -550,7 +551,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../drawdance/canvasstate.cpp" line="+48"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Calque %1</translation>
     </message>
 </context>
 <context>
@@ -558,22 +559,22 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-139"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maj.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt Gauche</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Méta</translation>
     </message>
 </context>
 <context>
@@ -586,76 +587,76 @@ Select a regular layer instead.</source>
     <message>
         <location line="-446"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1j%2h%3min</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1h%2min</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1min</translation>
     </message>
     <message numerus="yes">
         <location line="+106"/>
         <source>%1/%n users</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%1/%n utilisateur·ice</numerusform>
+            <numerusform>%1/%n utilisateur·ice·s</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n utilisateur·ice</numerusform>
+            <numerusform>%n utilisateur·ice·s</numerusform>
         </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre d&apos;utilisateur·ice·s actif·ve·s en train de dessiner inconnu</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n utilisateur·ice en train de dessiner</numerusform>
+            <numerusform>%n utilisateur·ice·s en train de dessiner</numerusform>
         </translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation>Compatible</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Requires compatibility mode (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Requiert le mode de compatibilité (%1)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Requires newer client (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Requiert un nouveau client (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Incompatible (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Incompatible&#xa0;(%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>Version inconnue</translation>
     </message>
     <message>
         <location line="+113"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Compatibilité</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -675,7 +676,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>Actif·ve</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -695,17 +696,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>joining from web not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rejoindre depuis le web&#xa0;: non autorisé</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fermé</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation>Protégé par mot de passe</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -723,7 +724,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Recolor</source>
-        <translation type="unfinished">Recoloriser</translation>
+        <translation>Recolorer</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -738,12 +739,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Écran</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>Surcouche</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -758,7 +759,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Dodge</source>
-        <translation type="unfinished">Éclaicir</translation>
+        <translation>Éclaircir</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -768,12 +769,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Lighten</source>
-        <translation type="unfinished">Éclaicir uniquement</translation>
+        <translation>Éclaircir uniquement</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Subtract</source>
-        <translation type="unfinished">Soutraire</translation>
+        <translation>Soustraire</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -793,27 +794,27 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Hard Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Lumière Dure</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Soft Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Lumière douce</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Linear Burn</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Assombrissement linéaire</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Linear Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Éclaircissement linéaire</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Luminosity/Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Luminosité/Brillance (SAI)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -828,7 +829,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Luminosity</source>
-        <translation type="unfinished"></translation>
+        <translation>Luminosité</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -838,7 +839,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+10"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Inconnu·e</translation>
     </message>
 </context>
 <context>
@@ -854,22 +855,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="-128"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tous</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation type="unfinished"></translation>
+        <translation>Sans étiquette</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show all brushes, regardless of tagging.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Montrer tous les pinceaux, sans prendre en compte les étiquettes.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show brushes not assigned to any tag.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Montrer les pinceaux sans étiquette.</translation>
     </message>
     <message>
         <location line="+198"/>
@@ -879,123 +880,123 @@ Select a regular layer instead.</source>
     <message>
         <location line="+18"/>
         <source>Classic Brush %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinceau Classique %1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Converted from %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Converti depuis %1</translation>
     </message>
     <message>
         <location line="+16"/>
         <location line="+457"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&apos;%1&apos; ne peut être ouvert.</translation>
     </message>
     <message>
         <location line="-423"/>
         <source>Invalid brush pack: order.conf not found inside</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pack de pinceaux invalide&#xa0;: fichier order.conf introuvable</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 non catégorisé·e</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Invalid brush pack: order.conf contains no brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Pack de pinceaux invalide&#xa0;: pas de pinceaux dans le fichier order.conf</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Could not create tag &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Impossible de créer l&apos;étiquette &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Could not create brush preset &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de créer le pré-réglage de pinceau &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not assign brush &apos;%1&apos; to tag &apos;%2&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;assigner le pinceau &apos;%1&apos; à l&apos;étiquette &apos;%2&apos;.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Lecture du fichier de pinceau &apos;%1&apos; impossible</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Unknown brush format in file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Format de pinceau inconnu dans le fichier &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>Brush file &apos;%1&apos; does not contain valid JSON: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le fichier de pinceau &apos;%1&apos; ne contient pas de JSON valide: %1</translation>
     </message>
     <message>
         <location line="-55"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de charger le pinceau du fichier de pinceau &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le fichier de pinceau &apos;%1&apos; ne contient pas d&apos;objet JSON</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Brush file &apos;%1&apos; has invalid version %d</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La version du fichier de pinceau &apos;%1&apos; est invalide (%d)</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le fichier de pinceau &apos;%1&apos; contient un réglage de couleur invalide</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le fichier de pinceau &apos;%1&apos; contient un réglage &apos;%2&apos; obsolète</translation>
     </message>
     <message>
         <location line="+129"/>
         <source>No brushes exported</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pas de pinceaux exportés</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Can&apos;t export order.conf</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Export de order.conf impossible</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error writing &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erreur d&apos;écriture de &apos;%1&apos;&#xa0;: %2</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ne peut exporter l&apos;étiquette &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Missing preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Pré-réglage %1 manquant</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;exporter le pré-réglage &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;exporter la miniature de pré-réglage &apos;%1&apos;</translation>
     </message>
 </context>
 <context>
@@ -1003,7 +1004,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/paintengine.cpp" line="+205"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Calque %1</translation>
     </message>
 </context>
 <context>
@@ -1021,12 +1022,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Fiables</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enregistré·e</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1041,7 +1042,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+34"/>
         <source>User</source>
-        <translation type="unfinished">Utilisateur</translation>
+        <translation>Utilisateur·ice</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1061,7 +1062,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>User #%1</source>
-        <translation type="unfinished">Utilisateur #%1</translation>
+        <translation type="unfinished">Utilisateur·ice #%1</translation>
     </message>
 </context>
 <context>
@@ -1070,13 +1071,13 @@ Select a regular layer instead.</source>
         <location filename="../import/animationimporter.cpp" line="+30"/>
         <source>Frame %1</source>
         <extracomment>Title for imported animation layers.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Cadre %1</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Cadres %1</translation>
     </message>
 </context>
 <context>
@@ -1094,12 +1095,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Fiables</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation type="unfinished">Utilisateur</translation>
+        <translation>Utilisateur·ice</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1113,13 +1114,13 @@ Select a regular layer instead.</source>
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Identifiant</translation>
     </message>
     <message>
         <location line="-13"/>
         <location line="+15"/>
         <source>User</source>
-        <translation type="unfinished">Utilisateur</translation>
+        <translation>Utilisateur·ice</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -1129,7 +1130,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Client info</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Informations Client</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1143,93 +1144,93 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/client.cpp" line="+541"/>
         <source>%1 banned by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 banni·e par %2.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 kicked by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%2 a exclu·e %1.</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>%1 made operator by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 promu·e opérateur·ice par le serveur.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 made operator by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 promu·e opérateur·ice par %2.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 made operator via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 promu·e opérateur·ice par invitation de l&apos;administrateur du serveur.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 made operator via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 promu·e opérateur·ice par invitation créée par %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Operator status revoked from %1 by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Statut d&apos;opérateur·ice de %1 révoqué par le serveur.</translation>
     </message>
     <message>
         <location line="-511"/>
         <source>You have been kicked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous avez été exclu·e.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous avez été exclu·e par %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Une erreur serveur vient d&apos;arriver.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Une erreur serveur vient d&apos;arriver&#xa0;: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le serveur va s&apos;arrêter.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The session has been shut down: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>La session a été arrêtée&#xa0;: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Déconnecté·e.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Déconnecté·e&#xa0;: %1</translation>
     </message>
     <message>
         <location line="+420"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Seul·e·s les modérateur·ice·s peuvent exporter les bannissements en clair.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erreur du serveur.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Exporting encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Export des bannissements chiffrés non configuré sur ce serveur.</translation>
     </message>
     <message>
         <location line="+3"/>
