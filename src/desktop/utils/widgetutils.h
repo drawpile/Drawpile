@@ -86,9 +86,11 @@ public:
 	void
 	setVerticalScrollBarPolicy(Qt::ScrollBarPolicy verticalScrollBarPolicy);
 
-	void setKineticScrollGesture(int kineticScrollGesture);
-	void setKineticScrollThreshold(int kineticScrollThreshold);
-	void setKineticScrollHideBars(bool kineticScrollHideBars);
+	// These delay setting the parameters until the next event loop iteration
+	// and process events afterwards. This avoids crashes on Windows.
+	void setKineticScrollGestureDelayed(int kineticScrollGesture);
+	void setKineticScrollThresholdDelayed(int kineticScrollThreshold);
+	void setKineticScrollHideBarsDelayed(bool kineticScrollHideBars);
 
 protected:
 	bool eventFilter(QObject *watched, QEvent *event) override;

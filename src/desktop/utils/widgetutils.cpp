@@ -26,6 +26,7 @@
 #include <QScreen>
 #include <QScrollBar>
 #include <QStyle>
+#include <QTimer>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -261,31 +262,42 @@ void KineticScroller::setVerticalScrollBarPolicy(
 	}
 }
 
-void KineticScroller::setKineticScrollGesture(int kineticScrollGesture)
+void KineticScroller::setKineticScrollGestureDelayed(int kineticScrollGesture)
 {
 	if(kineticScrollGesture != m_kineticScrollGesture) {
-		reset(
-			kineticScrollGesture, m_kineticScrollSensitivity,
-			m_kineticScrollHideBars);
+		QTimer::singleShot(0, this, [this, kineticScrollGesture] {
+			reset(
+				kineticScrollGesture, m_kineticScrollSensitivity,
+				m_kineticScrollHideBars);
+			QCoreApplication::processEvents();
+		});
 	}
 }
 
-void KineticScroller::setKineticScrollThreshold(int kineticScrollThreshold)
+void KineticScroller::setKineticScrollThresholdDelayed(
+	int kineticScrollThreshold)
 {
 	int kineticScrollSensitivity = toSensitivity(kineticScrollThreshold);
 	if(kineticScrollSensitivity != m_kineticScrollSensitivity) {
-		reset(
-			m_kineticScrollGesture, kineticScrollSensitivity,
-			m_kineticScrollHideBars);
+		QTimer::singleShot(0, this, [this, kineticScrollSensitivity] {
+			reset(
+				m_kineticScrollGesture, kineticScrollSensitivity,
+				m_kineticScrollHideBars);
+			QCoreApplication::processEvents();
+		});
 	}
 }
 
-void KineticScroller::setKineticScrollHideBars(bool kineticScrollHideBars)
+void KineticScroller::setKineticScrollHideBarsDelayed(
+	bool kineticScrollHideBars)
 {
 	if(kineticScrollHideBars != m_kineticScrollHideBars) {
-		reset(
-			m_kineticScrollGesture, m_kineticScrollSensitivity,
-			kineticScrollHideBars);
+		QTimer::singleShot(0, this, [this, kineticScrollHideBars] {
+			reset(
+				m_kineticScrollGesture, m_kineticScrollSensitivity,
+				kineticScrollHideBars);
+			QCoreApplication::processEvents();
+		});
 	}
 }
 
@@ -748,11 +760,11 @@ KineticScroller *bindKineticScrollingWith(
 			settings.kineticScrollGesture(), settings.kineticScrollThreshold(),
 			settings.kineticScrollHideBars());
 		settings.bindKineticScrollGesture(
-			scroller, &KineticScroller::setKineticScrollGesture);
+			scroller, &KineticScroller::setKineticScrollGestureDelayed);
 		settings.bindKineticScrollThreshold(
-			scroller, &KineticScroller::setKineticScrollThreshold);
+			scroller, &KineticScroller::setKineticScrollThresholdDelayed);
 		settings.bindKineticScrollHideBars(
-			scroller, &KineticScroller::setKineticScrollHideBars);
+			scroller, &KineticScroller::setKineticScrollHideBarsDelayed);
 		return scroller;
 	} else {
 		return nullptr;
