@@ -2000,12 +2000,12 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+5"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pe&amp;gar Da Tela</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Paste &amp;From File...</source>
-        <translation>Colar do &amp;ficheiro...</translation>
+        <translation>Colar do &amp;Ficheiro...</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2046,32 +2046,32 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+72"/>
         <source>Expand &amp;Up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Alargar para &amp;Cima…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Down…</source>
-        <translation type="unfinished"></translation>
+        <translation>Alargar para &amp;Baixo…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Left…</source>
-        <translation type="unfinished"></translation>
+        <translation>Alargar para a &amp;Esquerda…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Right…</source>
-        <translation type="unfinished"></translation>
+        <translation>Alargar para a &amp;Direita…</translation>
     </message>
     <message>
         <location line="+170"/>
         <source>Zoom In On Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Ampliar Tela No Centro</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Out From Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Reduzir Tela No Centro</translation>
     </message>
     <message>
         <location line="+1"/>
