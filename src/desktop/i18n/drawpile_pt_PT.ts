@@ -2076,7 +2076,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Repor Zoom</translation>
     </message>
     <message>
         <location line="+1"/>
