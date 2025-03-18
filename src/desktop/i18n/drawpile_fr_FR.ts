@@ -1322,7 +1322,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+103"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
-        <translation type="unfinished">Cette session est hégergée avec une ancienne version de Drawpile, certaine nouvelle fonctionnalités ne seront pas disponible. Les autres versions de Drawpile verront des résultats différents, les réinitialisations de la session peuvent causer des changements abruptes.</translation>
+        <translation>Cette session est hébergée avec une ancienne version de Drawpile, certaine nouvelles fonctionnalités ne seront pas disponibles. Les autres versions de Drawpile verront des résultats différents, les réinitialisations de la session peuvent causer des changements abruptes.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1337,7 +1337,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export session template</source>
-        <translation type="unfinished">N&apos;a pas pu importer le modèle de session</translation>
+        <translation>Le modèle de session n&apos;a pas pu être importé</translation>
     </message>
     <message>
         <location line="+137"/>
@@ -1357,7 +1357,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+3"/>
         <source>Couldn&apos;t start recording.</source>
-        <translation type="unfinished">N&apos;a pas pu commencer l&apos;enregistrement.</translation>
+        <translation>L&apos;enregistrement n&apos;a pas pu être démarré.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1377,7 +1377,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+27"/>
         <source>Error closing tablet event log.</source>
-        <translation type="unfinished">Erreurs lors de la fermeture de la table des évènements.</translation>
+        <translation>Erreurs lors de la fermeture de la table des évènements.</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -1493,7 +1493,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+436"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished">déconnecter de la session</translation>
+        <translation type="unfinished">déconnection à la session</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1511,7 +1511,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+5"/>
         <source>discard your playback</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">rejet de l&apos;enregistrement</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1553,12 +1553,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+111"/>
         <location line="+3793"/>
         <source>Export Again</source>
-        <translation>Exportér à Nouveau</translation>
+        <translation>Exporter à Nouveau</translation>
     </message>
     <message>
         <location line="-3789"/>
         <source>Export Again to %1</source>
-        <translation>Exportér à Nouveau vers %1</translation>
+        <translation>Exporter à Nouveau vers %1</translation>
     </message>
     <message>
         <location line="+814"/>
@@ -1599,7 +1599,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>You&apos;re about to create a new canvas and close this window.</source>
-        <translation>Vous êtes sur le point de créer une nouvelle toile et de fermer cette fenêtre.</translation>
+        <translation type="unfinished">Vous êtes sur le point de créer un nouveau canevas et de fermer cette fenêtre.</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -1686,7 +1686,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a debug dump and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vous êtes sur le point d&apos;ouvrir une archive de débogage et de fermer cette fenêtre.</translation>
     </message>
     <message>
         <location line="+233"/>
@@ -1701,7 +1701,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+5"/>
         <source>Arrange Docks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Arranger les Panneaux</translation>
     </message>
     <message>
         <location line="+80"/>
@@ -1769,7 +1769,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+9"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Prendre depuis l&apos;écran (&amp;k)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1795,17 +1795,17 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+257"/>
         <source>&amp;Fit Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Adapter Canevas (&amp;f)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fit Canvas &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Adapter Largeur Canevas (&amp;w)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Fit Canvas &amp;Height</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Adapter &amp;Hauteur Canevas</translation>
     </message>
     <message>
         <location line="+3"/>
