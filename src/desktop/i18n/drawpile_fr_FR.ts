@@ -2051,47 +2051,47 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+11"/>
         <source>&amp;Transform</source>
-        <translation>Transformer</translation>
+        <translation>&amp;Transformer</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Transform the selection, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformer la sélection, revenir aux outils ensuite</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Transform Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Masque de Transformation de Sélection</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ne transformer que le masque de sélection, retourner aux outils ensuite</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Mirror Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformation &amp;Miroir</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror the transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Inverser l&apos;image transformée horizontalement</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>inverser/retourner l&apos;image transformée horizontalement</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Flip Transform</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Inversion</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the transformed image upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Inverser l&apos;image transformée à l&apos;envers</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2296,7 +2296,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>Download complete, click on &quot;Save&quot; to save your file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Téléchargement terminé, cliquez sur &quot;Sauvegarder&quot; pour sauvegarder votre fichier.</translation>
     </message>
     <message>
         <location line="+311"/>
