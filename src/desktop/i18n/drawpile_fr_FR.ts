@@ -2341,7 +2341,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+2"/>
         <source>Could not establish a connection to the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;établir une connexion avec le serveur SFTP</translation>
     </message>
     <message>
         <location line="+41"/>
