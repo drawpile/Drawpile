@@ -497,7 +497,7 @@
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished">Tous les Fichiers Supportés (%1)</translation>
+        <translation>Tous les fichiers supportés (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
