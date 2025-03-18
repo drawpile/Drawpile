@@ -472,7 +472,7 @@
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Imagens de Quadro</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -482,7 +482,7 @@
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Imagens com Camadas</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -2146,12 +2146,12 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+3"/>
         <source>Show &amp;Rulers</source>
-        <translation>Mostrar Réguas</translation>
+        <translation>Mostrar &amp;Réguas</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mostrar Mascara da Selecção</translation>
     </message>
     <message>
         <location line="+2"/>
