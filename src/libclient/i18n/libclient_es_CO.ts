@@ -54,17 +54,17 @@
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
-        <translation>No se pudo fusionar el lienzo en una imagen plana.</translation>
+        <translation type="unfinished">No fue posible fusionar el lienzo a una imagen plana.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation>No se pudo abrir archivo para escribir.</translation>
+        <translation type="unfinished">No se pudo abrir el archivo para su escritura.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save operation failed, but the file might have been partially written.</source>
-        <translation>Operación de guardar falló, pero el archivo puede haber sido escrito parcialmente.</translation>
+        <translation type="unfinished">La operación de guardado ha fallado, pero el archivo pudo haber sido escrito parcialmente.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -133,7 +133,7 @@
     <message>
         <location line="+48"/>
         <source>Mouse Wheel</source>
-        <translation>Rueda del Mouse</translation>
+        <translation type="unfinished">Rueda del ratón</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -144,22 +144,22 @@
     <message>
         <location line="+40"/>
         <source>Unset</source>
-        <translation type="unfinished">Desarmado</translation>
+        <translation>No definido</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Left Click</source>
-        <translation>Click Izquierdo</translation>
+        <translation>Click izquierdo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right Click</source>
-        <translation>Click Derecho</translation>
+        <translation>Click derecho</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation>Clic del Medio</translation>
+        <translation>Clic del medio</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -174,37 +174,37 @@
     <message>
         <location line="+8"/>
         <source>Pan Canvas</source>
-        <translation>Alejar Lienzo</translation>
+        <translation>Alejar lienzo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation>Rotar Lienzo</translation>
+        <translation>Rotar lienzo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Canvas</source>
-        <translation>Acercar Lienzo</translation>
+        <translation>Acercar lienzo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation>Escoger Color</translation>
+        <translation>Escoger color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Layer</source>
-        <translation>Escoger Capa</translation>
+        <translation>Escoger capa</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation>Cambiar Tamaño de Pincel</translation>
+        <translation>Cambiar tamaño del pincel</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation>Herramienta de Constreñimiento</translation>
+        <translation>Herramienta de limitación</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -214,37 +214,37 @@
     <message>
         <location line="+3"/>
         <source>Constrain and Center Tool</source>
-        <translation>Herramienta de Centrado y Constreñir</translation>
+        <translation>Herramienta de centrado y limitación</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Constraint 0x%1</source>
-        <translation>Constreñimiento desconocido 0x%1</translation>
+        <translation>Limitación desconocida 0x%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rotación de un sentido del lienzo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Free Rotate Canvas</source>
-        <translation>Rotación libre de lienzo</translation>
+        <translation>Rotación libre del lienzo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation>Cambiar Tono de Color</translation>
+        <translation>Cambiar tono de color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation>Cambiar Saturación del Color</translation>
+        <translation>Cambiar saturación del color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished">Cambiar Valor del Color</translation>
+        <translation>Cambiar valor del color</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -254,7 +254,7 @@
     <message>
         <location line="+8"/>
         <source>Inverted, Swap Axes</source>
-        <translation>Invertido, Intercambiar Ejes</translation>
+        <translation>Invertido, intercambiar ejes</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -264,7 +264,7 @@
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation>Intercambiar Ejes</translation>
+        <translation>Intercambiar ejes</translation>
     </message>
 </context>
 <context>
@@ -272,27 +272,27 @@
     <message>
         <location filename="../utils/certificatestoremodel.cpp" line="+25"/>
         <source>&apos;%1&apos; does not contain any valid host certificates.</source>
-        <translation>&apos;%1&apos; no contiene un certificado de host valido.</translation>
+        <translation>&apos;%1&apos; no contiene ningún certificado de anfitrión valido.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&apos;%1&apos; contains multiple host certificates, which is not currently supported.</source>
-        <translation>&apos;%1&apos; Contiene múltiples certificados de hosteo, lo cual no es soportado actualmente.</translation>
+        <translation>&apos;%1&apos; Contiene múltiples certificados de anfitriones, lo cual actualmente no está soportado.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&apos;%1&apos; contains an invalid certificate.</source>
-        <translation>&apos;%1&apos; Contiene un certificado invalido.</translation>
+        <translation>&apos;%1&apos; contiene un certificado invalido.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&apos;%1&apos; contains a certificate with multiple hostnames, which is not currently supported.</source>
-        <translation>&apos;%1&apos; contiene un certificado con múltiples nombres de host, lo cual no es soportado actualmente.</translation>
+        <translation>&apos;%1&apos; contiene un certificado con múltiples nombres de host, lo cual actualmente no está soportado.</translation>
     </message>
     <message>
         <location line="+140"/>
         <source>Could not read certificate from &apos;%1&apos;.</source>
-        <translation>No se pudo leer certificado de &apos;%1&apos;.</translation>
+        <translation>No se pudo leer el certificado de &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -307,7 +307,7 @@
     <message>
         <location line="+7"/>
         <source>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</source>
-        <translation>No se puede mover &apos;%1&apos; a &apos;%2&apos;: %3.</translation>
+        <translation>No se pudo mover &apos;%1&apos; a &apos;%2&apos;: %3.</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -370,7 +370,7 @@
     <message>
         <location line="+3"/>
         <source>Error starting recorder.</source>
-        <translation>Comenzar grabación de errores.</translation>
+        <translation>Error al iniciar la grabadora.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -380,7 +380,7 @@
     <message>
         <location line="+664"/>
         <source>Error saving image</source>
-        <translation>Error en guardar la imagen</translation>
+        <translation>Error en guardar la imagen.</translation>
     </message>
 </context>
 <context>
@@ -388,7 +388,7 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="+62"/>
         <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
-        <translation type="unfinished">Puedes descargar en Windows la versión de ffmpeg en &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Elige ffmpeg.exe para el camino para ffmpeg en Drawpile.</translation>
+        <translation>Puedes descargar la versión para Windows de ffmpeg en &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Elige ffmpeg.exe para el camino a ffmpeg en Drawpile.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -398,7 +398,7 @@
     <message>
         <location line="+2"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation type="unfinished">Probablemente puedas instalar ffmpeg a través de los paquetes del gerente.</translation>
+        <translation>Probablemente puedas instalar ffmpeg a través del administrador de paquetes.</translation>
     </message>
     <message>
         <location line="+98"/>
@@ -409,12 +409,12 @@
     <message>
         <location line="+6"/>
         <source>Ffmpeg crashed!</source>
-        <translation>Ffmpeg Rompio!</translation>
+        <translation>Ffmpeg falló!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ffmpeg process error</source>
-        <translation type="unfinished">Ffmpeg error de proceso</translation>
+        <translation>Error de proceso de ffmpeg.</translation>
     </message>
 </context>
 <context>
@@ -422,19 +422,19 @@
     <message>
         <location filename="../tools/floodfill.cpp" line="+322"/>
         <source>Filling…</source>
-        <translation>Llenar…</translation>
+        <translation>Llenando…</translation>
     </message>
     <message>
         <location line="+73"/>
         <source>No layer selected.</source>
-        <translation>Capa Sin Seleccionar.</translation>
+        <translation>Capa(s) no seleccionada(s).</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
-        <translation>No se pudo llenar el grupo de la capa %1
-En cambio seleccione una capa.</translation>
+        <translation type="unfinished">No se pudo llenar el grupo de capa(s) %1
+En su lugar, selecciona una capa regular.</translation>
     </message>
 </context>
 <context>
@@ -442,17 +442,17 @@ En cambio seleccione una capa.</translation>
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
         <source>Visibility: Hidden</source>
-        <translation>Visibilidad: Oculta</translation>
+        <translation>Visibilidad: oculta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Revealed</source>
-        <translation>Visibilidad: Revelada</translation>
+        <translation>Visibilidad: revelada</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Parent</source>
-        <translation type="unfinished">Visibilidad: Causa</translation>
+        <translation>Visibilidad: primaria</translation>
     </message>
 </context>
 <context>
@@ -460,7 +460,7 @@ En cambio seleccione una capa.</translation>
     <message>
         <location filename="../tools/magicwand.cpp" line="+291"/>
         <source>Selecting…</source>
-        <translation>Seleccionar…</translation>
+        <translation>Seleccionando…</translation>
     </message>
 </context>
 <context>
@@ -468,7 +468,7 @@ En cambio seleccione una capa.</translation>
     <message>
         <location filename="../utils/images.cpp" line="+84"/>
         <source>Images (%1)</source>
-        <translation>Imagenes (%1)</translation>
+        <translation>Imágenes (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -478,12 +478,12 @@ En cambio seleccione una capa.</translation>
     <message>
         <location line="+7"/>
         <source>Binary Recordings (%1)</source>
-        <translation>Grabacion Binaria (%1)</translation>
+        <translation>Grabación binaria (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Text Recordings (%1)</source>
-        <translation>Grabacion de Texto (%1)</translation>
+        <translation>Grabaciones de texto (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -493,12 +493,12 @@ En cambio seleccione una capa.</translation>
     <message>
         <location line="+7"/>
         <source>Performance Profile (%1)</source>
-        <translation>Perfil de Rendimiento (%1)</translation>
+        <translation>Perfil de rendimiento (%1)</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Debug Dumps (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Volcado de depuraciones (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
