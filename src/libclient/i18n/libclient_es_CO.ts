@@ -896,7 +896,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="-423"/>
         <source>Invalid brush pack: order.conf not found inside</source>
-        <translation>Paquete de pinceles no válido: no se encontró el archivo order.conf dentro :(</translation>
+        <translation>Paquete de pinceles no válido: no se encontró dentro el archivo order.conf</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -926,7 +926,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+19"/>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
-        <translation>No se puede leer el archivo de pincel &apos;%1&apos;</translation>
+        <translation>No se pudo leer el archivo del pincel &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -941,7 +941,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="-55"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
-        <translation>No se puede cargar el pincel desde el archivo de pincel &apos;%1&apos;</translation>
+        <translation>No se pudo cargar el pincel desde el archivo de pincel &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+61"/>
@@ -971,7 +971,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+6"/>
         <source>Can&apos;t export order.conf</source>
-        <translation>No se puede exportar order.conf</translation>
+        <translation>No se pudo exportar order.conf</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -981,22 +981,22 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+14"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
-        <translation>No se puede exportar la etiqueta &apos;%1&apos;</translation>
+        <translation>No se pudo exportar la etiqueta &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Missing preset %1</source>
-        <translation>Falta el ajuste preestablecido %1</translation>
+        <translation>Ajuste preestablecido faltante %1</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo exportar el preestablecido &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo exportar la miniatura del preestablecido &apos;%1&apos;</translation>
     </message>
 </context>
 <context>
@@ -1004,7 +1004,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../canvas/paintengine.cpp" line="+205"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Capa %1</translation>
     </message>
 </context>
 <context>
@@ -1022,7 +1022,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation>Confiado</translation>
+        <translation>Confiable</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1032,7 +1032,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+5"/>
         <source>Online</source>
-        <translation>En linea</translation>
+        <translation>En línea</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -1095,7 +1095,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished">Confiado</translation>
+        <translation>Confiable</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -1105,7 +1105,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Roles</translation>
     </message>
 </context>
 <context>
@@ -1125,18 +1125,18 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="-13"/>
         <source>IP address</source>
-        <translation>Direccion IP</translation>
+        <translation>Dirección IP</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Client info</source>
-        <translation type="unfinished"></translation>
+        <translation>Información del cliente</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+11"/>
         <source>Banned by</source>
-        <translation>Suspendido por</translation>
+        <translation>Banneado por</translation>
     </message>
 </context>
 <context>
@@ -1144,7 +1144,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../net/client.cpp" line="+541"/>
         <source>%1 banned by %2.</source>
-        <translation>%1 suspendido por %2.</translation>
+        <translation>%1 banneado por %2.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1164,17 +1164,17 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+6"/>
         <source>%1 made operator via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 hecho operador a través de una invitación creada por el admistrador del servidor.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 made operator via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 hecho operador a través de una invitación creada por %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Operator status revoked from %1 by the server.</source>
-        <translation>Estatus de operador revocado de %1 por el servidor.</translation>
+        <translation>Estado de operador revocado de %1 por el servidor.</translation>
     </message>
     <message>
         <location line="-511"/>
@@ -1220,7 +1220,7 @@ En su lugar, selecciona una capa regular.</translation>
         <location line="+420"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
-        <translation>Sólo moderadores pueden exportar suspensiones simples.</translation>
+        <translation>Solo los moderadores pueden exportar baneos básicos.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1230,7 +1230,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+2"/>
         <source>Exporting encrypted bans not configured on this server.</source>
-        <translation>La exportación de suspensiones encriptadas no ha sido configurada en este servidor.</translation>
+        <translation>No ha sido configurada la exportación de suspensiones encriptadas en este servidor.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1240,22 +1240,22 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation>El servidor no pudo leer la data importada. Esto puede deberse a que fue exportada de un servidor distinto. Solo pueden importarse suspensiones a la misma sesión desde donde fueron exportadas.</translation>
+        <translation>El servidor no pudo leer la información importada. Esto puede deberse a que fue exportada de un servidor distinto. Solo pueden importarse suspensiones al mismo servidor de donde fueron exportadas.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid import data.</source>
-        <translation>Data importada inválida.</translation>
+        <translation>Información importada inválida.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Malformed import data.</source>
-        <translation>Data importada no estándar.</translation>
+        <translation>Información importada mal formulada.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Importing encrypted bans not configured on this server.</source>
-        <translation>La importación de suspensiones encriptadas no ha sido configurada en este servidor.</translation>
+        <translation>No se ha configurado la importación de suspensiones encriptadas en este servidor.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1265,80 +1265,80 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+14"/>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>La contraseña de la sesión ha sido removida por el administrador del servidor. Este servidor no permite los navegadores web en sesiones públicas, serán desconectados.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>La contraseña de la sesión ha sido removida por %1. Este servidor no permite los navegadores web en sesiones públicas, serán desconectados.</translation>
     </message>
     <message>
         <location line="+93"/>
         <source>%1 trusted via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 confiado a través de una invitación creada por el administrador del servidor.</translation>
     </message>
     <message>
         <location line="-62"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation>El estatus de operador ha sido revocado de %1 por %2.</translation>
+        <translation>El estado de operador ha sido revocado de %1 por %2.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
-        <translation>¡Sesión sin espacio! Para continuar dibujando, un operador debe resetearla para disminuir su tamaño. Esto puede hacerse vía Sesión &gt; Reset.</translation>
+        <translation>¡Sesión sin espacio! Para continuar dibujando, un operador debe resetearla para disminuir su tamaño. Esto puede hacerse vía Sesión &gt; Resetear.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>¡El reseteo de la sesión ha sido cancelado! Un operador debe desbloquear el lienzo y resetear la sesión manualmente.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>¡El reseteo de la sesión ha fallado! Un operador debe desbloquear el lienzo y resetear la sesión manualmente.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>¡Preparando el reseteo de la sesión! Espera un momento por favor, la sesión debería estar disponible otra vez en breve…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>¡%1 ha preparado el reseteo de la sesión! Espera un momento por favor, la sesión debería estar disponible otra vez en breve…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>¡%1 está comprimiendo el lienzo! Espera un momento por favor, la sesión debería estar disponible otra vez en breve…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>¡%1 está reemplazando el lienzo! Espera un momento por favor, la sesión debería estar disponible otra vez en breve…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>¡%1 está revirtiendo el lienzo a un estado anterior! Espera un momento por favor, la sesión debería estar disponible otra vez en breve…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session terminated by moderator (%1).</source>
         <extracomment>%1 is the name of the moderator.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sesión finalizada por un moderador. (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by administrator: %1</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sesión finalizada por un administrador: %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by moderator (%1): %2</source>
         <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
-        <translation>Sesión terminada por un moderador (%1): %2</translation>
+        <translation>Sesión finalizada por un moderador (%1): %2</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1353,7 +1353,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+10"/>
         <source>%1 trusted via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 es confiable a través de una invitación creada por %2.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1371,24 +1371,24 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../net/invitelistmodel.cpp" line="+119"/>
         <source>No invite codes, click Create to add one.</source>
-        <translation type="unfinished"></translation>
+        <translation>No hay códigos de invitación, clickea Crear para añadir uno.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Used %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Se usó hace %1 por %2</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Created %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Se creó hace %1 por %2</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Operator and Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Operador y Confiable</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1398,33 +1398,33 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished">Confiado</translation>
+        <translation>Confiable</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1/%2</source>
         <extracomment>This is the &quot;uses&quot; column in the invite code table. %1 is how often the invite has been used, %2 is how many there are total.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1/%2</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Código</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Creator</source>
-        <translation type="unfinished"></translation>
+        <translation>Creador</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Role</source>
-        <translation type="unfinished"></translation>
+        <translation>Rol</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Uses</source>
-        <translation type="unfinished"></translation>
+        <translation>Usos</translation>
     </message>
 </context>
 <context>
@@ -1448,48 +1448,48 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="-793"/>
         <source>Server is for a different Drawpile version!</source>
-        <translation>Servidor es para una sesion de Drawpile distinta!</translation>
+        <translation>¡Este servidor es para una versión de Drawpile distinta!</translation>
     </message>
     <message>
         <location line="+86"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>¡Este servidor no provee alguna forma de ingresar para entrar a una sesión!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>¡Este servidor no provee alguna forma de ingresar para hostear una sesión!</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Server expects STARTTLS on unsupported socket.</source>
-        <translation type="unfinished"></translation>
+        <translation>El servidor espera STARTTLS en un socket no compatible.</translation>
     </message>
     <message>
         <location line="+64"/>
         <source>Failed to retrieve server info</source>
-        <translation type="unfinished"></translation>
+        <translation>La obtención de información del servidor ha fallado.</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Session lookup failed</source>
-        <translation type="unfinished"></translation>
+        <translation>La búsqueda de sesion ha fallado.</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>This server does not allow guest logins</source>
-        <translation>Este servidor no permite acceso a invitados</translation>
+        <translation>Este servidor no permite el acceso de invitados.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
-        <translation>Contraseña requerida para acceder como &quot;%1&quot;</translation>
+        <translation>Se requiere de una contraseña para ingresar como &quot;%1&quot;</translation>
     </message>
     <message>
         <location line="+74"/>
         <location line="+7"/>
         <source>Auth server error: %1</source>
-        <translation>Error de servidor de autentificacion: %1</translation>
+        <translation type="unfinished">Error de autentificación por el servidor: %1</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -1504,12 +1504,12 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+86"/>
         <source>Invalid ident intent response.</source>
-        <translation type="unfinished"></translation>
+        <translation>Respuesta del ident intent inválida.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
-        <translation>Configuracion de servidor incorrecta: URL de ext-auth invalida</translation>
+        <translation>Configuracion de servidor incorrecta: URL de ext-auth inválida</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1519,22 +1519,22 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+9"/>
         <source>Server reported two different ext-auth URLs</source>
-        <translation type="unfinished"></translation>
+        <translation>El servidor ha reportado dos URLs de ext-auth diferentes</translation>
     </message>
     <message>
         <location line="+118"/>
         <source>Got multiple sessions when only one was expected</source>
-        <translation type="unfinished"></translation>
+        <translation>Varias sesiones recibidas cuando solo se esperaba una</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>New version</source>
-        <translation>Nueva version</translation>
+        <translation>Nueva versión</translation>
     </message>
     <message>
         <location line="-45"/>
         <source>Session not yet started!</source>
-        <translation>Sesion aun no ha comensado!</translation>
+        <translation>¡La sesión aún no ha comenzado!</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1544,7 +1544,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+9"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
-        <translation>¡Hay una sesión para una versión diferente de Drawpile (%1) en progreso!</translation>
+        <translation>¡Sesión para una versión diferente de Drawpile (%1) en progreso!</translation>
     </message>
     <message>
         <location line="+214"/>
@@ -1555,7 +1555,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+55"/>
         <source>Unable to set TLS error ignore state</source>
-        <translation>No es posible aplicar el estado Ignorar error de TLS</translation>
+        <translation>No se puede establecer el estado de Ignorar error TLS</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -1571,12 +1571,12 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+14"/>
         <source>Session not found!</source>
-        <translation>Sesion no encontrada!</translation>
+        <translation>¡Sesión no encontrada!</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Invalid username!</source>
-        <translation>Nombre de usuario incorrecto!</translation>
+        <translation>¡Nombre de usuario incorrecto!</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1586,22 +1586,22 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+2"/>
         <source>Username already taken!</source>
-        <translation>Nombre de usuario en uso!</translation>
+        <translation>¡Nombre de usuario en uso!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Server is full!</source>
-        <translation>Servidor Lleno!</translation>
+        <translation>¡Este servidor está lleno!</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Session is closed!</source>
-        <translation>Sesion cerrada!</translation>
+        <translation>¡La sesión está cerrada!</translation>
     </message>
     <message>
         <location line="-937"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
-        <translation>¡Modo seguro no activado en un anfitrión con certificado fijo!</translation>
+        <translation>¡El modo seguro no ha sido activado en un host con certificado fijo!</translation>
     </message>
     <message>
         <location line="+558"/>
