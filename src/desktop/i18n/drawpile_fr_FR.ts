@@ -1825,7 +1825,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+2"/>
         <source>Mirror the canvas horizontally</source>
-        <translation>Miroir horizontal des tracés</translation>
+        <translation type="unfinished">Miroir horizontal des tracés</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1905,12 +1905,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+3"/>
         <source>&amp;Check All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Tout Cocher</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Uncheck All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Tout Décocher</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -1970,17 +1970,17 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+190"/>
         <source>Normal View</source>
-        <translation type="unfinished"></translation>
+        <translation>Vue Normale</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show all layers normally</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher tous les calques normalement</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Layer View</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vue des Calques</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -1990,12 +1990,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+2"/>
         <source>Frame View</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vue du Cadre</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show only layers in the current frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne montrer que les calques dans le cadre actuel</translation>
     </message>
     <message>
         <location line="+88"/>
@@ -2035,7 +2035,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+4"/>
         <source>Select Layer &amp;Bounds</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sélectionner &amp;Bordures des Calques</translation>
     </message>
     <message>
         <location line="+4"/>
