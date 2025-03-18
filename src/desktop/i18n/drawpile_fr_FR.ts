@@ -1825,7 +1825,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+2"/>
         <source>Mirror the canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Miroir horizontal des tracés</translation>
     </message>
     <message>
         <location line="+2"/>
