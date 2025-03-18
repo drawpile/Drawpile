@@ -508,7 +508,7 @@
     <message>
         <location line="-390"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished">Bannissements de la Session (%1)</translation>
+        <translation>Bannissements de la Session (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -553,7 +553,7 @@
     <message>
         <location line="+7"/>
         <source>Export Animated WEBP</source>
-        <translation type="unfinished">Exporter l&apos;Animation en WEBP</translation>
+        <translation type="unfinished">Exporter Animation WEBP</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -684,7 +684,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+13"/>
         <source>Merged without background</source>
-        <translation type="unfinished">Fusionner sans l&apos;arrière-plan</translation>
+        <translation>Fusionner sans arrière-plan</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -725,7 +725,7 @@
         <location line="-336"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-113"/>
         <source>Size Limit: </source>
-        <translation>Limite de taille: </translation>
+        <translation>Limite de taille&#xa0;: </translation>
     </message>
     <message>
         <location line="+279"/>
@@ -1810,7 +1810,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+3"/>
         <source>&amp;Reset Canvas Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Restaurer la Rotation de la Toile</translation>
     </message>
     <message>
         <location line="+8"/>
