@@ -6,17 +6,17 @@
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+52"/>
         <source>Add New</source>
-        <translation>Agregar Nuevo</translation>
+        <translation>Agregar nuevo</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Move Up</source>
-        <translation>Mover Arriba</translation>
+        <translation>Mover hacia arriba</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Down</source>
-        <translation>Mover Abajo</translation>
+        <translation>Mover hacia abajo</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -29,7 +29,7 @@
     <message>
         <location filename="../ui/abusereport.ui" line="+14"/>
         <source>Report Abuse</source>
-        <translation>Reportar Abuso</translation>
+        <translation>Reportar abuso</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -62,7 +62,7 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation>Ingresa un URL de servidor:</translation>
+        <translation>Introduce la URL de una lista de servidores:</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -75,7 +75,7 @@
     <message>
         <location filename="../ui/avatarimport.ui" line="+14"/>
         <source>Crop Avatar</source>
-        <translation>Recortar Avatar</translation>
+        <translation>Recortar avatar</translation>
     </message>
 </context>
 <context>
@@ -83,7 +83,7 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+90"/>
         <source>Pick initial color from layer</source>
-        <translation>Escoger color inicial de la capa</translation>
+        <translation>Seleccionar el color inicial de la capa</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -93,12 +93,12 @@
     <message>
         <location line="+14"/>
         <source>Eraser mode</source>
-        <translation>Borrador</translation>
+        <translation>Modo de borrador</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Direct drawing mode</source>
-        <translation>Modo de dibujo Directo</translation>
+        <translation>Modo de dibujo directo</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -108,7 +108,7 @@
     <message>
         <location line="+16"/>
         <source>Radius: </source>
-        <translation>Radio </translation>
+        <translation>Radio: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -123,22 +123,22 @@
     <message>
         <location line="+58"/>
         <source>Smudging: </source>
-        <translation>Difuminar: </translation>
+        <translation>Difuminación: </translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Color Pickup: 1/</source>
-        <translation>Selección de color: 1/</translation>
+        <translation>Agarre de color: 1/</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Spacing: </source>
-        <translation>Espacio </translation>
+        <translation>Espaciado: </translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Gain: </source>
-        <translation type="unfinished">Ganancia: </translation>
+        <translation>Ganancia: </translation>
     </message>
     <message>
         <location line="+22"/>
@@ -148,7 +148,7 @@
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation>Alisado: </translation>
+        <translation>Suavizado: </translation>
     </message>
     <message>
         <location line="-145"/>
@@ -156,12 +156,12 @@
         <location line="+14"/>
         <location line="+33"/>
         <source>Pressure sensitivity</source>
-        <translation>Sensibilidad de Presión</translation>
+        <translation>Sensibilidad de presión</translation>
     </message>
     <message>
         <location line="-214"/>
         <source>Brush type</source>
-        <translation>Tipo de cepillo</translation>
+        <translation>Tipo de pincel</translation>
     </message>
     <message>
         <location line="+92"/>
@@ -174,7 +174,7 @@
     <message>
         <location filename="../ui/canvasshortcutsdialog.ui" line="+14"/>
         <source>Canvas Shortcut</source>
-        <translation>Atajo de Lienzo</translation>
+        <translation>Atajo de lienzo</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -195,7 +195,7 @@
     <message>
         <location line="-26"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation>Invertir dirección de entrada. Por ejemplo, Desplazar hacia arriba para Disminuir el Zoom en vez de acercarlo.</translation>
+        <translation>Invierte la dirección de entrada. Por ejemplo, desplazar hacia arriba para alejar el zoom en vez de acercarlo.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -205,12 +205,12 @@
     <message>
         <location line="+7"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation>Cambiar direcciones horizontal y vertical. Por ejemplo, mover el cursor arriba y abajo para cambiar el tamaño del cepillo en vez de moverlo de izquierda a derecha.</translation>
+        <translation>Cambia las direcciones horizontal y vertical. Por ejemplo, mover el cursor arriba y abajo para cambiar el tamaño del pincel en vez de moverlo de izquierda a derecha.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation>Intercambiar Ejes</translation>
+        <translation>Intercambiar ejes</translation>
     </message>
 </context>
 <context>
@@ -218,7 +218,7 @@
     <message>
         <location filename="../ui/certificateview.ui" line="+24"/>
         <source>Info</source>
-        <translation>Informacion</translation>
+        <translation>Información</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -261,12 +261,12 @@
         <location line="+14"/>
         <location line="+50"/>
         <source>Common name:</source>
-        <translation>Nombre comun:</translation>
+        <translation>Nombre común:</translation>
     </message>
     <message>
         <location line="-43"/>
         <source>Serial number:</source>
-        <translation>Numero de serie:</translation>
+        <translation>Número de serie:</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -281,7 +281,7 @@
     <message>
         <location line="+13"/>
         <source>Fingerprints</source>
-        <translation>Huella</translation>
+        <translation>Huellas</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -294,7 +294,7 @@
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.ui" line="+19"/>
         <source>Select Color</source>
-        <translation>Seleccionar Color</translation>
+        <translation>Seleccionar color</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -304,7 +304,7 @@
     <message>
         <location line="+7"/>
         <source>Hue</source>
-        <translation>Matiz</translation>
+        <translation>Tono</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -375,38 +375,38 @@
     <message>
         <location line="+16"/>
         <source>Import Session Bans</source>
-        <translation>Importar Baneos de Sesiones</translation>
+        <translation>Importar baneos de sesiones</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Import Roles</source>
-        <translation>Importar Roles</translation>
+        <translation>Importar roles</translation>
     </message>
     <message>
         <location line="+137"/>
         <location line="+298"/>
         <source>Save Image</source>
-        <translation>Guardar Imagen</translation>
+        <translation>Guardar imágen</translation>
     </message>
     <message>
         <location line="-298"/>
         <source>Export Image</source>
-        <translation>Exportar Imagen</translation>
+        <translation>Exportar imágen</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Save Pre-Reset Image</source>
-        <translation>Guardar Imagen Pre-reinicio</translation>
+        <translation>Guardar imágen pre-reinicio</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Save Selection</source>
-        <translation>Guardar Selección</translation>
+        <translation>Guardar selección</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Record Session</source>
-        <translation>Grabar Sesión</translation>
+        <translation>Grabar sesión</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -421,17 +421,17 @@
     <message>
         <location line="+35"/>
         <source>Performance Profile</source>
-        <translation>Perfil de Desempeño</translation>
+        <translation>Perfil de rendimiento</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tablet Event Log</source>
-        <translation>Registro de Eventos de Tableta</translation>
+        <translation>Registro de eventos de tableta</translation>
     </message>
     <message>
         <location line="+143"/>
         <source>Log File</source>
-        <translation>Archivo de Registro</translation>
+        <translation>Archivo de registro</translation>
     </message>
     <message>
         <location line="-171"/>
@@ -442,7 +442,7 @@
     <message>
         <location line="+7"/>
         <source>Export WebM Video</source>
-        <translation>Exportar video WebM</translation>
+        <translation>Exportar vídeo WebM</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -452,17 +452,17 @@
     <message>
         <location line="-77"/>
         <source>Save Animation Frames</source>
-        <translation>Guardar cuadros de animación</translation>
+        <translation>Guardar fotogramas de animación</translation>
     </message>
     <message>
         <location line="-271"/>
         <source>Add Avatar</source>
-        <translation>Añadir Avatar</translation>
+        <translation>Añadir avatar</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Import Animation Frames</source>
-        <translation>Importar fotograma de animación</translation>
+        <translation>Importar fotogramas de animación</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -472,48 +472,48 @@
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation>Imágenes de Fotograma</translation>
+        <translation type="unfinished">Imágenes de fotograma</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Import Animation from Layers</source>
-        <translation>Importar Animación desde Capas</translation>
+        <translation>Importar animación desde capas</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation>Imagenes en Capa</translation>
+        <translation>Imagenes en capa</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation>Importar Pinceles</translation>
+        <translation>Importar pinceles</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Import Session Settings</source>
-        <translation>Importar Ajustes de Sesión</translation>
+        <translation>Importar ajustes de sesión</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation>Todos los Archivos Soportados (%1)</translation>
+        <translation>Todos los archivos soportados (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+391"/>
         <source>Session Settings (%1)</source>
-        <translation>Ajustes de Sesión (%1)</translation>
+        <translation>Ajustes de sesión (%1)</translation>
     </message>
     <message>
         <location line="-390"/>
         <source>Session Bans (%1)</source>
-        <translation>Baneos de Sesión (%1)</translation>
+        <translation>Baneos de sesión (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Session Roles (%1)</source>
-        <translation>Roles de Sesiones (%1)</translation>
+        <translation type="unfinished">Roles de sesión (%1)</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -523,7 +523,7 @@
     <message>
         <location line="+12"/>
         <source>Open Image</source>
-        <translation>Abrir Imagen</translation>
+        <translation>Abrir imágen</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -533,67 +533,67 @@
     <message>
         <location line="+5"/>
         <source>Paste File</source>
-        <translation>Pegar Archivo</translation>
+        <translation>Pegar archivo</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Reference Image</source>
-        <translation>Imagen de Referencia</translation>
+        <translation>Imágen de referencia</translation>
     </message>
     <message>
         <location line="+168"/>
         <source>Export Frames in ZIP</source>
-        <translation>Exportar Fotogramas en ZIP</translation>
+        <translation>Exportar fotogramas en ZIP</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation>Exportar Video de WEBM</translation>
+        <translation>Exportar vídeo de WEBM</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Animated WEBP</source>
-        <translation>Exportar WEBP Animada</translation>
+        <translation>Exportar WEBP animado</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Save Image Series</source>
-        <translation>Guardar Serie de Imagenes</translation>
+        <translation>Guardar serie de imagenes</translation>
     </message>
     <message>
         <location line="+74"/>
         <source>Export Brushes</source>
-        <translation>Exportar Cepillos</translation>
+        <translation>Exportar pinceles</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Export Session Bans</source>
-        <translation>Exportar Baneos de sesión</translation>
+        <translation>Exportar baneos de sesión</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Export Roles</source>
-        <translation>Exportar Roles</translation>
+        <translation>Exportar roles</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Export Session Settings</source>
-        <translation>Exportar Ajustes de Sesión</translation>
+        <translation>Exportar ajustes de sesión</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
-        <translation>El formato PSD no soporta anotaciones, líneas de tiempo de animación y ciertos modos de mezcla. Si quieres que se guarden de forma apropiada, debes guardar un archivo ORA.</translation>
+        <translation>El formato PSD no soporta anotaciones, líneas de tiempo de animación y ciertos modos de mezcla. Si quieres que se guarden de forma apropiada, debes guardar en archivo ORA.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save an ORA file.</source>
-        <translation>El formato seleccionado guardara una imagen fusionada. Si quieres mantener las capas, anotaciones y la linea de tiempo de animacion, debes guardar un archivo ORA.</translation>
+        <translation>El formato seleccionado guardará una imagen fusionada. Si quieres mantener las capas, anotaciones y la linea de tiempo de animacion, debes guardar en archivo ORA.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Save as Selected Format</source>
-        <translation>Guardar como Formato Seleccionado</translation>
+        <translation>Guardar como formato seleccionado</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -658,13 +658,13 @@
         <location line="-97"/>
         <location line="+3"/>
         <source>Fill continuous area</source>
-        <translation type="unfinished">Llenar área continuoso</translation>
+        <translation>Llenar área continua</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill all similar colors</source>
-        <translation>Llenar colores similares</translation>
+        <translation>Llenar todos los colores similares</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -677,7 +677,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+71"/>
         <source>Merged image</source>
-        <translation>Imagen combinada</translation>
+        <translation>Imágen combinada</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -703,7 +703,7 @@
         <location line="+96"/>
         <location line="+3"/>
         <source>Apply the pending fill, making it visible for everyone</source>
-        <translation>Aplicar el rellenar pendiente, haciéndolo visible para todos</translation>
+        <translation>Aplicar el rellenado pendiente, haciéndolo visible para todos</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -714,7 +714,7 @@
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation type="unfinished">Cancelar la llena pendiente; nadie va a ver sus efectos</translation>
+        <translation>Cancelar el rellenado pendiente, nadie verá sus efectos</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -725,7 +725,7 @@
         <location line="-336"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-113"/>
         <source>Size Limit: </source>
-        <translation>Límite de Tamaño: </translation>
+        <translation>Límite de tamaño: </translation>
     </message>
     <message>
         <location line="+279"/>
@@ -736,7 +736,7 @@
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+131"/>
         <source>Size Limit: Unlimited</source>
-        <translation>Límite de Tamaño: Sin límite</translation>
+        <translation>Límite de tamaño: Sin límite</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="-260"/>
@@ -761,12 +761,12 @@
     <message>
         <location line="+28"/>
         <source>Reset Zoom</source>
-        <translation>Resetear Zoom</translation>
+        <translation>Resetear zoom</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Refresh</source>
-        <translation>Refrescar</translation>
+        <translation>Actualizar</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -781,7 +781,7 @@
     <message>
         <location line="+17"/>
         <source>Frame:</source>
-        <translation>Marco:</translation>
+        <translation>Fotograma:</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -8689,7 +8689,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-65"/>
         <source>Unpin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation type="unfinished">Retirar</translation>
+        <translation>Soltar</translation>
     </message>
     <message>
         <location line="+1"/>
