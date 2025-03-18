@@ -508,7 +508,7 @@
     <message>
         <location line="-390"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bannissements de la Session (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -912,12 +912,12 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+10"/>
         <source>&amp;Step up</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Montée</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Step &amp;down</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Descente</translation>
     </message>
 </context>
 <context>
@@ -940,7 +940,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+10"/>
         <source>Trail: </source>
-        <translation type="unfinished"></translation>
+        <translation>Trainée&#xa0;: </translation>
     </message>
 </context>
 <context>
@@ -989,17 +989,17 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+7"/>
         <source>Sketch mode for you</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mode esquisse pour vous</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Sketch Opacity:</source>
-        <translation type="unfinished"></translation>
+        <translation>Opacité esquisse&#xa0;:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Sketch Tint:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Teinte d&apos;esquisse&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1019,17 +1019,17 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+81"/>
         <source>No tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de teinte</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blue tint</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Teinte bleue</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisir…</translation>
     </message>
 </context>
 <context>
@@ -1057,7 +1057,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Les panneaux de Drawpile peuvent être librement réarrangés. Vous pouvez utiliser Affichage &gt; Panneaux &gt; Arranger les Panneaux pour les déplacer plus facilement. Assurez-vous que votre arrangement convient pour votre résolution d&apos;écran, autrement, il pourrait arriver que certains contrôles se retrouvent en dehors de l&apos;écran.</translation>
     </message>
 </context>
 <context>
@@ -1065,22 +1065,22 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location filename="../utils/widgetutils.cpp" line="+1129"/>
         <source>Open Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir le lien</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This link will take you to the website at &quot;%1&quot;, which is not run by Drawpile. Are you sure you want to go there?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ce lien vous amènera sur le site web vers &quot;%1&quot;, qui n&apos;est pas géré par Drawpile. Êtes-vous sur·e de vouloir continuer&#x202f;?</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Yes, visit website</source>
-        <translation type="unfinished"></translation>
+        <translation>Oui, visiter le site web</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Non, annuler</translation>
     </message>
 </context>
 <context>
