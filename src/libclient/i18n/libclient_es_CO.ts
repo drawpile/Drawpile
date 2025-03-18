@@ -518,17 +518,17 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+8"/>
         <source>Text File (%1)</source>
-        <translation>Archivo de Texto (%1)</translation>
+        <translation>Archivo de texto (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brush Pack (%1)</source>
-        <translation>Paquete de Pinceles (%1)</translation>
+        <translation>Paquete de pinceles (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished">Banneos de Sesión (%1)</translation>
+        <translation>Banneos de la sesión (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -543,7 +543,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+6"/>
         <source>All Files (*)</source>
-        <translation>Todos los Archivos (*)</translation>
+        <translation>Todos los archivos (*)</translation>
     </message>
 </context>
 <context>
@@ -582,22 +582,22 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="+522"/>
         <source>(untitled)</source>
-        <translation>(sin titulo)</translation>
+        <translation>(sin título)</translation>
     </message>
     <message>
         <location line="-446"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished">%1día%2horas%3minutos</translation>
+        <translation>%1día(s)%2hora(s)%3minuto(s)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished">%1hora%2minutos</translation>
+        <translation>%1hora(s)%2minuto(s)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1m</source>
-        <translation type="unfinished">%1minuto</translation>
+        <translation>%1minuto(s)</translation>
     </message>
     <message numerus="yes">
         <location line="+106"/>
@@ -618,14 +618,14 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+9"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished">Número desconocido de usuarios dibujando actualmente</translation>
+        <translation>Número de usuarios actualmente dibujando desconocido.</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform>%n usuario dibujando actualmente</numerusform>
-            <numerusform>%n usuarios dibujando actualmente</numerusform>
+        <translation>
+            <numerusform>%n usuario actualmente dibujando</numerusform>
+            <numerusform>%n usuarios actualmente dibujando</numerusform>
         </translation>
     </message>
     <message>
@@ -641,7 +641,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+3"/>
         <source>Requires newer client (%1)</source>
-        <translation>Requiere un cliente más nuevo (%1)</translation>
+        <translation>Requiere un cliente más reciente (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -651,7 +651,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+2"/>
         <source>unknown version</source>
-        <translation>Versión desconocida</translation>
+        <translation>Versión desconocida.</translation>
     </message>
     <message>
         <location line="+113"/>
@@ -661,7 +661,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+7"/>
         <source>Title</source>
-        <translation>Titulo</translation>
+        <translation>Título</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -676,12 +676,12 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation type="unfinished">Activos</translation>
+        <translation>Activo/a</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Owner</source>
-        <translation>Dueño</translation>
+        <translation>Dueño/a</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -696,12 +696,12 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+4"/>
         <source>joining from web not allowed</source>
-        <translation>No se permite unirse desde la web</translation>
+        <translation>Conexión desde la web no permitida.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>closed</source>
-        <translation>Cerrada</translation>
+        <translation>cerrada</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -711,7 +711,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation>NSFM</translation>
+        <translation>No apto para menores de edad. (NSFM)</translation>
     </message>
 </context>
 <context>
@@ -729,7 +729,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished">Detras</translation>
+        <translation>Atrás</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -744,7 +744,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+5"/>
         <source>Overlay</source>
-        <translation>Cubrir</translation>
+        <translation>Superposición</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -759,7 +759,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+5"/>
         <source>Dodge</source>
-        <translation type="unfinished">Evitar</translation>
+        <translation>Esquivar</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -779,7 +779,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+5"/>
         <source>Add</source>
-        <translation type="unfinished">Agregar</translation>
+        <translation>Añadir</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -794,12 +794,12 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+5"/>
         <source>Hard Light</source>
-        <translation>Luz Intensa</translation>
+        <translation>Luz intensa</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Soft Light</source>
-        <translation>Luz Suave</translation>
+        <translation>Luz suave</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -819,7 +819,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+5"/>
         <source>Hue</source>
-        <translation type="unfinished">Matiz</translation>
+        <translation>Tonalidad</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -865,12 +865,12 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+7"/>
         <source>Show all brushes, regardless of tagging.</source>
-        <translation>Mostrar todos los pinceles, independientemente del etiquetado.</translation>
+        <translation>Mostrar todos los pinceles, sin importar su etiquetado.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show brushes not assigned to any tag.</source>
-        <translation>Mostrar pinceles no asignados a una marca.</translation>
+        <translation>Mostrar pinceles no asignados a cualquier etiqueta.</translation>
     </message>
     <message>
         <location line="+198"/>
