@@ -1235,47 +1235,47 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location line="+3"/>
         <source>Exporting encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Export des bannissements chiffrés non supporté par ce serveur.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le serveur ne peut lire les données importées. C&apos;est probablement dû au fait qu&apos;elles ont été exportées depuis un autre serveur. Vous pouvez uniquement importer les bannissements depuis le serveur où elles ont été exportées.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid import data.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Données importées invalides.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Malformed import data.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Données importées déformées.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Importing encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Import des bannissements chiffrés non configuré sur ce serveur.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Importing encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Import des bannissements chiffrés non supporté sur ce serveur.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mot de passe de session retiré par un administrateur du serveur. Ce serveur n&apos;autorise pas les navigateurs web dans une session publique&#xa0;: ils seront déconnectés.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mot de passe de session retiré par %1. Ce serveur n&apos;autorise pas les navigateurs web dans une session publique&#xa0;: ils seront déconnectés.</translation>
     </message>
     <message>
         <location line="+93"/>
         <source>%1 trusted via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 rendu·e fiable via invitation crée par un administrateur serveur.</translation>
     </message>
     <message>
         <location line="-62"/>
