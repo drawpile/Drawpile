@@ -1516,7 +1516,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+14"/>
         <source>Are you sure you want to continue?</source>
-        <translation>Are you sure you want to continue?</translation>
+        <translation>您确定要继续吗?</translation>
     </message>
     <message>
         <location line="+1"/>
