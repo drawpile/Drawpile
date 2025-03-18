@@ -342,12 +342,12 @@
     <message>
         <location filename="../ui/filetypedialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished">Nom&#x202f;:</translation>
+        <translation>Nom&#xa0;:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished">Type&#x202f;:</translation>
+        <translation>Type&#xa0;:</translation>
     </message>
 </context>
 <context>
