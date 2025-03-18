@@ -1606,7 +1606,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+558"/>
         <source>Unknown version %1</source>
-        <translation>Versión desconocida %1</translation>
+        <translation>Version desconocida</translation>
     </message>
     <message>
         <location line="+280"/>
