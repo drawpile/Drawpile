@@ -277,17 +277,17 @@
     <message>
         <location line="+7"/>
         <source>&apos;%1&apos; contains multiple host certificates, which is not currently supported.</source>
-        <translation>&apos;%1&apos; Contiene múltiples certificados de anfitriones, lo cual actualmente no está soportado.</translation>
+        <translation>&apos;%1&apos; Contiene múltiples certificados de anfitriones, lo cual no es compatible de momento.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&apos;%1&apos; contains an invalid certificate.</source>
-        <translation>&apos;%1&apos; contiene un certificado invalido.</translation>
+        <translation>&apos;%1&apos; contiene un certificado inválido.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&apos;%1&apos; contains a certificate with multiple hostnames, which is not currently supported.</source>
-        <translation>&apos;%1&apos; contiene un certificado con múltiples nombres de host, lo cual actualmente no está soportado.</translation>
+        <translation>&apos;%1&apos; contiene un certificado con múltiples nombres de host, lo cual por el momento no es compatible.</translation>
     </message>
     <message>
         <location line="+140"/>
@@ -380,7 +380,7 @@
     <message>
         <location line="+664"/>
         <source>Error saving image</source>
-        <translation>Error en guardar la imagen.</translation>
+        <translation>Error en guardar la imagen</translation>
     </message>
 </context>
 <context>
@@ -409,12 +409,12 @@
     <message>
         <location line="+6"/>
         <source>Ffmpeg crashed!</source>
-        <translation>Ffmpeg falló!</translation>
+        <translation>¡Falló ffmpeg!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ffmpeg process error</source>
-        <translation>Error de proceso de ffmpeg.</translation>
+        <translation>Error de proceso de ffmpeg</translation>
     </message>
 </context>
 <context>
@@ -543,7 +543,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+6"/>
         <source>All Files (*)</source>
-        <translation>Todos los archivos (*)</translation>
+        <translation type="unfinished">Todos los archivos (*)</translation>
     </message>
 </context>
 <context>
@@ -618,7 +618,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+9"/>
         <source>Unknown number of actively drawing users</source>
-        <translation>Número de usuarios actualmente dibujando desconocido.</translation>
+        <translation>Número de usuarios actualmente dibujando desconocido</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
@@ -646,12 +646,12 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+2"/>
         <source>Incompatible (%1)</source>
-        <translation type="unfinished">Incompatible (%1)</translation>
+        <translation>No compatible (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>unknown version</source>
-        <translation>Versión desconocida.</translation>
+        <translation>Versión desconocida</translation>
     </message>
     <message>
         <location line="+113"/>
@@ -696,7 +696,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+4"/>
         <source>joining from web not allowed</source>
-        <translation>Conexión desde la web no permitida.</translation>
+        <translation>Conexión desde la web no permitida</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1326,7 +1326,7 @@ En su lugar, selecciona una capa regular.</translation>
         <location line="+5"/>
         <source>Session terminated by moderator (%1).</source>
         <extracomment>%1 is the name of the moderator.</extracomment>
-        <translation>Sesión finalizada por un moderador. (%1)</translation>
+        <translation>Sesión finalizada por un moderador (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1468,17 +1468,17 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+64"/>
         <source>Failed to retrieve server info</source>
-        <translation>La obtención de información del servidor ha fallado.</translation>
+        <translation>La obtención de información del servidor ha fallado</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Session lookup failed</source>
-        <translation>La búsqueda de sesion ha fallado.</translation>
+        <translation>La búsqueda de sesión ha fallado</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>This server does not allow guest logins</source>
-        <translation>Este servidor no permite el acceso de invitados.</translation>
+        <translation>Este servidor no permite el acceso de invitados</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1606,12 +1606,12 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+558"/>
         <source>Unknown version %1</source>
-        <translation>Version desconocida</translation>
+        <translation>Versión desconocida %1</translation>
     </message>
     <message>
         <location line="+280"/>
         <source>Pinned certificate has changed!</source>
-        <translation>¡El certificado fijo ha cambiado!</translation>
+        <translation>¡El certificado fijo ha sido cambiado!</translation>
     </message>
     <message>
         <location line="+102"/>
@@ -1621,42 +1621,42 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation>Has sido baneado de esta sesion!</translation>
+        <translation>¡Has sido baneado de esta sesión!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session alias is reserved!</source>
-        <translation>Alias de sesion reservada!</translation>
+        <translation>¡El alias de sesión ya ha sido reservado!</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
-        <translation type="unfinished"></translation>
+        <translation>Esto generalmente significa que tu versión de Drawpile ya es muy antigua. ¿Necesitas actualizar?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesión no encontrada, puede que ya terminó o el link de invitación ha cambiado</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server only allows joining sessions through a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este servidor solo admite unirte a sus sesiones a través de un link directo.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Invalid host name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de host inválido.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>No está permitido realizar sesiones públicas aquí, solo se permiten sesiones personales. Puedes cambiar de pública a personal en la pestaña Sesión.</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Client failed to serialize command</source>
-        <translation type="unfinished"></translation>
+        <translation>El cliente falló en serializar un comando</translation>
     </message>
 </context>
 <context>
@@ -1664,17 +1664,17 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../net/loginsessions.cpp" line="+48"/>
         <source>(untitled)</source>
-        <translation>(sin titulo)</translation>
+        <translation>(sin título)</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>%1 (incompatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (no compatible)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.1 (compatibility mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.1 (modo de compatibilidad)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1689,7 +1689,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+3"/>
         <source>Closed (not allowed to join from the web browser)</source>
-        <translation>Cerrada (no se permite la participación desde el navegador web)</translation>
+        <translation>Cerrada (no se permite unirse desde un navegador web)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1699,22 +1699,22 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+3"/>
         <source>Closed (guest logins blocked)</source>
-        <translation>Cerrada (usuarios de invitados son bloqueados)</translation>
+        <translation>Cerrada (invitados bloqueados)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (new logins blocked)</source>
-        <translation>Cerrada (Nuevos usuarios son bloqueados)</translation>
+        <translation>Cerrada (nuevos usuarios bloqueados)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session password required</source>
-        <translation>Se requiere la contraseña de esta sesión</translation>
+        <translation>Contraseña de sesión requerida</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation>No es apto para menores (NSFM)</translation>
+        <translation>No apto para menores de edad (NSFM)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1753,43 +1753,43 @@ En su lugar, selecciona una capa regular.</translation>
         <location line="+42"/>
         <source>It is full or closed.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation>Sesión cerrada o llena.</translation>
+        <translation>Sesión llena o cerrada.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It requires an account.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation>Se requiere una cuenta.</translation>
+        <translation>Sesión requiere de una cuenta.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>It does not allow joining via web browser.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sesión no permite entrar vía navegador web.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>It does not allow joining via WebSockets.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sesión no permite entrar vía WebSockets.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>It is hosted with a newer version of Drawpile, you have to update. If there is no update available, it may be hosted with a development version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sesión hosteada en versión nueva de Drawpile, tienes que actualizar. Si no hay una actualización disponible, puede estar hosteado en una versión de desarrollo de Drawpile.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>It is hosted with an old, incompatible version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sesión hosteada en una versión antigua de Drawpile no compatible.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is hosted with an incompatible protocol.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sesión hosteada con un protocolo no compatible.</translation>
     </message>
 </context>
 <context>
@@ -1797,49 +1797,49 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../net/server.cpp" line="+214"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Si no tienes intendido utilizar un proxy, puedes deshabilitar el proxy de red en las preferencias de Drawpile en la pestaña Red.</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Network read error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de lectura de red</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network read error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de lectura de red: %1</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Network write error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de escritura de red</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network write error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de escritura de red: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Network connection timed out</source>
-        <translation type="unfinished"></translation>
+        <translation>Se agotó el tiempo de conexión de red</translation>
     </message>
     <message>
         <location line="+97"/>
         <source>Received invalid data</source>
-        <translation type="unfinished">Informacion recivida invalida</translation>
+        <translation>Informacion recibida inválida</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Error de socket %1: %2</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (error %2)</translation>
     </message>
 </context>
 <context>
@@ -1852,17 +1852,17 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="-7"/>
         <source>No canvas present.</source>
-        <translation>Lienzo no existe.</translation>
+        <translation>Lienzo inexistente.</translation>
     </message>
     <message>
         <location line="-254"/>
         <source>You don&apos;t have permission for that transformation.</source>
-        <translation>No tienes permisos para esa transformación.</translation>
+        <translation>No posees los permisos para realizar la transformación.</translation>
     </message>
     <message>
         <location line="+207"/>
         <source>You don&apos;t have permission to stamp selections.</source>
-        <translation>No tienes permisos para estampar selecciones.</translation>
+        <translation>No posees los permisos para estampar selecciones.</translation>
     </message>
     <message>
         <location line="+63"/>
@@ -1889,27 +1889,27 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="-23"/>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
-        <translation>La búsqueda automática de actualizaciones está desactivada, &lt;a href=&quot;#autoupdate&quot;&gt;haz clic aquí para activarla&lt;/a&gt;.</translation>
+        <translation>La búsqueda automática de actualizaciones está desactivada, &lt;a href=&quot;#autoupdate&quot;&gt;clic aquí para activarla&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
-        <translation>Si no quieres búsquedas automáticas, &lt;a href=&quot;#checkupdates&quot;&gt;haz clic aquí para buscar manualmente&lt;/a&gt;.</translation>
+        <translation>Si no quieres búsquedas automáticas, &lt;a href=&quot;#checkupdates&quot;&gt;clic aquí para buscar manualmente&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de red: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Couldn&apos;t make sense of the fetched data.</source>
-        <translation>Data obtenida no procesada.</translation>
+        <translation>No se pudo entender los datos obtenidos.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Couldn&apos;t make sense of fetched updates.</source>
-        <translation>Actualización obtenida no procesada.</translation>
+        <translation>No se pudo entender las actualizaciones obtenidas.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1919,7 +1919,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+10"/>
         <source>Couldn&apos;t make sense of fetched news.</source>
-        <translation>Anuncio obtenido no procesado.</translation>
+        <translation>No se pudo entender los anuncios obtenidos.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1937,7 +1937,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../wasmsupport.cpp" line="+109"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
-        <translation>No está utilizando el cliente oficial para web.drawpile.net. La mayoría de los servidores no admiten conexiones provenientes de otras plataformas.</translation>
+        <translation>No estás utilizando el cliente oficial en web.drawpile.net. La mayoría de los servidores no admiten conexiones provenientes de otras partes.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1947,12 +1947,12 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+6"/>
         <source>You&apos;re trying to connect to an IP address instead of a proper domain name. This usually doesn&apos;t work unless you&apos;ve configured your browser to allow this first.</source>
-        <translation>Está intentando conectarse a una dirección IP en vez de a un dominio apropiado. Esto usualmente no es posible a menos que su navegador haya sido configurado para ello.</translation>
+        <translation>Estás intentando conectarte a una dirección IP en vez de a un nombre de dominio apropiado. Esto generalmente no es posible a menos que tu navegador haya sido configurado para ello.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The server may not support joining via web browser.</source>
-        <translation>Puede que el servidor no soporte la participación a través de un navegador web.</translation>
+        <translation>Puede que el servidor no soporte unirse a través de un navegador web.</translation>
     </message>
 </context>
 </TS>
