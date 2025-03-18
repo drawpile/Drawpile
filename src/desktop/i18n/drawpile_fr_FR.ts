@@ -472,7 +472,7 @@
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation type="unfinished">Images d&apos;Animation</translation>
+        <translation>Images d&apos;Animation</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -492,7 +492,7 @@
     <message>
         <location line="+23"/>
         <source>Import Session Settings</source>
-        <translation type="unfinished">Importer les Réglages de Session</translation>
+        <translation>Importer les Réglages de Session</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1332,12 +1332,12 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+19"/>
         <source>Session template saved</source>
-        <translation type="unfinished"></translation>
+        <translation>Modèle de session sauvegardé</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export session template</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">N&apos;a pas pu importer le modèle de session</translation>
     </message>
     <message>
         <location line="+137"/>
@@ -1357,7 +1357,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+3"/>
         <source>Couldn&apos;t start recording.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">N&apos;a pas pu commencer l&apos;enregistrement.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1367,22 +1367,22 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+27"/>
         <source>Error closing profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur lors de la fermeture du profil.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error opening profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreurs lors de l&apos;ouverture du profil.</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Error closing tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erreurs lors de la fermeture de la table des évènements.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Error opening tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erreurs lors de l&apos;ouverture de la table des évènements.</translation>
     </message>
     <message>
         <location line="+209"/>
@@ -1493,19 +1493,19 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+436"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">déconnecter de la session</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>lose any unsaved changes</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">perte des changements non enregistrés</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>stop your recording</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">arrêt de l&apos;enregistrement</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1517,48 +1517,48 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+5"/>
         <location line="+15"/>
         <source>Doing so will %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cette action va %1.</translation>
     </message>
     <message>
         <location line="-11"/>
         <source>Doing so will %1 and %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cette action va %1 et %2.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Doing so will %1, %2 and %3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cette action va %1, %2 et %3.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Doing so will %1, %2, %3 and %4.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cette action va %1, %2, %3 et %4.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Are you sure you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>Êtes-vous sûr de vouloir continuer&#x202f;?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Oui, continuer</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Non, annuler</translation>
     </message>
     <message>
         <location line="+111"/>
         <location line="+3793"/>
         <source>Export Again</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportér à Nouveau</translation>
     </message>
     <message>
         <location line="-3789"/>
         <source>Export Again to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportér à Nouveau vers %1</translation>
     </message>
     <message>
         <location line="+814"/>
@@ -1569,7 +1569,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to resize the canvas.</source>
-        <translation type="unfinished">Vous n&apos;avez pas la permission de redimensionner le canvas</translation>
+        <translation>Vous n&apos;avez pas la permission de redimensionner le canvas.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1594,47 +1594,47 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+112"/>
         <source>New</source>
-        <translation type="unfinished">Nouveau</translation>
+        <translation>Nouveau</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to create a new canvas and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous êtes sur le point de créer une nouvelle toile et de fermer cette fenêtre.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Open Recent File</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir un Fichier Récent</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recent file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous êtes sur le point d&apos;ouvrir un fichier récent et de fermer cette fenêtre.</translation>
     </message>
     <message>
         <location line="-1152"/>
         <source>Open</source>
-        <translation type="unfinished">Ouvrir</translation>
+        <translation>Ouvrir</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a new file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous êtes sur le point d&apos;ouvrir un nouveau fichier et de fermer cette fenêtre.</translation>
     </message>
     <message>
         <location line="+2060"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vous êtes déjà connecté à cette session&#x202f;! Déconnectez-vous pour pouvoir en héberger une.</translation>
     </message>
     <message>
         <location line="+170"/>
         <source>Reconnect</source>
-        <translation type="unfinished">Reconnexion</translation>
+        <translation>Reconnexion</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about reconnect to the session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous êtes sur le point de vous reconnecter à la session et de fermer cette fenêtre.</translation>
     </message>
     <message>
         <location line="+76"/>
@@ -1660,12 +1660,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="-2698"/>
         <source>Join Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Rejoindre la Session</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to connect to a new session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous êtes sur le point de vous connecter à une nouvelle session et de fermer cette fenêtre.</translation>
     </message>
     <message>
         <location line="+278"/>
@@ -1676,7 +1676,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+559"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Cette image n&apos;a pas pu être chargée&#xa0;: %1.</translation>
     </message>
     <message>
         <location line="+438"/>
@@ -1691,7 +1691,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+233"/>
         <source>Show Icons on Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Montrer les Icônes sur les Onglets</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1815,12 +1815,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+8"/>
         <source>Rotate Canvas Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Tourner la Toile dans le sens Inverse des Aiguilles d&apos;une Montre</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Mirror Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Refléter la toile</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1835,22 +1835,22 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+3"/>
         <source>Flip Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Inverser la Toile</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the canvas upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Inverser la Toile à l&apos;Envers</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>refléter/inverser la toile verticalement</translation>
     </message>
     <message>
         <location line="+139"/>
         <source>Group View</source>
-        <translation type="unfinished"></translation>
+        <translation>Vue de Groupe</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -1860,7 +1860,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+32"/>
         <source>Stay Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Temps de Séjour</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1890,7 +1890,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+1"/>
         <source>Forever</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>Pour Toujour</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -2161,37 +2161,37 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+10"/>
         <source>&amp;Select</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sélectionner</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select rectangular area</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner une aire rectangulaire</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Lasso Select</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sélection au Lasso</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select a free-form area</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sélectionner une aire à main levée</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Magic Wand Select</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Sélection Baguette Magique</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select areas with similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner les endroits avec des couleurs similaires</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Transform Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Outil Transformation</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2201,7 +2201,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Déplacer</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2226,7 +2226,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+3"/>
         <source>Artifical Disconnect...</source>
-        <translation type="unfinished"></translation>
+        <translation>Déconnexion artificielle...</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -2236,12 +2236,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+44"/>
         <source>Toggle Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Activer/Désactiver le Mode Gomme</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Toggle Recolor Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Activer/Désactiver le Mode Recolorer</translation>
     </message>
     <message>
         <location line="+1"/>
