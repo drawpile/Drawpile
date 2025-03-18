@@ -1280,90 +1280,90 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location line="-62"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Statut d&apos;opérateur·ice de %1 révoqué·e par %2.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La session n&apos;a plus d&apos;espace libre&#x202f;! Pour continuer de dessiner, un·e opérateur·ice doit le réinitialiser pour le ramener à une taille plus petite. Cela peut être réalisé via Session &gt; Réinitialiser.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Réinitialisation de la session annulée&#x202f;! Un·e opérateur·ice doit débloquer le canevas et réinitialiser la session manuellement.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Échec de la réinitialisation de la session&#x202f;! Un·e opérateur·ice doit débloquer le canevas et réinitialiser la session manuellement.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Réinitialisation en cours de préparation&#x202f;! Veuillez patienter pendant que la session soit de nouveau disponible…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>Réinitialisation par %1 en cours de préparation&#x202f;! Veuillez patienter pendant que la session soit de nouveau disponible…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>Compression du canevas par %1&#x202f;! Veuillez patienter pendant que la session soit de nouveau disponible…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplacement du canevas par %1&#x202f;! Veuillez patienter pendant que la session soit de nouveau disponible…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>Retour du canevas à un état précédent par %1&#x202f;! Veuillez patienter pendant que la session soit de nouveau disponible…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session terminated by moderator (%1).</source>
         <extracomment>%1 is the name of the moderator.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Session terminée par un·e modérateur·ice (%1).</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by administrator: %1</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Session terminée par un·e administrateur·ice&#xa0;: %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by moderator (%1): %2</source>
         <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Session terminée par un·e modérateur·ice (%1)&#xa0;: %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 trusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 rendu·e fiable par le serveur.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 trusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 rendu·e fiable par %2.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>%1 trusted via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 rendu·e fiable par invitation créée par %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>%1 untrusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 rendu·e non fiable par le serveur.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 rendu·e non fiable par %2.</translation>
     </message>
 </context>
 <context>
@@ -1371,60 +1371,60 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location filename="../net/invitelistmodel.cpp" line="+119"/>
         <source>No invite codes, click Create to add one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de code d&apos;invitation, cliquez sur Créer pour en ajouter un.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Used %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Utilisé le %1 par %2</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Created %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Crée le %1 par %2</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Operator and Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Opérateur·ice et Fiable</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished">Opérateur</translation>
+        <translation>Opérateur·ice</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Fiable·s</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1/%2</source>
         <extracomment>This is the &quot;uses&quot; column in the invite code table. %1 is how often the invite has been used, %2 is how many there are total.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1/%2</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Code</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Creator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Créateur·ice</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Role</source>
-        <translation type="unfinished"></translation>
+        <translation>Rôle</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Uses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Utilise</translation>
     </message>
 </context>
 <context>
@@ -1453,27 +1453,27 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location line="+86"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ce serveur ne dispose pas d&apos;un moyen de se connecter pour rejoindre une session&#x202f;!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ce serveur ne dispose pas d&apos;un moyen de se connecter pour héberger une session&#x202f;!</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Server expects STARTTLS on unsupported socket.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le serveur attend un STARTTLS sur un socket non supporté.</translation>
     </message>
     <message>
         <location line="+64"/>
         <source>Failed to retrieve server info</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Échec lors de la récupération des informations de serveur</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Session lookup failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Échec lors de la récupération de la session</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -1519,12 +1519,12 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location line="+9"/>
         <source>Server reported two different ext-auth URLs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le serveur a reporté deux URL ext-auth différentes</translation>
     </message>
     <message>
         <location line="+118"/>
         <source>Got multiple sessions when only one was expected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Plusieurs sessions en cours alors qu&apos;une seule session est attendue</translation>
     </message>
     <message>
         <location line="+66"/>
@@ -1544,18 +1544,18 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location line="+9"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Session pour une version différente de Drawpile (%1) en cours&#x202f;!</translation>
     </message>
     <message>
         <location line="+214"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">TLS n&apos;est pas supporté via ce type de socket</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Unable to set TLS error ignore state</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Impossible de configurer l&apos;erreur d&apos;état ignorée de TLS</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -1566,17 +1566,17 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location line="-856"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mode sécurisé non actif sur un hôte avec un certificat épinglé&#x202f;!</translation>
     </message>
     <message>
         <location line="+558"/>
         <source>Unknown version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Version inconnue %1</translation>
     </message>
     <message>
         <location line="+280"/>
         <source>Pinned certificate has changed!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le certificat épinglé à changé&#x202f;!</translation>
     </message>
     <message>
         <location line="+64"/>
@@ -1631,32 +1631,32 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location line="+4"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cela veut probablement dire que votre version de Drawpile est trop ancienne. Voulez-vous la mettre à jour&#x202f;?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Session introuvable, le lien a peut-être changé; ou la session a pris fin</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server only allows joining sessions through a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ce serveur n&apos;autorise qu&apos;à joindre la session via un lien direct.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Invalid host name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom d&apos;hôte invalide.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vous n&apos;êtes pas autorisé à héberger des sessions publiques ici, seules les sessions personnelles sont autorisées. Vous pouvez passer de public à personnel dans l&apos;onglet Sessions.</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Client failed to serialize command</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Échec du client à sérialiser la commande</translation>
     </message>
 </context>
 <context>
@@ -1669,64 +1669,64 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location line="+53"/>
         <source>%1 (incompatible)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">(incompatible) %1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.1 (compatibility mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.1 (mode de compatibilité)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (fully compatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 (complètement compatible)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation>Version incompatible</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Closed (not allowed to join from the web browser)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fermé (non autorisé à rejoindre depuis un navigateur web)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (not allowed to join via WebSocket)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fermé (non autorisé à rejoindre depuis WebSocket)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Closed (guest logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fermé (connexions invité bloqués)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (new logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fermé (nouvelles connexions bloquées)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session password required</source>
-        <translation type="unfinished"></translation>
+        <translation>Mot de passe de session requis</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Inadapté pour les mineurs (NSFM)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nombre d&apos;utilisateur·ice·s actif·ve·s en train de dessiner inconnu</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n utlisateur·ice actif·ve en train de dessiner</numerusform>
+            <numerusform>%n utlisateur·ice·s actif·ve·s en train de dessiner</numerusform>
         </translation>
     </message>
     <message>
@@ -1742,54 +1742,54 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location line="+2"/>
         <source>Users</source>
-        <translation type="unfinished">Utilisateurs</translation>
+        <translation>Utilisateur·ice·s</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Actif·ve·s</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>It is full or closed.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>La session est complète ou fermée.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It requires an account.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>La session requiert un compte.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>It does not allow joining via web browser.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>La session n&apos;autorise pas à rejoindre depuis un navigateur web.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>It does not allow joining via WebSockets.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La session n&apos;autorise pas à rejoindre depuis un WebSocket.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>It is hosted with a newer version of Drawpile, you have to update. If there is no update available, it may be hosted with a development version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La session est hébergée depuis une nouvelle version de Drawpile, vous devez mettre à jour votre version du logiciel. S&apos;il n&apos;y a pas de mise à jour disponible, cette session est probablement hébergée par une version de développement de Drawpile.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>It is hosted with an old, incompatible version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cette session est hébergé par une ancienne version incompatible de Drawpile.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is hosted with an incompatible protocol.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Cette session est hébergé avec un protocole incompatible.</translation>
     </message>
 </context>
 <context>
@@ -1797,27 +1797,27 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location filename="../net/server.cpp" line="+214"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Si vous n&apos;avez pas l&apos;intention d&apos;utiliser un proxy, vous pouvez désactiver le proxy de réseau dans les préférences de Drawpile depuis l&apos;onglet Réseau.</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Network read error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erreur de lecture réseau</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network read error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erreur de lecture réseau: %1</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Network write error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erreur d&apos;écriture réseau</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network write error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erreur d&apos;écriture réseau&#xa0;: %1</translation>
     </message>
     <message>
         <location line="+9"/>
