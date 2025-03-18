@@ -528,7 +528,7 @@
     <message>
         <location line="+7"/>
         <source>Set Brush Preset Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer miniatura de pincel preestablecido</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -697,7 +697,7 @@
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill source layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Rellenar la capa de origen</translation>
     </message>
     <message>
         <location line="+96"/>
@@ -842,7 +842,7 @@
     <message>
         <location line="+30"/>
         <source>Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Códigos</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -852,7 +852,7 @@
     <message>
         <location line="+11"/>
         <source>Revoke</source>
-        <translation type="unfinished"></translation>
+        <translation>Revocar</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -872,7 +872,7 @@
     <message>
         <location line="+37"/>
         <source>Allow session operators to manage invite codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Permitir que los operadores de sesión administren los códigos de invitación</translation>
     </message>
     <message>
         <location line="+7"/>
