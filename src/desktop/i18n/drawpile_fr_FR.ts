@@ -503,7 +503,7 @@
         <location line="+2"/>
         <location line="+391"/>
         <source>Session Settings (%1)</source>
-        <translation type="unfinished">Paramètres de Session (%1)</translation>
+        <translation>Paramètres de la session</translation>
     </message>
     <message>
         <location line="-390"/>
