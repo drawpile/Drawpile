@@ -945,7 +945,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+61"/>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
-        <translation>Ficheiro de pincel &apos;%1&apos; não contém nenhum JSON válido: %1</translation>
+        <translation>Ficheiro de pincel &apos;%1&apos; não contém objeto de JSON</translation>
     </message>
     <message>
         <location line="+34"/>
