@@ -1304,7 +1304,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>A preparar para reiniciar a sessão! Deverá voltar em alguns instantes…</translation>
     </message>
     <message>
         <location line="+5"/>
