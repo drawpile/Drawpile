@@ -3669,7 +3669,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+50"/>
         <source>You must be an operator to reset the session.</source>
-        <translation>Vous devez être un opérateur afin de réinitialiser la session.</translation>
+        <translation type="unfinished">Vous devez être un·e opérateur·ice afin de réinitialiser la session.</translation>
     </message>
 </context>
 <context>
@@ -3845,29 +3845,29 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+6"/>
         <source>Only operators can manage bans.</source>
-        <translation>Seuls les opérateurs peuvent gérer les bannissement.</translation>
+        <translation>Seul·e·s les opérateur·ice·s peuvent gérer les bannissements.</translation>
     </message>
     <message>
         <location line="+25"/>
         <location line="+82"/>
         <source>Import</source>
-        <translation type="unfinished">Importer</translation>
+        <translation>Importer</translation>
     </message>
     <message>
         <location line="-71"/>
         <location line="+82"/>
         <source>Export</source>
-        <translation type="unfinished">Exporter</translation>
+        <translation>Exporter</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Add listing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ajouter une liste</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove selected listing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Retirer la liste sélectionnée</translation>
     </message>
     <message>
         <location line="-466"/>
@@ -3907,12 +3907,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+3"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished">Non adapté aux mineurs (NSFM)</translation>
+        <translation>Non adapté aux mineur·e·s (NSFM)</translation>
     </message>
     <message>
         <location line="+113"/>
         <source>Block new joins</source>
-        <translation>Blocker les nouveaux entrants</translation>
+        <translation type="unfinished">Bloquer les nouveaux·elles entrant·e·s</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3978,7 +3978,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+27"/>
         <source>MyPaint Brushes:</source>
-        <translation>Mes Pinceaux&#xa0;:</translation>
+        <translation>Pinceaux MyPaint&#xa0;:</translation>
     </message>
     <message>
         <location line="+77"/>
@@ -3988,12 +3988,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+10"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Rôles</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Operator</source>
-        <translation type="unfinished">Opérateur</translation>
+        <translation>Opérateur·ice</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -4062,67 +4062,67 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../ui/userinfodialog.ui" line="+14"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dialogue</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Qt Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Version de Qt&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Application Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Version de l&apos;Application&#xa0;:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">Adoucissement :</translation>
+        <translation>Adoucissement&#xa0;:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Tablet Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrée Tablette&#xa0;:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Pen Pressure:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pression Stylet&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Id:</source>
-        <translation type="unfinished"></translation>
+        <translation>Identifiant&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Touch Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode de touche&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>dp:x.y.z</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">dp:x.y.z</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Operating System:</source>
-        <translation type="unfinished"></translation>
+        <translation>Système d&apos;Exploitation&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Name:</source>
-        <translation type="unfinished">Nom&#x202f;:</translation>
+        <translation>Nom&#xa0;:</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Protocol Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Version du Protocole&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Global Pressure Curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>Courbe de Pression Globale&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -4155,7 +4155,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+14"/>
         <source>Format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Format&#xa0;:</translation>
     </message>
     <message>
         <location line="+72"/>
@@ -4180,17 +4180,17 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+14"/>
         <source>Path to ffmpeg:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chemin vers ffmpeg&#xa0;:</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Choisir</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Custom Arguments:</source>
-        <translation type="unfinished"></translation>
+        <translation>Arguments Personnalisés&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -4206,7 +4206,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette.cpp" line="+422"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>Sans nom</translation>
     </message>
 </context>
 <context>
@@ -4214,12 +4214,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_model.cpp" line="+55"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>Sans nom</translation>
     </message>
     <message>
         <location line="+75"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2 couleurs)</translation>
     </message>
 </context>
 <context>
@@ -4227,64 +4227,64 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_widget.ui" line="+64"/>
         <source>Open a new palette from file</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir une nouvelle palette depuis le fichier</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Create a new palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer une nouvelle palette</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Duplicate the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Dupliquer la palette actuelle</translation>
     </message>
     <message>
         <location line="+84"/>
         <source>Delete the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer la palette actuelle</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Revert changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Annuler les changements de la palette actuelle</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Save changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauvegarder les changements de la palette actuelle</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Add a color to the palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter une couleur à la palette</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove the selected color from the palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Retirer la couleur sélectionnée de la palette</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_widget.cpp" line="+181"/>
         <location line="+15"/>
         <source>New Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouvelle palette</translation>
     </message>
     <message>
         <location line="-14"/>
         <location line="+15"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>GIMP Palettes (*.gpl)</source>
-        <translation type="unfinished"></translation>
+        <translation>Palettes GIMP (*.gpl)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Palette Image (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Image de palette (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4295,13 +4295,14 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location line="+1"/>
         <location line="+13"/>
         <source>Open Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir la Palette</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to load the palette file
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec dans l&apos;ouverture de fichier de palette
+%1</translation>
     </message>
 </context>
 <context>
@@ -4309,17 +4310,17 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../bundled/QtColorWidgets/gradient_editor.cpp" line="+321"/>
         <source>Add Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ajouter une couleur</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Remove Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Supprimer une couleur</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Edit Color...</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier la Couleur...</translation>
     </message>
 </context>
 <context>
@@ -4327,7 +4328,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../bundled/QtColorWidgets/gradient_list_model.cpp" line="+215"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2 couleurs)</translation>
     </message>
 </context>
 <context>
@@ -4335,12 +4336,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../bundled/QtColorWidgets/swatch.cpp" line="+855"/>
         <source>Clear Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Effacer la Couleur</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -4356,17 +4357,17 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../dialogs/addserverdialog.cpp" line="+130"/>
         <source>&lt;strong&gt;Error:&lt;/strong&gt; %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Erreur&#xa0;:&lt;/strong&gt; %1</translation>
     </message>
     <message>
         <location line="+106"/>
         <source>Retrieving %1...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Récupération de %1...</translation>
     </message>
     <message>
         <location line="+74"/>
         <source>Check</source>
-        <translation type="unfinished"></translation>
+        <translation>Vérifier</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4376,7 +4377,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+11"/>
         <source>Checking %1...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vérification de %1 en cours...</translation>
     </message>
 </context>
 <context>
@@ -4384,52 +4385,52 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../dialogs/animationexportdialog.cpp" line="+29"/>
         <source>Export Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter Animation</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortie</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Frames as PNGs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trames en tant que PNG</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frames as PNGs in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trames en tant que PNG compressés (ZIP)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>GIF Animé</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBP Animé</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Vidéo MP4</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Vidéo WEBM</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Format&#xa0;:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loops:</source>
-        <translation type="unfinished"></translation>
+        <translation>Boucles&#xa0;:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4439,22 +4440,22 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lissage Progressif</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Scaling:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Échelle&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entrée</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Intervalle de Trame&#xa0;:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4469,12 +4470,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+3"/>
         <source>Crop X:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Découper X:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Crop Y:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Découper Y:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4484,17 +4485,17 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+2"/>
         <source>Reset inputs to the whole canvas and timeline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Réinitialiser les entrées de l&apos;entièreté du canevas et de la frise temporelle</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Set from Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Régler depuis le Folioscope</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set inputs to what is being previewed in the flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Régler les entrées par rapport à la prévisualisation du folioscope</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4504,7 +4505,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+125"/>
         <source>Output resolution will be %1x%2 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La résolution de sortie sera de %1 pixels sur %2</translation>
     </message>
 </context>
 <context>
@@ -4512,62 +4513,62 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../dialogs/animationimportdialog.cpp" line="+43"/>
         <source>Import Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer Animation</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Frames</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trames</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Import a series of images as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer une série d&apos;images en tant que trames de la frise temporelle.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Importing animation frames is not supported in the web browser version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">L&apos;import de trames d&apos;animation n&apos;est pas supportée dans la version Web de Drawpile.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Canvas Background:</source>
-        <translation type="unfinished">Arrière-plan du canevas :</translation>
+        <translation>Arrière-plan du Canevas&#xa0;:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Add</source>
-        <translation type="unfinished">Ajouter</translation>
+        <translation>Ajouter</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Remove</source>
-        <translation type="unfinished">Retirer</translation>
+        <translation>Retirer</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Sort</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trier</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Numeric Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Numérique Croissant</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Numeric Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Numérique Décroissant</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alphabetic Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Alphabétique Croissant</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alphabetic Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Alphabétique Décroissant</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4577,28 +4578,28 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+4"/>
         <source>Import the layers of an ORA or PSD file as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importer les calques d&apos;un fichier ORA ou PSD en tant que trames de la frise temporelle.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>File to Import:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichier à Importer&#xa0;:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Choisir</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Key frame length:</source>
         <extracomment>How many frames each imported key frame gets in the timeline.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Longueur de la trame de référence&#xa0;:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source> FPS</source>
-        <translation type="unfinished"> IPS</translation>
+        <translation> IPS</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4608,20 +4609,20 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+7"/>
         <source>Import</source>
-        <translation type="unfinished">Importer</translation>
+        <translation>Importer</translation>
     </message>
     <message numerus="yes">
         <location line="+88"/>
         <source> frame(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform> image</numerusform>
+            <numerusform> images</numerusform>
         </translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Animation Import Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur d&apos;Importation de l&apos;Animation</translation>
     </message>
 </context>
 <context>
@@ -4629,99 +4630,99 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../dialogs/artisticcolorwheeldialog.cpp" line="+23"/>
         <source>Color Circle Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Réglages du Cercle de Couleur</translation>
     </message>
     <message>
         <location line="+86"/>
         <source>Continuous hue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Teinte continue</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue steps: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Étapes de teinte&#xa0;: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue angle: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angle de teinte&#xa0;: </translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+43"/>
         <source>°</source>
         <extracomment>Degree symbol. Unless your language uses a different one, keep as-is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">°</translation>
     </message>
     <message>
         <location line="-40"/>
         <source>Continuous chroma</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chromatique continue</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Chroma steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Étape par chromatique&#xa0;: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Continuous luminance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Luminance continue</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Luminance steps: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Étapes par luminance&#xa0;: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Saturation continue</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Saturation steps: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Étapes par saturation&#xa0;: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous lightness</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Éclaircissement continu</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lightness steps: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Étapes par éclaircissement&#xa0;: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Valeur continue</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Value steps: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Étapes par valeur&#xa0;: </translation>
     </message>
     <message>
         <location line="+8"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucun</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Gamut mask:</source>
-        <translation type="unfinished"></translation>
+        <translation>Masque de gamut&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Mask angle: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angle de masque&#xa0;: </translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Mask opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Opacité de masque&#xa0;: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4732,31 +4733,31 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location line="+54"/>
         <source>Atmosphere with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Atmosphère accentué</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Atmospheric triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Triade atmosphérique</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Complémentaire</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dominant hue with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Teinte dominante accentué</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Shifted triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Triade décalée</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4774,7 +4775,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location line="+5"/>
         <source>Tetradic</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tétradicale</translation>
     </message>
 </context>
 <context>
@@ -4789,7 +4790,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location line="-6"/>
         <source>Couldn&apos;t read image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ne peut lire l&apos;image&#xa0;: %1.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4802,7 +4803,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../dialogs/brushexportdialog.cpp" line="+46"/>
         <source>Export Brushes</source>
-        <translation type="unfinished">Exporter les pinceaux</translation>
+        <translation>Exporter les Pinceaux</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -4813,27 +4814,27 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+164"/>
         <source>Brush Export</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Exporter Pinceau</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <source>%n brush(es) exported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n pinceau exporté.</numerusform>
+            <numerusform>%n pinceaux exportés.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Brush export failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec de l&apos;export de pinceau.</translation>
     </message>
     <message numerus="yes">
         <location line="+7"/>
         <source>%n error(s) encountered.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n erreur est survenue.</numerusform>
+            <numerusform>%n erreurs sont survenues.</numerusform>
         </translation>
     </message>
 </context>
@@ -4842,22 +4843,22 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+70"/>
         <source>Change…</source>
-        <translation type="unfinished"></translation>
+        <translation>Changer…</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Shortcut:</source>
-        <translation type="unfinished"></translation>
+        <translation>Raccourci&#xa0;:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Choose File…</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisir Fichier…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Will be resized to 64x64 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sera redimensionné en 64 pixels sur 64.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4867,22 +4868,22 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+3"/>
         <source>Add Label:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ajouter Label&#xa0;:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Name:</source>
-        <translation type="unfinished">Nom&#x202f;:</translation>
+        <translation>Nom&#xa0;:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Description:</source>
-        <translation type="unfinished">Description&#x202f;:</translation>
+        <translation>Description&#xa0;:</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>No shortcut assigned</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de raccourci assigné</translation>
     </message>
 </context>
 <context>
@@ -4890,7 +4891,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+133"/>
         <source>Brush Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Éditeur de Pinceau</translation>
     </message>
     <message>
         <location line="+105"/>
@@ -4900,92 +4901,92 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+0"/>
         <source>Brush metadata settings.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Réglages de métadonnées du pinceau.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Général</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Core brush settings.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Réglages principaux du pinceau.</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Save as New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauvegarder en tant que Nouveau Pinceau</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Écraser Pinceau</translation>
     </message>
     <message>
         <location line="+80"/>
         <source>Brush Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Type de Pinceau&#xa0;:</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+425"/>
         <source>Round Pixel Brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pinceau Rond Pixellisé</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Square Pixel Brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pinceau Carré Pixellisé</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Soft Round Brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pinceau Rond Doux</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>MyPaint Brush</source>
-        <translation type="unfinished">Pinceau MyPaint</translation>
+        <translation>Pinceau MyPaint</translation>
     </message>
     <message>
         <location line="+23"/>
         <location line="+14"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mode de Mélange&#xa0;:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Paint Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode de Peinture&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Build-Up/Direct</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Construire/Direct</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Wash/Indirect</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lavé/Indirect</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode Gomme</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Pick Initial Color from Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Prendre Couleur Initiale depuis le Calque</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Lock Alpha (Recolor Mode)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Verrouiller Alpha (Mode Recolorer)</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -5006,17 +5007,17 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="-267"/>
         <source>Stabilization Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode de Stabilisation&#xa0;:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Time-Based Stabilizer</source>
-        <translation type="unfinished"></translation>
+        <translation>Stabilisateur Basé sur la Durée</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lissage Moyen</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -5042,13 +5043,13 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="-1"/>
         <source>Minimum Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Taille Minimale&#xa0;: </translation>
     </message>
     <message>
         <location line="+10"/>
         <location line="+419"/>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille</translation>
     </message>
     <message>
         <location line="-419"/>
@@ -5056,7 +5057,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location line="+59"/>
         <location line="+71"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrée</translation>
     </message>
     <message>
         <location line="-158"/>
@@ -5066,13 +5067,13 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+17"/>
         <source>Minimum Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Opacité Minimale&#xa0;: </translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+362"/>
         <source>Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Opacité</translation>
     </message>
     <message>
         <location line="-331"/>
@@ -5082,13 +5083,13 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+17"/>
         <source>Minimum Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>Dureté Minimale&#xa0;: </translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+308"/>
         <source>Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Dureté</translation>
     </message>
     <message>
         <location line="-277"/>
@@ -5103,231 +5104,231 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+17"/>
         <source>Minimum Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Étalement Minimal&#xa0;: </translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+241"/>
         <source>Smudging</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Étalement</translation>
     </message>
     <message>
         <location line="-217"/>
         <source>No dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pas de dynamique</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dynamique de pression</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dynamique de véolcité</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dynamique de distance</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Vélocité Maximale&#xa0;: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished"></translation>
+        <translation>Distance Maximale&#xa0;: </translation>
     </message>
     <message>
         <location line="+9"/>
         <location line="+19"/>
         <location line="+36"/>
         <source>Apply to All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Appliquer à Tous</translation>
     </message>
     <message>
         <location line="-53"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Régler la vélocité au maximum pour la Taille, l&apos;Opacité, la Dureté et l&apos;Étalement en même temps.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vélocité réglée au maximum pour tous les réglages de ce pinceau.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Régler la distance au maximum pour la Taille, l&apos;Opacité, la Dureté et l&apos;Étalement en même temps.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Distance réglée au maximum pour tous les réglages de ce pinceau.</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Set this curve for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Régler la courbe pour la Taille, l&apos;Opacité, la Dureté et l&apos;Étalement en même temps.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Curve set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Courbe réglée pour tous les réglages de ce pinceau.</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Value: </source>
-        <translation type="unfinished"></translation>
+        <translation>Valeur&#xa0;: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>No brush dynamics.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pas de dynamique de pinceau.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Not available in Indirect/Wash mode.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Non disponible en mode Lavé/Indirect.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Dynamics not available in Indirect/Wash mode.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dynamiques non disponibles en mode Lavé/Indirect.</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>The radius of the brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le rayon du pinceau.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Opaqueness of the brush, 0% is transparent, 100% fully opaque.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opacité du pinceau, 0% pour transparent; 100% pour complètement opaque.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Edge hardness, 0% is blurry, 100% is sharp.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dureté de bord de pinceau, 0% pour flou, 100% pour net.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blending of colors on the layer being drawn on.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mélange de couleurs sur le calque actuel de dessin.</translation>
     </message>
     <message>
         <location line="+175"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ralentit le tracé pour le stabiliser sur le temps. Une valeur élevée donnera un tracé lisse, mais le dessinera lentement. Lorsque vous cessez de bouger, la ligne rattrapera votre curseur. Le lissage de la tablette dans les préférences d&apos;entrée s&apos;applique également.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fait simplement une moyenne du nombre d&apos;entrées. Plus rapide que le stabilisateur basé sur le temps, mais pas aussi lisse que ce dernier, et ne rattrapera pas votre curseur si vous êtes à l&apos;arrêt. Ignore le lissage de la tablette dans les préférences d&apos;entrée.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown stabilization mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode de stabilisation inconnu.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Synchronizing stabilization settings with brushes is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Les réglages de stabilisation synchrone avec les pinceaux sont désactivées.</translation>
     </message>
     <message>
         <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+14"/>
         <source>Pressure</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Pression</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Fine speed</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. &quot;fine&quot; refers to the accuracy and update frequency of the speed value, as in &quot;fine grained&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vitesse réglée avec finesse</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Gross speed</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. changes more smoothly but is less accurate than &quot;Fine speed&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vitesse réglée plus succinctement</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Random</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aléatoire</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Stroke</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tracé</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Direction</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Direction</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination/Tilt</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Déclinaison/Inclinaison</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ascension</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ascension</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Custom</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. the input is the output of the &quot;Custom input&quot; setting</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Personnalisé</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Direction 360</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. refers to the direction of the stroke</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Omnidirectionnel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Attack Angle</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angle d&apos;Attaque</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination/Tilt X</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Déclinaison/Inclinaison X</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination/Tilt Y</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Déclinaison/Inclinaison Y</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5348,41 +5349,41 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>Zoom Level</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. refers to canvas zoom</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Niveau de Zoom</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Barrel Rotation</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rotation du Barillet</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Base Brush Radius</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rayon de Base du Pinceau</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Input</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entrée Inconnue</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>The pressure reported by the tablet. Usually between 0.0 and 1.0, but it may get larger when a pressure gain is used. If you use the mouse, it will be 0.5 when a button is pressed and 0.0 otherwise.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La pression rapportée par la tablette. Comprise généralement entre 0.0 et 1.0, mais peut être plus élevée en cas de gain de pression. Si vous utilisez la souris, elle sera de 0.5 en cas d&apos;appui de bouton, et 0.0 dans les autres cas.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">A quelle vitesse vous vous déplacez actuellement. Elle peut changer très rapidement. Essayez &apos;imprimer valeurs d&apos;entrée&apos; depuis le menu d&apos;aide pour vous faire une idée de la portée; des valeurs négatives sont possibles mais rares à très faible vitesse.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5396,49 +5397,49 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>Fast random noise, changing at each evaluation. Evenly distributed between 0 and 1.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bruit rapide aléatoire changeant à chaque évaluation. Distribué de façon équitable entre 0 et 1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the &apos;stroke duration&apos; and &apos;stroke hold time&apos; settings.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cette entrée passe lentement de 0 à 1 lorsque vous faites un tracé. Elle peut être configuré pour retourner à 0 périodiquement lorsque vous vous déplacez. Regardez les réglages de &apos;durée de tracé&apos; et &apos;durée de maintien du tracé&apos;.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">L&apos;angle du tracé, en degrés. Cette valeur reste comprise entre 0.0 et 180.0, ignorant les tournants à 180 degrés.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination of stylus tilt. 0 when stylus is parallel to tablet and 90.0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Déclinaison de l&apos;inclinaison du stylet. 0 lorsque le stylet est parallèle à la tablette, et 90.0 lorsqu&apos;il est perpendiculaire à la tablette.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Right ascension of stylus tilt. 0 when stylus working end points to you, +90 when rotated 90 degrees clockwise, -90 when rotated 90 degrees counterclockwise.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Déclinaison droite de l&apos;inclinaison du stylet. 0 lorsque le bout du stylet pointe vers vous, +90 s&apos;il est tourné de 90 degrés dans le sens horaire, -90 s&apos;il est tourné de 90 degrés dans le sens antihoraire.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ceci est une entrée définie par l&apos;utlisateur·ice. Regardez le réglage &apos;entrée personnalisé&apos; pour plus d&apos;informations.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The angle of the stroke, from 0 to 360 degrees.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">L&apos;angle du tracé, comprise entre 0 et 360 degrés.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5449,21 +5450,25 @@ The range is +/-180.0.
 180 means the angle of the stroke is directly opposite the angle of the stylus.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La différence, en degrés, entre l&apos;angle vers lequel le stylet pointe et l&apos;angle de mouvement du tracé.
+La portée est de +/-180.0.
+0.0 indique que l&apos;angle du tracé correspond à celui du stylet. 
+90 indique que l&apos;angle du tracé est perpendiculaire à l&apos;angle du stylet. 
+180 indique que l&apos;angle du tracé est directement opposée à l&apos;angle du stylet.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination of stylus tilt on X-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La déclinaison de l&apos;inclinaison du stylet sur un axe X. 90/-90 lorsqu&apos;il est parallèle à la tablette et 0 lorsqu&apos;il est perpendiculaire à la tablette.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination of stylus tilt on Y-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La déclinaison de l&apos;inclinaison du stylet sur un axe Y. 90/-90 lorsqu&apos;il est parallèle à la tablette et 0 lorsqu&apos;il est perpendiculaire à la tablette.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5471,7 +5476,8 @@ The range is +/-180.0.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La coordonnée X sur une grille de 256 pixels. Elle tourne autour de 0-256 lorsque le curseur se déplace sur l&apos;axe X. Similaire à &quot;Tracé&quot;. Peut être utilisé pour ajouter un effet papier en modifiant l&apos;opacité, etc..
+La taille du pinceau doit être considérablement inférieure à la taille de la grille pour de meilleurs résultats.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5479,7 +5485,8 @@ The brush size should be considerably smaller than the grid scale for best resul
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La coordonnée Y sur une grille de 256 pixels. Elle tourne autour de 0-256 lorsque le curseur se déplace sur l&apos;axe Y. Similaire à &quot;Tracé&quot;. Peut être utilisé pour ajouter un effet papier en modifiant l&apos;opacité, etc..
+La taille du pinceau doit être considérablement inférieure à la taille de la grille pour de meilleurs résultats.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5488,7 +5495,9 @@ Logarithmic: 0.0 is 100%, 0.69 is 200%, -1.38 is 25%
 For the Radius setting, using a value of -4.15 makes the brush size roughly constant, relative to the level of zoom.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le niveau de zoom actuel de la vue de canevas. 
+Logarithmique: 0.0 est 100%, 0.69 est 200%, -1.38 est 25%.
+Pour le réglage du Rayon, utiliser une valeur de -4.15 rend la taille du pinceau relativement constant, relatif du niveau de zoom.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5498,7 +5507,10 @@ For the Radius setting, using a value of -4.15 makes the brush size roughly cons
 -90 when twisted counterclockwise 90 degrees</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rotation du barillet du stylet. 
+0 s&apos;il n&apos;est inchangé. 
++90 s&apos;il est tourné de 90 degrés dans le sens horaire. 
+-90 s&apos;il est tourné de 90 degrés dans le sens antihoraire.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5950,14 +5962,14 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Posterization levels</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Niveaux de postérisation</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Pigment</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pigment</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12379,32 +12391,32 @@ Hex: %4</source>
     <message>
         <location line="+7"/>
         <source>Key frame on %1 (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trame de référence sur %1 (dupliquer)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key frame %1 on %2 (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trame de référence %1 sur %2 (dupliquer)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Key frame on %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Trame de référence sur %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key frame %1 on %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Trame de référence %1 à %2</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Toggle visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Basculer la visibilité</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle onion skin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Basculer le pelage d&apos;oignon</translation>
     </message>
     <message>
         <location line="+129"/>
@@ -12453,12 +12465,12 @@ Ou par Animation ▸ Nouvelle Piste.</translation>
     <message>
         <location line="+330"/>
         <source>Set Key Frame to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Régler Trame de Référence à %1</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Régler Trame de Référence au Calque Actuel</translation>
     </message>
 </context>
 <context>
@@ -12466,7 +12478,7 @@ Ou par Animation ▸ Nouvelle Piste.</translation>
     <message>
         <location filename="../chat/useritemdelegate.cpp" line="+167"/>
         <source>Operator</source>
-        <translation type="unfinished">Opérateur</translation>
+        <translation>Opérateur·ice</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12491,7 +12503,7 @@ Ou par Animation ▸ Nouvelle Piste.</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>Rendre &amp;Muet</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12526,12 +12538,12 @@ Ou par Animation ▸ Nouvelle Piste.</translation>
     <message>
         <location line="+2"/>
         <source>Take Current &amp;Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Prendre le Pinceau Actuel (&amp;B)</translation>
     </message>
     <message>
         <location line="+107"/>
         <source>Moderator</source>
-        <translation type="unfinished">Modérateur</translation>
+        <translation>Modérateur·ice</translation>
     </message>
     <message>
         <location line="+11"/>
