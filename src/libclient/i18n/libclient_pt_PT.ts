@@ -234,7 +234,7 @@
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Mudar matiz da cor</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -459,7 +459,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/magicwand.cpp" line="+291"/>
         <source>Selecting…</source>
-        <translation type="unfinished"></translation>
+        <translation>A seleccionar…</translation>
     </message>
 </context>
 <context>
