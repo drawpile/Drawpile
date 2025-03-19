@@ -1304,7 +1304,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
-        <translation>A preparar para reiniciar a sessão! Deverá voltar em alguns instantes…</translation>
+        <translation>%1 começou a reinicialização da sessão! Espere por favor, sessão recomeça em breve…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1314,7 +1314,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 substituiu a tela! Espere por favor, sessão recomeça em breve…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1408,22 +1408,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+22"/>
         <source>Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Código</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Creator</source>
-        <translation type="unfinished"></translation>
+        <translation>Autor</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Role</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Uses</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplicações</translation>
     </message>
 </context>
 <context>
