@@ -694,7 +694,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+59"/>
         <source>Merged image</source>
-        <translation type="unfinished"></translation>
+        <translation>Imagem Unida</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -708,7 +708,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+15"/>
         <source>Current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada Atual</translation>
     </message>
     <message>
         <location line="+17"/>
