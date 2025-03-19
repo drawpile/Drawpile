@@ -11954,7 +11954,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+2"/>
         <location filename="../view/canvascontroller.cpp" line="+3"/>
         <source>Saving…</source>
-        <translation type="unfinished"></translation>
+        <translation>A gravar…</translation>
     </message>
 </context>
 <context>
