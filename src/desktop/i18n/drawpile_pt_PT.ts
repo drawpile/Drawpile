@@ -761,7 +761,7 @@
     <message>
         <location line="+28"/>
         <source>Reset Zoom</source>
-        <translation>Reiniciar Zoom</translation>
+        <translation>Repor Zoom</translation>
     </message>
     <message>
         <location line="-17"/>
@@ -2081,7 +2081,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+1"/>
         <source>Reset Zoom At Center</source>
-        <translation>Restaurar Zoom No Centro</translation>
+        <translation>Repor Zoom No Centro</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3251,7 +3251,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+1"/>
         <source>&amp;Laser Pointer</source>
-        <translation>Apontadores a &amp;laser</translation>
+        <translation>Ponteiro &amp;laser</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3621,7 +3621,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+5"/>
         <source>Laser Pointer</source>
-        <translation>Apontador a laser</translation>
+        <translation>Ponteiro laser</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3905,7 +3905,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+10"/>
         <source>Laser Pointer:</source>
-        <translation>Apontador Laser:</translation>
+        <translation>Ponteiro Laser:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -9429,7 +9429,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+11"/>
         <source>Vertical sync:</source>
-        <translation>Sincronização vertical</translation>
+        <translation>Sincronização vertical:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9604,7 +9604,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+4"/>
         <source>Listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Listagem</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9624,7 +9624,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+50"/>
         <source>Host Error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erro de Hospede</translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
@@ -9637,22 +9637,22 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+55"/>
         <source>Failed to read file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Falha na leitura do ficheiro: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No file or content received.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ficheiro ou conteúdo nenhum recebido.</translation>
     </message>
     <message>
         <location line="+82"/>
         <source>Import Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Falha na Importação</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Could not import session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível importar a configuração da sessão.</translation>
     </message>
 </context>
 <context>
@@ -9774,7 +9774,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../dialogs/startdialog/welcome.cpp" line="+50"/>
         <source>Standalone Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo Autónomo</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9830,7 +9830,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+4"/>
         <source>Listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Listagem</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -9962,7 +9962,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-356"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Carregar Configurações</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -9989,7 +9989,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+13"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation>Conflito</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10068,7 +10068,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+3"/>
         <source>Laser pointer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ponteiro laser:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10093,7 +10093,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+14"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Registado</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -10205,7 +10205,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+7"/>
         <source>Session password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Palavra-passe de sessão:</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -10240,7 +10240,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>Server:</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor:</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10250,12 +10250,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+130"/>
         <source>Session: a password is required</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessão: uma palavra-passe é necessária</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Session: a server is required</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessão: um servidor é necessário</translation>
     </message>
     <message>
         <location line="+70"/>
@@ -10298,7 +10298,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+13"/>
         <source>Invalid role format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato de cargo invalido.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -10346,7 +10346,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+3"/>
         <source>&amp;New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Novo Pincel</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10356,7 +10356,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>&amp;Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eliminar Pincel</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10423,7 +10423,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+312"/>
         <location line="+45"/>
         <source>Keep</source>
-        <translation type="unfinished"></translation>
+        <translation>Manter</translation>
     </message>
     <message>
         <location line="-294"/>
@@ -10496,12 +10496,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="-3"/>
         <source>Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar Pincel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete brush &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Realmente eliminar pincel &apos;%1&apos;?</translation>
     </message>
 </context>
 <context>
@@ -10514,12 +10514,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+0"/>
         <source>Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Circulo</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Configure…</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurar…</translation>
     </message>
 </context>
 <context>
@@ -10532,12 +10532,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="-249"/>
         <source>New palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Nova paleta</translation>
     </message>
     <message>
         <location line="-12"/>
         <source>Color Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta de Cor</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -10547,27 +10547,27 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+14"/>
         <source>Duplicate palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplicar paleta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar paleta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rename palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Renomear paleta</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import palette…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar paleta…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export palette…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar paleta…</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -10582,7 +10582,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+55"/>
         <source>Color history</source>
-        <translation type="unfinished"></translation>
+        <translation>Histórico de cores</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10623,7 +10623,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+0"/>
         <source>Rename Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Renomear Paleta</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -10671,7 +10671,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../docks/colorsliders.cpp" line="+73"/>
         <source>Color Sliders</source>
-        <translation type="unfinished"></translation>
+        <translation>Slider de Cores</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -10681,7 +10681,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+9"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>Espaço de Cores</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10712,7 +10712,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+3"/>
         <source>Show hex input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mostrar entrada hexadecimal</translation>
     </message>
     <message>
         <location line="+84"/>
@@ -10735,7 +10735,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+19"/>
         <source>RGB</source>
-        <translation type="unfinished"></translation>
+        <translation>RGB</translation>
     </message>
     <message>
         <location line="+203"/>
@@ -10806,33 +10806,33 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../docks/colorspinner.cpp" line="+88"/>
         <source>Shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Forma</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Rotating triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Triângulo rotadora</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Rotating square</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadrado rotadora</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Triângulo fixo</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed square</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadrado fixo</translation>
     </message>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+6"/>
         <location filename="../docks/colorspinner.cpp" line="+15"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>Espaço de cores</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10880,7 +10880,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+11"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Alinhamento</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10896,7 +10896,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location filename="../docks/colorcircle.cpp" line="+12"/>
         <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>Preview selected color</source>
-        <translation type="unfinished"></translation>
+        <translation>Previsão da cor selecionada</translation>
     </message>
 </context>
 <context>
@@ -10904,12 +10904,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../docks/dockbase.cpp" line="+73"/>
         <source>Drag here to arrange</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrastar aqui para arranjar</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Finish arranging</source>
-        <translation type="unfinished"></translation>
+        <translation>Finalizar arranjamento</translation>
     </message>
 </context>
 <context>
@@ -10965,7 +10965,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+45"/>
         <source>Toggle sketch mode (only visible to you)</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar modo de esboço (visível somente para si)</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10981,7 +10981,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+10"/>
         <source>Change sketch tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Mudar tom do esboço</translation>
     </message>
     <message>
         <location line="+284"/>
@@ -11006,37 +11006,37 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar &amp;Visibilidade de Grupos de Camadas</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar Modo de E&amp;sboço no Grupos de Camadas</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Check Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar Grupo de Camadas</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Desselecionar Grupo de Camadas</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Check Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar Camada</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Desselecionar Camada</translation>
     </message>
     <message>
         <location line="+1366"/>
         <source>Sketch: </source>
-        <translation type="unfinished"></translation>
+        <translation>Esboço: </translation>
     </message>
     <message>
         <location line="+165"/>
@@ -11125,17 +11125,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../docks/reference.cpp" line="+26"/>
         <source>Reference</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Referencia</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Open…</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open a file as a reference image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Abrir ficheiro como imagem de referencia</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -11145,7 +11145,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>Paste a reference image from the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Colar imagem de referencia da área de trabalho.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -11155,22 +11155,22 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+1"/>
         <source>Close the current reference image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fechar imagem de referencia atual</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished"></translation>
+        <translation>Escolher cor</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Pan image</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrastar imagem</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Reset zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Repor zoom</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -11180,7 +11180,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+6"/>
         <source>Zoom: </source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11196,7 +11196,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+2"/>
         <source>Could not open reference image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível abrir a imagem de referencia: %1.</translation>
     </message>
 </context>
 <context>
@@ -11240,7 +11240,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+0"/>
         <source>Tool Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuração de Ferramentas</translation>
     </message>
 </context>
 <context>
@@ -11266,7 +11266,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>KisTablet Windows Ink non-native input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">KisTablet Windows Ink entrada inativa</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11347,7 +11347,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar</translation>
     </message>
     <message>
         <location line="+343"/>
@@ -11360,27 +11360,27 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-106"/>
         <source>&amp;Edit Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Editar Pincel…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Repor Pincel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Repor todos os &amp;Slots de Pincel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Repor todos os Pincéis</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;New Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Novo Pincel…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -11390,7 +11390,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+6"/>
         <source>&amp;Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eliminar Pincel</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -11506,12 +11506,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+231"/>
         <source>Size Limit: Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamanho Limite: Seleção</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamanho Limite: Sem Limite</translation>
     </message>
 </context>
 <context>
@@ -11519,19 +11519,19 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../toolwidgets/lasersettings.cpp" line="+93"/>
         <source>You don&apos;t have permission to use the laser pointer.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não tem permissão para utilizar o ponteiro laser.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Laser trails are hidden. </source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Trilhos de laser estão escondidos. </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar</translation>
     </message>
 </context>
 <context>
@@ -11539,27 +11539,27 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-140"/>
         <source>Replace selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Substituir seleção</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Add to selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Adicionar à seleção</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Intersect with selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Cruzar com seleção</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove from selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover da seleção</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Anti-aliasing</source>
-        <translation type="unfinished"></translation>
+        <translation>Anti-Aliasing</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11569,7 +11569,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+7"/>
         <source>Drag to move</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrastar para mexer</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11579,12 +11579,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+161"/>
         <source>Select continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar área continua</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Select similar color</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar cores semelhantes</translation>
     </message>
 </context>
 <context>
@@ -11597,22 +11597,22 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+1"/>
         <source>Quick preview not taking into account layering, opacity or anything else</source>
-        <translation type="unfinished"></translation>
+        <translation>Previsão rápida sem ter camadas, opacidade ou qualquer outra coisa em conta</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Accurate</source>
-        <translation type="unfinished"></translation>
+        <translation>Exato</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preview the transform exactly how will look when applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Previsão da transformação exatamente como irá ser aplicada</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Too many layers selected for accurate preview, only fast preview is available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas selecionadas demasiadamente para uma previsão exata, disponível somente a previsão rápida.</translation>
     </message>
     <message>
         <location line="+14"/>
