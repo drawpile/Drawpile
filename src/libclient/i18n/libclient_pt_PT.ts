@@ -690,7 +690,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+169"/>
         <source>incompatible</source>
-        <translation>Incompatível</translation>
+        <translation>incompatível</translation>
     </message>
     <message>
         <location line="+4"/>
