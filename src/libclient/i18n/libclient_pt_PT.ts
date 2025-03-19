@@ -1801,12 +1801,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+23"/>
         <source>Network read error</source>
-        <translation>Erro de rede</translation>
+        <translation>Erro de leitura na rede</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network read error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro de leitura na rede: %1</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -1816,7 +1816,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Network write error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro de escrita na rede: %1</translation>
     </message>
     <message>
         <location line="+9"/>
