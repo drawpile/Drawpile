@@ -1746,7 +1746,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation>Ativa</translation>
+        <translation type="unfinished">Ativo</translation>
     </message>
     <message>
         <location line="+42"/>
