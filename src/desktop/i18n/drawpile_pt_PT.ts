@@ -487,7 +487,7 @@
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation>Importar Pincéis...</translation>
+        <translation>Importar Pincéis</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -513,7 +513,7 @@
     <message>
         <location line="+1"/>
         <source>Session Roles (%1)</source>
-        <translation>Funcionários da Sessão (%1)</translation>
+        <translation>Cargos da Sessão (%1)</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1491,7 +1491,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+35"/>
         <source>Download Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Download Completo</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1562,7 +1562,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+22"/>
         <source>Error downloading profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao descarregar o perfil.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1577,22 +1577,22 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+22"/>
         <source>Error downloading tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao descarregar o registo de eventos da mesa digitalizadora.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error closing tablet event log.</source>
-        <translation>Erro ao fechar log de eventos da mesa digitalizadora.</translation>
+        <translation>Erro ao fechar o registo de eventos da mesa digitalizadora.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Error opening tablet event log.</source>
-        <translation>Erro ao abrir log de eventos da mesa digitalizadora.</translation>
+        <translation>Erro ao abrir o registo de eventos da mesa digitalizadora.</translation>
     </message>
     <message>
         <location line="+183"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Já está conectado a uma sessão! Desligue-se dessa para iniciar uma.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1617,7 +1617,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+1"/>
         <source>You&apos;re about reconnect to the session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Está prestes a ligar novamente à sessão e a fechar esta janela.</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -2511,7 +2511,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+1"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Novo Grupo de Camadas</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="+483"/>
@@ -2747,12 +2747,12 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+1"/>
         <source>Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Próximo Quadro-Chave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadro-Chave Anterior</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3860,7 +3860,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+7"/>
         <source>Allow joining from the web browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Permitir entrada pelo navegador da web</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -7590,14 +7590,14 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+37"/>
         <source>Error saving roles: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao salvar cargos: %1</translation>
     </message>
     <message numerus="yes">
         <location line="+61"/>
         <source>%n role(s) imported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n cargo importado.</numerusform>
+            <numerusform>%n cargos importados.</numerusform>
         </translation>
     </message>
     <message>
@@ -8159,17 +8159,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+106"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolar quando a visualização é ampliada ou girada</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Prevent jitter at certain zoom and rotation levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Prevenir que trema em certos níveis de zoom e rotação</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ativar estas opções pode afetar o desempenho em alguns sistemas.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -9414,7 +9414,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+20"/>
         <source>Scale factor: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fator de Escala: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9444,12 +9444,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+16"/>
         <source>%1px</source>
-        <translation type="unfinished"></translation>
+        <translation>%1px</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1pt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1pt</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10116,7 +10116,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+6"/>
         <source>Pick the sections you want to reset to their defaults:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Escolha a secção que pretenda reiniciar:</translation>
     </message>
 </context>
 <context>
@@ -10124,17 +10124,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/roles.cpp" line="+36"/>
         <source>Define a password to let anyone become operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Define uma palavra-passe com que qualquer pessoa se possa tornar operador</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Operator password:</source>
-        <translation type="unfinished">Palavra-passe do operador:</translation>
+        <translation>Palavra-passe para Operadores:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>No roles imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nenhum Cargo importado.</translation>
     </message>
     <message>
         <location line="+47"/>
@@ -10152,37 +10152,37 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+282"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Carregar Configurações</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Name:</source>
-        <translation type="unfinished">Nome:</translation>
+        <translation>Nome:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Pick the sections you want to save:</source>
-        <translation type="unfinished"></translation>
+        <translation>Escolha as secções que pretenda gravar:</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Save</source>
-        <translation type="unfinished">Gravar</translation>
+        <translation>Guardar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Predefinição %1 já existe, pretende substituir isso?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Yes, replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Sim, substituir</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep</source>
-        <translation type="unfinished"></translation>
+        <translation>Não, manter</translation>
     </message>
 </context>
 <context>
@@ -10190,12 +10190,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/session.cpp" line="+38"/>
         <source>Personal session, only people you invite can join</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessão pessoal, podem-se juntar pessoas somente por convite</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Public session, anyone can freely join</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessão Publica, qualquer um pode entrar</translation>
     </message>
     <message>
         <location line="+9"/>
