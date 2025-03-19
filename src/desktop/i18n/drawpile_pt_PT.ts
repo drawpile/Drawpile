@@ -2647,7 +2647,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+0"/>
         <source>Show animation preview window</source>
-        <translation>Mostrar janela de previsão da animação</translation>
+        <translation>Mostrar janela de pré-visualização da animação</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8418,7 +8418,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+4"/>
         <source>Preview</source>
-        <translation>Prévia</translation>
+        <translation>Pré-visualização</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8448,7 +8448,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+27"/>
         <source>Preview event</source>
-        <translation>Prévia do evento</translation>
+        <translation>Previsão de evento</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -10896,7 +10896,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location filename="../docks/colorcircle.cpp" line="+12"/>
         <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>Preview selected color</source>
-        <translation>Previsão da cor selecionada</translation>
+        <translation>Pré-visualização da cor selecionada</translation>
     </message>
 </context>
 <context>
@@ -11597,7 +11597,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+1"/>
         <source>Quick preview not taking into account layering, opacity or anything else</source>
-        <translation>Previsão rápida sem ter camadas, opacidade ou qualquer outra coisa em conta</translation>
+        <translation>Pré-visualização rápida sem ter camadas, opacidade ou qualquer outra coisa em conta</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -11607,17 +11607,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>Preview the transform exactly how will look when applied</source>
-        <translation>Previsão da transformação exatamente como irá ser aplicada</translation>
+        <translation>Pré-visualização da transformação exatamente como irá ser aplicada</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Too many layers selected for accurate preview, only fast preview is available.</source>
-        <translation>Camadas selecionadas demasiadamente para uma previsão exata, disponível somente a previsão rápida.</translation>
+        <translation>Camadas selecionadas demasiadamente para uma pré-visualização exata, somente pré-visualização rápida disponível.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Preview:</source>
-        <translation>Pré-visualizar:</translation>
+        <translation>Pré-visualização:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -11643,12 +11643,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+13"/>
         <source>Sampling:</source>
         <extracomment>Refers to the transform interpolation, but &quot;interpolation&quot; is uncomfortably long in English, it causes a lot of blank space and the tool settings to get wider. Try to take that into account if possible.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Interpolação:</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Show</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11714,7 +11714,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+1"/>
         <source>Apply the transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplicar transformação</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11724,7 +11724,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+1"/>
         <source>Cancel the transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancelar transformação</translation>
     </message>
 </context>
 <context>
@@ -11758,12 +11758,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+32"/>
         <source>Compressing canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Comprimir tela…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Uploading canvas %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Upload da tela %1%</translation>
     </message>
 </context>
 <context>
@@ -11779,7 +11779,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../view/lock.cpp" line="+29"/>
         <source>Out of space, use Session &gt; Reset to fix this</source>
-        <translation type="unfinished"></translation>
+        <translation>Falta de espaço, use Sessão &gt; Reiniciar para corrigir</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -11824,7 +11824,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>No layer selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Nenhuma camada selecionada</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -11837,7 +11837,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../widgets/brushpreview.cpp" line="+18"/>
         <source>Click to edit brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Clique para alterar o pincel</translation>
     </message>
 </context>
 <context>
