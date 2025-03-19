@@ -503,7 +503,7 @@
         <location line="+2"/>
         <location line="+391"/>
         <source>Session Settings (%1)</source>
-        <translation>Paramètres de la session</translation>
+        <translation>Paramètres de Session (%1)</translation>
     </message>
     <message>
         <location line="-390"/>
@@ -714,7 +714,7 @@
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation type="unfinished">Annuler le remplissage en cours, sans montrer les effets à personne</translation>
+        <translation>Annuler le remplissage en cours, sans que personne ne voit ses effets</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -736,7 +736,7 @@
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+131"/>
         <source>Size Limit: Unlimited</source>
-        <translation>Limite de taille: Infinie</translation>
+        <translation>Limite de taille&#xa0;: Infinie</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="-260"/>
@@ -867,7 +867,7 @@
     <message>
         <location line="+32"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished">Obtenir l&apos;adresse IP visible extérieurement</translation>
+        <translation>Obtenir l&apos;adresse IP visible extérieurement</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -912,12 +912,12 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+10"/>
         <source>&amp;Step up</source>
-        <translation type="unfinished">Montée</translation>
+        <translation type="unfinished">Monter d&apos;un pa&amp;s</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Step &amp;down</source>
-        <translation type="unfinished">Descente</translation>
+        <translation>&amp; Descendre d&apos;un pas</translation>
     </message>
 </context>
 <context>
@@ -930,7 +930,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="-94"/>
         <source>Color:</source>
-        <translation>Couleur :</translation>
+        <translation>Couleur&#xa0;:</translation>
     </message>
     <message>
         <location line="+87"/>
@@ -953,12 +953,12 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation>Nom&#x202f;:</translation>
+        <translation>Nom&#xa0;:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Opacity:</source>
-        <translation type="unfinished">Opacité&#x202f;:</translation>
+        <translation type="unfinished">Opacité&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -969,17 +969,17 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="-45"/>
         <source>Blending Mode:</source>
-        <translation>Mode de mélange&#x202f;:</translation>
+        <translation>Mode de Mélange&#xa0;:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Visibility:</source>
-        <translation>Visibilité&#x202f;:</translation>
+        <translation>Visibilité&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Visible to you</source>
-        <translation>Visible pour moi</translation>
+        <translation>Visible pour vous</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -994,27 +994,27 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+7"/>
         <source>Sketch Opacity:</source>
-        <translation>Opacité esquisse&#xa0;:</translation>
+        <translation>Opacité Esquisse&#xa0;:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Sketch Tint:</source>
-        <translation type="unfinished">Teinte d&apos;esquisse&#xa0;:</translation>
+        <translation>Teinte d&apos;Esquisse&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Collaboration:</source>
-        <translation>Collaboration&#x202f;:</translation>
+        <translation>Collaboration&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Default for new users</source>
-        <translation>Utilisé par défault pour les nouveaux utilisateurs</translation>
+        <translation>Par défault pour les nouveaux utilisateurs</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Created by:</source>
-        <translation>Crée par&#x202f;:</translation>
+        <translation>Crée par&#xa0;:</translation>
     </message>
     <message>
         <location line="+81"/>
@@ -1070,7 +1070,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+1"/>
         <source>This link will take you to the website at &quot;%1&quot;, which is not run by Drawpile. Are you sure you want to go there?</source>
-        <translation type="unfinished">Ce lien vous amènera sur le site web vers &quot;%1&quot;, qui n&apos;est pas géré par Drawpile. Êtes-vous sur·e de vouloir continuer&#x202f;?</translation>
+        <translation>Ce lien vous amènera sur le site web vers &quot;%1&quot;, qui n&apos;est pas géré par Drawpile. Êtes-vous sur·e de vouloir continuer&#x202f;?</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -2423,7 +2423,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>Simulate a disconnect after this many seconds:</source>
-        <translation type="unfinished">Simuler une déconnexion après combien de secondes&#x202f;?</translation>
+        <translation>Simuler une déconnexion après ce nombre de secondes&#xa0;:</translation>
     </message>
     <message>
         <location line="+16"/>
