@@ -3058,27 +3058,27 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Delete Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer la Trame de Référence</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>New Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouvelle Piste</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Visible</source>
-        <translation type="unfinished"></translation>
+        <translation>Piste Visible</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Onion Skin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Piste en pelage d&apos;oignon</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate Track</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dupliquer la Piste</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3088,12 +3088,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Delete Track</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Supprimer la Piste</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Trame de Référence Suivante</translation>
     </message>
     <message>
         <location line="+1"/>
