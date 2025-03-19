@@ -487,7 +487,7 @@
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation>Importar Pincéis</translation>
+        <translation>Importar Pincéis...</translation>
     </message>
     <message>
         <location line="+23"/>
