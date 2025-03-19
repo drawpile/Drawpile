@@ -11592,7 +11592,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../toolwidgets/transformsettings.cpp" line="+143"/>
         <source>Fast</source>
-        <translation type="unfinished"></translation>
+        <translation>Rápido</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11617,7 +11617,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+14"/>
         <source>Preview:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pré-visualizar:</translation>
     </message>
     <message>
         <location line="+14"/>
