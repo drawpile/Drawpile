@@ -9424,7 +9424,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+18"/>
         <source>Font size:</source>
-        <translation>Tamanho da letra:</translation>
+        <translation>Tamanho de letra:</translation>
     </message>
     <message>
         <location line="+11"/>
