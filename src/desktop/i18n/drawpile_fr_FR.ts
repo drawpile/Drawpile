@@ -462,7 +462,7 @@
     <message>
         <location line="+14"/>
         <source>Import Animation Frames</source>
-        <translation type="unfinished">Importer des Images d&apos;Animation</translation>
+        <translation>Importer des Images d&apos;Animation</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -482,7 +482,7 @@
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation type="unfinished">Images Superposées</translation>
+        <translation>Images Superposées</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -528,7 +528,7 @@
     <message>
         <location line="+7"/>
         <source>Set Brush Preset Thumbnail</source>
-        <translation type="unfinished">Définir la Miniature du Préréglage du Pinceau</translation>
+        <translation>Définir la Miniature de Préréglage du Pinceau</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -543,17 +543,17 @@
     <message>
         <location line="+168"/>
         <source>Export Frames in ZIP</source>
-        <translation type="unfinished">Exporter les Images en ZIP</translation>
+        <translation>Exporter les Images en ZIP</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation type="unfinished">Exporter la Vidéo WEBM</translation>
+        <translation>Exporter la Vidéo WEBM</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Animated WEBP</source>
-        <translation type="unfinished">Exporter Animation WEBP</translation>
+        <translation>Exporter Animation WEBP</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -697,7 +697,7 @@
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill source layer</source>
-        <translation type="unfinished">Remplir le calque source</translation>
+        <translation>Remplir le calque source</translation>
     </message>
     <message>
         <location line="+96"/>
@@ -1830,7 +1830,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>inverser/retourner la toile horizontalement</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1895,12 +1895,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+57"/>
         <source>Clear Fill Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplissage Transparent de la Source</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Toggle Layer Check State</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Activer/Désac&amp;tiver l&apos;État Coché du Calque</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2005,7 +2005,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+7"/>
         <source>Set as Fill Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Définir Comme Source de Remplissage</translation>
     </message>
     <message>
         <location line="+193"/>
