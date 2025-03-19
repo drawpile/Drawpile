@@ -11709,7 +11709,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+9"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplicar</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11948,7 +11948,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+30"/>
         <location filename="../view/canvascontroller.cpp" line="+34"/>
         <source>Downloading…</source>
-        <translation type="unfinished"></translation>
+        <translation>A descarregar…</translation>
     </message>
     <message>
         <location line="+2"/>
