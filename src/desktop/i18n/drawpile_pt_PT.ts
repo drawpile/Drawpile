@@ -1642,7 +1642,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+39"/>
         <source>Become Operator</source>
-        <translation>Virar Operador</translation>
+        <translation>Tornar Operador</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2883,32 +2883,32 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+28"/>
         <source>System Information…</source>
-        <translation>Informação do sistema</translation>
+        <translation>Informações do sistema…</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Cause Crash…</source>
-        <translation type="unfinished"></translation>
+        <translation>Causa Falha…</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Choose the current foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar a cor primária atual</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Choose the current background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar a cor de fundo atual</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Swap current foreground and background color with each other</source>
-        <translation type="unfinished"></translation>
+        <translation>Trocar a posição das cores primária e de fundo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set foreground color to black and background color to white</source>
-        <translation type="unfinished"></translation>
+        <translation>Definir a cor primária como preto e a cor de fundo como branco</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2928,12 +2928,12 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+3"/>
         <source>&amp;Next Brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Próximo Pincel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Previous Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pincel Anterior</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2948,22 +2948,22 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+3"/>
         <source>Next Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Próximo Slot de Pincel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Previous Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Slot de Pincel Anterior</translation>
     </message>
     <message>
         <location line="+143"/>
         <source>Could not write log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível escrever o ficheiro de log: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Could not read log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível ler o ficheiro de log: %1</translation>
     </message>
     <message>
         <location line="-339"/>
@@ -3130,7 +3130,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+2"/>
         <source>Become Operator...</source>
-        <translation>Virar Operador...</translation>
+        <translation>Tornar Operador...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3636,7 +3636,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+3"/>
         <source>Selection (Magic Wand)</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleção (Varinha Mágica)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3646,7 +3646,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+3"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrastar</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3669,7 +3669,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+50"/>
         <source>You must be an operator to reset the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Necessita ter o cargo de Operador para reiniciar a sessão.</translation>
     </message>
 </context>
 <context>
@@ -3850,12 +3850,12 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+32"/>
         <source>Block new joins</source>
-        <translation type="unfinished"></translation>
+        <translation>Impedir novos participantes</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Require a registered account to join</source>
-        <translation type="unfinished"></translation>
+        <translation>Requerer conta registada para participar</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3956,7 +3956,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+6"/>
         <source>Only operators can manage bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Somente operadores podem fazer gerência de Banidos.</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -3993,12 +3993,12 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+31"/>
         <source>Add listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Adicionar listagem</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove selected listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover listagem selecionada</translation>
     </message>
 </context>
 <context>
@@ -4385,7 +4385,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location filename="../dialogs/animationexportdialog.cpp" line="+29"/>
         <source>Export Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Animação</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -4395,22 +4395,22 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+4"/>
         <source>Frames as PNGs</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadros como PNGs</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frames as PNGs in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadros como PNGs em ZIP</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>GIF Animado</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBP Animado</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6882,7 +6882,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>Only operators and server administrators can manage invite codes on this session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Somente operadores e administradores de servidor podem gerir códigos de sessão.</translation>
     </message>
     <message>
         <location line="+29"/>
