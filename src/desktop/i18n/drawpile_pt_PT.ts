@@ -11948,7 +11948,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+30"/>
         <location filename="../view/canvascontroller.cpp" line="+34"/>
         <source>Downloading…</source>
-        <translation>A descarregar…</translation>
+        <translation>Descarregando…</translation>
     </message>
     <message>
         <location line="+2"/>
