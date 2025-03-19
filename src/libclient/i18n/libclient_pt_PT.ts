@@ -1874,7 +1874,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/hostpresetmodel.cpp" line="+57"/>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Predefinições</translation>
     </message>
 </context>
 <context>
