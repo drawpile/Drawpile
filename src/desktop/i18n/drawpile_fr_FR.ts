@@ -1830,7 +1830,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas horizontally</source>
-        <translation>inverser/retourner la toile horizontalement</translation>
+        <translation>inverser/retourner toile horizontalement</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3404,7 +3404,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+26"/>
         <source>Missing Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichier Journal Manquant</translation>
     </message>
     <message>
         <location line="+1"/>
