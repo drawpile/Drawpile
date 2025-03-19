@@ -1570,7 +1570,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+558"/>
         <source>Unknown version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Versão desconhecida</translation>
     </message>
     <message>
         <location line="+280"/>
