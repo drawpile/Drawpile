@@ -2221,7 +2221,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+3"/>
         <source>&amp;Check All</source>
-        <translation>Activar todos</translation>
+        <translation type="unfinished">Activar todos</translation>
     </message>
     <message>
         <location line="+2"/>
