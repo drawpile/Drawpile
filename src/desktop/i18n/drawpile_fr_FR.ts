@@ -2452,147 +2452,147 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Do you really want to crash Drawpile? This will terminate the program and you will lose any unsaved data!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Voulez vous faire crasher Drawpile&#x202f;? Ceci va arrêter le programme, et les données non sauvegardées seront perdues&#x202f;!</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Settings File:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fichier de Configuration&#xa0;:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrée Tablette&#xa0;:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Primary screen:</source>
-        <translation type="unfinished"></translation>
+        <translation>Écran principal&#xa0;:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1x%2px² (%3x%4mm²)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1x%2px² (%3x%4mm²)</translation>
     </message>
     <message>
         <location line="+168"/>
         <source>Lock Docks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Verrouiller Panneaux</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Vertical Tabs on Sides</source>
-        <translation type="unfinished"></translation>
+        <translation>Panneaux Verticaux sur les Côtés</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>&amp;Download Image…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Télécharger Image (&amp;D)…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Download Selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Télécharger Sélection…</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Export &amp;Animation…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter l&apos;&amp;Animation…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Import Animation &amp;Frames…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importer les Trames d&apos;Animation…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import Animation from &amp;Layers…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importer l&apos;Animation depuis les Ca&amp;lques…</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Start...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Démarrer...</translation>
     </message>
     <message>
         <location line="+113"/>
         <source>&amp;Import</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Importer</translation>
     </message>
     <message>
         <location line="+109"/>
         <source>Paste in View Center</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Coller dans la Vue Centrée</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Set Session Background...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Régler Arrière-plan de Session...</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Set Local Background...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Définir l&apos;Arrière-plan Local...</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Clear Local Background</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Effacer l&apos;Arrière-Plan Local</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Brush Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Réglages de pinceau (&amp;B)</translation>
     </message>
     <message>
         <location line="+75"/>
         <source>Expand &amp;Up…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Étendre vers le Ha&amp;ut…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Down…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Éten&amp;dre vers le Bas…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Left…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Étendre vers la Gauche (&amp;L)…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Right…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Étendre vers la D&amp;roite</translation>
     </message>
     <message>
         <location line="+110"/>
         <source>Canvas Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrière-plan du Canevas</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>&amp;Layouts...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dispositions (&amp;L)...</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Move Canvas Left</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Déplacer le Canevas vers la Gauche</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Right</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Déplacer le Canevas vers la Droite</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Up</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Déplacer le Canevas vers le Haut</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Down</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Déplacer le Canevas vers le Bas</translation>
     </message>
     <message>
         <location line="+7"/>
