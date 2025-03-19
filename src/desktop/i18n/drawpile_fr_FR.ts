@@ -3409,7 +3409,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation type="unfinished">Fichier journal non existant, devez-vous l&apos;activer dans les préférences&#x202f;?</translation>
+        <translation type="unfinished">Fichier journal non existant, voulez-vous l&apos;activer dans les préférences&#x202f;?</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -3455,12 +3455,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+17"/>
         <source>Tiles:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tuiles&#xa0;:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Tile Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mémoire de la Tuile&#xa0;:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -3503,7 +3503,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+17"/>
         <source>Skip Backward</source>
-        <translation>Sauter en Arrière</translation>
+        <translation type="unfinished">Revenir en Arrière</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -3513,7 +3513,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+17"/>
         <source>Skip Forward</source>
-        <translation>Sauter en Avant</translation>
+        <translation>Avancer</translation>
     </message>
     <message>
         <location line="+32"/>
