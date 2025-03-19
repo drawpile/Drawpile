@@ -459,7 +459,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/magicwand.cpp" line="+291"/>
         <source>Selecting…</source>
-        <translation>A seleccionar…</translation>
+        <translation>Selecionando…</translation>
     </message>
 </context>
 <context>
