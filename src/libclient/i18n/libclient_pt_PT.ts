@@ -229,7 +229,7 @@
     <message>
         <location line="+2"/>
         <source>Free Rotate Canvas</source>
-        <translation>Girar Tela de Pintura</translation>
+        <translation>Girar Tela Livremente</translation>
     </message>
     <message>
         <location line="+2"/>
