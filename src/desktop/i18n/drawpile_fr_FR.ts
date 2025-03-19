@@ -2040,13 +2040,13 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+4"/>
         <source>&amp;Layer to Selection</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ca&amp;lque sélectionné</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Expand/Shrink/Feather Selection</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ét&amp;endre/Réduire/Flouter Sélection</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2096,42 +2096,42 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>mirror/flip transformed image vertically</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Inverser/Effet miroir sur l&apos;image transformé verticalement</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Rotate Transform Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Transformation par &amp;Rotation dans le sens horaire</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Rotate Transform &amp;Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformation par Rotation dans le sens anti-horaire (&amp;c)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Shrink Transform to &amp;Fit View</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Transformation par Réduction pour Adapter à la Vue (&amp;F)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Stamp Transform</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Transformation Tampon (&amp;S)</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Selectio&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectio&amp;n</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Next Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trame Suivante</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trame précédente</translation>
     </message>
     <message>
         <location line="+133"/>
@@ -2176,7 +2176,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+0"/>
         <source>Select a free-form area</source>
-        <translation type="unfinished">Sélectionner une aire à main levée</translation>
+        <translation>Sélectionner une zone à main levée</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2196,7 +2196,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+0"/>
         <source>Transform selection</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sélection par Transformation</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2206,7 +2206,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+0"/>
         <source>Pan canvas view</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pivoter la vue du canevas par incréments</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -2221,7 +2221,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+29"/>
         <source>Set Artificial Lag...</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurer Latence artificielle...</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2231,7 +2231,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="-26"/>
         <source>Open Debug Dump...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ouvrir Archive de Débogage</translation>
     </message>
     <message>
         <location line="+44"/>
@@ -2246,32 +2246,32 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>Choose the current foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Choisir la couleur de premier plan</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Choose the current background color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Choisir la couleur d&apos;arrière-plan</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Swap current foreground and background color with each other</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Échanger les couleurs de premier plan et d&apos;arrière-plan</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set foreground color to black and background color to white</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Régler la couleur de premier plan sur noir et la couleur d&apos;arrière-plan sur blanc</translation>
     </message>
     <message>
         <location line="+168"/>
         <source>Could not write log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ne peut pas écrire le fichier de journal&#xa0;: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Could not read log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ne peut pas lire le fichier de journal&#xa0;: %1</translation>
     </message>
     <message>
         <location line="+88"/>
@@ -2306,7 +2306,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+35"/>
         <source>Error downloading tablet event log.</source>
-        <translation type="unfinished">Erreur d&apos;enregistrement du journal des évènements.</translation>
+        <translation type="unfinished">Erreur d&apos;enregistrement de la table des évènements.</translation>
     </message>
     <message>
         <location line="+219"/>
@@ -2326,7 +2326,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+250"/>
         <source>Disconnected</source>
-        <translation type="unfinished">Déconnecté</translation>
+        <translation>Déconnecté·e</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2381,55 +2381,55 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+42"/>
         <source>Stop Tablet Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Arrêter la Table des Évènements</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1601"/>
         <source>Tablet Event Log...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Table des Évènements...</translation>
     </message>
     <message>
         <location line="-1597"/>
         <source>Stop Profile</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Arrêter Profil</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+1598"/>
         <source>Profile...</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil...</translation>
     </message>
     <message>
         <location line="-1587"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Régler Latence Artificielle... (Actuellement&#xa0;: %1 ms)</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Set Artificial Lag</source>
-        <translation type="unfinished"></translation>
+        <translation>Régler Latence Artificielle</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Artificial lag in milliseconds (0 to disable):</source>
-        <translation type="unfinished"></translation>
+        <translation>Latence artificielle en millisecondes (0 pour désactiver)&#xa0;:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Artificial Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Déconnexion Artificielle</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Simulate a disconnect after this many seconds:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Simuler une déconnexion après combien de secondes&#x202f;?</translation>
     </message>
     <message>
         <location line="+16"/>
         <location line="+1545"/>
         <source>Record Debug Dumps</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer Archive de Débogage</translation>
     </message>
     <message>
         <location line="-1544"/>
@@ -2438,12 +2438,16 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
 
 Are you sure youwant to start recording debug dumps?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Les archives de débogage enregistrent les commandes effectués en local et à distance. Elles peuvent être utilisés pour régler des problèmes de réseaux, et parfois plus dans de rares cas. Si vous souhaitez effectuer un enregistrement classique, veuillez utiliser Fichier &gt; Enregistrer (Vidéo).
+
+L&apos;archive de débogage démarre sur la prochaine réinitialisation du canevas, et les fichiers seront sauvegardés sur %1
+
+Êtes vous sûr·e de vouloir commencer un enregistrement d&apos;archive de débogage&#x202f;?</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Cause Crash</source>
-        <translation type="unfinished"></translation>
+        <translation>Raison du Crash</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2749,7 +2753,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Browse session listings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Parcourir listes de session</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2759,7 +2763,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Undo Limit…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Annuler la limite…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2774,27 +2778,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Prevent changes to the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Prévenir les changements sur le canevas</translation>
     </message>
     <message>
         <location line="+105"/>
         <source>Statistics…</source>
-        <translation type="unfinished"></translation>
+        <translation>Statistiques…</translation>
     </message>
     <message>
         <location line="+259"/>
         <source>Brush slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Emplacement de pinceau #%1</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Swap With Brush Slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Échanger avec Emplacement de pinceau #%1</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Swatch Color %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Échanger Couleur %1</translation>
     </message>
     <message>
         <location line="+24"/>
