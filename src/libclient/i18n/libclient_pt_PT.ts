@@ -1645,7 +1645,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Invalid host name.</source>
-        <translation>Nome de servidor inválido!</translation>
+        <translation type="unfinished">Nome de hospede inválido.</translation>
     </message>
     <message>
         <location line="+2"/>
