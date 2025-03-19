@@ -9409,7 +9409,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+9"/>
         <source>Scaling:</source>
-        <translation>Escala:</translation>
+        <translation type="unfinished">Dimensionamento:</translation>
     </message>
     <message>
         <location line="+20"/>
