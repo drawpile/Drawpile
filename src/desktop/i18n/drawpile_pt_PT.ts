@@ -8706,7 +8706,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="-65"/>
         <source>Unpin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Desafixar</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9409,7 +9409,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+9"/>
         <source>Scaling:</source>
-        <translation type="unfinished"></translation>
+        <translation>Escala:</translation>
     </message>
     <message>
         <location line="+20"/>
