@@ -4420,7 +4420,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+1"/>
         <source>WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Vídeo WebM</translation>
     </message>
     <message>
         <location line="+12"/>
