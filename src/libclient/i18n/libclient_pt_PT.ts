@@ -838,7 +838,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+10"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Desconhecido</translation>
     </message>
 </context>
 <context>
