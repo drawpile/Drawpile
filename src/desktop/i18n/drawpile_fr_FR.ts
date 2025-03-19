@@ -3917,7 +3917,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+7"/>
         <source>Require a registered account to join</source>
-        <translation type="unfinished"></translation>
+        <translation>Nécessite un compte inscrit pour rejoindre</translation>
     </message>
     <message>
         <location line="+54"/>
@@ -3968,17 +3968,17 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+98"/>
         <source>Metadata:</source>
-        <translation type="unfinished"></translation>
+        <translation>Métadonnées&#xa0;:</translation>
     </message>
     <message>
         <location line="-10"/>
         <source>Timeline:</source>
-        <translation type="unfinished"></translation>
+        <translation>Chronologie&#xa0;:</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>MyPaint Brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mes Pinceaux&#xa0;:</translation>
     </message>
     <message>
         <location line="+77"/>
