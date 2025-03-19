@@ -1801,7 +1801,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+23"/>
         <source>Network read error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro de rede</translation>
     </message>
     <message>
         <location line="+2"/>
