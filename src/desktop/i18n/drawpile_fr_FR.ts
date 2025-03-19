@@ -2597,22 +2597,22 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+7"/>
         <source>Zoom In On Center</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zoomer vers le Centre</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Out From Center</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dézoomer depuis le Centre</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Réinitialiser le Zoom</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset Zoom At Center</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Réinitialiser le Zoom et Centrer</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -2632,32 +2632,32 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Hide From Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cacher depuis le Curseur</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show &amp;Rulers</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher les &amp;Règles</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher la Sélection de &amp;Masques</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle selection display between a mask and an outline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alterner la sélection d&apos;affichage entre un masque et un contour</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Fit to Screen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ajuster à l&apos;Écran (&amp;F)</translation>
     </message>
     <message>
         <location line="+128"/>
         <source>Layer View Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mode de Vue de Calque</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2668,87 +2668,87 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location filename="../docks/layerlistdock.cpp" line="+486"/>
         <location filename="../mainwindow.cpp" line="+68"/>
         <source>Merge Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Fusionner les Calques</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Select Above</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sélectionner au dessus</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Select Below</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sélectionner en dessous</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>&amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ca&amp;lque</translation>
     </message>
     <message>
         <location line="+186"/>
         <source>Increase Key Frame Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Augmenter l&apos;Exposition de la Trame de Référence</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Decrease Key Frame Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Réduire l&apos;Exposition de la Trame de Référence</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Create Group on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer un Groupe sur la Trame de Référence Actuelle</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Group on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer un Groupe sur la Trame de Référence Suivante</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Group on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer un Groupe sur la Trame de Référence Précédente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate to Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Dupliquer sur la Trame de Référence Suivante</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate to Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Dupliquer sur la Trame de Référence Précédente</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Create Group on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer un Groupe sur la Trame de Référence</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Duplicate Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Dupliquer la Trame de Référence</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Share your canvas with others</source>
-        <translation type="unfinished"></translation>
+        <translation>Partager votre canevas avec d&apos;autres</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Invite...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Inviter...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Invite another user to this session</source>
-        <translation type="unfinished"></translation>
+        <translation>Inviter un·e autre utilisateur·ice à cette session</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Browse...</source>
-        <translation type="unfinished"></translation>
+        <translation>Parcourir (&amp;B)...</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2803,7 +2803,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+24"/>
         <source>Focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Centrer sur le canevas</translation>
     </message>
     <message>
         <location line="-961"/>
@@ -2813,12 +2813,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="-4628"/>
         <source>🙋 %1 joined!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">🙋 %1 a rejoint&#x202f;!</translation>
     </message>
     <message>
         <location line="+1727"/>
         <source>Saving animation...</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauvegarde de l&apos;animation...</translation>
     </message>
     <message>
         <location line="+2875"/>
@@ -2881,13 +2881,13 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Basculer la &amp;Visibilité du Calque</translation>
     </message>
     <message>
         <location line="+4"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Basculer la Visibilité du Mode d&apos;E&amp;squisse</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="-93"/>
@@ -2897,163 +2897,163 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="-4072"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;p&gt;Le raccourci suivant &apos;%1&apos; est ambigu, il correspond à&#xa0;:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Ambiguous Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Raccourci Ambigu</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>Réparer</translation>
     </message>
     <message>
         <location line="+630"/>
         <source>Opening file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouverture du fichier…</translation>
     </message>
     <message>
         <location line="+275"/>
         <source>Joined the session!</source>
-        <translation type="unfinished"></translation>
+        <translation>A rejoint la session&#x202f;!</translation>
     </message>
     <message>
         <location line="+844"/>
         <source>Reason:</source>
-        <translation type="unfinished">Raison :</translation>
+        <translation>Raison&#xa0;:</translation>
     </message>
     <message>
         <location line="+257"/>
         <source>Canvas locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Canevas verrouillé</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Canevas déverrouillé</translation>
     </message>
     <message>
         <location line="+432"/>
         <source>Freehand (erase mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Main libre (mode gomme, cliquer pour réinitialiser)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (erase mode)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Outil pinceau en main libre (mode gomme)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Freehand (alpha lock mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation>Main libre (mode alpha verrouillé, cliquer pour réinitialiser)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (alpha lock mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Outil pinceau en main libre (mode alpha verrouillé)</translation>
     </message>
     <message>
         <location line="+801"/>
         <source>Toggle Dock %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Basculer Panneau %1</translation>
     </message>
     <message>
         <location line="+89"/>
         <source>Export Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter l&apos;image…</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Export Selection...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter la sélection...</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Import &amp;Brushes...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importer les Pinceaux (&amp;B)…</translation>
     </message>
     <message>
         <location line="-16"/>
         <source>Export Session &amp;Template...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Exporter le Modèle de Session (&amp;T)...</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Export &amp;Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Exporter les Pinceaux (&amp;B)…</translation>
     </message>
     <message>
         <location line="+203"/>
         <source>&amp;Copy Merged</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Copie Fusionnée</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Copy Without Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Copie sans l&apos;Arrière-plan</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Copy From &amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Copier depuis le Ca&amp;lque</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Cu&amp;t From Layer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Couper depuis le Calque (&amp;T)</translation>
     </message>
     <message>
         <location line="+243"/>
         <source>Tablet Driver</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pilotes pour Tablette</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-10"/>
         <location filename="../mainwindow.cpp" line="+319"/>
         <source>Layer Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>Propriétés du calque…</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+198"/>
         <source>Change Frame Count...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Changer le Nombre de Trames...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change Frame Rate (FPS)...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Changer la Fréquence d&apos;image pour les Trames (IPS)...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Régler la Trame de Référence au Calque Actuel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Blank Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Régler Trame de Référence Vide</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cut Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Couper Trame de Référence</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Copier Trame de Référence</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Paste Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Coller Trame de Référence</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key Frame Properties...</source>
-        <translation type="unfinished"></translation>
+        <translation>Propriétés de la Trame de Référence...</translation>
     </message>
     <message>
         <location line="+1"/>
