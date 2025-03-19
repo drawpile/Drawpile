@@ -7649,7 +7649,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>Touch</source>
-        <translation>Touch</translation>
+        <translation>Ecrã tátil</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7868,7 +7868,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../dialogs/systeminfodialog.cpp" line="+27"/>
         <source>System Information</source>
-        <translation>Informação do sistema</translation>
+        <translation>Informações do Sistema</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -7881,7 +7881,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../dialogs/touchtestdialog.cpp" line="+214"/>
         <source>Enable touch</source>
-        <translation>Ativar toque</translation>
+        <translation>Ativar ecrã tátil</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8059,19 +8059,19 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+11"/>
         <source>Qt Graphics View</source>
         <extracomment>One of the canvas renderer options. &quot;Qt&quot; is a software framework.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Visualização de Gráficos Qt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hardware (experimental)</source>
         <extracomment>One of the canvas renderer options. Hardware meaning it uses the GPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Hardware (experimental)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Software (experimental)</source>
         <extracomment>One of the canvas renderer options. Software meaning it uses the CPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Software (experimental)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8082,7 +8082,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+10"/>
         <source>Renderer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Renderização:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8094,7 +8094,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+4"/>
         <source>Current renderer: %1. Changes apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Renderização atual: %1. Mudanças só terão efeito após reiniciar o Drawpile.</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -8114,42 +8114,42 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+36"/>
         <source>Blue Apatite</source>
-        <translation type="unfinished"></translation>
+        <translation>Apatita Azul</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Indigo</source>
-        <translation type="unfinished"></translation>
+        <translation>Índigo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Ocean Deep</source>
-        <translation type="unfinished"></translation>
+        <translation>Oceano Profundo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pool Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesa de Bilhar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rose Quartz</source>
-        <translation type="unfinished"></translation>
+        <translation>Quartzo Rosa</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rust</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferrugem</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Watermelon</source>
-        <translation type="unfinished"></translation>
+        <translation>Melancia</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>%1 offline undo levels by default</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 níveis de desfazer quando offline por predefinição</translation>
     </message>
     <message>
         <location line="-196"/>
@@ -8694,13 +8694,13 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+60"/>
         <source>Pin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fixar</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+82"/>
         <source>Pin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Fixar certificados selecionados</translation>
     </message>
     <message>
         <location line="-65"/>
@@ -8712,7 +8712,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+1"/>
         <location line="+65"/>
         <source>Unpin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Desafixar certificados selecionados</translation>
     </message>
     <message>
         <location line="-35"/>
@@ -8722,7 +8722,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+11"/>
         <source>Import certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar certificados</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -8735,12 +8735,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/shortcutfilterinput.cpp" line="+18"/>
         <source>Search…</source>
-        <translation type="unfinished"></translation>
+        <translation>Pesquisa…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show conflicts only</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar somente conflitos</translation>
     </message>
 </context>
 <context>
@@ -8785,12 +8785,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+5"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Edit selected canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar atalho da tela selecionada…</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8828,7 +8828,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+95"/>
         <source>Actions</source>
-        <translation type="unfinished"></translation>
+        <translation>Ações</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8838,7 +8838,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+5"/>
         <source>Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Tela</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -8852,12 +8852,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/tablet.cpp" line="+30"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Testar mesa digitalizadora</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Tablet</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesa digitalizadora</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8873,25 +8873,25 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+9"/>
         <location filename="../mainwindow.cpp" line="-1247"/>
         <source>Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Windows Ink Non-Native</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Windows Ink Inativo</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+10"/>
         <source>Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Wintab</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Wintab Relative</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Wintab relativo</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8914,7 +8914,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+8"/>
         <source>Tablet driver:</source>
-        <translation type="unfinished"></translation>
+        <translation>Driver de Mesa digitalizadora:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8924,7 +8924,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>Pen pressure:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pressão de caneta:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8949,23 +8949,23 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+6"/>
         <source>Treat as regular pen tip</source>
-        <translation type="unfinished"></translation>
+        <translation>Tratar como ponta de caneta normal</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mudar para slot de borracha</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Apagar com pincel atual</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser tip behavior:</source>
         <extracomment>This refers to the eraser end tablet pen, not a tooltip or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ação da ponta da Borracha:</translation>
     </message>
 </context>
 <context>
@@ -9075,7 +9075,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+19"/>
         <source>ms</source>
         <extracomment>This stands for millseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ms</translation>
     </message>
     <message numerus="yes">
         <location line="+31"/>
@@ -9155,7 +9155,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+13"/>
         <location line="+9"/>
         <source>No action</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sem ação</translation>
     </message>
     <message>
         <location line="-82"/>
@@ -9175,22 +9175,22 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+3"/>
         <source>Toggle color picker</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar para escolha-cor</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar para borracha</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle erase mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar para modo de borracha</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle recolor mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar para modo de recolorir</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -9215,7 +9215,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished"></translation>
+        <translation>Escolha-cor</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -9235,7 +9235,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>Guess</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Automatico</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9255,17 +9255,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+7"/>
         <source>Rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotação de tela</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Free rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotação livremente de tela</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ratchet rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotação de tela em passos</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9359,22 +9359,22 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="-126"/>
         <source>Small screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Ecrã pequeno</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>First checker color</source>
-        <translation type="unfinished"></translation>
+        <translation>Primeira Cor xadrez</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Second checker color</source>
-        <translation type="unfinished"></translation>
+        <translation>Segunda Cor xadrez</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Colors behind canvas:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cores por traz da tela:</translation>
     </message>
     <message>
         <location line="+33"/>
