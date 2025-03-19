@@ -9507,7 +9507,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+6"/>
         <source>Inactive</source>
-        <translation type="unfinished"></translation>
+        <translation>Inativa</translation>
     </message>
     <message>
         <location line="+2"/>
