@@ -3409,13 +3409,13 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fichier journal non existant, devez-vous l&apos;activer dans les préférences&#x202f;?</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+5"/>
         <source>Error Saving Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur de Sauvegarde du Fichier Journal</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -3437,7 +3437,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location filename="../utils/widgetutils.cpp" line="-87"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -3465,12 +3465,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+14"/>
         <source>Contexts:</source>
-        <translation type="unfinished"></translation>
+        <translation>Contextes&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Context Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mémoire Contexte&#xa0;:</translation>
     </message>
     <message>
         <location line="-86"/>
@@ -3498,27 +3498,27 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="-34"/>
         <source>Rewind to Beginning</source>
-        <translation type="unfinished"></translation>
+        <translation>Rembobiner au Début</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Skip Backward</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauter en Arrière</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Next Stroke</source>
-        <translation type="unfinished"></translation>
+        <translation>Tracé Suivant</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Skip Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauter en Avant</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Playback Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Vitesse de Lecture&#xa0;: </translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3528,7 +3528,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+79"/>
         <source>Building an index will let you quickly skip to any part of your recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>Construire un index vous permettra de sauter rapidement à n&apos;importe quelle partie de votre enregistrement.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -3636,17 +3636,17 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+3"/>
         <source>Selection (Magic Wand)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélection (Baguette Magique)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformer</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Se Déplacer</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3669,7 +3669,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+50"/>
         <source>You must be an operator to reset the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous devez être un opérateur afin de réinitialiser la session.</translation>
     </message>
 </context>
 <context>
@@ -3800,17 +3800,17 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+17"/>
         <source>Idle timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Délai d&apos;inactivité&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>X seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>X secondes</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Disable idle timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>Désactiver le délai d&apos;inactivité</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -3835,7 +3835,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+46"/>
         <source>Allow joining from the web browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Autoriser à rejoindre depuis le navigateur web</translation>
     </message>
     <message>
         <location line="+166"/>
@@ -3845,7 +3845,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+6"/>
         <source>Only operators can manage bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Seuls les opérateurs peuvent gérer les bannissement.</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -3887,7 +3887,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+70"/>
         <source>Laser Pointer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pointeur Laser&#xa0;:</translation>
     </message>
     <message>
         <location line="+61"/>
@@ -3902,17 +3902,17 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="-160"/>
         <source>This session contains age-restricted content</source>
-        <translation type="unfinished"></translation>
+        <translation>Cette session contient du contenu soumis à des restrictions d&apos;âge</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Non adapté aux mineurs (NSFM)</translation>
     </message>
     <message>
         <location line="+113"/>
         <source>Block new joins</source>
-        <translation type="unfinished"></translation>
+        <translation>Blocker les nouveaux entrants</translation>
     </message>
     <message>
         <location line="+7"/>
