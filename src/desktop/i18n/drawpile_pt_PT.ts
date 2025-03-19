@@ -9429,7 +9429,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+11"/>
         <source>Vertical sync:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sincronização vertical</translation>
     </message>
     <message>
         <location line="+1"/>
