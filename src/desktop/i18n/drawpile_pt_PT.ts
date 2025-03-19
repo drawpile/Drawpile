@@ -842,7 +842,7 @@
     <message>
         <location line="+30"/>
         <source>Codes</source>
-        <translation>Codigos</translation>
+        <translation>Códigos</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -4420,7 +4420,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+1"/>
         <source>WEBM Video</source>
-        <translation>Vídeo WebM</translation>
+        <translation>Vídeo WEBM</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4430,7 +4430,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+2"/>
         <source>Loops:</source>
-        <translation type="unfinished"></translation>
+        <translation>Repetições:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4445,7 +4445,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+6"/>
         <source>Scaling:</source>
-        <translation type="unfinished"></translation>
+        <translation>Redimensionar:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4455,7 +4455,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+3"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Intervalo de Quadros:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4470,12 +4470,12 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+3"/>
         <source>Crop X:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cortar X:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Crop Y:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cortar Y:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4518,17 +4518,17 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+18"/>
         <source>Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadros</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Import a series of images as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar uma série de imagens como quadros na linha do tempo.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Importing animation frames is not supported in the web browser version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar quadros de animação não é uma ação suportada na versão web do Drawpile.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4548,27 +4548,27 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+6"/>
         <source>Sort</source>
-        <translation type="unfinished"></translation>
+        <translation>Organizar</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Numeric Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Numérico Crescente</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Numeric Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Numérico Decrescente</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alphabetic Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Alfabético Crescente</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alphabetic Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Alfabético Decrescente</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4578,7 +4578,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+4"/>
         <source>Import the layers of an ORA or PSD file as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar as camadas de um arquivo ORA ou PSD como quadros na linha do tempo.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4635,7 +4635,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+86"/>
         <source>Continuous hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Matiz Continua</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4652,7 +4652,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <location line="+43"/>
         <source>°</source>
         <extracomment>Degree symbol. Unless your language uses a different one, keep as-is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>°</translation>
     </message>
     <message>
         <location line="-40"/>
@@ -4707,7 +4707,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+8"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nenhum</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4843,22 +4843,22 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+70"/>
         <source>Change…</source>
-        <translation type="unfinished"></translation>
+        <translation>Mudar…</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Shortcut:</source>
-        <translation type="unfinished"></translation>
+        <translation>Atalho:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Choose File…</source>
-        <translation type="unfinished"></translation>
+        <translation>Escolha Ficheiro…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Will be resized to 64x64 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Será redimensionado para 64x64 pixeis.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4868,7 +4868,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+3"/>
         <source>Add Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>Adicionar Etiqueta:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4883,7 +4883,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+60"/>
         <source>No shortcut assigned</source>
-        <translation type="unfinished"></translation>
+        <translation>Sem atalho atribuído</translation>
     </message>
 </context>
 <context>
@@ -4916,12 +4916,12 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+62"/>
         <source>Save as New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Gravar como Pincel Novo</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Substituir Pincel</translation>
     </message>
     <message>
         <location line="+80"/>
@@ -6610,7 +6610,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+3"/>
         <source>Free Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas without snapping around 0°.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Rodar Tela Livremente</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6641,7 +6641,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Mudar Matiz da Cor</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6727,17 +6727,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="+426"/>
         <source>Create Invite Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Criar Códigos de Convite</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Uses:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aplicações:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;None</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Nenhum</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6752,7 +6752,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+6"/>
         <source>Role:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargo:</translation>
     </message>
 </context>
 <context>
@@ -6854,7 +6854,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location filename="../dialogs/invitedialog.cpp" line="-334"/>
         <location line="+260"/>
         <source>What are invite codes?</source>
-        <translation type="unfinished"></translation>
+        <translation>O que são códigos de convite?</translation>
     </message>
     <message>
         <location line="-122"/>
@@ -6864,54 +6864,54 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message numerus="yes">
         <location line="+22"/>
         <source>Invite code link(s) copied to clipboard.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Código de convite copiado para a área de transferência.</numerusform>
+            <numerusform>Códigos de convite copiados para a área de transferência.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+34"/>
         <source>This server does not support invite codes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este servidor não tem suporte para códigos de convite.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only server administrators can manage invite codes on this session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Somente administradores de servidor podem gerir códigos de convite nesta sessão.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Only operators and server administrators can manage invite codes on this session.</source>
-        <translation>Somente operadores e administradores de servidor podem gerir códigos de sessão.</translation>
+        <translation>Somente operadores e administradores de servidor podem gerir códigos de convite nesta sessão.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Revoke Invite Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Revogar Códigos de Convite</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really revoke %n selected invite code(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Realmente revogar %n código de convite selecionado?</numerusform>
+            <numerusform>Realmente revogar %n códigos de convite selecionados?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Invite codes let someone join the session via a limited-use link. You can revoke the code later to take away their access again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Códigos de convite permitem com que alguém possa participar numa sessão através de um link com validade limitada. Pode depois revogar o código se quiser retirar-lhe o acesso.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Someone joining via an invite code bypasses normal session restrictions: they don&apos;t need the session password, can join via web browser, don&apos;t need a registered account and aren&apos;t affected by new joins being blocked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Quem entrar via código de convite desvia das restrições de sessão normais: não necessitam palavra-passe, podem ligar sobre navegador da web, não necessitam de uma conta registada e não são afetados pelo impedimento de novos participantes.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>They don&apos;t bypass bans or server-wide restrictions.</source>
         <extracomment>&quot;They&quot; is referring to invite codes.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Não desvia de restrições pelo servidor inteiro ou se foram banidos.</translation>
     </message>
 </context>
 <context>
@@ -6929,17 +6929,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+8"/>
         <source>Search…</source>
-        <translation type="unfinished"></translation>
+        <translation>Pesquisa…</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Anterior</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Próximo</translation>
     </message>
 </context>
 <context>
@@ -6947,7 +6947,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../dialogs/layerproperties.cpp" line="+92"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Novo Grupo de Camadas</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7111,17 +7111,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+198"/>
         <source>You can&apos;t join this session because:</source>
-        <translation type="unfinished"></translation>
+        <translation>Você não pode entrar nesta sessão porque:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown reason.</source>
-        <translation type="unfinished"></translation>
+        <translation>Motivo desconhecido.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Can&apos;t join session</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível entrar na sessão</translation>
     </message>
     <message>
         <location line="+63"/>
@@ -7286,12 +7286,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+71"/>
         <source>Error opening file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao abrir ficheiro: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error opening file: %1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao abrir ficheiro: %1 (%2)</translation>
     </message>
     <message>
         <location line="-3"/>
@@ -7304,22 +7304,22 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="+30"/>
         <source>Expand up</source>
-        <translation type="unfinished"></translation>
+        <translation>Alargar para cima</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand left</source>
-        <translation type="unfinished"></translation>
+        <translation>Alargar para a esquerda</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand right</source>
-        <translation type="unfinished"></translation>
+        <translation>Alargar para a direita</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand down</source>
-        <translation type="unfinished"></translation>
+        <translation>Alargar para baixo</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7402,7 +7402,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+1"/>
         <source>Error saving bans: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao gravar banimentos: %1</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7585,7 +7585,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="-97"/>
         <source>File does not contain a valid role export.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ficheiro não contem uma exportação de cargos válida.</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -7644,12 +7644,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>Tablet</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesa Digitalizadora</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touch</source>
-        <translation type="unfinished"></translation>
+        <translation>Touch</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7792,7 +7792,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+5"/>
         <source>Save/Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Gravar/Carregar</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7802,22 +7802,22 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+4"/>
         <source>Load settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Carregar definições…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Gravar definições…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import from file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar do ficheiro…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Export to file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar para ficheiro…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -10351,7 +10351,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>&amp;Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Substituir Pincel</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10406,17 +10406,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+227"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Substituir Pincel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really overwrite brush &apos;%1&apos; with the current one?</source>
-        <translation type="unfinished"></translation>
+        <translation>Realmente substituir pincel &apos;%1&apos; com o atual?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Substituir</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11385,7 +11385,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+6"/>
         <source>&amp;Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Substituir Pincel</translation>
     </message>
     <message>
         <location line="+6"/>
