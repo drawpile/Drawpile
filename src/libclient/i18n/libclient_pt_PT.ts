@@ -31,7 +31,7 @@
     <message>
         <location line="+85"/>
         <source>Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pincel</translation>
     </message>
     <message>
         <location line="+2"/>
