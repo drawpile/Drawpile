@@ -2226,7 +2226,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+2"/>
         <source>&amp;Uncheck All</source>
-        <translation type="unfinished"></translation>
+        <translation>Desativar todos</translation>
     </message>
     <message>
         <location line="+37"/>
