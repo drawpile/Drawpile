@@ -2883,7 +2883,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     <message>
         <location line="+28"/>
         <source>System Information…</source>
-        <translation type="unfinished"></translation>
+        <translation>Informação do sistema</translation>
     </message>
     <message>
         <location line="+35"/>
