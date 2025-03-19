@@ -7868,7 +7868,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location filename="../dialogs/systeminfodialog.cpp" line="+27"/>
         <source>System Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Informação do sistema</translation>
     </message>
     <message>
         <location line="+15"/>
