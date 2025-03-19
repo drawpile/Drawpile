@@ -9298,7 +9298,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+1"/>
         <source>Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinâmico</translation>
     </message>
     <message>
         <location line="+1"/>
