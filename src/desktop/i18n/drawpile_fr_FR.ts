@@ -3098,42 +3098,42 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Trame de Référence Précédente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Above</source>
-        <translation type="unfinished"></translation>
+        <translation>Piste au Dessus</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Below</source>
-        <translation type="unfinished"></translation>
+        <translation>Piste en Dessous</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Create Layers on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer des Calques sur la Trame de Référence Actuelle</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer des Calques sur la Trame de Référence Suivante</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer des Calques sur la Trame de Référence Précédente</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>&amp;Animation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Animation</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Create Layers on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer des Calques sur la Trame de Référence</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -3301,7 +3301,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+38"/>
         <source>Cause Crash…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Causer un Crash…</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -3316,47 +3316,47 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Réinitialiser Pinceau</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Réinitialiser tous les Emplacements de Pinceau (&amp;S)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Réinitialiser tous les Pinceaux (&amp;B)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Next Brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pinceau Suivant (&amp;N)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Previous Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinceau &amp;Précédent</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Next Brush Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Étiquette de Pinceau Suivant</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Previous Brush Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Étiquette de Pinceau Précédent</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Next Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Emplacement de Pinceau Suivant</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Previous Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Emplacement de Pinceau Précédent</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -3377,7 +3377,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Touch Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Test Tactile</translation>
     </message>
     <message>
         <location line="+1"/>
