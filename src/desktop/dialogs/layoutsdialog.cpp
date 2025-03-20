@@ -96,7 +96,7 @@ struct LayoutsDialog::Private {
 
 	void createDefaultLayouts(const Predefs &predefs)
 	{
-		layouts = {
+		layouts.append({
 			LayoutsDialog::Layout{tr("Default"), predefs.defaultLayout},
 			LayoutsDialog::Layout{
 				tr("Default Animation"), predefs.defaultAnimationLayout},
@@ -112,7 +112,7 @@ struct LayoutsDialog::Private {
 				tr("Paint.NET-esque"), predefs.paintNetEsqueLayout},
 			LayoutsDialog::Layout{tr("SAI-esque"), predefs.saiEsqueLayout},
 			LayoutsDialog::Layout{tr("Spider"), predefs.spiderLayout},
-		};
+		});
 	}
 
 	void applyCompatibilityMapping(

@@ -50,6 +50,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Default kinetic scroll on Android and the browser to left-click, since that works better and also covers touch.
  * Fix: Allow dragging layers and sliding across the checkboxes in the layer list even when kinetic scrolling with left-click or touch is enabled by making the left and right areas not react to scroll. This is a patch to Qt.
  * Fix: Work around a crash on Windows when toggling kinetic scroll settings.
+ * Fix: Properly show current layout on first layouts dialog run. Thanks Dib for reporting.
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.
