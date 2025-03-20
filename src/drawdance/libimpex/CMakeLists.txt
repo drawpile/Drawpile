@@ -45,6 +45,7 @@ endif()
 
 if(IMAGE_IMPL STREQUAL "LIBS")
     target_sources(dpimpex PRIVATE
+        dpimpex/image_init.c
         dpimpex/image_jpeg.c
         dpimpex/image_png.c
     )

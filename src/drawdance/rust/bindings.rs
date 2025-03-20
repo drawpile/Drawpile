@@ -7949,6 +7949,9 @@ extern "C" {
     pub fn DP_transient_track_delete_at(tt: *mut DP_TransientTrack, index: ::std::os::raw::c_int);
 }
 extern "C" {
+    pub fn DP_image_impex_init();
+}
+extern "C" {
     pub fn DP_image_new_from_file(
         input: *mut DP_Input,
         type_: DP_ImageFileType,
@@ -12066,13 +12069,6 @@ extern "C" {
     pub fn DP_message_serialize(
         msg: *mut DP_Message,
         write_body_length: bool,
-        get_buffer: DP_GetMessageBufferFn,
-        user: *mut ::std::os::raw::c_void,
-    ) -> usize;
-}
-extern "C" {
-    pub fn DP_message_serialize_body(
-        msg: *mut DP_Message,
         get_buffer: DP_GetMessageBufferFn,
         user: *mut ::std::os::raw::c_void,
     ) -> usize;

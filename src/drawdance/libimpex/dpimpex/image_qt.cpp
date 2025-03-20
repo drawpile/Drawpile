@@ -12,6 +12,15 @@ extern "C" {
 #include <dpcommon/platform_qt.h>
 #include <QIODevice>
 #include <QImage>
+#include <QImageReader>
+
+
+extern "C" void DP_image_impex_init(void)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	QImageReader::setAllocationLimit(0);
+#endif
+}
 
 
 class DP_InputDevice : public QIODevice {

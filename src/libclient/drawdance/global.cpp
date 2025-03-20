@@ -4,6 +4,7 @@ extern "C" {
 #include <dpcommon/cpu.h>
 #include <dpcommon/threading.h>
 #include <dpengine/draw_context.h>
+#include <dpimpex/image_impex.h>
 }
 #include "libclient/drawdance/global.h"
 #include <QLoggingCategory>
@@ -63,6 +64,11 @@ void initLogging()
 void initCpuSupport()
 {
 	DP_cpu_support_init();
+}
+
+void initImageImportExport()
+{
+	DP_image_impex_init();
 }
 
 

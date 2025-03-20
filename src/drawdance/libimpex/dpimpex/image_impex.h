@@ -9,6 +9,10 @@ typedef struct DP_Input DP_Input;
 typedef struct DP_Output DP_Output;
 
 
+// Should be called on application startup to disable the image reader
+// allocation limit in Qt6. Other implementations do nothing here.
+void DP_image_impex_init(void);
+
 DP_Image *DP_image_new_from_file(DP_Input *input, DP_ImageFileType type,
                                  DP_ImageFileType *out_type);
 

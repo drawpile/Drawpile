@@ -204,12 +204,6 @@ inline bool isTouchPad(const QTouchEvent *event)
 {
 	return event->deviceType() == QInputDevice::DeviceType::TouchPad;
 }
-
-inline void disableImageReaderAllocationLimit()
-{
-	QImageReader::setAllocationLimit(0);
-}
-
 #else
 using DeviceType = QTabletEvent::TabletDevice;
 using EnterEvent = QEvent;
@@ -312,11 +306,6 @@ inline int touchDeviceType(const QTouchEvent *event)
 inline bool isTouchPad(const QTouchEvent *event)
 {
 	return touchDeviceType(event) == int(QTouchDevice::TouchPad);
-}
-
-inline void disableImageReaderAllocationLimit()
-{
-	// Nothing to do, Qt 5 doesn't have this limit.
 }
 #endif
 

@@ -20,6 +20,7 @@ pub mod msg;
 
 pub fn init() {
     unsafe { DP_cpu_support_init() };
+    unsafe { DP_image_impex_init() };
 }
 
 pub fn dp_error() -> String {

@@ -75,6 +75,7 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 
 	drawdance::initLogging();
 	drawdance::initCpuSupport();
+	drawdance::initImageImportExport();
 	drawdance::DrawContextPool::init();
 	utils::Cursors::init();
 
@@ -1146,7 +1147,6 @@ extern "C" void drawpileMain(int argc, char **argv)
 #endif
 	DP_QT_LOCALE_RESET();
 
-	compat::disableImageReaderAllocationLimit();
 	startApplication(app);
 
 #ifndef __EMSCRIPTEN__
