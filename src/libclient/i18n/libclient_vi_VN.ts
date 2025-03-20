@@ -264,7 +264,7 @@
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Đổi trục</translation>
     </message>
 </context>
 <context>
