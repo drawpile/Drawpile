@@ -259,7 +259,7 @@
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>Đảo ngược</translation>
     </message>
     <message>
         <location line="+3"/>
