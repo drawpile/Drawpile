@@ -1037,7 +1037,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location filename="../ui/layoutsdialog.ui" line="+14"/>
         <source>Layouts</source>
-        <translation>Agencements</translation>
+        <translation>Mise en Page</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -6004,7 +6004,9 @@ Ce réglage est responsable de l&apos;arrêt de la peinture lorsqu&apos;aucune p
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Corrige la non-linéarité introduite en mélangeant plusieurs tapotements les uns par-dessus les autres. Cette correction devrait vous donner en réponse une pression linéaire (&quot;naturelle&quot;) lorsqu&apos;une pression est mappé sur &apos;Opacité par Produit&apos;, comme normalement. 0.9 est suffisant pour des tracés standard, baissez-le si votre pinceau se disperse trop, ou montez-le si vous utilisez les &apos;tapotements par seconde&apos;.
+La valeur opaque au dessus de 0.0 convient pour les tapotements individuels.
+La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, considérant que chaque pixel aie (tapotements par rayon*2) tapotements de pinceau en moyenne sur un tracé.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6013,14 +6015,16 @@ Ce réglage est responsable de l&apos;arrêt de la peinture lorsqu&apos;aucune p
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rayon de pinceau basique (logarithmique)
+ 0.7 pour 2 pixels
+ 3.0 pour 20 pixels</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Hard brush-circle borders (setting to zero will draw nothing). To reach the maximum hardness, you need to disable Pixel feather.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bordure de pinceau-cercle en dur (le régler sur 0 ne dessinera rien). Pour atteindre la dureté maximale, vous devez désactiver la Plume pixellisé.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6030,28 +6034,31 @@ Ce réglage est responsable de l&apos;arrêt de la peinture lorsqu&apos;aucune p
  5.0 notable blur, thin strokes will disappear</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ce réglage réduit la dureté si nécessaire pour prévenir les effets d&apos;escalier pixelisé (aliasing) en rendant le tapotement plus flou.
+ 0.0 pour le désactiver (gomme fortes et pinceaux pixelisés)
+ 1.0 pour un flou d&apos;un pixel (bonne valeur)
+ 5.0 pour un flou notable; les tracés fins disparaîtront</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Combien de tapotements sont dessinés pendant que le pointeur se déplace à un pinceau de rayon en distance (plus précisément: la valeur de base du rayon)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Identique à au-dessus, mais le rayon actuellement dessiné est utilisé, ce qui peut changer de façon dynamique</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Dabs to draw each second, no matter how far the pointer moves</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tapotements à dessiner chaque seconde, peu importe la distance à laquelle va le pointeur</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6060,7 +6067,9 @@ Ce réglage est responsable de l&apos;arrêt de la peinture lorsqu&apos;aucune p
 2) it will not change the actual radius seen by dabs_per_actual_radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Altère le rayon aléatoirement à chaque tapotement. Vous pouvez aussi faire ça avec l&apos;entrée &apos;aléatoire&apos; dans le réglage du rayon. Si vous le faites ici, deux différences&#xa0;:
+1) La valeur d&apos;opacité sera corrigé de sorte à ce qu&apos;un tapotement de grand rayon sera plus transparent
+2) Cela ne changera pas le rayon actuel de &apos;tapotements par rayon actuel&apos;</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6068,14 +6077,15 @@ Ce réglage est responsable de l&apos;arrêt de la peinture lorsqu&apos;aucune p
 0.0 change immediately as your speed changes (not recommended, but try it)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">A quelle lenteur l&apos;entrée de vitesse réglée avec finesse suit la vitesse réelle
+0.0 la change instantanément si votre vitesse change (non recommandé, mais vous pouvez essayer)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as &apos;fine speed filter&apos;, but note that the range is different</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Similaire à filtre de vitesse réglée avec finesse, mais prenez en compte que sa portée diffère</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6501,139 +6511,139 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/canvasshortcutsdialog.cpp" line="+24"/>
         <source>Key Combination</source>
-        <translation type="unfinished"></translation>
+        <translation>Combinaison de Touches</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mouse Button</source>
-        <translation type="unfinished"></translation>
+        <translation>Bouton de la Souris</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Molette de la Souris</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Constraint Key</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Touche de Contrainte</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pivoter Canevas par Incréments</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pivoter Canevas</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Free Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas without snapping around 0°.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pivotement Libre du Canevas</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas in 15° steps.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pivoter le Canevas par Incréments de 15°</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zoomer sur le Canevas</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sélectionner Couleur</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pick Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner Calque</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Changer la Taille du Pinceau</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Changer la Teinte de Couleur</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Changer la Saturation de Couleur</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Changer la Valeur de Couleur</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Outil de Contrainte</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Outil de Centrage</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Outil de Centrage et de Contrainte</translation>
     </message>
     <message>
         <location line="+98"/>
         <source>A regular key combination on the canvas without further mouse or pen inputs. Example: holding Space to pan, without having to click as well.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Une combinaison de touches régulière sur le canevas sans entrée de la part de la souris ou du stylet. Exemple&#xa0;: Maintenir Espace pour pivoter, sans avoir à cliquer.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Pressing a mouse or pen button, optionally while also holding down keys. Putting the pen down is like a left click. Example: holding space and pressing left click to pan.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Appuyer sur une touche du stylet ou de la souris, optionnellement pendant que d&apos;autres touches sont maintenues. Poser le stylet revient à faire un clic gauche. Exemple&#xa0;: Maintenir Espace et faire un clic gauche pour pivoter.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Turning the mouse wheel or some input device that acts like one, optionally while also holding down keys. Example: scrolling to zoom the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tourner la molette de la souris ou tout composant équivalent, optionnellement pendant que d&apos;autres touches sont maintenues. Exemple&#xa0;: tourner la molette pour zoomer sur le canevas.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Keys to hold down to make rectangle, line or selection tools behave differently. Constrain means to e.g. keep the aspect ratio, center means to e.g. center shapes around the origin.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Touches à maintenir pour faire un rectangle, une ligne ou altérer le comportement de certains outils. Contraindre revient par exemple à garder l&apos;aspect visuel actuel, ou centrer revient par exemple à centrer les formes autour du point d&apos;origine.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Unknown type %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Type %1 inconnu.</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>&lt;b&gt;Conflict:&lt;/b&gt; the existing shortcut for &apos;%1&apos; will be overwritten if you proceed.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Conflit&#xa0;:&lt;/b&gt; le raccourci existant pour &apos;%1&apos; sera écrasé si vous continuez.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can&apos;t assign a shortcut to a Left Click without any keys since that would interfere with drawing.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vous ne pouvez assigner de raccourci au clic gauche sans l&apos;appui d&apos;autres touches, car cela interférerait avec le dessin au clic gauche.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>You can&apos;t assign just a key combination to this action, change the type to mouse button instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous ne pouvez assigner cette combinaison de touches à cette action, veuillez utiliser une touche de la souris à la place.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Assign a shortcut to proceed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Assignez un raccourci pour continuer.</translation>
     </message>
 </context>
 <context>
@@ -6649,17 +6659,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="+426"/>
         <source>Create Invite Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer un Code d&apos;Invitation</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Uses:</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilisations&#xa0;:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;None</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aucu&amp;n</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6674,7 +6684,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Role:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rôle&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -6682,7 +6692,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/curvepresetdialog.cpp" line="+32"/>
         <source>Use</source>
-        <translation type="unfinished"></translation>
+        <translation>Utiliser</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6708,53 +6718,53 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Save Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer la Courbe</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+16"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Rename Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Renommer la Courbe</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Delete Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer la Courbe</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete curve &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Voulez-vous vraiment supprimer la courbe &apos;%1&apos;&#x202f;?</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Smooth Out</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lisser en sortie</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smooth In</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisser en entrée</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lissage</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Linear</source>
-        <translation type="unfinished"></translation>
+        <translation>Linéaire</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Current (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Actuelle (non-sauvegardée)</translation>
     </message>
 </context>
 <context>
@@ -6767,7 +6777,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>% (%1 FPS)</source>
-        <translation type="unfinished"></translation>
+        <translation>% (%1 IPS)</translation>
     </message>
 </context>
 <context>
@@ -6776,64 +6786,64 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/invitedialog.cpp" line="-334"/>
         <location line="+260"/>
         <source>What are invite codes?</source>
-        <translation type="unfinished"></translation>
+        <translation>Qu&apos;est-ce que les codes d&apos;invitation&#x202f;?</translation>
     </message>
     <message>
         <location line="-122"/>
         <source>Invite link copied to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lien d&apos;invitation copié dans le presse-papiers.</translation>
     </message>
     <message numerus="yes">
         <location line="+22"/>
         <source>Invite code link(s) copied to clipboard.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Lien d&apos;invitation copié dans le presse-papiers.</numerusform>
+            <numerusform>Liens d&apos;invitation copiés dans le presse-papiers.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+34"/>
         <source>This server does not support invite codes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ce serveur ne supporte pas les liens d&apos;invitations.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only server administrators can manage invite codes on this session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Seul·e·s les administrateur·ice·s peuvent gérer les liens d&apos;invitations sur cette session.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Only operators and server administrators can manage invite codes on this session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Seul·e·s les opérateur·ice·s et les administrateur·ice·s peuvent gérer les codes d&apos;invitation sur cette session.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Revoke Invite Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Révoquer les Codes d&apos;Invitation</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really revoke %n selected invite code(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Voulez-vous vraiment révoquer %n code d&apos;invitation&#x202f;?</numerusform>
+            <numerusform>Voulez-vous vraiment révoquer %n codes d&apos;invitation&#x202f;?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Invite codes let someone join the session via a limited-use link. You can revoke the code later to take away their access again.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Les codes d&apos;invitation permettent à un·e utilisateur·ice de rejoindre la session via un lien à usage limité. Vous pouvez révoquer ce code plus tard pour leur retirer cet accès.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Someone joining via an invite code bypasses normal session restrictions: they don&apos;t need the session password, can join via web browser, don&apos;t need a registered account and aren&apos;t affected by new joins being blocked.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Un·e utilisateur·ice rejoignant via un code d&apos;invitation passe outre les restrictions de session habituelles&#xa0;: iels n&apos;ont pas besoin du mot de passe de la sessions, peuvent rejoindre depuis un navigateur web, n&apos;ont pas besoin d&apos;un compte enregistré et ne sont pas affectés par les blocages d&apos;arrivée de nouveaux·elles utilisateur·ice·s sur le salon.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>They don&apos;t bypass bans or server-wide restrictions.</source>
         <extracomment>&quot;They&quot; is referring to invite codes.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Iels ne peuvent passer outre les bannissements ou les restrictions à l&apos;échelle du serveur.</translation>
     </message>
 </context>
 <context>
@@ -6841,7 +6851,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/keyframepropertiesdialog.cpp" line="+127"/>
         <source>Key Frame Properties</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Propriétés de la Trame de Référence</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6851,17 +6861,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Search…</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechercher…</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Précédent</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Suivant</translation>
     </message>
 </context>
 <context>
@@ -6879,7 +6889,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+110"/>
         <source>Pass Through</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Passer au Travers</translation>
     </message>
 </context>
 <context>
@@ -6887,27 +6897,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/layoutsdialog.cpp" line="+167"/>
         <source>Current (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Actuelle (non-sauvegardée)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (new)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (nouveau)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (deleted)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (supprimée)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (renamed from %2)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (renommée depuis %2)</translation>
     </message>
     <message>
         <location line="+136"/>
         <source>Undelete</source>
-        <translation type="unfinished"></translation>
+        <translation>Restaurer</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6917,7 +6927,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+31"/>
         <source>Layout Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de a Mise en Page&#xa0;:</translation>
     </message>
     <message>
         <location line="-242"/>
@@ -6927,52 +6937,52 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Default Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Animation par Défaut</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>FireAlpaca-esque</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Façon FireAlpaca</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Horizontal</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hyena</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hyène</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita-esque</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Façon Krita</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>MediBang-esque</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Façon MediBang</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mink</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vison</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Paint.NET-esque</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Façon Paint.NET</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>SAI-esque</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Façon SAI</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Spider</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Araignée</translation>
     </message>
 </context>
 <context>
@@ -6985,7 +6995,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+157"/>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation>Accepter</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -6995,17 +7005,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+20"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrez un mot de passe de compte. Si vous n&apos;avez pas de compte, vous devez vous enregistrer. Ce serveur ne donne pas d&apos;information sur comment faire cette opération.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entrez un mot de passe de compte. Si vous n&apos;avez pas de compte, vous pouvez en enregistrer un sur %1.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ce nom d&apos;utilisateur·ice appartient à un autre compte. Si ce n&apos;est pas votre compte, annulez et recommencez avec un nom différent.</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -7015,146 +7025,146 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Decline</source>
-        <translation type="unfinished"></translation>
+        <translation>Refuser</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+12"/>
         <location line="+12"/>
         <source>Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Règles</translation>
     </message>
     <message>
         <location line="-16"/>
         <location line="+22"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Retour</translation>
     </message>
     <message>
         <location line="+198"/>
         <source>You can&apos;t join this session because:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous ne pouvez rejoindre cette session car&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown reason.</source>
-        <translation type="unfinished"></translation>
+        <translation>Raison inconnue.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Can&apos;t join session</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous ne pouvez rejoindre la session</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>Remove Account</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer le Compte</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really forget this account? This will only remove it from your recent account list, it won&apos;t delete the account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Voulez-vous vraiment oublier ce compte&#x202f;? Cela le retirera de votre liste de comptes récents, il ne sera pas supprimé.</translation>
     </message>
     <message>
         <location line="+48"/>
         <location line="+161"/>
         <source>Enter the name you want to use.</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrez ici le nom que vous souhaitez utiliser.</translation>
     </message>
     <message>
         <location line="-99"/>
         <source>Server Rules for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Règles du Serveur pour %1</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Log in with %1 account</source>
-        <translation type="unfinished"></translation>
+        <translation>Se connecter avec le compte %1</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrez ici le nom que vous souhaitez utiliser. Voir %1 pour plus d&apos;informations sur le serveur.</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ce nom d&apos;utilisateur·ice n&apos;appartient pas à un compte sur ce serveur. Ce n&apos;est pas votre compte Drawpile.net&#x202f;!</translation>
     </message>
     <message>
         <location line="+552"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrez ici le nom d&apos;utilisateur·ice et votre mot de passe pour votre compte sur ce serveur. Ce n&apos;est pas votre compte Drawpile.net&#x202f;!</translation>
     </message>
     <message>
         <location line="-636"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vous pouvez continuer sans compte ici. Si vous souhaitez vous enregistrer cependant, vous pouvez le faire sur %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>An account is required. You can register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Un compte est requis ici. Vous pouvez en enregistrer un sur %1.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You can continue without an account. The server doesn&apos;t provide any information on how to register one either.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vous pouvez continuer sans avoir de compte ici. Cependant, ce serveur ne donne pas d&apos;information sur comment enregistrer de compte.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>An account is required, but the server doesn&apos;t provide any information on how to register one.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Un compte est requis ici, mais ce serveur ne donne pas d&apos;information sur comment enregistrer de compte.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>See %1 for more information about this server. To register an account, visit %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Voir %1 pour plus d&apos;informations sur ce serveur. Pour enregistrer un compte, veuillez visiter %2.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Voir %1 pour plus d&apos;informations sur ce serveur.</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>This username belongs to an account, pick a different one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ce nom d&apos;utilisateur·ice appartient à un compte. Veuillez en utiliser un autre.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>The %1 authentication is not working.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;authentification %1 ne fonctionne pas.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This username doesn&apos;t belong an account on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ce nom d&apos;utilisateur·ice n&apos;appartient à aucun compte sur %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ce nom d&apos;utilisateur·ice appartient à un compte du serveur, vous ne pouvez l&apos;utiliser pour vous connecter via %1 sur ce serveur.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>This username belongs to some other login method, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ce nom d&apos;utilisateur·ice appartient à une autre méthode de connexion, vous ne pouvez l&apos;utiliser pour vous connecter via %1 sur ce serveur.</translation>
     </message>
     <message>
         <location line="+540"/>
         <source>Enter the username and password for your %1 account.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entrez le nom d&apos;utilisateur·ice et le mot de passe pour votre compte %1.</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Log in with &apos;%1&apos; credentials</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Se connecter avec la combinaison de nom d&apos;utilisateur et de mot de passe de &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log in with &apos;%1&apos; credentials (INSECURE CONNECTION!)</source>
-        <translation type="unfinished"></translation>
+        <translation>Se connecter avec la combinaison de nom d&apos;utilisateur et de mot de passe de &apos;%1&apos; (CONNEXION NON-SÉCURISÉE&#x202f;!)</translation>
     </message>
 </context>
 <context>
@@ -7175,12 +7185,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+144"/>
         <source>Building index...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Construction de l&apos;index...</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Index building failed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Échec de la construction de l&apos;index.</translation>
     </message>
     <message>
         <location line="+165"/>
@@ -7193,7 +7203,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/resetdialog.cpp" line="+132"/>
         <source>Reset Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Réinitialiser la Session</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -7208,12 +7218,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+71"/>
         <source>Error opening file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur lors de l&apos;ouverture du fichier&#xa0;: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error opening file: %1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur lors de l&apos;ouverture du fichier&#xa0;: %1 (%2)</translation>
     </message>
     <message>
         <location line="-3"/>
@@ -7226,22 +7236,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="+30"/>
         <source>Expand up</source>
-        <translation type="unfinished"></translation>
+        <translation>Étendre vers le haut</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand left</source>
-        <translation type="unfinished"></translation>
+        <translation>Étendre vers la gauche</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand right</source>
-        <translation type="unfinished"></translation>
+        <translation>Étendre vers la droite</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand down</source>
-        <translation type="unfinished"></translation>
+        <translation>Étendre vers le bas</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7251,7 +7261,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Centrer</translation>
     </message>
     <message>
         <location line="+93"/>
@@ -7281,13 +7291,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+49"/>
         <source>Shrink and feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Réduire et flouter depuis le bord du canevas</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Flouter depuis le bord du canevas</translation>
     </message>
 </context>
 <context>
@@ -7295,9 +7305,9 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location filename="../dialogs/sessionsettings.cpp" line="+355"/>
         <source>Imported %n session ban(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n Bannissement de session importé.</numerusform>
+            <numerusform>%n Bannissements de session importés.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -7305,8 +7315,8 @@ Values above 0.5 may not be noticeable.</source>
         <source>%1 %n was/were not imported because it was/they were invalid or duplicates.</source>
         <extracomment>%1 is the &quot;Imported %n session ban(s).&quot; message.</extracomment>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%1 %n n&apos;a pas pu être importé car invalide, ou est un duplicata.</numerusform>
+            <numerusform>%1 %n n&apos;ont pas pu être importés car invalides, ou sont des duplicatas.</numerusform>
         </translation>
     </message>
     <message>
@@ -7314,32 +7324,32 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+469"/>
         <location line="+12"/>
         <source>Session Ban Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer les Bannissements de Session</translation>
     </message>
     <message>
         <location line="-467"/>
         <source>Session Ban Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter les Bannissements de Session</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error saving bans: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur de sauvegarde des bannissements&#xa0;: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Session Ban Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur de Bannissement de Session</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>This list shows only registered users.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cette liste ne montre que les utilisateur·ice·s enregistré·e·s.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only operators can see this list.</source>
-        <translation type="unfinished"></translation>
+        <translation>Seul·e·s les opérateur·ice·s peuvent voir cette liste.</translation>
     </message>
     <message>
         <location line="+69"/>
@@ -7389,46 +7399,46 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+41"/>
         <source>never</source>
         <extracomment>&quot;Idle timeout: never&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>jamais</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>disabled by moderator</source>
         <extracomment>&quot;Idle timeout: disabled by moderator&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>désactivé par modérateur·ice</translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n hour(s)</source>
         <extracomment>Idle timeout hours. May be joined with minutes and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n heure</numerusform>
+            <numerusform>%n heures</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n minute(s)</source>
         <extracomment>Idle timeout minutes. May be joined with hours and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n minute</numerusform>
+            <numerusform>%n minutes</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n second(s)</source>
         <extracomment>Idle timeout seconds. May be joined with hours and minutes.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n seconde</numerusform>
+            <numerusform>%n secondes</numerusform>
         </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>, </source>
         <extracomment>This string joins the hours, minutes and seconds for the idle time.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>, </translation>
     </message>
     <message>
         <location line="+122"/>
@@ -7460,59 +7470,59 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+31"/>
         <location line="+122"/>
         <source>Error opening &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur lors de l&apos;ouverture de &apos;%1&apos;&#xa0;: %2</translation>
     </message>
     <message>
         <location line="-91"/>
         <source>This server does not support importing encrypted bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ce serveur ne supporte pas l&apos;importation de bannissements chiffrés.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>This server does not support importing plain bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ce serveur ne supporte pas l&apos;importation de bannissements en clair.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>File does not appear to contain any ban data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le fichier ne semble pas contenir de données de bannissement.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Choose Ban Export Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Choisir le Type d&apos;Export de Bannissement</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Since you are a moderator, you can export bans encrypted or plain. Encrypted bans can only be imported on this server. Which format do you want to export?</source>
-        <translation type="unfinished"></translation>
+        <translation>Étant donné que vous êtes modérateur·ice, vous pouvez exporter les bannissements en clair ou chiffrés. Les bannissements chiffrés ne pourront être importés que sur ce serveur. Quel format souhaitez-vous utiliser pour l&apos;exportation&#x202f;?</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>Chiffré</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Plain</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Complet</translation>
     </message>
     <message>
         <location line="+52"/>
         <location line="+12"/>
         <location line="+98"/>
         <source>Role Import</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importer Rôles</translation>
     </message>
     <message>
         <location line="-97"/>
         <source>File does not contain a valid role export.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le fichier ne contient pas un rôle d&apos;export valide.</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Error saving roles: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur lors de l&apos;enregistrement des rôles&#xa0;: %1</translation>
     </message>
     <message numerus="yes">
         <location line="+61"/>
