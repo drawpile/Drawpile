@@ -1614,7 +1614,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about reconnect to the session and close this window.</source>
-        <translation></translation>
+        <translation>You&apos;re about to reconnect to the session and close this window.</translation>
     </message>
     <message>
         <location line="+25"/>
