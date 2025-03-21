@@ -958,7 +958,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+10"/>
         <source>Opacity:</source>
-        <translation type="unfinished">Opacité&#xa0;:</translation>
+        <translation>Opacité&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -989,7 +989,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+7"/>
         <source>Sketch mode for you</source>
-        <translation type="unfinished">Mode esquisse pour vous</translation>
+        <translation>Mode esquisse pour vous</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1024,7 +1024,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+7"/>
         <source>Blue tint</source>
-        <translation type="unfinished">Teinte bleue</translation>
+        <translation>Teinte bleue</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1042,7 +1042,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+16"/>
         <source>Save</source>
-        <translation type="unfinished">Enregistrer</translation>
+        <translation>Enregistrer</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1052,12 +1052,12 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+7"/>
         <source>Delete</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished">Les panneaux de Drawpile peuvent être librement réarrangés. Vous pouvez utiliser Affichage &gt; Panneaux &gt; Arranger les Panneaux pour les déplacer plus facilement. Assurez-vous que votre arrangement convient pour votre résolution d&apos;écran, autrement, il pourrait arriver que certains contrôles se retrouvent en dehors de l&apos;écran.</translation>
+        <translation>Les panneaux de Drawpile peuvent être librement réarrangés. Vous pouvez utiliser Affichage &gt; Panneaux &gt; Arranger les Panneaux pour les déplacer plus facilement. Assurez-vous que votre arrangement convient pour votre résolution d&apos;écran, autrement, il pourrait arriver que certains contrôles se retrouvent en dehors de l&apos;écran.</translation>
     </message>
 </context>
 <context>
