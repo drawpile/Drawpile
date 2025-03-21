@@ -12026,7 +12026,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+29"/>
         <source>Unknown command: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Commande inconnue&#xa0;: %1</translation>
     </message>
     <message>
         <location line="-711"/>
