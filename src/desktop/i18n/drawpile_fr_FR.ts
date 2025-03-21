@@ -12105,7 +12105,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Curve pasted from clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>Collé à partir du presse-papiers</translation>
     </message>
     <message>
         <location line="+3"/>
