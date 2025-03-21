@@ -12227,7 +12227,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+88"/>
         <source>Self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Certificat auto-signé</translation>
     </message>
     <message>
         <location line="+5"/>
