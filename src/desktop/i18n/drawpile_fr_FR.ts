@@ -12090,7 +12090,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Presets…</source>
-        <translation>Préréglages</translation>
+        <translation>Préréglages…</translation>
     </message>
     <message>
         <location line="+3"/>
