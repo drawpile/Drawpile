@@ -12237,7 +12237,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Pinned self-signed certificate</source>
-        <translation>Certificat auto-signé</translation>
+        <translation>Certificat auto-signé épinglé</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -12247,52 +12247,52 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Pinned valid certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Certificat valide épinglé</translation>
     </message>
     <message>
         <location line="+169"/>
         <source>not connected</source>
-        <translation type="unfinished">non connecté</translation>
+        <translation>non connecté</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Connecting...</source>
-        <translation type="unfinished">Connexion...</translation>
+        <translation>Connexion...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Connecting to %1...</source>
-        <translation type="unfinished">Connexion à %1...</translation>
+        <translation>Connexion à %1...</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Connected</source>
-        <translation type="unfinished">Connecté</translation>
+        <translation>Connecté</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Host: %1</source>
-        <translation type="unfinished">Hôte : %1</translation>
+        <translation>Hôte&#xa0;: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Logging out...</source>
-        <translation type="unfinished">Déconnexion...</translation>
+        <translation>Déconnexion...</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Notice</source>
-        <translation type="unfinished">Note</translation>
+        <translation>Notice</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile&apos;s help page for workarounds.</source>
-        <translation type="unfinished">Votre fournisseur d&apos;accès utilise un Carrier Grade NAT (NAT444). Ceci rend impossible la connexion directe avec vous. Consulter la documentation de Drawpile pour trouver un moyen de contourner ce problème.</translation>
+        <translation>Votre fournisseur d&apos;accès utilise un Carrier Grade NAT (NAT444). Ceci rend impossible la connexion directe avec vous. Consulter la documentation de Drawpile pour trouver un moyen de contourner ce problème.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished">Ne plus afficher</translation>
+        <translation>Ne plus afficher</translation>
     </message>
 </context>
 <context>
@@ -12300,7 +12300,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/notifbar.cpp" line="+123"/>
         <source>Dismiss (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Passer (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
