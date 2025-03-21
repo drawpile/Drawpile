@@ -12080,7 +12080,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Coller</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12090,7 +12090,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Presets…</source>
-        <translation type="unfinished"></translation>
+        <translation>Préréglages</translation>
     </message>
     <message>
         <location line="+3"/>
