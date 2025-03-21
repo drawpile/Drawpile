@@ -887,6 +887,47 @@ bool handlePenLeaveMsg(const POINTER_PEN_INFO &penInfo)
     return false;
 }
 
+static QPoint getGlobalPosition(
+	const PenPointerItem &penPointerItem, const POINTER_PEN_INFO &penInfo)
+{
+	return QPoint(
+		int(penInfo.pointerInfo.ptPixelLocationRaw.x *
+			penPointerItem.oneOverDpr),
+		int(penInfo.pointerInfo.ptPixelLocationRaw.y *
+			penPointerItem.oneOverDpr));
+}
+
+static QPoint getGlobalPositionNative(
+	const PenPointerItem &penPointerItem, const POINTER_PEN_INFO &penInfo,
+	const PointerDeviceItem &deviceItem)
+{
+	QWindow *window = penPointerItem.activeWindow.data();
+	if(window) {
+		const RECT &pRect = deviceItem.pointerDeviceRect;
+		const RECT &dRect = deviceItem.displayRect;
+		QPointF nativeGlobalPosF = QPointF(
+			dRect.left +
+				qreal(penInfo.pointerInfo.ptHimetricLocation.x - pRect.left) /
+					(pRect.right - pRect.left) * (dRect.right - dRect.left),
+			dRect.top +
+				qreal(penInfo.pointerInfo.ptHimetricLocation.y - pRect.top) /
+					(pRect.bottom - pRect.top) * (dRect.bottom - dRect.top));
+		return QHighDpi::fromNativePixels(nativeGlobalPosF, window).toPoint();
+	} else {
+		return getGlobalPosition(penPointerItem, penInfo);
+	}
+}
+
+static QPoint getPosInHwndWidget(
+	const PenPointerItem &penPointerItem, const POINTER_PEN_INFO &penInfo,
+	const PointerDeviceItem &deviceItem, QWidget *hwndWidget)
+{
+	return hwndWidget->mapFromGlobal(
+		useNativePositions
+			? getGlobalPositionNative(penPointerItem, penInfo, deviceItem)
+			: getGlobalPosition(penPointerItem, penInfo));
+}
+
 bool handleSinglePenUpdate(PenPointerItem &penPointerItem, const POINTER_PEN_INFO &penInfo, const PointerDeviceItem &device, const bool shouldSynthesizeMouseEvent)
 {
     QWidget *targetWidget;
@@ -923,10 +964,8 @@ bool handleSinglePenUpdate(PenPointerItem &penPointerItem, const POINTER_PEN_INF
                 penPointerItem.oneOverDpr = 1.0 / qApp->devicePixelRatio();
             }
         }
-        QPoint posInHwndWidget = hwndWidget->mapFromGlobal(QPoint(
-            static_cast<int>(penInfo.pointerInfo.ptPixelLocationRaw.x * penPointerItem.oneOverDpr),
-            static_cast<int>(penInfo.pointerInfo.ptPixelLocationRaw.y * penPointerItem.oneOverDpr)
-        ));
+		QPoint posInHwndWidget =
+			getPosInHwndWidget(penPointerItem, penInfo, device, hwndWidget);
         targetWidget = hwndWidget->childAt(posInHwndWidget);
         if (!targetWidget) {
             // dbgTablet << "No childQWidget at cursor position";
@@ -1008,10 +1047,13 @@ bool handlePenDownMsg(const POINTER_PEN_INFO &penInfo)
             currentPointerIt->oneOverDpr = 1.0 / qApp->devicePixelRatio();
         }
     }
-    QPoint posInHwndWidget = hwndWidget->mapFromGlobal(QPoint(
-        static_cast<int>(penInfo.pointerInfo.ptPixelLocationRaw.x * currentPointerIt->oneOverDpr),
-        static_cast<int>(penInfo.pointerInfo.ptPixelLocationRaw.y * currentPointerIt->oneOverDpr)
-    ));
+    const auto devIt = penDevices.find(penInfo.pointerInfo.sourceDevice);
+    if (devIt == penDevices.end()) {
+        dbgTablet << "Device not registered???";
+        return false;
+    }
+	QPoint posInHwndWidget =
+		getPosInHwndWidget(*currentPointerIt, penInfo, *devIt, hwndWidget);
     QWidget *targetWidget = hwndWidget->childAt(posInHwndWidget);
     if (!targetWidget) {
         dbgTablet << "No childQWidget at cursor position";
@@ -1035,12 +1077,6 @@ bool handlePenDownMsg(const POINTER_PEN_INFO &penInfo)
     }
 
     // penDown
-    const auto devIt = penDevices.find(penInfo.pointerInfo.sourceDevice);
-    if (devIt == penDevices.end()) {
-        dbgTablet << "Device not registered???";
-        return false;
-    }
-
     bool handled = sendPositionalTabletEvent(targetWidget, QEvent::TabletPress, penInfo, *devIt, *currentPointerIt, true);
     currentPointerIt->widgetAcceptsPenEvent = handled;
     if (!handled) {
