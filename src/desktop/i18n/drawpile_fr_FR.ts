@@ -12313,7 +12313,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="+41"/>
         <source>Add</source>
-        <translation type="unfinished">Ajouter</translation>
+        <translation>Ajouter</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12323,7 +12323,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished">Retirer</translation>
+        <translation>Retirer</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -12336,7 +12336,10 @@ Values above 0.5 may not be noticeable.</source>
 Green: %2
 Blue: %3
 Hex: %4</source>
-        <translation type="unfinished"></translation>
+        <translation>Rouge&#xa0;: %1
+Vert&#xa0;: %2
+Bleu&#xa0;: %3
+Hex&#xa0;: %4</translation>
     </message>
 </context>
 <context>
@@ -12344,12 +12347,12 @@ Hex: %4</source>
     <message>
         <location filename="../widgets/presetselector.cpp" line="+28"/>
         <source>Presets</source>
-        <translation type="unfinished">Préréglages</translation>
+        <translation>Préréglages</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Load</source>
-        <translation type="unfinished">Charger</translation>
+        <translation>Charger</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12359,7 +12362,7 @@ Hex: %4</source>
     <message>
         <location line="+3"/>
         <source>Delete</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation>Supprimer</translation>
     </message>
 </context>
 <context>
