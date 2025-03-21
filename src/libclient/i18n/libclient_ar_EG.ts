@@ -918,7 +918,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+23"/>
         <source>Invalid brush pack: order.conf contains no brushes</source>
-        <translation>مجموعة فُرَش غير صالحة: لا يحتوي order.conf على أي فُرَش.</translation>
+        <translation>مجموعة فُرَش غير صالحة: لا يحتوي order.conf على أي فُرَش</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -958,7 +958,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+61"/>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
-        <translation>لا يحتوي ملف الفُرَش &apos;%1&apos; على ملف JSON صالح: %1</translation>
+        <translation>لا يحتوي ملف الفُرَش &apos;%1&apos; على ملف JSON صالح</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -978,7 +978,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+129"/>
         <source>No brushes exported</source>
-        <translation>لم يتم تصدير أي فُرَش.</translation>
+        <translation>لم يتم تصدير أي فُرَش</translation>
     </message>
     <message>
         <location line="+6"/>
