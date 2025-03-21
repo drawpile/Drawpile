@@ -12318,7 +12318,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Modify</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12328,7 +12328,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Set palette color</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisir couleur palette</translation>
     </message>
     <message>
         <location line="+203"/>
@@ -12370,7 +12370,7 @@ Hex&#xa0;: %4</translation>
     <message>
         <location filename="../widgets/recentscroll.cpp" line="+28"/>
         <source>No recent files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucun fichier récent</translation>
     </message>
     <message>
         <location line="+28"/>
