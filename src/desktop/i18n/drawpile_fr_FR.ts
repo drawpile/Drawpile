@@ -12031,22 +12031,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-711"/>
         <source>Clear</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation>Nettoyer</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Compact mode</source>
-        <translation type="unfinished">Mode compact</translation>
+        <translation>Mode compact</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Detach</source>
-        <translation type="unfinished">Détacher</translation>
+        <translation>Détacher</translation>
     </message>
     <message>
         <location line="-2"/>
         <source>Attach</source>
-        <translation type="unfinished">Attacher</translation>
+        <translation>Attacher</translation>
     </message>
 </context>
 <context>
@@ -12054,7 +12054,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatwindow.cpp" line="+12"/>
         <source>Chat</source>
-        <translation type="unfinished">Discussion</translation>
+        <translation>Discussion</translation>
     </message>
 </context>
 <context>
@@ -12062,7 +12062,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/colorbutton.cpp" line="+42"/>
         <source>Select a color</source>
-        <translation type="unfinished">Choisir une couleur</translation>
+        <translation>Choisir une couleur</translation>
     </message>
 </context>
 <context>
@@ -12070,12 +12070,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/curvewidget.cpp" line="+109"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Copier</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Copies this curve to the clipboard. You can paste it into another setting or into the chat to share it with other users.</source>
-        <translation type="unfinished"></translation>
+        <translation>Copie la courbe dans le presse-papier. Vous pouvez la coller dans d&apos;autres paramètres ou dans la discussion pour la partager avec d&apos;autres utilisateurs.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12085,7 +12085,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Pastes a copied curve from the clipboard, overwriting what is there currently.</source>
-        <translation type="unfinished"></translation>
+        <translation>Colle une courbe copiée depuis le presse-papier, écrasant ce qui y est actuellement.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -12095,7 +12095,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Save and load curve presets.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauvegarder et charger les préréglages.</translation>
     </message>
     <message>
         <location line="+85"/>
