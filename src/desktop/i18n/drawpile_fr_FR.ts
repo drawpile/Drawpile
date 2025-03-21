@@ -12232,7 +12232,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Known self-signed certificate</source>
-        <translation>Certificat auto-signé</translation>
+        <translation>Certificat auto-signé connu</translation>
     </message>
     <message>
         <location line="+5"/>
