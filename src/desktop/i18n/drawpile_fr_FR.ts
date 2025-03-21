@@ -12100,7 +12100,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+85"/>
         <source>Curve copied to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>Code copié dans le presse-papier.</translation>
     </message>
     <message>
         <location line="+12"/>
