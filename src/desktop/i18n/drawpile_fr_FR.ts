@@ -12179,17 +12179,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/mypaintinput.cpp" line="+137"/>
         <source>Output Range: </source>
-        <translation>Gamme de la sortie </translation>
+        <translation>Plage de Sortie&#xa0;: </translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Input Minimum: </source>
-        <translation type="unfinished"></translation>
+        <translation>Entrée Minimale&#xa0;: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Input Maximum: </source>
-        <translation type="unfinished"></translation>
+        <translation>Entrée Maximale&#xa0;: </translation>
     </message>
 </context>
 <context>
@@ -12197,32 +12197,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/netstatus.cpp" line="+58"/>
         <source>Copy address to clipboard</source>
-        <translation type="unfinished">Copier l&apos;adresse dans le presse-papier</translation>
+        <translation>Copier l&apos;adresse dans le presse-papier</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Copy session URL to clipboard</source>
-        <translation type="unfinished">Copier l&apos;URL de la session dans le presse-papier</translation>
+        <translation>Copier l&apos;URL de la session dans le presse-papier</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished">Obtenir l&apos;adresse IP externe</translation>
+        <translation>Obtenir l&apos;adresse IP externe</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Hide address</source>
-        <translation type="unfinished">Cacher l&apos;adresse</translation>
+        <translation>Cacher l&apos;adresse</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Statistics</source>
-        <translation type="unfinished">Statistiques</translation>
+        <translation>Statistiques</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Show certificate</source>
-        <translation type="unfinished">Afficher le certificat</translation>
+        <translation>Afficher le certificat</translation>
     </message>
     <message>
         <location line="+88"/>
