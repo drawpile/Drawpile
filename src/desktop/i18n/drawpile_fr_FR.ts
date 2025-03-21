@@ -12370,17 +12370,17 @@ Hex&#xa0;: %4</translation>
     <message>
         <location filename="../widgets/recentscroll.cpp" line="+28"/>
         <source>No recent files.</source>
-        <translation>Aucun fichier récent</translation>
+        <translation>Aucun fichier récent.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>No recent hosts.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas d&apos;hôtes récents.</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>Remove</source>
-        <translation type="unfinished">Retirer</translation>
+        <translation>Retirer</translation>
     </message>
 </context>
 <context>
@@ -12388,42 +12388,42 @@ Hex&#xa0;: %4</translation>
     <message>
         <location filename="../widgets/timelinewidget.cpp" line="+607"/>
         <source>Blank key frame (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Image clé vierge (dupliquée)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blank key frame %1 (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Image clé vierge %1 (dupliquée)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blank key frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Image clé vierge</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blank key frame %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Image clé vierge %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Key frame on %1 (duplicate)</source>
-        <translation type="unfinished">Trame de référence sur %1 (dupliquer)</translation>
+        <translation>Image clé sur %1 (dupliquer)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key frame %1 on %2 (duplicate)</source>
-        <translation type="unfinished">Trame de référence %1 sur %2 (dupliquer)</translation>
+        <translation>Image clé %1 sur %2 (dupliquer)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Key frame on %1</source>
-        <translation>Trame de référence sur %1</translation>
+        <translation>Image clé sur %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key frame %1 on %2</source>
-        <translation>Trame de référence %1 à %2</translation>
+        <translation>Image clé %1 à %2</translation>
     </message>
     <message>
         <location line="+6"/>
