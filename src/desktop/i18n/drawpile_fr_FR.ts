@@ -12428,7 +12428,7 @@ Hex&#xa0;: %4</translation>
     <message>
         <location line="+6"/>
         <source>Toggle visibility</source>
-        <translation>Basculer la visibilité</translation>
+        <translation>Changer la visibilité</translation>
     </message>
     <message>
         <location line="+2"/>
