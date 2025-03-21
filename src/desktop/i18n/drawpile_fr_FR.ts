@@ -12105,12 +12105,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Curve pasted from clipboard.</source>
-        <translation>Collé à partir du presse-papiers</translation>
+        <translation>Courbe collée à partir du presse-papiers</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Clipboard does not appear to contain a curve.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le presse-papier ne semble pas contenir de courbe.</translation>
     </message>
 </context>
 <context>
@@ -12118,7 +12118,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/dualcolorbutton.cpp" line="+31"/>
         <source>Set foreground color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Définir la couleur du premier plan…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -12128,12 +12128,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Reset colors to black and white</source>
-        <translation type="unfinished"></translation>
+        <translation>Réinitialiser les couleurs en blanc et noir</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Swap foreground and background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Échanger les couleurs du premier plan et de l&apos;arrière plan</translation>
     </message>
 </context>
 <context>
