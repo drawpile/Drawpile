@@ -12123,7 +12123,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Set background color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Définir la couleur de fond…</translation>
     </message>
     <message>
         <location line="+5"/>
