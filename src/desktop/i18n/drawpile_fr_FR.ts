@@ -12151,7 +12151,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Shrink</source>
-        <translation type="unfinished"></translation>
+        <translation>Réduire</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12166,7 +12166,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+93"/>
         <source>Shrink: </source>
-        <translation type="unfinished"></translation>
+        <translation>Réduction: </translation>
     </message>
     <message>
         <location line="+0"/>
