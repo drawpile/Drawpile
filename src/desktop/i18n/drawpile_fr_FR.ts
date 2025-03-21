@@ -12105,7 +12105,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Curve pasted from clipboard.</source>
-        <translation>Courbe collée à partir du presse-papiers</translation>
+        <translation>Courbe collée à partir du presse-papiers.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12166,7 +12166,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+93"/>
         <source>Shrink: </source>
-        <translation>Réduction: </translation>
+        <translation>Réduction&#xa0;: </translation>
     </message>
     <message>
         <location line="+0"/>
