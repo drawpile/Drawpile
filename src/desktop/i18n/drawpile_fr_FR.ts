@@ -12440,8 +12440,8 @@ Hex&#xa0;: %4</translation>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
-        <translation>Pas de pistes existantes.
-Pour en ajouter, appuyez sur le bouton +
+        <translation>Pas de pistes pour l&apos;instant.
+Pour en ajouter, appuyez sur le bouton + au-dessus
 Ou par Animation ▸ Nouvelle Piste.</translation>
     </message>
     <message>
@@ -12467,7 +12467,7 @@ Ou par Animation ▸ Nouvelle Piste.</translation>
     <message>
         <location line="+1"/>
         <source>Frame Count (key frames beyond this point will be deleted)</source>
-        <translation>Nombre de Frames (les images-clé au delà de ce point seront effacées)</translation>
+        <translation>Nombre d&apos;images (les images clé au delà de ce point seront effacées)</translation>
     </message>
     <message>
         <location line="+11"/>
