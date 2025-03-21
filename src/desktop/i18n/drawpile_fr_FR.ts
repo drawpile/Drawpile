@@ -12123,7 +12123,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Set background color…</source>
-        <translation>Définir la couleur de fond…</translation>
+        <translation>Définir la couleur de l&apos;arrière plan…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -12141,12 +12141,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/expandshrinkspinner.cpp" line="+27"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>Agrandir</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12156,7 +12156,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Round expansion shape</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forme d&apos;agrandissement ronde</translation>
     </message>
     <message>
         <location line="+2"/>
