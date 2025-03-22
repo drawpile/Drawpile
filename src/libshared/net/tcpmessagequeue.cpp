@@ -90,7 +90,7 @@ void TcpMessageQueue::readData()
 			return;
 		}
 
-		if(m_gracefullyDisconnecting) {
+		if(m_gracefullyDisconnecting && !m_quietDisconnecting) {
 			// Ignore incoming data when we're in the process of disconnecting
 			if(read > 0) {
 				continue;
@@ -131,6 +131,20 @@ void TcpMessageQueue::readData()
 			} else if(type == MSG_TYPE_KEEP_ALIVE) {
 				// Nothing to do, just keeps the connection alive if the client
 				// fails to send out a ping due upload queue saturation.
+
+			} else if(m_gracefullyDisconnecting) {
+				// Just keep echoing everything that has a client effect.
+				if(type == MSG_TYPE_CHAT || type == MSG_TYPE_PRIVATE_CHAT ||
+				   type >= MSG_TYPE_CLIENT_META) {
+					m_outbox.enqueue(Message::noinc(DP_message_new_opaque(
+						DP_MessageType(type), m_recvbuffer[3],
+						reinterpret_cast<const unsigned char *>(
+							m_recvbuffer + DP_MESSAGE_HEADER_LENGTH),
+						messageLength - DP_MESSAGE_HEADER_LENGTH)));
+					if(m_sendbuffer.isEmpty()) {
+						writeData();
+					}
+				}
 
 			} else {
 				// The rest are normal messages
@@ -213,7 +227,7 @@ void TcpMessageQueue::dataWritten(qint64 bytes)
 	if(m_socket->bytesToWrite() == 0) {
 		if(m_sendbuffer.isEmpty() && !messagesInOutbox()) {
 			emit allSent();
-			if(m_gracefullyDisconnecting) {
+			if(m_gracefullyDisconnecting && !m_quietDisconnecting) {
 				qInfo("All sent, gracefully disconnecting.");
 				m_socket->disconnectFromHost();
 			}

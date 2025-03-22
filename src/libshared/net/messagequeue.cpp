@@ -13,6 +13,7 @@ MessageQueue::MessageQueue(bool decodeOpaque, QObject *parent)
 	: QObject(parent)
 	, m_decodeOpaque(decodeOpaque)
 	, m_gracefullyDisconnecting(false)
+	, m_quietDisconnecting(false)
 	, m_smoothEnabled(false)
 	, m_smoothDrainRate(DEFAULT_SMOOTH_DRAIN_RATE)
 	, m_smoothTimer(nullptr)
@@ -233,7 +234,7 @@ void MessageQueue::sendArtificallyLaggedMessages()
 
 void MessageQueue::sendPingMsg(bool pong)
 {
-	if(!m_gracefullyDisconnecting) {
+	if(!m_gracefullyDisconnecting || (m_quietDisconnecting && pong)) {
 		if(m_artificialLagMs == 0) {
 			resetKeepAliveTimer();
 			enqueuePing(pong);
@@ -244,17 +245,47 @@ void MessageQueue::sendPingMsg(bool pong)
 	}
 }
 
-void MessageQueue::sendDisconnect(
+bool MessageQueue::sendDisconnect(
 	GracefulDisconnect reason, const QString &message)
 {
+	bool wasAlreadyDisconnecting = false;
 	if(m_gracefullyDisconnecting) {
-		qWarning("sendDisconnect: already disconnecting.");
+		if(m_quietDisconnecting) {
+			m_gracefullyDisconnecting = false;
+			m_quietDisconnecting = false;
+		} else {
+			qWarning("sendDisconnect: already disconnecting.");
+			wasAlreadyDisconnecting = true;
+		}
 	}
 	net::Message msg = net::makeDisconnectMessage(0, uint8_t(reason), message);
 	send(msg);
 	m_gracefullyDisconnecting = true;
 	afterDisconnectSent();
 	setSmoothEnabled(false);
+	if(m_pingTimer) {
+		m_pingTimer->stop();
+	}
+	return wasAlreadyDisconnecting;
+}
+
+void MessageQueue::quietDisconnect()
+{
+	if(m_gracefullyDisconnecting) {
+		qWarning("quietDisconnect: already disconnecting.");
+	}
+	m_gracefullyDisconnecting = true;
+	m_quietDisconnecting = true;
+	afterDisconnectSent();
+	setSmoothEnabled(false);
+	if(m_pingTimer) {
+		m_pingTimer->stop();
+	}
+}
+
+void MessageQueue::forceDisconnect()
+{
+	abortSocket();
 }
 
 void MessageQueue::sendPing()
@@ -271,7 +302,7 @@ void MessageQueue::sendPing()
 
 void MessageQueue::resetLastRecvTimer()
 {
-	if(!m_gracefullyDisconnecting) {
+	if(!m_gracefullyDisconnecting || m_quietDisconnecting) {
 		resetDeadlineTimer(m_lastRecvTimer, m_idleTimeout);
 	}
 }
@@ -283,7 +314,12 @@ void MessageQueue::resetKeepAliveTimer()
 
 void MessageQueue::handlePing(bool isPong)
 {
-	if(!m_gracefullyDisconnecting) {
+	if(m_gracefullyDisconnecting) {
+		if(!isPong && m_quietDisconnecting) {
+			// Keep replying to pings to keep the connection up
+			sendPingMsg(true);
+		}
+	} else {
 		if(isPong) {
 			// We got a Pong back: measure latency
 			if(m_pingSentTimer.isValid()) {

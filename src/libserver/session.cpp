@@ -1638,7 +1638,7 @@ void Session::resetSession(int resetter, const QString &type)
 		QStringLiteral("init")));
 }
 
-void Session::killSession(const QString &message, bool terminate)
+void Session::killSession(const QString &message, bool terminate, bool quiet)
 {
 	if(m_state == State::Shutdown)
 		return;
@@ -1648,16 +1648,27 @@ void Session::killSession(const QString &message, bool terminate)
 	stopRecording();
 
 	for(Client *c : m_clients) {
-		c->disconnectClient(
-			Client::DisconnectionReason::Shutdown, message,
-			terminate ? QStringLiteral("terminate=true")
-					  : QStringLiteral("terminate=false"));
+		if(quiet) {
+			c->quietDisconnectClient();
+		} else {
+			c->disconnectClient(
+				Client::DisconnectionReason::Shutdown, message,
+				terminate ? QStringLiteral("terminate=true")
+						  : QStringLiteral("terminate=false"));
+		}
 		c->setSession(nullptr);
 	}
 	m_clients.clear();
 
-	if(terminate)
+	if(quiet) {
+		log(Log()
+				.about(Log::Level::Info, Log::Topic::Status)
+				.message("Quietly terminating session"));
+	}
+
+	if(terminate) {
 		m_history->terminate();
+	}
 
 	this->deleteLater();
 }
@@ -2231,15 +2242,22 @@ JsonApiResult Session::callJsonApi(
 		}
 
 	} else if(method == JsonApiMethod::Delete) {
-		QString reason = request[QStringLiteral("reason")].toString().trimmed();
-		if(!reason.isEmpty()) {
-			keyMessageAll(
-				QStringLiteral("Session shut down by administrator: %1")
-					.arg(reason),
-				true, net::ServerReply::KEY_TERMINATE_SESSION_ADMIN,
-				{{QStringLiteral("reason"), reason}});
+		if(parseRequestBool(request, QStringLiteral("quiet"), 0, 0)) {
+			killSession(
+				QStringLiteral("Session quietly terminated by administrator"),
+				true, true);
+		} else {
+			QString reason =
+				request[QStringLiteral("reason")].toString().trimmed();
+			if(!reason.isEmpty()) {
+				keyMessageAll(
+					QStringLiteral("Session shut down by administrator: %1")
+						.arg(reason),
+					true, net::ServerReply::KEY_TERMINATE_SESSION_ADMIN,
+					{{QStringLiteral("reason"), reason}});
+			}
+			killSession(QStringLiteral("Session terminated by administrator"));
 		}
-		killSession(QStringLiteral("Session terminated by administrator"));
 		return JsonApiResult{
 			JsonApiResult::Ok, QJsonDocument(QJsonObject{{"status", "ok"}})};
 	}
