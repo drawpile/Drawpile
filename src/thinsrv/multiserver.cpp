@@ -598,6 +598,8 @@ JsonApiResult MultiServer::serverJsonApi(
 		config::RequireMatchingHost,
 		config::AllowGuestWebHosts,
 		config::Invites,
+		config::ForbiddenNameRegex,
+		config::FilterNameRegex,
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 

@@ -502,6 +502,13 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 		return;
 	}
 
+	if(m_config->isNameBanned(username)) {
+		sendError(
+			QStringLiteral("forbiddenUsername"),
+			QStringLiteral("Forbidden username"));
+		return;
+	}
+
 	IdentIntent intent =
 		parseIdentIntent(cmd.kwargs[QStringLiteral("intent")].toString());
 	if(intent == IdentIntent::Invalid) {
