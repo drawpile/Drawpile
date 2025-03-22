@@ -6348,7 +6348,7 @@ En la modifiant de manière aléatoire, vous pouvez générer une entrée aléat
         <source>Aspect ratio of the dabs; must be &gt;= 1.0, where 1.0 means a perfectly round dab.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Rapport d&apos;aspect des touches&#x202f;; doit être &gt;= 1,0, où 1,0 signifie une touche parfaitement ronde.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6358,14 +6358,17 @@ En la modifiant de manière aléatoire, vous pouvez générer une entrée aléat
  180.0 horizontal again</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Angle auquel les touches elliptiques sont inclinées
+ 0,0 touches horizontales
+ 45,0 45 degrés, tournés dans le sens horaire
+ 180,0 de nouveau horizontales</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>A low value will make the direction input adapt more quickly, a high value will make it smoother</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Une valeur faible adaptera plus rapidement à la direction de l&apos;entrée, une valeur élevée rendra plus fluide</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6375,28 +6378,31 @@ En la modifiant de manière aléatoire, vous pouvez générer une entrée aléat
  1.0 alpha channel fully locked</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ne modifie pas le canal alpha pour le calque (ne peint que lorsqu&apos;il y a déjà de la peinture)
+0.0 peindre normalement
+0.5 la moitié de la peinture est appliquée normalement
+1.0 le canal alpha est complètement verrouillé</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Colorize the target layer, setting its hue and saturation from the active brush color while retaining its value and alpha.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Colorer le calque cible, en réglant sa valeur et sa saturation en fonction de la couleur de la brosse active, tout en conservant sa valeur et son alpha.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Snap brush dab&apos;s center and its radius to pixels. Set this to 1.0 for a thin pixel brush.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Aligne le centre de la touche de brosse, ainsi que son rayon, aux pixels. Réglez le à 1.0 pour une brosse large d&apos;un pixel.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This changes how hard you have to press. It multiplies tablet pressure by a constant factor.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Cela change la force avec laquelle il faut presser. Il multiplie la pression de la tablette par un facteur constant.</translation>
     </message>
     <message>
         <location line="+3"/>
