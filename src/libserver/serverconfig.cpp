@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libserver/serverconfig.h"
+#include "libserver/serverlog.h"
 #include <QJsonObject>
 #include <QRegularExpression>
 
@@ -98,6 +99,12 @@ bool ServerConfig::setConfigString(ConfigKey key, const QString &value)
 	}
 
 	// TODO key specific validation
+
+	if(key.index == config::ForbiddenNameRegex.index) {
+		m_forbiddenNameRegexNeedsCompile = true;
+	} else if(key.index == config::FilterNameRegex.index) {
+		m_nameFilterRegexNeedsCompile = true;
+	}
 
 	setConfigValue(key, value);
 	emit configValueChanged(key);
@@ -340,6 +347,27 @@ BanReaction ServerConfig::parseReaction(const QString &reaction)
 	}
 }
 
+bool ServerConfig::isNameBanned(const QString &s)
+{
+	compileRegex(
+		m_forbiddenNameRegexNeedsCompile, m_forbiddenNameRegexValid,
+		m_forbiddenNameRegex, config::ForbiddenNameRegex);
+	if(m_forbiddenNameRegexValid) {
+		compileRegex(
+			m_nameFilterRegexNeedsCompile, m_nameFilterRegexValid,
+			m_nameFilterRegex, config::FilterNameRegex);
+		if(m_nameFilterRegexValid) {
+			return m_forbiddenNameRegex
+				.match(QString(s).replace(m_nameFilterRegex, QString()))
+				.hasMatch();
+		} else {
+			return m_forbiddenNameRegex.match(s).hasMatch();
+		}
+	} else {
+		return false;
+	}
+}
+
 bool ServerConfig::isAddressInRange(
 	const QHostAddress &addr, const QHostAddress &from, const QHostAddress &to)
 {
@@ -500,6 +528,37 @@ QString ServerConfig::reactionToString(BanReaction reaction)
 		return QStringLiteral("timer");
 	}
 	return QString();
+}
+
+void ServerConfig::compileRegex(
+	bool &needsCompile, bool &valid, QRegularExpression &regex,
+	const ConfigKey &key)
+{
+	if(needsCompile) {
+		needsCompile = false;
+		QString pattern = getConfigString(key).trimmed();
+		if(pattern.isEmpty()) {
+			regex = QRegularExpression();
+			valid = false;
+		} else {
+			regex = QRegularExpression(
+				pattern, QRegularExpression::DotMatchesEverythingOption |
+							 QRegularExpression::CaseInsensitiveOption |
+							 QRegularExpression::DontCaptureOption);
+			if(regex.isValid()) {
+				valid = true;
+				regex.optimize();
+			} else {
+				logger()->logMessage(
+					Log()
+						.about(Log::Level::Error, Log::Topic::RuleBreak)
+						.message(QStringLiteral("Error compiling %1 regex: %2")
+									 .arg(key.name, regex.errorString())));
+				valid = false;
+				regex = QRegularExpression();
+			}
+		}
+	}
 }
 
 }

@@ -6,6 +6,7 @@
 #include <QHostAddress>
 #include <QJsonArray>
 #include <QObject>
+#include <QRegularExpression>
 #include <QString>
 #include <QUrl>
 
@@ -159,7 +160,14 @@ static const ConfigKey
 	Invites(49, "invites", "true", ConfigKey::BOOL),
 	// Whether this server prefers that you connect via WebSockets. Will cause
 	// the client to generate invite links accordingly.
-	PreferWebSockets(50, "preferWebSockets", "false", ConfigKey::BOOL);
+	PreferWebSockets(50, "preferWebSockets", "false", ConfigKey::BOOL),
+	// Regular expression of forbidden names. These won't be allowed to be set
+	// as usernames or session titles.
+	ForbiddenNameRegex(51, "forbiddenNameRegex", "", ConfigKey::STRING),
+	// Regular expression to apply to names before running them through the
+	// forbiddenNameRegex. Can be used to filter out allowed names that are too
+	// close to banned words.
+	FilterNameRegex(52, "filterNameRegex", "", ConfigKey::STRING);
 }
 
 //! Settings that are not adjustable after the server has started
@@ -364,6 +372,8 @@ public:
 
 	static BanReaction parseReaction(const QString &reaction);
 
+	bool isNameBanned(const QString &s);
+
 signals:
 	void configValueChanged(const ConfigKey &key);
 
@@ -424,9 +434,19 @@ private:
 
 	static QJsonArray banUsersToJson(const QVector<BanUser> &users);
 
+	void compileRegex(
+		bool &needsCompile, bool &valid, QRegularExpression &regex,
+		const ConfigKey &key);
+
 	InternalConfig m_internalCfg;
 	QVector<ExtBan> m_extBans;
 	QSet<int> m_disabledExtBanIds;
+	QRegularExpression m_nameFilterRegex;
+	QRegularExpression m_forbiddenNameRegex;
+	bool m_nameFilterRegexNeedsCompile = true;
+	bool m_forbiddenNameRegexNeedsCompile = true;
+	bool m_nameFilterRegexValid = false;
+	bool m_forbiddenNameRegexValid = false;
 };
 
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69210
