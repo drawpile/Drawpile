@@ -624,6 +624,10 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 		QString newTitle = QStringLiteral("%1 Drawpile")
 							   .arg(m_history->founderName())
 							   .mid(0, 100);
+		if(m_config->isNameBanned(newTitle)) {
+			newTitle = QStringLiteral("Drawpile");
+		}
+
 		if(m_history->setTitle(newTitle)) {
 			changes.append(
 				QStringLiteral("changed autotitle to '%1'").arg(newTitle));
@@ -632,14 +636,42 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 		}
 	} else if(conf.contains(QStringLiteral("title"))) {
 		bool hadAutoTitle = flags.testFlag(SessionHistory::AutoTitle);
-		flags.setFlag(SessionHistory::AutoTitle, false);
 		QString newTitle =
 			conf.value(QStringLiteral("title")).toString().mid(0, 100);
-		if(m_history->setTitle(newTitle)) {
-			changes.append(
-				QStringLiteral("changed title to '%1'").arg(newTitle));
-		} else if(hadAutoTitle) {
-			changes.append(QStringLiteral("disabled autotitle"));
+		if(!changedByModeratorOrAdmin && m_config->isNameBanned(newTitle)) {
+			changedBy->log(
+				Log()
+					.about(Log::Level::Warn, Log::Topic::RuleBreak)
+					.message(
+						QStringLiteral("Attempt to set forbidden name '%1'")
+							.arg(newTitle)));
+			if(!hadAutoTitle) {
+				flags.setFlag(SessionHistory::AutoTitle, true);
+				newTitle = QStringLiteral("%1 Drawpile")
+							   .arg(m_history->founderName())
+							   .mid(0, 100);
+				if(m_config->isNameBanned(newTitle)) {
+					newTitle = QStringLiteral("Drawpile");
+				}
+
+				if(m_history->setTitle(newTitle)) {
+					changes.append(
+						QStringLiteral(
+							"changed autotitle to '%1' due to forbidden title")
+							.arg(newTitle));
+				} else if(!hadAutoTitle) {
+					changes.append(QStringLiteral(
+						"enabled autotitle due to forbidden title"));
+				}
+			}
+		} else {
+			flags.setFlag(SessionHistory::AutoTitle, false);
+			if(m_history->setTitle(newTitle)) {
+				changes.append(
+					QStringLiteral("changed title to '%1'").arg(newTitle));
+			} else if(hadAutoTitle) {
+				changes.append(QStringLiteral("disabled autotitle"));
+			}
 		}
 	}
 

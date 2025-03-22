@@ -7,6 +7,7 @@ Unreleased Version 2.2.3-pre
  * Fix: Properly snap pixel brush outlines in the correct spot and don't snap soft brush outlines at all. Thanks Meru for reporting.
  * Fix: Disable color wheel preview on macOS, since it breaks dragging on the wheel like it does on Android. Thanks Millie for reporting.
  * Feature: Let operators create annotations beyond the 256 per-user maximum. Like with layers, this will use annotations of user 0 first, then 255, 254 etc. Thanks to Devil Like Me for reporting.
+ * Server Feature: Add settings to filter disallowed user and session names. Thanks Bluestrings for suggesting.
 
 2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.
@@ -62,8 +63,12 @@ Unreleased Version 2.2.3-pre
  * Fix: Work around a crash on Windows when toggling kinetic scroll settings.
  * Fix: Properly show current layout on first layouts dialog run. Thanks Dib for reporting.
  * Fix: Disable image reader limit in command-line tools under Qt6.
+<<<<<<< HEAD
  * Fix: Deduplicate brush and tag names when exporting brushes. Thanks Blozzom for reporting.
  * Fix: Don't crash under Windows 7 when attempting to play two sounds once. Thanks pachuco for reporting.
+=======
+ * Server Feature: Allow configuring filter regular expressions for usernames and session titles. One expression to remove allow-listed parts and one to block disallowed ones.
+>>>>>>> e3d60448c (Add session title and username filter regexes)
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.
