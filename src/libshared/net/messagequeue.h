@@ -63,8 +63,11 @@ public:
 	 *
 	 * @param reason
 	 * @param message
+	 * @return Whether this queue was already disconnecting
 	 */
-	void sendDisconnect(GracefulDisconnect reason, const QString &message);
+	bool sendDisconnect(GracefulDisconnect reason, const QString &message);
+	void quietDisconnect();
+	void forceDisconnect();
 
 	/**
 	 * @brief Get the number of bytes in the upload queue
@@ -174,6 +177,9 @@ protected:
 	static constexpr int MSG_TYPE_DISCONNECT = 1;
 	static constexpr int MSG_TYPE_PING = 2;
 	static constexpr int MSG_TYPE_KEEP_ALIVE = 2;
+	static constexpr int MSG_TYPE_CHAT = 35;
+	static constexpr int MSG_TYPE_PRIVATE_CHAT = 38;
+	static constexpr int MSG_TYPE_CLIENT_META = 64;
 
 	virtual void enqueueMessages(int count, const net::Message *msgs) = 0;
 	virtual void enqueuePing(bool pong) = 0;
@@ -188,6 +194,7 @@ protected:
 	bool m_decodeOpaque;
 	net::MessageList m_inbox; // received (complete) messages
 	bool m_gracefullyDisconnecting;
+	bool m_quietDisconnecting;
 	// Smoothing of received messages. Depending on the server and network
 	// conditions, messages will arrive in chunks, which causes other people's
 	// strokes to appear choppy. Smoothing compensates for it, if enabled.

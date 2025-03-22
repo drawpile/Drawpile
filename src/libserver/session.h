@@ -231,11 +231,12 @@ public:
 	/**
 	 * @brief Initiate the shutdown of this session
 	 *
-	 * If the terminate parameter is false, the session history
-	 * will not be terminated. This allows the session to survive
-	 * server restarts.
+	 * If the terminate parameter is false, the session history will not be
+	 * terminated. This allows the session to survive server restarts. If quiet
+	 * is true, the users will not be informed of the termination.
 	 */
-	void killSession(const QString &message, bool terminate = true);
+	void killSession(
+		const QString &message, bool terminate = true, bool quiet = false);
 
 	/**
 	 * @brief Send a direct message to all session participants

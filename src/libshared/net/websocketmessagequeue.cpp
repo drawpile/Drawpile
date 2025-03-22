@@ -82,7 +82,7 @@ void WebSocketMessageQueue::dataWritten(qint64 bytes)
 	if(m_socket->bytesToWrite() == 0) {
 		emit allSent();
 #ifndef __EMSCRIPTEN__
-		if(m_gracefullyDisconnecting) {
+		if(m_gracefullyDisconnecting && !m_quietDisconnecting) {
 			qInfo("All sent, gracefully disconnecting.");
 			m_socket->close();
 		}
@@ -93,7 +93,7 @@ void WebSocketMessageQueue::dataWritten(qint64 bytes)
 void WebSocketMessageQueue::receiveBinaryMessage(const QByteArray &bytes)
 {
 	// Ignore incoming messages while we're in the process of disconnecting.
-	if(!m_gracefullyDisconnecting) {
+	if(!m_gracefullyDisconnecting || m_quietDisconnecting) {
 		bool gotmessage = false;
 		bool smoothFlush = false;
 		int disconnectReason = -1;
@@ -125,6 +125,13 @@ void WebSocketMessageQueue::receiveBinaryMessage(const QByteArray &bytes)
 				disconnectMessage = QString::fromUtf8(
 					bytes.constData() + DP_MESSAGE_WS_HEADER_LENGTH + 1,
 					int(messageLength) - DP_MESSAGE_WS_HEADER_LENGTH - 1);
+			}
+
+		} else if(m_gracefullyDisconnecting) {
+			// Just keep echoing everything that has a client effect.
+			if(type == MSG_TYPE_CHAT || type == MSG_TYPE_PRIVATE_CHAT ||
+			   type >= MSG_TYPE_CLIENT_META) {
+				m_socket->sendBinaryMessage(bytes);
 			}
 
 		} else {
