@@ -176,7 +176,7 @@ protected slots:
 protected:
 	static constexpr int MSG_TYPE_DISCONNECT = 1;
 	static constexpr int MSG_TYPE_PING = 2;
-	static constexpr int MSG_TYPE_KEEP_ALIVE = 2;
+	static constexpr int MSG_TYPE_KEEP_ALIVE = 3;
 	static constexpr int MSG_TYPE_CHAT = 35;
 	static constexpr int MSG_TYPE_PRIVATE_CHAT = 38;
 	static constexpr int MSG_TYPE_CLIENT_META = 64;
