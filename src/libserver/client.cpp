@@ -161,6 +161,8 @@ struct Client::Private {
 	bool isHoldLocked = false;
 	bool isBanTriggered = false;
 	bool isGhost = false;
+	bool gracefulDisconnect = false;
+	bool shadowDisconnect = false;
 	ResetFlags resetFlags = ResetFlag::None;
 	BanResult ban = BanResult::notBanned();
 
@@ -267,6 +269,22 @@ QJsonObject Client::description(bool includeSession) const
 	if(includeSession && d->session) {
 		u["session"] = d->session->id();
 	}
+	QString state;
+	switch(connectionState()) {
+	case ConnectionState::Login:
+		state = QStringLiteral("login");
+		break;
+	case ConnectionState::Session:
+		state = QStringLiteral("session");
+		break;
+	case ConnectionState::GracefulDisconnect:
+		state = QStringLiteral("graceful_disconnect");
+		break;
+	case ConnectionState::ShadowDisconnect:
+		state = QStringLiteral("shadow_disconnect");
+		break;
+	}
+	u.insert(QStringLiteral("state"), state);
 	return u;
 }
 
@@ -325,13 +343,18 @@ JsonApiResult Client::jsonApiKick(const QString &message)
 			{QStringLiteral("error"), QStringLiteral("message too long")}};
 		return JsonApiResult{JsonApiResult::BadRequest, QJsonDocument(o)};
 	}
-	disconnectClient(
+	bool wasAlreadyDisconnecting = disconnectClient(
 		Client::DisconnectionReason::Kick,
 		QStringLiteral("the server administrator") +
 			(message.isEmpty() ? QString()
 							   : QStringLiteral(" (%1)").arg(message)),
 		QStringLiteral("kicked via web admin"));
-	QJsonObject o{{QStringLiteral("status"), QStringLiteral("ok")}};
+	if(wasAlreadyDisconnecting) {
+		d->msgqueue->forceDisconnect();
+	}
+	QJsonObject o{
+		{QStringLiteral("status"), QStringLiteral("ok")},
+		{QStringLiteral("force"), wasAlreadyDisconnecting}};
 	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(o)};
 }
 
@@ -816,7 +839,7 @@ void Client::socketDisconnect()
 	this->deleteLater();
 }
 
-void Client::disconnectClient(
+bool Client::disconnectClient(
 	DisconnectionReason reason, const QString &message, const QString &details)
 {
 	net::MessageQueue::GracefulDisconnect pr{
@@ -854,7 +877,30 @@ void Client::disconnectClient(
 	log(Log().about(Log::Level::Info, topic).message(logMessage));
 
 	emit loggedOff(this);
-	d->msgqueue->sendDisconnect(pr, message);
+	d->gracefulDisconnect = true;
+	d->shadowDisconnect = false;
+	return d->msgqueue->sendDisconnect(pr, message);
+}
+
+void Client::shadowDisconnectClient()
+{
+	if(!d->gracefulDisconnect) {
+		d->shadowDisconnect = true;
+		d->msgqueue->shadowDisconnect();
+	}
+}
+
+Client::ConnectionState Client::connectionState() const
+{
+	if(d->gracefulDisconnect) {
+		return ConnectionState::GracefulDisconnect;
+	} else if(d->shadowDisconnect) {
+		return ConnectionState::ShadowDisconnect;
+	} else if(d->session) {
+		return ConnectionState::Session;
+	} else {
+		return ConnectionState::Login;
+	}
 }
 
 void Client::setHoldLocked(bool lock)

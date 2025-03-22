@@ -206,10 +206,22 @@ public:
 	 * @param reason
 	 * @param message
 	 * @param details emitted in the log, not sent to the client
+	 * @return Whether this client was already disconnecting
 	 */
-	void disconnectClient(
+	bool disconnectClient(
 		DisconnectionReason reason, const QString &message,
 		const QString &details);
+
+	void shadowDisconnectClient();
+
+	enum class ConnectionState {
+		Login,
+		Session,
+		GracefulDisconnect,
+		ShadowDisconnect,
+	};
+
+	ConnectionState connectionState() const;
 
 	/**
 	 * @brief Send a message directly to this client
