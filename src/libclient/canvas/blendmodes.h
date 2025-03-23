@@ -17,8 +17,6 @@ struct Named {
 	QString name;
 };
 
-QString translatedName(int mode);
-
 //! Get the SVG name for the given blend mode
 QString oraName(DP_BlendMode mode);
 
