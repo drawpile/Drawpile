@@ -7957,7 +7957,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/videoexportdialog.cpp" line="+31"/>
         <source>Image Series</source>
-        <translation type="unfinished"></translation>
+        <translation>Série d&apos;images</translation>
     </message>
     <message>
         <location line="+2"/>
