@@ -53,6 +53,12 @@ static const BlendModeInfo BLEND_MODE[] = {
 		BrushMode,
 	},
 	{
+		QT_TRANSLATE_NOOP("blendmode", "Greater Density"),
+		DP_BLEND_MODE_GREATER_ALPHA,
+		DP_BLEND_MODE_GREATER,
+		UniversalMode,
+	},
+	{
 		QT_TRANSLATE_NOOP("blendmode", "Multiply"),
 		DP_BLEND_MODE_MULTIPLY,
 		DP_BLEND_MODE_MULTIPLY_ALPHA,
@@ -193,18 +199,6 @@ static const BlendModeInfo BLEND_MODE[] = {
 };
 
 static const int BLEND_MODES = sizeof(BLEND_MODE) / sizeof(BlendModeInfo);
-
-QString translatedName(int mode)
-{
-	const char *key = QT_TRANSLATE_NOOP("blendmode", "Unknown");
-	for(const BlendModeInfo &info : BLEND_MODE) {
-		if(int(info.id) == mode) {
-			key = info.name;
-			break;
-		}
-	}
-	return QCoreApplication::translate("blendmode", key);
-}
 
 QString oraName(DP_BlendMode mode)
 {
