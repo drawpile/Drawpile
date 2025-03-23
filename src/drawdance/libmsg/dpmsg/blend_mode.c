@@ -252,20 +252,30 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         {
             INCREASE_OPACITY | BLEND_BLANK,
             "DP_BLEND_MODE_ALPHA_DARKEN",
-            // Actually, the lerp variant of this blend mode is closer to what
-            // Krita uses. However, this blend mode is only ever used for
-            // brushes, so it doesn't end up in anything you'd open in Krita.
+            // This is not actually what Krita uses for its Alpha Darken blend
+            // mode. What it does is closer to compare density below, except it
+            // also interpolates the color channels. However, this blend mode is
+            // only ever used for brush strokes, so it never ends up in anything
+            // that's read by Krita.
             "krita:alphadarken",
             "krita:alphadarken",
             "Alpha Darken",
         },
-    [DP_BLEND_MODE_ALPHA_DARKEN_LERP] =
+    [DP_BLEND_MODE_COMPARE_DENSITY] =
         {
             INCREASE_OPACITY | BLEND_BLANK,
-            "DP_BLEND_MODE_ALPHA_DARKEN_LERP",
-            "-dp-alpha-darken-lerp",
-            "-dp-alpha-darken-lerp",
-            "Alpha Darken",
+            "DP_BLEND_MODE_COMPARE_DENSITY",
+            "-dp-compare-density",
+            "-dp-compare-density",
+            "Compare Density",
+        },
+    [DP_BLEND_MODE_GREATER] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            "DP_BLEND_MODE_GREATER",
+            "krita:greater",
+            "-dp-greater",
+            "Greater",
         },
     [DP_BLEND_MODE_ERASE_LIGHT] =
         {
@@ -451,14 +461,13 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             "-dp-color-alpha",
             "Color Alpha",
         },
-
-    [DP_BLEND_MODE_REPLACE] =
+    [DP_BLEND_MODE_GREATER_ALPHA] =
         {
-            BRUSH | INCREASE_OPACITY | DECREASE_OPACITY | BLEND_BLANK,
-            "DP_BLEND_MODE_REPLACE",
-            REPLACE_NAME,
-            REPLACE_NAME,
-            "Replace",
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_GREATER_ALPHA",
+            "krita:greater",
+            "krita:greater",
+            "Greater Alpha",
         },
     [DP_BLEND_MODE_ERASE_PRESERVE] =
         {
@@ -520,6 +529,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             "-dp-dark-to-alpha",
             "-dp-dark-to-alpha-preserve",
             "Darkness to Alpha Preserve",
+        },
+    [DP_BLEND_MODE_REPLACE] =
+        {
+            BRUSH | INCREASE_OPACITY | DECREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_REPLACE",
+            REPLACE_NAME,
+            REPLACE_NAME,
+            "Replace",
         },
 };
 
@@ -776,6 +793,11 @@ bool DP_blend_mode_alpha_preserve_pair(int blend_mode,
         alpha_affecting = DP_BLEND_MODE_COLOR_ALPHA;
         alpha_preserving = DP_BLEND_MODE_COLOR;
         break;
+    case DP_BLEND_MODE_GREATER:
+    case DP_BLEND_MODE_GREATER_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_GREATER_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_GREATER;
+        break;
     case DP_BLEND_MODE_ERASE_LIGHT:
     case DP_BLEND_MODE_ERASE_LIGHT_PRESERVE:
         alpha_affecting = DP_BLEND_MODE_ERASE_LIGHT;
@@ -852,6 +874,8 @@ int DP_blend_mode_to_alpha_affecting(int blend_mode)
         return DP_BLEND_MODE_LUMINOSITY_ALPHA;
     case DP_BLEND_MODE_COLOR:
         return DP_BLEND_MODE_COLOR_ALPHA;
+    case DP_BLEND_MODE_GREATER:
+        return DP_BLEND_MODE_GREATER_ALPHA;
     case DP_BLEND_MODE_ERASE_PRESERVE:
         return DP_BLEND_MODE_ERASE;
     case DP_BLEND_MODE_BEHIND_PRESERVE:
@@ -926,6 +950,8 @@ int DP_blend_mode_to_alpha_preserving(int blend_mode)
         return DP_BLEND_MODE_LUMINOSITY;
     case DP_BLEND_MODE_COLOR_ALPHA:
         return DP_BLEND_MODE_COLOR;
+    case DP_BLEND_MODE_GREATER_ALPHA:
+        return DP_BLEND_MODE_GREATER;
     default:
         return blend_mode;
     }
