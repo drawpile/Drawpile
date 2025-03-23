@@ -7944,12 +7944,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+7"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Activé</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Désactivé</translation>
     </message>
 </context>
 <context>
@@ -7962,12 +7962,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Vidéo MP4</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>WebM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Vidéo WebM</translation>
     </message>
     <message>
         <location line="+2"/>
