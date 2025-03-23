@@ -52,6 +52,11 @@ static const BlendModeInfo BLEND_MODE[] = {
 		BrushMode | BackwardCompatibleMode,
 	},
 	{
+		QT_TRANSLATE_NOOP("blendmode", "Compare Density"),
+		DP_BLEND_MODE_COMPARE_DENSITY,
+		BrushMode,
+	},
+	{
 		QT_TRANSLATE_NOOP("blendmode", "Multiply"),
 		DP_BLEND_MODE_MULTIPLY,
 		UniversalMode | BackwardCompatibleMode,

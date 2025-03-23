@@ -231,18 +231,20 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         {
             INCREASE_OPACITY | BLEND_BLANK,
             "DP_BLEND_MODE_ALPHA_DARKEN",
-            // Actually, the lerp variant of this blend mode is closer to what
-            // Krita uses. However, this blend mode is only ever used for
-            // brushes, so it doesn't end up in anything you'd open in Krita.
+            // This is not actually what Krita uses for its Alpha Darken blend
+            // mode. What it does is closer to compare density below, except it
+            // also interpolates the color channels. However, this blend mode is
+            // only ever used for brush strokes, so it never ends up in anything
+            // that's read by Krita.
             "krita:alphadarken",
             "Alpha Darken",
         },
-    [DP_BLEND_MODE_ALPHA_DARKEN_LERP] =
+    [DP_BLEND_MODE_COMPARE_DENSITY] =
         {
-            INCREASE_OPACITY | BLEND_BLANK,
-            "DP_BLEND_MODE_ALPHA_DARKEN_LERP",
-            "-dp-alpha-darken-lerp",
-            "Alpha Darken",
+            BRUSH | LAYER | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_COMPARE_DENSITY",
+            "-dp-compare-density",
+            "Compare Density",
         },
     [DP_BLEND_MODE_REPLACE] =
         {

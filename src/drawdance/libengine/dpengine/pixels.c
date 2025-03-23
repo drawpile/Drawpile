@@ -1870,20 +1870,19 @@ static void blend_mask_alpha_darken(DP_Pixel15 *dst, DP_UPixel15 src,
     });
 }
 
-static void blend_mask_alpha_darken_lerp(DP_Pixel15 *dst, DP_UPixel15 src,
-                                         const uint16_t *mask, Fix15 opacity,
-                                         int w, int h, int mask_skip,
-                                         int base_skip)
+static void blend_mask_compare_density(DP_Pixel15 *dst, DP_UPixel15 src,
+                                       const uint16_t *mask, Fix15 opacity,
+                                       int w, int h, int mask_skip,
+                                       int base_skip)
 {
     FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, m, {
         Fix15 da = dst->a;
-        if (m != 0 && da < opacity) {
-            Fix15 a = da + fix15_mul(m, opacity - da);
+        if (m != 0 && da <= opacity) {
             *dst = DP_pixel15_premultiply((DP_UPixel15){
                 src.b,
                 src.g,
                 src.r,
-                from_fix(a),
+                from_fix(da + fix15_mul(m, opacity - da)),
             });
         }
     });
@@ -1962,9 +1961,9 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
         blend_mask_alpha_darken(dst, src, mask, to_fix(opacity), w, h,
                                 mask_skip, base_skip);
         break;
-    case DP_BLEND_MODE_ALPHA_DARKEN_LERP:
-        blend_mask_alpha_darken_lerp(dst, src, mask, to_fix(opacity), w, h,
-                                     mask_skip, base_skip);
+    case DP_BLEND_MODE_COMPARE_DENSITY:
+        blend_mask_compare_density(dst, src, mask, to_fix(opacity), w, h,
+                                   mask_skip, base_skip);
         break;
     case DP_BLEND_MODE_REPLACE:
         blend_mask_alpha_op(dst, src, mask, to_fix(opacity), w, h, mask_skip,
@@ -2081,6 +2080,50 @@ static void blend_pixels_alpha_op(DP_Pixel15 *DP_RESTRICT dst,
     }
 }
 
+static void blend_pixels_compare_density(DP_Pixel15 *DP_RESTRICT dst,
+                                         const DP_Pixel15 *DP_RESTRICT src,
+                                         int pixel_count, Fix15 opacity)
+{
+    if (opacity == DP_BIT15) {
+        for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
+            Fix15 as = src->a;
+            if (as != 0) {
+                Fix15 ab = dst->a;
+                if (ab == 0) {
+                    *dst = *src;
+                }
+                else if (ab <= as) {
+                    BGR15 cs = to_ubgr(DP_pixel15_unpremultiply(*src));
+                    *dst = DP_pixel15_premultiply((DP_UPixel15){
+                        from_fix(cs.b),
+                        from_fix(cs.g),
+                        from_fix(cs.r),
+                        from_fix(as),
+                    });
+                }
+            }
+        }
+    }
+    else {
+        for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
+            Fix15 as = src->a;
+            if (as != 0) {
+                Fix15 aso = fix15_mul(as, opacity);
+                Fix15 ab = dst->a;
+                if (ab <= aso) {
+                    BGR15 cs = to_ubgr(DP_pixel15_unpremultiply(*src));
+                    *dst = DP_pixel15_premultiply((DP_UPixel15){
+                        from_fix(cs.b),
+                        from_fix(cs.g),
+                        from_fix(cs.r),
+                        from_fix(aso),
+                    });
+                }
+            }
+        }
+    }
+}
+
 static void blend_pixels_color_erase(DP_Pixel15 *DP_RESTRICT dst,
                                      const DP_Pixel15 *DP_RESTRICT src,
                                      int pixel_count, uint16_t opacity)
@@ -2184,6 +2227,9 @@ void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
     case DP_BLEND_MODE_REPLACE:
         blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
                               blend_replace);
+        break;
+    case DP_BLEND_MODE_COMPARE_DENSITY:
+        blend_pixels_compare_density(dst, src, pixel_count, to_fix(opacity));
         break;
     case DP_BLEND_MODE_COLOR_ERASE:
         blend_pixels_color_erase(dst, src, pixel_count, opacity);
