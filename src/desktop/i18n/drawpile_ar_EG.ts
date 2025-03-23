@@ -1420,7 +1420,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation type="unfinished"></translation>
+        <translation>اصلح</translation>
     </message>
     <message>
         <location line="+3"/>
