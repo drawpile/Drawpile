@@ -691,7 +691,7 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location line="+169"/>
         <source>incompatible</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">incompatible</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -711,7 +711,7 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Non adapté aux mineur·e·s (NSFM)</translation>
     </message>
 </context>
 <context>
@@ -789,7 +789,7 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location line="+5"/>
         <source>Color Erase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Effacer la Couleur</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1105,7 +1105,7 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Rôles</translation>
     </message>
 </context>
 <context>
@@ -1822,7 +1822,7 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location line="+9"/>
         <source>Network connection timed out</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Délai de connection au réseau dépassé</translation>
     </message>
     <message>
         <location line="+97"/>
@@ -1833,13 +1833,13 @@ Veuillez sélectionner un autre calque.</translation>
         <location line="+51"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erreur de socket %1&#xa0;: %2</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (erreur %2)</translation>
     </message>
 </context>
 <context>
@@ -1847,27 +1847,27 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location filename="../tools/transform.cpp" line="+425"/>
         <source>You don&apos;t have permission to transform selections.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vous n&apos;avez pas les droits pour transformer les sélections.</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>No canvas present.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de canevas présent.</translation>
     </message>
     <message>
         <location line="-254"/>
         <source>You don&apos;t have permission for that transformation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous n&apos;avez pas le droit d&apos;effectuer cette transformation.</translation>
     </message>
     <message>
         <location line="+207"/>
         <source>You don&apos;t have permission to stamp selections.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vous n&apos;avez pas le droit de tamponner ces sélections.</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>Nothing selected that could be transformed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rien dans la sélection ne peut être transformé.</translation>
     </message>
 </context>
 <context>
@@ -1875,7 +1875,7 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location filename="../utils/hostpresetmodel.cpp" line="+57"/>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Valeurs par défaut</translation>
     </message>
 </context>
 <context>
@@ -1884,52 +1884,52 @@ Veuillez sélectionner un autre calque.</translation>
         <location filename="../utils/news.cpp" line="+286"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Recherche de mises à jour…</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La recherche automatique de mises à jour est désactivé; &lt;a href=&quot;#autoupdate&quot;&gt;veuillez cliquer ici pour l&apos;activer&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Si vous ne voulez pas de vérification automatique, &lt;a href=&quot;#checkupdates&quot;&gt;veillez cliquer ici pour l&apos;effectuer manuellement.&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erreur de réseau&#xa0;: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Couldn&apos;t make sense of the fetched data.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Impossible de donner du sens aux données récupérées.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Couldn&apos;t make sense of fetched updates.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Impossible de donner du sens aux mises à jour récupérées.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de sauvegarder les mises à jour.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Couldn&apos;t make sense of fetched news.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Impossible de donner du sens aux informations récupérées.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save news.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sauvegarde des informations impossible.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>No news available.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pas d&apos;informations disponibles.</translation>
     </message>
 </context>
 <context>
@@ -1937,22 +1937,22 @@ Veuillez sélectionner un autre calque.</translation>
     <message>
         <location filename="../wasmsupport.cpp" line="+109"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vous n&apos;utilisez pas le client officiel sur web.drawpile.net. La plupart des serveurs n&apos;autorisent pas les connections venant d&apos;ailleurs.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The session address does not look like a valid WebSocket URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;adresse de la session ne ressemble pas à une URL WebSocket valide.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You&apos;re trying to connect to an IP address instead of a proper domain name. This usually doesn&apos;t work unless you&apos;ve configured your browser to allow this first.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vous êtes en train de vous connecter sur une adresse IP au lieu d&apos;un nom de domaine propre. Cela ne fonctionnera pas, à moins que vous ayez configuré et autorisé votre navigateur à le faire.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The server may not support joining via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ce serveur peut ne pas supporter l&apos;action de rejoindre une session depuis un navigateur web.</translation>
     </message>
 </context>
 </TS>
