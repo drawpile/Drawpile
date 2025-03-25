@@ -761,6 +761,19 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 					: QStringLiteral("disabled invites"));
 	}
 
+	if(changedByModeratorOrAdmin && conf.contains(QStringLiteral("unlisted"))) {
+		bool unlist = conf.value(QStringLiteral("unlisted")).toBool();
+		bool isUnlisted = flags.testFlag(SessionHistory::Unlisted);
+		if(unlist && !isUnlisted) {
+			changes.append(QStringLiteral("unlisted"));
+			flags.setFlag(SessionHistory::Unlisted, true);
+			m_announcements->unlistSession(this);
+		} else if(!unlist && isUnlisted) {
+			changes.append(QStringLiteral("listed"));
+			flags.setFlag(SessionHistory::Unlisted, false);
+		}
+	}
+
 	// Toggling allowing WebSocket connections requires the client to have the
 	// WEBSESSION flag. If changedBy is null, the request came from the API.
 	bool canManageWebSession = !changedBy || changedBy->canManageWebSession();
@@ -1903,10 +1916,15 @@ QStringList Session::userNames() const
 	return lst;
 }
 
-void Session::makeAnnouncement(const QUrl &url)
+bool Session::makeAnnouncement(const QUrl &url)
 {
 	Q_ASSERT(m_announcements);
-	m_announcements->announceSession(this, url);
+	if(m_history->hasFlag(SessionHistory::Unlisted)) {
+		return false;
+	} else {
+		m_announcements->announceSession(this, url);
+		return true;
+	}
 }
 
 void Session::unlistAnnouncement(const QUrl &url, bool terminate)
@@ -2094,6 +2112,8 @@ QJsonObject Session::getDescription(bool full, bool invite) const
 		 m_history->hasFlag(SessionHistory::Persistent)},
 		{QStringLiteral("invites"),
 		 m_history->hasFlag(SessionHistory::Invites)},
+		{QStringLiteral("unlisted"),
+		 m_history->hasFlag(SessionHistory::Unlisted)},
 	};
 
 	if(m_config->getConfigBool(config::AllowIdleOverride)) {
@@ -2332,15 +2352,19 @@ JsonApiResult Session::callListingsJsonApi(
 		return JsonApiResult{
 			JsonApiResult::Ok, QJsonDocument(getListingsDescription())};
 	} else if(method == JsonApiMethod::Create) {
-		if(request.contains("url")) {
-			makeAnnouncement(QUrl(request["url"].toString()));
-			return JsonApiResult{
-				JsonApiResult::Ok,
-				QJsonDocument(QJsonObject{{"status", "ok"}})};
-		} else {
+		if(!request.contains("url")) {
 			return JsonApiErrorResult(
 				JsonApiResult::BadRequest, QStringLiteral("Missing url"));
 		}
+
+		if(!makeAnnouncement(QUrl(request["url"].toString()))) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest,
+				QStringLiteral("Can't list an unlisted session"));
+		}
+
+		return JsonApiResult{
+			JsonApiResult::Ok, QJsonDocument(QJsonObject{{"status", "ok"}})};
 	} else {
 		return JsonApiBadMethod();
 	}

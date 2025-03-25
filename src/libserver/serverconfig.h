@@ -167,7 +167,11 @@ static const ConfigKey
 	// Regular expression to apply to names before running them through the
 	// forbiddenNameRegex. Can be used to filter out allowed names that are too
 	// close to banned words.
-	FilterNameRegex(52, "filterNameRegex", "", ConfigKey::STRING);
+	FilterNameRegex(52, "filterNameRegex", "", ConfigKey::STRING),
+	// What sessions to set the Unlisted session history flag on when they are
+	// hosted. "WEB" will set it on sessions, hosted via web browser, "ALL" will
+	// set it on all sessions, any other value sets it on no session.
+	UnlistedHostPolicy(53, "unlistedHostPolicy", "", ConfigKey::STRING);
 }
 
 //! Settings that are not adjustable after the server has started

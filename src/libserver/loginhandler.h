@@ -164,6 +164,7 @@ private:
 	QJsonObject m_clientInfo;
 	QJsonObject m_lastLoggedClientInfo;
 	Session *m_lastClientSession = nullptr;
+	QSet<QString> m_listedSessionIds;
 };
 
 }

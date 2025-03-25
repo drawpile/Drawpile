@@ -26,9 +26,10 @@ quint16 BuiltinServer::port() const
 	return m_server ? m_server->serverPort() : 0;
 }
 
-QJsonArray BuiltinServer::sessionDescriptions() const
+QJsonArray BuiltinServer::sessionDescriptions(bool includeUnlisted) const
 {
-	if(m_session) {
+	if(m_session && (includeUnlisted || !m_session->history()->hasFlag(
+											SessionHistory::Unlisted))) {
 		return {m_session->getDescription()};
 	} else {
 		return {};

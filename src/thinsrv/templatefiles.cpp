@@ -57,11 +57,14 @@ void TemplateFiles::scanDirectory()
 	m_templates = templates;
 }
 
-QVector<QJsonObject> TemplateFiles::templateDescriptions() const
+QVector<QJsonObject>
+TemplateFiles::templateDescriptions(bool includeUnlisted) const
 {
 	QVector<QJsonObject> descriptions;
 	for(const Template &t : m_templates) {
-		if(!t.description.isEmpty()) {
+		if(!t.description.isEmpty() &&
+		   (includeUnlisted ||
+			!t.description.value(QStringLiteral("unlisted")).toBool())) {
 			descriptions.append(t.description);
 		}
 	}
@@ -160,6 +163,7 @@ QJsonObject TemplateFiles::templateFileDescription(
 		{"authOnly", getHeaderBool(header, "authOnly")},
 		{"allowWeb", getHeaderBool(header, "allowWeb")},
 		{"invites", getHeaderBool(header, "invites")},
+		{"unlisted", getHeaderBool(header, "unlisted")},
 	};
 
 	DP_player_free(player);
@@ -249,6 +253,8 @@ bool TemplateFiles::init(SessionHistory *session) const
 		flags |= SessionHistory::AllowWeb;
 	if(getHeaderBool(header, "invites"))
 		flags |= SessionHistory::Invites;
+	if(getHeaderBool(header, "unlisted"))
+		flags |= SessionHistory::Unlisted;
 	session->setFlags(flags);
 
 	// Set initial history

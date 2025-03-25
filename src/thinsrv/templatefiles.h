@@ -15,7 +15,8 @@ class TemplateFiles final : public QObject, public TemplateLoader {
 public:
 	explicit TemplateFiles(const QDir &dir, QObject *parent = nullptr);
 
-	QVector<QJsonObject> templateDescriptions() const override;
+	QVector<QJsonObject>
+	templateDescriptions(bool includeUnlisted) const override;
 	QJsonObject templateDescription(const QString &alias) const override;
 	bool exists(const QString &alias) const override;
 

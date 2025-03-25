@@ -22,8 +22,8 @@ public:
 	/**
 	 * @brief Get a list of all available templates.
 	 *
-	 * The template description is a subset of a session description. Specifically,
-	 * it includes the following attributes:
+	 * The template description is a subset of a session description.
+	 * Specifically, it includes the following attributes:
 	 *
 	 *  - alias
 	 *  - protocol
@@ -38,7 +38,8 @@ public:
 	 *   - id (templates are identified by alias only)
 	 *   - startTime (templates are not live sessions)
 	 */
-	virtual QVector<QJsonObject> templateDescriptions() const = 0;
+	virtual QVector<QJsonObject>
+	templateDescriptions(bool includeUnlisted) const = 0;
 
 	/**
 	 * @brief Get the description for a specific template

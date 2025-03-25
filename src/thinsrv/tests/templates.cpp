@@ -33,7 +33,7 @@ private slots:
 		TemplateFiles templates(dir);
 
 		// There should now be one available template
-		QCOMPARE(templates.templateDescriptions().size(), 1);
+		QCOMPARE(templates.templateDescriptions(true).size(), 1);
 		QCOMPARE(templates.exists("test"), true);
 		QCOMPARE(templates.exists("empty"), false);
 
