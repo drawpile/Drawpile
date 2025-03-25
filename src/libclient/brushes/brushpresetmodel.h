@@ -202,12 +202,17 @@ private:
 	static double scaleOldColorSaturationOrValue(double y);
 
 	void exportTag(
-		BrushExportResult &result, QStringList &order, drawdance::ZipWriter &zw,
+		BrushExportResult &result, QStringList &order, QSet<QString> &tagPaths,
+		QSet<QString> &tagNames, drawdance::ZipWriter &zw,
 		const BrushExportTag &tag) const;
 
 	void exportPreset(
-		BrushExportResult &result, QStringList &order, drawdance::ZipWriter &zw,
+		BrushExportResult &result, QStringList &order,
+		QSet<QString> &presetNames, drawdance::ZipWriter &zw,
 		const QString &tagPath, int presetId) const;
+
+	static QString
+	makeExportNameUnique(QSet<QString> &names, const QString &name);
 
 	static QString getExportName(int presetId, const QString presetName);
 

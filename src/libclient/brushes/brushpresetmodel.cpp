@@ -1943,8 +1943,12 @@ BrushExportResult BrushPresetTagModel::exportBrushPack(
 	}
 
 	QStringList order;
-	for(const BrushExportTag &tag : exportTags) {
-		exportTag(result, order, zw, tag);
+	{
+		QSet<QString> tagPaths;
+		QSet<QString> tagNames;
+		for(const BrushExportTag &tag : exportTags) {
+			exportTag(result, order, tagPaths, tagNames, zw, tag);
+		}
 	}
 
 	if(result.exportedBrushCount == 0) {
@@ -1968,10 +1972,11 @@ BrushExportResult BrushPresetTagModel::exportBrushPack(
 }
 
 void BrushPresetTagModel::exportTag(
-	BrushExportResult &result, QStringList &order, drawdance::ZipWriter &zw,
+	BrushExportResult &result, QStringList &order, QSet<QString> &tagPaths,
+	QSet<QString> &tagNames, drawdance::ZipWriter &zw,
 	const BrushExportTag &tag) const
 {
-	QString tagPath = makeExportSafe(tag.name);
+	QString tagPath = makeExportNameUnique(tagPaths, makeExportSafe(tag.name));
 	if(!zw.addDir(tagPath)) {
 		qWarning(
 			"Error creating tag directory '%s': %s", qUtf8Printable(tagPath),
@@ -1980,16 +1985,18 @@ void BrushPresetTagModel::exportTag(
 		return;
 	}
 
-	order.append(QStringLiteral("Group: %1").arg(tag.name));
+	order.append(QStringLiteral("Group: %1")
+					 .arg(makeExportNameUnique(tagNames, tag.name)));
+	QSet<QString> presetNames;
 	for(int presetId : tag.presetIds) {
-		exportPreset(result, order, zw, tagPath, presetId);
+		exportPreset(result, order, presetNames, zw, tagPath, presetId);
 	}
 	order.append(QString{});
 }
 
 void BrushPresetTagModel::exportPreset(
-	BrushExportResult &result, QStringList &order, drawdance::ZipWriter &zw,
-	const QString &tagPath, int presetId) const
+	BrushExportResult &result, QStringList &order, QSet<QString> &presetNames,
+	drawdance::ZipWriter &zw, const QString &tagPath, int presetId) const
 {
 	std::optional<Preset> opt = d->readPresetById(presetId);
 	if(!opt.has_value()) {
@@ -2002,7 +2009,8 @@ void BrushPresetTagModel::exportPreset(
 	QByteArray exportData =
 		preset.originalBrush.toExportJson(preset.originalDescription);
 
-	QString presetName = getExportName(presetId, preset.originalName);
+	QString presetName = makeExportNameUnique(
+		presetNames, getExportName(presetId, preset.originalName));
 	QString presetPath = QStringLiteral("%1/%2").arg(tagPath, presetName);
 
 	QString dataPath = QStringLiteral("%1.myb").arg(presetPath);
@@ -2028,6 +2036,23 @@ void BrushPresetTagModel::exportPreset(
 
 	order.append(presetPath);
 	++result.exportedBrushCount;
+}
+
+QString BrushPresetTagModel::makeExportNameUnique(
+	QSet<QString> &names, const QString &name)
+{
+	if(names.contains(name)) {
+		QString newName;
+		int i = 2;
+		do {
+			newName = name + QString::number(i++);
+		} while(names.contains(newName));
+		names.insert(newName);
+		return newName;
+	} else {
+		names.insert(name);
+		return name;
+	}
 }
 
 QString
