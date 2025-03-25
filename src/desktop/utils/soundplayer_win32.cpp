@@ -93,9 +93,17 @@ void SoundPlayer::playSound(const QString &path, int volume)
 		}
 
 		if(winmmPlaySound) {
-			DP_atomic_inc(&d->playing);
-			QThreadPool::globalInstance()->start(
-				new SoundPlayerRunnable(&d->playing, path, volume));
+			// Windows 7 crashes if we try to play more than one sound at once.
+			// Newer Windowses instead queue them up one after another, which we
+			// also don't really want, it can cause an overly long chain. We
+			// instead just skip playing the sound if there's one going already.
+			LONG64 playing = InterlockedIncrement64(&d->playing);
+			if(playing == 1) {
+				QThreadPool::globalInstance()->start(
+					new SoundPlayerRunnable(&d->playing, path, volume));
+			} else {
+				InterlockedDecrement64(&d->playing);
+			}
 		}
 	}
 }
