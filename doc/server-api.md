@@ -442,6 +442,19 @@ Possible topics are:
  * PubList: session announcement related messages
  * Status: general status messages
 
+To add a log message: `POST /api/log`
+
+    {
+        "message": string   (message, must start with a "[SOURCE] ", where SOURCE is an identifier)
+        "level": string     (log level, Error, Warn, Info or Debug)
+        "topic": string     (log topic, see above)
+        "user": {
+            "id": integer   (user id, 0 to 255)
+            "ip": string    (IP address)
+            "name": string  (username)
+        }
+    }
+
 Implementation: `logJsonApi @ src/server/multiserver.cpp`
 
 
