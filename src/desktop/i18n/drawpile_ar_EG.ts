@@ -1425,37 +1425,37 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to create annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>معاكش إذن كتابة توضيحات.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to undo or redo.</source>
-        <translation type="unfinished"></translation>
+        <translation>معاكش إذن التّراجع أو عكس التّراجع.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>ما فكش تساوي كدا.</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>New</source>
-        <translation type="unfinished">جديد</translation>
+        <translation>جديد...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to create a new canvas and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيتمّ إنشاء لوح جديد و إغلاق هذه النّافذة.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Open Recent File</source>
-        <translation type="unfinished"></translation>
+        <translation>فتح ملفّ لاحق</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recent file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيُفتح ملفّ تمّ تعديله لاحقا، و تُغلق هذه النّافذة.</translation>
     </message>
     <message>
         <location line="+102"/>
@@ -1470,7 +1470,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a new file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيُفتح ملفّ جديد، و تُغلق هذه النّافذة.</translation>
     </message>
     <message>
         <location line="+1438"/>
@@ -1480,47 +1480,47 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+24"/>
         <source>Image saving failed</source>
-        <translation type="unfinished"></translation>
+        <translation>ما انحفظش الملفّ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Couldn&apos;t save image</source>
-        <translation>عدم القدره ان حفظ الصوره</translation>
+        <translation>ما يمكنش حفظ الصّورة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Image saved</source>
-        <translation>صوره محفوظه</translation>
+        <translation>انحفظت الصّوره</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Download Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>خلّص التّنزيل</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Download complete, click on &quot;Save&quot; to save your file.</source>
-        <translation type="unfinished"></translation>
+        <translation>خلّص التّنزيل، انقر زرّ &quot;إحفظ&quot; تتحفظ ملفّك.</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
-        <translation>هذه هي الجلسه قديمه, بعض الادوات والاداء ليست متاحه هنا. اعاده ضبطممكن تجيب بعض المشاكل. بعض الاجهزه ممكن تشوف حاجات اخرى.</translation>
+        <translation>هاذي الجلسه مقامة على إصدار Drawpile قديم، في من الخصائص الجديدة مش هتكون موجودة. الإصدارات المختلفة مش هتورّي رسومات متناسقة مع بعضها، و ممكن يبقى تغيّرات كبيرة لمّا تغلق الجلسة و ينعاد فتحها.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Compatibility Mode</source>
-        <translation>وضع التوافق</translation>
+        <translation type="unfinished">حاول توازي الادوات القديمة...</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Session template saved</source>
-        <translation>تم حفظ نموذج الجلسة</translation>
+        <translation>انحفظ نموذج الجلسة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export session template</source>
-        <translation>عدم قدره حفظ النموذج الجلسه</translation>
+        <translation>ما اتمكّن حفظ نموذج الجلسه</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -1561,72 +1561,72 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation>خطأ غير معروف.</translation>
+        <translation>صار خطأ مجهول.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Error downloading profile.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ما اتنزّلش العزئيل.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error closing profile.</source>
-        <translation>خطأ, غلاق الملف الشخصي.</translation>
+        <translation type="unfinished">ما اتسكّرش الغزئيل صحّ.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error opening profile.</source>
-        <translation>خطأ, غلاق الملف الشخصي.</translation>
+        <translation>ما انفتحش العزئيل.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Error downloading tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>ما اتنزّلش مكتوب عمليّات لوح الرّسم.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error closing tablet event log.</source>
-        <translation>حدث خطأ أثناء إغلاق سجل أحداث الجهاز اللوحي.</translation>
+        <translation>ما اتشكّرش مكتوب عمليّات لوح الرّسم.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Error opening tablet event log.</source>
-        <translation>حدث خطأ أثناء إغلاق سجل أحداث الجهاز اللوحي.</translation>
+        <translation>ما قدرش ينفتح مكتوب عمليّات لوح الرّسم.</translation>
     </message>
     <message>
         <location line="+183"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
-        <translation type="unfinished"></translation>
+        <translation>انت جوّاة جلسة برضو! لازم تنفصل الجلسة أوّلاً تتبلش وحدة جديدة.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>No canvas to host! Create one or open a file.</source>
-        <translation>لا يوجد لوحه للجلسه! ضع لوحه او افتح ملف.</translation>
+        <translation>لازم يكون في لوح تتبلش جلسة عالإنترنت: ممكن ينفتح لوح أو ينتشأ لوح جديد.</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Invalid address</source>
-        <translation>عنوان خاطئ</translation>
+        <translation>العنوان ده مش صالح</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Host Session</source>
-        <translation>استضيف جلسه</translation>
+        <translation>بلّش جلسة</translation>
     </message>
     <message>
         <location line="+127"/>
         <source>Reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>برضو اتّصل</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about reconnect to the session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>هينعاد الإتّصال بهالجلسة و ينغلق هادا الشّبّاك.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Really leave the session?</source>
-        <translation>اخرج من الجلسه؟</translation>
+        <translation>جدّ هتترك دي الجلسه؟</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1636,22 +1636,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Stay</source>
-        <translation>افضل</translation>
+        <translation>ضلّ</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
-        <translation>تزال هناك بيانات لم يتم إرسالها! الرجاء الانتظار حتى اكتمال الإرسال!</translation>
+        <translation type="unfinished">تزال هناك بيانات لم يتم إرسالها! الرجاء الانتظار حتى اكتمال الإرسال!</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Become Operator</source>
-        <translation>اصبح رئيس</translation>
+        <translation type="unfinished">اصبح رئيس</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Enter operator password</source>
-        <translation>ضع كلمه المرور</translation>
+        <translation type="unfinished">ضع كلمه المرور</translation>
     </message>
     <message>
         <location line="+64"/>
@@ -1662,7 +1662,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+2"/>
         <location line="+2712"/>
         <source>Terminate</source>
-        <translation>انهي</translation>
+        <translation type="unfinished">انهي</translation>
     </message>
     <message>
         <location line="-2698"/>
@@ -1677,17 +1677,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+141"/>
         <source>Would you like to join the session instead?</source>
-        <translation>هل تريد دخول الجلسه؟</translation>
+        <translation type="unfinished">هل تريد دخول الجلسه؟</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Join</source>
-        <translation>ادخل</translation>
+        <translation type="unfinished">ادخل</translation>
     </message>
     <message>
         <location line="+135"/>
         <source>Session blocked by parental controls</source>
-        <translation>تم حظر الجلسة بواسطة أدوات الرقابة الأبوية</translation>
+        <translation type="unfinished">تم حظر الجلسة بواسطة أدوات الرقابة الأبوية</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -1697,12 +1697,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Change the session&apos;s undo limit, current limit is %1.</source>
-        <translation>غير حد الترجيعو, حدد ترجيع الان %1.</translation>
+        <translation type="unfinished">غير حد الترجيعو, حدد ترجيع الان %1.</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Error</source>
-        <translation type="unfinished">خطأ</translation>
+        <translation>خطأ</translation>
     </message>
     <message>
         <location line="+489"/>
