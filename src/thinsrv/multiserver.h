@@ -176,7 +176,7 @@ private:
 		const QJsonObject &request, bool sectionLocked);
 	JsonApiResult logJsonApi(
 		JsonApiMethod method, const QStringList &path,
-		const QJsonObject &request);
+		const QJsonObject &request, bool sectionLocked);
 	JsonApiResult extbansJsonApi(
 		JsonApiMethod method, const QStringList &path,
 		const QJsonObject &request, bool sectionLocked);

@@ -17,6 +17,7 @@
 #include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QMetaEnum>
 #include <QRegularExpression>
 #include <QTcpSocket>
 #include <QTimer>
@@ -495,7 +496,9 @@ JsonApiResult MultiServer::callJsonApi(
 			method, tail, request, QStringLiteral("accounts"),
 			&MultiServer::accountsJsonApi);
 	} else if(head == QStringLiteral("log")) {
-		return logJsonApi(method, tail, request);
+		return callJsonApiCheckLock(
+			method, tail, request, QStringLiteral("log"),
+			&MultiServer::logJsonApi);
 	} else if(head == QStringLiteral("extbans")) {
 		return callJsonApiCheckLock(
 			method, tail, request, QStringLiteral("extbans"),
@@ -1051,48 +1054,125 @@ JsonApiResult MultiServer::accountsJsonApi(
 }
 
 JsonApiResult MultiServer::logJsonApi(
-	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request,
+	bool sectionLocked)
 {
 	if(!path.isEmpty()) {
 		return JsonApiNotFound();
 	}
 
-	if(method != JsonApiMethod::Get) {
+	if(method == JsonApiMethod::Get) {
+		ServerLogQuery q = m_config->logger()->query();
+		q.page(parseRequestInt(request, QStringLiteral("page"), 0, 0), 100);
+
+		if(request.contains(QStringLiteral("session"))) {
+			q.session(request.value(QStringLiteral("session")).toString());
+		}
+
+		if(request.contains(QStringLiteral("user"))) {
+			q.user(request.value(QStringLiteral("user")).toString());
+		}
+
+		if(request.contains(QStringLiteral("contains"))) {
+			q.messageContains(
+				request.value(QStringLiteral("contains")).toString());
+		}
+
+		if(request.contains(QStringLiteral("after"))) {
+			QDateTime after = QDateTime::fromString(
+				request.value(QStringLiteral("after")).toString(), Qt::ISODate);
+			if(after.isValid()) {
+				q.after(after);
+			} else {
+				return JsonApiErrorResult(
+					JsonApiResult::BadRequest,
+					QStringLiteral("Invalid timestamp"));
+			}
+		}
+
+		QJsonArray out;
+		for(const Log &log : q.omitSensitive(false).get()) {
+			out.append(log.toJson());
+		}
+
+		return JsonApiResult{JsonApiResult::Ok, QJsonDocument(out)};
+	} else if(method == JsonApiMethod::Create) {
+		Log entry;
+
+		{
+			bool levelOk;
+			int level = QMetaEnum::fromType<Log::Level>().keyToValue(
+				request.value(QStringLiteral("level"))
+					.toString()
+					.toUtf8()
+					.constData(),
+				&levelOk);
+			if(!levelOk) {
+				return JsonApiErrorResult(
+					JsonApiResult::BadRequest, QStringLiteral("Invalid level"));
+			}
+
+			bool topicOk;
+			int topic = QMetaEnum::fromType<Log::Topic>().keyToValue(
+				request.value(QStringLiteral("topic"))
+					.toString()
+					.toUtf8()
+					.constData(),
+				&topicOk);
+			if(!topicOk) {
+				return JsonApiErrorResult(
+					JsonApiResult::BadRequest, QStringLiteral("Invalid topic"));
+			}
+
+			entry.about(Log::Level(level), Log::Topic(topic));
+		}
+
+		{
+			QString session =
+				request.value(QStringLiteral("session")).toString();
+			if(!session.isEmpty()) {
+				if(Ulid(session).isNull()) {
+					return JsonApiErrorResult(
+						JsonApiResult::BadRequest,
+						QStringLiteral("Invalid session"));
+				}
+				entry.session(session);
+			}
+		}
+
+		if(request.contains(QStringLiteral("user"))) {
+			QJsonObject user = request.value(QStringLiteral("user")).toObject();
+			entry.user(
+				qBound(0, user.value(QStringLiteral("id")).toInt(), 255),
+				QHostAddress(user.value(QStringLiteral("ip")).toString()),
+				user.value(QStringLiteral("name")).toString());
+		}
+
+		{
+			// External logs must start with a source identifier in brackets,
+			// followed by whitespace and then some non-whitespace message.
+			static QRegularExpression messageRe(
+				QStringLiteral("\\A\\[[a-zA-Z0-9_\\.\\-]+\\]\\s+\\S"));
+			QString message =
+				request.value(QStringLiteral("message")).toString();
+			if(!messageRe.match(message).hasMatch()) {
+				return JsonApiErrorResult(
+					JsonApiResult::BadRequest,
+					QStringLiteral("Invalid message"));
+			}
+			entry.message(message);
+		}
+
+		m_config->logger()->logMessage(entry);
+
+		return JsonApiResult{
+			JsonApiResult::Ok, QJsonDocument(QJsonObject{
+								   {QStringLiteral("_locked"), sectionLocked},
+								   {QStringLiteral("entry"), entry.toJson()},
+							   })};
+	} else {
 		return JsonApiBadMethod();
 	}
-
-	ServerLogQuery q = m_config->logger()->query();
-	q.page(parseRequestInt(request, QStringLiteral("page"), 0, 0), 100);
-
-	if(request.contains(QStringLiteral("session"))) {
-		q.session(request.value(QStringLiteral("session")).toString());
-	}
-
-	if(request.contains(QStringLiteral("user"))) {
-		q.user(request.value(QStringLiteral("user")).toString());
-	}
-
-	if(request.contains(QStringLiteral("contains"))) {
-		q.messageContains(request.value(QStringLiteral("contains")).toString());
-	}
-
-	if(request.contains(QStringLiteral("after"))) {
-		QDateTime after = QDateTime::fromString(
-			request.value(QStringLiteral("after")).toString(), Qt::ISODate);
-		if(after.isValid()) {
-			q.after(after);
-		} else {
-			return JsonApiErrorResult(
-				JsonApiResult::BadRequest, QStringLiteral("Invalid timestamp"));
-		}
-	}
-
-	QJsonArray out;
-	for(const Log &log : q.omitSensitive(false).get()) {
-		out.append(log.toJson());
-	}
-
-	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(out)};
 }
 
 JsonApiResult MultiServer::extbansJsonApi(
