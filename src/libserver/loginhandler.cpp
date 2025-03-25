@@ -197,9 +197,13 @@ void LoginHandler::startLoginProcess()
 
 void LoginHandler::announceServerInfo()
 {
-	const QJsonArray sessions = m_mandatoryLookup || !m_lookup.isEmpty()
-									? QJsonArray()
-									: m_sessions->sessionDescriptions();
+	const QJsonArray sessions =
+		m_mandatoryLookup || !m_lookup.isEmpty()
+			? QJsonArray()
+			: m_sessions->sessionDescriptions(m_client->isModerator());
+	for(const QJsonValue &session : sessions) {
+		m_listedSessionIds.insert(session[QStringLiteral("id")].toString());
+	}
 
 	QString message = QStringLiteral("Welcome");
 	QString title = m_config->getConfigString(config::ServerTitle);
@@ -223,14 +227,21 @@ void LoginHandler::announceSession(const QJsonObject &session)
 {
 	Q_ASSERT(session.contains("id"));
 	if(m_state == State::WaitForLogin && !m_mandatoryLookup) {
-		send(net::ServerReply::makeLoginSessions(
-			QStringLiteral("New session"), {session}));
+		QString id = session.value(QStringLiteral("id")).toString();
+		if(!m_client->isModerator() && session.value("unlisted").toBool()) {
+			announceSessionEnd(id);
+		} else {
+			m_listedSessionIds.insert(id);
+			send(net::ServerReply::makeLoginSessions(
+				QStringLiteral("New session"), {session}));
+		}
 	}
 }
 
 void LoginHandler::announceSessionEnd(const QString &id)
 {
-	if(m_state == State::WaitForLogin && !m_mandatoryLookup) {
+	if(m_state == State::WaitForLogin && !m_mandatoryLookup &&
+	   m_listedSessionIds.remove(id)) {
 		send(net::ServerReply::makeLoginRemoveSessions(
 			QStringLiteral("Session ended"), {id}));
 	}
@@ -1066,12 +1077,24 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 		session->history()->setPassword(password);
 	}
 
+	SessionHistory::Flags flags;
 	if(shouldAllowWebOnHost(cmd, session)) {
-		session->history()->setFlag(SessionHistory::AllowWeb);
+		flags.setFlag(SessionHistory::AllowWeb);
 	}
 
 	if(m_config->getConfigBool(config::Invites)) {
-		session->history()->setFlag(SessionHistory::Invites);
+		flags.setFlag(SessionHistory::Invites);
+	}
+
+	QString unlist = m_config->getConfigString(config::UnlistedHostPolicy);
+	if(unlist.contains(QStringLiteral("ALL")) ||
+	   (unlist.contains(QStringLiteral("WEB")) && m_client->isBrowser())) {
+		flags.setFlag(SessionHistory::Unlisted);
+	}
+
+	if(flags) {
+		SessionHistory *history = session->history();
+		history->setFlags(history->flags() | flags);
 	}
 
 	// Mark login phase as complete.

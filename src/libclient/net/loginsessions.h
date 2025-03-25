@@ -33,8 +33,8 @@ struct LoginSession {
 	bool persistent;
 	bool newLoginsBlocked;
 	bool guestLoginBlocked; // Will only be true if we're a guest.
-	bool webLoginBlocked; // Will only be true if we're connected via WebSocket.
-
+	bool webLoginBlocked; // Will only be true if we're connected via browser.
+	bool unlisted;
 	bool nsfm;
 
 	QString idOrAlias() const { return alias.isEmpty() ? id : alias; }

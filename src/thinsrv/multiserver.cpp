@@ -600,6 +600,7 @@ JsonApiResult MultiServer::serverJsonApi(
 		config::Invites,
 		config::ForbiddenNameRegex,
 		config::FilterNameRegex,
+		config::UnlistedHostPolicy,
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 

@@ -8,6 +8,7 @@ Unreleased Version 2.2.3-pre
  * Fix: Disable color wheel preview on macOS, since it breaks dragging on the wheel like it does on Android. Thanks Millie for reporting.
  * Feature: Let operators create annotations beyond the 256 per-user maximum. Like with layers, this will use annotations of user 0 first, then 255, 254 etc. Thanks to Devil Like Me for reporting.
  * Server Feature: Add settings to filter disallowed user and session names. Thanks Bluestrings for suggesting.
+ * Server Feature: Allow marking individual sessions as unlisted, as well as a setting to automatically unlist all or browser-hosted sessions. Thanks Bluestrings for suggesting.
 
 2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.

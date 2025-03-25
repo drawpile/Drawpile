@@ -79,7 +79,9 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 				return QIcon::fromTheme("state-ok");
 			}
 		case ColumnStatus:
-			if(ls.isIncompatible()) {
+			if(ls.unlisted) {
+				return QIcon::fromTheme("view-hidden");
+			} else if(ls.isIncompatible()) {
 				return QIcon::fromTheme("dontknow");
 			} else if(ls.isClosed()) {
 				return QIcon::fromTheme("cards-block");
@@ -105,7 +107,9 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 				return tr("Drawpile 2.2 (fully compatible)");
 			}
 		case ColumnStatus:
-			if(ls.isIncompatible()) {
+			if(ls.unlisted) {
+				return tr("Unlisted");
+			} else if(ls.isIncompatible()) {
 				return tr("Incompatible version");
 			} else if(ls.webLoginBlocked) {
 #ifdef __EMSCRIPTEN__

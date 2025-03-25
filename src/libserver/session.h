@@ -256,8 +256,9 @@ public:
 	 * @brief Generate a request for session announcement
 	 *
 	 * @param url listing server API url
+	 * @return If the session was listable (but not if the listing succeeded)
 	 */
-	void makeAnnouncement(const QUrl &url);
+	bool makeAnnouncement(const QUrl &url);
 
 	/**
 	 * @brief Generate a request for session announcement unlisting

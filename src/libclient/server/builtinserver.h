@@ -40,7 +40,7 @@ public:
 
 	quint16 port() const;
 
-	QJsonArray sessionDescriptions() const override;
+	QJsonArray sessionDescriptions(bool includeUnlisted) const override;
 
 	Session *getSessionById(const QString &id, bool loadTemplate) override;
 

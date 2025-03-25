@@ -85,7 +85,7 @@ public:
 	/**
 	 * @brief Get descriptions of all sessions
 	 */
-	QJsonArray sessionDescriptions() const override;
+	QJsonArray sessionDescriptions(bool includeUnlisted) const override;
 
 	/**
 	 * @brief Get the session with the specified ID

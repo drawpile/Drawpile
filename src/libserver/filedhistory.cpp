@@ -365,6 +365,8 @@ bool FiledHistory::load()
 					flags |= AutoTitle;
 				} else if(f == QStringLiteral("invites")) {
 					flags |= Invites;
+				} else if(f == QStringLiteral("unlisted")) {
+					flags |= Unlisted;
 				} else {
 					qWarning()
 						<< id() << "unknown flag:" << QString::fromUtf8(f);
@@ -741,6 +743,9 @@ void FiledHistory::setFlags(Flags f)
 		}
 		if(f.testFlag(Invites)) {
 			fstr.append(QStringLiteral("invites"));
+		}
+		if(f.testFlag(Unlisted)) {
+			fstr.append(QStringLiteral("unlisted"));
 		}
 		writeStringToJournal(QStringLiteral("FLAGS %1\n").arg(fstr.join(' ')));
 	}

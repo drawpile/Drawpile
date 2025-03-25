@@ -112,6 +112,7 @@ public:
 		AllowWeb = 0x40,
 		AutoTitle = 0x80,
 		Invites = 0x100,
+		Unlisted = 0x200,
 	};
 	Q_DECLARE_FLAGS(Flags, Flag)
 

@@ -66,13 +66,16 @@ void SessionServer::loadNewSessions()
 	}
 }
 
-QJsonArray SessionServer::sessionDescriptions() const
+QJsonArray SessionServer::sessionDescriptions(bool includeUnlisted) const
 {
 	QJsonArray descs;
 	QSet<QString> aliases;
 
 	for(const Session *s : m_sessions) {
-		descs.append(s->getDescription());
+		if(includeUnlisted ||
+		   !s->history()->hasFlag(SessionHistory::Unlisted)) {
+			descs.append(s->getDescription());
+		}
 		if(!s->idAlias().isEmpty()) {
 			aliases.insert(s->idAlias());
 		}
@@ -86,7 +89,8 @@ QJsonArray SessionServer::sessionDescriptions() const
 #endif
 	if(loader) {
 		// Add session templates to list, if not shadowed by live sessions
-		QVector<QJsonObject> templates = loader->templateDescriptions();
+		QVector<QJsonObject> templates =
+			loader->templateDescriptions(includeUnlisted);
 		for(QJsonObject &o : templates) {
 			QString alias = o.value(QStringLiteral("alias")).toString();
 			if(!aliases.contains(alias)) {
@@ -434,11 +438,13 @@ JsonApiResult SessionServer::callSessionJsonApi(
 
 	if(method == JsonApiMethod::Get) {
 		QJsonDocument body;
+		bool onlyListed =
+			parseRequestBool(request, QStringLiteral("listed"), 0, 0);
 		if(parseRequestInt(request, QStringLiteral("v"), 0, 0) <= 1) {
-			body.setArray(sessionDescriptions());
+			body.setArray(sessionDescriptions(!onlyListed));
 		} else {
 			body.setObject({
-				{QStringLiteral("sessions"), sessionDescriptions()},
+				{QStringLiteral("sessions"), sessionDescriptions(!onlyListed)},
 				{QStringLiteral("_locked"), sectionLocked},
 			});
 		}

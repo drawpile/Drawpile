@@ -41,7 +41,7 @@ public:
 	/**
 	 * Get a list of session descriptions
 	 */
-	virtual QJsonArray sessionDescriptions() const = 0;
+	virtual QJsonArray sessionDescriptions(bool includeUnlisted) const = 0;
 
 	/**
 	 * Get a session with the given ID or alias

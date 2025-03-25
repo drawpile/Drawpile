@@ -370,7 +370,11 @@ CmdResult announceSession(
 			"Private listings are not available on this server");
 	}
 
-	client->session()->makeAnnouncement(apiUrl);
+	if(!client->session()->makeAnnouncement(apiUrl)) {
+		return CmdResult::err(QStringLiteral(
+			"This session is hidden from listings, it can't be listed"));
+	}
+
 	return CmdResult::ok();
 }
 
