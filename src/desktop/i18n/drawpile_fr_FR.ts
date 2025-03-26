@@ -8089,32 +8089,32 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <source>Unknown</source>
         <comment>CanvasImplementation</comment>
         <extracomment>Refers to an unknown canvas renderer, should never happen.</extracomment>
-        <translation>inconnue</translation>
+        <translation>Inconnu</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Current renderer: %1. Changes apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Moteur de rendu actuel&#xa0;: %1. Les changements entrent en action après le redémarrage de Drawpile.</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Keep %1 canvas snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation>Conserver %1 captures de la toile</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas snapshots:</source>
-        <translation type="unfinished"></translation>
+        <translation>Captures de la toile&#xa0;:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Take one snapshot every %1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Prendre une capture toutes les %1 secondes</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Blue Apatite</source>
-        <translation type="unfinished"></translation>
+        <translation>Apatite Bleue</translation>
     </message>
     <message>
         <location line="+2"/>
