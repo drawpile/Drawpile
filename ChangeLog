@@ -1,4 +1,6 @@
-Unreleased Version 2.2.2-pre
+Unreleased Version 2.2.3-pre
+
+2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.
  * Feature: Add -u/--users parameter to dprectool, which will print out a table of user statistics along with names and ids.
  * Feature: Add --include-user-ids parameter to dprectool, allowing to pass a comma-separated list of user ids to only include visual changes from.
