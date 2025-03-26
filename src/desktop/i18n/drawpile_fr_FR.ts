@@ -6034,10 +6034,10 @@ La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, cons
  5.0 notable blur, thin strokes will disappear</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Ce réglage réduit la dureté si nécessaire pour prévenir les effets d&apos;escalier pixelisé (aliasing) en rendant le tapotement plus flou.
-0.0 pour le désactiver (gomme fortes et pinceaux pixelisés)
-1.0 pour un flou d&apos;un pixel (bonne valeur)
-5.0 pour un flou notable&#x202f;; les tracés fins disparaîtront</translation>
+        <translation>Ce réglage diminue la dureté lorsque nécessaire afin de prévenir un effet d&apos;escalier (crénelage) sur les pixels en rendant la touche plus floue.
+ 0.0 désactivé (pour les effaceurs très durs et les brosses de pixel)
+ 1.0 floute un pixel (valeur convenable)
+ 5.0 flou notable, les traits les plus fins disparaissent</translation>
     </message>
     <message>
         <location line="+3"/>
