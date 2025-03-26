@@ -7817,7 +7817,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+5"/>
         <source>Export to file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter dans un fichier</translation>
     </message>
     <message>
         <location line="+6"/>
