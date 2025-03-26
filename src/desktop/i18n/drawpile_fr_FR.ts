@@ -8033,17 +8033,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Language changes apply after you restart Drawpile.</source>
-        <translation>Le changement de langue sera effectif après un redémarrage.</translation>
+        <translation>Le changement de langue sera effectif après un redémarrage de Drawpile.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>%1 (%2) / %3 (%4)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2) / %3 (%4)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location line="+9"/>
