@@ -8277,12 +8277,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Poor</source>
-        <translation>Médiocre</translation>
+        <translation>Mauvais</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Network timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Délai d&apos;expiration du réseau&#xa0;:</translation>
     </message>
     <message>
         <location line="+0"/>
