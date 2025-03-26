@@ -7988,7 +7988,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+80"/>
         <source>Executables</source>
         <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Exécutables</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7998,12 +7998,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+107"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vérification…</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Not found. %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Introuvable.</translation>
     </message>
 </context>
 <context>
