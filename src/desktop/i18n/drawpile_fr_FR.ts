@@ -7822,12 +7822,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+6"/>
         <source>Check for Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Vérifier les mises à jour</translation>
     </message>
     <message>
         <location line="+338"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>Vérification…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7837,9 +7837,9 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message numerus="yes">
         <location line="+2"/>
         <source>Last check: %n day(s) ago.</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Dernière vérification il y a {0} jours</numerusform>
         </translation>
     </message>
     <message>
