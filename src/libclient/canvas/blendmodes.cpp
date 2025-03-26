@@ -109,6 +109,16 @@ static const BlendModeInfo BLEND_MODE[] = {
 		EraserMode ,
 	},
 	{
+		QT_TRANSLATE_NOOP("blendmode", "Erase Lightness"),
+		DP_BLEND_MODE_ERASE_LIGHT,
+		LayerMode | EraserMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Erase Darkness"),
+		DP_BLEND_MODE_ERASE_DARK,
+		LayerMode | EraserMode,
+	},
+	{
 		QT_TRANSLATE_NOOP("blendmode", "Hard Light"),
 		DP_BLEND_MODE_HARD_LIGHT,
 		UniversalMode

@@ -1515,7 +1515,14 @@ void MainWindow::receiveCurrentBrush(int userId, const QJsonObject &info)
 
 void MainWindow::fillArea(const QColor &color, int blendMode, float opacity)
 {
-	if(blendMode != DP_BLEND_MODE_ERASE) {
+	switch(blendMode) {
+	case DP_BLEND_MODE_ERASE:
+	case DP_BLEND_MODE_ERASE_LIGHT:
+	case DP_BLEND_MODE_ERASE_DARK:
+	case DP_BLEND_MODE_LIGHT_TO_ALPHA:
+	case DP_BLEND_MODE_DARK_TO_ALPHA:
+		break;
+	default:
 		m_dockToolSettings->addLastUsedColor(color);
 	}
 	m_doc->fillArea(color, DP_BlendMode(blendMode), opacity);
@@ -3870,6 +3877,8 @@ void MainWindow::updateSelectTransformActions()
 	getAction("fillfgarea")->setEnabled(haveSelection);
 	getAction("recolorarea")->setEnabled(haveSelection);
 	getAction("colorerasearea")->setEnabled(haveSelection);
+	getAction("lightnesstoalphaarea")->setEnabled(haveSelection);
+	getAction("darknesstoalphaarea")->setEnabled(haveSelection);
 	getAction("starttransform")->setEnabled(haveSelection);
 	getAction("starttransformmask")->setEnabled(haveSelection);
 	getAction("transformmirror")->setEnabled(haveTransform);
@@ -5606,6 +5615,12 @@ void MainWindow::setupActions()
 	QAction *colorerasearea =
 		makeAction("colorerasearea", tr("Color Erase Selection"))
 			.shortcut(Qt::SHIFT | Qt::Key_Delete);
+	QAction *lightnesstoalphaarea =
+		makeAction("lightnesstoalphaarea", tr("Selection Lightness to Alpha"))
+			.noDefaultShortcut();
+	QAction *darknesstoalphaarea =
+		makeAction("darknesstoalphaarea", tr("Selection Darkness to Alpha"))
+			.noDefaultShortcut();
 	QAction *starttransform =
 		makeAction("starttransform", tr("&Transform"))
 			.shortcut("T")
@@ -5654,6 +5669,8 @@ void MainWindow::setupActions()
 	m_putimagetools->addAction(fillfgarea);
 	m_putimagetools->addAction(recolorarea);
 	m_putimagetools->addAction(colorerasearea);
+	m_putimagetools->addAction(lightnesstoalphaarea);
+	m_putimagetools->addAction(darknesstoalphaarea);
 	m_putimagetools->addAction(stamp);
 
 	connect(selectall, &QAction::triggered, m_doc, &Document::selectAll);
@@ -5684,6 +5701,16 @@ void MainWindow::setupActions()
 			&MainWindow::fillAreaWithBlendMode, this,
 			DP_BLEND_MODE_COLOR_ERASE));
 	connect(
+		lightnesstoalphaarea, &QAction::triggered, this,
+		std::bind(
+			&MainWindow::fillAreaWithBlendMode, this,
+			DP_BLEND_MODE_LIGHT_TO_ALPHA));
+	connect(
+		darknesstoalphaarea, &QAction::triggered, this,
+		std::bind(
+			&MainWindow::fillAreaWithBlendMode, this,
+			DP_BLEND_MODE_DARK_TO_ALPHA));
+	connect(
 		starttransform, &QAction::triggered, m_dockToolSettings,
 		&docks::ToolSettings::startTransformMoveActiveLayer);
 	connect(
@@ -5702,6 +5729,8 @@ void MainWindow::setupActions()
 	selectMenu->addAction(fillfgarea);
 	selectMenu->addAction(recolorarea);
 	selectMenu->addAction(colorerasearea);
+	selectMenu->addAction(lightnesstoalphaarea);
+	selectMenu->addAction(darknesstoalphaarea);
 	selectMenu->addSeparator();
 	selectMenu->addAction(starttransform);
 	selectMenu->addAction(starttransformmask);
