@@ -8003,7 +8003,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+8"/>
         <source>Not found. %1</source>
-        <translation>Introuvable.</translation>
+        <translation>Introuvable. %1</translation>
     </message>
 </context>
 <context>
@@ -8011,7 +8011,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/general.cpp" line="+58"/>
         <source>When enabled, save every %1 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>Quand activé, enregistre toutes les %1 minutes</translation>
     </message>
     <message>
         <location line="+2"/>
