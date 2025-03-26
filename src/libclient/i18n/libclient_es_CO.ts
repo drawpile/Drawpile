@@ -54,17 +54,17 @@
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
-        <translation type="unfinished">No fue posible fusionar el lienzo a una imagen plana.</translation>
+        <translation>No fue posible fusionar el lienzo a una imagen plana.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation type="unfinished">No se pudo abrir el archivo para su escritura.</translation>
+        <translation>No se pudo abrir el archivo para su escritura.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save operation failed, but the file might have been partially written.</source>
-        <translation type="unfinished">La operación de guardado ha fallado, pero el archivo pudo haber sido escrito parcialmente.</translation>
+        <translation>La operación de guardado ha fallado, pero el archivo pudo haber sido escrito parcialmente.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -133,7 +133,7 @@
     <message>
         <location line="+48"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished">Rueda del ratón</translation>
+        <translation>Rueda del ratón</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -224,7 +224,7 @@
     <message>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
-        <translation type="unfinished">Rotación de un sentido del lienzo</translation>
+        <translation>Rotación de un sentido del lienzo</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -433,7 +433,7 @@
         <location line="+15"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
-        <translation type="unfinished">No se pudo llenar el grupo de capa(s) %1
+        <translation>No se pudo llenar el grupo de capa(s) %1
 En su lugar, selecciona una capa regular.</translation>
     </message>
 </context>
@@ -533,7 +533,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+4"/>
         <source>Roles (%1)</source>
-        <translation type="unfinished">Roles (%1)</translation>
+        <translation>Roles (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -543,7 +543,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+6"/>
         <source>All Files (*)</source>
-        <translation type="unfinished">Todos los archivos (*)</translation>
+        <translation>Todos los archivos (*)</translation>
     </message>
 </context>
 <context>
@@ -559,22 +559,22 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-139"/>
         <source>Shift</source>
-        <translation type="unfinished">Shift</translation>
+        <translation>Shift</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation type="unfinished">Alt</translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished">Ctrl</translation>
+        <translation>Ctrl</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation type="unfinished">Meta</translation>
+        <translation>Meta</translation>
     </message>
 </context>
 <context>
@@ -724,7 +724,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+5"/>
         <source>Recolor</source>
-        <translation type="unfinished">Recolorear</translation>
+        <translation>Recolorear</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -734,7 +734,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+5"/>
         <source>Multiply</source>
-        <translation type="unfinished">Multiplicar</translation>
+        <translation>Multiplicar</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -749,12 +749,12 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+5"/>
         <source>Divide</source>
-        <translation type="unfinished">Dividir</translation>
+        <translation>Dividir</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Burn</source>
-        <translation type="unfinished">Quemar</translation>
+        <translation>Quemar</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -764,17 +764,17 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+5"/>
         <source>Darken</source>
-        <translation type="unfinished">Oscurecer</translation>
+        <translation>Oscurecer</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Lighten</source>
-        <translation type="unfinished">Aclarar</translation>
+        <translation>Aclarar</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Subtract</source>
-        <translation type="unfinished">Restar</translation>
+        <translation>Restar</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -784,12 +784,12 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished">Borrar</translation>
+        <translation>Borrar</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color Erase</source>
-        <translation type="unfinished">Borrar color</translation>
+        <translation>Borrar color</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -824,7 +824,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+5"/>
         <source>Saturation</source>
-        <translation type="unfinished">Saturación</translation>
+        <translation>Saturación</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -875,7 +875,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+198"/>
         <source>Default</source>
-        <translation type="unfinished">Predeterminado</translation>
+        <translation>Predeterminado</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1085,12 +1085,12 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation type="unfinished">Moderador</translation>
+        <translation>Moderador</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation type="unfinished">Operador</translation>
+        <translation>Operador</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1100,7 +1100,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation type="unfinished">Usuario</translation>
+        <translation>Usuario</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1393,7 +1393,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished">Operador</translation>
+        <translation>Operador</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1489,7 +1489,7 @@ En su lugar, selecciona una capa regular.</translation>
         <location line="+74"/>
         <location line="+7"/>
         <source>Auth server error: %1</source>
-        <translation type="unfinished">Error de autentificación por el servidor: %1</translation>
+        <translation>Error de autentificación por el servidor: %1</translation>
     </message>
     <message>
         <location line="+19"/>
