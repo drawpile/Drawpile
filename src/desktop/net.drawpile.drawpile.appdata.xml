@@ -92,8 +92,8 @@
         </artifact>
         <artifact type="binary" platform="win32">
           <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2/Drawpile-2.2.2-x86.msi</location>
-          <checksum type="sha256">9272667a13133a9b1bdd3884406e35963d12aab376c8f698ba095449f96d2d52</checksum>
-          <size type="download">20373504</size>
+          <checksum type="sha256">f0ec7f3ba9a84d99f0b81c76454b76bd009db7cd3fa9cd80b3e976194417427c</checksum>
+          <size type="download">20369408</size>
         </artifact>
         <artifact type="binary" platform="macos">
           <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2/Drawpile-2.2.2-x86_64.dmg</location>
