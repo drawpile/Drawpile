@@ -8144,7 +8144,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Watermelon</source>
-        <translation type="unfinished"></translation>
+        <translation>Pastèque</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8184,12 +8184,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+5"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Clair</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Sombre</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8242,7 +8242,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+7"/>
         <source>Automatically check for updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Vérifier automatiquement pour des mises à jour</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8257,7 +8257,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+7"/>
         <source>Password security:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mot de passe et sécurité</translation>
     </message>
     <message>
         <location line="+3"/>
