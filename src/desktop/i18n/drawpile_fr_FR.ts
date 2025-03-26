@@ -8016,7 +8016,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Autosave:</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrement automatique</translation>
     </message>
     <message>
         <location line="+12"/>
