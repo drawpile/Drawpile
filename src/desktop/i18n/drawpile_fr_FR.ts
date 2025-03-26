@@ -7896,7 +7896,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Touch test log could not be saved: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Le journal des tests tactiles n&apos;a pas pu être enregistré&#xa0;: %1</translation>
     </message>
 </context>
 <context>
@@ -7904,7 +7904,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-236"/>
         <source>Touch here.</source>
-        <translation type="unfinished"></translation>
+        <translation>Touchez ici.</translation>
     </message>
 </context>
 <context>
@@ -7934,7 +7934,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Déplacer la Toile</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11511,7 +11511,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished">Limite de taille: Infinie</translation>
+        <translation>Limite de taille&#xa0;: Infinie</translation>
     </message>
 </context>
 <context>
