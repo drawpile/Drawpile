@@ -5383,7 +5383,8 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>A quelle vitesse vous vous déplacez actuellement. Elle peut changer très rapidement. Essayez &apos;imprimer valeurs d&apos;entrée&apos; depuis le menu d&apos;aide pour vous faire une idée de la portée&#x202f;; des valeurs négatives sont possibles mais rares à très faible vitesse.</translation>
+        <translation>Vitesse actuelle de déplacement. Cela peut changer très rapidement. Essayez «&#xa0;écrire des valeurs d&apos;entrée&#xa0;» depuis le menu «&#xa0;aide&#xa0;» pour ressentir la variation; les valeurs négatives sont rares mais possibles lors de déplacements très lents
+.</translation>
     </message>
     <message>
         <location line="+3"/>
