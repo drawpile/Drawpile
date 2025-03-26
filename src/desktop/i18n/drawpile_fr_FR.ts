@@ -4470,12 +4470,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+3"/>
         <source>Crop X:</source>
-        <translation>Rogner&#xa0;:</translation>
+        <translation>Rogner&#xa0;X&#xa0;:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Crop Y:</source>
-        <translation>Rogner&#xa0;:</translation>
+        <translation>Rogner&#xa0;Y&#xa0;:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -5207,7 +5207,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+3"/>
         <source>Opaqueness of the brush, 0% is transparent, 100% fully opaque.</source>
-        <translation type="unfinished">Opacité du pinceau, 0% pour transparent; 100% pour complètement opaque.</translation>
+        <translation>Opacité du pinceau, 0% pour transparent&#x202f;; 100% pour complètement opaque.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5383,7 +5383,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">A quelle vitesse vous vous déplacez actuellement. Elle peut changer très rapidement. Essayez &apos;imprimer valeurs d&apos;entrée&apos; depuis le menu d&apos;aide pour vous faire une idée de la portée; des valeurs négatives sont possibles mais rares à très faible vitesse.</translation>
+        <translation>A quelle vitesse vous vous déplacez actuellement. Elle peut changer très rapidement. Essayez &apos;imprimer valeurs d&apos;entrée&apos; depuis le menu d&apos;aide pour vous faire une idée de la portée&#x202f;; des valeurs négatives sont possibles mais rares à très faible vitesse.</translation>
     </message>
     <message>
         <location line="+3"/>
