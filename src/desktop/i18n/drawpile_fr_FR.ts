@@ -7881,7 +7881,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/touchtestdialog.cpp" line="+214"/>
         <source>Enable touch</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer le toucher</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8413,32 +8413,32 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Mark Drawpile&apos;s window as requiring attention. How exactly this looks depends on your system.</source>
-        <translation type="unfinished"></translation>
+        <translation>Marquer la fenêtre de Drawpile comme nécessitant une attention particulière. Son apparence dépend de votre système.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Aperçu</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trigger this event so you can see what happens.</source>
-        <translation type="unfinished"></translation>
+        <translation>Déclencher cet évènement afin de voir ce qu&apos;il se passe.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Chat message</source>
-        <translation type="unfinished"></translation>
+        <translation>Message de discussion</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Private message</source>
-        <translation type="unfinished"></translation>
+        <translation>Message privé</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>User left</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilisateur est parti</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -8448,7 +8448,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+27"/>
         <source>Preview event</source>
-        <translation type="unfinished"></translation>
+        <translation>Aperçu de l&apos;événement</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -8458,42 +8458,42 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Sound volume:</source>
-        <translation type="unfinished"></translation>
+        <translation>Volume du son&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Use private message notification for mentions</source>
-        <translation type="unfinished"></translation>
+        <translation>Utiliser les notifications de messages privés pour les mentions</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mentions:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mentions&#xa0;:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Additional triggers go here, one per line.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les déclencheurs additionnels vont ici, un par ligne.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your username always counts as a mention. You can add additional trigger words or phrases that you want to count as well, such as other nicknames. One word or phrase per line, case doesn&apos;t matter.</source>
-        <translation type="unfinished"></translation>
+        <translation>Votre nom d&apos;utilisateur compte toujours comme une mention. Vous pouvez ajouter des mots ou expressions déclencheurs supplémentaires, comme d&apos;autres pseudonymes, à comptabiliser. Un mot ou une expression par ligne, sans distinction de majuscules ou de minuscules.</translation>
     </message>
     <message>
         <location line="-83"/>
         <source>User joined</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilisateur a rejoint la session</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Canvas locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Toile verrouillée</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Toile déverrouillée</translation>
     </message>
 </context>
 <context>
@@ -9599,7 +9599,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host.cpp" line="+41"/>
         <source>Session</source>
-        <translation type="unfinished">Session</translation>
+        <translation>Session</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9609,7 +9609,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>Permissions</source>
-        <translation type="unfinished">Permissions</translation>
+        <translation>Permissions</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9825,7 +9825,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/categories.cpp" line="+27"/>
         <source>Session</source>
-        <translation type="unfinished">Session</translation>
+        <translation>Session</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9840,7 +9840,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+7"/>
         <source>Permissions</source>
-        <translation type="unfinished">Permissions</translation>
+        <translation>Permissions</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10542,7 +10542,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Palette</source>
-        <translation type="unfinished">Palette</translation>
+        <translation>Palette</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -10633,7 +10633,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Palettes (%1)</source>
-        <translation type="unfinished">Palettes (%1)</translation>
+        <translation>Palettes (%1)</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -11967,7 +11967,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+6"/>
         <source>Session</source>
-        <translation type="unfinished">Session</translation>
+        <translation>Session</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -12633,7 +12633,7 @@ Ou par Animation ▸ Nouvelle Piste.</translation>
     <message>
         <location line="+11"/>
         <source>Bot</source>
-        <translation type="unfinished">Bot</translation>
+        <translation>Bot</translation>
     </message>
     <message>
         <location line="+5"/>
