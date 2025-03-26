@@ -22,460 +22,68 @@
     <category>Graphics</category>
   </categories>
   <releases>
-    <release version="2.2.2-beta.5" type="development" date="2025-02-12">
-      <url>https://drawpile.net/news/release-2.2.2-beta.5/</url>
+    <release version="2.2.2" type="stable" date="2025-03-26">
+      <url>https://drawpile.net/news/release-2.2.2/</url>
       <description>
         <p>Changes in this version:</p>
         <ul>
-          <li>Feature: Color circle dock with gamut masks, available through View &gt; Docks &gt; Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.</li>
-          <li>Fix: Make temporary tool switches by holding a key down work again. Thanks 3rd_EFNO and bunnie for reporting.</li>
-          <li>Fix: Disregard hidden layers when layer picking in frame view.</li>
-          <li>Feature: Add a search bar to the key frame properties dialog.</li>
-          <li>Fix: Reset locale to "C" after Qt messes it up on startup. Thanks Meru for reporting.</li>
-          <li>Fix: Don't use bilinear interpolation in transforms unnecessarily.</li>
-          <li>Feature: Add canvas shortcuts for changing color hue, saturation/chroma and value/lightness/luminosity. Thanks Dann DecCairns for suggesting.</li>
-          <li>Feature: Make size adjustment canvas shortcut depend on the speed of the drag. Thanks MorrowShore for suggesting.</li>
-          <li>Fix: Remove pointless permissions on Android that Qt includes by default but aren't actually used.</li>
-          <li>Fix: Don't default Android to fingerpaint when a pen is present.</li>
-          <li>Fix: Work around a crash on Android that sometimes occurs when putting your palm on the screen, which somehow leads to touch events with zero contact points. Thanks Mav for reporting.</li>
-          <li>Fix: Uncap aspect ratio on older Android versions. Thanks Molderche for reporting.</li>
-          <li>Fix: Work around modifier keys not registering when using a tablet on Wayland. Thanks Absolute Goober for reporting.</li>
-          <li>Server Fix: Don't pointlessly reload server certificates if they didn't change. Thanks Liz for reporting.</li>
-          <li>Server Fix: Work around too many authenticated users in a session, which could cause a crash. Thanks Liz for reporting.</li>
-          <li>Fix: Don't crash when filling with feathering and a canvas-filling selection. Thanks Meru for reporting.</li>
-          <li>Fix: Don't carry over HUD button presses to dock UI in small screen mode. Thanks Meru for reporting.</li>
-          <li>Feature: Make list action buttons in settings dialog clearer, adding an edit button for canvas shortcuts. Thanks Maffi for suggesting.</li>
-          <li>Fix: Work around broken transparency when copying images between canvases on Wayland. Thanks Absolute Goober for reporting.</li>
-          <li>Fix: Properly ignore system tablet events when using KisTablet drivers on Windows. Thanks Doc for reporting.</li>
-          <li>Feature: Warn when an action will close a relevant window on Android and in the browser. Thanks 3rd_EFNO for suggesting.</li>
-          <li>Fix: When enabling a dock and it gets put into a tab, that tab now gets activated.</li>
-          <li>Feature: Show icons on dock tabs by default, rather than text that gets squashed. In desktop mode, this can be toggled via View &gt; Docks &gt; Show Icons on Tabs.</li>
-          <li>Feature: Replace "hold shift to arrange" with View &gt; Docks &gt; Arrange Docks, which doesn't require a keyboard. Thanks 3rd_EFNO for suggesting.</li>
-          <li>Feature: Allow configuring temporary tool switch hold time. Thanks 3rd_EFNO and pachuco for suggesting.</li>
-          <li>Fix: Properly pass tilt and barrel rotation values to MyPaint brushes. Thanks MorrowShore for reporting.</li>
-          <li>Feature: Tilt support on Android. Thanks MorrowShore and Verdrusk for suggesting.</li>
-          <li>Server Feature: Allow two-way chat in web admin, letting admins talk to sessions without having to intrude on them. Thanks Bluestrings for suggesting.</li>
-          <li>Server Fix: Don't transmit ban lists and logs to non-operators. Thanks Ryngtail for reporting.</li>
-          <li>Fix: Always show color dialogs in HSV color space, since they don't behave correctly in other spaces. Thanks Meru for reporting.</li>
-          <li>Fix: Apply pending fills when manipulating layers. Thanks MorrowShore for reporting.</li>
-          <li>Server Feature: Show better messages when a session reset happens, specifying if it's compressing, reverting or replacing the canvas. Thanks MorrowShore for suggesting.</li>
-          <li>Feature: Reference image dock. Allows opening images in a separate dock and picking colors from them. Thanks 3rd_EFNO and leandro2222 for suggesting parts of this.</li>
-          <li>Fix: Make clicking and dragging fill and magic wand tools work at all zoom levels and drag speeds.</li>
-          <li>Feature: Make the canvas resize dialog fit to a floating transform, if present. This allows you to paste an image larger than the canvas and then resize to fit. Thanks Meru for suggesting.</li>
-          <li>Server Fix: Don't filter out feature access messages when loading session templates, so that permissions can actually get set properly from them.</li>
-          <li>Feature: Add --pass/-p option to dprectool, to allow configuring which messages are passed through when converting. The default is to pass all messages through, rather than just messages relevant for the client.</li>
-          <li>Server Feature: Treat invalid password and opword hashes in session templates as plain passwords. This still issues a warning, since those kinds of passwords should really be specified by prefixing them with "plain;".</li>
-          <li>Server Fix: Make template sessions not appear with a blank title and settings when first joining them.</li>
-          <li>Server Fix: Properly include web socket allowance in template session listings.</li>
-          <li>Server Feature: Allow authOnly option in session templates.</li>
-          <li>Server Fix: Allow joining a non-instantiated templated session via a direct link to its alias, rather than telling the user that the session isn't up.</li>
-          <li>Server Fix: Properly start recordings for sessions instantiated from a template.</li>
-          <li>Fix: Try to retain dock arrangements after resizing the window, the Windows on-screen keyboard squashing the application or rotating a device/monitor. They should no longer remain squished to a smaller size after resizing the window back. Thanks vipperz for reporting.</li>
-          <li>Fix: Work around Android devices reporting way too huge motions when panning with two fingers. Thanks quandaledingle44 for reporting.</li>
-          <li>Feature: Right-clicking outside of a transform now applies it. Thanks MorrowShore for suggesting.</li>
-          <li>Feature: Allow dragging selections to quickly move their contents without having to double-click to deselect and dragging the edge to move the selection itself without its contents. Thanks Blozzom, Lungy, MorrowShore, SadColor and Zheida for suggesting and testing.</li>
-          <li>Fix: Don't mark the canvas as saved if it was only exported.</li>
-          <li>Fix: Round colors to 8 bits in fill and magic wand tools so that they don't get snagged on color differences too small to see on screen. Thanks vipperz for reporting.</li>
-          <li>Feature: Add -I/--interpolation option to the drawpile-cmd and drawpile-timelapse commands, to allow using better scaling than bilinear if appropriate. Thanks Saphiros for causing this.</li>
-          <li>Fix: Don't add blank filenames to recent files list. Thanks Aries Raenidaez for reporting.</li>
-          <li>Fix: Don't reset zoom and rotation when lifting and replacing one of two fingers in a pinch or twist operation. Thanks Partack for reporting.</li>
-          <li>Fix: Stop tap-and-hold color picking when another finger is added.</li>
-          <li>Fix: Use Normal blending in Layer View and Group View modes. Thanks Meru for reporting.</li>
-          <li>Feature: Show different cursors for selection replace, unite, exclude and intersect operations. Thanks MorrowShore for suggesting.</li>
-          <li>Fix: Take canvas rotation, mirror and flip into account with regards to pen tilt inputs.</li>
-          <li>Fix: Adjust minimum resolution for desktop-screen mode to be a bit larger, to avoid getting a cut-off desktop UI on some phones.</li>
-          <li>Fix: Don't cut off the bottom of dialogs on some Android phones. Thanks Anonymous, Bluestrings and Molderche for reporting.</li>
-          <li>Fix: Work around Gaomon tablets reporting pen buttons as mouse inputs. They were getting ignored because of an earlier Huion bug workaround.</li>
-          <li>Fix: Replace sound playback implementation on Windows to avoid mysterious crashes on some systems. Thanks Anonymous for reporting.</li>
-          <li>Fix: Properly put an undo point before layer property changes. Thanks Maffi for reporting.</li>
-          <li>Feature: Raise default undo limit to 60 instead of 30.</li>
-          <li>Feature: Expand the Host tab in the start dialog, allowing setting up sessions in advance and separating personal from public sessions better.</li>
-          <li>Feature: Remember background color as well when using per-slot colors.</li>
-          <li>Fix: Scroll to the brush in question when creating or overwriting one.</li>
-          <li>Feature: Allow editing brush names, descriptions and thumbnails when using detached slots.</li>
-          <li>Fix: Make next/previous brush and tag shortcuts work when using detached slots.</li>
-          <li>Server Feature: Inform clients of session password changes so that they can update their invite links.</li>
-          <li>Fix: Work around the web browser receiving messages while the application is handling messages already. This could cause nonsensical errors like "incompatible server" or "invalid state" or outright crashes during login.</li>
-          <li>Server Feature: Allow filtering server logs via the web admin API. Thanks Bluestrings for suggesting.</li>
-          <li>Fix: Properly save background color of annotations in ORA files.</li>
-          <li>Feature: Allow toggling a "sketch mode" on layers, which will change the opacity and/or tint the layer locally. The exact look of this can be configured in the layer properties. Thanks abrasivetroop and leandro2222 for suggesting.</li>
-          <li>Feature: Use the sketch mode tinting for onion skins as well, since it gives better results when there's colored areas involved.</li>
-          <li>Fix: Properly update rotation when choosing an angle from the drop-down in the status bar when the angle is fractionally off the chosen angle. Thanks annoy for reporting.</li>
-          <li>Server Feature: Allow locking admin API sections to prevent changes on them, optionally with a password that needs to be entered to unlock them.</li>
-          <li>Server Feature: Only treat WebSocket connections from browsers (based on the presence of an Origin header) as requiring extra permissions, to allow desktop and mobile clients to connect via WebSockets without being subjected to extra restrictions.</li>
-          <li>Server Feature: Allow hosting passworded sessions via the browser if password-dependent sessions are enabled, rather than refusing hosting altogether.</li>
-          <li>Server Feature: Allow restricting connections to the correct host name as passed with --local-host. Enabling this requires an updated client, since older ones don't transmit the hostname.</li>
-          <li>Fix: When setting the canvas background color, the dialog now properly previews colors with alpha instead of showing them as opaque.</li>
-          <li>Feature: Add File &gt; Export Again to let you export to the same file without showing a file picker. Thanks gerroon for suggesting.</li>
-          <li>Fix: Properly save flipbook crop for when cropping multiple times without resetting in-between. Thanks BornIncompetence for reporting.</li>
-          <li>Feature: Allow selecting and then moving, grouping, deleting etc. of multiple layers at once. To select multiple layers, hold Shift or Ctrl while making a selection or use the boxes on the right. Thanks MorrowShore for suggesting parts of this.</li>
-          <li>Feature: Allow dragging across the layer icons to hide the visibility of multiple layers in a row, rather than having to click each one. Thanks MorrowShore for suggesting.</li>
-          <li>Feature: The fill and magic wand tools now always at least fill the initial pixel if gap closing or shrinking would up with a blank result. Thanks MorrowShore for suggesting.</li>
-          <li>Fix: Properly apply transforms if the only thing you change is the opacity or blend mode. Thanks Blozzom for reporting.</li>
-          <li>Feature: Add Blue Apatite, Indigo, Ocean Deep, Pool Table, Rose Quartz, Rust and Watermelon color schemes. Thanks Weenifer for contributing.</li>
-          <li>Fix: Use the Fusion style by default on macOS because the System style has crashing bugs when using it with Sidecar. Thanks Axocrat for reporting.</li>
-          <li>Fix: Make the software renderer not create errant dark lines when moving the cursor when fractional scaling is involved. Thanks lambda20xx for reporting.</li>
-          <li>Fix: Remove nonsensical license page from Windows installer, Drawpile isn't under the kind of license that requires the user to accept it.</li>
-          <li>Fix: Properly open ORA, PSD and brush pack ZIP files when dragging them over the window. Thanks MorrowShore for reporting.</li>
-          <li>Fix: Don't show laser trails while catching up. Thanks MorrowShore for reporting.</li>
+          <li>Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.</li>
+          <li>Feature: Add -u/--users parameter to dprectool, which will print out a table of user statistics along with names and ids.</li>
+          <li>Feature: Add --include-user-ids parameter to dprectool, allowing to pass a comma-separated list of user ids to only include visual changes from.</li>
+          <li>Fix: Work around WebKit bug 284752 that prevents Drawpile from working on Safari 18. Thanks grimsley for reporting.</li>
+          <li>Fix: Correct weird letter spacing in the font rendering on Windows. Thanks Sinamer for reporting.</li>
+          <li>Feature: Make reset images a bit smaller and much faster. This speeds up manual session resets, canvas compression, hosting and joins in the builtin server. Thanks mukihyena for reporting.</li>
+          <li>Fix: Generate the catchup image in the background when hosting on the builtin server, rather than hanging the client. Thanks mukihyena for reporting.</li>
+          <li>Server Fix: Additional checks and logging to avoid and diagnose temporary failures in streamed resets. Thanks Will for reporting.</li>
+          <li>Fix: Slightly delay restoring dock layouts after the window is resized to avoid a crash on macOS. Thanks Axocrat for reporting.</li>
+          <li>Fix: Properly update the checkbox on View &gt; Full Screen if the OS forces the application out of it. Thanks Sinamer for reporting.</li>
+          <li>Fix: Restore window maximized after exiting the application from full screen mode. Thanks Sinamer for reporting.</li>
+          <li>Fix: Only remember dock sizes when the window is maximized or full screen on operating systems where that's possible to tell. Thanks Meiren for reporting.</li>
+          <li>Fix: Make tablet positions work on Cintiqs under Windows Ink with UI scaling and when it's not set to be the primary monitor. The old behavior is available via Edit &gt; Tablet Driver &gt; Windows Ink Non-Native, in case this breaks something else. Thanks Axocrat and Liz for reporting, Weenifer for reporting and testing, Maffi for reporting additional issues.</li>
+          <li>Fix: Remove the "KisTablet" prefix from the tablet driver names in Windows, it's a technical name that doesn't add anything useful.</li>
+          <li>Feature: Indicate when you have no layer selected so that it doesn't seem like you can draw but nothing happens.</li>
+          <li>Server Fix: Remove browser users when a session's password is removed and the server only allows browsers in passworded sessions. Thanks Bluestrings for reporting.</li>
+          <li>Server Feature: Add a separate permission for hosting via browser and whether to take this permission from ext-auth. This also fixes the issue where it would ask you to log in when trying to host from the browser, just to then tell you that you're not allowed to do so anyway. Thanks Bluestrings for suggesting.</li>
+          <li>Removed Feature: Username lists in external session announcements. They were never used.</li>
+          <li>Fix: Show current tier in the layer permissions menu again. Thanks Meiren for reporting.</li>
+          <li>Fix: Reduce selection outline resolution instead of punting to the blue selection mask when it gets too large. Thanks Meru, MorrowShore and Shane for reporting.</li>
+          <li>Server Feature: Invite codes, allowing inviting people with revokable links that override regular session restrictions. Thanks Bluestrings and Liz for suggesting.</li>
+          <li>Removed Feature: Toggling between web and direct links in the invite dialog. Drawpile will translate the web link if you paste it into the join dialog anyway, so the distinction was pointless.</li>
+          <li>Fix: Change temporary tool switch setting text to say that only the primary shortcut will cause it. This was unintentional, but it's useful. Thanks 3rd_EFNO for reporting.</li>
+          <li>Fix: Use proper background images in Windows installer instead of those ugly red discs. Thanks evilTriangle for reporting.</li>
+          <li>Fix: Correct intermittent errors when connecting, reconnecting or otherwise opening a new main view in the browser that could hang the application.</li>
+          <li>Feature: Allow hiding the color history swatches on individual color docks. Thanks Stickly for suggesting.</li>
+          <li>Fix: Make pan, zoom, inspector and color picker tools not get locked by the session catching up or resetting. Thanks Greendyno for reporting.</li>
+          <li>Fix: Don't show canvas during catchup when using software renderer.</li>
+          <li>Fix: Fix keyboard shortcuts, enter and backspace not reacting on some devices in the browser. Thanks Greendyno for reporting.</li>
+          <li>Fix: Keep leading spaces and zeroes the same when creating or duplicating a layer. Thanks Greendyno for reporting.</li>
+          <li>Feature: Allow making the application full-screen in the browser, using View &gt; Full Screen. Thanks Windy for suggesting.</li>
+          <li>Fix: Make user markers not leave streaks in the software renderer when fractional UI scaling is involved. Thanks lambda20xx for reporting.</li>
+          <li>Feature: Add constrain and center buttons to the transform tool, for the equivalent of holding Shift and Alt when you don't have a keyboard. Thanks MachKerman for suggesting.</li>
+          <li>Fix: Don't crash on invalid certificates when connecting via WebSocket. Thanks IZUHU for reporting.</li>
+          <li>Feature: Set user agent header when connecting via WebSocket using the client. Thanks Meru for suggesting.</li>
+          <li>Feature: Allow adding a "w" query parameter to session URLs to connect via WebSocket instead. Thanks IZUHU for suggesting.</li>
+          <li>Fix: Remember whether a host was connected to via WebSocket by adding the "w" query parameter to it.</li>
+          <li>Server Feature: Add a "prefer WebSockets" option. Clients will generate appropriate invite links and announcements will contain this preference.</li>
+          <li>Server Fix: Allow refreshing external bans even when the section is locked. Thanks Bluestrings for reporting.</li>
+          <li>Feature: Add -i/--image option to the drawpile-cmd command, to allow e.g. converting an ORA to a PNG file or similar on the command line.</li>
+          <li>Feature: Add PSD and WEBP format support to the drawpile-cmd command.</li>
+          <li>Fix: Don't reset reference dock position when toggling dock visibility. Thanks izzy for reporting.</li>
+          <li>Fix: Remove language selection in the web version for now, since it doesn't do anything. Thanks Albano Battistella for reporting.</li>
+          <li>Feature: Allow setting the language in the web version using a query parameter. Many languages don't work properly, but this allows setting it before starting the thing and then having to change it.</li>
+          <li>Fix: Show and select existing track title when renaming it. Thanks Greendyno for reporting.</li>
+          <li>Fix: Properly resize login dialog on Android when showing session listings so that you can actually read something.</li>
+          <li>Fix: Don't make kinetic touch scrolling jerk around when moving the finger over the scroll bar.</li>
+          <li>Fix: Properly linkify URLs with an @ in the path.</li>
+          <li>Fix: Default kinetic scroll on Android and the browser to left-click, since that works better and also covers touch.</li>
+          <li>Fix: Allow dragging layers and sliding across the checkboxes in the layer list even when kinetic scrolling with left-click or touch is enabled by making the left and right areas not react to scroll. This is a patch to Qt.</li>
+          <li>Fix: Work around a crash on Windows when toggling kinetic scroll settings.</li>
+          <li>Fix: Properly show current layout on first layouts dialog run. Thanks Dib for reporting.</li>
+          <li>Fix: Disable image reader limit in command-line tools under Qt6.</li>
+          <li>Fix: Deduplicate brush and tag names when exporting brushes. Thanks Blozzom for reporting.</li>
+          <li>Fix: Don't crash under Windows 7 when attempting to play two sounds once. Thanks pachuco for reporting.</li>
         </ul>
       </description>
-      <artifacts>
-        <artifact type="binary" platform="x86_64-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.5/Drawpile-2.2.2-beta.5-x86_64.msi</location>
-          <checksum type="sha256">0201430ee1bd6caabb8452ba18b5c7c92121a5388cbd10fe2ab06e8e0ad842e0</checksum>
-          <size type="download">23158784</size>
-        </artifact>
-        <artifact type="binary" platform="i386-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.5/Drawpile-2.2.2-beta.5-x86.msi</location>
-          <checksum type="sha256">21b028bfcd7dce21678968f4e5b49b8ae934dc5f409174f90df71052bbecc5e2</checksum>
-          <size type="download">19791872</size>
-        </artifact>
-        <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.5/Drawpile-2.2.2-beta.5-x86_64.dmg</location>
-          <checksum type="sha256">6fd87af95954a5e6eb978b9dbc950f639a5c08165e716aa27fc97ef1fdaabf2d</checksum>
-          <size type="download">30312510</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.5/Drawpile-2.2.2-beta.5-arm64.dmg</location>
-          <checksum type="sha256">6a5bb42fb946801621a3dfc3cbe74fe6e7d33782f1ea2e04c977ec6a00bd33ba</checksum>
-          <size type="download">27909885</size>
-        </artifact>
-        <artifact type="binary" platform="x86_64-linux-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.5/Drawpile-2.2.2-beta.5-x86_64.AppImage</location>
-          <checksum type="sha256">c1ce0acb31aa9b8e0b5a2213a1f6fd536e6f187ca65efaaea423a35fa1a531c3</checksum>
-          <size type="download">52016320</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.5/Drawpile-2.2.2-beta.5-30-34-arm64-v8a.apk</location>
-          <checksum type="sha256">ccefed6043a0795a4904da42a071b87aa6088a7fd8e4c77841fe46e081e819d0</checksum>
-          <size type="download">23217543</size>
-        </artifact>
-        <artifact type="binary" platform="arm-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.5/Drawpile-2.2.2-beta.5-23-23-armeabi-v7a.apk</location>
-          <checksum type="sha256">251cb1641ca79f20ba5517998a4f6397efb4114876d465221486de8c5c4356d3</checksum>
-          <size type="download">19449407</size>
-        </artifact>
-        <artifact type="source">
-          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.2-beta.5.tar.gz</location>
-          <checksum type="sha256">303a5f912901281332adaca8d134b8468f9e856161df1958887ebf04b07ef5ab</checksum>
-          <size type="download">6548545</size>
-        </artifact>
-      </artifacts>
-    </release>
-    <release version="2.2.2-beta.4" type="development" date="2024-11-06">
-      <url>https://drawpile.net/news/release-2.2.2-beta.4/</url>
-      <description>
-        <p>Changes in this version:</p>
-        <ul>
-          <li>Fix: Solve rendering glitches with selection outlines that happen on some systems. Thanks xxxx for reporting.</li>
-          <li>Feature: Allow scaling animation exports. Thanks Hopfel for animating across a giant canvas.</li>
-          <li>Fix: Allow disabling the application proxy in the network preferences and automatically detect bad proxy configurations that can't actually make connections. Thanks FishEggsThe for reporting.</li>
-          <li>Fix: Improve socket error messages, listing the error code and adding extra information on what to do if a proxy error occurs. Thanks FishEggsThe for reporting.</li>
-          <li>Fix: Center soft brushes on the cursor better, they got offset to the top-left from correcting for size discontinuity before. Thanks Meiren for reporting.</li>
-          <li>Fix: Don't mess up gridmap settings when opening brush settings dialog and initially changing a value in it. Thanks Blozzom for reporting.</li>
-          <li>Fix: Default "confirm action" to both the regular enter key as well as the one on the numpad. Thanks MachKerman for reporting.</li>
-          <li>Feature: Add settings button to color wheel, sliders and palette at the top-left of the dock. For the wheel, this allows changing the settings here now instead of having to go into the preferences. For the sliders, you can now toggle the color space here and decide whether to show all sliders and the hex input. For the palette, this just moves the menu button that used to be in the row below. Thanks MachKerman for suggesting.</li>
-          <li>Feature: Allow aligning the color wheel to the top of the dock instead of the center. Can be toggled in the dock's menu. Thanks MorrowShore for suggesting.</li>
-          <li>Fix: Scale outer color wheel ring with the size of the widget. Thanks MorrowShore for reporting.</li>
-          <li>Feature: Preview selected color on the color wheel. Can be toggled in the dock's menu. Thanks MorrowShore for suggesting.</li>
-          <li>Fix: Allow pressing the numpad enter key to apply an action and Ctrl+Equal in addition to Ctrl+Plus to zoom in. Thanks MachKerman and Sinamer for reporting.</li>
-          <li>Fix: Prevent artifacts around brush cursor when the canvas is rotated in software renderer mode. Thanks Sinamer for reporting.</li>
-          <li>Fix: Don't consider the flood fill's own preview when filling the merged image. Thanks Meru for reporting.</li>
-          <li>Server Feature: Streamed autoresets that don't interrupt the session to bring it down to a smaller size, instead the compressed state is built up in the background and replaced on the fly.</li>
-          <li>Fix: Make joining through a direct link not put the desktop client into single-session mode. Thanks Bluestrings for reporting.</li>
-          <li>Fix: Work around Huion tablets emitting mouse clicks every few pen presses and causing full-pressure strokes to be started. Thanks Blozzom, DT and and Dumb Dog Disease for reporting.</li>
-          <li>Feature: Toggle layer visibility action, available in the Layer menu. Mostly useful to let assign a keyboard shortcut to it. Thanks incoheart for suggesting.</li>
-          <li>Feature: Remember ranges set for MyPaint brushes in the settings editor, rather than implicitly fitting them to the curve. Thanks Verdrusk for suggesting.</li>
-          <li>Server Feature: Provide more session status information for administrators, such as the autoreset state.</li>
-          <li>Feature: Allow importing MyPaint brushes in old version formats instead of saying they contain invalid JSON. Thanks bunnie for suggesting.</li>
-          <li>Feature: Attach brushes to slots, showing which brush you selected and remembering changes to them. This attachment can be disabled in the tool preferences.</li>
-          <li>Feature: Allow configuring the number of brush slots in the tool settings, from 1 to 9, in addition to the everpresent eraser slot. Thanks vipperz for suggesting.</li>
-          <li>Fix: Clamp palette swatch sizes to more reasonable bounds. Thanks MachKerman for reporting.</li>
-          <li>Server Feature: Allow checking session, operator and server account passwords via the API. This can be used to password-protect recordings or similar. Thanks Meru for contributing.</li>
-          <li>Fix: Correct some UI scaling problems with brush outlines, canvas centering, dock toggling, pixel grid and transform handles. Thanks annoy for reporting.</li>
-          <li>Feature: Extended touch tap gestures, among them two-finger tap to undo, three-finger tap to redo and tap-and-hold to summon the color picker. Can be configured in the preferences under the Touch tab. Thanks InconsolableCellist and many others for suggesting.</li>
-          <li>Feature: Snap canvas rotation around 0° by default. If you don't want this, you can set the canvas shortcut or touch rotation to "free rotate canvas" instead.</li>
-          <li>Feature: Show a color preview when picking a color from the canvas. Can be toggled in the tool preferences.</li>
-          <li>Fix: In layer view mode, render the layer truly in isolation instead of applying opacities, visibilities or alpha preserve to it. Thanks MachKerman and incoheart for reporting.</li>
-          <li>Feature: Add Layer &gt; Group View to show the parent group of the current layer in isolation. Thanks Rylan for suggesting.</li>
-          <li>Fix: Save and export images according to the current view mode. Thanks incoheart for reporting.</li>
-          <li>Server Fix: Don't get announcement refreshes stuck in an infinite loop. Thanks Meru for reporting.</li>
-          <li>Fix: Make MyPaint brushes not ignore the first stroke made with them. This would also sometimes lead to a blank preview.</li>
-          <li>Feature: Allow choosing between a round and square expansion/shrinking kernel in flood fill, magic wand and when altering a selection. The latter is particularly useful for pixel art. Thanks Bigcheese and MorrowShore for suggesting.</li>
-          <li>Fix: Don't ignore double-clicks when toggling layer visibility or check state. Thanks Chryssabliss for reporting.</li>
-          <li>Feature: Put all shortcuts onto a single settings page, showing conflicts between them better. Allow searching for shortcuts by name and keybinding, as well as filtering out only conflicts. Thanks MajorCooke for suggesting parts of this.</li>
-          <li>Feature: Allow assigning keyboard shortcuts to brushes. Assigning the same shortcut to multiple brushes will toggle through them. Thanks annoy for suggesting.</li>
-          <li>Server Feature: Integrate with systemd watchdog.</li>
-          <li>Fix: Make user interface scaling not round to multiple of 100% anymore. Thanks blau, Buch, Chryssabliss and ShotgunnerFox for reporting.</li>
-          <li>Fix: Don't use system message boxes on Android, since they behave in various broken and nonsensical ways, like showing you a yes button three times.  Thanks Hopfel for reporting.</li>
-          <li>Feature: Use hardware renderer on Android by default.</li>
-          <li>Fix: Don't unnecessarily scale full-canvas animations by a single pixel.</li>
-          <li>Feature: Replace GIF export with ffmpeg's libraries, since they are also used for videos. It's way faster, generates much better palettes and supports transparent backgrounds. Thanks dAVePAGE and JJ for reporting issues in this regard.</li>
-          <li>Fix: Constrain aspect ratio of transform scaling properly, it was getting offset by the distance between the clicked point and the actual corner. Thanks Blozzom for reporting.</li>
-          <li>Feature: Allow configuring flood fill preview and confirmation behavior, defaulting to the simplest mode similar to single-user software, but still previewing fills locally first. The magic wand always works this way for now, since selections are local only anyway.</li>
-          <li>Feature: Show resize dialog when expanding canvas, to avoid accidental resizes and improve performance by doing the expansions all in one step. The keyboard shortcuts to expand the canvas work in this dialog now and also auto-repeat if you hold them down. Thanks Bluestrings and tobiasBora for suggesting things in this regard.</li>
-          <li>Fix: Indicate denied permissions by showing a message to that effect, rather than just disabling the actions and leaving you guessing. Thanks Venesio for reporting.</li>
-          <li>Fix: Clicking off of an annotation will no longer instantly create a new one in that spot. It will instead only deselect the annotation that was selected.</li>
-          <li>Fix: The Delete Empty Annotations can now be undone without undoing what happened before it as well.</li>
-          <li>Feature: Empty annotations are now automatically deleted when you deselect them, to avoid the common clutter of stray empty annotations across the canvas. If you really did want an empty annotation, you can hit undo and it will return.</li>
-          <li>Server Feature: Setting a minimum protocol version of dp:4.24.0 now tells clients that they're using a Drawpile version too old for this server, rather than leaving them sitting at a session list where they can join no sessions.</li>
-          <li>Feature: Allow clicking and dragging the fill and magic wand tools to adjust the tolerance.</li>
-          <li>Fix: Make mouse click canvas shortcuts not override key canvas shortcuts. Thanks incoheart for reporting.</li>
-          <li>Server Feature: Always allow server admins, moderators and users with the new PERSIST flag to toggle session persistence. The global persistence setting still allows anyone to toggle this. Thanks Bluestrings for suggesting.</li>
-          <li>Server Feature: Allow admins to specify a linger time for empty sessions, which will let even non-persistent sessions live on for that time to allow people a chance to reconnect.</li>
-          <li>Server Feature: Add API endpoints to get and create session listings. Thanks Meru for contributing.</li>
-          <li>Fix: Make login dialog not spill off-screen on mobile devices.</li>
-        </ul>
-      </description>
-      <artifacts>
-        <artifact type="binary" platform="x86_64-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.4/Drawpile-2.2.2-beta.4-x86_64.msi</location>
-          <checksum type="sha256">cc461bb9276d9517fa9a70bca6b42fb9c6287516104153cab3fca374541b0123</checksum>
-          <size type="download">22953984</size>
-        </artifact>
-        <artifact type="binary" platform="i386-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.4/Drawpile-2.2.2-beta.4-x86.msi</location>
-          <checksum type="sha256">f1dd1c4e275e5cf27e45469460a8095d78419f93deeaea030e3cc5127b0fd067</checksum>
-          <size type="download">19648512</size>
-        </artifact>
-        <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.4/Drawpile-2.2.2-beta.4-x86_64.dmg</location>
-          <checksum type="sha256">55bd045d57d6dede82a50d62f062ce7992713a536fe61b00f2ad587cab58933c</checksum>
-          <size type="download">28658561</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.4/Drawpile-2.2.2-beta.4-arm64.dmg</location>
-          <checksum type="sha256">c872016fd1aa714836a1297375838f4fede438e5e828f498eec95077be13be26</checksum>
-          <size type="download">26607923</size>
-        </artifact>
-        <artifact type="binary" platform="x86_64-linux-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.4/Drawpile-2.2.2-beta.4-x86_64.AppImage</location>
-          <checksum type="sha256">7d9e636b8f019f9bf8beaab54400605dfa58d21f46ac1b211c7443dfa33d0a75</checksum>
-          <size type="download">49853632</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.4/Drawpile-2.2.2-beta.4-arm64-v8a.apk</location>
-          <checksum type="sha256">f83a035f5e06f8b840c1f9f1acb9ee7a3b83cf3707b2af7cdaef988f1caaa959</checksum>
-          <size type="download">22391978</size>
-        </artifact>
-        <artifact type="binary" platform="arm-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.4/Drawpile-2.2.2-beta.4-armeabi-v7a.apk</location>
-          <checksum type="sha256">76f0776ba23c418035047f035eb31815867e9caae676cfbb38d699eb09e4a045</checksum>
-          <size type="download">18890026</size>
-        </artifact>
-        <artifact type="source">
-          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.2-beta.4.tar.gz</location>
-          <checksum type="sha256">a42dc811dcada990839cd096d13765f078af03726990b1fbc7a544ed0d53f235</checksum>
-          <size type="download">6314228</size>
-        </artifact>
-      </artifacts>
-    </release>
-    <release version="2.2.2-beta.3" type="development" date="2024-08-09">
-      <url>https://drawpile.net/news/release-2.2.2-beta.3/</url>
-      <description>
-        <p>Changes in this version:</p>
-        <ul>
-          <li>Fix: Use more accurate timers for performance profiles if the platform supports it.</li>
-          <li>Fix: Don't try to update the roles list before becoming an operator, which could lead to a crash. Thanks Bluestrings for reporting.</li>
-          <li>Fix: Don't update sessions that were just added to the session browser, since that can lead to a crash because of what is probably a bug in Qt's filtering and sorting. Thanks Bluestrings for reporting.</li>
-          <li>Feature: Turn too large transforms into cut and paste operations instead of cancelling them outright.</li>
-          <li>Fix: Make frame import not create a track with an invalid ID that messes up the UI. Thanks BulletPepper and greendyno for reporting.</li>
-        </ul>
-      </description>
-      <artifacts>
-        <artifact type="binary" platform="x86_64-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.3/Drawpile-2.2.2-beta.3-x86_64.msi</location>
-          <checksum type="sha256">82a1893f1e4475ef7b3674e5c4c261c26c64e99b649f330ea8eb2286342c3273</checksum>
-          <size type="download">22810624</size>
-        </artifact>
-        <artifact type="binary" platform="i386-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.3/Drawpile-2.2.2-beta.3-x86.msi</location>
-          <checksum type="sha256">5bfe11c08dbc5d9b411ffe94a80351f6835c1a174febab3a442861997ba00b40</checksum>
-          <size type="download">19550208</size>
-        </artifact>
-        <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.3/Drawpile-2.2.2-beta.3-x86_64.dmg</location>
-          <checksum type="sha256">f79327ebc102ca17f536aacee0e0dc3a129df4ec9c2f91096a24a0967c96db7c</checksum>
-          <size type="download">28350525</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.3/Drawpile-2.2.2-beta.3-arm64.dmg</location>
-          <checksum type="sha256">a161834d7dd28e1edebee1c490c3dd02bb82a55167ac192150387e6aa347b4b0</checksum>
-          <size type="download">26163747</size>
-        </artifact>
-        <artifact type="binary" platform="x86_64-linux-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.3/Drawpile-2.2.2-beta.3-x86_64.AppImage</location>
-          <checksum type="sha256">e8666ad73105bc1c0e2c55781f448db53fe585988061c528bb525d480320a228</checksum>
-          <size type="download">49181888</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.3/Drawpile-2.2.2-beta.3-arm64-v8a.apk</location>
-          <checksum type="sha256">d003b012337ab365741cb1b0f7cb03e13261459908514c44ae0127857d292eff</checksum>
-          <size type="download">22034264</size>
-        </artifact>
-        <artifact type="binary" platform="arm-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.3/Drawpile-2.2.2-beta.3-armeabi-v7a.apk</location>
-          <checksum type="sha256">294bf63d932b9290a3197a736c7c1e9057ff17fa2396359c002c6f69240a53fe</checksum>
-          <size type="download">18552788</size>
-        </artifact>
-        <artifact type="source">
-          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.2-beta.3.tar.gz</location>
-          <checksum type="sha256">5dfe7bfc21e334c5be9e6383428f2aa5281e31f072b3138891a8a55bbc1845ac</checksum>
-          <size type="download">6025831</size>
-        </artifact>
-      </artifacts>
-    </release>
-    <release version="2.2.2-beta.2" type="development" date="2024-08-04">
-      <url>https://drawpile.net/news/release-2.2.2-beta.2/</url>
-      <description>
-        <p>Changes in this version:</p>
-        <ul>
-          <li>Feature: Allow choosing a different cursor for erase and alpha locked brushes. Thanks Hipofiz and Rylan for suggesting.</li>
-          <li>Server Fix: Properly sever connections on read, write and timeout errors.</li>
-          <li>Fix: Load annotations from ORA files saved by Drawpile 2.1 properly. Thanks RyanMolyneux for reporting.</li>
-          <li>Feature: Ignore inputs with invalid pressure during strokes. Thanks Lunalatte for reporting.</li>
-          <li>Server Fix: Handle sessions running out of space better, they should no longer end up in an unrecoverable state. The messages in chat are also now translatable, more informative and don't get spammed for every command. Thanks Bluestrings and Charmandrigo for reporting.</li>
-          <li>Feature: Lock canvas when the session is out of space, showing an appropriate message in the corner, rather than letting you continue drawing. The server needs to be updated for this to be available.</li>
-          <li>Server Fix: Make catchup not take pointlessly long when the session is out of space.</li>
-          <li>Feature: Add a message to the reset dialog that you need to be an operator to reset the session, since it's not too clear why the button is disabled otherwise.</li>
-          <li>Feature: Make fill source selection a set of buttons for merged image, merged without background and layer, using the dropdown only for the latter thereof. The checked button will be remembered. Thanks Blozzom, Bluestrings and Meru for suggesting.</li>
-          <li>Feature: Default redo to both Ctrl+Y and Ctrl+Shift+Z on Windows, Linux and the browser. Thanks Crow for suggesting.</li>
-          <li>Fix: Brighten up transparency checkerboard to be a bit easier on the eyes. Thanks Crow for suggesting.</li>
-          <li>Server Feature: Allow registered users to replace themselves when rejoining a session, rather than telling them that their own name is in use. Avoids having to wait for their old self to time out if their internet flakes. Thanks Crow for suggesting.</li>
-          <li>Fix: Don't fail server compilation when turning off webadmin or WebSockets. Thanks leegean for reporting.</li>
-          <li>Fix: Save and load annotation vertical alignment to and from ORA files.</li>
-          <li>Fix: Put a transparent background behind flat images, rather than using white. Thanks lungy for reporting.</li>
-          <li>Fix: Make pasting images from Drawpile into other applications retain transparency on Windows. This is really a bug in those other programs, they pick the wrong format by default, but whatever. Thanks lungy for reporting.</li>
-          <li>Feature: Allow configuring the transparency checkerboard colors in the user interface preferences. Thanks lungy for suggesting.</li>
-          <li>Fix: Don't reselect and scroll back to default layer after interacting with the layer list by picking a layer or toggling visibility. Thanks MachKerman and Ben for reporting.</li>
-          <li>Fix: Load PNGs even when they have corrupt checksums. Thanks xxxx for reporting.</li>
-          <li>Feature: Allow copying multiple entries from the event log. Thanks Bluestrings for reporting.</li>
-          <li>Feature: Allow toggling vertical sync in the user interface preferences. Default is off, because it can cause input lag.</li>
-          <li>Feature: Web browser support for the client.</li>
-          <li>Feature: New hardware and software canvas renderers. The hardware renderer is much faster than the old one, especially in the browser. Uses Direct3D on Windows, WebGL in the browser and OpenGL on all other platforms. The software renderer is slightly faster than the old one, useful for cursed hardware or drivers that cause input lag or visual glitches. This is an experimental feature and can be enabled in the General preferences under Renderer.</li>
-          <li>Feature: Add system information dialog under Tools &gt; Developer Tools &gt; System Information.</li>
-          <li>Feature: Hide user pointers when they get close to your cursor. Can be toggled under View &gt; User Pointers &gt; Hide From Cursor. Thanks Crowley for suggesting.</li>
-          <li>Feature: Allow filling non-continuous areas. Thanks Ben for suggesting.</li>
-          <li>Fix: Make rotation via View &gt; Rotation &gt; Rotate Canvas (Counter-)Clockwise work properly when it's mirrored or flipped. Thanks Ragged for reporting.</li>
-          <li>Feature: Allow disabling the zoom, rotation, mirror and flip on-canvas notices in the User Interface preferences. Thanks Partack for suggesting.</li>
-          <li>Feature: Allow configuring user pointer stay time through View → User Pointers → Stay Time. Thanks johannesCmayer for suggesting.</li>
-          <li>Feature: Allow prompting for layer properties when creating a layer. Can be turned on in the User Interface preferences. Thanks Ben for suggesting.</li>
-          <li>Fix: Focus existing layer properties dialog if one exists for the layer that properties are requested for.</li>
-          <li>Feature: Name layers after the username of the creator by default.</li>
-          <li>Fix: Don't use bilinear interpolation when selection is only moved, rotated by a multiple of 90 degrees, flipped or mirrored, to avoid unnecessary blurring. Thanks lungy for reporting.</li>
-          <li>Feature: Don't require restarting the application when changing kinetic scrolling settings.</li>
-          <li>Fix: Change default canvas size to 2000x2000, because 800x600 is a bit outdated. Thanks MorrowShore for for contributing.</li>
-          <li>Feature: Don't require restarting the application to switch between desktop and small screen mode. There's also a "dynamic" option now, which will change the mode based on the size of the window, enabled by default on Android and in the browser.</li>
-          <li>Feature: Pan or "hand" tool. Lets you move the canvas around by clicking. Thanks DeeJii for suggesting.</li>
-          <li>Fix: Don't move view position when pressing side buttons in small screen mode.</li>
-          <li>Feature: Show a proper explanation when you can't join a session.</li>
-          <li>Fix: Make autosave interval actually be in minutes, not in seconds because that's ridiculous. Thanks D'mitri for reporting.</li>
-          <li>Feature: Add -U/--uncensor parameter to drawpile-timelapse to allow revealing censored layers.</li>
-          <li>Fix: Reduce contrast on censor tile stripes to make them less annoying to look at.</li>
-          <li>Server Feature: When you pass an option that's not compiled in, the error message will not inform you of that fact, rather than just saying you passed an unknown option with no further information.</li>
-          <li>Feature: On Windows and Linux, new windows now open in a separate process, since that's more efficient and resilient. Can be disabled by setting the DRAWPILE_SINGLE_PROCESS environment variable. Thanks Bluestrings for suggesting.</li>
-          <li>Fix: The main window should now properly restore to its previous position even when that's on a secondary screen. Thanks Moe for reporting.</li>
-          <li>Removed Feature: Roomcodes. They are a vestige from a time where Drawpile only had a single, central listing server. Nowadays nobody uses these anymore, invite links are the replacement.</li>
-          <li>Feature: Disable global smoothing for mouse drawing by default, since that really only make sense for tablets and touch. Can be toggled in the input preferences. Thanks nililfin for suggesting.</li>
-          <li>Feature: Always show drawing tools toolbar in small screen mode. Thanks Blozzom for suggesting.</li>
-          <li>Fix: Increase contrast on depressed buttons in dark themes. This is a patch to Qt. Thanks MorrowShore for reporting.</li>
-          <li>Fix: Switch out the icon for the extension buttons on squashed menus and toolbars so that they're actually visible in dark themes. This is a patch to Qt.</li>
-          <li>Feature: Make canvas zoom slider use the same increments as the mouse wheel and zoom in/out actions, since stepping by 1% is not useful. Thanks zheida for suggesting.</li>
-          <li>Fix: Work around a crash on Linux that happens when hosting with busted versions of Qt 6.6+. Thanks Vanska for reporting.</li>
-          <li>Fix: Allow tabbing the main window on macOS again, for some reason Qt disabled it. This is a patch to Qt. Thanks mira for reporting.</li>
-          <li>Feature: Pixel ruler, available under View &gt; Show Rulers. Thanks fluttershydev for contributing.</li>
-          <li>Fix: Ignore mouse clicks caused by briefly touching the canvas on some devices on Windows. Thanks sfin for reporting.</li>
-          <li>Feature: Translate links copied out of the browser version of Drawpile into something that can be joined when they are pasted into the join page.</li>
-          <li>Feature: Better small-screen mode handling. The toggle items now no longer overlap, dialogs get maximized if appropriate, the start and settings dialogs get arranged horizontally.</li>
-          <li>Feature: Rework selections and transforms entirely. They're now distinct operations. Selections participate in the undo stack.</li>
-          <li>Feature: Allow toggling between accurate and fast transform previews. The former is the current kind of preview that actually gets previewed on the layer, the latter is like in Drawpile 2.1, where it's just a vector image drawn on top of everything.</li>
-          <li>Feature: Allow picking blend modes and opacity when pasting, stamping and transforming. Thanks blurymind for suggesting.</li>
-          <li>Feature: Show layouts action in dock menus. Thanks Elisa for suggesting.</li>
-          <li>Fix: Set TCP_NODELAY on sockets to reduce unnecessary latency.</li>
-          <li>Feature: Build option -DPROXY_STYLE=ON to fix the bad contrast in dark themes when not building a patched version of Qt yourself.</li>
-          <li>Fix: Disable the image memory limit when using Qt 6, because that breaks the loading large files. Thanks LiterallyMe for reporting.</li>
-          <li>Feature: Indicate fill source in layer list.</li>
-          <li>Fix: Make canvas lock and layers not lock tools that don't actually act on them.</li>
-          <li>Feature: Allow transforming multiple layers at once.</li>
-          <li>Feature: Make creating a key frame layer copy the layer structure of the closest frame if that's assigned to a layer group. Thanks Ausjamcian for suggesting.</li>
-          <li>Fix: Don't overwrite last file on save after resetting the canvas to an external image. Thanks Bluestrings for reporting.</li>
-          <li>Fix: Ignore bogus mouse clicks emitted by some tablets after briefly tapping the pen on them. Thanks Ausjamcian for reporting.</li>
-          <li>Fix: Make the window fit itself to the screen harder in the browser and on Android. There's also an option under View -&gt; Fit to Screen now to manually force it to do so. Thanks Sidca for reporting and Meru for testing.</li>
-          <li>Feature: Allow importing animation frames from multiple files and as layers from PSD files, to be found under File -&gt; Import. Thanks Meru, BulletPepper, Ben and RubberRoss for suggesting.</li>
-          <li>Feature: Extend animation export to be a dialog where you pick the format. You can now export frames to a ZIP, allowing Android and the browser to save a series of frames as well. Exporting to MP4 and WEBM videos as well as animated WEBP is also implemented via ffmpeg's libraries.</li>
-          <li>Feature: Magic wand select tool. Basically a fill tool, but for selections. Thanks ChristianJohnsten for suggesting.</li>
-          <li>Fix: Properly remember NSFM setting in host dialog. Thanks Bluestrings and cupcake for reporting.</li>
-          <li>Fix: Properly check NSFM setting in host dialog based on title if that is configured in the parental controls preferences. Thanks Bluestrings for reporting.</li>
-          <li>Fix: Behind blend mode now does opacity math correctly. Thanks Blozzom for reporting.</li>
-          <li>Fix: Allow cancelling fill tool with right-click even when that's bound to something else. Thanks SadColor for reporting.</li>
-          <li>Feature: The fill tool now previews fills instead of doing them immediately, allowing cancelling and changing layers before applying it. You can also pick more blend modes, change the opacity and fill the entire selection with it now.</li>
-          <li>Fix: Make layer picking work properly in frame mode, it picked the bottom-most instead of the top-most one.</li>
-          <li>Feature: Add View &gt; Show Selection Mask, which lets you view selections as a solid mask instead of an outline. This lets you see opacity properly.</li>
-          <li>Removed Feature: Zeroconf support, an obscure LAN-only discovery thing that wasn't working anymore anyway.</li>
-          <li>Fix: Make the fill tool not feather along canvas edge. Thanks Meru for reporting.</li>
-          <li>Server Feature: Allow specifying idleOverride and allowWeb in session templates. Thanks MorrowShore for suggesting.</li>
-          <li>Feature: Allow shrinking fills and magic wand selections. Thanks Meru for suggesting.</li>
-          <li>Feature: New dialog Selection &gt; Expand/Shrink/Feather Selection that alters selections accordingly. Thanks MorrowShore for suggesting.</li>
-          <li>Feature: Zooming with keyboard shortcuts now zooms in on the cursor when it's pointing at the canvas. If you don't like this, there's new shortcuts that always zoom on the center, which you can bind in the preferences. Thanks Chryssabliss for suggesting.</li>
-          <li>Feature: Make header and footer buttons on docks stretch further if there's empty space, making them easier to hit. Thanks MorrowShore for suggesting.</li>
-          <li>Fix: Properly truncate files when writing them on Android to avoid corruption from leftover junk at the end.</li>
-          <li>Feature: Allow cropping in the drawpile-timelapse command-line tool using -x/--crop.</li>
-          <li>Fix: Compensate for discontinuity in the classic soft brush radius to make the transition look less bumpy. Thanks BulletPepper for reporting.</li>
-          <li>Feature: Make color sliders dock smaller by showing only one set of sliders at a time and add an input field for a hex color name. Thanks Kawaxte and MorrowShore for suggesting.</li>
-          <li>Fix: Don't switch tools while typing into text fields in some situations. Thanks leopardheart982 for reporting.</li>
-          <li>Fix: Give color wheel, color palette and navigator docks a minimum size so that they can't be shrunken into nonexistence. Thanks vipperz for reporting.</li>
-          <li>Fix: Don't remove layer censors when resetting sessions hosted on the builtin server. Thanks O_O for reporting.</li>
-          <li>Server Feature: Allow changing session founder names through the admin API.</li>
-          <li>Feature: Don't pop open chat for session auto-resets, just show a note in the corner of the canvas. Needs both client and server to be updated.</li>
-          <li>Feature: Support reading and writing WEBP files.</li>
-          <li>Feature: Enable high-DPI scaling by default on all platforms except Android. Can be disabled in the user interface preferences if needed.</li>
-          <li>Fix: Default kinetic scrolling on Android to touch instead of left click, since the latter conflicts with stuff like dragging layers.</li>
-          <li>Fix: Allow importing role lists larger than 100 entries, since public sessions have those. Thanks kale for reporting.</li>
-        </ul>
-      </description>
-      <artifacts>
-        <artifact type="binary" platform="x86_64-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.2/Drawpile-2.2.2-beta.2-x86_64.msi</location>
-          <checksum type="sha256">32a475400768e072cecfa81cd90cf2cfaf271b63eb22a8e4f32b0cd0e160ff68</checksum>
-          <size type="download">23330816</size>
-        </artifact>
-        <artifact type="binary" platform="i386-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.2/Drawpile-2.2.2-beta.2-x86.msi</location>
-          <checksum type="sha256">f7420f1c5c89ee09a80809538a6038b5d5b07b601420659edc45d1f8b4f8422d</checksum>
-          <size type="download">19898368</size>
-        </artifact>
-        <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.2/Drawpile-2.2.2-beta.2-x86_64.dmg</location>
-          <checksum type="sha256">46c7e572e9fce657d8b3ec5cf8be8bbb564c9751d8e524aadc654b0a1f398dac</checksum>
-          <size type="download">28342153</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.2/Drawpile-2.2.2-beta.2-arm64.dmg</location>
-          <checksum type="sha256">2d35b6b7b987c236511dedb388ae1d29824eea755d3352901d3e0b04d6e7f955</checksum>
-          <size type="download">26154739</size>
-        </artifact>
-        <artifact type="binary" platform="x86_64-linux-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.2/Drawpile-2.2.2-beta.2-x86_64.AppImage</location>
-          <checksum type="sha256">e286d682f257ff9b77cdfe6da77e289b30a46309bf534772a25ad4280913c76c</checksum>
-          <size type="download">49820864</size>
-        </artifact>
-        <artifact type="binary" platform="aarch64-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.2/Drawpile-2.2.2-beta.2-arm64-v8a.apk</location>
-          <checksum type="sha256">5cc3a6b2faec976cf4ce1c227e98c78d652308ff96d63e55107a99c88cb449a9</checksum>
-          <size type="download">22034264</size>
-        </artifact>
-        <artifact type="binary" platform="arm-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2-beta.2/Drawpile-2.2.2-beta.2-armeabi-v7a.apk</location>
-          <checksum type="sha256">95d6dd8a03662180757028d7a39b52907fb20ee14552f3138b82fc764dd7dbb2</checksum>
-          <size type="download">18548692</size>
-        </artifact>
-        <artifact type="source">
-          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.2-beta.2.tar.gz</location>
-          <checksum type="sha256">c51c953e3a19b169bf71b6cf3df38de2afb98adfc1fa931b7f14324fc3501b08</checksum>
-          <size type="download">6025022</size>
-        </artifact>
-      </artifacts>
     </release>
     <release version="2.2.1" type="stable" date="2024-02-18">
       <url>https://drawpile.net/news/release-2.2.1/</url>
