@@ -1,0 +1,1 @@
+Fixes kinetic touch scrolling to not jitter around or make it impossible to drag layers. Optimizes reset image generation, making hosting, resetting and compressing canvases faster. Implements invite codes, simpler WebSocket links and more. See the website for the full changelog.
