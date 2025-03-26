@@ -8257,17 +8257,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+7"/>
         <source>Password security:</source>
-        <translation>Mot de passe et sécurité</translation>
+        <translation>Sécurité du mot de passe&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>With this enabled, Drawpile may save passwords in an unencrypted format. Disabling it will forget any insecurely stored passwords.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lorsque cette option est activée, Drawpile peut enregistrer les mots de passe dans un format non chiffré. La désactiver entraînera l&apos;oubli de tout mot de passe non sécurisé.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Connection quality:</source>
-        <translation type="unfinished"></translation>
+        <translation>Qualité de connexion&#xa0;:</translation>
     </message>
     <message>
         <location line="+1"/>
