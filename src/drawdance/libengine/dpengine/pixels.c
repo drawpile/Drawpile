@@ -1350,6 +1350,24 @@ static BGRA15 blend_erase(BGR15 cb, DP_UNUSED BGR15 cs, Fix15 ab, Fix15 as,
     };
 }
 
+static BGRA15 blend_erase_light(BGR15 cb, BGR15 cs, Fix15 ab,
+                                DP_UNUSED Fix15 as, Fix15 o)
+{
+    Fix15 as1 = BIT15_FIX - fix15_mul(lum(cs), o);
+    return (BGRA15){
+        .b = fix15_mul(cb.b, as1),
+        .g = fix15_mul(cb.g, as1),
+        .r = fix15_mul(cb.r, as1),
+        .a = fix15_mul(ab, as1),
+    };
+}
+
+static BGRA15 blend_erase_dark(BGR15 cb, BGR15 cs, Fix15 ab, Fix15 as, Fix15 o)
+{
+    return blend_erase_light(cb, (BGR15){as - cs.b, as - cs.g, as - cs.r}, ab,
+                             as, o);
+}
+
 static BGRA15 blend_replace(DP_UNUSED BGR15 cb, DP_UNUSED BGR15 cs,
                             DP_UNUSED Fix15 ab, Fix15 as, Fix15 o)
 {
@@ -1936,6 +1954,24 @@ static void blend_mask_recolor(DP_Pixel15 *dst, DP_UPixel15 src,
 #endif
 }
 
+static void
+blend_mask_to_alpha_op(DP_Pixel15 *dst, const uint16_t *mask, Fix15 opacity,
+                       int w, int h, int mask_skip, int base_skip,
+                       BGRA15 (*op)(BGR15, BGR15, Fix15, Fix15, Fix15))
+{
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x, ++dst, ++mask) {
+            Fix15 o = fix15_mul(*mask, opacity);
+            DP_Pixel15 dp = *dst;
+            BGRA15 b = to_bgra(dp);
+            BGR15 cs = to_ubgr(DP_pixel15_unpremultiply(dp));
+            *dst = from_bgra(op(b.bgr, cs, b.a, ((Fix15)(1 << 15)), o));
+        }
+        dst += base_skip;
+        mask += mask_skip;
+    }
+}
+
 void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
                    const uint16_t *mask, uint16_t opacity, int w, int h,
                    int mask_skip, int base_skip)
@@ -1973,6 +2009,22 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
     case DP_BLEND_MODE_COLOR_ERASE:
         blend_mask_color_erase(dst, src, mask, to_fix(opacity), w, h, mask_skip,
                                base_skip);
+        break;
+    case DP_BLEND_MODE_ERASE_LIGHT:
+        blend_mask_alpha_op(dst, src, mask, to_fix(opacity), w, h, mask_skip,
+                            base_skip, blend_erase_light);
+        break;
+    case DP_BLEND_MODE_ERASE_DARK:
+        blend_mask_alpha_op(dst, src, mask, to_fix(opacity), w, h, mask_skip,
+                            base_skip, blend_erase_dark);
+        break;
+    case DP_BLEND_MODE_LIGHT_TO_ALPHA:
+        blend_mask_to_alpha_op(dst, mask, to_fix(opacity), w, h, mask_skip,
+                               base_skip, blend_erase_light);
+        break;
+    case DP_BLEND_MODE_DARK_TO_ALPHA:
+        blend_mask_to_alpha_op(dst, mask, to_fix(opacity), w, h, mask_skip,
+                               base_skip, blend_erase_dark);
         break;
     // Alpha-preserving separable blend modes (each channel handled separately)
     case DP_BLEND_MODE_MULTIPLY:
@@ -2081,6 +2133,19 @@ static void blend_pixels_alpha_op(DP_Pixel15 *DP_RESTRICT dst,
     }
 }
 
+static void blend_pixels_to_alpha_op(DP_Pixel15 *DP_RESTRICT dst,
+                                     int pixel_count, Fix15 opacity,
+                                     BGRA15 (*op)(BGR15, BGR15, Fix15, Fix15,
+                                                  Fix15))
+{
+    for (int i = 0; i < pixel_count; ++i, ++dst) {
+        DP_Pixel15 dp = *dst;
+        BGRA15 b = to_bgra(*dst);
+        BGR15 s = to_ubgr(DP_pixel15_unpremultiply(dp));
+        *dst = from_bgra(op(b.bgr, s, b.a, ((Fix15)(1 << 15)), opacity));
+    }
+}
+
 static void blend_pixels_color_erase(DP_Pixel15 *DP_RESTRICT dst,
                                      const DP_Pixel15 *DP_RESTRICT src,
                                      int pixel_count, uint16_t opacity)
@@ -2180,6 +2245,22 @@ void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
     case DP_BLEND_MODE_ERASE:
         blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
                               blend_erase);
+        break;
+    case DP_BLEND_MODE_ERASE_LIGHT:
+        blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
+                              blend_erase_light);
+        break;
+    case DP_BLEND_MODE_ERASE_DARK:
+        blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
+                              blend_erase_dark);
+        break;
+    case DP_BLEND_MODE_LIGHT_TO_ALPHA:
+        blend_pixels_to_alpha_op(dst, pixel_count, to_fix(opacity),
+                                 blend_erase_light);
+        break;
+    case DP_BLEND_MODE_DARK_TO_ALPHA:
+        blend_pixels_to_alpha_op(dst, pixel_count, to_fix(opacity),
+                                 blend_erase_dark);
         break;
     case DP_BLEND_MODE_REPLACE:
         blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
