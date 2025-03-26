@@ -141,7 +141,7 @@
     <message>
         <location line="+30"/>
         <source>Color Pickup: 1/</source>
-        <translation>Pipette&#x202f;à couleurs&#x202f;:</translation>
+        <translation>Pipette&#x202f;à couleurs&#xa0;: 1/</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -2562,7 +2562,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+3"/>
         <source>Expand &amp;Right…</source>
-        <translation type="unfinished">Étendre vers la D&amp;roite</translation>
+        <translation>Étendre vers la D&amp;roite…</translation>
     </message>
     <message>
         <location line="+110"/>
@@ -5099,7 +5099,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+12"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished">Pipette&#x202f;à couleurs&#x202f;:</translation>
+        <translation>Pipette&#x202f;à Couleurs&#xa0;: 1/</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -7580,7 +7580,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+12"/>
         <location line="+98"/>
         <source>Role Import</source>
-        <translation type="unfinished">Importer Rôles</translation>
+        <translation>Importer des Rôles</translation>
     </message>
     <message>
         <location line="-97"/>
@@ -7659,7 +7659,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Network</source>
-        <translation type="unfinished">Réseau</translation>
+        <translation>Réseau</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7722,12 +7722,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Host Session</source>
-        <translation type="unfinished">Héberger une session</translation>
+        <translation>Héberger une Session</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Share your canvas with others</source>
-        <translation>Partager votre toile avec les autres</translation>
+        <translation>Partagez votre toile avec les autres</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7838,14 +7838,14 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+2"/>
         <source>Last check: %n day(s) ago.</source>
         <translation>
-            <numerusform></numerusform>
-            <numerusform>Dernière vérification il y a {0} jours</numerusform>
+            <numerusform>Dernière vérification il y a %n jour.</numerusform>
+            <numerusform>Dernière vérification il y a %n jours.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Last check: never.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dernière vérification&#xa0;: jamais.</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -7891,7 +7891,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+50"/>
         <source>Error Saving Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur d&apos;Enregistrement du Journal</translation>
     </message>
     <message>
         <location line="+1"/>
