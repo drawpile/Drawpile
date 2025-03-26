@@ -7817,7 +7817,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+5"/>
         <source>Export to file…</source>
-        <translation>Exporter dans un fichier</translation>
+        <translation>Exporter dans un fichier…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7832,7 +7832,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+6"/>
         <source>Last check: today.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dernière vérification&#xa0;: aujourd&apos;hui.</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
