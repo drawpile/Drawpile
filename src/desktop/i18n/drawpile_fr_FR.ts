@@ -8048,7 +8048,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+9"/>
         <source>Write debugging log to file</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer les logs de debug dans des fichiers</translation>
     </message>
     <message>
         <location line="+2"/>
