@@ -8048,7 +8048,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+9"/>
         <source>Write debugging log to file</source>
-        <translation>Enregistrer les logs de debug dans des fichiers</translation>
+        <translation>Enregistrer les journaux de déboguage dans un fichier</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8059,19 +8059,19 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+11"/>
         <source>Qt Graphics View</source>
         <extracomment>One of the canvas renderer options. &quot;Qt&quot; is a software framework.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vue Graphique Qt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hardware (experimental)</source>
         <extracomment>One of the canvas renderer options. Hardware meaning it uses the GPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Matériel (expérimental)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Software (experimental)</source>
         <extracomment>One of the canvas renderer options. Software meaning it uses the CPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Logiciel (expérimental)</translation>
     </message>
     <message>
         <location line="+3"/>
