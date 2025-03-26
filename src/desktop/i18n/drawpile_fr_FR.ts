@@ -7762,7 +7762,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Layouts</source>
-        <translation type="unfinished">Agencements</translation>
+        <translation>Agencements</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7868,12 +7868,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/systeminfodialog.cpp" line="+27"/>
         <source>System Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Informations sur le système</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Copier</translation>
     </message>
 </context>
 <context>
