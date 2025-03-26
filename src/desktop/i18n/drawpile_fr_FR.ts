@@ -7939,7 +7939,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Do Nothing</source>
-        <translation>Ne rien faire</translation>
+        <translation>Ne Rien Faire</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7972,7 +7972,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Custom FFmpeg Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Commande FFmpeg Customisée</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7993,7 +7993,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+5"/>
         <source>Choose ffmpeg path</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisir le cheminement ffmpeg</translation>
     </message>
     <message>
         <location line="+107"/>
