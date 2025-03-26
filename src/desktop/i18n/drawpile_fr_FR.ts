@@ -7595,15 +7595,15 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message numerus="yes">
         <location line="+61"/>
         <source>%n role(s) imported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n rôle importé.</numerusform>
+            <numerusform>%n rôles importés.</numerusform>
         </translation>
     </message>
     <message>
         <location line="-61"/>
         <source>Role Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Export du Rôle</translation>
     </message>
 </context>
 <context>
@@ -7611,7 +7611,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/sessionundodepthlimitdialog.cpp" line="+21"/>
         <source>Change Session Undo Depth Limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Changer la Limite de Retour en Arrière de la Session</translation>
     </message>
     <message>
         <location line="+7"/>
