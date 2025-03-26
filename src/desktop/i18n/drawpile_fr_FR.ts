@@ -8089,7 +8089,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <source>Unknown</source>
         <comment>CanvasImplementation</comment>
         <extracomment>Refers to an unknown canvas renderer, should never happen.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>inconnue</translation>
     </message>
     <message>
         <location line="+4"/>
