@@ -8287,7 +8287,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>%1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 secondes</translation>
     </message>
     <message>
         <location line="+4"/>
