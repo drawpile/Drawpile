@@ -6044,7 +6044,7 @@ La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, cons
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Combien de tapotements sont dessinés pendant que le pointeur se déplace à un pinceau de rayon en distance (plus précisément: la valeur de base du rayon)</translation>
+        <translation>Nombre de touches à tracer pendant que le pointeur se déplace d&apos;une fois le rayon de la brosse (plus précisément&#xa0;: La valeur de base du rayon)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7924,12 +7924,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+9"/>
         <location line="+7"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Inconnu</translation>
     </message>
     <message>
         <location line="-22"/>
         <source>Draw</source>
-        <translation type="unfinished"></translation>
+        <translation>Dessiner</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7939,7 +7939,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Do Nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne rien faire</translation>
     </message>
     <message>
         <location line="+7"/>
