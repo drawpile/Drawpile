@@ -1599,7 +1599,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>You&apos;re about to create a new canvas and close this window.</source>
-        <translation type="unfinished">Vous êtes sur le point de créer un nouveau canevas et de fermer cette fenêtre.</translation>
+        <translation>Vous êtes sur le point de créer un nouveau canevas et de fermer cette fenêtre.</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -2231,7 +2231,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="-26"/>
         <source>Open Debug Dump...</source>
-        <translation type="unfinished">Ouvrir Archive de Débogage</translation>
+        <translation>Ouvrir Archive de Débogage...</translation>
     </message>
     <message>
         <location line="+44"/>
@@ -2341,7 +2341,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+2"/>
         <source>Could not establish a connection to the server.</source>
-        <translation>Impossible d&apos;établir une connexion avec le serveur SFTP</translation>
+        <translation>Impossible d&apos;établir une connexion avec le serveur.</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -2381,7 +2381,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+42"/>
         <source>Stop Tablet Event Log</source>
-        <translation type="unfinished">Arrêter la Table des Évènements</translation>
+        <translation>Arrêter la Table des Évènements</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2472,7 +2472,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>%1x%2px² (%3x%4mm²)</source>
-        <translation type="unfinished">%1x%2px² (%3x%4mm²)</translation>
+        <translation>%1x%2px² (%3x%4mm²)</translation>
     </message>
     <message>
         <location line="+168"/>
@@ -2487,7 +2487,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+38"/>
         <source>&amp;Download Image…</source>
-        <translation type="unfinished">Télécharger Image (&amp;D)…</translation>
+        <translation>Télécharger l&apos;Image (&amp;D)…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -3128,7 +3128,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+17"/>
         <source>&amp;Animation</source>
-        <translation type="unfinished">&amp;Animation</translation>
+        <translation>&amp;Animation</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -3503,7 +3503,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+17"/>
         <source>Skip Backward</source>
-        <translation type="unfinished">Revenir en Arrière</translation>
+        <translation>Sauter en Arrière</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -3669,7 +3669,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+50"/>
         <source>You must be an operator to reset the session.</source>
-        <translation type="unfinished">Vous devez être un·e opérateur·ice afin de réinitialiser la session.</translation>
+        <translation>Vous devez être un·e opérateur·ice afin de réinitialiser la session.</translation>
     </message>
 </context>
 <context>
@@ -3912,7 +3912,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+113"/>
         <source>Block new joins</source>
-        <translation type="unfinished">Bloquer les nouveaux·elles entrant·e·s</translation>
+        <translation>Bloquer les nouveaux·elles entrant·e·s</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4505,7 +4505,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+125"/>
         <source>Output resolution will be %1x%2 pixels.</source>
-        <translation type="unfinished">La résolution de sortie sera de %1 pixels sur %2</translation>
+        <translation>La résolution de sortie sera de %1x%2 pixels.</translation>
     </message>
 </context>
 <context>
@@ -5397,7 +5397,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>Fast random noise, changing at each evaluation. Evenly distributed between 0 and 1.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Bruit rapide aléatoire changeant à chaque évaluation. Distribué de façon équitable entre 0 et 1</translation>
+        <translation>Bruit rapide aléatoire, changeant à chaque évaluation. Distribué de façon équitable entre 0 et 1.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5507,10 +5507,10 @@ Pour le réglage du Rayon, utiliser une valeur de -4.15 rend la taille du pincea
 -90 when twisted counterclockwise 90 degrees</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Rotation du barillet du stylet. 
+        <translation>Rotation du barillet du stylet. 
 0 s&apos;il n&apos;est inchangé. 
 +90 s&apos;il est tourné de 90 degrés dans le sens horaire. 
--90 s&apos;il est tourné de 90 degrés dans le sens antihoraire.</translation>
+-90 s&apos;il est tourné de 90 degrés dans le sens antihoraire</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5971,7 +5971,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Pigment</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.</extracomment>
-        <translation type="unfinished">Pigment</translation>
+        <translation>Pigment</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6004,9 +6004,9 @@ Ce réglage est responsable de l&apos;arrêt de la peinture lorsqu&apos;aucune p
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Corrige la non-linéarité introduite en mélangeant plusieurs tapotements les uns par-dessus les autres. Cette correction devrait vous donner en réponse une pression linéaire (&quot;naturelle&quot;) lorsqu&apos;une pression est mappé sur &apos;Opacité par Produit&apos;, comme normalement. 0.9 est suffisant pour des tracés standard, baissez-le si votre pinceau se disperse trop, ou montez-le si vous utilisez les &apos;tapotements par seconde&apos;.
+        <translation>Corrige la non-linéarité introduite en mélangeant plusieurs tapotements les uns par-dessus les autres. Cette correction devrait vous donner en réponse une pression linéaire (&quot;naturelle&quot;) lorsqu&apos;une pression est mappé sur &apos;Opacité par Produit&apos;, comme normalement. 0.9 est suffisant pour des tracés standard, baissez-le si votre pinceau se disperse trop, ou montez-le si vous utilisez les &apos;tapotements par seconde&apos;.
 La valeur opaque au dessus de 0.0 convient pour les tapotements individuels.
-La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, considérant que chaque pixel aie (tapotements par rayon*2) tapotements de pinceau en moyenne sur un tracé.</translation>
+La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, considérant que chaque pixel aie (tapotements_par_rayon*2) tapotements de pinceau en moyenne sur un tracé</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6179,7 +6179,7 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
         <translation>Lors de la sélection d&apos;un pinceau, la couleur peut être restaurée à celle avec laquelle il a été enregistré.
  0.0 Ne pas modifier la couleur active lors de la sélection de ce pinceau.
  0.5 Remplacer la couleur active par la couleur du pinceau.
- 1.0 Définir la couleur active sur la couleur du pinceau lors de la sélection.</translation>
+ 1.0 Définir la couleur active sur la couleur du pinceau lors de la sélection</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8292,7 +8292,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>Network proxy:</source>
-        <translation>Proxy</translation>
+        <translation>Proxy réseau&#xa0;:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8302,22 +8302,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Désactivé</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Receive delay:</source>
-        <translation type="unfinished"></translation>
+        <translation>Délai de réception&#xa0;:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The higher the value, the smoother strokes from other users come in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plus la valeur est élevée, plus les traits des autres utilisateurs sont fluides.</translation>
     </message>
     <message>
         <location line="-98"/>
         <source>Chat avatars:</source>
-        <translation type="unfinished"></translation>
+        <translation>Avatars de discussion&#xa0;:</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -8332,7 +8332,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>Delete selected avatars…</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer les avatars sélectionnés…</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8342,14 +8342,14 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Delete avatars</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer les avatars</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really delete %n avatar(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Voulez-vous vraiment supprimer %n avatar&#x202f;?</numerusform>
+            <numerusform>Voulez-vous vraiment supprimer %n avatars&#x202f;?</numerusform>
         </translation>
     </message>
 </context>
@@ -8363,7 +8363,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>What triggered this notification</source>
-        <translation type="unfinished"></translation>
+        <translation>Qu&apos;est-ce qui a déclenché cette notification</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8373,7 +8373,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Play a sound effect when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Jouer un effet sonore lorsque cet événement se produit.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8383,32 +8383,32 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Pop up a speech bubble in the corner when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Faire apparaître une bulle de dialogue dans le coin lorsque cet événement se produit.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flash taskbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Faire clignoter la barre des tâches</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Flash the Drawpile window in the taskbar when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Faire clignoter la fenêtre Drawpile dans la barre des tâches lorsque cet événement se produit.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bounce dock</source>
-        <translation type="unfinished"></translation>
+        <translation>Faire bondir le dock</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Bounce Drawpile&apos;s icon in the dock when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Faites rebondir l&apos;icône de Drawpile dans le dock lorsque cet événement se produit.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Demand attention</source>
-        <translation type="unfinished"></translation>
+        <translation>Demander l&apos;attention</translation>
     </message>
     <message>
         <location line="+1"/>
