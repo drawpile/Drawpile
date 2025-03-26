@@ -5383,8 +5383,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Vitesse actuelle de déplacement. Cela peut changer très rapidement. Essayez «&#xa0;écrire des valeurs d&apos;entrée&#xa0;» depuis le menu «&#xa0;aide&#xa0;» pour ressentir la variation; les valeurs négatives sont rares mais possibles lors de déplacements très lents
-.</translation>
+        <translation>Vitesse actuelle de déplacement. Cela peut changer très rapidement. Essayez «&#xa0;écrire des valeurs d&apos;entrée&#xa0;» depuis le menu «&#xa0;aide&#xa0;» pour ressentir la variation&#x202f;; les valeurs négatives sont rares mais possibles lors de déplacements très lents.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5496,8 +5495,8 @@ Logarithmic: 0.0 is 100%, 0.69 is 200%, -1.38 is 25%
 For the Radius setting, using a value of -4.15 makes the brush size roughly constant, relative to the level of zoom.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Le niveau de zoom actuel de la vue de canevas. 
-Logarithmique: 0.0 est 100%, 0.69 est 200%, -1.38 est 25%.
+        <translation>Le niveau de zoom actuel de la vue de canevas.
+Logarithmique&#xa0;: 0.0 est 100%, 0.69 est 200%, -1.38 est 25%.
 Pour le réglage du Rayon, utiliser une valeur de -4.15 rend la taille du pinceau relativement constant, relatif du niveau de zoom.</translation>
     </message>
     <message>
@@ -6035,10 +6034,10 @@ La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, cons
  5.0 notable blur, thin strokes will disappear</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Ce réglage réduit la dureté si nécessaire pour prévenir les effets d&apos;escalier pixelisé (aliasing) en rendant le tapotement plus flou.
- 0.0 pour le désactiver (gomme fortes et pinceaux pixelisés)
- 1.0 pour un flou d&apos;un pixel (bonne valeur)
- 5.0 pour un flou notable; les tracés fins disparaîtront</translation>
+        <translation>Ce réglage réduit la dureté si nécessaire pour prévenir les effets d&apos;escalier pixelisé (aliasing) en rendant le tapotement plus flou.
+0.0 pour le désactiver (gomme fortes et pinceaux pixelisés)
+1.0 pour un flou d&apos;un pixel (bonne valeur)
+5.0 pour un flou notable&#x202f;; les tracés fins disparaîtront</translation>
     </message>
     <message>
         <location line="+3"/>
