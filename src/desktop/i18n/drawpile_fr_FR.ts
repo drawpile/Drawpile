@@ -8124,22 +8124,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Ocean Deep</source>
-        <translation type="unfinished"></translation>
+        <translation>Océan Profond</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pool Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Table de Billard</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rose Quartz</source>
-        <translation type="unfinished"></translation>
+        <translation>Quartz Rose</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rust</source>
-        <translation type="unfinished"></translation>
+        <translation>Rouille</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8149,37 +8149,37 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+15"/>
         <source>%1 offline undo levels by default</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 niveaux d&apos;annulation hors ligne par défaut</translation>
     </message>
     <message>
         <location line="-196"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;enregistrement automatique peut être activé pour le fichier actuel sous Fichier ▸ Enregistrement automatique.</translation>
     </message>
     <message>
         <location line="+106"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpoler lorsque la vue est agrandie ou pivotée</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Prevent jitter at certain zoom and rotation levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Empêcher les tremblements à certains niveaux de zoom et de rotation</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;activation de ces options peut avoir un impact sur les performances de certains systèmes.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Snapshots can be restored from the Session ▸ Reset… menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les captures peuvent être restaurées depuis Session ▸ Réinitialiser...menu.</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Style:</source>
-        <translation type="unfinished"></translation>
+        <translation>Style&#xa0;:</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8194,32 +8194,32 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Krita Bright</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita Lumineux</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita Sombre</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Darker</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita Plus Sombre</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Qt Fusion</source>
-        <translation type="unfinished"></translation>
+        <translation>Fusion Qt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hotdog Stand</source>
-        <translation type="unfinished"></translation>
+        <translation>Stand de Hot-Dogs</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color scheme:</source>
-        <translation type="unfinished"></translation>
+        <translation>Modèle de couleurs&#xa0;:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -8232,12 +8232,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/network.cpp" line="+89"/>
         <source>Builtin server:</source>
-        <translation type="unfinished"></translation>
+        <translation>Serveur intégré&#xa0;:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Host on port %1 if available</source>
-        <translation type="unfinished"></translation>
+        <translation>Héberger sur le port %1 si disponible</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8247,12 +8247,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Updates:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mises à jour&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Allow insecure local storage</source>
-        <translation type="unfinished"></translation>
+        <translation>Autoriser le stockage local non sécurisé</translation>
     </message>
     <message>
         <location line="+7"/>
