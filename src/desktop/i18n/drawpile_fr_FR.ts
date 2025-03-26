@@ -4470,12 +4470,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+3"/>
         <source>Crop X:</source>
-        <translation type="unfinished">Découper X:</translation>
+        <translation>Rogner&#xa0;:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Crop Y:</source>
-        <translation type="unfinished">Découper Y:</translation>
+        <translation>Rogner&#xa0;:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -7886,7 +7886,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Enable gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer les gestes</translation>
     </message>
     <message>
         <location line="+50"/>
