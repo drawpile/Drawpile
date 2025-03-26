@@ -69,6 +69,16 @@ SoundPlayer::~SoundPlayer()
 
 void SoundPlayer::playSound(const QString &path, int volume)
 {
+	// As far as I can tell, PlaySound is just busted on 32 bit Windows. This
+	// may be due to trying to load it dynamically or something, but even just
+	// trying to play back a normal WAV file leads to the program crashing. The
+	// reason we switched to PlaySound was because QtMultimedia was crashing on
+	// some Windows 7 systems. So we seemingly just get a choice of who gets
+	// sound and I guess it's not gonna be 32 bit Windows.
+#if defined(Q_OS_WIN) && !defined(_WIN64)
+	Q_UNUSED(path);
+	Q_UNUSED(volume);
+#else
 	if(!path.isEmpty()) {
 		DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(lock);
 		if(!winmmPlaySound && !winmmLoadAttempted) {
@@ -106,6 +116,7 @@ void SoundPlayer::playSound(const QString &path, int volume)
 			}
 		}
 	}
+#endif
 }
 
 bool SoundPlayer::isPlaying() const

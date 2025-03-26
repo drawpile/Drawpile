@@ -109,7 +109,12 @@ void Notifications::initGrid(
 
 		QCheckBox *soundBox = new QCheckBox(this);
 		soundBox->setToolTip(std::get<1>(header[1]));
+		// See soundplayer_win32.cpp for an explanation.
+#if defined(Q_OS_WIN) && !defined(_WIN64)
+		soundBox->setEnabled(false);
+#else
 		((&settings)->*bindSound)(std::forward<QCheckBox *>(soundBox));
+#endif
 		grid->addWidget(soundBox, row, 1, Qt::AlignHCenter);
 
 		QCheckBox *popupBox = new QCheckBox(this);
@@ -146,7 +151,13 @@ void Notifications::initOptions(
 	KisSliderSpinBox *volume = new KisSliderSpinBox(this);
 	volume->setMaximum(100);
 	volume->setSuffix(tr("%"));
+	// See soundplayer_win32.cpp for an explanation.
+#if defined(Q_OS_WIN) && !defined(_WIN64)
+	volume->setValue(0);
+	volume->setEnabled(false);
+#else
 	settings.bindSoundVolume(volume);
+#endif
 	form->addRow(tr("Sound volume:"), volume);
 
 	QCheckBox *mentionEnabled =
