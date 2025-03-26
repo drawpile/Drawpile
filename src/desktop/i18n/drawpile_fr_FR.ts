@@ -7621,7 +7621,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+9"/>
         <source>Choose a new undo limit for this session, the current limit is %1. Undos are shared between all participants. Changing the limit will start the undo stack anew, you won&apos;t be able to undo before the point where you changed it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisir une nouvelle limite de retour en arrière pour cette session, la limite actuelle est %1. Les retours en arrière sont partagés entre tous les participants. Changer la limite relancera la pile d&apos;annulation, vous ne pourrez pas annuler avant le point où vous l&apos;avez modifiée.</translation>
     </message>
 </context>
 <context>
