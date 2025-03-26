@@ -244,6 +244,34 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             "-dp-alpha-darken-lerp",
             "Alpha Darken",
         },
+    [DP_BLEND_MODE_ERASE_LIGHT] =
+        {
+            LAYER | BRUSH | DECREASE_OPACITY | PRESENTS_AS_ERASER,
+            "DP_BLEND_MODE_ERASE_LIGHT",
+            "-dp-erase-light",
+            "Erase Lightness",
+        },
+    [DP_BLEND_MODE_ERASE_DARK] =
+        {
+            LAYER | BRUSH | DECREASE_OPACITY | PRESENTS_AS_ERASER,
+            "DP_BLEND_MODE_ERASE_DARK",
+            "-dp-erase-dark",
+            "Erase Darkness",
+        },
+    [DP_BLEND_MODE_LIGHT_TO_ALPHA] =
+        {
+            LAYER | BRUSH | DECREASE_OPACITY,
+            "DP_BLEND_MODE_LIGHT_TO_ALPHA",
+            "-dp-light-to-alpha",
+            "Lightness to Alpha",
+        },
+    [DP_BLEND_MODE_DARK_TO_ALPHA] =
+        {
+            LAYER | BRUSH | DECREASE_OPACITY,
+            "DP_BLEND_MODE_DARK_TO_ALPHA",
+            "-dp-dark-to-alpha",
+            "Darkness to Alpha",
+        },
     [DP_BLEND_MODE_REPLACE] =
         {
             BRUSH | INCREASE_OPACITY | DECREASE_OPACITY | BLEND_BLANK,
