@@ -302,7 +302,7 @@ if(BASE)
 				patches/android_backtrace.diff
 				patches/androidtilt-qt5.diff
 				patches/qtbug-104895.diff
-				patches/android_no_build-id.diff
+				patches/android_no_build_id.diff
 				patches/kineticscrollfilter-qt5.diff
 			6.7.2
 				patches/qtbug-113394.diff
@@ -318,7 +318,7 @@ if(BASE)
 				patches/findeglemscripten.diff
 				patches/embool_qtbase.diff
 				patches/noasyncify.diff
-				patches/android_no_build-id.diff
+				patches/android_no_build_id.diff
 				patches/browser_keyboard_input.diff
 				patches/kineticscrollfilter-qt6.diff
 			6.8.2
@@ -334,7 +334,7 @@ if(BASE)
 				# TODO: make these patches work.
 				# patches/noasyncify.diff
 				# patches/browser_keyboard_input.diff
-				patches/android_no_build-id.diff
+				patches/android_no_build_id.diff
 				patches/kineticscrollfilter-qt6.diff
 	)
 endif()
