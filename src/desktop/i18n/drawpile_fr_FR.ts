@@ -62,7 +62,7 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation>Saisissez l&apos;URL d&apos;un serveur&#x202f;:</translation>
+        <translation>Saisissez un URL de serveur&#xa0;:</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -457,7 +457,7 @@
     <message>
         <location line="-271"/>
         <source>Add Avatar</source>
-        <translation>Ajouter un avatar</translation>
+        <translation>Ajouter un Avatar</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -8620,17 +8620,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+15"/>
         <source>Import trusted certificate…</source>
-        <translation>Importer un certificat fiable</translation>
+        <translation>Importer un certificat fiable…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove selected hosts…</source>
-        <translation type="unfinished"></translation>
+        <translation>Retirer les hôtes sélectionnés…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove known hosts</source>
-        <translation type="unfinished"></translation>
+        <translation>Retirer les hôtes connus</translation>
     </message>
     <message>
         <location line="-81"/>
@@ -8655,17 +8655,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message numerus="yes">
         <location line="+59"/>
         <source>Really remove %n known host(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Vraiment retirer %n hôte connu&#x202f;?</numerusform>
+            <numerusform>Vraiment retirer %n hôtes connus&#x202f;?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="-58"/>
         <source>Really remove %n list server(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Voulez-vous vraiment retirer %n serveur liste&#x202f;?</numerusform>
+            <numerusform>Voulez-vous vraiment retirer %n serveurs listes&#x202f;?</numerusform>
         </translation>
     </message>
     <message>
@@ -8683,51 +8683,51 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-54"/>
         <source>Move up</source>
-        <translation type="unfinished"></translation>
+        <translation>Monter</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Move down</source>
-        <translation type="unfinished"></translation>
+        <translation>Descendre</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Pin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Épingler</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+82"/>
         <source>Pin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Épingler les certificats certifiés</translation>
     </message>
     <message>
         <location line="-65"/>
         <source>Unpin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Désépingler</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+65"/>
         <source>Unpin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Désépingler les certificats sélectionnés</translation>
     </message>
     <message>
         <location line="-35"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Continuer</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Import certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer les certificats</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Could not save changes to known hosts: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de sauvegarder les changements de l&apos;hôte&#xa0;: %1</translation>
     </message>
 </context>
 <context>
@@ -8735,12 +8735,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/shortcutfilterinput.cpp" line="+18"/>
         <source>Search…</source>
-        <translation type="unfinished"></translation>
+        <translation>Recherche…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show conflicts only</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne montrer que les conflits</translation>
     </message>
 </context>
 <context>
@@ -8748,29 +8748,29 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+194"/>
         <source>Restore Shortcut Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Restaurer les Raccourcis par Défaut</translation>
     </message>
     <message>
         <location line="-4"/>
         <location line="+168"/>
         <source>Restore defaults…</source>
-        <translation type="unfinished"></translation>
+        <translation>Restaurer les défauts…</translation>
     </message>
     <message>
         <location line="-163"/>
         <source>Really restore all shortcuts to their default values?</source>
-        <translation type="unfinished"></translation>
+        <translation>Voulez-vous vraiment restaurer tous les raccourcis à leurs valeurs par défaut&#x202f;?</translation>
     </message>
     <message>
         <location line="+123"/>
         <location line="+27"/>
         <source>Edit Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier les Raccourcis de la Toile</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Add canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter un raccourci de la toile…</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8780,22 +8780,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>New Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouveau Raccourci de la Toile</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Edit selected canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier les raccourcis de la toile sélectionnés…</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Remove selected canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>Retirer les raccourcis de la toile sélectionnés…</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8805,30 +8805,30 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Remove canvas shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Retirer les raccourcis de la toile</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Voulez-vous vraiment retirer %n raccourci de la toile&#x202f;?</numerusform>
+            <numerusform>Voulez-vous vraiment retirer %n raccourcis de la toile&#x202f;?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Restore Canvas Shortcut Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Restaurer les Paramètres par Défaut des Raccourcis de la Toile</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really restore all canvas shortcuts to their default values?</source>
-        <translation type="unfinished"></translation>
+        <translation>Voulez-vous vraiment restaurer tous les raccourcis de la toile à leurs valeurs par défaut&#x202f;?</translation>
     </message>
     <message>
         <location line="+95"/>
         <source>Actions</source>
-        <translation type="unfinished"></translation>
+        <translation>Actions</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8838,13 +8838,13 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+5"/>
         <source>Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Toile</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 (%2)</source>
         <extracomment>This is for showing search feedback in the tabs of the shortcut preferences. %1 is the original tab title, like &quot;Actions&quot; or &quot;Brushes&quot;, %2 is the number of search results in that tab.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -8852,69 +8852,69 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/tablet.cpp" line="+30"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Testeur de Tablette</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Tablet</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablette</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortie</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Global pressure curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>Courbe de pression globale&#xa0;:</translation>
     </message>
     <message>
         <location line="+9"/>
         <location filename="../mainwindow.cpp" line="-75"/>
         <source>Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Windows Ink Non-Native</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows Ink non-Natif</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+10"/>
         <source>Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>Wintab</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Wintab Relative</source>
-        <translation type="unfinished"></translation>
+        <translation>Wintab Parent</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+10"/>
         <source>Qt5</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt5</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+9"/>
         <source>Qt6 Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt5 Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Qt6 Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Wintab</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Tablet driver:</source>
-        <translation type="unfinished"></translation>
+        <translation>Driver de tablette&#xa0;:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8924,12 +8924,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Pen pressure:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pression du stylet&#xa0;:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Global smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Lissage global&#xa0;: </translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8939,33 +8939,33 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Apply global smoothing to mouse</source>
-        <translation type="unfinished"></translation>
+        <translation>Appliquer le lissage global à la souris</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Compensate jagged curves</source>
-        <translation type="unfinished"></translation>
+        <translation>Compenser les courbes irrégulières</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Treat as regular pen tip</source>
-        <translation type="unfinished"></translation>
+        <translation>Traiter comme une pointe de stylo ordinaire</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Passer à l&apos;emplacement de la gomme</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Effacer avec le pinceau actuel</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser tip behavior:</source>
         <extracomment>This refers to the eraser end tablet pen, not a tooltip or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Comportement du bout de la gomme&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -8973,42 +8973,42 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/tools.cpp" line="+146"/>
         <source>Toggle between previous and current tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Échanger entre l&apos;outil actuel et le précédent</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Keyboard shortcuts:</source>
-        <translation type="unfinished"></translation>
+        <translation>Raccourcis de clavier&#xa0;:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Double-tap Alt key to focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Double-tap la touche Alt pour faire la mise au point sur la toile</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Switch tool temporarily by holding primary shortcut for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Changer d&apos;outil temporairement en maintenant le raccourci principal enfoncé pendant %1</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Attach selected brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Attacher les pinceaux sélectionnés</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>When enabled, changes in a brush slot will be saved to the brush itself automatically. When disabled, the brush itself only changes when you save it explicitly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lorsque cette option est activée, les modifications apportées à un emplacement de pinceau sont automatiquement enregistrées dans le pinceau lui-même. Lorsqu&apos;elle est désactivée, le pinceau lui-même ne change que si vous l&apos;enregistrez explicitement.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Brush slots:</source>
-        <translation type="unfinished"></translation>
+        <translation>Emplacements de pinceau&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Share one color across all brush slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Partager une couleur pour tous les emplacements de pinceau</translation>
     </message>
     <message>
         <location line="-108"/>
@@ -9018,23 +9018,23 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Show a %1 outline around the brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer une bordure de %1 autour du pinceau</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+88"/>
         <source>Enable brush outline</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer la bordure du pinceau</translation>
     </message>
     <message>
         <location line="-71"/>
         <source>Brush outline:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bordure du pinceau&#xa0;:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Same as brush cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Identique au curseur du pinceau</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9054,51 +9054,51 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Right-handed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Triangle droitier</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Left-handed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Triangle gaucher</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Show sampling ring</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer la bague d&apos;échantillonnage</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color picker:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélecteur de couleurs&#xa0;:</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>ms</source>
         <extracomment>This stands for millseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ms</translation>
     </message>
     <message numerus="yes">
         <location line="+31"/>
         <source>Show %1 brush slot(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Montrer %1 emplacement de pinceau</numerusform>
+            <numerusform>Montrer %1 emplacements de pinceaux</numerusform>
         </translation>
     </message>
     <message>
         <location line="-136"/>
         <source>Color space:</source>
-        <translation type="unfinished"></translation>
+        <translation>Espace colorimétrique&#xa0;:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>HSV (Hue–Saturation–Value)</source>
-        <translation type="unfinished"></translation>
+        <translation>TSV (Teinte-Saturation-Valeur)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>HSL (Hue–Saturation–Lightness)</source>
-        <translation type="unfinished"></translation>
+        <translation>TSL (Teinte-Saturation-Luminosité)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9113,12 +9113,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+9"/>
         <source>Brush cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Curseur du pinceau&#xa0;:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Eraser cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Curseur de la gomme&#xa0;:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9131,22 +9131,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/touch.cpp" line="+25"/>
         <source>Touch Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Testeur de Toucher</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Touch mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode de Toucher&#xa0;:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished"></translation>
+        <translation>Écran tactile</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>Gestures</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9155,7 +9155,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+13"/>
         <location line="+9"/>
         <source>No action</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas d&apos;actions</translation>
     </message>
     <message>
         <location line="-82"/>
@@ -9175,47 +9175,47 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Toggle color picker</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer/désactiver le sélecteur de couleur</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer/désactiver la gomme</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle erase mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer/désactiver le mode effaçage</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle recolor mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer/désactiver le mode recoloration</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>One-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Appuyer avec un doigt&#xa0;:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Two-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Appuyer avec deux doigts&#xa0;:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Three-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Appuyer avec trois doigts&#xa0;:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Four-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Appuyer avec quatre doigts&#xa0;:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisir la couleur</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -9225,7 +9225,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+11"/>
         <source>Draw</source>
-        <translation type="unfinished"></translation>
+        <translation>Dessiner</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9235,7 +9235,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Guess</source>
-        <translation type="unfinished"></translation>
+        <translation>Deviner</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9250,22 +9250,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Two-finger pinch:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pincer à deux doigts&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Tourner la toile</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Free rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotation libre de la toile</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ratchet rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotation à cran de la toile</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9439,22 +9439,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>Système</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>%1px</source>
-        <translation type="unfinished"></translation>
+        <translation>%1px</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1pt</source>
-        <translation type="unfinished"></translation>
+        <translation>%1pt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Changes apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les modifications s&apos;appliquent après le redémarrage de Drawpile. Le facteur d&apos;échelle actuel est de %1% et la taille de police est de %2.</translation>
     </message>
 </context>
 <context>
@@ -9462,12 +9462,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/browse.cpp" line="+61"/>
         <source>You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous n&apos;avez pas encore ajouté de serveurs. Vous pouvez en trouver à &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>To add the public Drawpile server, &lt;a href=&quot;#&quot;&gt;click here&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pour ajouter le serveur Drawpile publique, &lt;a href=&quot;#&quot;&gt;cliquez ici&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -9482,7 +9482,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Show sessions that don&apos;t let new users join</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher les sessions qui ne permettent pas aux nouveaux utilisateurs de rejoindre</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9492,7 +9492,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Show sessions that require a password to join</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher les sessions qui nécessitent un mot de passe pour rejoindre</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9507,22 +9507,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+6"/>
         <source>Inactive</source>
-        <translation type="unfinished"></translation>
+        <translation>Inactif</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that have zero actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher les sessions qui n&apos;ont aucun utilisateur activement en train de dessiner</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Duplicates</source>
-        <translation type="unfinished"></translation>
+        <translation>Doublons</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that are listed on multiple servers</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer les sessions répertoriées dans plusieurs serveurs</translation>
     </message>
     <message>
         <location line="+158"/>
@@ -9537,32 +9537,32 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+6"/>
         <source>Copy session URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Copier l&apos;URL de la session</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy title</source>
-        <translation type="unfinished"></translation>
+        <translation>Copier le titre</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Copy server</source>
-        <translation type="unfinished"></translation>
+        <translation>Copier le serveur</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy owner</source>
-        <translation type="unfinished"></translation>
+        <translation>Copier le propriétaire</translation>
     </message>
     <message>
         <location line="+92"/>
         <source>Nothing here yet!</source>
-        <translation type="unfinished"></translation>
+        <translation>Rien ici pour l&apos;instant&#x202f;!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Read the message at the top on how to add a server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lire le message au dessus sur comment ajouter un serveur.</translation>
     </message>
 </context>
 <context>
@@ -9586,7 +9586,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+42"/>
         <source>Canvas background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur de fond de la toile</translation>
     </message>
     <message>
         <location line="-33"/>
@@ -9614,7 +9614,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Rôles</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9624,35 +9624,35 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+50"/>
         <source>Host Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur de l&apos;Hôte</translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>Invalid input(s), please correct the following:</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Entrée non valide, veuillez corriger l&apos;élément suivant&#xa0;:</numerusform>
+            <numerusform>Entrées non valides, veuillez corriger les éléments suivants&#xa0;:</numerusform>
         </translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Failed to read file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec de lecture du fichier&#xa0;: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No file or content received.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucun fichier ou contenu reçu.</translation>
     </message>
     <message>
         <location line="+82"/>
         <source>Import Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec de l&apos;importation</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Could not import session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;importer les paramètres de session.</translation>
     </message>
 </context>
 <context>
@@ -9660,12 +9660,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/join.cpp" line="+26"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt; or &lt;strong&gt;IP address&lt;/strong&gt;:</source>
-        <translation type="unfinished"></translation>
+        <translation>Entez un &lt;strong&gt;URL de session&lt;/strong&gt;, &lt;strong&gt;nom d&apos;hôte&lt;/strong&gt; ou &lt;strong&gt;adresse IP&lt;/strong&gt;&#xa0;:</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Recent:</source>
-        <translation type="unfinished"></translation>
+        <translation>Récent&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -9673,62 +9673,62 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="+28"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Aide</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s help pages in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir les pages d&apos;aide de Drawpile dans votre navigateur</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuration de la tablette</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s tablet setup and troubleshooting help page</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrez la page Drawpile d&apos;aide à la configuration et au dépannage de la tablette</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Communities</source>
-        <translation type="unfinished"></translation>
+        <translation>Communautés</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s communities page in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir la page des communautés Drawpile dans votre navigateur</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discord</source>
-        <translation type="unfinished"></translation>
+        <translation>Discord</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Join the Drawpile Discord server</source>
-        <translation type="unfinished"></translation>
+        <translation>Rejoindre le serveur Discord de Drawpile</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation>libera.chat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Join the #drawpile chatroom on libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Rejoindre le salon de discussion #drawpile sur libera.chat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GitHub</source>
-        <translation type="unfinished"></translation>
+        <translation>GitHub</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s GitHub page in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir la pages Github de Drawpile dans votre navigateur</translation>
     </message>
 </context>
 <context>
@@ -9736,7 +9736,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/updatenotice.cpp" line="+60"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Mise à jour</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -9746,27 +9746,27 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Hide this notification</source>
-        <translation type="unfinished"></translation>
+        <translation>Cacher cette notification</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>A new version of Drawpile is available!</source>
-        <translation type="unfinished"></translation>
+        <translation>Une nouvelle version de Drawpile est disponible&#x202f;!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Update to Drawpile version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Mise à jour de Drawpile version %1</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>La page de téléchargement de Drawpile %1 devrait s&apos;ouvrir dans votre navigateur. Si non, merci de visiter &lt;strong&gt;drawpile.net&lt;/strong&gt; manuellement.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The download page for Drawpile %1 could not be opened, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>La page de téléchargement de Drawpile %1 n&apos;a pas pu être ouverte, merci de visiter &lt;strong&gt;drawpile.net&lt;/strong&gt; manuellement.</translation>
     </message>
 </context>
 <context>
@@ -9774,27 +9774,27 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/welcome.cpp" line="+50"/>
         <source>Standalone Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode autonome</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You are running the web browser version of Drawpile in standalone mode. It will &lt;strong&gt;not&lt;/strong&gt; automatically save what you draw, so save often!</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous utilisez la version navigateur web de Drawpile en mode autonome. Vos dessins ne seront &lt;strong&gt;pas&lt;/strong&gt; automatiquement enregistrés&#x202f;; sauvegardez donc régulièrement&#x202f;!</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Welcome to Drawpile!</source>
-        <translation type="unfinished"></translation>
+        <translation>Bienvenue sur Drawpile&#x202f;!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layouts&quot;&gt;Layout&lt;/a&gt; for the application.</source>
-        <translation type="unfinished"></translation>
+        <translation>Consultez les &lt;a href=&quot;#preferences&quot;&gt;Préférences&lt;/a&gt; pour configurer les éléments à votre convenance. Vous pouvez également choisir une &lt;a href=&quot;#layouts&quot;&gt;mise en page&lt;/a&gt; différente pour l&apos;application.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
-        <translation type="unfinished"></translation>
+        <translation>Si vous disposez d&apos;un lien d&apos;invitation pour une séance de dessin, vous pouvez la &lt;a href=&quot;#join&quot;&gt;Rejoindre&lt;/a&gt; directement. Vous pouvez également &lt;a href=&quot;#browse&quot;&gt;Parcourir&lt;/a&gt; les séances publiques ou simplement créer une &lt;a href=&quot;#create&quot;&gt;Nouvelle Toile&lt;/a&gt; pour dessiner par vous-même.</translation>
     </message>
     <message>
         <location line="+5"/>
