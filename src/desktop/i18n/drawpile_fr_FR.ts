@@ -8615,7 +8615,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/servers.cpp" line="+107"/>
         <source>Known hosts:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hôtes connus</translation>
     </message>
     <message>
         <location line="+15"/>
