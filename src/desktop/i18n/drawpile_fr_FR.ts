@@ -8516,7 +8516,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Unrestricted</source>
-        <translation>Non restreinte</translation>
+        <translation>Non restreint</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8551,7 +8551,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+5"/>
         <source>Disallow uncensoring of layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Interdire la décensure des calques</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8567,12 +8567,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-23"/>
         <source>Hide settings when locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Cacher les paramètres lorsqu’ils sont verrouillés</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Parental controls are currently locked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les contrôles parentaux sont actuellement verrouillés.</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -8587,7 +8587,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+13"/>
         <source>Parental controls are currently managed by the operating system.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les contrôles parentaux sont actuellement gérés par le système d&apos;exploitation.</translation>
     </message>
     <message>
         <location line="+17"/>
