@@ -8620,7 +8620,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+15"/>
         <source>Import trusted certificate…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer un certificat fiable</translation>
     </message>
     <message>
         <location line="+5"/>
