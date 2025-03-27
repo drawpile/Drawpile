@@ -9170,7 +9170,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Hide docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Cacher le panneau d&apos;outils</translation>
     </message>
     <message>
         <location line="+3"/>
