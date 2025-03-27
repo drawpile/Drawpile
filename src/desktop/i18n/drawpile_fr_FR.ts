@@ -8511,7 +8511,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+12"/>
         <source>Filter mode:</source>
-        <translation>Mode Filtre</translation>
+        <translation>Mode du filtre&#xa0;:</translation>
     </message>
     <message>
         <location line="+1"/>
