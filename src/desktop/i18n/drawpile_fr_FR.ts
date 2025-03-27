@@ -8506,7 +8506,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Keywords:</source>
-        <translation>Mots-clés:</translation>
+        <translation>Mots-clés&#xa0;:</translation>
     </message>
     <message>
         <location line="+12"/>
