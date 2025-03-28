@@ -150,8 +150,7 @@ void TransformTool::finishMultipart()
 		bool movedSelection = false;
 		net::MessageList msgs = transform->applyActiveTransform(
 			client->myId(), m_owner.activeLayer(),
-			m_owner.transformInterpolation(), client->isCompatibilityMode(),
-			false, &movedSelection);
+			m_owner.transformInterpolation(), false, &movedSelection);
 		allowed = checkAndSend(client, msgs);
 		if(allowed) {
 			endTransform(transform, !msgs.isEmpty() && movedSelection);
@@ -361,8 +360,7 @@ void TransformTool::stamp()
 			net::Client *client = m_owner.client();
 			net::MessageList msgs = transform->applyActiveTransform(
 				client->myId(), m_owner.activeLayer(),
-				m_owner.transformInterpolation(), client->isCompatibilityMode(),
-				true);
+				m_owner.transformInterpolation(), true);
 			allowed = checkAndSend(client, msgs);
 		}
 	}

@@ -48,8 +48,8 @@ public:
 	void applyOffset(int x, int y);
 
 	QVector<net::Message> applyActiveTransform(
-		uint8_t contextId, int layerId, int interpolation,
-		bool compatibilityMode, bool stamp, bool *outMovedSelection = nullptr);
+		uint8_t contextId, int layerId, int interpolation, bool stamp,
+		bool *outMovedSelection = nullptr);
 
 	bool isAllowedToApplyActiveTransform() const;
 
@@ -68,7 +68,7 @@ signals:
 private:
 	QVector<net::Message> applyFromCanvas(
 		uint8_t contextId, int layerId, int interpolation,
-		bool compatibilityMode, bool *outMovedSelection);
+		bool *outMovedSelection);
 
 	void applyMoveRect(
 		QVector<net::Message> &msgs, unsigned int contextId, int layerId,
@@ -97,8 +97,8 @@ private:
 		int srcX, int srcY, int srcW, int srcH, const QImage &mask) const;
 
 	QVector<net::Message> applyFloating(
-		uint8_t contextId, int layerId, int interpolation,
-		bool compatibilityMode, bool stamp, bool *outMovedSelection);
+		uint8_t contextId, int layerId, int interpolation, bool stamp,
+		bool *outMovedSelection);
 
 	void clear();
 

@@ -27,7 +27,6 @@ CanvasModel::CanvasModel(
 	long long snapshotMinDelayMs, bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
 	, m_localUserId(1)
-	, m_compatibilityMode(false)
 {
 	m_paintengine = new PaintEngine(
 		canvasImplementation, settings.checkerColor1(),
@@ -127,8 +126,7 @@ void CanvasModel::previewAnnotation(int id, const QRect &shape)
 	emit previewAnnotationRequested(id, shape);
 }
 
-void CanvasModel::connectedToServer(
-	uint8_t myUserId, bool join, bool compatibilityMode)
+void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
 {
 	if(myUserId == 0) {
 		// Zero is a reserved "null" user ID
@@ -136,7 +134,6 @@ void CanvasModel::connectedToServer(
 	}
 
 	m_localUserId = myUserId;
-	m_compatibilityMode = compatibilityMode;
 	m_layerlist->setAutoselectAny(true);
 
 	m_aclstate->setLocalUserId(myUserId);
@@ -147,17 +144,14 @@ void CanvasModel::connectedToServer(
 	}
 
 	m_userlist->reset();
-	emit compatibilityModeChanged(m_compatibilityMode);
 }
 
 void CanvasModel::disconnectedFromServer()
 {
-	m_compatibilityMode = false;
 	m_paintengine->cleanup();
 	m_userlist->allLogout();
 	m_paintengine->resetAcl(m_localUserId);
 	m_paintengine->cleanup();
-	emit compatibilityModeChanged(m_compatibilityMode);
 }
 
 void CanvasModel::handleCommands(int count, const net::Message *msgs)

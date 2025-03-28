@@ -32,17 +32,14 @@ public:
 		bool isDefault);
 	void setControlsEnabled(bool enabled);
 	void setOpControlsEnabled(bool enabled);
-	void setCompatibilityMode(bool compatibilityMode);
 
 	int layerId() const { return m_item.id; }
 
 	static void updateBlendMode(
-		QComboBox *combo, DP_BlendMode mode, bool group, bool isolated,
-		bool compatibilityMode);
+		QComboBox *combo, DP_BlendMode mode, bool group, bool isolated);
 
 	static QStandardItemModel *layerBlendModes();
 	static QStandardItemModel *groupBlendModes();
-	static QStandardItemModel *compatibilityLayerBlendModes();
 
 signals:
 	void addLayerOrGroupRequested(
@@ -73,7 +70,6 @@ private:
 	canvas::LayerListItem m_item = canvas::LayerListItem::null();
 	int m_selectedId = 0;
 	bool m_wasDefault = false;
-	bool m_compatibilityMode = false;
 	bool m_controlsEnabled = true;
 	uint8_t m_user;
 };

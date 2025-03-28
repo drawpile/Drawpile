@@ -118,8 +118,7 @@ public:
 	virtual void
 	showDisconnectedWarning(const QString &message, bool singleSession) = 0;
 	virtual void hideDisconnectedWarning() = 0;
-	virtual void
-	showResetNotice(bool compatibilityMode, bool saveInProgress) = 0;
+	virtual void showResetNotice(bool saveInProgress) = 0;
 	virtual void hideResetNotice() = 0;
 
 	virtual void showPopupNotice(const QString &message) = 0;

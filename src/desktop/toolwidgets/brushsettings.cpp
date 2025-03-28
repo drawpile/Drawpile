@@ -176,7 +176,6 @@ struct BrushSettings::Private {
 	bool presetsAttach = true;
 	bool updateInProgress = false;
 	bool myPaintAllowed = true;
-	bool compatibilityMode = false;
 
 	Slot &slotAt(int i)
 	{
@@ -603,17 +602,7 @@ bool BrushSettings::isLocked()
 
 BrushSettings::Lock BrushSettings::getLock()
 {
-	if(d->compatibilityMode) {
-		if(d->currentIsMyPaint()) {
-			return Lock::MyPaintCompat;
-		} else {
-			const brushes::ClassicBrush &classic = d->currentBrush().classic();
-			if(!classic.incremental &&
-			   classic.opacity_dynamic.type != DP_CLASSIC_BRUSH_DYNAMIC_NONE) {
-				return Lock::IndirectCompat;
-			}
-		}
-	} else if(!d->myPaintAllowed && d->currentIsMyPaint()) {
+	if(!d->myPaintAllowed && d->currentIsMyPaint()) {
 		return Lock::MyPaintPermission;
 	}
 	return Lock::None;
@@ -624,15 +613,6 @@ QString BrushSettings::getLockDescription(Lock lock)
 	switch(lock) {
 	case Lock::MyPaintPermission:
 		return tr("You don't have permission to use MyPaint brushes.");
-	case Lock::MyPaintCompat:
-		return tr("This session is hosted with Drawpile 2.1, MyPaint brushes "
-				  "are unavailable.");
-	case Lock::IndirectCompat:
-		return tr(
-			"This session is hosted with Drawpile 2.1, Indirect/Wash Mode with "
-			"opacity dynamics is unavailable. <a href=\"#inc\">Click here to "
-			"switch to Direct/Build-Up Mode</a> or <a href=\"#opa\">here to "
-			"disable opacity dynamics</a>.");
 	default:
 		return QString{};
 	}
@@ -641,13 +621,6 @@ QString BrushSettings::getLockDescription(Lock lock)
 void BrushSettings::setMyPaintAllowed(bool myPaintAllowed)
 {
 	d->myPaintAllowed = myPaintAllowed;
-	updateUi();
-}
-
-void BrushSettings::setCompatibilityMode(bool compatibilityMode)
-{
-	d->compatibilityMode = compatibilityMode;
-	canvas::blendmode::setCompatibilityMode(d->blendModes, compatibilityMode);
 	updateUi();
 }
 
@@ -1269,8 +1242,7 @@ void BrushSettings::updateUi()
 		bool canUseIncrementalMode;
 		if(classic.smudge.max == 0.0) {
 			Lock lock = getLock();
-			canUseIncrementalMode =
-				lock == Lock::None || lock == Lock::IndirectCompat;
+			canUseIncrementalMode = lock == Lock::None;
 		} else {
 			canUseIncrementalMode = false;
 		}
@@ -1410,8 +1382,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			bool canUseIncrementalMode;
 			if(classic.smudge.max == 0.0) {
 				Lock lock = getLock();
-				canUseIncrementalMode =
-					lock == Lock::None || lock == Lock::IndirectCompat;
+				canUseIncrementalMode = lock == Lock::None;
 			} else {
 				canUseIncrementalMode = false;
 			}
@@ -1483,9 +1454,7 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		{d->ui.modeColorpick, !locked && !mypaintmode},
 		{d->ui.modeLockAlpha, !locked && mypaintmode},
 		{d->ui.modeEraser, !locked},
-		{d->ui.modeIncremental,
-		 d->ui.modeIncremental->isEnabled() &&
-			 (!locked || (!mypaintmode && lock == Lock::IndirectCompat))},
+		{d->ui.modeIncremental, d->ui.modeIncremental->isEnabled() && !locked},
 		{d->ui.blendmode, !locked && !mypaintmode},
 		{d->ui.pressureHardness, !locked && softmode && !mypaintmode},
 		{d->ui.hardnessBox, !locked && softmode},
@@ -1493,8 +1462,7 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		{d->ui.pressureSize, !locked && !mypaintmode},
 		{d->ui.radiusLogarithmicBox, !locked && mypaintmode},
 		{d->ui.opacityBox, !locked},
-		{d->ui.pressureOpacity,
-		 !mypaintmode && (!locked || lock == Lock::IndirectCompat)},
+		{d->ui.pressureOpacity, !mypaintmode && !locked},
 		{d->ui.smudgingBox, !locked && !mypaintmode},
 		{d->ui.pressureSmudging, !locked && !mypaintmode},
 		{d->ui.colorpickupBox, !locked && !mypaintmode},
