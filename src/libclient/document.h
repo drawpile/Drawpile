@@ -217,8 +217,6 @@ public:
 
 	qulonglong pasteId() const { return reinterpret_cast<uintptr_t>(this); }
 
-	bool isCompatibilityMode() const;
-
 	void handleCommands(int count, const net::Message *msgs) override;
 	void handleLocalCommands(int count, const net::Message *msgs) override;
 
@@ -231,7 +229,6 @@ signals:
 	void serverDisconnected(
 		const QString &message, const QString &errorcode, bool localDisconnect,
 		bool anyMessageReceived);
-	void compatibilityModeChanged(bool compatibilityMode);
 
 	void canvasChanged(canvas::CanvasModel *canvas);
 	void dirtyCanvas(bool isDirty);
@@ -334,8 +331,7 @@ public slots:
 
 private slots:
 	void onServerLogin(
-		bool join, bool compatibilityMode, const QString &joinPassword,
-		const QString &authId);
+		bool join, const QString &joinPassword, const QString &authId);
 	void onServerDisconnect();
 	void setPreparingReset(bool preparing);
 	void onSessionResetted();

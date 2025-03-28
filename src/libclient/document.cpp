@@ -316,15 +316,14 @@ DP_LoadResult Document::loadRecording(
 }
 
 void Document::onServerLogin(
-	bool join, bool compatibilityMode, const QString &joinPassword,
-	const QString &authId)
+	bool join, const QString &joinPassword, const QString &authId)
 {
 	if(join)
 		initCanvas();
 
 	Q_ASSERT(m_canvas);
 
-	m_canvas->connectedToServer(m_client->myId(), join, compatibilityMode);
+	m_canvas->connectedToServer(m_client->myId(), join);
 	m_banlist->setShowSensitive(m_client->isModerator());
 	m_authList->setOwnAuthId(authId);
 
@@ -337,7 +336,6 @@ void Document::onServerLogin(
 	m_sessionHistoryMaxSize = 0;
 	m_baseResetThreshold = 0;
 	emit serverLoggedIn(join, joinPassword);
-	emit compatibilityModeChanged(compatibilityMode);
 }
 
 void Document::onServerDisconnect()
@@ -356,7 +354,6 @@ void Document::onServerDisconnect()
 	setSessionPreferWebSockets(false);
 	setSessionInviteCodesEnabled(false);
 	setServerSupportsInviteCodes(false);
-	emit compatibilityModeChanged(false);
 	setPreparingReset(false);
 	m_autoResetCorrelator = QString();
 	setStreamResetState(StreamResetState::None);
@@ -628,41 +625,20 @@ void Document::onMoveLayerRequested(
 	int sourceIdCount = sourceIds.size();
 	if(sourceIdCount > 0) {
 		uint8_t contextId = m_client->myId();
-		bool compatibilityMode = m_client->isCompatibilityMode();
 		net::MessageList msgs;
-		msgs.reserve(compatibilityMode ? 2 : sourceIdCount + 1);
+		msgs.reserve(sourceIdCount + 1);
 		msgs.append(net::makeUndoPointMessage(contextId));
 
-		if(compatibilityMode) {
-			if(sourceIdCount == 1) {
-				net::Message msg =
-					m_canvas->paintEngine()
-						->historyCanvasState()
-						.makeLayerOrder(
-							contextId, sourceIds[0], targetId, below);
-				if(msg.isNull()) {
-					qWarning("Can't order layer: %s", DP_error());
-					return;
-				} else {
-					msgs.append(msg);
-				}
+		drawdance::CanvasState canvasState =
+			m_canvas->paintEngine()->historyCanvasState();
+		for(int i = sourceIdCount - 1; i >= 0; --i) {
+			net::Message msg = canvasState.makeLayerTreeMove(
+				contextId, sourceIds[i], targetId, intoGroup, below);
+			if(msg.isNull()) {
+				qWarning("Can't move layer: %s", DP_error());
+				return; // Bail out instead of doing something nonsensical.
 			} else {
-				qWarning("Reordering multiple layers is not implemented in "
-						 "compatibility mode");
-				return;
-			}
-		} else {
-			drawdance::CanvasState canvasState =
-				m_canvas->paintEngine()->historyCanvasState();
-			for(int i = sourceIdCount - 1; i >= 0; --i) {
-				net::Message msg = canvasState.makeLayerTreeMove(
-					contextId, sourceIds[i], targetId, intoGroup, below);
-				if(msg.isNull()) {
-					qWarning("Can't move layer: %s", DP_error());
-					return; // Bail out instead of doing something nonsensical.
-				} else {
-					msgs.append(msg);
-				}
+				msgs.append(msg);
 			}
 		}
 
@@ -929,11 +905,6 @@ QString Document::downloadName() const
 void Document::setDownloadName(const QString &downloadName)
 {
 	m_downloadName = downloadName;
-}
-
-bool Document::isCompatibilityMode() const
-{
-	return m_client->isCompatibilityMode();
 }
 
 void Document::handleCommands(int count, const net::Message *msgs)

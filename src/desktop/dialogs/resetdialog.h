@@ -18,8 +18,8 @@ class ResetDialog final : public QDialog {
 	Q_OBJECT
 public:
 	ResetDialog(
-		const canvas::PaintEngine *pe, bool compatibilityMode,
-		bool singleSession, QWidget *parent = nullptr);
+		const canvas::PaintEngine *pe, bool singleSession,
+		QWidget *parent = nullptr);
 
 	~ResetDialog() override;
 

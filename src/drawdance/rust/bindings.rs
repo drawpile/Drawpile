@@ -6173,8 +6173,7 @@ pub const DP_PLAYER_ERROR_OPERATION: DP_PlayerResult = 4;
 pub type DP_PlayerResult = ::std::os::raw::c_uint;
 pub const DP_PLAYER_COMPATIBLE: DP_PlayerCompatibility = 0;
 pub const DP_PLAYER_MINOR_INCOMPATIBILITY: DP_PlayerCompatibility = 1;
-pub const DP_PLAYER_BACKWARD_COMPATIBLE: DP_PlayerCompatibility = 2;
-pub const DP_PLAYER_INCOMPATIBLE: DP_PlayerCompatibility = 3;
+pub const DP_PLAYER_INCOMPATIBLE: DP_PlayerCompatibility = 2;
 pub type DP_PlayerCompatibility = ::std::os::raw::c_uint;
 pub const DP_PLAYER_PASS_CLIENT_PLAYBACK: DP_PlayerPass = 0;
 pub const DP_PLAYER_PASS_FEATURE_ACCESS: DP_PlayerPass = 1;
@@ -12096,12 +12095,6 @@ extern "C" {
         bufsize: usize,
         decode_opaque: bool,
     ) -> *mut DP_Message;
-}
-extern "C" {
-    pub fn DP_message_compat_flag_indirect(msg: *mut DP_Message) -> bool;
-}
-extern "C" {
-    pub fn DP_message_compat_flag_indirect_set(msg: *mut DP_Message);
 }
 extern "C" {
     pub fn DP_msg_draw_dabs_classic_indirect(mddc: *mut DP_MsgDrawDabsClassic) -> bool;

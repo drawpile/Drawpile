@@ -170,9 +170,6 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 			m_ui->baseResetThreshold->setText(QStringLiteral("+ %1 MB").arg(
 				threshold / (1024.0 * 1024.0), 0, 'f', 1));
 		});
-	connect(
-		m_doc, &Document::compatibilityModeChanged, this,
-		&SessionSettingsDialog::setCompatibilityMode);
 
 	// Set up permissions tab
 	connect(
@@ -269,7 +266,6 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	// So we'll hide that setting for now, until it actually does something.
 	m_ui->permMetadata->hide();
 	m_ui->labelMetadata->hide();
-	setCompatibilityMode(m_doc->isCompatibilityMode());
 	updateBanImportExportState();
 	m_ui->allowWeb->setEnabled(false);
 	m_ui->allowWeb->setVisible(false);
@@ -434,7 +430,6 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 	m_ui->permissionPresets->setWriteOnly(!op);
 	updatePasswordLabel(m_ui->sessionPassword);
 	updatePasswordLabel(m_ui->opword);
-	setCompatibilityMode(m_doc->isCompatibilityMode());
 
 	m_ui->authLabel->setText(
 		op ? tr("This list shows only registered users.")
@@ -602,7 +597,6 @@ void SessionSettingsDialog::updateAllowWebCheckbox(bool allowWeb, bool canAlter)
 	m_canAlterAllowWeb = canAlter;
 	m_ui->allowWeb->setChecked(allowWeb);
 	m_ui->allowWeb->setEnabled(m_op && canAlter);
-	m_ui->allowWeb->setVisible(!m_doc->isCompatibilityMode());
 }
 
 void SessionSettingsDialog::updateNsfmCheckbox(bool)
@@ -680,16 +674,6 @@ void SessionSettingsDialog::updateAuthListCheckboxes()
 	m_ui->authTrusted->setEnabled(enableTrusted);
 	m_ui->authOp->setChecked(checkOp);
 	m_ui->authTrusted->setChecked(checkTrusted);
-}
-
-void SessionSettingsDialog::setCompatibilityMode(bool compatibilityMode)
-{
-	if(compatibilityMode) {
-		m_ui->allowWeb->setVisible(false);
-		m_ui->permMyPaint->setEnabled(false);
-		m_ui->permTimeline->setEnabled(false);
-		m_ui->permMetadata->setEnabled(false);
-	}
 }
 
 void SessionSettingsDialog::sendSessionConf()

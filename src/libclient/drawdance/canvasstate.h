@@ -116,8 +116,6 @@ public:
 		int expand, DP_FloodFillKernel kernel, int featherRadius, bool fromEdge,
 		const QAtomicInt &cancel, QImage &outImg, int &outX, int &outY) const;
 
-	drawdance::CanvasState makeBackwardCompatible() const;
-
 	static unsigned int loadFlags();
 
 private:

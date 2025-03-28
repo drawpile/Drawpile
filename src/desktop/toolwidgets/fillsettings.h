@@ -42,8 +42,6 @@ public:
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;
 
-	void setCompatibilityMode(bool compatibilityMode);
-
 	QWidget *getHeaderWidget() override { return m_headerWidget; }
 
 	void setFeatureAccess(bool featureAccess);
@@ -90,7 +88,6 @@ private:
 	qreal m_quickAdjust1 = 0.0;
 	bool m_featureAccess = true;
 	bool m_haveSelection = false;
-	bool m_compatibilityMode = false;
 	bool m_updating = false;
 };
 
