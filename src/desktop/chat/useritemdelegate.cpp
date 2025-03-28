@@ -93,11 +93,6 @@ UserItemDelegate::~UserItemDelegate()
 	delete m_userMenu;
 }
 
-void UserItemDelegate::setCompatibilityMode(bool compatibilityMode)
-{
-	m_infoAction->setDisabled(compatibilityMode);
-}
-
 QSize UserItemDelegate::sizeHint(
 	const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
@@ -278,9 +273,8 @@ void UserItemDelegate::showContextMenu(
 	m_kickAction->setEnabled(canKick);
 	m_banAction->setEnabled(canKick);
 
-	m_chatAction->setEnabled(!isSelf); // Can't chat with self.
-	// Taking your own brush is pointless. Can't take brushes in 2.1 sessions.
-	m_brushAction->setEnabled(!isSelf && !m_doc->isCompatibilityMode());
+	m_chatAction->setEnabled(!isSelf);	// Can't chat with self.
+	m_brushAction->setEnabled(!isSelf); // Taking your own brush is pointless.
 
 	m_userMenu->popup(pos);
 }

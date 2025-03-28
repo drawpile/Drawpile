@@ -68,8 +68,7 @@ public:
 	void setCurrentTrack(int trackId);
 	void setCurrentLayer(int layerId);
 
-	void
-	updateControlsEnabled(bool access, bool locked, bool compatibilityMode);
+	void updateControlsEnabled(bool access, bool locked);
 
 	canvas::CanvasModel *canvas() const;
 

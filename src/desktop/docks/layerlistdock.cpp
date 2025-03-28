@@ -302,12 +302,6 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	connect(
 		m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
 		&LayerList::selectionChanged);
-	connect(
-		canvas, &canvas::CanvasModel::compatibilityModeChanged, this,
-		&LayerList::updateLockedControls);
-	connect(
-		canvas, &canvas::CanvasModel::compatibilityModeChanged, this,
-		&LayerList::updateBlendModes);
 
 	// Init
 	m_view->setEnabled(true);
@@ -523,15 +517,14 @@ void LayerList::updateLockedControls()
 	const bool locked = acls ? acls->amLocked() : true;
 	const bool canEdit = acls && acls->canUseFeature(DP_FEATURE_EDIT_LAYERS);
 	const bool ownLayers = acls && acls->canUseFeature(DP_FEATURE_OWN_LAYERS);
-	const bool compatibilityMode = m_canvas && m_canvas->isCompatibilityMode();
 
 	// Layer creation actions work as long as we have an editing permission
 	const bool canAdd = !locked && (canEdit || ownLayers);
 	const bool hasEditActions = m_actions.addLayer != nullptr;
 	if(hasEditActions) {
 		m_actions.addLayer->setEnabled(canAdd);
-		m_actions.addGroup->setEnabled(canAdd && !compatibilityMode);
-		m_actions.layerKeyFrameGroup->setEnabled(canAdd && !compatibilityMode);
+		m_actions.addGroup->setEnabled(canAdd);
+		m_actions.layerKeyFrameGroup->setEnabled(canAdd);
 	}
 
 	// Rest of the controls need a selection to work.
@@ -572,15 +565,14 @@ void LayerList::updateLockedControls()
 	updateFillSourceLayerId();
 }
 
-void LayerList::updateBlendModes(bool compatibilityMode)
+void LayerList::updateBlendModes()
 {
 	QModelIndex index = currentSelection();
 	if(currentSelection().isValid()) {
 		const canvas::LayerListItem &layer =
 			index.data().value<canvas::LayerListItem>();
 		dialogs::LayerProperties::updateBlendMode(
-			m_blendModeCombo, layer.blend, layer.group, layer.isolated,
-			compatibilityMode);
+			m_blendModeCombo, layer.blend, layer.group, layer.isolated);
 	}
 }
 
@@ -963,92 +955,80 @@ int LayerList::makeAddLayerOrGroupCommands(
 	int firstId = ids.first();
 	msgs.append(net::makeUndoPointMessage(contextId));
 
-	bool compatibilityMode = m_canvas->isCompatibilityMode();
-	if(compatibilityMode) {
-		uint16_t targetId = index.isValid() ? selectedId : 0;
-		uint8_t flags = targetId == 0 ? 0 : DP_MSG_LAYER_CREATE_FLAGS_INSERT;
-		msgs.append(net::makeLayerCreateMessage(
-			contextId, firstId, targetId, 0, flags,
-			title.isEmpty() ? layers->getAvailableLayerName(getBaseName(false))
-							: title));
+	int targetId = -1;
+	int sourceId = 0;
+	int targetFrame = -1;
+	int moveId = -1;
+	uint8_t flags = group ? DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP : 0;
+
+	if(keyFrame && m_trackId != 0 && m_frame != -1) {
+		// TODO: having to do a layer move here is dumb, there should be a
+		// layer create flag that throws the layer at the bottom instead.
+		targetFrame = m_frame + keyFrameOffset;
+		moveId = intuitKeyFrameTarget(
+			duplicateKeyFrame ? m_frame : -1, targetFrame, sourceId, targetId,
+			flags);
+	}
+
+	if(targetId == -1 && index.isValid()) {
+		targetId = selectedId;
+		bool into = layerIdsToGroup.isEmpty() &&
+					index.data(canvas::LayerListModel::IsGroupRole).toBool() &&
+					(m_view->isExpanded(index) ||
+					 index.data(canvas::LayerListModel::IsEmptyRole).toBool());
+		if(into) {
+			flags |= DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO;
+		}
+	}
+
+	QString effectiveTitle;
+	if(title.isEmpty()) {
+		QString baseName;
+		if(sourceId != 0) {
+			QModelIndex sourceIndex = layers->layerIndex(sourceId);
+			if(sourceIndex.isValid()) {
+				baseName = sourceIndex.data(canvas::LayerListModel::TitleRole)
+							   .toString();
+			}
+		}
+		effectiveTitle = layers->getAvailableLayerName(
+			baseName.isEmpty() ? getBaseName(group) : baseName);
 	} else {
-		int targetId = -1;
-		int sourceId = 0;
-		int targetFrame = -1;
-		int moveId = -1;
-		uint8_t flags = group ? DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP : 0;
+		effectiveTitle = title;
+	}
 
-		if(keyFrame && m_trackId != 0 && m_frame != -1) {
-			// TODO: having to do a layer move here is dumb, there should be a
-			// layer create flag that throws the layer at the bottom instead.
-			targetFrame = m_frame + keyFrameOffset;
-			moveId = intuitKeyFrameTarget(
-				duplicateKeyFrame ? m_frame : -1, targetFrame, sourceId,
-				targetId, flags);
-		}
+	msgs.append(net::makeLayerTreeCreateMessage(
+		contextId, firstId, sourceId, qMax(0, targetId), 0, flags,
+		effectiveTitle));
+	if(targetFrame >= 0) {
+		msgs.append(net::makeKeyFrameSetMessage(
+			contextId, m_trackId, targetFrame, firstId, 0,
+			DP_MSG_KEY_FRAME_SET_SOURCE_LAYER));
+	}
+	if(moveId != -1) {
+		msgs.append(net::makeLayerTreeMoveMessage(
+			contextId, firstId, targetId, moveId));
+	}
 
-		if(targetId == -1 && index.isValid()) {
-			targetId = selectedId;
-			bool into =
-				layerIdsToGroup.isEmpty() &&
-				index.data(canvas::LayerListModel::IsGroupRole).toBool() &&
-				(m_view->isExpanded(index) ||
-				 index.data(canvas::LayerListModel::IsEmptyRole).toBool());
-			if(into) {
-				flags |= DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO;
-			}
-		}
+	if(referenceIdx.isValid()) {
+		makeKeyFrameReferenceEditCommands(
+			msgs, contextId, referenceIdx, firstId);
+		int idIndex = 1;
+		makeKeyFrameReferenceAddCommands(
+			layers, msgs, ids, idIndex, contextId, referenceIdx, firstId);
+	}
 
-		QString effectiveTitle;
-		if(title.isEmpty()) {
-			QString baseName;
-			if(sourceId != 0) {
-				QModelIndex sourceIndex = layers->layerIndex(sourceId);
-				if(sourceIndex.isValid()) {
-					baseName =
-						sourceIndex.data(canvas::LayerListModel::TitleRole)
-							.toString();
-				}
-			}
-			effectiveTitle = layers->getAvailableLayerName(
-				baseName.isEmpty() ? getBaseName(group) : baseName);
-		} else {
-			effectiveTitle = title;
-		}
-
-		msgs.append(net::makeLayerTreeCreateMessage(
-			contextId, firstId, sourceId, qMax(0, targetId), 0, flags,
-			effectiveTitle));
-		if(targetFrame >= 0) {
-			msgs.append(net::makeKeyFrameSetMessage(
-				contextId, m_trackId, targetFrame, firstId, 0,
-				DP_MSG_KEY_FRAME_SET_SOURCE_LAYER));
-		}
-		if(moveId != -1) {
-			msgs.append(net::makeLayerTreeMoveMessage(
-				contextId, firstId, targetId, moveId));
-		}
-
-		if(referenceIdx.isValid()) {
-			makeKeyFrameReferenceEditCommands(
-				msgs, contextId, referenceIdx, firstId);
-			int idIndex = 1;
-			makeKeyFrameReferenceAddCommands(
-				layers, msgs, ids, idIndex, contextId, referenceIdx, firstId);
-		}
-
-		if(!layerIdsToGroup.isEmpty()) {
-			const QVector<canvas::LayerListItem> &items = layers->layerItems();
-			for(QVector<canvas::LayerListItem>::const_reverse_iterator
-					it = items.crbegin(),
-					end = items.crend();
-				it != end; ++it) {
-				int layerId = it->id;
-				if(layerIdsToGroup.contains(layerId)) {
-					msgs.append(net::makeLayerTreeMoveMessage(
-						contextId, layerId, firstId, 0));
-				};
-			}
+	if(!layerIdsToGroup.isEmpty()) {
+		const QVector<canvas::LayerListItem> &items = layers->layerItems();
+		for(QVector<canvas::LayerListItem>::const_reverse_iterator
+				it = items.crbegin(),
+				end = items.crend();
+			it != end; ++it) {
+			int layerId = it->id;
+			if(layerIdsToGroup.contains(layerId)) {
+				msgs.append(net::makeLayerTreeMoveMessage(
+					contextId, layerId, firstId, 0));
+			};
 		}
 	}
 
@@ -1241,17 +1221,9 @@ void LayerList::duplicateLayer()
 
 	uint8_t contextId = m_canvas->localUserId();
 
-	net::Message msg;
-	if(m_canvas->isCompatibilityMode()) {
-		msg = net::makeLayerCreateMessage(
-			contextId, id, layer.id, 0,
-			DP_MSG_LAYER_CREATE_FLAGS_COPY | DP_MSG_LAYER_CREATE_FLAGS_INSERT,
-			layers->getAvailableLayerName(layer.title));
-	} else {
-		msg = net::makeLayerTreeCreateMessage(
-			contextId, id, layer.id, layer.id, 0, 0,
-			layers->getAvailableLayerName(layer.title));
-	}
+	net::Message msg = net::makeLayerTreeCreateMessage(
+		contextId, id, layer.id, layer.id, 0, 0,
+		layers->getAvailableLayerName(layer.title));
 
 	layers->setLayerIdToSelect(id);
 	net::Message messages[] = {net::makeUndoPointMessage(contextId), msg};
@@ -1286,8 +1258,6 @@ QModelIndex LayerList::canMerge(const QSet<int> &topLevelIds) const
 				return QModelIndex();
 			}
 		}
-	} else if(m_canvas->isCompatibilityMode()) {
-		return QModelIndex();
 	} else {
 		for(int layerId : topLevelIds) {
 			if(layerId != targetId && !aclState->canEditLayer(layerId)) {
@@ -1346,13 +1316,9 @@ void LayerList::doDeleteSelected()
 		net::MessageList msgs;
 		msgs.reserve(count + 1);
 		msgs.append(net::makeUndoPointMessage(contextId));
-		bool compatibilityMode = m_canvas->isCompatibilityMode();
 		for(const QModelIndex &idx : indexes) {
 			int layerId = idx.data(canvas::LayerListModel::IdRole).toInt();
-			msgs.append(
-				compatibilityMode
-					? net::makeLayerDeleteMessage(contextId, layerId, false)
-					: net::makeLayerTreeDeleteMessage(contextId, layerId, 0));
+			msgs.append(net::makeLayerTreeDeleteMessage(contextId, layerId, 0));
 		}
 		emit layerCommands(msgs.size(), msgs.constData());
 	}
@@ -1375,9 +1341,7 @@ void LayerList::mergeSelected()
 	msgs.append(net::makeUndoPointMessage(contextId));
 
 	int targetId = targetIndex.data(canvas::LayerListModel::IdRole).toInt();
-	if(m_canvas->isCompatibilityMode()) {
-		msgs.append(net::makeLayerDeleteMessage(contextId, targetId, true));
-	} else if(topLevelIds.size() == 1) {
+	if(topLevelIds.size() == 1) {
 		if(targetIndex.data(canvas::LayerListModel::IsGroupRole).toBool()) {
 			msgs.append(
 				net::makeLayerTreeDeleteMessage(contextId, targetId, targetId));
@@ -1507,9 +1471,6 @@ dialogs::LayerProperties *LayerList::makeLayerPropertiesDialog(
 	dlg->setModal(false);
 
 	connect(
-		m_canvas, &canvas::CanvasModel::compatibilityModeChanged, dlg,
-		&dialogs::LayerProperties::setCompatibilityMode);
-	connect(
 		dlg, &dialogs::LayerProperties::layerCommands, this,
 		&LayerList::layerCommands);
 
@@ -1553,7 +1514,6 @@ dialogs::LayerProperties *LayerList::makeLayerPropertiesDialog(
 		 isOwnLayer);
 	dlg->setControlsEnabled(canEdit);
 	dlg->setOpControlsEnabled(canEditAll);
-	dlg->setCompatibilityMode(m_canvas->isCompatibilityMode());
 
 	return dlg;
 }
@@ -1870,8 +1830,7 @@ void LayerList::updateUiFromCurrent()
 
 	m_aclmenu->setCensored(layer.actuallyCensored());
 	dialogs::LayerProperties::updateBlendMode(
-		m_blendModeCombo, layer.blend, layer.group, layer.isolated,
-		m_canvas->isCompatibilityMode());
+		m_blendModeCombo, layer.blend, layer.group, layer.isolated);
 	m_opacitySlider->setPrefix(m_sketchMode ? tr("Sketch: ") : tr("Opacity: "));
 	m_opacitySlider->setValue(
 		(m_sketchMode ? layer.sketchOpacity : layer.opacity) * 100.0 + 0.5);

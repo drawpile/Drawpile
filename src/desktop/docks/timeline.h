@@ -57,7 +57,6 @@ signals:
 
 private slots:
 	void setCurrentFrame(int frame);
-	void setCompatibilityMode(bool compatibilityMode);
 	void setLocked(bool locked);
 
 private:
@@ -70,10 +69,7 @@ private:
 		docks::TitleWidget *titlebar, QAction *action,
 		widgets::GroupedToolButton::GroupPosition position);
 
-	bool isCompatibilityMode() const;
-
-	void
-	updateControlsEnabled(bool access, bool locked, bool compatibilityMode);
+	void updateControlsEnabled(bool access, bool locked);
 
 	void updateFrame(int frame);
 
