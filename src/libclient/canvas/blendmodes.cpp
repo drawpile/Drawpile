@@ -179,14 +179,14 @@ QString translatedName(int mode)
 	return QCoreApplication::translate("blendmode", key);
 }
 
-QString svgName(DP_BlendMode mode)
+QString oraName(DP_BlendMode mode)
 {
-	return QString::fromUtf8(DP_blend_mode_svg_name(mode));
+	return QString::fromUtf8(DP_blend_mode_ora_name(mode));
 }
 
-DP_BlendMode fromSvgName(const QString &name, DP_BlendMode defaultMode)
+DP_BlendMode fromOraName(const QString &name, DP_BlendMode defaultMode)
 {
-	return DP_blend_mode_by_svg_name(name.toUtf8().constData(), defaultMode);
+	return DP_blend_mode_by_ora_name(name.toUtf8().constData(), defaultMode);
 }
 
 
