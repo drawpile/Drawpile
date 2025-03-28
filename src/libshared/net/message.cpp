@@ -162,11 +162,6 @@ void Message::setContextId(unsigned int contextId)
 	DP_message_context_id_set(m_data, contextId);
 }
 
-void Message::setIndirectCompatFlag()
-{
-	DP_message_compat_flag_indirect_set(m_data);
-}
-
 size_t Message::length() const
 {
 	return DP_message_length(m_data);

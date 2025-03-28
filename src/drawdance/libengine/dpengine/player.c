@@ -363,13 +363,6 @@ DP_PlayerCompatibility DP_player_compatibility(DP_Player *player)
         return DP_PLAYER_COMPATIBLE;
     case DP_PROTOCOL_COMPATIBILITY_MINOR_INCOMPATIBILITY:
         return DP_PLAYER_MINOR_INCOMPATIBILITY;
-    case DP_PROTOCOL_COMPATIBILITY_BACKWARD_COMPATIBLE:
-        // The binary format is still the same as in Drawpile 2.1, there's just
-        // new messages added and some stuff renders differently. But the text
-        // format changed, so we can't play those back.
-        return player->type == DP_PLAYER_TYPE_BINARY
-                 ? DP_PLAYER_BACKWARD_COMPATIBLE
-                 : DP_PLAYER_INCOMPATIBLE;
     default:
         return DP_PLAYER_INCOMPATIBLE;
     }
@@ -381,7 +374,6 @@ bool DP_player_compatible(DP_Player *player)
     switch (DP_player_compatibility(player)) {
     case DP_PLAYER_COMPATIBLE:
     case DP_PLAYER_MINOR_INCOMPATIBILITY:
-    case DP_PLAYER_BACKWARD_COMPATIBLE:
         return true;
     default:
         return false;

@@ -57,7 +57,7 @@ public:
 	void showDisconnectedWarning(
 		const QString &message, bool singleSession) override;
 	void hideDisconnectedWarning() override;
-	void showResetNotice(bool compatibilityMode, bool saveInProgress) override;
+	void showResetNotice(bool saveInProgress) override;
 	void hideResetNotice() override;
 
 	void showPopupNotice(const QString &message) override;

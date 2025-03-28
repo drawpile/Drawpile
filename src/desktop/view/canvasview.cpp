@@ -115,21 +115,14 @@ void CanvasView::hideDisconnectedWarning()
 	}
 }
 
-void CanvasView::showResetNotice(bool compatibilityMode, bool saveInProgress)
+void CanvasView::showResetNotice(bool saveInProgress)
 {
 	if(m_notificationBarState != NotificationBarState::Reset) {
 		dismissNotificationBar();
 		m_notificationBarState = NotificationBarState::Reset;
-		QString message =
-			compatibilityMode
-				? QCoreApplication::translate(
-					  "widgets::CanvasView",
-					  "Do you want to save the canvas as it was before the "
-					  "reset? Since this is a Drawpile 2.1 session, it may "
-					  "have desynchronized!")
-				: QCoreApplication::translate(
-					  "widgets::CanvasView", "Do you want to save the canvas "
-											 "as it was before the reset?");
+		QString message = QCoreApplication::translate(
+			"widgets::CanvasView", "Do you want to save the canvas "
+								   "as it was before the reset?");
 		m_notificationBar->show(
 			message, QIcon::fromTheme("document-save-as"), tr("Save As…"),
 			widgets::NotificationBar::RoleColor::Notice);

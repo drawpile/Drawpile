@@ -25,9 +25,8 @@
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
 
-#define FLAG_NONE            0x0
-#define FLAG_OPAQUE          0x1
-#define FLAG_COMPAT_INDIRECT 0x2
+#define FLAG_NONE   0x0
+#define FLAG_OPAQUE 0x1
 
 typedef DP_Message *(*DP_MessageDeserializeFn)(unsigned int context_id,
                                                const unsigned char *buffer,
@@ -362,21 +361,6 @@ DP_Message *DP_message_deserialize(const unsigned char *buf, size_t bufsize,
         DP_error_set("Buffer size %zu too short for message header", bufsize);
         return NULL;
     }
-}
-
-
-bool DP_message_compat_flag_indirect(DP_Message *msg)
-{
-    DP_ASSERT(msg);
-    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
-    return msg->flags & FLAG_COMPAT_INDIRECT;
-}
-
-void DP_message_compat_flag_indirect_set(DP_Message *msg)
-{
-    DP_ASSERT(msg);
-    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
-    msg->flags |= FLAG_COMPAT_INDIRECT;
 }
 
 

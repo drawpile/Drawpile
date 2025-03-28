@@ -86,8 +86,6 @@ private slots:
 	void updateIdleSettings(int timeLimit, bool overridden, bool canOverride);
 	void updateAuthListCheckboxes();
 
-	void setCompatibilityMode(bool compatibilityMode);
-
 	void importBans();
 	void exportBans();
 

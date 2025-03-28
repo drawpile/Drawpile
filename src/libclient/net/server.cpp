@@ -401,8 +401,7 @@ void Server::loginSuccess()
 		m_loginstate->mode() == LoginHandler::Mode::Join,
 		m_loginstate->isAuthenticated(), m_loginstate->userFlags(),
 		!m_loginstate->sessionFlags().contains("NOAUTORESET"),
-		m_loginstate->compatibilityMode(), m_loginstate->joinPassword(),
-		m_loginstate->authId());
+		m_loginstate->joinPassword(), m_loginstate->authId());
 
 	m_loginstate->deleteLater();
 	m_loginstate = nullptr;

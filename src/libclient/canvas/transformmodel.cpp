@@ -164,15 +164,14 @@ void TransformModel::applyOffset(int x, int y)
 }
 
 QVector<net::Message> TransformModel::applyActiveTransform(
-	uint8_t contextId, int layerId, int interpolation, bool compatibilityMode,
-	bool stamp, bool *outMovedSelection)
+	uint8_t contextId, int layerId, int interpolation, bool stamp,
+	bool *outMovedSelection)
 {
 	if(m_active && m_dstQuadValid) {
 		utils::ScopedOverrideCursor waitCursor;
 		if(m_pasted) {
 			return applyFloating(
-				contextId, layerId, interpolation, compatibilityMode, stamp,
-				outMovedSelection);
+				contextId, layerId, interpolation, stamp, outMovedSelection);
 		} else {
 			if(stamp) {
 				if(isStampable()) {
@@ -183,8 +182,7 @@ QVector<net::Message> TransformModel::applyActiveTransform(
 				}
 			}
 			return applyFromCanvas(
-				contextId, layerId, interpolation, compatibilityMode,
-				outMovedSelection);
+				contextId, layerId, interpolation, outMovedSelection);
 		}
 	} else {
 		return {};
@@ -256,16 +254,14 @@ int TransformModel::getSingleLayerMoveId(int layerId) const
 }
 
 QVector<net::Message> TransformModel::applyFromCanvas(
-	uint8_t contextId, int layerId, int interpolation, bool compatibilityMode,
-	bool *outMovedSelection)
+	uint8_t contextId, int layerId, int interpolation, bool *outMovedSelection)
 {
 	Q_ASSERT(m_active);
 	Q_ASSERT(!m_pasted || m_stamped);
 	bool identity = TransformQuad(m_srcBounds) == m_dstQuad;
 	bool adjustsImage =
 		m_blendMode != int(DP_BLEND_MODE_NORMAL) || m_opacity < 1.0;
-	int singleLayerSourceId =
-		compatibilityMode ? 0 : getSingleLayerMoveId(layerId);
+	int singleLayerSourceId = getSingleLayerMoveId(layerId);
 	if(!identity || adjustsImage ||
 	   (singleLayerSourceId > 0 && singleLayerSourceId != layerId)) {
 		int srcX = m_srcBounds.x();
@@ -287,32 +283,7 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 				contextId, canvas::CanvasModel::MAIN_SELECTION_ID));
 		}
 
-		if(compatibilityMode) {
-			int dstTopRightX = qRound(m_dstQuad.topRight().x());
-			int dstTopRightY = qRound(m_dstQuad.topRight().y());
-			int dstBottomRightX = qRound(m_dstQuad.bottomRight().x());
-			int dstBottomRightY = qRound(m_dstQuad.bottomRight().y());
-			int dstBottomLeftX = qRound(m_dstQuad.bottomLeft().x());
-			int dstBottomLeftY = qRound(m_dstQuad.bottomLeft().y());
-			if(moveSelection && !identity) {
-				msgs.append(net::makeMoveRegionMessage(
-					contextId, 0, srcX, srcY, srcW, srcH, dstTopLeftX,
-					dstTopLeftY, dstTopRightX, dstTopRightY, dstBottomRightX,
-					dstBottomRightY, dstBottomLeftX, dstBottomLeftY, QImage()));
-			}
-			if(moveContents) {
-				for(int layerIdToMove : m_layerIds) {
-					if(hasContentInSelection(layerIdToMove)) {
-						msgs.append(net::makeMoveRegionMessage(
-							contextId, layerIdToMove, srcX, srcY, srcW, srcH,
-							dstTopLeftX, dstTopLeftY, dstTopRightX,
-							dstTopRightY, dstBottomRightX, dstBottomRightY,
-							dstBottomLeftX, dstBottomLeftY,
-							needsMask ? convertMaskToMono() : QImage()));
-					}
-				}
-			}
-		} else if(moveIsOnlyTranslated()) {
+		if(moveIsOnlyTranslated()) {
 			if(moveSelection && !identity) {
 				msgs.append(net::makeMoveRectMessage(
 					contextId, SELECTION_IDS, 0, srcX, srcY, dstTopLeftX,
@@ -533,8 +504,8 @@ void TransformModel::applyCut(
 }
 
 QVector<net::Message> TransformModel::applyFloating(
-	uint8_t contextId, int layerId, int interpolation, bool compatibilityMode,
-	bool stamp, bool *outMovedSelection)
+	uint8_t contextId, int layerId, int interpolation, bool stamp,
+	bool *outMovedSelection)
 {
 	Q_ASSERT(m_active);
 	Q_ASSERT(m_pasted);
@@ -554,8 +525,7 @@ QVector<net::Message> TransformModel::applyFloating(
 	QVector<net::Message> msgs;
 	if(m_stamped && !stamp) {
 		msgs = applyFromCanvas(
-			contextId, layerId, interpolation, compatibilityMode,
-			outMovedSelection);
+			contextId, layerId, interpolation, outMovedSelection);
 	}
 
 	// May be empty either if the transform wasn't stamped or if there was

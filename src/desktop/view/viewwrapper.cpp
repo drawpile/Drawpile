@@ -176,9 +176,9 @@ void ViewWrapper::hideDisconnectedWarning()
 	m_view->hideDisconnectedWarning();
 }
 
-void ViewWrapper::showResetNotice(bool compatibilityMode, bool saveInProgress)
+void ViewWrapper::showResetNotice(bool saveInProgress)
 {
-	m_view->showResetNotice(compatibilityMode, saveInProgress);
+	m_view->showResetNotice(saveInProgress);
 }
 
 void ViewWrapper::hideResetNotice()

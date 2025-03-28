@@ -1469,9 +1469,7 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
 
         DP_TransientLayerContent *target;
         if (params.indirect) {
-            params.blend_mode = params.indirect_compat
-                                  ? DP_BLEND_MODE_NORMAL
-                                  : DP_BLEND_MODE_ALPHA_DARKEN;
+            params.blend_mode = DP_BLEND_MODE_ALPHA_DARKEN;
             int sublayer_id = DP_uint_to_int(params.context_id);
             if (last_sublayer_id != sublayer_id) {
                 last_sublayer_id = sublayer_id;
