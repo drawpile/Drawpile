@@ -83,7 +83,7 @@ public:
 	QRect getPasteBounds(
 		const QSize &imageSize, const QPoint &defaultPoint, bool forceDefault);
 
-	void connectedToServer(uint8_t myUserId, bool join, bool compatibilityMode);
+	void connectedToServer(uint8_t myUserId, bool join);
 	void disconnectedFromServer();
 
 	AclState *aclState() const { return m_aclstate; }
@@ -93,7 +93,6 @@ public:
 	DocumentMetadata *metadata() const { return m_metadata; }
 	SelectionModel *selection() const { return m_selection; }
 	TransformModel *transform() const { return m_transform; }
-	bool isCompatibilityMode() const { return m_compatibilityMode; }
 
 	//! Open a recording file and start recording
 	drawdance::RecordStartResult startRecording(const QString &path);
@@ -165,8 +164,6 @@ signals:
 
 	void recorderStateChanged(bool recording);
 
-	void compatibilityModeChanged(bool compatibilityMode);
-
 	void permissionDenied(int feature);
 
 private slots:
@@ -194,7 +191,6 @@ private:
 	QString m_pinnedMessage;
 
 	uint8_t m_localUserId;
-	bool m_compatibilityMode;
 };
 
 }

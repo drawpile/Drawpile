@@ -358,41 +358,6 @@ DP_FloodFillResult CanvasState::selectionFill(
 	return result;
 }
 
-drawdance::CanvasState CanvasState::makeBackwardCompatible() const
-{
-	if(!m_data) {
-		return null();
-	}
-
-	DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(m_data);
-	DP_TransientLayerList *tll =
-		DP_transient_canvas_state_transient_layers(tcs, 0);
-	DP_TransientLayerPropsList *tlpl =
-		DP_transient_canvas_state_transient_layer_props(tcs, 0);
-	int count = DP_transient_layer_list_count(tll);
-	for(int i = 0; i < count; ++i) {
-		DP_LayerProps *lp = DP_transient_layer_props_list_at_noinc(tlpl, i);
-		bool isGroup = DP_layer_props_children_noinc(lp);
-		bool isModeIncompatible = !canvas::blendmode::isBackwardCompatibleMode(
-			DP_BlendMode(DP_layer_props_blend_mode(lp)));
-
-		if(isGroup) {
-			DP_transient_layer_list_merge_at(tll, lp, i);
-			DP_transient_layer_props_list_merge_at(tlpl, i);
-		}
-
-		if(isModeIncompatible) {
-			DP_TransientLayerProps *tlp =
-				DP_transient_layer_props_list_transient_at_noinc(tlpl, i);
-			DP_transient_layer_props_blend_mode_set(tlp, DP_BLEND_MODE_NORMAL);
-		}
-	}
-
-	// Other stuff like the timeline or document metadata will just get dropped.
-	return drawdance::CanvasState::noinc(
-		DP_transient_canvas_state_persist(tcs));
-}
-
 unsigned int CanvasState::loadFlags()
 {
 #if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)

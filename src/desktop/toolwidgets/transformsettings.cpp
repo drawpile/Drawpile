@@ -43,15 +43,6 @@ TransformSettings::TransformSettings(ToolController *ctrl, QObject *parent)
 		&TransformSettings::updateHandles);
 }
 
-void TransformSettings::setCompatibilityMode(bool compatibilityMode)
-{
-	for(QAbstractButton *button : m_interpolationGroup->buttons()) {
-		button->setDisabled(compatibilityMode);
-	}
-	m_blendModeCombo->setDisabled(compatibilityMode);
-	m_opacitySlider->setDisabled(compatibilityMode);
-}
-
 void TransformSettings::setActions(
 	QAction *mirror, QAction *flip, QAction *rotatecw, QAction *rotateccw,
 	QAction *shrinktoview, QAction *stamp)
@@ -427,16 +418,15 @@ void TransformSettings::updateEnabledFrom(canvas::CanvasModel *canvas)
 	if(m_applyButton) {
 		canvas::TransformModel *transform =
 			canvas ? canvas->transform() : nullptr;
-		bool compatibilityMode = controller()->client()->isCompatibilityMode();
 
 		bool haveTransform = transform && transform->isActive();
 		bool canApplyTransform = haveTransform && transform->isDstQuadValid();
 		m_scaleButton->setEnabled(haveTransform);
 		m_distortButton->setEnabled(haveTransform);
-		m_blendModeCombo->setEnabled(haveTransform && !compatibilityMode);
+		m_blendModeCombo->setEnabled(haveTransform);
 		m_constrainButton->setEnabled(haveTransform);
 		m_centerButton->setEnabled(haveTransform);
-		m_opacitySlider->setEnabled(haveTransform && !compatibilityMode);
+		m_opacitySlider->setEnabled(haveTransform);
 		m_applyButton->setEnabled(canApplyTransform);
 		m_cancelButton->setEnabled(haveTransform);
 

@@ -71,14 +71,9 @@ public:
 	bool isPast() const;
 
 	/**
-	 * Is this an older, but compatible version?
-	 */
-	bool isPastCompatible() const;
-
-	/**
 	 * Is this some kind of compatible recording?
 	 */
-	bool isCompatible() const { return isCurrent() || isPastCompatible(); }
+	bool isCompatible() const { return isCurrent(); }
 
 	bool shouldHaveSystemId() const;
 	bool shouldSupportLookup() const;

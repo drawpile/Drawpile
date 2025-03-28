@@ -84,7 +84,6 @@ public:
 
 	bool isLocked() override;
 	void setMyPaintAllowed(bool myPaintAllowed);
-	void setCompatibilityMode(bool compatibilityMode);
 
 public slots:
 	void selectBrushSlot(int i);
@@ -137,7 +136,7 @@ private slots:
 
 private:
 	enum class BrushType { PixelRound, PixelSquare, SoftRound, MyPaint };
-	enum class Lock { None, MyPaintPermission, MyPaintCompat, IndirectCompat };
+	enum class Lock { None, MyPaintPermission };
 
 	void changePresetBrush(const brushes::ActiveBrush &brush);
 	void updateChangesInCurrentBrushPreset();

@@ -47,7 +47,7 @@ static void parse(TEST_PARAMS)
 static void compare_check(TEST_PARAMS, const char *title,
                           DP_ProtocolVersion *protover, const char *ns,
                           int server, int major, int minor, bool current,
-                          bool future, bool past_compatible, bool requires_sid,
+                          bool future, bool requires_sid,
                           DP_ProtocolCompatibility compatibility)
 {
     OK(DP_protocol_version_valid(protover), "%s is valid", title);
@@ -69,15 +69,6 @@ static void compare_check(TEST_PARAMS, const char *title,
     }
     else {
         NOK(DP_protocol_version_is_future(protover), "%s is not future", title);
-    }
-
-    if (past_compatible) {
-        OK(DP_protocol_version_is_past_compatible(protover),
-           "%s is past compatible", title);
-    }
-    else {
-        NOK(DP_protocol_version_is_past_compatible(protover),
-            "%s is not past compatible", title);
     }
 
     if (requires_sid) {
@@ -135,20 +126,13 @@ static void compare(TEST_PARAMS)
     DP_ProtocolVersion *current = DP_protocol_version_new_current();
     compare_check(TEST_ARGS, "current", current, DP_PROTOCOL_VERSION_NAMESPACE,
                   DP_PROTOCOL_VERSION_SERVER, DP_PROTOCOL_VERSION_MAJOR,
-                  DP_PROTOCOL_VERSION_MINOR, true, false, false, true,
+                  DP_PROTOCOL_VERSION_MINOR, true, false, true,
                   DP_PROTOCOL_COMPATIBILITY_COMPATIBLE);
 
     DP_ProtocolVersion *past_incompatible =
         DP_protocol_version_new("dp", 4, 20, 1);
     compare_check(TEST_ARGS, "dp:4.20.1", past_incompatible, "dp", 4, 20, 1,
-                  false, false, false, false,
-                  DP_PROTOCOL_COMPATIBILITY_INCOMPATIBLE);
-
-    DP_ProtocolVersion *past_compatible =
-        DP_protocol_version_new("dp", 4, 21, 2);
-    compare_check(TEST_ARGS, "dp:4.21.2", past_compatible, "dp", 4, 21, 2,
-                  false, false, true, false,
-                  DP_PROTOCOL_COMPATIBILITY_BACKWARD_COMPATIBLE);
+                  false, false, false, DP_PROTOCOL_COMPATIBILITY_INCOMPATIBLE);
 
     DP_ProtocolVersion *minor_future = DP_protocol_version_new(
         DP_PROTOCOL_VERSION_NAMESPACE, DP_PROTOCOL_VERSION_SERVER,
@@ -156,7 +140,7 @@ static void compare(TEST_PARAMS)
     compare_check(TEST_ARGS, "minor+1", minor_future,
                   DP_PROTOCOL_VERSION_NAMESPACE, DP_PROTOCOL_VERSION_SERVER,
                   DP_PROTOCOL_VERSION_MAJOR, DP_PROTOCOL_VERSION_MINOR + 1,
-                  false, true, false, true,
+                  false, true, true,
                   DP_PROTOCOL_COMPATIBILITY_MINOR_INCOMPATIBILITY);
 
     DP_ProtocolVersion *major_future = DP_protocol_version_new(
@@ -165,8 +149,7 @@ static void compare(TEST_PARAMS)
     compare_check(TEST_ARGS, "major+1", major_future,
                   DP_PROTOCOL_VERSION_NAMESPACE, DP_PROTOCOL_VERSION_SERVER,
                   DP_PROTOCOL_VERSION_MAJOR + 1, DP_PROTOCOL_VERSION_MINOR,
-                  false, true, false, true,
-                  DP_PROTOCOL_COMPATIBILITY_INCOMPATIBLE);
+                  false, true, true, DP_PROTOCOL_COMPATIBILITY_INCOMPATIBLE);
 
     DP_ProtocolVersion *server_future = DP_protocol_version_new(
         DP_PROTOCOL_VERSION_NAMESPACE, DP_PROTOCOL_VERSION_SERVER + 1,
@@ -174,7 +157,7 @@ static void compare(TEST_PARAMS)
     compare_check(TEST_ARGS, "server+1", server_future,
                   DP_PROTOCOL_VERSION_NAMESPACE, DP_PROTOCOL_VERSION_SERVER + 1,
                   DP_PROTOCOL_VERSION_MAJOR, DP_PROTOCOL_VERSION_MINOR, false,
-                  true, false, true,
+                  true, true,
                   // Server portion does not affect client compatibility.
                   // In practice, it will certainly cause a major bump too.
                   DP_PROTOCOL_COMPATIBILITY_COMPATIBLE);
@@ -184,7 +167,7 @@ static void compare(TEST_PARAMS)
         DP_PROTOCOL_VERSION_MINOR);
     compare_check(TEST_ARGS, "other namespace", other_namespace, "qq",
                   DP_PROTOCOL_VERSION_SERVER, DP_PROTOCOL_VERSION_MAJOR,
-                  DP_PROTOCOL_VERSION_MINOR, false, false, false, false,
+                  DP_PROTOCOL_VERSION_MINOR, false, false, false,
                   DP_PROTOCOL_COMPATIBILITY_INCOMPATIBLE);
 
     compare_versions(TEST_ARGS, "server+1", "major+1", server_future,
@@ -193,8 +176,6 @@ static void compare(TEST_PARAMS)
                      minor_future, true);
     compare_versions(TEST_ARGS, "server+1", "current", server_future, current,
                      true);
-    compare_versions(TEST_ARGS, "server+1", "past compatible", server_future,
-                     past_compatible, true);
     compare_versions(TEST_ARGS, "server+1", "past incompatible", server_future,
                      past_incompatible, true);
 
@@ -204,8 +185,6 @@ static void compare(TEST_PARAMS)
                      minor_future, true);
     compare_versions(TEST_ARGS, "major+1", "current", major_future, current,
                      true);
-    compare_versions(TEST_ARGS, "major+1", "past compatible", major_future,
-                     past_compatible, true);
     compare_versions(TEST_ARGS, "major+1", "past incompatible", major_future,
                      past_incompatible, true);
 
@@ -215,8 +194,6 @@ static void compare(TEST_PARAMS)
                      major_future, false);
     compare_versions(TEST_ARGS, "minor+1", "current", minor_future, current,
                      true);
-    compare_versions(TEST_ARGS, "minor+1", "past compatible", minor_future,
-                     past_compatible, true);
     compare_versions(TEST_ARGS, "minor+1", "past incompatible", minor_future,
                      past_incompatible, true);
 
@@ -226,21 +203,8 @@ static void compare(TEST_PARAMS)
                      false);
     compare_versions(TEST_ARGS, "current", "minor+1", current, minor_future,
                      false);
-    compare_versions(TEST_ARGS, "current", "past compatible", current,
-                     past_compatible, true);
     compare_versions(TEST_ARGS, "current", "past incompatible", current,
                      past_incompatible, true);
-
-    compare_versions(TEST_ARGS, "past compatible", "server+1", past_compatible,
-                     server_future, false);
-    compare_versions(TEST_ARGS, "past compatible", "major+1", past_compatible,
-                     major_future, false);
-    compare_versions(TEST_ARGS, "past compatible", "minor+1", past_compatible,
-                     minor_future, false);
-    compare_versions(TEST_ARGS, "past compatible", "current", past_compatible,
-                     current, false);
-    compare_versions(TEST_ARGS, "past compatible", "past incompatible",
-                     past_compatible, past_incompatible, true);
 
     compare_versions(TEST_ARGS, "past incompatible", "server+1",
                      past_incompatible, server_future, false);
@@ -248,8 +212,6 @@ static void compare(TEST_PARAMS)
                      past_incompatible, major_future, false);
     compare_versions(TEST_ARGS, "past incompatible", "minor+1",
                      past_incompatible, minor_future, false);
-    compare_versions(TEST_ARGS, "past incompatible", "past compatible",
-                     past_incompatible, past_compatible, false);
     compare_versions(TEST_ARGS, "past incompatible", "current",
                      past_incompatible, current, false);
 
@@ -257,7 +219,6 @@ static void compare(TEST_PARAMS)
     DP_protocol_version_free(server_future);
     DP_protocol_version_free(major_future);
     DP_protocol_version_free(minor_future);
-    DP_protocol_version_free(past_compatible);
     DP_protocol_version_free(past_incompatible);
     DP_protocol_version_free(current);
 }
