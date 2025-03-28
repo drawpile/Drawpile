@@ -8709,7 +8709,26 @@ pub const DP_BLEND_MODE_ERASE_LIGHT: DP_BlendMode = 27;
 pub const DP_BLEND_MODE_ERASE_DARK: DP_BlendMode = 28;
 pub const DP_BLEND_MODE_LIGHT_TO_ALPHA: DP_BlendMode = 29;
 pub const DP_BLEND_MODE_DARK_TO_ALPHA: DP_BlendMode = 30;
-pub const DP_BLEND_MODE_LAST_EXCEPT_REPLACE: DP_BlendMode = 31;
+pub const DP_BLEND_MODE_MULTIPLY_ALPHA: DP_BlendMode = 31;
+pub const DP_BLEND_MODE_DIVIDE_ALPHA: DP_BlendMode = 32;
+pub const DP_BLEND_MODE_BURN_ALPHA: DP_BlendMode = 33;
+pub const DP_BLEND_MODE_DODGE_ALPHA: DP_BlendMode = 34;
+pub const DP_BLEND_MODE_DARKEN_ALPHA: DP_BlendMode = 35;
+pub const DP_BLEND_MODE_LIGHTEN_ALPHA: DP_BlendMode = 36;
+pub const DP_BLEND_MODE_SUBTRACT_ALPHA: DP_BlendMode = 37;
+pub const DP_BLEND_MODE_ADD_ALPHA: DP_BlendMode = 38;
+pub const DP_BLEND_MODE_SCREEN_ALPHA: DP_BlendMode = 39;
+pub const DP_BLEND_MODE_LUMINOSITY_SHINE_SAI_ALPHA: DP_BlendMode = 40;
+pub const DP_BLEND_MODE_OVERLAY_ALPHA: DP_BlendMode = 41;
+pub const DP_BLEND_MODE_HARD_LIGHT_ALPHA: DP_BlendMode = 42;
+pub const DP_BLEND_MODE_SOFT_LIGHT_ALPHA: DP_BlendMode = 43;
+pub const DP_BLEND_MODE_LINEAR_BURN_ALPHA: DP_BlendMode = 44;
+pub const DP_BLEND_MODE_LINEAR_LIGHT_ALPHA: DP_BlendMode = 45;
+pub const DP_BLEND_MODE_HUE_ALPHA: DP_BlendMode = 46;
+pub const DP_BLEND_MODE_SATURATION_ALPHA: DP_BlendMode = 47;
+pub const DP_BLEND_MODE_LUMINOSITY_ALPHA: DP_BlendMode = 48;
+pub const DP_BLEND_MODE_COLOR_ALPHA: DP_BlendMode = 49;
+pub const DP_BLEND_MODE_LAST_EXCEPT_REPLACE: DP_BlendMode = 50;
 pub const DP_BLEND_MODE_COMPAT_LOCAL_MATCH: DP_BlendMode = 252;
 pub const DP_BLEND_MODE_REPLACE: DP_BlendMode = 255;
 pub const DP_BLEND_MODE_COUNT: DP_BlendMode = 256;
@@ -8734,12 +8753,12 @@ extern "C" {
     ) -> *const ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn DP_blend_mode_svg_name(
+    pub fn DP_blend_mode_ora_name(
         blend_mode: ::std::os::raw::c_int,
     ) -> *const ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn DP_blend_mode_text_name(
+    pub fn DP_blend_mode_dptxt_name(
         blend_mode: ::std::os::raw::c_int,
     ) -> *const ::std::os::raw::c_char;
 }
@@ -8759,10 +8778,23 @@ extern "C" {
     pub fn DP_blend_mode_presents_as_eraser(blend_mode: ::std::os::raw::c_int) -> bool;
 }
 extern "C" {
-    pub fn DP_blend_mode_by_svg_name(
+    pub fn DP_blend_mode_by_ora_name(
         svg_name: *const ::std::os::raw::c_char,
         not_found_value: DP_BlendMode,
     ) -> DP_BlendMode;
+}
+extern "C" {
+    pub fn DP_blend_mode_by_dptxt_name(
+        svg_name: *const ::std::os::raw::c_char,
+        not_found_value: DP_BlendMode,
+    ) -> DP_BlendMode;
+}
+extern "C" {
+    pub fn DP_blend_mode_alpha_preserve_pair(
+        blend_mode: ::std::os::raw::c_int,
+        out_alpha_affecting: *mut DP_BlendMode,
+        out_alpha_preserving: *mut DP_BlendMode,
+    ) -> bool;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

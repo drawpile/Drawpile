@@ -391,15 +391,21 @@ static DP_TransientLayerProps *ora_make_layer_props(DP_XmlElement *element,
         DP_transient_layer_props_hidden_set(tlp, true);
     }
 
-    DP_BlendMode blend_mode = DP_blend_mode_by_svg_name(
+    DP_BlendMode blend_mode = DP_blend_mode_by_ora_name(
         DP_xml_element_attribute(element, NULL, "composite-op"),
         DP_BLEND_MODE_NORMAL);
 
-    // Normal with alpha preserve is Recolor. Drawpile doesn't save it this way,
-    // but it's a valid way to represent it, so we handle it.
-    if (blend_mode == DP_BLEND_MODE_NORMAL
-        && ora_read_bool_attribute(element, NULL, "alpha-preserve")) {
-        blend_mode = DP_BLEND_MODE_RECOLOR;
+    DP_BlendMode alpha_affecting_blend_mode;
+    DP_BlendMode alpha_preserving_blend_mode;
+    if (DP_blend_mode_alpha_preserve_pair((int)blend_mode,
+                                          &alpha_affecting_blend_mode,
+                                          &alpha_preserving_blend_mode)) {
+        if (ora_read_bool_attribute(element, NULL, "alpha-preserve")) {
+            blend_mode = alpha_preserving_blend_mode;
+        }
+        else {
+            blend_mode = alpha_affecting_blend_mode;
+        }
     }
 
     DP_transient_layer_props_blend_mode_set(tlp, (int)blend_mode);

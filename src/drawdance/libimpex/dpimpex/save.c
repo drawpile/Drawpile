@@ -423,7 +423,7 @@ static void ora_write_layer_props_xml(DP_SaveOraContext *c, DP_Output *output,
     int blend_mode = DP_layer_props_blend_mode(lp);
     if (blend_mode != DP_BLEND_MODE_NORMAL) {
         ORA_APPEND_ATTR(c, output, "composite-op", "%s",
-                        DP_blend_mode_svg_name(blend_mode));
+                        DP_blend_mode_ora_name(blend_mode));
     }
 
     // Drawpile doesn't itself need the alpha preserve property, since its alpha

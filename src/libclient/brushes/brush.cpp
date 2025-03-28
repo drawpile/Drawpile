@@ -171,8 +171,8 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.m_lastSmudgeDynamicType =
 		lastDynamicTypeFromJson(o, QStringLiteral("smudge"));
 
-	b.brush_mode = canvas::blendmode::fromSvgName(o["blend"].toString());
-	b.erase_mode = canvas::blendmode::fromSvgName(
+	b.brush_mode = canvas::blendmode::fromOraName(o["blend"].toString());
+	b.erase_mode = canvas::blendmode::fromOraName(
 		o["blenderase"].toString(), DP_BLEND_MODE_ERASE);
 	b.erase = o["erase"].toBool();
 
@@ -277,8 +277,8 @@ void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
 	m_lastSmudgeDynamicType =
 		lastDynamicTypeFromJson(settings, QStringLiteral("smudge"));
 
-	brush_mode = canvas::blendmode::fromSvgName(settings["blend"].toString());
-	erase_mode = canvas::blendmode::fromSvgName(
+	brush_mode = canvas::blendmode::fromOraName(settings["blend"].toString());
+	erase_mode = canvas::blendmode::fromOraName(
 		settings["blenderase"].toString(), DP_BLEND_MODE_ERASE);
 	erase = settings["erase"].toBool();
 
@@ -343,8 +343,8 @@ QJsonObject ClassicBrush::settingsToJson() const
 	dynamicToJson(
 		smudge_dynamic, m_lastSmudgeDynamicType, QStringLiteral("smudge"), o);
 
-	o["blend"] = canvas::blendmode::svgName(brush_mode);
-	o["blenderase"] = canvas::blendmode::svgName(erase_mode);
+	o["blend"] = canvas::blendmode::oraName(brush_mode);
+	o["blenderase"] = canvas::blendmode::oraName(erase_mode);
 	o["erase"] = erase;
 
 	o["stabilizationmode"] = stabilizationMode;

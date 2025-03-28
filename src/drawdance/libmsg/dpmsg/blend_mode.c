@@ -31,24 +31,18 @@
 #define PRESERVES_ALPHA    (1 << 5)
 #define PRESENTS_AS_ERASER (1 << 6)
 
-// The Krita name for the linear light blend mode contains a space, which isn't
-// supported in draw dabs messages, since they already use the curly brace body
-// for the dab data. So we have to use this alternate, spaceless name instead.
-#define LINEAR_LIGHT_TEXT_NAME "-dp-linear-light"
-#define REPLACE_NAME           "-dp-replace"
+#define REPLACE_NAME "-dp-replace"
 
 typedef struct DP_BlendModeAttributes {
     int flags;
     const char *enum_name;
-    const char *svg_name;
+    const char *ora_name;
+    const char *dptxt_name;
     const char *name;
 } DP_BlendModeAttributes;
 
 static const DP_BlendModeAttributes invalid_attributes = {
-    0,
-    "DP_BLEND_MODE_UNKNOWN",
-    "-dp-unknown",
-    "Unknown",
+    0, "DP_BLEND_MODE_UNKNOWN", "-dp-unknown", "-dp-unknown", "Unknown",
 };
 
 static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
@@ -57,12 +51,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             LAYER | BRUSH | DECREASE_OPACITY | PRESENTS_AS_ERASER,
             "DP_BLEND_MODE_ERASE",
             "svg:dst-out",
+            "svg:dst-out",
             "Erase",
         },
     [DP_BLEND_MODE_NORMAL] =
         {
             LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
             "DP_BLEND_MODE_NORMAL",
+            "svg:src-over",
             "svg:src-over",
             "Normal",
         },
@@ -71,12 +67,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_MULTIPLY",
             "svg:multiply",
+            "svg:multiply",
             "Multiply",
         },
     [DP_BLEND_MODE_DIVIDE] =
         {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_DIVIDE",
+            "krita:divide",
             "krita:divide",
             "Divide",
         },
@@ -85,12 +83,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_BURN",
             "svg:color-burn",
+            "svg:color-burn",
             "Burn",
         },
     [DP_BLEND_MODE_DODGE] =
         {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_DODGE",
+            "svg:color-dodge",
             "svg:color-dodge",
             "Dodge",
         },
@@ -99,12 +99,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_DARKEN",
             "svg:darken",
+            "svg:darken",
             "Darken",
         },
     [DP_BLEND_MODE_LIGHTEN] =
         {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_LIGHTEN",
+            "svg:lighten",
             "svg:lighten",
             "Lighten",
         },
@@ -113,12 +115,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_SUBTRACT",
             "krita:subtract",
+            "krita:subtract",
             "Subtract",
         },
     [DP_BLEND_MODE_ADD] =
         {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_ADD",
+            "svg:plus",
             "svg:plus",
             "Add",
         },
@@ -127,12 +131,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_RECOLOR",
             "svg:src-atop",
+            "svg:src-atop",
             "Recolor",
         },
     [DP_BLEND_MODE_BEHIND] =
         {
             BRUSH | INCREASE_OPACITY | BLEND_BLANK,
             "DP_BLEND_MODE_BEHIND",
+            "svg:dst-over",
             "svg:dst-over",
             "Behind",
         },
@@ -141,12 +147,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             BRUSH | DECREASE_OPACITY | PRESENTS_AS_ERASER,
             "DP_BLEND_MODE_COLOR_ERASE",
             "-dp-cerase",
+            "-dp-cerase",
             "Color Erase",
         },
     [DP_BLEND_MODE_SCREEN] =
         {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_SCREEN",
+            "svg:screen",
             "svg:screen",
             "Screen",
         },
@@ -155,12 +163,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             BRUSH | INCREASE_OPACITY | DECREASE_OPACITY | BLEND_BLANK,
             "DP_BLEND_MODE_NORMAL_AND_ERASER",
             "-dp-normal-and-eraser",
+            "-dp-normal-and-eraser",
             "Normal and Eraser",
         },
     [DP_BLEND_MODE_LUMINOSITY_SHINE_SAI] =
         {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_LUMINOSITY_SHINE_SAI",
+            "krita:luminosity_sai",
             "krita:luminosity_sai",
             "Luminosity/Shine (SAI)",
         },
@@ -169,12 +179,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_OVERLAY",
             "svg:overlay",
+            "svg:overlay",
             "Overlay",
         },
     [DP_BLEND_MODE_HARD_LIGHT] =
         {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_HARD_LIGHT",
+            "svg:hard-light",
             "svg:hard-light",
             "Hard Light",
         },
@@ -183,12 +195,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_SOFT_LIGHT",
             "svg:soft-light",
+            "svg:soft-light",
             "Soft Light",
         },
     [DP_BLEND_MODE_LINEAR_BURN] =
         {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_LINEAR_BURN",
+            "krita:linear_burn",
             "krita:linear_burn",
             "Linear Burn",
         },
@@ -197,12 +211,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_LINEAR_LIGHT",
             "krita:linear light",
+            "-dp-linear-light",
             "Linear Light",
         },
     [DP_BLEND_MODE_HUE] =
         {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_HUE",
+            "svg:hue",
             "svg:hue",
             "Hue",
         },
@@ -211,6 +227,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_SATURATION",
             "svg:saturation",
+            "svg:saturation",
             "Saturation",
         },
     [DP_BLEND_MODE_LUMINOSITY] =
@@ -218,12 +235,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_LUMINOSITY",
             "svg:luminosity",
+            "svg:luminosity",
             "Luminosity",
         },
     [DP_BLEND_MODE_COLOR] =
         {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_COLOR",
+            "svg:color",
             "svg:color",
             "Color",
         },
@@ -235,12 +254,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             // Krita uses. However, this blend mode is only ever used for
             // brushes, so it doesn't end up in anything you'd open in Krita.
             "krita:alphadarken",
+            "krita:alphadarken",
             "Alpha Darken",
         },
     [DP_BLEND_MODE_ALPHA_DARKEN_LERP] =
         {
             INCREASE_OPACITY | BLEND_BLANK,
             "DP_BLEND_MODE_ALPHA_DARKEN_LERP",
+            "-dp-alpha-darken-lerp",
             "-dp-alpha-darken-lerp",
             "Alpha Darken",
         },
@@ -249,12 +270,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             LAYER | BRUSH | DECREASE_OPACITY | PRESENTS_AS_ERASER,
             "DP_BLEND_MODE_ERASE_LIGHT",
             "-dp-erase-light",
+            "-dp-erase-light",
             "Erase Lightness",
         },
     [DP_BLEND_MODE_ERASE_DARK] =
         {
             LAYER | BRUSH | DECREASE_OPACITY | PRESENTS_AS_ERASER,
             "DP_BLEND_MODE_ERASE_DARK",
+            "-dp-erase-dark",
             "-dp-erase-dark",
             "Erase Darkness",
         },
@@ -263,6 +286,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             LAYER | BRUSH | DECREASE_OPACITY,
             "DP_BLEND_MODE_LIGHT_TO_ALPHA",
             "-dp-light-to-alpha",
+            "-dp-light-to-alpha",
             "Lightness to Alpha",
         },
     [DP_BLEND_MODE_DARK_TO_ALPHA] =
@@ -270,12 +294,167 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             LAYER | BRUSH | DECREASE_OPACITY,
             "DP_BLEND_MODE_DARK_TO_ALPHA",
             "-dp-dark-to-alpha",
+            "-dp-dark-to-alpha",
             "Darkness to Alpha",
         },
+    [DP_BLEND_MODE_MULTIPLY_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_MULTIPLY_ALPHA",
+            "svg:multiply",
+            "-dp-multiply-alpha",
+            "Multiply Alpha",
+        },
+    [DP_BLEND_MODE_DIVIDE_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_DIVIDE_ALPHA",
+            "krita:divide",
+            "-dp-divide-alpha",
+            "Divide Alpha",
+        },
+    [DP_BLEND_MODE_BURN_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_BURN_ALPHA",
+            "svg:color-burn",
+            "-dp-burn-alpha",
+            "Burn Alpha",
+        },
+    [DP_BLEND_MODE_DODGE_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_DODGE_ALPHA",
+            "svg:color-dodge",
+            "-dp-dodge-alpha",
+            "Dodge Alpha",
+        },
+    [DP_BLEND_MODE_DARKEN_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_DARKEN_ALPHA",
+            "svg:darken",
+            "-dp-darken-alpha",
+            "Darken Alpha",
+        },
+    [DP_BLEND_MODE_LIGHTEN_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_LIGHTEN_ALPHA",
+            "svg:lighten",
+            "-dp-lighten-alpha",
+            "Lighten Alpha",
+        },
+    [DP_BLEND_MODE_SUBTRACT_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_SUBTRACT_ALPHA",
+            "krita:subtract",
+            "-dp-subtract-alpha",
+            "Subtract Alpha",
+        },
+    [DP_BLEND_MODE_ADD_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_ADD_ALPHA",
+            "svg:plus",
+            "-dp-add-alpha",
+            "Add Alpha",
+        },
+    [DP_BLEND_MODE_SCREEN_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_SCREEN_ALPHA",
+            "svg:screen",
+            "-dp-screen-alpha",
+            "Screen Alpha",
+        },
+    [DP_BLEND_MODE_LUMINOSITY_SHINE_SAI_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_LUMINOSITY_SHINE_SAI_ALPHA",
+            "krita:luminosity_sai",
+            "-dp-luminosity-shine-sai-alpha",
+            "Luminosity/Shine (SAI) Alpha",
+        },
+    [DP_BLEND_MODE_OVERLAY_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_OVERLAY_ALPHA",
+            "svg:overlay",
+            "-dp-overlay-alpha",
+            "Overlay Alpha",
+        },
+    [DP_BLEND_MODE_HARD_LIGHT_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_HARD_LIGHT_ALPHA",
+            "svg:hard-light",
+            "-dp-hard-light-alpha",
+            "Hard Light Alpha",
+        },
+    [DP_BLEND_MODE_SOFT_LIGHT_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_SOFT_LIGHT_ALPHA",
+            "svg:soft-light",
+            "-dp-soft-light-alpha",
+            "Soft Light Alpha",
+        },
+    [DP_BLEND_MODE_LINEAR_BURN_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_LINEAR_BURN_ALPHA",
+            "krita:linear_burn",
+            "-dp-linear-burn-alpha",
+            "Linear Burn Alpha",
+        },
+    [DP_BLEND_MODE_LINEAR_LIGHT_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_LINEAR_LIGHT_ALPHA",
+            "krita:linear light",
+            "-dp-linear-light-alpha",
+            "Linear Light Alpha",
+        },
+    [DP_BLEND_MODE_HUE_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_HUE_ALPHA",
+            "svg:hue",
+            "-dp-hue-alpha",
+            "Hue Alpha",
+        },
+    [DP_BLEND_MODE_SATURATION_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_SATURATION_ALPHA",
+            "svg:saturation",
+            "-dp-saturation-alpha",
+            "Saturation Alpha",
+        },
+    [DP_BLEND_MODE_LUMINOSITY_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_LUMINOSITY_ALPHA",
+            "svg:luminosity",
+            "-dp-luminosity-alpha",
+            "Luminosity Alpha",
+        },
+    [DP_BLEND_MODE_COLOR_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_COLOR_ALPHA",
+            "svg:color",
+            "-dp-color-alpha",
+            "Color Alpha",
+        },
+
     [DP_BLEND_MODE_REPLACE] =
         {
             BRUSH | INCREASE_OPACITY | DECREASE_OPACITY | BLEND_BLANK,
             "DP_BLEND_MODE_REPLACE",
+            REPLACE_NAME,
             REPLACE_NAME,
             "Replace",
         },
@@ -321,19 +500,14 @@ const char *DP_blend_mode_enum_name_unprefixed(int blend_mode)
     return get_attributes(blend_mode)->enum_name + 14;
 }
 
-const char *DP_blend_mode_svg_name(int blend_mode)
+const char *DP_blend_mode_ora_name(int blend_mode)
 {
-    return get_attributes(blend_mode)->svg_name;
+    return get_attributes(blend_mode)->ora_name;
 }
 
-const char *DP_blend_mode_text_name(int blend_mode)
+const char *DP_blend_mode_dptxt_name(int blend_mode)
 {
-    if (blend_mode == DP_BLEND_MODE_LINEAR_LIGHT) {
-        return LINEAR_LIGHT_TEXT_NAME;
-    }
-    else {
-        return DP_blend_mode_svg_name(blend_mode);
-    }
+    return get_attributes(blend_mode)->dptxt_name;
 }
 
 bool DP_blend_mode_can_increase_opacity(int blend_mode)
@@ -361,15 +535,9 @@ bool DP_blend_mode_presents_as_eraser(int blend_mode)
     return get_attributes(blend_mode)->flags & PRESENTS_AS_ERASER;
 }
 
-DP_BlendMode DP_blend_mode_by_svg_name(const char *svg_name,
-                                       DP_BlendMode not_found_value)
+static DP_BlendMode blend_mode_by_fallback_name(const char *name,
+                                                DP_BlendMode not_found_value)
 {
-    for (int i = 0; i < DP_BLEND_MODE_LAST_EXCEPT_REPLACE; ++i) {
-        if (DP_str_equal(svg_name, mode_attributes[i].svg_name)) {
-            return (DP_BlendMode)i;
-        }
-    }
-
     static const struct {
         const char *name;
         DP_BlendMode mode;
@@ -379,16 +547,156 @@ DP_BlendMode DP_blend_mode_by_svg_name(const char *svg_name,
         {"-dp-erase", DP_BLEND_MODE_ERASE},
         {"-dp-divide", DP_BLEND_MODE_DIVIDE},
         {"-dp-minus", DP_BLEND_MODE_SUBTRACT},
-        // Text mode compatibility, see above.
-        {LINEAR_LIGHT_TEXT_NAME, DP_BLEND_MODE_LINEAR_LIGHT},
         // Makes the code a bit easier to have this here.
         {REPLACE_NAME, DP_BLEND_MODE_REPLACE},
     };
     for (size_t i = 0; i < DP_ARRAY_LENGTH(additional_modes); ++i) {
-        if (DP_str_equal(svg_name, additional_modes[i].name)) {
+        if (DP_str_equal(name, additional_modes[i].name)) {
             return additional_modes[i].mode;
         }
     }
 
     return not_found_value;
+}
+
+DP_BlendMode DP_blend_mode_by_ora_name(const char *ora_name,
+                                       DP_BlendMode not_found_value)
+{
+    for (int i = 0; i < DP_BLEND_MODE_LAST_EXCEPT_REPLACE; ++i) {
+        if (DP_str_equal(ora_name, mode_attributes[i].ora_name)) {
+            return (DP_BlendMode)i;
+        }
+    }
+    return blend_mode_by_fallback_name(ora_name, not_found_value);
+}
+
+DP_BlendMode DP_blend_mode_by_dptxt_name(const char *ora_name,
+                                         DP_BlendMode not_found_value)
+{
+    for (int i = 0; i < DP_BLEND_MODE_LAST_EXCEPT_REPLACE; ++i) {
+        if (DP_str_equal(ora_name, mode_attributes[i].dptxt_name)) {
+            return (DP_BlendMode)i;
+        }
+    }
+    return blend_mode_by_fallback_name(ora_name, not_found_value);
+}
+
+bool DP_blend_mode_alpha_preserve_pair(int blend_mode,
+                                       DP_BlendMode *out_alpha_affecting,
+                                       DP_BlendMode *out_alpha_preserving)
+{
+    DP_BlendMode alpha_affecting;
+    DP_BlendMode alpha_preserving;
+    switch (blend_mode) {
+    case DP_BLEND_MODE_NORMAL:
+    case DP_BLEND_MODE_RECOLOR:
+        alpha_affecting = DP_BLEND_MODE_NORMAL;
+        alpha_preserving = DP_BLEND_MODE_RECOLOR;
+        break;
+    case DP_BLEND_MODE_MULTIPLY:
+    case DP_BLEND_MODE_MULTIPLY_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_MULTIPLY_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_MULTIPLY;
+        break;
+    case DP_BLEND_MODE_DIVIDE:
+    case DP_BLEND_MODE_DIVIDE_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_DIVIDE_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_DIVIDE;
+        break;
+    case DP_BLEND_MODE_BURN:
+    case DP_BLEND_MODE_BURN_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_BURN_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_BURN;
+        break;
+    case DP_BLEND_MODE_DODGE:
+    case DP_BLEND_MODE_DODGE_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_DODGE_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_DODGE;
+        break;
+    case DP_BLEND_MODE_DARKEN:
+    case DP_BLEND_MODE_DARKEN_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_DARKEN_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_DARKEN;
+        break;
+    case DP_BLEND_MODE_LIGHTEN:
+    case DP_BLEND_MODE_LIGHTEN_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_LIGHTEN_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_LIGHTEN;
+        break;
+    case DP_BLEND_MODE_SUBTRACT:
+    case DP_BLEND_MODE_SUBTRACT_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_SUBTRACT_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_SUBTRACT;
+        break;
+    case DP_BLEND_MODE_ADD:
+    case DP_BLEND_MODE_ADD_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_ADD_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_ADD;
+        break;
+    case DP_BLEND_MODE_SCREEN:
+    case DP_BLEND_MODE_SCREEN_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_SCREEN_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_SCREEN;
+        break;
+    case DP_BLEND_MODE_LUMINOSITY_SHINE_SAI:
+    case DP_BLEND_MODE_LUMINOSITY_SHINE_SAI_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_LUMINOSITY_SHINE_SAI_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_LUMINOSITY_SHINE_SAI;
+        break;
+    case DP_BLEND_MODE_OVERLAY:
+    case DP_BLEND_MODE_OVERLAY_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_OVERLAY_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_OVERLAY;
+        break;
+    case DP_BLEND_MODE_HARD_LIGHT:
+    case DP_BLEND_MODE_HARD_LIGHT_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_HARD_LIGHT_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_HARD_LIGHT;
+        break;
+    case DP_BLEND_MODE_SOFT_LIGHT:
+    case DP_BLEND_MODE_SOFT_LIGHT_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_SOFT_LIGHT_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_SOFT_LIGHT;
+        break;
+    case DP_BLEND_MODE_LINEAR_BURN:
+    case DP_BLEND_MODE_LINEAR_BURN_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_LINEAR_BURN_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_LINEAR_BURN;
+        break;
+    case DP_BLEND_MODE_LINEAR_LIGHT:
+    case DP_BLEND_MODE_LINEAR_LIGHT_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_LINEAR_LIGHT_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_LINEAR_LIGHT;
+        break;
+    case DP_BLEND_MODE_HUE:
+    case DP_BLEND_MODE_HUE_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_HUE_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_HUE;
+        break;
+    case DP_BLEND_MODE_SATURATION:
+    case DP_BLEND_MODE_SATURATION_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_SATURATION_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_SATURATION;
+        break;
+    case DP_BLEND_MODE_LUMINOSITY:
+    case DP_BLEND_MODE_LUMINOSITY_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_LUMINOSITY_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_LUMINOSITY;
+        break;
+    case DP_BLEND_MODE_COLOR:
+    case DP_BLEND_MODE_COLOR_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_COLOR_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_COLOR;
+        break;
+    default:
+        return false;
+    }
+
+    if (out_alpha_affecting) {
+        *out_alpha_affecting = alpha_affecting;
+    }
+    if (out_alpha_preserving) {
+        *out_alpha_preserving = alpha_preserving;
+    }
+    return true;
 }
