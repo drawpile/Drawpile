@@ -55,6 +55,9 @@ struct LayerListItem {
 	//! Isolated (not pass-through) group?
 	bool isolated;
 
+	//! Does this layer clip to the one below?
+	bool clip;
+
 	//! Is this a layer group?
 	bool group;
 
@@ -110,6 +113,8 @@ public:
 		CheckStateRole,
 		IsSketchModeRole,
 		OwnerIdRole,
+		IsClipRole,
+		IsAtBottomRole,
 	};
 
 	enum CheckState {
@@ -275,6 +280,9 @@ private:
 
 	void
 	gatherModifiableLayers(QSet<int> &layerIds, const QModelIndex &idx) const;
+
+	bool isLayerOrClippingGroupHidden(
+		const QModelIndex &index, const LayerListItem &item) const;
 
 	QVector<LayerListItem> m_items;
 	QSet<int> m_frameLayers;

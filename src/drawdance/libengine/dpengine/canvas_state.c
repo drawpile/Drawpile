@@ -426,11 +426,12 @@ static DP_CanvasState *handle_layer_attr(DP_CanvasState *cs,
     unsigned int flags = DP_msg_layer_attributes_flags(mla);
     bool censored = flags & DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR;
     bool isolated = flags & DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED;
+    bool clip = flags & DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP;
 
     return DP_ops_layer_attributes(
         cs, layer_id, DP_msg_layer_attributes_sublayer(mla),
         DP_channel8_to_15(DP_msg_layer_attributes_opacity(mla)),
-        DP_msg_layer_attributes_blend(mla), censored, isolated);
+        DP_msg_layer_attributes_blend(mla), censored, isolated, clip);
 }
 
 
@@ -1556,7 +1557,7 @@ flatten_onion_skin(int tile_index, DP_TransientTile *tt, DP_LayerListEntry *lle,
     DP_TransientTile *skin_tt = DP_layer_list_entry_flatten_tile_to(
         lle, lp, tile_index, DP_transient_tile_new_blank(0),
         DP_fix15_mul(parent_opacity, os->opacity), (DP_UPixel8){.color = 0},
-        include_sublayers, false, vmc);
+        include_sublayers, false, false, vmc);
 
     DP_UPixel8 tint = os->tint;
     if (tint.a != 0) {
@@ -1574,6 +1575,15 @@ flatten_onion_skin(int tile_index, DP_TransientTile *tt, DP_LayerListEntry *lle,
     }
 }
 
+static DP_ViewModeContext get_clip_layer(void *user, int i,
+                                         DP_LayerListEntry **out_lle,
+                                         DP_LayerProps **out_lp)
+{
+    DP_ViewModeContextRoot *vmcr = ((void **)user)[0];
+    DP_CanvasState *cs = ((void **)user)[1];
+    return DP_view_mode_context_root_at_clip(vmcr, cs, i, out_lle, out_lp);
+}
+
 DP_TransientTile *DP_canvas_state_flatten_tile_to(DP_CanvasState *cs,
                                                   int tile_index,
                                                   DP_TransientTile *tt_or_null,
@@ -1588,17 +1598,25 @@ DP_TransientTile *DP_canvas_state_flatten_tile_to(DP_CanvasState *cs,
         const DP_OnionSkin *os;
         uint16_t parent_opacity;
         DP_UPixel8 parent_tint;
+        int clip_count;
         DP_ViewModeContext vmc = DP_view_mode_context_root_at(
-            &vmcr, cs, i, &lle, &lp, &os, &parent_opacity, &parent_tint);
+            &vmcr, cs, i, &lle, &lp, &os, &parent_opacity, &parent_tint,
+            &clip_count);
         if (!DP_view_mode_context_excludes_everything(&vmc)) {
             if (os) {
                 tt = flatten_onion_skin(tile_index, tt, lle, lp, parent_opacity,
                                         include_sublayers, &vmc, os);
             }
-            else {
+            else if (clip_count == 0) {
                 tt = DP_layer_list_entry_flatten_tile_to(
                     lle, lp, tile_index, tt, parent_opacity, parent_tint,
-                    include_sublayers, false, &vmc);
+                    include_sublayers, false, false, &vmc);
+            }
+            else {
+                tt = DP_layer_list_flatten_clipping_tile_to(
+                    (void *[]){&vmcr, cs}, get_clip_layer, i, clip_count,
+                    tile_index, tt, parent_opacity, include_sublayers, &vmc);
+                i += clip_count;
             }
         }
     }

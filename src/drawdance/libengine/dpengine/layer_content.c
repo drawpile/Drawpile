@@ -1015,7 +1015,7 @@ static DP_Tile *flatten_tile(DP_LayerContent *lc, int tile_index,
         DP_ViewModeContext vmc = DP_view_mode_context_make_default();
         DP_layer_list_flatten_tile_to(ll, lc->sub.props, tile_index, tt,
                                       DP_BIT15, (DP_UPixel8){.color = 0}, false,
-                                      false, &vmc);
+                                      false, false, &vmc);
         if (tint.a != 0) {
             DP_transient_tile_tint(tt, tint);
         }
@@ -1025,7 +1025,7 @@ static DP_Tile *flatten_tile(DP_LayerContent *lc, int tile_index,
         DP_ViewModeContext vmc = DP_view_mode_context_make_default();
         DP_TransientTile *tt_or_null = DP_layer_list_flatten_tile_to(
             ll, lc->sub.props, tile_index, NULL, DP_BIT15,
-            (DP_UPixel8){.color = 0}, false, false, &vmc);
+            (DP_UPixel8){.color = 0}, false, false, false, &vmc);
         if (tt_or_null) {
             if (tint.a != 0) {
                 DP_transient_tile_tint(tt_or_null, tint);

@@ -130,5 +130,13 @@ bool DP_blend_mode_alpha_preserve_pair(int blend_mode,
                                        DP_BlendMode *out_alpha_affecting,
                                        DP_BlendMode *out_alpha_preserving);
 
+int DP_blend_mode_to_alpha_affecting(int blend_mode);
+int DP_blend_mode_to_alpha_preserving(int blend_mode);
+
+DP_INLINE int DP_blend_mode_clip(int blend_mode, bool clip)
+{
+    return clip ? DP_blend_mode_to_alpha_preserving(blend_mode) : blend_mode;
+}
+
 
 #endif
