@@ -35,7 +35,7 @@ private:
 	void deselectAnnotation();
 
 	/// ID of the currently selected annotation
-	uint16_t m_selectedId = 0;
+	int m_selectedId = 0;
 
 	/// Are we currently creating a new annotation?
 	bool m_isNew = true;

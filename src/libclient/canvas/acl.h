@@ -58,7 +58,7 @@ public:
 	bool isSessionLocked() const;
 
 	//! Is the given layer locked for this user (ignoring canvaswide lock)
-	bool isLayerLocked(uint16_t layerId) const;
+	bool isLayerLocked(int layerId) const;
 
 	//! Is this feature available for us?
 	bool canUseFeature(DP_Feature feature) const;
@@ -76,7 +76,7 @@ public:
 	DP_FeatureTiers featureTiers() const;
 
 	//! Get the layer's access control list
-	Layer layerAcl(uint16_t layerId) const;
+	Layer layerAcl(int layerId) const;
 
 	bool isResetLocked() const;
 

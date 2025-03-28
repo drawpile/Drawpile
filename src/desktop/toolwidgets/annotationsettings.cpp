@@ -428,7 +428,7 @@ void AnnotationSettings::setFontFamily(QTextCharFormat &fmt)
 	compat::setFontFamily(fmt, m_ui->font->currentText());
 }
 
-void AnnotationSettings::setSelectionId(uint16_t id)
+void AnnotationSettings::setSelectionId(int id)
 {
 	QScopedValueRollback<bool> rollback(m_noupdate, true);
 	setUiEnabled(id > 0);

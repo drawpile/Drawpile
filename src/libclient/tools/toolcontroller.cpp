@@ -136,7 +136,7 @@ void ToolController::setActiveTool(Tool::Type tool)
 	}
 }
 
-void ToolController::setActiveAnnotation(uint16_t id)
+void ToolController::setActiveAnnotation(int id)
 {
 	if(m_activeAnnotation != id) {
 		if(m_activeAnnotation != 0) {
@@ -187,7 +187,7 @@ Capabilities ToolController::activeToolCapabilities() const
 	return m_activeTool->capabilities();
 }
 
-void ToolController::setActiveLayer(uint16_t id)
+void ToolController::setActiveLayer(int id)
 {
 	if(m_activeLayer != id) {
 		m_activeLayer = id;

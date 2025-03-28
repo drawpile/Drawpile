@@ -417,15 +417,15 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     // layers during a transform is pretty uncommon, so that's okay.
     case DP_MSG_MOVE_RECT: {
         DP_MsgMoveRect *mmr = DP_msg_move_rect_cast(msg);
-        uint16_t source_id = DP_msg_move_rect_source(mmr);
-        uint16_t target_id = DP_msg_move_rect_layer(mmr);
+        int source_id = DP_msg_move_rect_source(mmr);
+        int target_id = DP_msg_move_rect_layer(mmr);
         return make_pixels(source_id == target_id ? source_id : ALL_IDS,
                            move_rect_bounds(mmr));
     }
     case DP_MSG_TRANSFORM_REGION: {
         DP_MsgTransformRegion *mtr = DP_msg_transform_region_cast(msg);
-        uint16_t source_id = DP_msg_transform_region_source(mtr);
-        uint16_t target_id = DP_msg_transform_region_layer(mtr);
+        int source_id = DP_msg_transform_region_source(mtr);
+        int target_id = DP_msg_transform_region_layer(mtr);
         return make_pixels(source_id == target_id ? source_id : ALL_IDS,
                            region_bounds(DP_msg_transform_region_bx(mtr),
                                          DP_msg_transform_region_by(mtr),

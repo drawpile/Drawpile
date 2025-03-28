@@ -227,7 +227,7 @@ bool AclState::isSessionLocked() const
 	return d->users.all_locked;
 }
 
-bool AclState::isLayerLocked(uint16_t layerId) const
+bool AclState::isLayerLocked(int layerId) const
 {
 	if(!d->layers.contains(layerId))
 		return false;
@@ -269,7 +269,7 @@ DP_FeatureTiers AclState::featureTiers() const
 	return d->features;
 }
 
-AclState::Layer AclState::layerAcl(uint16_t layerId) const
+AclState::Layer AclState::layerAcl(int layerId) const
 {
 	return d->layers[layerId];
 }
