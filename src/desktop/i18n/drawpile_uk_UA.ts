@@ -2934,7 +2934,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+48"/>
         <source>Selectio&amp;n</source>
-        <translation>Прямокутний вибір</translation>
+        <translation>Вибір</translation>
     </message>
     <message>
         <location line="+32"/>
