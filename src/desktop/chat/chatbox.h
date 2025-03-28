@@ -46,7 +46,6 @@ public slots:
 private slots:
 	void onCanvasChanged(canvas::CanvasModel *canvas);
 	void onServerLogin();
-	void onCompatibilityModeChanged(bool compatibilityMode);
 	void detachFromParent();
 	void reattachToParent();
 

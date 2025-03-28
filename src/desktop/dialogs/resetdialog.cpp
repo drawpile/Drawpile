@@ -69,15 +69,13 @@ namespace dialogs {
 struct ResetDialog::Private {
 	QScopedPointer<Ui_ResetDialog> ui;
 	const canvas::PaintEngine *paintEngine;
-	bool compatibilityMode;
 	QPushButton *resetButton;
 	QVector<ResetPoint> resetPoints;
 	compat::sizetype selection;
 
-	Private(const canvas::PaintEngine *pe, bool cm)
+	Private(const canvas::PaintEngine *pe)
 		: ui{new Ui_ResetDialog}
 		, paintEngine{pe}
-		, compatibilityMode(cm)
 		, resetPoints{makeResetPoints(pe)}
 		, selection{resetPoints.size() - 1}
 	{
@@ -121,10 +119,9 @@ struct ResetDialog::Private {
 };
 
 ResetDialog::ResetDialog(
-	const canvas::PaintEngine *pe, bool compatibilityMode, bool singleSession,
-	QWidget *parent)
+	const canvas::PaintEngine *pe, bool singleSession, QWidget *parent)
 	: QDialog(parent)
-	, d(new Private(pe, compatibilityMode))
+	, d(new Private(pe))
 {
 	d->ui->setupUi(this);
 
@@ -204,8 +201,7 @@ void ResetDialog::onOpenSuccess(const drawdance::CanvasState &canvasState)
 	setEnabled(true);
 	QApplication::restoreOverrideCursor();
 	d->resetPoints.append({
-		d->compatibilityMode ? canvasState.makeBackwardCompatible()
-							 : canvasState,
+		canvasState,
 		QPixmap(),
 		Type::External,
 	});

@@ -1,3 +1,6 @@
+Unreleased Version 2.3.0-pre
+ * Removed Feature: Compatibility with the old 2.1 versions, which was originally released 6 years ago. 2.3 is compatible with 2.2 instead.
+
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.
  * Fix: Clear text in the annotation tool when deselecting, since it makes it seem like you can still type in there.

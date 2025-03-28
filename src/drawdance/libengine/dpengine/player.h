@@ -53,7 +53,6 @@ typedef enum DP_PlayerResult {
 typedef enum DP_PlayerCompatibility {
     DP_PLAYER_COMPATIBLE,
     DP_PLAYER_MINOR_INCOMPATIBILITY,
-    DP_PLAYER_BACKWARD_COMPATIBLE,
     DP_PLAYER_INCOMPATIBLE,
 } DP_PlayerCompatibility;
 

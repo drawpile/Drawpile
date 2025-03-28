@@ -71,7 +71,7 @@ public:
 	void setCurrentLayer(int layerId);
 
 	void
-	updateControlsEnabled(bool access, bool locked, bool compatibilityMode);
+	updateControlsEnabled(bool access, bool locked);
 	void updateKeyFrameColorMenuIcon();
 
 	canvas::CanvasModel *canvas() const;

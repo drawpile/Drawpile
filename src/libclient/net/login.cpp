@@ -752,8 +752,7 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 				// A session ID was given as part of the URL
 				if(checkSession(session, false)) {
 					prepareJoinSelectedSession(
-						m_autoJoinId, session.needPassword,
-						session.version.compatibilityMode, session.title,
+						m_autoJoinId, session.needPassword, session.title,
 						session.nsfm, true);
 				} else {
 					m_autoJoinId = QString();
@@ -777,8 +776,7 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 			LoginSession session = m_sessions->getFirstSession();
 			if(checkSession(session, true)) {
 				prepareJoinSelectedSession(
-					session.id, session.needPassword,
-					session.version.compatibilityMode, session.title,
+					session.id, session.needPassword, session.title,
 					session.nsfm, true);
 			}
 		}
@@ -830,12 +828,7 @@ LoginSession LoginHandler::updateSession(const QJsonObject &js)
 	LoginSessionVersion version;
 	version.future = protoVer.isFuture();
 	version.past = protoVer.isPast();
-	version.compatibilityMode = protoVer.isPastCompatible();
-#ifdef HAVE_COMPATIBILITY_MODE
 	version.compatible = protoVer.isCompatible();
-#else
-	version.compatible = !version.compatibilityMode && protoVer.isCompatible();
-#endif
 	if(!version.compatible) {
 		if(version.future) {
 			version.description = tr("New version");
@@ -980,12 +973,11 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 }
 
 void LoginHandler::prepareJoinSelectedSession(
-	const QString &id, bool needPassword, bool compatibilityMode,
-	const QString &title, bool nsfm, bool autoJoin)
+	const QString &id, bool needPassword, const QString &title, bool nsfm,
+	bool autoJoin)
 {
 	Q_ASSERT(!id.isEmpty());
 	m_selectedId = id;
-	m_compatibilityMode = compatibilityMode;
 	m_needSessionPassword = needPassword;
 	emit sessionConfirmationNeeded(title, nsfm, autoJoin);
 }
