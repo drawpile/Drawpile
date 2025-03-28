@@ -208,7 +208,7 @@ private:
 	gatherTopLevel(const std::function<void(const QModelIndex &)> &fn) const;
 	void selectLayerIndex(QModelIndex index, bool scrollTo = false);
 
-	QString layerCreatorName(uint16_t layerId) const;
+	QString layerCreatorName(int layerId) const;
 
 	QString getBaseName(bool group);
 

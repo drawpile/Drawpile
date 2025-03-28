@@ -245,7 +245,7 @@ bool LayerListModel::dropMimeData(
 	return false;
 }
 
-QModelIndex LayerListModel::layerIndex(uint16_t id) const
+QModelIndex LayerListModel::layerIndex(int id) const
 {
 	for(int i = 0; i < m_items.size(); ++i) {
 		if(m_items.at(i).id == id) {
@@ -417,7 +417,7 @@ static LayerListItem makeItem(
 {
 	int id = lp.id();
 	return LayerListItem{
-		uint16_t(id),
+		id,
 		lp.title(),
 		float(lp.opacity()) / float(DP_BIT15),
 		DP_BlendMode(lp.blendMode()),
@@ -428,8 +428,8 @@ static LayerListItem makeItem(
 		revealedLayers.contains(id),
 		lp.isolated(),
 		isGroup,
-		uint16_t(isGroup ? children.count() : 0),
-		uint16_t(relIndex),
+		isGroup ? children.count() : 0,
+		relIndex,
 		left,
 		right,
 	};
@@ -894,7 +894,7 @@ void LayerListModel::setAclState(AclState *aclstate)
 		&LayerListModel::updateCheckedLayerAcl);
 }
 
-void LayerListModel::setDefaultLayer(uint16_t id)
+void LayerListModel::setDefaultLayer(int id)
 {
 	if(id == m_defaultLayer) {
 		return;
@@ -919,7 +919,7 @@ void LayerListModel::setDefaultLayer(uint16_t id)
 	}
 }
 
-AclState::Layer LayerListModel::layerAcl(uint16_t id)
+AclState::Layer LayerListModel::layerAcl(int id)
 {
 	if(m_aclstate) {
 		return m_aclstate->layerAcl(id);

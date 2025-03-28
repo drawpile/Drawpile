@@ -26,7 +26,7 @@ struct LayerListItem {
 	// Note: normally, layer ID range is from 0 to 0xffff, but internal
 	// layers use values outside that range. However, internal layers are not
 	// shown in the layer list.
-	uint16_t id;
+	int id;
 
 	//! Layer title
 	QString title;
@@ -59,10 +59,10 @@ struct LayerListItem {
 	bool group;
 
 	//! Number of child layers
-	uint16_t children;
+	int children;
 
 	//! Index in parent group
-	uint16_t relIndex;
+	int relIndex;
 
 	//! Left index (MPTT)
 	int left;
@@ -138,7 +138,7 @@ public:
 		const QModelIndex &parent = QModelIndex()) const override;
 	QModelIndex parent(const QModelIndex &index) const override;
 
-	QModelIndex layerIndex(uint16_t id) const;
+	QModelIndex layerIndex(int id) const;
 	const QVector<LayerListItem> &layerItems() const { return m_items; }
 
 	void setLayerGetter(GetLayerFunction fn) { m_getlayerfn = fn; }
@@ -158,12 +158,12 @@ public:
 	 * @brief Get the default layer to select when logging in
 	 * Zero means no default.
 	 */
-	uint16_t defaultLayer() const { return m_defaultLayer; }
-	void setDefaultLayer(uint16_t id);
+	int defaultLayer() const { return m_defaultLayer; }
+	void setDefaultLayer(int id);
 
 	int fillSourceLayerId() const { return m_fillSourceLayerId; }
 
-	AclState::Layer layerAcl(uint16_t id);
+	AclState::Layer layerAcl(int id);
 
 	/**
 	 * @brief Find a free layer ID
@@ -282,7 +282,7 @@ private:
 	GetLayerFunction m_getlayerfn = nullptr;
 	AclState *m_aclstate = nullptr;
 	int m_rootLayerCount = 0;
-	uint16_t m_defaultLayer = 0;
+	int m_defaultLayer = 0;
 	bool m_autoselectAny = true;
 	bool m_checkMode = false;
 	int m_viewMode;

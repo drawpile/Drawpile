@@ -4063,7 +4063,7 @@ void MainWindow::clearOrDelete()
 	// that instead of clearing out the canvas.
 	QAction *annotationtool = getAction("tooltext");
 	if(annotationtool->isChecked()) {
-		const uint16_t a = m_dockToolSettings->annotationSettings()->selected();
+		const int a = m_dockToolSettings->annotationSettings()->selected();
 		if(a>0) {
 			net::Client *client = m_doc->client();
 			uint8_t contextId = client->myId();

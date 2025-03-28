@@ -39,7 +39,7 @@ public:
 	 * @brief Get the ID of the currently selected annotation
 	 * @return ID or 0 if none selected
 	 */
-	uint16_t selected() const { return m_selectionId; }
+	int selected() const { return m_selectionId; }
 
 	/**
 	 * @brief Focus content editing box and set cursor position
@@ -58,7 +58,7 @@ public:
 
 public slots:
 	//! Set the currently selected annotation item
-	void setSelectionId(uint16_t id);
+	void setSelectionId(int id);
 
 	//! Focus the content editing box
 	void setFocus();
@@ -97,7 +97,7 @@ private:
 	QLabel *m_annotationsHiddenLabel = nullptr;
 	QActionGroup *m_editActions = nullptr;
 	QAction *m_protectedAction = nullptr;
-	uint16_t m_selectionId = 0;
+	int m_selectionId = 0;
 	bool m_annotationsShown = true;
 	bool m_noupdate = false;
 	QTimer *m_updatetimer = nullptr;

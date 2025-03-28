@@ -659,7 +659,7 @@ void LayerList::selectLayerIndex(QModelIndex index, bool scrollTo)
 	}
 }
 
-QString LayerList::layerCreatorName(uint16_t layerId) const
+QString LayerList::layerCreatorName(int layerId) const
 {
 	return m_canvas->userlist()->getUsername(
 		canvas::AclState::extractLayerOwnerId(layerId));
