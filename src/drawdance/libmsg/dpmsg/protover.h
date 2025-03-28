@@ -6,7 +6,6 @@
 typedef enum DP_ProtocolCompatibility {
     DP_PROTOCOL_COMPATIBILITY_COMPATIBLE,
     DP_PROTOCOL_COMPATIBILITY_MINOR_INCOMPATIBILITY,
-    DP_PROTOCOL_COMPATIBILITY_BACKWARD_COMPATIBLE,
     DP_PROTOCOL_COMPATIBILITY_INCOMPATIBLE,
 } DP_ProtocolCompatibility;
 
@@ -36,8 +35,6 @@ bool DP_protocol_version_is_current(const DP_ProtocolVersion *protover);
 bool DP_protocol_version_is_future(const DP_ProtocolVersion *protover);
 
 bool DP_protocol_version_is_past(const DP_ProtocolVersion *protover);
-
-bool DP_protocol_version_is_past_compatible(const DP_ProtocolVersion *protover);
 
 bool DP_protocol_version_should_have_system_id(
     const DP_ProtocolVersion *protover);

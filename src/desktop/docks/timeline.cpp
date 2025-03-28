@@ -54,9 +54,6 @@ void Timeline::setCanvas(canvas::CanvasModel *canvas)
 	m_widget->setCanvas(canvas);
 
 	connect(
-		canvas, &canvas::CanvasModel::compatibilityModeChanged, this,
-		&Timeline::setCompatibilityMode);
-	connect(
 		canvas->aclState(), &canvas::AclState::resetLockChanged, this,
 		&Timeline::setDisabled);
 	connect(
@@ -71,7 +68,6 @@ void Timeline::setCanvas(canvas::CanvasModel *canvas)
 		metadata, &canvas::DocumentMetadata::frameCountChanged, this,
 		&Timeline::setFrameCount);
 
-	setCompatibilityMode(canvas->isCompatibilityMode());
 	setFramerate(metadata->framerate());
 	setFrameCount(metadata->frameCount());
 }
@@ -126,7 +122,7 @@ void Timeline::setCurrentLayer(int layerId)
 void Timeline::setFeatureAccess(bool access)
 {
 	m_featureAccessEnabled = access;
-	updateControlsEnabled(access, m_locked, isCompatibilityMode());
+	updateControlsEnabled(access, m_locked);
 }
 
 void Timeline::setCurrentFrame(int frame)
@@ -135,16 +131,10 @@ void Timeline::setCurrentFrame(int frame)
 	updateFrame(frame);
 }
 
-void Timeline::setCompatibilityMode(bool compatibilityMode)
-{
-	updateControlsEnabled(m_featureAccessEnabled, m_locked, compatibilityMode);
-}
-
 void Timeline::setLocked(bool locked)
 {
 	m_locked = locked;
-	updateControlsEnabled(
-		m_featureAccessEnabled, locked, isCompatibilityMode());
+	updateControlsEnabled(m_featureAccessEnabled, locked);
 }
 
 void Timeline::setUpTitleWidget(
@@ -224,16 +214,9 @@ void Timeline::addTitleButton(
 	titlebar->addCustomWidget(button);
 }
 
-bool Timeline::isCompatibilityMode() const
+void Timeline::updateControlsEnabled(bool access, bool locked)
 {
-	canvas::CanvasModel *canvas = m_widget->canvas();
-	return canvas && canvas->isCompatibilityMode();
-}
-
-void Timeline::updateControlsEnabled(
-	bool access, bool locked, bool compatibilityMode)
-{
-	m_widget->updateControlsEnabled(access, locked, compatibilityMode);
+	m_widget->updateControlsEnabled(access, locked);
 }
 
 void Timeline::updateFrame(int frame)

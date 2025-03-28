@@ -208,7 +208,6 @@ private slots:
 	void showResetNoticeDialog(const drawdance::CanvasState &canvasState);
 	void updateCatchupProgress(int percent);
 	void updateStreamResetProgress(int percent);
-	void showCompatibilityModeWarning();
 
 	void onOperatorModeChange(bool op);
 	void onFeatureAccessChange(DP_Feature feature, bool canUse);
@@ -219,7 +218,6 @@ private slots:
 	void onServerDisconnected(
 		const QString &message, const QString &errorcode, bool localDisconnect,
 		bool anyMessageReceived);
-	void onCompatibilityModeChanged(bool compatibilityMode);
 	void onNsfmChanged(bool nsfm);
 
 	void updateLockWidget();

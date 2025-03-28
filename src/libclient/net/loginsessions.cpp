@@ -73,8 +73,6 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case ColumnVersion:
 			if(ls.isIncompatible()) {
 				return QIcon::fromTheme("state-error");
-			} else if(ls.isCompatibilityMode()) {
-				return QIcon::fromTheme("state-warning");
 			} else {
 				return QIcon::fromTheme("state-ok");
 			}
@@ -101,8 +99,6 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case ColumnVersion:
 			if(ls.isIncompatible()) {
 				return tr("%1 (incompatible)").arg(ls.version.description);
-			} else if(ls.isCompatibilityMode()) {
-				return tr("Drawpile 2.1 (compatibility mode)");
 			} else {
 				return tr("Drawpile 2.2 (fully compatible)");
 			}
@@ -178,8 +174,6 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 			return ls.isJoinable(m_moderatorMode);
 		case NsfmRole:
 			return isNsfm(ls);
-		case CompatibilityModeRole:
-			return ls.isCompatibilityMode();
 		case InactiveRole:
 			return ls.activeDrawingUserCount == 0;
 		case JoinDenyReasonsRole:

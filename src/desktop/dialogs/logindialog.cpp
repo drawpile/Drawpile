@@ -1318,7 +1318,6 @@ void LoginDialog::onOkClicked()
 			d->loginHandler->prepareJoinSelectedSession(
 				i.data(net::LoginSessionModel::AliasOrIdRole).toString(),
 				i.data(net::LoginSessionModel::NeedPasswordRole).toBool(),
-				i.data(net::LoginSessionModel::CompatibilityModeRole).toBool(),
 				i.data(net::LoginSessionModel::TitleRole).toString(),
 				i.data(net::LoginSessionModel::NsfmRole).toBool(), false);
 		} else {

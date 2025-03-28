@@ -131,7 +131,7 @@ QUrl Client::sessionUrl(bool includeUser) const
 void Client::handleConnect(
 	const QUrl &url, uint8_t userid, bool join, bool auth,
 	const QStringList &userFlags, bool supportsAutoReset,
-	bool compatibilityMode, const QString &joinPassword, const QString &authId)
+	const QString &joinPassword, const QString &authId)
 {
 	m_lastUrl = url;
 	m_myId = userid;
@@ -145,9 +145,8 @@ void Client::handleConnect(
 	}
 	m_isAuthenticated = auth;
 	m_supportsAutoReset = supportsAutoReset;
-	m_compatibilityMode = compatibilityMode;
 
-	emit serverLoggedIn(join, m_compatibilityMode, joinPassword, authId);
+	emit serverLoggedIn(join, joinPassword, authId);
 }
 
 void Client::handleDisconnect(
@@ -159,7 +158,6 @@ void Client::handleDisconnect(
 	emit serverDisconnected(
 		message, errorcode, localDisconnect, anyMessageReceived);
 	if(isConnected()) {
-		m_compatibilityMode = false;
 		m_server->deleteLater();
 		m_server = nullptr;
 		m_userFlags = UserFlag::None;
@@ -208,18 +206,6 @@ void Client::sendMessage(const net::Message &msg)
 
 void Client::sendMessages(int count, const net::Message *msgs)
 {
-	if(m_compatibilityMode) {
-		QVector<net::Message> compatibleMsgs =
-			filterCompatibleMessages(count, msgs);
-		sendCompatibleMessages(
-			compatibleMsgs.count(), compatibleMsgs.constData());
-	} else {
-		sendCompatibleMessages(count, msgs);
-	}
-}
-
-void Client::sendCompatibleMessages(int count, const net::Message *msgs)
-{
 	if(count > 0) {
 		m_commandHandler->handleLocalCommands(count, msgs);
 		// Note: we could only send only local commands here when offline, but
@@ -242,18 +228,6 @@ void Client::sendResetMessage(const net::Message &msg)
 
 void Client::sendResetMessages(int count, const net::Message *msgs)
 {
-	if(m_compatibilityMode) {
-		QVector<net::Message> compatibleMsgs =
-			filterCompatibleMessages(count, msgs);
-		sendCompatibleResetMessages(
-			compatibleMsgs.count(), compatibleMsgs.constData());
-	} else {
-		sendCompatibleResetMessages(count, msgs);
-	}
-}
-
-void Client::sendCompatibleResetMessages(int count, const net::Message *msgs)
-{
 	if(count > 0) {
 		sendRemoteMessages(count, msgs);
 	}
@@ -267,27 +241,6 @@ void Client::sendRemoteMessages(int count, const net::Message *msgs)
 	} else {
 		m_commandHandler->handleCommands(count, msgs);
 	}
-}
-
-QVector<net::Message>
-Client::filterCompatibleMessages(int count, const net::Message *msgs)
-{
-	// Ideally, the client shouldn't be attempting to send any incompatible
-	// messages in the first place, but we'll err on the side of caution. In
-	// particular, a thick server will kick us out if we send a wrong message.
-	QVector<net::Message> compatibleMsgs;
-	compatibleMsgs.reserve(count);
-	for(int i = 0; i < count; ++i) {
-		const net::Message &msg = msgs[i];
-		const net::Message compatibleMsg =
-			net::makeMessageBackwardCompatible(msg);
-		if(compatibleMsg.isNull()) {
-			qWarning("Incompatible %s message", qUtf8Printable(msg.typeName()));
-		} else {
-			compatibleMsgs.append(compatibleMsg);
-		}
-	}
-	return compatibleMsgs;
 }
 
 QVector<net::Message>
@@ -345,13 +298,6 @@ void Client::handleMessages(int count, net::Message *msgs)
 		}
 		case DP_MSG_DATA:
 			handleData(msg);
-			break;
-		case DP_MSG_DRAW_DABS_CLASSIC:
-		case DP_MSG_DRAW_DABS_PIXEL:
-		case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
-			if(m_compatibilityMode) {
-				msg.setIndirectCompatFlag();
-			}
 			break;
 		default:
 			break;

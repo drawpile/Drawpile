@@ -163,8 +163,6 @@ public:
 
 	bool sessionSupportsAutoReset() const { return m_supportsAutoReset; }
 
-	bool isCompatibilityMode() const { return m_compatibilityMode; }
-
 	/**
 	 * @brief Get the number of bytes waiting to be sent
 	 * @return upload queue length
@@ -257,8 +255,7 @@ signals:
 
 	void serverConnected(const QString &address, int port);
 	void serverLoggedIn(
-		bool join, bool compatibilityMode, const QString &joinPassword,
-		const QString &authId);
+		bool join, const QString &joinPassword, const QString &authId);
 	void serverDisconnecting();
 	void serverDisconnected(
 		const QString &message, const QString &errorcode, bool localDisconnect,
@@ -290,8 +287,7 @@ private slots:
 	void handleConnect(
 		const QUrl &url, uint8_t userid, bool join, bool auth,
 		const QStringList &userFlags, bool supportsAutoReset,
-		bool compatibilityMode, const QString &joinPassword,
-		const QString &authId);
+		const QString &joinPassword, const QString &authId);
 	void handleDisconnect(
 		const QString &message, const QString &errorcode, bool localDisconnect,
 		bool anyMessageReceived);
@@ -310,11 +306,7 @@ private:
 		return isConnected() && !sessionSupportsAutoReset();
 	}
 
-	void sendCompatibleMessages(int count, const net::Message *msgs);
-	void sendCompatibleResetMessages(int count, const net::Message *msgs);
 	void sendRemoteMessages(int count, const net::Message *msgs);
-	QVector<net::Message>
-	filterCompatibleMessages(int count, const net::Message *msgs);
 	QVector<net::Message>
 	replaceLocalMatchMessages(int count, const net::Message *msgs);
 
@@ -341,7 +333,6 @@ private:
 	UserFlags m_userFlags = UserFlag::None;
 	bool m_isAuthenticated = false;
 	bool m_supportsAutoReset = false;
-	bool m_compatibilityMode = false;
 
 	int m_catchupTo = 0;
 	int m_caughtUp = 0;

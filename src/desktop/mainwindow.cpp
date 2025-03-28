@@ -490,7 +490,6 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		m_viewStatusBar->setSessionHistorySize(-1);
 		m_viewStatusBar->setLatency(-1);
 	});
-	connect(m_doc, &Document::compatibilityModeChanged, this, &MainWindow::onCompatibilityModeChanged);
 	connect(m_doc, &Document::sessionNsfmChanged, this, &MainWindow::onNsfmChanged);
 
 	connect(m_doc, &Document::serverConnected, m_netstatus, &widgets::NetStatus::connectingToHost);
@@ -2266,8 +2265,7 @@ void MainWindow::offerDownload(
 void MainWindow::showResetNoticeDialog(const drawdance::CanvasState &canvasState)
 {
 	m_canvasView->setCatchupProgress(0, true);
-	m_canvasView->showResetNotice(
-		m_doc->isCompatibilityMode(), m_doc->isSaveInProgress());
+	m_canvasView->showResetNotice(m_doc->isSaveInProgress());
 	if(m_preResetCanvasState.isNull()) {
 		m_preResetCanvasState = canvasState;
 	}
@@ -2313,22 +2311,6 @@ void MainWindow::discardPreResetImage()
 {
 	m_preResetCanvasState = drawdance::CanvasState::null();
 	m_canvasView->hideResetNotice();
-}
-
-void MainWindow::showCompatibilityModeWarning()
-{
-	if(m_doc->isCompatibilityMode()) {
-		QString message = tr(
-			"This session was hosted with an older version of Drawpile, some "
-			"newer features won't be available. Other Drawpile versions will "
-			"see different results, session resets may cause abrupt changes.");
-		QMessageBox *box = new QMessageBox{
-			QMessageBox::Warning, tr("Compatibility Mode"), message,
-			QMessageBox::Ok, this};
-		box->setAttribute(Qt::WA_DeleteOnClose);
-		box->setModal(false);
-		box->show();
-	}
 }
 
 void MainWindow::exportTemplate()
@@ -2930,16 +2912,12 @@ void MainWindow::invite()
 		net::Client *client = m_doc->client();
 		canvas::AclState *acls = canvas->aclState();
 		dialogs::InviteDialog *dlg = new dialogs::InviteDialog(
-			m_netstatus, m_doc->inviteList(), m_doc->isCompatibilityMode(),
-			m_doc->isSessionWebSupported(), m_doc->isSessionAllowWeb(),
-			m_doc->isSessionPreferWebSockets(), m_doc->isSessionNsfm(),
-			acls->amOperator(), client->isModerator(),
+			m_netstatus, m_doc->inviteList(), m_doc->isSessionWebSupported(),
+			m_doc->isSessionAllowWeb(), m_doc->isSessionPreferWebSockets(),
+			m_doc->isSessionNsfm(), acls->amOperator(), client->isModerator(),
 			m_doc->serverSupportsInviteCodes(),
 			m_doc->isSessionInviteCodesEnabled(), this);
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
-		connect(
-			m_doc, &Document::compatibilityModeChanged, dlg,
-			&dialogs::InviteDialog::setSessionCompatibilityMode);
 		connect(
 			m_doc, &Document::sessionWebSupportedChanged, dlg,
 			&dialogs::InviteDialog::setSessionWebSupported);
@@ -3081,7 +3059,7 @@ void MainWindow::resetSession()
 {
 	utils::ScopedOverrideCursor waitCursor;
 	dialogs::ResetDialog *dlg = new dialogs::ResetDialog(
-		m_doc->canvas()->paintEngine(), m_doc->isCompatibilityMode(),
+		m_doc->canvas()->paintEngine(),
 		m_singleSession, this);
 	dlg->setWindowModality(Qt::WindowModal);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
@@ -3202,9 +3180,6 @@ void MainWindow::connectToSession(
 	connect(
 		m_doc, &Document::serverLoggedIn, dlg,
 		&dialogs::LoginDialog::onLoginDone);
-	connect(
-		dlg, &dialogs::LoginDialog::destroyed, this,
-		&MainWindow::showCompatibilityModeWarning);
 	m_canvasView->connectLoginDialog(m_doc, dlg);
 
 	dlg->show();
@@ -3363,13 +3338,6 @@ void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 	}
 }
 
-void MainWindow::onCompatibilityModeChanged(bool compatibilityMode)
-{
-	m_dockToolSettings->brushSettings()->setCompatibilityMode(compatibilityMode);
-	m_dockToolSettings->fillSettings()->setCompatibilityMode(compatibilityMode);
-	m_dockToolSettings->transformSettings()->setCompatibilityMode(compatibilityMode);
-}
-
 void MainWindow::updateLockWidget()
 {
 	using Reason = view::Lock::Reason;
@@ -3436,7 +3404,7 @@ void MainWindow::onOperatorModeChange(bool op)
 	m_admintools->setEnabled(op);
 	m_serverLogDialog->setOperatorMode(op);
 	getAction("gainop")->setEnabled(!op && m_doc->isSessionOpword());
-	getAction("sessionundodepthlimit")->setEnabled(op && !m_doc->client()->isCompatibilityMode());
+	getAction("sessionundodepthlimit")->setEnabled(op);
 }
 
 void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)

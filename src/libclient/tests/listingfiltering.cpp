@@ -105,7 +105,7 @@ private:
 			QString(),
 			"Title: " + id,
 			QString(),
-			{QString(), true, false, false, false},
+			{QString(), true, false, false},
 			0,
 			-1,
 			password,

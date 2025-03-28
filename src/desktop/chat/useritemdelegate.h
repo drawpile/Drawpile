@@ -28,7 +28,6 @@ public:
 		const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
 	void setDocument(Document *doc) { m_doc = doc; }
-	void setCompatibilityMode(bool compatibilityMode);
 
 signals:
 	void opCommand(const net::Message &msg);
