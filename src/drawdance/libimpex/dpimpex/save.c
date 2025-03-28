@@ -119,6 +119,7 @@ typedef struct DP_SaveOraLayer {
 typedef struct DP_SaveOraContext {
     DP_ZipWriter *zw;
     DP_SaveOraLayer *layers;
+    int clipping_groups;
     struct {
         size_t capacity;
         char *buffer;
@@ -407,30 +408,45 @@ static void ora_write_name_attr(DP_SaveOraContext *c, DP_Output *output,
     }
 }
 
+static void ora_write_layer_title(DP_SaveOraContext *c, DP_Output *output,
+                                  DP_LayerProps *lp)
+{
+    ora_write_name_attr(c, output, DP_layer_props_title(lp, NULL));
+}
+
 static void ora_write_layer_props_xml(DP_SaveOraContext *c, DP_Output *output,
-                                      DP_LayerProps *lp)
+                                      DP_LayerProps *lp, bool clipping_group,
+                                      bool force_alpha_preserve)
 {
     double opacity =
         DP_uint16_to_double(DP_layer_props_opacity(lp)) / (double)DP_BIT15;
     ORA_APPEND_ATTR(c, output, "opacity", "%.4f", opacity);
 
-    ora_write_name_attr(c, output, DP_layer_props_title(lp, NULL));
+    if (clipping_group) {
+        int i = ++c->clipping_groups;
+        ORA_APPEND_ATTR(c, output, "name", "__clippinggroup%d", i);
+    }
+    else {
+        ora_write_layer_title(c, output, lp);
+    }
 
     if (DP_layer_props_hidden(lp)) {
         DP_OUTPUT_PRINT_LITERAL(output, " visibility=\"hidden\"");
     }
 
     int blend_mode = DP_layer_props_blend_mode(lp);
+    if (blend_mode == DP_BLEND_MODE_NORMAL && force_alpha_preserve) {
+        blend_mode = DP_BLEND_MODE_RECOLOR;
+    }
+
     if (blend_mode != DP_BLEND_MODE_NORMAL) {
         ORA_APPEND_ATTR(c, output, "composite-op", "%s",
                         DP_blend_mode_ora_name(blend_mode));
     }
 
-    // Drawpile doesn't itself need the alpha preserve property, since its alpha
-    // preserve behavior depends on the blend mode, but other software cares.
     // The Recolor blend mode is saved as src-atop, which is alpha-preserving
     // per its definition, so it doesn't get the extra attribute.
-    if (DP_blend_mode_preserves_alpha(blend_mode)
+    if ((force_alpha_preserve || DP_blend_mode_preserves_alpha(blend_mode))
         && blend_mode != DP_BLEND_MODE_RECOLOR) {
         DP_OUTPUT_PRINT_LITERAL(output, " alpha-preserve=\"true\"");
     }
@@ -448,20 +464,59 @@ static void ora_write_layer_props_xml(DP_SaveOraContext *c, DP_Output *output,
     }
 }
 
+static DP_LayerProps *ora_clip_base(DP_LayerPropsList *lpl, int start)
+{
+    DP_ASSERT(start >= 0);
+    DP_LayerProps *lp;
+    for (int i = start; i >= 0; --i) {
+        lp = DP_layer_props_list_at_noinc(lpl, i);
+        if (!DP_layer_props_clip(DP_layer_props_list_at_noinc(lpl, i))) {
+            break;
+        }
+    }
+    return lp;
+}
+
 static void ora_write_layers_xml(DP_SaveOraContext *c, DP_Output *output,
                                  DP_LayerList *ll, DP_LayerPropsList *lpl)
 {
     int count = DP_layer_list_count(ll);
     DP_ASSERT(DP_layer_props_list_count(lpl) == count);
+    DP_LayerProps *clip_base_lp = NULL;
     for (int i = count - 1; i >= 0; --i) {
         DP_LayerListEntry *lle = DP_layer_list_at_noinc(ll, i);
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
+        bool clip = DP_layer_props_clip(lp);
+        if (clip && !clip_base_lp) {
+            clip_base_lp = ora_clip_base(lpl, i);
+            DP_OUTPUT_PRINT_LITERAL(output, "<stack");
+            ora_write_layer_props_xml(c, output, clip_base_lp, true, false);
+            DP_OUTPUT_PRINT_LITERAL(output, " isolation=\"isolate\"");
+            DP_OUTPUT_PRINT_LITERAL(output,
+                                    " drawpile:clipping-group=\"true\"");
+            if (DP_layer_props_clip(clip_base_lp)) {
+                DP_OUTPUT_PRINT_LITERAL(output,
+                                        " drawpile:clip-bottom=\"true\"");
+            }
+            DP_OUTPUT_PRINT_LITERAL(output, ">");
+        }
+
+        bool in_clip = clip_base_lp != NULL;
+        bool is_clip_base = in_clip && lp == clip_base_lp;
         if (DP_layer_list_entry_is_group(lle)) {
             DP_OUTPUT_PRINT_LITERAL(output, "<stack");
-            ora_write_layer_props_xml(c, output, lp);
+
+            if (is_clip_base) {
+                ora_write_layer_title(c, output, lp);
+            }
+            else {
+                ora_write_layer_props_xml(c, output, lp, false, in_clip);
+            }
+
             if (DP_layer_props_isolated(lp)) {
                 DP_OUTPUT_PRINT_LITERAL(output, " isolation=\"isolate\"");
             }
+
             DP_LayerGroup *lg = DP_layer_list_entry_group_noinc(lle);
             DP_LayerList *child_ll = DP_layer_group_children_noinc(lg);
             if (DP_layer_list_count(child_ll) == 0) {
@@ -486,8 +541,20 @@ static void ora_write_layers_xml(DP_SaveOraContext *c, DP_Output *output,
             if (offset_y != 0) {
                 ORA_APPEND_ATTR(c, output, "y", "%d", offset_y);
             }
-            ora_write_layer_props_xml(c, output, lp);
+
+            if (is_clip_base) {
+                ora_write_layer_title(c, output, lp);
+            }
+            else {
+                ora_write_layer_props_xml(c, output, lp, false, in_clip);
+            }
+
             DP_OUTPUT_PRINT_LITERAL(output, "/>");
+        }
+
+        if (is_clip_base) {
+            DP_OUTPUT_PRINT_LITERAL(output, "</stack>");
+            clip_base_lp = NULL;
         }
     }
 }
@@ -712,7 +779,7 @@ static DP_SaveResult save_ora(DP_CanvasState *cs, const char *path,
         return DP_SAVE_RESULT_WRITE_ERROR;
     }
 
-    DP_SaveOraContext c = {zw, NULL, {0, NULL}};
+    DP_SaveOraContext c = {zw, NULL, 0, {0, NULL}};
     int next_index = 0;
     bool content_ok =
         ora_store_layers(&c, &next_index, DP_canvas_state_layers_noinc(cs),

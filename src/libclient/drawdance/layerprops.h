@@ -36,6 +36,7 @@ public:
     bool hidden() const;
     bool censored() const;
     bool isolated() const;
+    bool clip() const;
     uint16_t sketchOpacity() const;
     uint32_t sketchTint() const;
 

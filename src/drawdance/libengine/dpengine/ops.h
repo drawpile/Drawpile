@@ -52,7 +52,7 @@ DP_ops_layer_tree_create(DP_CanvasState *cs, DP_DrawContext *dc, int layer_id,
 DP_CanvasState *DP_ops_layer_attributes(DP_CanvasState *cs, int layer_id,
                                         int sublayer_id, uint16_t opacity,
                                         int blend_mode, bool censored,
-                                        bool isolated);
+                                        bool isolated, bool clip);
 
 DP_CanvasState *DP_ops_layer_order(DP_CanvasState *cs, DP_DrawContext *dc,
                                    int layer_id_count,

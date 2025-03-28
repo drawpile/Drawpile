@@ -103,6 +103,11 @@ bool LayerProps::isolated() const
     return DP_layer_props_isolated(m_data);
 }
 
+bool LayerProps::clip() const
+{
+    return DP_layer_props_clip(m_data);
+}
+
 uint16_t LayerProps::sketchOpacity() const
 {
     return DP_layer_props_sketch_opacity(m_data);
