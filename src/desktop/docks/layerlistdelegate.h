@@ -50,6 +50,7 @@ signals:
 private:
 	static constexpr int GLYPH_SIZE = 24;
 	static constexpr int ICON_SIZE = 16;
+	static constexpr int CLIP_SIZE = 4;
 
 	static QRect getOpacityGlyphRect(const QRect &originalRect);
 	static QRect getCheckRect(const QRect &originalRect);

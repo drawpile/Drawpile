@@ -116,12 +116,13 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 			   !m_frameLayers.contains(item.id);
 	case IsHiddenInTreeRole:
 		if(m_viewMode == DP_VIEW_MODE_NORMAL) {
-			if(item.hidden) {
+			if(isLayerOrClippingGroupHidden(index, item)) {
 				return true;
 			} else {
 				QModelIndex current = index.parent();
 				while(current.isValid()) {
-					if(m_items.at(current.internalId()).hidden) {
+					if(isLayerOrClippingGroupHidden(
+						   current, m_items.at(current.internalId()))) {
 						return true;
 					} else {
 						current = current.parent();
@@ -160,6 +161,10 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 		return AclState::extractLayerOwnerId(item.id);
 	case ColorRole:
 		return item.color;
+	case IsClipRole:
+		return item.clip;
+	case IsAtBottomRole:
+		return item.relIndex == rowCount(index.parent()) - 1;
 	}
 
 	return QVariant();
@@ -448,6 +453,7 @@ static LayerListItem makeItem(
 		lp.censored(),
 		revealedLayers.contains(id),
 		lp.isolated(),
+		lp.clip(),
 		isGroup,
 		isGroup ? children.count() : 0,
 		relIndex,
@@ -1052,6 +1058,29 @@ void LayerListModel::gatherModifiableLayers(
 	}
 }
 
+bool LayerListModel::isLayerOrClippingGroupHidden(
+	const QModelIndex &idx, const LayerListItem &item) const
+{
+	if(item.hidden || (item.opacity == 0.0f && item.sketchOpacity == 0.0f)) {
+		return true;
+	} else if(item.clip) {
+		QModelIndex parent = idx.parent();
+		int count = rowCount(parent);
+		if(item.relIndex == count - 1) {
+			return false;
+		} else {
+			int i = item.relIndex + 1;
+			QModelIndex c = index(i, 0, parent);
+			while(c.data(IsClipRole).toBool() && i < count - 1) {
+				c = index(++i, 0, parent);
+			}
+			return c.data(IsHiddenInTreeRole).toBool();
+		}
+	} else {
+		return false;
+	}
+}
+
 QStringList LayerMimeData::formats() const
 {
 	return {QStringLiteral("application/x-qt-image")};
@@ -1184,9 +1213,9 @@ LayerListItem LayerListItem::null()
 {
 	return LayerListItem{
 		0,	   QString(), QColor(), 1.0f,  DP_BLEND_MODE_NORMAL,
-		0.0f,  QColor(),  false,	false, false,
-		false, false,	  0,		0,	   0,
-		0,
+		0.0f,  QColor(),  false, false,
+		false, false,	  false, false,
+		0,	   0,		  0,	 0,
 	};
 }
 

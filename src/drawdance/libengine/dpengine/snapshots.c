@@ -323,6 +323,8 @@ static void layer_props_to_reset_image(struct DP_ResetImageContext *c,
                 DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR);
     SET_FLAG_IF(attr_flags, group && DP_layer_props_isolated(lp),
                 DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED);
+    SET_FLAG_IF(attr_flags, DP_layer_props_clip(lp),
+                DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP);
     reset_image_push(c, DP_msg_layer_attributes_new(
                             c->context_id, layer_id, sublayer_id, attr_flags,
                             DP_channel15_to_8(DP_layer_props_opacity(lp)),

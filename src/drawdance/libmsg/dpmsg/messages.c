@@ -4005,6 +4005,8 @@ const char *DP_msg_layer_attributes_flags_flag_name(unsigned int value)
         return "fixed";
     case DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED:
         return "isolated";
+    case DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP:
+        return "clip";
     default:
         return NULL;
     }
@@ -4043,11 +4045,12 @@ static bool msg_layer_attributes_write_payload_text(DP_Message *msg,
     DP_MsgLayerAttributes *mla = DP_message_internal(msg);
     return DP_text_writer_write_blend_mode(writer, "blend", mla->blend)
         && DP_text_writer_write_flags(
-               writer, "flags", mla->flags, 3,
-               (const char *[]){"censor", "fixed", "isolated"},
+               writer, "flags", mla->flags, 4,
+               (const char *[]){"censor", "fixed", "isolated", "clip"},
                (unsigned int[]){DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR,
                                 DP_MSG_LAYER_ATTRIBUTES_FLAGS_FIXED,
-                                DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED})
+                                DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED,
+                                DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP})
         && DP_text_writer_write_uint(writer, "id", mla->id, true)
         && DP_text_writer_write_uint(writer, "opacity", mla->opacity, false)
         && DP_text_writer_write_uint(writer, "sublayer", mla->sublayer, false);
@@ -4113,10 +4116,12 @@ DP_Message *DP_msg_layer_attributes_parse(unsigned int context_id,
     uint8_t sublayer =
         (uint8_t)DP_text_reader_get_ulong(reader, "sublayer", UINT8_MAX);
     uint8_t flags = (uint8_t)DP_text_reader_get_flags(
-        reader, "flags", 3, (const char *[]){"censor", "fixed", "isolated"},
+        reader, "flags", 4,
+        (const char *[]){"censor", "fixed", "isolated", "clip"},
         (unsigned int[]){DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR,
                          DP_MSG_LAYER_ATTRIBUTES_FLAGS_FIXED,
-                         DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED});
+                         DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED,
+                         DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP});
     uint8_t opacity =
         (uint8_t)DP_text_reader_get_ulong(reader, "opacity", UINT8_MAX);
     uint8_t blend = DP_text_reader_get_blend_mode(reader, "blend");

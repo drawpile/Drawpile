@@ -309,7 +309,8 @@ static bool write_lsct_block(DP_Output *out, DP_SavePsdSection section,
 
 static bool write_layer_info(DP_DrawContext *dc, DP_Output *out, int blend_mode,
                              uint8_t opacity, bool hidden, const char *title,
-                             DP_SavePsdSection section, bool isolated)
+                             DP_SavePsdSection section, bool isolated,
+                             bool clip)
 {
     size_t section_start;
     const char *psd_blend_mode;
@@ -327,9 +328,9 @@ static bool write_layer_info(DP_DrawContext *dc, DP_Output *out, int blend_mode,
         // Blend mode.
         && DP_output_print(out,
                            (psd_blend_mode = blend_mode_to_psd(blend_mode)))
-        // Opacity, clipping (none), flags, reserved byte.
+        // Opacity, clipping, flags, reserved byte.
         && DP_OUTPUT_WRITE_BIGENDIAN(
-               out, DP_OUTPUT_UINT8(opacity), DP_OUTPUT_UINT8(0),
+               out, DP_OUTPUT_UINT8(opacity), DP_OUTPUT_UINT8(clip ? 1 : 0),
                DP_OUTPUT_UINT8(layer_section_flags(hidden, section)),
                DP_OUTPUT_UINT8(0), DP_OUTPUT_END)
         // Extra layer data section.
@@ -356,8 +357,9 @@ static bool write_layer_props_info(DP_LayerProps *lp, DP_DrawContext *dc,
     const char *title = section == DP_SAVE_PSD_SECTION_DIVIDER
                           ? "</Layer group>"
                           : DP_layer_props_title(lp, NULL);
+    bool clip = DP_layer_props_clip(lp);
     return write_layer_info(dc, out, blend_mode, opacity, hidden, title,
-                            section, isolated);
+                            section, isolated, clip);
 }
 
 static bool write_layer_infos_recursive(DP_LayerPropsList *lpl,
@@ -664,7 +666,8 @@ static bool write_layer_info_section(DP_CanvasState *cs, DP_DrawContext *dc,
         // Background layer info.
         && set_background_layer_offset(layer_offsets, out)
         && write_layer_info(dc, out, DP_BLEND_MODE_NORMAL, 255, false,
-                            "Background", DP_SAVE_PSD_SECTION_OTHER, true)
+                            "Background", DP_SAVE_PSD_SECTION_OTHER, true,
+                            false)
         // Remaining layer info.
         && write_layer_infos_recursive(lpl, dc, out, layer_offsets)
         // Channel pixel data.
