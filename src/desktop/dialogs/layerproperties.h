@@ -36,16 +36,20 @@ public:
 	int layerId() const { return m_item.id; }
 
 	static void updateBlendMode(
-		QComboBox *combo, DP_BlendMode mode, bool group, bool isolated);
+		QComboBox *combo, DP_BlendMode mode, bool group, bool isolated,
+		bool clip);
 
 	static QStandardItemModel *layerBlendModes();
+	static QStandardItemModel *layerBlendModesClip();
 	static QStandardItemModel *groupBlendModes();
+	static QStandardItemModel *groupBlendModesClip();
 
 signals:
 	void addLayerOrGroupRequested(
 		int selectedId, bool group, const QString &title, int opacityPercent,
-		int blendMode, bool isolated, bool censored, bool defaultLayer,
-		bool visible, int sketchOpacityPercent, const QColor &sketchTint);
+		int blendMode, bool isolated, bool censored, bool clip,
+		bool defaultLayer, bool visible, int sketchOpacityPercent,
+		const QColor &sketchTint);
 	void layerCommands(int count, const net::Message *msgs);
 	void visibilityChanged(int layerId, bool visible);
 	void sketchModeChanged(int layerId, int opacityPercent, const QColor &tint);
@@ -54,6 +58,7 @@ protected:
 	virtual void showEvent(QShowEvent *event) override;
 
 private:
+	void updateClip(bool clip);
 	void updateSketchMode(compat::CheckBoxState state);
 	void showSketchTintColorPicker();
 	void setSketchTintTo(const QColor &color);
@@ -62,7 +67,8 @@ private:
 	void apply();
 	QString getTitleWithColor() const;
 	void emitChanges();
-	static void addBlendModesTo(QStandardItemModel *model);
+	static void addGroupBlendModesTo(QStandardItemModel *model, bool clip);
+	static void addBlendModesTo(QStandardItemModel *model, bool clip);
 	static int searchBlendModeIndex(QComboBox *combo, DP_BlendMode mode);
 
 	Ui_LayerProperties *m_ui;

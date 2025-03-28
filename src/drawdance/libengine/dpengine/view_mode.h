@@ -141,7 +141,11 @@ DP_ViewModeContext DP_view_mode_context_root_at(
     const DP_ViewModeContextRoot *vmcr, DP_CanvasState *cs, int index,
     DP_LayerListEntry **out_lle, DP_LayerProps **out_lp,
     const DP_OnionSkin **out_os, uint16_t *out_parent_opacity,
-    DP_UPixel8 *out_parent_tint);
+    DP_UPixel8 *out_parent_tint, int *clip_count);
+
+DP_ViewModeContext DP_view_mode_context_root_at_clip(
+    const DP_ViewModeContextRoot *vmcr, DP_CanvasState *cs, int index,
+    DP_LayerListEntry **out_lle, DP_LayerProps **out_lp);
 
 DP_ViewModeResult DP_view_mode_context_apply(const DP_ViewModeContext *vmc,
                                              DP_LayerProps *lp,

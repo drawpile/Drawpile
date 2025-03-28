@@ -62,6 +62,9 @@ DP_LayerGroup *DP_layer_list_entry_group_noinc(DP_LayerListEntry *lle);
 DP_TransientLayerGroup *
 DP_layer_list_entry_transient_group_noinc(DP_LayerListEntry *lle);
 
+int DP_layer_list_entry_width(DP_LayerListEntry *lle);
+int DP_layer_list_entry_height(DP_LayerListEntry *lle);
+
 
 DP_LayerList *DP_layer_list_new(void);
 
@@ -101,19 +104,27 @@ void DP_layer_list_merge_to_flat_image(DP_LayerList *ll, DP_LayerPropsList *lpl,
                                        uint16_t parent_opacity,
                                        bool include_sublayers,
                                        bool reveal_censored,
-                                       bool pass_through_censored);
+                                       bool pass_through_censored, bool clip);
 
 DP_TransientTile *DP_layer_list_entry_flatten_tile_to(
     DP_LayerListEntry *lle, DP_LayerProps *lp, int tile_index,
     DP_TransientTile *tt, uint16_t parent_opacity, DP_UPixel8 parent_tint,
-    bool include_sublayers, bool pass_through_censored,
+    bool include_sublayers, bool pass_through_censored, bool clip,
+    const DP_ViewModeContext *vmc);
+
+DP_TransientTile *DP_layer_list_flatten_clipping_tile_to(
+    void *user,
+    DP_ViewModeContext (*fn)(void *, int, DP_LayerListEntry **,
+                             DP_LayerProps **),
+    int i, int clip_count, int tile_index, DP_TransientTile *tt_or_null,
+    uint16_t parent_opacity, bool include_sublayers,
     const DP_ViewModeContext *vmc);
 
 DP_TransientTile *DP_layer_list_flatten_tile_to(
     DP_LayerList *ll, DP_LayerPropsList *lpl, int tile_index,
     DP_TransientTile *tt_or_null, uint16_t parent_opacity,
     DP_UPixel8 parent_tint, bool include_sublayers, bool pass_through_censored,
-    const DP_ViewModeContext *vmc);
+    bool clip, const DP_ViewModeContext *vmc);
 
 
 DP_TransientLayerList *DP_transient_layer_list_new_init(int reserve);
