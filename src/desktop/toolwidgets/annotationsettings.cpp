@@ -233,6 +233,7 @@ void AnnotationSettings::setUiEnabled(bool enabled)
 	}
 	m_editActions->setEnabled(enabled);
 	if(!enabled) {
+		m_ui->content->setText(QString());
 		m_protectedAction->setChecked(false);
 		m_ui->creatorLabel->setText(QString{});
 	}
