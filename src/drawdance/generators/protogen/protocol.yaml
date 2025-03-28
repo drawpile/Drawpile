@@ -420,7 +420,7 @@ LayerAttributes:
     fields:
         - id u16: hex
         - sublayer u8
-        - flags flags: [censor, fixed, isolated]
+        - flags flags: [censor, fixed, isolated, clip]
         - opacity u8
         - blend blendmode
 

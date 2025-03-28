@@ -42,6 +42,30 @@ void LayerListDelegate::paint(
 		glyphRect, painter, layer.opacity, layer.hidden,
 		layer.actuallyCensored(), layer.group);
 
+	if(index.data(canvas::LayerListModel::IsClipRole).toBool()) {
+		painter->save();
+		QRect clipRect = QRect(
+			originalRect.left(), originalRect.top() + 1, CLIP_SIZE,
+			originalRect.height() - 1);
+		painter->setPen(Qt::NoPen);
+
+		if(index.data(canvas::LayerListModel::IsAtBottomRole).toBool()) {
+			QBrush brush = opt.palette.text();
+			brush.setStyle(Qt::Dense5Pattern);
+			painter->setBrush(brush);
+		} else {
+			painter->setBrush(opt.palette.text());
+		}
+		painter->drawConvexPolygon(QPolygon({
+			clipRect.topLeft(),
+			QPoint(clipRect.right(), clipRect.top() + CLIP_SIZE),
+			QPoint(clipRect.right(), clipRect.bottom() - CLIP_SIZE),
+			clipRect.bottomLeft(),
+			clipRect.topLeft(),
+		}));
+		painter->restore();
+	}
+
 	if(index.data(canvas::LayerListModel::CheckModeRole).toBool()) {
 		int checkState =
 			index.data(canvas::LayerListModel::CheckStateRole).toInt();
