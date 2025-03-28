@@ -15,6 +15,10 @@ namespace browser {
 bool hasLowPressurePen();
 QString getLocale();
 QString getWelcomeMessage();
+QString getHostaddressParam();
+QString getHostpassParam();
+QString getUsernameParam();
+QString getUserpassParam();
 void showLoginModal(net::LoginHandler *loginHandler);
 void cancelLoginModal(net::LoginHandler *loginHandler);
 void authenticate(net::LoginHandler *loginHandler, const QByteArray &payload);

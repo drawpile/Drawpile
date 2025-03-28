@@ -62,15 +62,24 @@ bool hasLowPressurePen()
 	return lowPressurePen != 0;
 }
 
+namespace {
+QString convertAndFreeWasmString(char *value)
+{
+	if(value) {
+		QString s = QString::fromUtf8(value);
+		free(value);
+		return s;
+	} else {
+		return QString();
+	}
+}
+}
+
 QString getLocale()
 {
-	char *message = static_cast<char *>(
+	char *locale = static_cast<char *>(
 		EM_ASM_PTR(return stringToNewUTF8(window.drawpileLocale || "");));
-	QString s;
-	if(message) {
-		s = QString::fromUtf8(message).trimmed();
-		free(message);
-	}
+	QString s = convertAndFreeWasmString(locale).trimmed();
 	return s.isEmpty() ? QStringLiteral("en_US") : s;
 }
 
@@ -78,12 +87,35 @@ QString getWelcomeMessage()
 {
 	char *message = static_cast<char *>(EM_ASM_PTR(
 		return stringToNewUTF8(window.drawpileStandaloneMessage || "");));
-	QString s;
-	if(message) {
-		s = QString::fromUtf8(message);
-		free(message);
-	}
-	return s;
+	return convertAndFreeWasmString(message).trimmed();
+}
+
+QString getHostaddressParam()
+{
+	char *value = static_cast<char *>(EM_ASM_PTR(return stringToNewUTF8(
+		new URLSearchParams(window.location.search).get("hostaddress") || "")));
+	return convertAndFreeWasmString(value).trimmed();
+}
+
+QString getHostpassParam()
+{
+	char *value = static_cast<char *>(EM_ASM_PTR(return stringToNewUTF8(
+		new URLSearchParams(window.location.search).get("hostpass") || "")));
+	return convertAndFreeWasmString(value).trimmed();
+}
+
+QString getUsernameParam()
+{
+	char *value = static_cast<char *>(EM_ASM_PTR(return stringToNewUTF8(
+		new URLSearchParams(window.location.search).get("username") || "")));
+	return convertAndFreeWasmString(value).trimmed();
+}
+
+QString getUserpassParam()
+{
+	char *value = static_cast<char *>(EM_ASM_PTR(return stringToNewUTF8(
+		new URLSearchParams(window.location.search).get("userpass") || "")));
+	return convertAndFreeWasmString(value).trimmed();
 }
 
 void showLoginModal(net::LoginHandler *loginHandler)

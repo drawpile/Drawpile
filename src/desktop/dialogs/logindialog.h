@@ -102,6 +102,8 @@ private:
 	void delayUpdate();
 	static QString formatLoginInfo(const QString &loginInfo);
 	static QString formatExtAuthPrompt(const QUrl &url);
+	static QString getUsername(const QString &name);
+	static QString getUserpass(const QString &pass);
 
 	struct Private;
 	Private *d;

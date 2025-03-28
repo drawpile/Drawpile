@@ -25,6 +25,9 @@
 #include <QScreen>
 #include <QStyle>
 #include <QTimer>
+#ifdef __EMSCRIPTEN__
+#	include "libclient/wasmsupport.h"
+#endif
 
 namespace dialogs {
 
@@ -225,7 +228,7 @@ struct LoginDialog::Private {
 	void restoreOldLogin()
 	{
 		const desktop::settings::Settings &settings = dpApp().settings();
-		ui->username->setText(settings.lastUsername());
+		ui->username->setText(getUsername(settings.lastUsername()));
 		restoreAvatar(settings.lastAvatar());
 	}
 
@@ -251,7 +254,8 @@ struct LoginDialog::Private {
 	void restoreGuest()
 	{
 		const utils::StateDatabase &state = dpApp().state();
-		ui->username->setText(state.get(LAST_GUEST_NAME_KEY).toString());
+		ui->username->setText(
+			getUsername(state.get(LAST_GUEST_NAME_KEY).toString()));
 		restoreAvatar(state.get(LAST_GUEST_AVATAR_KEY).toString());
 	}
 
@@ -756,6 +760,8 @@ void LoginDialog::onLoginMethodExtAuthClicked()
 	}
 #endif
 	d->resetMode(Mode::ExtAuthLogin);
+	d->ui->username->setText(getUsername(d->ui->username->text()));
+	d->ui->password->setText(getUserpass(d->ui->password->text()));
 	updateOkButtonEnabled();
 	setExtAuthLoginExplanation();
 }
@@ -764,6 +770,8 @@ void LoginDialog::onLoginMethodAuthClicked()
 {
 	d->wasRecentAccount = false;
 	d->resetMode(Mode::AuthLogin);
+	d->ui->username->setText(getUsername(d->ui->username->text()));
+	d->ui->password->setText(getUserpass(d->ui->password->text()));
 	updateOkButtonEnabled();
 	setAuthLoginExplanation();
 }
@@ -1580,6 +1588,28 @@ QString LoginDialog::formatExtAuthPrompt(const QUrl &url)
 			? tr("Log in with '%1' credentials")
 			: tr("Log in with '%1' credentials (INSECURE CONNECTION!)");
 	return prompt.arg(url.host());
+}
+
+QString LoginDialog::getUsername(const QString &name)
+{
+#ifdef __EMSCRIPTEN__
+	QString param = browser::getUsernameParam();
+	if(!param.isEmpty()) {
+		return param;
+	}
+#endif
+	return name;
+}
+
+QString LoginDialog::getUserpass(const QString &pass)
+{
+#ifdef __EMSCRIPTEN__
+	QString param = browser::getUserpassParam();
+	if(!param.isEmpty()) {
+		return param;
+	}
+#endif
+	return pass;
 }
 
 }

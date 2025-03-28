@@ -18,6 +18,9 @@
 #include <QRegularExpression>
 #include <QTextBrowser>
 #include <QVBoxLayout>
+#ifdef __EMSCRIPTEN__
+#	include "libclient/wasmsupport.h"
+#endif
 
 namespace dialogs {
 namespace startdialog {
@@ -116,6 +119,12 @@ Session::Session(QWidget *parent)
 		&Session::followServerInfoLink);
 
 	desktop::settings::Settings &settings = dpApp().settings();
+#ifdef __EMSCRIPTEN__
+	QString hostpass = browser::getHostpassParam();
+	if(!hostpass.isEmpty()) {
+		settings.setLastSessionPassword(hostpass);
+	}
+#endif
 	if(settings.lastSessionPassword().trimmed().isEmpty()) {
 		generatePasswordWith(settings);
 	}
@@ -382,6 +391,13 @@ void Session::updateAddressCombo()
 			editText = value;
 		}
 	}
+
+#ifdef __EMSCRIPTEN__
+	QString hostaddress = browser::getHostaddressParam();
+	if(!hostaddress.isEmpty()) {
+		editText = hostaddress;
+	}
+#endif
 
 	m_addressCombo->setEditText(editText);
 }
