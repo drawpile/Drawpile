@@ -143,6 +143,12 @@ static Fix15 fix15_mul(Fix15 a, Fix15 b)
 }
 
 // Adapted from MyPaint, see license above.
+static Fix15 fix15_div(Fix15 a, Fix15 b)
+{
+    return (a << FIX_15) / b;
+}
+
+// Adapted from MyPaint, see license above.
 static Fix15 fix15_sumprods(Fix15 a1, Fix15 a2, Fix15 b1, Fix15 b2)
 {
     return ((a1 * a2) + (b1 * b2)) >> FIX_15;
@@ -264,6 +270,19 @@ static BGR15 set_sat(BGR15 bgr, Fix15 s)
     }
     *min = 0;
     return bgr;
+}
+
+// Adapted from MyPaint, see license above.
+// Composites an unpremultiplied source over a premultiplied destination.
+static DP_Pixel15 source_over_premultiplied(DP_Pixel15 b, BGRA15 s)
+{
+    Fix15 as1 = BIT15_FIX - s.a;
+    return (DP_Pixel15){
+        .b = from_fix(fix15_clamp(fix15_sumprods(s.a, s.b, as1, b.b))),
+        .g = from_fix(fix15_clamp(fix15_sumprods(s.a, s.g, as1, b.g))),
+        .r = from_fix(fix15_clamp(fix15_sumprods(s.a, s.r, as1, b.r))),
+        .a = from_fix(fix15_clamp(s.a + fix15_mul(b.a, as1))),
+    };
 }
 
 
@@ -1677,6 +1696,35 @@ static void blend_mask_composite_separable(DP_Pixel15 *dst, DP_UPixel15 src,
     });
 }
 
+static void composite_separable_alpha(DP_Pixel15 *dst, BGR15 cs, Fix15 as,
+                                      Fix15 opacity,
+                                      Fix15 (*comp_op)(Fix15, Fix15))
+{
+    DP_Pixel15 bp = *dst;
+    BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
+    Fix15 ab = bp.a;
+    Fix15 ab1 = BIT15_FIX - ab;
+    *dst = source_over_premultiplied(
+        bp, (BGRA15){
+                .b = fix15_sumprods(ab1, cs.b, ab, comp_op(cb.b, cs.b)),
+                .g = fix15_sumprods(ab1, cs.g, ab, comp_op(cb.g, cs.g)),
+                .r = fix15_sumprods(ab1, cs.r, ab, comp_op(cb.r, cs.r)),
+                .a = fix15_mul(as, opacity),
+            });
+}
+
+static void blend_mask_composite_separable_alpha(
+    DP_Pixel15 *dst, DP_UPixel15 src, const uint16_t *mask, Fix15 opacity,
+    int w, int h, int mask_skip, int base_skip, Fix15 (*comp_op)(Fix15, Fix15))
+{
+    BGR15 cs = to_ubgr(src);
+    FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, m, {
+        if (m != 0) {
+            composite_separable_alpha(dst, cs, m, opacity, comp_op);
+        }
+    });
+}
+
 static void blend_mask_composite_separable_with_opacity(
     DP_Pixel15 *dst, DP_UPixel15 src, const uint16_t *mask, Fix15 opacity,
     int w, int h, int mask_skip, int base_skip,
@@ -1693,6 +1741,29 @@ static void blend_mask_composite_separable_with_opacity(
                 from_fix(comp_op(cb.r, cs.r, o)),
                 bp.a,
             });
+        }
+    });
+}
+
+static void blend_mask_composite_separable_with_opacity_alpha(
+    DP_Pixel15 *dst, DP_UPixel15 src, const uint16_t *mask, Fix15 opacity,
+    int w, int h, int mask_skip, int base_skip,
+    Fix15 (*comp_op)(Fix15, Fix15, Fix15))
+{
+    BGR15 cs = to_ubgr(src);
+    FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, m, {
+        if (m != 0) {
+            DP_Pixel15 bp = *dst;
+            Fix15 o = fix15_mul(m, opacity);
+            Fix15 a = from_fix(o + fix15_mul(bp.a, DP_BIT15 - o));
+            if (a != 0) {
+                *dst = DP_pixel15_premultiply((DP_UPixel15){
+                    from_fix(fix15_clamp(fix15_div(comp_op(bp.b, cs.b, o), a))),
+                    from_fix(fix15_clamp(fix15_div(comp_op(bp.g, cs.g, o), a))),
+                    from_fix(fix15_clamp(fix15_div(comp_op(bp.r, cs.r, o), a))),
+                    from_fix(a),
+                });
+            }
         }
     });
 }
@@ -1716,6 +1787,36 @@ static void blend_mask_composite_nonseparable(DP_Pixel15 *dst, DP_UPixel15 src,
                 from_fix(fix15_sumprods(o1, cb.r, o, cr.r)),
                 bp.a,
             });
+        }
+    });
+}
+
+static void composite_nonseparable_alpha(DP_Pixel15 *dst, BGR15 cs, Fix15 as,
+                                         Fix15 opacity,
+                                         BGR15 (*comp_op)(BGR15, BGR15))
+{
+    DP_Pixel15 bp = *dst;
+    BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
+    BGR15 cr = comp_op(cb, cs);
+    Fix15 ab = bp.a;
+    Fix15 ab1 = BIT15_FIX - ab;
+    *dst = source_over_premultiplied(
+        bp, (BGRA15){
+                .b = fix15_sumprods(ab1, cs.b, ab, cr.b),
+                .g = fix15_sumprods(ab1, cs.g, ab, cr.g),
+                .r = fix15_sumprods(ab1, cs.r, ab, cr.r),
+                .a = fix15_mul(as, opacity),
+            });
+}
+
+static void blend_mask_composite_nonseparable_alpha(
+    DP_Pixel15 *dst, DP_UPixel15 src, const uint16_t *mask, Fix15 opacity,
+    int w, int h, int mask_skip, int base_skip, BGR15 (*comp_op)(BGR15, BGR15))
+{
+    BGR15 cs = to_ubgr(src);
+    FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, m, {
+        if (m != 0) {
+            composite_nonseparable_alpha(dst, cs, m, opacity, comp_op);
         }
     });
 }
@@ -2112,6 +2213,92 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
         blend_mask_composite_nonseparable(dst, src, mask, opacity, w, h,
                                           mask_skip, base_skip, comp_color);
         break;
+    // Alpha-affecting separable blend modes (each channel handled separately)
+    case DP_BLEND_MODE_MULTIPLY_ALPHA:
+        blend_mask_composite_separable_alpha(
+            dst, src, mask, opacity, w, h, mask_skip, base_skip, comp_multiply);
+        break;
+    case DP_BLEND_MODE_DIVIDE_ALPHA:
+        blend_mask_composite_separable_alpha(dst, src, mask, opacity, w, h,
+                                             mask_skip, base_skip, comp_divide);
+        break;
+    case DP_BLEND_MODE_BURN_ALPHA:
+        blend_mask_composite_separable_alpha(dst, src, mask, opacity, w, h,
+                                             mask_skip, base_skip, comp_burn);
+        break;
+    case DP_BLEND_MODE_DODGE_ALPHA:
+        blend_mask_composite_separable_alpha(dst, src, mask, opacity, w, h,
+                                             mask_skip, base_skip, comp_dodge);
+        break;
+    case DP_BLEND_MODE_DARKEN_ALPHA:
+        blend_mask_composite_separable_alpha(dst, src, mask, opacity, w, h,
+                                             mask_skip, base_skip, comp_darken);
+        break;
+    case DP_BLEND_MODE_LIGHTEN_ALPHA:
+        blend_mask_composite_separable_alpha(
+            dst, src, mask, opacity, w, h, mask_skip, base_skip, comp_lighten);
+        break;
+    case DP_BLEND_MODE_SUBTRACT_ALPHA:
+        blend_mask_composite_separable_alpha(
+            dst, src, mask, opacity, w, h, mask_skip, base_skip, comp_subtract);
+        break;
+    case DP_BLEND_MODE_ADD_ALPHA:
+        blend_mask_composite_separable_alpha(dst, src, mask, opacity, w, h,
+                                             mask_skip, base_skip, comp_add);
+        break;
+    case DP_BLEND_MODE_SCREEN_ALPHA:
+        blend_mask_composite_separable_alpha(dst, src, mask, opacity, w, h,
+                                             mask_skip, base_skip, comp_screen);
+        break;
+    case DP_BLEND_MODE_OVERLAY_ALPHA:
+        blend_mask_composite_separable_alpha(
+            dst, src, mask, opacity, w, h, mask_skip, base_skip, comp_overlay);
+        break;
+    case DP_BLEND_MODE_HARD_LIGHT_ALPHA:
+        blend_mask_composite_separable_alpha(dst, src, mask, opacity, w, h,
+                                             mask_skip, base_skip,
+                                             comp_hard_light);
+        break;
+    case DP_BLEND_MODE_SOFT_LIGHT_ALPHA:
+        blend_mask_composite_separable_alpha(dst, src, mask, opacity, w, h,
+                                             mask_skip, base_skip,
+                                             comp_soft_light);
+        break;
+    case DP_BLEND_MODE_LINEAR_BURN_ALPHA:
+        blend_mask_composite_separable_alpha(dst, src, mask, opacity, w, h,
+                                             mask_skip, base_skip,
+                                             comp_linear_burn);
+        break;
+    case DP_BLEND_MODE_LINEAR_LIGHT_ALPHA:
+        blend_mask_composite_separable_alpha(dst, src, mask, opacity, w, h,
+                                             mask_skip, base_skip,
+                                             comp_linear_light);
+        break;
+    // Alpha-preserving separable blend modes where the opacity affects blending
+    case DP_BLEND_MODE_LUMINOSITY_SHINE_SAI_ALPHA:
+        blend_mask_composite_separable_with_opacity_alpha(
+            dst, src, mask, opacity, w, h, mask_skip, base_skip,
+            comp_luminosity_shine_sai);
+        break;
+    // Alpha-affecting non-separable blend modes (channels interact)
+    case DP_BLEND_MODE_HUE_ALPHA:
+        blend_mask_composite_nonseparable_alpha(dst, src, mask, opacity, w, h,
+                                                mask_skip, base_skip, comp_hue);
+        break;
+    case DP_BLEND_MODE_SATURATION_ALPHA:
+        blend_mask_composite_nonseparable_alpha(dst, src, mask, opacity, w, h,
+                                                mask_skip, base_skip,
+                                                comp_saturation);
+        break;
+    case DP_BLEND_MODE_LUMINOSITY_ALPHA:
+        blend_mask_composite_nonseparable_alpha(dst, src, mask, opacity, w, h,
+                                                mask_skip, base_skip,
+                                                comp_luminosity);
+        break;
+    case DP_BLEND_MODE_COLOR_ALPHA:
+        blend_mask_composite_nonseparable_alpha(
+            dst, src, mask, opacity, w, h, mask_skip, base_skip, comp_color);
+        break;
     default:
         DP_debug("Unknown mask blend mode %d (%s)", blend_mode,
                  DP_blend_mode_enum_name(blend_mode));
@@ -2185,6 +2372,19 @@ static void blend_pixels_composite_separable(DP_Pixel15 *DP_RESTRICT dst,
     }
 }
 
+static void blend_pixels_composite_separable_alpha(
+    DP_Pixel15 *DP_RESTRICT dst, const DP_Pixel15 *DP_RESTRICT src,
+    int pixel_count, Fix15 opacity, Fix15 (*comp_op)(Fix15, Fix15))
+{
+    for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
+        DP_Pixel15 sp = *src;
+        if (sp.a != 0) {
+            BGR15 cs = to_ubgr(DP_pixel15_unpremultiply(sp));
+            composite_separable_alpha(dst, cs, sp.a, opacity, comp_op);
+        }
+    }
+}
+
 static void blend_pixels_composite_separable_with_opacity(
     DP_Pixel15 *DP_RESTRICT dst, const DP_Pixel15 *DP_RESTRICT src,
     int pixel_count, Fix15 opacity, Fix15 (*comp_op)(Fix15, Fix15, Fix15))
@@ -2202,6 +2402,29 @@ static void blend_pixels_composite_separable_with_opacity(
                 from_fix(comp_op(cb.r, cs.r, o)),
                 bp.a,
             });
+        }
+    }
+}
+
+static void blend_pixels_composite_separable_with_opacity_alpha(
+    DP_Pixel15 *DP_RESTRICT dst, const DP_Pixel15 *DP_RESTRICT src,
+    int pixel_count, Fix15 opacity, Fix15 (*comp_op)(Fix15, Fix15, Fix15))
+{
+    for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
+        DP_Pixel15 sp = *src;
+        if (sp.a != 0) {
+            DP_Pixel15 bp = *dst;
+            Fix15 o = fix15_mul(to_fix(sp.a), opacity);
+            Fix15 a = from_fix(o + fix15_mul(bp.a, DP_BIT15 - o));
+            if (a != 0) {
+                BGR15 cs = to_ubgr(DP_pixel15_unpremultiply(sp));
+                *dst = DP_pixel15_premultiply((DP_UPixel15){
+                    from_fix(fix15_clamp(fix15_div(comp_op(bp.b, cs.b, o), a))),
+                    from_fix(fix15_clamp(fix15_div(comp_op(bp.g, cs.g, o), a))),
+                    from_fix(fix15_clamp(fix15_div(comp_op(bp.r, cs.r, o), a))),
+                    from_fix(a),
+                });
+            }
         }
     }
 }
@@ -2224,6 +2447,19 @@ static void blend_pixels_composite_nonseparable(
                 from_fix(fix15_sumprods(o1, cb.r, o, cr.r)),
                 bp.a,
             });
+        }
+    }
+}
+
+static void blend_pixels_composite_nonseparable_alpha(
+    DP_Pixel15 *DP_RESTRICT dst, const DP_Pixel15 *DP_RESTRICT src,
+    int pixel_count, Fix15 opacity, BGR15 (*comp_op)(BGR15, BGR15))
+{
+    for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
+        DP_Pixel15 sp = *src;
+        if (sp.a != 0) {
+            BGR15 cs = to_ubgr(DP_pixel15_unpremultiply(sp));
+            composite_nonseparable_alpha(dst, cs, sp.a, opacity, comp_op);
         }
     }
 }
@@ -2351,6 +2587,85 @@ void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
     case DP_BLEND_MODE_COLOR:
         blend_pixels_composite_nonseparable(dst, src, pixel_count,
                                             to_fix(opacity), comp_color);
+        break;
+    // Alpha-affecting separable blend modes (each channel handled separately)
+    case DP_BLEND_MODE_MULTIPLY_ALPHA:
+        blend_pixels_composite_separable_alpha(dst, src, pixel_count,
+                                               to_fix(opacity), comp_multiply);
+        break;
+    case DP_BLEND_MODE_DIVIDE_ALPHA:
+        blend_pixels_composite_separable_alpha(dst, src, pixel_count,
+                                               to_fix(opacity), comp_divide);
+        break;
+    case DP_BLEND_MODE_BURN_ALPHA:
+        blend_pixels_composite_separable_alpha(dst, src, pixel_count,
+                                               to_fix(opacity), comp_burn);
+        break;
+    case DP_BLEND_MODE_DODGE_ALPHA:
+        blend_pixels_composite_separable_alpha(dst, src, pixel_count,
+                                               to_fix(opacity), comp_dodge);
+        break;
+    case DP_BLEND_MODE_DARKEN_ALPHA:
+        blend_pixels_composite_separable_alpha(dst, src, pixel_count,
+                                               to_fix(opacity), comp_darken);
+        break;
+    case DP_BLEND_MODE_LIGHTEN_ALPHA:
+        blend_pixels_composite_separable_alpha(dst, src, pixel_count,
+                                               to_fix(opacity), comp_lighten);
+        break;
+    case DP_BLEND_MODE_SUBTRACT_ALPHA:
+        blend_pixels_composite_separable_alpha(dst, src, pixel_count,
+                                               to_fix(opacity), comp_subtract);
+        break;
+    case DP_BLEND_MODE_ADD_ALPHA:
+        blend_pixels_composite_separable_alpha(dst, src, pixel_count,
+                                               to_fix(opacity), comp_add);
+        break;
+    case DP_BLEND_MODE_SCREEN_ALPHA:
+        blend_pixels_composite_separable_alpha(dst, src, pixel_count,
+                                               to_fix(opacity), comp_screen);
+        break;
+    case DP_BLEND_MODE_OVERLAY_ALPHA:
+        blend_pixels_composite_separable_alpha(dst, src, pixel_count,
+                                               to_fix(opacity), comp_overlay);
+        break;
+    case DP_BLEND_MODE_HARD_LIGHT_ALPHA:
+        blend_pixels_composite_separable_alpha(
+            dst, src, pixel_count, to_fix(opacity), comp_hard_light);
+        break;
+    case DP_BLEND_MODE_SOFT_LIGHT_ALPHA:
+        blend_pixels_composite_separable_alpha(
+            dst, src, pixel_count, to_fix(opacity), comp_soft_light);
+        break;
+    case DP_BLEND_MODE_LINEAR_BURN_ALPHA:
+        blend_pixels_composite_separable_alpha(
+            dst, src, pixel_count, to_fix(opacity), comp_linear_burn);
+        break;
+    case DP_BLEND_MODE_LINEAR_LIGHT_ALPHA:
+        blend_pixels_composite_separable_alpha(
+            dst, src, pixel_count, to_fix(opacity), comp_linear_light);
+        break;
+    // Alpha-preserving separable blend modes where the opacity affects blending
+    case DP_BLEND_MODE_LUMINOSITY_SHINE_SAI_ALPHA:
+        blend_pixels_composite_separable_with_opacity_alpha(
+            dst, src, pixel_count, to_fix(opacity), comp_luminosity_shine_sai);
+        break;
+    // Alpha-affecting non-separable blend modes (channels interact)
+    case DP_BLEND_MODE_HUE_ALPHA:
+        blend_pixels_composite_nonseparable_alpha(dst, src, pixel_count,
+                                                  to_fix(opacity), comp_hue);
+        break;
+    case DP_BLEND_MODE_SATURATION_ALPHA:
+        blend_pixels_composite_nonseparable_alpha(
+            dst, src, pixel_count, to_fix(opacity), comp_saturation);
+        break;
+    case DP_BLEND_MODE_LUMINOSITY_ALPHA:
+        blend_pixels_composite_nonseparable_alpha(
+            dst, src, pixel_count, to_fix(opacity), comp_luminosity);
+        break;
+    case DP_BLEND_MODE_COLOR_ALPHA:
+        blend_pixels_composite_nonseparable_alpha(dst, src, pixel_count,
+                                                  to_fix(opacity), comp_color);
         break;
     default:
         DP_debug("Unknown pixel blend mode %d (%s)", blend_mode,

@@ -211,40 +211,58 @@ static const char *blend_mode_to_psd(int blend_mode)
 {
     switch (blend_mode) {
     case DP_BLEND_MODE_DARKEN:
+    case DP_BLEND_MODE_DARKEN_ALPHA:
         return "dark";
     case DP_BLEND_MODE_MULTIPLY:
+    case DP_BLEND_MODE_MULTIPLY_ALPHA:
         return "mul ";
     case DP_BLEND_MODE_BURN:
+    case DP_BLEND_MODE_BURN_ALPHA:
         return "idiv";
     case DP_BLEND_MODE_LINEAR_BURN:
+    case DP_BLEND_MODE_LINEAR_BURN_ALPHA:
         return "lbrn";
     case DP_BLEND_MODE_LIGHTEN:
+    case DP_BLEND_MODE_LIGHTEN_ALPHA:
         return "lite";
     case DP_BLEND_MODE_SCREEN:
+    case DP_BLEND_MODE_SCREEN_ALPHA:
         return "scrn";
     case DP_BLEND_MODE_DODGE:
+    case DP_BLEND_MODE_DODGE_ALPHA:
         return "div ";
     case DP_BLEND_MODE_ADD:
+    case DP_BLEND_MODE_ADD_ALPHA:
         return "lddg";
     case DP_BLEND_MODE_OVERLAY:
+    case DP_BLEND_MODE_OVERLAY_ALPHA:
         return "over";
     case DP_BLEND_MODE_SOFT_LIGHT:
+    case DP_BLEND_MODE_SOFT_LIGHT_ALPHA:
         return "sLit";
     case DP_BLEND_MODE_HARD_LIGHT:
+    case DP_BLEND_MODE_HARD_LIGHT_ALPHA:
         return "hLit";
     case DP_BLEND_MODE_LINEAR_LIGHT:
+    case DP_BLEND_MODE_LINEAR_LIGHT_ALPHA:
         return "lLit";
     case DP_BLEND_MODE_SUBTRACT:
+    case DP_BLEND_MODE_SUBTRACT_ALPHA:
         return "fsub";
     case DP_BLEND_MODE_DIVIDE:
+    case DP_BLEND_MODE_DIVIDE_ALPHA:
         return "fdiv";
     case DP_BLEND_MODE_HUE:
+    case DP_BLEND_MODE_HUE_ALPHA:
         return "hue ";
     case DP_BLEND_MODE_SATURATION:
+    case DP_BLEND_MODE_SATURATION_ALPHA:
         return "sat ";
     case DP_BLEND_MODE_COLOR:
+    case DP_BLEND_MODE_COLOR_ALPHA:
         return "colr";
     case DP_BLEND_MODE_LUMINOSITY:
+    case DP_BLEND_MODE_LUMINOSITY_ALPHA:
         return "lum ";
     default:
         return "norm";

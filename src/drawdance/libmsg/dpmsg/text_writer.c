@@ -297,7 +297,7 @@ bool DP_text_writer_write_blend_mode(DP_TextWriter *writer, const char *key,
     DP_ASSERT(writer);
     DP_ASSERT(key);
     return DP_text_writer_write_string(writer, key,
-                                       DP_blend_mode_text_name(blend_mode));
+                                       DP_blend_mode_dptxt_name(blend_mode));
 }
 
 static bool buffer_wrapped_argument(DP_TextWriter *writer, const char *key,

@@ -866,7 +866,7 @@ uint8_t DP_text_reader_get_blend_mode(DP_TextReader *reader, const char *key)
     DP_ASSERT(key);
     const char *value = search_field(reader, key);
     return value
-             ? (uint8_t)DP_blend_mode_by_svg_name(value, DP_BLEND_MODE_NORMAL)
+             ? (uint8_t)DP_blend_mode_by_dptxt_name(value, DP_BLEND_MODE_NORMAL)
              : DP_BLEND_MODE_NORMAL;
 }
 
