@@ -1203,11 +1203,13 @@ size_t DP_msg_layer_create_title_len(const DP_MsgLayerCreate *mlc);
 #define DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR   0x1
 #define DP_MSG_LAYER_ATTRIBUTES_FLAGS_FIXED    0x2
 #define DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED 0x4
+#define DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP     0x8
 
-#define DP_MSG_LAYER_ATTRIBUTES_NUM_FLAGS 3
+#define DP_MSG_LAYER_ATTRIBUTES_NUM_FLAGS 4
 #define DP_MSG_LAYER_ATTRIBUTES_ALL_FLAGS                                      \
     DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR, DP_MSG_LAYER_ATTRIBUTES_FLAGS_FIXED, \
-        DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED
+        DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED,                                \
+        DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP
 
 const char *DP_msg_layer_attributes_flags_flag_name(unsigned int value);
 

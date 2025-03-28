@@ -325,9 +325,9 @@ DP_Pixel8 *DP_layer_group_to_pixels8(DP_LayerGroup *lg, DP_LayerProps *lp,
     // TODO: Don't merge the whole group just to cut out a part of it.
     DP_TransientLayerContent *tlc =
         DP_transient_layer_content_new_init(lg->width, lg->height, NULL);
-    DP_layer_list_merge_to_flat_image(lg->children,
-                                      DP_layer_props_children_noinc(lp), tlc,
-                                      DP_BIT15, true, reveal_censored, false);
+    DP_layer_list_merge_to_flat_image(
+        lg->children, DP_layer_props_children_noinc(lp), tlc, DP_BIT15, true,
+        reveal_censored, false, false);
     DP_Pixel8 *pixels = DP_layer_content_to_pixels8((DP_LayerContent *)tlc, x,
                                                     y, width, height);
     DP_transient_layer_content_decref(tlc);
@@ -345,7 +345,7 @@ DP_TransientLayerContent *DP_layer_group_merge(DP_LayerGroup *lg,
     DP_TransientLayerContent *tlc =
         DP_transient_layer_content_new_init(lg->width, lg->height, NULL);
     DP_layer_list_merge_to_flat_image(lg->children, lpl, tlc, DP_BIT15,
-                                      include_sublayers, true, false);
+                                      include_sublayers, true, false, false);
     return tlc;
 }
 
@@ -353,7 +353,7 @@ void DP_layer_group_merge_to_flat_image(DP_LayerGroup *lg, DP_LayerProps *lp,
                                         DP_TransientLayerContent *tlc,
                                         uint16_t parent_opacity,
                                         bool include_sublayers,
-                                        bool pass_through_censored)
+                                        bool pass_through_censored, bool clip)
 {
     DP_ASSERT(lg);
     DP_ASSERT(DP_atomic_get(&lg->refcount) > 0);
@@ -370,17 +370,19 @@ void DP_layer_group_merge_to_flat_image(DP_LayerGroup *lg, DP_LayerProps *lp,
             DP_transient_layer_content_width(tlc),
             DP_transient_layer_content_height(tlc), NULL);
         DP_layer_list_merge_to_flat_image(lg->children, lpl, gtlc, DP_BIT15,
-                                          include_sublayers, true, false);
-        DP_transient_layer_content_merge(tlc, 0, (DP_LayerContent *)gtlc,
-                                         opacity, DP_layer_props_blend_mode(lp),
-                                         censored);
+                                          include_sublayers, true, false,
+                                          false);
+        DP_transient_layer_content_merge(
+            tlc, 0, (DP_LayerContent *)gtlc, opacity,
+            DP_blend_mode_clip(DP_layer_props_blend_mode(lp), clip), censored);
         DP_transient_layer_content_decref(gtlc);
     }
     else {
         // Flatten the containing layers one by one, disregarding the blend
         // mode, but taking the opacity into account individually.
         DP_layer_list_merge_to_flat_image(lg->children, lpl, tlc, opacity,
-                                          include_sublayers, true, censored);
+                                          include_sublayers, true, censored,
+                                          clip);
     }
 }
 
@@ -396,14 +398,15 @@ DP_TransientTile *DP_layer_group_flatten_tile(DP_LayerGroup *lg,
     DP_ViewModeContext vmc = DP_view_mode_context_make_default();
     return DP_layer_list_flatten_tile_to(
         lg->children, DP_layer_props_children_noinc(lp), tile_index, NULL,
-        DP_BIT15, (DP_UPixel8){.color = 0}, include_sublayers, false, &vmc);
+        DP_BIT15, (DP_UPixel8){.color = 0}, include_sublayers, false, false,
+        &vmc);
 }
 
 DP_TransientTile *DP_layer_group_flatten_tile_to(
     DP_LayerGroup *lg, DP_LayerProps *lp, int tile_index,
     DP_TransientTile *tt_or_null, uint16_t parent_opacity,
     DP_UPixel8 parent_tint, bool include_sublayers, bool pass_through_censored,
-    const DP_ViewModeContext *vmc)
+    bool clip, const DP_ViewModeContext *vmc)
 {
     DP_ASSERT(lg);
     DP_ASSERT(DP_atomic_get(&lg->refcount) > 0);
@@ -425,7 +428,8 @@ DP_TransientTile *DP_layer_group_flatten_tile_to(
         // merge the result with the group's blend mode and opacity.
         DP_TransientTile *gtt = DP_layer_list_flatten_tile_to(
             lg->children, lpl, tile_index, NULL, DP_BIT15,
-            (DP_UPixel8){.color = 0}, include_sublayers, false, &vmr.child_vmc);
+            (DP_UPixel8){.color = 0}, include_sublayers, false, false,
+            &vmr.child_vmc);
         if (gtt) {
             if (vmr.tint.a != 0) {
                 DP_transient_tile_tint(gtt, vmr.tint);
@@ -436,7 +440,7 @@ DP_TransientTile *DP_layer_group_flatten_tile_to(
             DP_TransientTile *tt = DP_transient_tile_merge_nullable(
                 tt_or_null,
                 censored ? DP_tile_censored_noinc() : (DP_Tile *)gtt,
-                vmr.opacity, vmr.blend_mode);
+                vmr.opacity, DP_blend_mode_clip(vmr.blend_mode, clip));
             DP_transient_tile_decref(gtt);
             return tt;
         }
@@ -450,7 +454,7 @@ DP_TransientTile *DP_layer_group_flatten_tile_to(
         return DP_layer_list_flatten_tile_to(
             lg->children, lpl, tile_index, tt_or_null, vmr.opacity,
             vmr.tint.a == 0 ? parent_tint : vmr.tint, include_sublayers,
-            censored, &vmr.child_vmc);
+            censored, clip, &vmr.child_vmc);
     }
 }
 
