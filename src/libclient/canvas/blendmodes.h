@@ -23,10 +23,10 @@ namespace blendmode {
 	QString translatedName(int mode);
 
 	//! Get the SVG name for the given blend mode
-	QString svgName(DP_BlendMode mode);
+	QString oraName(DP_BlendMode mode);
 
 	//! Find a blend mode by its SVG name
-	DP_BlendMode fromSvgName(
+	DP_BlendMode fromOraName(
 		const QString &name, DP_BlendMode defaultMode = DP_BLEND_MODE_NORMAL);
 
 	//! Get a list of brush blend modes and their translated names
