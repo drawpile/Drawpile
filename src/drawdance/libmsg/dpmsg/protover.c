@@ -217,13 +217,6 @@ bool DP_protocol_version_is_past(const DP_ProtocolVersion *protover)
                         && protover->minor < DP_PROTOCOL_VERSION_MINOR))));
 }
 
-bool DP_protocol_version_is_past_compatible(const DP_ProtocolVersion *protover)
-{
-    return protover && DP_str_equal(protover->ns, DP_PROTOCOL_VERSION_NAMESPACE)
-        && protover->server == 4 && protover->major == 21
-        && protover->minor == 2;
-}
-
 static bool is_at_least_4_24_0(const DP_ProtocolVersion *protover)
 {
     return protover && DP_str_equal(protover->ns, DP_PROTOCOL_VERSION_NAMESPACE)
@@ -296,10 +289,6 @@ DP_protocol_version_client_compatibility(const DP_ProtocolVersion *protover)
             else {
                 return DP_PROTOCOL_COMPATIBILITY_MINOR_INCOMPATIBILITY;
             }
-        }
-        else if (protover->major == 21 && protover->minor == 2) {
-            // Drawpile 2.1 recording
-            return DP_PROTOCOL_COMPATIBILITY_BACKWARD_COMPATIBLE;
         }
     }
     return DP_PROTOCOL_COMPATIBILITY_INCOMPATIBLE;

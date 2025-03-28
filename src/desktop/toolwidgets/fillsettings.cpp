@@ -215,15 +215,6 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	return m_stack;
 }
 
-void FillSettings::setCompatibilityMode(bool compatibilityMode)
-{
-	if((compatibilityMode && !m_compatibilityMode) ||
-	   (!compatibilityMode && m_compatibilityMode)) {
-		m_compatibilityMode = compatibilityMode;
-		initBlendModeOptions();
-	}
-}
-
 void FillSettings::setFeatureAccess(bool featureAccess)
 {
 	if(!featureAccess && m_featureAccess) {
@@ -463,17 +454,10 @@ void FillSettings::initBlendModeOptions()
 		m_ui->blendModeCombo->clear();
 		for(const canvas::blendmode::Named &named :
 			canvas::blendmode::pasteModeNames()) {
-			if(!m_compatibilityMode ||
-			   canvas::blendmode::isBackwardCompatibleMode(named.mode)) {
-				m_ui->blendModeCombo->addItem(named.name, int(named.mode));
-			}
+			m_ui->blendModeCombo->addItem(named.name, int(named.mode));
 		}
 	}
-	selectBlendMode(
-		!m_compatibilityMode || canvas::blendmode::isBackwardCompatibleMode(
-									DP_BlendMode(selectedBlendMode))
-			? selectedBlendMode
-			: DP_BLEND_MODE_NORMAL);
+	selectBlendMode(selectedBlendMode);
 }
 
 void FillSettings::selectBlendMode(int blendMode)

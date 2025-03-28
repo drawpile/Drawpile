@@ -35,8 +35,6 @@ public:
 	bool affectsCanvas() override { return true; }
 	bool affectsLayer() override { return false; }
 
-	void setCompatibilityMode(bool compatibilityMode);
-
 	void setActions(
 		QAction *mirror, QAction *flip, QAction *rotatecw, QAction *rotateccw,
 		QAction *shrinktoview, QAction *stamp);

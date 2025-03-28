@@ -13,7 +13,6 @@ struct LoginSessionVersion {
 	bool compatible;
 	bool future;
 	bool past;
-	bool compatibilityMode;
 };
 
 /**
@@ -50,15 +49,6 @@ struct LoginSession {
 		return newLoginsBlocked || guestLoginBlocked || webLoginBlocked;
 	}
 
-	bool isCompatibilityMode() const
-	{
-#ifdef HAVE_COMPATIBILITY_MODE
-		return version.compatibilityMode;
-#else
-		return false;
-#endif
-	}
-
 	bool isJoinable(bool mod) const
 	{
 		return (mod || !isClosed()) && version.compatible;
@@ -84,8 +74,7 @@ public:
 		IncompatibleRole, // Is the session meant for some other client version
 		JoinableRole,	  // Is this session joinable
 		NsfmRole,		  // Is this session tagged as Not Suitable For Minors
-		CompatibilityModeRole, // Is this a Drawpile 2.1.x session
-		InactiveRole,		   // Does this session have zero active users
+		InactiveRole,	  // Does this session have zero active users
 		JoinDenyReasonsRole, // Human-readable explanations why they can't join.
 		JoinDenyIcon,		 // Icon for the can't join message box.
 	};

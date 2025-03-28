@@ -27,7 +27,6 @@ struct InviteDialog::Private {
 	QAction *inviteCodeRemove = nullptr;
 	QAction *inviteCodeCopy = nullptr;
 	QString joinPassword;
-	bool compatibilityMode;
 	bool webSupported;
 	bool allowWeb;
 	bool preferWebSockets;
@@ -41,16 +40,14 @@ struct InviteDialog::Private {
 
 InviteDialog::InviteDialog(
 	widgets::NetStatus *netStatus, net::InviteListModel *inviteListModel,
-	bool compatibilityMode, bool webSupported, bool allowWeb,
-	bool preferWebSockets, bool nsfm, bool op, bool moderator,
-	bool supportsCodes, bool codesEnabled, QWidget *parent)
+	bool webSupported, bool allowWeb, bool preferWebSockets, bool nsfm, bool op,
+	bool moderator, bool supportsCodes, bool codesEnabled, QWidget *parent)
 	: QDialog{parent}
 	, d{new Private}
 {
 	d->netStatus = netStatus;
 	d->inviteListModel = inviteListModel;
 	d->joinPassword = netStatus->joinPassword();
-	d->compatibilityMode = compatibilityMode;
 	d->webSupported = webSupported;
 	d->allowWeb = allowWeb;
 	d->preferWebSockets = preferWebSockets;
@@ -140,14 +137,6 @@ InviteDialog::~InviteDialog()
 	delete d;
 }
 
-void InviteDialog::setSessionCompatibilityMode(bool compatibilityMode)
-{
-	if(compatibilityMode != d->compatibilityMode) {
-		d->compatibilityMode = compatibilityMode;
-		updateInviteLink();
-	}
-}
-
 void InviteDialog::setSessionWebSupported(bool webSupported)
 {
 	d->webSupported = webSupported;
@@ -235,7 +224,7 @@ QString InviteDialog::buildWebInviteLink(
 	if(d->preferWebSockets) {
 		queryParams.append(QStringLiteral("w"));
 	}
-	if(web && !d->compatibilityMode) {
+	if(web) {
 		queryParams.append(QStringLiteral("web"));
 	}
 	if(d->nsfm) {

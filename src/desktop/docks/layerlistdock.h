@@ -153,7 +153,7 @@ private:
 	void updateActionLabels();
 	void setActionLabel(QAction *action, const QString &text);
 	void updateLockedControls();
-	void updateBlendModes(bool compatibilityMode);
+	void updateBlendModes();
 	void updateCheckActions();
 	void forceRefreshMargin();
 	QModelIndex canMerge(const QSet<int> &topLevelIds) const;
@@ -259,7 +259,7 @@ class LayerListScrollFilter : public DrawpileQScrollerFilter {
 public:
 	explicit LayerListScrollFilter(LayerList *parent);
 
-    bool filterScroll(QWidget *w, const QPointF &point) override;
+	bool filterScroll(QWidget *w, const QPointF &point) override;
 };
 #endif
 

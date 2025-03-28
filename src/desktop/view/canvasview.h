@@ -30,7 +30,7 @@ public:
 
 	void showDisconnectedWarning(const QString &message, bool singleSession);
 	void hideDisconnectedWarning();
-	void showResetNotice(bool compatibilityMode, bool saveInProgress);
+	void showResetNotice(bool saveInProgress);
 	void hideResetNotice();
 
 signals:

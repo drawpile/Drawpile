@@ -117,8 +117,7 @@ void LayerProperties::setNewLayerItem(
 	m_ui->createdByLabel->hide();
 	m_ui->createdBy->hide();
 	updateBlendMode(
-		m_ui->blendMode, m_item.blend, m_item.group, m_item.isolated,
-		m_compatibilityMode);
+		m_ui->blendMode, m_item.blend, m_item.group, m_item.isolated);
 	// Can't apply settings to a layer that doesn't exist yet.
 	QPushButton *applyButton = m_ui->buttonBox->button(QDialogButtonBox::Apply);
 	if(applyButton) {
@@ -154,9 +153,7 @@ void LayerProperties::setLayerItem(
 	}
 	m_ui->defaultLayer->setChecked(isDefault);
 	m_ui->createdBy->setText(creator);
-	updateBlendMode(
-		m_ui->blendMode, item.blend, item.group, item.isolated,
-		m_compatibilityMode);
+	updateBlendMode(m_ui->blendMode, item.blend, item.group, item.isolated);
 }
 
 void LayerProperties::updateLayerItem(
@@ -181,24 +178,10 @@ void LayerProperties::setOpControlsEnabled(bool enabled)
 	m_ui->defaultLayer->setEnabled(enabled);
 }
 
-void LayerProperties::setCompatibilityMode(bool compatibilityMode)
-{
-	int blendModeData = m_ui->blendMode->currentData().toInt();
-	DP_BlendMode mode =
-		blendModeData == -1 ? m_item.blend : DP_BlendMode(blendModeData);
-	m_compatibilityMode = compatibilityMode;
-	updateBlendMode(
-		m_ui->blendMode, mode, m_item.group, m_item.isolated,
-		m_compatibilityMode);
-}
-
 void LayerProperties::updateBlendMode(
-	QComboBox *combo, DP_BlendMode mode, bool group, bool isolated,
-	bool compatibilityMode)
+	QComboBox *combo, DP_BlendMode mode, bool group, bool isolated)
 {
-	if(compatibilityMode) {
-		combo->setModel(compatibilityLayerBlendModes());
-	} else if(group) {
+	if(group) {
 		combo->setModel(groupBlendModes());
 	} else {
 		combo->setModel(layerBlendModes());
@@ -228,17 +211,6 @@ QStandardItemModel *LayerProperties::groupBlendModes()
 		item->setData(-1, Qt::UserRole);
 		model->appendRow(item);
 		addBlendModesTo(model);
-	}
-	return model;
-}
-
-QStandardItemModel *LayerProperties::compatibilityLayerBlendModes()
-{
-	static QStandardItemModel *model;
-	if(!model) {
-		model = new QStandardItemModel;
-		addBlendModesTo(model);
-		canvas::blendmode::setCompatibilityMode(model, true);
 	}
 	return model;
 }

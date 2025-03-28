@@ -114,7 +114,7 @@ signals:
 
 	void loggedIn(
 		const QUrl &url, uint8_t userid, bool join, bool auth,
-		const QStringList &userFlags, bool hasAutoreset, bool compatibilityMode,
+		const QStringList &userFlags, bool hasAutoreset,
 		const QString &joinPassword, const QString &authId);
 
 	void loggingOut();
@@ -180,7 +180,6 @@ private:
 	bool m_supportsCryptBanImpEx = false;
 	bool m_supportsModBanImpEx = false;
 	bool m_supportsAbuseReports = false;
-	bool m_compatibilityMode = false;
 	bool m_canReceive = true;
 	bool m_receiveMore = false;
 	bool m_handlingError = false;

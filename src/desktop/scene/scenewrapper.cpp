@@ -189,9 +189,9 @@ void SceneWrapper::hideDisconnectedWarning()
 	m_view->hideDisconnectedWarning();
 }
 
-void SceneWrapper::showResetNotice(bool compatibilityMode, bool saveInProgress)
+void SceneWrapper::showResetNotice(bool saveInProgress)
 {
-	m_view->showResetNotice(compatibilityMode, saveInProgress);
+	m_view->showResetNotice(saveInProgress);
 }
 
 void SceneWrapper::showPopupNotice(const QString &message)
