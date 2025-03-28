@@ -41,6 +41,8 @@ LayerProperties::LayerProperties(uint8_t localUser, QWidget *parent)
 
 	connect(m_ui->title, &QLineEdit::returnPressed, this, &QDialog::accept);
 	connect(
+		m_ui->clip, &QCheckBox::clicked, this, &LayerProperties::updateClip);
+	connect(
 		m_ui->sketchMode, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox), this,
 		&LayerProperties::updateSketchMode);
 	connect(
@@ -84,14 +86,15 @@ void LayerProperties::setNewLayerItem(
 	m_item = {
 		0,	   QString(), 1.0f,	 DP_BLEND_MODE_NORMAL,
 		0.0f,  QColor(),  false, false,
-		false, group,	  group, 0,
-		0,	   0,		  0,
+		false, false,	  group, group,
+		0,	   0,		  0,	 0,
 	};
 	m_selectedId = selectedId;
 	m_wasDefault = false;
 	setWindowTitle(group ? tr("New Layer Group") : tr("New Layer"));
 	m_ui->title->setText(title);
 	m_ui->opacitySlider->setValue(100);
+	m_ui->clip->setChecked(false);
 	m_ui->visible->setChecked(true);
 	m_ui->censored->setChecked(false);
 	setSketchParamsFromSettings();
@@ -99,7 +102,8 @@ void LayerProperties::setNewLayerItem(
 	m_ui->createdByLabel->hide();
 	m_ui->createdBy->hide();
 	updateBlendMode(
-		m_ui->blendMode, m_item.blend, m_item.group, m_item.isolated);
+		m_ui->blendMode, m_item.blend, m_item.group, m_item.isolated,
+		m_item.clip);
 	// Can't apply settings to a layer that doesn't exist yet.
 	QPushButton *applyButton = m_ui->buttonBox->button(QDialogButtonBox::Apply);
 	if(applyButton) {
@@ -116,6 +120,7 @@ void LayerProperties::setLayerItem(
 
 	m_ui->title->setText(item.title);
 	m_ui->opacitySlider->setValue(qRound(item.opacity * 100.0f));
+	m_ui->clip->setChecked(item.clip);
 	m_ui->visible->setChecked(!item.hidden);
 	m_ui->censored->setChecked(item.actuallyCensored());
 	if(item.sketchOpacity <= 0.0f) {
@@ -128,7 +133,8 @@ void LayerProperties::setLayerItem(
 	}
 	m_ui->defaultLayer->setChecked(isDefault);
 	m_ui->createdBy->setText(creator);
-	updateBlendMode(m_ui->blendMode, item.blend, item.group, item.isolated);
+	updateBlendMode(
+		m_ui->blendMode, item.blend, item.group, item.isolated, item.clip);
 }
 
 void LayerProperties::updateLayerItem(
@@ -154,12 +160,12 @@ void LayerProperties::setOpControlsEnabled(bool enabled)
 }
 
 void LayerProperties::updateBlendMode(
-	QComboBox *combo, DP_BlendMode mode, bool group, bool isolated)
+	QComboBox *combo, DP_BlendMode mode, bool group, bool isolated, bool clip)
 {
 	if(group) {
-		combo->setModel(groupBlendModes());
+		combo->setModel(clip ? groupBlendModesClip() : groupBlendModes());
 	} else {
-		combo->setModel(layerBlendModes());
+		combo->setModel(clip ? layerBlendModesClip() : layerBlendModes());
 	}
 	// If this is an unknown blend mode, hide the control to avoid damage.
 	int blendModeIndex = searchBlendModeIndex(combo, mode);
@@ -172,7 +178,17 @@ QStandardItemModel *LayerProperties::layerBlendModes()
 	static QStandardItemModel *model;
 	if(!model) {
 		model = new QStandardItemModel;
-		addBlendModesTo(model);
+		addBlendModesTo(model, false);
+	}
+	return model;
+}
+
+QStandardItemModel *LayerProperties::layerBlendModesClip()
+{
+	static QStandardItemModel *model;
+	if(!model) {
+		model = new QStandardItemModel;
+		addBlendModesTo(model, true);
 	}
 	return model;
 }
@@ -182,10 +198,17 @@ QStandardItemModel *LayerProperties::groupBlendModes()
 	static QStandardItemModel *model;
 	if(!model) {
 		model = new QStandardItemModel;
-		QStandardItem *item = new QStandardItem{tr("Pass Through")};
-		item->setData(-1, Qt::UserRole);
-		model->appendRow(item);
-		addBlendModesTo(model);
+		addGroupBlendModesTo(model, false);
+	}
+	return model;
+}
+
+QStandardItemModel *LayerProperties::groupBlendModesClip()
+{
+	static QStandardItemModel *model;
+	if(!model) {
+		model = new QStandardItemModel;
+		addGroupBlendModesTo(model, true);
 	}
 	return model;
 }
@@ -195,6 +218,27 @@ void LayerProperties::showEvent(QShowEvent *event)
 	QDialog::showEvent(event);
 	m_ui->title->setFocus(Qt::PopupFocusReason);
 	m_ui->title->selectAll();
+}
+
+void LayerProperties::updateClip(bool clip)
+{
+	int index = m_ui->blendMode->currentIndex();
+	int blendMode = m_ui->blendMode->itemData(index).toInt();
+	if(m_item.group) {
+		m_ui->blendMode->setModel(
+			clip ? groupBlendModesClip() : groupBlendModes());
+	} else {
+		m_ui->blendMode->setModel(
+			clip ? layerBlendModesClip() : layerBlendModes());
+	}
+
+	if(clip && blendMode == DP_BLEND_MODE_RECOLOR) {
+		int normalIndex =
+			searchBlendModeIndex(m_ui->blendMode, DP_BLEND_MODE_NORMAL);
+		m_ui->blendMode->setCurrentIndex(normalIndex == -1 ? 0 : normalIndex);
+	} else {
+		m_ui->blendMode->setCurrentIndex(index);
+	}
 }
 
 void LayerProperties::updateSketchMode(compat::CheckBoxState state)
@@ -244,7 +288,16 @@ void LayerProperties::saveSketchParametersToSettings(
 void LayerProperties::apply()
 {
 	if(m_item.id == 0) {
-		int blendModeData = m_ui->blendMode->currentData().toInt();
+		int blendMode = m_ui->blendMode->currentData().toInt();
+		if(blendMode == -1) {
+			blendMode = DP_BLEND_MODE_NORMAL;
+		}
+
+		bool clip = m_ui->clip->isChecked();
+		if(clip) {
+			blendMode = DP_blend_mode_to_alpha_affecting(blendMode);
+		}
+
 		int sketchOpacity = m_ui->sketchMode->isChecked()
 								? m_ui->sketchOpacitySlider->value()
 								: 0;
@@ -253,9 +306,8 @@ void LayerProperties::apply()
 		saveSketchParametersToSettings(sketchOpacity, sketchTint);
 		emit addLayerOrGroupRequested(
 			m_selectedId, m_item.group, m_ui->title->text(),
-			m_ui->opacitySlider->value(),
-			blendModeData == -1 ? DP_BLEND_MODE_NORMAL : blendModeData,
-			m_item.group && blendModeData != -1, m_ui->censored->isChecked(),
+			m_ui->opacitySlider->value(), blendMode,
+			m_item.group && blendMode != -1, m_ui->censored->isChecked(), clip,
 			m_ui->defaultLayer->isChecked(), m_ui->visible->isChecked(),
 			sketchOpacity, sketchTint);
 	} else {
@@ -274,6 +326,7 @@ void LayerProperties::emitChanges()
 
 	const int oldOpacity = qRound(m_item.opacity * 100.0);
 	const bool censored = m_ui->censored->isChecked();
+	const bool clip = m_ui->clip->isChecked();
 	DP_BlendMode newBlendmode;
 	bool isolated;
 	if(m_ui->blendMode->isEnabled()) {
@@ -290,11 +343,18 @@ void LayerProperties::emitChanges()
 		isolated = m_item.isolated;
 	}
 
+	if(clip) {
+		newBlendmode =
+			DP_BlendMode(DP_blend_mode_to_alpha_affecting(int(newBlendmode)));
+	}
+
 	if(m_ui->opacitySlider->value() != oldOpacity ||
 	   newBlendmode != m_item.blend || censored != m_item.actuallyCensored() ||
-	   isolated != m_item.isolated) {
-		uint8_t flags = (censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
-						(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0);
+	   isolated != m_item.isolated || clip != m_item.clip) {
+		uint8_t flags =
+			(censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
+			(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0) |
+			(clip ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP : 0);
 		uint8_t opacity = qRound(m_ui->opacitySlider->value() / 100.0 * 255);
 		messages.append(net::makeLayerAttributesMessage(
 			m_user, m_item.id, 0, flags, opacity, newBlendmode));
@@ -328,12 +388,23 @@ void LayerProperties::emitChanges()
 	}
 }
 
-void LayerProperties::addBlendModesTo(QStandardItemModel *model)
+void LayerProperties::addGroupBlendModesTo(QStandardItemModel *model, bool clip)
+{
+	QStandardItem *item = new QStandardItem(tr("Pass Through"));
+	item->setData(-1, Qt::UserRole);
+	model->appendRow(item);
+	addBlendModesTo(model, clip);
+}
+
+void LayerProperties::addBlendModesTo(QStandardItemModel *model, bool clip)
 {
 	for(const canvas::blendmode::Named &m :
 		canvas::blendmode::layerModeNames()) {
 		QStandardItem *item = new QStandardItem{m.name};
 		item->setData(int(m.mode), Qt::UserRole);
+		if(clip && m.mode == DP_BLEND_MODE_RECOLOR) {
+			item->setEnabled(false);
+		}
 		model->appendRow(item);
 	}
 }

@@ -157,7 +157,8 @@ pub const DP_MSG_LAYER_ATTRIBUTES_STATIC_LENGTH: u32 = 6;
 pub const DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR: u32 = 1;
 pub const DP_MSG_LAYER_ATTRIBUTES_FLAGS_FIXED: u32 = 2;
 pub const DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED: u32 = 4;
-pub const DP_MSG_LAYER_ATTRIBUTES_NUM_FLAGS: u32 = 3;
+pub const DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP: u32 = 8;
+pub const DP_MSG_LAYER_ATTRIBUTES_NUM_FLAGS: u32 = 4;
 pub const DP_MSG_LAYER_RETITLE_STATIC_LENGTH: u32 = 2;
 pub const DP_MSG_LAYER_RETITLE_TITLE_MIN_LEN: u32 = 0;
 pub const DP_MSG_LAYER_RETITLE_TITLE_MAX_LEN: u32 = 65533;
@@ -3209,6 +3210,7 @@ extern "C" {
         parent_opacity: u16,
         include_sublayers: bool,
         pass_through_censored: bool,
+        clip: bool,
     );
 }
 extern "C" {
@@ -3229,6 +3231,7 @@ extern "C" {
         parent_tint: DP_UPixel8,
         include_sublayers: bool,
         pass_through_censored: bool,
+        clip: bool,
         vmc: *const DP_ViewModeContext,
     ) -> *mut DP_TransientTile;
 }
@@ -3316,6 +3319,12 @@ extern "C" {
     ) -> *mut DP_TransientLayerGroup;
 }
 extern "C" {
+    pub fn DP_layer_list_entry_width(lle: *mut DP_LayerListEntry) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_layer_list_entry_height(lle: *mut DP_LayerListEntry) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn DP_layer_list_new() -> *mut DP_LayerList;
 }
 extern "C" {
@@ -3389,6 +3398,7 @@ extern "C" {
         include_sublayers: bool,
         reveal_censored: bool,
         pass_through_censored: bool,
+        clip: bool,
     );
 }
 extern "C" {
@@ -3401,6 +3411,27 @@ extern "C" {
         parent_tint: DP_UPixel8,
         include_sublayers: bool,
         pass_through_censored: bool,
+        clip: bool,
+        vmc: *const DP_ViewModeContext,
+    ) -> *mut DP_TransientTile;
+}
+extern "C" {
+    pub fn DP_layer_list_flatten_clipping_tile_to(
+        user: *mut ::std::os::raw::c_void,
+        fn_: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: *mut ::std::os::raw::c_void,
+                arg2: ::std::os::raw::c_int,
+                arg3: *mut *mut DP_LayerListEntry,
+                arg4: *mut *mut DP_LayerProps,
+            ) -> DP_ViewModeContext,
+        >,
+        i: ::std::os::raw::c_int,
+        clip_count: ::std::os::raw::c_int,
+        tile_index: ::std::os::raw::c_int,
+        tt_or_null: *mut DP_TransientTile,
+        parent_opacity: u16,
+        include_sublayers: bool,
         vmc: *const DP_ViewModeContext,
     ) -> *mut DP_TransientTile;
 }
@@ -3414,6 +3445,7 @@ extern "C" {
         parent_tint: DP_UPixel8,
         include_sublayers: bool,
         pass_through_censored: bool,
+        clip: bool,
         vmc: *const DP_ViewModeContext,
     ) -> *mut DP_TransientTile;
 }
@@ -3610,6 +3642,9 @@ extern "C" {
     pub fn DP_layer_props_isolated(lp: *mut DP_LayerProps) -> bool;
 }
 extern "C" {
+    pub fn DP_layer_props_clip(lp: *mut DP_LayerProps) -> bool;
+}
+extern "C" {
     pub fn DP_layer_props_visible(lp: *mut DP_LayerProps) -> bool;
 }
 extern "C" {
@@ -3694,6 +3729,9 @@ extern "C" {
     pub fn DP_transient_layer_props_isolated(tlp: *mut DP_TransientLayerProps) -> bool;
 }
 extern "C" {
+    pub fn DP_transient_layer_props_clip(tlp: *mut DP_TransientLayerProps) -> bool;
+}
+extern "C" {
     pub fn DP_transient_layer_props_visible(tlp: *mut DP_TransientLayerProps) -> bool;
 }
 extern "C" {
@@ -3748,6 +3786,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_transient_layer_props_isolated_set(tlp: *mut DP_TransientLayerProps, isolated: bool);
+}
+extern "C" {
+    pub fn DP_transient_layer_props_clip_set(tlp: *mut DP_TransientLayerProps, clip: bool);
 }
 extern "C" {
     pub fn DP_transient_layer_props_title_set(
@@ -5806,6 +5847,16 @@ extern "C" {
         out_os: *mut *const DP_OnionSkin,
         out_parent_opacity: *mut u16,
         out_parent_tint: *mut DP_UPixel8,
+        clip_count: *mut ::std::os::raw::c_int,
+    ) -> DP_ViewModeContext;
+}
+extern "C" {
+    pub fn DP_view_mode_context_root_at_clip(
+        vmcr: *const DP_ViewModeContextRoot,
+        cs: *mut DP_CanvasState,
+        index: ::std::os::raw::c_int,
+        out_lle: *mut *mut DP_LayerListEntry,
+        out_lp: *mut *mut DP_LayerProps,
     ) -> DP_ViewModeContext;
 }
 extern "C" {
@@ -8795,6 +8846,11 @@ extern "C" {
         out_alpha_affecting: *mut DP_BlendMode,
         out_alpha_preserving: *mut DP_BlendMode,
     ) -> bool;
+}
+extern "C" {
+    pub fn DP_blend_mode_to_alpha_preserving(
+        blend_mode: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

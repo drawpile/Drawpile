@@ -700,3 +700,99 @@ bool DP_blend_mode_alpha_preserve_pair(int blend_mode,
     }
     return true;
 }
+
+int DP_blend_mode_to_alpha_affecting(int blend_mode)
+{
+    switch (blend_mode) {
+    case DP_BLEND_MODE_RECOLOR:
+        return DP_BLEND_MODE_NORMAL;
+    case DP_BLEND_MODE_MULTIPLY:
+        return DP_BLEND_MODE_MULTIPLY_ALPHA;
+    case DP_BLEND_MODE_DIVIDE:
+        return DP_BLEND_MODE_DIVIDE_ALPHA;
+    case DP_BLEND_MODE_BURN:
+        return DP_BLEND_MODE_BURN_ALPHA;
+    case DP_BLEND_MODE_DODGE:
+        return DP_BLEND_MODE_DODGE_ALPHA;
+    case DP_BLEND_MODE_DARKEN:
+        return DP_BLEND_MODE_DARKEN_ALPHA;
+    case DP_BLEND_MODE_LIGHTEN:
+        return DP_BLEND_MODE_LIGHTEN_ALPHA;
+    case DP_BLEND_MODE_SUBTRACT:
+        return DP_BLEND_MODE_SUBTRACT_ALPHA;
+    case DP_BLEND_MODE_ADD:
+        return DP_BLEND_MODE_ADD_ALPHA;
+    case DP_BLEND_MODE_SCREEN:
+        return DP_BLEND_MODE_SCREEN_ALPHA;
+    case DP_BLEND_MODE_LUMINOSITY_SHINE_SAI:
+        return DP_BLEND_MODE_LUMINOSITY_SHINE_SAI_ALPHA;
+    case DP_BLEND_MODE_OVERLAY:
+        return DP_BLEND_MODE_OVERLAY_ALPHA;
+    case DP_BLEND_MODE_HARD_LIGHT:
+        return DP_BLEND_MODE_HARD_LIGHT_ALPHA;
+    case DP_BLEND_MODE_SOFT_LIGHT:
+        return DP_BLEND_MODE_SOFT_LIGHT_ALPHA;
+    case DP_BLEND_MODE_LINEAR_BURN:
+        return DP_BLEND_MODE_LINEAR_BURN_ALPHA;
+    case DP_BLEND_MODE_LINEAR_LIGHT:
+        return DP_BLEND_MODE_LINEAR_LIGHT_ALPHA;
+    case DP_BLEND_MODE_HUE:
+        return DP_BLEND_MODE_HUE_ALPHA;
+    case DP_BLEND_MODE_SATURATION:
+        return DP_BLEND_MODE_SATURATION_ALPHA;
+    case DP_BLEND_MODE_LUMINOSITY:
+        return DP_BLEND_MODE_LUMINOSITY_ALPHA;
+    case DP_BLEND_MODE_COLOR:
+        return DP_BLEND_MODE_COLOR_ALPHA;
+    default:
+        return blend_mode;
+    }
+}
+
+int DP_blend_mode_to_alpha_preserving(int blend_mode)
+{
+    switch (blend_mode) {
+    case DP_BLEND_MODE_NORMAL:
+        return DP_BLEND_MODE_RECOLOR;
+    case DP_BLEND_MODE_MULTIPLY_ALPHA:
+        return DP_BLEND_MODE_MULTIPLY;
+    case DP_BLEND_MODE_DIVIDE_ALPHA:
+        return DP_BLEND_MODE_DIVIDE;
+    case DP_BLEND_MODE_BURN_ALPHA:
+        return DP_BLEND_MODE_BURN;
+    case DP_BLEND_MODE_DODGE_ALPHA:
+        return DP_BLEND_MODE_DODGE;
+    case DP_BLEND_MODE_DARKEN_ALPHA:
+        return DP_BLEND_MODE_DARKEN;
+    case DP_BLEND_MODE_LIGHTEN_ALPHA:
+        return DP_BLEND_MODE_LIGHTEN;
+    case DP_BLEND_MODE_SUBTRACT_ALPHA:
+        return DP_BLEND_MODE_SUBTRACT;
+    case DP_BLEND_MODE_ADD_ALPHA:
+        return DP_BLEND_MODE_ADD;
+    case DP_BLEND_MODE_SCREEN_ALPHA:
+        return DP_BLEND_MODE_SCREEN;
+    case DP_BLEND_MODE_LUMINOSITY_SHINE_SAI_ALPHA:
+        return DP_BLEND_MODE_LUMINOSITY_SHINE_SAI;
+    case DP_BLEND_MODE_OVERLAY_ALPHA:
+        return DP_BLEND_MODE_OVERLAY;
+    case DP_BLEND_MODE_HARD_LIGHT_ALPHA:
+        return DP_BLEND_MODE_HARD_LIGHT;
+    case DP_BLEND_MODE_SOFT_LIGHT_ALPHA:
+        return DP_BLEND_MODE_SOFT_LIGHT;
+    case DP_BLEND_MODE_LINEAR_BURN_ALPHA:
+        return DP_BLEND_MODE_LINEAR_BURN;
+    case DP_BLEND_MODE_LINEAR_LIGHT_ALPHA:
+        return DP_BLEND_MODE_LINEAR_LIGHT;
+    case DP_BLEND_MODE_HUE_ALPHA:
+        return DP_BLEND_MODE_HUE;
+    case DP_BLEND_MODE_SATURATION_ALPHA:
+        return DP_BLEND_MODE_SATURATION;
+    case DP_BLEND_MODE_LUMINOSITY_ALPHA:
+        return DP_BLEND_MODE_LUMINOSITY;
+    case DP_BLEND_MODE_COLOR_ALPHA:
+        return DP_BLEND_MODE_COLOR;
+    default:
+        return blend_mode;
+    }
+}

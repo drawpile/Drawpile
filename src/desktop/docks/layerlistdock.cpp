@@ -118,14 +118,6 @@ private:
 LayerList::LayerList(QWidget *parent)
 	: DockBase(
 		  tr("Layers"), QString(), QIcon::fromTheme("layer-visible-on"), parent)
-	, m_canvas(nullptr)
-	, m_currentId(0)
-	, m_nearestToDeletedId(0)
-	, m_trackId(0)
-	, m_frame(-1)
-	, m_noupdate(false)
-	, m_updateBlendModeIndex(-1)
-	, m_updateOpacity(-1)
 {
 	m_debounceTimer = new QTimer{this};
 	m_debounceTimer->setSingleShot(true);
@@ -136,13 +128,26 @@ LayerList::LayerList(QWidget *parent)
 	setTitleBarWidget(titlebar);
 
 	m_lockButton =
-		new widgets::GroupedToolButton{widgets::GroupedToolButton::NotGrouped};
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
 	m_lockButton->setIcon(QIcon::fromTheme("object-locked"));
+	m_lockButton->setToolTip(tr("Locks and permissions"));
+	m_lockButton->setStatusTip(m_lockButton->toolTip());
 	m_lockButton->setCheckable(true);
 	m_lockButton->setPopupMode(QToolButton::InstantPopup);
 	titlebar->addCustomWidget(m_lockButton);
-	titlebar->addSpace(4);
 
+	m_clipButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+	m_clipButton->setIcon(QIcon::fromTheme("drawpile_selection_intersect"));
+	m_clipButton->setToolTip(tr("Clip to layer below"));
+	m_clipButton->setStatusTip(m_clipButton->toolTip());
+	m_clipButton->setCheckable(true);
+	connect(
+		m_clipButton, &widgets::GroupedToolButton::clicked, this,
+		&LayerList::clipChanged);
+	titlebar->addCustomWidget(m_clipButton);
+
+	titlebar->addSpace(4);
 	m_blendModeCombo = new QComboBox;
 	m_blendModeCombo->setMinimumWidth(24);
 	utils::setWidgetRetainSizeWhenHidden(m_blendModeCombo, true);
@@ -542,6 +547,8 @@ void LayerList::updateLockedControls()
 
 	m_lockButton->setEnabled(
 		canEditCurrent && haveAnySelected && canEditCurrent);
+	m_clipButton->setEnabled(
+		canEditCurrent && haveAnySelected && canEditSelected);
 	m_blendModeCombo->setEnabled(
 		canEditCurrent && haveAnySelected && canEditSelected);
 	m_opacitySlider->setEnabled(
@@ -563,17 +570,6 @@ void LayerList::updateLockedControls()
 	}
 
 	updateFillSourceLayerId();
-}
-
-void LayerList::updateBlendModes()
-{
-	QModelIndex index = currentSelection();
-	if(currentSelection().isValid()) {
-		const canvas::LayerListItem &layer =
-			index.data().value<canvas::LayerListItem>();
-		dialogs::LayerProperties::updateBlendMode(
-			m_blendModeCombo, layer.blend, layer.group, layer.isolated);
-	}
 }
 
 void LayerList::updateCheckActions()
@@ -851,7 +847,7 @@ void LayerList::addOrPromptLayerOrGroup(bool group)
 
 void LayerList::addLayerOrGroupFromPrompt(
 	int selectedId, bool group, const QString &title, int opacityPercent,
-	int blendMode, bool isolated, bool censored, bool defaultLayer,
+	int blendMode, bool isolated, bool censored, bool clip, bool defaultLayer,
 	bool visible, int sketchOpacityPercent, const QColor &sketchTint)
 {
 	net::MessageList msgs;
@@ -862,12 +858,16 @@ void LayerList::addLayerOrGroupFromPrompt(
 		title);
 	if(layerId > 0 && !msgs.isEmpty()) {
 		uint8_t contextId = m_canvas->localUserId();
+		if(clip) {
+			blendMode = DP_blend_mode_to_alpha_affecting(blendMode);
+		}
 		if(opacityPercent != 100 || blendMode != DP_BLEND_MODE_NORMAL ||
 		   (group && !isolated) || censored) {
 			uint8_t flags =
 				(group && isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED
 								   : 0) |
-				(censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0);
+				(censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
+				(clip ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP : 0);
 			msgs.append(net::makeLayerAttributesMessage(
 				contextId, layerId, 0, flags,
 				qRound(opacityPercent / 100.0 * 255), blendMode));
@@ -1816,6 +1816,7 @@ void LayerList::updateUiFromCurrent()
 	m_currentId = layer.id;
 
 	QScopedValueRollback<bool> rollback(m_noupdate, true);
+	m_clipButton->setChecked(layer.clip);
 	m_sketchMode = layer.sketchOpacity > 0.0f;
 	m_sketchButton->setChecked(m_sketchMode);
 	m_sketchButton->setGroupPosition(
@@ -1830,7 +1831,7 @@ void LayerList::updateUiFromCurrent()
 
 	m_aclmenu->setCensored(layer.actuallyCensored());
 	dialogs::LayerProperties::updateBlendMode(
-		m_blendModeCombo, layer.blend, layer.group, layer.isolated);
+		m_blendModeCombo, layer.blend, layer.group, layer.isolated, layer.clip);
 	m_opacitySlider->setPrefix(m_sketchMode ? tr("Sketch: ") : tr("Opacity: "));
 	m_opacitySlider->setValue(
 		(m_sketchMode ? layer.sketchOpacity : layer.opacity) * 100.0 + 0.5);
@@ -1864,6 +1865,15 @@ void LayerList::userLockStatusChanged(bool)
 	updateCheckActions();
 }
 
+void LayerList::clipChanged(bool clip)
+{
+	if(!m_noupdate) {
+		m_updateClip = clip ? 1 : 0;
+		m_debounceTimer->stop();
+		triggerUpdate();
+	}
+}
+
 void LayerList::blendModeChanged(int index)
 {
 	if(m_noupdate) {
@@ -1890,9 +1900,11 @@ void LayerList::triggerUpdate()
 	m_debounceTimer->stop();
 
 	int selectedCount = m_selectedIds.size();
+	bool haveClipUpdate = m_updateClip != -1;
 	bool haveBlendModeUpdate = m_updateBlendModeIndex != -1;
 	bool haveOpacityUpdate = m_updateOpacity != -1;
-	bool haveAnyAttributeUpdate = haveBlendModeUpdate || haveOpacityUpdate;
+	bool haveAnyAttributeUpdate =
+		haveClipUpdate || haveBlendModeUpdate || haveOpacityUpdate;
 	bool haveSketchOpacityUpdate = m_updateSketchOpacity != -1;
 	bool haveSketchTintUpdate = m_updateSketchTint.isValid();
 	bool haveAnySketchUpdate = haveSketchOpacityUpdate || haveSketchTintUpdate;
@@ -1910,11 +1922,15 @@ void LayerList::triggerUpdate()
 
 		net::MessageList msgs;
 		uint8_t contextId = m_canvas->localUserId();
+		bool targetClip = false;
 		int targetBlendMode = -1;
 		float targetOpacity = 0.0f;
 		if(haveAnyAttributeUpdate) {
 			msgs.reserve(indexes.size() + 1);
 			msgs.append(net::makeUndoPointMessage(contextId));
+			if(haveClipUpdate) {
+				targetClip = m_clipButton->isChecked();
+			}
 			if(haveBlendModeUpdate) {
 				targetBlendMode =
 					m_blendModeCombo->itemData(m_updateBlendModeIndex).toInt();
@@ -1939,6 +1955,8 @@ void LayerList::triggerUpdate()
 				idx.data().value<canvas::LayerListItem>();
 
 			if(haveAnyAttributeUpdate && canEditLayer(idx)) {
+				bool clip = haveClipUpdate ? targetClip : layer.clip;
+
 				DP_BlendMode mode;
 				bool isolated;
 				if(haveBlendModeUpdate) {
@@ -1951,6 +1969,11 @@ void LayerList::triggerUpdate()
 					isolated = layer.isolated;
 				}
 
+				if(clip) {
+					mode = DP_BlendMode(
+						DP_blend_mode_to_alpha_affecting(int(mode)));
+				}
+
 				float opacity =
 					haveOpacityUpdate ? targetOpacity : layer.opacity;
 
@@ -1958,7 +1981,8 @@ void LayerList::triggerUpdate()
 					(layer.actuallyCensored()
 						 ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR
 						 : 0) |
-					(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0);
+					(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0) |
+					(clip ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP : 0);
 
 				msgs.append(net::makeLayerAttributesMessage(
 					contextId, layer.id, 0, flags, opacity * 255.0f + 0.5f,
@@ -1980,6 +2004,7 @@ void LayerList::triggerUpdate()
 		}
 	}
 
+	m_updateClip = -1;
 	m_updateBlendModeIndex = -1;
 	m_updateOpacity = -1;
 	m_updateSketchOpacity = -1;
