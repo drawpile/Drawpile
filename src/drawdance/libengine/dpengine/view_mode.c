@@ -469,11 +469,22 @@ bool DP_view_mode_context_excludes_everything(const DP_ViewModeContext *vmc)
     return vmc->internal_type == TYPE_NOTHING;
 }
 
+static int count_clipping_layers(DP_LayerPropsList *lpl, int i, int count)
+{
+    int clip_count = 0;
+    for (int j = i + 1;
+         j < count && DP_layer_props_clip(DP_layer_props_list_at_noinc(lpl, j));
+         ++j) {
+        ++clip_count;
+    }
+    return clip_count;
+}
+
 DP_ViewModeContext DP_view_mode_context_root_at(
     const DP_ViewModeContextRoot *vmcr, DP_CanvasState *cs, int index,
     DP_LayerListEntry **out_lle, DP_LayerProps **out_lp,
     const DP_OnionSkin **out_os, uint16_t *out_parent_opacity,
-    DP_UPixel8 *out_parent_tint)
+    DP_UPixel8 *out_parent_tint, int *out_clip_count)
 {
     DP_ASSERT(vmcr);
     DP_ASSERT(cs);
@@ -499,6 +510,7 @@ DP_ViewModeContext DP_view_mode_context_root_at(
                 *out_os = vmt->onion_skin;
                 DP_layer_routes_entry_parent_opacity_tint(
                     lre, cs, out_parent_opacity, out_parent_tint);
+                *out_clip_count = 0;
                 return make_frame_context(internal_type, index, vmb);
             }
             else {
@@ -509,14 +521,20 @@ DP_ViewModeContext DP_view_mode_context_root_at(
         *out_lp = NULL;
         *out_os = NULL;
         *out_parent_opacity = DP_BIT15;
+        *out_parent_tint = (DP_UPixel8){0};
+        *out_clip_count = 0;
         return make_nothing_context();
     }
     else {
+        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, index);
         *out_lle = DP_layer_list_at_noinc(ll, index);
-        *out_lp = DP_layer_props_list_at_noinc(lpl, index);
+        *out_lp = lp;
         *out_os = NULL;
         *out_parent_opacity = DP_BIT15;
         *out_parent_tint = (DP_UPixel8){0};
+        *out_clip_count = index == 0 || !DP_layer_props_clip(lp)
+                            ? count_clipping_layers(lpl, index, vmcr->count)
+                            : 0;
         DP_ViewModeContext vmc;
         vmc.internal_type = internal_type;
         if (internal_type == TYPE_CALLBACK) {
@@ -527,6 +545,19 @@ DP_ViewModeContext DP_view_mode_context_root_at(
         }
         return vmc;
     }
+}
+
+DP_ViewModeContext DP_view_mode_context_root_at_clip(
+    const DP_ViewModeContextRoot *vmcr, DP_CanvasState *cs, int index,
+    DP_LayerListEntry **out_lle, DP_LayerProps **out_lp)
+{
+    const DP_OnionSkin *os;
+    uint16_t parent_opacity;
+    DP_UPixel8 parent_tint;
+    int clip_count;
+    return DP_view_mode_context_root_at(vmcr, cs, index, out_lle, out_lp, &os,
+                                        &parent_opacity, &parent_tint,
+                                        &clip_count);
 }
 
 static bool is_effectively_visible(DP_LayerProps *lp, uint16_t parent_opacity,

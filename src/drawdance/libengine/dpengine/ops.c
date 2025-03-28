@@ -325,7 +325,7 @@ static DP_TransientLayerProps *get_layer_props(DP_TransientCanvasState *tcs,
 DP_CanvasState *DP_ops_layer_attributes(DP_CanvasState *cs, int layer_id,
                                         int sublayer_id, uint16_t opacity,
                                         int blend_mode, bool censored,
-                                        bool isolated)
+                                        bool isolated, bool clip)
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
     DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
@@ -347,6 +347,7 @@ DP_CanvasState *DP_ops_layer_attributes(DP_CanvasState *cs, int layer_id,
     DP_transient_layer_props_blend_mode_set(tlp, blend_mode);
     DP_transient_layer_props_censored_set(tlp, censored);
     DP_transient_layer_props_isolated_set(tlp, isolated);
+    DP_transient_layer_props_clip_set(tlp, clip);
 
     return DP_transient_canvas_state_persist(tcs);
 }
@@ -673,12 +674,30 @@ static void delete_layer(DP_TransientCanvasState *tcs, unsigned int context_id,
         uint16_t opacity = DP_layer_props_opacity(delete_lp);
         int blend_mode = DP_layer_props_blend_mode(delete_lp);
 
+        // Adjust the blend mode according to the clipping group state. Merging
+        // a clipped layer into an unclipped layer should preserve alpha,
+        // whereas merging a clipped layer into another clipped layer should
+        // affect it. This will give correct results when merging layers down.
+        DP_BlendMode alpha_affecting;
+        DP_BlendMode alpha_preserving;
+        if (DP_layer_props_clip(delete_lp)
+            && DP_blend_mode_alpha_preserve_pair(blend_mode, &alpha_affecting,
+                                                 &alpha_preserving)) {
+            if (DP_layer_props_clip(DP_layer_routes_entry_props(
+                    merge_lre, (DP_CanvasState *)tcs))) {
+                blend_mode = (int)alpha_affecting;
+            }
+            else {
+                blend_mode = (int)alpha_preserving;
+            }
+        }
+
         DP_LayerListEntry *delete_lle =
             DP_transient_layer_list_at_noinc(delete_tll, delete_last_index);
         if (DP_layer_list_entry_is_group(delete_lle)) {
             DP_layer_group_merge_to_flat_image(
                 DP_layer_list_entry_group_noinc(delete_lle), delete_lp,
-                merge_tlc, DP_BIT15, true, false);
+                merge_tlc, DP_BIT15, true, false, false);
         }
         else {
             DP_transient_layer_content_merge(

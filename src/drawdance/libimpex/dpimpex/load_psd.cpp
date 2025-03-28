@@ -143,41 +143,41 @@ static int extract_blend_mode(uint32_t key)
     case psd::blendMode::NORMAL:
         return DP_BLEND_MODE_NORMAL;
     case psd::blendMode::DARKEN:
-        return DP_BLEND_MODE_DARKEN;
+        return DP_BLEND_MODE_DARKEN_ALPHA;
     case psd::blendMode::MULTIPLY:
-        return DP_BLEND_MODE_MULTIPLY;
+        return DP_BLEND_MODE_MULTIPLY_ALPHA;
     case psd::blendMode::COLOR_BURN:
-        return DP_BLEND_MODE_BURN;
+        return DP_BLEND_MODE_BURN_ALPHA;
     case psd::blendMode::LINEAR_BURN:
-        return DP_BLEND_MODE_LINEAR_BURN;
+        return DP_BLEND_MODE_LINEAR_BURN_ALPHA;
     case psd::blendMode::LIGHTEN:
-        return DP_BLEND_MODE_LIGHTEN;
+        return DP_BLEND_MODE_LIGHTEN_ALPHA;
     case psd::blendMode::SCREEN:
-        return DP_BLEND_MODE_SCREEN;
+        return DP_BLEND_MODE_SCREEN_ALPHA;
     case psd::blendMode::COLOR_DODGE:
-        return DP_BLEND_MODE_DODGE;
+        return DP_BLEND_MODE_DODGE_ALPHA;
     case psd::blendMode::LINEAR_DODGE:
-        return DP_BLEND_MODE_ADD;
+        return DP_BLEND_MODE_ADD_ALPHA;
     case psd::blendMode::OVERLAY:
-        return DP_BLEND_MODE_OVERLAY;
+        return DP_BLEND_MODE_OVERLAY_ALPHA;
     case psd::blendMode::SOFT_LIGHT:
-        return DP_BLEND_MODE_SOFT_LIGHT;
+        return DP_BLEND_MODE_SOFT_LIGHT_ALPHA;
     case psd::blendMode::HARD_LIGHT:
-        return DP_BLEND_MODE_HARD_LIGHT;
+        return DP_BLEND_MODE_HARD_LIGHT_ALPHA;
     case psd::blendMode::LINEAR_LIGHT:
-        return DP_BLEND_MODE_LINEAR_LIGHT;
+        return DP_BLEND_MODE_LINEAR_LIGHT_ALPHA;
     case psd::blendMode::SUBTRACT:
-        return DP_BLEND_MODE_SUBTRACT;
+        return DP_BLEND_MODE_SUBTRACT_ALPHA;
     case psd::blendMode::DIVIDE:
-        return DP_BLEND_MODE_DIVIDE;
+        return DP_BLEND_MODE_DIVIDE_ALPHA;
     case psd::blendMode::HUE:
-        return DP_BLEND_MODE_HUE;
+        return DP_BLEND_MODE_HUE_ALPHA;
     case psd::blendMode::SATURATION:
-        return DP_BLEND_MODE_SATURATION;
+        return DP_BLEND_MODE_SATURATION_ALPHA;
     case psd::blendMode::COLOR:
-        return DP_BLEND_MODE_COLOR;
+        return DP_BLEND_MODE_COLOR_ALPHA;
     case psd::blendMode::LUMINOSITY:
-        return DP_BLEND_MODE_LUMINOSITY;
+        return DP_BLEND_MODE_LUMINOSITY_ALPHA;
     default:
         DP_warn("Unhandled PSD blend mode '%s'",
                 psd::blendMode::ToString(mode));
@@ -200,6 +200,9 @@ static void apply_layer_props(DP_TransientLayerProps *tlp, psd::Layer *layer)
     }
     if (DP_transient_layer_props_children_noinc(tlp) && layer->isPassThrough) {
         DP_transient_layer_props_isolated_set(tlp, false);
+    }
+    if (layer->clipping == 1) {
+        DP_transient_layer_props_clip_set(tlp, true);
     }
 }
 

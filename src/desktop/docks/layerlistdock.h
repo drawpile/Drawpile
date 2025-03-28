@@ -144,6 +144,7 @@ private slots:
 
 	void layerLockStatusChanged(int layerId);
 	void userLockStatusChanged(bool);
+	void clipChanged(bool clip);
 	void blendModeChanged(int index);
 	void opacityChanged(int value);
 
@@ -153,7 +154,6 @@ private:
 	void updateActionLabels();
 	void setActionLabel(QAction *action, const QString &text);
 	void updateLockedControls();
-	void updateBlendModes();
 	void updateCheckActions();
 	void forceRefreshMargin();
 	QModelIndex canMerge(const QSet<int> &topLevelIds) const;
@@ -169,8 +169,9 @@ private:
 	void addOrPromptLayerOrGroup(bool group);
 	void addLayerOrGroupFromPrompt(
 		int selectedId, bool group, const QString &title, int opacityPercent,
-		int blendMode, bool isolated, bool censored, bool defaultLayer,
-		bool visible, int sketchOpacityPercent, const QColor &sketchTint);
+		int blendMode, bool isolated, bool censored, bool clip,
+		bool defaultLayer, bool visible, int sketchOpacityPercent,
+		const QColor &sketchTint);
 	void addLayerOrGroup(
 		bool group, bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset);
 	int makeAddLayerOrGroupCommands(
@@ -217,33 +218,35 @@ private:
 
 	QString getBaseName(bool group);
 
-	canvas::CanvasModel *m_canvas;
+	canvas::CanvasModel *m_canvas = nullptr;
 
 	// cache selection and remember it across model resets
-	int m_currentId;
-	int m_nearestToDeletedId;
+	int m_currentId = 0;
+	int m_nearestToDeletedId = 0;
 	QSet<int> m_selectedIds;
 
 	// try to retain view status across model resets
 	QSet<int> m_expandedGroups;
-	int m_lastScrollPosition;
+	int m_lastScrollPosition = 0;
 
-	int m_trackId;
-	int m_frame;
+	int m_trackId = 0;
+	int m_frame = -1;
 
-	bool m_noupdate;
+	bool m_noupdate = false;
 	bool m_sketchMode = false;
 
 	QMenu *m_contextMenu;
 	LayerAclMenu *m_aclmenu;
 
 	QTimer *m_debounceTimer;
-	int m_updateBlendModeIndex;
-	int m_updateOpacity;
+	int m_updateClip = -1;
+	int m_updateBlendModeIndex = -1;
+	int m_updateOpacity = -1;
 	int m_updateSketchOpacity = -1;
 	QColor m_updateSketchTint;
 
 	widgets::GroupedToolButton *m_lockButton;
+	widgets::GroupedToolButton *m_clipButton;
 	QComboBox *m_blendModeCombo;
 	KisSliderSpinBox *m_opacitySlider;
 	widgets::GroupedToolButton *m_sketchButton;

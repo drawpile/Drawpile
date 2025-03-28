@@ -8,7 +8,6 @@
 #include <dpcommon/conversions.h>
 #include <dpcommon/input.h>
 #include <dpcommon/perf.h>
-#include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
 #include <dpcommon/vector.h>
 #include <dpcommon/worker.h>
@@ -95,6 +94,8 @@ typedef struct DP_ReadOraGroup {
     DP_TransientLayerGroup *tlg;
     DP_TransientLayerProps *tlp;
     int child_count;
+    bool maybe_clipping_group;
+    bool clip_bottom;
 } DP_ReadOraGroup;
 
 typedef struct DP_ReadOraChildren {
@@ -142,16 +143,16 @@ typedef struct DP_ReadOraContext {
     int next_annotation_id;
     int next_track_id;
     int garbage_depth;
-    DP_Queue groups;
-    DP_Queue children;
-    DP_Queue annotations;
+    DP_Vector groups;
+    DP_Vector children;
+    DP_Vector annotations;
     DP_Vector tracks;
     size_t text_capacity;
     size_t text_len;
     char *text;
 } DP_ReadOraContext;
 
-static void dispose_child(void *element, DP_UNUSED void *user)
+static void dispose_child(void *element)
 {
     DP_ReadOraChildren *roc = element;
     DP_TransientLayerProps *tlp = roc->tlp;
@@ -164,7 +165,7 @@ static void dispose_child(void *element, DP_UNUSED void *user)
     DP_transient_layer_props_decref(tlp);
 }
 
-static void dispose_annotation(void *element, DP_UNUSED void *user)
+static void dispose_annotation(void *element)
 {
     DP_Annotation *a = element;
     DP_annotation_decref(a);
@@ -293,17 +294,18 @@ static uint32_t ora_read_color_attribute(DP_XmlElement *element,
 }
 
 static void push_group(DP_ReadOraContext *c, DP_TransientLayerGroup *tlg,
-                       DP_TransientLayerProps *tlp)
+                       DP_TransientLayerProps *tlp, bool maybe_clipping_group,
+                       bool clip_bottom)
 {
-    DP_ReadOraGroup *rog = DP_queue_push(&c->groups, sizeof(*rog));
-    *rog = (DP_ReadOraGroup){tlg, tlp, 0};
+    DP_ReadOraGroup rog = {tlg, tlp, 0, maybe_clipping_group, clip_bottom};
+    DP_VECTOR_PUSH_TYPE(&c->groups, DP_ReadOraGroup, rog);
 }
 
 static void push_layer_children(DP_ReadOraContext *c, DP_ReadOraChildren roc)
 {
-    DP_ReadOraGroup *rog = DP_queue_peek_last(&c->groups, sizeof(*rog));
+    DP_ReadOraGroup *rog = &DP_VECTOR_LAST_TYPE(&c->groups, DP_ReadOraGroup);
     ++rog->child_count;
-    *(DP_ReadOraChildren *)DP_queue_push(&c->children, sizeof(roc)) = roc;
+    DP_VECTOR_PUSH_TYPE(&c->children, DP_ReadOraChildren, roc);
 }
 
 static bool ora_handle_image(DP_ReadOraContext *c, DP_XmlElement *element)
@@ -349,7 +351,7 @@ static bool ora_handle_image(DP_ReadOraContext *c, DP_XmlElement *element)
         DP_transient_document_metadata_framerate_set(tdm, framerate);
     }
 
-    push_group(c, NULL, NULL);
+    push_group(c, NULL, NULL, false, false);
     c->expect = DP_READ_ORA_EXPECT_ROOT_STACK_OR_ANNOTATIONS_OR_TIMELINE;
     return true;
 }
@@ -395,16 +397,21 @@ static DP_TransientLayerProps *ora_make_layer_props(DP_XmlElement *element,
         DP_xml_element_attribute(element, NULL, "composite-op"),
         DP_BLEND_MODE_NORMAL);
 
-    DP_BlendMode alpha_affecting_blend_mode;
-    DP_BlendMode alpha_preserving_blend_mode;
-    if (DP_blend_mode_alpha_preserve_pair((int)blend_mode,
-                                          &alpha_affecting_blend_mode,
-                                          &alpha_preserving_blend_mode)) {
-        if (ora_read_bool_attribute(element, NULL, "alpha-preserve")) {
-            blend_mode = alpha_preserving_blend_mode;
-        }
-        else {
-            blend_mode = alpha_affecting_blend_mode;
+    // Recolor is saved as svc:src-atop, which is alpha-preserving on its own.
+    // Entering the block below would incorrectly translate it to Normal in
+    // absence of a redundant alpha-preserve attribute.
+    if (blend_mode != DP_BLEND_MODE_RECOLOR) {
+        DP_BlendMode alpha_affecting_blend_mode;
+        DP_BlendMode alpha_preserving_blend_mode;
+        if (DP_blend_mode_alpha_preserve_pair((int)blend_mode,
+                                              &alpha_affecting_blend_mode,
+                                              &alpha_preserving_blend_mode)) {
+            if (ora_read_bool_attribute(element, NULL, "alpha-preserve")) {
+                blend_mode = alpha_preserving_blend_mode;
+            }
+            else {
+                blend_mode = alpha_affecting_blend_mode;
+            }
         }
     }
 
@@ -570,6 +577,19 @@ static bool ora_handle_layer(DP_ReadOraContext *c, DP_XmlElement *element)
     return true;
 }
 
+static bool ora_is_maybe_clipping_group(DP_XmlElement *element)
+{
+    if (ora_read_bool_attribute(element, DRAWPILE_NAMESPACE,
+                                "clipping-group")) {
+        return true;
+    }
+    else {
+        const char *name = DP_xml_element_attribute(element, NULL, "name");
+        return name && strlen(name) >= 15
+            && memcmp(name, "__clippinggroup", 15) == 0;
+    }
+}
+
 static bool ora_handle_stack(DP_ReadOraContext *c, DP_XmlElement *element)
 {
     int layer_id = ora_get_next_id(&c->next_layer_id);
@@ -589,46 +609,139 @@ static bool ora_handle_stack(DP_ReadOraContext *c, DP_XmlElement *element)
     }
 
     push_layer_children(c, (DP_ReadOraChildren){.tlg = tlg, .tlp = tlp});
-    push_group(c, tlg, tlp);
+    bool maybe_clipping_group = ora_is_maybe_clipping_group(element);
+    push_group(c, tlg, tlp, maybe_clipping_group,
+               maybe_clipping_group
+                   && ora_read_bool_attribute(element, DRAWPILE_NAMESPACE,
+                                              "clip-bottom"));
+    return true;
+}
+
+static bool ora_is_valid_clip_base(DP_TransientLayerProps *tlp)
+{
+    return DP_transient_layer_props_blend_mode(tlp) == DP_BLEND_MODE_NORMAL
+        && DP_transient_layer_props_opacity(tlp) == DP_BIT15;
+}
+
+static bool ora_is_valid_clip_child(DP_TransientLayerProps *tlp)
+{
+    return DP_blend_mode_preserves_alpha(
+        DP_transient_layer_props_blend_mode(tlp));
+}
+
+static bool ora_is_actually_clipping_group(DP_ReadOraContext *c,
+                                           DP_ReadOraGroup *rog)
+{
+    if (!rog->maybe_clipping_group) {
+        return false;
+    }
+
+    size_t child_count = DP_int_to_size(rog->child_count);
+    if (child_count == 0) {
+        return false;
+    }
+
+    DP_ReadOraChildren *base_roc = &DP_VECTOR_AT_TYPE(
+        &c->children, DP_ReadOraChildren, c->children.used - 1);
+    if (!ora_is_valid_clip_base(base_roc->tlp)) {
+        return false;
+    }
+
+    for (size_t i = 1; i < child_count; ++i) {
+        DP_ReadOraChildren *child_roc = &DP_VECTOR_AT_TYPE(
+            &c->children, DP_ReadOraChildren, c->children.used - i - 1);
+        if (!ora_is_valid_clip_child(child_roc->tlp)) {
+            return false;
+        }
+    }
+
     return true;
 }
 
 static void ora_handle_stack_end(DP_ReadOraContext *c)
 {
-    DP_ReadOraGroup *rog = DP_queue_peek_last(&c->groups, sizeof(*rog));
+    DP_ReadOraGroup *rog = &DP_VECTOR_LAST_TYPE(&c->groups, DP_ReadOraGroup);
     int count = rog->child_count;
-
-    DP_TransientLayerList *tll;
-    DP_TransientLayerPropsList *tlpl;
-    if (rog->tlg) {
+    if (rog->tlg && ora_is_actually_clipping_group(c, rog)) {
         DP_ASSERT(rog->tlp);
-        tll = DP_transient_layer_group_transient_children(rog->tlg, count);
-        tlpl = DP_transient_layer_props_transient_children(rog->tlp, count);
+        DP_ReadOraChildren *base_roc = &DP_VECTOR_AT_TYPE(
+            &c->children, DP_ReadOraChildren, c->children.used - 1);
+        DP_TransientLayerProps *base_tlp = base_roc->tlp;
+        DP_transient_layer_props_opacity_set(
+            base_tlp, DP_transient_layer_props_opacity(rog->tlp));
+        DP_transient_layer_props_sketch_opacity_set(
+            base_tlp, DP_transient_layer_props_sketch_opacity(rog->tlp));
+        DP_transient_layer_props_sketch_tint_set(
+            base_tlp, DP_transient_layer_props_sketch_tint(rog->tlp));
+        DP_transient_layer_props_blend_mode_set(
+            base_tlp, DP_transient_layer_props_blend_mode(rog->tlp));
+        DP_transient_layer_props_censored_set(
+            base_tlp, DP_transient_layer_props_censored(rog->tlp));
+        DP_transient_layer_props_hidden_set(
+            base_tlp, DP_transient_layer_props_hidden(rog->tlp));
+        if (rog->clip_bottom) {
+            DP_transient_layer_props_clip_set(base_tlp, true);
+            DP_transient_layer_props_blend_mode_set(
+                base_tlp, DP_blend_mode_to_alpha_affecting(
+                              DP_transient_layer_props_blend_mode(base_tlp)));
+        }
+
+        size_t child_count = DP_int_to_size(count);
+        for (size_t i = 1; i < child_count; ++i) {
+            DP_ReadOraChildren *child_roc = &DP_VECTOR_AT_TYPE(
+                &c->children, DP_ReadOraChildren, c->children.used - i - 1);
+            DP_transient_layer_props_clip_set(child_roc->tlp, true);
+            DP_transient_layer_props_blend_mode_set(
+                child_roc->tlp,
+                DP_blend_mode_to_alpha_affecting(
+                    DP_transient_layer_props_blend_mode(child_roc->tlp)));
+        }
+
+        DP_transient_layer_group_decref(rog->tlg);
+        DP_transient_layer_props_decref(rog->tlp);
+        DP_vector_pop(&c->groups);
+        DP_VECTOR_REMOVE_TYPE(&c->children, DP_ReadOraChildren,
+                              c->children.used - child_count - 1);
+
+        DP_ReadOraGroup *parent_rog =
+            &DP_VECTOR_LAST_TYPE(&c->groups, DP_ReadOraGroup);
+        parent_rog->child_count += count - 1;
     }
     else {
-        DP_ASSERT(!rog->tlp);
-        tll = DP_transient_canvas_state_transient_layers(c->tcs, count);
-        tlpl = DP_transient_canvas_state_transient_layer_props(c->tcs, count);
-        c->expect = DP_READ_ORA_EXPECT_ROOT_STACK_OR_ANNOTATIONS_OR_TIMELINE;
-    }
-
-    for (int i = 0; i < count; ++i) {
-        DP_ReadOraChildren *roc =
-            DP_queue_peek_last(&c->children, sizeof(*roc));
-        DP_TransientLayerProps *tlp = roc->tlp;
-        if (DP_transient_layer_props_children_noinc(tlp)) {
-            DP_transient_layer_list_insert_transient_group_noinc(tll, roc->tlg,
-                                                                 i);
+        DP_TransientLayerList *tll;
+        DP_TransientLayerPropsList *tlpl;
+        if (rog->tlg) {
+            DP_ASSERT(rog->tlp);
+            tll = DP_transient_layer_group_transient_children(rog->tlg, count);
+            tlpl = DP_transient_layer_props_transient_children(rog->tlp, count);
         }
         else {
-            DP_transient_layer_list_insert_transient_content_noinc(tll,
-                                                                   roc->tlc, i);
+            DP_ASSERT(!rog->tlp);
+            tll = DP_transient_canvas_state_transient_layers(c->tcs, count);
+            tlpl =
+                DP_transient_canvas_state_transient_layer_props(c->tcs, count);
+            c->expect =
+                DP_READ_ORA_EXPECT_ROOT_STACK_OR_ANNOTATIONS_OR_TIMELINE;
         }
-        DP_transient_layer_props_list_insert_transient_noinc(tlpl, tlp, i);
-        DP_queue_pop(&c->children);
-    }
 
-    DP_queue_pop(&c->groups);
+        for (int i = 0; i < count; ++i) {
+            DP_ReadOraChildren *roc =
+                &DP_VECTOR_LAST_TYPE(&c->children, DP_ReadOraChildren);
+            DP_TransientLayerProps *tlp = roc->tlp;
+            if (DP_transient_layer_props_children_noinc(tlp)) {
+                DP_transient_layer_list_insert_transient_group_noinc(
+                    tll, roc->tlg, i);
+            }
+            else {
+                DP_transient_layer_list_insert_transient_content_noinc(
+                    tll, roc->tlc, i);
+            }
+            DP_transient_layer_props_list_insert_transient_noinc(tlpl, tlp, i);
+            DP_vector_pop(&c->children);
+        }
+
+        DP_vector_pop(&c->groups);
+    }
 }
 
 static void ora_handle_annotations(DP_ReadOraContext *c, bool in_stack)
@@ -682,9 +795,7 @@ static bool ora_handle_annotation(DP_ReadOraContext *c, DP_XmlElement *element)
         DP_transient_annotation_valign_set(ta, DP_ANNOTATION_VALIGN_BOTTOM);
     }
 
-    DP_TransientAnnotation **pp =
-        DP_queue_push(&c->annotations, sizeof(DP_TransientAnnotation *));
-    *pp = ta;
+    DP_VECTOR_PUSH_TYPE(&c->annotations, DP_TransientAnnotation *, ta);
 
     c->text_len = 0;
     c->expect = DP_READ_ORA_EXPECT_ANNOTATION_CONTENT;
@@ -693,8 +804,8 @@ static bool ora_handle_annotation(DP_ReadOraContext *c, DP_XmlElement *element)
 
 static void ora_handle_annotation_end(DP_ReadOraContext *c)
 {
-    DP_TransientAnnotation *ta = *(DP_TransientAnnotation **)DP_queue_peek_last(
-        &c->annotations, sizeof(DP_TransientAnnotation *));
+    DP_TransientAnnotation *ta =
+        DP_VECTOR_LAST_TYPE(&c->annotations, DP_TransientAnnotation *);
     DP_transient_annotation_text_set(ta, c->text, c->text_len);
     c->text_len = 0;
     c->text[0] = '\0';
@@ -707,11 +818,11 @@ static void ora_handle_annotations_end(DP_ReadOraContext *c)
     DP_TransientAnnotationList *tal =
         DP_transient_canvas_state_transient_annotations(c->tcs, count);
     for (int i = 0; i < count; ++i) {
-        DP_Annotation *a = *(DP_Annotation **)DP_queue_peek(
-            &c->annotations, sizeof(DP_Annotation *));
+        DP_Annotation *a =
+            DP_VECTOR_AT_TYPE(&c->annotations, DP_Annotation *, i);
         DP_transient_annotation_list_insert_noinc(tal, a, i);
-        DP_queue_shift(&c->annotations);
     }
+    c->annotations.used = 0;
     c->expect = c->annotations_in_stack
                   ? DP_READ_ORA_EXPECT_STACK_OR_LAYER
                   : DP_READ_ORA_EXPECT_ROOT_STACK_OR_ANNOTATIONS_OR_TIMELINE;
@@ -1185,24 +1296,23 @@ static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
         START_ID,
         START_ID,
         0,
-        DP_QUEUE_NULL,
-        DP_QUEUE_NULL,
-        DP_QUEUE_NULL,
+        DP_VECTOR_NULL,
+        DP_VECTOR_NULL,
+        DP_VECTOR_NULL,
         DP_VECTOR_NULL,
         0,
         0,
         NULL,
     };
-    DP_queue_init(&c.groups, 8, sizeof(DP_ReadOraGroup));
-    DP_queue_init(&c.children, 8, sizeof(DP_ReadOraChildren));
-    DP_queue_init(&c.annotations, 8, sizeof(DP_Annotation *));
+    DP_VECTOR_INIT_TYPE(&c.groups, DP_ReadOraGroup, 8);
+    DP_VECTOR_INIT_TYPE(&c.children, DP_ReadOraChildren, 8);
+    DP_VECTOR_INIT_TYPE(&c.annotations, DP_Annotation *, 8);
     DP_CanvasState *cs = ora_read_stack_xml(&c, flags);
-    DP_queue_each(&c.children, sizeof(DP_ReadOraChildren), dispose_child, NULL);
-    DP_queue_dispose(&c.children);
-    DP_queue_dispose(&c.groups);
-    DP_queue_each(&c.annotations, sizeof(DP_Annotation *), dispose_annotation,
-                  NULL);
-    DP_queue_dispose(&c.annotations);
+    DP_VECTOR_CLEAR_DISPOSE_TYPE(&c.children, DP_ReadOraChildren,
+                                 dispose_child);
+    DP_vector_dispose(&c.groups);
+    DP_VECTOR_CLEAR_DISPOSE_TYPE(&c.annotations, DP_Annotation *,
+                                 dispose_annotation);
     DP_VECTOR_CLEAR_DISPOSE_TYPE(&c.tracks, DP_ReadOraTrack, dispose_track);
     DP_free(c.text);
     DP_zip_reader_free(zr);
