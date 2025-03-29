@@ -69,6 +69,11 @@ public:
 		QAction *layerCheckToggle = nullptr;
 		QAction *layerCheckAll = nullptr;
 		QAction *layerUncheckAll = nullptr;
+		QActionGroup *layerAlphaGroup = nullptr;
+		QAction *layerAlphaBlend = nullptr;
+		QAction *layerAlphaPreserve = nullptr;
+		QAction *layerClip = nullptr;
+		QAction *layerAutomaticAlphaPreserve = nullptr;
 	};
 
 	LayerList(QWidget *parent = nullptr);
@@ -142,6 +147,7 @@ private slots:
 	void layerLockStatusChanged(int layerId);
 	void userLockStatusChanged(bool);
 	void clipChanged(bool clip);
+	void alphaPreserveChanged(bool alphaPreserve);
 	void blendModeChanged(int index);
 	void opacityChanged(int value);
 
@@ -162,6 +168,7 @@ private:
 		const QItemSelection &selected, const QItemSelection &deselected);
 	void updateCurrent(const QModelIndex &current);
 	void updateUiFromCurrent();
+	void setAutomaticAlphaPreserve(bool automaticAlphaPreserve);
 
 	void addOrPromptLayerOrGroup(bool group);
 	void addLayerOrGroupFromPrompt(
@@ -199,6 +206,10 @@ private:
 	void showSketchTintColorPicker();
 	void setUpdateSketchTint(const QColor &tint);
 
+	void setLayerAlphaBlend();
+	void setLayerAlphaPreserve();
+	void setLayerClip();
+
 	bool isGroupSelected() const;
 	QModelIndex currentSelection() const;
 	bool ownsAllTopLevelSelections() const;
@@ -229,12 +240,14 @@ private:
 
 	bool m_noupdate = false;
 	bool m_sketchMode = false;
+	bool m_automaticAlphaPreserve = true;
 
 	QMenu *m_contextMenu;
 	LayerAclMenu *m_aclmenu;
 
 	QTimer *m_debounceTimer;
 	int m_updateClip = -1;
+	int m_updateAlphaPreserve = -1;
 	int m_updateBlendModeIndex = -1;
 	int m_updateOpacity = -1;
 	int m_updateSketchOpacity = -1;
@@ -242,6 +255,7 @@ private:
 
 	widgets::GroupedToolButton *m_lockButton;
 	widgets::GroupedToolButton *m_clipButton;
+	widgets::GroupedToolButton *m_alphaPreserveButton;
 	QComboBox *m_blendModeCombo;
 	KisSliderSpinBox *m_opacitySlider;
 	widgets::GroupedToolButton *m_sketchButton;

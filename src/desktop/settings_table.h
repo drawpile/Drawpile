@@ -98,6 +98,7 @@ SETTING_GETSET_V(
 	any::getExactVersion, &any::set)
 #endif
 SETTING(animationExportFormat     , AnimationExportFormat     , "animationexport/format"                , int(-1))
+SETTING(automaticAlphaPreserve    , AutomaticAlphaPreserve    , "settings/automaticalphapreserve"       , int(1))
 SETTING_GETSET_V(
 	V1, brushCursor               , BrushCursor               , "settings/brushcursor"                  , int(view::Cursor::TriangleRight),
 	&viewCursor::get, &viewCursor::set)

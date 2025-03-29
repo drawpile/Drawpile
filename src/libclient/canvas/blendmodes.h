@@ -41,6 +41,16 @@ QVector<Named> pasteModeNames();
 bool isValidBrushMode(DP_BlendMode mode);
 bool isValidEraseMode(DP_BlendMode mode);
 
+bool preservesAlpha(int mode);
+bool presentsAsEraser(int mode);
+bool presentsAsAlphaPreserving(int mode);
+
+bool alphaPreservePair(
+	int mode, DP_BlendMode *outAlphaAffecting,
+	DP_BlendMode *outAlphaPreserving);
+int toAlphaAffecting(int mode);
+int toAlphaPreserving(int mode);
+
 }
 }
 

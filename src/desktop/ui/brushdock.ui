@@ -104,8 +104,8 @@
         <string>Lock alpha (recolor mode)</string>
        </property>
        <property name="icon">
-        <iconset theme="object-locked">
-         <normaloff>theme:object-locked.svg</normaloff>theme:object-locked.svg</iconset>
+        <iconset theme="drawpile_alpha_off">
+         <normaloff>theme:drawpile_alpha_off.svg</normaloff>theme:drawpile_alpha_off.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>

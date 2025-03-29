@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>350</width>
-    <height>400</height>
+    <width>400</width>
+    <height>450</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -54,42 +54,42 @@
    <item row="4" column="1">
     <widget class="QComboBox" name="blendMode"/>
    </item>
-   <item row="6" column="0">
+   <item row="9" column="0">
     <widget class="QLabel" name="visibilityLabel">
      <property name="text">
       <string>Visibility:</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
+   <item row="9" column="1">
     <widget class="QCheckBox" name="visible">
      <property name="text">
       <string>Visible to you</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="1">
+   <item row="10" column="1">
     <widget class="QCheckBox" name="censored">
      <property name="text">
       <string>Censor content</string>
      </property>
     </widget>
    </item>
-   <item row="8" column="1">
+   <item row="11" column="1">
     <widget class="QCheckBox" name="sketchMode">
      <property name="text">
       <string>Sketch mode for you</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="0">
+   <item row="12" column="0">
     <widget class="QLabel" name="sketchOpacityLabel">
      <property name="text">
       <string>Sketch Opacity:</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="1">
+   <item row="12" column="1">
     <widget class="KisSliderSpinBox" name="sketchOpacitySlider">
      <property name="suffix">
       <string>%</string>
@@ -102,35 +102,35 @@
      </property>
     </widget>
    </item>
-   <item row="10" column="0">
+   <item row="13" column="0">
     <widget class="QLabel" name="sketchTintLabel">
      <property name="text">
       <string>Sketch Tint:</string>
      </property>
     </widget>
    </item>
-   <item row="12" column="0">
+   <item row="15" column="0">
     <widget class="QLabel" name="collaborationLabel">
      <property name="text">
       <string>Collaboration:</string>
      </property>
     </widget>
    </item>
-   <item row="12" column="1">
+   <item row="15" column="1">
     <widget class="QCheckBox" name="defaultLayer">
      <property name="text">
       <string>Default for new users</string>
      </property>
     </widget>
    </item>
-   <item row="14" column="0">
+   <item row="17" column="0">
     <widget class="QLabel" name="createdByLabel">
      <property name="text">
       <string>Created by:</string>
      </property>
     </widget>
    </item>
-   <item row="14" column="1">
+   <item row="17" column="1">
     <widget class="QLabel" name="createdBy">
      <property name="text">
       <string notr="true">#0</string>
@@ -140,7 +140,7 @@
      </property>
     </widget>
    </item>
-   <item row="16" column="0">
+   <item row="19" column="0">
     <spacer name="buttonsSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -153,14 +153,14 @@
      </property>
     </spacer>
    </item>
-   <item row="17" column="0" colspan="2">
+   <item row="20" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
-   <item row="10" column="1">
+   <item row="13" column="1">
     <widget class="QWidget" name="sketchTintWidget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="spacing">
@@ -237,11 +237,46 @@
      </layout>
     </widget>
    </item>
-   <item row="5" column="1">
-    <widget class="QCheckBox" name="clip">
+   <item row="6" column="1">
+    <widget class="QRadioButton" name="alphaPreserve">
+     <property name="text">
+      <string>Inherit alpha</string>
+     </property>
+     <property name="icon">
+      <iconset theme="drawpile_alpha_off">
+       <normaloff>theme:drawpile_alpha_off.svg</normaloff>theme:drawpile_alpha_off.svg</iconset>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">alphaGroup</string>
+     </attribute>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="QRadioButton" name="clip">
      <property name="text">
       <string>Clip to layer below</string>
      </property>
+     <property name="icon">
+      <iconset theme="drawpile_selection_intersect">
+       <normaloff>theme:drawpile_selection_intersect.svg</normaloff>theme:drawpile_selection_intersect.svg</iconset>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">alphaGroup</string>
+     </attribute>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QRadioButton" name="alphaBlend">
+     <property name="text">
+      <string>Blend alpha</string>
+     </property>
+     <property name="icon">
+      <iconset theme="drawpile_alpha_on">
+       <normaloff>theme:drawpile_alpha_on.svg</normaloff>theme:drawpile_alpha_on.svg</iconset>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">alphaGroup</string>
+     </attribute>
     </widget>
    </item>
   </layout>
@@ -274,4 +309,7 @@
  </tabstops>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="alphaGroup"/>
+ </buttongroups>
 </ui>

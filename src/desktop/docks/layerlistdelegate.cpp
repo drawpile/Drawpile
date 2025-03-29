@@ -2,6 +2,7 @@
 #include "desktop/docks/layerlistdelegate.h"
 #include "desktop/docks/layerlistdock.h"
 #include "desktop/main.h"
+#include "libclient/canvas/blendmodes.h"
 #include "libclient/canvas/layerlist.h"
 #include <QIcon>
 #include <QLineEdit>
@@ -15,11 +16,15 @@ namespace docks {
 LayerListDelegate::LayerListDelegate(LayerList *dock)
 	: QItemDelegate(dock)
 	, m_dock(dock)
-	, m_visibleIcon(QIcon::fromTheme("layer-visible-on"))
+	, m_layerIcon(QIcon::fromTheme("layer-visible-on"))
+	, m_layerHiddenIcon(QIcon::fromTheme("layer-visible-off"))
+	, m_layerAlphaIcon(QIcon::fromTheme("drawpile_layer_alpha_on"))
+	, m_layerAlphaHiddenIcon(QIcon::fromTheme("drawpile_layer_alpha_off"))
 	, m_groupIcon(QIcon::fromTheme("folder"))
-	, m_censoredIcon(QIcon(":/icons/censored.svg"))
-	, m_hiddenIcon(QIcon::fromTheme("layer-visible-off"))
 	, m_groupHiddenIcon(QIcon::fromTheme("drawpile_folderhidden"))
+	, m_groupAlphaIcon(QIcon::fromTheme("drawpile_folder_alpha_on"))
+	, m_groupAlphaHiddenIcon(QIcon::fromTheme("drawpile_folder_alpha_off"))
+	, m_censoredIcon(QIcon(":/icons/censored.svg"))
 	, m_sketchIcon(QIcon::fromTheme("draw-freehand"))
 	, m_fillIcon(QIcon::fromTheme("tag"))
 	, m_forbiddenIcon(QIcon::fromTheme("cards-block"))
@@ -40,6 +45,7 @@ void LayerListDelegate::paint(
 		index.data().value<canvas::LayerListItem>();
 	drawOpacityGlyph(
 		glyphRect, painter, layer.opacity, layer.hidden,
+		canvas::blendmode::presentsAsAlphaPreserving(layer.blend),
 		layer.actuallyCensored(), layer.group);
 
 	if(index.data(canvas::LayerListModel::IsClipRole).toBool()) {
@@ -278,30 +284,57 @@ void LayerListDelegate::drawBackgroundFor(
 
 void LayerListDelegate::drawOpacityGlyph(
 	const QRect &rect, QPainter *painter, float value, bool hidden,
-	bool censored, bool group) const
+	bool alphaPreserve, bool censored, bool group) const
 {
 	QRect r(
 		int(rect.left() + rect.width() / 2 - ICON_SIZE / 2),
 		int(rect.top() + rect.height() / 2 - ICON_SIZE / 2), ICON_SIZE,
 		ICON_SIZE);
 
-	if(hidden) {
-		if(group) {
-			m_groupHiddenIcon.paint(painter, r);
-		} else {
-			m_hiddenIcon.paint(painter, r);
-		}
+	const QIcon &icon = getOpacityGlyph(hidden, alphaPreserve, censored, group);
+	if(hidden || value >= 0.995f) {
+		icon.paint(painter, r);
 	} else {
 		qreal originalOpacity = painter->opacity();
 		painter->setOpacity(originalOpacity * value);
-		if(censored) {
-			m_censoredIcon.paint(painter, r);
-		} else if(group) {
-			m_groupIcon.paint(painter, r);
-		} else {
-			m_visibleIcon.paint(painter, r);
-		}
+		icon.paint(painter, r);
 		painter->setOpacity(originalOpacity);
+	}
+}
+
+const QIcon &LayerListDelegate::getOpacityGlyph(
+	bool hidden, bool alphaPreserve, bool censored, bool group) const
+{
+	if(hidden) {
+		if(group) {
+			if(alphaPreserve) {
+				return m_groupAlphaHiddenIcon;
+			} else {
+				return m_groupHiddenIcon;
+			}
+		} else {
+			if(alphaPreserve) {
+				return m_layerAlphaHiddenIcon;
+			} else {
+				return m_layerHiddenIcon;
+			}
+		}
+	} else if(censored) {
+		return m_censoredIcon;
+	} else {
+		if(group) {
+			if(alphaPreserve) {
+				return m_groupAlphaIcon;
+			} else {
+				return m_groupIcon;
+			}
+		} else {
+			if(alphaPreserve) {
+				return m_layerAlphaIcon;
+			} else {
+				return m_layerIcon;
+			}
+		}
 	}
 }
 

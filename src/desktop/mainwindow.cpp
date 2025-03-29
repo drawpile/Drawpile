@@ -562,6 +562,8 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		this, &MainWindow::updateTemporaryToolSwitch);
 	settings.bindTemporaryToolSwitchMs(
 		this, &MainWindow::updateTemporaryToolSwitch);
+	settings.bindAutomaticAlphaPreserve(
+		getAction("layerautomaticalphapreserve"));
 	settings.trySubmit();
 
 	m_updatingInterfaceMode = false;
@@ -5522,6 +5524,39 @@ void MainWindow::setupActions()
 	QAction *layerSetFillSource = makeAction("layersetfillsource", tr("Set as Fill Source")).icon("tag").noDefaultShortcut();
 	QAction *layerClearFillSource = makeAction("layerclearfillsource", tr("Clear Fill Source")).icon("tag-delete").noDefaultShortcut();
 
+	// clang-format on
+	QAction *layerAlphaBlend =
+		makeAction(
+			"layeralphablend", QCoreApplication::translate(
+								   "LayerProperties", "Blend alpha", nullptr))
+			.checkable()
+			.checked()
+			.noDefaultShortcut();
+	QAction *layerAlphaPreserve =
+		makeAction(
+			"layeralphapreserve",
+			QCoreApplication::translate(
+				"LayerProperties", "Inherit alpha", nullptr))
+			.checkable()
+			.noDefaultShortcut();
+	QAction *layerClip =
+		makeAction(
+			"layerclip", QCoreApplication::translate(
+							 "LayerProperties", "Clip to layer below", nullptr))
+			.checkable()
+			.noDefaultShortcut();
+	QActionGroup *layerAlphaGroup = new QActionGroup(this);
+	layerAlphaGroup->addAction(layerAlphaBlend);
+	layerAlphaGroup->addAction(layerAlphaPreserve);
+	layerAlphaGroup->addAction(layerClip);
+	QAction *layerAutomaticAlphaPreserve =
+		makeAction(
+			"layerautomaticalphapreserve", tr("Automatically inherit alpha"))
+			.statusTip(tr("Inherit alpha based on blend mode"))
+			.checkable()
+			.noDefaultShortcut();
+	// clang-format off
+
 	QAction *layerUpAct = makeAction("layer-up", tr("Select Above")).shortcut("Shift+X").autoRepeat();
 	QAction *layerDownAct = makeAction("layer-down", tr("Select Below")).shortcut("Shift+Z").autoRepeat();
 
@@ -5547,6 +5582,12 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerSketchToggle);
 	layerMenu->addAction(layerSetFillSource);
 	layerMenu->addAction(layerClearFillSource);
+
+	layerMenu->addSeparator();
+	layerMenu->addAction(layerAlphaBlend);
+	layerMenu->addAction(layerAlphaPreserve);
+	layerMenu->addAction(layerClip);
+	layerMenu->addAction(layerAutomaticAlphaPreserve);
 
 	layerMenu->addSeparator();
 	layerMenu->addAction(layerUpAct);
@@ -5823,7 +5864,36 @@ void MainWindow::setupActions()
 	animationMenu->addAction(trackBelow);
 
 	m_currentdoctools->addAction(showFlipbook);
-	m_dockLayers->setLayerEditActions({layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, layerVisibilityToggle, layerSketchToggle, layerSetFillSource, layerClearFillSource, keyFrameSetLayer, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, layerKeyFrameGroup, layerCheckToggle, layerCheckAll, layerUncheckAll});
+	m_dockLayers->setLayerEditActions({
+		layerAdd,
+		groupAdd,
+		layerDupe,
+		layerMerge,
+		layerProperties,
+		layerDelete,
+		layerVisibilityToggle,
+		layerSketchToggle,
+		layerSetFillSource,
+		layerClearFillSource,
+		keyFrameSetLayer,
+		keyFrameCreateLayer,
+		keyFrameCreateLayerNext,
+		keyFrameCreateLayerPrev,
+		keyFrameCreateGroup,
+		keyFrameCreateGroupNext,
+		keyFrameCreateGroupPrev,
+		keyFrameDuplicateNext,
+		keyFrameDuplicatePrev,
+		layerKeyFrameGroup,
+		layerCheckToggle,
+		layerCheckAll,
+		layerUncheckAll,
+		layerAlphaGroup,
+		layerAlphaBlend,
+		layerAlphaPreserve,
+		layerClip,
+		layerAutomaticAlphaPreserve,
+	});
 	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, keyFrameExposureIncrease, keyFrameExposureDecrease, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, keyFrameNext, keyFramePrev, trackAbove, trackBelow, animationLayerMenu, animationGroupMenu, animationDuplicateMenu}, layerViewNormal, layerViewCurrentFrame, showFlipbook);
 
 	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);

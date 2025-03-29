@@ -242,5 +242,45 @@ bool isValidEraseMode(DP_BlendMode mode)
 	return hasFlag(mode, EraserMode);
 }
 
+bool preservesAlpha(int mode)
+{
+	return mode >= 0 && mode < DP_BLEND_MODE_COUNT &&
+		   DP_blend_mode_preserves_alpha(mode);
+}
+
+bool presentsAsEraser(int mode)
+{
+	return mode >= 0 && mode < DP_BLEND_MODE_COUNT &&
+		   DP_blend_mode_presents_as_eraser(mode);
+}
+
+bool presentsAsAlphaPreserving(int mode)
+{
+	return mode >= 0 && mode < DP_BLEND_MODE_COUNT &&
+		   DP_blend_mode_presents_as_alpha_preserving(mode);
+}
+
+bool alphaPreservePair(
+	int mode, DP_BlendMode *outAlphaAffecting, DP_BlendMode *outAlphaPreserving)
+{
+	return mode >= 0 && mode < DP_BLEND_MODE_COUNT &&
+		   DP_blend_mode_alpha_preserve_pair(
+			   mode, outAlphaAffecting, outAlphaPreserving);
+}
+
+int toAlphaAffecting(int mode)
+{
+	return mode >= 0 && mode < DP_BLEND_MODE_COUNT
+			   ? DP_blend_mode_to_alpha_affecting(mode)
+			   : DP_BLEND_MODE_NORMAL;
+}
+
+int toAlphaPreserving(int mode)
+{
+	return mode >= 0 && mode < DP_BLEND_MODE_COUNT
+			   ? DP_blend_mode_to_alpha_preserving(mode)
+			   : DP_BLEND_MODE_RECOLOR;
+}
+
 }
 }

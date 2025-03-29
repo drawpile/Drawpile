@@ -36,12 +36,16 @@ public:
 
 	static void updateBlendMode(
 		QComboBox *combo, DP_BlendMode mode, bool group, bool isolated,
-		bool clip);
+		bool clip, bool automaticAlphaPreserve);
 
+	static QStandardItemModel *
+	blendModesFor(bool group, bool clip, bool automaticAlphaPreserve);
 	static QStandardItemModel *layerBlendModes();
-	static QStandardItemModel *layerBlendModesClip();
+	static QStandardItemModel *layerBlendModesRecolorDisabled();
+	static QStandardItemModel *layerBlendModesRecolorOmitted();
 	static QStandardItemModel *groupBlendModes();
-	static QStandardItemModel *groupBlendModesClip();
+	static QStandardItemModel *groupBlendModesRecolorDisabled();
+	static QStandardItemModel *groupBlendModesRecolorOmitted();
 
 signals:
 	void addLayerOrGroupRequested(
@@ -57,7 +61,13 @@ protected:
 	virtual void showEvent(QShowEvent *event) override;
 
 private:
-	void updateClip(bool clip);
+	static constexpr int RECOLOR_ENABLED = 0;
+	static constexpr int RECOLOR_DISABLED = 1;
+	static constexpr int RECOLOR_OMITTED = 2;
+
+	void setAutomaticAlphaPerserve(bool automaticAlphaPreserve);
+	void updateAlpha(QAbstractButton *button);
+	void updateAlphaBasedOnBlendMode(int index);
 	void updateSketchMode(compat::CheckBoxState state);
 	void showSketchTintColorPicker();
 	void setSketchTintTo(const QColor &color);
@@ -65,15 +75,17 @@ private:
 	void saveSketchParametersToSettings(int opacityPercent, const QColor &tint);
 	void apply();
 	void emitChanges();
-	static void addGroupBlendModesTo(QStandardItemModel *model, bool clip);
-	static void addBlendModesTo(QStandardItemModel *model, bool clip);
+	static void addGroupBlendModesTo(QStandardItemModel *model, int recolor);
+	static void addBlendModesTo(QStandardItemModel *model, int recolor);
 	static int searchBlendModeIndex(QComboBox *combo, DP_BlendMode mode);
 
 	Ui_LayerProperties *m_ui;
 	canvas::LayerListItem m_item = canvas::LayerListItem::null();
 	int m_selectedId = 0;
+	bool m_updating = false;
 	bool m_wasDefault = false;
 	bool m_controlsEnabled = true;
+	bool m_automaticAlphaPreserve = true;
 	uint8_t m_user;
 };
 
