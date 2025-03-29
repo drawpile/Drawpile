@@ -3,10 +3,11 @@ extern "C" {
 #include <dpengine/brush.h>
 #include <dpmsg/blend_mode.h>
 }
+#include "desktop/main.h"
 #include "desktop/toolwidgets/brushsettings.h"
+#include "desktop/utils/blendmodes.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/brushes/brush.h"
-#include "libclient/canvas/blendmodes.h"
 #include "libclient/settings.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
@@ -132,8 +133,6 @@ struct BrushSettings::Private {
 	Ui_BrushDock ui;
 	brushes::BrushPresetModel *brushPresets = nullptr;
 
-	QStandardItemModel *blendModes, *eraseModes;
-
 	Slot brushSlots[BRUSH_SLOT_COUNT];
 	Slot eraserSlot;
 	QWidget *brushSlotWidget = nullptr;
@@ -160,22 +159,22 @@ struct BrushSettings::Private {
 	QAction *finishStrokesAction;
 	QAction *useBrushSampleCountAction;
 
+	QMenu *menu;
+
+	qreal quickAdjust1 = 0.0;
 	int brushSlotCount = BRUSH_SLOT_COUNT;
 	int current = 0;
 	int previousNonEraser = 0;
 	BrushMode previousBrushMode = UnknownMode;
 	int previousBlendMode = -1;
-
-	qreal quickAdjust1 = 0.0;
-
+	int globalSmoothing;
 	bool finishStrokes = true;
 	bool useBrushSampleCount = true;
-	int globalSmoothing;
-
 	bool shareBrushSlotColor = false;
 	bool presetsAttach = true;
 	bool updateInProgress = false;
 	bool myPaintAllowed = true;
+	bool automaticAlphaPreserve = true;
 
 	Slot &slotAt(int i)
 	{
@@ -217,21 +216,6 @@ struct BrushSettings::Private {
 	Private(BrushSettings *b)
 		: globalSmoothing{b->controller()->globalSmoothing()}
 	{
-		blendModes = new QStandardItemModel(0, 1, b);
-		for(const canvas::blendmode::Named &m :
-			canvas::blendmode::brushModeNames()) {
-			QStandardItem *item = new QStandardItem(m.name);
-			item->setData(int(m.mode), Qt::UserRole);
-			blendModes->appendRow(item);
-		}
-
-		eraseModes = new QStandardItemModel(0, 1, b);
-		for(const canvas::blendmode::Named &m :
-			canvas::blendmode::eraserModeNames()) {
-			QStandardItem *item = new QStandardItem(m.name);
-			item->setData(int(m.mode), Qt::UserRole);
-			eraseModes->appendRow(item);
-		}
 	}
 };
 
@@ -248,9 +232,12 @@ BrushSettings::~BrushSettings()
 
 void BrushSettings::setActions(
 	QAction *reloadPreset, QAction *reloadPresetSlots,
-	QAction *reloadAllPresets, QAction *nextSlot, QAction *previousSlot)
+	QAction *reloadAllPresets, QAction *nextSlot, QAction *previousSlot,
+	QAction *automaticAlphaPreserve)
 {
 	d->ui.reloadButton->setDefaultAction(reloadPreset);
+	d->menu->addSeparator();
+	d->menu->addAction(automaticAlphaPreserve);
 	connect(
 		d->resetBrushAction, &QAction::triggered, reloadPreset,
 		&QAction::trigger);
@@ -323,43 +310,44 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	menuButton->setIcon(QIcon::fromTheme("application-menu"));
 	menuButton->setPopupMode(QToolButton::InstantPopup);
 
-	QMenu *menu = new QMenu(menuButton);
-	menuButton->setMenu(menu);
+	d->menu = new QMenu(menuButton);
+	menuButton->setMenu(d->menu);
 
 	d->editBrushAction =
-		menu->addAction(QIcon::fromTheme("configure"), tr("&Edit Brush…"));
+		d->menu->addAction(QIcon::fromTheme("configure"), tr("&Edit Brush…"));
 	connect(
 		d->editBrushAction, &QAction::triggered, this,
 		&BrushSettings::editBrushRequested);
 
-	d->resetBrushAction =
-		menu->addAction(QIcon::fromTheme("view-refresh"), tr("&Reset Brush"));
-	d->resetSlotPresetsAction = menu->addAction(tr("Reset All Brush &Slots"));
-	d->resetAllPresetsAction = menu->addAction(tr("Reset All &Brushes"));
+	d->resetBrushAction = d->menu->addAction(
+		QIcon::fromTheme("view-refresh"), tr("&Reset Brush"));
+	d->resetSlotPresetsAction =
+		d->menu->addAction(tr("Reset All Brush &Slots"));
+	d->resetAllPresetsAction = d->menu->addAction(tr("Reset All &Brushes"));
 
-	menu->addSeparator();
+	d->menu->addSeparator();
 
 	d->newBrushAction =
-		menu->addAction(QIcon::fromTheme("list-add"), tr("&New Brush…"));
+		d->menu->addAction(QIcon::fromTheme("list-add"), tr("&New Brush…"));
 	connect(
 		d->newBrushAction, &QAction::triggered, this,
 		&BrushSettings::newBrushRequested);
 
-	d->overwriteBrushAction = menu->addAction(
+	d->overwriteBrushAction = d->menu->addAction(
 		QIcon::fromTheme("document-save"), tr("&Overwrite Brush"));
 	connect(
 		d->overwriteBrushAction, &QAction::triggered, this,
 		&BrushSettings::overwriteBrushRequested);
 
-	d->deleteBrushAction =
-		menu->addAction(QIcon::fromTheme("trash-empty"), tr("&Delete Brush"));
+	d->deleteBrushAction = d->menu->addAction(
+		QIcon::fromTheme("trash-empty"), tr("&Delete Brush"));
 	connect(
 		d->deleteBrushAction, &QAction::triggered, this,
 		&BrushSettings::deleteBrushRequested);
 
-	menu->addSeparator();
+	d->menu->addSeparator();
 
-	d->detachBrushAction = menu->addAction(
+	d->detachBrushAction = d->menu->addAction(
 		QIcon::fromTheme("network-disconnect"), tr("De&tach Brush"));
 	connect(
 		d->detachBrushAction, &QAction::triggered, this,
@@ -482,7 +470,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 
 	connect(
 		d->ui.blendmode, QOverload<int>::of(&QComboBox::activated), this,
-		&BrushSettings::selectBlendMode);
+		&BrushSettings::updateBlendMode);
 	connect(
 		d->ui.modeEraser, &QToolButton::clicked, this,
 		&BrushSettings::setEraserMode);
@@ -545,8 +533,8 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 		d->ui.modeColorpick, &QToolButton::clicked, this,
 		&BrushSettings::updateFromUi);
 	connect(
-		d->ui.modeLockAlpha, &QToolButton::clicked, this,
-		&BrushSettings::updateFromUi);
+		d->ui.alphaPreserve, &QToolButton::clicked, this,
+		&BrushSettings::updateAlphaPreserve);
 
 	connect(
 		d->stabilizerAction, &QAction::triggered, this,
@@ -586,6 +574,10 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	// startup and messing up the application layout. This will hide the excess
 	// UI elements and bring the docker to a reasonable size to begin with.
 	adjustSettingVisibilities(false, false);
+
+	desktop::settings::Settings &settings = dpApp().settings();
+	settings.bindAutomaticAlphaPreserve(
+		this, &BrushSettings::setAutomaticAlphaPreserve);
 
 	return widget;
 }
@@ -861,9 +853,13 @@ void BrushSettings::selectBrushSlot(int i)
 		emit backgroundColorChanged(d->currentBackgroundColor());
 	}
 
-	updateUi();
-
 	bool inEraserSlot = i == ERASER_SLOT_INDEX;
+	if(inEraserSlot) {
+		setEraserMode(true);
+	} else {
+		updateUi();
+	}
+
 	if((previousSlot == ERASER_SLOT_INDEX) != inEraserSlot) {
 		emit eraseModeChanged(inEraserSlot);
 	}
@@ -966,7 +962,7 @@ void BrushSettings::changeCurrentPresetThumbnail(const QPixmap &thumbnail)
 
 void BrushSettings::setEraserMode(bool erase)
 {
-	Q_ASSERT(!isCurrentEraserSlot());
+	Q_ASSERT(erase || !isCurrentEraserSlot());
 
 	brushes::ActiveBrush &brush = d->currentBrush();
 	brushes::ClassicBrush &classic = brush.classic();
@@ -1089,21 +1085,6 @@ void BrushSettings::changeRadiusLogarithmicSetting(int radiusLogarithmic)
 	}
 }
 
-void BrushSettings::selectBlendMode(int modeIndex)
-{
-	const DP_BlendMode mode = DP_BlendMode(d->ui.blendmode->model()
-											   ->index(modeIndex, 0)
-											   .data(Qt::UserRole)
-											   .toInt());
-	brushes::ClassicBrush &classic = d->currentBrush().classic();
-	if(classic.erase) {
-		classic.erase_mode = mode;
-	} else {
-		classic.brush_mode = mode;
-	}
-	updateUi();
-}
-
 void BrushSettings::updateMenuActions()
 {
 	const Preset &preset = d->currentPreset();
@@ -1135,6 +1116,66 @@ static void setMyPaintSettingFromSlider(
 		value += mypaint_brush_setting_info(setting)->min;
 	}
 	myPaintSettings.mappings[setting].base_value = value;
+}
+
+void BrushSettings::setAutomaticAlphaPreserve(bool automaticAlphaPreserve)
+{
+	if(automaticAlphaPreserve != d->automaticAlphaPreserve) {
+		d->automaticAlphaPreserve = automaticAlphaPreserve;
+		const brushes::ActiveBrush &brush = d->currentBrush();
+		if(brush.activeType() == brushes::ActiveBrush::CLASSIC) {
+			const brushes::ClassicBrush &cb = brush.classic();
+			int blendMode = getBlendMode();
+			QSignalBlocker blocker(d->ui.blendmode);
+			d->ui.blendmode->setModel(
+				getBrushBlendModesFor(cb.erase, automaticAlphaPreserve));
+			int index = searchBlendModeComboIndex(d->ui.blendmode, blendMode);
+			if(index != -1) {
+				d->ui.blendmode->setCurrentIndex(index);
+			}
+			d->ui.alphaPreserve->setChecked(
+				canvas::blendmode::presentsAsAlphaPreserving(blendMode));
+		} else {
+			QSignalBlocker blocker(d->ui.blendmode);
+			d->ui.blendmode->setModel(
+				getBrushBlendModesFor(false, automaticAlphaPreserve));
+		}
+	}
+}
+
+void BrushSettings::updateAlphaPreserve(bool alphaPreserve)
+{
+	if(!d->updateInProgress) {
+		if(!d->currentIsMyPaint()) {
+			int blendMode = getBlendMode();
+			canvas::blendmode::adjustAlphaBehavior(blendMode, alphaPreserve);
+			int index = searchBlendModeComboIndex(d->ui.blendmode, blendMode);
+			if(index != -1) {
+				QSignalBlocker blocker(d->ui.blendmode);
+				d->ui.blendmode->setCurrentIndex(index);
+			}
+		}
+		updateFromUi();
+	}
+}
+
+void BrushSettings::updateBlendMode(int index)
+{
+	if(!d->updateInProgress) {
+		int blendMode = d->ui.blendmode->itemData(index).toInt();
+		if(d->automaticAlphaPreserve) {
+			QSignalBlocker blocker(d->ui.alphaPreserve);
+			d->ui.alphaPreserve->setChecked(
+				canvas::blendmode::presentsAsAlphaPreserving(blendMode));
+		} else {
+			canvas::blendmode::adjustAlphaBehavior(
+				blendMode, d->ui.alphaPreserve->isChecked());
+		}
+
+		brushes::ClassicBrush &classic = d->currentBrush().classic();
+		classic.setBlendMode(blendMode, classic.erase);
+		updateUi();
+	}
 }
 
 void BrushSettings::updateUi()
@@ -1183,17 +1224,16 @@ void BrushSettings::updateUi()
 	adjustSettingVisibilities(softmode, mypaintmode);
 
 	// Show correct blending mode
-	d->ui.blendmode->setModel(classic.erase ? d->eraseModes : d->blendModes);
+	d->ui.blendmode->setModel(
+		getBrushBlendModesFor(classic.erase, d->automaticAlphaPreserve));
 	d->ui.modeEraser->setChecked(brush.isEraser());
 	d->ui.modeEraser->setEnabled(!isCurrentEraserSlot());
 
-	int mode = DP_classic_brush_blend_mode(&classic);
-	d->ui.modeColorpick->setEnabled(mode != DP_BLEND_MODE_ERASE);
-	for(int i = 0; i < d->ui.blendmode->model()->rowCount(); ++i) {
-		if(d->ui.blendmode->model()->index(i, 0).data(Qt::UserRole) == mode) {
-			d->ui.blendmode->setCurrentIndex(i);
-			break;
-		}
+	int blendMode = DP_classic_brush_blend_mode(&classic);
+	d->ui.modeColorpick->setEnabled(blendMode != DP_BLEND_MODE_ERASE);
+	int blendModeIndex = searchBlendModeComboIndex(d->ui.blendmode, blendMode);
+	if(blendModeIndex != -1) {
+		d->ui.blendmode->setCurrentIndex(blendModeIndex);
 	}
 
 	// Set UI elements that are distinct between classic and MyPaint brushes
@@ -1223,9 +1263,9 @@ void BrushSettings::updateUi()
 	setSliderFromMyPaintSetting(
 		d->ui.gainBox, myPaintSettings,
 		MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG);
-	d->ui.modeLockAlpha->setChecked(myPaint.constBrush().lock_alpha);
 
 	if(mypaintmode) {
+		d->ui.alphaPreserve->setChecked(myPaint.constBrush().lock_alpha);
 		setSliderFromMyPaintSetting(
 			d->ui.opacityBox, myPaintSettings, MYPAINT_BRUSH_SETTING_OPAQUE);
 		setSliderFromMyPaintSetting(
@@ -1235,6 +1275,8 @@ void BrushSettings::updateUi()
 		d->ui.modeIncremental->setEnabled(canUseIncrementalMode);
 		d->ui.modeIncremental->setVisible(canUseIncrementalMode);
 	} else {
+		d->ui.alphaPreserve->setChecked(
+			canvas::blendmode::presentsAsAlphaPreserving(blendMode));
 		d->ui.opacityBox->setValue(qRound(classic.opacity.max * 100.0));
 		d->ui.hardnessBox->setValue(qRound(classic.hardness.max * 100.0));
 		d->ui.modeIncremental->setChecked(classic.incremental);
@@ -1332,14 +1374,6 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	classic.spacing = d->ui.brushspacingBox->value() / 100.0;
 	classic.colorpick = d->ui.modeColorpick->isChecked();
 
-	DP_BlendMode mode =
-		DP_BlendMode(d->ui.blendmode->currentData(Qt::UserRole).toInt());
-	if(classic.erase && canvas::blendmode::isValidEraseMode(mode)) {
-		classic.erase_mode = mode;
-	} else if(canvas::blendmode::isValidBrushMode(mode)) {
-		classic.brush_mode = mode;
-	}
-
 	DP_MyPaintSettings &myPaintSettings = myPaint.settings();
 	setMyPaintSettingFromSlider(
 		d->ui.radiusLogarithmicBox, myPaintSettings,
@@ -1347,13 +1381,13 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	setMyPaintSettingFromSlider(
 		d->ui.gainBox, myPaintSettings,
 		MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG);
-	myPaint.brush().lock_alpha = d->ui.modeLockAlpha->isChecked();
 
 	// We want to keep MyPaint and classic brush opacity and hardness separate,
 	// since they work so differently from each other. So this will be false
 	// when switching types as to not overwrite the values with each other.
 	if(updateShared) {
 		if(mypaintmode) {
+			myPaint.brush().lock_alpha = d->ui.alphaPreserve->isChecked();
 			setMyPaintSettingFromSlider(
 				d->ui.opacityBox, myPaintSettings,
 				MYPAINT_BRUSH_SETTING_OPAQUE);
@@ -1365,6 +1399,10 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			d->ui.modeIncremental->setEnabled(canUseIncrementalMode);
 			d->ui.modeIncremental->setVisible(canUseIncrementalMode);
 		} else {
+			int blendMode = d->ui.blendmode->currentData(Qt::UserRole).toInt();
+			canvas::blendmode::adjustAlphaBehavior(
+				blendMode, d->ui.alphaPreserve->isChecked());
+			classic.setBlendMode(blendMode, classic.erase);
 			classic.opacity.max = d->ui.opacityBox->value() / 100.0;
 			classic.opacity_dynamic.type =
 				d->ui.pressureOpacity->isChecked()
@@ -1452,7 +1490,7 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 	bool locked = lock != Lock::None;
 	QPair<QWidget *, bool> widgetVisibilities[] = {
 		{d->ui.modeColorpick, !locked && !mypaintmode},
-		{d->ui.modeLockAlpha, !locked && mypaintmode},
+		{d->ui.alphaPreserve, !locked},
 		{d->ui.modeEraser, !locked},
 		{d->ui.modeIncremental, d->ui.modeIncremental->isEnabled() && !locked},
 		{d->ui.blendmode, !locked && !mypaintmode},

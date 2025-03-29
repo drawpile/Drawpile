@@ -77,6 +77,15 @@ typedef enum DP_BlendMode {
     DP_BLEND_MODE_SATURATION_ALPHA,
     DP_BLEND_MODE_LUMINOSITY_ALPHA,
     DP_BLEND_MODE_COLOR_ALPHA,
+    // The _PRESERVE blend modes are identical to the ones without that suffix.
+    // They only exist to track the intended alpha preserve state.
+    DP_BLEND_MODE_ERASE_PRESERVE,
+    DP_BLEND_MODE_BEHIND_PRESERVE,
+    DP_BLEND_MODE_COLOR_ERASE_PRESERVE,
+    DP_BLEND_MODE_ERASE_LIGHT_PRESERVE,
+    DP_BLEND_MODE_ERASE_DARK_PRESERVE,
+    DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE,
+    DP_BLEND_MODE_DARK_TO_ALPHA_PRESERVE,
     DP_BLEND_MODE_LAST_EXCEPT_REPLACE, // Put new blend modes before this value.
     // Compatibility hack, not actual blend modes. Selections need new commands,
     // which are not accepted on the thick/builtin server. So we disguise them
@@ -97,6 +106,8 @@ bool DP_blend_mode_valid_for_layer(int blend_mode);
 
 bool DP_blend_mode_valid_for_brush(int blend_mode);
 
+bool DP_blend_mode_secondary_alias(int blend_mode);
+
 const char *DP_blend_mode_enum_name(int blend_mode);
 
 const char *DP_blend_mode_enum_name_unprefixed(int blend_mode);
@@ -114,6 +125,8 @@ bool DP_blend_mode_blend_blank(int blend_mode);
 bool DP_blend_mode_preserves_alpha(int blend_mode);
 
 bool DP_blend_mode_presents_as_eraser(int blend_mode);
+
+bool DP_blend_mode_presents_as_alpha_preserving(int blend_mode);
 
 DP_BlendMode DP_blend_mode_by_ora_name(const char *svg_name,
                                        DP_BlendMode not_found_value);
