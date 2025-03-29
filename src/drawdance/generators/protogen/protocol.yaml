@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 
 _protocol:
-    version: dp:4.24.0
+    version: dp:4.25.0
     undo_depth: 30
 
 # Control messages (transparent)
