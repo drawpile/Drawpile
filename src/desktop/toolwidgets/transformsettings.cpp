@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/toolwidgets/transformsettings.h"
+#include "desktop/main.h"
+#include "desktop/utils/blendmodes.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/view/canvaswrapper.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
-#include "libclient/canvas/blendmodes.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/transformmodel.h"
-#include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
 #include "libclient/tools/transform.h"
@@ -20,6 +20,7 @@
 #include <QPushButton>
 #include <QSignalBlocker>
 #include <QSpacerItem>
+#include <QStandardItemModel>
 #include <QStyle>
 #include <QWidget>
 
@@ -272,6 +273,24 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 	modeLayout->setContentsMargins(0, 0, 0, 0);
 	modeLayout->setSpacing(0);
 	layout->addRow(tr("Mode:"), modeLayout);
+	m_alphaPreserveButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped);
+	QIcon alphaLockedUnlockedIcon;
+	alphaLockedUnlockedIcon.addFile(
+		QStringLiteral("theme:drawpile_alpha_unlocked.svg"), QSize(),
+		QIcon::Normal, QIcon::Off);
+	alphaLockedUnlockedIcon.addFile(
+		QStringLiteral("theme:drawpile_alpha_locked.svg"), QSize(),
+		QIcon::Normal, QIcon::On);
+	m_alphaPreserveButton->setIcon(alphaLockedUnlockedIcon);
+	m_alphaPreserveButton->setToolTip(
+		QCoreApplication::translate("BrushDock", "Preserve alpha"));
+	m_alphaPreserveButton->setStatusTip(m_alphaPreserveButton->toolTip());
+	m_alphaPreserveButton->setCheckable(true);
+	modeLayout->addWidget(m_alphaPreserveButton);
+	connect(
+		m_alphaPreserveButton, &widgets::GroupedToolButton::clicked, this,
+		&TransformSettings::updateAlphaPreserve);
 
 	m_blendModeCombo = new QComboBox;
 	QSizePolicy blendModeSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -281,11 +300,7 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 		m_blendModeCombo->sizePolicy().hasHeightForWidth());
 	m_blendModeCombo->setSizePolicy(blendModeSizePolicy);
 	m_blendModeCombo->setMinimumSize(QSize(24, 0));
-	for(const canvas::blendmode::Named &named :
-		canvas::blendmode::pasteModeNames()) {
-		m_blendModeCombo->addItem(named.name, int(named.mode));
-	}
-	selectBlendMode(DP_BLEND_MODE_NORMAL);
+	initBlendModeOptions();
 	modeLayout->addWidget(m_blendModeCombo);
 	connect(
 		m_blendModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -354,6 +369,10 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 	applyCancelLayout->addWidget(m_applyButton);
 	applyCancelLayout->addWidget(m_cancelButton);
 	layout->addRow(applyCancelLayout);
+
+	desktop::settings::Settings &settings = dpApp().settings();
+	settings.bindAutomaticAlphaPreserve(
+		this, &TransformSettings::setAutomaticAlphaPerserve);
 
 	return widget;
 }
@@ -424,6 +443,7 @@ void TransformSettings::updateEnabledFrom(canvas::CanvasModel *canvas)
 		m_scaleButton->setEnabled(haveTransform);
 		m_distortButton->setEnabled(haveTransform);
 		m_blendModeCombo->setEnabled(haveTransform);
+		m_alphaPreserveButton->setEnabled(haveTransform);
 		m_constrainButton->setEnabled(haveTransform);
 		m_centerButton->setEnabled(haveTransform);
 		m_opacitySlider->setEnabled(haveTransform);
@@ -480,19 +500,76 @@ void TransformSettings::showHandles()
 	tool()->setMode(TransformTool::Mode::Scale);
 }
 
+void TransformSettings::initBlendModeOptions()
+{
+	int blendMode = getCurrentBlendMode();
+	{
+		QSignalBlocker blocker(m_blendModeCombo);
+		m_blendModeCombo->setModel(
+			getFillBlendModesFor(m_automaticAlphaPreserve));
+	}
+	selectBlendMode(blendMode);
+}
+
+void TransformSettings::updateAlphaPreserve(bool alphaPreserve)
+{
+	int blendMode = m_blendModeCombo->currentData().toInt();
+	canvas::blendmode::adjustAlphaBehavior(blendMode, alphaPreserve);
+
+	int index = searchBlendModeComboIndex(m_blendModeCombo, blendMode);
+	if(index != -1) {
+		QSignalBlocker blocker(m_blendModeCombo);
+		m_blendModeCombo->setCurrentIndex(index);
+	}
+	emit blendModeChanged(blendMode);
+}
+
 void TransformSettings::updateBlendMode(int index)
 {
-	emit blendModeChanged(m_blendModeCombo->itemData(index).toInt());
+	int blendMode = m_blendModeCombo->itemData(index).toInt();
+	if(m_automaticAlphaPreserve) {
+		QSignalBlocker blocker(m_alphaPreserveButton);
+		m_alphaPreserveButton->setChecked(
+			canvas::blendmode::presentsAsAlphaPreserving(blendMode));
+	} else {
+		canvas::blendmode::adjustAlphaBehavior(
+			blendMode, m_alphaPreserveButton->isChecked());
+	}
+	emit blendModeChanged(blendMode);
 }
 
 void TransformSettings::selectBlendMode(int blendMode)
 {
-	int count = m_blendModeCombo->count();
-	for(int i = 0; i < count; ++i) {
-		if(m_blendModeCombo->itemData(i).toInt() == blendMode) {
-			m_blendModeCombo->setCurrentIndex(i);
-			break;
+	int index = searchBlendModeComboIndex(m_blendModeCombo, blendMode);
+	if(index != -1) {
+		{
+			QSignalBlocker blocker(m_blendModeCombo);
+			m_blendModeCombo->setCurrentIndex(index);
 		}
+		if(m_automaticAlphaPreserve) {
+			QSignalBlocker blocker(m_alphaPreserveButton);
+			m_alphaPreserveButton->setChecked(
+				canvas::blendmode::presentsAsAlphaPreserving(blendMode));
+		}
+		emit blendModeChanged(blendMode);
+	}
+}
+
+int TransformSettings::getCurrentBlendMode() const
+{
+	int blendMode = m_blendModeCombo->count() == 0
+						? DP_BLEND_MODE_NORMAL
+						: m_blendModeCombo->currentData().toInt();
+	canvas::blendmode::adjustAlphaBehavior(
+		blendMode, m_alphaPreserveButton->isChecked());
+	return blendMode;
+}
+
+void TransformSettings::setAutomaticAlphaPerserve(bool automaticAlphaPreserve)
+{
+	if(automaticAlphaPreserve != m_automaticAlphaPreserve) {
+		m_automaticAlphaPreserve = automaticAlphaPreserve;
+		initBlendModeOptions();
 	}
 }
 

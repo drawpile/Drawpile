@@ -66,6 +66,23 @@ bool ClassicBrush::equalPreset(
 		   smoothing == other.smoothing;
 }
 
+void ClassicBrush::setBlendMode(int blendMode, bool isErase)
+{
+	if(isErase) {
+		if(canvas::blendmode::isValidEraseMode(blendMode)) {
+			erase_mode = DP_BlendMode(blendMode);
+		} else {
+			qWarning("Invalid brush erase mode %d", blendMode);
+		}
+	} else {
+		if(canvas::blendmode::isValidBrushMode(blendMode)) {
+			brush_mode = DP_BlendMode(blendMode);
+		} else {
+			qWarning("Invalid brush blend mode %d", blendMode);
+		}
+	}
+}
+
 void ClassicBrush::setSizeCurve(const KisCubicCurve &sizeCurve)
 {
 	m_sizeCurve = sizeCurve;
@@ -171,9 +188,24 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.m_lastSmudgeDynamicType =
 		lastDynamicTypeFromJson(o, QStringLiteral("smudge"));
 
-	b.brush_mode = canvas::blendmode::fromOraName(o["blend"].toString());
-	b.erase_mode = canvas::blendmode::fromOraName(
-		o["blenderase"].toString(), DP_BLEND_MODE_ERASE);
+
+	int brushBlendMode = canvas::blendmode::fromOraName(
+		o.value(QStringLiteral("blend")).toString());
+	if(o.contains(QStringLiteral("blendalpha"))) {
+		canvas::blendmode::adjustAlphaBehavior(
+			brushBlendMode, o.value(QStringLiteral("blendalpha")).toBool());
+	}
+	b.brush_mode = DP_BlendMode(brushBlendMode);
+
+	int eraseBlendMode = canvas::blendmode::fromOraName(
+		o.value(QStringLiteral("blenderase")).toString());
+	if(o.contains(QStringLiteral("blenderasealpha"))) {
+		canvas::blendmode::adjustAlphaBehavior(
+			eraseBlendMode,
+			o.value(QStringLiteral("blenderasealpha")).toBool());
+	}
+	b.erase_mode = DP_BlendMode(eraseBlendMode);
+
 	b.erase = o["erase"].toBool();
 
 	b.stabilizationMode =
@@ -277,9 +309,24 @@ void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
 	m_lastSmudgeDynamicType =
 		lastDynamicTypeFromJson(settings, QStringLiteral("smudge"));
 
-	brush_mode = canvas::blendmode::fromOraName(settings["blend"].toString());
-	erase_mode = canvas::blendmode::fromOraName(
-		settings["blenderase"].toString(), DP_BLEND_MODE_ERASE);
+	int brushBlendMode = canvas::blendmode::fromOraName(
+		settings.value(QStringLiteral("blend")).toString());
+	if(settings.contains(QStringLiteral("blendalpha"))) {
+		canvas::blendmode::adjustAlphaBehavior(
+			brushBlendMode,
+			settings.value(QStringLiteral("blendalpha")).toBool());
+	}
+	brush_mode = DP_BlendMode(brushBlendMode);
+
+	int eraseBlendMode = canvas::blendmode::fromOraName(
+		settings.value(QStringLiteral("blenderase")).toString());
+	if(settings.contains(QStringLiteral("blenderasealpha"))) {
+		canvas::blendmode::adjustAlphaBehavior(
+			eraseBlendMode,
+			settings.value(QStringLiteral("blenderasealpha")).toBool());
+	}
+	erase_mode = DP_BlendMode(eraseBlendMode);
+
 	erase = settings["erase"].toBool();
 
 	stabilizationMode = settings["stabilizationmode"].toInt() == Smoothing
@@ -342,6 +389,11 @@ QJsonObject ClassicBrush::settingsToJson() const
 		o);
 	dynamicToJson(
 		smudge_dynamic, m_lastSmudgeDynamicType, QStringLiteral("smudge"), o);
+
+	o[QStringLiteral("blendalpha")] =
+		canvas::blendmode::presentsAsAlphaPreserving(brush_mode);
+	o[QStringLiteral("blenderasealpha")] =
+		canvas::blendmode::presentsAsAlphaPreserving(erase_mode);
 
 	o["blend"] = canvas::blendmode::oraName(brush_mode);
 	o["blenderase"] = canvas::blendmode::oraName(erase_mode);

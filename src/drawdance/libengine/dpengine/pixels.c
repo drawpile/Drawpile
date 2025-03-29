@@ -2084,10 +2084,12 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
                           base_skip);
         break;
     case DP_BLEND_MODE_BEHIND:
+    case DP_BLEND_MODE_BEHIND_PRESERVE:
         blend_mask_alpha_op(dst, src, mask, to_fix(opacity), w, h, mask_skip,
                             base_skip, blend_behind);
         break;
     case DP_BLEND_MODE_ERASE:
+    case DP_BLEND_MODE_ERASE_PRESERVE:
         blend_mask_alpha_op(dst, src, mask, to_fix(opacity), w, h, mask_skip,
                             base_skip, blend_erase);
         break;
@@ -2108,22 +2110,27 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
                             base_skip, blend_replace);
         break;
     case DP_BLEND_MODE_COLOR_ERASE:
+    case DP_BLEND_MODE_COLOR_ERASE_PRESERVE:
         blend_mask_color_erase(dst, src, mask, to_fix(opacity), w, h, mask_skip,
                                base_skip);
         break;
     case DP_BLEND_MODE_ERASE_LIGHT:
+    case DP_BLEND_MODE_ERASE_LIGHT_PRESERVE:
         blend_mask_alpha_op(dst, src, mask, to_fix(opacity), w, h, mask_skip,
                             base_skip, blend_erase_light);
         break;
     case DP_BLEND_MODE_ERASE_DARK:
+    case DP_BLEND_MODE_ERASE_DARK_PRESERVE:
         blend_mask_alpha_op(dst, src, mask, to_fix(opacity), w, h, mask_skip,
                             base_skip, blend_erase_dark);
         break;
     case DP_BLEND_MODE_LIGHT_TO_ALPHA:
+    case DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE:
         blend_mask_to_alpha_op(dst, mask, to_fix(opacity), w, h, mask_skip,
                                base_skip, blend_erase_light);
         break;
     case DP_BLEND_MODE_DARK_TO_ALPHA:
+    case DP_BLEND_MODE_DARK_TO_ALPHA_PRESERVE:
         blend_mask_to_alpha_op(dst, mask, to_fix(opacity), w, h, mask_skip,
                                base_skip, blend_erase_dark);
         break;
@@ -2475,26 +2482,32 @@ void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
                               blend_normal);
         break;
     case DP_BLEND_MODE_BEHIND:
+    case DP_BLEND_MODE_BEHIND_PRESERVE:
         blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
                               blend_behind);
         break;
     case DP_BLEND_MODE_ERASE:
+    case DP_BLEND_MODE_ERASE_PRESERVE:
         blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
                               blend_erase);
         break;
     case DP_BLEND_MODE_ERASE_LIGHT:
+    case DP_BLEND_MODE_ERASE_LIGHT_PRESERVE:
         blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
                               blend_erase_light);
         break;
     case DP_BLEND_MODE_ERASE_DARK:
+    case DP_BLEND_MODE_ERASE_DARK_PRESERVE:
         blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
                               blend_erase_dark);
         break;
     case DP_BLEND_MODE_LIGHT_TO_ALPHA:
+    case DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE:
         blend_pixels_to_alpha_op(dst, pixel_count, to_fix(opacity),
                                  blend_erase_light);
         break;
     case DP_BLEND_MODE_DARK_TO_ALPHA:
+    case DP_BLEND_MODE_DARK_TO_ALPHA_PRESERVE:
         blend_pixels_to_alpha_op(dst, pixel_count, to_fix(opacity),
                                  blend_erase_dark);
         break;
@@ -2503,6 +2516,7 @@ void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
                               blend_replace);
         break;
     case DP_BLEND_MODE_COLOR_ERASE:
+    case DP_BLEND_MODE_COLOR_ERASE_PRESERVE:
         blend_pixels_color_erase(dst, src, pixel_count, opacity);
         break;
     // Alpha-preserving separable blend modes (each channel handled separately)

@@ -562,6 +562,8 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		this, &MainWindow::updateTemporaryToolSwitch);
 	settings.bindTemporaryToolSwitchMs(
 		this, &MainWindow::updateTemporaryToolSwitch);
+	settings.bindAutomaticAlphaPreserve(
+		getAction("layerautomaticalphapreserve"), &QAction::setChecked);
 	settings.trySubmit();
 
 	m_updatingInterfaceMode = false;
@@ -5531,6 +5533,39 @@ void MainWindow::setupActions()
 	QAction *layerSetFillSource = makeAction("layersetfillsource", tr("Set as Fill Source")).icon("tag").noDefaultShortcut();
 	QAction *layerClearFillSource = makeAction("layerclearfillsource", tr("Clear Fill Source")).icon("tag-delete").noDefaultShortcut();
 
+	// clang-format on
+	QAction *layerAlphaBlend =
+		makeAction(
+			"layeralphablend", QCoreApplication::translate(
+								   "dialogs::LayerProperties", "Blend alpha"))
+			.checkable()
+			.checked()
+			.noDefaultShortcut();
+	QAction *layerAlphaPreserve =
+		makeAction(
+			"layeralphapreserve",
+			QCoreApplication::translate(
+				"dialogs::LayerProperties", "Inherit alpha"))
+			.checkable()
+			.noDefaultShortcut();
+	QAction *layerClip =
+		makeAction(
+			"layerclip", QCoreApplication::translate(
+							 "dialogs::LayerProperties", "Clip to layer below"))
+			.checkable()
+			.noDefaultShortcut();
+	QActionGroup *layerAlphaGroup = new QActionGroup(this);
+	layerAlphaGroup->addAction(layerAlphaBlend);
+	layerAlphaGroup->addAction(layerAlphaPreserve);
+	layerAlphaGroup->addAction(layerClip);
+	QAction *layerAutomaticAlphaPreserve =
+		makeAction(
+			"layerautomaticalphapreserve", tr("Automatically inherit alpha"))
+			.statusTip(tr("Inherit and preserve alpha based on blend mode"))
+			.checkable()
+			.noDefaultShortcut();
+	// clang-format off
+
 	QAction *layerUpAct = makeAction("layer-up", tr("Select Above")).shortcut("Shift+X").autoRepeat();
 	QAction *layerDownAct = makeAction("layer-down", tr("Select Below")).shortcut("Shift+Z").autoRepeat();
 
@@ -5562,6 +5597,12 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerSketchToggle);
 	layerMenu->addAction(layerSetFillSource);
 	layerMenu->addAction(layerClearFillSource);
+
+	layerMenu->addSeparator();
+	layerMenu->addAction(layerAlphaBlend);
+	layerMenu->addAction(layerAlphaPreserve);
+	layerMenu->addAction(layerClip);
+	layerMenu->addAction(layerAutomaticAlphaPreserve);
 
 	layerMenu->addSeparator();
 	layerMenu->addAction(layerUpAct);
@@ -5881,6 +5922,11 @@ void MainWindow::setupActions()
 		layerCheckToggle,
 		layerCheckAll,
 		layerUncheckAll,
+		layerAlphaGroup,
+		layerAlphaBlend,
+		layerAlphaPreserve,
+		layerClip,
+		layerAutomaticAlphaPreserve,
 		layerColorMenu,
 	});
 	m_dockTimeline->setActions(
@@ -5922,6 +5968,7 @@ void MainWindow::setupActions()
 			animationDuplicateMenu,
 		},
 		layerViewNormal, layerViewCurrentFrame, showFlipbook);
+	m_dockToolSettings->fillSettings()->setActions(layerAutomaticAlphaPreserve);
 
 	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);
 	connect(
@@ -6199,10 +6246,13 @@ void MainWindow::setupActions()
 		}
 	}
 
+	// clang-format on
 	m_dockToolSettings->brushSettings()->setActions(
-		reloadPreset, reloadPresetSlots, reloadAllPresets, nextSlot, previousSlot);
+		reloadPreset, reloadPresetSlots, reloadAllPresets, nextSlot,
+		previousSlot, layerAutomaticAlphaPreserve);
 	m_dockBrushPalette->setActions(
 		nextPreset, previousPreset, nextTag, previousTag);
+	// clang-format off
 
 	m_smallScreenSpacer = new QWidget;
 	m_smallScreenSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);

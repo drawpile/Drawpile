@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-extern "C" {
-#include "dpmsg/blend_mode.h"
-}
+#include "desktop/view/canvascontroller.h"
 #include "desktop/main.h"
 #include "desktop/scene/toggleitem.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/touchhandler.h"
-#include "desktop/view/canvascontroller.h"
 #include "desktop/view/canvasinterface.h"
 #include "desktop/view/canvasscene.h"
+#include "libclient/canvas/blendmodes.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/drawdance/eventlog.h"
@@ -1926,11 +1924,11 @@ void CanvasController::resetCursor()
 
 int CanvasController::getCurrentCursorStyle() const
 {
-	if(DP_blend_mode_presents_as_eraser(m_brushBlendMode)) {
+	if(canvas::blendmode::presentsAsEraser(m_brushBlendMode)) {
 		if(m_eraseCursorStyle != int(view::Cursor::SameAsBrush)) {
 			return m_eraseCursorStyle;
 		}
-	} else if(DP_blend_mode_preserves_alpha(m_brushBlendMode)) {
+	} else if(canvas::blendmode::preservesAlpha(m_brushBlendMode)) {
 		if(m_alphaLockCursorStyle != int(view::Cursor::SameAsBrush)) {
 			return m_alphaLockCursorStyle;
 		}

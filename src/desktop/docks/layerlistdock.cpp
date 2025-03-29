@@ -9,6 +9,7 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "libclient/canvas/blendmodes.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
@@ -161,7 +162,7 @@ LayerList::LayerList(QWidget *parent)
 	titlebar->addCustomWidget(m_lockButton);
 
 	m_clipButton =
-		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
 	m_clipButton->setIcon(QIcon::fromTheme("drawpile_selection_intersect"));
 	m_clipButton->setToolTip(tr("Clip to layer below"));
 	m_clipButton->setStatusTip(m_clipButton->toolTip());
@@ -170,6 +171,24 @@ LayerList::LayerList(QWidget *parent)
 		m_clipButton, &widgets::GroupedToolButton::clicked, this,
 		&LayerList::clipChanged);
 	titlebar->addCustomWidget(m_clipButton);
+
+	m_alphaPreserveButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+	QIcon alphaOffOnIcon;
+	alphaOffOnIcon.addFile(
+		QStringLiteral("theme:drawpile_alpha_on.svg"), QSize(), QIcon::Normal,
+		QIcon::Off);
+	alphaOffOnIcon.addFile(
+		QStringLiteral("theme:drawpile_alpha_off.svg"), QSize(), QIcon::Normal,
+		QIcon::On);
+	m_alphaPreserveButton->setIcon(alphaOffOnIcon);
+	m_alphaPreserveButton->setToolTip(tr("Inherit alpha"));
+	m_alphaPreserveButton->setStatusTip(m_alphaPreserveButton->toolTip());
+	m_alphaPreserveButton->setCheckable(true);
+	connect(
+		m_alphaPreserveButton, &widgets::GroupedToolButton::clicked, this,
+		&LayerList::alphaPreserveChanged);
+	titlebar->addCustomWidget(m_alphaPreserveButton);
 
 	titlebar->addSpace(4);
 	m_blendModeCombo = new QComboBox;
@@ -283,6 +302,10 @@ LayerList::LayerList(QWidget *parent)
 		del, &LayerListDelegate::editProperties, this,
 		&LayerList::showPropertiesOfIndex);
 	m_view->setItemDelegate(del);
+
+	desktop::settings::Settings &settings = dpApp().settings();
+	settings.bindAutomaticAlphaPreserve(
+		this, &LayerList::setAutomaticAlphaPreserve);
 }
 
 
@@ -393,6 +416,11 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	m_contextMenu->addAction(m_actions.toggleVisibility);
 	m_contextMenu->addAction(m_actions.toggleSketch);
 	m_contextMenu->addSeparator();
+	m_contextMenu->addAction(m_actions.layerAlphaBlend);
+	m_contextMenu->addAction(m_actions.layerAlphaPreserve);
+	m_contextMenu->addAction(m_actions.layerClip);
+	m_contextMenu->addAction(m_actions.layerAutomaticAlphaPreserve);
+	m_contextMenu->addSeparator();
 	m_contextMenu->addAction(m_actions.setFillSource);
 	m_contextMenu->addAction(m_actions.clearFillSource);
 	m_contextMenu->addAction(m_actions.keyFrameSetLayer);
@@ -462,6 +490,15 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	connect(
 		m_actions.layerUncheckAll, &QAction::triggered, this,
 		&LayerList::uncheckAll);
+	connect(
+		m_actions.layerAlphaBlend, &QAction::triggered, this,
+		&LayerList::setLayerAlphaBlend);
+	connect(
+		m_actions.layerAlphaPreserve, &QAction::triggered, this,
+		&LayerList::setLayerAlphaPreserve);
+	connect(
+		m_actions.layerClip, &QAction::triggered, this,
+		&LayerList::setLayerClip);
 	connect(
 		actions.layerColorMenu, &QMenu::triggered, this,
 		&LayerList::setLayerColor);
@@ -578,8 +615,13 @@ void LayerList::updateLockedControls()
 
 	m_lockButton->setEnabled(
 		canEditCurrent && haveAnySelected && canEditCurrent);
+	m_alphaPreserveButton->setEnabled(
+		canEditCurrent && haveAnySelected && canEditSelected &&
+		m_actions.layerAlphaPreserve &&
+		m_actions.layerAlphaPreserve->isEnabled());
 	m_clipButton->setEnabled(
-		canEditCurrent && haveAnySelected && canEditSelected);
+		canEditCurrent && haveAnySelected && canEditSelected &&
+		m_actions.layerClip && m_actions.layerClip->isEnabled());
 	m_blendModeCombo->setEnabled(
 		canEditCurrent && haveAnySelected && canEditSelected);
 	m_opacitySlider->setEnabled(
@@ -608,6 +650,7 @@ void LayerList::updateLockedControls()
 		m_actions.toggleSketch->setEnabled(haveCurrent && haveAnySelected);
 		m_actions.setFillSource->setEnabled(
 			haveCurrent && !haveMultipleSelected);
+		m_actions.layerAlphaGroup->setEnabled(canEditSelected);
 	}
 
 	updateFillSourceLayerId();
@@ -900,7 +943,7 @@ void LayerList::addLayerOrGroupFromPrompt(
 	if(layerId > 0 && !msgs.isEmpty()) {
 		uint8_t contextId = m_canvas->localUserId();
 		if(clip) {
-			blendMode = DP_blend_mode_to_alpha_affecting(blendMode);
+			blendMode = canvas::blendmode::toAlphaAffecting(blendMode);
 		}
 		if(opacityPercent != 100 || blendMode != DP_BLEND_MODE_NORMAL ||
 		   (group && !isolated) || censored) {
@@ -1625,6 +1668,27 @@ void LayerList::setUpdateSketchTint(const QColor &tint)
 	triggerUpdate();
 }
 
+void LayerList::setLayerAlphaBlend()
+{
+	m_updateAlphaPreserve = 0;
+	m_updateClip = 0;
+	triggerUpdate();
+}
+
+void LayerList::setLayerAlphaPreserve()
+{
+	m_updateAlphaPreserve = 1;
+	m_updateClip = 0;
+	triggerUpdate();
+}
+
+void LayerList::setLayerClip()
+{
+	m_updateAlphaPreserve = 0;
+	m_updateClip = 1;
+	triggerUpdate();
+}
+
 void LayerList::showContextMenu(const QPoint &pos)
 {
 	QModelIndex index = m_view->indexAt(pos);
@@ -1854,7 +1918,6 @@ void LayerList::selectionChanged(
 	Q_UNUSED(selected);
 	Q_UNUSED(deselected);
 	if(m_debounceTimer->isActive()) {
-		m_debounceTimer->stop();
 		triggerUpdate();
 	}
 
@@ -1885,7 +1948,6 @@ void LayerList::selectionChanged(
 void LayerList::updateCurrent(const QModelIndex &current)
 {
 	if(m_debounceTimer->isActive()) {
-		m_debounceTimer->stop();
 		triggerUpdate();
 	}
 
@@ -1910,6 +1972,10 @@ void LayerList::updateUiFromCurrent()
 
 	QScopedValueRollback<bool> rollback(m_noupdate, true);
 	m_clipButton->setChecked(layer.clip);
+	bool alphaPreserve =
+		!layer.clip &&
+		canvas::blendmode::presentsAsAlphaPreserving(layer.blend);
+	m_alphaPreserveButton->setChecked(alphaPreserve);
 	m_sketchMode = layer.sketchOpacity > 0.0f;
 	m_sketchButton->setChecked(m_sketchMode);
 	m_sketchButton->setGroupPosition(
@@ -1924,11 +1990,26 @@ void LayerList::updateUiFromCurrent()
 
 	m_aclmenu->setCensored(layer.actuallyCensored());
 	dialogs::LayerProperties::updateBlendMode(
-		m_blendModeCombo, layer.blend, layer.group, layer.isolated, layer.clip);
+		m_blendModeCombo, layer.blend, layer.group, layer.isolated, layer.clip,
+		m_automaticAlphaPreserve);
 	m_opacitySlider->setPrefix(m_sketchMode ? tr("Sketch: ") : tr("Opacity: "));
 	m_opacitySlider->setMinimum(m_sketchMode ? 1 : 0);
 	m_opacitySlider->setValue(
 		(m_sketchMode ? layer.sketchOpacity : layer.opacity) * 100.0 + 0.5);
+
+	if(m_actions.layerAlphaGroup) {
+		bool enabled = !layer.group || layer.isolated;
+		m_actions.layerAlphaBlend->setEnabled(enabled);
+		m_actions.layerAlphaPreserve->setEnabled(enabled);
+		m_actions.layerClip->setEnabled(enabled);
+		if(layer.clip) {
+			m_actions.layerClip->setChecked(true);
+		} else if(alphaPreserve) {
+			m_actions.layerAlphaPreserve->setChecked(true);
+		} else {
+			m_actions.layerAlphaBlend->setChecked(true);
+		}
+	}
 
 	layerLockStatusChanged(layer.id);
 	updateActionLabels();
@@ -1937,6 +2018,18 @@ void LayerList::updateUiFromCurrent()
 
 	// TODO use change flags to detect if this really changed
 	emit activeLayerVisibilityChanged();
+}
+
+void LayerList::setAutomaticAlphaPreserve(bool automaticAlphaPreserve)
+{
+	if(m_automaticAlphaPreserve != automaticAlphaPreserve) {
+		m_automaticAlphaPreserve = automaticAlphaPreserve;
+		const canvas::LayerListItem &layer =
+			currentSelection().data().value<canvas::LayerListItem>();
+		dialogs::LayerProperties::updateBlendMode(
+			m_blendModeCombo, layer.blend, layer.group, layer.isolated,
+			layer.clip, m_automaticAlphaPreserve);
+	}
 }
 
 void LayerList::layerLockStatusChanged(int layerId)
@@ -1961,8 +2054,25 @@ void LayerList::userLockStatusChanged(bool)
 void LayerList::clipChanged(bool clip)
 {
 	if(!m_noupdate) {
-		m_updateClip = clip ? 1 : 0;
-		m_debounceTimer->stop();
+		if(clip) {
+			m_updateClip = 1;
+			m_updateAlphaPreserve = 0;
+		} else {
+			m_updateClip = 0;
+		}
+		triggerUpdate();
+	}
+}
+
+void LayerList::alphaPreserveChanged(bool alphaPreserve)
+{
+	if(!m_noupdate) {
+		if(alphaPreserve) {
+			m_updateAlphaPreserve = 1;
+			m_updateClip = 0;
+		} else {
+			m_updateAlphaPreserve = 0;
+		}
 		triggerUpdate();
 	}
 }
@@ -1994,10 +2104,11 @@ void LayerList::triggerUpdate()
 
 	int selectedCount = m_selectedIds.size();
 	bool haveClipUpdate = m_updateClip != -1;
+	bool haveAlphaPreserveUpdate = m_updateAlphaPreserve != -1;
 	bool haveBlendModeUpdate = m_updateBlendModeIndex != -1;
 	bool haveOpacityUpdate = m_updateOpacity != -1;
-	bool haveAnyAttributeUpdate =
-		haveClipUpdate || haveBlendModeUpdate || haveOpacityUpdate;
+	bool haveAnyAttributeUpdate = haveClipUpdate || haveAlphaPreserveUpdate ||
+								  haveBlendModeUpdate || haveOpacityUpdate;
 	bool haveSketchOpacityUpdate = m_updateSketchOpacity != -1;
 	bool haveSketchTintUpdate = m_updateSketchTint.isValid();
 	bool haveAnySketchUpdate = haveSketchOpacityUpdate || haveSketchTintUpdate;
@@ -2016,13 +2127,17 @@ void LayerList::triggerUpdate()
 		net::MessageList msgs;
 		uint8_t contextId = m_canvas->localUserId();
 		bool targetClip = false;
+		bool targetAlphaPreserve = false;
 		int targetBlendMode = -1;
 		float targetOpacity = 0.0f;
 		if(haveAnyAttributeUpdate) {
 			msgs.reserve(indexes.size() + 1);
 			msgs.append(net::makeUndoPointMessage(contextId));
 			if(haveClipUpdate) {
-				targetClip = m_clipButton->isChecked();
+				targetClip = m_updateClip != 0;
+			}
+			if(haveAlphaPreserveUpdate) {
+				targetAlphaPreserve = m_updateAlphaPreserve != 0;
 			}
 			if(haveBlendModeUpdate) {
 				targetBlendMode =
@@ -2048,8 +2163,6 @@ void LayerList::triggerUpdate()
 				idx.data().value<canvas::LayerListItem>();
 
 			if(haveAnyAttributeUpdate && canEditLayer(idx)) {
-				bool clip = haveClipUpdate ? targetClip : layer.clip;
-
 				DP_BlendMode mode;
 				bool isolated;
 				if(haveBlendModeUpdate) {
@@ -2062,9 +2175,25 @@ void LayerList::triggerUpdate()
 					isolated = layer.isolated;
 				}
 
-				if(clip) {
-					mode = DP_BlendMode(
-						DP_blend_mode_to_alpha_affecting(int(mode)));
+				bool clip = haveClipUpdate ? targetClip : layer.clip;
+				bool alphaPreserve;
+				if(haveAlphaPreserveUpdate) {
+					alphaPreserve = targetAlphaPreserve;
+				} else if(m_automaticAlphaPreserve) {
+					alphaPreserve =
+						canvas::blendmode::presentsAsAlphaPreserving(mode);
+				} else {
+					alphaPreserve =
+						canvas::blendmode::presentsAsAlphaPreserving(
+							layer.blend);
+				}
+
+				DP_BlendMode alphaAffectingMode;
+				DP_BlendMode alphaPreservingMode;
+				if(canvas::blendmode::alphaPreservePair(
+					   int(mode), &alphaAffectingMode, &alphaPreservingMode)) {
+					mode = clip || !alphaPreserve ? alphaAffectingMode
+												  : alphaPreservingMode;
 				}
 
 				float opacity =
@@ -2098,6 +2227,7 @@ void LayerList::triggerUpdate()
 	}
 
 	m_updateClip = -1;
+	m_updateAlphaPreserve = -1;
 	m_updateBlendModeIndex = -1;
 	m_updateOpacity = -1;
 	m_updateSketchOpacity = -1;

@@ -161,6 +161,11 @@ void UserInterface::initMiscellaneous(
 	QCheckBox *confirmDelete = new QCheckBox(tr("Ask before deleting layers"));
 	settings.bindConfirmLayerDelete(confirmDelete);
 	form->addRow(nullptr, confirmDelete);
+
+	QCheckBox *automaticAlphaPreserve = new QCheckBox(
+		tr("Automatically inherit and preserve alpha based on blend mode"));
+	settings.bindAutomaticAlphaPreserve(automaticAlphaPreserve);
+	form->addRow(nullptr, automaticAlphaPreserve);
 }
 
 void UserInterface::initRequiringRestart(
