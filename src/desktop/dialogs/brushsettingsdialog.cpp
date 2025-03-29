@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/brushsettingsdialog.h"
 #include "desktop/filewrangler.h"
-#include "desktop/utils/qtguicompat.h"
+#include "desktop/utils/blendmodes.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/curvewidget.h"
 #include "desktop/widgets/keysequenceedit.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/toolmessage.h"
-#include "libclient/canvas/blendmodes.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -28,6 +27,7 @@
 #include <QSignalBlocker>
 #include <QSpacerItem>
 #include <QStackedWidget>
+#include <QStandardItemModel>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -268,15 +268,13 @@ struct BrushSettingsDialog::Private {
 	QStackedWidget *stackedWidget;
 	BrushPresetForm *brushPresetForm;
 	QComboBox *brushTypeCombo;
-	QLabel *brushModeLabel;
-	QComboBox *brushModeCombo;
-	QLabel *eraseModeLabel;
-	QComboBox *eraseModeCombo;
 	QLabel *paintModeLabel;
 	QComboBox *paintModeCombo;
+	QLabel *brushModeLabel;
+	QComboBox *brushModeCombo;
 	QCheckBox *eraseModeBox;
 	QCheckBox *colorPickBox;
-	QCheckBox *lockAlphaBox;
+	QCheckBox *preserveAlphaBox;
 	KisSliderSpinBox *spacingSpinner;
 	QComboBox *stabilizationModeCombo;
 	KisSliderSpinBox *stabilizerSpinner;
@@ -312,6 +310,7 @@ struct BrushSettingsDialog::Private {
 	int globalSmoothing;
 	int presetId = 0;
 	bool useBrushSampleCount;
+	bool automaticAlphaPreserve = true;
 	bool presetAttached = true;
 	bool updating = false;
 };
@@ -610,34 +609,6 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 			emitChange();
 		}));
 
-	d->brushModeLabel = new QLabel{tr("Blend Mode:"), widget};
-	d->brushModeCombo = new QComboBox{widget};
-	layout->addRow(d->brushModeLabel, d->brushModeCombo);
-	for(canvas::blendmode::Named m : canvas::blendmode::brushModeNames()) {
-		d->brushModeCombo->addItem(m.name, int(m.mode));
-	}
-	connect(
-		d->brushModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		makeBrushChangeCallbackArg<int>([this](int index) {
-			d->brush.classic().brush_mode =
-				DP_BlendMode(d->brushModeCombo->itemData(index).toInt());
-			emitChange();
-		}));
-
-	d->eraseModeLabel = new QLabel{tr("Blend Mode:"), widget};
-	d->eraseModeCombo = new QComboBox{widget};
-	layout->addRow(d->eraseModeLabel, d->eraseModeCombo);
-	for(canvas::blendmode::Named m : canvas::blendmode::eraserModeNames()) {
-		d->eraseModeCombo->addItem(m.name, int(m.mode));
-	}
-	connect(
-		d->eraseModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		makeBrushChangeCallbackArg<int>([this](int index) {
-			d->brush.classic().erase_mode =
-				DP_BlendMode(d->eraseModeCombo->itemData(index).toInt());
-			emitChange();
-		}));
-
 	d->paintModeLabel = new QLabel{tr("Paint Mode:"), widget};
 	d->paintModeCombo = new QComboBox{widget};
 	layout->addRow(d->paintModeLabel, d->paintModeCombo);
@@ -656,37 +627,60 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 			emitChange();
 		}));
 
+	d->brushModeLabel = new QLabel{tr("Blend Mode:"), widget};
+	d->brushModeCombo = new QComboBox{widget};
+	layout->addRow(d->brushModeLabel, d->brushModeCombo);
+	connect(
+		d->brushModeCombo, QOverload<int>::of(&QComboBox::activated),
+		makeBrushChangeCallbackArg<int>([this](int index) {
+			int blendMode = d->brushModeCombo->itemData(index).toInt();
+			if(!d->automaticAlphaPreserve) {
+				canvas::blendmode::adjustAlphaBehavior(
+					blendMode, d->preserveAlphaBox->isChecked());
+			}
+			d->brush.classic().setBlendMode(
+				blendMode, d->eraseModeBox->isChecked());
+			emitChange();
+		}));
+
+	d->preserveAlphaBox = new QCheckBox{tr("Preserve alpha"), widget};
+	d->preserveAlphaBox->setIcon(QIcon::fromTheme("drawpile_alpha_locked"));
+	layout->addRow(d->preserveAlphaBox);
+	connect(
+		d->preserveAlphaBox, &QCheckBox::clicked,
+		makeBrushChangeCallbackArg<bool>([this](bool checked) {
+			if(d->brush.activeType() == brushes::ActiveBrush::CLASSIC) {
+				int blendMode = d->brushModeCombo->currentData().toInt();
+				canvas::blendmode::adjustAlphaBehavior(blendMode, checked);
+				d->brush.classic().setBlendMode(
+					blendMode, d->eraseModeBox->isChecked());
+			} else {
+				d->brush.myPaint().brush().lock_alpha = checked;
+			}
+			emitChange();
+		}));
+
 	d->eraseModeBox = new QCheckBox{tr("Eraser Mode"), widget};
+	d->eraseModeBox->setIcon(QIcon::fromTheme("draw-eraser"));
 	layout->addRow(d->eraseModeBox);
 	connect(
-		d->eraseModeBox, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox),
-		makeBrushChangeCallbackArg<compat::CheckBoxState>(
-			[this](compat::CheckBoxState state) {
-				d->brush.classic().erase = state != Qt::Unchecked;
-				d->brush.myPaint().brush().erase = state != Qt::Unchecked;
-				emitChange();
-			}));
+		d->eraseModeBox, &QCheckBox::clicked,
+		makeBrushChangeCallbackArg<bool>([this](bool checked) {
+			d->brush.classic().erase = checked;
+			d->brush.myPaint().brush().erase = checked;
+			emitChange();
+		}));
 
 	d->colorPickBox =
 		new QCheckBox{tr("Pick Initial Color from Layer"), widget};
+	d->colorPickBox->setIcon(QIcon::fromTheme("color-picker"));
 	layout->addRow(d->colorPickBox);
 	connect(
-		d->colorPickBox, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox),
-		makeBrushChangeCallbackArg<compat::CheckBoxState>(
-			[this](compat::CheckBoxState state) {
-				d->brush.classic().colorpick = state != Qt::Unchecked;
-				emitChange();
-			}));
-
-	d->lockAlphaBox = new QCheckBox{tr("Lock Alpha (Recolor Mode)"), widget};
-	layout->addRow(d->lockAlphaBox);
-	connect(
-		d->lockAlphaBox, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox),
-		makeBrushChangeCallbackArg<compat::CheckBoxState>(
-			[this](compat::CheckBoxState state) {
-				d->brush.myPaint().brush().lock_alpha = state != Qt::Unchecked;
-				emitChange();
-			}));
+		d->colorPickBox, &QCheckBox::clicked,
+		makeBrushChangeCallbackArg<bool>([this](bool checked) {
+			d->brush.classic().colorpick = checked;
+			emitChange();
+		}));
 
 	d->spacingSpinner = new KisSliderSpinBox{widget};
 	layout->addRow(d->spacingSpinner);
@@ -1242,13 +1236,18 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 {
 	const brushes::ClassicBrush &classic = d->brush.classic();
 
-	d->brushModeLabel->setVisible(!classic.erase);
-	d->brushModeCombo->setVisible(!classic.erase);
-	setComboBoxIndexByData(d->brushModeCombo, int(classic.brush_mode));
-
-	d->eraseModeLabel->setVisible(classic.erase);
-	d->eraseModeCombo->setVisible(classic.erase);
-	setComboBoxIndexByData(d->eraseModeCombo, int(classic.erase_mode));
+	d->brushModeLabel->setVisible(true);
+	d->brushModeCombo->setVisible(true);
+	d->brushModeCombo->setModel(
+		getBrushBlendModesFor(classic.erase, d->automaticAlphaPreserve));
+	int brushMode = classic.erase ? classic.erase_mode : classic.brush_mode;
+	int brushModeIndex =
+		searchBlendModeComboIndex(d->brushModeCombo, brushMode);
+	if(brushModeIndex != -1) {
+		d->brushModeCombo->setCurrentIndex(brushModeIndex);
+	}
+	d->preserveAlphaBox->setChecked(
+		canvas::blendmode::presentsAsAlphaPreserving(brushMode));
 
 	d->eraseModeBox->setChecked(classic.erase);
 
@@ -1256,7 +1255,6 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 	d->colorPickBox->setEnabled(
 		DP_classic_brush_blend_mode(&classic) != DP_BLEND_MODE_ERASE);
 	d->colorPickBox->setVisible(true);
-	d->lockAlphaBox->setVisible(false);
 
 	bool haveSmudge = classic.smudge.max > 0.0f;
 	d->paintModeCombo->setCurrentIndex(
@@ -1329,16 +1327,13 @@ void BrushSettingsDialog::updateUiFromMyPaintBrush()
 
 	d->brushModeLabel->setVisible(false);
 	d->brushModeCombo->setVisible(false);
-	d->eraseModeLabel->setVisible(false);
-	d->eraseModeCombo->setVisible(false);
 	d->colorPickBox->setVisible(false);
 	d->spacingSpinner->setVisible(false);
 
 	d->paintModeCombo->setCurrentIndex(brush.incremental ? 0 : 1);
 	d->paintModeCombo->setEnabled(true);
 	d->eraseModeBox->setChecked(brush.erase);
-	d->lockAlphaBox->setChecked(brush.lock_alpha);
-	d->lockAlphaBox->setVisible(true);
+	d->preserveAlphaBox->setChecked(brush.lock_alpha);
 
 	for(int setting = 0; setting < MYPAINT_BRUSH_SETTINGS_COUNT; ++setting) {
 		if(shouldIncludeMyPaintSetting(setting)) {

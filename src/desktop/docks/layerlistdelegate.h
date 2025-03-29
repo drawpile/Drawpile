@@ -66,7 +66,10 @@ private:
 
 	void drawOpacityGlyph(
 		const QRect &rect, QPainter *painter, float value, bool hidden,
-		bool censored, bool group) const;
+		bool alphaPreserve, bool censored, bool group) const;
+
+	const QIcon &getOpacityGlyph(
+		bool hidden, bool alphaPreserve, bool censored, bool group) const;
 
 	void drawSelectionCheckBox(
 		const QRect &rect, QPainter *painter,
@@ -76,11 +79,15 @@ private:
 	drawGlyph(const QIcon &icon, const QRect &rect, QPainter *painter) const;
 
 	LayerList *m_dock;
-	QIcon m_visibleIcon;
+	QIcon m_layerIcon;
+	QIcon m_layerHiddenIcon;
+	QIcon m_layerAlphaIcon;
+	QIcon m_layerAlphaHiddenIcon;
 	QIcon m_groupIcon;
-	QIcon m_censoredIcon;
-	QIcon m_hiddenIcon;
 	QIcon m_groupHiddenIcon;
+	QIcon m_groupAlphaIcon;
+	QIcon m_groupAlphaHiddenIcon;
+	QIcon m_censoredIcon;
 	QIcon m_sketchIcon;
 	QIcon m_fillIcon;
 	QIcon m_forbiddenIcon;

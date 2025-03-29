@@ -37,12 +37,7 @@ public:
 
 	static void updateBlendMode(
 		QComboBox *combo, DP_BlendMode mode, bool group, bool isolated,
-		bool clip);
-
-	static QStandardItemModel *layerBlendModes();
-	static QStandardItemModel *layerBlendModesClip();
-	static QStandardItemModel *groupBlendModes();
-	static QStandardItemModel *groupBlendModesClip();
+		bool clip, bool automaticAlphaPreserve);
 
 signals:
 	void addLayerOrGroupRequested(
@@ -58,7 +53,9 @@ protected:
 	virtual void showEvent(QShowEvent *event) override;
 
 private:
-	void updateClip(bool clip);
+	void setAutomaticAlphaPerserve(bool automaticAlphaPreserve);
+	void updateAlpha(QAbstractButton *button);
+	void updateAlphaBasedOnBlendMode(int index);
 	void updateSketchMode(compat::CheckBoxState state);
 	void showSketchTintColorPicker();
 	void setSketchTintTo(const QColor &color);
@@ -67,16 +64,15 @@ private:
 	void apply();
 	QString getTitleWithColor() const;
 	void emitChanges();
-	static void addGroupBlendModesTo(QStandardItemModel *model, bool clip);
-	static void addBlendModesTo(QStandardItemModel *model, bool clip);
-	static int searchBlendModeIndex(QComboBox *combo, DP_BlendMode mode);
 
 	Ui_LayerProperties *m_ui;
 	QButtonGroup *m_colorButtons;
 	canvas::LayerListItem m_item = canvas::LayerListItem::null();
 	int m_selectedId = 0;
+	bool m_updating = false;
 	bool m_wasDefault = false;
 	bool m_controlsEnabled = true;
+	bool m_automaticAlphaPreserve = true;
 	uint8_t m_user;
 };
 
