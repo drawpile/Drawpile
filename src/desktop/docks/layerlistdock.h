@@ -142,6 +142,7 @@ private slots:
 	void layerLockStatusChanged(int layerId);
 	void userLockStatusChanged(bool);
 	void clipChanged(bool clip);
+	void alphaPreserveChanged(bool alphaPreserve);
 	void blendModeChanged(int index);
 	void opacityChanged(int value);
 
@@ -242,6 +243,7 @@ private:
 
 	widgets::GroupedToolButton *m_lockButton;
 	widgets::GroupedToolButton *m_clipButton;
+	widgets::GroupedToolButton *m_alphaPreserveButton;
 	QComboBox *m_blendModeCombo;
 	KisSliderSpinBox *m_opacitySlider;
 	widgets::GroupedToolButton *m_sketchButton;

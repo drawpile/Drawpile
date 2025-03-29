@@ -137,7 +137,7 @@ LayerList::LayerList(QWidget *parent)
 	titlebar->addCustomWidget(m_lockButton);
 
 	m_clipButton =
-		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
 	m_clipButton->setIcon(QIcon::fromTheme("drawpile_selection_intersect"));
 	m_clipButton->setToolTip(tr("Clip to layer below"));
 	m_clipButton->setStatusTip(m_clipButton->toolTip());
@@ -146,6 +146,17 @@ LayerList::LayerList(QWidget *parent)
 		m_clipButton, &widgets::GroupedToolButton::clicked, this,
 		&LayerList::clipChanged);
 	titlebar->addCustomWidget(m_clipButton);
+
+	m_alphaPreserveButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+	m_alphaPreserveButton->setIcon(QIcon::fromTheme("drawpile_alpha_on"));
+	m_alphaPreserveButton->setToolTip(tr("Inherit alpha"));
+	m_alphaPreserveButton->setStatusTip(m_alphaPreserveButton->toolTip());
+	m_alphaPreserveButton->setCheckable(true);
+	connect(
+		m_alphaPreserveButton, &widgets::GroupedToolButton::clicked, this,
+		&LayerList::clipChanged);
+	titlebar->addCustomWidget(m_alphaPreserveButton);
 
 	titlebar->addSpace(4);
 	m_blendModeCombo = new QComboBox;
@@ -1870,6 +1881,13 @@ void LayerList::clipChanged(bool clip)
 		m_updateClip = clip ? 1 : 0;
 		m_debounceTimer->stop();
 		triggerUpdate();
+	}
+}
+
+void LayerList::alphaPreserveChanged(bool alphaPreserve)
+{
+	if(!m_noupdate) {
+
 	}
 }
 

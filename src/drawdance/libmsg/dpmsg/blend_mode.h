@@ -77,6 +77,13 @@ typedef enum DP_BlendMode {
     DP_BLEND_MODE_SATURATION_ALPHA,
     DP_BLEND_MODE_LUMINOSITY_ALPHA,
     DP_BLEND_MODE_COLOR_ALPHA,
+    DP_BLEND_MODE_ERASE_PRESERVE,
+    DP_BLEND_MODE_BEHIND_PRESERVE,
+    DP_BLEND_MODE_COLOR_ERASE_PRESERVE,
+    DP_BLEND_MODE_ERASE_LIGHT_PRESERVE,
+    DP_BLEND_MODE_ERASE_DARK_PRESERVE,
+    DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE,
+    DP_BLEND_MODE_DARK_TO_ALPHA_PRESERVE,
     DP_BLEND_MODE_LAST_EXCEPT_REPLACE, // Put new blend modes before this value.
     // Compatibility hack, not actual blend modes. Selections need new commands,
     // which are not accepted on the thick/builtin server. So we disguise them

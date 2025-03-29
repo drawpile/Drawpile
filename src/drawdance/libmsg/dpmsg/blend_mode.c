@@ -588,6 +588,11 @@ bool DP_blend_mode_alpha_preserve_pair(int blend_mode,
     DP_BlendMode alpha_affecting;
     DP_BlendMode alpha_preserving;
     switch (blend_mode) {
+    case DP_BLEND_MODE_ERASE:
+    case DP_BLEND_MODE_ERASE_PRESERVE:
+        alpha_affecting = DP_BLEND_MODE_ERASE;
+        alpha_preserving = DP_BLEND_MODE_ERASE_PRESERVE;
+        break;
     case DP_BLEND_MODE_NORMAL:
     case DP_BLEND_MODE_RECOLOR:
         alpha_affecting = DP_BLEND_MODE_NORMAL;
@@ -632,6 +637,16 @@ bool DP_blend_mode_alpha_preserve_pair(int blend_mode,
     case DP_BLEND_MODE_ADD_ALPHA:
         alpha_affecting = DP_BLEND_MODE_ADD_ALPHA;
         alpha_preserving = DP_BLEND_MODE_ADD;
+        break;
+    case DP_BLEND_MODE_BEHIND:
+    case DP_BLEND_MODE_BEHIND_PRESERVE:
+        alpha_affecting = DP_BLEND_MODE_BEHIND;
+        alpha_preserving = DP_BLEND_MODE_BEHIND_PRESERVE;
+        break;
+    case DP_BLEND_MODE_COLOR_ERASE:
+    case DP_BLEND_MODE_COLOR_ERASE_PRESERVE:
+        alpha_affecting = DP_BLEND_MODE_COLOR_ERASE;
+        alpha_preserving = DP_BLEND_MODE_COLOR_ERASE_PRESERVE;
         break;
     case DP_BLEND_MODE_SCREEN:
     case DP_BLEND_MODE_SCREEN_ALPHA:
@@ -687,6 +702,26 @@ bool DP_blend_mode_alpha_preserve_pair(int blend_mode,
     case DP_BLEND_MODE_COLOR_ALPHA:
         alpha_affecting = DP_BLEND_MODE_COLOR_ALPHA;
         alpha_preserving = DP_BLEND_MODE_COLOR;
+        break;
+    case DP_BLEND_MODE_ERASE_LIGHT:
+    case DP_BLEND_MODE_ERASE_LIGHT_PRESERVE:
+        alpha_affecting = DP_BLEND_MODE_ERASE_LIGHT;
+        alpha_preserving = DP_BLEND_MODE_ERASE_LIGHT_PRESERVE;
+        break;
+    case DP_BLEND_MODE_ERASE_DARK:
+    case DP_BLEND_MODE_ERASE_DARK_PRESERVE:
+        alpha_affecting = DP_BLEND_MODE_ERASE_DARK;
+        alpha_preserving = DP_BLEND_MODE_ERASE_DARK_PRESERVE;
+        break;
+    case DP_BLEND_MODE_LIGHT_TO_ALPHA:
+    case DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE:
+        alpha_affecting = DP_BLEND_MODE_LIGHT_TO_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE;
+        break;
+    case DP_BLEND_MODE_DARK_TO_ALPHA:
+    case DP_BLEND_MODE_DARK_TO_ALPHA_PRESERVE:
+        alpha_affecting = DP_BLEND_MODE_DARK_TO_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_DARK_TO_ALPHA_PRESERVE;
         break;
     default:
         return false;
@@ -744,6 +779,20 @@ int DP_blend_mode_to_alpha_affecting(int blend_mode)
         return DP_BLEND_MODE_LUMINOSITY_ALPHA;
     case DP_BLEND_MODE_COLOR:
         return DP_BLEND_MODE_COLOR_ALPHA;
+    case DP_BLEND_MODE_ERASE:
+        return DP_BLEND_MODE_ERASE_PRESERVE;
+    case DP_BLEND_MODE_BEHIND:
+        return DP_BLEND_MODE_BEHIND_PRESERVE;
+    case DP_BLEND_MODE_COLOR_ERASE:
+        return DP_BLEND_MODE_COLOR_ERASE_PRESERVE;
+    case DP_BLEND_MODE_ERASE_LIGHT:
+        return DP_BLEND_MODE_ERASE_LIGHT_PRESERVE;
+    case DP_BLEND_MODE_ERASE_DARK:
+        return DP_BLEND_MODE_ERASE_DARK_PRESERVE;
+    case DP_BLEND_MODE_LIGHT_TO_ALPHA:
+        return DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE;
+    case DP_BLEND_MODE_DARK_TO_ALPHA:
+        return DP_BLEND_MODE_DARK_TO_ALPHA_PRESERVE;
     default:
         return blend_mode;
     }
@@ -754,6 +803,18 @@ int DP_blend_mode_to_alpha_preserving(int blend_mode)
     switch (blend_mode) {
     case DP_BLEND_MODE_NORMAL:
         return DP_BLEND_MODE_RECOLOR;
+    case DP_BLEND_MODE_BEHIND:
+        return DP_BLEND_MODE_BEHIND_PRESERVE;
+    case DP_BLEND_MODE_COLOR_ERASE:
+        return DP_BLEND_MODE_COLOR_ERASE_PRESERVE;
+    case DP_BLEND_MODE_ERASE_LIGHT:
+        return DP_BLEND_MODE_ERASE_LIGHT_PRESERVE;
+    case DP_BLEND_MODE_ERASE_DARK:
+        return DP_BLEND_MODE_ERASE_DARK_PRESERVE;
+    case DP_BLEND_MODE_LIGHT_TO_ALPHA:
+        return DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE;
+    case DP_BLEND_MODE_DARK_TO_ALPHA:
+        return DP_BLEND_MODE_DARK_TO_ALPHA_PRESERVE;
     case DP_BLEND_MODE_MULTIPLY_ALPHA:
         return DP_BLEND_MODE_MULTIPLY;
     case DP_BLEND_MODE_DIVIDE_ALPHA:

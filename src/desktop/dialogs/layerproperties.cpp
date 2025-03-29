@@ -417,6 +417,16 @@ int LayerProperties::searchBlendModeIndex(QComboBox *combo, DP_BlendMode mode)
 			return i;
 		}
 	}
+
+	int alphaPreservingMode = DP_blend_mode_to_alpha_preserving(int(mode));
+	if(alphaPreservingMode != int(mode)) {
+		for(int i = 0; i < blendModeCount; ++i) {
+			if(combo->itemData(i).toInt() == alphaPreservingMode) {
+				return i;
+			}
+		}
+	}
+
 	return -1;
 }
 
