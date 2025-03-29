@@ -10,6 +10,9 @@
 #include <QTemporaryDir>
 #include <QtTest/QtTest>
 #include <dpcommon/platform_qt.h>
+extern "C" {
+#include <dpmsg/message.h>
+}
 
 using namespace server;
 
@@ -25,8 +28,23 @@ private slots:
 		// Copy some test files to the temp dir
 		QVERIFY(QFile(":test/test-config.cfg")
 					.copy(dir.absoluteFilePath("test.cfg")));
-		QVERIFY(
-			QFile(":test/test.dptxt").copy(dir.absoluteFilePath("test.dptxt")));
+		{
+			QFile testFile(dir.absoluteFilePath("test.dptxt"));
+			QVERIFY(testFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+			QByteArray testContent =
+				QByteArrayLiteral("!version=" DP_PROTOCOL_VERSION "\n"
+								  "!maxUserCount=1\n"
+								  "!founder=tester\n"
+								  "!password=plain;qwerty123\n"
+								  "!title=Test\n"
+								  "!nsfm=false\n"
+								  "\n"
+								  "1 resize bottom=3000 right=3000\n"
+								  "1 newlayer id=0x0101 title=background\n");
+			QCOMPARE(testFile.write(testContent), testContent.size());
+			QVERIFY(testFile.flush());
+			testFile.close();
+		}
 		QVERIFY(touch(dir.absoluteFilePath("empty.dptxt")));
 
 		// Scan templates
