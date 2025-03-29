@@ -2,14 +2,15 @@
 #include "desktop/dialogs/layerproperties.h"
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/main.h"
+#include "desktop/utils/blendmodes.h"
 #include "desktop/utils/widgetutils.h"
-#include "libclient/canvas/blendmodes.h"
 #include "libclient/net/message.h"
 #include "ui_layerproperties.h"
 #include <QButtonGroup>
 #include <QPainter>
 #include <QPixmap>
 #include <QPushButton>
+#include <QScopedValueRollback>
 #include <QStandardItemModel>
 #include <QStyle>
 #include <functional>
@@ -58,7 +59,12 @@ LayerProperties::LayerProperties(uint8_t localUser, QWidget *parent)
 
 	connect(m_ui->title, &QLineEdit::returnPressed, this, &QDialog::accept);
 	connect(
-		m_ui->clip, &QCheckBox::clicked, this, &LayerProperties::updateClip);
+		m_ui->blendMode, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, &LayerProperties::updateAlphaBasedOnBlendMode);
+	connect(
+		m_ui->alphaGroup,
+		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
+		&LayerProperties::updateAlpha);
 	connect(
 		m_ui->sketchMode, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox), this,
 		&LayerProperties::updateSketchMode);
@@ -100,6 +106,7 @@ LayerProperties::~LayerProperties()
 void LayerProperties::setNewLayerItem(
 	int selectedId, bool group, const QString &title)
 {
+	QScopedValueRollback<bool> rollback(m_updating, true);
 	m_item = {
 		0,	   QString(), QColor(), 1.0f,  DP_BLEND_MODE_NORMAL,
 		0.0f,  QColor(),  false,	false, false,
@@ -112,7 +119,7 @@ void LayerProperties::setNewLayerItem(
 	m_ui->buttonBox->buttons()[0]->setChecked(true);
 	m_ui->title->setText(title);
 	m_ui->opacitySlider->setValue(100);
-	m_ui->clip->setChecked(false);
+	m_ui->alphaBlend->setChecked(true);
 	m_ui->visible->setChecked(true);
 	m_ui->censored->setChecked(false);
 	setSketchParamsFromSettings();
@@ -121,7 +128,7 @@ void LayerProperties::setNewLayerItem(
 	m_ui->createdBy->hide();
 	updateBlendMode(
 		m_ui->blendMode, m_item.blend, m_item.group, m_item.isolated,
-		m_item.clip);
+		m_item.clip, m_automaticAlphaPreserve);
 	// Can't apply settings to a layer that doesn't exist yet.
 	QPushButton *applyButton = m_ui->buttonBox->button(QDialogButtonBox::Apply);
 	if(applyButton) {
@@ -133,6 +140,7 @@ void LayerProperties::setNewLayerItem(
 void LayerProperties::setLayerItem(
 	const canvas::LayerListItem &item, const QString &creator, bool isDefault)
 {
+	QScopedValueRollback<bool> rollback(m_updating, true);
 	m_item = item;
 	m_wasDefault = isDefault;
 
@@ -145,7 +153,13 @@ void LayerProperties::setLayerItem(
 		m_colorButtons->buttons()[0]->setChecked(true);
 	}
 	m_ui->opacitySlider->setValue(qRound(item.opacity * 100.0f));
-	m_ui->clip->setChecked(item.clip);
+	if(item.clip) {
+		m_ui->clip->setChecked(true);
+	} else if(canvas::blendmode::presentsAsAlphaPreserving(item.blend)) {
+		m_ui->alphaPreserve->setChecked(true);
+	} else {
+		m_ui->alphaBlend->setChecked(true);
+	}
 	m_ui->visible->setChecked(!item.hidden);
 	m_ui->censored->setChecked(item.actuallyCensored());
 	if(item.sketchOpacity <= 0.0f) {
@@ -159,7 +173,12 @@ void LayerProperties::setLayerItem(
 	m_ui->defaultLayer->setChecked(isDefault);
 	m_ui->createdBy->setText(creator);
 	updateBlendMode(
-		m_ui->blendMode, item.blend, item.group, item.isolated, item.clip);
+		m_ui->blendMode, item.blend, item.group, item.isolated, item.clip,
+		m_automaticAlphaPreserve);
+
+	desktop::settings::Settings &settings = dpApp().settings();
+	settings.bindAutomaticAlphaPreserve(
+		this, &LayerProperties::setAutomaticAlphaPerserve);
 }
 
 void LayerProperties::updateLayerItem(
@@ -185,57 +204,14 @@ void LayerProperties::setOpControlsEnabled(bool enabled)
 }
 
 void LayerProperties::updateBlendMode(
-	QComboBox *combo, DP_BlendMode mode, bool group, bool isolated, bool clip)
+	QComboBox *combo, DP_BlendMode mode, bool group, bool isolated, bool clip,
+	bool automaticAlphaPreserve)
 {
-	if(group) {
-		combo->setModel(clip ? groupBlendModesClip() : groupBlendModes());
-	} else {
-		combo->setModel(clip ? layerBlendModesClip() : layerBlendModes());
-	}
+	combo->setModel(getLayerBlendModesFor(group, clip, automaticAlphaPreserve));
 	// If this is an unknown blend mode, hide the control to avoid damage.
-	int blendModeIndex = searchBlendModeIndex(combo, mode);
+	int blendModeIndex = searchBlendModeComboIndex(combo, int(mode));
 	combo->setVisible(blendModeIndex != -1);
 	combo->setCurrentIndex(group && !isolated ? 0 : blendModeIndex);
-}
-
-QStandardItemModel *LayerProperties::layerBlendModes()
-{
-	static QStandardItemModel *model;
-	if(!model) {
-		model = new QStandardItemModel;
-		addBlendModesTo(model, false);
-	}
-	return model;
-}
-
-QStandardItemModel *LayerProperties::layerBlendModesClip()
-{
-	static QStandardItemModel *model;
-	if(!model) {
-		model = new QStandardItemModel;
-		addBlendModesTo(model, true);
-	}
-	return model;
-}
-
-QStandardItemModel *LayerProperties::groupBlendModes()
-{
-	static QStandardItemModel *model;
-	if(!model) {
-		model = new QStandardItemModel;
-		addGroupBlendModesTo(model, false);
-	}
-	return model;
-}
-
-QStandardItemModel *LayerProperties::groupBlendModesClip()
-{
-	static QStandardItemModel *model;
-	if(!model) {
-		model = new QStandardItemModel;
-		addGroupBlendModesTo(model, true);
-	}
-	return model;
 }
 
 void LayerProperties::showEvent(QShowEvent *event)
@@ -245,24 +221,45 @@ void LayerProperties::showEvent(QShowEvent *event)
 	m_ui->title->selectAll();
 }
 
-void LayerProperties::updateClip(bool clip)
+void LayerProperties::setAutomaticAlphaPerserve(bool automaticAlphaPreserve)
 {
-	int index = m_ui->blendMode->currentIndex();
-	int blendMode = m_ui->blendMode->itemData(index).toInt();
-	if(m_item.group) {
-		m_ui->blendMode->setModel(
-			clip ? groupBlendModesClip() : groupBlendModes());
-	} else {
-		m_ui->blendMode->setModel(
-			clip ? layerBlendModesClip() : layerBlendModes());
+	if(automaticAlphaPreserve != m_automaticAlphaPreserve) {
+		m_automaticAlphaPreserve = automaticAlphaPreserve;
+		updateAlpha(m_ui->alphaGroup->checkedButton());
 	}
+}
 
-	if(clip && blendMode == DP_BLEND_MODE_RECOLOR) {
-		int normalIndex =
-			searchBlendModeIndex(m_ui->blendMode, DP_BLEND_MODE_NORMAL);
-		m_ui->blendMode->setCurrentIndex(normalIndex == -1 ? 0 : normalIndex);
-	} else {
-		m_ui->blendMode->setCurrentIndex(index);
+void LayerProperties::updateAlpha(QAbstractButton *button)
+{
+	if(!m_updating) {
+		QScopedValueRollback<bool> rollback(m_updating, true);
+		bool clip = button == m_ui->clip;
+		bool alphaPreserve = button == m_ui->alphaPreserve;
+		int blendMode = m_ui->blendMode->currentData().toInt();
+		m_ui->blendMode->setModel(getLayerBlendModesFor(
+			m_item.group, clip, m_automaticAlphaPreserve));
+
+		if((clip || !alphaPreserve) && blendMode == DP_BLEND_MODE_RECOLOR) {
+			blendMode = DP_BLEND_MODE_NORMAL;
+		} else if(!clip && alphaPreserve && blendMode == DP_BLEND_MODE_NORMAL) {
+			blendMode = DP_BLEND_MODE_RECOLOR;
+		}
+
+		int index = searchBlendModeComboIndex(m_ui->blendMode, blendMode);
+		m_ui->blendMode->setCurrentIndex(index == -1 ? 0 : index);
+	}
+}
+
+void LayerProperties::updateAlphaBasedOnBlendMode(int index)
+{
+	if(!m_updating && m_automaticAlphaPreserve && !m_ui->clip->isChecked()) {
+		QScopedValueRollback<bool> rollback(m_updating, true);
+		int blendMode = m_ui->blendMode->itemData(index).toInt();
+		if(canvas::blendmode::presentsAsAlphaPreserving(blendMode)) {
+			m_ui->alphaPreserve->setChecked(true);
+		} else {
+			m_ui->alphaBlend->setChecked(true);
+		}
 	}
 }
 
@@ -319,8 +316,11 @@ void LayerProperties::apply()
 		}
 
 		bool clip = m_ui->clip->isChecked();
+		bool alphaPreserve = m_ui->alphaPreserve->isChecked();
 		if(clip) {
-			blendMode = DP_blend_mode_to_alpha_affecting(blendMode);
+			blendMode = canvas::blendmode::toAlphaAffecting(blendMode);
+		} else if(alphaPreserve) {
+			blendMode = canvas::blendmode::toAlphaPreserving(blendMode);
 		}
 
 		int sketchOpacity = m_ui->sketchMode->isChecked()
@@ -358,9 +358,10 @@ void LayerProperties::emitChanges()
 		messages.append(net::makeLayerRetitleMessage(m_user, m_item.id, title));
 	}
 
-	const int oldOpacity = qRound(m_item.opacity * 100.0);
-	const bool censored = m_ui->censored->isChecked();
-	const bool clip = m_ui->clip->isChecked();
+	int oldOpacity = qRound(m_item.opacity * 100.0);
+	bool censored = m_ui->censored->isChecked();
+	bool clip = m_ui->clip->isChecked();
+	bool alphaPreserve = m_ui->alphaPreserve->isChecked();
 	DP_BlendMode newBlendmode;
 	bool isolated;
 	if(m_ui->blendMode->isEnabled()) {
@@ -378,8 +379,11 @@ void LayerProperties::emitChanges()
 	}
 
 	if(clip) {
-		newBlendmode =
-			DP_BlendMode(DP_blend_mode_to_alpha_affecting(int(newBlendmode)));
+		newBlendmode = DP_BlendMode(
+			canvas::blendmode::toAlphaAffecting(int(newBlendmode)));
+	} else if(alphaPreserve) {
+		newBlendmode = DP_BlendMode(
+			canvas::blendmode::toAlphaPreserving(int(newBlendmode)));
 	}
 
 	if(m_ui->opacitySlider->value() != oldOpacity ||
@@ -420,38 +424,6 @@ void LayerProperties::emitChanges()
 		messages.prepend(net::makeUndoPointMessage(m_user));
 		emit layerCommands(messages.count(), messages.constData());
 	}
-}
-
-void LayerProperties::addGroupBlendModesTo(QStandardItemModel *model, bool clip)
-{
-	QStandardItem *item = new QStandardItem(tr("Pass Through"));
-	item->setData(-1, Qt::UserRole);
-	model->appendRow(item);
-	addBlendModesTo(model, clip);
-}
-
-void LayerProperties::addBlendModesTo(QStandardItemModel *model, bool clip)
-{
-	for(const canvas::blendmode::Named &m :
-		canvas::blendmode::layerModeNames()) {
-		QStandardItem *item = new QStandardItem{m.name};
-		item->setData(int(m.mode), Qt::UserRole);
-		if(clip && m.mode == DP_BLEND_MODE_RECOLOR) {
-			item->setEnabled(false);
-		}
-		model->appendRow(item);
-	}
-}
-
-int LayerProperties::searchBlendModeIndex(QComboBox *combo, DP_BlendMode mode)
-{
-	int blendModeCount = combo->count();
-	for(int i = 0; i < blendModeCount; ++i) {
-		if(combo->itemData(i).toInt() == int(mode)) {
-			return i;
-		}
-	}
-	return -1;
 }
 
 }

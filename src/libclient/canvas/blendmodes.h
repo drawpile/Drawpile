@@ -38,8 +38,20 @@ QVector<Named> layerModeNames();
 //! Get a list of paste/fill blend modes and their translated names
 QVector<Named> pasteModeNames();
 
-bool isValidBrushMode(DP_BlendMode mode);
-bool isValidEraseMode(DP_BlendMode mode);
+bool isValidBrushMode(int mode);
+bool isValidEraseMode(int mode);
+
+bool preservesAlpha(int mode);
+bool presentsAsEraser(int mode);
+bool presentsAsAlphaPreserving(int mode);
+
+bool alphaPreservePair(
+	int mode, DP_BlendMode *outAlphaAffecting,
+	DP_BlendMode *outAlphaPreserving);
+int toAlphaAffecting(int mode);
+int toAlphaPreserving(int mode);
+
+void adjustAlphaBehavior(int &mode, bool preserveAlpha);
 
 }
 }

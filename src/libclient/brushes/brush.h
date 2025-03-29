@@ -37,6 +37,8 @@ public:
 
 	bool equalPreset(const ClassicBrush &other, bool inEraserSlot) const;
 
+	void setBlendMode(int blendMode, bool isErase);
+
 	const KisCubicCurve &sizeCurve() const { return m_sizeCurve; }
 	void setSizeCurve(const KisCubicCurve &sizeCurve);
 

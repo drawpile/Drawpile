@@ -28,7 +28,8 @@ public:
 
 	void setActions(
 		QAction *reloadPreset, QAction *reloadPresetSlots,
-		QAction *reloadAllPresets, QAction *nextSlot, QAction *previousSlot);
+		QAction *reloadAllPresets, QAction *nextSlot, QAction *previousSlot,
+		QAction *automaticAlphaPreserve);
 	void connectBrushPresets(brushes::BrushPresetModel *brushPresets);
 
 	QString toolType() const override { return QStringLiteral("brush"); }
@@ -123,7 +124,6 @@ private slots:
 	void changeBrushType(const QAction *action);
 	void changeSizeSetting(int size);
 	void changeRadiusLogarithmicSetting(int radiusLogarithmic);
-	void selectBlendMode(int);
 	void updateFromUi();
 	void updateFromUiWith(bool updateShared);
 	void updateStabilizationSettingVisibility();
@@ -146,6 +146,9 @@ private:
 	brushes::ActiveBrush changeBrushInSlot(brushes::ActiveBrush brush, int i);
 
 	void updateMenuActions();
+	void setAutomaticAlphaPreserve(bool automaticAlphaPreserve);
+	void updateAlphaPreserve(bool alphaPreserve);
+	void updateBlendMode(int index);
 	void updateUi();
 
 	Lock getLock();

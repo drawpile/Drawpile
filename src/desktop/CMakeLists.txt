@@ -332,6 +332,8 @@ target_sources(drawpile PRIVATE
 	utils/accountlistmodel.cpp
 	utils/accountlistmodel.h
 	utils/actionbuilder.h
+	utils/blendmodes.cpp
+	utils/blendmodes.h
 	utils/connections.h
 	utils/globalkeyeventfilter.cpp
 	utils/globalkeyeventfilter.h

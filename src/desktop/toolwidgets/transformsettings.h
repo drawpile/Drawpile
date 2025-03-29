@@ -72,8 +72,12 @@ private:
 	void updateHandles(int mode);
 	void showHandles();
 
+	void initBlendModeOptions();
+	void updateAlphaPreserve(bool alphaPreserve);
 	void updateBlendMode(int index);
 	void selectBlendMode(int blendMode);
+	int getCurrentBlendMode() const;
+	void setAutomaticAlphaPerserve(bool automaticAlphaPreserve);
 
 	void updateConstrain(bool constrain);
 	void updateCenter(bool center);
@@ -98,6 +102,7 @@ private:
 	widgets::GroupedToolButton *m_scaleButton = nullptr;
 	widgets::GroupedToolButton *m_distortButton = nullptr;
 	QButtonGroup *m_handlesGroup = nullptr;
+	widgets::GroupedToolButton *m_alphaPreserveButton = nullptr;
 	QComboBox *m_blendModeCombo = nullptr;
 	widgets::GroupedToolButton *m_constrainButton = nullptr;
 	widgets::GroupedToolButton *m_centerButton = nullptr;
@@ -106,6 +111,7 @@ private:
 	QPushButton *m_cancelButton = nullptr;
 	view::CanvasWrapper *m_canvasView = nullptr;
 	bool m_handleButtonsVisible = true;
+	bool m_automaticAlphaPreserve = true;
 };
 
 }
